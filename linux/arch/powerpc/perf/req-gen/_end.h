@@ -1,4 +1,0 @@
-
-#undef WEQ_GEN_PWEFIX
-#undef WEQUEST_BEGIN
-#undef WEQUEST_END

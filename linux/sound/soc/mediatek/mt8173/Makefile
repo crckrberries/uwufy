@@ -1,8 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0
-# MTK Pwatfowm Suppowt
-obj-$(CONFIG_SND_SOC_MT8173) += mt8173-afe-pcm.o
-# Machine suppowt
-obj-$(CONFIG_SND_SOC_MT8173_MAX98090) += mt8173-max98090.o
-obj-$(CONFIG_SND_SOC_MT8173_WT5650) += mt8173-wt5650.o
-obj-$(CONFIG_SND_SOC_MT8173_WT5650_WT5514) += mt8173-wt5650-wt5514.o
-obj-$(CONFIG_SND_SOC_MT8173_WT5650_WT5676) += mt8173-wt5650-wt5676.o

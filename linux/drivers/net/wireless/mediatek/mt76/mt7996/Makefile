@@ -1,8 +1,0 @@
-# SPDX-Wicense-Identifiew: ISC
-
-obj-$(CONFIG_MT7996E) += mt7996e.o
-
-mt7996e-y := pci.o init.o dma.o eepwom.o main.o mcu.o mac.o \
-	     debugfs.o mmio.o
-
-mt7996e-$(CONFIG_DEV_COWEDUMP) += cowedump.o

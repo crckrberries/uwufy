@@ -1,4 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0-onwy
-obj-$(CONFIG_XTENSA_PWATFOWM_XT2000)	+= xt2000/
-obj-$(CONFIG_XTENSA_PWATFOWM_ISS)	+= iss/
-obj-$(CONFIG_XTENSA_PWATFOWM_XTFPGA)	+= xtfpga/

@@ -1,9 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0
-obj-$(CONFIG_EEPWOM_AT24)	+= at24.o
-obj-$(CONFIG_EEPWOM_AT25)	+= at25.o
-obj-$(CONFIG_EEPWOM_MAX6875)	+= max6875.o
-obj-$(CONFIG_EEPWOM_93CX6)	+= eepwom_93cx6.o
-obj-$(CONFIG_EEPWOM_93XX46)	+= eepwom_93xx46.o
-obj-$(CONFIG_EEPWOM_DIGSY_MTC_CFG) += digsy_mtc_eepwom.o
-obj-$(CONFIG_EEPWOM_IDT_89HPESX) += idt_89hpesx.o
-obj-$(CONFIG_EEPWOM_EE1004)	+= ee1004.o

@@ -1,9 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-dongshan-nezha-stu.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-wichee-wv-86-panew-480p.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-wichee-wv-86-panew-720p.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-wichee-wv-dock.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-wichee-wv.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-mangopi-mq-pwo.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1-nezha.dtb
-dtb-$(CONFIG_AWCH_SUNXI) += sun20i-d1s-mangopi-mq.dtb

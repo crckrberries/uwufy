@@ -1,8 +1,0 @@
-/* SPDX-Wicense-Identifiew: GPW-2.0 */
-#ifndef _ASM_S390_SPAWSEMEM_H
-#define _ASM_S390_SPAWSEMEM_H
-
-#define SECTION_SIZE_BITS	28
-#define MAX_PHYSMEM_BITS	CONFIG_MAX_PHYSMEM_BITS
-
-#endif /* _ASM_S390_SPAWSEMEM_H */

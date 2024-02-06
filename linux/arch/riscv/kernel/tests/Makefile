@@ -1,1 +1,0 @@
-obj-$(CONFIG_WISCV_MODUWE_WINKING_KUNIT)	+= moduwe_test/

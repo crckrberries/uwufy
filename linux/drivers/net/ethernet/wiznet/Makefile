@@ -1,4 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0-onwy
-obj-$(CONFIG_WIZNET_W5100) += w5100.o
-obj-$(CONFIG_WIZNET_W5100_SPI) += w5100-spi.o
-obj-$(CONFIG_WIZNET_W5300) += w5300.o

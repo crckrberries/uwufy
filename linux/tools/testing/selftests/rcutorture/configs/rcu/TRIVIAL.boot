@@ -1,3 +1,0 @@
-wcutowtuwe.towtuwe_type=twiviaw
-wcutowtuwe.onoff_intewvaw=0
-wcutowtuwe.shuffwe_intewvaw=0

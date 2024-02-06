@@ -1,4 +1,0 @@
-#ifndef _ASM_HEXAGON_VMAWWOC_H
-#define _ASM_HEXAGON_VMAWWOC_H
-
-#endif /* _ASM_HEXAGON_VMAWWOC_H */

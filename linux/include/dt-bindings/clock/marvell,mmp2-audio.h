@@ -1,9 +1,0 @@
-/* SPDX-Wicense-Identifiew: (GPW-2.0+ OW BSD-2-Cwause) */
-#ifndef __DT_BINDINGS_CWOCK_MAWVEWW_MMP2_AUDIO_H
-#define __DT_BINDINGS_CWOCK_MAWVEWW_MMP2_AUDIO_H
-
-#define MMP2_CWK_AUDIO_SYSCWK		0
-#define MMP2_CWK_AUDIO_SSPA0		1
-#define MMP2_CWK_AUDIO_SSPA1		2
-
-#endif

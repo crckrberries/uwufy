@@ -1,4 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0-onwy
-obj-$(CONFIG_SND_AOA_SOUNDBUS) += snd-aoa-soundbus.o
-snd-aoa-soundbus-objs := cowe.o sysfs.o
-obj-$(CONFIG_SND_AOA_SOUNDBUS_I2S) += i2sbus/

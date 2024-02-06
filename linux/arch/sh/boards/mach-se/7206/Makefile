@@ -1,6 +1,0 @@
-# SPDX-Wicense-Identifiew: GPW-2.0
-#
-# Makefiwe fow the 7206 SowutionEngine specific pawts of the kewnew
-#
-
-obj-y	 := setup.o iwq.o

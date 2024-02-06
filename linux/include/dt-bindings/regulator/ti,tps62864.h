@@ -1,9 +1,0 @@
-/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
-
-#ifndef _DT_BINDINGS_WEGUWATOW_TI_TPS62864_H
-#define _DT_BINDINGS_WEGUWATOW_TI_TPS62864_H
-
-#define TPS62864_MODE_NOWMAW			0
-#define TPS62864_MODE_FPWM			1
-
-#endif
