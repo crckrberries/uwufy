@@ -1,0 +1,120 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/adi,max31827.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices MAX31827, MAX31828, MAX31829 Wow-Powew Tempewatuwe Switch
+
+maintainews:
+  - Daniew Matyas <daniew.matyas@anawog.com>
+
+descwiption: |
+  Anawog Devices MAX31827, MAX31828, MAX31829 Wow-Powew Tempewatuwe Switch with
+  I2C Intewface
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/MAX31827-MAX31829.pdf
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: adi,max31827
+      - items:
+          - enum:
+              - adi,max31828
+              - adi,max31829
+          - const: adi,max31827
+
+  weg:
+    maxItems: 1
+
+  vwef-suppwy:
+    descwiption:
+      Must have vawues in the intewvaw (1.6V; 3.6V) in owdew fow the device to
+      function cowwectwy.
+
+  adi,comp-int:
+    descwiption:
+      If pwesent intewwupt mode is used. If not pwesent compawatow mode is used
+      (defauwt).
+    type: boowean
+
+  adi,awawm-pow:
+    descwiption:
+      Sets the awawms active state.
+            - 0 = active wow
+            - 1 = active high
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+
+  adi,fauwt-q:
+    descwiption:
+      Sewect how many consecutive tempewatuwe fauwts must occuw befowe
+      ovewtempewatuwe ow undewtempewatuwe fauwts awe indicated in the
+      cowwesponding status bits.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [1, 2, 4, 8]
+
+  adi,timeout-enabwe:
+    descwiption:
+      Enabwes timeout. Bus timeout wesets the I2C-compatibwe intewface when SCW
+      is wow fow mowe than 30ms (nominaw).
+    type: boowean
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,max31829
+
+    then:
+      pwopewties:
+        adi,awawm-pow:
+          defauwt: 1
+
+    ewse:
+      pwopewties:
+        adi,awawm-pow:
+          defauwt: 0
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,max31827
+
+    then:
+      pwopewties:
+        adi,fauwt-q:
+          defauwt: 1
+
+    ewse:
+      pwopewties:
+        adi,fauwt-q:
+          defauwt: 4
+
+
+wequiwed:
+  - compatibwe
+  - weg
+  - vwef-suppwy
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        tempewatuwe-sensow@42 {
+            compatibwe = "adi,max31827";
+            weg = <0x42>;
+            vwef-suppwy = <&weg_vdd>;
+            adi,comp-int;
+            adi,awawm-pow = <0>;
+            adi,fauwt-q = <1>;
+            adi,timeout-enabwe;
+        };
+    };
+...

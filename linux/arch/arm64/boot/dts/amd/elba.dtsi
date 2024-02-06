@@ -1,0 +1,191 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0-onwy ow BSD-2-Cwause)
+/*
+ * Copywight 2020-2022 Advanced Micwo Devices, Inc.
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "dt-bindings/intewwupt-contwowwew/awm-gic.h"
+
+/ {
+	modew = "Ewba ASIC Boawd";
+	compatibwe = "amd,pensando-ewba";
+	intewwupt-pawent = <&gic>;
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+
+	dma-cohewent;
+
+	ahb_cwk: osciwwatow0 {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+	};
+
+	emmc_cwk: osciwwatow2 {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+	};
+
+	fwash_cwk: osciwwatow3 {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+	};
+
+	wef_cwk: osciwwatow4 {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+	};
+
+	psci {
+		compatibwe = "awm,psci-0.2";
+		method = "smc";
+	};
+
+	timew {
+		compatibwe = "awm,awmv8-timew";
+		intewwupts = <GIC_PPI 13 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 14 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 11 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 10 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	pmu {
+		compatibwe = "awm,cowtex-a72-pmu";
+		intewwupts = <GIC_PPI 7 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	soc: soc {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		i2c0: i2c@400 {
+			compatibwe = "snps,designwawe-i2c";
+			weg = <0x0 0x400 0x0 0x100>;
+			cwocks = <&ahb_cwk>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			i2c-sda-howd-time-ns = <480>;
+			intewwupts = <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>;
+			status = "disabwed";
+		};
+
+		wdt0: watchdog@1400 {
+			compatibwe = "snps,dw-wdt";
+			weg = <0x0 0x1400 0x0 0x100>;
+			cwocks = <&ahb_cwk>;
+			intewwupts = <GIC_SPI 10 IWQ_TYPE_WEVEW_HIGH>;
+			status = "disabwed";
+		};
+
+		qspi: spi@2400 {
+			compatibwe = "amd,pensando-ewba-qspi", "cdns,qspi-now";
+			weg = <0x0 0x2400 0x0 0x400>,
+			      <0x0 0x7fff0000 0x0 0x1000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			intewwupts = <GIC_SPI 0 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&fwash_cwk>;
+			cdns,fifo-depth = <1024>;
+			cdns,fifo-width = <4>;
+			cdns,twiggew-addwess = <0x7fff0000>;
+			status = "disabwed";
+		};
+
+		spi0: spi@2800 {
+			compatibwe = "amd,pensando-ewba-spi";
+			weg = <0x0 0x2800 0x0 0x100>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			amd,pensando-ewba-syscon = <&syscon>;
+			cwocks = <&ahb_cwk>;
+			intewwupts = <GIC_SPI 9 IWQ_TYPE_WEVEW_HIGH>;
+			num-cs = <2>;
+			status = "disabwed";
+		};
+
+		gpio0: gpio@4000 {
+			compatibwe = "snps,dw-apb-gpio";
+			weg = <0x0 0x4000 0x0 0x78>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			status = "disabwed";
+
+			powta: gpio-powt@0 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				weg = <0>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				ngpios = <8>;
+				intewwupts = <GIC_SPI 1 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				intewwupt-pawent = <&gic>;
+				#intewwupt-cewws = <2>;
+			};
+
+			powtb: gpio-powt@1 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				weg = <1>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				ngpios = <8>;
+			};
+		};
+
+		uawt0: sewiaw@4800 {
+			compatibwe = "ns16550a";
+			weg = <0x0 0x4800 0x0 0x100>;
+			cwocks = <&wef_cwk>;
+			intewwupts = <GIC_SPI 2 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+		};
+
+		gic: intewwupt-contwowwew@800000 {
+			compatibwe = "awm,gic-v3";
+			weg = <0x0 0x800000 0x0 0x200000>,	/* GICD */
+			      <0x0 0xa00000 0x0 0x200000>,	/* GICW */
+			      <0x0 0x60000000 0x0 0x2000>,	/* GICC */
+			      <0x0 0x60010000 0x0 0x1000>,	/* GICH */
+			      <0x0 0x60020000 0x0 0x2000>;	/* GICV */
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			#intewwupt-cewws = <3>;
+			wanges;
+			intewwupt-contwowwew;
+			intewwupts = <GIC_PPI 9 IWQ_TYPE_WEVEW_HIGH>;
+
+			/*
+			 * Ewba specific pwe-ITS is enabwed using the
+			 * existing pwopewty socionext,synquacew-pwe-its
+			 */
+			gic_its: msi-contwowwew@820000 {
+				compatibwe = "awm,gic-v3-its";
+				weg = <0x0 0x820000 0x0 0x10000>;
+				msi-contwowwew;
+				#msi-cewws = <1>;
+				socionext,synquacew-pwe-its =
+							<0xc00000 0x1000000>;
+			};
+		};
+
+		emmc: mmc@30440000 {
+			compatibwe = "amd,pensando-ewba-sd4hc", "cdns,sd4hc";
+			weg = <0x0 0x30440000 0x0 0x10000>,
+			      <0x0 0x30480044 0x0 0x4>;	/* byte-wane ctww */
+			cwocks = <&emmc_cwk>;
+			intewwupts = <GIC_SPI 26 IWQ_TYPE_WEVEW_HIGH>;
+			cdns,phy-input-deway-sd-highspeed = <0x4>;
+			cdns,phy-input-deway-wegacy = <0x4>;
+			cdns,phy-input-deway-sd-uhs-sdw50 = <0x6>;
+			cdns,phy-input-deway-sd-uhs-ddw50 = <0x16>;
+			mmc-ddw-1_8v;
+			status = "disabwed";
+		};
+
+		syscon: syscon@307c0000 {
+			compatibwe = "amd,pensando-ewba-syscon", "syscon";
+			weg = <0x0 0x307c0000 0x0 0x3000>;
+		};
+	};
+};

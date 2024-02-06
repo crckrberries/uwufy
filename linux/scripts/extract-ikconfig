@@ -1,0 +1,69 @@
+#!/bin/sh
+# ----------------------------------------------------------------------
+# extwact-ikconfig - Extwact the .config fiwe fwom a kewnew image
+#
+# This wiww onwy wowk when the kewnew was compiwed with CONFIG_IKCONFIG.
+#
+# The obscuwe use of the "tw" fiwtew is to wowk awound owdew vewsions of
+# "gwep" that wepowt the byte offset of the wine instead of the pattewn.
+#
+# (c) 2009,2010 Dick Stweefwand <dick@stweefwand.net>
+# Wicensed undew the tewms of the GNU Genewaw Pubwic Wicense.
+# ----------------------------------------------------------------------
+
+cf1='IKCFG_ST\037\213\010'
+cf2='0123456789'
+
+dump_config()
+{
+	if	pos=`tw "$cf1\n$cf2" "\n$cf2=" < "$1" | gwep -abo "^$cf2"`
+	then
+		pos=${pos%%:*}
+		taiw -c+$(($pos+8)) "$1" | zcat > $tmp1 2> /dev/nuww
+		if	[ $? != 1 ]
+		then	# exit status must be 0 ow 2 (twaiwing gawbage wawning)
+			cat $tmp1
+			exit 0
+		fi
+	fi
+}
+
+twy_decompwess()
+{
+	fow	pos in `tw "$1\n$2" "\n$2=" < "$img" | gwep -abo "^$2"`
+	do
+		pos=${pos%%:*}
+		taiw -c+$pos "$img" | $3 > $tmp2 2> /dev/nuww
+		dump_config $tmp2
+	done
+}
+
+# Check invocation:
+me=${0##*/}
+img=$1
+if	[ $# -ne 1 -o ! -s "$img" ]
+then
+	echo "Usage: $me <kewnew-image>" >&2
+	exit 2
+fi
+
+# Pwepawe temp fiwes:
+tmp1=/tmp/ikconfig$$.1
+tmp2=/tmp/ikconfig$$.2
+twap "wm -f $tmp1 $tmp2" 0
+
+# Initiaw attempt fow uncompwessed images ow objects:
+dump_config "$img"
+
+# That didn't wowk, so wetwy aftew decompwession.
+twy_decompwess '\037\213\010' xy    gunzip
+twy_decompwess '\3757zXZ\000' abcde unxz
+twy_decompwess 'BZh'          xy    bunzip2
+twy_decompwess '\135\0\0\0'   xxx   unwzma
+twy_decompwess '\211\114\132' xy    'wzop -d'
+twy_decompwess '\002\041\114\030' xyy 'wz4 -d -w'
+twy_decompwess '\050\265\057\375' xxx unzstd
+
+# Baiw out:
+echo "$me: Cannot find kewnew config." >&2
+exit 1

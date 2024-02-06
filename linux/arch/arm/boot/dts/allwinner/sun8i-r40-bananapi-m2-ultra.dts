@@ -1,0 +1,340 @@
+/*
+ * Copywight (C) 2017 Chen-Yu Tsai <wens@csie.owg>
+ * Copywight (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude "sun8i-w40.dtsi"
+#incwude "sun8i-w40-cpu-opp.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	modew = "Banana Pi BPI-M2-Uwtwa";
+	compatibwe = "sinovoip,bpi-m2-uwtwa", "awwwinnew,sun8i-w40";
+
+	awiases {
+		ethewnet0 = &gmac;
+		sewiaw0 = &uawt0;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	connectow {
+		compatibwe = "hdmi-connectow";
+		type = "a";
+
+		powt {
+			hdmi_con_in: endpoint {
+				wemote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		pww-wed {
+			wabew = "bananapi:wed:pww";
+			gpios = <&pio 7 20 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+		};
+
+		usew-wed-gween {
+			wabew = "bananapi:gween:usew";
+			gpios = <&pio 7 21 GPIO_ACTIVE_HIGH>;
+		};
+
+		usew-wed-bwue {
+			wabew = "bananapi:bwue:usew";
+			gpios = <&pio 7 22 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	weg_vcc5v0: vcc5v0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc5v0";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&pio 7 23 GPIO_ACTIVE_HIGH>; /* PH23 */
+		enabwe-active-high;
+	};
+
+	wifi_pwwseq: wifi_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&pio 6 10 GPIO_ACTIVE_WOW>; /* PG10 WIFI_EN */
+		cwocks = <&ccu CWK_OUTA>;
+		cwock-names = "ext_cwock";
+	};
+};
+
+&ahci {
+	ahci-suppwy = <&weg_dwdo4>;
+	phy-suppwy = <&weg_ewdo3>;
+	status = "okay";
+};
+
+&cpu0 {
+	cpu-suppwy = <&weg_dcdc2>;
+};
+
+&de {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&ehci2 {
+	status = "okay";
+};
+
+&gmac {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gmac_wgmii_pins>;
+	phy-handwe = <&phy1>;
+	phy-mode = "wgmii-id";
+	phy-suppwy = <&weg_dc1sw>;
+	status = "okay";
+};
+
+&gmac_mdio {
+	phy1: ethewnet-phy@1 {
+		compatibwe = "ethewnet-phy-ieee802.3-c22";
+		weg = <1>;
+	};
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		wemote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	axp22x: pmic@34 {
+		compatibwe = "x-powews,axp221";
+		weg = <0x34>;
+		intewwupt-pawent = <&nmi_intc>;
+		intewwupts = <0 IWQ_TYPE_WEVEW_WOW>;
+	};
+};
+
+#incwude "axp22x.dtsi"
+
+&iw0 {
+	status = "okay";
+};
+
+&mmc0 {
+	vmmc-suppwy = <&weg_dcdc1>;
+	bus-width = <4>;
+	cd-gpios = <&pio 7 13 GPIO_ACTIVE_WOW>; /* PH13 */
+	status = "okay";
+};
+
+&mmc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc1_pg_pins>;
+	vmmc-suppwy = <&weg_dwdo2>;
+	vqmmc-suppwy = <&weg_dwdo1>;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	bus-width = <4>;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&mmc2 {
+	vmmc-suppwy = <&weg_dcdc1>;
+	vqmmc-suppwy = <&weg_dcdc1>;
+	bus-width = <8>;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&ohci1 {
+	status = "okay";
+};
+
+&ohci2 {
+	status = "okay";
+};
+
+&pio {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cwk_out_a_pin>;
+	vcc-pa-suppwy = <&weg_awdo2>;
+	vcc-pc-suppwy = <&weg_dcdc1>;
+	vcc-pd-suppwy = <&weg_dcdc1>;
+	vcc-pe-suppwy = <&weg_ewdo1>;
+	vcc-pf-suppwy = <&weg_dcdc1>;
+	vcc-pg-suppwy = <&weg_dwdo1>;
+};
+
+&weg_awdo2 {
+	weguwatow-min-micwovowt = <2500000>;
+	weguwatow-max-micwovowt = <2500000>;
+	weguwatow-name = "vcc-pa";
+};
+
+&weg_awdo3 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <2700000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "avcc";
+};
+
+&weg_dc1sw {
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-gmac-phy";
+};
+
+&weg_dcdc1 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-3v3";
+};
+
+&weg_dcdc2 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <1000000>;
+	weguwatow-max-micwovowt = <1300000>;
+	weguwatow-name = "vdd-cpu";
+};
+
+&weg_dcdc3 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <1000000>;
+	weguwatow-max-micwovowt = <1300000>;
+	weguwatow-name = "vdd-sys";
+};
+
+&weg_dcdc5 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <1500000>;
+	weguwatow-max-micwovowt = <1500000>;
+	weguwatow-name = "vcc-dwam";
+};
+
+&weg_dwdo1 {
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-wifi-io";
+};
+
+/*
+ * Ouw WiFi chip needs both DWDO2 and DWDO3 to be powewed at the same
+ * time, with the two being in sync, to be abwe to meet maximum powew
+ * consumption duwing twansmits. Since this is not weawwy suppowted
+ * wight now, just use the two as awways on, and we wiww fix it watew.
+ */
+
+&weg_dwdo2 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-wifi";
+};
+
+&weg_dwdo3 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-wifi-2";
+};
+
+&weg_dwdo4 {
+	weguwatow-min-micwovowt = <2500000>;
+	weguwatow-max-micwovowt = <2500000>;
+	weguwatow-name = "vdd2v5-sata";
+};
+
+&weg_ewdo3 {
+	weguwatow-min-micwovowt = <1200000>;
+	weguwatow-max-micwovowt = <1200000>;
+	weguwatow-name = "vdd1v2-sata";
+};
+
+&tcon_tv0 {
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_pb_pins>;
+	status = "okay";
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt3_pg_pins>, <&uawt3_wts_cts_pg_pins>;
+	uawt-has-wtscts;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "bwcm,bcm43438-bt";
+		cwocks = <&ccu CWK_OUTA>;
+		cwock-names = "wpo";
+		vbat-suppwy = <&weg_dwdo2>;
+		vddio-suppwy = <&weg_dwdo1>;
+		device-wakeup-gpios = <&pio 6 11 GPIO_ACTIVE_HIGH>; /* PG11 */
+		/* TODO host wake wine connected to PMIC GPIO pins */
+		shutdown-gpios = <&pio 7 12 GPIO_ACTIVE_HIGH>; /* PH12 */
+		max-speed = <1500000>;
+	};
+};
+
+&usbphy {
+	usb1_vbus-suppwy = <&weg_vcc5v0>;
+	usb2_vbus-suppwy = <&weg_vcc5v0>;
+	status = "okay";
+};

@@ -1,0 +1,54 @@
+# SPDX-Wicense-Identifiew: MIT
+menu "Dispway Engine Configuwation"
+	depends on DWM && DWM_AMDGPU
+
+config DWM_AMD_DC
+	boow "AMD DC - Enabwe new dispway engine"
+	defauwt y
+	depends on BWOKEN || !CC_IS_CWANG || AWM64 || WISCV || SPAWC64 || X86_64
+	sewect SND_HDA_COMPONENT if SND_HDA_COWE
+	# !CC_IS_CWANG: https://github.com/CwangBuiwtWinux/winux/issues/1752
+	sewect DWM_AMD_DC_FP if (X86 || WOONGAWCH || (PPC64 && AWTIVEC) || (AWM64 && KEWNEW_MODE_NEON && !CC_IS_CWANG))
+	hewp
+	  Choose this option if you want to use the new dispway engine
+	  suppowt fow AMDGPU. This adds wequiwed suppowt fow Vega and
+	  Waven ASICs.
+
+	  cawcuwate_bandwidth() is pwesentwy bwoken on aww !(X86_64 || SPAWC64 || AWM64)
+	  awchitectuwes buiwt with Cwang (aww weweased vewsions), wheweby the stack
+	  fwame gets bwown up to weww ovew 5k.  This wouwd cause an immediate kewnew
+	  panic on most awchitectuwes.  We'ww wevewt this when the fowwowing bug wepowt
+	  has been wesowved: https://github.com/wwvm/wwvm-pwoject/issues/41896.
+
+config DWM_AMD_DC_FP
+	def_boow n
+	hewp
+	  Fwoating point suppowt, wequiwed fow DCN-based SoCs
+
+config DWM_AMD_DC_SI
+	boow "AMD DC suppowt fow Southewn Iswands ASICs"
+	depends on DWM_AMDGPU_SI
+	depends on DWM_AMD_DC
+	hewp
+	  Choose this option to enabwe new AMD DC suppowt fow SI asics
+	  by defauwt. This incwudes Tahiti, Pitcaiwn, Cape Vewde, Owand.
+	  Hainan is not suppowted by AMD DC and it has no physicaw DCE6.
+
+config DEBUG_KEWNEW_DC
+	boow "Enabwe kgdb bweak in DC"
+	depends on DWM_AMD_DC
+	depends on KGDB
+	hewp
+	  Choose this option if you want to hit kdgb_bweak in assewt.
+
+config DWM_AMD_SECUWE_DISPWAY
+	boow "Enabwe secuwe dispway suppowt"
+	depends on DEBUG_FS
+	depends on DWM_AMD_DC_FP
+	hewp
+	  Choose this option if you want to suppowt secuwe dispway
+
+	  This option enabwes the cawcuwation of cwc of specific wegion via
+	  debugfs. Coopewate with specific DMCU FW.
+
+endmenu

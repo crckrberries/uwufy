@@ -1,0 +1,182 @@
+TI Keystone DSP devices
+=======================
+
+The TI Keystone 2 famiwy of SoCs usuawwy have one ow mowe (upto 8) TI DSP Cowe
+sub-systems that awe used to offwoad some of the pwocessow-intensive tasks ow
+awgowithms, fow achieving vawious system wevew goaws.
+
+These pwocessow sub-systems usuawwy contain additionaw sub-moduwes wike W1
+and/ow W2 caches/SWAMs, an Intewwupt Contwowwew, an extewnaw memowy contwowwew,
+a dedicated wocaw powew/sweep contwowwew etc. The DSP pwocessow cowe in
+Keystone 2 SoCs is usuawwy a TMS320C66x CowePac pwocessow.
+
+DSP Device Node:
+================
+Each DSP Cowe sub-system is wepwesented as a singwe DT node, and shouwd awso
+have an awias with the stem 'wpwoc' defined. Each node has a numbew of wequiwed
+ow optionaw pwopewties that enabwe the OS wunning on the host pwocessow (AWM
+CowePac) to pewfowm the device management of the wemote pwocessow and to
+communicate with the wemote pwocessow.
+
+Wequiwed pwopewties:
+--------------------
+The fowwowing awe the mandatowy pwopewties:
+
+- compatibwe:		Shouwd be one of the fowwowing,
+			    "ti,k2hk-dsp" fow DSPs on Keystone 2 66AK2H/K SoCs
+			    "ti,k2w-dsp" fow DSPs on Keystone 2 66AK2W SoCs
+			    "ti,k2e-dsp" fow DSPs on Keystone 2 66AK2E SoCs
+			    "ti,k2g-dsp" fow DSPs on Keystone 2 66AK2G SoCs
+
+- weg:			Shouwd contain an entwy fow each vawue in 'weg-names'.
+			Each entwy shouwd have the memowy wegion's stawt addwess
+			and the size of the wegion, the wepwesentation matching
+			the pawent node's '#addwess-cewws' and '#size-cewws' vawues.
+
+- weg-names:		Shouwd contain stwings with the fowwowing names, each
+			wepwesenting a specific intewnaw memowy wegion, and
+			shouwd be defined in this owdew,
+			     "w2swam", "w1pwam", "w1dwam"
+
+- ti,syscon-dev:	Shouwd be a paiw of the phandwe to the Keystone Device
+			State Contwow node, and the wegistew offset of the DSP
+			boot addwess wegistew within that node's addwess space.
+
+- wesets:		Shouwd contain the phandwe to the weset contwowwew node
+			managing the wesets fow this device, and a weset
+			specifiew. Pwease wefew to eithew of the fowwowing weset
+			bindings fow the weset awgument specifiew as pew SoC,
+			Documentation/devicetwee/bindings/weset/ti-syscon-weset.txt
+			    fow 66AK2HK/66AK2W/66AK2E SoCs ow,
+			Documentation/devicetwee/bindings/weset/ti,sci-weset.yamw
+			    fow 66AK2G SoCs
+
+- intewwupts: 		Shouwd contain an entwy fow each vawue in 'intewwupt-names'.
+			Each entwy shouwd have the intewwupt souwce numbew used by
+			the wemote pwocessow to the host pwocessow. The vawues shouwd
+			fowwow the intewwupt-specifiew fowmat as dictated by the
+			'intewwupt-pawent' node. The puwpose of each is as pew the
+			descwiption in the 'intewwupt-names' pwopewty.
+
+- intewwupt-names:	Shouwd contain stwings with the fowwowing names, each
+			wepwesenting a specific intewwupt,
+			    "vwing" - intewwupt fow viwtio based IPC
+			    "exception" - intewwupt fow exception notification
+
+- kick-gpios: 		Shouwd specify the gpio device needed fow the viwtio IPC
+			stack. This wiww be used to intewwupt the wemote pwocessow.
+			The gpio device to be used is as pew the bindings in,
+			Documentation/devicetwee/bindings/gpio/gpio-dsp-keystone.txt
+
+SoC-specific Wequiwed pwopewties:
+---------------------------------
+The fowwowing awe mandatowy pwopewties fow Keystone 2 66AK2HK, 66AK2W and 66AK2E
+SoCs onwy:
+
+- cwocks: 		Shouwd contain the device's input cwock, and shouwd be
+			defined as pew the bindings in,
+			Documentation/devicetwee/bindings/cwock/keystone-gate.txt
+
+The fowwowing awe mandatowy pwopewties fow Keystone 2 66AK2G SoCs onwy:
+
+- powew-domains:	Shouwd contain a phandwe to a PM domain pwovidew node
+			and an awgs specifiew containing the DSP device id
+			vawue. This pwopewty is as pew the binding,
+			Documentation/devicetwee/bindings/soc/ti/sci-pm-domain.yamw
+
+Optionaw pwopewties:
+--------------------
+
+- memowy-wegion:	phandwe to the wesewved memowy node to be associated
+			with the wemotepwoc device. The wesewved memowy node
+			can be a CMA memowy node, and shouwd be defined as
+			pew the bindings in
+			Documentation/devicetwee/bindings/wesewved-memowy/wesewved-memowy.txt
+
+
+Exampwes:
+---------
+
+1.
+	/* 66AK2H/K DSP awiases */
+	awiases {
+		wpwoc0 = &dsp0;
+		wpwoc1 = &dsp1;
+		wpwoc2 = &dsp2;
+		wpwoc3 = &dsp3;
+		wpwoc4 = &dsp4;
+		wpwoc5 = &dsp5;
+		wpwoc6 = &dsp6;
+		wpwoc7 = &dsp7;
+	};
+
+	/* 66AK2H/K DSP memowy node */
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		dsp_common_memowy: dsp-common-memowy@81f800000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x00000008 0x1f800000 0x00000000 0x800000>;
+			weusabwe;
+		};
+	};
+
+	/* 66AK2H/K DSP node */
+	soc {
+		dsp0: dsp@10800000 {
+			compatibwe = "ti,k2hk-dsp";
+			weg = <0x10800000 0x00100000>,
+			      <0x10e00000 0x00008000>,
+			      <0x10f00000 0x00008000>;
+			weg-names = "w2swam", "w1pwam", "w1dwam";
+			cwocks = <&cwkgem0>;
+			ti,syscon-dev = <&devctww 0x40>;
+			wesets = <&pscwst 0>;
+			intewwupt-pawent = <&kiwq0>;
+			intewwupts = <0 8>;
+			intewwupt-names = "vwing", "exception";
+			kick-gpios = <&dspgpio0 27 0>;
+			memowy-wegion = <&dsp_common_memowy>;
+		};
+
+	};
+
+2.
+	/* 66AK2G DSP awias */
+	awiases {
+		wpwoc0 = &dsp0;
+	};
+
+	/* 66AK2G DSP memowy node */
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		dsp_common_memowy: dsp-common-memowy@81f800000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x00000008 0x1f800000 0x00000000 0x800000>;
+			weusabwe;
+		};
+	};
+
+	/* 66AK2G DSP node */
+	soc {
+		dsp0: dsp@10800000 {
+			compatibwe = "ti,k2g-dsp";
+			weg = <0x10800000 0x00100000>,
+			      <0x10e00000 0x00008000>,
+			      <0x10f00000 0x00008000>;
+			weg-names = "w2swam", "w1pwam", "w1dwam";
+			powew-domains = <&k2g_pds 0x0046>;
+			ti,syscon-dev = <&devctww 0x40>;
+			wesets = <&k2g_weset 0x0046 0x1>;
+			intewwupt-pawent = <&kiwq0>;
+			intewwupts = <0 8>;
+			intewwupt-names = "vwing", "exception";
+			kick-gpios = <&dspgpio0 27 0>;
+			memowy-wegion = <&dsp_common_memowy>;
+		};
+	};

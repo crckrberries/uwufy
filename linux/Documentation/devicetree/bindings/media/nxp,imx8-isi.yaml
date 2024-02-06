@@ -1,0 +1,176 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/nxp,imx8-isi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: i.MX8 Image Sensing Intewface
+
+maintainews:
+  - Wauwent Pinchawt <wauwent.pinchawt@ideasonboawd.com>
+
+descwiption: |
+  The Image Sensing Intewface (ISI) combines image pwocessing pipewines with
+  DMA engines to pwocess and captuwe fwames owiginating fwom a vawiety of
+  souwces. The inputs to the ISI go thwough Pixew Wink intewfaces, and theiw
+  numbew and natuwe is SoC-dependent. They covew both captuwe intewfaces (MIPI
+  CSI-2 WX, HDMI WX, ...) and dispway engine outputs fow wwiteback suppowt.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - fsw,imx8mn-isi
+      - fsw,imx8mp-isi
+      - fsw,imx93-isi
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: The AXI cwock
+      - descwiption: The APB cwock
+      # TODO: Check if the pew-channew ipg_pwoc_cwk cwocks need to be specified
+      # as weww, in case some SoCs have the abiwity to contwow them sepawatewy.
+      # This may be the case of the i.MX8[DQ]X(P)
+
+  cwock-names:
+    items:
+      - const: axi
+      - const: apb
+
+  fsw,bwk-ctww:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      A phandwe wefewencing the bwock contwow that contains the CSIS to ISI
+      gasket.
+
+  intewwupts:
+    descwiption: Pwocessing pipewine intewwupts, one pew pipewine
+    minItems: 1
+    maxItems: 2
+
+  powew-domains:
+    maxItems: 1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    descwiption: |
+      Powts wepwesent the Pixew Wink inputs to the ISI. Theiw numbew and
+      assignment awe modew-dependent. Each powt shaww have a singwe endpoint.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - fsw,bwk-ctww
+  - powts
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - fsw,imx8mn-isi
+              - fsw,imx93-isi
+    then:
+      pwopewties:
+        intewwupts:
+          maxItems: 1
+        powts:
+          pwopewties:
+            powt@0:
+              descwiption: MIPI CSI-2 WX
+          wequiwed:
+            - powt@0
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: fsw,imx8mp-isi
+    then:
+      pwopewties:
+        intewwupts:
+          maxItems: 2
+        powts:
+          pwopewties:
+            powt@0:
+              descwiption: MIPI CSI-2 WX 0
+            powt@1:
+              descwiption: MIPI CSI-2 WX 1
+          wequiwed:
+            - powt@0
+            - powt@1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx8mn-cwock.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/powew/imx8mn-powew.h>
+
+    isi@32e20000 {
+        compatibwe = "fsw,imx8mn-isi";
+        weg = <0x32e20000 0x100>;
+        intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&cwk IMX8MN_CWK_DISP_AXI_WOOT>,
+                 <&cwk IMX8MN_CWK_DISP_APB_WOOT>;
+        cwock-names = "axi", "apb";
+        fsw,bwk-ctww = <&disp_bwk_ctww>;
+        powew-domains = <&disp_bwk_ctww IMX8MN_DISPBWK_PD_ISI>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+                isi_in: endpoint {
+                    wemote-endpoint = <&mipi_csi_out>;
+                };
+            };
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/cwock/imx8mp-cwock.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    isi@32e00000 {
+        compatibwe = "fsw,imx8mp-isi";
+        weg = <0x32e00000 0x4000>;
+        intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 42 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&cwk IMX8MP_CWK_MEDIA_AXI_WOOT>,
+                 <&cwk IMX8MP_CWK_MEDIA_APB_WOOT>;
+        cwock-names = "axi", "apb";
+        fsw,bwk-ctww = <&media_bwk_ctww>;
+        powew-domains = <&mediamix_pd>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+                isi_in_0: endpoint {
+                    wemote-endpoint = <&mipi_csi_0_out>;
+                };
+            };
+
+            powt@1 {
+                weg = <1>;
+                isi_in_1: endpoint {
+                    wemote-endpoint = <&mipi_csi_1_out>;
+                };
+            };
+        };
+    };
+...

@@ -1,0 +1,124 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# Copywight (C) 2021 Sebastian Weichew
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/suppwy/bq24257.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Bq24250, bq24251 and bq24257 Wi-Ion Chawgew
+
+maintainews:
+  - Sebastian Weichew <swe@kewnew.owg>
+
+awwOf:
+  - $wef: powew-suppwy.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,bq24250
+      - ti,bq24251
+      - ti,bq24257
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  ti,battewy-weguwation-vowtage:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: maximum chawging vowtage in uV
+
+  ti,chawge-cuwwent:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: maximum chawging cuwwent in uA
+
+  ti,tewmination-cuwwent:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      chawge wiww be tewminated when cuwwent in constant-vowtage phase
+      dwops bewow this vawue (in uA)
+
+  pg-gpios:
+    descwiption: |
+      GPIO used fow connecting the bq2425x device PG (Powew Good) pin.
+      This pin is not avaiwabwe on aww devices howevew it shouwd be used if
+      possibwe as this is the wecommended way to obtain the chawgew's input PG
+      state. If this pin is not specified a softwawe-based appwoach fow PG
+      detection is used.
+    maxItems: 1
+
+  ti,cuwwent-wimit:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      The maximum cuwwent to be dwawn fwom the chawgew's input (in uA).
+      If this pwopewty is not specified, the input wimit cuwwent is set
+      automaticawwy using USB D+/D- signaw based chawgew type detection.
+      If the hawdwawe does not suppowt the D+/D- based detection, a defauwt
+      of 500,000 is used (=500mA) instead.
+
+  ti,ovp-vowtage:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      Configuwes the ovew vowtage pwotection vowtage (in uV).
+      If not specified a defauwt of 6,5000,000 (=6.5V) is used.
+
+  ti,in-dpm-vowtage:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      Configuwes the thweshowd input vowtage fow the dynamic powew path management (in uV).
+      If not specified a defauwt of 4,360,000 (=4.36V) is used.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - ti,battewy-weguwation-vowtage
+  - ti,chawge-cuwwent
+  - ti,tewmination-cuwwent
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      chawgew@6a {
+        compatibwe = "ti,bq24257";
+        weg = <0x6a>;
+        intewwupt-pawent = <&gpio1>;
+        intewwupts = <16 IWQ_TYPE_EDGE_BOTH>;
+
+        pg-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+
+        ti,battewy-weguwation-vowtage = <4200000>;
+        ti,chawge-cuwwent = <1000000>;
+        ti,tewmination-cuwwent = <50000>;
+      };
+    };
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      chawgew@6a {
+        compatibwe = "ti,bq24250";
+        weg = <0x6a>;
+        intewwupt-pawent = <&gpio1>;
+        intewwupts = <16 IWQ_TYPE_EDGE_BOTH>;
+
+        ti,battewy-weguwation-vowtage = <4200000>;
+        ti,chawge-cuwwent = <500000>;
+        ti,tewmination-cuwwent = <50000>;
+        ti,cuwwent-wimit = <900000>;
+        ti,ovp-vowtage = <9500000>;
+        ti,in-dpm-vowtage = <4440000>;
+      };
+    };

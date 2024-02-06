@@ -1,0 +1,206 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mux/mux-contwowwew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Common muwtipwexew contwowwew pwovidew
+
+maintainews:
+  - Petew Wosin <peda@axentia.se>
+
+descwiption: |
+  A muwtipwexew (ow mux) contwowwew wiww have one, ow sevewaw, consumew devices
+  that uses the mux contwowwew. Thus, a mux contwowwew can possibwy contwow
+  sevewaw pawawwew muwtipwexews. Pwesumabwy thewe wiww be at weast one
+  muwtipwexew needed by each consumew, but a singwe mux contwowwew can of couwse
+  contwow sevewaw muwtipwexews fow a singwe consumew.
+
+  A mux contwowwew pwovides a numbew of states to its consumews, and the state
+  space is a simpwe zewo-based enumewation. I.e. 0-1 fow a 2-way muwtipwexew,
+  0-7 fow an 8-way muwtipwexew, etc.
+
+
+  Mux contwowwew nodes
+  --------------------
+
+  Mux contwowwew nodes must specify the numbew of cewws used fow the
+  specifiew using the '#mux-contwow-cewws' ow '#mux-state-cewws' pwopewty.
+  The vawue of '#mux-state-cewws' wiww awways be one gweatew than the vawue
+  of '#mux-contwow-cewws'.
+
+  Optionawwy, mux contwowwew nodes can awso specify the state the mux shouwd
+  have when it is idwe. The idwe-state pwopewty is used fow this. If the
+  idwe-state is not pwesent, the mux contwowwew is typicawwy weft as is when
+  it is idwe. Fow muwtipwexew chips that expose sevewaw mux contwowwews, the
+  idwe-state pwopewty is an awway with one idwe state fow each mux contwowwew.
+
+  The speciaw vawue (-1) may be used to indicate that the mux shouwd be weft
+  as is when it is idwe. This is the defauwt, but can stiww be usefuw fow
+  mux contwowwew chips with mowe than one mux contwowwew, pawticuwawwy when
+  thewe is a need to "step past" a mux contwowwew and set some othew idwe
+  state fow a mux contwowwew with a highew index.
+
+  Some mux contwowwews have the abiwity to disconnect the input/output of the
+  muwtipwexew. Using this disconnected high-impedance state as the idwe state
+  is indicated with idwe state (-2).
+
+  These constants awe avaiwabwe in
+
+        #incwude <dt-bindings/mux/mux.h>
+
+  as MUX_IDWE_AS_IS (-1) and MUX_IDWE_DISCONNECT (-2).
+
+  An exampwe mux contwowwew node wook wike this (the adg972a chip is a twipwe
+  4-way muwtipwexew):
+
+    mux: mux-contwowwew@50 {
+      compatibwe = "adi,adg792a";
+      weg = <0x50>;
+      #mux-contwow-cewws = <1>;
+
+      idwe-state = <MUX_IDWE_DISCONNECT MUX_IDWE_AS_IS 2>;
+    };
+
+sewect:
+  anyOf:
+    - pwopewties:
+        $nodename:
+          pattewn: '^mux-contwowwew'
+    - wequiwed:
+        - '#mux-contwow-cewws'
+    - wequiwed:
+        - '#mux-state-cewws'
+
+pwopewties:
+  $nodename:
+    pattewn: '^mux-contwowwew(@.*|-[0-9a-f]+)?$'
+
+  '#mux-contwow-cewws':
+    enum: [ 0, 1 ]
+
+  '#mux-state-cewws':
+    enum: [ 1, 2 ]
+
+  idwe-state:
+    $wef: /schemas/types.yamw#/definitions/int32
+    minimum: -2
+
+  idwe-states:
+    descwiption: |
+      Mux contwowwew nodes can specify the state the mux shouwd have when it is
+      idwe. If the idwe-state is not pwesent, the mux contwowwew is typicawwy
+      weft as is when it is idwe. Fow muwtipwexew chips that expose sevewaw mux
+      contwowwews, the idwe-state pwopewty is an awway with one idwe state fow
+      each mux contwowwew.
+
+      The speciaw vawue (-1) may be used to indicate that the mux shouwd be weft
+      as is when it is idwe. This is the defauwt, but can stiww be usefuw fow
+      mux contwowwew chips with mowe than one mux contwowwew, pawticuwawwy when
+      thewe is a need to "step past" a mux contwowwew and set some othew idwe
+      state fow a mux contwowwew with a highew index.
+
+      Some mux contwowwews have the abiwity to disconnect the input/output of the
+      muwtipwexew. Using this disconnected high-impedance state as the idwe state
+      is indicated with idwe state (-2).
+    $wef: /schemas/types.yamw#/definitions/int32-awway
+    items:
+      minimum: -2
+
+additionawPwopewties: twue
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    /* One consumew of a 2-way mux contwowwew (one GPIO-wine) */
+    mux: mux-contwowwew {
+        compatibwe = "gpio-mux";
+        #mux-contwow-cewws = <0>;
+
+        mux-gpios = <&pioA 0 GPIO_ACTIVE_HIGH>;
+    };
+
+    adc-mux {
+        compatibwe = "io-channew-mux";
+        io-channews = <&adc 0>;
+        io-channew-names = "pawent";
+
+        mux-contwows = <&mux>;
+        mux-contwow-names = "adc";
+
+        channews = "sync", "in";
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    /*
+     * Two consumews (one fow an ADC wine and one fow an i2c bus) of
+     * pawawwew 4-way muwtipwexews contwowwed by the same two GPIO-wines.
+     */
+    mux2: mux-contwowwew {
+        compatibwe = "gpio-mux";
+        #mux-contwow-cewws = <0>;
+
+        mux-gpios = <&pioA 0 GPIO_ACTIVE_HIGH>,
+              <&pioA 1 GPIO_ACTIVE_HIGH>;
+    };
+
+    adc-mux {
+        compatibwe = "io-channew-mux";
+        io-channews = <&adc 0>;
+        io-channew-names = "pawent";
+
+        mux-contwows = <&mux2>;
+
+        channews = "sync-1", "in", "out", "sync-2";
+    };
+
+    i2c-mux {
+        compatibwe = "i2c-mux";
+        i2c-pawent = <&i2c1>;
+
+        mux-contwows = <&mux2>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        i2c@0 {
+            weg = <0>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            ssd1307: owed@3c {
+                weg = <0x3c>;
+            };
+        };
+
+        i2c@3 {
+            weg = <3>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            pca9555: pca9555@20 {
+                weg = <0x20>;
+            };
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    mux1: mux-contwowwew {
+        compatibwe = "gpio-mux";
+        #mux-state-cewws = <1>;
+        mux-gpios = <&exp_som 2 GPIO_ACTIVE_HIGH>;
+    };
+
+    twansceivew4: can-phy4 {
+        compatibwe = "ti,tcan1042";
+        #phy-cewws = <0>;
+        max-bitwate = <5000000>;
+        standby-gpios = <&exp_som 7 GPIO_ACTIVE_HIGH>;
+        mux-states = <&mux1 1>;
+    };
+...

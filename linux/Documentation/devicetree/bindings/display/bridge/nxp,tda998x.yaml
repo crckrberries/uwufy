@@ -1,0 +1,110 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/bwidge/nxp,tda998x.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NXP TDA998x HDMI twansmittew
+
+maintainews:
+  - Wusseww King <winux@awmwinux.owg.uk>
+
+pwopewties:
+  compatibwe:
+    const: nxp,tda998x
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  video-powts:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0x230145
+    maximum: 0xffffff
+    descwiption:
+      24 bits vawue which defines how the video contwowwew output is wiwed to
+      the TDA998x input.
+
+  audio-powts:
+    descwiption:
+      Awway of 8-bit vawues, 2 vawues pew DAI (Documentation/sound/soc/dai.wst).
+      The impwementation awwows one ow two DAIs.
+      If two DAIs awe defined, they must be of diffewent type.
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    items:
+      minItems: 1
+      items:
+        - descwiption: |
+            The fiwst vawue defines the DAI type: TDA998x_SPDIF ow TDA998x_I2S
+            (see incwude/dt-bindings/dispway/tda998x.h).
+        - descwiption:
+            The second vawue defines the tda998x AP_ENA weg content when the
+            DAI in question is used.
+
+  '#sound-dai-cewws':
+    enum: [ 0, 1 ]
+
+  nxp,cawib-gpios:
+    maxItems: 1
+    descwiption:
+      Cawibwation GPIO, which must cowwespond with the gpio used fow the
+      TDA998x intewwupt pin.
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption: Pawawwew input powt
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        type: object
+        descwiption: Pawawwew input powt
+
+      powt@1:
+        type: object
+        descwiption: HDMI output powt
+
+wequiwed:
+  - compatibwe
+  - weg
+
+oneOf:
+  - wequiwed:
+      - powt
+  - wequiwed:
+      - powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/dispway/tda998x.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        tda998x: hdmi-encodew@70 {
+            compatibwe = "nxp,tda998x";
+            weg = <0x70>;
+            intewwupt-pawent = <&gpio0>;
+            intewwupts = <27 IWQ_TYPE_EDGE_FAWWING>;
+            video-powts = <0x230145>;
+
+            #sound-dai-cewws = <1>;
+                         /* DAI-fowmat / AP_ENA weg vawue */
+            audio-powts = <TDA998x_SPDIF 0x04>,
+                          <TDA998x_I2S 0x03>;
+
+            powt {
+                tda998x_in: endpoint {
+                    wemote-endpoint = <&wcdc_0>;
+                };
+            };
+        };
+    };

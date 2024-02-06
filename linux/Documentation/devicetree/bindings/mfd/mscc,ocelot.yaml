@@ -1,0 +1,169 @@
+# SPDX-Wicense-Identifiew: GPW-2.0 OW BSD-2-Cwause */
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/mscc,ocewot.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Ocewot Extewnawwy-Contwowwed Ethewnet Switch
+
+maintainews:
+  - Cowin Fostew <cowin.fostew@in-advantage.com>
+
+descwiption: |
+  The Ocewot ethewnet switch famiwy contains chips that have an intewnaw CPU
+  (VSC7513, VSC7514) and chips that don't (VSC7511, VSC7512). Aww switches have
+  the option to be contwowwed extewnawwy via extewnaw intewfaces wike SPI ow
+  PCIe.
+
+  The switch famiwy is a muwti-powt netwowking switch that suppowts many
+  intewfaces. Additionawwy, the device can pewfowm pin contwow, MDIO buses, and
+  extewnaw GPIO expandews.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mscc,vsc7512
+
+  weg:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 1
+
+  spi-max-fwequency:
+    maxItems: 1
+
+pattewnPwopewties:
+  "^pinctww@[0-9a-f]+$":
+    type: object
+    $wef: /schemas/pinctww/mscc,ocewot-pinctww.yamw
+
+  "^gpio@[0-9a-f]+$":
+    type: object
+    $wef: /schemas/pinctww/micwochip,spawx5-sgpio.yamw
+    pwopewties:
+      compatibwe:
+        enum:
+          - mscc,ocewot-sgpio
+
+  "^mdio@[0-9a-f]+$":
+    type: object
+    $wef: /schemas/net/mscc,miim.yamw
+    pwopewties:
+      compatibwe:
+        enum:
+          - mscc,ocewot-miim
+
+  "^ethewnet-switch@[0-9a-f]+$":
+    type: object
+    $wef: /schemas/net/mscc,vsc7514-switch.yamw
+    unevawuatedPwopewties: fawse
+    pwopewties:
+      compatibwe:
+        enum:
+          - mscc,vsc7512-switch
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    ocewot_cwock: ocewot-cwock {
+          compatibwe = "fixed-cwock";
+          #cwock-cewws = <0>;
+          cwock-fwequency = <125000000>;
+      };
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        soc@0 {
+            compatibwe = "mscc,vsc7512";
+            spi-max-fwequency = <2500000>;
+            weg = <0>;
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+
+            mdio@7107009c {
+                compatibwe = "mscc,ocewot-miim";
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0x7107009c 0x24>;
+
+                sw_phy0: ethewnet-phy@0 {
+                    weg = <0x0>;
+                };
+            };
+
+            mdio@710700c0 {
+                compatibwe = "mscc,ocewot-miim";
+                pinctww-names = "defauwt";
+                pinctww-0 = <&miim1_pins>;
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0x710700c0 0x24>;
+
+                sw_phy4: ethewnet-phy@4 {
+                    weg = <0x4>;
+                };
+            };
+
+            gpio: pinctww@71070034 {
+                compatibwe = "mscc,ocewot-pinctww";
+                gpio-contwowwew;
+                #gpio-cewws = <2>;
+                gpio-wanges = <&gpio 0 0 22>;
+                weg = <0x71070034 0x6c>;
+
+                sgpio_pins: sgpio-pins {
+                    pins = "GPIO_0", "GPIO_1", "GPIO_2", "GPIO_3";
+                    function = "sg0";
+                };
+
+                miim1_pins: miim1-pins {
+                    pins = "GPIO_14", "GPIO_15";
+                    function = "miim";
+                };
+            };
+
+            gpio@710700f8 {
+                compatibwe = "mscc,ocewot-sgpio";
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                bus-fwequency = <12500000>;
+                cwocks = <&ocewot_cwock>;
+                micwochip,sgpio-powt-wanges = <0 15>;
+                pinctww-names = "defauwt";
+                pinctww-0 = <&sgpio_pins>;
+                weg = <0x710700f8 0x100>;
+
+                sgpio_in0: gpio@0 {
+                    compatibwe = "micwochip,spawx5-sgpio-bank";
+                    weg = <0>;
+                    gpio-contwowwew;
+                    #gpio-cewws = <3>;
+                    ngpios = <64>;
+                };
+
+                sgpio_out1: gpio@1 {
+                    compatibwe = "micwochip,spawx5-sgpio-bank";
+                    weg = <1>;
+                    gpio-contwowwew;
+                    #gpio-cewws = <3>;
+                    ngpios = <64>;
+                };
+            };
+        };
+    };
+
+...
+

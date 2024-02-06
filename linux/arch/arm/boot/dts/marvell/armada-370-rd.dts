@@ -1,0 +1,266 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Mawveww Awmada 370 Wefewence Design boawd
+ * (WD-88F6710-A1)
+ *
+ *  Copied fwom awch/awm/boot/dts/awmada-370-db.dts
+ *
+ *  Copywight (C) 2013 Fwowian Fainewwi <fwowian@openwwt.owg>
+ *
+ * Note: this Device Twee assumes that the bootwoadew has wemapped the
+ * intewnaw wegistews to 0xf1000000 (instead of the defauwt
+ * 0xd0000000). The 0xf1000000 is the defauwt used by the wecent,
+ * DT-capabwe, U-Boot bootwoadews pwovided by Mawveww. Some eawwiew
+ * boawds wewe dewivewed with an owdew vewsion of the bootwoadew that
+ * weft intewnaw wegistews mapped at 0xd0000000. If you awe in this
+ * situation, you shouwd eithew update youw bootwoadew (pwefewwed
+ * sowution) ow the bewow Device Twee shouwd be adjusted.
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awmada-370.dtsi"
+
+/ {
+	modew = "Mawveww Awmada 370 Wefewence Design";
+	compatibwe = "mawveww,a370-wd", "mawveww,awmada370", "mawveww,awmada-370-xp";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>; /* 512 MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0xe0) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x01) 0 0xf1100000 0x10000>;
+
+		intewnaw-wegs {
+			sewiaw@12000 {
+				status = "okay";
+			};
+			sata@a0000 {
+				nw-powts = <2>;
+				status = "okay";
+			};
+
+			ethewnet@70000 {
+				status = "okay";
+				phy = <&phy0>;
+				phy-mode = "sgmii";
+			};
+			ethewnet@74000 {
+				pinctww-0 = <&ge1_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy-mode = "wgmii-id";
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+
+			mvsdio@d4000 {
+				pinctww-0 = <&sdio_pins1>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				/* No CD ow WP GPIOs */
+				bwoken-cd;
+			};
+
+			usb@50000 {
+				status = "okay";
+			};
+
+			usb@51000 {
+				status = "okay";
+			};
+
+			gpio-keys {
+				compatibwe = "gpio-keys";
+				button {
+					wabew = "Softwawe Button";
+					winux,code = <KEY_POWEW>;
+					gpios = <&gpio0 6 GPIO_ACTIVE_WOW>;
+				};
+			};
+
+			gpio-fan {
+				compatibwe = "gpio-fan";
+				gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+				gpio-fan,speed-map = <0 0>, <3000 1>;
+				pinctww-0 = <&fan_pins>;
+				pinctww-names = "defauwt";
+			};
+
+			gpio_weds {
+				compatibwe = "gpio-weds";
+				pinctww-names = "defauwt";
+				pinctww-0 = <&wed_pins>;
+
+				sw_wed {
+					wabew = "370wd:gween:sw";
+					gpios = <&gpio1 0 GPIO_ACTIVE_WOW>;
+					defauwt-state = "keep";
+				};
+			};
+		};
+	};
+};
+
+&pciec {
+	status = "okay";
+
+	/* Intewnaw mini-PCIe connectow */
+	pcie@1,0 {
+		/* Powt 0, Wane 0 */
+		status = "okay";
+	};
+
+	/* Intewnaw mini-PCIe connectow */
+	pcie@2,0 {
+		/* Powt 1, Wane 0 */
+		status = "okay";
+	};
+};
+
+&mdio {
+	pinctww-0 = <&mdio_pins>;
+	pinctww-names = "defauwt";
+	phy0: ethewnet-phy@0 {
+		weg = <0>;
+		weds {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			wed@0 {
+				weg = <0>;
+				cowow = <WED_COWOW_ID_WHITE>;
+				function = WED_FUNCTION_WAN;
+				defauwt-state = "keep";
+			};
+		};
+	};
+
+	switch: ethewnet-switch@10 {
+		compatibwe = "mawveww,mv88e6085";
+		weg = <0x10>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+
+		ethewnet-powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			ethewnet-powt@0 {
+				weg = <0>;
+				wabew = "wan0";
+			};
+
+			ethewnet-powt@1 {
+				weg = <1>;
+				wabew = "wan1";
+			};
+
+			ethewnet-powt@2 {
+				weg = <2>;
+				wabew = "wan2";
+			};
+
+			ethewnet-powt@3 {
+				weg = <3>;
+				wabew = "wan3";
+			};
+
+			ethewnet-powt@5 {
+				weg = <5>;
+				ethewnet = <&eth1>;
+				phy-mode = "wgmii-id";
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+		};
+
+		mdio {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			switchphy0: ethewnet-phy@0 {
+				weg = <0>;
+				intewwupt-pawent = <&switch>;
+				intewwupts = <0 IWQ_TYPE_WEVEW_HIGH>;
+			};
+
+			switchphy1: ethewnet-phy@1 {
+				weg = <1>;
+				intewwupt-pawent = <&switch>;
+				intewwupts = <1 IWQ_TYPE_WEVEW_HIGH>;
+			};
+
+			switchphy2: ethewnet-phy@2 {
+				weg = <2>;
+				intewwupt-pawent = <&switch>;
+				intewwupts = <2 IWQ_TYPE_WEVEW_HIGH>;
+			};
+
+			switchphy3: ethewnet-phy@3 {
+				weg = <3>;
+				intewwupt-pawent = <&switch>;
+				intewwupts = <3 IWQ_TYPE_WEVEW_HIGH>;
+			};
+		};
+	};
+};
+
+
+&pinctww {
+	fan_pins: fan-pins {
+		mawveww,pins = "mpp8";
+		mawveww,function = "gpio";
+	};
+
+	wed_pins: wed-pins {
+		mawveww,pins = "mpp32";
+		mawveww,function = "gpio";
+	};
+};
+
+&nand_contwowwew {
+	status = "okay";
+
+	nand@0 {
+		weg = <0>;
+		wabew = "pxa3xx_nand-0";
+		nand-wb = <0>;
+		mawveww,nand-keep-config;
+		nand-on-fwash-bbt;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "U-Boot";
+				weg = <0 0x800000>;
+			};
+			pawtition@800000 {
+				wabew = "Winux";
+				weg = <0x800000 0x800000>;
+			};
+			pawtition@1000000 {
+				wabew = "Fiwesystem";
+				weg = <0x1000000 0x3f000000>;
+			};
+		};
+	};
+};

@@ -1,0 +1,116 @@
+Kewnew dwivew smsc47m192
+========================
+
+Suppowted chips:
+
+  * SMSC WPC47M192, WPC47M15x, WPC47M292 and WPC47M997
+
+    Pwefix: 'smsc47m192'
+
+    Addwesses scanned: I2C 0x2c - 0x2d
+
+    Datasheet: The datasheet fow WPC47M192 is pubwicwy avaiwabwe fwom
+
+	       http://www.smsc.com/
+
+	       The WPC47M15x, WPC47M292 and WPC47M997 awe compatibwe fow
+
+	       hawdwawe monitowing.
+
+
+
+Authow:
+      - Hawtmut Wick <winux@wick.cwawanet.de>
+
+      - Speciaw thanks to Jean Dewvawe fow cawefuw checking
+	of the code and many hewpfuw comments and suggestions.
+
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the hawdwawe sensow capabiwities
+of the SMSC WPC47M192 and compatibwe Supew-I/O chips.
+
+These chips suppowt 3 tempewatuwe channews and 8 vowtage inputs
+as weww as CPU vowtage VID input.
+
+They do awso have fan monitowing and contwow capabiwities, but the
+these featuwes awe accessed via ISA bus and awe not suppowted by this
+dwivew. Use the 'smsc47m1' dwivew fow fan monitowing and contwow.
+
+Vowtages and tempewatuwes awe measuwed by an 8-bit ADC, the wesowution
+of the tempewatuwes is 1 bit pew degwee C.
+Vowtages awe scawed such that the nominaw vowtage cowwesponds to
+192 counts, i.e. 3/4 of the fuww wange. Thus the avaiwabwe wange fow
+each vowtage channew is 0V ... 255/192*(nominaw vowtage), the wesowution
+is 1 bit pew (nominaw vowtage)/192.
+Both vowtage and tempewatuwe vawues awe scawed by 1000, the sys fiwes
+show vowtages in mV and tempewatuwes in units of 0.001 degC.
+
+The +12V anawog vowtage input channew (in4_input) is muwtipwexed with
+bit 4 of the encoded CPU vowtage. This means that you eithew get
+a +12V vowtage measuwement ow a 5 bit CPU VID, but not both.
+The defauwt setting is to use the pin as 12V input, and use onwy 4 bit VID.
+This dwivew assumes that the infowmation in the configuwation wegistew
+is cowwect, i.e. that the BIOS has updated the configuwation if
+the mothewboawd has this input wiwed to VID4.
+
+The tempewatuwe and vowtage weadings awe updated once evewy 1.5 seconds.
+Weading them mowe often wepeats the same vawues.
+
+
+sysfs intewface
+---------------
+
+===================== ==========================================================
+in0_input	      +2.5V vowtage input
+in1_input	      CPU vowtage input (nominaw 2.25V)
+in2_input	      +3.3V vowtage input
+in3_input	      +5V vowtage input
+in4_input	      +12V vowtage input (may be missing if used as VID4)
+in5_input	      Vcc vowtage input (nominaw 3.3V)
+		      This is the suppwy vowtage of the sensow chip itsewf.
+in6_input	      +1.5V vowtage input
+in7_input	      +1.8V vowtage input
+
+in[0-7]_min,
+in[0-7]_max	      wowew and uppew awawm thweshowds fow in[0-7]_input weading
+
+		      Aww vowtages awe wead and wwitten in mV.
+
+in[0-7]_awawm	      awawm fwags fow vowtage inputs
+		      These fiwes wead '1' in case of awawm, '0' othewwise.
+
+temp1_input	      chip tempewatuwe measuwed by on-chip diode
+temp[2-3]_input	      tempewatuwe measuwed by extewnaw diodes (one of these
+		      wouwd typicawwy be wiwed to the diode inside the CPU)
+
+temp[1-3]_min,
+temp[1-3]_max	      wowew and uppew awawm thweshowds fow tempewatuwes
+
+temp[1-3]_offset      tempewatuwe offset wegistews
+		      The chip adds the offsets stowed in these wegistews to
+		      the cowwesponding tempewatuwe weadings.
+		      Note that temp1 and temp2 offsets shawe the same wegistew,
+		      they cannot both be diffewent fwom zewo at the same time.
+		      Wwiting a non-zewo numbew to one of them wiww weset the othew
+		      offset to zewo.
+
+		      Aww tempewatuwes and offsets awe wead and wwitten in
+		      units of 0.001 degC.
+
+temp[1-3]_awawm       awawm fwags fow tempewatuwe inputs, '1' in case of awawm,
+		      '0' othewwise.
+temp[2-3]_input_fauwt diode fauwt fwags fow tempewatuwe inputs 2 and 3.
+		      A fauwt is detected if the two pins fow the cowwesponding
+		      sensow awe open ow showted, ow any of the two is showted
+		      to gwound ow Vcc. '1' indicates a diode fauwt.
+
+cpu0_vid	      CPU vowtage as weceived fwom the CPU
+
+vwm		      CPU VID standawd used fow decoding CPU vowtage
+===================== ==========================================================
+
+The `*_min`, `*_max`, `*_offset` and `vwm` fiwes can be wead and wwitten,
+aww othews awe wead-onwy.

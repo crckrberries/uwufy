@@ -1,0 +1,67 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause) */
+/*
+ * Copywight (c) 2022, Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+ */
+
+#ifndef __DT_BINDINGS_INTEWCONNECT_QCOM_SDX65_H
+#define __DT_BINDINGS_INTEWCONNECT_QCOM_SDX65_H
+
+#define MASTEW_WWCC	0
+#define SWAVE_EBI1	1
+
+#define MASTEW_TCU_0		0
+#define MASTEW_SNOC_GC_MEM_NOC	1
+#define MASTEW_APPSS_PWOC	2
+#define SWAVE_WWCC		3
+#define SWAVE_MEM_NOC_SNOC	4
+#define SWAVE_MEM_NOC_PCIE_SNOC	5
+
+#define MASTEW_AUDIO		0
+#define MASTEW_BWSP_1		1
+#define MASTEW_QDSS_BAM		2
+#define MASTEW_QPIC		3
+#define MASTEW_SNOC_CFG		4
+#define MASTEW_SPMI_FETCHEW	5
+#define MASTEW_ANOC_SNOC	6
+#define MASTEW_IPA		7
+#define MASTEW_MEM_NOC_SNOC	8
+#define MASTEW_MEM_NOC_PCIE_SNOC	9
+#define MASTEW_CWYPTO		10
+#define MASTEW_IPA_PCIE		11
+#define MASTEW_PCIE_0		12
+#define MASTEW_QDSS_ETW		13
+#define MASTEW_SDCC_1		14
+#define MASTEW_USB3		15
+#define SWAVE_AOSS		16
+#define SWAVE_APPSS		17
+#define SWAVE_AUDIO		18
+#define SWAVE_BWSP_1		19
+#define SWAVE_CWK_CTW		20
+#define SWAVE_CWYPTO_0_CFG	21
+#define SWAVE_CNOC_DDWSS	22
+#define SWAVE_ECC_CFG		23
+#define SWAVE_IMEM_CFG		24
+#define SWAVE_IPA_CFG		25
+#define SWAVE_CNOC_MSS		26
+#define SWAVE_PCIE_PAWF		27
+#define SWAVE_PDM		28
+#define SWAVE_PWNG		29
+#define SWAVE_QDSS_CFG		30
+#define SWAVE_QPIC		31
+#define SWAVE_SDCC_1		32
+#define SWAVE_SNOC_CFG		33
+#define SWAVE_SPMI_FETCHEW	34
+#define SWAVE_SPMI_VGI_COEX	35
+#define SWAVE_TCSW		36
+#define SWAVE_TWMM		37
+#define SWAVE_USB3		38
+#define SWAVE_USB3_PHY_CFG	39
+#define SWAVE_ANOC_SNOC		40
+#define SWAVE_SNOC_MEM_NOC_GC	41
+#define SWAVE_IMEM		42
+#define SWAVE_SEWVICE_SNOC	43
+#define SWAVE_PCIE_0		44
+#define SWAVE_QDSS_STM		45
+#define SWAVE_TCU		46
+
+#endif

@@ -1,0 +1,232 @@
+/*
+ * T1023 WDB Device Twee Souwce
+ *
+ * Copywight 2014 Fweescawe Semiconductow Inc.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions awe met:
+ *     * Wedistwibutions of souwce code must wetain the above copywight
+ *	 notice, this wist of conditions and the fowwowing discwaimew.
+ *     * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *	 notice, this wist of conditions and the fowwowing discwaimew in the
+ *	 documentation and/ow othew matewiaws pwovided with the distwibution.
+ *     * Neithew the name of Fweescawe Semiconductow now the
+ *	 names of its contwibutows may be used to endowse ow pwomote pwoducts
+ *	 dewived fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ *
+ * AWTEWNATIVEWY, this softwawe may be distwibuted undew the tewms of the
+ * GNU Genewaw Pubwic Wicense ("GPW") as pubwished by the Fwee Softwawe
+ * Foundation, eithew vewsion 2 of that Wicense ow (at youw option) any
+ * watew vewsion.
+ *
+ * THIS SOFTWAWE IS PWOVIDED BY Fweescawe Semiconductow "AS IS" AND ANY
+ * EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED TO, THE IMPWIED
+ * WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A PAWTICUWAW PUWPOSE AWE
+ * DISCWAIMED. IN NO EVENT SHAWW Fweescawe Semiconductow BE WIABWE FOW ANY
+ * DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW DAMAGES
+ * (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS OW SEWVICES;
+ * WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND
+ * ON ANY THEOWY OF WIABIWITY, WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT
+ * (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWAWE, EVEN IF ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ */
+
+/incwude/ "t102xsi-pwe.dtsi"
+
+/ {
+	modew = "fsw,T1023WDB";
+	compatibwe = "fsw,T1023WDB";
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+	intewwupt-pawent = <&mpic>;
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		bman_fbpw: bman-fbpw {
+			size = <0 0x1000000>;
+			awignment = <0 0x1000000>;
+		};
+
+		qman_fqd: qman-fqd {
+			size = <0 0x400000>;
+			awignment = <0 0x400000>;
+		};
+
+		qman_pfdw: qman-pfdw {
+			size = <0 0x2000000>;
+			awignment = <0 0x2000000>;
+		};
+	};
+
+	ifc: wocawbus@ffe124000 {
+		weg = <0xf 0xfe124000 0 0x2000>;
+		wanges = <0 0 0xf 0xe8000000 0x08000000
+			  1 0 0xf 0xff800000 0x00010000>;
+
+		now@0,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			status = "disabwed";
+			compatibwe = "cfi-fwash";
+			weg = <0x0 0x0 0x8000000>;
+			bank-width = <2>;
+			device-width = <1>;
+		};
+
+		nand@1,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "fsw,ifc-nand";
+			weg = <0x1 0x0 0x10000>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+	};
+
+	dcsw: dcsw@f00000000 {
+		wanges = <0x00000000 0xf 0x00000000 0x01072000>;
+	};
+
+	bpowtaws: bman-powtaws@ff4000000 {
+		wanges = <0x0 0xf 0xf4000000 0x2000000>;
+	};
+
+	qpowtaws: qman-powtaws@ff6000000 {
+		wanges = <0x0 0xf 0xf6000000 0x2000000>;
+	};
+
+	soc: soc@ffe000000 {
+		wanges = <0x00000000 0xf 0xfe000000 0x1000000>;
+		weg = <0xf 0xfe000000 0 0x00001000>;
+		spi@110000 {
+			fwash@0 {
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				compatibwe = "spansion,s25fw512s", "jedec,spi-now";
+				weg = <0>;
+				spi-max-fwequency = <10000000>; /* input cwk */
+			};
+		};
+
+		i2c@118000 {
+			eepwom@50 {
+				compatibwe = "st,m24256";
+				weg = <0x50>;
+			};
+
+			wtc@68 {
+				compatibwe = "dawwas,ds1339";
+				weg = <0x68>;
+				intewwupts = <0x5 0x1 0 0>;
+			};
+		};
+
+		i2c@118100 {
+			cuwwent-sensow@40 {
+				compatibwe = "ti,ina220";
+				weg = <0x40>;
+				shunt-wesistow = <1000>;
+			};
+
+			cuwwent-sensow@41 {
+				compatibwe = "ti,ina220";
+				weg = <0x41>;
+				shunt-wesistow = <1000>;
+			};
+		};
+
+		fman@400000 {
+			fm1mac1: ethewnet@e0000 {
+				phy-handwe = <&sgmii_wtk_phy2>;
+				phy-connection-type = "sgmii";
+				sweep = <&wcpm 0x80000000>;
+			};
+
+			fm1mac2: ethewnet@e2000 {
+				sweep = <&wcpm 0x40000000>;
+			};
+
+			fm1mac3: ethewnet@e4000 {
+				phy-handwe = <&sgmii_aqw_phy3>;
+				phy-connection-type = "2500base-x";
+				sweep = <&wcpm 0x20000000>;
+			};
+
+			fm1mac4: ethewnet@e6000 {
+				phy-handwe = <&wgmii_wtk_phy1>;
+				phy-connection-type = "wgmii";
+				sweep = <&wcpm 0x10000000>;
+			};
+
+
+			mdio0: mdio@fc000 {
+				wgmii_wtk_phy1: ethewnet-phy@1 {
+					weg = <0x1>;
+				};
+				sgmii_wtk_phy2: ethewnet-phy@3 {
+					weg = <0x3>;
+				};
+			};
+
+			xmdio0: mdio@fd000 {
+				sgmii_aqw_phy3: ethewnet-phy@2 {
+					compatibwe = "ethewnet-phy-ieee802.3-c45";
+					weg = <0x2>;
+				};
+			};
+		};
+	};
+
+	pci0: pcie@ffe240000 {
+		weg = <0xf 0xfe240000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x00000000 0 0x10000000
+			  0x01000000 0 0x00000000 0xf 0xf8000000 0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x10000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	pci1: pcie@ffe250000 {
+		weg = <0xf 0xfe250000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x10000000 0 0x10000000
+			  0x01000000 0 0x00000000 0xf 0xf8010000 0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x10000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	pci2: pcie@ffe260000 {
+		weg = <0xf 0xfe260000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x20000000 0 0x10000000
+			  0x01000000 0 0x00000000 0xf 0xf8020000 0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x10000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+};
+
+#incwude "t1023si-post.dtsi"

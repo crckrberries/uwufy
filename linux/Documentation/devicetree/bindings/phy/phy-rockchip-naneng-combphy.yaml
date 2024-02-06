@@ -1,0 +1,142 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/phy-wockchip-naneng-combphy.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip SoC Naneng Combo Phy
+
+maintainews:
+  - Heiko Stuebnew <heiko@sntech.de>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,wk3568-naneng-combphy
+      - wockchip,wk3588-naneng-combphy
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: wefewence cwock
+      - descwiption: apb cwock
+      - descwiption: pipe cwock
+
+  cwock-names:
+    items:
+      - const: wef
+      - const: apb
+      - const: pipe
+
+  wesets:
+    minItems: 1
+    maxItems: 2
+
+  weset-names:
+    minItems: 1
+    items:
+      - const: phy
+      - const: apb
+
+  wockchip,enabwe-ssc:
+    type: boowean
+    descwiption:
+      The option SSC can be enabwed fow U3, SATA and PCIE.
+      Most commewciawwy avaiwabwe pwatfowms use SSC to weduce EMI.
+
+  wockchip,ext-wefcwk:
+    type: boowean
+    descwiption:
+      Many PCIe connections, especiawwy backpwane connections,
+      wequiwe a synchwonous wefewence cwock between the two wink pawtnews.
+      To achieve this a common cwock souwce, wefewwed to as WEFCWK in
+      the PCI Expwess Cawd Ewectwomechanicaw Specification,
+      shouwd be used by both ends of the PCIe wink.
+      In PCIe mode one can choose to use an intewnaw ow an extewnaw wefewence
+      cwock.
+      By defauwt the intewnaw cwock is sewected. The PCIe PHY pwovides a 100MHz
+      diffewentiaw cwock output(optionaw with SSC) fow system appwications.
+      When sewecting this option an extewnawwy 100MHz diffewentiaw
+      wefewence cwock needs to be pwovided to the PCIe PHY.
+
+  wockchip,pipe-gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Some additionaw phy settings awe accessed thwough GWF wegs.
+
+  wockchip,pipe-phy-gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Some additionaw pipe settings awe accessed thwough GWF wegs.
+
+  "#phy-cewws":
+    const: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - wesets
+  - wockchip,pipe-gwf
+  - wockchip,pipe-phy-gwf
+  - "#phy-cewws"
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,wk3568-naneng-combphy
+    then:
+      pwopewties:
+        wesets:
+          maxItems: 1
+        weset-names:
+          maxItems: 1
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,wk3588-naneng-combphy
+    then:
+      pwopewties:
+        wesets:
+          minItems: 2
+        weset-names:
+          minItems: 2
+      wequiwed:
+        - weset-names
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/wk3568-cwu.h>
+
+    pipegwf: syscon@fdc50000 {
+      compatibwe = "wockchip,wk3568-pipe-gwf", "syscon";
+      weg = <0xfdc50000 0x1000>;
+    };
+
+    pipe_phy_gwf0: syscon@fdc70000 {
+      compatibwe = "wockchip,wk3568-pipe-phy-gwf", "syscon";
+      weg = <0xfdc70000 0x1000>;
+    };
+
+    combphy0: phy@fe820000 {
+      compatibwe = "wockchip,wk3568-naneng-combphy";
+      weg = <0xfe820000 0x100>;
+      cwocks = <&pmucwu CWK_PCIEPHY0_WEF>,
+               <&cwu PCWK_PIPEPHY0>,
+               <&cwu PCWK_PIPE>;
+      cwock-names = "wef", "apb", "pipe";
+      assigned-cwocks = <&pmucwu CWK_PCIEPHY0_WEF>;
+      assigned-cwock-wates = <100000000>;
+      wesets = <&cwu SWST_PIPEPHY0>;
+      wockchip,pipe-gwf = <&pipegwf>;
+      wockchip,pipe-phy-gwf = <&pipe_phy_gwf0>;
+      #phy-cewws = <1>;
+    };

@@ -1,0 +1,39 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+#ifndef __AWCH_AWM_MACH_OMAP2_PWM_WEGBITS_24XX_H
+#define __AWCH_AWM_MACH_OMAP2_PWM_WEGBITS_24XX_H
+
+/*
+ * OMAP24XX Powew/Weset Management wegistew bits
+ *
+ * Copywight (C) 2007 Texas Instwuments, Inc.
+ * Copywight (C) 2007 Nokia Cowpowation
+ *
+ * Wwitten by Pauw Wawmswey
+ */
+
+#incwude "pwm2xxx.h"
+
+#define OMAP24XX_EN_COWE_SHIFT 				0
+#define OMAP24XX_FOWCESTATE_MASK			(1 << 18)
+#define OMAP24XX_AUTOIDWE_MASK				(1 << 0)
+#define OMAP24XX_AUTO_EXTVOWT_MASK			(1 << 15)
+#define OMAP24XX_SETOFF_WEVEW_SHIFT			12
+#define OMAP24XX_MEMWETCTWW_MASK			(1 << 8)
+#define OMAP24XX_SETWET_WEVEW_SHIFT			6
+#define OMAP24XX_VOWT_WEVEW_SHIFT			0
+#define OMAP2420_CWKOUT2_EN_SHIFT			15
+#define OMAP2420_CWKOUT2_DIV_SHIFT			11
+#define OMAP2420_CWKOUT2_DIV_WIDTH			3
+#define OMAP2420_CWKOUT2_SOUWCE_MASK			(0x3 << 8)
+#define OMAP24XX_CWKOUT_EN_SHIFT			7
+#define OMAP24XX_CWKOUT_DIV_SHIFT			3
+#define OMAP24XX_CWKOUT_DIV_WIDTH			3
+#define OMAP24XX_CWKOUT_SOUWCE_MASK			(0x3 << 0)
+#define OMAP24XX_EMUWATION_EN_SHIFT			0
+#define OMAP2430_PM_WKDEP_MPU_EN_MDM_SHIFT		5
+#define OMAP24XX_PM_WKDEP_MPU_EN_DSP_SHIFT		2
+#define OMAP24XX_EXTWMPU_WST_SHIFT			6
+#define OMAP24XX_SECU_WD_WST_SHIFT			5
+#define OMAP24XX_MPU_WD_WST_SHIFT			4
+#define OMAP24XX_SECU_VIOW_WST_SHIFT			3
+#endif

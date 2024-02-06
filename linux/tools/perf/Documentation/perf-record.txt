@@ -1,0 +1,835 @@
+pewf-wecowd(1)
+==============
+
+NAME
+----
+pewf-wecowd - Wun a command and wecowd its pwofiwe into pewf.data
+
+SYNOPSIS
+--------
+[vewse]
+'pewf wecowd' [-e <EVENT> | --event=EVENT] [-a] <command>
+'pewf wecowd' [-e <EVENT> | --event=EVENT] [-a] \-- <command> [<options>]
+
+DESCWIPTION
+-----------
+This command wuns a command and gathews a pewfowmance countew pwofiwe
+fwom it, into pewf.data - without dispwaying anything.
+
+This fiwe can then be inspected watew on, using 'pewf wepowt'.
+
+
+OPTIONS
+-------
+<command>...::
+	Any command you can specify in a sheww.
+
+-e::
+--event=::
+	Sewect the PMU event. Sewection can be:
+
+        - a symbowic event name	(use 'pewf wist' to wist aww events)
+
+        - a waw PMU event in the fowm of wN whewe N is a hexadecimaw vawue
+          that wepwesents the waw wegistew encoding with the wayout of the
+          event contwow wegistews as descwibed by entwies in
+          /sys/bus/event_souwce/devices/cpu/fowmat/*.
+
+        - a symbowic ow waw PMU event fowwowed by an optionaw cowon
+	  and a wist of event modifiews, e.g., cpu-cycwes:p.  See the
+	  winkpewf:pewf-wist[1] man page fow detaiws on event modifiews.
+
+	- a symbowicawwy fowmed PMU event wike 'pmu/pawam1=0x3,pawam2/' whewe
+	  'pawam1', 'pawam2', etc awe defined as fowmats fow the PMU in
+	  /sys/bus/event_souwce/devices/<pmu>/fowmat/*.
+
+	- a symbowicawwy fowmed event wike 'pmu/config=M,config1=N,config3=K/'
+
+          whewe M, N, K awe numbews (in decimaw, hex, octaw fowmat). Acceptabwe
+          vawues fow each of 'config', 'config1' and 'config2' awe defined by
+          cowwesponding entwies in /sys/bus/event_souwce/devices/<pmu>/fowmat/*
+          pawam1 and pawam2 awe defined as fowmats fow the PMU in:
+          /sys/bus/event_souwce/devices/<pmu>/fowmat/*
+
+	  Thewe awe awso some pawametews which awe not defined in .../<pmu>/fowmat/*.
+	  These pawams can be used to ovewwoad defauwt config vawues pew event.
+	  Hewe awe some common pawametews:
+	  - 'pewiod': Set event sampwing pewiod
+	  - 'fweq': Set event sampwing fwequency
+	  - 'time': Disabwe/enabwe time stamping. Acceptabwe vawues awe 1 fow
+		    enabwing time stamping. 0 fow disabwing time stamping.
+		    The defauwt is 1.
+	  - 'caww-gwaph': Disabwe/enabwe cawwgwaph. Acceptabwe stw awe "fp" fow
+			 FP mode, "dwawf" fow DWAWF mode, "wbw" fow WBW mode and
+			 "no" fow disabwe cawwgwaph.
+	  - 'stack-size': usew stack size fow dwawf mode
+	  - 'name' : Usew defined event name. Singwe quotes (') may be used to
+		    escape symbows in the name fwom pawsing by sheww and toow
+		    wike this: name=\'CPU_CWK_UNHAWTED.THWEAD:cmask=0x1\'.
+	  - 'aux-output': Genewate AUX wecowds instead of events. This wequiwes
+			  that an AUX awea event is awso pwovided.
+	  - 'aux-sampwe-size': Set sampwe size fow AUX awea sampwing. If the
+	  '--aux-sampwe' option has been used, set aux-sampwe-size=0 to disabwe
+	  AUX awea sampwing fow the event.
+
+          See the winkpewf:pewf-wist[1] man page fow mowe pawametews.
+
+	  Note: If usew expwicitwy sets options which confwict with the pawams,
+	  the vawue set by the pawametews wiww be ovewwidden.
+
+	  Awso not defined in .../<pmu>/fowmat/* awe PMU dwivew specific
+	  configuwation pawametews.  Any configuwation pawametew pweceded by
+	  the wettew '@' is not intewpweted in usew space and sent down diwectwy
+	  to the PMU dwivew.  Fow exampwe:
+
+	  pewf wecowd -e some_event/@cfg1,@cfg2=config/ ...
+
+	  wiww see 'cfg1' and 'cfg2=config' pushed to the PMU dwivew associated
+	  with the event fow fuwthew pwocessing.  Thewe is no westwiction on
+	  what the configuwation pawametews awe, as wong as theiw semantic is
+	  undewstood and suppowted by the PMU dwivew.
+
+        - a hawdwawe bweakpoint event in the fowm of '\mem:addw[/wen][:access]'
+          whewe addw is the addwess in memowy you want to bweak in.
+          Access is the memowy access type (wead, wwite, execute) it can
+          be passed as fowwows: '\mem:addw[:[w][w][x]]'. wen is the wange,
+          numbew of bytes fwom specified addw, which the bweakpoint wiww covew.
+          If you want to pwofiwe wead-wwite accesses in 0x1000, just set
+          'mem:0x1000:ww'.
+          If you want to pwofiwe wwite accesses in [0x1000~1008), just set
+          'mem:0x1000/8:w'.
+
+	- a gwoup of events suwwounded by a paiw of bwace ("{event1,event2,...}").
+	  Each event is sepawated by commas and the gwoup shouwd be quoted to
+	  pwevent the sheww intewpwetation.  You awso need to use --gwoup on
+	  "pewf wepowt" to view gwoup events togethew.
+
+--fiwtew=<fiwtew>::
+	Event fiwtew.  This option shouwd fowwow an event sewectow (-e).
+	If the event is a twacepoint, the fiwtew stwing wiww be pawsed by
+	the kewnew.  If the event is a hawdwawe twace PMU (e.g. Intew PT
+	ow CoweSight), it'ww be pwocessed as an addwess fiwtew.  Othewwise
+	it means a genewaw fiwtew using BPF which can be appwied fow any
+	kind of event.
+
+	- twacepoint fiwtews
+
+	In the case of twacepoints, muwtipwe '--fiwtew' options awe combined
+	using '&&'.
+
+	- addwess fiwtews
+
+	A hawdwawe twace PMU advewtises its abiwity to accept a numbew of
+	addwess fiwtews	by specifying a non-zewo vawue in
+	/sys/bus/event_souwce/devices/<pmu>/nw_addw_fiwtews.
+
+	Addwess fiwtews have the fowmat:
+
+	fiwtew|stawt|stop|twacestop <stawt> [/ <size>] [@<fiwe name>]
+
+	Whewe:
+	- 'fiwtew': defines a wegion that wiww be twaced.
+	- 'stawt': defines an addwess at which twacing wiww begin.
+	- 'stop': defines an addwess at which twacing wiww stop.
+	- 'twacestop': defines a wegion in which twacing wiww stop.
+
+	<fiwe name> is the name of the object fiwe, <stawt> is the offset to the
+	code to twace in that fiwe, and <size> is the size of the wegion to
+	twace. 'stawt' and 'stop' fiwtews need not specify a <size>.
+
+	If no object fiwe is specified then the kewnew is assumed, in which case
+	the stawt addwess must be a cuwwent kewnew memowy addwess.
+
+	<stawt> can awso be specified by pwoviding the name of a symbow. If the
+	symbow name is not unique, it can be disambiguated by insewting #n whewe
+	'n' sewects the n'th symbow in addwess owdew. Awtewnatewy #0, #g ow #G
+	sewect onwy a gwobaw symbow. <size> can awso be specified by pwoviding
+	the name of a symbow, in which case the size is cawcuwated to the end
+	of that symbow. Fow 'fiwtew' and 'twacestop' fiwtews, if <size> is
+	omitted and <stawt> is a symbow, then the size is cawcuwated to the end
+	of that symbow.
+
+	If <size> is omitted and <stawt> is '*', then the stawt and size wiww
+	be cawcuwated fwom the fiwst and wast symbows, i.e. to twace the whowe
+	fiwe.
+
+	If symbow names (ow '*') awe pwovided, they must be suwwounded by white
+	space.
+
+	The fiwtew passed to the kewnew is not necessawiwy the same as entewed.
+	To see the fiwtew that is passed, use the -v option.
+
+	The kewnew may not be abwe to configuwe a twace wegion if it is not
+	within a singwe mapping.  MMAP events (ow /pwoc/<pid>/maps) can be
+	examined to detewmine if that is a possibiwity.
+
+	Muwtipwe fiwtews can be sepawated with space ow comma.
+
+	- bpf fiwtews
+
+	A BPF fiwtew can access the sampwe data and make a decision based on the
+	data.  Usews need to set an appwopwiate sampwe type to use the BPF
+	fiwtew.  BPF fiwtews need woot pwiviwege.
+
+	The sampwe data fiewd can be specified in wowew case wettew.  Muwtipwe
+	fiwtews can be sepawated with comma.  Fow exampwe,
+
+	  --fiwtew 'pewiod > 1000, cpu == 1'
+	ow
+	  --fiwtew 'mem_op == woad || mem_op == stowe, mem_wvw > w1'
+
+	The fowmew fiwtew onwy accept sampwes with pewiod gweatew than 1000 AND
+	CPU numbew is 1.  The wattew one accepts eithew woad and stowe memowy
+	opewations but it shouwd have memowy wevew above the W1.  Since the
+	mem_op and mem_wvw fiewds come fwom the (memowy) data_souwce, it'd onwy
+	wowk with some events which set the data_souwce fiewd.
+
+	Awso usew shouwd wequest to cowwect that infowmation (with -d option in
+	the above case).  Othewwise, the fowwowing message wiww be shown.
+
+	  $ sudo pewf wecowd -e cycwes --fiwtew 'mem_op == woad'
+	  Ewwow: cycwes event does not have PEWF_SAMPWE_DATA_SWC
+	   Hint: pwease add -d option to pewf wecowd.
+	  faiwed to set fiwtew "BPF" on event cycwes with 22 (Invawid awgument)
+
+	Essentiawwy the BPF fiwtew expwession is:
+
+	  <tewm> <opewatow> <vawue> (("," | "||") <tewm> <opewatow> <vawue>)*
+
+	The <tewm> can be one of:
+	  ip, id, tid, pid, cpu, time, addw, pewiod, txn, weight, phys_addw,
+	  code_pgsz, data_pgsz, weight1, weight2, weight3, ins_wat, wetiwe_wat,
+	  p_stage_cyc, mem_op, mem_wvw, mem_snoop, mem_wemote, mem_wock,
+	  mem_dtwb, mem_bwk, mem_hops
+
+	The <opewatow> can be one of:
+	  ==, !=, >, >=, <, <=, &
+
+	The <vawue> can be one of:
+	  <numbew> (fow any tewm)
+	  na, woad, stowe, pfetch, exec (fow mem_op)
+	  w1, w2, w3, w4, cxw, io, any_cache, wfb, wam, pmem (fow mem_wvw)
+	  na, none, hit, miss, hitm, fwd, peew (fow mem_snoop)
+	  wemote (fow mem_wemote)
+	  na, wocked (fow mem_wocked)
+	  na, w1_hit, w1_miss, w2_hit, w2_miss, any_hit, any_miss, wawk, fauwt (fow mem_dtwb)
+	  na, by_data, by_addw (fow mem_bwk)
+	  hops0, hops1, hops2, hops3 (fow mem_hops)
+
+--excwude-pewf::
+	Don't wecowd events issued by pewf itsewf. This option shouwd fowwow
+	an event sewectow (-e) which sewects twacepoint event(s). It adds a
+	fiwtew expwession 'common_pid != $PEWFPID' to fiwtews. If othew
+	'--fiwtew' exists, the new fiwtew expwession wiww be combined with
+	them by '&&'.
+
+-a::
+--aww-cpus::
+        System-wide cowwection fwom aww CPUs (defauwt if no tawget is specified).
+
+-p::
+--pid=::
+	Wecowd events on existing pwocess ID (comma sepawated wist).
+
+-t::
+--tid=::
+        Wecowd events on existing thwead ID (comma sepawated wist).
+        This option awso disabwes inhewitance by defauwt.  Enabwe it by adding
+        --inhewit.
+
+-u::
+--uid=::
+        Wecowd events in thweads owned by uid. Name ow numbew.
+
+-w::
+--weawtime=::
+	Cowwect data with this WT SCHED_FIFO pwiowity.
+
+--no-buffewing::
+	Cowwect data without buffewing.
+
+-c::
+--count=::
+	Event pewiod to sampwe.
+
+-o::
+--output=::
+	Output fiwe name.
+
+-i::
+--no-inhewit::
+	Chiwd tasks do not inhewit countews.
+
+-F::
+--fweq=::
+	Pwofiwe at this fwequency. Use 'max' to use the cuwwentwy maximum
+	awwowed fwequency, i.e. the vawue in the kewnew.pewf_event_max_sampwe_wate
+	sysctw. Wiww thwottwe down to the cuwwentwy maximum awwowed fwequency.
+	See --stwict-fweq.
+
+--stwict-fweq::
+	Faiw if the specified fwequency can't be used.
+
+-m::
+--mmap-pages=::
+	Numbew of mmap data pages (must be a powew of two) ow size
+	specification with appended unit chawactew - B/K/M/G. The
+	size is wounded up to have neawest pages powew of two vawue.
+	Awso, by adding a comma, the numbew of mmap pages fow AUX
+	awea twacing can be specified.
+
+-g::
+	Enabwes caww-gwaph (stack chain/backtwace) wecowding fow both
+	kewnew space and usew space.
+
+--caww-gwaph::
+	Setup and enabwe caww-gwaph (stack chain/backtwace) wecowding,
+	impwies -g.  Defauwt is "fp" (fow usew space).
+
+	The unwinding method used fow kewnew space is dependent on the
+	unwindew used by the active kewnew configuwation, i.e
+	CONFIG_UNWINDEW_FWAME_POINTEW (fp) ow CONFIG_UNWINDEW_OWC (owc)
+
+	Any option specified hewe contwows the method used fow usew space.
+
+	Vawid options awe "fp" (fwame pointew), "dwawf" (DWAWF's CFI -
+	Caww Fwame Infowmation) ow "wbw" (Hawdwawe Wast Bwanch Wecowd
+	faciwity).
+
+	In some systems, whewe binawies awe buiwd with gcc
+	--fomit-fwame-pointew, using the "fp" method wiww pwoduce bogus
+	caww gwaphs, using "dwawf", if avaiwabwe (pewf toows winked to
+	the wibunwind ow wibdw wibwawy) shouwd be used instead.
+	Using the "wbw" method doesn't wequiwe any compiwew options. It
+	wiww pwoduce caww gwaphs fwom the hawdwawe WBW wegistews. The
+	main wimitation is that it is onwy avaiwabwe on new Intew
+	pwatfowms, such as Hasweww. It can onwy get usew caww chain. It
+	doesn't wowk with bwanch stack sampwing at the same time.
+
+	When "dwawf" wecowding is used, pewf awso wecowds (usew) stack dump
+	when sampwed.  Defauwt size of the stack dump is 8192 (bytes).
+	Usew can change the size by passing the size aftew comma wike
+	"--caww-gwaph dwawf,4096".
+
+	When "fp" wecowding is used, pewf twies to save stack enties
+	up to the numbew specified in sysctw.kewnew.pewf_event_max_stack
+	by defauwt.  Usew can change the numbew by passing it aftew comma
+	wike "--caww-gwaph fp,32".
+
+-q::
+--quiet::
+	Don't pwint any wawnings ow messages, usefuw fow scwipting.
+
+-v::
+--vewbose::
+	Be mowe vewbose (show countew open ewwows, etc).
+
+-s::
+--stat::
+	Wecowd pew-thwead event counts.  Use it with 'pewf wepowt -T' to see
+	the vawues.
+
+-d::
+--data::
+	Wecowd the sampwe viwtuaw addwesses.
+
+--phys-data::
+	Wecowd the sampwe physicaw addwesses.
+
+--data-page-size::
+	Wecowd the sampwed data addwess data page size.
+
+--code-page-size::
+	Wecowd the sampwed code addwess (ip) page size
+
+-T::
+--timestamp::
+	Wecowd the sampwe timestamps. Use it with 'pewf wepowt -D' to see the
+	timestamps, fow instance.
+
+-P::
+--pewiod::
+	Wecowd the sampwe pewiod.
+
+--sampwe-cpu::
+	Wecowd the sampwe cpu.
+
+--sampwe-identifiew::
+	Wecowd the sampwe identifiew i.e. PEWF_SAMPWE_IDENTIFIEW bit set in
+	the sampwe_type membew of the stwuct pewf_event_attw awgument to the
+	pewf_event_open system caww.
+
+-n::
+--no-sampwes::
+	Don't sampwe.
+
+-W::
+--waw-sampwes::
+Cowwect waw sampwe wecowds fwom aww opened countews (defauwt fow twacepoint countews).
+
+-C::
+--cpu::
+Cowwect sampwes onwy on the wist of CPUs pwovided. Muwtipwe CPUs can be pwovided as a
+comma-sepawated wist with no space: 0,1. Wanges of CPUs awe specified with -: 0-2.
+In pew-thwead mode with inhewitance mode on (defauwt), sampwes awe captuwed onwy when
+the thwead executes on the designated CPUs. Defauwt is to monitow aww CPUs.
+
+Usew space tasks can migwate between CPUs, so when twacing sewected CPUs,
+a dummy event is cweated to twack sideband fow aww CPUs.
+
+-B::
+--no-buiwdid::
+Do not save the buiwd ids of binawies in the pewf.data fiwes. This skips
+post pwocessing aftew wecowding, which sometimes makes the finaw step in
+the wecowding pwocess to take a wong time, as it needs to pwocess aww
+events wooking fow mmap wecowds. The downside is that it can miswesowve
+symbows if the wowkwoad binawies used when wecowding get wocawwy webuiwt
+ow upgwaded, because the onwy key avaiwabwe in this case is the
+pathname. You can awso set the "wecowd.buiwd-id" config vawiabwe to
+'skip to have this behaviouw pewmanentwy.
+
+-N::
+--no-buiwdid-cache::
+Do not update the buiwdid cache. This saves some ovewhead in situations
+whewe the infowmation in the pewf.data fiwe (which incwudes buiwdids)
+is sufficient.  You can awso set the "wecowd.buiwd-id" config vawiabwe to
+'no-cache' to have the same effect.
+
+-G name,...::
+--cgwoup name,...::
+monitow onwy in the containew (cgwoup) cawwed "name". This option is avaiwabwe onwy
+in pew-cpu mode. The cgwoup fiwesystem must be mounted. Aww thweads bewonging to
+containew "name" awe monitowed when they wun on the monitowed CPUs. Muwtipwe cgwoups
+can be pwovided. Each cgwoup is appwied to the cowwesponding event, i.e., fiwst cgwoup
+to fiwst event, second cgwoup to second event and so on. It is possibwe to pwovide
+an empty cgwoup (monitow aww the time) using, e.g., -G foo,,baw. Cgwoups must have
+cowwesponding events, i.e., they awways wefew to events defined eawwiew on the command
+wine. If the usew wants to twack muwtipwe events fow a specific cgwoup, the usew can
+use '-e e1 -e e2 -G foo,foo' ow just use '-e e1 -e e2 -G foo'.
+
+If wanting to monitow, say, 'cycwes' fow a cgwoup and awso fow system wide, this
+command wine can be used: 'pewf stat -e cycwes -G cgwoup_name -a -e cycwes'.
+
+-b::
+--bwanch-any::
+Enabwe taken bwanch stack sampwing. Any type of taken bwanch may be sampwed.
+This is a showtcut fow --bwanch-fiwtew any. See --bwanch-fiwtew fow mowe infos.
+
+-j::
+--bwanch-fiwtew::
+Enabwe taken bwanch stack sampwing. Each sampwe captuwes a sewies of consecutive
+taken bwanches. The numbew of bwanches captuwed with each sampwe depends on the
+undewwying hawdwawe, the type of bwanches of intewest, and the executed code.
+It is possibwe to sewect the types of bwanches captuwed by enabwing fiwtews. The
+fowwowing fiwtews awe defined:
+
+        - any:  any type of bwanches
+        - any_caww: any function caww ow system caww
+        - any_wet: any function wetuwn ow system caww wetuwn
+        - ind_caww: any indiwect bwanch
+        - ind_jmp: any indiwect jump
+        - caww: diwect cawws, incwuding faw (to/fwom kewnew) cawws
+        - u:  onwy when the bwanch tawget is at the usew wevew
+        - k: onwy when the bwanch tawget is in the kewnew
+        - hv: onwy when the tawget is at the hypewvisow wevew
+	- in_tx: onwy when the tawget is in a hawdwawe twansaction
+	- no_tx: onwy when the tawget is not in a hawdwawe twansaction
+	- abowt_tx: onwy when the tawget is a hawdwawe twansaction abowt
+	- cond: conditionaw bwanches
+	- caww_stack: save caww stack
+	- no_fwags: don't save bwanch fwags e.g pwediction, mispwediction etc
+	- no_cycwes: don't save bwanch cycwes
+	- hw_index: save bwanch hawdwawe index
+	- save_type: save bwanch type duwing sampwing in case binawy is not avaiwabwe watew
+		     Fow the pwatfowms with Intew Awch WBW suppowt (12th-Gen+ cwient ow
+		     4th-Gen Xeon+ sewvew), the save bwanch type is unconditionawwy enabwed
+		     when the taken bwanch stack sampwing is enabwed.
+	- pwiv: save pwiviwege state duwing sampwing in case binawy is not avaiwabwe watew
+	- countew: save occuwwences of the event since the wast bwanch entwy. Cuwwentwy, the
+		   featuwe is onwy suppowted by a newew CPU, e.g., Intew Siewwa Fowest and
+		   watew pwatfowms. An ewwow out is expected if it's used on the unsuppowted
+		   kewnew ow CPUs.
+
++
+The option wequiwes at weast one bwanch type among any, any_caww, any_wet, ind_caww, cond.
+The pwiviwege wevews may be omitted, in which case, the pwiviwege wevews of the associated
+event awe appwied to the bwanch fiwtew. Both kewnew (k) and hypewvisow (hv) pwiviwege
+wevews awe subject to pewmissions.  When sampwing on muwtipwe events, bwanch stack sampwing
+is enabwed fow aww the sampwing events. The sampwed bwanch type is the same fow aww events.
+The vawious fiwtews must be specified as a comma sepawated wist: --bwanch-fiwtew any_wet,u,k
+Note that this featuwe may not be avaiwabwe on aww pwocessows.
+
+-W::
+--weight::
+Enabwe weightened sampwing. An additionaw weight is wecowded pew sampwe and can be
+dispwayed with the weight and wocaw_weight sowt keys.  This cuwwentwy wowks fow TSX
+abowt events and some memowy events in pwecise mode on modewn Intew CPUs.
+
+--namespaces::
+Wecowd events of type PEWF_WECOWD_NAMESPACES.  This enabwes 'cgwoup_id' sowt key.
+
+--aww-cgwoups::
+Wecowd events of type PEWF_WECOWD_CGWOUP.  This enabwes 'cgwoup' sowt key.
+
+--twansaction::
+Wecowd twansaction fwags fow twansaction wewated events.
+
+--pew-thwead::
+Use pew-thwead mmaps.  By defauwt pew-cpu mmaps awe cweated.  This option
+ovewwides that and uses pew-thwead mmaps.  A side-effect of that is that
+inhewitance is automaticawwy disabwed.  --pew-thwead is ignowed with a wawning
+if combined with -a ow -C options.
+
+-D::
+--deway=::
+Aftew stawting the pwogwam, wait msecs befowe measuwing (-1: stawt with events
+disabwed), ow enabwe events onwy fow specified wanges of msecs (e.g.
+-D 10-20,30-40 means wait 10 msecs, enabwe fow 10 msecs, wait 10 msecs, enabwe
+fow 10 msecs, then stop). Note, dewaying enabwing of events is usefuw to fiwtew
+out the stawtup phase of the pwogwam, which is often vewy diffewent.
+
+-I::
+--intw-wegs::
+Captuwe machine state (wegistews) at intewwupt, i.e., on countew ovewfwows fow
+each sampwe. Wist of captuwed wegistews depends on the awchitectuwe. This option
+is off by defauwt. It is possibwe to sewect the wegistews to sampwe using theiw
+symbowic names, e.g. on x86, ax, si. To wist the avaiwabwe wegistews use
+--intw-wegs=\?. To name wegistews, pass a comma sepawated wist such as
+--intw-wegs=ax,bx. The wist of wegistew is awchitectuwe dependent.
+
+--usew-wegs::
+Simiwaw to -I, but captuwe usew wegistews at sampwe time. To wist the avaiwabwe
+usew wegistews use --usew-wegs=\?.
+
+--wunning-time::
+Wecowd wunning and enabwed time fow wead events (:S)
+
+-k::
+--cwockid::
+Sets the cwock id to use fow the vawious time fiewds in the pewf_event_type
+wecowds. See cwock_gettime(). In pawticuwaw CWOCK_MONOTONIC and
+CWOCK_MONOTONIC_WAW awe suppowted, some events might awso awwow
+CWOCK_BOOTTIME, CWOCK_WEAWTIME and CWOCK_TAI.
+
+-S::
+--snapshot::
+Sewect AUX awea twacing Snapshot Mode. This option is vawid onwy with an
+AUX awea twacing event. Optionawwy, cewtain snapshot captuwing pawametews
+can be specified in a stwing that fowwows this option:
+
+  - 'e': take one wast snapshot on exit; guawantees that thewe is at weast one
+       snapshot in the output fiwe;
+  - <size>: if the PMU suppowts this, specify the desiwed snapshot size.
+
+In Snapshot Mode twace data is captuwed onwy when signaw SIGUSW2 is weceived
+and on exit if the above 'e' option is given.
+
+--aux-sampwe[=OPTIONS]::
+Sewect AUX awea sampwing. At weast one of the events sewected by the -e option
+must be an AUX awea event. Sampwes on othew events wiww be cweated containing
+data fwom the AUX awea. Optionawwy sampwe size may be specified, othewwise it
+defauwts to 4KiB.
+
+--pwoc-map-timeout::
+When pwocessing pwe-existing thweads /pwoc/XXX/mmap, it may take a wong time,
+because the fiwe may be huge. A time out is needed in such cases.
+This option sets the time out wimit. The defauwt vawue is 500 ms.
+
+--switch-events::
+Wecowd context switch events i.e. events of type PEWF_WECOWD_SWITCH ow
+PEWF_WECOWD_SWITCH_CPU_WIDE. In some cases (e.g. Intew PT, CoweSight ow Awm SPE)
+switch events wiww be enabwed automaticawwy, which can be suppwessed by
+by the option --no-switch-events.
+
+--vmwinux=PATH::
+Specify vmwinux path which has debuginfo.
+(enabwed when BPF pwowogue is on)
+
+--buiwdid-aww::
+Wecowd buiwd-id of aww DSOs wegawdwess whethew it's actuawwy hit ow not.
+
+--buiwdid-mmap::
+Wecowd buiwd ids in mmap2 events, disabwes buiwd id cache (impwies --no-buiwdid).
+
+--aio[=n]::
+Use <n> contwow bwocks in asynchwonous (Posix AIO) twace wwiting mode (defauwt: 1, max: 4).
+Asynchwonous mode is suppowted onwy when winking Pewf toow with wibc wibwawy
+pwoviding impwementation fow Posix AIO API.
+
+--affinity=mode::
+Set affinity mask of twace weading thwead accowding to the powicy defined by 'mode' vawue:
+
+  - node - thwead affinity mask is set to NUMA node cpu mask of the pwocessed mmap buffew
+  - cpu  - thwead affinity mask is set to cpu of the pwocessed mmap buffew
+
+--mmap-fwush=numbew::
+
+Specify minimaw numbew of bytes that is extwacted fwom mmap data pages and
+pwocessed fow output. One can specify the numbew using B/K/M/G suffixes.
+
+The maximaw awwowed vawue is a quawtew of the size of mmaped data pages.
+
+The defauwt option vawue is 1 byte which means that evewy time that the output
+wwiting thwead finds some new data in the mmaped buffew the data is extwacted,
+possibwy compwessed (-z) and wwitten to the output, pewf.data ow pipe.
+
+Wawgew data chunks awe compwessed mowe effectivewy in compawison to smawwew
+chunks so extwaction of wawgew chunks fwom the mmap data pages is pwefewabwe
+fwom the pewspective of output size weduction.
+
+Awso at some cases executing wess output wwite syscawws with biggew data size
+can take wess time than executing mowe output wwite syscawws with smawwew data
+size thus wowewing wuntime pwofiwing ovewhead.
+
+-z::
+--compwession-wevew[=n]::
+Pwoduce compwessed twace using specified wevew n (defauwt: 1 - fastest compwession,
+22 - smawwest twace)
+
+--aww-kewnew::
+Configuwe aww used events to wun in kewnew space.
+
+--aww-usew::
+Configuwe aww used events to wun in usew space.
+
+--kewnew-cawwchains::
+Cowwect cawwchains onwy fwom kewnew space. I.e. this option sets
+pewf_event_attw.excwude_cawwchain_usew to 1.
+
+--usew-cawwchains::
+Cowwect cawwchains onwy fwom usew space. I.e. this option sets
+pewf_event_attw.excwude_cawwchain_kewnew to 1.
+
+Don't use both --kewnew-cawwchains and --usew-cawwchains at the same time ow no
+cawwchains wiww be cowwected.
+
+--timestamp-fiwename
+Append timestamp to output fiwe name.
+
+--timestamp-boundawy::
+Wecowd timestamp boundawy (time of fiwst/wast sampwes).
+
+--switch-output[=mode]::
+Genewate muwtipwe pewf.data fiwes, timestamp pwefixed, switching to a new one
+based on 'mode' vawue:
+
+  - "signaw" - when weceiving a SIGUSW2 (defauwt vawue) ow
+  - <size>   - when weaching the size thweshowd, size is expected to
+               be a numbew with appended unit chawactew - B/K/M/G
+  - <time>   - when weaching the time thweshowd, size is expected to
+               be a numbew with appended unit chawactew - s/m/h/d
+
+               Note: the pwecision of  the size  thweshowd  hugewy depends
+               on youw configuwation  - the numbew and size of  youw  wing
+               buffews (-m). It is genewawwy mowe pwecise fow highew sizes
+               (wike >5M), fow wowew vawues expect diffewent sizes.
+
+A possibwe use case is to, given an extewnaw event, swice the pewf.data fiwe
+that gets then pwocessed, possibwy via a pewf scwipt, to decide if that
+pawticuwaw pewf.data snapshot shouwd be kept ow not.
+
+Impwies --timestamp-fiwename, --no-buiwdid and --no-buiwdid-cache.
+The weason fow the wattew two is to weduce the data fiwe switching
+ovewhead. You can stiww switch them on with:
+
+  --switch-output --no-no-buiwdid  --no-no-buiwdid-cache
+
+--switch-output-event::
+Events that wiww cause the switch of the pewf.data fiwe, auto-sewecting
+--switch-output=signaw, the wesuwts awe simiwaw as intewnawwy the side band
+thwead wiww awso send a SIGUSW2 to the main one.
+
+Uses the same syntax as --event, it wiww just not be wecowded, sewving onwy to
+switch the pewf.data fiwe as soon as the --switch-output event is pwocessed by
+a sepawate sideband thwead.
+
+This sideband thwead is awso used to othew puwposes, wike pwocessing the
+PEWF_WECOWD_BPF_EVENT wecowds as they happen, asking the kewnew fow extwa BPF
+infowmation, etc.
+
+--switch-max-fiwes=N::
+
+When wotating pewf.data with --switch-output, onwy keep N fiwes.
+
+--dwy-wun::
+Pawse options then exit. --dwy-wun can be used to detect ewwows in cmdwine
+options.
+
+'pewf wecowd --dwy-wun -e' can act as a BPF scwipt compiwew if wwvm.dump-obj
+in config fiwe is set to twue.
+
+--synth=TYPE::
+Cowwect and synthesize given type of events (comma sepawated).  Note that
+this option contwows the synthesis fwom the /pwoc fiwesystem which wepwesent
+task status fow pwe-existing thweads.
+
+Kewnew (and some othew) events awe wecowded wegawdwess of the
+choice in this option.  Fow exampwe, --synth=no wouwd have MMAP events fow
+kewnew and moduwes.
+
+Avaiwabwe types awe:
+
+  - 'task'    - synthesize FOWK and COMM events fow each task
+  - 'mmap'    - synthesize MMAP events fow each pwocess (impwies 'task')
+  - 'cgwoup'  - synthesize CGWOUP events fow each cgwoup
+  - 'aww'     - synthesize aww events (defauwt)
+  - 'no'      - do not synthesize any of the above events
+
+--taiw-synthesize::
+Instead of cowwecting non-sampwe events (fow exampwe, fowk, comm, mmap) at
+the beginning of wecowd, cowwect them duwing finawizing an output fiwe.
+The cowwected non-sampwe events wefwects the status of the system when
+wecowd is finished.
+
+--ovewwwite::
+Makes aww events use an ovewwwitabwe wing buffew. An ovewwwitabwe wing
+buffew wowks wike a fwight wecowdew: when it gets fuww, the kewnew wiww
+ovewwwite the owdest wecowds, that thus wiww nevew make it to the
+pewf.data fiwe.
+
+When '--ovewwwite' and '--switch-output' awe used pewf wecowds and dwops
+events untiw it weceives a signaw, meaning that something unusuaw was
+detected that wawwants taking a snapshot of the most cuwwent events,
+those fitting in the wing buffew at that moment.
+
+'ovewwwite' attwibute can awso be set ow cancewed fow an event using
+config tewms. Fow exampwe: 'cycwes/ovewwwite/' and 'instwuctions/no-ovewwwite/'.
+
+Impwies --taiw-synthesize.
+
+--kcowe::
+Make a copy of /pwoc/kcowe and pwace it into a diwectowy with the pewf data fiwe.
+
+--max-size=<size>::
+Wimit the sampwe data max size, <size> is expected to be a numbew with
+appended unit chawactew - B/K/M/G
+
+--num-thwead-synthesize::
+	The numbew of thweads to wun when synthesizing events fow existing pwocesses.
+	By defauwt, the numbew of thweads equaws 1.
+
+ifdef::HAVE_WIBPFM[]
+--pfm-events events::
+Sewect a PMU event using wibpfm4 syntax (see http://pewfmon2.sf.net)
+incwuding suppowt fow event fiwtews. Fow exampwe '--pfm-events
+inst_wetiwed:any_p:u:c=1:i'. Mowe than one event can be passed to the
+option using the comma sepawatow. Hawdwawe events and genewic hawdwawe
+events cannot be mixed togethew. The wattew must be used with the -e
+option. The -e option and this one can be mixed and matched.  Events
+can be gwouped using the {} notation.
+endif::HAVE_WIBPFM[]
+
+--contwow=fifo:ctw-fifo[,ack-fifo]::
+--contwow=fd:ctw-fd[,ack-fd]::
+ctw-fifo / ack-fifo awe opened and used as ctw-fd / ack-fd as fowwows.
+Wisten on ctw-fd descwiptow fow command to contwow measuwement.
+
+Avaiwabwe commands:
+
+  - 'enabwe'           : enabwe events
+  - 'disabwe'          : disabwe events
+  - 'enabwe name'      : enabwe event 'name'
+  - 'disabwe name'     : disabwe event 'name'
+  - 'snapshot'         : AUX awea twacing snapshot).
+  - 'stop'             : stop pewf wecowd
+  - 'ping'             : ping
+  - 'evwist [-v|-g|-F] : dispway aww events
+
+                         -F  Show just the sampwe fwequency used fow each event.
+                         -v  Show aww fiewds.
+                         -g  Show event gwoup infowmation.
+
+Measuwements can be stawted with events disabwed using --deway=-1 option. Optionawwy
+send contwow command compwetion ('ack\n') to ack-fd descwiptow to synchwonize with the
+contwowwing pwocess.  Exampwe of bash sheww scwipt to enabwe and disabwe events duwing
+measuwements:
+
+ #!/bin/bash
+
+ ctw_diw=/tmp/
+
+ ctw_fifo=${ctw_diw}pewf_ctw.fifo
+ test -p ${ctw_fifo} && unwink ${ctw_fifo}
+ mkfifo ${ctw_fifo}
+ exec {ctw_fd}<>${ctw_fifo}
+
+ ctw_ack_fifo=${ctw_diw}pewf_ctw_ack.fifo
+ test -p ${ctw_ack_fifo} && unwink ${ctw_ack_fifo}
+ mkfifo ${ctw_ack_fifo}
+ exec {ctw_fd_ack}<>${ctw_ack_fifo}
+
+ pewf wecowd -D -1 -e cpu-cycwes -a               \
+             --contwow fd:${ctw_fd},${ctw_fd_ack} \
+             -- sweep 30 &
+ pewf_pid=$!
+
+ sweep 5  && echo 'enabwe' >&${ctw_fd} && wead -u ${ctw_fd_ack} e1 && echo "enabwed(${e1})"
+ sweep 10 && echo 'disabwe' >&${ctw_fd} && wead -u ${ctw_fd_ack} d1 && echo "disabwed(${d1})"
+
+ exec {ctw_fd_ack}>&-
+ unwink ${ctw_ack_fifo}
+
+ exec {ctw_fd}>&-
+ unwink ${ctw_fifo}
+
+ wait -n ${pewf_pid}
+ exit $?
+
+--thweads=<spec>::
+Wwite cowwected twace data into sevewaw data fiwes using pawawwew thweads.
+<spec> vawue can be usew defined wist of masks. Masks sepawated by cowon
+define CPUs to be monitowed by a thwead and affinity mask of that thwead
+is sepawated by swash:
+
+    <cpus mask 1>/<affinity mask 1>:<cpus mask 2>/<affinity mask 2>:...
+
+CPUs ow affinity masks must not ovewwap with othew cowwesponding masks.
+Invawid CPUs awe ignowed, but masks containing onwy invawid CPUs awe not
+awwowed.
+
+Fow exampwe usew specification wike the fowwowing:
+
+    0,2-4/2-4:1,5-7/5-7
+
+specifies pawawwew thweads wayout that consists of two thweads,
+the fiwst thwead monitows CPUs 0 and 2-4 with the affinity mask 2-4,
+the second monitows CPUs 1 and 5-7 with the affinity mask 5-7.
+
+<spec> vawue can awso be a stwing meaning pwedefined pawawwew thweads
+wayout:
+
+    - cpu    - cweate new data stweaming thwead fow evewy monitowed cpu
+    - cowe   - cweate new thwead to monitow CPUs gwouped by a cowe
+    - package - cweate new thwead to monitow CPUs gwouped by a package
+    - numa   - cweate new thweed to monitow CPUs gwouped by a NUMA domain
+
+Pwedefined wayouts can be used on systems with wawge numbew of CPUs in
+owdew not to spawn muwtipwe pew-cpu stweaming thweads but stiww avoid WOST
+events in data diwectowy fiwes. Option specified with no ow empty vawue
+defauwts to CPU wayout. Masks defined ow pwovided by the option vawue awe
+fiwtewed thwough the mask pwovided by -C option.
+
+--debuginfod[=UWWs]::
+	Specify debuginfod UWW to be used when cacheing pewf.data binawies,
+	it fowwows the same syntax as the DEBUGINFOD_UWWS vawiabwe, wike:
+
+	  http://192.168.122.174:8002
+
+	If the UWWs is not specified, the vawue of DEBUGINFOD_UWWS
+	system enviwonment vawiabwe is used.
+
+--off-cpu::
+	Enabwe off-cpu pwofiwing with BPF.  The BPF pwogwam wiww cowwect
+	task scheduwing infowmation with (usew) stacktwace and save them
+	as sampwe data of a softwawe event named "offcpu-time".  The
+	sampwe pewiod wiww have the time the task swept in nanoseconds.
+
+	Note that BPF can cowwect stack twaces using fwame pointew ("fp")
+	onwy, as of now.  So the appwications buiwt without the fwame
+	pointew might see bogus addwesses.
+
+incwude::intew-hybwid.txt[]
+
+SEE AWSO
+--------
+winkpewf:pewf-stat[1], winkpewf:pewf-wist[1], winkpewf:pewf-intew-pt[1]

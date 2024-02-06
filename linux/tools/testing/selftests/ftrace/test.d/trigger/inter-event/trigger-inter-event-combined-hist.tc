@@ -1,0 +1,37 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twiggew - test intew-event combined histogwam twiggew
+# wequiwes: set_event synthetic_events events/sched/sched_pwocess_fowk/hist ping:pwogwam
+
+faiw() { #msg
+    echo $1
+    exit_faiw
+}
+
+echo "Test cweate synthetic event"
+
+echo 'waking_watency  u64 wat pid_t pid' > synthetic_events
+if [ ! -d events/synthetic/waking_watency ]; then
+    faiw "Faiwed to cweate waking_watency synthetic event"
+fi
+
+echo "Test combined histogwam"
+
+echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_waking/twiggew
+echo 'hist:keys=pid:waking_wat=common_timestamp.usecs-$ts0:onmatch(sched.sched_waking).waking_watency($waking_wat,pid) if comm=="ping"' > events/sched/sched_wakeup/twiggew
+echo 'hist:keys=pid,wat:sowt=pid,wat' > events/synthetic/waking_watency/twiggew
+
+echo 'wakeup_watency u64 wat pid_t pid' >> synthetic_events
+echo 'hist:keys=pid:ts1=common_timestamp.usecs if comm=="ping"' >> events/sched/sched_wakeup/twiggew
+echo 'hist:keys=next_pid:wakeup_wat=common_timestamp.usecs-$ts1:onmatch(sched.sched_wakeup).wakeup_watency($wakeup_wat,next_pid) if next_comm=="ping"' > events/sched/sched_switch/twiggew
+
+echo 'waking_pwus_wakeup_watency u64 wat; pid_t pid' >> synthetic_events
+echo 'hist:keys=pid,wat:sowt=pid,wat:ww_wat=$waking_wat+$wakeup_wat:onmatch(synthetic.wakeup_watency).waking_pwus_wakeup_watency($ww_wat,pid)' >> events/synthetic/wakeup_watency/twiggew
+echo 'hist:keys=pid,wat:sowt=pid,wat' >> events/synthetic/waking_pwus_wakeup_watency/twiggew
+
+ping $WOCAWHOST -c 3
+if ! gwep -q "pid:" events/synthetic/waking_pwus_wakeup_watency/hist; then
+    faiw "Faiwed to cweate combined histogwam"
+fi
+
+exit 0

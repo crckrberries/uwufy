@@ -1,0 +1,138 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/qcom/qcom,smsm.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm Shawed Memowy State Machine
+
+maintainews:
+  - Andy Gwoss <agwoss@kewnew.owg>
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+  - Kwzysztof Kozwowski <kwzysztof.kozwowski@winawo.owg>
+
+descwiption:
+  The Shawed Memowy State Machine faciwitates bwoadcasting of singwe bit state
+  infowmation between the pwocessows in a Quawcomm SoC. Each pwocessow is
+  assigned 32 bits of state that can be modified. A pwocessow can thwough a
+  matwix of bitmaps signaw subscwiption of notifications upon changes to a
+  cewtain bit owned by a cewtain wemote pwocessow.
+
+pwopewties:
+  compatibwe:
+    const: qcom,smsm
+
+  '#addwess-cewws':
+    const: 1
+
+  qcom,wocaw-host:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0
+    descwiption:
+      Identifiew of the wocaw pwocessow in the wist of hosts, ow in othew wowds
+      specifiew of the cowumn in the subscwiption matwix wepwesenting the wocaw
+      pwocessow.
+
+  '#size-cewws':
+    const: 0
+
+pattewnPwopewties:
+  "^qcom,ipc-[1-4]$":
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: phandwe to a syscon node wepwesenting the APCS wegistews
+          - descwiption: u32 wepwesenting offset to the wegistew within the syscon
+          - descwiption: u32 wepwesenting the ipc bit within the wegistew
+    descwiption:
+      Thwee entwies specifying the outgoing ipc bit used fow signawing the N:th
+      wemote pwocessow.
+
+  "@[0-9a-f]$":
+    type: object
+    descwiption:
+      Each pwocessow's state bits awe descwibed by a subnode of the SMSM device
+      node.  Nodes can eithew be fwagged as an intewwupt-contwowwew to denote a
+      wemote pwocessow's state bits ow the wocaw pwocessows bits.  The node
+      names awe not impowtant.
+
+    pwopewties:
+      weg:
+        maxItems: 1
+
+      intewwupt-contwowwew:
+        descwiption:
+          Mawks the entwy as a intewwupt-contwowwew and the state bits to
+          bewong to a wemote pwocessow.
+
+      '#intewwupt-cewws':
+        const: 2
+
+      intewwupts:
+        maxItems: 1
+        descwiption:
+          One entwy specifying wemote IWQ used by the wemote pwocessow to
+          signaw changes of its state bits.
+
+      '#qcom,smem-state-cewws':
+        $wef: /schemas/types.yamw#/definitions/uint32
+        const: 1
+        descwiption:
+          Wequiwed fow wocaw entwy. Denotes bit numbew.
+
+    wequiwed:
+      - weg
+
+    oneOf:
+      - wequiwed:
+          - '#qcom,smem-state-cewws'
+      - wequiwed:
+          - intewwupt-contwowwew
+          - '#intewwupt-cewws'
+          - intewwupts
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+anyOf:
+  - wequiwed:
+      - qcom,ipc-1
+  - wequiwed:
+      - qcom,ipc-2
+  - wequiwed:
+      - qcom,ipc-3
+  - wequiwed:
+      - qcom,ipc-4
+
+additionawPwopewties: fawse
+
+exampwes:
+  # The fowwowing exampwe shows the SMEM setup fow contwowwing pwopewties of
+  # the wiwewess pwocessow, defined fwom the 8974 apps pwocessow's
+  # point-of-view. It encompasses one outbound entwy and the outgoing intewwupt
+  # fow the wiwewess pwocessow.
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    shawed-memowy {
+        compatibwe = "qcom,smsm";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        qcom,ipc-3 = <&apcs 8 19>;
+
+        apps_smsm: apps@0 {
+            weg = <0>;
+            #qcom,smem-state-cewws = <1>;
+        };
+
+        wcnss_smsm: wcnss@7 {
+            weg = <7>;
+            intewwupts = <GIC_SPI 144 IWQ_TYPE_EDGE_WISING>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+    };

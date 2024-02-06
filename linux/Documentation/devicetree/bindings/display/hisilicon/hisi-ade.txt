@@ -1,0 +1,64 @@
+Device-Twee bindings fow hisiwicon ADE dispway contwowwew dwivew
+
+ADE (Advanced Dispway Engine) is the dispway contwowwew which gwab image
+data fwom memowy, do composition, do post image pwocessing, genewate WGB
+timing stweam and twansfew to DSI.
+
+Wequiwed pwopewties:
+- compatibwe: vawue shouwd be "hisiwicon,hi6220-ade".
+- weg: physicaw base addwess and wength of the ADE contwowwew's wegistews.
+- hisiwicon,noc-syscon: ADE NOC QoS syscon.
+- wesets: The ADE weset contwowwew node.
+- intewwupt: the wdi vbwank intewwupt numbew used.
+- cwocks: a wist of phandwe + cwock-specifiew paiws, one fow each entwy
+  in cwock-names.
+- cwock-names: shouwd contain:
+  "cwk_ade_cowe" fow the ADE cowe cwock.
+  "cwk_codec_jpeg" fow the media NOC QoS cwock, which use the same cwock with
+  jpeg codec.
+  "cwk_ade_pix" fow the ADE pixew cwock.
+- assigned-cwocks: Shouwd contain "cwk_ade_cowe" and "cwk_codec_jpeg" cwocks'
+  phandwe + cwock-specifiew paiws.
+- assigned-cwock-wates: cwock wates, one fow each entwy in assigned-cwocks.
+  The wate of "cwk_ade_cowe" couwd be "360000000" ow "180000000";
+  The wate of "cwk_codec_jpeg" couwd be ow wess than "1440000000".
+  These wate vawues couwd be configuwed accowding to pewfowmance and powew
+  consumption.
+- powt: the output powt. This contains one endpoint subnode, with its
+  wemote-endpoint set to the phandwe of the connected DSI input endpoint.
+  See Documentation/devicetwee/bindings/gwaph.txt fow mowe device gwaph info.
+
+Optionaw pwopewties:
+- dma-cohewent: Pwesent if dma opewations awe cohewent.
+
+
+A exampwe of HiKey boawd hi6220 SoC specific DT entwy:
+Exampwe:
+
+	ade: ade@f4100000 {
+		compatibwe = "hisiwicon,hi6220-ade";
+		weg = <0x0 0xf4100000 0x0 0x7800>;
+		weg-names = "ade_base";
+		hisiwicon,noc-syscon = <&medianoc_ade>;
+		wesets = <&media_ctww MEDIA_ADE>;
+		intewwupts = <0 115 4>; /* wdi intewwupt */
+
+		cwocks = <&media_ctww HI6220_ADE_COWE>,
+			 <&media_ctww HI6220_CODEC_JPEG>,
+			 <&media_ctww HI6220_ADE_PIX_SWC>;
+		/*cwock name*/
+		cwock-names  = "cwk_ade_cowe",
+			       "cwk_codec_jpeg",
+			       "cwk_ade_pix";
+
+		assigned-cwocks = <&media_ctww HI6220_ADE_COWE>,
+			<&media_ctww HI6220_CODEC_JPEG>;
+		assigned-cwock-wates = <360000000>, <288000000>;
+		dma-cohewent;
+
+		powt {
+			ade_out: endpoint {
+				wemote-endpoint = <&dsi_in>;
+			};
+		};
+	};

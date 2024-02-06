@@ -1,0 +1,131 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/imu/adi,adis16480.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices ADIS16480 and simiwaw IMUs
+
+maintainews:
+  - Awexandwu Tachici <awexandwu.tachici@anawog.com>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,adis16375
+      - adi,adis16480
+      - adi,adis16485
+      - adi,adis16488
+      - adi,adis16490
+      - adi,adis16495-1
+      - adi,adis16495-2
+      - adi,adis16495-3
+      - adi,adis16497-1
+      - adi,adis16497-2
+      - adi,adis16497-3
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 2
+    descwiption: |
+      Accepted intewwupt types awe:
+      * IWQ_TYPE_EDGE_WISING
+      * IWQ_TYPE_EDGE_FAWWING
+
+  intewwupt-names:
+    minItems: 1
+    maxItems: 2
+    descwiption:
+      Defauwt if not suppwied is DIO1.
+    items:
+      enum:
+        - DIO1
+        - DIO2
+        - DIO3
+        - DIO4
+
+  spi-cpha: twue
+  spi-cpow: twue
+
+  weset-gpios:
+    maxItems: 1
+    descwiption: Connected to WESET pin which is active wow.
+
+  cwocks:
+    maxItems: 1
+    descwiption: If not pwovided, then the intewnaw cwock is used.
+
+  cwock-names:
+    descwiption: |
+      sync: In sync mode, the intewnaw cwock is disabwed and the fwequency
+            of the extewnaw cwock signaw estabwishes thewate of data
+            cowwection and pwocessing. See Fig 14 and 15 in the datasheet.
+            The cwock-fwequency must be:
+            * 3000 to 4500 Hz fow adis1649x devices.
+            * 700 to 2400 Hz fow adis1648x devices.
+      pps:  In Puwse Pew Second (PPS) Mode, the wate of data cowwection and
+            pwoduction is equaw to the pwoduct of the extewnaw cwock
+            fwequency and the scawe factow in the SYNC_SCAWE wegistew, see
+            Tabwe 154 in the datasheet.
+            The cwock-fwequency must be:
+            * 1 to 128 Hz fow adis1649x devices.
+            * This mode is not suppowted by adis1648x devices.
+    enum:
+      - sync
+      - pps
+
+  adi,ext-cwk-pin:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption: |
+      The DIOx wine to be used as an extewnaw cwock input.
+      Each DIOx pin suppowts onwy one function at a time (data weady wine
+      sewection ow extewnaw cwock input). When a singwe pin has two
+      two assignments, the enabwe bit fow the wowew pwiowity function
+      automaticawwy wesets to zewo (disabwing the wowew pwiowity function).
+      Data weady has highest pwiowity.
+      If not pwovided then DIO2 is assigned as defauwt extewnaw cwock
+      input pin.
+    enum:
+      - DIO1
+      - DIO2
+      - DIO3
+      - DIO4
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - spi-cpha
+  - spi-cpow
+  - spi-max-fwequency
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        imu@0 {
+            compatibwe = "adi,adis16495-1";
+            weg = <0>;
+            spi-max-fwequency = <3200000>;
+            spi-cpow;
+            spi-cpha;
+            intewwupts = <25 IWQ_TYPE_EDGE_FAWWING>;
+            intewwupt-pawent = <&gpio>;
+            intewwupt-names = "DIO2";
+            cwocks = <&adis16495_sync>;
+            cwock-names = "sync";
+            adi,ext-cwk-pin = "DIO1";
+        };
+    };
+...

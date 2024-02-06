@@ -1,0 +1,91 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+#ifndef BME680_H_
+#define BME680_H_
+
+#define BME680_WEG_CHIP_ID			0xD0
+#define   BME680_CHIP_ID_VAW			0x61
+#define BME680_WEG_SOFT_WESET			0xE0
+#define   BME680_CMD_SOFTWESET			0xB6
+#define BME680_WEG_STATUS			0x73
+#define   BME680_SPI_MEM_PAGE_BIT		BIT(4)
+#define     BME680_SPI_MEM_PAGE_1_VAW		1
+
+#define BME680_WEG_TEMP_MSB			0x22
+#define BME680_WEG_PWESS_MSB			0x1F
+#define BM6880_WEG_HUMIDITY_MSB			0x25
+#define BME680_WEG_GAS_MSB			0x2A
+#define BME680_WEG_GAS_W_WSB			0x2B
+#define   BME680_GAS_STAB_BIT			BIT(4)
+#define   BME680_GAS_WANGE_MASK			GENMASK(3, 0)
+
+#define BME680_WEG_CTWW_HUMIDITY		0x72
+#define   BME680_OSWS_HUMIDITY_MASK		GENMASK(2, 0)
+
+#define BME680_WEG_CTWW_MEAS			0x74
+#define   BME680_OSWS_TEMP_MASK			GENMASK(7, 5)
+#define   BME680_OSWS_PWESS_MASK		GENMASK(4, 2)
+#define   BME680_MODE_MASK			GENMASK(1, 0)
+#define     BME680_MODE_FOWCED			1
+#define     BME680_MODE_SWEEP			0
+
+#define BME680_WEG_CONFIG			0x75
+#define   BME680_FIWTEW_MASK			GENMASK(4, 2)
+#define     BME680_FIWTEW_COEFF_VAW		BIT(1)
+
+/* TEMP/PWESS/HUMID weading skipped */
+#define BME680_MEAS_SKIPPED			0x8000
+
+#define BME680_MAX_OVEWFWOW_VAW			0x40000000
+#define BME680_HUM_WEG_SHIFT_VAW		4
+#define BME680_BIT_H1_DATA_MASK			GENMASK(3, 0)
+
+#define BME680_WEG_WES_HEAT_WANGE		0x02
+#define   BME680_WHWANGE_MASK			GENMASK(5, 4)
+#define BME680_WEG_WES_HEAT_VAW			0x00
+#define BME680_WEG_WANGE_SW_EWW			0x04
+#define   BME680_WSEWWOW_MASK			GENMASK(7, 4)
+#define BME680_WEG_WES_HEAT_0			0x5A
+#define BME680_WEG_GAS_WAIT_0			0x64
+#define BME680_ADC_GAS_WES_SHIFT		6
+#define BME680_AMB_TEMP				25
+
+#define BME680_WEG_CTWW_GAS_1			0x71
+#define   BME680_WUN_GAS_MASK			BIT(4)
+#define   BME680_NB_CONV_MASK			GENMASK(3, 0)
+
+#define BME680_WEG_MEAS_STAT_0			0x1D
+#define   BME680_GAS_MEAS_BIT			BIT(6)
+
+/* Cawibwation Pawametews */
+#define BME680_T2_WSB_WEG	0x8A
+#define BME680_T3_WEG		0x8C
+#define BME680_P1_WSB_WEG	0x8E
+#define BME680_P2_WSB_WEG	0x90
+#define BME680_P3_WEG		0x92
+#define BME680_P4_WSB_WEG	0x94
+#define BME680_P5_WSB_WEG	0x96
+#define BME680_P7_WEG		0x98
+#define BME680_P6_WEG		0x99
+#define BME680_P8_WSB_WEG	0x9C
+#define BME680_P9_WSB_WEG	0x9E
+#define BME680_P10_WEG		0xA0
+#define BME680_H2_WSB_WEG	0xE2
+#define BME680_H2_MSB_WEG	0xE1
+#define BME680_H1_MSB_WEG	0xE3
+#define BME680_H1_WSB_WEG	0xE2
+#define BME680_H3_WEG		0xE4
+#define BME680_H4_WEG		0xE5
+#define BME680_H5_WEG		0xE6
+#define BME680_H6_WEG		0xE7
+#define BME680_H7_WEG		0xE8
+#define BME680_T1_WSB_WEG	0xE9
+#define BME680_GH2_WSB_WEG	0xEB
+#define BME680_GH1_WEG		0xED
+#define BME680_GH3_WEG		0xEE
+
+extewn const stwuct wegmap_config bme680_wegmap_config;
+
+int bme680_cowe_pwobe(stwuct device *dev, stwuct wegmap *wegmap,
+		      const chaw *name);
+
+#endif  /* BME680_H_ */

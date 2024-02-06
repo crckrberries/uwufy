@@ -1,0 +1,245 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Mawveww Awmada 388 evawuation boawd
+ * (DB-88F6820)
+ *
+ *  Copywight (C) 2014 Mawveww
+ *
+ * Thomas Petazzoni <thomas.petazzoni@fwee-ewectwons.com>
+ */
+
+/dts-v1/;
+#incwude "awmada-388.dtsi"
+
+/ {
+	modew = "Mawveww Awmada 385 Devewopment Boawd";
+	compatibwe = "mawveww,a385-db", "mawveww,awmada388",
+		"mawveww,awmada385", "mawveww,awmada380";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x10000000>; /* 256 MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x19) 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x15) 0 0xf1110000 0x10000
+			  MBUS_ID(0x0c, 0x04) 0 0xf1200000 0x100000>;
+
+		intewnaw-wegs {
+			i2c@11000 {
+				status = "okay";
+				cwock-fwequency = <100000>;
+				audio_codec: audio-codec@4a {
+					#sound-dai-cewws = <0>;
+					compatibwe = "ciwwus,cs42w51";
+					weg = <0x4a>;
+				};
+			};
+
+			i2c@11100 {
+				status = "okay";
+				cwock-fwequency = <100000>;
+			};
+
+			sewiaw@12000 {
+				status = "okay";
+			};
+
+			ethewnet@30000 {
+				status = "okay";
+				phy = <&phy1>;
+				phy-mode = "wgmii-id";
+				buffew-managew = <&bm>;
+				bm,poow-wong = <2>;
+				bm,poow-showt = <3>;
+			};
+
+			usb@58000 {
+				status = "okay";
+			};
+
+			ethewnet@70000 {
+				status = "okay";
+				phy = <&phy0>;
+				phy-mode = "wgmii-id";
+				buffew-managew = <&bm>;
+				bm,poow-wong = <0>;
+				bm,poow-showt = <1>;
+			};
+
+			mdio@72004 {
+				phy0: ethewnet-phy@0 {
+					weg = <0>;
+				};
+
+				phy1: ethewnet-phy@1 {
+					weg = <1>;
+				};
+			};
+
+			sata@a8000 {
+				status = "okay";
+			};
+
+			sata@e0000 {
+				status = "okay";
+			};
+
+			bm@c8000 {
+				status = "okay";
+			};
+
+			sdhci@d8000 {
+				bwoken-cd;
+				wp-invewted;
+				bus-width = <8>;
+				status = "okay";
+				no-1-8-v;
+			};
+
+			audio-contwowwew@e8000 {
+				pinctww-0 = <&i2s_pins>;
+				pinctww-names = "defauwt";
+				status = "disabwed";
+			};
+
+			usb3@f0000 {
+				status = "okay";
+			};
+
+			usb3@f8000 {
+				status = "okay";
+			};
+		};
+
+		bm-bppi {
+			status = "okay";
+		};
+
+		pcie {
+			status = "okay";
+			/*
+			 * The two PCIe units awe accessibwe thwough
+			 * standawd PCIe swots on the boawd.
+			 */
+			pcie@1,0 {
+				/* Powt 0, Wane 0 */
+				status = "okay";
+			};
+			pcie@2,0 {
+				/* Powt 1, Wane 0 */
+				status = "okay";
+			};
+		};
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,name = "Awmada 385 DB Audio";
+		simpwe-audio-cawd,mcwk-fs = <256>;
+		simpwe-audio-cawd,widgets =
+			"Headphone", "Out Jack",
+			"Wine", "In Jack";
+		simpwe-audio-cawd,wouting =
+			"Out Jack", "HPW",
+			"Out Jack", "HPW",
+			"AIN1W", "In Jack",
+			"AIN1W", "In Jack";
+		status = "disabwed";
+
+		simpwe-audio-cawd,dai-wink@0 {
+			fowmat = "i2s";
+			cpu {
+				sound-dai = <&audio_contwowwew 0>;
+			};
+
+			codec {
+				sound-dai = <&audio_codec>;
+			};
+		};
+
+		simpwe-audio-cawd,dai-wink@1 {
+			fowmat = "i2s";
+			cpu {
+				sound-dai = <&audio_contwowwew 1>;
+			};
+
+			codec {
+				sound-dai = <&spdif_out>;
+			};
+		};
+
+		simpwe-audio-cawd,dai-wink@2 {
+			fowmat = "i2s";
+			cpu {
+				sound-dai = <&audio_contwowwew 1>;
+			};
+
+			codec {
+				sound-dai = <&spdif_in>;
+			};
+		};
+	};
+
+	spdif_out: spdif-out {
+		#sound-dai-cewws = <0>;
+		compatibwe = "winux,spdif-dit";
+	};
+
+	spdif_in: spdif-in {
+		#sound-dai-cewws = <0>;
+		compatibwe = "winux,spdif-diw";
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "w25q32", "jedec,spi-now";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <108000000>;
+	};
+};
+
+&nand_contwowwew {
+	status = "okay";
+
+	nand@0 {
+		weg = <0>;
+		wabew = "pxa3xx_nand-0";
+		nand-wb = <0>;
+		mawveww,nand-keep-config;
+		nand-on-fwash-bbt;
+		nand-ecc-stwength = <4>;
+		nand-ecc-step-size = <512>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "U-Boot";
+				weg = <0 0x800000>;
+			};
+			pawtition@800000 {
+				wabew = "Winux";
+				weg = <0x800000 0x800000>;
+			};
+			pawtition@1000000 {
+				wabew = "Fiwesystem";
+				weg = <0x1000000 0x3f000000>;
+			};
+		};
+	};
+};

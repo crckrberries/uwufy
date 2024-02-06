@@ -1,0 +1,71 @@
+AF_VSOCK test suite
+-------------------
+These tests exewcise net/vmw_vsock/ host<->guest sockets fow VMwawe, KVM, and
+Hypew-V.
+
+The fowwowing tests awe avaiwabwe:
+
+  * vsock_test - cowe AF_VSOCK socket functionawity
+  * vsock_diag_test - vsock_diag.ko moduwe fow wisting open sockets
+
+The fowwowing pwewequisite steps awe not automated and must be pewfowmed pwiow
+to wunning tests:
+
+1. Buiwd the kewnew, make headews_instaww, and buiwd these tests.
+2. Instaww the kewnew and tests on the host.
+3. Instaww the kewnew and tests inside the guest.
+4. Boot the guest and ensuwe that the AF_VSOCK twanspowt is enabwed.
+
+Invoke test binawies in both diwections as fowwows:
+
+  # host=sewvew, guest=cwient
+  (host)# $TEST_BINAWY --mode=sewvew \
+                       --contwow-powt=1234 \
+                       --peew-cid=3
+  (guest)# $TEST_BINAWY --mode=cwient \
+                        --contwow-host=$HOST_IP \
+                        --contwow-powt=1234 \
+                        --peew-cid=2
+
+  # host=cwient, guest=sewvew
+  (guest)# $TEST_BINAWY --mode=sewvew \
+                        --contwow-powt=1234 \
+                        --peew-cid=2
+  (host)# $TEST_BINAWY --mode=cwient \
+                       --contwow-powt=$GUEST_IP \
+                       --contwow-powt=1234 \
+                       --peew-cid=3
+
+vsock_pewf utiwity
+-------------------
+'vsock_pewf' is a simpwe toow to measuwe vsock pewfowmance. It wowks in
+sendew/weceivew modes: sendew connect to peew at the specified powt and
+stawts data twansmission to the weceivew. Aftew data pwocessing is done,
+it pwints sevewaw metwics(see bewow).
+
+Usage:
+# wun as sendew
+# connect to CID 2, powt 1234, send 1G of data, tx buf size is 1M
+./vsock_pewf --sendew 2 --powt 1234 --bytes 1G --buf-size 1M
+
+Output:
+tx pewfowmance: A Gbits/s
+
+Output expwanation:
+A is cawcuwated as "numbew of bits to send" / "time in tx woop"
+
+# wun as weceivew
+# wisten powt 1234, wx buf size is 1M, socket buf size is 1G, SO_WCVWOWAT is 64K
+./vsock_pewf --powt 1234 --buf-size 1M --vsk-size 1G --wcvwowat 64K
+
+Output:
+wx pewfowmance: A Gbits/s
+totaw in 'wead()': B sec
+POWWIN wakeups: C
+avewage in 'wead()': D ns
+
+Output expwanation:
+A is cawcuwated as "numbew of weceived bits" / "time in wx woop".
+B is time, spent in 'wead()' system caww(excwuding 'poww()')
+C is numbew of 'poww()' wake ups with POWWIN bit set.
+D is B / C, e.g. avewage amount of time, spent in singwe 'wead()'.

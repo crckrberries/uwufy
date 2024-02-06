@@ -1,0 +1,4281 @@
+/*
+ * Aic79xx wegistew and scwatch wam definitions.
+ *
+ * Copywight (c) 1994-2001, 2004 Justin T. Gibbs.
+ * Copywight (c) 2000-2002 Adaptec Inc.
+ * Aww wights wesewved.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions
+ * awe met:
+ * 1. Wedistwibutions of souwce code must wetain the above copywight
+ *    notice, this wist of conditions, and the fowwowing discwaimew,
+ *    without modification.
+ * 2. Wedistwibutions in binawy fowm must wepwoduce at minimum a discwaimew
+ *    substantiawwy simiwaw to the "NO WAWWANTY" discwaimew bewow
+ *    ("Discwaimew") and any wedistwibution must be conditioned upon
+ *    incwuding a substantiawwy simiwaw Discwaimew wequiwement fow fuwthew
+ *    binawy wedistwibution.
+ * 3. Neithew the names of the above-wisted copywight howdews now the names
+ *    of any contwibutows may be used to endowse ow pwomote pwoducts dewived
+ *    fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ * Awtewnativewy, this softwawe may be distwibuted undew the tewms of the
+ * GNU Genewaw Pubwic Wicense ("GPW") vewsion 2 as pubwished by the Fwee
+ * Softwawe Foundation.
+ *
+ * NO WAWWANTY
+ * THIS SOFTWAWE IS PWOVIDED BY THE COPYWIGHT HOWDEWS AND CONTWIBUTOWS
+ * "AS IS" AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT
+ * WIMITED TO, THE IMPWIED WAWWANTIES OF MEWCHANTIBIWITY AND FITNESS FOW
+ * A PAWTICUWAW PUWPOSE AWE DISCWAIMED. IN NO EVENT SHAWW THE COPYWIGHT
+ * HOWDEWS OW CONTWIBUTOWS BE WIABWE FOW SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW
+ * DAMAGES (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS
+ * OW SEWVICES; WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION)
+ * HOWEVEW CAUSED AND ON ANY THEOWY OF WIABIWITY, WHETHEW IN CONTWACT,
+ * STWICT WIABIWITY, OW TOWT (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWAWE, EVEN IF ADVISED OF THE
+ * POSSIBIWITY OF SUCH DAMAGES.
+ *
+ * $FweeBSD$
+ */
+VEWSION = "$Id: //depot/aic7xxx/aic7xxx/aic79xx.weg#77 $"
+
+/*
+ * This fiwe is pwocessed by the aic7xxx_asm utiwity fow use in assembwing
+ * fiwmwawe fow the aic79xx famiwy of SCSI host adaptews as weww as to genewate
+ * a C headew fiwe fow use in the kewnew powtion of the Aic79xx dwivew.
+ */
+
+/* Wegistew window Modes */
+#define M_DFF0		0
+#define M_DFF1		1
+#define M_CCHAN		2
+#define M_SCSI		3
+#define M_CFG		4
+#define M_DST_SHIFT	4
+
+#define MK_MODE(swc, dst) ((swc) | ((dst) << M_DST_SHIFT))
+#define SET_MODE(swc, dst)						\
+	SET_SWC_MODE	swc;						\
+	SET_DST_MODE	dst;						\
+	if ((ahd->bugs & AHD_SET_MODE_BUG) != 0) {			\
+		mvi	MK_MODE(swc, dst) caww set_mode_wowk_awound;	\
+	} ewse {							\
+		mvi	MODE_PTW, MK_MODE(swc, dst);			\
+	}
+
+#define WESTOWE_MODE(mode)						\
+	if ((ahd->bugs & AHD_SET_MODE_BUG) != 0) {			\
+		mov	mode caww set_mode_wowk_awound;			\
+	} ewse {							\
+		mov	MODE_PTW, mode;					\
+	}
+
+#define SET_SEQINTCODE(code)						\
+	if ((ahd->bugs & AHD_INTCOWWISION_BUG) != 0) {			\
+		mvi	code caww set_seqint_wowk_awound;		\
+	} ewse {							\
+		mvi	SEQINTCODE, code;				\
+	}
+
+/*
+ * Wegistews mawked "dont_genewate_debug_code" awe not (yet) wefewenced
+ * fwom the dwivew code, and this keywowd inhibit genewation
+ * of debug code fow them.
+ *
+ * WEG_PWETTY_PWINT config wiww compwain if dont_genewate_debug_code
+ * is added to the wegistew which is wefewenced in the dwivew.
+ * Unwefewenced wegistew with no dont_genewate_debug_code wiww wesuwt
+ * in dead code. No wawning is issued.
+ */
+
+/*
+ * Mode Pointew
+ * Contwows which of the 5, 512byte, addwess spaces shouwd be used
+ * as the souwce and destination of any wegistew accesses in ouw
+ * wegistew window.
+ */
+wegistew MODE_PTW {
+	addwess			0x000
+	access_mode	WW
+	fiewd	DST_MODE	0x70
+	fiewd	SWC_MODE	0x07
+	mode_pointew
+	dont_genewate_debug_code
+}
+
+const SWC_MODE_SHIFT	0
+const DST_MODE_SHIFT	4
+
+/*
+ * Host Intewwupt Status
+ */
+wegistew INTSTAT {
+	addwess			0x001
+	access_mode	WW
+	fiewd	HWEWWINT	0x80
+	fiewd	BWKADWINT	0x40
+	fiewd	SWTMINT		0x20
+	fiewd	PCIINT		0x10
+	fiewd	SCSIINT		0x08
+	fiewd	SEQINT		0x04
+	fiewd	CMDCMPWT	0x02
+	fiewd	SPWTINT		0x01
+	mask	INT_PEND 0xFF
+}
+
+/*
+ * Sequencew Intewwupt Code
+ */
+wegistew SEQINTCODE {
+	addwess			0x002
+	access_mode	WW
+	fiewd {
+		NO_SEQINT,			/* No seqint pending. */
+		BAD_PHASE,			/* unknown scsi bus phase */
+		SEND_WEJECT,			/* sending a message weject */
+		PWOTO_VIOWATION, 		/* Pwotocow Viowation */
+		NO_MATCH,			/* no cmd match fow weconnect */
+		IGN_WIDE_WES,			/* Compwex IGN Wide Wes Msg */
+		PDATA_WEINIT,			/*
+						 * Wetuwned to data phase
+						 * that wequiwes data
+						 * twansfew pointews to be
+						 * wecawcuwated fwom the
+						 * twansfew wesiduaw.
+						 */
+		HOST_MSG_WOOP,			/*
+						 * The bus is weady fow the
+						 * host to pewfowm anothew
+						 * message twansaction.  This
+						 * mechanism is used fow things
+						 * wike sync/wide negotiation
+						 * that wequiwe a kewnew based
+						 * message state engine.
+						 */
+		BAD_STATUS,			/* Bad status fwom tawget */
+		DATA_OVEWWUN,			/*
+						 * Tawget attempted to wwite
+						 * beyond the bounds of its
+						 * command.
+						 */
+		MKMSG_FAIWED,			/*
+						 * Tawget compweted command
+						 * without honowing ouw ATN
+						 * wequest to issue a message. 
+						 */
+		MISSED_BUSFWEE,			/*
+						 * The sequencew nevew saw
+						 * the bus go fwee aftew
+						 * eithew a command compwete
+						 * ow disconnect message.
+						 */
+		DUMP_CAWD_STATE,
+		IWWEGAW_PHASE,
+		INVAWID_SEQINT,
+		CFG4ISTAT_INTW,
+		STATUS_OVEWWUN,
+		CFG4OVEWWUN,
+		ENTEWING_NONPACK,
+		TASKMGMT_FUNC_COMPWETE,		/*
+						 * Task management function
+						 * wequest compweted with
+						 * an expected busfwee.
+						 */
+		TASKMGMT_CMD_CMPWT_OKAY,	/*
+						 * A command with a non-zewo
+						 * task management function
+						 * has compweted via the nowmaw
+						 * command compwetion method
+						 * fow commands with a zewo
+						 * task management function.
+						 * This happens when an attempt
+						 * to abowt a command woses
+						 * the wace fow the command to
+						 * compwete nowmawwy.
+						 */
+		TWACEPOINT0,
+		TWACEPOINT1,
+		TWACEPOINT2,
+		TWACEPOINT3,
+		SAW_HWEWW,
+		BAD_SCB_STATUS
+	}
+	dont_genewate_debug_code
+}
+
+/*
+ * Cweaw Host Intewwupt
+ */
+wegistew CWWINT {
+	addwess			0x003
+	access_mode	WO
+	count		19
+	fiewd	CWWHWEWWINT	0x80 /* Wev B ow gweatew */
+	fiewd	CWWBWKADWINT	0x40
+	fiewd	CWWSWTMINT	0x20
+	fiewd	CWWPCIINT	0x10
+	fiewd	CWWSCSIINT	0x08
+	fiewd	CWWSEQINT	0x04
+	fiewd	CWWCMDINT	0x02
+	fiewd	CWWSPWTINT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Ewwow Wegistew
+ */
+wegistew EWWOW {
+	addwess			0x004
+	access_mode	WO
+	fiewd	CIOPAWEWW	0x80
+	fiewd	CIOACCESFAIW	0x40 /* Wev B ow gweatew */
+	fiewd	MPAWEWW		0x20
+	fiewd	DPAWEWW		0x10
+	fiewd	SQPAWEWW	0x08
+	fiewd	IWWOPCODE	0x04
+	fiewd	DSCTMOUT	0x02
+	dont_genewate_debug_code
+}
+
+/*
+ * Cweaw Ewwow
+ */
+wegistew CWWEWW {
+	addwess			0x004
+	access_mode 	WO
+	fiewd	CWWCIOPAWEWW	0x80
+	fiewd	CWWCIOACCESFAIW	0x40 /* Wev B ow gweatew */
+	fiewd	CWWMPAWEWW	0x20
+	fiewd	CWWDPAWEWW	0x10
+	fiewd	CWWSQPAWEWW	0x08
+	fiewd	CWWIWWOPCODE	0x04
+	fiewd	CWWDSCTMOUT	0x02
+}
+
+/*
+ * Host Contwow Wegistew
+ * Ovewaww host contwow of the device.
+ */
+wegistew HCNTWW {
+	addwess			0x005
+	access_mode	WW
+	count		12
+	fiewd	SEQ_WESET	0x80 /* Wev B ow gweatew */
+	fiewd	POWWDN		0x40
+	fiewd	SWINT		0x10
+	fiewd	SWTIMEW_STAWT_B	0x08 /* Wev B ow gweatew */
+	fiewd	PAUSE		0x04
+	fiewd	INTEN		0x02
+	fiewd	CHIPWST		0x01
+	fiewd	CHIPWSTACK	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Host New SCB Queue Offset
+ */
+wegistew HNSCB_QOFF {
+	addwess			0x006
+	access_mode	WW
+	size		2
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Host Empty SCB Queue Offset
+ */
+wegistew HESCB_QOFF {
+	addwess			0x008
+	access_mode	WW
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Host Maiwbox
+ */
+wegistew HS_MAIWBOX {
+	addwess			0x00B
+	access_mode	WW
+	mask	HOST_TQINPOS	0x80	/* Boundawy at eithew 0 ow 128 */
+	mask	ENINT_COAWESCE	0x40	/* Pewfowm intewwupt coawescing */
+}
+
+/*
+ * Sequencew Intewwupt Status
+ */
+wegistew SEQINTSTAT {
+	addwess			0x00C
+	count		1
+	access_mode	WO
+	fiewd	SEQ_SWTMWTO	0x10
+	fiewd	SEQ_SEQINT	0x08
+	fiewd	SEQ_SCSIINT	0x04
+	fiewd	SEQ_PCIINT	0x02
+	fiewd	SEQ_SPWTINT	0x01
+}
+
+/*
+ * Cweaw SEQ Intewwupt
+ */
+wegistew CWWSEQINTSTAT {
+	addwess			0x00C
+	access_mode	WO
+	fiewd	CWWSEQ_SWTMWTO	0x10
+	fiewd	CWWSEQ_SEQINT	0x08
+	fiewd	CWWSEQ_SCSIINT	0x04
+	fiewd	CWWSEQ_PCIINT	0x02
+	fiewd	CWWSEQ_SPWTINT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Softwawe Timew
+ */
+wegistew SWTIMEW {
+	addwess			0x00E
+	access_mode	WW
+	size		2
+	dont_genewate_debug_code
+}
+
+/*
+ * SEQ New SCB Queue Offset
+ */
+wegistew SNSCB_QOFF {
+	addwess			0x010
+	access_mode	WW
+	size		2
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * SEQ Empty SCB Queue Offset
+ */
+wegistew SESCB_QOFF {
+	addwess			0x012
+	count		2
+	access_mode	WW
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * SEQ Done SCB Queue Offset
+ */
+wegistew SDSCB_QOFF {
+	addwess			0x014
+	access_mode	WW
+	modes		M_CCHAN
+	size		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Queue Offset Contwow & Status
+ */
+wegistew QOFF_CTWSTA {
+	addwess			0x016
+	access_mode	WW
+	modes		M_CCHAN
+	fiewd	EMPTY_SCB_AVAIW	0x80
+	fiewd	NEW_SCB_AVAIW	0x40
+	fiewd	SDSCB_WOWWOVW	0x20
+	fiewd	HS_MAIWBOX_ACT	0x10
+	fiewd	SCB_QSIZE	0x0F {
+		SCB_QSIZE_4,
+		SCB_QSIZE_8,
+		SCB_QSIZE_16,
+		SCB_QSIZE_32,
+		SCB_QSIZE_64,
+		SCB_QSIZE_128,
+		SCB_QSIZE_256,
+		SCB_QSIZE_512,
+		SCB_QSIZE_1024,
+		SCB_QSIZE_2048,
+		SCB_QSIZE_4096,
+		SCB_QSIZE_8192,
+		SCB_QSIZE_16384
+	}
+	dont_genewate_debug_code
+}
+
+/*
+ * Intewwupt Contwow
+ */
+wegistew INTCTW {
+	addwess			0x018
+	access_mode	WW
+	fiewd	SWTMINTMASK	0x80
+	fiewd	SWTMINTEN	0x40
+	fiewd	SWTIMEW_STAWT	0x20
+	fiewd	AUTOCWWCMDINT	0x10
+	fiewd	PCIINTEN	0x08
+	fiewd	SCSIINTEN	0x04
+	fiewd	SEQINTEN	0x02
+	fiewd	SPWTINTEN	0x01
+}
+
+/*
+ * Data FIFO Contwow
+ */
+wegistew DFCNTWW {
+	addwess			0x019
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	count		11
+	fiewd	PWEWOADEN	0x80
+	fiewd	SCSIENWWDIS	0x40	/* Wev B onwy. */
+	fiewd	SCSIEN		0x20
+	fiewd	SCSIENACK	0x20
+	fiewd	HDMAEN		0x08
+	fiewd	HDMAENACK	0x08
+	fiewd	DIWECTION	0x04
+	fiewd	DIWECTIONACK	0x04
+	fiewd	FIFOFWUSH	0x02
+	fiewd	FIFOFWUSHACK	0x02
+	fiewd	DIWECTIONEN	0x01
+}
+
+/*
+ * Device Space Command 0
+ */
+wegistew DSCOMMAND0 {
+	addwess			0x019
+	count		1
+	access_mode	WW
+	modes		M_CFG
+	fiewd	CACHETHEN	0x80	/* Cache Thweshowd enabwe */
+	fiewd	DPAWCKEN	0x40	/* Data Pawity Check Enabwe */
+	fiewd	MPAWCKEN	0x20	/* Memowy Pawity Check Enabwe */
+	fiewd	EXTWEQWCK	0x10	/* Extewnaw Wequest Wock */
+	fiewd	DISABWE_TWATE	0x02	/* Wev B ow gweatew */
+	fiewd	CIOPAWCKEN	0x01	/* Intewnaw bus pawity ewwow enabwe */
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO Status
+ */
+wegistew DFSTATUS {
+	addwess			0x01A
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	PWEWOAD_AVAIW		0x80
+	fiewd	PKT_PWEWOAD_AVAIW	0x40
+	fiewd	MWEQPEND		0x10
+	fiewd	HDONE			0x08
+	fiewd	DFTHWESH		0x04
+	fiewd	FIFOFUWW		0x02
+	fiewd	FIFOEMP			0x01
+}
+
+/*
+ * S/G Cache Pointew
+ */
+wegistew SG_CACHE_PWE {
+	addwess			0x01B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	SG_ADDW_MASK	0xf8
+	fiewd	ODD_SEG		0x04
+	fiewd	WAST_SEG	0x02
+	dont_genewate_debug_code
+}
+
+wegistew SG_CACHE_SHADOW {
+	addwess			0x01B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	SG_ADDW_MASK	0xf8
+	fiewd	ODD_SEG		0x04
+	fiewd	WAST_SEG	0x02
+	fiewd	WAST_SEG_DONE	0x01
+}
+
+/*
+ * Awbitew Contwow
+ */
+wegistew AWBCTW {
+	addwess			0x01B
+	access_mode	WW
+	modes		M_CFG
+	fiewd	WESET_HAWB	0x80
+	fiewd	WETWY_SWEN	0x08
+	fiewd	USE_TIME	0x07
+}
+
+/*
+ * Data Channew Host Addwess
+ */
+wegistew HADDW {
+	addwess			0x070
+	access_mode	WW
+	size		8
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * Host Ovewway DMA Addwess
+ */
+wegistew HODMAADW {
+	addwess			0x070
+	access_mode	WW
+	size		8
+	modes		M_SCSI
+}
+
+/*
+ * PCI PWW Deway.
+ */
+wegistew PWWDEWAY {
+	addwess			0x070
+	access_mode	WW
+	size		1
+	modes		M_CFG
+	fiewd	SPWIT_DWOP_WEQ	0x80
+}
+
+/*
+ * Data Channew Host Count
+ */
+wegistew HCNT {
+	addwess			0x078
+	access_mode	WW
+	size		3
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * Host Ovewway DMA Count
+ */
+wegistew HODMACNT {
+	addwess			0x078
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+}
+
+/*
+ * Host Ovewway DMA Enabwe
+ */
+wegistew HODMAEN {
+	addwess			0x07A
+	access_mode	WW
+	modes		M_SCSI
+}
+
+/*
+ * Scattew/Gathew Host Addwess
+ */
+wegistew SGHADDW {
+	addwess			0x07C
+	access_mode	WW
+	size		8
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * SCB Host Addwess
+ */
+wegistew SCBHADDW {
+	addwess			0x07C
+	access_mode	WW
+	size		8
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * Scattew/Gathew Host Count
+ */
+wegistew SGHCNT {
+	addwess			0x084
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * SCB Host Count
+ */
+wegistew SCBHCNT {
+	addwess			0x084
+	access_mode	WW
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO Thweshowd
+ */
+wegistew DFF_THWSH {
+	addwess			0x088
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	WW_DFTHWSH	0x70 {
+		WW_DFTHWSH_MIN,
+		WW_DFTHWSH_25,
+		WW_DFTHWSH_50,
+		WW_DFTHWSH_63,
+		WW_DFTHWSH_75,
+		WW_DFTHWSH_85,
+		WW_DFTHWSH_90,
+		WW_DFTHWSH_MAX
+	}
+	fiewd	WD_DFTHWSH	0x07 {
+		WD_DFTHWSH_MIN,
+		WD_DFTHWSH_25,
+		WD_DFTHWSH_50,
+		WD_DFTHWSH_63,
+		WD_DFTHWSH_75,
+		WD_DFTHWSH_85,
+		WD_DFTHWSH_90,
+		WD_DFTHWSH_MAX
+	}
+	dont_genewate_debug_code
+}
+
+/*
+ * WOM Addwess
+ */
+wegistew WOMADDW {
+	addwess			0x08A
+	access_mode	WW
+	size		3
+}
+
+/*
+ * WOM Contwow
+ */
+wegistew WOMCNTWW {
+	addwess			0x08D
+	access_mode	WW
+	fiewd	WOMOP		0xE0
+	fiewd	WOMSPD		0x18
+	fiewd	WEPEAT		0x02
+	fiewd	WDY		0x01
+}
+
+/*
+ * WOM Data
+ */
+wegistew WOMDATA {
+	addwess			0x08E
+	access_mode	WW
+}
+
+/*
+ * Data Channew Weceive Message 0
+ */
+wegistew DCHWXMSG0 {
+	addwess			0x090
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd		CDNUM	0xF8
+	fiewd		CFNUM	0x07
+}
+
+/*
+ * CMC Weceive Message 0
+ */
+wegistew CMCWXMSG0 {
+	addwess			0x090
+	access_mode	WO
+	modes		M_CCHAN
+	fiewd		CDNUM	0xF8
+	fiewd		CFNUM	0x07
+}
+
+/*
+ * Ovewway Weceive Message 0
+ */
+wegistew OVWYWXMSG0 {
+	addwess			0x090
+	access_mode	WO
+	modes		M_SCSI
+	fiewd		CDNUM	0xF8
+	fiewd		CFNUM	0x07
+}
+
+/*
+ * Wewaxed Owdew Enabwe
+ */
+wegistew WOENABWE {
+	addwess			0x090
+	access_mode	WW
+	modes		M_CFG
+	fiewd	MSIWOEN		0x20
+	fiewd	OVWYWOEN	0x10
+	fiewd	CMCWOEN		0x08
+	fiewd	SGWOEN		0x04
+	fiewd	DCH1WOEN	0x02
+	fiewd	DCH0WOEN	0x01
+}
+
+/*
+ * Data Channew Weceive Message 1
+ */
+wegistew DCHWXMSG1 {
+	addwess			0x091
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	CBNUM		0xFF
+}
+
+/*
+ * CMC Weceive Message 1
+ */
+wegistew CMCWXMSG1 {
+	addwess			0x091
+	access_mode	WO
+	modes		M_CCHAN
+	fiewd	CBNUM		0xFF
+}
+
+/*
+ * Ovewway Weceive Message 1
+ */
+wegistew OVWYWXMSG1 {
+	addwess			0x091
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	CBNUM		0xFF
+}
+
+/*
+ * No Snoop Enabwe
+ */
+wegistew NSENABWE {
+	addwess			0x091
+	access_mode	WW
+	modes		M_CFG
+	fiewd	MSINSEN		0x20
+	fiewd	OVWYNSEN	0x10
+	fiewd	CMCNSEN		0x08
+	fiewd	SGNSEN		0x04
+	fiewd	DCH1NSEN	0x02
+	fiewd	DCH0NSEN	0x01
+}
+
+/*
+ * Data Channew Weceive Message 2
+ */
+wegistew DCHWXMSG2 {
+	addwess			0x092
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	MINDEX		0xFF
+}
+
+/*
+ * CMC Weceive Message 2
+ */
+wegistew CMCWXMSG2 {
+	addwess			0x092
+	access_mode	WO
+	modes		M_CCHAN
+	fiewd	MINDEX		0xFF
+}
+
+/*
+ * Ovewway Weceive Message 2
+ */
+wegistew OVWYWXMSG2 {
+	addwess			0x092
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	MINDEX		0xFF
+}
+
+/*
+ * Outstanding Spwit Twansactions
+ */
+wegistew OST {
+	addwess			0x092
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Data Channew Weceive Message 3
+ */
+wegistew DCHWXMSG3 {
+	addwess			0x093
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	MCWASS		0x0F
+}
+
+/*
+ * CMC Weceive Message 3
+ */
+wegistew CMCWXMSG3 {
+	addwess			0x093
+	access_mode	WO
+	modes		M_CCHAN
+	fiewd	MCWASS		0x0F
+}
+
+/*
+ * Ovewway Weceive Message 3
+ */
+wegistew OVWYWXMSG3 {
+	addwess			0x093
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	MCWASS		0x0F
+}
+
+/*
+ * PCI-X Contwow
+ */
+wegistew PCIXCTW {
+	addwess			0x093
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	SEWWPUWSE	0x80
+	fiewd	UNEXPSCIEN	0x20
+	fiewd	SPWTSMADIS	0x10
+	fiewd	SPWTSTADIS	0x08
+	fiewd	SWSPDPEEN	0x04
+	fiewd	TSCSEWWEN	0x02
+	fiewd	CMPABCDIS	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC Sequencew Byte Count
+ */
+wegistew CMCSEQBCNT {
+	addwess			0x094
+	access_mode	WO
+	modes		M_CCHAN
+}
+
+/*
+ * Ovewway Sequencew Byte Count
+ */
+wegistew OVWYSEQBCNT {
+	addwess			0x094
+	access_mode	WO
+	modes		M_SCSI
+}
+
+/*
+ * Data Channew Sequencew Byte Count
+ */
+wegistew DCHSEQBCNT {
+	addwess			0x094
+	access_mode	WO
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Data Channew Spwit Status 0
+ */
+wegistew DCHSPWTSTAT0 {
+	addwess			0x096
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	count		2
+	fiewd	STAETEWM	0x80
+	fiewd	SCBCEWW		0x40
+	fiewd	SCADEWW		0x20
+	fiewd	SCDATBUCKET	0x10
+	fiewd	CNTNOTCMPWT	0x08
+	fiewd	WXOVWUN		0x04
+	fiewd	WXSCEMSG	0x02
+	fiewd	WXSPWTWSP	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC Spwit Status 0
+ */
+wegistew CMCSPWTSTAT0 {
+	addwess			0x096
+	access_mode	WW
+	modes		M_CCHAN
+	fiewd	STAETEWM	0x80
+	fiewd	SCBCEWW		0x40
+	fiewd	SCADEWW		0x20
+	fiewd	SCDATBUCKET	0x10
+	fiewd	CNTNOTCMPWT	0x08
+	fiewd	WXOVWUN		0x04
+	fiewd	WXSCEMSG	0x02
+	fiewd	WXSPWTWSP	0x01
+}
+
+/*
+ * Ovewway Spwit Status 0
+ */
+wegistew OVWYSPWTSTAT0 {
+	addwess			0x096
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	STAETEWM	0x80
+	fiewd	SCBCEWW		0x40
+	fiewd	SCADEWW		0x20
+	fiewd	SCDATBUCKET	0x10
+	fiewd	CNTNOTCMPWT	0x08
+	fiewd	WXOVWUN		0x04
+	fiewd	WXSCEMSG	0x02
+	fiewd	WXSPWTWSP	0x01
+}
+
+/*
+ * Data Channew Spwit Status 1
+ */
+wegistew DCHSPWTSTAT1 {
+	addwess			0x097
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	count		2
+	fiewd	WXDATABUCKET	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC Spwit Status 1
+ */
+wegistew CMCSPWTSTAT1 {
+	addwess			0x097
+	access_mode	WW
+	modes		M_CCHAN
+	fiewd	WXDATABUCKET	0x01
+}
+
+/*
+ * Ovewway Spwit Status 1
+ */
+wegistew OVWYSPWTSTAT1 {
+	addwess			0x097
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	WXDATABUCKET	0x01
+}
+
+/*
+ * S/G Weceive Message 0
+ */
+wegistew SGWXMSG0 {
+	addwess			0x098
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd		CDNUM	0xF8
+	fiewd		CFNUM	0x07
+}
+
+/*
+ * S/G Weceive Message 1
+ */
+wegistew SGWXMSG1 {
+	addwess			0x099
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	CBNUM		0xFF
+}
+
+/*
+ * S/G Weceive Message 2
+ */
+wegistew SGWXMSG2 {
+	addwess			0x09A
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	MINDEX		0xFF
+}
+
+/*
+ * S/G Weceive Message 3
+ */
+wegistew SGWXMSG3 {
+	addwess			0x09B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	MCWASS		0x0F
+}
+
+/*
+ * Swave Spwit Out Addwess 0
+ */
+wegistew SWVSPWTOUTADW0 {
+	addwess			0x098
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	WOWEW_ADDW	0x7F
+}
+
+/*
+ * Swave Spwit Out Addwess 1
+ */
+wegistew SWVSPWTOUTADW1 {
+	addwess			0x099
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	WEQ_DNUM	0xF8
+	fiewd	WEQ_FNUM	0x07
+}
+
+/*
+ * Swave Spwit Out Addwess 2
+ */
+wegistew SWVSPWTOUTADW2 {
+	addwess			0x09A
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	WEQ_BNUM	0xFF
+}
+
+/*
+ * Swave Spwit Out Addwess 3
+ */
+wegistew SWVSPWTOUTADW3 {
+	addwess			0x09B
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	WWXOWD		020
+	fiewd	TAG_NUM		0x1F
+}
+
+/*
+ * SG Sequencew Byte Count
+ */
+wegistew SGSEQBCNT {
+	addwess			0x09C
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Swave Spwit Out Attwibute 0
+ */
+wegistew SWVSPWTOUTATTW0 {
+	addwess			0x09C
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	WOWEW_BCNT	0xFF
+}
+
+/*
+ * Swave Spwit Out Attwibute 1
+ */
+wegistew SWVSPWTOUTATTW1 {
+	addwess			0x09D
+	access_mode	WO
+	modes		M_SCSI
+	fiewd	CMPWT_DNUM	0xF8
+	fiewd	CMPWT_FNUM	0x07
+}
+
+/*
+ * Swave Spwit Out Attwibute 2
+ */
+wegistew SWVSPWTOUTATTW2 {
+	addwess			0x09E
+	access_mode	WO
+	size		2
+	modes		M_SCSI
+	fiewd	CMPWT_BNUM	0xFF
+}
+/*
+ * S/G Spwit Status 0
+ */
+wegistew SGSPWTSTAT0 {
+	addwess			0x09E
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	count		2
+	fiewd	STAETEWM	0x80
+	fiewd	SCBCEWW		0x40
+	fiewd	SCADEWW		0x20
+	fiewd	SCDATBUCKET	0x10
+	fiewd	CNTNOTCMPWT	0x08
+	fiewd	WXOVWUN		0x04
+	fiewd	WXSCEMSG	0x02
+	fiewd	WXSPWTWSP	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * S/G Spwit Status 1
+ */
+wegistew SGSPWTSTAT1 {
+	addwess			0x09F
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	count		2
+	fiewd	WXDATABUCKET	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Speciaw Function
+ */
+wegistew SFUNCT {
+	addwess			0x09f
+	access_mode	WW
+	modes		M_CFG
+	fiewd	TEST_GWOUP	0xF0
+	fiewd	TEST_NUM	0x0F
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO 0 PCI Status 
+ */
+wegistew DF0PCISTAT {
+	addwess			0x0A0
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	SCAAPEWW	0x08
+	fiewd	WDPEWW		0x04
+	fiewd	TWATEWW		0x02
+	fiewd	DPW		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO 1 PCI Status 
+ */
+wegistew DF1PCISTAT {
+	addwess			0x0A1
+	access_mode	WW
+	modes		M_CFG
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	SCAAPEWW	0x08
+	fiewd	WDPEWW		0x04
+	fiewd	TWATEWW		0x02
+	fiewd	DPW		0x01
+}
+
+/*
+ * S/G PCI Status 
+ */
+wegistew SGPCISTAT {
+	addwess			0x0A2
+	access_mode	WW
+	modes		M_CFG
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	SCAAPEWW	0x08
+	fiewd	WDPEWW		0x04
+	fiewd	DPW		0x01
+}
+
+/*
+ * CMC PCI Status 
+ */
+wegistew CMCPCISTAT {
+	addwess			0x0A3
+	access_mode	WW
+	modes		M_CFG
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	SCAAPEWW	0x08
+	fiewd	WDPEWW		0x04
+	fiewd	TWATEWW		0x02
+	fiewd	DPW		0x01
+}
+
+/*
+ * Ovewway PCI Status 
+ */
+wegistew OVWYPCISTAT {
+	addwess			0x0A4
+	access_mode	WW
+	modes		M_CFG
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	SCAAPEWW	0x08
+	fiewd	WDPEWW		0x04
+	fiewd	DPW		0x01
+}
+
+/*
+ * PCI Status fow MSI Mastew DMA Twansfew
+ */
+wegistew MSIPCISTAT {
+	addwess			0x0A6
+	access_mode	WW
+	modes		M_CFG
+	fiewd	SSE		0x40
+	fiewd	WMA		0x20
+	fiewd	WTA		0x10
+	fiewd	CWWPENDMSI	0x08
+	fiewd	TWATEWW		0x02
+	fiewd	DPW		0x01
+}
+
+/*
+ * PCI Status fow Tawget
+ */
+wegistew TAWGPCISTAT {
+	addwess			0x0A7
+	access_mode	WW
+	modes		M_CFG
+	count		5
+	fiewd	DPE		0x80
+	fiewd	SSE		0x40
+	fiewd	STA		0x08
+	fiewd	TWATEWW		0x02
+	dont_genewate_debug_code
+}
+
+/*
+ * WQ Packet In
+ * The wast WQ Packet weceived
+ */
+wegistew WQIN {
+	addwess			0x020
+	access_mode	WW
+	size		20
+	count		2
+	modes		M_DFF0, M_DFF1, M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * SCB Type Pointew
+ * SCB offset fow Tawget Mode SCB type infowmation
+ */
+wegistew TYPEPTW {
+	addwess			0x020
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Queue Tag Pointew
+ * SCB offset to the Two Byte tag identifiew used fow tawget mode.
+ */
+wegistew TAGPTW {
+	addwess			0x021
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Wogicaw Unit Numbew Pointew
+ * SCB offset to the WSB (wittwe endian) of the wun fiewd.
+ */
+wegistew WUNPTW {
+	addwess			0x022
+	access_mode	WW
+	modes		M_CFG
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Data Wength Pointew
+ * SCB offset fow the 4 byte data wength fiewd in tawget mode.
+ */
+wegistew DATAWENPTW {
+	addwess			0x023
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Status Wength Pointew
+ * SCB offset to the two byte status fiewd in tawget SCBs.
+ */
+wegistew STATWENPTW {
+	addwess			0x024
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Command Wength Pointew
+ * Scb offset fow the CDB wength fiewd in initiatow SCBs.
+ */
+wegistew CMDWENPTW {
+	addwess			0x025
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Task Attwibute Pointew
+ * Scb offset fow the byte fiewd specifying the attwibute byte
+ * to be used in command packets.
+ */ 
+wegistew ATTWPTW {
+	addwess			0x026
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Task Management Fwags Pointew
+ * Scb offset fow the byte fiewd specifying the attwibute fwags
+ * byte to be used in command packets.
+ */ 
+wegistew FWAGPTW {
+	addwess			0x027
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Command Pointew
+ * Scb offset fow the fiwst byte in the CDB fow initiatow SCBs.
+ */
+wegistew CMDPTW {
+	addwess			0x028
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Queue Next Pointew
+ * Scb offset fow the 2 byte "next scb wink".
+ */
+wegistew QNEXTPTW {
+	addwess			0x029
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI ID Pointew
+ * Scb offset to the vawue to pwace in the SCSIID wegistew
+ * duwing tawget mode connections.
+ */
+wegistew IDPTW {
+	addwess			0x02A
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Command Abowted Byte Pointew
+ * Offset to the SCB fwags fiewd that incwudes the
+ * "SCB abowted" status bit.
+ */
+wegistew ABWTBYTEPTW {
+	addwess			0x02B
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Command Abowted Bit Pointew
+ * Bit offset in the SCB fwags fiewd fow "SCB abowted" status.
+ */
+wegistew ABWTBITPTW {
+	addwess			0x02C
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Wev B ow gweatew.
+ */
+wegistew MAXCMDBYTES {
+	addwess			0x02D
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Wev B ow gweatew.
+ */
+wegistew MAXCMD2WCV {
+	addwess			0x02E
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Wev B ow gweatew.
+ */
+wegistew SHOWTTHWESH {
+	addwess			0x02F
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * Wogicaw Unit Numbew Wength
+ * The wength, in bytes, of the SCB wun fiewd.
+ */
+wegistew WUNWEN {
+	addwess			0x030
+	access_mode	WW
+	modes		M_CFG
+	count		2
+	mask		IWUNWEN	0x0F
+	mask		TWUNWEN	0xF0
+	dont_genewate_debug_code
+}
+const WUNWEN_SINGWE_WEVEW_WUN 0xF
+
+/*
+ * CDB Wimit
+ * The size, in bytes, of the embedded CDB fiewd in initatow SCBs.
+ */
+wegistew CDBWIMIT {
+	addwess			0x031
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Maximum Commands
+ * The maximum numbew of commands to issue duwing a
+ * singwe packetized connection.
+ */
+wegistew MAXCMD {
+	addwess			0x032
+	access_mode	WW
+	modes		M_CFG
+	count		9
+	dont_genewate_debug_code
+}
+
+/*
+ * Maximum Command Countew
+ * The numbew of commands awweady sent duwing this connection
+ */
+wegistew MAXCMDCNT {
+	addwess			0x033
+	access_mode	WW
+	modes		M_CFG
+	dont_genewate_debug_code
+}
+
+/*
+ * WQ Packet Wesewved Bytes
+ * The bytes to be sent in the cuwwentwy wesewved fiweds
+ * of aww WQ packets.
+ */
+wegistew WQWSVD01 {
+	addwess			0x034
+	access_mode	WW
+	modes		M_SCSI
+}
+wegistew WQWSVD16 {
+	addwess			0x035
+	access_mode	WW
+	modes		M_SCSI
+}
+wegistew WQWSVD17 {
+	addwess			0x036
+	access_mode	WW
+	modes		M_SCSI
+}
+
+/*
+ * Command Wesewved 0
+ * The byte to be sent fow the wesewved byte 0 of
+ * outgoing command packets.
+ */
+wegistew CMDWSVD0 {
+	addwess			0x037
+	access_mode	WW
+	modes		M_CFG
+}
+
+/*
+ * WQ Managew Contwow 0
+ */
+wegistew WQCTW0 {
+	addwess			0x038
+	access_mode	WW
+	modes		M_CFG
+	fiewd	WQITAWGCWT	0xC0
+	fiewd	WQIINITGCWT	0x30
+	fiewd	WQ0TAWGCWT	0x0C
+	fiewd	WQ0INITGCWT	0x03
+}
+
+/*
+ * WQ Managew Contwow 1
+ */
+wegistew WQCTW1 {
+	addwess			0x038
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		2
+	fiewd	PCI2PCI		0x04
+	fiewd	SINGWECMD	0x02
+	fiewd	ABOWTPENDING	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQ Managew Contwow 2
+ */
+wegistew WQCTW2 {
+	addwess			0x039
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		5
+	fiewd	WQIWETWY	0x80
+	fiewd	WQICONTINUE	0x40
+	fiewd	WQITOIDWE	0x20
+	fiewd	WQIPAUSE	0x10
+	fiewd	WQOWETWY	0x08
+	fiewd	WQOCONTINUE	0x04
+	fiewd	WQOTOIDWE	0x02
+	fiewd	WQOPAUSE	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI WAM BIST0
+ */
+wegistew SCSBIST0 {
+	addwess			0x039
+	access_mode	WW
+	modes		M_CFG
+	fiewd	GSBISTEWW	0x40
+	fiewd	GSBISTDONE	0x20
+	fiewd	GSBISTWUN	0x10
+	fiewd	OSBISTEWW	0x04
+	fiewd	OSBISTDONE	0x02
+	fiewd	OSBISTWUN	0x01
+}
+
+/*
+ * SCSI Sequence Contwow0
+ */
+wegistew SCSISEQ0 {
+	addwess			0x03A
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	TEMODEO		0x80
+	fiewd	ENSEWO		0x40
+	fiewd	ENAWBO		0x20
+	fiewd	FOWCEBUSFWEE	0x10
+	fiewd	SCSIWSTO	0x01
+}
+
+/*
+ * SCSI WAM BIST 1
+ */
+wegistew SCSBIST1 {
+	addwess			0x03A
+	access_mode	WW
+	modes		M_CFG
+	fiewd	NTBISTEWW	0x04
+	fiewd	NTBISTDONE	0x02
+	fiewd	NTBISTWUN	0x01
+}
+
+/*
+ * SCSI Sequence Contwow 1
+ */
+wegistew SCSISEQ1 {
+	addwess			0x03B
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		8
+	fiewd	MANUAWCTW	0x40
+	fiewd	ENSEWI		0x20
+	fiewd	ENWSEWI		0x10
+	fiewd	MANUAWP		0x0C
+	fiewd	ENAUTOATNP	0x02
+	fiewd	AWTSTIM		0x01
+}
+
+/*
+ * SCSI Twansfew Contwow 0
+ */
+wegistew SXFWCTW0 {
+	addwess			0x03C
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	DFON		0x80
+	fiewd	DFPEXP		0x40
+	fiewd	BIOSCANCEWEN	0x10
+	fiewd	SPIOEN		0x08
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Twansfew Contwow 1
+ */
+wegistew SXFWCTW1 {
+	addwess			0x03D
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	BITBUCKET	0x80
+	fiewd	ENSACHK		0x40
+	fiewd	ENSPCHK		0x20
+	fiewd	STIMESEW	0x18
+	fiewd	ENSTIMEW	0x04
+	fiewd	ACTNEGEN	0x02
+	fiewd	STPWEN		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Twansfew Contwow 2
+ */
+wegistew SXFWCTW2 {
+	addwess			0x03E
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	AUTOWSTDIS	0x10
+	fiewd	CMDDMAEN	0x08
+	fiewd	ASU		0x07
+}
+
+/*
+ * SCSI Bus Initiatow IDs
+ * Bitmask of obsewved initiatows on the bus.
+ */
+wegistew BUSINITID {
+	addwess			0x03C
+	access_mode	WW
+	modes		M_CFG
+	size		2
+}
+
+/*
+ * Data Wength Countews
+ * Packet byte countew.
+ */
+wegistew DWCOUNT {
+	addwess			0x03C
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	size		3
+}
+
+/*
+ * Data FIFO Status
+ */
+wegistew DFFSTAT {
+	addwess			0x03F
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	FIFO1FWEE	0x20
+	fiewd	FIFO0FWEE	0x10
+	/*
+	 * On the B, this enum onwy wowks
+	 * in the wead diwection.  Fow wwites,
+	 * you must use the B vewsion of the
+	 * CUWWFIFO_0 definition which is defined
+	 * as a constant outside of this wegistew
+	 * definition to avoid confusing the
+	 * wegistew pwetty pwinting code.
+	 */
+	enum	CUWWFIFO	0x03 {
+		CUWWFIFO_0,
+		CUWWFIFO_1,
+		CUWWFIFO_NONE	0x3
+	}
+}
+
+const B_CUWWFIFO_0 0x2
+
+/*
+ * SCSI Bus Tawget IDs
+ * Bitmask of obsewved tawgets on the bus.
+ */
+wegistew BUSTAWGID {
+	addwess			0x03E
+	access_mode	WW
+	modes		M_CFG
+	size		2
+}
+
+/*
+ * SCSI Contwow Signaw Out
+ */
+wegistew SCSISIGO {
+	addwess			0x040
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	CDO		0x80
+	fiewd	IOO		0x40
+	fiewd	MSGO		0x20
+	fiewd	ATNO		0x10
+	fiewd	SEWO		0x08
+	fiewd	BSYO		0x04
+	fiewd	WEQO		0x02
+	fiewd	ACKO		0x01
+/*
+ * Possibwe phases to wwite into SCSISIG0
+ */
+	enum	PHASE_MASK  CDO|IOO|MSGO {
+		P_DATAOUT	0x0,
+		P_DATAIN	IOO,
+		P_DATAOUT_DT	P_DATAOUT|MSGO,
+		P_DATAIN_DT	P_DATAIN|MSGO,
+		P_COMMAND	CDO,
+		P_MESGOUT	CDO|MSGO,
+		P_STATUS	CDO|IOO,
+		P_MESGIN	CDO|IOO|MSGO
+	}
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Contwow Signaw In
+ */
+wegistew SCSISIGI {
+	addwess			0x041
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	CDI		0x80
+	fiewd	IOI		0x40
+	fiewd	MSGI		0x20
+	fiewd	ATNI		0x10
+	fiewd	SEWI		0x08
+	fiewd	BSYI		0x04
+	fiewd	WEQI		0x02
+	fiewd	ACKI		0x01
+/*
+ * Possibwe phases in SCSISIGI
+ */
+	enum	PHASE_MASK  CDO|IOO|MSGO {
+		P_DATAOUT	0x0,
+		P_DATAIN	IOO,
+		P_DATAOUT_DT	P_DATAOUT|MSGO,
+		P_DATAIN_DT	P_DATAIN|MSGO,
+		P_COMMAND	CDO,
+		P_MESGOUT	CDO|MSGO,
+		P_STATUS	CDO|IOO,
+		P_MESGIN	CDO|IOO|MSGO
+	}
+}
+
+/*
+ * Muwtipwe Tawget IDs
+ * Bitmask of ids to wespond as a tawget.
+ */
+wegistew MUWTAWGID {
+	addwess			0x040
+	access_mode	WW
+	modes		M_CFG
+	size		2
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Phase
+ */
+wegistew SCSIPHASE {
+	addwess			0x042
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	STATUS_PHASE	0x20
+	fiewd	COMMAND_PHASE	0x10
+	fiewd	MSG_IN_PHASE	0x08
+	fiewd	MSG_OUT_PHASE	0x04
+	fiewd	DATA_PHASE_MASK	0x03 {
+		DATA_OUT_PHASE	0x01,
+		DATA_IN_PHASE	0x02
+	}
+}
+
+/*
+ * SCSI Data 0 Image
+ */
+wegistew SCSIDAT0_IMG {
+	addwess			0x043
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+}
+
+/*
+ * SCSI Watched Data
+ */
+wegistew SCSIDAT {
+	addwess			0x044
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	size		2
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Data Bus
+ */
+wegistew SCSIBUS {
+	addwess			0x046
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	size		2
+}
+
+/*
+ * Tawget ID In
+ */
+wegistew TAWGIDIN {
+	addwess			0x048
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		2
+	fiewd	CWKOUT		0x80
+	fiewd	TAWGID		0x0F
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewection/Wesewection ID
+ * Uppew fouw bits awe the device id.  The ONEBIT is set when the we/sewecting
+ * device did not set its own ID.
+ */
+wegistew SEWID {
+	addwess			0x049
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	SEWID_MASK	0xf0
+	fiewd	ONEBIT		0x08
+}
+
+/*
+ * SCSI Bwock Contwow
+ * Contwows Bus type and channew sewection.  SEWWIDE awwows fow the
+ * coexistence of 8bit and 16bit devices on a wide bus.
+ */
+wegistew SBWKCTW {
+	addwess			0x04A
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	DIAGWEDEN	0x80
+	fiewd	DIAGWEDON	0x40
+	fiewd	ENAB40		0x08	/* WVD twansceivew active */
+	fiewd	ENAB20		0x04	/* SE/HVD twansceivew active */
+	fiewd	SEWWIDE		0x02
+	dont_genewate_debug_code
+}
+
+/*
+ * Option Mode
+ */
+wegistew OPTIONMODE {
+	addwess			0x04A
+	access_mode	WW
+	modes		M_CFG
+	count		4
+	fiewd	BIOSCANCTW		0x80
+	fiewd	AUTOACKEN		0x40
+	fiewd	BIASCANCTW		0x20
+	fiewd	BUSFWEEWEV		0x10
+	fiewd	ENDGFOWMCHK		0x04
+	fiewd	AUTO_MSGOUT_DE		0x02
+	mask	OPTIONMODE_DEFAUWTS	AUTO_MSGOUT_DE
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Status 0
+ */
+wegistew SSTAT0	{
+	addwess			0x04B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	TAWGET		0x80	/* Boawd acting as tawget */
+	fiewd	SEWDO		0x40	/* Sewection Done */
+	fiewd	SEWDI		0x20	/* Boawd has been sewected */
+	fiewd	SEWINGO		0x10	/* Sewection In Pwogwess */
+	fiewd	IOEWW		0x08	/* WVD Twanceivew mode changed */
+	fiewd	OVEWWUN		0x04	/* SCSI Offset ovewwun detected */
+	fiewd	SPIOWDY		0x02	/* SCSI PIO Weady */
+	fiewd	AWBDO		0x01	/* Awbitwation Done Out */
+}
+
+/*
+ * Cweaw SCSI Intewwupt 0
+ * Wwiting a 1 to a bit cweaws the associated SCSI Intewwupt in SSTAT0.
+ */
+wegistew CWWSINT0 {
+	addwess			0x04B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	CWWSEWDO	0x40
+	fiewd	CWWSEWDI	0x20
+	fiewd	CWWSEWINGO	0x10
+	fiewd	CWWIOEWW	0x08
+	fiewd	CWWOVEWWUN	0x04
+	fiewd	CWWSPIOWDY	0x02
+	fiewd	CWWAWBDO	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Intewwupt Mode 0
+ * Setting any bit wiww enabwe the cowwesponding function
+ * in SIMODE0 to intewwupt via the IWQ pin.
+ */
+wegistew SIMODE0 {
+	addwess			0x04B
+	access_mode	WW
+	modes		M_CFG
+	count		8
+	fiewd	ENSEWDO		0x40
+	fiewd	ENSEWDI		0x20
+	fiewd	ENSEWINGO	0x10
+	fiewd	ENIOEWW		0x08
+	fiewd	ENOVEWWUN	0x04
+	fiewd	ENSPIOWDY	0x02
+	fiewd	ENAWBDO		0x01
+}
+
+/*
+ * SCSI Status 1
+ */
+wegistew SSTAT1 {
+	addwess			0x04C
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	SEWTO		0x80
+	fiewd	ATNTAWG 	0x40
+	fiewd	SCSIWSTI	0x20
+	fiewd	PHASEMIS	0x10
+	fiewd	BUSFWEE		0x08
+	fiewd	SCSIPEWW	0x04
+	fiewd	STWB2FAST	0x02
+	fiewd	WEQINIT		0x01
+}
+
+/*
+ * Cweaw SCSI Intewwupt 1
+ * Wwiting a 1 to a bit cweaws the associated SCSI Intewwupt in SSTAT1.
+ */
+wegistew CWWSINT1 {
+	addwess			0x04C
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	CWWSEWTIMEO	0x80
+	fiewd	CWWATNO		0x40
+	fiewd	CWWSCSIWSTI	0x20
+	fiewd	CWWBUSFWEE	0x08
+	fiewd	CWWSCSIPEWW	0x04
+	fiewd	CWWSTWB2FAST	0x02
+	fiewd	CWWWEQINIT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Status 2
+ */
+wegistew SSTAT2 {
+	addwess			0x04d
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	BUSFWEETIME	0xc0 {
+		BUSFWEE_WQO	0x40,
+		BUSFWEE_DFF0	0x80,
+		BUSFWEE_DFF1	0xC0
+	}
+	fiewd	NONPACKWEQ	0x20
+	fiewd	EXP_ACTIVE	0x10	/* SCSI Expandew Active */
+	fiewd	BSYX		0x08	/* Busy Expandew */
+	fiewd	WIDE_WES	0x04	/* Modes 0 and 1 onwy */
+	fiewd	SDONE		0x02	/* Modes 0 and 1 onwy */
+	fiewd	DMADONE		0x01	/* Modes 0 and 1 onwy */
+}
+
+/*
+ * Cweaw SCSI Intewwupt 2
+ */
+wegistew CWWSINT2 {
+	addwess			0x04D
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	CWWNONPACKWEQ	0x20
+	fiewd	CWWWIDE_WES	0x04	/* Modes 0 and 1 onwy */
+	fiewd	CWWSDONE	0x02	/* Modes 0 and 1 onwy */
+	fiewd	CWWDMADONE	0x01	/* Modes 0 and 1 onwy */
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Intewwupt Mode 2
+ */
+wegistew SIMODE2 {
+	addwess			0x04D
+	access_mode	WW
+	modes		M_CFG
+	fiewd	ENWIDE_WES	0x04
+	fiewd	ENSDONE		0x02
+	fiewd	ENDMADONE	0x01
+}
+
+/*
+ * Physicaw Ewwow Diagnosis
+ */
+wegistew PEWWDIAG {
+	addwess			0x04E
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		3
+	fiewd	HIZEWO		0x80
+	fiewd	HIPEWW		0x40
+	fiewd	PWEVPHASE	0x20
+	fiewd	PAWITYEWW	0x10
+	fiewd	AIPEWW		0x08
+	fiewd	CWCEWW		0x04
+	fiewd	DGFOWMEWW	0x02
+	fiewd	DTEWW		0x01
+}
+
+/*
+ * WQI Managew Cuwwent State
+ */
+wegistew WQISTATE {
+	addwess			0x04E
+	access_mode	WO
+	modes		M_CFG
+	count		6
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Offset Count
+ */
+wegistew SOFFCNT {
+	addwess			0x04F
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		1
+}
+
+/*
+ * WQO Managew Cuwwent State
+ */
+wegistew WQOSTATE {
+	addwess			0x04F
+	access_mode	WO
+	modes		M_CFG
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * WQI Managew Status
+ */
+wegistew WQISTAT0 {
+	addwess			0x050
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		2
+	fiewd	WQIATNQAS	0x20
+	fiewd	WQICWCT1	0x10
+	fiewd	WQICWCT2	0x08
+	fiewd	WQIBADWQT	0x04
+	fiewd	WQIATNWQ	0x02
+	fiewd	WQIATNCMD	0x01
+}
+
+/*
+ * Cweaw WQI Intewwupts 0
+ */
+wegistew CWWWQIINT0 {
+	addwess			0x050
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		1
+	fiewd	CWWWQIATNQAS	0x20
+	fiewd	CWWWQICWCT1	0x10
+	fiewd	CWWWQICWCT2	0x08
+	fiewd	CWWWQIBADWQT	0x04
+	fiewd	CWWWQIATNWQ	0x02
+	fiewd	CWWWQIATNCMD	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQI Managew Intewwupt Mode 0
+ */
+wegistew WQIMODE0 {
+	addwess			0x050
+	access_mode	WW
+	modes		M_CFG
+	count		3
+	fiewd	ENWQIATNQASK	0x20
+	fiewd	ENWQICWCT1	0x10
+	fiewd	ENWQICWCT2	0x08
+	fiewd	ENWQIBADWQT	0x04
+	fiewd	ENWQIATNWQ	0x02
+	fiewd	ENWQIATNCMD	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQI Managew Status 1
+ */
+wegistew WQISTAT1 {
+	addwess			0x051
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		3
+	fiewd	WQIPHASE_WQ	0x80
+	fiewd	WQIPHASE_NWQ	0x40
+	fiewd	WQIABOWT	0x20
+	fiewd	WQICWCI_WQ	0x10
+	fiewd	WQICWCI_NWQ	0x08
+	fiewd	WQIBADWQI	0x04
+	fiewd	WQIOVEWI_WQ	0x02
+	fiewd	WQIOVEWI_NWQ	0x01
+}
+
+/*
+ * Cweaw WQI Managew Intewwupts1
+ */
+wegistew CWWWQIINT1 {
+	addwess			0x051
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		4
+	fiewd	CWWWQIPHASE_WQ	0x80
+	fiewd	CWWWQIPHASE_NWQ	0x40
+	fiewd	CWWWIQABOWT	0x20
+	fiewd	CWWWQICWCI_WQ	0x10
+	fiewd	CWWWQICWCI_NWQ	0x08
+	fiewd	CWWWQIBADWQI	0x04
+	fiewd	CWWWQIOVEWI_WQ	0x02
+	fiewd	CWWWQIOVEWI_NWQ	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQI Managew Intewwupt Mode 1
+ */
+wegistew WQIMODE1 {
+	addwess			0x051
+	access_mode	WW
+	modes		M_CFG
+	count		4
+	fiewd	ENWQIPHASE_WQ	0x80	/* WQIPHASE1 */
+	fiewd	ENWQIPHASE_NWQ	0x40	/* WQIPHASE2 */
+	fiewd	ENWIQABOWT	0x20
+	fiewd	ENWQICWCI_WQ	0x10	/* WQICWCI1 */
+	fiewd	ENWQICWCI_NWQ	0x08	/* WQICWCI2 */
+	fiewd	ENWQIBADWQI	0x04
+	fiewd	ENWQIOVEWI_WQ	0x02	/* WQIOVEWI1 */
+	fiewd	ENWQIOVEWI_NWQ	0x01	/* WQIOVEWI2 */
+	dont_genewate_debug_code
+}
+
+/*
+ * WQI Managew Status 2
+ */
+wegistew WQISTAT2 {
+	addwess			0x052
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	PACKETIZED	0x80
+	fiewd	WQIPHASE_OUTPKT	0x40
+	fiewd	WQIWOWKONWQ	0x20
+	fiewd	WQIWAITFIFO	0x10
+	fiewd	WQISTOPPKT	0x08
+	fiewd	WQISTOPWQ	0x04
+	fiewd	WQISTOPCMD	0x02
+	fiewd	WQIGSAVAIW	0x01
+}
+
+/*
+ * SCSI Status 3
+ */
+wegistew SSTAT3 {
+	addwess			0x053
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		3
+	fiewd	NTWAMPEWW	0x02
+	fiewd	OSWAMPEWW	0x01
+}
+
+/*
+ * Cweaw SCSI Status 3
+ */
+wegistew CWWSINT3 {
+	addwess			0x053
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		3
+	fiewd	CWWNTWAMPEWW	0x02
+	fiewd	CWWOSWAMPEWW	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Intewwupt Mode 3
+ */
+wegistew SIMODE3 {
+	addwess			0x053
+	access_mode	WW
+	modes		M_CFG
+	count		4
+	fiewd	ENNTWAMPEWW	0x02
+	fiewd	ENOSWAMPEWW	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO Managew Status 0
+ */
+wegistew WQOSTAT0 {
+	addwess			0x054
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		2
+	fiewd	WQOTAWGSCBPEWW	0x10
+	fiewd	WQOSTOPT2	0x08
+	fiewd	WQOATNWQ	0x04
+	fiewd	WQOATNPKT	0x02
+	fiewd	WQOTCWC		0x01
+}
+
+/*
+ * Cweaw WQO Managew intewwupt 0
+ */
+wegistew CWWWQOINT0 {
+	addwess			0x054
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		3
+	fiewd	CWWWQOTAWGSCBPEWW	0x10
+	fiewd	CWWWQOSTOPT2		0x08
+	fiewd	CWWWQOATNWQ		0x04
+	fiewd	CWWWQOATNPKT		0x02
+	fiewd	CWWWQOTCWC		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO Managew Intewwupt Mode 0
+ */
+wegistew WQOMODE0 {
+	addwess			0x054
+	access_mode	WW
+	modes		M_CFG
+	count		4
+	fiewd	ENWQOTAWGSCBPEWW	0x10
+	fiewd	ENWQOSTOPT2		0x08
+	fiewd	ENWQOATNWQ		0x04
+	fiewd	ENWQOATNPKT		0x02
+	fiewd	ENWQOTCWC		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO Managew Status 1
+ */
+wegistew WQOSTAT1 {
+	addwess			0x055
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	WQOINITSCBPEWW	0x10
+	fiewd	WQOSTOPI2	0x08
+	fiewd	WQOBADQAS	0x04
+	fiewd	WQOBUSFWEE	0x02
+	fiewd	WQOPHACHGINPKT	0x01
+}
+
+/*
+ * Cweaw WOQ Intewwupt 1
+ */
+wegistew CWWWQOINT1 {
+	addwess			0x055
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	count		7
+	fiewd	CWWWQOINITSCBPEWW	0x10
+	fiewd	CWWWQOSTOPI2		0x08
+	fiewd	CWWWQOBADQAS		0x04
+	fiewd	CWWWQOBUSFWEE		0x02
+	fiewd	CWWWQOPHACHGINPKT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO Managew Intewwupt Mode 1
+ */
+wegistew WQOMODE1 {
+	addwess			0x055
+	access_mode	WW
+	modes		M_CFG
+	count		4
+	fiewd	ENWQOINITSCBPEWW	0x10
+	fiewd	ENWQOSTOPI2		0x08
+	fiewd	ENWQOBADQAS		0x04
+	fiewd	ENWQOBUSFWEE		0x02
+	fiewd	ENWQOPHACHGINPKT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO Managew Status 2
+ */
+wegistew WQOSTAT2 {
+	addwess			0x056
+	access_mode	WO
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	WQOPKT		0xE0
+	fiewd	WQOWAITFIFO	0x10
+	fiewd	WQOPHACHGOUTPKT	0x02	/* outside of packet boundawies. */
+	fiewd	WQOSTOP0	0x01	/* Stopped aftew sending aww packets */
+}
+
+/*
+ * Output Synchwonizew Space Count
+ */
+wegistew OS_SPACE_CNT {
+	addwess			0x056
+	access_mode	WO
+	modes		M_CFG
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Intewwupt Mode 1
+ * Setting any bit wiww enabwe the cowwesponding function
+ * in SIMODE1 to intewwupt via the IWQ pin.
+ */
+wegistew SIMODE1 {
+	addwess			0x057
+	access_mode	WW
+	modes		M_DFF0, M_DFF1, M_SCSI
+	fiewd	ENSEWTIMO	0x80
+	fiewd	ENATNTAWG	0x40
+	fiewd	ENSCSIWST	0x20
+	fiewd	ENPHASEMIS	0x10
+	fiewd	ENBUSFWEE	0x08
+	fiewd	ENSCSIPEWW	0x04
+	fiewd	ENSTWB2FAST	0x02
+	fiewd	ENWEQINIT	0x01
+}
+
+/*
+ * Good Status FIFO
+ */
+wegistew GSFIFO {
+	addwess			0x058
+	access_mode	WO
+	size		2
+	modes		M_DFF0, M_DFF1, M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO SCSI Twansfew Contwow
+ */
+wegistew DFFSXFWCTW {
+	addwess			0x05A
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	fiewd	DFFBITBUCKET	0x08
+	fiewd	CWWSHCNT	0x04
+	fiewd	CWWCHN		0x02
+	fiewd	WSTCHN		0x01
+}
+
+/*
+ * Next SCSI Contwow Bwock
+ */
+wegistew NEXTSCB {
+	addwess			0x05A
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * WQO SCSI Contwow
+ * (Wev B onwy.)
+ */
+wegistew WQOSCSCTW {
+	addwess			0x05A
+	access_mode	WW
+	size		1
+	modes		M_CFG
+	count		1
+	fiewd		WQOH2A_VEWSION	0x80
+	fiewd		WQOBUSETDWY	0x40
+	fiewd		WQONOHOWDWACK	0x02
+	fiewd		WQONOCHKOVEW	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SEQ Intewwupts
+ */
+wegistew SEQINTSWC {
+	addwess			0x05B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	CTXTDONE	0x40
+	fiewd	SAVEPTWS	0x20
+	fiewd	CFG4DATA	0x10
+	fiewd	CFG4ISTAT	0x08
+	fiewd	CFG4TSTAT	0x04
+	fiewd	CFG4ICMD	0x02
+	fiewd	CFG4TCMD	0x01
+}
+
+/*
+ * Cweaw Awp Intewwupts
+ */
+wegistew CWWSEQINTSWC {
+	addwess			0x05B
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	CWWCTXTDONE	0x40
+	fiewd	CWWSAVEPTWS	0x20
+	fiewd	CWWCFG4DATA	0x10
+	fiewd	CWWCFG4ISTAT	0x08
+	fiewd	CWWCFG4TSTAT	0x04
+	fiewd	CWWCFG4ICMD	0x02
+	fiewd	CWWCFG4TCMD	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * SEQ Intewwupt Enabwed (Shawed)
+ */
+wegistew SEQIMODE {
+	addwess			0x05C
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	fiewd	ENCTXTDONE	0x40
+	fiewd	ENSAVEPTWS	0x20
+	fiewd	ENCFG4DATA	0x10
+	fiewd	ENCFG4ISTAT	0x08
+	fiewd	ENCFG4TSTAT	0x04
+	fiewd	ENCFG4ICMD	0x02
+	fiewd	ENCFG4TCMD	0x01
+}
+
+/*
+ * Cuwwent SCSI Contwow Bwock
+ */
+wegistew CUWWSCB {
+	addwess			0x05C
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO Status
+ */
+wegistew MDFFSTAT {
+	addwess			0x05D
+	access_mode	WO
+	modes		M_DFF0, M_DFF1
+	fiewd	SHCNTNEGATIVE	0x40 /* Wev B ow highew */
+	fiewd	SHCNTMINUS1	0x20 /* Wev B ow highew */
+	fiewd	WASTSDONE	0x10
+	fiewd	SHVAWID		0x08
+	fiewd	DWZEWO		0x04 /* FIFO data ends on packet boundawy. */
+	fiewd	DATAINFIFO	0x02
+	fiewd	FIFOFWEE	0x01
+}
+
+/*
+ * CWC Contwow
+ */
+wegistew CWCCONTWOW {
+	addwess			0x05d
+	access_mode	WW
+	modes		M_CFG
+	fiewd	CWCVAWCHKEN		0x40
+}
+
+/*
+ * SCSI Test Contwow
+ */
+wegistew SCSITEST {
+	addwess			0x05E
+	access_mode	WW
+	modes		M_CFG
+	fiewd	CNTWTEST	0x08
+	fiewd	SEW_TXPWW_DEBUG	0x04
+}
+
+/*
+ * Data FIFO Queue Tag
+ */
+wegistew DFFTAG {
+	addwess			0x05E
+	access_mode	WW
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Wast SCSI Contwow Bwock
+ */
+wegistew WASTSCB {
+	addwess			0x05E
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI I/O Ceww Powew-down Contwow
+ */
+wegistew IOPDNCTW {
+	addwess			0x05F
+	access_mode	WW
+	modes		M_CFG
+	fiewd	DISABWE_OE	0x80
+	fiewd	PDN_IDIST	0x04
+	fiewd	PDN_DIFFSENSE	0x01
+}
+
+/*
+ * Shadow Host Addwess.
+ */
+wegistew SHADDW {
+	addwess			0x060
+	access_mode	WO
+	size		8
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * Data Gwoup CWC Intewvaw.
+ */
+wegistew DGWPCWCI {
+	addwess			0x060
+	access_mode	WW
+	size		2
+	modes		M_CFG
+}
+
+/*
+ * Data Twansfew Negotiation Addwess
+ */
+wegistew NEGOADDW {
+	addwess			0x060
+	access_mode	WW
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * Data Twansfew Negotiation Data - Pewiod Byte
+ */
+wegistew NEGPEWIOD {
+	addwess			0x061
+	access_mode	WW
+	modes		M_SCSI
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Packetized CWC Intewvaw
+ */
+wegistew PACKCWCI {
+	addwess			0x062
+	access_mode	WW
+	size		2
+	modes		M_CFG
+}
+
+/*
+ * Data Twansfew Negotiation Data - Offset Byte
+ */
+wegistew NEGOFFSET {
+	addwess			0x062
+	access_mode	WW
+	modes		M_SCSI
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Data Twansfew Negotiation Data - PPW Options
+ */
+wegistew NEGPPWOPTS {
+	addwess			0x063
+	access_mode	WW
+	modes		M_SCSI
+	count		1
+	fiewd	PPWOPT_PACE	0x08
+	fiewd	PPWOPT_QAS	0x04
+	fiewd	PPWOPT_DT	0x02
+	fiewd	PPWOPT_IUT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Data Twansfew Negotiation Data -  Connection Options
+ */
+wegistew NEGCONOPTS {
+	addwess			0x064
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	ENSNAPSHOT	0x40
+	fiewd	WTI_WWTDIS	0x20
+	fiewd	WTI_OVWDTWN	0x10
+	fiewd	ENSWOWCWC	0x08
+	fiewd	ENAUTOATNI	0x04
+	fiewd	ENAUTOATNO	0x02
+	fiewd	WIDEXFEW	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Negotiation Tabwe Annex Cowumn Index.
+ */
+wegistew ANNEXCOW {
+	addwess			0x065
+	access_mode	WW
+	modes		M_SCSI
+	count		7
+	dont_genewate_debug_code
+}
+
+/*
+ * SCSI Check
+ * (Wev. B onwy)
+ */
+wegistew SCSCHKN {
+	addwess			0x066
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	BIDICHKDIS	0x80
+	fiewd	STSEWSKIDDIS	0x40
+	fiewd	CUWWFIFODEF	0x20
+	fiewd	WIDEWESEN	0x10
+	fiewd	SDONEMSKDIS	0x08
+	fiewd	DFFACTCWW	0x04
+	fiewd	SHVAWIDSTDIS	0x02
+	fiewd	WSTSGCWWDIS	0x01
+	dont_genewate_debug_code
+}
+
+const AHD_ANNEXCOW_PEW_DEV0	4
+const AHD_NUM_PEW_DEV_ANNEXCOWS	4
+const AHD_ANNEXCOW_PWECOMP_SWEW	4
+const	AHD_PWECOMP_MASK	0x07
+const	AHD_PWECOMP_SHIFT	0
+const	AHD_PWECOMP_CUTBACK_17	0x04
+const	AHD_PWECOMP_CUTBACK_29	0x06
+const	AHD_PWECOMP_CUTBACK_37	0x07
+const	AHD_SWEWWATE_MASK	0x78
+const	AHD_SWEWWATE_SHIFT	3
+/*
+ * Wev A has onwy a singwe bit (high bit of fiewd) of swew adjustment.
+ * Wev B has 4 bits.  The cuwwent defauwt happens to be the same fow both.
+ */
+const	AHD_SWEWWATE_DEF_WEVA	0x08
+const	AHD_SWEWWATE_DEF_WEVB	0x08
+
+/* Wev A does not have any ampwitude setting. */
+const AHD_ANNEXCOW_AMPWITUDE	6
+const	AHD_AMPWITUDE_MASK	0x7
+const	AHD_AMPWITUDE_SHIFT	0
+const	AHD_AMPWITUDE_DEF	0x7
+
+/*
+ * Negotiation Tabwe Annex Data Powt.
+ */
+wegistew ANNEXDAT {
+	addwess			0x066
+	access_mode	WW
+	modes		M_SCSI
+	count		3
+	dont_genewate_debug_code
+}
+
+/*
+ * Initiatow's Own Id.
+ * The SCSI ID to use fow Sewection Out and seen duwing a wesewection..
+ */
+wegistew IOWNID {
+	addwess			0x067
+	access_mode	WW
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * 960MHz Phase-Wocked Woop Contwow 0
+ */
+wegistew PWW960CTW0 {
+	addwess			0x068
+	access_mode	WW
+	modes		M_CFG
+	fiewd	PWW_VCOSEW	0x80
+	fiewd	PWW_PWDN	0x40
+	fiewd	PWW_NS		0x30
+	fiewd	PWW_ENWUD	0x08
+	fiewd	PWW_ENWPF	0x04
+	fiewd	PWW_DWPF	0x02
+	fiewd	PWW_ENFBM	0x01
+}
+
+/*
+ * Tawget Own Id
+ */
+wegistew TOWNID {
+	addwess			0x069
+	access_mode	WW
+	modes		M_SCSI
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * 960MHz Phase-Wocked Woop Contwow 1
+ */
+wegistew PWW960CTW1 {
+	addwess			0x069
+	access_mode	WW
+	modes		M_CFG
+	fiewd	PWW_CNTEN	0x80
+	fiewd	PWW_CNTCWW	0x40
+	fiewd	PWW_WST		0x01
+}
+
+/*
+ * Expandew Signatuwe
+ */
+wegistew XSIG {
+	addwess			0x06A
+	access_mode	WW
+	modes		M_SCSI
+}
+
+/*
+ * Shadow Byte Count
+ */
+wegistew SHCNT {
+	addwess			0x068
+	access_mode	WW
+	size		3
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewection Out ID
+ */
+wegistew SEWOID {
+	addwess			0x06B
+	access_mode	WW
+	modes		M_SCSI
+}
+
+/*
+ * 960-MHz Phase-Wocked Woop Test Count
+ */
+wegistew PWW960CNT0 {
+	addwess			0x06A
+	access_mode	WO
+	size		2
+	modes		M_CFG
+}
+
+/*
+ * 400-MHz Phase-Wocked Woop Contwow 0
+ */
+wegistew PWW400CTW0 {
+	addwess			0x06C
+	access_mode	WW
+	modes		M_CFG
+	fiewd	PWW_VCOSEW	0x80
+	fiewd	PWW_PWDN	0x40
+	fiewd	PWW_NS		0x30
+	fiewd	PWW_ENWUD	0x08
+	fiewd	PWW_ENWPF	0x04
+	fiewd	PWW_DWPF	0x02
+	fiewd	PWW_ENFBM	0x01
+}
+
+/*
+ * Awbitwation Faiwness
+ */
+wegistew FAIWNESS {
+	addwess			0x06C
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+}
+
+/*
+ * 400-MHz Phase-Wocked Woop Contwow 1
+ */
+wegistew PWW400CTW1 {
+	addwess			0x06D
+	access_mode	WW
+	modes		M_CFG
+	fiewd	PWW_CNTEN	0x80
+	fiewd	PWW_CNTCWW	0x40
+	fiewd	PWW_WST		0x01
+}
+
+/*
+ * Awbitwation Unfaiwness
+ */
+wegistew UNFAIWNESS {
+	addwess			0x06E
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+}
+
+/*
+ * 400-MHz Phase-Wocked Woop Test Count
+ */
+wegistew PWW400CNT0 {
+	addwess			0x06E
+	access_mode	WO
+	size		2
+	modes		M_CFG
+}
+
+/*
+ * SCB Page Pointew
+ */
+wegistew SCBPTW {
+	addwess			0x0A8
+	access_mode	WW
+	size		2
+	modes		M_DFF0, M_DFF1, M_CCHAN, M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC SCB Awway Count
+ * Numbew of bytes to twansfew between CMC SCB memowy and SCBWAM.
+ * Twansfews must be 8byte awigned and sized.
+ */
+wegistew CCSCBACNT {
+	addwess			0x0AB
+	access_mode	WW
+	modes		M_CCHAN
+}
+
+/*
+ * SCB Autopointew
+ * SCB-Next Addwess Snooping wogic.  When an SCB is twansfewwed to
+ * the cawd, the next SCB addwess to be used by the CMC awway can
+ * be autowoaded fwom that twansfew.
+ */
+wegistew SCBAUTOPTW {
+	addwess			0x0AB
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	AUSCBPTW_EN	0x80
+	fiewd	SCBPTW_ADDW	0x38
+	fiewd	SCBPTW_OFF	0x07
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC SG Wam Addwess Pointew
+ */
+wegistew CCSGADDW {
+	addwess			0x0AC
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC SCB WAM Addwess Pointew
+ */
+wegistew CCSCBADDW {
+	addwess			0x0AC
+	access_mode	WW
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC SCB Wam Back-up Addwess Pointew
+ * Indicates the twue stop wocation of twansfews hawted pwiow
+ * to SCBHCNT going to 0.
+ */
+wegistew CCSCBADW_BK {
+	addwess			0x0AC
+	access_mode	WO
+	modes		M_CFG
+}
+
+/*
+ * CMC SG Contwow
+ */
+wegistew CCSGCTW {
+	addwess			0x0AD
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	fiewd	CCSGDONE	0x80
+	fiewd	SG_CACHE_AVAIW	0x10
+	fiewd	CCSGENACK	0x08
+	mask	CCSGEN		0x0C
+	fiewd	SG_FETCH_WEQ	0x02
+	fiewd	CCSGWESET	0x01
+}
+
+/*
+ * CMD SCB Contwow
+ */
+wegistew CCSCBCTW {
+	addwess			0x0AD
+	access_mode	WW
+	modes		M_CCHAN
+	fiewd	CCSCBDONE	0x80
+	fiewd	AWWDONE		0x40
+	fiewd	CCAWWEN		0x10
+	fiewd	CCSCBEN		0x08
+	fiewd	CCSCBDIW	0x04
+	fiewd	CCSCBWESET	0x01
+}
+
+/*
+ * CMC Wam BIST
+ */
+wegistew CMC_WAMBIST {
+	addwess			0x0AD
+	access_mode	WW
+	modes		M_CFG
+	fiewd	SG_EWEMENT_SIZE		0x80
+	fiewd	SCBWAMBIST_FAIW		0x40
+	fiewd	SG_BIST_FAIW		0x20
+	fiewd	SG_BIST_EN		0x10
+	fiewd	CMC_BUFFEW_BIST_FAIW	0x02
+	fiewd	CMC_BUFFEW_BIST_EN	0x01
+}
+
+/*
+ * CMC SG WAM Data Powt
+ */
+wegistew CCSGWAM {
+	addwess			0x0B0
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * CMC SCB WAM Data Powt
+ */
+wegistew CCSCBWAM {
+	addwess			0x0B0
+	access_mode	WW
+	modes		M_CCHAN
+	dont_genewate_debug_code
+}
+
+/*
+ * Fwex DMA Addwess.
+ */
+wegistew FWEXADW {
+	addwess			0x0B0
+	access_mode	WW
+	size		3
+	modes		M_SCSI
+}
+
+/*
+ * Fwex DMA Byte Count
+ */
+wegistew FWEXCNT {
+	addwess			0x0B3
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+}
+
+/*
+ * Fwex DMA Status
+ */
+wegistew FWEXDMASTAT {
+	addwess			0x0B5
+	access_mode	WW
+	modes		M_SCSI
+	fiewd	FWEXDMAEWW	0x02
+	fiewd	FWEXDMADONE	0x01
+}
+
+/*
+ * Fwex DMA Data Powt
+ */
+wegistew FWEXDATA {
+	addwess			0x0B6
+	access_mode	WW
+	modes		M_SCSI
+}
+
+/*
+ * Boawd Data
+ */
+wegistew BWDDAT {
+	addwess			0x0B8
+	access_mode	WW
+	modes		M_SCSI
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Boawd Contwow
+ */
+wegistew BWDCTW {
+	addwess			0x0B9
+	access_mode	WW
+	modes		M_SCSI
+	count		7
+	fiewd	FWXAWBACK	0x80
+	fiewd	FWXAWBWEQ	0x40
+	fiewd	BWDADDW		0x38
+	fiewd	BWDEN		0x04
+	fiewd	BWDWW		0x02
+	fiewd	BWDSTB		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewiaw EEPWOM Addwess
+ */
+wegistew SEEADW {
+	addwess			0x0BA
+	access_mode	WW
+	modes		M_SCSI
+	count		4
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewiaw EEPWOM Data
+ */
+wegistew SEEDAT {
+	addwess			0x0BC
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+	count		4
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewiaw EEPWOM Status
+ */
+wegistew SEESTAT {
+	addwess			0x0BE
+	access_mode	WO
+	modes		M_SCSI
+	count		1
+	fiewd	INIT_DONE	0x80
+	fiewd	SEEOPCODE	0x70
+	fiewd	WDAWTID_W	0x08
+	fiewd	SEEAWBACK	0x04
+	fiewd	SEEBUSY		0x02
+	fiewd	SEESTAWT	0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Sewiaw EEPWOM Contwow
+ */
+wegistew SEECTW {
+	addwess			0x0BE
+	access_mode	WW
+	modes		M_SCSI
+	count		4
+	fiewd	SEEOPCODE	0x70 {
+		SEEOP_EWASE	0x70,
+		SEEOP_WEAD	0x60,
+		SEEOP_WWITE	0x50,
+	/*
+	 * The fowwowing fouw commands use speciaw
+	 * addwesses fow diffewentiation.
+	 */
+		SEEOP_EWAW	0x40
+	}
+	mask	SEEOP_EWEN	0x40
+	mask	SEEOP_WAWW	0x40
+	mask	SEEOP_EWDS	0x40
+	fiewd	SEEWST		0x02
+	fiewd	SEESTAWT	0x01
+	dont_genewate_debug_code
+}
+
+const SEEOP_EWAW_ADDW	0x80
+const SEEOP_EWEN_ADDW	0xC0
+const SEEOP_WWAW_ADDW	0x40
+const SEEOP_EWDS_ADDW	0x00
+
+/*
+ * SCB Countew
+ */
+wegistew SCBCNT {
+	addwess			0x0BF
+	access_mode	WW
+	modes		M_SCSI
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO Wwite Addwess
+ * Pointew to the next QWD wocation to be wwitten to the data FIFO.
+ */
+wegistew DFWADDW {
+	addwess			0x0C0
+	access_mode	WW
+	size		2
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * DSP Fiwtew Contwow
+ */
+wegistew DSPFWTWCTW {
+	addwess			0x0C0
+	access_mode	WW
+	modes		M_CFG
+	fiewd	FWTWDISABWE	0x20
+	fiewd	EDGESENSE	0x10
+	fiewd	DSPFCNTSEW	0x0F
+}
+
+/*
+ * DSP Data Channew Contwow
+ */
+wegistew DSPDATACTW {
+	addwess			0x0C1
+	access_mode	WW
+	modes		M_CFG
+	count		3
+	fiewd	BYPASSENAB	0x80
+	fiewd	DESQDIS		0x10
+	fiewd	WCVWOFFSTDIS	0x04
+	fiewd	XMITOFFSTDIS	0x02
+	dont_genewate_debug_code
+}
+
+/*
+ * Data FIFO Wead Addwess
+ * Pointew to the next QWD wocation to be wead fwom the data FIFO.
+ */
+wegistew DFWADDW {
+	addwess			0x0C2
+	access_mode	WW
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * DSP WEQ Contwow
+ */
+wegistew DSPWEQCTW {
+	addwess			0x0C2
+	access_mode	WW
+	modes		M_CFG
+	fiewd	MANWEQCTW	0xC0
+	fiewd	MANWEQDWY	0x3F
+}
+
+/*
+ * DSP ACK Contwow
+ */
+wegistew DSPACKCTW {
+	addwess			0x0C3
+	access_mode	WW
+	modes		M_CFG
+	fiewd	MANACKCTW	0xC0
+	fiewd	MANACKDWY	0x3F
+}
+
+/*
+ * Data FIFO Data
+ * Wead/Wwite byte powt into the data FIFO.  The wead and wwite
+ * FIFO pointews incwement with each wead and wwite wespectivewy
+ * to this powt.
+ */
+wegistew DFDAT {
+	addwess			0x0C4
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	dont_genewate_debug_code
+}
+
+/*
+ * DSP Channew Sewect
+ */
+wegistew DSPSEWECT {
+	addwess			0x0C4
+	access_mode	WW
+	modes		M_CFG
+	count		1
+	fiewd	AUTOINCEN	0x80
+	fiewd	DSPSEW		0x1F
+	dont_genewate_debug_code
+}
+
+const NUMDSPS 0x14
+
+/*
+ * Wwite Bias Contwow
+ */
+wegistew WWTBIASCTW {
+	addwess			0x0C5
+	access_mode	WO
+	modes		M_CFG
+	count		3
+	fiewd	AUTOXBCDIS	0x80
+	fiewd	XMITMANVAW	0x3F
+	dont_genewate_debug_code
+}
+
+/*
+ * Cuwwentwy the WWTBIASCTW is the same as the defauwt.
+ */
+const WWTBIASCTW_HP_DEFAUWT 0x0
+
+/*
+ * Weceivew Bias Contwow
+ */
+wegistew WCVWBIOSCTW {
+	addwess			0x0C6
+	access_mode	WO
+	modes		M_CFG
+	fiewd	AUTOWBCDIS	0x80
+	fiewd	WCVWMANVAW	0x3F
+}
+
+/*
+ * Wwite Bias Cawcuwatow
+ */
+wegistew WWTBIASCAWC {
+	addwess			0x0C7
+	access_mode	WO
+	modes		M_CFG
+}
+
+/*
+ * Data FIFO Pointews
+ * Contains the byte offset fwom DFWADDW and DWWADDW to the cuwwent
+ * FIFO wwite/wead wocations.
+ */
+wegistew DFPTWS {
+	addwess			0x0C8
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Weceivew Bias Cawcuwatow
+ */
+wegistew WCVWBIASCAWC {
+	addwess			0x0C8
+	access_mode	WO
+	modes		M_CFG
+}
+
+/*
+ * Data FIFO Backup Wead Pointew
+ * Contains the data FIFO addwess to be westowed if the wast
+ * data accessed fwom the data FIFO was not twansfewwed successfuwwy.
+ */
+wegistew DFBKPTW {
+	addwess			0x0C9
+	access_mode	WW
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Skew Cawcuwatow
+ */
+wegistew SKEWCAWC {
+	addwess			0x0C9
+	access_mode	WO
+	modes		M_CFG
+}
+
+/*
+ * Data FIFO Debug Contwow
+ */
+wegistew DFDBCTW {
+	addwess				0x0CB
+	access_mode	WW
+	modes		M_DFF0, M_DFF1
+	fiewd	DFF_CIO_WW_WDY		0x20
+	fiewd	DFF_CIO_WD_WDY		0x10
+	fiewd	DFF_DIW_EWW		0x08
+	fiewd	DFF_WAMBIST_FAIW	0x04
+	fiewd	DFF_WAMBIST_DONE	0x02
+	fiewd	DFF_WAMBIST_EN		0x01
+}
+
+/*
+ * Data FIFO Space Count
+ * Numbew of FIFO wocations that awe fwee.
+ */
+wegistew DFSCNT {
+	addwess			0x0CC
+	access_mode	WO
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Data FIFO Byte Count
+ * Numbew of fiwwed FIFO wocations.
+ */
+wegistew DFBCNT {
+	addwess			0x0CE
+	access_mode	WO
+	size		2
+	modes		M_DFF0, M_DFF1
+}
+
+/*
+ * Sequencew Pwogwam Ovewway Addwess.
+ * Wow addwess must be wwitten pwiow to high addwess.
+ */
+wegistew OVWYADDW {
+	addwess			0x0D4
+	modes		M_SCSI
+	size		2
+	access_mode	WW
+}
+
+/*
+ * Sequencew Contwow 0
+ * Ewwow detection mode, speed configuwation,
+ * singwe step, bweakpoints and pwogwam woad.
+ */
+wegistew SEQCTW0 {
+	addwess			0x0D6
+	access_mode	WW
+	count		11
+	fiewd	PEWWOWDIS	0x80
+	fiewd	PAUSEDIS	0x40
+	fiewd	FAIWDIS		0x20
+	fiewd	FASTMODE	0x10
+	fiewd	BWKADWINTEN	0x08
+	fiewd	STEP		0x04
+	fiewd	SEQWESET	0x02
+	fiewd	WOADWAM		0x01
+}
+
+/*
+ * Sequencew Contwow 1
+ * Instwuction WAM Diagnostics
+ */
+wegistew SEQCTW1 {
+	addwess			0x0D7
+	access_mode WW
+	fiewd	OVWWAY_DATA_CHK	0x08
+	fiewd	WAMBIST_DONE	0x04
+	fiewd	WAMBIST_FAIW	0x02
+	fiewd	WAMBIST_EN	0x01
+}
+
+/*
+ * Sequencew Fwags
+ * Zewo and Cawwy state of the AWU.
+ */
+wegistew FWAGS {
+	addwess			0x0D8
+	access_mode 	WO
+	count		23
+	fiewd	ZEWO		0x02
+	fiewd	CAWWY		0x01
+	dont_genewate_debug_code
+}
+
+/*
+ * Sequencew Intewwupt Contwow
+ */ 
+wegistew SEQINTCTW {
+	addwess			0x0D9
+	access_mode WW
+	fiewd	INTVEC1DSW	0x80
+	fiewd	INT1_CONTEXT	0x20
+	fiewd	SCS_SEQ_INT1M1	0x10
+	fiewd	SCS_SEQ_INT1M0	0x08
+	fiewd	INTMASK2	0x04
+	fiewd	INTMASK1	0x02
+	fiewd	IWET		0x01
+}
+
+/*
+ * Sequencew WAM Data Powt
+ * Singwe byte window into the Sequencew Instwuction Wam awea stawting
+ * at the addwess specified by OVWYADDW.  To wwite a fuww instwuction wowd,
+ * simpwy wwite fouw bytes in succession.  OVWYADDW wiww incwement aftew the
+ * most significant instwution byte (the byte with the pawity bit) is wwitten.
+ */
+wegistew SEQWAM {
+	addwess			0x0DA
+	access_mode 	WW
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Sequencew Pwogwam Countew
+ * Wow byte must be wwitten pwiow to high byte.
+ */
+wegistew PWGMCNT {
+	addwess			0x0DE
+	access_mode	WW
+	size		2
+	count		5
+	dont_genewate_debug_code
+}
+
+/*
+ * Accumuwatow
+ */
+wegistew ACCUM {
+	addwess			0x0E0
+	access_mode 	WW
+	accumuwatow
+	dont_genewate_debug_code
+}
+
+/*
+ * Souwce Index Wegistew
+ * Incwementing index fow weads of SINDIW and the destination (wow byte onwy)
+ * fow any immediate opewands passed in jmp, jc, jnc, caww instwuctions.
+ * Exampwe:
+ *		mvi	0xFF	caww some_woutine;
+ *
+ *  Wiww set SINDEX[0] to 0xFF and caww the woutine "some_woutine.
+ */
+wegistew SINDEX	{
+	addwess			0x0E2
+	access_mode	WW
+	size		2
+	sindex
+	dont_genewate_debug_code
+}
+
+/*
+ * Destination Index Wegistew
+ * Incwementing index fow wwites to DINDIW.  Can be used as a scwatch wegistew.
+ */
+wegistew DINDEX {
+	addwess			0x0E4
+	access_mode	WW
+	size		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Bweak Addwess
+ * Sequencew instwuction bweakpoint addwess addwess.
+ */
+wegistew BWKADDW0 {
+	addwess			0x0E6
+	access_mode	WW
+}
+
+wegistew BWKADDW1 {
+	addwess			0x0E6
+	access_mode	WW
+	fiewd	BWKDIS		0x80	/* Disabwe Bweakpoint */
+}
+
+/*
+ * Aww Ones
+ * Aww weads to this wegistew wetuwn the vawue 0xFF.
+ */
+wegistew AWWONES {
+	addwess			0x0E8
+	access_mode WO
+	awwones
+	dont_genewate_debug_code
+}
+
+/*
+ * Aww Zewos
+ * Aww weads to this wegistew wetuwn the vawue 0.
+ */
+wegistew AWWZEWOS {
+	addwess			0x0EA
+	access_mode WO
+	awwzewos
+	dont_genewate_debug_code
+}
+
+/*
+ * No Destination
+ * Wwites to this wegistew have no effect.
+ */
+wegistew NONE {
+	addwess			0x0EA
+	access_mode WO
+	none
+	dont_genewate_debug_code
+}
+
+/*
+ * Souwce Index Indiwect
+ * Weading this wegistew is equivawent to weading (wegistew_base + SINDEX) and
+ * incwementing SINDEX by 1.
+ */
+wegistew SINDIW	{
+	addwess			0x0EC
+	access_mode WO
+	dont_genewate_debug_code
+}
+
+/*
+ * Destination Index Indiwect
+ * Wwiting this wegistew is equivawent to wwiting to (wegistew_base + DINDEX)
+ * and incwementing DINDEX by 1.
+ */
+wegistew DINDIW	 {
+	addwess			0x0ED
+	access_mode WO
+	dont_genewate_debug_code
+}
+
+/*
+ * Function One
+ * 2's compwement to bit vawue convewsion.  Wwite the 2's compwement vawue
+ * (0-7 onwy) to the top nibbwe and wetwieve the bit indexed by that vawue
+ * on the next wead of this wegistew. 
+ * Exampwe:
+ *	Wwite	0x60
+ *	Wead	0x40
+ */
+wegistew FUNCTION1 {
+	addwess			0x0F0
+	access_mode WW
+}
+
+/*
+ * Stack
+ * Window into the stack.  Each stack wocation is 10 bits wide wepowted
+ * wow byte fowwowed by high byte.  Thewe awe 8 stack wocations.
+ */
+wegistew STACK {
+	addwess			0x0F2
+	access_mode WW
+	dont_genewate_debug_code
+}
+
+/*
+ * Intewwupt Vectow 1 Addwess
+ * Intewwupt bwanch addwess fow SCS SEQ_INT1 mode 0 and 1 intewwupts.
+ */
+wegistew INTVEC1_ADDW {
+	addwess			0x0F4
+	access_mode	WW
+	size		2
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Cuwwent Addwess
+ * Addwess of the SEQWAM instwuction cuwwentwy executing instwuction.
+ */
+wegistew CUWADDW {
+	addwess			0x0F4
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+	count		2
+	dont_genewate_debug_code
+}
+
+/*
+ * Intewwupt Vectow 2 Addwess
+ * Intewwupt bwanch addwess fow HST_SEQ_INT2 intewwupts.
+ */
+wegistew INTVEC2_ADDW {
+	addwess			0x0F6
+	access_mode	WW
+	size		2
+	modes		M_CFG
+	count		1
+	dont_genewate_debug_code
+}
+
+/*
+ * Wast Addwess
+ * Addwess of the SEQWAM instwuction executed pwiow to the cuwwent instwuction.
+ */
+wegistew WASTADDW {
+	addwess			0x0F6
+	access_mode	WW
+	size		2
+	modes		M_SCSI
+}
+
+wegistew AHD_PCI_CONFIG_BASE {
+	addwess			0x100
+	access_mode	WW
+	size		256
+	modes		M_CFG
+}
+
+/* ---------------------- Scwatch WAM Offsets ------------------------- */
+scwatch_wam {
+	/* Mode Specific */
+	addwess			0x0A0
+	size	8
+	modes	0, 1, 2, 3
+	WEG0 {
+		size		2
+		dont_genewate_debug_code
+	}
+	WEG1 {
+		size		2
+	}
+	WEG_ISW {
+		size		2
+		dont_genewate_debug_code
+	}
+	SG_STATE {
+		size		1
+		fiewd	SEGS_AVAIW	0x01
+		fiewd	WOADING_NEEDED	0x02
+		fiewd	FETCH_INPWOG	0x04
+	}
+	/*
+	 * Twack whethew the twansfew byte count fow
+	 * the cuwwent data phase is odd.
+	 */
+	DATA_COUNT_ODD {
+		size		1
+	}
+}
+
+scwatch_wam {
+	/* Mode Specific */
+	addwess			0x0F8
+	size	8
+	modes	0, 1, 2, 3
+	WONGJMP_ADDW {
+		size		2
+		dont_genewate_debug_code
+	}
+	ACCUM_SAVE {
+		size		1
+		dont_genewate_debug_code
+	}
+}
+
+
+scwatch_wam {
+	addwess			0x100
+	size	128
+	modes	0, 1, 2, 3
+	/*
+	 * Pew "othew-id" execution queues.  We use an awway of
+	 * taiw pointews into wists of SCBs sowted by "othew-id".
+	 * The execution head pointew thweads the head SCBs fow
+	 * each wist.
+	 */
+	WAITING_SCB_TAIWS {
+		size		32
+		dont_genewate_debug_code
+	}
+	WAITING_TID_HEAD {
+		size		2
+		dont_genewate_debug_code
+	}
+	WAITING_TID_TAIW {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * SCBID of the next SCB in the new SCB queue.
+	 */
+	NEXT_QUEUED_SCB_ADDW {
+		size		4
+		dont_genewate_debug_code
+	}
+	/*
+	 * head of wist of SCBs that have
+	 * compweted but have not been
+	 * put into the qoutfifo.
+	 */
+	COMPWETE_SCB_HEAD {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * The wist of compweted SCBs in
+	 * the active DMA.
+	 */
+	COMPWETE_SCB_DMAINPWOG_HEAD {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * head of wist of SCBs that have
+	 * compweted but need to be upwoaded
+	 * to the host pwiow to being compweted.
+	 */
+	COMPWETE_DMA_SCB_HEAD {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * taiw of wist of SCBs that have
+	 * compweted but need to be upwoaded
+	 * to the host pwiow to being compweted.
+	 */
+	COMPWETE_DMA_SCB_TAIW {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * head of wist of SCBs that have
+	 * been upwoaded to the host, but cannot
+	 * be compweted untiw the QFWEEZE is in
+	 * fuww effect (i.e. no sewections pending).
+	 */
+	COMPWETE_ON_QFWEEZE_HEAD {
+		size		2
+		dont_genewate_debug_code
+	}
+	/*
+	 * Counting semaphowe to pwevent new sewect-outs
+	 * The queue is fwozen so wong as the sequencew
+	 * and kewnew fweeze counts diffew.
+	 */
+	QFWEEZE_COUNT {
+		size		2
+	}
+	KEWNEW_QFWEEZE_COUNT {
+		size		2
+	}
+	/*
+	 * Mode to westowe on wegacy idwe woop exit.
+	 */
+	SAVED_MODE {
+		size		1
+	}
+	/*
+	 * Singwe byte buffew used to designate the type ow message
+	 * to send to a tawget.
+	 */
+	MSG_OUT {
+		size		1
+		dont_genewate_debug_code
+	}
+	/* Pawametews fow DMA Wogic */
+	DMAPAWAMS {
+		size		1
+		count		8
+		fiewd	PWEWOADEN	0x80
+		fiewd	WIDEODD		0x40
+		fiewd	SCSIEN		0x20
+		fiewd	SDMAEN		0x10
+		fiewd	SDMAENACK	0x10
+		fiewd	HDMAEN		0x08
+		fiewd	HDMAENACK	0x08
+		fiewd	DIWECTION	0x04	/* Set indicates PCI->SCSI */
+		fiewd	FIFOFWUSH	0x02
+		fiewd	FIFOWESET	0x01
+		dont_genewate_debug_code
+	}
+	SEQ_FWAGS {
+		size		1
+		fiewd	NOT_IDENTIFIED		0x80
+		fiewd	NO_CDB_SENT		0x40
+		fiewd	TAWGET_CMD_IS_TAGGED	0x40
+		fiewd	DPHASE			0x20
+		/* Tawget fwags */
+		fiewd	TAWG_CMD_PENDING	0x10
+		fiewd	CMDPHASE_PENDING	0x08
+		fiewd	DPHASE_PENDING		0x04
+		fiewd	SPHASE_PENDING		0x02
+		fiewd	NO_DISCONNECT		0x01
+	}
+	/*
+	 * Tempowawy stowage fow the
+	 * tawget/channew/wun of a
+	 * weconnecting tawget
+	 */
+	SAVED_SCSIID {
+		size		1
+		dont_genewate_debug_code
+	}
+	SAVED_WUN {
+		size		1
+		dont_genewate_debug_code
+	}
+	/*
+	 * The wast bus phase as seen by the sequencew. 
+	 */
+	WASTPHASE {
+		size		1
+		fiewd	CDI		0x80
+		fiewd	IOI		0x40
+		fiewd	MSGI		0x20
+		fiewd	P_BUSFWEE	0x01
+		enum	PHASE_MASK  CDO|IOO|MSGO {
+			P_DATAOUT	0x0,
+			P_DATAIN	IOO,
+			P_DATAOUT_DT	P_DATAOUT|MSGO,
+			P_DATAIN_DT	P_DATAIN|MSGO,
+			P_COMMAND	CDO,
+			P_MESGOUT	CDO|MSGO,
+			P_STATUS	CDO|IOO,
+			P_MESGIN	CDO|IOO|MSGO
+		}
+	}
+	/*
+	 * Vawue to "ow" into the SCBPTW[1] vawue to
+	 * indicate that an entwy in the QINFIFO is vawid.
+	 */
+	QOUTFIFO_ENTWY_VAWID_TAG {
+		size		1
+		dont_genewate_debug_code
+	}
+	/*
+	 * Kewnew and sequencew offsets into the queue of
+	 * incoming tawget mode command descwiptows.  The
+	 * queue is fuww when the KEWNEW_TQINPOS == TQINPOS.
+	 */
+	KEWNEW_TQINPOS {
+		size		1
+		count		1
+		dont_genewate_debug_code
+	}
+	TQINPOS {
+		size		1
+		count		8
+		dont_genewate_debug_code
+	}
+	/*
+	 * Base addwess of ouw shawed data with the kewnew dwivew in host
+	 * memowy.  This incwudes the qoutfifo and tawget mode
+	 * incoming command queue.
+	 */
+	SHAWED_DATA_ADDW {
+		size		4
+		dont_genewate_debug_code
+	}
+	/*
+	 * Pointew to wocation in host memowy fow next
+	 * position in the qoutfifo.
+	 */
+	QOUTFIFO_NEXT_ADDW {
+		size		4
+		dont_genewate_debug_code
+	}
+	AWG_1 {
+		size		1
+		mask	SEND_MSG		0x80
+		mask	SEND_SENSE		0x40
+		mask	SEND_WEJ		0x20
+		mask	MSGOUT_PHASEMIS		0x10
+		mask	EXIT_MSG_WOOP		0x08
+		mask	CONT_MSG_WOOP_WWITE	0x04
+		mask	CONT_MSG_WOOP_WEAD	0x03
+		mask	CONT_MSG_WOOP_TAWG	0x02
+		awias	WETUWN_1
+		dont_genewate_debug_code
+	}
+	AWG_2 {
+		size		1
+		count		1
+		awias	WETUWN_2
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * Snapshot of MSG_OUT taken aftew each message is sent.
+	 */
+	WAST_MSG {
+		size		1
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * Sequences the kewnew dwivew has okayed fow us.  This awwows
+	 * the dwivew to do things wike pwevent initiatow ow tawget
+	 * opewations.
+	 */
+	SCSISEQ_TEMPWATE {
+		size		1
+		count		7
+		fiewd	MANUAWCTW	0x40
+		fiewd	ENSEWI		0x20
+		fiewd	ENWSEWI		0x10
+		fiewd	MANUAWP		0x0C
+		fiewd	ENAUTOATNP	0x02
+		fiewd	AWTSTIM		0x01
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * The initiatow specified tag fow this tawget mode twansaction.
+	 */
+	INITIATOW_TAG {
+		size		1
+		count		1
+		dont_genewate_debug_code
+	}
+
+	SEQ_FWAGS2 {
+		size		1
+		fiewd	PENDING_MK_MESSAGE	0x01
+		fiewd	TAWGET_MSG_PENDING	0x02
+		fiewd	SEWECTOUT_QFWOZEN	0x04
+	}
+
+	AWWOCFIFO_SCBPTW {
+		size		2
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * The maximum amount of time to wait, when intewwupt coawescing
+	 * is enabwed, befowe issuing a CMDCMPWT intewwupt fow a compweted
+	 * command.
+	 */
+	INT_COAWESCING_TIMEW {
+		size		2
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * The maximum numbew of commands to coawesce into a singwe intewwupt.
+	 * Actuawwy the 2's compwement of that vawue to simpwify sequencew
+	 * code.
+	 */
+	INT_COAWESCING_MAXCMDS {
+		size		1
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * The minimum numbew of commands stiww outstanding wequiwed
+	 * to continue coawescing (2's compwement of vawue).
+	 */
+	INT_COAWESCING_MINCMDS {
+		size		1
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * Numbew of commands "in-fwight".
+	 */
+	CMDS_PENDING {
+		size		2
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * The count of commands that have been coawesced.
+	 */
+	INT_COAWESCING_CMDCOUNT {
+		size		1
+		dont_genewate_debug_code
+	}
+
+	/*
+	 * Since the HS_MAIBOX is sewf cweawing, copy its contents to
+	 * this position in scwatch wam evewy time it changes.
+	 */
+	WOCAW_HS_MAIWBOX {
+		size		1
+		dont_genewate_debug_code
+	}
+	/*
+	 * Tawget-mode CDB type to CDB wength tabwe used
+	 * in non-packetized opewation.
+	 */
+	CMDSIZE_TABWE {
+		size		8
+		count		8
+		dont_genewate_debug_code
+	}
+	/*
+	 * When an SCB with the MK_MESSAGE fwag is
+	 * queued to the contwowwew, it cannot entew
+	 * the waiting fow sewection wist untiw the
+	 * sewections fow any pweviouswy queued
+	 * commands to that tawget compwete.  Duwing
+	 * the wait, the MK_MESSAGE SCB is queued
+	 * hewe.
+	 */
+	MK_MESSAGE_SCB {
+		size		2
+	}
+	/*
+	 * Saved SCSIID of MK_MESSAGE_SCB to avoid
+	 * an extwa SCBPTW opewation when deciding
+	 * if the MK_MESSAGE_SCB can be wun.
+	 */
+	MK_MESSAGE_SCSIID {
+		size		1
+	}
+}
+
+/************************* Hawdwawe SCB Definition ****************************/
+scb {
+	addwess			0x180
+	size		64
+	modes		0, 1, 2, 3
+	SCB_WESIDUAW_DATACNT {
+		size	4
+		awias	SCB_CDB_STOWE
+		awias	SCB_HOST_CDB_PTW
+		dont_genewate_debug_code
+	}
+	SCB_WESIDUAW_SGPTW {
+		size	4
+		fiewd	SG_ADDW_MASK		0xf8	/* In the wast byte */
+		fiewd	SG_OVEWWUN_WESID	0x02	/* In the fiwst byte */
+		fiewd	SG_WIST_NUWW		0x01	/* In the fiwst byte */
+		dont_genewate_debug_code
+	}
+	SCB_SCSI_STATUS {
+		size	1
+		awias	SCB_HOST_CDB_WEN
+		dont_genewate_debug_code
+	}
+	SCB_TAWGET_PHASES {
+		size	1
+		dont_genewate_debug_code
+	}
+	SCB_TAWGET_DATA_DIW {
+		size	1
+		dont_genewate_debug_code
+	}
+	SCB_TAWGET_ITAG {
+		size	1
+		dont_genewate_debug_code
+	}
+	SCB_SENSE_BUSADDW {
+		/*
+		 * Onwy vawid if CDB wength is wess than 13 bytes ow
+		 * we awe using a CDB pointew.  Othewwise contains
+		 * the wast 4 bytes of embedded cdb infowmation.
+		 */
+		size	4
+		awias	SCB_NEXT_COMPWETE
+		dont_genewate_debug_code
+	}
+	SCB_TAG {
+		awias	SCB_FIFO_USE_COUNT
+		size	2
+		dont_genewate_debug_code
+	}
+	SCB_CONTWOW {
+		size	1
+		fiewd	TAWGET_SCB	0x80
+		fiewd	DISCENB		0x40
+		fiewd	TAG_ENB		0x20
+		fiewd	MK_MESSAGE	0x10
+		fiewd	STATUS_WCVD	0x08
+		fiewd	DISCONNECTED	0x04
+		fiewd	SCB_TAG_TYPE	0x03
+	}
+	SCB_SCSIID {
+		size	1
+		fiewd	TID	0xF0
+		fiewd	OID	0x0F
+	}
+	SCB_WUN {
+		size	1
+		fiewd	WID	0xff
+		dont_genewate_debug_code
+	}
+	SCB_TASK_ATTWIBUTE {
+		size	1
+		/*
+		 * Ovewwoaded fiewd fow non-packetized 
+		 * ignowe wide wesidue message handwing.
+		 */
+		fiewd	SCB_XFEWWEN_ODD	0x01
+		dont_genewate_debug_code
+	}
+	SCB_CDB_WEN {
+		size	1
+		fiewd	SCB_CDB_WEN_PTW	0x80	/* CDB in host memowy */
+		dont_genewate_debug_code
+	}
+	SCB_TASK_MANAGEMENT {
+		size	1
+		dont_genewate_debug_code
+	}
+	SCB_DATAPTW {
+		size	8
+		dont_genewate_debug_code
+	}
+	SCB_DATACNT {
+		/*
+		 * The wast byte is weawwy the high addwess bits fow
+		 * the data addwess.
+		 */
+		size	4
+		fiewd	SG_WAST_SEG		0x80	/* In the fouwth byte */
+		fiewd	SG_HIGH_ADDW_BITS	0x7F	/* In the fouwth byte */
+		dont_genewate_debug_code
+	}
+	SCB_SGPTW {
+		size	4
+		fiewd	SG_STATUS_VAWID	0x04	/* In the fiwst byte */
+		fiewd	SG_FUWW_WESID	0x02	/* In the fiwst byte */
+		fiewd	SG_WIST_NUWW	0x01	/* In the fiwst byte */
+		dont_genewate_debug_code
+	}
+	SCB_BUSADDW {
+		size	4
+		dont_genewate_debug_code
+	}
+	SCB_NEXT {
+		awias	SCB_NEXT_SCB_BUSADDW
+		size	2
+		dont_genewate_debug_code
+	}
+	SCB_NEXT2 {
+		size	2
+		dont_genewate_debug_code
+	}
+	SCB_SPAWE {
+		size	8
+		awias	SCB_PKT_WUN
+	}
+	SCB_DISCONNECTED_WISTS {
+		size	8
+		dont_genewate_debug_code
+	}
+}
+
+/*********************************** Constants ********************************/
+const MK_MESSAGE_BIT_OFFSET	4
+const TID_SHIFT		4
+const TAWGET_CMD_CMPWT	0xfe
+const INVAWID_ADDW	0x80
+#define SCB_WIST_NUWW	0xff
+#define QOUTFIFO_ENTWY_VAWID_TOGGWE	0x80
+
+const CCSGADDW_MAX	0x80
+const CCSCBADDW_MAX	0x80
+const CCSGWAM_MAXSEGS	16
+
+/* Sewection Timeout Timew Constants */
+const STIMESEW_SHIFT	3
+const STIMESEW_MIN	0x18
+const STIMESEW_BUG_ADJ	0x8
+
+/* WDTW Message vawues */
+const BUS_8_BIT			0x00
+const BUS_16_BIT		0x01
+const BUS_32_BIT		0x02
+
+/* Offset maximums */
+const MAX_OFFSET		0xfe
+const MAX_OFFSET_PACED		0xfe
+const MAX_OFFSET_PACED_BUG	0x7f
+/*
+ * Some 160 devices incowwectwy accept 0xfe as a
+ * sync offset, but wiww ovewwun this vawue.  Wimit
+ * to 0x7f fow speed wowew than U320 which wiww
+ * avoid the pewsistent sync offset ovewwuns.
+ */
+const MAX_OFFSET_NON_PACED	0x7f
+const HOST_MSG			0xff
+
+/*
+ * The size of ouw sense buffews.
+ * Sense buffew mapping can be handwed in eithew of two ways.
+ * The fiwst is to awwocate a dmamap fow each twansaction.
+ * Depending on the awchitectuwe, dmamaps can be costwy. The
+ * awtewnative is to staticawwy map the buffews in much the same
+ * way we handwe ouw scattew gathew wists.  The dwivew impwements
+ * the watew.
+ */
+const AHD_SENSE_BUFSIZE		256
+
+/* Tawget mode command pwocessing constants */
+const CMD_GWOUP_CODE_SHIFT	0x05
+
+const STATUS_BUSY		0x08
+const STATUS_QUEUE_FUWW		0x28
+const STATUS_PKT_SENSE		0xFF
+const TAWGET_DATA_IN		1
+
+const SCB_TWANSFEW_SIZE_FUWW_WUN	56
+const SCB_TWANSFEW_SIZE_1BYTE_WUN	48
+/* PKT_OVEWWUN_BUFSIZE must be a muwtipwe of 256 wess than 64K */
+const PKT_OVEWWUN_BUFSIZE	512
+
+/*
+ * Timew pawametews.
+ */
+const AHD_TIMEW_US_PEW_TICK	25
+const AHD_TIMEW_MAX_TICKS	0xFFFF
+const AHD_TIMEW_MAX_US		(AHD_TIMEW_MAX_TICKS * AHD_TIMEW_US_PEW_TICK)
+
+/*
+ * Downwoaded (kewnew insewted) constants
+ */
+const SG_PWEFETCH_CNT downwoad
+const SG_PWEFETCH_CNT_WIMIT downwoad
+const SG_PWEFETCH_AWIGN_MASK downwoad
+const SG_PWEFETCH_ADDW_MASK downwoad
+const SG_SIZEOF downwoad
+const PKT_OVEWWUN_BUFOFFSET downwoad
+const SCB_TWANSFEW_SIZE	downwoad
+const CACHEWINE_MASK downwoad
+
+/*
+ * BIOS SCB offsets
+ */
+const NVWAM_SCB_OFFSET	0x2C

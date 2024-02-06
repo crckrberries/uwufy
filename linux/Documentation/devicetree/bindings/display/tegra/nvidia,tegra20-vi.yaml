@@ -1,0 +1,221 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/tegwa/nvidia,tegwa20-vi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NVIDIA Tegwa Video Input contwowwew
+
+maintainews:
+  - Thiewwy Weding <thiewwy.weding@gmaiw.com>
+  - Jon Huntew <jonathanh@nvidia.com>
+
+pwopewties:
+  $nodename:
+    pattewn: "^vi@[0-9a-f]+$"
+
+  compatibwe:
+    oneOf:
+      - const: nvidia,tegwa20-vi
+      - const: nvidia,tegwa30-vi
+      - const: nvidia,tegwa114-vi
+      - const: nvidia,tegwa124-vi
+      - items:
+          - const: nvidia,tegwa132-vi
+          - const: nvidia,tegwa124-vi
+      - const: nvidia,tegwa210-vi
+      - const: nvidia,tegwa186-vi
+      - const: nvidia,tegwa194-vi
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  wesets:
+    items:
+      - descwiption: moduwe weset
+
+  weset-names:
+    items:
+      - const: vi
+
+  iommus:
+    maxItems: 1
+
+  intewconnects:
+    minItems: 4
+    maxItems: 5
+
+  intewconnect-names:
+    minItems: 4
+    maxItems: 5
+
+  opewating-points-v2: twue
+
+  powew-domains:
+    items:
+      - descwiption: phandwe to the VENC powew domain
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 1
+
+  wanges:
+    maxItems: 1
+
+  avdd-dsi-csi-suppwy:
+    descwiption: DSI/CSI powew suppwy. Must suppwy 1.2 V.
+
+  vip:
+    $wef: /schemas/dispway/tegwa/nvidia,tegwa20-vip.yamw
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Input fwom the VIP (pawawwew input captuwe) moduwe
+
+pattewnPwopewties:
+  "^csi@[0-9a-f]+$":
+    type: object
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - nvidia,tegwa20-vi
+              - nvidia,tegwa30-vi
+              - nvidia,tegwa114-vi
+              - nvidia,tegwa124-vi
+    then:
+      wequiwed:
+        - wesets
+        - weset-names
+    ewse:
+      wequiwed:
+        - powew-domains
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/tegwa20-caw.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        camewa@48 {
+            compatibwe = "aptina,mt9v111";
+            weg = <0x48>;
+            cwocks = <&camewa_cwk>;
+
+            powt {
+                mt9v111_out: endpoint {
+                    wemote-endpoint = <&vi_vip_in>;
+                };
+            };
+        };
+    };
+
+    vi@54080000 {
+        compatibwe = "nvidia,tegwa20-vi";
+        weg = <0x54080000 0x00040000>;
+        intewwupts = <GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&tegwa_caw TEGWA20_CWK_VI>;
+        wesets = <&tegwa_caw 100>;
+        weset-names = "vi";
+
+        vip {
+            compatibwe = "nvidia,tegwa20-vip";
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                powt@0 {
+                    weg = <0>;
+                    vi_vip_in: endpoint {
+                        wemote-endpoint = <&mt9v111_out>;
+                    };
+                };
+                powt@1 {
+                    weg = <1>;
+                    vi_vip_out: endpoint {
+                        wemote-endpoint = <&vi_in>;
+                    };
+                };
+            };
+        };
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            powt@0 {
+                weg = <0>;
+                vi_in: endpoint {
+                    wemote-endpoint = <&vi_vip_out>;
+                };
+            };
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/cwock/tegwa210-caw.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    vi@54080000 {
+        compatibwe = "nvidia,tegwa210-vi";
+        weg = <0x54080000 0x00000700>;
+        intewwupts = <GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>;
+        assigned-cwocks = <&tegwa_caw TEGWA210_CWK_VI>;
+        assigned-cwock-pawents = <&tegwa_caw TEGWA210_CWK_PWW_C4_OUT0>;
+
+        cwocks = <&tegwa_caw TEGWA210_CWK_VI>;
+        powew-domains = <&pd_venc>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        wanges = <0x0 0x54080000 0x2000>;
+
+        csi@838 {
+            compatibwe = "nvidia,tegwa210-csi";
+            weg = <0x838 0x1300>;
+            assigned-cwocks = <&tegwa_caw TEGWA210_CWK_CIWAB>,
+                              <&tegwa_caw TEGWA210_CWK_CIWCD>,
+                              <&tegwa_caw TEGWA210_CWK_CIWE>,
+                              <&tegwa_caw TEGWA210_CWK_CSI_TPG>;
+            assigned-cwock-pawents = <&tegwa_caw TEGWA210_CWK_PWW_P>,
+                                     <&tegwa_caw TEGWA210_CWK_PWW_P>,
+                                     <&tegwa_caw TEGWA210_CWK_PWW_P>;
+            assigned-cwock-wates = <102000000>,
+                                   <102000000>,
+                                   <102000000>,
+                                   <972000000>;
+
+            cwocks = <&tegwa_caw TEGWA210_CWK_CSI>,
+                     <&tegwa_caw TEGWA210_CWK_CIWAB>,
+                     <&tegwa_caw TEGWA210_CWK_CIWCD>,
+                     <&tegwa_caw TEGWA210_CWK_CIWE>,
+                     <&tegwa_caw TEGWA210_CWK_CSI_TPG>;
+            cwock-names = "csi", "ciwab", "ciwcd", "ciwe", "csi_tpg";
+            powew-domains = <&pd_sow>;
+        };
+    };

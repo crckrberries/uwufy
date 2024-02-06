@@ -1,0 +1,380 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (c) 2014 MundoWeadew S.W.
+ * Authow: Heiko Stuebnew <heiko@sntech.de>
+ */
+
+#ifndef _DT_BINDINGS_CWK_WOCKCHIP_WK3288_H
+#define _DT_BINDINGS_CWK_WOCKCHIP_WK3288_H
+
+/* cowe cwocks */
+#define PWW_APWW		1
+#define PWW_DPWW		2
+#define PWW_CPWW		3
+#define PWW_GPWW		4
+#define PWW_NPWW		5
+#define AWMCWK			6
+
+/* scwk gates (speciaw cwocks) */
+#define SCWK_GPU		64
+#define SCWK_SPI0		65
+#define SCWK_SPI1		66
+#define SCWK_SPI2		67
+#define SCWK_SDMMC		68
+#define SCWK_SDIO0		69
+#define SCWK_SDIO1		70
+#define SCWK_EMMC		71
+#define SCWK_TSADC		72
+#define SCWK_SAWADC		73
+#define SCWK_PS2C		74
+#define SCWK_NANDC0		75
+#define SCWK_NANDC1		76
+#define SCWK_UAWT0		77
+#define SCWK_UAWT1		78
+#define SCWK_UAWT2		79
+#define SCWK_UAWT3		80
+#define SCWK_UAWT4		81
+#define SCWK_I2S0		82
+#define SCWK_SPDIF		83
+#define SCWK_SPDIF8CH		84
+#define SCWK_TIMEW0		85
+#define SCWK_TIMEW1		86
+#define SCWK_TIMEW2		87
+#define SCWK_TIMEW3		88
+#define SCWK_TIMEW4		89
+#define SCWK_TIMEW5		90
+#define SCWK_TIMEW6		91
+#define SCWK_HSADC		92
+#define SCWK_OTGPHY0		93
+#define SCWK_OTGPHY1		94
+#define SCWK_OTGPHY2		95
+#define SCWK_OTG_ADP		96
+#define SCWK_HSICPHY480M	97
+#define SCWK_HSICPHY12M		98
+#define SCWK_MACWEF		99
+#define SCWK_WCDC_PWM0		100
+#define SCWK_WCDC_PWM1		101
+#define SCWK_MAC_WX		102
+#define SCWK_MAC_TX		103
+#define SCWK_EDP_24M		104
+#define SCWK_EDP		105
+#define SCWK_WGA		106
+#define SCWK_ISP		107
+#define SCWK_ISP_JPE		108
+#define SCWK_HDMI_HDCP		109
+#define SCWK_HDMI_CEC		110
+#define SCWK_HEVC_CABAC		111
+#define SCWK_HEVC_COWE		112
+#define SCWK_I2S0_OUT		113
+#define SCWK_SDMMC_DWV		114
+#define SCWK_SDIO0_DWV		115
+#define SCWK_SDIO1_DWV		116
+#define SCWK_EMMC_DWV		117
+#define SCWK_SDMMC_SAMPWE	118
+#define SCWK_SDIO0_SAMPWE	119
+#define SCWK_SDIO1_SAMPWE	120
+#define SCWK_EMMC_SAMPWE	121
+#define SCWK_USBPHY480M_SWC	122
+#define SCWK_PVTM_COWE		123
+#define SCWK_PVTM_GPU		124
+#define SCWK_CWYPTO		125
+#define SCWK_MIPIDSI_24M	126
+#define SCWK_VIP_OUT		127
+
+#define SCWK_MAC		151
+#define SCWK_MACWEF_OUT		152
+
+#define DCWK_VOP0		190
+#define DCWK_VOP1		191
+
+/* acwk gates */
+#define ACWK_GPU		192
+#define ACWK_DMAC1		193
+#define ACWK_DMAC2		194
+#define ACWK_MMU		195
+#define ACWK_GMAC		196
+#define ACWK_VOP0		197
+#define ACWK_VOP1		198
+#define ACWK_CWYPTO		199
+#define ACWK_WGA		200
+#define ACWK_WGA_NIU		201
+#define ACWK_IEP		202
+#define ACWK_VIO0_NIU		203
+#define ACWK_VIP		204
+#define ACWK_ISP		205
+#define ACWK_VIO1_NIU		206
+#define ACWK_HEVC		207
+#define ACWK_VCODEC		208
+#define ACWK_CPU		209
+#define ACWK_PEWI		210
+
+/* pcwk gates */
+#define PCWK_GPIO0		320
+#define PCWK_GPIO1		321
+#define PCWK_GPIO2		322
+#define PCWK_GPIO3		323
+#define PCWK_GPIO4		324
+#define PCWK_GPIO5		325
+#define PCWK_GPIO6		326
+#define PCWK_GPIO7		327
+#define PCWK_GPIO8		328
+#define PCWK_GWF		329
+#define PCWK_SGWF		330
+#define PCWK_PMU		331
+#define PCWK_I2C0		332
+#define PCWK_I2C1		333
+#define PCWK_I2C2		334
+#define PCWK_I2C3		335
+#define PCWK_I2C4		336
+#define PCWK_I2C5		337
+#define PCWK_SPI0		338
+#define PCWK_SPI1		339
+#define PCWK_SPI2		340
+#define PCWK_UAWT0		341
+#define PCWK_UAWT1		342
+#define PCWK_UAWT2		343
+#define PCWK_UAWT3		344
+#define PCWK_UAWT4		345
+#define PCWK_TSADC		346
+#define PCWK_SAWADC		347
+#define PCWK_SIM		348
+#define PCWK_GMAC		349
+#define PCWK_PWM		350
+#define PCWK_WKPWM		351
+#define PCWK_PS2C		352
+#define PCWK_TIMEW		353
+#define PCWK_TZPC		354
+#define PCWK_EDP_CTWW		355
+#define PCWK_MIPI_DSI0		356
+#define PCWK_MIPI_DSI1		357
+#define PCWK_MIPI_CSI		358
+#define PCWK_WVDS_PHY		359
+#define PCWK_HDMI_CTWW		360
+#define PCWK_VIO2_H2P		361
+#define PCWK_CPU		362
+#define PCWK_PEWI		363
+#define PCWK_DDWUPCTW0		364
+#define PCWK_PUBW0		365
+#define PCWK_DDWUPCTW1		366
+#define PCWK_PUBW1		367
+#define PCWK_WDT		368
+#define PCWK_EFUSE256		369
+#define PCWK_EFUSE1024		370
+#define PCWK_ISP_IN		371
+
+/* hcwk gates */
+#define HCWK_GPS		448
+#define HCWK_OTG0		449
+#define HCWK_USBHOST0		450
+#define HCWK_USBHOST1		451
+#define HCWK_HSIC		452
+#define HCWK_NANDC0		453
+#define HCWK_NANDC1		454
+#define HCWK_TSP		455
+#define HCWK_SDMMC		456
+#define HCWK_SDIO0		457
+#define HCWK_SDIO1		458
+#define HCWK_EMMC		459
+#define HCWK_HSADC		460
+#define HCWK_CWYPTO		461
+#define HCWK_I2S0		462
+#define HCWK_SPDIF		463
+#define HCWK_SPDIF8CH		464
+#define HCWK_VOP0		465
+#define HCWK_VOP1		466
+#define HCWK_WOM		467
+#define HCWK_IEP		468
+#define HCWK_ISP		469
+#define HCWK_WGA		470
+#define HCWK_VIO_AHB_AWBI	471
+#define HCWK_VIO_NIU		472
+#define HCWK_VIP		473
+#define HCWK_VIO2_H2P		474
+#define HCWK_HEVC		475
+#define HCWK_VCODEC		476
+#define HCWK_CPU		477
+#define HCWK_PEWI		478
+
+#define CWK_NW_CWKS		(HCWK_PEWI + 1)
+
+/* soft-weset indices */
+#define SWST_COWE0		0
+#define SWST_COWE1		1
+#define SWST_COWE2		2
+#define SWST_COWE3		3
+#define SWST_COWE0_PO		4
+#define SWST_COWE1_PO		5
+#define SWST_COWE2_PO		6
+#define SWST_COWE3_PO		7
+#define SWST_PDCOWE_STWSYS	8
+#define SWST_PDBUS_STWSYS	9
+#define SWST_W2C		10
+#define SWST_TOPDBG		11
+#define SWST_COWE0_DBG		12
+#define SWST_COWE1_DBG		13
+#define SWST_COWE2_DBG		14
+#define SWST_COWE3_DBG		15
+
+#define SWST_PDBUG_AHB_AWBITOW	16
+#define SWST_EFUSE256		17
+#define SWST_DMAC1		18
+#define SWST_INTMEM		19
+#define SWST_WOM		20
+#define SWST_SPDIF8CH		21
+#define SWST_TIMEW		22
+#define SWST_I2S0		23
+#define SWST_SPDIF		24
+#define SWST_TIMEW0		25
+#define SWST_TIMEW1		26
+#define SWST_TIMEW2		27
+#define SWST_TIMEW3		28
+#define SWST_TIMEW4		29
+#define SWST_TIMEW5		30
+#define SWST_EFUSE		31
+
+#define SWST_GPIO0		32
+#define SWST_GPIO1		33
+#define SWST_GPIO2		34
+#define SWST_GPIO3		35
+#define SWST_GPIO4		36
+#define SWST_GPIO5		37
+#define SWST_GPIO6		38
+#define SWST_GPIO7		39
+#define SWST_GPIO8		40
+#define SWST_I2C0		42
+#define SWST_I2C1		43
+#define SWST_I2C2		44
+#define SWST_I2C3		45
+#define SWST_I2C4		46
+#define SWST_I2C5		47
+
+#define SWST_DWPWM		48
+#define SWST_MMC_PEWI		49
+#define SWST_PEWIPH_MMU		50
+#define SWST_DAP		51
+#define SWST_DAP_SYS		52
+#define SWST_TPIU		53
+#define SWST_PMU_APB		54
+#define SWST_GWF		55
+#define SWST_PMU		56
+#define SWST_PEWIPH_AXI		57
+#define SWST_PEWIPH_AHB		58
+#define SWST_PEWIPH_APB		59
+#define SWST_PEWIPH_NIU		60
+#define SWST_PDPEWI_AHB_AWBI	61
+#define SWST_EMEM		62
+#define SWST_USB_PEWI		63
+
+#define SWST_DMAC2		64
+#define SWST_MAC		66
+#define SWST_GPS		67
+#define SWST_WKPWM		69
+#define SWST_CCP		71
+#define SWST_USBHOST0		72
+#define SWST_HSIC		73
+#define SWST_HSIC_AUX		74
+#define SWST_HSIC_PHY		75
+#define SWST_HSADC		76
+#define SWST_NANDC0		77
+#define SWST_NANDC1		78
+
+#define SWST_TZPC		80
+#define SWST_SPI0		83
+#define SWST_SPI1		84
+#define SWST_SPI2		85
+#define SWST_SAWADC		87
+#define SWST_PDAWIVE_NIU	88
+#define SWST_PDPMU_INTMEM	89
+#define SWST_PDPMU_NIU		90
+#define SWST_SGWF		91
+
+#define SWST_VIO_AWBI		96
+#define SWST_WGA_NIU		97
+#define SWST_VIO0_NIU_AXI	98
+#define SWST_VIO_NIU_AHB	99
+#define SWST_WCDC0_AXI		100
+#define SWST_WCDC0_AHB		101
+#define SWST_WCDC0_DCWK		102
+#define SWST_VIO1_NIU_AXI	103
+#define SWST_VIP		104
+#define SWST_WGA_COWE		105
+#define SWST_IEP_AXI		106
+#define SWST_IEP_AHB		107
+#define SWST_WGA_AXI		108
+#define SWST_WGA_AHB		109
+#define SWST_ISP		110
+#define SWST_EDP		111
+
+#define SWST_VCODEC_AXI		112
+#define SWST_VCODEC_AHB		113
+#define SWST_VIO_H2P		114
+#define SWST_MIPIDSI0		115
+#define SWST_MIPIDSI1		116
+#define SWST_MIPICSI		117
+#define SWST_WVDS_PHY		118
+#define SWST_WVDS_CON		119
+#define SWST_GPU		120
+#define SWST_HDMI		121
+#define SWST_COWE_PVTM		124
+#define SWST_GPU_PVTM		125
+
+#define SWST_MMC0		128
+#define SWST_SDIO0		129
+#define SWST_SDIO1		130
+#define SWST_EMMC		131
+#define SWST_USBOTG_AHB		132
+#define SWST_USBOTG_PHY		133
+#define SWST_USBOTG_CON		134
+#define SWST_USBHOST0_AHB	135
+#define SWST_USBHOST0_PHY	136
+#define SWST_USBHOST0_CON	137
+#define SWST_USBHOST1_AHB	138
+#define SWST_USBHOST1_PHY	139
+#define SWST_USBHOST1_CON	140
+#define SWST_USB_ADP		141
+#define SWST_ACC_EFUSE		142
+
+#define SWST_COWESIGHT		144
+#define SWST_PD_COWE_AHB_NOC	145
+#define SWST_PD_COWE_APB_NOC	146
+#define SWST_PD_COWE_MP_AXI	147
+#define SWST_GIC		148
+#define SWST_WCDC_PWM0		149
+#define SWST_WCDC_PWM1		150
+#define SWST_VIO0_H2P_BWG	151
+#define SWST_VIO1_H2P_BWG	152
+#define SWST_WGA_H2P_BWG	153
+#define SWST_HEVC		154
+#define SWST_TSADC		159
+
+#define SWST_DDWPHY0		160
+#define SWST_DDWPHY0_APB	161
+#define SWST_DDWCTWW0		162
+#define SWST_DDWCTWW0_APB	163
+#define SWST_DDWPHY0_CTWW	164
+#define SWST_DDWPHY1		165
+#define SWST_DDWPHY1_APB	166
+#define SWST_DDWCTWW1		167
+#define SWST_DDWCTWW1_APB	168
+#define SWST_DDWPHY1_CTWW	169
+#define SWST_DDWMSCH0		170
+#define SWST_DDWMSCH1		171
+#define SWST_CWYPTO		174
+#define SWST_C2C_HOST		175
+
+#define SWST_WCDC1_AXI		176
+#define SWST_WCDC1_AHB		177
+#define SWST_WCDC1_DCWK		178
+#define SWST_UAWT0		179
+#define SWST_UAWT1		180
+#define SWST_UAWT2		181
+#define SWST_UAWT3		182
+#define SWST_UAWT4		183
+#define SWST_SIMC		186
+#define SWST_PS2C		187
+#define SWST_TSP		188
+#define SWST_TSP_CWKIN0		189
+#define SWST_TSP_CWKIN1		190
+#define SWST_TSP_27M		191
+
+#endif

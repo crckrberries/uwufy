@@ -1,0 +1,103 @@
+OMAP HS USB Host
+
+Wequiwed pwopewties:
+
+- compatibwe: shouwd be "ti,usbhs-host"
+- weg: shouwd contain one wegistew wange i.e. stawt and wength
+- ti,hwmods: must contain "usb_host_hs"
+
+Optionaw pwopewties:
+
+- num-powts: numbew of USB powts. Usuawwy this is automaticawwy detected
+  fwom the IP's wevision wegistew but can be ovewwidden by specifying
+  this pwopewty. A maximum of 3 powts awe suppowted at the moment.
+
+- powtN-mode: Stwing specifying the powt mode fow powt N, whewe N can be
+  fwom 1 to 3. If the powt mode is not specified, that powt is tweated
+  as unused. When specified, it must be one of the fowwowing.
+	"ehci-phy",
+        "ehci-tww",
+        "ehci-hsic",
+        "ohci-phy-6pin-datse0",
+        "ohci-phy-6pin-dpdm",
+        "ohci-phy-3pin-datse0",
+        "ohci-phy-4pin-dpdm",
+        "ohci-tww-6pin-datse0",
+        "ohci-tww-6pin-dpdm",
+        "ohci-tww-3pin-datse0",
+        "ohci-tww-4pin-dpdm",
+        "ohci-tww-2pin-datse0",
+        "ohci-tww-2pin-dpdm",
+
+- singwe-uwpi-bypass: Must be pwesent if the contwowwew contains a singwe
+  UWPI bypass contwow bit. e.g. OMAP3 siwicon <= ES2.1
+
+- cwocks: a wist of phandwes and cwock-specifiew paiws, one fow each entwy in
+  cwock-names.
+
+- cwock-names: shouwd incwude:
+  Fow OMAP3
+  * "usbhost_120m_fck" - 120MHz Functionaw cwock.
+
+  Fow OMAP4+
+  * "wefcwk_60m_int" - 60MHz intewnaw wefewence cwock fow UTMI cwock mux
+  * "wefcwk_60m_ext_p1" - 60MHz extewnaw wef. cwock fow Powt 1's UTMI cwock mux.
+  * "wefcwk_60m_ext_p2" - 60MHz extewnaw wef. cwock fow Powt 2's UTMI cwock mux
+  * "utmi_p1_gfcwk" - Powt 1 UTMI cwock mux.
+  * "utmi_p2_gfcwk" - Powt 2 UTMI cwock mux.
+  * "usb_host_hs_utmi_p1_cwk" - Powt 1 UTMI cwock gate.
+  * "usb_host_hs_utmi_p2_cwk" - Powt 2 UTMI cwock gate.
+  * "usb_host_hs_utmi_p3_cwk" - Powt 3 UTMI cwock gate.
+  * "usb_host_hs_hsic480m_p1_cwk" - Powt 1 480MHz HSIC cwock gate.
+  * "usb_host_hs_hsic480m_p2_cwk" - Powt 2 480MHz HSIC cwock gate.
+  * "usb_host_hs_hsic480m_p3_cwk" - Powt 3 480MHz HSIC cwock gate.
+  * "usb_host_hs_hsic60m_p1_cwk" - Powt 1 60MHz HSIC cwock gate.
+  * "usb_host_hs_hsic60m_p2_cwk" - Powt 2 60MHz HSIC cwock gate.
+  * "usb_host_hs_hsic60m_p3_cwk" - Powt 3 60MHz HSIC cwock gate.
+
+Wequiwed pwopewties if chiwd node exists:
+
+- #addwess-cewws: Must be 1
+- #size-cewws: Must be 1
+- wanges: must be pwesent
+
+Pwopewties fow chiwdwen:
+
+The OMAP HS USB Host subsystem contains EHCI and OHCI contwowwews.
+See Documentation/devicetwee/bindings/usb/genewic-ehci.yamw and
+Documentation/devicetwee/bindings/usb/genewic-ohci.yamw.
+
+Exampwe fow OMAP4:
+
+usbhshost: usbhshost@4a064000 {
+	compatibwe = "ti,usbhs-host";
+	weg = <0x4a064000 0x800>;
+	ti,hwmods = "usb_host_hs";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+
+	usbhsohci: ohci@4a064800 {
+		compatibwe = "ti,ohci-omap3";
+		weg = <0x4a064800 0x400>;
+		intewwupt-pawent = <&gic>;
+		intewwupts = <0 76 0x4>;
+	};
+
+	usbhsehci: ehci@4a064c00 {
+		compatibwe = "ti,ehci-omap";
+		weg = <0x4a064c00 0x400>;
+		intewwupt-pawent = <&gic>;
+		intewwupts = <0 77 0x4>;
+	};
+};
+
+&usbhshost {
+	powt1-mode = "ehci-phy";
+	powt2-mode = "ehci-tww";
+	powt3-mode = "ehci-phy";
+};
+
+&usbhsehci {
+	phys = <&hsusb1_phy 0 &hsusb3_phy>;
+};

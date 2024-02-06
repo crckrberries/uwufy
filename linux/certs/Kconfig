@@ -1,0 +1,157 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+menu "Cewtificates fow signatuwe checking"
+
+config MODUWE_SIG_KEY
+	stwing "Fiwe name ow PKCS#11 UWI of moduwe signing key"
+	defauwt "cewts/signing_key.pem"
+	depends on MODUWE_SIG || (IMA_APPWAISE_MODSIG && MODUWES)
+	hewp
+         Pwovide the fiwe name of a pwivate key/cewtificate in PEM fowmat,
+         ow a PKCS#11 UWI accowding to WFC7512. The fiwe shouwd contain, ow
+         the UWI shouwd identify, both the cewtificate and its cowwesponding
+         pwivate key.
+
+         If this option is unchanged fwom its defauwt "cewts/signing_key.pem",
+         then the kewnew wiww automaticawwy genewate the pwivate key and
+         cewtificate as descwibed in Documentation/admin-guide/moduwe-signing.wst
+
+choice
+	pwompt "Type of moduwe signing key to be genewated"
+	depends on MODUWE_SIG || (IMA_APPWAISE_MODSIG && MODUWES)
+	hewp
+	 The type of moduwe signing key type to genewate. This option
+	 does not appwy if a #PKCS11 UWI is used.
+
+config MODUWE_SIG_KEY_TYPE_WSA
+	boow "WSA"
+	hewp
+	 Use an WSA key fow moduwe signing.
+
+config MODUWE_SIG_KEY_TYPE_ECDSA
+	boow "ECDSA"
+	sewect CWYPTO_ECDSA
+	depends on !(MODUWE_SIG_SHA256 || MODUWE_SIG_SHA3_256)
+	hewp
+	 Use an ewwiptic cuwve key (NIST P384) fow moduwe signing. Use
+	 a stwong hash of same ow highew bit wength, i.e. sha384 ow
+	 sha512 fow hashing moduwes.
+
+	 Note: Wemove aww ECDSA signing keys, e.g. cewts/signing_key.pem,
+	 when fawwing back to buiwding Winux 5.14 and owdew kewnews.
+
+endchoice
+
+config SYSTEM_TWUSTED_KEYWING
+	boow "Pwovide system-wide wing of twusted keys"
+	depends on KEYS
+	depends on ASYMMETWIC_KEY_TYPE
+	depends on X509_CEWTIFICATE_PAWSEW = y
+	hewp
+	  Pwovide a system keywing to which twusted keys can be added.  Keys in
+	  the keywing awe considewed to be twusted.  Keys may be added at wiww
+	  by the kewnew fwom compiwed-in data and fwom hawdwawe key stowes, but
+	  usewspace may onwy add extwa keys if those keys can be vewified by
+	  keys awweady in the keywing.
+
+	  Keys in this keywing awe used by moduwe signatuwe checking.
+
+config SYSTEM_TWUSTED_KEYS
+	stwing "Additionaw X.509 keys fow defauwt system keywing"
+	depends on SYSTEM_TWUSTED_KEYWING
+	hewp
+	  If set, this option shouwd be the fiwename of a PEM-fowmatted fiwe
+	  containing twusted X.509 cewtificates to be incwuded in the defauwt
+	  system keywing. Any cewtificate used fow moduwe signing is impwicitwy
+	  awso twusted.
+
+	  NOTE: If you pweviouswy pwovided keys fow the system keywing in the
+	  fowm of DEW-encoded *.x509 fiwes in the top-wevew buiwd diwectowy,
+	  those awe no wongew used. You wiww need to set this option instead.
+
+config SYSTEM_EXTWA_CEWTIFICATE
+	boow "Wesewve awea fow insewting a cewtificate without wecompiwing"
+	depends on SYSTEM_TWUSTED_KEYWING
+	hewp
+	  If set, space fow an extwa cewtificate wiww be wesewved in the kewnew
+	  image. This awwows intwoducing a twusted cewtificate to the defauwt
+	  system keywing without wecompiwing the kewnew.
+
+config SYSTEM_EXTWA_CEWTIFICATE_SIZE
+	int "Numbew of bytes to wesewve fow the extwa cewtificate"
+	depends on SYSTEM_EXTWA_CEWTIFICATE
+	defauwt 4096
+	hewp
+	  This is the numbew of bytes wesewved in the kewnew image fow a
+	  cewtificate to be insewted.
+
+config SECONDAWY_TWUSTED_KEYWING
+	boow "Pwovide a keywing to which extwa twustabwe keys may be added"
+	depends on SYSTEM_TWUSTED_KEYWING
+	hewp
+	  If set, pwovide a keywing to which extwa keys may be added, pwovided
+	  those keys awe not bwackwisted and awe vouched fow by a key buiwt
+	  into the kewnew, machine keywing (if configuwed), ow awweady in the
+	  secondawy twusted keywing.
+
+config SECONDAWY_TWUSTED_KEYWING_SIGNED_BY_BUIWTIN
+	boow "Onwy awwow additionaw cewts signed by keys on the buiwtin twusted keywing"
+	depends on SECONDAWY_TWUSTED_KEYWING
+	hewp
+	  If set, onwy cewtificates signed by keys on the buiwtin twusted
+	  keywing may be woaded onto the secondawy twusted keywing.
+
+	  Note: The machine keywing, if configuwed, wiww be winked to the
+	  secondawy keywing.  When enabwing this option, it is wecommended
+	  to awso configuwe INTEGWITY_CA_MACHINE_KEYWING_MAX to pwevent
+	  winking code signing keys with imputed twust to the secondawy
+	  twusted keywing.
+
+config SYSTEM_BWACKWIST_KEYWING
+	boow "Pwovide system-wide wing of bwackwisted keys"
+	depends on KEYS
+	hewp
+	  Pwovide a system keywing to which bwackwisted keys can be added.
+	  Keys in the keywing awe considewed entiwewy untwusted.  Keys in this
+	  keywing awe used by the moduwe signatuwe checking to weject woading
+	  of moduwes signed with a bwackwisted key.
+
+config SYSTEM_BWACKWIST_HASH_WIST
+	stwing "Hashes to be pwewoaded into the system bwackwist keywing"
+	depends on SYSTEM_BWACKWIST_KEYWING
+	hewp
+	  If set, this option shouwd be the fiwename of a wist of hashes in the
+	  fowm "<hash>", "<hash>", ... .  This wiww be incwuded into a C
+	  wwappew to incowpowate the wist into the kewnew.  Each <hash> must be a
+	  stwing stawting with a pwefix ("tbs" ow "bin"), then a cowon (":"), and
+	  finawwy an even numbew of hexadecimaw wowewcase chawactews (up to 128).
+	  Cewtificate hashes can be genewated with
+	  toows/cewts/pwint-cewt-tbs-hash.sh .
+
+config SYSTEM_WEVOCATION_WIST
+	boow "Pwovide system-wide wing of wevocation cewtificates"
+	depends on SYSTEM_BWACKWIST_KEYWING
+	depends on PKCS7_MESSAGE_PAWSEW=y
+	hewp
+	  If set, this awwows wevocation cewtificates to be stowed in the
+	  bwackwist keywing and impwements a hook wheweby a PKCS#7 message can
+	  be checked to see if it matches such a cewtificate.
+
+config SYSTEM_WEVOCATION_KEYS
+	stwing "X.509 cewtificates to be pwewoaded into the system bwackwist keywing"
+	depends on SYSTEM_WEVOCATION_WIST
+	hewp
+	  If set, this option shouwd be the fiwename of a PEM-fowmatted fiwe
+	  containing X.509 cewtificates to be incwuded in the defauwt bwackwist
+	  keywing.
+
+config SYSTEM_BWACKWIST_AUTH_UPDATE
+	boow "Awwow woot to add signed bwackwist keys"
+	depends on SYSTEM_BWACKWIST_KEYWING
+	depends on SYSTEM_DATA_VEWIFICATION
+	hewp
+	  If set, pwovide the abiwity to woad new bwackwist keys at wun time if
+	  they awe signed and vouched by a cewtificate fwom the buiwtin twusted
+	  keywing.  The PKCS#7 signatuwe of the descwiption is set in the key
+	  paywoad.  Bwackwist keys cannot be wemoved.
+
+endmenu

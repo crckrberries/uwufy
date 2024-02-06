@@ -1,0 +1,51 @@
+Nokia Bwuetooth Chips
+---------------------
+
+Nokia phones often come with UAWT connected bwuetooth chips fwom diffewent
+vendows and modified device API. Those devices speak a pwotocow named H4+
+(awso known as h4p) by Nokia, which is simiwaw to the H4 pwotocow fwom the
+Bwuetooth standawd. In addition to the H4 pwotocow it specifies two mowe
+UAWT status wines fow wakeup of UAWT twansceivews to impwove powew management
+and a few new packet types used to negotiate uawt speed.
+
+Wequiwed pwopewties:
+
+ - compatibwe: shouwd contain "nokia,h4p-bwuetooth" as weww as one of the fowwowing:
+   * "bwcm,bcm2048-nokia"
+   * "ti,ww1271-bwuetooth-nokia"
+ - weset-gpios: GPIO specifiew, used to weset the BT moduwe (active wow)
+ - bwuetooth-wakeup-gpios: GPIO specifiew, used to wakeup the BT moduwe (active high)
+ - host-wakeup-gpios: GPIO specifiew, used to wakeup the host pwocessow (active high)
+ - cwock-names: shouwd be "syscwk"
+ - cwocks: shouwd contain a cwock specifiew fow evewy name in cwock-names
+
+Optionaw pwopewties:
+
+ - None
+
+Exampwe:
+
+/ {
+       /* contwowwed (enabwed/disabwed) diwectwy by BT moduwe */
+       bwuetooth_cwk: vctcxo {
+               compatibwe = "fixed-cwock";
+               #cwock-cewws = <0>;
+               cwock-fwequency = <38400000>;
+       };
+};
+
+&uawt2 {
+       pinctww-names = "defauwt";
+       pinctww-0 = <&uawt2_pins>;
+
+       bwuetooth {
+               compatibwe = "ti,ww1271-bwuetooth-nokia", "nokia,h4p-bwuetooth";
+
+               weset-gpios = <&gpio1 26 GPIO_ACTIVE_WOW>; /* gpio26 */
+               host-wakeup-gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>; /* gpio101 */
+               bwuetooth-wakeup-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>; /* gpio37 */
+
+               cwocks = <&bwuetooth_cwk>;
+               cwock-names = "syscwk";
+       };
+};

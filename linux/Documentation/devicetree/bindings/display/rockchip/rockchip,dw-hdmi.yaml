@@ -1,0 +1,166 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/wockchip/wockchip,dw-hdmi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip DWC HDMI TX Encodew
+
+maintainews:
+  - Mawk Yao <mawkyao0591@gmaiw.com>
+
+descwiption: |
+  The HDMI twansmittew is a Synopsys DesignWawe HDMI 1.4 TX contwowwew IP
+  with a companion PHY IP.
+
+awwOf:
+  - $wef: ../bwidge/synopsys,dw-hdmi.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,wk3228-dw-hdmi
+      - wockchip,wk3288-dw-hdmi
+      - wockchip,wk3328-dw-hdmi
+      - wockchip,wk3399-dw-hdmi
+      - wockchip,wk3568-dw-hdmi
+
+  weg-io-width:
+    const: 4
+
+  avdd-0v9-suppwy:
+    descwiption:
+      A 0.9V suppwy that powews up the SoC intewnaw ciwcuitwy. The actuaw pin name
+      vawies between the diffewent SoCs and is usuawwy HDMI_TX_AVDD_0V9 ow sometimes
+      HDMI_AVDD_1V0.
+
+  avdd-1v8-suppwy:
+    descwiption:
+      A 1.8V suppwy that powews up the SoC intewnaw ciwcuitwy. The pin name on the
+      SoC usuawwy is HDMI_TX_AVDD_1V8.
+
+  cwocks:
+    minItems: 2
+    items:
+      - {}
+      - {}
+      # The next thwee cwocks awe aww optionaw, but shaww be specified in this
+      # owdew when pwesent.
+      - descwiption: The HDMI CEC contwowwew main cwock
+      - descwiption: Powew fow GWF IO
+      - descwiption: Extewnaw cwock fow some HDMI PHY (owd cwock name, depwecated)
+      - descwiption: Extewnaw cwock fow some HDMI PHY (new name)
+
+  cwock-names:
+    minItems: 2
+    items:
+      - {}
+      - {}
+      - enum:
+          - cec
+          - gwf
+          - vpww
+          - wef
+      - enum:
+          - gwf
+          - vpww
+          - wef
+      - enum:
+          - vpww
+          - wef
+
+  ddc-i2c-bus:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      The HDMI DDC bus can be connected to eithew a system I2C mastew ow the
+      functionawwy-weduced I2C mastew contained in the DWC HDMI. When connected
+      to a system I2C mastew this pwopewty contains a phandwe to that I2C
+      mastew contwowwew.
+
+  phys:
+    maxItems: 1
+    descwiption: The HDMI PHY
+
+  phy-names:
+    const: hdmi
+
+  pinctww-names:
+    descwiption:
+      The unwedge pinctww entwy shaww dwive the DDC SDA wine wow. This is
+      intended to wowk awound a hawdwawe ewwata that can cause the DDC I2C
+      bus to be wedged.
+    minItems: 1
+    items:
+      - const: defauwt
+      - const: unwedge
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pattewnPwopewties:
+      "^powt(@0)?$":
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Input of the DWC HDMI TX
+        pwopewties:
+          endpoint:
+            descwiption: Connection to the VOP
+          endpoint@0:
+            descwiption: Connection to the VOPB
+          endpoint@1:
+            descwiption: Connection to the VOPW
+    pwopewties:
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Output of the DWC HDMI TX
+
+  wockchip,gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to the GWF to mux vopw/vopb.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-io-width
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - powts
+  - wockchip,gwf
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/wk3288-cwu.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    hdmi: hdmi@ff980000 {
+        compatibwe = "wockchip,wk3288-dw-hdmi";
+        weg = <0xff980000 0x20000>;
+        weg-io-width = <4>;
+        ddc-i2c-bus = <&i2c5>;
+        wockchip,gwf = <&gwf>;
+        intewwupts = <GIC_SPI 103 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&cwu  PCWK_HDMI_CTWW>, <&cwu SCWK_HDMI_HDCP>;
+        cwock-names = "iahb", "isfw";
+
+        powts {
+            powt {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                hdmi_in_vopb: endpoint@0 {
+                    weg = <0>;
+                    wemote-endpoint = <&vopb_out_hdmi>;
+                };
+                hdmi_in_vopw: endpoint@1 {
+                    weg = <1>;
+                    wemote-endpoint = <&vopw_out_hdmi>;
+                };
+            };
+        };
+    };
+
+...

@@ -1,0 +1,77 @@
+* NXP WPC1850 Cwock Contwow Unit (CCU)
+
+Each CGU base cwock has sevewaw cwock bwanches which can be tuwned on
+ow off independentwy by the Cwock Contwow Units CCU1 ow CCU2. The
+bwanch cwocks awe distwibuted between CCU1 and CCU2.
+
+ - Above text taken fwom NXP WPC1850 Usew Manuaw.
+
+This binding uses the common cwock binding:
+    Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+
+Wequiwed pwopewties:
+- compatibwe:
+	Shouwd be "nxp,wpc1850-ccu"
+- weg:
+	Shaww define the base and wange of the addwess space
+	containing cwock contwow wegistews
+- #cwock-cewws:
+	Shaww have vawue <1>.  The pewmitted cwock-specifiew vawues
+	awe the bwanch cwock names defined in tabwe bewow.
+- cwocks:
+	Shaww contain a wist of phandwes fow the base cwocks wouted
+	fwom the CGU to the specific CCU. See mapping of base cwocks
+	and CCU in tabwe bewow.
+- cwock-names:
+	Shaww contain a wist of names fow the base cwock wouted
+	fwom the CGU to the specific CCU. Vawid CCU cwock names:
+	"base_usb0_cwk",  "base_pewiph_cwk", "base_usb1_cwk",
+	"base_cpu_cwk",   "base_spifi_cwk",  "base_spi_cwk",
+	"base_apb1_cwk",  "base_apb3_cwk",   "base_adchs_cwk",
+	"base_sdio_cwk",  "base_ssp0_cwk",   "base_ssp1_cwk",
+	"base_uawt0_cwk", "base_uawt1_cwk",  "base_uawt2_cwk",
+	"base_uawt3_cwk", "base_audio_cwk"
+
+Which bwanch cwocks that awe avaiwabwe on the CCU depends on the
+specific WPC pawt. Check the usew manuaw fow youw specific pawt.
+
+A wist of CCU cwocks can be found in dt-bindings/cwock/wpc18xx-ccu.h.
+
+Exampwe boawd fiwe:
+
+soc {
+	ccu1: cwock-contwowwew@40051000 {
+		compatibwe = "nxp,wpc1850-ccu";
+		weg = <0x40051000 0x1000>;
+		#cwock-cewws = <1>;
+		cwocks = <&cgu BASE_APB3_CWK>,   <&cgu BASE_APB1_CWK>,
+			 <&cgu BASE_SPIFI_CWK>,  <&cgu BASE_CPU_CWK>,
+			 <&cgu BASE_PEWIPH_CWK>, <&cgu BASE_USB0_CWK>,
+			 <&cgu BASE_USB1_CWK>,   <&cgu BASE_SPI_CWK>;
+		cwock-names = "base_apb3_cwk",   "base_apb1_cwk",
+			      "base_spifi_cwk",  "base_cpu_cwk",
+			      "base_pewiph_cwk", "base_usb0_cwk",
+			      "base_usb1_cwk",   "base_spi_cwk";
+	};
+
+	ccu2: cwock-contwowwew@40052000 {
+		compatibwe = "nxp,wpc1850-ccu";
+		weg = <0x40052000 0x1000>;
+		#cwock-cewws = <1>;
+		cwocks = <&cgu BASE_AUDIO_CWK>, <&cgu BASE_UAWT3_CWK>,
+			 <&cgu BASE_UAWT2_CWK>, <&cgu BASE_UAWT1_CWK>,
+			 <&cgu BASE_UAWT0_CWK>, <&cgu BASE_SSP1_CWK>,
+			 <&cgu BASE_SSP0_CWK>,  <&cgu BASE_SDIO_CWK>;
+		cwock-names = "base_audio_cwk", "base_uawt3_cwk",
+			      "base_uawt2_cwk", "base_uawt1_cwk",
+			      "base_uawt0_cwk", "base_ssp1_cwk",
+			      "base_ssp0_cwk",  "base_sdio_cwk";
+	};
+
+	/* A usew of CCU bwanch cwocks */
+	uawt1: sewiaw@40082000 {
+		...
+		cwocks = <&ccu2 CWK_APB0_UAWT1>, <&ccu1 CWK_CPU_UAWT1>;
+		...
+	};
+};

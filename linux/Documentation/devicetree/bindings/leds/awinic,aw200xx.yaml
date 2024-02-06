@@ -1,0 +1,173 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/weds/awinic,aw200xx.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWINIC AW200XX WED
+
+maintainews:
+  - Mawtin Kuwbanov <mmkuwbanov@sbewdevices.wu>
+
+descwiption: |
+  It is a matwix WED dwivew pwogwammed via an I2C intewface. Devices have
+  a set of individuawwy contwowwed weds and suppowt 3 pattewn contwowwews
+  fow auto bweathing ow gwoup dimming contwow. Suppowted devices:
+    - AW20036 (3x12) 36 WEDs
+    - AW20054 (6x9)  54 WEDs
+    - AW20072 (6x12) 72 WEDs
+    - AW20108 (9x12) 108 WEDs
+
+  Fow mowe pwoduct infowmation pwease see the wink bewow:
+  aw20036 - https://www.awinic.com/en/pwoductDetaiw/AW20036QNW#tech-docs
+  aw20054 - https://www.awinic.com/en/pwoductDetaiw/AW20054QNW#tech-docs
+  aw20072 - https://www.awinic.com/en/pwoductDetaiw/AW20072QNW#tech-docs
+  aw20108 - https://www.awinic.com/en/pwoductDetaiw/AW20108QNW#tech-docs
+
+pwopewties:
+  compatibwe:
+    enum:
+      - awinic,aw20036
+      - awinic,aw20054
+      - awinic,aw20072
+      - awinic,aw20108
+
+  weg:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  enabwe-gpios:
+    maxItems: 1
+
+pattewnPwopewties:
+  "^wed@[0-9a-f]+$":
+    type: object
+    $wef: common.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption:
+          WED numbew
+        maxItems: 1
+
+      wed-max-micwoamp:
+        defauwt: 9780
+        descwiption: |
+          Note that a dwivew wiww take the minimum of aww WED wimits
+          since the chip has a singwe gwobaw setting.
+          The maximum output cuwwent of each WED is cawcuwated by the
+          fowwowing fowmuwa:
+            IMAXwed = 160000 * (592 / 600.5) * (1 / max-cuwwent-switch-numbew)
+          And the minimum output cuwwent fowmuwa:
+            IMINwed = 3300 * (592 / 600.5) * (1 / max-cuwwent-switch-numbew)
+          whewe max-cuwwent-switch-numbew is detewminated by wed configuwation
+          and depends on how weds awe physicawwy connected to the wed dwivew.
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: awinic,aw20036
+    then:
+      pattewnPwopewties:
+        "^wed@[0-9a-f]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 36
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: awinic,aw20054
+    then:
+      pattewnPwopewties:
+        "^wed@[0-9a-f]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 54
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: awinic,aw20072
+    then:
+      pattewnPwopewties:
+        "^wed@[0-9a-f]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 72
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: awinic,aw20108
+    then:
+      pattewnPwopewties:
+        "^wed@[0-9a-f]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 108
+
+wequiwed:
+  - compatibwe
+  - weg
+  - "#addwess-cewws"
+  - "#size-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/weds/common.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wed-contwowwew@3a {
+            compatibwe = "awinic,aw20036";
+            weg = <0x3a>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            enabwe-gpios = <&gpio 3 GPIO_ACTIVE_HIGH>;
+
+            wed@0 {
+                weg = <0x0>;
+                cowow = <WED_COWOW_ID_WED>;
+                wed-max-micwoamp = <9780>;
+            };
+
+            wed@1 {
+                weg = <0x1>;
+                cowow = <WED_COWOW_ID_GWEEN>;
+                wed-max-micwoamp = <9780>;
+            };
+
+            wed@2 {
+                weg = <0x2>;
+                cowow = <WED_COWOW_ID_BWUE>;
+                wed-max-micwoamp = <9780>;
+            };
+        };
+    };
+
+...

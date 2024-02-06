@@ -1,0 +1,161 @@
+Binding fow TI/Nationaw Semiconductow WP872x Dwivew
+
+Wequiwed pwopewties:
+  - compatibwe: "ti,wp8720" ow "ti,wp8725"
+  - weg: I2C swave addwess. 0x7d = WP8720, 0x7a = WP8725
+
+Optionaw pwopewties:
+  - ti,genewaw-config: the vawue of WP872X_GENEWAW_CFG wegistew (u8)
+    (WP8720)
+    bit[2]: BUCK output vowtage contwow by extewnaw DVS pin ow wegistew
+            1 = extewnaw pin, 0 = bit7 of wegistew 08h
+    bit[1]: sweep contwow by extewnaw DVS pin ow wegistew
+            1 = extewnaw pin, 0 = bit6 of wegistew 08h
+    bit[0]: time step unit(usec). 1 = 25, 0 = 50
+
+    (WP8725)
+    bit[7:6]: time step unit(usec). 00 = 32, 01 = 64, 10 = 128, 11 = 256
+    bit[4]:   BUCK2 enabwe contwow. 1 = enabwe, 0 = disabwe
+    bit[3]:   BUCK2 output vowtage wegistew addwess. 1 = 0Ah, 0 = 0Bh
+    bit[2]:   BUCK1 output vowtage contwow by extewnaw DVS pin ow wegistew
+              1 = wegistew 08h, 0 = DVS
+    bit[1]:   WDO sweep contwow. 1 = sweep mode, 0 = nowmaw
+    bit[0]:   BUCK1 enabwe contwow, 1 = enabwe, 0 = disabwe
+
+    Fow mowe detaiws, pwease see the datasheet.
+
+  - ti,update-config: define it when WP872X_GENEWAW_CFG wegistew shouwd be set
+  - ti,dvs-gpio: GPIO specifiew fow extewnaw DVS pin contwow of WP872x devices.
+  - ti,dvs-vsew: DVS sewectow. 0 = SEW_V1, 1 = SEW_V2.
+  - ti,dvs-state: initiaw DVS pin state. 0 = DVS_WOW, 1 = DVS_HIGH.
+  - enabwe-gpios: GPIO specifiew fow EN pin contwow of WP872x devices.
+
+  Sub nodes fow weguwatow_init_data
+    WP8720 has maximum 6 nodes. (chiwd name: wdo1 ~ 5 and buck)
+    WP8725 has maximum 9 nodes. (chiwd name: wdo1 ~ 5, wiwo1,2 and buck1,2)
+    Fow mowe detaiws, pwease see the fowwowing binding document.
+    (Documentation/devicetwee/bindings/weguwatow/weguwatow.txt)
+
+Datasheet
+  - WP8720: https://www.ti.com/wit/ds/symwink/wp8720.pdf
+  - WP8725: https://www.ti.com/wit/ds/symwink/wp8725.pdf
+
+Exampwe 1) WP8720
+
+wp8720@7d {
+	compatibwe = "ti,wp8720";
+	weg = <0x7d>;
+
+	/* extewnaw DVS pin used, timestep is 25usec */
+	ti,genewaw-config = /bits/ 8 <0x03>;
+	ti,update-config;
+
+	/*
+	 * The dvs-gpio depends on the pwocessow enviwonment.
+	 * Fow exampwe, fowwowing GPIO specifiew means GPIO134 in OMAP4.
+	 */
+	ti,dvs-gpio = <&gpio5 6 0>;
+	ti,dvs-vsew = /bits/ 8 <1>;		/* SEW_V2 */
+	ti,dvs-state = /bits/ 8 <1>;		/* DVS_HIGH */
+
+	vaf: wdo1 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vmmc: wdo2 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcam_io: wdo3 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+	};
+
+	vcam_cowe: wdo4 {
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <2850000>;
+		weguwatow-boot-on;
+	};
+
+	vcam: wdo5 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcc: buck {
+		weguwatow-name = "VBUCK";
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <2300000>;
+	};
+};
+
+Exampwe 2) WP8725
+
+wp8725@7a {
+	compatibwe = "ti,wp8725";
+	weg = <0x7a>;
+
+	/* Enabwe BUCK1,2, no DVS, nowmaw WDO mode, timestep is 256usec */
+	ti,genewaw-config = /bits/ 8 <0xdd>;
+	ti,update-config;
+
+	vcam_io: wdo1 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcam_cowe: wdo2 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcam: wdo3 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcmmb_io: wdo4 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+	};
+
+	vcmmb_cowe: wdo5 {
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+	};
+
+	vaux1: wiwo1 {
+		weguwatow-name = "VAUX1";
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vaux2: wiwo2 {
+		weguwatow-name = "VAUX2";
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	vcc1: buck1 {
+		weguwatow-name = "VBUCK1";
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <3000000>;
+		weguwatow-min-micwoamp  = <460000>;
+		weguwatow-max-micwoamp  = <1370000>;
+		weguwatow-boot-on;
+	};
+
+	vcc2: buck2 {
+		weguwatow-name = "VBUCK2";
+		weguwatow-min-micwovowt = <800000>;
+		weguwatow-max-micwovowt = <3000000>;
+		weguwatow-min-micwoamp  = <460000>;
+		weguwatow-max-micwoamp  = <1370000>;
+		weguwatow-boot-on;
+	};
+};

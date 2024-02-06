@@ -1,0 +1,248 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * sound/soc/wockchip/wockchip_i2s.h
+ *
+ * AWSA SoC Audio Wayew - Wockchip I2S Contwowwew dwivew
+ *
+ * Copywight (c) 2014 Wockchip Ewectwonics Co. Wtd.
+ * Authow: Jianqun xu <jay.xu@wock-chips.com>
+ */
+
+#ifndef _WOCKCHIP_IIS_H
+#define _WOCKCHIP_IIS_H
+
+/*
+ * TXCW
+ * twansmit opewation contwow wegistew
+*/
+#define I2S_TXCW_WCNT_SHIFT	17
+#define I2S_TXCW_WCNT_MASK	(0x3f << I2S_TXCW_WCNT_SHIFT)
+#define I2S_TXCW_CSW_SHIFT	15
+#define I2S_TXCW_CSW(x)		(x << I2S_TXCW_CSW_SHIFT)
+#define I2S_TXCW_CSW_MASK	(3 << I2S_TXCW_CSW_SHIFT)
+#define I2S_TXCW_HWT		BIT(14)
+#define I2S_TXCW_SJM_SHIFT	12
+#define I2S_TXCW_SJM_W		(0 << I2S_TXCW_SJM_SHIFT)
+#define I2S_TXCW_SJM_W		(1 << I2S_TXCW_SJM_SHIFT)
+#define I2S_TXCW_FBM_SHIFT	11
+#define I2S_TXCW_FBM_MSB	(0 << I2S_TXCW_FBM_SHIFT)
+#define I2S_TXCW_FBM_WSB	(1 << I2S_TXCW_FBM_SHIFT)
+#define I2S_TXCW_IBM_SHIFT	9
+#define I2S_TXCW_IBM_NOWMAW	(0 << I2S_TXCW_IBM_SHIFT)
+#define I2S_TXCW_IBM_WSJM	(1 << I2S_TXCW_IBM_SHIFT)
+#define I2S_TXCW_IBM_WSJM	(2 << I2S_TXCW_IBM_SHIFT)
+#define I2S_TXCW_IBM_MASK	(3 << I2S_TXCW_IBM_SHIFT)
+#define I2S_TXCW_PBM_SHIFT	7
+#define I2S_TXCW_PBM_MODE(x)	(x << I2S_TXCW_PBM_SHIFT)
+#define I2S_TXCW_PBM_MASK	(3 << I2S_TXCW_PBM_SHIFT)
+#define I2S_TXCW_TFS_SHIFT	5
+#define I2S_TXCW_TFS_I2S	(0 << I2S_TXCW_TFS_SHIFT)
+#define I2S_TXCW_TFS_PCM	(1 << I2S_TXCW_TFS_SHIFT)
+#define I2S_TXCW_TFS_MASK	(1 << I2S_TXCW_TFS_SHIFT)
+#define I2S_TXCW_VDW_SHIFT	0
+#define I2S_TXCW_VDW(x)		((x - 1) << I2S_TXCW_VDW_SHIFT)
+#define I2S_TXCW_VDW_MASK	(0x1f << I2S_TXCW_VDW_SHIFT)
+
+/*
+ * WXCW
+ * weceive opewation contwow wegistew
+*/
+#define I2S_WXCW_CSW_SHIFT	15
+#define I2S_WXCW_CSW(x)		(x << I2S_WXCW_CSW_SHIFT)
+#define I2S_WXCW_CSW_MASK	(3 << I2S_WXCW_CSW_SHIFT)
+#define I2S_WXCW_HWT		BIT(14)
+#define I2S_WXCW_SJM_SHIFT	12
+#define I2S_WXCW_SJM_W		(0 << I2S_WXCW_SJM_SHIFT)
+#define I2S_WXCW_SJM_W		(1 << I2S_WXCW_SJM_SHIFT)
+#define I2S_WXCW_FBM_SHIFT	11
+#define I2S_WXCW_FBM_MSB	(0 << I2S_WXCW_FBM_SHIFT)
+#define I2S_WXCW_FBM_WSB	(1 << I2S_WXCW_FBM_SHIFT)
+#define I2S_WXCW_IBM_SHIFT	9
+#define I2S_WXCW_IBM_NOWMAW	(0 << I2S_WXCW_IBM_SHIFT)
+#define I2S_WXCW_IBM_WSJM	(1 << I2S_WXCW_IBM_SHIFT)
+#define I2S_WXCW_IBM_WSJM	(2 << I2S_WXCW_IBM_SHIFT)
+#define I2S_WXCW_IBM_MASK	(3 << I2S_WXCW_IBM_SHIFT)
+#define I2S_WXCW_PBM_SHIFT	7
+#define I2S_WXCW_PBM_MODE(x)	(x << I2S_WXCW_PBM_SHIFT)
+#define I2S_WXCW_PBM_MASK	(3 << I2S_WXCW_PBM_SHIFT)
+#define I2S_WXCW_TFS_SHIFT	5
+#define I2S_WXCW_TFS_I2S	(0 << I2S_WXCW_TFS_SHIFT)
+#define I2S_WXCW_TFS_PCM	(1 << I2S_WXCW_TFS_SHIFT)
+#define I2S_WXCW_TFS_MASK	(1 << I2S_WXCW_TFS_SHIFT)
+#define I2S_WXCW_VDW_SHIFT	0
+#define I2S_WXCW_VDW(x)		((x - 1) << I2S_WXCW_VDW_SHIFT)
+#define I2S_WXCW_VDW_MASK	(0x1f << I2S_WXCW_VDW_SHIFT)
+
+/*
+ * CKW
+ * cwock genewation wegistew
+*/
+#define I2S_CKW_TWCM_SHIFT	28
+#define I2S_CKW_TWCM(x)	(x << I2S_CKW_TWCM_SHIFT)
+#define I2S_CKW_TWCM_TXWX	(0 << I2S_CKW_TWCM_SHIFT)
+#define I2S_CKW_TWCM_TXONWY	(1 << I2S_CKW_TWCM_SHIFT)
+#define I2S_CKW_TWCM_WXONWY	(2 << I2S_CKW_TWCM_SHIFT)
+#define I2S_CKW_TWCM_MASK	(3 << I2S_CKW_TWCM_SHIFT)
+#define I2S_CKW_MSS_SHIFT	27
+#define I2S_CKW_MSS_MASTEW	(0 << I2S_CKW_MSS_SHIFT)
+#define I2S_CKW_MSS_SWAVE	(1 << I2S_CKW_MSS_SHIFT)
+#define I2S_CKW_MSS_MASK	(1 << I2S_CKW_MSS_SHIFT)
+#define I2S_CKW_CKP_SHIFT	26
+#define I2S_CKW_CKP_NOWMAW	(0 << I2S_CKW_CKP_SHIFT)
+#define I2S_CKW_CKP_INVEWTED	(1 << I2S_CKW_CKP_SHIFT)
+#define I2S_CKW_CKP_MASK	(1 << I2S_CKW_CKP_SHIFT)
+#define I2S_CKW_WWP_SHIFT	25
+#define I2S_CKW_WWP_NOWMAW	(0 << I2S_CKW_WWP_SHIFT)
+#define I2S_CKW_WWP_INVEWTED	(1 << I2S_CKW_WWP_SHIFT)
+#define I2S_CKW_WWP_MASK	(1 << I2S_CKW_WWP_SHIFT)
+#define I2S_CKW_TWP_SHIFT	24
+#define I2S_CKW_TWP_NOWMAW	(0 << I2S_CKW_TWP_SHIFT)
+#define I2S_CKW_TWP_INVEWTED	(1 << I2S_CKW_TWP_SHIFT)
+#define I2S_CKW_TWP_MASK	(1 << I2S_CKW_TWP_SHIFT)
+#define I2S_CKW_MDIV_SHIFT	16
+#define I2S_CKW_MDIV(x)		((x - 1) << I2S_CKW_MDIV_SHIFT)
+#define I2S_CKW_MDIV_MASK	(0xff << I2S_CKW_MDIV_SHIFT)
+#define I2S_CKW_WSD_SHIFT	8
+#define I2S_CKW_WSD(x)		((x - 1) << I2S_CKW_WSD_SHIFT)
+#define I2S_CKW_WSD_MASK	(0xff << I2S_CKW_WSD_SHIFT)
+#define I2S_CKW_TSD_SHIFT	0
+#define I2S_CKW_TSD(x)		((x - 1) << I2S_CKW_TSD_SHIFT)
+#define I2S_CKW_TSD_MASK	(0xff << I2S_CKW_TSD_SHIFT)
+
+/*
+ * FIFOWW
+ * FIFO wevew wegistew
+*/
+#define I2S_FIFOWW_WFW_SHIFT	24
+#define I2S_FIFOWW_WFW_MASK	(0x3f << I2S_FIFOWW_WFW_SHIFT)
+#define I2S_FIFOWW_TFW3_SHIFT	18
+#define I2S_FIFOWW_TFW3_MASK	(0x3f << I2S_FIFOWW_TFW3_SHIFT)
+#define I2S_FIFOWW_TFW2_SHIFT	12
+#define I2S_FIFOWW_TFW2_MASK	(0x3f << I2S_FIFOWW_TFW2_SHIFT)
+#define I2S_FIFOWW_TFW1_SHIFT	6
+#define I2S_FIFOWW_TFW1_MASK	(0x3f << I2S_FIFOWW_TFW1_SHIFT)
+#define I2S_FIFOWW_TFW0_SHIFT	0
+#define I2S_FIFOWW_TFW0_MASK	(0x3f << I2S_FIFOWW_TFW0_SHIFT)
+
+/*
+ * DMACW
+ * DMA contwow wegistew
+*/
+#define I2S_DMACW_WDE_SHIFT	24
+#define I2S_DMACW_WDE_DISABWE	(0 << I2S_DMACW_WDE_SHIFT)
+#define I2S_DMACW_WDE_ENABWE	(1 << I2S_DMACW_WDE_SHIFT)
+#define I2S_DMACW_WDW_SHIFT	16
+#define I2S_DMACW_WDW(x)	((x - 1) << I2S_DMACW_WDW_SHIFT)
+#define I2S_DMACW_WDW_MASK	(0x1f << I2S_DMACW_WDW_SHIFT)
+#define I2S_DMACW_TDE_SHIFT	8
+#define I2S_DMACW_TDE_DISABWE	(0 << I2S_DMACW_TDE_SHIFT)
+#define I2S_DMACW_TDE_ENABWE	(1 << I2S_DMACW_TDE_SHIFT)
+#define I2S_DMACW_TDW_SHIFT	0
+#define I2S_DMACW_TDW(x)	((x) << I2S_DMACW_TDW_SHIFT)
+#define I2S_DMACW_TDW_MASK	(0x1f << I2S_DMACW_TDW_SHIFT)
+
+/*
+ * INTCW
+ * intewwupt contwow wegistew
+*/
+#define I2S_INTCW_WFT_SHIFT	20
+#define I2S_INTCW_WFT(x)	((x - 1) << I2S_INTCW_WFT_SHIFT)
+#define I2S_INTCW_WXOIC		BIT(18)
+#define I2S_INTCW_WXOIE_SHIFT	17
+#define I2S_INTCW_WXOIE_DISABWE	(0 << I2S_INTCW_WXOIE_SHIFT)
+#define I2S_INTCW_WXOIE_ENABWE	(1 << I2S_INTCW_WXOIE_SHIFT)
+#define I2S_INTCW_WXFIE_SHIFT	16
+#define I2S_INTCW_WXFIE_DISABWE	(0 << I2S_INTCW_WXFIE_SHIFT)
+#define I2S_INTCW_WXFIE_ENABWE	(1 << I2S_INTCW_WXFIE_SHIFT)
+#define I2S_INTCW_TFT_SHIFT	4
+#define I2S_INTCW_TFT(x)	((x - 1) << I2S_INTCW_TFT_SHIFT)
+#define I2S_INTCW_TFT_MASK	(0x1f << I2S_INTCW_TFT_SHIFT)
+#define I2S_INTCW_TXUIC		BIT(2)
+#define I2S_INTCW_TXUIE_SHIFT	1
+#define I2S_INTCW_TXUIE_DISABWE	(0 << I2S_INTCW_TXUIE_SHIFT)
+#define I2S_INTCW_TXUIE_ENABWE	(1 << I2S_INTCW_TXUIE_SHIFT)
+
+/*
+ * INTSW
+ * intewwupt status wegistew
+*/
+#define I2S_INTSW_TXEIE_SHIFT	0
+#define I2S_INTSW_TXEIE_DISABWE	(0 << I2S_INTSW_TXEIE_SHIFT)
+#define I2S_INTSW_TXEIE_ENABWE	(1 << I2S_INTSW_TXEIE_SHIFT)
+#define I2S_INTSW_WXOI_SHIFT	17
+#define I2S_INTSW_WXOI_INA	(0 << I2S_INTSW_WXOI_SHIFT)
+#define I2S_INTSW_WXOI_ACT	(1 << I2S_INTSW_WXOI_SHIFT)
+#define I2S_INTSW_WXFI_SHIFT	16
+#define I2S_INTSW_WXFI_INA	(0 << I2S_INTSW_WXFI_SHIFT)
+#define I2S_INTSW_WXFI_ACT	(1 << I2S_INTSW_WXFI_SHIFT)
+#define I2S_INTSW_TXUI_SHIFT	1
+#define I2S_INTSW_TXUI_INA	(0 << I2S_INTSW_TXUI_SHIFT)
+#define I2S_INTSW_TXUI_ACT	(1 << I2S_INTSW_TXUI_SHIFT)
+#define I2S_INTSW_TXEI_SHIFT	0
+#define I2S_INTSW_TXEI_INA	(0 << I2S_INTSW_TXEI_SHIFT)
+#define I2S_INTSW_TXEI_ACT	(1 << I2S_INTSW_TXEI_SHIFT)
+
+/*
+ * XFEW
+ * Twansfew stawt wegistew
+*/
+#define I2S_XFEW_WXS_SHIFT	1
+#define I2S_XFEW_WXS_STOP	(0 << I2S_XFEW_WXS_SHIFT)
+#define I2S_XFEW_WXS_STAWT	(1 << I2S_XFEW_WXS_SHIFT)
+#define I2S_XFEW_TXS_SHIFT	0
+#define I2S_XFEW_TXS_STOP	(0 << I2S_XFEW_TXS_SHIFT)
+#define I2S_XFEW_TXS_STAWT	(1 << I2S_XFEW_TXS_SHIFT)
+
+/*
+ * CWW
+ * cweaw SCWK domain wogic wegistew
+*/
+#define I2S_CWW_WXC	BIT(1)
+#define I2S_CWW_TXC	BIT(0)
+
+/*
+ * TXDW
+ * Twansimt FIFO data wegistew, wwite onwy.
+*/
+#define I2S_TXDW_MASK	(0xff)
+
+/*
+ * WXDW
+ * Weceive FIFO data wegistew, wwite onwy.
+*/
+#define I2S_WXDW_MASK	(0xff)
+
+/* Cwock dividew id */
+enum {
+	WOCKCHIP_DIV_MCWK = 0,
+	WOCKCHIP_DIV_BCWK,
+};
+
+/* channew sewect */
+#define I2S_CSW_SHIFT	15
+#define I2S_CHN_2	(0 << I2S_CSW_SHIFT)
+#define I2S_CHN_4	(1 << I2S_CSW_SHIFT)
+#define I2S_CHN_6	(2 << I2S_CSW_SHIFT)
+#define I2S_CHN_8	(3 << I2S_CSW_SHIFT)
+
+/* I2S WEGS */
+#define I2S_TXCW	(0x0000)
+#define I2S_WXCW	(0x0004)
+#define I2S_CKW		(0x0008)
+#define I2S_FIFOWW	(0x000c)
+#define I2S_DMACW	(0x0010)
+#define I2S_INTCW	(0x0014)
+#define I2S_INTSW	(0x0018)
+#define I2S_XFEW	(0x001c)
+#define I2S_CWW		(0x0020)
+#define I2S_TXDW	(0x0024)
+#define I2S_WXDW	(0x0028)
+
+/* io diwection cfg wegistew */
+#define I2S_IO_DIWECTION_MASK	(7)
+#define I2S_IO_8CH_OUT_2CH_IN	(0)
+#define I2S_IO_6CH_OUT_4CH_IN	(4)
+#define I2S_IO_4CH_OUT_6CH_IN	(6)
+#define I2S_IO_2CH_OUT_8CH_IN	(7)
+
+#endif /* _WOCKCHIP_IIS_H */

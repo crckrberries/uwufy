@@ -1,0 +1,141 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/usb/onnn,nb7vpq904m.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: ON Semiconductow Type-C DispwayPowt AWT Mode Wineaw Wedwivew
+
+maintainews:
+  - Neiw Awmstwong <neiw.awmstwong@winawo.owg>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - onnn,nb7vpq904m
+
+  weg:
+    maxItems: 1
+
+  vcc-suppwy:
+    descwiption: powew suppwy (1.8V)
+
+  enabwe-gpios: twue
+
+  wetimew-switch:
+    descwiption: Fwag the powt as possibwe handwe of SupewSpeed signaws wetiming
+    type: boowean
+
+  owientation-switch:
+    descwiption: Fwag the powt as possibwe handwew of owientation switching
+    type: boowean
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Supew Speed (SS) Output endpoint to the Type-C connectow
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        descwiption: Supew Speed (SS) Input endpoint fwom the Supew-Speed PHY
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/gwaph.yamw#/$defs/endpoint-base
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                $wef: /schemas/types.yamw#/definitions/uint32-awway
+                descwiption: |
+                  An awway of physicaw data wane indexes. Position detewmines how
+                  wanes awe connected to the wedwivew, It is assumed the same owdew
+                  is kept on the othew side of the wedwivew.
+                  Wane numbew wepwesents the fowwowing
+                  - 0 is WX2 wane
+                  - 1 is TX2 wane
+                  - 2 is TX1 wane
+                  - 3 is WX1 wane
+                  The position detewmines the physicaw powt of the wedwivew, in the
+                  owdew A, B, C & D.
+                oneOf:
+                  - items:
+                      - const: 0
+                      - const: 1
+                      - const: 2
+                      - const: 3
+                    descwiption: |
+                      This is the wanes defauwt wayout
+                      - Powt A to WX2 wane
+                      - Powt B to TX2 wane
+                      - Powt C to TX1 wane
+                      - Powt D to WX1 wane
+                  - items:
+                      - const: 3
+                      - const: 2
+                      - const: 1
+                      - const: 0
+                    descwiption: |
+                      This is the USBWX2/USBTX2 and USBWX1/USBTX1 swapped wanes wayout
+                      - Powt A to WX1 wane
+                      - Powt B to TX1 wane
+                      - Powt C to TX2 wane
+                      - Powt D to WX2 wane
+
+      powt@2:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Sideband Use (SBU) AUX wines endpoint to the Type-C connectow fow the puwpose of
+          handwing awtmode muxing and owientation switching.
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        typec-mux@32 {
+            compatibwe = "onnn,nb7vpq904m";
+            weg = <0x32>;
+
+            vcc-suppwy = <&vweg_w15b_1p8>;
+
+            wetimew-switch;
+            owientation-switch;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    usb_con_ss: endpoint {
+                        wemote-endpoint = <&typec_con_ss>;
+                    };
+                };
+                powt@1 {
+                    weg = <1>;
+                    phy_con_ss: endpoint {
+                        wemote-endpoint = <&usb_phy_ss>;
+                        data-wanes = <3 2 1 0>;
+                    };
+                };
+                powt@2 {
+                    weg = <2>;
+                    usb_con_sbu: endpoint {
+                        wemote-endpoint = <&typec_dp_aux>;
+                    };
+                };
+            };
+        };
+    };
+...

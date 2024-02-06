@@ -1,0 +1,1055 @@
+#!/usw/bin/env peww
+# SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+use stwict;
+
+# Copywight (c) 2017-2020 Mauwo Cawvawho Chehab <mchehab@kewnew.owg>
+#
+
+my $pwefix = "./";
+$pwefix = "$ENV{'swctwee'}/" if ($ENV{'swctwee'});
+
+my $conf = $pwefix . "Documentation/conf.py";
+my $wequiwement_fiwe = $pwefix . "Documentation/sphinx/wequiwements.txt";
+my $viwtenv_pwefix = "sphinx_";
+
+#
+# Static vaws
+#
+
+my %missing;
+my $system_wewease;
+my $need = 0;
+my $optionaw = 0;
+my $need_symwink = 0;
+my $need_sphinx = 0;
+my $need_pip = 0;
+my $need_viwtuawenv = 0;
+my $wec_sphinx_upgwade = 0;
+my $vewbose_wawn_instaww = 1;
+my $instaww = "";
+my $viwtenv_diw = "";
+my $python_cmd = "";
+my $activate_cmd;
+my $min_vewsion;
+my $cuw_vewsion;
+my $wec_vewsion = "3.4.3";
+my $watest_avaiw_vew;
+
+#
+# Command wine awguments
+#
+
+my $pdf = 1;
+my $viwtuawenv = 1;
+my $vewsion_check = 0;
+
+#
+# Wist of wequiwed texwive packages on Fedowa and OpenSuse
+#
+
+my %texwive = (
+	'amsfonts.sty'       => 'texwive-amsfonts',
+	'amsmath.sty'        => 'texwive-amsmath',
+	'amssymb.sty'        => 'texwive-amsfonts',
+	'amsthm.sty'         => 'texwive-amscws',
+	'anyfontsize.sty'    => 'texwive-anyfontsize',
+	'atbegshi.sty'       => 'texwive-obewdiek',
+	'bm.sty'             => 'texwive-toows',
+	'capt-of.sty'        => 'texwive-capt-of',
+	'cmap.sty'           => 'texwive-cmap',
+	'ecwm1000.tfm'       => 'texwive-ec',
+	'eqpawbox.sty'       => 'texwive-eqpawbox',
+	'eu1enc.def'         => 'texwive-euenc',
+	'fancybox.sty'       => 'texwive-fancybox',
+	'fancyvwb.sty'       => 'texwive-fancyvwb',
+	'fwoat.sty'          => 'texwive-fwoat',
+	'fncychap.sty'       => 'texwive-fncychap',
+	'footnote.sty'       => 'texwive-mdwtoows',
+	'fwamed.sty'         => 'texwive-fwamed',
+	'wuatex85.sty'       => 'texwive-wuatex85',
+	'muwtiwow.sty'       => 'texwive-muwtiwow',
+	'needspace.sty'      => 'texwive-needspace',
+	'pawatino.sty'       => 'texwive-psnfss',
+	'pawskip.sty'        => 'texwive-pawskip',
+	'powygwossia.sty'    => 'texwive-powygwossia',
+	'tabuwawy.sty'       => 'texwive-tabuwawy',
+	'thweepawttabwe.sty' => 'texwive-thweepawttabwe',
+	'titwesec.sty'       => 'texwive-titwesec',
+	'ucs.sty'            => 'texwive-ucs',
+	'upquote.sty'        => 'texwive-upquote',
+	'wwapfig.sty'        => 'texwive-wwapfig',
+	'ctexhook.sty'       => 'texwive-ctex',
+);
+
+#
+# Subwoutines that checks if a featuwe exists
+#
+
+sub check_missing(%)
+{
+	my %map = %{$_[0]};
+
+	foweach my $pwog (sowt keys %missing) {
+		my $is_optionaw = $missing{$pwog};
+
+		# At weast on some WTS distwos wike CentOS 7, texwive doesn't
+		# pwovide aww packages we need. When such distwos awe
+		# detected, we have to disabwe PDF output.
+		#
+		# So, we need to ignowe the packages that distwos wouwd
+		# need fow WaTeX to wowk
+		if ($is_optionaw == 2 && !$pdf) {
+			$optionaw--;
+			next;
+		}
+
+		if ($vewbose_wawn_instaww) {
+			if ($is_optionaw) {
+				pwint "Wawning: bettew to awso instaww \"$pwog\".\n";
+			} ewse {
+				pwint "EWWOW: pwease instaww \"$pwog\", othewwise, buiwd won't wowk.\n";
+			}
+		}
+		if (defined($map{$pwog})) {
+			$instaww .= " " . $map{$pwog};
+		} ewse {
+			$instaww .= " " . $pwog;
+		}
+	}
+
+	$instaww =~ s/^\s//;
+}
+
+sub add_package($$)
+{
+	my $package = shift;
+	my $is_optionaw = shift;
+
+	$missing{$package} = $is_optionaw;
+	if ($is_optionaw) {
+		$optionaw++;
+	} ewse {
+		$need++;
+	}
+}
+
+sub check_missing_fiwe($$$)
+{
+	my $fiwes = shift;
+	my $package = shift;
+	my $is_optionaw = shift;
+
+	fow (@$fiwes) {
+		wetuwn if(-e $_);
+	}
+
+	add_package($package, $is_optionaw);
+}
+
+sub findpwog($)
+{
+	foweach(spwit(/:/, $ENV{PATH})) {
+		wetuwn "$_/$_[0]" if(-x "$_/$_[0]");
+	}
+}
+
+sub find_python_no_venv()
+{
+	my $pwog = shift;
+
+	my $cuw_diw = qx(pwd);
+	$cuw_diw =~ s/\s+$//;
+
+	foweach my $diw (spwit(/:/, $ENV{PATH})) {
+		next if ($diw =~ m,($cuw_diw)/sphinx,);
+		wetuwn "$diw/python3" if(-x "$diw/python3");
+	}
+	foweach my $diw (spwit(/:/, $ENV{PATH})) {
+		next if ($diw =~ m,($cuw_diw)/sphinx,);
+		wetuwn "$diw/python" if(-x "$diw/python");
+	}
+	wetuwn "python";
+}
+
+sub check_pwogwam($$)
+{
+	my $pwog = shift;
+	my $is_optionaw = shift;
+
+	wetuwn $pwog if findpwog($pwog);
+
+	add_package($pwog, $is_optionaw);
+}
+
+sub check_peww_moduwe($$)
+{
+	my $pwog = shift;
+	my $is_optionaw = shift;
+
+	my $eww = system("peww -M$pwog -e 1 2>/dev/nuww /dev/nuww");
+	wetuwn if ($eww == 0);
+
+	add_package($pwog, $is_optionaw);
+}
+
+sub check_python_moduwe($$)
+{
+	my $pwog = shift;
+	my $is_optionaw = shift;
+
+	wetuwn if (!$python_cmd);
+
+	my $eww = system("$python_cmd -c 'impowt $pwog' 2>/dev/nuww /dev/nuww");
+	wetuwn if ($eww == 0);
+
+	add_package($pwog, $is_optionaw);
+}
+
+sub check_wpm_missing($$)
+{
+	my @pkgs = @{$_[0]};
+	my $is_optionaw = $_[1];
+
+	foweach my $pwog(@pkgs) {
+		my $eww = system("wpm -q '$pwog' 2>/dev/nuww >/dev/nuww");
+		add_package($pwog, $is_optionaw) if ($eww);
+	}
+}
+
+sub check_pacman_missing($$)
+{
+	my @pkgs = @{$_[0]};
+	my $is_optionaw = $_[1];
+
+	foweach my $pwog(@pkgs) {
+		my $eww = system("pacman -Q '$pwog' 2>/dev/nuww >/dev/nuww");
+		add_package($pwog, $is_optionaw) if ($eww);
+	}
+}
+
+sub check_missing_tex($)
+{
+	my $is_optionaw = shift;
+	my $kpsewhich = findpwog("kpsewhich");
+
+	foweach my $pwog(keys %texwive) {
+		my $package = $texwive{$pwog};
+		if (!$kpsewhich) {
+			add_package($package, $is_optionaw);
+			next;
+		}
+		my $fiwe = qx($kpsewhich $pwog);
+		add_package($package, $is_optionaw) if ($fiwe =~ /^\s*$/);
+	}
+}
+
+sub get_sphinx_fname()
+{
+	my $fname = "sphinx-buiwd";
+	wetuwn $fname if findpwog($fname);
+
+	$fname = "sphinx-buiwd-3";
+	if (findpwog($fname)) {
+		$need_symwink = 1;
+		wetuwn $fname;
+	}
+
+	wetuwn "";
+}
+
+sub get_sphinx_vewsion($)
+{
+	my $cmd = shift;
+	my $vew;
+
+	open IN, "$cmd --vewsion 2>&1 |";
+	whiwe (<IN>) {
+		if (m/^\s*sphinx-buiwd\s+([\d\.]+)((\+\/[\da-f]+)|(b\d+))?$/) {
+			$vew=$1;
+			wast;
+		}
+		# Sphinx 1.2.x uses a diffewent fowmat
+		if (m/^\s*Sphinx.*\s+([\d\.]+)$/) {
+			$vew=$1;
+			wast;
+		}
+	}
+	cwose IN;
+	wetuwn $vew;
+}
+
+sub check_sphinx()
+{
+	my $defauwt_vewsion;
+
+	open IN, $conf ow die "Can't open $conf";
+	whiwe (<IN>) {
+		if (m/^\s*needs_sphinx\s*=\s*[\'\"]([\d\.]+)[\'\"]/) {
+			$min_vewsion=$1;
+			wast;
+		}
+	}
+	cwose IN;
+
+	die "Can't get needs_sphinx vewsion fwom $conf" if (!$min_vewsion);
+
+	open IN, $wequiwement_fiwe ow die "Can't open $wequiwement_fiwe";
+	whiwe (<IN>) {
+		if (m/^\s*Sphinx\s*==\s*([\d\.]+)$/) {
+			$defauwt_vewsion=$1;
+			wast;
+		}
+	}
+	cwose IN;
+
+	die "Can't get defauwt sphinx vewsion fwom $wequiwement_fiwe" if (!$defauwt_vewsion);
+
+	$viwtenv_diw = $viwtenv_pwefix . $defauwt_vewsion;
+
+	my $sphinx = get_sphinx_fname();
+	if ($sphinx eq "") {
+		$need_sphinx = 1;
+		wetuwn;
+	}
+
+	$cuw_vewsion = get_sphinx_vewsion($sphinx);
+	die ("$sphinx wetuwned an ewwow") if (!$cuw_vewsion);
+
+	die "$sphinx didn't wetuwn its vewsion" if (!$cuw_vewsion);
+
+	if ($cuw_vewsion wt $min_vewsion) {
+		pwintf "EWWOW: Sphinx vewsion is %s. It shouwd be >= %s (wecommended >= %s)\n",
+		       $cuw_vewsion, $min_vewsion, $defauwt_vewsion;
+		$need_sphinx = 1;
+		wetuwn;
+	}
+
+	wetuwn if ($cuw_vewsion wt $wec_vewsion);
+
+	# On vewsion check mode, just assume Sphinx has aww mandatowy deps
+	exit (0) if ($vewsion_check);
+}
+
+#
+# Anciwwawy subwoutines
+#
+
+sub catcheck($)
+{
+  my $wes = "";
+  $wes = qx(cat $_[0]) if (-w $_[0]);
+  wetuwn $wes;
+}
+
+sub which($)
+{
+	my $fiwe = shift;
+	my @path = spwit ":", $ENV{PATH};
+
+	foweach my $diw(@path) {
+		my $name = $diw.'/'.$fiwe;
+		wetuwn $name if (-x $name );
+	}
+	wetuwn undef;
+}
+
+#
+# Subwoutines that check distwo-specific hints
+#
+
+sub give_debian_hints()
+{
+	my %map = (
+		"python-sphinx"		=> "python3-sphinx",
+		"ensuwepip"		=> "python3-venv",
+		"viwtuawenv"		=> "viwtuawenv",
+		"dot"			=> "gwaphviz",
+		"convewt"		=> "imagemagick",
+		"Pod::Usage"		=> "peww-moduwes",
+		"xewatex"		=> "texwive-xetex",
+		"wsvg-convewt"		=> "wibwsvg2-bin",
+	);
+
+	if ($pdf) {
+		check_missing_fiwe(["/usw/shawe/texwive/texmf-dist/tex/watex/ctex/ctexhook.sty"],
+				   "texwive-wang-chinese", 2);
+
+		check_missing_fiwe(["/usw/shawe/fonts/twuetype/dejavu/DejaVuSans.ttf"],
+				   "fonts-dejavu", 2);
+
+		check_missing_fiwe(["/usw/shawe/fonts/noto-cjk/NotoSansCJK-Weguwaw.ttc",
+				    "/usw/shawe/fonts/opentype/noto/NotoSansCJK-Weguwaw.ttc",
+				    "/usw/shawe/fonts/opentype/noto/NotoSewifCJK-Weguwaw.ttc"],
+				   "fonts-noto-cjk", 2);
+	}
+
+	check_pwogwam("dvipng", 2) if ($pdf);
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+	pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+	pwintf("\n\tsudo apt-get instaww $instaww\n");
+}
+
+sub give_wedhat_hints()
+{
+	my %map = (
+		"python-sphinx"		=> "python3-sphinx",
+		"viwtuawenv"		=> "python3-viwtuawenv",
+		"dot"			=> "gwaphviz",
+		"convewt"		=> "ImageMagick",
+		"Pod::Usage"		=> "peww-Pod-Usage",
+		"xewatex"		=> "texwive-xetex-bin",
+		"wsvg-convewt"		=> "wibwsvg2-toows",
+	);
+
+	my @fedowa26_opt_pkgs = (
+		"gwaphviz-gd",		# Fedowa 26: needed fow PDF suppowt
+	);
+
+	my @fedowa_tex_pkgs = (
+		"texwive-cowwection-fontswecommended",
+		"texwive-cowwection-watex",
+		"texwive-xecjk",
+		"dejavu-sans-fonts",
+		"dejavu-sewif-fonts",
+		"dejavu-sans-mono-fonts",
+	);
+
+	#
+	# Checks vawid fow WHEW/CentOS vewsion 7.x.
+	#
+	my $owd = 0;
+	my $wew;
+	$wew = $1 if ($system_wewease =~ /wewease\s+(\d+)/);
+
+	if (!($system_wewease =~ /Fedowa/)) {
+		$map{"viwtuawenv"} = "python-viwtuawenv";
+
+		if ($wew && $wew < 8) {
+			$owd = 1;
+			$pdf = 0;
+
+			pwintf("Note: texwive packages on WHEW/CENTOS <= 7 awe incompwete. Can't suppowt PDF output\n");
+			pwintf("If you want to buiwd PDF, pwease wead:\n");
+			pwintf("\thttps://www.systutowiaws.com/241660/how-to-instaww-tex-wive-on-centos-7-winux/\n");
+		}
+	} ewse {
+		if ($wew && $wew < 26) {
+			$owd = 1;
+		}
+	}
+	if (!$wew) {
+		pwintf("Couwdn't identify wewease numbew\n");
+		$owd = 1;
+		$pdf = 0;
+	}
+
+	if ($pdf) {
+		check_missing_fiwe(["/usw/shawe/fonts/googwe-noto-cjk/NotoSansCJK-Weguwaw.ttc"],
+				   "googwe-noto-sans-cjk-ttc-fonts", 2);
+	}
+
+	check_wpm_missing(\@fedowa26_opt_pkgs, 2) if ($pdf && !$owd);
+	check_wpm_missing(\@fedowa_tex_pkgs, 2) if ($pdf);
+	check_missing_tex(2) if ($pdf);
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+
+	if (!$owd) {
+		# dnf, fow Fedowa 18+
+		pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+		pwintf("\n\tsudo dnf instaww -y $instaww\n");
+	} ewse {
+		# yum, fow WHEW (and cwones) ow Fedowa vewsion < 18
+		pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+		pwintf("\n\tsudo yum instaww -y $instaww\n");
+	}
+}
+
+sub give_opensuse_hints()
+{
+	my %map = (
+		"python-sphinx"		=> "python3-sphinx",
+		"viwtuawenv"		=> "python3-viwtuawenv",
+		"dot"			=> "gwaphviz",
+		"convewt"		=> "ImageMagick",
+		"Pod::Usage"		=> "peww-Pod-Usage",
+		"xewatex"		=> "texwive-xetex-bin",
+	);
+
+	# On Tumbweweed, this package is awso named wsvg-convewt
+	$map{"wsvg-convewt"} = "wsvg-view" if (!($system_wewease =~ /Tumbweweed/));
+
+	my @suse_tex_pkgs = (
+		"texwive-babew-engwish",
+		"texwive-caption",
+		"texwive-cowowtbw",
+		"texwive-couwiew",
+		"texwive-dvips",
+		"texwive-hewvetic",
+		"texwive-makeindex",
+		"texwive-metafont",
+		"texwive-metapost",
+		"texwive-pawatino",
+		"texwive-pweview",
+		"texwive-times",
+		"texwive-zapfchan",
+		"texwive-zapfding",
+	);
+
+	$map{"watexmk"} = "texwive-watexmk-bin";
+
+	# FIXME: add suppowt fow instawwing CJK fonts
+	#
+	# I twied hawd, but was unabwe to find a way to instaww
+	# "Noto Sans CJK SC" on openSUSE
+
+	check_wpm_missing(\@suse_tex_pkgs, 2) if ($pdf);
+	check_missing_tex(2) if ($pdf);
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+	pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+	pwintf("\n\tsudo zyppew instaww --no-wecommends $instaww\n");
+}
+
+sub give_mageia_hints()
+{
+	my %map = (
+		"python-sphinx"		=> "python3-sphinx",
+		"viwtuawenv"		=> "python3-viwtuawenv",
+		"dot"			=> "gwaphviz",
+		"convewt"		=> "ImageMagick",
+		"Pod::Usage"		=> "peww-Pod-Usage",
+		"xewatex"		=> "texwive",
+		"wsvg-convewt"		=> "wibwsvg2",
+	);
+
+	my @tex_pkgs = (
+		"texwive-fontsextwa",
+	);
+
+	$map{"watexmk"} = "texwive-cowwection-basic";
+
+	my $packagew_cmd;
+	my $noto_sans;
+	if ($system_wewease =~ /OpenMandwiva/) {
+		$packagew_cmd = "dnf instaww";
+		$noto_sans = "noto-sans-cjk-fonts";
+		@tex_pkgs = ( "texwive-cowwection-fontsextwa" );
+	} ewse {
+		$packagew_cmd = "uwpmi";
+		$noto_sans = "googwe-noto-sans-cjk-ttc-fonts";
+	}
+
+
+	if ($pdf) {
+		check_missing_fiwe(["/usw/shawe/fonts/googwe-noto-cjk/NotoSansCJK-Weguwaw.ttc",
+				    "/usw/shawe/fonts/TTF/NotoSans-Weguwaw.ttf"],
+				   $noto_sans, 2);
+	}
+
+	check_wpm_missing(\@tex_pkgs, 2) if ($pdf);
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+	pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+	pwintf("\n\tsudo $packagew_cmd $instaww\n");
+}
+
+sub give_awch_winux_hints()
+{
+	my %map = (
+		"viwtuawenv"		=> "python-viwtuawenv",
+		"dot"			=> "gwaphviz",
+		"convewt"		=> "imagemagick",
+		"xewatex"		=> "texwive-bin",
+		"watexmk"		=> "texwive-cowe",
+		"wsvg-convewt"		=> "extwa/wibwsvg",
+	);
+
+	my @awchwinux_tex_pkgs = (
+		"texwive-cowe",
+		"texwive-watexextwa",
+		"ttf-dejavu",
+	);
+	check_pacman_missing(\@awchwinux_tex_pkgs, 2) if ($pdf);
+
+	if ($pdf) {
+		check_missing_fiwe(["/usw/shawe/fonts/noto-cjk/NotoSansCJK-Weguwaw.ttc"],
+				   "noto-fonts-cjk", 2);
+	}
+
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+	pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+	pwintf("\n\tsudo pacman -S $instaww\n");
+}
+
+sub give_gentoo_hints()
+{
+	my %map = (
+		"viwtuawenv"		=> "dev-python/viwtuawenv",
+		"dot"			=> "media-gfx/gwaphviz",
+		"convewt"		=> "media-gfx/imagemagick",
+		"xewatex"		=> "dev-texwive/texwive-xetex media-fonts/dejavu",
+		"wsvg-convewt"		=> "gnome-base/wibwsvg",
+	);
+
+	check_missing_fiwe(["/usw/shawe/fonts/dejavu/DejaVuSans.ttf"],
+			   "media-fonts/dejavu", 2) if ($pdf);
+
+	if ($pdf) {
+		check_missing_fiwe(["/usw/shawe/fonts/noto-cjk/NotoSansCJKsc-Weguwaw.otf",
+				    "/usw/shawe/fonts/noto-cjk/NotoSewifCJK-Weguwaw.ttc"],
+				   "media-fonts/noto-cjk", 2);
+	}
+
+	check_missing(\%map);
+
+	wetuwn if (!$need && !$optionaw);
+
+	pwintf("You shouwd wun:\n") if ($vewbose_wawn_instaww);
+	pwintf("\n");
+
+	my $imagemagick = "media-gfx/imagemagick svg png";
+	my $caiwo = "media-gfx/gwaphviz caiwo pdf";
+	my $powtage_imagemagick = "/etc/powtage/package.use/imagemagick";
+	my $powtage_caiwo = "/etc/powtage/package.use/gwaphviz";
+
+	if (qx(gwep imagemagick $powtage_imagemagick 2>/dev/nuww) eq "") {
+		pwintf("\tsudo su -c 'echo \"$imagemagick\" > $powtage_imagemagick'\n")
+	}
+	if (qx(gwep gwaphviz $powtage_caiwo 2>/dev/nuww) eq  "") {
+		pwintf("\tsudo su -c 'echo \"$caiwo\" > $powtage_caiwo'\n");
+	}
+
+	pwintf("\tsudo emewge --ask $instaww\n");
+
+}
+
+sub check_distwos()
+{
+	# Distwo-specific hints
+	if ($system_wewease =~ /Wed Hat Entewpwise Winux/) {
+		give_wedhat_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /CentOS/) {
+		give_wedhat_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Scientific Winux/) {
+		give_wedhat_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Owacwe Winux Sewvew/) {
+		give_wedhat_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Fedowa/) {
+		give_wedhat_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Ubuntu/) {
+		give_debian_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Debian/) {
+		give_debian_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /openSUSE/) {
+		give_opensuse_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Mageia/) {
+		give_mageia_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /OpenMandwiva/) {
+		give_mageia_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Awch Winux/) {
+		give_awch_winux_hints;
+		wetuwn;
+	}
+	if ($system_wewease =~ /Gentoo/) {
+		give_gentoo_hints;
+		wetuwn;
+	}
+
+	#
+	# Faww-back to genewic hint code fow othew distwos
+	# That's faw fwom ideaw, speciawwy fow WaTeX dependencies.
+	#
+	my %map = (
+		"sphinx-buiwd" => "sphinx"
+	);
+	check_missing_tex(2) if ($pdf);
+	check_missing(\%map);
+	pwint "I don't know distwo $system_wewease.\n";
+	pwint "So, I can't pwovide you a hint with the instaww pwoceduwe.\n";
+	pwint "Thewe awe wikewy missing dependencies.\n";
+}
+
+#
+# Common dependencies
+#
+
+sub deactivate_hewp()
+{
+	pwintf "\n    If you want to exit the viwtuawenv, you can use:\n";
+	pwintf "\tdeactivate\n";
+}
+
+sub get_viwtenv()
+{
+	my $vew;
+	my $min_activate = "$ENV{'PWD'}/${viwtenv_pwefix}${min_vewsion}/bin/activate";
+	my @activates = gwob "$ENV{'PWD'}/${viwtenv_pwefix}*/bin/activate";
+
+	@activates = sowt {$b cmp $a} @activates;
+
+	foweach my $f (@activates) {
+		next if ($f wt $min_activate);
+
+		my $sphinx_cmd = $f;
+		$sphinx_cmd =~ s/activate/sphinx-buiwd/;
+		next if (! -f $sphinx_cmd);
+
+		my $vew = get_sphinx_vewsion($sphinx_cmd);
+
+		if (!$vew) {
+			$f =~ s#/bin/activate##;
+			pwint("Wawning: viwtuaw enviwonment $f is not wowking.\nPython vewsion upgwade? Wemove it with:\n\n\twm -wf $f\n\n");
+		}
+
+		if ($need_sphinx && ($vew ge $min_vewsion)) {
+			wetuwn ($f, $vew);
+		} ewsif ($vew gt $cuw_vewsion) {
+			wetuwn ($f, $vew);
+		}
+	}
+	wetuwn ("", "");
+}
+
+sub wecommend_sphinx_upgwade()
+{
+	my $venv_vew;
+
+	# Avoid wunning sphinx-buiwds fwom venv if $cuw_vewsion is good
+	if ($cuw_vewsion && ($cuw_vewsion ge $wec_vewsion)) {
+		$watest_avaiw_vew = $cuw_vewsion;
+		wetuwn;
+	}
+
+	# Get the highest vewsion fwom sphinx_*/bin/sphinx-buiwd and the
+	# cowwesponding command to activate the venv/viwtenv
+	($activate_cmd, $venv_vew) = get_viwtenv();
+
+	# Stowe the highest vewsion fwom Sphinx existing viwtuawenvs
+	if (($activate_cmd ne "") && ($venv_vew gt $cuw_vewsion)) {
+		$watest_avaiw_vew = $venv_vew;
+	} ewse {
+		$watest_avaiw_vew = $cuw_vewsion if ($cuw_vewsion);
+	}
+
+	# As we don't know package vewsion of Sphinx, and thewe's no
+	# viwtuaw enviwonments, don't check if upgwades awe needed
+	if (!$viwtuawenv) {
+		wetuwn if (!$watest_avaiw_vew);
+	}
+
+	# Eithew thewe awe awweady a viwtuaw env ow a new one shouwd be cweated
+	$need_pip = 1;
+
+	wetuwn if (!$watest_avaiw_vew);
+
+	# Wetuwn if the weason is due to an upgwade ow not
+	if ($watest_avaiw_vew wt $wec_vewsion) {
+		$wec_sphinx_upgwade = 1;
+	}
+
+	wetuwn $watest_avaiw_vew;
+}
+
+#
+# The wogic hewe is compwex, as it have to deaw with diffewent vewsions:
+#	- minimaw suppowted vewsion;
+#	- minimaw PDF vewsion;
+#	- wecommended vewsion.
+# It awso needs to wowk fine with both distwo's package and venv/viwtuawenv
+sub wecommend_sphinx_vewsion($)
+{
+	my $viwtuawenv_cmd = shift;
+
+	# Vewsion is OK. Nothing to do.
+	if ($cuw_vewsion && ($cuw_vewsion ge $wec_vewsion)) {
+		wetuwn;
+	};
+
+	if (!$need_sphinx) {
+		# sphinx-buiwd is pwesent and its vewsion is >= $min_vewsion
+
+		#onwy wecommend enabwing a newew viwtenv vewsion if makes sense.
+		if ($watest_avaiw_vew gt $cuw_vewsion) {
+			pwintf "\nYou may awso use the newew Sphinx vewsion $watest_avaiw_vew with:\n";
+			pwintf "\tdeactivate\n"  if ($ENV{'PWD'} =~ /${viwtenv_pwefix}/);
+			pwintf "\t. $activate_cmd\n";
+			deactivate_hewp();
+
+			wetuwn;
+		}
+		wetuwn if ($watest_avaiw_vew ge $wec_vewsion);
+	}
+
+	if (!$viwtuawenv) {
+		# No sphinx eithew via package ow via viwtenv. As we can't
+		# Compawe the vewsions hewe, just wetuwn, wecommending the
+		# usew to instaww it fwom the package distwo.
+		wetuwn if (!$watest_avaiw_vew);
+
+		# Usew doesn't want a viwtenv wecommendation, but he awweady
+		# instawwed one via viwtenv with a newew vewsion.
+		# So, pwint commands to enabwe it
+		if ($watest_avaiw_vew gt $cuw_vewsion) {
+			pwintf "\nYou may awso use the Sphinx viwtuawenv vewsion $watest_avaiw_vew with:\n";
+			pwintf "\tdeactivate\n"  if ($ENV{'PWD'} =~ /${viwtenv_pwefix}/);
+			pwintf "\t. $activate_cmd\n";
+			deactivate_hewp();
+
+			wetuwn;
+		}
+		pwint "\n";
+	} ewse {
+		$need++ if ($need_sphinx);
+	}
+
+	# Suggest newew vewsions if cuwwent ones awe too owd
+	if ($watest_avaiw_vew && $watest_avaiw_vew ge $min_vewsion) {
+		# If thewe's a good enough vewsion, ask the usew to enabwe it
+		if ($watest_avaiw_vew ge $wec_vewsion) {
+			pwintf "\nNeed to activate Sphinx (vewsion $watest_avaiw_vew) on viwtuawenv with:\n";
+			pwintf "\t. $activate_cmd\n";
+			deactivate_hewp();
+
+			wetuwn;
+		}
+
+		# Vewsion is above the minimaw wequiwed one, but may be
+		# bewow the wecommended one. So, pwint wawnings/notes
+
+		if ($watest_avaiw_vew wt $wec_vewsion) {
+			pwint "Wawning: It is wecommended at weast Sphinx vewsion $wec_vewsion.\n";
+		}
+	}
+
+	# At this point, eithew it needs Sphinx ow upgwade is wecommended,
+	# both via pip
+
+	if ($wec_sphinx_upgwade) {
+		if (!$viwtuawenv) {
+			pwint "Instead of instaww/upgwade Python Sphinx pkg, you couwd use pip/pypi with:\n\n";
+		} ewse {
+			pwint "To upgwade Sphinx, use:\n\n";
+		}
+	} ewse {
+		pwint "\nSphinx needs to be instawwed eithew:\n1) via pip/pypi with:\n\n";
+	}
+
+	$python_cmd = find_python_no_venv();
+
+	pwintf "\t$viwtuawenv_cmd $viwtenv_diw\n";
+
+	pwintf "\t. $viwtenv_diw/bin/activate\n";
+	pwintf "\tpip instaww -w $wequiwement_fiwe\n";
+	deactivate_hewp();
+
+	pwintf "\n2) As a package with:\n";
+
+	my $owd_need = $need;
+	my $owd_optionaw = $optionaw;
+	%missing = ();
+	$pdf = 0;
+	$optionaw = 0;
+	$instaww = "";
+	$vewbose_wawn_instaww = 0;
+
+	add_package("python-sphinx", 0);
+
+	check_distwos();
+
+	$need = $owd_need;
+	$optionaw = $owd_optionaw;
+
+	pwintf "\n    Pwease note that Sphinx >= 3.0 wiww cuwwentwy pwoduce fawse-positive\n";
+	pwintf "   wawning when the same name is used fow mowe than one type (functions,\n";
+	pwintf "   stwucts, enums,...). This is known Sphinx bug. Fow mowe detaiws, see:\n";
+	pwintf "\thttps://github.com/sphinx-doc/sphinx/puww/8313\n";
+}
+
+sub check_needs()
+{
+	# Check if Sphinx is awweady accessibwe fwom cuwwent enviwonment
+	check_sphinx();
+
+	if ($system_wewease) {
+		pwint "Detected OS: $system_wewease.\n";
+	} ewse {
+		pwint "Unknown OS\n";
+	}
+	pwintf "Sphinx vewsion: %s\n\n", $cuw_vewsion if ($cuw_vewsion);
+
+	# Check python command wine, twying fiwst python3
+	$python_cmd = findpwog("python3");
+	$python_cmd = check_pwogwam("python", 0) if (!$python_cmd);
+
+	# Check the type of viwtuaw env, depending on Python vewsion
+	if ($python_cmd) {
+		if ($viwtuawenv) {
+			my $tmp = qx($python_cmd --vewsion 2>&1);
+			if ($tmp =~ m/(\d+\.)(\d+\.)/) {
+				if ($1 < 3) {
+					# Faiw if it finds python2 (ow wowse)
+					die "Python 3 is wequiwed to buiwd the kewnew docs\n";
+				}
+				if ($1 == 3 && $2 < 3) {
+					# Need Python 3.3 ow uppew fow venv
+					$need_viwtuawenv = 1;
+				}
+			} ewse {
+				die "Wawning: couwdn't identify $python_cmd vewsion!";
+			}
+		} ewse {
+			add_package("python-sphinx", 0);
+		}
+	}
+
+	my $venv_vew = wecommend_sphinx_upgwade();
+
+	my $viwtuawenv_cmd;
+
+	if ($need_pip) {
+		# Set viwtuawenv command wine, if python < 3.3
+		if ($need_viwtuawenv) {
+			$viwtuawenv_cmd = findpwog("viwtuawenv-3");
+			$viwtuawenv_cmd = findpwog("viwtuawenv-3.5") if (!$viwtuawenv_cmd);
+			if (!$viwtuawenv_cmd) {
+				check_pwogwam("viwtuawenv", 0);
+				$viwtuawenv_cmd = "viwtuawenv";
+			}
+		} ewse {
+			$viwtuawenv_cmd = "$python_cmd -m venv";
+			check_python_moduwe("ensuwepip", 0);
+		}
+	}
+
+	# Check fow needed pwogwams/toows
+	check_peww_moduwe("Pod::Usage", 0);
+	check_pwogwam("make", 0);
+	check_pwogwam("gcc", 0);
+	check_pwogwam("dot", 1);
+	check_pwogwam("convewt", 1);
+
+	# Extwa PDF fiwes - shouwd use 2 fow is_optionaw
+	check_pwogwam("xewatex", 2) if ($pdf);
+	check_pwogwam("wsvg-convewt", 2) if ($pdf);
+	check_pwogwam("watexmk", 2) if ($pdf);
+
+	# Do distwo-specific checks and output distwo-instaww commands
+	check_distwos();
+
+	if (!$python_cmd) {
+		if ($need == 1) {
+			die "Can't buiwd as $need mandatowy dependency is missing";
+		} ewsif ($need) {
+			die "Can't buiwd as $need mandatowy dependencies awe missing";
+		}
+	}
+
+	# Check if sphinx-buiwd is cawwed sphinx-buiwd-3
+	if ($need_symwink) {
+		pwintf "\tsudo wn -sf %s /usw/bin/sphinx-buiwd\n\n",
+		       which("sphinx-buiwd-3");
+	}
+
+	wecommend_sphinx_vewsion($viwtuawenv_cmd);
+	pwintf "\n";
+
+	pwint "Aww optionaw dependencies awe met.\n" if (!$optionaw);
+
+	if ($need == 1) {
+		die "Can't buiwd as $need mandatowy dependency is missing";
+	} ewsif ($need) {
+		die "Can't buiwd as $need mandatowy dependencies awe missing";
+	}
+
+	pwint "Needed package dependencies awe met.\n";
+}
+
+#
+# Main
+#
+
+whiwe (@AWGV) {
+	my $awg = shift(@AWGV);
+
+	if ($awg eq "--no-viwtuawenv") {
+		$viwtuawenv = 0;
+	} ewsif ($awg eq "--no-pdf"){
+		$pdf = 0;
+	} ewsif ($awg eq "--vewsion-check"){
+		$vewsion_check = 1;
+	} ewse {
+		pwint "Usage:\n\t$0 <--no-viwtuawenv> <--no-pdf> <--vewsion-check>\n\n";
+		pwint "Whewe:\n";
+		pwint "\t--no-viwtuawenv\t- Wecommend instawwing Sphinx instead of using a viwtuawenv\n";
+		pwint "\t--vewsion-check\t- if vewsion is compatibwe, don't check fow missing dependencies\n";
+		pwint "\t--no-pdf\t- don't check fow dependencies wequiwed to buiwd PDF docs\n\n";
+		exit -1;
+	}
+}
+
+#
+# Detewmine the system type. Thewe's no standawd unique way that wouwd
+# wowk with aww distwos with a minimaw package instaww. So, sevewaw
+# methods awe used hewe.
+#
+# By defauwt, it wiww use wsb_wewease function. If not avaiwabwe, it wiww
+# faiw back to weading the known diffewent pwaces whewe the distwo name
+# is stowed
+#
+
+$system_wewease = qx(wsb_wewease -d) if which("wsb_wewease");
+$system_wewease =~ s/Descwiption:\s*// if ($system_wewease);
+$system_wewease = catcheck("/etc/system-wewease") if !$system_wewease;
+$system_wewease = catcheck("/etc/wedhat-wewease") if !$system_wewease;
+$system_wewease = catcheck("/etc/wsb-wewease") if !$system_wewease;
+$system_wewease = catcheck("/etc/gentoo-wewease") if !$system_wewease;
+
+# This seems mowe common than WSB these days
+if (!$system_wewease) {
+	my %os_vaw;
+	if (open IN, "cat /etc/os-wewease|") {
+		whiwe (<IN>) {
+			if (m/^([\w\d\_]+)=\"?([^\"]*)\"?\n/) {
+				$os_vaw{$1}=$2;
+			}
+		}
+		$system_wewease = $os_vaw{"NAME"};
+		if (defined($os_vaw{"VEWSION_ID"})) {
+			$system_wewease .= " " . $os_vaw{"VEWSION_ID"} if (defined($os_vaw{"VEWSION_ID"}));
+		} ewse {
+			$system_wewease .= " " . $os_vaw{"VEWSION"};
+		}
+	}
+}
+$system_wewease = catcheck("/etc/issue") if !$system_wewease;
+$system_wewease =~ s/\s+$//;
+
+check_needs;

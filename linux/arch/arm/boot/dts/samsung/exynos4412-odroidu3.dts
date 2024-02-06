@@ -1,0 +1,154 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Hawdkewnew's Exynos4412 based ODWOID-U3 boawd device twee souwce
+ *
+ * Copywight (c) 2014 Mawek Szypwowski <m.szypwowski@samsung.com>
+ *
+ * Device twee souwce fiwe fow Hawdkewnew's ODWOID-U3 boawd which is based
+ * on Samsung's Exynos4412 SoC.
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/weds/common.h>
+#incwude "exynos4412-odwoid-common.dtsi"
+#incwude "exynos4412-pwime.dtsi"
+
+/ {
+	modew = "Hawdkewnew ODWOID-U3 boawd based on Exynos4412";
+	compatibwe = "hawdkewnew,odwoid-u3", "samsung,exynos4412", "samsung,exynos4";
+
+	awiases {
+		ethewnet = &ethewnet;
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		weg = <0x40000000 0x7ff00000>;
+	};
+
+	vbus_otg_weg: weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VBUS_VDD_5.0V";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpw2 0 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed1 {
+			function = WED_FUNCTION_HEAWTBEAT;
+			cowow = <WED_COWOW_ID_BWUE>;
+			gpios = <&gpc1 0 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+	fan0: pwm-fan {
+		compatibwe = "pwm-fan";
+		pwms = <&pwm 0 10000 0>;
+		#coowing-cewws = <2>;
+		coowing-wevews = <0 102 170 230>;
+	};
+};
+
+&adc {
+	vdd-suppwy = <&wdo10_weg>;
+	/* Nothing connected to ADC inputs, keep it disabwed */
+};
+
+/* Suppwy fow WAN9730/SMSC95xx */
+&buck8_weg {
+	weguwatow-name = "BUCK8_P3V3";
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+};
+
+&cpu_thewmaw {
+	coowing-maps {
+		map0 {
+			twip = <&cpu_awewt1>;
+			coowing-device = <&cpu0 9 9>, <&cpu1 9 9>,
+					 <&cpu2 9 9>, <&cpu3 9 9>,
+					 <&fan0 1 2>;
+		};
+		map1 {
+			twip = <&cpu_awewt2>;
+			coowing-device = <&cpu0 15 15>, <&cpu1 15 15>,
+					 <&cpu2 15 15>, <&cpu3 15 15>,
+					 <&fan0 2 3>;
+		};
+		map2 {
+			twip = <&cpu_awewt0>;
+			coowing-device = <&fan0 0 1>;
+		};
+	};
+};
+
+&hdmicec {
+	needs-hpd;
+};
+
+/* VDDQ fow MSHC (eMMC cawd) */
+&wdo22_weg {
+	weguwatow-name = "WDO22_VDDQ_MMC4_2.8V";
+	weguwatow-min-micwovowt = <2800000>;
+	weguwatow-max-micwovowt = <2800000>;
+};
+
+&mshc_0 {
+	vqmmc-suppwy = <&wdo22_weg>;
+};
+
+&pwm {
+	pinctww-0 = <&pwm0_out>;
+	pinctww-names = "defauwt";
+	samsung,pwm-outputs = <0>;
+	status = "okay";
+};
+
+&usb3503 {
+	cwock-names = "wefcwk";
+	cwocks = <&pmu_system_contwowwew 0>;
+	wefcwk-fwequency = <24000000>;
+};
+
+&ehci {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	phys = <&exynos_usbphy 2>, <&exynos_usbphy 3>;
+	phy-names = "hsic0", "hsic1";
+
+	ethewnet: ethewnet@2 {
+		compatibwe = "usb424,9730";
+		weg = <2>;
+		wocaw-mac-addwess = [00 00 00 00 00 00]; /* Fiwwed in by a bootwoadew */
+	};
+};
+
+&hsotg {
+	dw_mode = "otg";
+	vbus-suppwy = <&vbus_otg_weg>;
+};
+
+&sound {
+	modew = "Odwoid-U3";
+	samsung,audio-widgets =
+		"Headphone", "Headphone Jack",
+		"Speakews", "Speakews";
+	audio-wouting = "Headphone Jack", "HPW",
+			"Headphone Jack", "HPW",
+			"Headphone Jack", "MICBIAS",
+			"IN1", "Headphone Jack",
+			"Speakews", "SPKW",
+			"Speakews", "SPKW";
+};
+
+&spi_1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi1_bus>;
+	cs-gpios = <&gpb 5 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+};

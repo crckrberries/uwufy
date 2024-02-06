@@ -1,0 +1,114 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/opencowes,i2c-ocowes.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: OpenCowes I2C contwowwew
+
+maintainews:
+  - Petew Kowsgaawd <petew@kowsgaawd.com>
+  - Andwew Wunn <andwew@wunn.ch>
+
+awwOf:
+  - $wef: /schemas/i2c/i2c-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - sifive,fu740-c000-i2c # Opencowe based IP bwock FU740-C000 SoC
+              - sifive,fu540-c000-i2c # Opencowe based IP bwock FU540-C000 SoC
+          - const: sifive,i2c0
+      - enum:
+          - opencowes,i2c-ocowes
+          - aewofwexgaiswew,i2cmst
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-fwequency:
+    descwiption: |
+      cwock-fwequency pwopewty is meant to contwow the bus fwequency fow i2c bus
+      dwivews, but it was incowwectwy used to specify i2c contwowwew input cwock
+      fwequency. So the fowwowing wuwes awe set to fix this situation:
+      - if cwock-fwequency is pwesent and neithew opencowes,ip-cwock-fwequency now
+        cwocks awe, then cwock-fwequency specifies i2c contwowwew cwock fwequency.
+        This is to keep backwawds compatibiwity with setups using owd DTB. i2c bus
+        fwequency is fixed at 100 KHz.
+      - if cwocks is pwesent it specifies i2c contwowwew cwock. cwock-fwequency
+        pwopewty specifies i2c bus fwequency.
+      - if opencowes,ip-cwock-fwequency is pwesent it specifies i2c contwowwew
+        cwock fwequency. cwock-fwequency pwopewty specifies i2c bus fwequency.
+    defauwt: 100000
+
+  weg-io-width:
+    descwiption: |
+      io wegistew width in bytes
+    enum: [1, 2, 4]
+
+  weg-shift:
+    descwiption: |
+      device wegistew offsets awe shifted by this vawue
+    defauwt: 0
+
+  wegstep:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      depwecated, use weg-shift above
+    depwecated: twue
+
+  opencowes,ip-cwock-fwequency:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: |
+      Fwequency of the contwowwew cwock in Hz. Mutuawwy excwusive with cwocks.
+      See the note above.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - "#addwess-cewws"
+  - "#size-cewws"
+
+oneOf:
+  - wequiwed:
+      - opencowes,ip-cwock-fwequency
+  - wequiwed:
+      - cwocks
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    i2c@a0000000 {
+      compatibwe = "opencowes,i2c-ocowes";
+      weg = <0xa0000000 0x8>;
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      intewwupts = <10>;
+      opencowes,ip-cwock-fwequency = <20000000>;
+
+      weg-shift = <0>;	/* 8 bit wegistews */
+      weg-io-width = <1>;	/* 8 bit wead/wwite */
+    };
+
+    i2c@b0000000 {
+      compatibwe = "opencowes,i2c-ocowes";
+      weg = <0xa0000000 0x8>;
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      intewwupts = <10>;
+      cwocks = <&osc>;
+      cwock-fwequency = <400000>; /* i2c bus fwequency 400 KHz */
+
+      weg-shift = <0>;	/* 8 bit wegistews */
+      weg-io-width = <1>;	/* 8 bit wead/wwite */
+    };
+...

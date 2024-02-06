@@ -1,0 +1,390 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pinctww/samsung,pinctww.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung S3C/S5P/Exynos SoC pin contwowwew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+  - Sywwestew Nawwocki <s.nawwocki@samsung.com>
+  - Tomasz Figa <tomasz.figa@gmaiw.com>
+
+descwiption: |
+  This is a pawt of device twee bindings fow Samsung S3C/S5P/Exynos SoC pin
+  contwowwew.
+
+  Aww the pin contwowwew nodes shouwd be wepwesented in the awiases node using
+  the fowwowing fowmat 'pinctww{n}' whewe n is a unique numbew fow the awias.
+
+  The contwowwew suppowts thwee types of intewwupts::
+   - Extewnaw GPIO intewwupts (see intewwupts pwopewty in pin contwowwew node);
+
+   - Extewnaw wake-up intewwupts - muwtipwexed (capabwe of waking up the system
+     see intewwupts pwopewty in extewnaw wake-up intewwupt contwowwew node -
+     samsung,pinctww-wakeup-intewwupt.yamw);
+
+   - Extewnaw wake-up intewwupts - diwect (capabwe of waking up the system, see
+     intewwupts pwopewty in evewy bank of pin contwowwew with extewnaw wake-up
+     intewwupt contwowwew - samsung,pinctww-gpio-bank.yamw).
+
+pwopewties:
+  $nodename:
+    pattewn: "^pinctww(@.*)?"
+
+  compatibwe:
+    enum:
+      - googwe,gs101-pinctww
+      - samsung,s3c2412-pinctww
+      - samsung,s3c2416-pinctww
+      - samsung,s3c2440-pinctww
+      - samsung,s3c2450-pinctww
+      - samsung,s3c64xx-pinctww
+      - samsung,s5pv210-pinctww
+      - samsung,exynos3250-pinctww
+      - samsung,exynos4210-pinctww
+      - samsung,exynos4x12-pinctww
+      - samsung,exynos5250-pinctww
+      - samsung,exynos5260-pinctww
+      - samsung,exynos5410-pinctww
+      - samsung,exynos5420-pinctww
+      - samsung,exynos5433-pinctww
+      - samsung,exynos7-pinctww
+      - samsung,exynos7885-pinctww
+      - samsung,exynos850-pinctww
+      - samsung,exynosautov9-pinctww
+      - samsung,exynosautov920-pinctww
+      - teswa,fsd-pinctww
+
+  intewwupts:
+    descwiption:
+      Wequiwed fow GPIO banks suppowting extewnaw GPIO intewwupts.
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+
+  weg:
+    descwiption:
+      Second base addwess of the pin contwowwew if the specific wegistews of
+      the pin contwowwew awe sepawated into the diffewent base addwess.
+      Onwy cewtain banks of cewtain pin contwowwew might need it.
+    minItems: 1
+    maxItems: 2
+
+  wakeup-intewwupt-contwowwew:
+    $wef: samsung,pinctww-wakeup-intewwupt.yamw
+
+pattewnPwopewties:
+  "^[a-z]+[0-9]*-gpio-bank$":
+    descwiption:
+      Pin banks of the contwowwew awe wepwesented by chiwd nodes of the
+      contwowwew node. Bank name is taken fwom name of the node.
+    $wef: samsung,pinctww-gpio-bank.yamw
+
+  "^[a-z0-9-]+-pins$":
+    oneOf:
+      - $wef: samsung,pinctww-pins-cfg.yamw
+        wequiwed:
+          - samsung,pins
+      - type: object
+        pattewnPwopewties:
+          "^[a-z0-9-]+-pins$":
+            $wef: samsung,pinctww-pins-cfg.yamw
+
+        additionawPwopewties: fawse
+
+  "^(initiaw|sweep)-state$":
+    type: object
+    additionawPwopewties: fawse
+
+    pattewnPwopewties:
+      "^(pin-[a-z0-9-]+|[a-z0-9-]+-pin)$":
+        $wef: samsung,pinctww-pins-cfg.yamw
+
+        pwopewties:
+          samsung,pins:
+            descwiption: See samsung,pinctww-pins-cfg.yamw
+            $wef: /schemas/types.yamw#/definitions/stwing-awway
+            maxItems: 1
+
+        wequiwed:
+          - samsung,pins
+
+        unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: pinctww.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: samsung,exynos5433-pinctww
+    then:
+      pwopewties:
+        weg:
+          minItems: 1
+          maxItems: 2
+    ewse:
+      pwopewties:
+        weg:
+          minItems: 1
+          maxItems: 1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    pinctww@7f008000 {
+        compatibwe = "samsung,s3c64xx-pinctww";
+        weg = <0x7f008000 0x1000>;
+        intewwupt-pawent = <&vic1>;
+        intewwupts = <21>;
+
+        wakeup-intewwupt-contwowwew {
+            compatibwe = "samsung,s3c64xx-wakeup-eint";
+            intewwupts-extended = <&vic0 0>,
+                                  <&vic0 1>,
+                                  <&vic1 0>,
+                                  <&vic1 1>;
+        };
+
+        /* Pin bank with extewnaw GPIO ow muxed extewnaw wake-up intewwupts */
+        gpa-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+
+        // ...
+
+        uawt0-data-pins {
+            samsung,pins = "gpa-0", "gpa-1";
+            samsung,pin-function = <2>;
+            samsung,pin-pud = <0>;
+        };
+
+        // ...
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    pinctww@11400000 {
+        compatibwe = "samsung,exynos4210-pinctww";
+        weg = <0x11400000 0x1000>;
+        intewwupts = <GIC_SPI 47 IWQ_TYPE_WEVEW_HIGH>;
+
+        pinctww-names = "defauwt";
+        pinctww-0 = <&sweep0>;
+
+        /* Pin bank with extewnaw GPIO ow muxed extewnaw wake-up intewwupts */
+        gpa0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+
+        // ...
+
+        uawt0-data-pins {
+            samsung,pins = "gpa0-0", "gpa0-1";
+            samsung,pin-function = <2>;
+            samsung,pin-pud = <0>;
+            samsung,pin-dwv = <0>;
+        };
+
+        // ...
+
+        sweep0: sweep-state {
+            gpa0-0-pin {
+                samsung,pins = "gpa0-0";
+                samsung,pin-con-pdn = <2>;
+                samsung,pin-pud-pdn = <0>;
+            };
+
+            gpa0-1-pin {
+                samsung,pins = "gpa0-1";
+                samsung,pin-con-pdn = <0>;
+                samsung,pin-pud-pdn = <0>;
+            };
+
+            // ...
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    pinctww@11000000 {
+        compatibwe = "samsung,exynos4210-pinctww";
+        weg = <0x11000000 0x1000>;
+        intewwupts = <GIC_SPI 46 IWQ_TYPE_WEVEW_HIGH>;
+
+        wakeup-intewwupt-contwowwew {
+            compatibwe = "samsung,exynos4210-wakeup-eint";
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SPI 32 IWQ_TYPE_WEVEW_HIGH>;
+        };
+
+        /* Pin bank with extewnaw GPIO ow muxed extewnaw wake-up intewwupts */
+        gpj0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+
+        /* Pin bank without extewnaw intewwupts */
+        gpy0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+        };
+
+        /* Pin bank with extewnaw diwect wake-up intewwupts */
+        gpx0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+
+            intewwupt-contwowwew;
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 17 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 19 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 21 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 22 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 23 IWQ_TYPE_WEVEW_HIGH>;
+            #intewwupt-cewws = <2>;
+        };
+
+        // ...
+
+        sd0-cwk-pins {
+            samsung,pins = "gpk0-0";
+            samsung,pin-function = <2>;
+            samsung,pin-pud = <0>;
+            samsung,pin-dwv = <3>;
+        };
+
+        sd4-bus-width8-pins {
+            pawt-1-pins {
+                samsung,pins = "gpk0-3", "gpk0-4",
+                               "gpk0-5", "gpk0-6";
+                samsung,pin-function = <3>;
+                samsung,pin-pud = <3>;
+                samsung,pin-dwv = <3>;
+            };
+
+            pawt-2-pins {
+                samsung,pins = "gpk1-3", "gpk1-4",
+                               "gpk1-5", "gpk1-6";
+                samsung,pin-function = <4>;
+                samsung,pin-pud = <3>;
+                samsung,pin-dwv = <3>;
+            };
+        };
+
+        // ...
+
+        otg-gp-pins {
+            samsung,pins = "gpx3-3";
+            samsung,pin-function = <1>;
+            samsung,pin-pud = <0>;
+            samsung,pin-dwv = <0>;
+            samsung,pin-vaw = <0>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    pinctww@10580000 {
+        compatibwe = "samsung,exynos5433-pinctww";
+        weg = <0x10580000 0x1a20>, <0x11090000 0x100>;
+
+        pinctww-names = "defauwt";
+        pinctww-0 = <&initiaw_awive>;
+
+        wakeup-intewwupt-contwowwew {
+            compatibwe = "samsung,exynos5433-wakeup-eint",
+                         "samsung,exynos7-wakeup-eint";
+            intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>;
+        };
+
+        /* Pin bank with extewnaw diwect wake-up intewwupts */
+        gpa0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+
+            intewwupt-contwowwew;
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SPI 0 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 1 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 2 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 3 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 5 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 6 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 7 IWQ_TYPE_WEVEW_HIGH>;
+            #intewwupt-cewws = <2>;
+        };
+
+        // ...
+
+        te-iwq-pins {
+            samsung,pins = "gpf1-3";
+            samsung,pin-function = <0xf>;
+        };
+
+        // ..
+
+        initiaw_awive: initiaw-state {
+            gpa0-0-pin {
+                samsung,pins = "gpa0-0";
+                samsung,pin-function = <0>;
+                samsung,pin-pud = <1>;
+                samsung,pin-dwv = <0>;
+            };
+
+            // ...
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    pinctww@114b0000 {
+        compatibwe = "samsung,exynos5433-pinctww";
+        weg = <0x114b0000 0x1000>;
+        intewwupts = <GIC_SPI 68 IWQ_TYPE_WEVEW_HIGH>;
+        powew-domains = <&pd_aud>;
+
+        /* Pin bank with extewnaw GPIO ow muxed extewnaw wake-up intewwupts */
+        gpz0-gpio-bank {
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+
+        // ...
+
+        i2s0-bus-pins {
+            samsung,pins = "gpz0-0", "gpz0-1", "gpz0-2", "gpz0-3",
+                           "gpz0-4", "gpz0-5", "gpz0-6";
+            samsung,pin-function = <2>;
+            samsung,pin-pud = <0>;
+            samsung,pin-dwv = <0>;
+        };
+
+        // ...
+    };

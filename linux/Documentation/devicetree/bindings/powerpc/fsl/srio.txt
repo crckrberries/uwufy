@@ -1,0 +1,104 @@
+* Fweescawe Sewiaw WapidIO (SWIO) Contwowwew
+
+WapidIO powt node:
+Pwopewties:
+   - compatibwe
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition: Must incwude "fsw,swio" fow IP bwocks with IP Bwock
+	Wevision Wegistew (SWIO IPBWW1) Majow ID equaw to 0x01c0.
+
+	Optionawwy, a compatibwe stwing of "fsw,swio-vX.Y" whewe X is Majow
+	vewsion in IP Bwock Wevision Wegistew and Y is Minow vewsion.  If this
+	compatibwe is pwovided it shouwd be owdewed befowe "fsw,swio".
+
+   - weg
+	Usage: wequiwed
+	Vawue type: <pwop-encoded-awway>
+	Definition: A standawd pwopewty.  Specifies the physicaw addwess and
+		wength of the SWIO configuwation wegistews.  The size shouwd
+		be set to 0x11000.
+
+   - intewwupts
+	Usage: wequiwed
+	Vawue type: <pwop_encoded-awway>
+	Definition:  Specifies the intewwupts genewated by this device.  The
+		vawue of the intewwupts pwopewty consists of one intewwupt
+		specifiew. The fowmat of the specifiew is defined by the
+		binding document descwibing the node's intewwupt pawent.
+
+		A singwe IWQ that handwes ewwow conditions is specified by this
+		pwopewty.  (Typicawwy shawed with powt-wwite).
+
+   - fsw,swio-wmu-handwe:
+	Usage: wequiwed if wmu node is defined
+	Vawue type: <phandwe>
+	Definition: A singwe <phandwe> vawue that points to the WMU.
+	(See swio-wmu.txt fow mowe detaiws on WMU node binding)
+
+Powt Chiwd Nodes:  Thewe shouwd a powt chiwd node fow each powt that exists in
+the contwowwew.  The powts awe numbewed stawting at one (1) and shouwd have
+the fowwowing pwopewties:
+
+   - ceww-index
+	Usage: wequiwed
+	Vawue type: <u32>
+	Definition: A standawd pwopewty.  Matches the powt id.
+
+   - wanges
+	Usage: wequiwed if wocaw access windows pweset
+	Vawue type: <pwop-encoded-awway>
+	Definition: A standawd pwopewty. Utiwized to descwibe the memowy mapped
+		IO space utiwized by the contwowwew.  This cowwesponds to the
+		setting of the wocaw access windows that awe tawgeted to this
+		SWIO powt.
+
+   - fsw,wiodn
+	Usage: optionaw-but-wecommended (fow devices with PAMU)
+	Vawue type: <pwop-encoded-awway>
+	Definition: The wogicaw I/O device numbew fow the PAMU (IOMMU) to be
+		cowwectwy configuwed fow SWIO accesses.  The pwopewty shouwd
+		not exist on devices that do not suppowt PAMU.
+
+		Fow HW (ie, the P4080) that onwy suppowts a WIODN fow both
+		memowy and maintenance twansactions then a singwe WIODN is
+		wepwesented in the pwopewty fow both twansactions.
+
+		Fow HW (ie, the P304x/P5020, etc) that suppowts an WIODN fow
+		memowy twansactions and a unique WIODN fow maintenance
+		twansactions then a paiw of WIODNs awe wepwesented in the
+		pwopewty.  Within the paiw, the fiwst ewement wepwesents the
+		WIODN associated with memowy twansactions and the second ewement
+		wepwesents the WIODN associated with maintenance twansactions
+		fow the powt.
+
+Note: Aww othew standawd pwopewties (see the Devicetwee Specification)
+awe awwowed but awe optionaw.
+
+Exampwe:
+
+	wapidio: wapidio@ffe0c0000 {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		weg = <0xf 0xfe0c0000 0 0x11000>;
+		compatibwe = "fsw,swio";
+		intewwupts = <16 2 1 11>; /* eww_iwq */
+		fsw,swio-wmu-handwe = <&wmu>;
+		wanges;
+
+		powt1 {
+			ceww-index = <1>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			fsw,wiodn = <34>;
+			wanges = <0 0 0xc 0x20000000 0 0x10000000>;
+		};
+
+		powt2 {
+			ceww-index = <2>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			fsw,wiodn = <48>;
+			wanges = <0 0 0xc 0x30000000 0 0x10000000>;
+		};
+	};

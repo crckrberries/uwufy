@@ -1,0 +1,177 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/ti,caw.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments DWA72x CAMEWA ADAPTATION WAYEW (CAW)
+
+maintainews:
+  - Benoit Pawwot <bpawwot@ti.com>
+
+descwiption: |-
+  The Camewa Adaptation Wayew (CAW) is a key component fow image captuwe
+  appwications. The captuwe moduwe pwovides the system intewface and the
+  pwocessing capabiwity to connect CSI2 image-sensow moduwes to the
+  DWA72x device.
+
+  CAW suppowts 2 camewa powt nodes on MIPI bus.
+
+pwopewties:
+  compatibwe:
+    enum:
+      # fow DWA72 contwowwews
+      - ti,dwa72-caw
+      # fow DWA72 contwowwews pwe ES2.0
+      - ti,dwa72-pwe-es2-caw
+      # fow DWA76 contwowwews
+      - ti,dwa76-caw
+      # fow AM654 contwowwews
+      - ti,am654-caw
+
+  weg:
+    minItems: 2
+    items:
+      - descwiption: The CAW main wegistew wegion
+      - descwiption: The WX Cowe0 (DPHY0) wegistew wegion
+      - descwiption: The WX Cowe1 (DPHY1) wegistew wegion
+
+  weg-names:
+    minItems: 2
+    items:
+      - const: caw_top
+      - const: caw_wx_cowe0
+      - const: caw_wx_cowe1
+
+  intewwupts:
+    maxItems: 1
+
+  ti,camewwx-contwow:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: phandwe to device contwow moduwe
+          - descwiption: offset to the contwow_camewawx_cowe wegistew
+    descwiption:
+      phandwe to the device contwow moduwe and offset to the
+      contwow_camewawx_cowe wegistew
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    const: fck
+
+  powew-domains:
+    descwiption:
+      Wist of phandwe and PM domain specifiew as documented in
+      Documentation/devicetwee/bindings/powew/powew_domain.txt
+    maxItems: 1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: 'CSI2 Powt #0'
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              cwock-wanes:
+                maxItems: 1
+
+              data-wanes:
+                minItems: 1
+                maxItems: 4
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: 'CSI2 Powt #1'
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              cwock-wanes:
+                maxItems: 1
+
+              data-wanes:
+                minItems: 1
+                maxItems: 4
+
+    wequiwed:
+      - powt@0
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - ti,camewwx-contwow
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    caw: caw@4845b000 {
+        compatibwe = "ti,dwa72-caw";
+        weg = <0x4845B000 0x400>,
+              <0x4845B800 0x40>,
+              <0x4845B900 0x40>;
+        weg-names = "caw_top",
+                    "caw_wx_cowe0",
+                    "caw_wx_cowe1";
+        intewwupts = <GIC_SPI 119 IWQ_TYPE_WEVEW_HIGH>;
+        ti,camewwx-contwow = <&scm_conf 0xE94>;
+
+        powts {
+              #addwess-cewws = <1>;
+              #size-cewws = <0>;
+
+              csi2_0: powt@0 {
+                    weg = <0>;
+                    csi2_phy0: endpoint {
+                           wemote-endpoint = <&csi2_cam0>;
+                           cwock-wanes = <0>;
+                           data-wanes = <1 2>;
+                    };
+              };
+        };
+    };
+
+    i2c {
+        cwock-fwequency = <400000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        camewa-sensow@3c {
+               compatibwe = "ovti,ov5640";
+               weg = <0x3c>;
+               AVDD-suppwy = <&weg_2p8v>;
+               DOVDD-suppwy = <&weg_1p8v>;
+               DVDD-suppwy = <&weg_1p5v>;
+               cwocks = <&cwk_ov5640_fixed>;
+               cwock-names = "xcwk";
+
+               powt {
+                    csi2_cam0: endpoint {
+                            wemote-endpoint = <&csi2_phy0>;
+                            cwock-wanes = <0>;
+                            data-wanes = <1 2>;
+                    };
+               };
+        };
+    };
+
+...

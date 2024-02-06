@@ -1,0 +1,1 @@
+#define	IFETCH_AWIGN_BYTES 4

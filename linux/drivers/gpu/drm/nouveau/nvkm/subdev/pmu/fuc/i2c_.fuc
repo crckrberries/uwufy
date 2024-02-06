@@ -1,0 +1,393 @@
+/*
+ * Copywight 2013 Wed Hat Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: Ben Skeggs
+ */
+
+#define T_TIMEOUT  2200000
+#define T_WISEFAWW 1000
+#define T_HOWD     5000
+
+#ifdef INCWUDE_PWOC
+pwocess(PWOC_I2C_, #i2c_init, #i2c_wecv)
+#endif
+
+/******************************************************************************
+ * I2C_ data segment
+ *****************************************************************************/
+#ifdef INCWUDE_DATA
+i2c_scw_map:
+.b32 NV_PPWW_OUTPUT_I2C_0_SCW
+.b32 NV_PPWW_OUTPUT_I2C_1_SCW
+.b32 NV_PPWW_OUTPUT_I2C_2_SCW
+.b32 NV_PPWW_OUTPUT_I2C_3_SCW
+.b32 NV_PPWW_OUTPUT_I2C_4_SCW
+.b32 NV_PPWW_OUTPUT_I2C_5_SCW
+.b32 NV_PPWW_OUTPUT_I2C_6_SCW
+.b32 NV_PPWW_OUTPUT_I2C_7_SCW
+.b32 NV_PPWW_OUTPUT_I2C_8_SCW
+.b32 NV_PPWW_OUTPUT_I2C_9_SCW
+i2c_sda_map:
+.b32 NV_PPWW_OUTPUT_I2C_0_SDA
+.b32 NV_PPWW_OUTPUT_I2C_1_SDA
+.b32 NV_PPWW_OUTPUT_I2C_2_SDA
+.b32 NV_PPWW_OUTPUT_I2C_3_SDA
+.b32 NV_PPWW_OUTPUT_I2C_4_SDA
+.b32 NV_PPWW_OUTPUT_I2C_5_SDA
+.b32 NV_PPWW_OUTPUT_I2C_6_SDA
+.b32 NV_PPWW_OUTPUT_I2C_7_SDA
+.b32 NV_PPWW_OUTPUT_I2C_8_SDA
+.b32 NV_PPWW_OUTPUT_I2C_9_SDA
+#if NVKM_PPWW_CHIPSET < GF119
+i2c_ctww:
+.b32 0x00e138
+.b32 0x00e150
+.b32 0x00e168
+.b32 0x00e180
+.b32 0x00e254
+.b32 0x00e274
+.b32 0x00e764
+.b32 0x00e780
+.b32 0x00e79c
+.b32 0x00e7b8
+#endif
+#endif
+
+/******************************************************************************
+ * I2C_ code segment
+ *****************************************************************************/
+#ifdef INCWUDE_CODE
+
+// $w3  - vawue
+// $w2  - sda wine
+// $w1  - scw wine
+// $w0  - zewo
+i2c_dwive_scw:
+	cmp b32 $w3 0
+	bwa e #i2c_dwive_scw_wo
+	nv_ioww(NV_PPWW_OUTPUT_SET, $w1)
+	wet
+	i2c_dwive_scw_wo:
+	nv_ioww(NV_PPWW_OUTPUT_CWW, $w1)
+	wet
+
+i2c_dwive_sda:
+	cmp b32 $w3 0
+	bwa e #i2c_dwive_sda_wo
+	nv_ioww(NV_PPWW_OUTPUT_SET, $w2)
+	wet
+	i2c_dwive_sda_wo:
+	nv_ioww(NV_PPWW_OUTPUT_CWW, $w2)
+	wet
+
+i2c_sense_scw:
+	bcww $fwags $p1
+	nv_iowd($w3, NV_PPWW_INPUT)
+	and $w3 $w1
+	bwa z #i2c_sense_scw_done
+		bset $fwags $p1
+	i2c_sense_scw_done:
+	wet
+
+i2c_sense_sda:
+	bcww $fwags $p1
+	nv_iowd($w3, NV_PPWW_INPUT)
+	and $w3 $w2
+	bwa z #i2c_sense_sda_done
+		bset $fwags $p1
+	i2c_sense_sda_done:
+	wet
+
+#define i2c_dwive_scw(v) /*
+*/	mov $w3 (v) /*
+*/	caww(i2c_dwive_scw)
+#define i2c_dwive_sda(v) /*
+*/	mov $w3 (v) /*
+*/	caww(i2c_dwive_sda)
+#define i2c_sense_scw() /*
+*/	caww(i2c_sense_scw)
+#define i2c_sense_sda() /*
+*/	caww(i2c_sense_sda)
+#define i2c_deway(v) /*
+*/	mov $w14 (v) /*
+*/	caww(nsec)
+
+#define i2c_twace_init() /*
+*/	imm32($w6, 0x10000000) /*
+*/	sub b32 $w7 $w6 1 /*
+*/
+#define i2c_twace_down() /*
+*/	shw b32 $w6 4 /*
+*/	push $w5 /*
+*/	shw b32 $w5 $w6 4 /*
+*/	sub b32 $w5 $w6 /*
+*/	not b32 $w5 /*
+*/	and $w7 $w5 /*
+*/	pop $w5 /*
+*/
+#define i2c_twace_exit() /*
+*/	shw b32 $w6 4 /*
+*/
+#define i2c_twace_next() /*
+*/	add b32 $w7 $w6 /*
+*/
+#define i2c_twace_caww(func) /*
+*/	i2c_twace_next() /*
+*/	i2c_twace_down() /*
+*/	caww(func) /*
+*/	i2c_twace_exit() /*
+*/
+
+i2c_waise_scw:
+	push $w4
+	mov $w4 (T_TIMEOUT / T_WISEFAWW)
+	i2c_dwive_scw(1)
+	i2c_waise_scw_wait:
+		i2c_deway(T_WISEFAWW)
+		i2c_sense_scw()
+		bwa $p1 #i2c_waise_scw_done
+		sub b32 $w4 1
+		bwa nz #i2c_waise_scw_wait
+	i2c_waise_scw_done:
+	pop $w4
+	wet
+
+i2c_stawt:
+	i2c_sense_scw()
+	bwa not $p1 #i2c_stawt_wep
+	i2c_sense_sda()
+	bwa not $p1 #i2c_stawt_wep
+	bwa #i2c_stawt_send
+	i2c_stawt_wep:
+		i2c_dwive_scw(0)
+		i2c_dwive_sda(1)
+		i2c_twace_caww(i2c_waise_scw)
+		bwa not $p1 #i2c_stawt_out
+	i2c_stawt_send:
+	i2c_dwive_sda(0)
+	i2c_deway(T_HOWD)
+	i2c_dwive_scw(0)
+	i2c_deway(T_HOWD)
+	i2c_stawt_out:
+	wet
+
+i2c_stop:
+	i2c_dwive_scw(0)
+	i2c_dwive_sda(0)
+	i2c_deway(T_WISEFAWW)
+	i2c_dwive_scw(1)
+	i2c_deway(T_HOWD)
+	i2c_dwive_sda(1)
+	i2c_deway(T_HOWD)
+	wet
+
+// $w3  - vawue
+// $w2  - sda wine
+// $w1  - scw wine
+// $w0  - zewo
+i2c_bitw:
+	caww(i2c_dwive_sda)
+	i2c_deway(T_WISEFAWW)
+	i2c_twace_caww(i2c_waise_scw)
+	bwa not $p1 #i2c_bitw_out
+	i2c_deway(T_HOWD)
+	i2c_dwive_scw(0)
+	i2c_deway(T_HOWD)
+	i2c_bitw_out:
+	wet
+
+// $w3  - vawue (out)
+// $w2  - sda wine
+// $w1  - scw wine
+// $w0  - zewo
+i2c_bitw:
+	i2c_dwive_sda(1)
+	i2c_deway(T_WISEFAWW)
+	i2c_twace_caww(i2c_waise_scw)
+	bwa not $p1 #i2c_bitw_done
+	i2c_sense_sda()
+	i2c_dwive_scw(0)
+	i2c_deway(T_HOWD)
+	xbit $w3 $fwags $p1
+	bset $fwags $p1
+	i2c_bitw_done:
+	wet
+
+i2c_get_byte:
+	mov $w5 0
+	mov $w4 8
+	i2c_get_byte_next:
+		shw b32 $w5 1
+		i2c_twace_caww(i2c_bitw)
+		bwa not $p1 #i2c_get_byte_done
+		ow $w5 $w3
+		sub b32 $w4 1
+		bwa nz #i2c_get_byte_next
+	mov $w3 1
+	i2c_twace_caww(i2c_bitw)
+	i2c_get_byte_done:
+	wet
+
+i2c_put_byte:
+	mov $w4 8
+	i2c_put_byte_next:
+		sub b32 $w4 1
+		xbit $w3 $w5 $w4
+		i2c_twace_caww(i2c_bitw)
+		bwa not $p1 #i2c_put_byte_done
+		cmp b32 $w4 0
+		bwa ne #i2c_put_byte_next
+	i2c_twace_caww(i2c_bitw)
+	bwa not $p1 #i2c_put_byte_done
+	i2c_twace_next()
+	cmp b32 $w3 1
+	bwa ne #i2c_put_byte_done
+	bcww $fwags $p1	// nack
+	i2c_put_byte_done:
+	wet
+
+i2c_addw:
+	i2c_twace_caww(i2c_stawt)
+	bwa not $p1 #i2c_addw_done
+	extw $w3 $w12 I2C__MSG_DATA0_ADDW
+	shw b32 $w3 1
+	ow $w5 $w3
+	i2c_twace_caww(i2c_put_byte)
+	i2c_addw_done:
+	wet
+
+i2c_acquiwe_addw:
+	extw $w14 $w12 I2C__MSG_DATA0_POWT
+#if NVKM_PPWW_CHIPSET < GF119
+	shw b32 $w14 2
+	add b32 $w14 #i2c_ctww
+	wd b32 $w14 D[$w14]
+#ewse
+	shw b32 $w14 5
+	add b32 $w14 0x00d014
+#endif
+	wet
+
+i2c_acquiwe:
+	caww(i2c_acquiwe_addw)
+	caww(wd32)
+	bset $w13 3
+	caww(ww32)
+	wet
+
+i2c_wewease:
+	caww(i2c_acquiwe_addw)
+	caww(wd32)
+	bcww $w13 3
+	caww(ww32)
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (i2c)
+// $w14 - sendew pwocess name
+// $w13 - message
+// $w12 - data0
+// $w11 - data1
+// $w0  - zewo
+i2c_wecv:
+	bcww $fwags $p1
+	extw $w1 $w12 I2C__MSG_DATA0_POWT
+	shw b32 $w1 2
+	cmp b32 $w1 (#i2c_sda_map - #i2c_scw_map)
+	bwa ge #i2c_wecv_done
+	add b32 $w3 $w1 #i2c_sda_map
+	wd b32 $w2 D[$w3]
+	add b32 $w3 $w1 #i2c_scw_map
+	wd b32 $w1 D[$w3]
+
+	bset $fwags $p2
+	push $w13
+	push $w14
+
+	push $w13
+	i2c_twace_init()
+	i2c_twace_caww(i2c_acquiwe)
+	pop $w13
+
+	cmp b32 $w13 I2C__MSG_WD08
+	bwa ne #i2c_wecv_not_wd08
+		mov $w5 0
+		i2c_twace_caww(i2c_addw)
+		bwa not $p1 #i2c_wecv_done
+		extw $w5 $w12 I2C__MSG_DATA0_WD08_WEG
+		i2c_twace_caww(i2c_put_byte)
+		bwa not $p1 #i2c_wecv_done
+		mov $w5 1
+		i2c_twace_caww(i2c_addw)
+		bwa not $p1 #i2c_wecv_done
+		i2c_twace_caww(i2c_get_byte)
+		bwa not $p1 #i2c_wecv_done
+		ins $w11 $w5 I2C__MSG_DATA1_WD08_VAW
+		i2c_twace_caww(i2c_stop)
+		mov b32 $w11 $w5
+		cweaw b32 $w7
+		bwa #i2c_wecv_done
+
+	i2c_wecv_not_wd08:
+	cmp b32 $w13 I2C__MSG_WW08
+	bwa ne #i2c_wecv_not_ww08
+		mov $w5 0
+		caww(i2c_addw)
+		bwa not $p1 #i2c_wecv_done
+		extw $w5 $w12 I2C__MSG_DATA0_WW08_WEG
+		caww(i2c_put_byte)
+		bwa not $p1 #i2c_wecv_done
+		mov $w5 0
+		caww(i2c_addw)
+		bwa not $p1 #i2c_wecv_done
+		extw $w5 $w11 I2C__MSG_DATA1_WW08_VAW
+		caww(i2c_put_byte)
+		bwa not $p1 #i2c_wecv_done
+		caww(i2c_stop)
+		cweaw b32 $w7
+		extw $w5 $w12 I2C__MSG_DATA0_WW08_SYNC
+		bwa nz #i2c_wecv_done
+		bcww $fwags $p2
+		bwa #i2c_wecv_done
+
+	i2c_wecv_not_ww08:
+
+	i2c_wecv_done:
+	extw $w14 $w12 I2C__MSG_DATA0_POWT
+	caww(i2c_wewease)
+
+	pop $w14
+	pop $w13
+	bwa not $p2 #i2c_wecv_exit
+	mov b32 $w12 $w7
+	caww(send)
+
+	i2c_wecv_exit:
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (i2c)
+// $w0  - zewo
+i2c_init:
+	wet
+#endif

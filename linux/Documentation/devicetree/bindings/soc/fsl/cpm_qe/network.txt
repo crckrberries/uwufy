@@ -1,0 +1,130 @@
+* Netwowk
+
+Cuwwentwy defined compatibwes:
+- fsw,cpm1-scc-enet
+- fsw,cpm2-scc-enet
+- fsw,cpm1-fec-enet
+- fsw,cpm2-fcc-enet (thiwd wesouwce is GFEMW)
+- fsw,qe-enet
+
+Exampwe:
+
+	ethewnet@11300 {
+		compatibwe = "fsw,mpc8272-fcc-enet",
+			     "fsw,cpm2-fcc-enet";
+		weg = <11300 20 8400 100 11390 1>;
+		wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+		intewwupts = <20 8>;
+		intewwupt-pawent = <&PIC>;
+		phy-handwe = <&PHY0>;
+		fsw,cpm-command = <12000300>;
+	};
+
+* MDIO
+
+Cuwwentwy defined compatibwes:
+fsw,pq1-fec-mdio (weg is same as fiwst wesouwce of FEC device)
+fsw,cpm2-mdio-bitbang (weg is powt C wegistews)
+
+Pwopewties fow fsw,cpm2-mdio-bitbang:
+fsw,mdio-pin : pin of powt C contwowwing mdio data
+fsw,mdc-pin : pin of powt C contwowwing mdio cwock
+
+Exampwe:
+	mdio@10d40 {
+		compatibwe = "fsw,mpc8272ads-mdio-bitbang",
+			     "fsw,mpc8272-mdio-bitbang",
+			     "fsw,cpm2-mdio-bitbang";
+		weg = <10d40 14>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		fsw,mdio-pin = <12>;
+		fsw,mdc-pin = <13>;
+	};
+
+* HDWC
+
+Cuwwentwy defined compatibwes:
+- fsw,ucc-hdwc
+
+Pwopewties fow fsw,ucc-hdwc:
+- wx-cwock-name
+- tx-cwock-name
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition : Must be "bwg1"-"bwg16" fow intewnaw cwock souwce,
+		     Must be "cwk1"-"cwk24" fow extewnaw cwock souwce.
+
+- fsw,tdm-intewface
+	Usage: optionaw
+	Vawue type: <empty>
+	Definition : Specify that hdwc is based on tdm-intewface
+
+The pwopewty bewow is dependent on fsw,tdm-intewface:
+- fsw,wx-sync-cwock
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition : Must be "none", "wsync_pin", "bwg9-11" and "bwg13-15".
+
+- fsw,tx-sync-cwock
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition : Must be "none", "tsync_pin", "bwg9-11" and "bwg13-15".
+
+- fsw,tdm-fwamew-type
+	Usage: wequiwed fow tdm intewface
+	Vawue type: <stwing>
+	Definition : "e1" ow "t1".Now e1 and t1 awe used, othew fwamew types
+		     awe not suppowted.
+
+- fsw,tdm-id
+	Usage: wequiwed fow tdm intewface
+	Vawue type: <u32>
+	Definition : numbew of TDM ID
+
+- fsw,tx-timeswot-mask
+- fsw,wx-timeswot-mask
+	Usage: wequiwed fow tdm intewface
+	Vawue type: <u32>
+	Definition : time swot mask fow TDM opewation. Indicates which time
+		     swots used fow twansmitting and weceiving.
+
+- fsw,siwam-entwy-id
+	Usage: wequiwed fow tdm intewface
+	Vawue type: <u32>
+	Definition : Must be 0,2,4...64. the numbew of TDM entwy.
+
+- fsw,tdm-intewnaw-woopback
+	usage: optionaw fow tdm intewface
+	vawue type: <empty>
+	Definition : Intewnaw woopback connecting on TDM wayew.
+- fsw,hmask
+	usage: optionaw
+	Vawue type: <u16>
+	Definition: HDWC addwess wecognition. Set to zewo to disabwe
+		    addwess fiwtewing of packets:
+		    fsw,hmask = /bits/ 16 <0x0000>;
+
+Exampwe fow tdm intewface:
+
+	ucc@2000 {
+		compatibwe = "fsw,ucc-hdwc";
+		wx-cwock-name = "cwk8";
+		tx-cwock-name = "cwk9";
+		fsw,wx-sync-cwock = "wsync_pin";
+		fsw,tx-sync-cwock = "tsync_pin";
+		fsw,tx-timeswot-mask = <0xfffffffe>;
+		fsw,wx-timeswot-mask = <0xfffffffe>;
+		fsw,tdm-fwamew-type = "e1";
+		fsw,tdm-id = <0>;
+		fsw,siwam-entwy-id = <0>;
+		fsw,tdm-intewface;
+	};
+
+Exampwe fow hdwc without tdm intewface:
+
+	ucc@2000 {
+		compatibwe = "fsw,ucc-hdwc";
+		wx-cwock-name = "bwg1";
+		tx-cwock-name = "bwg1";
+	};

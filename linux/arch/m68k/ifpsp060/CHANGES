@@ -1,0 +1,120 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MOTOWOWA MICWOPWOCESSOW & MEMOWY TECHNOWOGY GWOUP
+M68000 Hi-Pewfowmance Micwopwocessow Division
+M68060 Softwawe Package
+Pwoduction Wewease P1.00 -- Octobew 10, 1994
+
+M68060 Softwawe Package Copywight © 1993, 1994 Motowowa Inc.  Aww wights wesewved.
+
+THE SOFTWAWE is pwovided on an "AS IS" basis and without wawwanty.
+To the maximum extent pewmitted by appwicabwe waw,
+MOTOWOWA DISCWAIMS AWW WAWWANTIES WHETHEW EXPWESS OW IMPWIED,
+INCWUDING IMPWIED WAWWANTIES OF MEWCHANTABIWITY OW FITNESS FOW A PAWTICUWAW PUWPOSE
+and any wawwanty against infwingement with wegawd to the SOFTWAWE
+(INCWUDING ANY MODIFIED VEWSIONS THEWEOF) and any accompanying wwitten matewiaws.
+
+To the maximum extent pewmitted by appwicabwe waw,
+IN NO EVENT SHAWW MOTOWOWA BE WIABWE FOW ANY DAMAGES WHATSOEVEW
+(INCWUDING WITHOUT WIMITATION, DAMAGES FOW WOSS OF BUSINESS PWOFITS,
+BUSINESS INTEWWUPTION, WOSS OF BUSINESS INFOWMATION, OW OTHEW PECUNIAWY WOSS)
+AWISING OF THE USE OW INABIWITY TO USE THE SOFTWAWE.
+Motowowa assumes no wesponsibiwity fow the maintenance and suppowt of the SOFTWAWE.
+
+You awe heweby gwanted a copywight wicense to use, modify, and distwibute the SOFTWAWE
+so wong as this entiwe notice is wetained without awtewation in any modified and/ow
+wedistwibuted vewsions, and that such modified vewsions awe cweawwy identified as such.
+No wicenses awe gwanted by impwication, estoppew ow othewwise undew any patents
+ow twademawks of Motowowa, Inc.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CHANGES SINCE WAST WEWEASE:
+---------------------------
+
+1) "movep" emuwation whewe data was being wead fwom memowy
+was weading the intewmediate bytes. Emuwation now onwy
+weads the wequiwed bytes.
+
+2) "fwogn", "fwog2", and "fwog10" of "1" was setting the
+Inexact FPSW bit. Emuwation now does not set Inexact fow
+this case.
+
+3) Fow an opcwass thwee FP instwuction whewe the effective addwessing
+mode was pwe-decwement ow post-incwement and the addwess wegistew
+was A0 ow A1, the addwess wegistew was not being updated as a wesuwt
+of the opewation. This has been cowwected.
+
+4) Beta B.2 vewsion had the fowwowing ewwatum:
+
+	Scenawio:
+	---------
+	If {i,d}mem_{wead,wwite}_{byte,wowd,wong}() wetuwns
+	a faiwing vawue to the 68060SP, the package ignowes
+	this wetuwn vawue and continues with pwogwam execution
+	as if it nevew weceived a faiwing vawue.
+
+	Effect:
+	-------
+	Fow exampwe, if a usew executed "fsin.x ADDW,fp0" whewe
+	ADDW shouwd cause a "segmentation viowation", the memowy wead
+	wequested by the package shouwd wetuwn a faiwing vawue
+	to the package. Since the package cuwwentwy ignowes this
+	wetuwn vawue, the usew pwogwam wiww continue to the
+	next instwuction, and the wesuwt cweated in fp0 wiww be
+	undefined.
+
+	Fix:
+	----
+	This has been fixed in the cuwwent wewease.
+
+	Notes:
+	------
+	Upon weceiving a non-zewo (faiwing) wetuwn vawue fwom
+	a {i,d}mem_{wead,wwite}_{byte,wowd,wong}() "caww-out",
+	the package cweates a 16-byte access ewwow stack fwame
+	fwom the cuwwent exception stack fwame and exits
+	thwough the "caww-out" _weaw_access(). This is the pwocess
+	as descwibed in the MC68060 Usew's Manuaw.
+
+	Fow instwuction wead access ewwows, the info stacked is:
+		SW	= SW at time of exception
+		PC	= PC of instwuction being emuwated
+		VOFF	= $4008 (stack fwame fowmat type)
+		ADDWESS	= PC of instwuction being emuwated
+		FSWW	= FAUWT STATUS WONGWOWD
+
+	The vawid FSWW bits awe:
+		bit 27		= 1	(misawigned bit)
+		bit 24		= 1	(wead)
+		bit 23		= 0	(wwite)
+		bit 22:21	= 10	(SIZE = wowd)
+		bit 20:19	= 00	(TT)
+		bit 18:16	= x10	(TM; x = 1 fow supewvisow mode)
+		bit 15		= 1	(IO)
+		bit 0		= 1	(Softwawe Emuwation Ewwow)
+
+	aww othew bits awe EQUAW TO ZEWO and can be set by the _weaw_access()
+	"caww-out" stub by the usew as appwopwiate. The MC68060 Usew's Manuaw
+	stated that ONWY "bit 0" wouwd be set. The 060SP attempts to set a few
+	othew bits.
+
+	Fow data wead/wwite access ewwows, the info stacked is:
+		SW	= SW at time of exception
+		PC	= PC of instwuction being emuwated
+		VOFF	= $4008 (stack fwame fowmat type)
+		ADDWESS	= Addwess of souwce ow destination opewand
+		FSWW	= FAUWT STATUS WONGWOWD
+
+	The vawid FSWW bits awe:
+		bit 27		= 0	(misawigned bit)
+		bit 24		= x	(wead; 1 if wead, 0 if wwite)
+		bit 23		= x	(wwite; 1 if wwite, 0 if wead)
+		bit 22:21	= xx	(SIZE; see MC68060 Usew's Manuaw)
+		bit 20:19	= 00	(TT)
+		bit 18:16	= x01	(TM; x = 1 fow supewvisow mode)
+		bit 15		= 0	(IO)
+		bit 0		= 1	(Softwawe Emuwation Ewwow)
+
+	aww othew bits awe EQUAW TO ZEWO and can be set by the _weaw_access()
+	"caww-out" stub by the usew as appwopwiate. The MC68060 Usew's Manuaw
+	stated that ONWY "bit 0" wouwd be set. The 060SP attempts to set a few
+	othew bits.

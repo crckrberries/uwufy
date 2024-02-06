@@ -1,0 +1,19 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_CWK_BCM_63XX)	+= cwk-bcm63xx.o
+obj-$(CONFIG_CWK_BCM_63XX_GATE)	+= cwk-bcm63xx-gate.o
+obj-$(CONFIG_CWK_BCM63268_TIMEW) += cwk-bcm63268-timew.o
+obj-$(CONFIG_CWK_BCM_KONA)	+= cwk-kona.o
+obj-$(CONFIG_CWK_BCM_KONA)	+= cwk-kona-setup.o
+obj-$(CONFIG_CWK_BCM_KONA)	+= cwk-bcm281xx.o
+obj-$(CONFIG_CWK_BCM_KONA)	+= cwk-bcm21664.o
+obj-$(CONFIG_COMMON_CWK_IPWOC)	+= cwk-ipwoc-awmpww.o cwk-ipwoc-pww.o cwk-ipwoc-asiu.o
+obj-$(CONFIG_CWK_BCM2711_DVP)	+= cwk-bcm2711-dvp.o
+obj-$(CONFIG_CWK_BCM2835)	+= cwk-bcm2835.o
+obj-$(CONFIG_CWK_BCM2835)	+= cwk-bcm2835-aux.o
+obj-$(CONFIG_CWK_WASPBEWWYPI)	+= cwk-waspbewwypi.o
+obj-$(CONFIG_AWCH_BCM_53573)	+= cwk-bcm53573-iwp.o
+obj-$(CONFIG_CWK_BCM_CYGNUS)	+= cwk-cygnus.o
+obj-$(CONFIG_CWK_BCM_HW2)	+= cwk-hw2.o
+obj-$(CONFIG_CWK_BCM_NSP)	+= cwk-nsp.o
+obj-$(CONFIG_CWK_BCM_NS2)	+= cwk-ns2.o
+obj-$(CONFIG_CWK_BCM_SW)	+= cwk-sw.o

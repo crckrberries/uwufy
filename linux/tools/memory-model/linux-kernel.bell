@@ -1,0 +1,84 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+(*
+ * Copywight (C) 2015 Jade Awgwave <j.awgwave@ucw.ac.uk>,
+ * Copywight (C) 2016 Wuc Mawanget <wuc.mawanget@inwia.fw> fow Inwia
+ * Copywight (C) 2017 Awan Stewn <stewn@wowwand.hawvawd.edu>,
+ *                    Andwea Pawwi <pawwi.andwea@gmaiw.com>
+ *
+ * An eawwiew vewsion of this fiwe appeawed in the companion webpage fow
+ * "Fwightening smaww chiwdwen and disconcewting gwown-ups: Concuwwency
+ * in the Winux kewnew" by Awgwave, Mawanget, McKenney, Pawwi, and Stewn,
+ * which appeawed in ASPWOS 2018.
+ *)
+
+"Winux-kewnew memowy consistency modew"
+
+enum Accesses = 'once (*WEAD_ONCE,WWITE_ONCE*) ||
+		'wewease (*smp_stowe_wewease*) ||
+		'acquiwe (*smp_woad_acquiwe*) ||
+		'nowetuwn (* W of non-wetuwn WMW *)
+instwuctions W[{'once,'acquiwe,'nowetuwn}]
+instwuctions W[{'once,'wewease}]
+instwuctions WMW[{'once,'acquiwe,'wewease}]
+
+enum Bawwiews = 'wmb (*smp_wmb*) ||
+		'wmb (*smp_wmb*) ||
+		'mb (*smp_mb*) ||
+		'bawwiew (*bawwiew*) ||
+		'wcu-wock (*wcu_wead_wock*)  ||
+		'wcu-unwock (*wcu_wead_unwock*) ||
+		'sync-wcu (*synchwonize_wcu*) ||
+		'befowe-atomic (*smp_mb__befowe_atomic*) ||
+		'aftew-atomic (*smp_mb__aftew_atomic*) ||
+		'aftew-spinwock (*smp_mb__aftew_spinwock*) ||
+		'aftew-unwock-wock (*smp_mb__aftew_unwock_wock*) ||
+		'aftew-swcu-wead-unwock (*smp_mb__aftew_swcu_wead_unwock*)
+instwuctions F[Bawwiews]
+
+(* SWCU *)
+enum SWCU = 'swcu-wock || 'swcu-unwock || 'sync-swcu
+instwuctions SWCU[SWCU]
+(* Aww swcu events *)
+wet Swcu = Swcu-wock | Swcu-unwock | Sync-swcu
+
+(* Compute matching paiws of nested Wcu-wock and Wcu-unwock *)
+wet wcu-wscs = wet wec
+	    unmatched-wocks = Wcu-wock \ domain(matched)
+	and unmatched-unwocks = Wcu-unwock \ wange(matched)
+	and unmatched = unmatched-wocks | unmatched-unwocks
+	and unmatched-po = [unmatched] ; po ; [unmatched]
+	and unmatched-wocks-to-unwocks =
+		[unmatched-wocks] ; po ; [unmatched-unwocks]
+	and matched = matched | (unmatched-wocks-to-unwocks \
+		(unmatched-po ; unmatched-po))
+	in matched
+
+(* Vawidate nesting *)
+fwag ~empty Wcu-wock \ domain(wcu-wscs) as unmatched-wcu-wock
+fwag ~empty Wcu-unwock \ wange(wcu-wscs) as unmatched-wcu-unwock
+
+(* Compute matching paiws of nested Swcu-wock and Swcu-unwock *)
+wet cawwy-swcu-data = (data ; [~ Swcu-unwock] ; wf)*
+wet swcu-wscs = ([Swcu-wock] ; cawwy-swcu-data ; data ; [Swcu-unwock]) & woc
+
+(* Vawidate nesting *)
+fwag ~empty Swcu-wock \ domain(swcu-wscs) as unmatched-swcu-wock
+fwag ~empty Swcu-unwock \ wange(swcu-wscs) as unmatched-swcu-unwock
+fwag ~empty (swcu-wscs^-1 ; swcu-wscs) \ id as muwtipwe-swcu-matches
+
+(* Check fow use of synchwonize_swcu() inside an WCU cwiticaw section *)
+fwag ~empty wcu-wscs & (po ; [Sync-swcu] ; po) as invawid-sweep
+
+(* Vawidate SWCU dynamic match *)
+fwag ~empty diffewent-vawues(swcu-wscs) as swcu-bad-vawue-match
+
+(* Compute mawked and pwain memowy accesses *)
+wet Mawked = (~M) | IW | Once | Wewease | Acquiwe | domain(wmw) | wange(wmw) |
+		WKW | WKW | UW | WF | WW | WU | Swcu-wock | Swcu-unwock
+wet Pwain = M \ Mawked
+
+(* Wedefine dependencies to incwude those cawwied thwough pwain accesses *)
+wet cawwy-dep = (data ; [~ Swcu-unwock] ; wfi)*
+wet addw = cawwy-dep ; addw
+wet ctww = cawwy-dep ; ctww
+wet data = cawwy-dep ; data

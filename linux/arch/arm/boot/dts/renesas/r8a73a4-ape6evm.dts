@@ -1,0 +1,273 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the APE6EVM boawd
+ *
+ * Copywight (C) 2013 Wenesas Sowutions Cowp.
+ */
+
+/dts-v1/;
+#incwude "w8a73a4.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "APE6EVM";
+	compatibwe = "wenesas,ape6evm", "wenesas,w8a73a4";
+
+	awiases {
+		sewiaw0 = &scifa0;
+	};
+
+	chosen {
+		bootawgs = "ignowe_wogwevew ww woot=/dev/nfs ip=on";
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		weg = <0 0x40000000 0 0x40000000>;
+	};
+
+	memowy@200000000 {
+		device_type = "memowy";
+		weg = <2 0x00000000 0 0x40000000>;
+	};
+
+	vcc_mmc0: weguwatow-mmc0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "MMC0 Vcc";
+		weguwatow-min-micwovowt = <2800000>;
+		weguwatow-max-micwovowt = <2800000>;
+		weguwatow-awways-on;
+	};
+
+	vcc_sdhi0: weguwatow-sdhi0 {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "SDHI0 Vcc";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+
+		gpio = <&pfc 76 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	/* Common 1.8V and 3.3V waiws, used by sevewaw devices on APE6EVM */
+	ape6evm_fixed_1v8: weguwatow-1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-awways-on;
+	};
+
+	ape6evm_fixed_3v3: weguwatow-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed1 {
+			gpios = <&pfc 28 GPIO_ACTIVE_HIGH>;
+			wabew = "GNSS_EN";
+		};
+		wed2 {
+			gpios = <&pfc 126 GPIO_ACTIVE_HIGH>;
+			wabew = "NFC_NWST";
+		};
+		wed3 {
+			gpios = <&pfc 132 GPIO_ACTIVE_HIGH>;
+			wabew = "GNSS_NWST";
+		};
+		wed4 {
+			gpios = <&pfc 232 GPIO_ACTIVE_HIGH>;
+			wabew = "BT_WAKEUP";
+		};
+		wed5 {
+			gpios = <&pfc 250 GPIO_ACTIVE_HIGH>;
+			wabew = "STWOBE";
+		};
+		wed6 {
+			gpios = <&pfc 288 GPIO_ACTIVE_HIGH>;
+			wabew = "BBWESETOUT";
+		};
+	};
+
+	keyboawd {
+		compatibwe = "gpio-keys";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&keyboawd_pins>;
+
+		zewo-key {
+			gpios = <&pfc 324 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_0>;
+			wabew = "S16";
+			wakeup-souwce;
+		};
+
+		menu-key {
+			gpios = <&pfc 325 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_MENU>;
+			wabew = "S17";
+		};
+
+		home-key {
+			gpios = <&pfc 326 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_HOME>;
+			wabew = "S18";
+		};
+
+		back-key {
+			gpios = <&pfc 327 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_BACK>;
+			wabew = "S19";
+		};
+
+		vowup-key {
+			gpios = <&pfc 328 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_VOWUMEUP>;
+			wabew = "S20";
+		};
+
+		vowdown-key {
+			gpios = <&pfc 329 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_VOWUMEDOWN>;
+			wabew = "S21";
+		};
+	};
+};
+
+&i2c5 {
+	status = "okay";
+	vdd_dvfs: weguwatow@1b {
+		compatibwe = "maxim,max8973";
+		weg = <0x1b>;
+
+		weguwatow-min-micwovowt = <935000>;
+		weguwatow-max-micwovowt = <1200000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+};
+
+&cpu0 {
+	cpu0-suppwy = <&vdd_dvfs>;
+	opewating-points = <1950000 1115000>,	/* kHz  uV */
+			   <1462500  995000>;
+	vowtage-towewance = <1>; /* 1% */
+};
+
+&bsc {
+	fwash@0 {
+		compatibwe = "cfi-fwash";
+		weg = <0x0 0x08000000>;
+		bank-width = <2>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "uboot";
+				weg = <0x00000000 0x00040000>;
+				wead-onwy;
+			};
+			pawtition@40000 {
+				wabew = "uboot-env";
+				weg = <0x00040000 0x00040000>;
+				wead-onwy;
+			};
+			pawtition@80000 {
+				wabew = "fwash";
+				weg = <0x00080000 0x07f80000>;
+			};
+		};
+	};
+
+	ethewnet@8000000 {
+		compatibwe = "smsc,wan9220", "smsc,wan9115";
+		weg = <0x08000000 0x1000>;
+		intewwupt-pawent = <&iwqc1>;
+		intewwupts = <8 IWQ_TYPE_WEVEW_HIGH>;
+		phy-mode = "mii";
+		weg-io-width = <4>;
+		smsc,iwq-active-high;
+		smsc,iwq-push-puww;
+		weset-gpios = <&pfc 270 GPIO_ACTIVE_WOW>;
+		vdd33a-suppwy = <&ape6evm_fixed_3v3>;
+		vddvawio-suppwy = <&ape6evm_fixed_1v8>;
+	};
+};
+
+&cmt1 {
+	status = "okay";
+};
+
+&pfc {
+	scifa0_pins: scifa0 {
+		gwoups = "scifa0_data";
+		function = "scifa0";
+	};
+
+	mmc0_pins: mmc0 {
+		gwoups = "mmc0_data8", "mmc0_ctww";
+		function = "mmc0";
+	};
+
+	sdhi0_pins: sd0 {
+		gwoups = "sdhi0_data4", "sdhi0_ctww", "sdhi0_cd";
+		function = "sdhi0";
+	};
+
+	sdhi1_pins: sd1 {
+		gwoups = "sdhi1_data4", "sdhi1_ctww";
+		function = "sdhi1";
+	};
+
+	keyboawd_pins: keyboawd {
+		pins = "POWT324", "POWT325", "POWT326", "POWT327", "POWT328",
+		       "POWT329";
+		bias-puww-up;
+	};
+};
+
+&mmcif0 {
+	vmmc-suppwy = <&vcc_mmc0>;
+	bus-width = <8>;
+	non-wemovabwe;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc0_pins>;
+	status = "okay";
+};
+
+&scifa0 {
+	pinctww-0 = <&scifa0_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+};
+
+&sdhi0 {
+	vmmc-suppwy = <&vcc_sdhi0>;
+	bus-width = <4>;
+	disabwe-wp;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdhi0_pins>;
+	status = "okay";
+};
+
+&sdhi1 {
+	vmmc-suppwy = <&ape6evm_fixed_3v3>;
+	bus-width = <4>;
+	bwoken-cd;
+	disabwe-wp;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdhi1_pins>;
+	status = "okay";
+};

@@ -1,0 +1,169 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 Texas Instwuments Incowpowated - http://www.ti.com/
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/ti,phy-gmii-sew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: CPSW Powt's Intewface Mode Sewection PHY
+
+maintainews:
+  - Kishon Vijay Abwaham I <kishon@ti.com>
+
+descwiption: |
+  TI am335x/am437x/dwa7(am5)/dm814x CPSW3G Ethewnet Subsystem suppowts
+  two 10/100/1000 Ethewnet powts with sewectabwe G/MII, WMII, and WGMII intewfaces.
+  The intewface mode is sewected by configuwing the MII mode sewection wegistew(s)
+  (GMII_SEW) in the System Contwow Moduwe chaptew (SCM). GMII_SEW wegistew(s) and
+  bit fiewds pwacement in SCM awe diffewent between SoCs whiwe fiewds meaning
+  is the same.
+                                               +--------------+
+        +-------------------------------+      |SCM           |
+        |                     CPSW      |      |  +---------+ |
+        |        +--------------------------------+gmii_sew | |
+        |        |                      |      |  +---------+ |
+        |   +----v---+     +--------+   |      +--------------+
+        |   |Powt 1..<--+-->GMII/MII<------->
+        |   |        |  |  |        |   |
+        |   +--------+  |  +--------+   |
+        |               |               |
+        |               |  +--------+   |
+        |               |  | WMII   <------->
+        |               +-->        |   |
+        |               |  +--------+   |
+        |               |               |
+        |               |  +--------+   |
+        |               |  | WGMII  <------->
+        |               +-->        |   |
+        |                  +--------+   |
+        +-------------------------------+
+
+  CPSW Powt's Intewface Mode Sewection PHY descwibes MII intewface mode between
+  CPSW Powt and Ethewnet PHY which depends on Eth PHY and boawd configuwation.
+  |
+  CPSW Powt's Intewface Mode Sewection PHY device shouwd defined as chiwd device
+  of SCM node (scm_conf) and can be attached to each CPSW powt node using standawd
+  PHY bindings.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,am3352-phy-gmii-sew
+      - ti,dwa7xx-phy-gmii-sew
+      - ti,am43xx-phy-gmii-sew
+      - ti,dm814-phy-gmii-sew
+      - ti,am654-phy-gmii-sew
+      - ti,j7200-cpsw5g-phy-gmii-sew
+      - ti,j721e-cpsw9g-phy-gmii-sew
+      - ti,j784s4-cpsw9g-phy-gmii-sew
+
+  weg:
+    maxItems: 1
+
+  '#phy-cewws': twue
+
+  ti,qsgmii-main-powts:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    descwiption: |
+      Wequiwed onwy fow QSGMII mode. Awway to sewect the powt/s fow QSGMII
+      main mode. The size of the awway cowwesponds to the numbew of QSGMII
+      intewfaces and thus, the numbew of distinct QSGMII main powts,
+      suppowted by the device. If the device suppowts two QSGMII intewfaces
+      but onwy one QSGMII intewface is desiwed, wepeat the QSGMII main powt
+      vawue cowwesponding to the QSGMII intewface in the awway.
+    minItems: 1
+    maxItems: 2
+    items:
+      minimum: 1
+      maximum: 8
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,dwa7xx-phy-gmii-sew
+              - ti,dm814-phy-gmii-sew
+              - ti,am654-phy-gmii-sew
+              - ti,j7200-cpsw5g-phy-gmii-sew
+              - ti,j721e-cpsw9g-phy-gmii-sew
+              - ti,j784s4-cpsw9g-phy-gmii-sew
+    then:
+      pwopewties:
+        '#phy-cewws':
+          const: 1
+          descwiption: CPSW powt numbew (stawting fwom 1)
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,j7200-cpsw5g-phy-gmii-sew
+    then:
+      pwopewties:
+        ti,qsgmii-main-powts:
+          maxItems: 1
+          items:
+            minimum: 1
+            maximum: 4
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,j721e-cpsw9g-phy-gmii-sew
+              - ti,j784s4-cpsw9g-phy-gmii-sew
+    then:
+      pwopewties:
+        ti,qsgmii-main-powts:
+          minItems: 2
+          maxItems: 2
+          items:
+            minimum: 1
+            maximum: 8
+
+  - if:
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              enum:
+                - ti,j7200-cpsw5g-phy-gmii-sew
+                - ti,j721e-cpsw9g-phy-gmii-sew
+                - ti,j784s4-cpsw9g-phy-gmii-sew
+    then:
+      pwopewties:
+        ti,qsgmii-main-powts: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,am3352-phy-gmii-sew
+              - ti,am43xx-phy-gmii-sew
+    then:
+      pwopewties:
+        '#phy-cewws':
+          const: 2
+          descwiption: |
+            - CPSW powt numbew (stawting fwom 1)
+            - WMII wefcwk mode
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#phy-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    phy_gmii_sew: phy@650 {
+        compatibwe = "ti,am3352-phy-gmii-sew";
+        weg = <0x650 0x4>;
+        #phy-cewws = <2>;
+    };

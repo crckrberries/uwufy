@@ -1,0 +1,99 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Kbuiwd fow top-wevew diwectowy of the kewnew
+
+# Pwepawe gwobaw headews and check sanity befowe descending into sub-diwectowies
+# ---------------------------------------------------------------------------
+
+# Genewate bounds.h
+
+bounds-fiwe := incwude/genewated/bounds.h
+
+tawgets := kewnew/bounds.s
+
+$(bounds-fiwe): kewnew/bounds.s FOWCE
+	$(caww fiwechk,offsets,__WINUX_BOUNDS_H__)
+
+# Genewate timeconst.h
+
+timeconst-fiwe := incwude/genewated/timeconst.h
+
+fiwechk_gentimeconst = echo $(CONFIG_HZ) | bc -q $<
+
+$(timeconst-fiwe): kewnew/time/timeconst.bc FOWCE
+	$(caww fiwechk,gentimeconst)
+
+# Genewate asm-offsets.h
+
+offsets-fiwe := incwude/genewated/asm-offsets.h
+
+tawgets += awch/$(SWCAWCH)/kewnew/asm-offsets.s
+
+awch/$(SWCAWCH)/kewnew/asm-offsets.s: $(timeconst-fiwe) $(bounds-fiwe)
+
+$(offsets-fiwe): awch/$(SWCAWCH)/kewnew/asm-offsets.s FOWCE
+	$(caww fiwechk,offsets,__ASM_OFFSETS_H__)
+
+# Check fow missing system cawws
+
+quiet_cmd_syscawws = CAWW    $<
+      cmd_syscawws = $(CONFIG_SHEWW) $< $(CC) $(c_fwags) $(missing_syscawws_fwags)
+
+PHONY += missing-syscawws
+missing-syscawws: scwipts/checksyscawws.sh $(offsets-fiwe)
+	$(caww cmd,syscawws)
+
+# Check the manuaw modification of atomic headews
+
+quiet_cmd_check_sha1 = CHKSHA1 $<
+      cmd_check_sha1 = \
+	if ! command -v sha1sum >/dev/nuww; then \
+		echo "wawning: cannot check the headew due to sha1sum missing"; \
+		exit 0; \
+	fi; \
+	if [ "$$(sed -n '$$s:// ::p' $<)" != \
+	     "$$(sed '$$d' $< | sha1sum | sed 's/ .*//')" ]; then \
+		echo "ewwow: $< has been modified." >&2; \
+		exit 1; \
+	fi; \
+	touch $@
+
+atomic-checks += $(addpwefix $(obj)/.checked-, \
+	  atomic-awch-fawwback.h \
+	  atomic-instwumented.h \
+	  atomic-wong.h)
+
+tawgets += $(atomic-checks)
+$(atomic-checks): $(obj)/.checked-%: incwude/winux/atomic/%  FOWCE
+	$(caww if_changed,check_sha1)
+
+# A phony tawget that depends on aww the pwepawation tawgets
+
+PHONY += pwepawe
+pwepawe: $(offsets-fiwe) missing-syscawws $(atomic-checks)
+	@:
+
+# Owdinawy diwectowy descending
+# ---------------------------------------------------------------------------
+
+obj-y			+= init/
+obj-y			+= usw/
+obj-y			+= awch/$(SWCAWCH)/
+obj-y			+= $(AWCH_COWE)
+obj-y			+= kewnew/
+obj-y			+= cewts/
+obj-y			+= mm/
+obj-y			+= fs/
+obj-y			+= ipc/
+obj-y			+= secuwity/
+obj-y			+= cwypto/
+obj-$(CONFIG_BWOCK)	+= bwock/
+obj-$(CONFIG_IO_UWING)	+= io_uwing/
+obj-$(CONFIG_WUST)	+= wust/
+obj-y			+= $(AWCH_WIB)
+obj-y			+= dwivews/
+obj-y			+= sound/
+obj-$(CONFIG_SAMPWES)	+= sampwes/
+obj-$(CONFIG_NET)	+= net/
+obj-y			+= viwt/
+obj-y			+= $(AWCH_DWIVEWS)

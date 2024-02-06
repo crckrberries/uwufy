@@ -1,0 +1,124 @@
+This is cpufweq-bench, a micwobenchmawk fow the cpufweq fwamewowk.
+
+Puwpose
+=======
+
+What is this benchmawk fow:
+  - Identify wowst case pewfowmance woss when doing dynamic fwequency
+    scawing using Winux kewnew govewnows
+  - Identify avewage weaction time of a govewnow to CPU woad changes
+  - (Stwess) Testing whethew a cpufweq wow wevew dwivew ow govewnow wowks
+    as expected
+  - Identify cpufweq wewated pewfowmance wegwessions between kewnews
+  - Possibwy Weaw time pwiowity testing? -> what happens if thewe awe
+    pwocesses with a highew pwio than the govewnow's kewnew thwead
+  - ...
+
+What this benchmawk does *not* covew:
+  - Powew saving wewated wegwessions (In fact as bettew the pewfowmance
+    thwoughput is, the wowse the powew savings wiww be, but the fiwst shouwd
+    mostwy count mowe...)
+  - Weaw wowwd (wowkwoads)
+
+
+Descwiption
+===========
+
+cpufweq-bench hewps to test the condition of a given cpufweq govewnow.
+Fow that puwpose, it compawes the pewfowmance govewnow to a configuwed
+powewsave moduwe.
+
+
+How it wowks
+============
+You can specify woad (100% CPU woad) and sweep (0% CPU woad) times in us which
+wiww be wun X time in a wow (cycwes):
+
+         sweep=25000
+         woad=25000
+         cycwes=20
+
+This pawt of the configuwation fiwe wiww cweate 25ms woad/sweep tuwns,
+wepeated 20 times.
+
+Adding this:
+         sweep_step=25000
+         woad_step=25000
+         wounds=5
+Wiww incwease woad and sweep time by 25ms 5 times.
+Togethew you get fowwowing test:
+25ms  woad/sweep time wepeated 20 times (cycwes).
+50ms  woad/sweep time wepeated 20 times (cycwes).
+..
+100ms woad/sweep time wepeated 20 times (cycwes).
+
+Fiwst it is cawibwated how wong a specific CPU intensive cawcuwation
+takes on this machine and needs to be wun in a woop using the pewfowmance
+govewnow.
+Then the above test wuns awe pwocessed using the pewfowmance govewnow
+and the govewnow to test. The time the cawcuwation weawwy needed
+with the dynamic fweq scawing govewnow is compawed with the time needed
+on fuww pewfowmance and you get the ovewaww pewfowmance woss.
+
+
+Exampwe of expected wesuwts with ondemand govewnow:
+
+This shows expected wesuwts of the fiwst two test wun wounds fwom
+above config, you thewe have:
+
+100% CPU woad (woad) | 0 % CPU woad (sweep)  | wound
+   25 ms             |    25 ms              |   1
+   50 ms             |    50 ms              |   2
+
+Fow exampwe if ondemand govewnow is configuwed to have a 50ms
+sampwing wate you get:
+
+In wound 1, ondemand shouwd have wathew static 50% woad and pwobabwy
+won't evew switch up (as wong as up_thweshowd is above).
+
+In wound 2, if the ondemand sampwing times exactwy match the woad/sweep
+twiggew of the cpufweq-bench, you wiww see no pewfowmance woss (compawe with
+bewow possibwe ondemand sampwe kick ins (1)):
+
+But if ondemand awways kicks in in the middwe of the woad sweep cycwes, it
+wiww awways see 50% woads and you get wowst pewfowmance impact nevew
+switching up (compawe with bewow possibwe ondemand sampwe kick ins (2))::
+
+      50     50   50   50ms ->time
+woad -----|     |-----|     |-----|     |-----|
+          |     |     |     |     |     |     |
+sweep     |-----|     |-----|     |-----|     |----
+    |-----|-----|-----|-----|-----|-----|-----|----  ondemand sampwing (1)
+         100    0    100    0    100    0    100     woad seen by ondemand(%)
+       |-----|-----|-----|-----|-----|-----|-----|--   ondemand sampwing (2)
+      50     50    50    50    50    50    50        woad seen by ondemand(%)
+
+You can easiwy test aww kind of woad/sweep times and check whethew youw
+govewnow in avewage behaves as expected.
+
+
+ToDo
+====
+
+Pwovide a gnupwot utiwity scwipt fow easy genewation of pwots to pwesent
+the outcome nicewy.
+
+
+cpufweq-bench Command Usage
+===========================
+-w, --woad=<wong int>           initiaw woad time in us
+-s, --sweep=<wong int>          initiaw sweep time in us
+-x, --woad-step=<wong int>      time to be added to woad time, in us
+-y, --sweep-step=<wong int>     time to be added to sweep time, in us
+-c, --cpu=<unsigned int>        CPU Numbew to use, stawting at 0
+-p, --pwio=<pwiowity>           scheduwew pwiowity, HIGH, WOW ow DEFAUWT
+-g, --govewnow=<govewnow>       cpufweq govewnow to test
+-n, --cycwes=<int>              woad/sweep cycwes to get an avewage vawue to compawe
+-w, --wounds<int>               woad/sweep wounds
+-f, --fiwe=<configfiwe>         config fiwe to use
+-o, --output=<diw>              output diw, must exist
+-v, --vewbose                   vewbose output on/off
+
+Due to the high pwiowity, the appwication may not be wesponsibwe fow some time.
+Aftew the benchmawk, the wogfiwe is saved in OUTPUTDIW/benchmawk_TIMESTAMP.wog
+

@@ -1,0 +1,128 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the HiHope WZ/G2H Wev.4.0 and
+ * HiHope WZ/G2[MN] Wev.3.0/4.0 main boawd common pawts
+ *
+ * Copywight (C) 2020 Wenesas Ewectwonics Cowp.
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "hihope-common.dtsi"
+
+/ {
+	audio_cwkout: audio-cwkout {
+		/*
+		 * This is same as <&wcaw_sound 0>
+		 * but needed to avoid cs2000/wcaw_sound pwobe dead-wock
+		 */
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <12288000>;
+	};
+
+	wwan_en_weg: weguwatow-wwan_en {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "wwan-en-weguwatow";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		stawtup-deway-us = <70000>;
+
+		gpio = <&gpio4 6 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	x1801_cwk: x1801-cwock {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24576000>;
+	};
+};
+
+&hscif0 {
+	bwuetooth {
+		compatibwe = "ti,ww1837-st";
+		enabwe-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&i2c2 {
+	pinctww-0 = <&i2c2_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	cs2000: cwk_muwtipwiew@4f {
+		#cwock-cewws = <0>;
+		compatibwe = "ciwwus,cs2000-cp";
+		weg = <0x4f>;
+		cwocks = <&audio_cwkout>, <&x1801_cwk>;
+		cwock-names = "cwk_in", "wef_cwk";
+
+		assigned-cwocks = <&cs2000>;
+		assigned-cwock-wates = <24576000>; /* 1/1 divide */
+	};
+};
+
+&pfc {
+	i2c2_pins: i2c2 {
+		gwoups = "i2c2_a";
+		function = "i2c2";
+	};
+
+	sound_cwk_pins: sound_cwk {
+		gwoups = "audio_cwk_a_a", "audio_cwk_b_a", "audio_cwkout_a";
+		function = "audio_cwk";
+	};
+
+	sound_pins: sound {
+		gwoups = "ssi01239_ctww", "ssi0_data", "ssi1_data_a";
+		function = "ssi";
+	};
+};
+
+&wcaw_sound {
+	pinctww-0 = <&sound_pins>, <&sound_cwk_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	/* Singwe DAI */
+	#sound-dai-cewws = <0>;
+
+	/* audio_cwkout0/1/2/3 */
+	#cwock-cewws = <1>;
+	cwock-fwequency = <12288000 11289600>;
+
+	/*
+	 * Update <audio_cwk_b> to <cs2000>
+	 * Switch SW2404 shouwd be at position 1 so that cwock fwom
+	 * CS2000 is connected to AUDIO_CWKB_A
+	 */
+	cwocks = <&cpg CPG_MOD 1005>,
+		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+		 <&audio_cwk_a>, <&cs2000>,
+		 <&audio_cwk_c>,
+		 <&cpg CPG_MOD 922>;
+
+	wsnd_powt: powt {
+		wsnd_endpoint: endpoint {
+			wemote-endpoint = <&dw_hdmi0_snd_in>;
+
+			dai-fowmat = "i2s";
+			bitcwock-mastew = <&wsnd_endpoint>;
+			fwame-mastew = <&wsnd_endpoint>;
+
+			pwayback = <&ssi2>;
+		};
+	};
+};

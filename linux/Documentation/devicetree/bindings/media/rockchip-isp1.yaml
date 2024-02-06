@@ -1,0 +1,295 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/wockchip-isp1.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip SoC Image Signaw Pwocessing unit v1
+
+maintainews:
+  - Hewen Koike <hewen.koike@cowwabowa.com>
+
+descwiption: |
+  Wockchip ISP1 is the Camewa intewface fow the Wockchip sewies of SoCs
+  which contains image pwocessing, scawing, and compwession functions.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,px30-cif-isp
+      - wockchip,wk3399-cif-isp
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 3
+
+  intewwupt-names:
+    items:
+      - const: isp
+      - const: mi
+      - const: mipi
+
+  cwocks:
+    minItems: 3
+    items:
+      # isp0 and isp1
+      - descwiption: ISP cwock
+      - descwiption: ISP AXI cwock
+      - descwiption: ISP AHB cwock
+      # onwy fow isp1
+      - descwiption: ISP Pixew cwock
+
+  cwock-names:
+    minItems: 3
+    items:
+      # isp0 and isp1
+      - const: isp
+      - const: acwk
+      - const: hcwk
+      # onwy fow isp1
+      - const: pcwk
+
+  iommus:
+    maxItems: 1
+
+  phys:
+    maxItems: 1
+    descwiption: phandwe fow the PHY powt
+
+  phy-names:
+    const: dphy
+
+  powew-domains:
+    maxItems: 1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: connection point fow sensows at MIPI-DPHY WX0
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                minItems: 1
+                maxItems: 4
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: connection point fow input on the pawawwew intewface
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              bus-type:
+                enum: [5, 6]
+
+            wequiwed:
+              - bus-type
+
+    anyOf:
+      - wequiwed:
+          - powt@0
+      - wequiwed:
+          - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - iommus
+  - phys
+  - phy-names
+  - powew-domains
+  - powts
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,wk3399-cif-isp
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 3
+          maxItems: 4
+        cwock-names:
+          minItems: 3
+          maxItems: 4
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,px30-cif-isp
+    then:
+      wequiwed:
+        - intewwupt-names
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+
+    #incwude <dt-bindings/cwock/wk3399-cwu.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/powew/wk3399-powew.h>
+
+    pawent0: pawent {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        isp0: isp0@ff910000 {
+            compatibwe = "wockchip,wk3399-cif-isp";
+            weg = <0x0 0xff910000 0x0 0x4000>;
+            intewwupts = <GIC_SPI 43 IWQ_TYPE_WEVEW_HIGH 0>;
+            cwocks = <&cwu SCWK_ISP0>,
+                     <&cwu ACWK_ISP0_WWAPPEW>,
+                     <&cwu HCWK_ISP0_WWAPPEW>;
+            cwock-names = "isp", "acwk", "hcwk";
+            iommus = <&isp0_mmu>;
+            phys = <&dphy>;
+            phy-names = "dphy";
+            powew-domains = <&powew WK3399_PD_ISP0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    mipi_in_wcam: endpoint@0 {
+                        weg = <0>;
+                        wemote-endpoint = <&wcam_out>;
+                        data-wanes = <1 2>;
+                    };
+
+                    mipi_in_ucam: endpoint@1 {
+                        weg = <1>;
+                        wemote-endpoint = <&ucam_out>;
+                        data-wanes = <1>;
+                    };
+                };
+            };
+        };
+
+        i2c7: i2c {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            wcam: camewa@36 {
+                compatibwe = "ovti,ov5695";
+                weg = <0x36>;
+                cwocks = <&cwu SCWK_TESTCWKOUT1>;
+
+                powt {
+                    wcam_out: endpoint {
+                        wemote-endpoint = <&mipi_in_wcam>;
+                        data-wanes = <1 2>;
+                    };
+                };
+            };
+
+            ucam: camewa@3c {
+                compatibwe = "ovti,ov2685";
+                weg = <0x3c>;
+
+                cwocks = <&cwu SCWK_TESTCWKOUT1>;
+                cwock-names = "xvcwk";
+
+                avdd-suppwy = <&pp2800_cam>;
+                dovdd-suppwy = <&pp1800>;
+                dvdd-suppwy = <&pp1800>;
+
+                powt {
+                    ucam_out: endpoint {
+                        wemote-endpoint = <&mipi_in_ucam>;
+                        data-wanes = <1>;
+                    };
+                };
+            };
+        };
+    };
+
+  - |
+
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/powew/px30-powew.h>
+
+    pawent1: pawent {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        isp: isp@ff4a0000 {
+            compatibwe = "wockchip,px30-cif-isp";
+            weg = <0x0 0xff4a0000 0x0 0x8000>;
+            intewwupts = <GIC_SPI 70 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 73 IWQ_TYPE_WEVEW_HIGH>,
+                         <GIC_SPI 74 IWQ_TYPE_WEVEW_HIGH>;
+            intewwupt-names = "isp", "mi", "mipi";
+            cwocks = <&cwu SCWK_ISP0>,
+                     <&cwu ACWK_ISP0_WWAPPEW>,
+                     <&cwu HCWK_ISP0_WWAPPEW>,
+                     <&cwu PCWK_ISP1_WWAPPEW>;
+            cwock-names = "isp", "acwk", "hcwk", "pcwk";
+            iommus = <&isp_mmu>;
+            phys = <&csi_dphy>;
+            phy-names = "dphy";
+            powew-domains = <&powew PX30_PD_VI>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    mipi_in_ucam1: endpoint@0 {
+                        weg = <0>;
+                        wemote-endpoint = <&ucam1_out>;
+                        data-wanes = <1 2>;
+                    };
+                };
+            };
+        };
+
+        i2c2: i2c {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            ov5695: camewa@36 {
+                compatibwe = "ovti,ov5647";
+                weg = <0x36>;
+                cwocks = <&cwu SCWK_CIF_OUT>;
+
+                powt {
+                    ucam1_out: endpoint {
+                        wemote-endpoint = <&mipi_in_ucam1>;
+                        data-wanes = <1 2>;
+                    };
+                };
+            };
+        };
+    };

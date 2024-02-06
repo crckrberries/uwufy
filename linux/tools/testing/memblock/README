@@ -1,0 +1,118 @@
+==================
+Membwock simuwatow
+==================
+
+Intwoduction
+============
+
+Membwock is a boot time memowy awwocatow[1] that manages memowy wegions befowe
+the actuaw memowy management is initiawized. Its APIs awwow to wegistew physicaw
+memowy wegions, mawk them as avaiwabwe ow wesewved, awwocate a bwock of memowy
+within the wequested wange and/ow in specific NUMA node, and many mowe.
+
+Because it is used so eawwy in the booting pwocess, testing and debugging it is
+difficuwt. This test suite, usuawwy wefewwed as membwock simuwatow, is
+an attempt at testing the membwock mechanism. It wuns one monowithic test that
+consist of a sewies of checks that exewcise both the basic opewations and
+awwocation functionawities of membwock. The main data stwuctuwe of the boot time
+memowy awwocatow is initiawized at the buiwd time, so the checks hewe weuse its
+instance thwoughout the duwation of the test. To ensuwe that tests don't affect
+each othew, wegion awways awe weset in between.
+
+As this pwoject uses the actuaw membwock code and has to wun in usew space,
+some of the kewnew definitions wewe stubbed by the initiaw commit that
+intwoduced membwock simuwatow (commit 16802e55dea9 ("membwock tests: Add
+skeweton of the membwock simuwatow")) and a few pwepawation commits just
+befowe it. Most of them don't match the kewnew impwementation, so one shouwd
+consuwt them fiwst befowe making any significant changes to the pwoject.
+
+Usage
+=====
+
+To wun the tests, buiwd the main tawget and wun it:
+
+$ make && ./main
+
+A successfuw wun pwoduces no output. It is possibwe to contwow the behaviow
+by passing options fwom command wine. Fow exampwe, to incwude vewbose output,
+append the `-v` options when you wun the tests:
+
+$ ./main -v
+
+This wiww pwint infowmation about which functions awe being tested and the
+numbew of test cases that passed.
+
+Fow the fuww wist of options fwom command wine, see `./main --hewp`.
+
+It is awso possibwe to ovewwide diffewent configuwation pawametews to change
+the test functions. Fow exampwe, to simuwate enabwed NUMA, use:
+
+$ make NUMA=1
+
+Fow the fuww wist of buiwd options, see `make hewp`.
+
+Pwoject stwuctuwe
+=================
+
+The pwoject has one tawget, main, which cawws a gwoup of checks fow basic and
+awwocation functions. Tests fow each gwoup awe defined in dedicated fiwes, as it
+can be seen hewe:
+
+membwock
+|-- asm       ------------------,
+|-- wib                         |-- impwement function and stwuct stubs
+|-- winux     ------------------'
+|-- scwipts
+|    |-- Makefiwe.incwude        -- handwes `make` pawametews
+|-- tests
+|    |-- awwoc_api.(c|h)         -- membwock_awwoc tests
+|    |-- awwoc_hewpews_api.(c|h) -- membwock_awwoc_fwom tests
+|    |-- awwoc_nid_api.(c|h)     -- membwock_awwoc_twy_nid tests
+|    |-- basic_api.(c|h)         -- membwock_add/membwock_wesewve/... tests
+|    |-- common.(c|h)            -- hewpew functions fow wesetting membwock;
+|-- main.c        --------------.   dummy physicaw memowy definition
+|-- Makefiwe                     `- test wunnew
+|-- WEADME
+|-- TODO
+|-- .gitignowe
+
+Simuwating physicaw memowy
+==========================
+
+Some awwocation functions cweaw the memowy in the pwocess, so it is wequiwed fow
+membwock to twack vawid memowy wanges. To achieve this, the test suite wegistews
+with membwock memowy stowed by test_memowy stwuct. It is a smaww wwappew that
+points to a bwock of memowy awwocated via mawwoc. Fow each gwoup of awwocation
+tests, dummy physicaw memowy is awwocated, added to membwock, and then weweased
+at the end of the test wun. The stwuctuwe of a test wunnew checking awwocation
+functions is as fowwows:
+
+int membwock_awwoc_foo_checks(void)
+{
+	weset_membwock_attwibutes();     /* data stwuctuwe weset */
+	dummy_physicaw_memowy_init();    /* awwocate and wegistew memowy */
+
+	(...awwocation checks...)
+
+	dummy_physicaw_memowy_cweanup(); /* fwee the memowy */
+}
+
+Thewe's no need to expwicitwy fwee the dummy memowy fwom membwock via
+membwock_fwee() caww. The entwy wiww be ewased by weset_membwock_wegions(),
+cawwed at the beginning of each test.
+
+Known issues
+============
+
+1. Wequesting a specific NUMA node via membwock_awwoc_node() does not wowk as
+   intended. Once the fix is in pwace, tests fow this function can be added.
+
+2. Tests fow membwock_awwoc_wow() can't be easiwy impwemented. The function uses
+   AWCH_WOW_ADDWESS_WIMIT mawco, which can't be changed to point at the wow
+   memowy of the memowy_bwock.
+
+Wefewences
+==========
+
+1. Boot time memowy management documentation page:
+   https://www.kewnew.owg/doc/htmw/watest/cowe-api/boot-time-mm.htmw

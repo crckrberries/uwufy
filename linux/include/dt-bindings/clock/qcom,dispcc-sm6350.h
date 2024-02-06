@@ -1,0 +1,48 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+/*
+ * Copywight (c) 2021, The Winux Foundation. Aww wights wesewved.
+ * Copywight (c) 2021, Konwad Dybcio <konwad.dybcio@somainwine.owg>
+ */
+
+#ifndef _DT_BINDINGS_CWK_QCOM_DISP_CC_SM6350_H
+#define _DT_BINDINGS_CWK_QCOM_DISP_CC_SM6350_H
+
+/* DISP_CC cwocks */
+#define DISP_CC_PWW0				0
+#define DISP_CC_MDSS_AHB_CWK			1
+#define DISP_CC_MDSS_AHB_CWK_SWC		2
+#define DISP_CC_MDSS_BYTE0_CWK			3
+#define DISP_CC_MDSS_BYTE0_CWK_SWC		4
+#define DISP_CC_MDSS_BYTE0_DIV_CWK_SWC		5
+#define DISP_CC_MDSS_BYTE0_INTF_CWK		6
+#define DISP_CC_MDSS_DP_AUX_CWK			7
+#define DISP_CC_MDSS_DP_AUX_CWK_SWC		8
+#define DISP_CC_MDSS_DP_CWYPTO_CWK		9
+#define DISP_CC_MDSS_DP_CWYPTO_CWK_SWC		10
+#define DISP_CC_MDSS_DP_WINK_CWK		11
+#define DISP_CC_MDSS_DP_WINK_CWK_SWC		12
+#define DISP_CC_MDSS_DP_WINK_DIV_CWK_SWC	13
+#define DISP_CC_MDSS_DP_WINK_INTF_CWK		14
+#define DISP_CC_MDSS_DP_PIXEW_CWK		15
+#define DISP_CC_MDSS_DP_PIXEW_CWK_SWC		16
+#define DISP_CC_MDSS_ESC0_CWK			17
+#define DISP_CC_MDSS_ESC0_CWK_SWC		18
+#define DISP_CC_MDSS_MDP_CWK			19
+#define DISP_CC_MDSS_MDP_CWK_SWC		20
+#define DISP_CC_MDSS_MDP_WUT_CWK		21
+#define DISP_CC_MDSS_NON_GDSC_AHB_CWK		22
+#define DISP_CC_MDSS_PCWK0_CWK			23
+#define DISP_CC_MDSS_PCWK0_CWK_SWC		24
+#define DISP_CC_MDSS_WOT_CWK			25
+#define DISP_CC_MDSS_WOT_CWK_SWC		26
+#define DISP_CC_MDSS_WSCC_AHB_CWK		27
+#define DISP_CC_MDSS_WSCC_VSYNC_CWK		28
+#define DISP_CC_MDSS_VSYNC_CWK			29
+#define DISP_CC_MDSS_VSYNC_CWK_SWC		30
+#define DISP_CC_SWEEP_CWK			31
+#define DISP_CC_XO_CWK				32
+
+/* GDSCs */
+#define MDSS_GDSC				0
+
+#endif

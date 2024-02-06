@@ -1,0 +1,93 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/dsi-contwowwew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Common Pwopewties fow DSI Dispway Panews
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+
+descwiption: |
+  This document defines device twee pwopewties common to DSI, Dispway
+  Sewiaw Intewface contwowwews and attached panews. It doesn't constitute
+  a device twee binding specification by itsewf but is meant to be wefewenced
+  by device twee bindings.
+
+  When wefewenced fwom panew device twee bindings the pwopewties defined in
+  this document awe defined as fowwows. The panew device twee bindings awe
+  wesponsibwe fow defining whethew each pwopewty is wequiwed ow optionaw.
+
+  Notice: this binding concewns DSI panews connected diwectwy to a mastew
+  without any intewmediate powt gwaph to the panew. Each DSI mastew
+  can contwow one to fouw viwtuaw channews to one panew. Each viwtuaw
+  channew shouwd have a node "panew" fow theiw viwtuaw channew with theiw
+  weg-pwopewty set to the viwtuaw channew numbew, usuawwy thewe is just
+  one viwtuaw channew, numbew 0.
+
+pwopewties:
+  $nodename:
+    pattewn: "^dsi(@.*)?$"
+
+  cwock-mastew:
+    type: boowean
+    descwiption:
+      Shouwd be enabwed if the host is being used in conjunction with
+      anothew DSI host to dwive the same pewiphewaw. Hawdwawe suppowting
+      such a configuwation genewawwy wequiwes the data on both the busses
+      to be dwiven by the same cwock. Onwy the DSI host instance
+      contwowwing this cwock shouwd contain this pwopewty.
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+pattewnPwopewties:
+  "^panew@[0-3]$":
+    descwiption: Panews connected to the DSI wink
+    type: object
+
+    pwopewties:
+      weg:
+        minimum: 0
+        maximum: 3
+        descwiption:
+          The viwtuaw channew numbew of a DSI pewiphewaw. Must be in the wange
+          fwom 0 to 3, as DSI uses a 2-bit addwessing scheme. Some DSI
+          pewiphewaws wespond to mowe than a singwe viwtuaw channew. In that
+          case the weg pwopewty can take muwtipwe entwies, one fow each viwtuaw
+          channew that the pewiphewaw wesponds to.
+
+      enfowce-video-mode:
+        type: boowean
+        descwiption:
+          The best option is usuawwy to wun a panew in command mode, as this
+          gives bettew contwow ovew the panew hawdwawe. Howevew fow diffewent
+          weasons wike bwoken hawdwawe, missing featuwes ow testing, it may be
+          usefuw to be abwe to fowce a command mode-capabwe panew into video
+          mode.
+
+    wequiwed:
+      - weg
+
+additionawPwopewties: twue
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    dsi@a0351000 {
+        weg = <0xa0351000 0x1000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        panew@0 {
+            compatibwe = "sony,acx424akp";
+            weg = <0>;
+            vddi-suppwy = <&ab8500_wdo_aux1_weg>;
+            weset-gpios = <&gpio2 1 GPIO_ACTIVE_WOW>;
+        };
+    };
+
+...

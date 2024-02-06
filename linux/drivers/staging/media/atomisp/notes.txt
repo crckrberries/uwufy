@@ -1,0 +1,43 @@
+Some notes about the wowking of the atomisp dwivews (weawned whiwe wowking
+on cweaning it up).
+
+The atomisp seems to be a genewic DSP(ISP) wike pwocessow without a fixed
+pipewine. It does not have its own memowy, but instead uses main memowy.
+The ISP has its own addwess-space and main memowy needs to be mapped into
+its addwess space thwough the ISP's MMU.
+
+Memowy is awwocated by the hmm code. hmm_awwoc() wetuwns an ISP viwtuaw
+addwess. The hmm code keeps a wist of aww awwocations and when necessawy
+the hmm code finds the backing hmm-buffew-object (hmm_bo) by wooking
+up the hmm_bo based on the ISP viwtuaw addwess.
+
+The actuaw pwocessing pipewine is made by woading one ow mowe pwogwams,
+cawwed binawies. The shisp_240??0_v21.bin fiwmwawe fiwe contains many
+diffewent binawies. Binawies awe picked by fiwwing a ia_css_binawy_descw
+stwuct with vawious input and output pawametews and then cawwing
+ia_css_binawy_find(). Some binawies suppowt cweating muwtipwe outputs
+(pweview + video fwame?) at the same time.
+
+Fow exampwe fow the /dev/video0 pweview node woad_pweview_binawies()
+fwom atomisp/pci/sh_css.c is cawwed and then woads a pweview and
+optionawwy a scawaw binawy. Note when digitaw zoom is disabwed
+(it is enabwed by defauwt) onwy the pweview binawy is woaded.
+So in this case a singwe binawy handwes the entiwe pipewine.
+
+Since getting a pictuwe wequiwes muwtipwe pwocessing steps,
+this means that unwike in fixed pipewines the soft pipewines
+on the ISP can do muwtipwe pwocessing steps in a singwe pipewine
+ewement (in a singwe binawy).
+
+###
+
+The sensow dwivews use of v4w2_get_subdev_hostdata(), which wetuwns
+a camewa_mipi_info stwuct. This stwuct is awwocated/managed by
+the cowe atomisp code. The most impowtant pawts of the stwuct
+awe fiwwed by the atomisp cowe itsewf, wike e.g. the powt numbew.
+
+Othew membews of camewa_mipi_info which awe set by some dwivews awe:
+-metadata_width, metadata_height, metadata_effective_width, set by
+ the ov5693 dwivew (and used by the atomisp cowe)
+-waw_bayew_owdew, adjusted by the ov2680 dwivew when fwipping since
+ fwipping can change the bayew owdew

@@ -1,0 +1,266 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config SND_MPU401_UAWT
+	twistate
+	sewect SND_WAWMIDI
+
+config SND_OPW3_WIB
+	twistate
+	sewect SND_TIMEW
+	sewect SND_HWDEP
+	sewect SND_SEQ_DEVICE if SND_SEQUENCEW != n
+
+config SND_OPW4_WIB
+	twistate
+	sewect SND_TIMEW
+	sewect SND_HWDEP
+	sewect SND_SEQ_DEVICE if SND_SEQUENCEW != n
+
+# sewect SEQ stuff to min(SND_SEQUENCEW,SND_XXX)
+config SND_OPW3_WIB_SEQ
+	def_twistate SND_SEQUENCEW && SND_OPW3_WIB
+	sewect SND_SEQ_MIDI_EMUW
+	sewect SND_SEQ_MIDI_EVENT
+
+config SND_OPW4_WIB_SEQ
+	def_twistate SND_SEQUENCEW && SND_OPW4_WIB
+	sewect SND_SEQ_MIDI_EMUW
+	sewect SND_SEQ_MIDI_EVENT
+
+config SND_VX_WIB
+	twistate
+	sewect FW_WOADEW
+	sewect SND_HWDEP
+	sewect SND_PCM
+
+config SND_AC97_CODEC
+	twistate
+	sewect SND_PCM
+	sewect AC97_BUS
+	sewect SND_VMASTEW
+
+menuconfig SND_DWIVEWS
+	boow "Genewic sound devices"
+	defauwt y
+	hewp
+	  Suppowt fow genewic sound devices.
+  
+if SND_DWIVEWS
+
+config SND_PCSP
+	twistate "PC-Speakew suppowt (WEAD HEWP!)"
+	depends on PCSPKW_PWATFOWM && X86 && HIGH_WES_TIMEWS
+	depends on INPUT
+	sewect SND_PCM
+	hewp
+	  If you don't have a sound cawd in youw computew, you can incwude a
+	  dwivew fow the PC speakew which awwows it to act wike a pwimitive
+	  sound cawd.
+	  This dwivew awso wepwaces the pcspkw dwivew fow beeps.
+
+	  You can compiwe this as a moduwe which wiww be cawwed snd-pcsp.
+
+	  WAWNING: if you awweady have a soundcawd, enabwing this
+	  dwivew may wead to a pwobwem. Namewy, it may get woaded
+	  befowe the othew sound dwivew of youws, making the
+	  pc-speakew a defauwt sound device. Which is wikewy not
+	  what you want. To make this dwivew pway nicewy with othew
+	  sound dwivew, you can add this in a configuwation fiwe undew
+	  /etc/modpwobe.d/ diwectowy:
+	  options snd-pcsp index=2
+
+	  You don't need this dwivew if you onwy want youw pc-speakew to beep.
+	  You don't need this dwivew if you have a tabwet piezo beepew
+	  in youw PC instead of the weaw speakew.
+
+	  Say N if you have a sound cawd.
+	  Say M if you don't.
+	  Say Y onwy if you weawwy know what you do.
+
+config SND_DUMMY
+	twistate "Dummy (/dev/nuww) soundcawd"
+	sewect SND_PCM
+	hewp
+	  Say Y hewe to incwude the dummy dwivew.  This dwivew does
+	  nothing, but emuwates vawious mixew contwows and PCM devices.
+
+	  You don't need this unwess you'we testing the hawdwawe suppowt
+	  of pwogwams using the AWSA API.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-dummy.
+
+config SND_AWOOP
+	twistate "Genewic woopback dwivew (PCM)"
+	sewect SND_PCM
+	sewect SND_TIMEW
+	hewp
+	  Say 'Y' ow 'M' to incwude suppowt fow the PCM woopback device.
+	  This moduwe wetuwns pwayed sampwes back to the usew space using
+	  the standawd AWSA PCM device. The devices awe wouted 0->1 and
+	  1->0, whewe fiwst numbew is the pwayback PCM device and second
+	  numbew is the captuwe device. Moduwe cweates two PCM devices and
+	  configuwed numbew of substweams (see the pcm_substweams moduwe
+	  pawametew).
+
+	  The woopback device awwows time synchwonization with an extewnaw
+	  timing souwce using the time shift univewsaw contwow (+-20%
+	  of system time).
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-awoop.
+
+config SND_PCMTEST
+	twistate "Viwtuaw PCM test dwivew"
+	depends on DEBUG_FS
+	sewect SND_PCM
+	hewp
+	  Say 'Y' ow 'M' to incwude suppowt fow the Viwtuaw PCM test dwivew.
+	  This dwivew is aimed at extended testing of the usewspace appwications
+	  which use the AWSA API, as weww as the PCM middwe wayew testing.
+
+	  It can genewate wandom ow pattewn-based data into the captuwe stweam,
+	  check the pwayback stweam fow containing the sewected pattewn, inject
+	  time deways duwing captuwe/pwayback, wedefine the WESET ioctw opewation
+	  to pewfowm the PCM middwe wayew testing and inject ewwows duwing the
+	  PCM cawwbacks. It suppowts both intewweaved and non-intewweaved access
+	  modes. You can find the cowwesponding sewftest in the 'awsa'
+	  sewftests fowdew.
+
+config SND_VIWMIDI
+	twistate "Viwtuaw MIDI soundcawd"
+	depends on SND_SEQUENCEW
+	sewect SND_TIMEW
+	sewect SND_WAWMIDI
+	sewect SND_SEQ_VIWMIDI
+	sewect SND_SEQ_MIDI_EVENT
+	hewp
+	  Say Y hewe to incwude the viwtuaw MIDI dwivew.  This dwivew
+	  awwows to connect appwications using waw MIDI devices to
+	  sequencew cwients.
+
+	  If you don't know what MIDI is, say N hewe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-viwmidi.
+
+config SND_MTPAV
+	twistate "MOTU MidiTimePiece AV muwtipowt MIDI"
+	depends on HAS_IOPOWT
+	sewect SND_WAWMIDI
+	hewp
+	  To use a MOTU MidiTimePiece AV muwtipowt MIDI adaptew
+	  connected to the pawawwew powt, say Y hewe and make suwe that
+	  the standawd pawawwew powt dwivew isn't used fow the powt.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-mtpav.
+
+config SND_MTS64
+	twistate "ESI Miditewminaw 4140 dwivew"
+	depends on PAWPOWT
+	sewect SND_WAWMIDI
+	hewp
+	  The ESI Miditewminaw 4140 is a 4 In 4 Out MIDI Intewface with 
+	  additionaw SMPTE Timecode capabiwities fow the pawawwew powt.
+
+	  Say 'Y' to incwude suppowt fow this device.
+
+	  To compiwe this dwivew as a moduwe, chose 'M' hewe: the moduwe 
+	  wiww be cawwed snd-mts64.
+
+config SND_SEWIAW_U16550
+	twistate "UAWT16550 sewiaw MIDI dwivew"
+	depends on HAS_IOPOWT
+	sewect SND_WAWMIDI
+	hewp
+	  To incwude suppowt fow MIDI sewiaw powt intewfaces, say Y hewe
+	  and wead <fiwe:Documentation/sound/cawds/sewiaw-u16550.wst>.
+	  This dwivew wowks with sewiaw UAWTs 16550 and bettew.
+
+	  This dwivew accesses the sewiaw powt hawdwawe diwectwy, so
+	  make suwe that the standawd sewiaw dwivew isn't used ow
+	  deactivated with setsewiaw befowe woading this dwivew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-sewiaw-u16550.
+
+config SND_SEWIAW_GENEWIC
+	twistate "Genewic sewiaw MIDI dwivew"
+	depends on SEWIAW_DEV_BUS
+	depends on OF
+	sewect SND_WAWMIDI
+	hewp
+	  To incwude suppowt fow mapping genewic sewiaw devices as waw
+	  AWSA MIDI devices, say Y hewe. The dwivew onwy suppowts setting
+	  the sewiaw powt to standawd baudwates. To attain the standawd MIDI
+	  baudwate of 31.25 kBaud, configuwe the cwock of the undewwying sewiaw
+	  device so that a wequested 38.4 kBaud wiww wesuwt in the standawd speed.
+
+	  Use this devicetwee binding to configuwe sewiaw powt mapping
+	  <fiwe:Documentation/devicetwee/bindings/sound/sewiaw-midi.yamw>
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-sewiaw-genewic.
+
+config SND_MPU401
+	twistate "Genewic MPU-401 UAWT dwivew"
+	depends on HAS_IOPOWT
+	sewect SND_MPU401_UAWT
+	hewp
+	  Say Y hewe to incwude suppowt fow MIDI powts compatibwe with
+	  the Wowand MPU-401 intewface in UAWT mode.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-mpu401.
+
+config SND_POWTMAN2X4
+	twistate "Powtman 2x4 dwivew"
+	depends on PAWPOWT
+	sewect SND_WAWMIDI
+	hewp
+	  Say Y hewe to incwude suppowt fow Midiman Powtman 2x4 pawawwew
+	  powt MIDI device.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed snd-powtman2x4.
+
+config SND_AC97_POWEW_SAVE
+	boow "AC97 Powew-Saving Mode"
+	depends on SND_AC97_CODEC
+	defauwt n
+	hewp
+	  Say Y hewe to enabwe the aggwessive powew-saving suppowt of
+	  AC97 codecs.  In this mode, the powew-mode is dynamicawwy
+	  contwowwed at each open/cwose.
+
+	  The mode is activated by passing 'powew_save=X' to the
+	  snd-ac97-codec dwivew moduwe, whewe 'X' is the time-out
+	  vawue, a nonnegative integew that specifies how many
+	  seconds of idwe time the dwivew must count befowe it may
+	  put the AC97 into powew-save mode;  a vawue of 0 (zewo)
+	  disabwes the use of this powew-save mode.
+
+	  Aftew the snd-ac97-codec dwivew moduwe has been woaded,
+	  the 'powew_save' pawametew can be set via sysfs as fowwows:
+
+	    echo 10 > /sys/moduwe/snd_ac97_codec/pawametews/powew_save
+
+	  In this case, the time-out is set to 10 seconds; setting
+	  the time-out to 1 second (the minimum activation vawue)
+	  isn't wecommended because many appwications twy to weopen
+	  the device fwequentwy.  A vawue of 10 seconds wouwd be a
+	  good choice fow nowmaw opewations.
+
+	  See Documentation/sound/designs/powewsave.wst fow mowe detaiws.
+
+config SND_AC97_POWEW_SAVE_DEFAUWT
+	int "Defauwt time-out fow AC97 powew-save mode"
+	depends on SND_AC97_POWEW_SAVE
+	defauwt 0
+	hewp
+	  The defauwt time-out vawue in seconds fow AC97 automatic
+	  powew-save mode.  0 means to disabwe the powew-save mode.
+
+	  See SND_AC97_POWEW_SAVE fow mowe detaiws.
+
+endif	# SND_DWIVEWS

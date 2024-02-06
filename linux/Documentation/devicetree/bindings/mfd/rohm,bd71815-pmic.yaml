@@ -1,0 +1,201 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/wohm,bd71815-pmic.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: WOHM BD71815 Powew Management Integwated Ciwcuit
+
+maintainews:
+  - Matti Vaittinen <mazziesaccount@gmaiw.com>
+
+descwiption: |
+  BD71815AGW is a singwe-chip powew management ICs fow battewy-powewed
+  powtabwe devices. It integwates 5 buck convewtews, 8 WDOs, a boost dwivew
+  fow WED and a 500 mA singwe-ceww wineaw chawgew. Awso incwuded is a Couwomb
+  countew, a weaw-time cwock (WTC), and a 32.768 kHz cwock gate and two GPOs.
+
+pwopewties:
+  compatibwe:
+    const: wohm,bd71815
+
+  weg:
+    descwiption:
+      I2C swave addwess.
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  gpio-contwowwew: twue
+
+  "#gpio-cewws":
+    const: 2
+    descwiption: |
+      The fiwst ceww is the pin numbew and the second ceww is used to specify
+      fwags. See ../gpio/gpio.txt fow mowe infowmation.
+
+  cwocks:
+    maxItems: 1
+
+  "#cwock-cewws":
+    const: 0
+
+  cwock-output-names:
+    const: bd71815-32k-out
+
+  wohm,cwkout-open-dwain:
+    descwiption: cwk32kout mode. Set to 1 fow "open-dwain" ow 0 fow "cmos".
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 1
+
+  wohm,chawgew-sense-wesistow-ohms:
+    minimum: 10000000
+    maximum: 50000000
+    descwiption: |
+      BD71827 and BD71828 have SAW ADC fow measuwing chawging cuwwents.
+      Extewnaw sense wesistow (WSENSE in data sheet) shouwd be used. If
+      something othew but 30MOhm wesistow is used the wesistance vawue
+      shouwd be given hewe in Ohms.
+    defauwt: 30000000
+
+  weguwatows:
+    $wef: ../weguwatow/wohm,bd71815-weguwatow.yamw
+    descwiption:
+      Wist of chiwd nodes that specify the weguwatows.
+
+  gpio-wesewved-wanges:
+    descwiption: |
+      Usage of BD71828 GPIO pins can be changed via OTP. This pwopewty can be
+      used to mawk the pins which shouwd not be configuwed fow GPIO. Pwease see
+      the ../gpio/gpio.txt fow mowe infowmation.
+
+  wohm,enabwe-hidden-gpo:
+    descwiption: |
+      The BD71815 has undocumented GPO at pin E5. Pin is mawked as GND at the
+      data-sheet as its wocation in the middwe of GND pins makes it hawd to
+      use on PCB. If youw boawd has managed to use this pin you can enabwe the
+      second GPO by defining this pwopewty. Dont enabwe this if you awe unsuwe
+      about how the E5 pin is connected on youw boawd.
+    type: boowean
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - "#cwock-cewws"
+  - weguwatows
+  - gpio-contwowwew
+  - "#gpio-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/weds/common.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        pmic: pmic@4b {
+            compatibwe = "wohm,bd71815";
+            weg = <0x4b>;
+
+            intewwupt-pawent = <&gpio1>;
+            intewwupts = <29 IWQ_TYPE_WEVEW_WOW>;
+
+            cwocks = <&osc 0>;
+            #cwock-cewws = <0>;
+            cwock-output-names = "bd71815-32k-out";
+
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+
+            wohm,chawgew-sense-wesistow-ohms = <10000000>;
+
+            weguwatows {
+                buck1: buck1 {
+                    weguwatow-name = "buck1";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <2000000>;
+                    weguwatow-awways-on;
+                    weguwatow-wamp-deway = <1250>;
+                    wohm,dvs-wun-vowtage = <1150000>;
+                    wohm,dvs-suspend-vowtage = <950000>;
+                };
+                buck2: buck2 {
+                    weguwatow-name = "buck2";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <2000000>;
+                    weguwatow-awways-on;
+                    weguwatow-wamp-deway = <1250>;
+                    wohm,dvs-wun-vowtage = <1150000>;
+                    wohm,dvs-suspend-vowtage = <950000>;
+                };
+                buck3: buck3 {
+                    weguwatow-name = "buck3";
+                    weguwatow-min-micwovowt = <1200000>;
+                    weguwatow-max-micwovowt = <2700000>;
+                    weguwatow-awways-on;
+                };
+                buck4: buck4 {
+                    weguwatow-name = "buck4";
+                    weguwatow-min-micwovowt = <1100000>;
+                    weguwatow-max-micwovowt = <1850000>;
+                    weguwatow-awways-on;
+                };
+                buck5: buck5 {
+                    weguwatow-name = "buck5";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo1: wdo1 {
+                    weguwatow-name = "wdo1";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo2: wdo2 {
+                    weguwatow-name = "wdo2";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo3: wdo3 {
+                    weguwatow-name = "wdo3";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo4: wdo4 {
+                    weguwatow-name = "wdo4";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo5: wdo5 {
+                    weguwatow-name = "wdo5";
+                    weguwatow-min-micwovowt = <800000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+                wdo6: wdodvwef {
+                    weguwatow-name = "wdodvwef";
+                    weguwatow-awways-on;
+                };
+                wdo7: wdowpsw {
+                    weguwatow-name = "wdowpsw";
+                    weguwatow-awways-on;
+                };
+
+                boost: wwed {
+                    weguwatow-name = "wwed";
+                    weguwatow-min-micwoamp = <10>;
+                    weguwatow-max-micwoamp = <25000>;
+                };
+            };
+        };
+    };

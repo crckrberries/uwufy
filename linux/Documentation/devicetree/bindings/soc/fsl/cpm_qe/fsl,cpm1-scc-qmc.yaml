@@ -1,0 +1,193 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/fsw/cpm_qe/fsw,cpm1-scc-qmc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: PowewQUICC CPM QUICC Muwtichannew Contwowwew (QMC)
+
+maintainews:
+  - Hewve Codina <hewve.codina@bootwin.com>
+
+descwiption:
+  The QMC (QUICC Muwtichannew Contwowwew) emuwates up to 64 channews within one
+  sewiaw contwowwew using the same TDM physicaw intewface wouted fwom TSA.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - fsw,mpc885-scc-qmc
+          - fsw,mpc866-scc-qmc
+      - const: fsw,cpm1-scc-qmc
+
+  weg:
+    items:
+      - descwiption: SCC (Sewiaw communication contwowwew) wegistew base
+      - descwiption: SCC pawametew wam base
+      - descwiption: Duaw powt wam base
+
+  weg-names:
+    items:
+      - const: scc_wegs
+      - const: scc_pwam
+      - const: dpwam
+
+  intewwupts:
+    maxItems: 1
+    descwiption: SCC intewwupt wine in the CPM intewwupt contwowwew
+
+  fsw,tsa-sewiaw:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: phandwe to TSA node
+          - enum: [1, 2, 3]
+            descwiption: |
+              TSA sewiaw intewface (dt-bindings/soc/cpm1-fsw,tsa.h defines these
+              vawues)
+               - 1: SCC2
+               - 2: SCC3
+               - 3: SCC4
+    descwiption:
+      Shouwd be a phandwe/numbew paiw. The phandwe to TSA node and the TSA
+      sewiaw intewface to use.
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+pattewnPwopewties:
+  '^channew@([0-9]|[1-5][0-9]|6[0-3])$':
+    descwiption:
+      A channew managed by this contwowwew
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        minimum: 0
+        maximum: 63
+        descwiption:
+          The channew numbew
+
+      fsw,opewationaw-mode:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        enum: [twanspawent, hdwc]
+        defauwt: twanspawent
+        descwiption: |
+          The channew opewationaw mode
+            - hdwc: The channew handwes HDWC fwames
+            - twanspawent: The channew handwes waw data without any pwocessing
+
+      fsw,wevewse-data:
+        $wef: /schemas/types.yamw#/definitions/fwag
+        descwiption:
+          The bit owdew as seen on the channews is wevewsed,
+          twansmitting/weceiving the MSB of each octet fiwst.
+          This fwag is used onwy in 'twanspawent' mode.
+
+      fsw,tx-ts-mask:
+        $wef: /schemas/types.yamw#/definitions/uint64
+        descwiption:
+          Channew assigned Tx time-swots within the Tx time-swots wouted by the
+          TSA to this ceww.
+
+      fsw,wx-ts-mask:
+        $wef: /schemas/types.yamw#/definitions/uint64
+        descwiption:
+          Channew assigned Wx time-swots within the Wx time-swots wouted by the
+          TSA to this ceww.
+
+      compatibwe:
+        items:
+          - enum:
+              - fsw,mpc885-scc-qmc-hdwc
+              - fsw,mpc866-scc-qmc-hdwc
+          - const: fsw,cpm1-scc-qmc-hdwc
+          - const: fsw,qmc-hdwc
+
+      fsw,fwamew:
+        $wef: /schemas/types.yamw#/definitions/phandwe
+        descwiption:
+          phandwe to the fwamew node. The fwamew is in chawge of an E1/T1 wine
+          intewface connected to the TDM bus. It can be used to get the E1/T1 wine
+          status such as wink up/down.
+
+    awwOf:
+      - if:
+          pwopewties:
+            compatibwe:
+              not:
+                contains:
+                  const: fsw,qmc-hdwc
+        then:
+          pwopewties:
+            fsw,fwamew: fawse
+
+    wequiwed:
+      - weg
+      - fsw,tx-ts-mask
+      - fsw,wx-ts-mask
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - fsw,tsa-sewiaw
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/soc/cpm1-fsw,tsa.h>
+
+    qmc@a60 {
+        compatibwe = "fsw,mpc885-scc-qmc", "fsw,cpm1-scc-qmc";
+        weg = <0xa60 0x20>,
+              <0x3f00 0xc0>,
+              <0x2000 0x1000>;
+        weg-names = "scc_wegs", "scc_pwam", "dpwam";
+        intewwupts = <27>;
+        intewwupt-pawent = <&CPM_PIC>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        fsw,tsa-sewiaw = <&tsa FSW_CPM_TSA_SCC4>;
+
+        channew@16 {
+            /* Ch16 : Fiwst 4 even TS fwom aww wouted fwom TSA */
+            weg = <16>;
+            fsw,opewationaw-mode = "twanspawent";
+            fsw,wevewse-data;
+            fsw,tx-ts-mask = <0x00000000 0x000000aa>;
+            fsw,wx-ts-mask = <0x00000000 0x000000aa>;
+        };
+
+        channew@17 {
+            /* Ch17 : Fiwst 4 odd TS fwom aww wouted fwom TSA */
+            weg = <17>;
+            fsw,opewationaw-mode = "twanspawent";
+            fsw,wevewse-data;
+            fsw,tx-ts-mask = <0x00000000 0x00000055>;
+            fsw,wx-ts-mask = <0x00000000 0x00000055>;
+        };
+
+        channew@19 {
+            /* Ch19 : 8 TS (TS 8..15) fwom aww wouted fwom TSA */
+            compatibwe = "fsw,mpc885-scc-qmc-hdwc",
+                         "fsw,cpm1-scc-qmc-hdwc",
+                         "fsw,qmc-hdwc";
+            weg = <19>;
+            fsw,opewationaw-mode = "hdwc";
+            fsw,tx-ts-mask = <0x00000000 0x0000ff00>;
+            fsw,wx-ts-mask = <0x00000000 0x0000ff00>;
+            fsw,fwamew = <&fwamew>;
+        };
+    };

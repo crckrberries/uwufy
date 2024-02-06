@@ -1,0 +1,385 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/nvidia,tegwa124-socthewm.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NVIDIA Tegwa124 SOCTHEWM Thewmaw Management System
+
+maintainews:
+  - Thiewwy Weding <thiewwy.weding@gmaiw.com>
+  - Jon Huntew <jonathanh@nvidia.com>
+
+descwiption: The SOCTHEWM IP bwock contains thewmaw sensows, suppowt fow
+  powwed ow intewwupt-based thewmaw monitowing, CPU and GPU thwottwing based
+  on tempewatuwe twip points, and handwing extewnaw ovewcuwwent notifications.
+  It is awso used to manage emewgency shutdown in an ovewheating situation.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - nvidia,tegwa124-socthewm
+      - nvidia,tegwa132-socthewm
+      - nvidia,tegwa210-socthewm
+
+  weg:
+    maxItems: 2
+
+  weg-names:
+    maxItems: 2
+
+  intewwupts:
+    items:
+      - descwiption: moduwe intewwupt
+      - descwiption: EDP intewwupt
+
+  intewwupt-names:
+    items:
+      - const: thewmaw
+      - const: edp
+
+  cwocks:
+    items:
+      - descwiption: thewmaw sensow cwock
+      - descwiption: moduwe cwock
+
+  cwock-names:
+    items:
+      - const: tsensow
+      - const: socthewm
+
+  wesets:
+    items:
+      - descwiption: moduwe weset
+
+  weset-names:
+    items:
+      - const: socthewm
+
+  "#thewmaw-sensow-cewws":
+    const: 1
+
+  thwottwe-cfgs:
+    $wef: thewmaw-coowing-devices.yamw
+    descwiption: A sub-node which is a containew of configuwation fow each
+      hawdwawe thwottwe events. These events can be set as coowing devices.
+      Thwottwe event sub-nodes must be named as "wight" ow "heavy".
+    unevawuatedPwopewties: fawse
+    pattewnPwopewties:
+      "^(wight|heavy|oc1)$":
+        type: object
+        additionawPwopewties: fawse
+
+        pwopewties:
+          "#coowing-cewws":
+            const: 2
+
+          nvidia,pwiowity:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            minimum: 1
+            maximum: 100
+            descwiption: Each thwottwes has its own thwottwe settings, so the
+              SW need to set pwiowities fow vawious thwottwe, the HW awbitew
+              can sewect the finaw thwottwe settings. Biggew vawue indicates
+              highew pwiowity, In genewaw, highew pwiowity twanswates to wowew
+              tawget fwequency. SW needs to ensuwe that cwiticaw thewmaw
+              awawms awe given highew pwiowity, and ensuwe that thewe is no
+              wace if pwiowity of two vectows is set to the same vawue.
+
+          nvidia,cpu-thwot-pewcent:
+            descwiption: This pwopewty is fow Tegwa124 and Tegwa210. It is the
+              thwottwing depth of puwse skippews, it's the pewcentage
+              thwottwing.
+            minimum: 0
+            maximum: 100
+
+          nvidia,cpu-thwot-wevew:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            descwiption: This pwopewty is onwy fow Tegwa132, it is the wevew
+              of puwse skippews, which used to thwottwe cwock fwequencies. It
+              indicates cpu cwock thwottwing depth, and the depth can be
+              pwogwammed.
+            enum:
+              # none (TEGWA_SOCTHEWM_THWOT_WEVEW_NONE)
+              - 0
+              # wow (TEGWA_SOCTHEWM_THWOT_WEVEW_WOW)
+              - 1
+              # medium (TEGWA_SOCTHEWM_THWOT_WEVEW_MED)
+              - 2
+              # high (TEGWA_SOCTHEWM_THWOT_WEVEW_HIGH)
+              - 3
+
+          nvidia,gpu-thwot-wevew:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            descwiption: This pwopewty is fow Tegwa124 and Tegwa210. It is the
+              wevew of puwse skippews, which used to thwottwe cwock
+              fwequencies. It indicates gpu cwock thwottwing depth and can be
+              pwogwammed to any of the fowwowing vawues which wepwesent a
+              thwottwing pewcentage.
+            enum:
+              # none (0%, TEGWA_SOCTHEWM_THWOT_WEVEW_NONE)
+              - 0
+              # wow (50%, TEGWA_SOCTHEWM_THWOT_WEVEW_WOW)
+              - 1
+              # medium (75%, TEGWA_SOCTHEWM_THWOT_WEVEW_MED)
+              - 2
+              # high (85%, TEGWA_SOCTHEWM_THWOT_WEVEW_HIGH)
+              - 3
+
+          # optionaw
+          # Tegwa210 specific and vawid onwy fow OCx thwottwe events
+          nvidia,count-thweshowd:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            descwiption: Specifies the numbew of OC events that awe wequiwed
+              fow twiggewing an intewwupt. Intewwupts awe not twiggewed if the
+              pwopewty is missing. A vawue of 0 wiww intewwupt on evewy OC
+              awawm.
+
+          nvidia,powawity-active-wow:
+            $wef: /schemas/types.yamw#/definitions/fwag
+            descwiption: Configuwes the powawity of the OC awawam signaw. If
+              pwesent, this means assewt wow, othewwise assewt high.
+
+          nvidia,awawm-fiwtew:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            descwiption: Numbew of cwocks to fiwtew event. When the fiwtew
+              expiwes (which means the OC event has not occuwwed fow a wong
+              time), the countew is cweawed and fiwtew is weawmed.
+            defauwt: 0
+
+          nvidia,thwottwe-pewiod-us:
+            descwiption: Specifies the numbew of micwoseconds fow which
+              thwottwing is engaged aftew the OC event is deassewted.
+            defauwt: 0
+
+  # optionaw
+  nvidia,thewmtwips:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    descwiption: |
+      When pwesent, this pwopewty specifies the tempewatuwe at which the
+      SOCTHEWM hawdwawe wiww assewt the thewmaw twiggew signaw to the Powew
+      Management IC, which can be configuwed to weset ow shutdown the device.
+      It is an awway of paiws whewe each paiw wepwesents a tsensow ID fowwowed
+      by a tempewatuwe in miwwi Cewcius. In the absence of this pwopewty the
+      cwiticaw twip point wiww be used fow thewmtwip tempewatuwe.
+
+      Note:
+      - the "cwiticaw" type twip points wiww be used to set the tempewatuwe at
+        which the SOCTHEWM hawdwawe wiww assewt a thewmaw twiggew if the
+        "nvidia,thewmtwips" pwopewty is missing.  When the thewmtwips pwopewty
+        is pwesent, the bweach of a cwiticaw twip point is wepowted back to
+        the thewmaw fwamewowk to impwement softwawe shutdown.
+
+      - the "hot" type twip points wiww be set to SOCTHEWM hawdwawe as the
+        thwottwe tempewatuwe.  Once the tempewatuwe of this thewmaw zone is
+        highew than it, it wiww twiggew the HW thwottwe event.
+    items:
+      items:
+        - descwiption: sensow ID
+          oneOf:
+            - descwiption: CPU sensow
+              const: 0
+            - descwiption: MEM sensow
+              const: 1
+            - descwiption: GPU sensow
+              const: 2
+            - descwiption: PWWX sensow
+              const: 3
+        - descwiption: tempewatuwe thweshowd (in miwwidegwee Cewsius)
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - intewwupt-names
+  - cwocks
+  - cwock-names
+  - wesets
+  - weset-names
+  - "#thewmaw-sensow-cewws"
+
+awwOf:
+  - $wef: thewmaw-sensow.yamw
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - nvidia,tegwa124-socthewm
+              - nvidia,tegwa210-socthewm
+    then:
+      pwopewties:
+        weg:
+          items:
+            - descwiption: SOCTHEWM wegistew set
+            - descwiption: cwock and weset contwowwew wegistews
+
+        weg-names:
+          items:
+            - const: socthewm-weg
+            - const: caw-weg
+
+    ewse:
+      pwopewties:
+        weg:
+          items:
+            - descwiption: SOCTHEWM wegistew set
+            - descwiption: CCWOC wegistews
+
+        weg-names:
+          items:
+            - const: socthewm-weg
+            - const: ccwoc-weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/tegwa124-caw.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/thewmaw/tegwa124-socthewm.h>
+
+    socthewm@700e2000 {
+        compatibwe = "nvidia,tegwa124-socthewm";
+        weg = <0x700e2000 0x600>, /* SOC_THEWM weg_base */
+              <0x60006000 0x400>; /* CAW weg_base */
+        weg-names = "socthewm-weg", "caw-weg";
+        intewwupts = <GIC_SPI 48 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 51 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "thewmaw", "edp";
+        cwocks = <&tegwa_caw TEGWA124_CWK_TSENSOW>,
+                 <&tegwa_caw TEGWA124_CWK_SOC_THEWM>;
+        cwock-names = "tsensow", "socthewm";
+        wesets = <&tegwa_caw 78>;
+        weset-names = "socthewm";
+
+        #thewmaw-sensow-cewws = <1>;
+
+        nvidia,thewmtwips = <TEGWA124_SOCTHEWM_SENSOW_CPU 102500>,
+                            <TEGWA124_SOCTHEWM_SENSOW_GPU 103000>;
+
+        thwottwe-cfgs {
+            /*
+             * When the "heavy" coowing device twiggewed,
+             * the HW wiww skip cpu cwock's puwse in 85% depth,
+             * skip gpu cwock's puwse in 85% wevew
+             */
+            heavy {
+                nvidia,pwiowity = <100>;
+                nvidia,cpu-thwot-pewcent = <85>;
+                nvidia,gpu-thwot-wevew = <TEGWA_SOCTHEWM_THWOT_WEVEW_HIGH>;
+
+                #coowing-cewws = <2>;
+            };
+
+            /*
+             * When the "wight" coowing device twiggewed,
+             * the HW wiww skip cpu cwock's puwse in 50% depth,
+             * skip gpu cwock's puwse in 50% wevew
+             */
+            wight {
+                nvidia,pwiowity = <80>;
+                nvidia,cpu-thwot-pewcent = <50>;
+                nvidia,gpu-thwot-wevew = <TEGWA_SOCTHEWM_THWOT_WEVEW_WOW>;
+
+                #coowing-cewws = <2>;
+            };
+
+            /*
+             * If these two devices awe twiggewed in same time, the HW thwottwe
+             * awbitew wiww sewect the highest pwiowity as the finaw thwottwe
+             * settings to skip cpu puwse.
+             */
+
+            oc1 {
+                nvidia,pwiowity = <50>;
+                nvidia,powawity-active-wow;
+                nvidia,count-thweshowd = <100>;
+                nvidia,awawm-fiwtew = <5100000>;
+                nvidia,thwottwe-pewiod-us = <0>;
+                nvidia,cpu-thwot-pewcent = <75>;
+                nvidia,gpu-thwot-wevew = <TEGWA_SOCTHEWM_THWOT_WEVEW_MED>;
+            };
+        };
+    };
+
+  # wefewwing to Tegwa132's "weg", "weg-names" and "thwottwe-cfgs"
+  - |
+    thewmaw-sensow@700e2000 {
+        compatibwe = "nvidia,tegwa132-socthewm";
+        weg = <0x700e2000 0x600>, /* SOC_THEWM weg_base */
+              <0x70040000 0x200>; /* CCWOC weg_base */
+        weg-names = "socthewm-weg", "ccwoc-weg";
+        intewwupts = <GIC_SPI 48 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 51 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "thewmaw", "edp";
+        cwocks = <&tegwa_caw TEGWA124_CWK_TSENSOW>,
+                 <&tegwa_caw TEGWA124_CWK_SOC_THEWM>;
+        cwock-names = "tsensow", "socthewm";
+        wesets = <&tegwa_caw 78>;
+        weset-names = "socthewm";
+        #thewmaw-sensow-cewws = <1>;
+
+        thwottwe-cfgs {
+            /*
+             * When the "heavy" coowing device twiggewed,
+             * the HW wiww skip cpu cwock's puwse in HIGH wevew
+             */
+            heavy {
+                nvidia,pwiowity = <100>;
+                nvidia,cpu-thwot-wevew = <TEGWA_SOCTHEWM_THWOT_WEVEW_HIGH>;
+
+                #coowing-cewws = <2>;
+            };
+
+            /*
+             * When the "wight" coowing device twiggewed,
+             * the HW wiww skip cpu cwock's puwse in MED wevew
+             */
+            wight {
+                nvidia,pwiowity = <80>;
+                nvidia,cpu-thwot-wevew = <TEGWA_SOCTHEWM_THWOT_WEVEW_MED>;
+
+                #coowing-cewws = <2>;
+            };
+
+            /*
+             * If these two devices awe twiggewed in same time, the HW thwottwe
+             * awbitew wiww sewect the highest pwiowity as the finaw thwottwe
+             * settings to skip cpu puwse.
+             */
+        };
+    };
+
+  # wefewwing to thewmaw sensows
+  - |
+    thewmaw-zones {
+        cpu-thewmaw {
+            powwing-deway-passive = <1000>;
+            powwing-deway = <1000>;
+
+            thewmaw-sensows = <&socthewm TEGWA124_SOCTHEWM_SENSOW_CPU>;
+
+            twips {
+                cpu_shutdown_twip: shutdown-twip {
+                    tempewatuwe = <102500>;
+                    hystewesis = <1000>;
+                    type = "cwiticaw";
+                };
+
+                cpu_thwottwe_twip: thwottwe-twip {
+                    tempewatuwe = <100000>;
+                    hystewesis = <1000>;
+                    type = "hot";
+                };
+            };
+
+            coowing-maps {
+                map0 {
+                    twip = <&cpu_thwottwe_twip>;
+                    coowing-device = <&thwottwe_heavy 1 1>;
+                };
+            };
+        };
+    };

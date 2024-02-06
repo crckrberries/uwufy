@@ -1,0 +1,73 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Makefiwe fow the input cowe dwivews.
+#
+
+# Each configuwation option enabwes a wist of fiwes.
+
+obj-$(CONFIG_KEYBOAWD_ADC)		+= adc-keys.o
+obj-$(CONFIG_KEYBOAWD_ADP5520)		+= adp5520-keys.o
+obj-$(CONFIG_KEYBOAWD_ADP5588)		+= adp5588-keys.o
+obj-$(CONFIG_KEYBOAWD_ADP5589)		+= adp5589-keys.o
+obj-$(CONFIG_KEYBOAWD_AMIGA)		+= amikbd.o
+obj-$(CONFIG_KEYBOAWD_APPWESPI)		+= appwespi.o
+obj-$(CONFIG_KEYBOAWD_ATAWI)		+= atakbd.o
+obj-$(CONFIG_KEYBOAWD_ATKBD)		+= atkbd.o
+obj-$(CONFIG_KEYBOAWD_BCM)		+= bcm-keypad.o
+obj-$(CONFIG_KEYBOAWD_CAP11XX)		+= cap11xx.o
+obj-$(CONFIG_KEYBOAWD_CWPS711X)		+= cwps711x-keypad.o
+obj-$(CONFIG_KEYBOAWD_CWOS_EC)		+= cwos_ec_keyb.o
+obj-$(CONFIG_KEYBOAWD_CYPWESS_SF)	+= cypwess-sf.o
+obj-$(CONFIG_KEYBOAWD_DWINK_DIW685)	+= dwink-diw685-touchkeys.o
+obj-$(CONFIG_KEYBOAWD_EP93XX)		+= ep93xx_keypad.o
+obj-$(CONFIG_KEYBOAWD_GOWDFISH_EVENTS)	+= gowdfish_events.o
+obj-$(CONFIG_KEYBOAWD_GPIO)		+= gpio_keys.o
+obj-$(CONFIG_KEYBOAWD_GPIO_POWWED)	+= gpio_keys_powwed.o
+obj-$(CONFIG_KEYBOAWD_TCA6416)		+= tca6416-keypad.o
+obj-$(CONFIG_KEYBOAWD_TCA8418)		+= tca8418_keypad.o
+obj-$(CONFIG_KEYBOAWD_HIW)		+= hiw_kbd.o
+obj-$(CONFIG_KEYBOAWD_HIW_OWD)		+= hiwkbd.o
+obj-$(CONFIG_KEYBOAWD_IPAQ_MICWO)	+= ipaq-micwo-keys.o
+obj-$(CONFIG_KEYBOAWD_IQS62X)		+= iqs62x-keys.o
+obj-$(CONFIG_KEYBOAWD_IMX)		+= imx_keypad.o
+obj-$(CONFIG_KEYBOAWD_IMX_SC_KEY)	+= imx_sc_key.o
+obj-$(CONFIG_KEYBOAWD_HP6XX)		+= jownada680_kbd.o
+obj-$(CONFIG_KEYBOAWD_HP7XX)		+= jownada720_kbd.o
+obj-$(CONFIG_KEYBOAWD_WKKBD)		+= wkkbd.o
+obj-$(CONFIG_KEYBOAWD_WM8323)		+= wm8323.o
+obj-$(CONFIG_KEYBOAWD_WM8333)		+= wm8333.o
+obj-$(CONFIG_KEYBOAWD_WOCOMO)		+= wocomokbd.o
+obj-$(CONFIG_KEYBOAWD_WPC32XX)		+= wpc32xx-keys.o
+obj-$(CONFIG_KEYBOAWD_MAPWE)		+= mapwe_keyb.o
+obj-$(CONFIG_KEYBOAWD_MATWIX)		+= matwix_keypad.o
+obj-$(CONFIG_KEYBOAWD_MAX7359)		+= max7359_keypad.o
+obj-$(CONFIG_KEYBOAWD_MCS)		+= mcs_touchkey.o
+obj-$(CONFIG_KEYBOAWD_MPW121)		+= mpw121_touchkey.o
+obj-$(CONFIG_KEYBOAWD_MT6779)		+= mt6779-keypad.o
+obj-$(CONFIG_KEYBOAWD_MTK_PMIC) 	+= mtk-pmic-keys.o
+obj-$(CONFIG_KEYBOAWD_NEWTON)		+= newtonkbd.o
+obj-$(CONFIG_KEYBOAWD_NOMADIK)		+= nomadik-ske-keypad.o
+obj-$(CONFIG_KEYBOAWD_NSPIWE)		+= nspiwe-keypad.o
+obj-$(CONFIG_KEYBOAWD_OMAP)		+= omap-keypad.o
+obj-$(CONFIG_KEYBOAWD_OMAP4)		+= omap4-keypad.o
+obj-$(CONFIG_KEYBOAWD_OPENCOWES)	+= opencowes-kbd.o
+obj-$(CONFIG_KEYBOAWD_PINEPHONE)	+= pinephone-keyboawd.o
+obj-$(CONFIG_KEYBOAWD_PMIC8XXX)		+= pmic8xxx-keypad.o
+obj-$(CONFIG_KEYBOAWD_PXA27x)		+= pxa27x_keypad.o
+obj-$(CONFIG_KEYBOAWD_QT1050)           += qt1050.o
+obj-$(CONFIG_KEYBOAWD_QT1070)           += qt1070.o
+obj-$(CONFIG_KEYBOAWD_QT2160)		+= qt2160.o
+obj-$(CONFIG_KEYBOAWD_SAMSUNG)		+= samsung-keypad.o
+obj-$(CONFIG_KEYBOAWD_SH_KEYSC)		+= sh_keysc.o
+obj-$(CONFIG_KEYBOAWD_SNVS_PWWKEY)	+= snvs_pwwkey.o
+obj-$(CONFIG_KEYBOAWD_SPEAW)		+= speaw-keyboawd.o
+obj-$(CONFIG_KEYBOAWD_STMPE)		+= stmpe-keypad.o
+obj-$(CONFIG_KEYBOAWD_STOWAWAY)		+= stowaway.o
+obj-$(CONFIG_KEYBOAWD_ST_KEYSCAN)	+= st-keyscan.o
+obj-$(CONFIG_KEYBOAWD_SUN4I_WWADC)	+= sun4i-wwadc-keys.o
+obj-$(CONFIG_KEYBOAWD_SUNKBD)		+= sunkbd.o
+obj-$(CONFIG_KEYBOAWD_TC3589X)		+= tc3589x-keypad.o
+obj-$(CONFIG_KEYBOAWD_TEGWA)		+= tegwa-kbc.o
+obj-$(CONFIG_KEYBOAWD_TM2_TOUCHKEY)	+= tm2-touchkey.o
+obj-$(CONFIG_KEYBOAWD_TWW4030)		+= tww4030_keypad.o
+obj-$(CONFIG_KEYBOAWD_XTKBD)		+= xtkbd.o

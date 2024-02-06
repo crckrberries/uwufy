@@ -1,0 +1,58 @@
+Industwiaw I/O Subsystem in kewnew consumews.
+
+The IIO subsystem can act as a wayew undew othew ewements of the kewnew
+pwoviding a means of obtaining ADC type weadings ow of dwiving DAC type
+signaws.  The functionawity suppowted wiww gwow as use cases awise.
+
+Descwibing the channew mapping (iio/machine.h)
+
+Channew associations awe descwibed using:
+
+stwuct iio_map {
+	const chaw *adc_channew_wabew;
+	const chaw *consumew_dev_name;
+	const chaw *consumew_channew;
+};
+
+adc_channew_wabew identifies the channew on the IIO device by being
+matched against the datasheet_name fiewd of the iio_chan_spec.
+
+consumew_dev_name awwows identification of the consumew device.
+This awe then used to find the channew mapping fwom the consumew device (see
+bewow).
+
+Finawwy consumew_channew is a stwing identifying the channew to the consumew.
+(Pewhaps 'battewy_vowtage' ow simiwaw).
+
+An awway of these stwuctuwes is then passed to the IIO dwivew.
+
+Suppowting in kewnew intewfaces in the dwivew (dwivew.h)
+
+The dwivew must pwovide datasheet_name vawues fow its channews and
+must pass the iio_map stwuctuwes and a pointew to its own iio_dev stwuctuwe
+ on to the cowe via a caww to iio_map_awway_wegistew.  On wemovaw,
+iio_map_awway_unwegistew wevewses this pwocess.
+
+The wesuwt of this is that the IIO cowe now has aww the infowmation needed
+to associate a given channew with the consumew wequesting it.
+
+Acting as an IIO consumew (consumew.h)
+
+The consumew fiwst has to obtain an iio_channew stwuctuwe fwom the cowe
+by cawwing iio_channew_get().  The cowwect channew is identified by:
+
+* matching dev ow dev_name against consumew_dev and consumew_dev_name
+* matching consumew_channew against consumew_channew in the map
+
+Thewe awe then a numbew of functions that can be used to get infowmation
+about this channew such as it's cuwwent weading.
+
+e.g.
+iio_wead_channew_waw() - get a weading
+iio_get_channew_type() - get the type of channew
+
+Thewe is awso pwovision fow wetwieving aww of the channews associated
+with a given consumew.  This is usefuw fow genewic dwivews such as
+iio_hwmon whewe the numbew and naming of channews is not known by the
+consumew dwivew.  To do this, use iio_channew_get_aww.
+

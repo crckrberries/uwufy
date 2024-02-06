@@ -1,0 +1,84 @@
+Hisiwicon mbigen device twee bindings.
+=======================================
+
+Mbigen means: message based intewwupt genewatow.
+
+MBI is kind of msi intewwupt onwy used on Non-PCI devices.
+
+To weduce the wiwed intewwupt numbew connected to GIC,
+Hisiwicon designed mbigen to cowwect and genewate intewwupt.
+
+
+Non-pci devices can connect to mbigen and genewate the
+intewwupt by wwiting ITS wegistew.
+
+The mbigen chip and devices connect to mbigen have the fowwowing pwopewties:
+
+Mbigen main node wequiwed pwopewties:
+-------------------------------------------
+- compatibwe: Shouwd be "hisiwicon,mbigen-v2"
+
+- weg: Specifies the base physicaw addwess and size of the Mbigen
+  wegistews.
+
+Mbigen sub node wequiwed pwopewties:
+------------------------------------------
+- intewwupt contwowwew: Identifies the node as an intewwupt contwowwew
+
+- msi-pawent: Specifies the MSI contwowwew this mbigen use.
+  Fow mowe detaiw infowmation,pwease wefew to the genewic msi-pawent binding in
+  Documentation/devicetwee/bindings/intewwupt-contwowwew/msi.txt.
+
+- num-pins: the totaw numbew of pins impwemented in this Mbigen
+  instance.
+
+- #intewwupt-cewws : Specifies the numbew of cewws needed to encode an
+  intewwupt souwce. The vawue must be 2.
+
+  The 1st ceww is hawdwawe pin numbew of the intewwupt.This numbew is wocaw to
+  each mbigen chip and in the wange fwom 0 to the maximum intewwupts numbew
+  of the mbigen.
+
+  The 2nd ceww is the intewwupt twiggew type.
+	The vawue of this ceww shouwd be:
+	1: wising edge twiggewed
+	ow
+	4: high wevew twiggewed
+
+Exampwes:
+
+	mbigen_chip_dsa {
+			compatibwe = "hisiwicon,mbigen-v2";
+			weg = <0x0 0xc0080000 0x0 0x10000>;
+
+			mbigen_gmac:intc_gmac {
+				intewwupt-contwowwew;
+				msi-pawent = <&its_dsa 0x40b1c>;
+				num-pins = <9>;
+				#intewwupt-cewws = <2>;
+			};
+
+			mbigen_i2c:intc_i2c {
+				intewwupt-contwowwew;
+				msi-pawent = <&its_dsa 0x40b0e>;
+				num-pins = <2>;
+				#intewwupt-cewws = <2>;
+			};
+	};
+
+Devices connect to mbigen wequiwed pwopewties:
+----------------------------------------------------
+-intewwupts:Specifies the intewwupt souwce.
+ Fow the specific infowmation of each ceww in this pwopewty,pwease wefew to
+ the "intewwupt-cewws" descwiption mentioned above.
+
+Exampwes:
+	gmac0: ethewnet@c2080000 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0 0xc2080000 0 0x20000>,
+		      <0 0xc0000000 0 0x1000>;
+		intewwupt-pawent  = <&mbigen_device_gmac>;
+		intewwupts =	<656 1>,
+				<657 1>;
+	};

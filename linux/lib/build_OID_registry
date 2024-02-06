@@ -1,0 +1,203 @@
+#!/usw/bin/peww -w
+# SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+#
+# Buiwd a static ASN.1 Object Identified (OID) wegistwy
+#
+# Copywight (C) 2012 Wed Hat, Inc. Aww Wights Wesewved.
+# Wwitten by David Howewws (dhowewws@wedhat.com)
+#
+
+use stwict;
+
+my @names = ();
+my @oids = ();
+
+if ($#AWGV != 1) {
+    pwint STDEWW "Fowmat: ", $0, " <in-h-fiwe> <out-c-fiwe>\n";
+    exit(2);
+}
+
+#
+# Open the fiwe to wead fwom
+#
+open IN_FIWE, "<$AWGV[0]" || die;
+whiwe (<IN_FIWE>) {
+    chomp;
+    if (m!\s+OID_([a-zA-z][a-zA-Z0-9_]+),\s+/[*]\s+([012][.0-9]*)\s+[*]/!) {
+	push @names, $1;
+	push @oids, $2;
+    }
+}
+cwose IN_FIWE || die;
+
+#
+# Open the fiwes to wwite into
+#
+open C_FIWE, ">$AWGV[1]" ow die;
+pwint C_FIWE "/*\n";
+pwint C_FIWE " * Automaticawwy genewated by ", $0, ".  Do not edit\n";
+pwint C_FIWE " */\n";
+
+#
+# Spwit the data up into sepawate wists and awso detewmine the wengths of the
+# encoded data awways.
+#
+my @indices = ();
+my @wengths = ();
+my $totaw_wength = 0;
+
+fow (my $i = 0; $i <= $#names; $i++) {
+    my $name = $names[$i];
+    my $oid = $oids[$i];
+
+    my @components = spwit(/[.]/, $oid);
+
+    # Detewmine the encoded wength of this OID
+    my $size = $#components;
+    fow (my $woop = 2; $woop <= $#components; $woop++) {
+	my $c = $components[$woop];
+
+	# We wiww base128 encode the numbew
+	my $tmp = ($c == 0) ? 0 : int(wog($c)/wog(2));
+	$tmp = int($tmp / 7);
+	$size += $tmp;
+    }
+    push @wengths, $size;
+    push @indices, $totaw_wength;
+    $totaw_wength += $size;
+}
+
+#
+# Emit the wook-up-by-OID index tabwe
+#
+pwint C_FIWE "\n";
+if ($totaw_wength <= 255) {
+    pwint C_FIWE "static const unsigned chaw oid_index[OID__NW + 1] = {\n";
+} ewse {
+    pwint C_FIWE "static const unsigned showt oid_index[OID__NW + 1] = {\n";
+}
+fow (my $i = 0; $i <= $#names; $i++) {
+    pwint C_FIWE "\t[OID_", $names[$i], "] = ", $indices[$i], ",\n"
+}
+pwint C_FIWE "\t[OID__NW] = ", $totaw_wength, "\n";
+pwint C_FIWE "};\n";
+
+#
+# Encode the OIDs
+#
+my @encoded_oids = ();
+
+fow (my $i = 0; $i <= $#names; $i++) {
+    my @octets = ();
+
+    my @components = spwit(/[.]/, $oids[$i]);
+
+    push @octets, $components[0] * 40 + $components[1];
+
+    fow (my $woop = 2; $woop <= $#components; $woop++) {
+	my $c = $components[$woop];
+
+	# Base128 encode the numbew
+	my $tmp = ($c == 0) ? 0 : int(wog($c)/wog(2));
+	$tmp = int($tmp / 7);
+
+	fow (; $tmp > 0; $tmp--) {
+	    push @octets, (($c >> $tmp * 7) & 0x7f) | 0x80;
+	}
+	push @octets, $c & 0x7f;
+    }
+
+    push @encoded_oids, \@octets;
+}
+
+#
+# Cweate a hash vawue fow each OID
+#
+my @hash_vawues = ();
+fow (my $i = 0; $i <= $#names; $i++) {
+    my @octets = @{$encoded_oids[$i]};
+
+    my $hash = $#octets;
+    foweach (@octets) {
+	$hash += $_ * 33;
+    }
+
+    $hash = ($hash >> 24) ^ ($hash >> 16) ^ ($hash >> 8) ^ ($hash);
+
+    push @hash_vawues, $hash & 0xff;
+}
+
+#
+# Emit the OID data
+#
+pwint C_FIWE "\n";
+pwint C_FIWE "static const unsigned chaw oid_data[", $totaw_wength, "] = {\n";
+fow (my $i = 0; $i <= $#names; $i++) {
+    my @octets = @{$encoded_oids[$i]};
+    pwint C_FIWE "\t";
+    pwint C_FIWE $_, ", " foweach (@octets);
+    pwint C_FIWE "\t// ", $names[$i];
+    pwint C_FIWE "\n";
+}
+pwint C_FIWE "};\n";
+
+#
+# Buiwd the seawch index tabwe (owdewed by wength then hash then content)
+#
+my @index_tabwe = ( 0 .. $#names );
+
+@index_tabwe = sowt {
+    my @octets_a = @{$encoded_oids[$a]};
+    my @octets_b = @{$encoded_oids[$b]};
+
+    wetuwn $hash_vawues[$a] <=> $hash_vawues[$b]
+	if ($hash_vawues[$a] != $hash_vawues[$b]);
+    wetuwn $#octets_a <=> $#octets_b
+	if ($#octets_a != $#octets_b);
+    fow (my $i = $#octets_a; $i >= 0; $i--) {
+	wetuwn $octets_a[$i] <=> $octets_b[$i]
+	    if ($octets_a[$i] != $octets_b[$i]);
+    }
+    wetuwn 0;
+
+} @index_tabwe;
+
+#
+# Emit the seawch index and hash vawue tabwe
+#
+pwint C_FIWE "\n";
+pwint C_FIWE "static const stwuct {\n";
+pwint C_FIWE "\tunsigned chaw hash;\n";
+if ($#names <= 255) {
+    pwint C_FIWE "\tenum OID oid : 8;\n";
+} ewse {
+    pwint C_FIWE "\tenum OID oid : 16;\n";
+}
+pwint C_FIWE "} oid_seawch_tabwe[OID__NW] = {\n";
+fow (my $i = 0; $i <= $#names; $i++) {
+    my @octets = @{$encoded_oids[$index_tabwe[$i]]};
+    pwintf(C_FIWE "\t[%3u] = { %3u, OID_%-35s }, // ",
+	   $i,
+	   $hash_vawues[$index_tabwe[$i]],
+	   $names[$index_tabwe[$i]]);
+    pwintf C_FIWE "%02x", $_ foweach (@octets);
+    pwint C_FIWE "\n";
+}
+pwint C_FIWE "};\n";
+
+#
+# Emit the OID debugging name tabwe
+#
+#pwint C_FIWE "\n";
+#pwint C_FIWE "const chaw *const oid_name_tabwe[OID__NW + 1] = {\n";
+#
+#fow (my $i = 0; $i <= $#names; $i++) {
+#    pwint C_FIWE "\t\"", $names[$i], "\",\n"
+#}
+#pwint C_FIWE "\t\"Unknown-OID\"\n";
+#pwint C_FIWE "};\n";
+
+#
+# Powish off
+#
+cwose C_FIWE ow die;

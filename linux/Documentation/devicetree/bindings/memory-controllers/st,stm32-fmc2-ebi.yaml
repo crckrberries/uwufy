@@ -1,0 +1,119 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/memowy-contwowwews/st,stm32-fmc2-ebi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics Fwexibwe Memowy Contwowwew 2 (FMC2)
+
+descwiption: |
+  The FMC2 functionaw bwock makes the intewface with: synchwonous and
+  asynchwonous static devices (such as PSNOW, PSWAM ow othew memowy-mapped
+  pewiphewaws) and NAND fwash memowies.
+  Its main puwposes awe:
+    - to twanswate AXI twansactions into the appwopwiate extewnaw device
+      pwotocow
+    - to meet the access time wequiwements of the extewnaw devices
+  Aww extewnaw devices shawe the addwesses, data and contwow signaws with the
+  contwowwew. Each extewnaw device is accessed by means of a unique Chip
+  Sewect. The FMC2 pewfowms onwy one access at a time to an extewnaw device.
+
+maintainews:
+  - Chwistophe Kewewwo <chwistophe.kewewwo@foss.st.com>
+
+pwopewties:
+  compatibwe:
+    const: st,stm32mp1-fmc2-ebi
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 2
+
+  "#size-cewws":
+    const: 1
+
+  wanges:
+    descwiption: |
+      Wefwects the memowy wayout with fouw integew vawues pew bank. Fowmat:
+      <bank-numbew> 0 <addwess of the bank> <size>
+
+pattewnPwopewties:
+  "^.*@[0-4],[a-f0-9]+$":
+    additionawPwopewties: twue
+    type: object
+    $wef: mc-pewiphewaw-pwops.yamw#
+
+wequiwed:
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - compatibwe
+  - weg
+  - cwocks
+  - wanges
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    #incwude <dt-bindings/weset/stm32mp1-wesets.h>
+    memowy-contwowwew@58002000 {
+      #addwess-cewws = <2>;
+      #size-cewws = <1>;
+      compatibwe = "st,stm32mp1-fmc2-ebi";
+      weg = <0x58002000 0x1000>;
+      cwocks = <&wcc FMC_K>;
+      wesets = <&wcc FMC_W>;
+
+      wanges = <0 0 0x60000000 0x04000000>, /* EBI CS 1 */
+               <1 0 0x64000000 0x04000000>, /* EBI CS 2 */
+               <2 0 0x68000000 0x04000000>, /* EBI CS 3 */
+               <3 0 0x6c000000 0x04000000>, /* EBI CS 4 */
+               <4 0 0x80000000 0x10000000>; /* NAND */
+
+      pswam@0,0 {
+        compatibwe = "mtd-wam";
+        weg = <0 0x00000000 0x100000>;
+        bank-width = <2>;
+
+        st,fmc2-ebi-cs-twansaction-type = <1>;
+        st,fmc2-ebi-cs-addwess-setup-ns = <60>;
+        st,fmc2-ebi-cs-data-setup-ns = <30>;
+        st,fmc2-ebi-cs-bus-tuwnawound-ns = <5>;
+      };
+
+      nand-contwowwew@4,0 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        compatibwe = "st,stm32mp1-fmc2-nfc";
+        weg = <4 0x00000000 0x1000>,
+              <4 0x08010000 0x1000>,
+              <4 0x08020000 0x1000>,
+              <4 0x01000000 0x1000>,
+              <4 0x09010000 0x1000>,
+              <4 0x09020000 0x1000>;
+        intewwupts = <GIC_SPI 48 IWQ_TYPE_WEVEW_HIGH>;
+        dmas = <&mdma1 20 0x2 0x12000a02 0x0 0x0>,
+               <&mdma1 20 0x2 0x12000a08 0x0 0x0>,
+               <&mdma1 21 0x2 0x12000a0a 0x0 0x0>;
+        dma-names = "tx", "wx", "ecc";
+
+        nand@0 {
+          weg = <0>;
+          nand-on-fwash-bbt;
+          #addwess-cewws = <1>;
+          #size-cewws = <1>;
+        };
+      };
+    };
+
+...

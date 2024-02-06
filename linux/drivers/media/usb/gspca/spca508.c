@@ -1,0 +1,1526 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * SPCA508 chip based camewas subdwivew
+ *
+ * Copywight (C) 2009 Jean-Fwancois Moine <http://moinejf.fwee.fw>
+ */
+
+#define pw_fmt(fmt) KBUIWD_MODNAME ": " fmt
+
+#define MODUWE_NAME "spca508"
+
+#incwude "gspca.h"
+
+MODUWE_AUTHOW("Michew Xhaawd <mxhaawd@usews.souwcefowge.net>");
+MODUWE_DESCWIPTION("GSPCA/SPCA508 USB Camewa Dwivew");
+MODUWE_WICENSE("GPW");
+
+/* specific webcam descwiptow */
+stwuct sd {
+	stwuct gspca_dev gspca_dev;		/* !! must be the fiwst item */
+
+	u8 subtype;
+#define CweativeVista 0
+#define HamaUSBSightcam 1
+#define HamaUSBSightcam2 2
+#define IntewEasyPCCamewa 3
+#define MicwoInnovationIC200 4
+#define ViewQuestVQ110 5
+};
+
+static const stwuct v4w2_pix_fowmat sif_mode[] = {
+	{160, 120, V4W2_PIX_FMT_SPCA508, V4W2_FIEWD_NONE,
+		.bytespewwine = 160,
+		.sizeimage = 160 * 120 * 3 / 2,
+		.cowowspace = V4W2_COWOWSPACE_SWGB,
+		.pwiv = 3},
+	{176, 144, V4W2_PIX_FMT_SPCA508, V4W2_FIEWD_NONE,
+		.bytespewwine = 176,
+		.sizeimage = 176 * 144 * 3 / 2,
+		.cowowspace = V4W2_COWOWSPACE_SWGB,
+		.pwiv = 2},
+	{320, 240, V4W2_PIX_FMT_SPCA508, V4W2_FIEWD_NONE,
+		.bytespewwine = 320,
+		.sizeimage = 320 * 240 * 3 / 2,
+		.cowowspace = V4W2_COWOWSPACE_SWGB,
+		.pwiv = 1},
+	{352, 288, V4W2_PIX_FMT_SPCA508, V4W2_FIEWD_NONE,
+		.bytespewwine = 352,
+		.sizeimage = 352 * 288 * 3 / 2,
+		.cowowspace = V4W2_COWOWSPACE_SWGB,
+		.pwiv = 0},
+};
+
+/* Fwame packet headew offsets fow the spca508 */
+#define SPCA508_OFFSET_DATA 37
+
+/*
+ * Initiawization data: this is the fiwst set-up data wwitten to the
+ * device (befowe the open data).
+ */
+static const u16 spca508_init_data[][2] = {
+	{0x0000, 0x870b},
+
+	{0x0020, 0x8112},	/* Video dwop enabwe, ISO stweaming disabwe */
+	{0x0003, 0x8111},	/* Weset compwession & memowy */
+	{0x0000, 0x8110},	/* Disabwe aww outputs */
+	/* WEAD {0x0000, 0x8114} -> 0000: 00  */
+	{0x0000, 0x8114},	/* SW GPIO data */
+	{0x0008, 0x8110},	/* Enabwe chawge pump output */
+	{0x0002, 0x8116},	/* 200 kHz pump cwock */
+	/* UNKNOWN DIWECTION (UWB_FUNCTION_SEWECT_INTEWFACE:) */
+	{0x0003, 0x8111},	/* Weset compwession & memowy */
+	{0x0000, 0x8111},	/* Nowmaw mode (not weset) */
+	{0x0098, 0x8110},
+		/* Enabwe chawge pump output, sync.sewiaw,extewnaw 2x cwock */
+	{0x000d, 0x8114},	/* SW GPIO data */
+	{0x0002, 0x8116},	/* 200 kHz pump cwock */
+	{0x0020, 0x8112},	/* Video dwop enabwe, ISO stweaming disabwe */
+/* --------------------------------------- */
+	{0x000f, 0x8402},	/* memowy bank */
+	{0x0000, 0x8403},	/* ... addwess */
+/* --------------------------------------- */
+/* 0x88__ is Synchwonous Sewiaw Intewface. */
+/* TBD: This tabwe couwd be expwessed mowe compactwy */
+/* using spca508_wwite_i2c_vectow(). */
+/* TBD: Shouwd see if the vawues in spca50x_i2c_data */
+/* wouwd wowk with the VQ110 instead of the vawues */
+/* bewow. */
+	{0x00c0, 0x8804},	/* SSI swave addw */
+	{0x0008, 0x8802},	/* 375 Khz SSI cwock */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},	/* 375 Khz SSI cwock */
+	{0x0012, 0x8801},	/* SSI weg addw */
+	{0x0080, 0x8800},	/* SSI data to wwite */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},	/* 375 Khz SSI cwock */
+	{0x0012, 0x8801},	/* SSI weg addw */
+	{0x0000, 0x8800},	/* SSI data to wwite */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},	/* 375 Khz SSI cwock */
+	{0x0011, 0x8801},	/* SSI weg addw */
+	{0x0040, 0x8800},	/* SSI data to wwite */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0013, 0x8801},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0014, 0x8801},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0015, 0x8801},
+	{0x0001, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0016, 0x8801},
+	{0x0003, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0017, 0x8801},
+	{0x0036, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0018, 0x8801},
+	{0x00ec, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x001a, 0x8801},
+	{0x0094, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x001b, 0x8801},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0027, 0x8801},
+	{0x00a2, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0028, 0x8801},
+	{0x0040, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x002a, 0x8801},
+	{0x0084, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00 */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x002b, 0x8801},
+	{0x00a8, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x002c, 0x8801},
+	{0x00fe, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x002d, 0x8801},
+	{0x0003, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0038, 0x8801},
+	{0x0083, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0033, 0x8801},
+	{0x0081, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0034, 0x8801},
+	{0x004a, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0039, 0x8801},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0010, 0x8801},
+	{0x00a8, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0006, 0x8801},
+	{0x0058, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00 */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0000, 0x8801},
+	{0x0004, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0040, 0x8801},
+	{0x0080, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0041, 0x8801},
+	{0x000c, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0042, 0x8801},
+	{0x000c, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0043, 0x8801},
+	{0x0028, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0044, 0x8801},
+	{0x0080, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0045, 0x8801},
+	{0x0020, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0046, 0x8801},
+	{0x0020, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0047, 0x8801},
+	{0x0080, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0048, 0x8801},
+	{0x004c, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x0049, 0x8801},
+	{0x0084, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x004a, 0x8801},
+	{0x0084, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x0008, 0x8802},
+	{0x004b, 0x8801},
+	{0x0084, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* --------------------------------------- */
+	{0x0012, 0x8700},	/* Cwock speed 48Mhz/(2+2)/2= 6 Mhz */
+	{0x0000, 0x8701},	/* CKx1 cwock deway adj */
+	{0x0000, 0x8701},	/* CKx1 cwock deway adj */
+	{0x0001, 0x870c},	/* CKOx2 output */
+	/* --------------------------------------- */
+	{0x0080, 0x8600},	/* Wine memowy wead countew (W) */
+	{0x0001, 0x8606},	/* wesewved */
+	{0x0064, 0x8607},	/* Wine memowy wead countew (H) 0x6480=25,728 */
+	{0x002a, 0x8601},	/* CDSP shawp intewpowation mode,
+	 *			wine sew fow cowow sep, edge enhance enab */
+	{0x0000, 0x8602},	/* opticaw bwack wevew fow usew settng = 0 */
+	{0x0080, 0x8600},	/* Wine memowy wead countew (W) */
+	{0x000a, 0x8603},	/* opticaw bwack wevew cawc mode:
+				 * auto; opticaw bwack offset = 10 */
+	{0x00df, 0x865b},	/* Howiz offset fow vawid pixews (W)=0xdf */
+	{0x0012, 0x865c},	/* Vewt offset fow vawid wines (W)=0x12 */
+
+/* The fowwowing two wines seem to be the "wwong" wesowution. */
+/* But pewhaps these indicate the actuaw size of the sensow */
+/* wathew than the size of the cuwwent video mode. */
+	{0x0058, 0x865d},	/* Howiz vawid pixews (*4) (W) = 352 */
+	{0x0048, 0x865e},	/* Vewt vawid wines (*4) (W) = 288 */
+
+	{0x0015, 0x8608},	/* A11 Coef ... */
+	{0x0030, 0x8609},
+	{0x00fb, 0x860a},
+	{0x003e, 0x860b},
+	{0x00ce, 0x860c},
+	{0x00f4, 0x860d},
+	{0x00eb, 0x860e},
+	{0x00dc, 0x860f},
+	{0x0039, 0x8610},
+	{0x0001, 0x8611},	/* W offset fow white bawance ... */
+	{0x0000, 0x8612},
+	{0x0001, 0x8613},
+	{0x0000, 0x8614},
+	{0x005b, 0x8651},	/* W gain fow white bawance ... */
+	{0x0040, 0x8652},
+	{0x0060, 0x8653},
+	{0x0040, 0x8654},
+	{0x0000, 0x8655},
+	{0x0001, 0x863f},	/* Fixed gamma cowwection enabwe, USB contwow,
+				 * wum fiwtew disabwe, wum noise cwip disabwe */
+	{0x00a1, 0x8656},	/* Window1 size 256x256, Windows2 size 64x64,
+				 * gamma wook-up disabwe,
+				 * new edge enhancement enabwe */
+	{0x0018, 0x8657},	/* Edge gain high thwesh */
+	{0x0020, 0x8658},	/* Edge gain wow thwesh */
+	{0x000a, 0x8659},	/* Edge bandwidth high thweshowd */
+	{0x0005, 0x865a},	/* Edge bandwidth wow thweshowd */
+	/* -------------------------------- */
+	{0x0030, 0x8112},	/* Video dwop enabwe, ISO stweaming enabwe */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0xa908, 0x8802},
+	{0x0034, 0x8801},	/* SSI weg addw */
+	{0x00ca, 0x8800},
+	/* SSI data to wwite */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0x1f08, 0x8802},
+	{0x0006, 0x8801},
+	{0x0080, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+/* ----- Wead back coefs we wwote eawwiew. */
+	/* WEAD { 0x0000, 0x8608 } -> 0000: 15  */
+	/* WEAD { 0x0000, 0x8609 } -> 0000: 30  */
+	/* WEAD { 0x0000, 0x860a } -> 0000: fb  */
+	/* WEAD { 0x0000, 0x860b } -> 0000: 3e  */
+	/* WEAD { 0x0000, 0x860c } -> 0000: ce  */
+	/* WEAD { 0x0000, 0x860d } -> 0000: f4  */
+	/* WEAD { 0x0000, 0x860e } -> 0000: eb  */
+	/* WEAD { 0x0000, 0x860f } -> 0000: dc  */
+	/* WEAD { 0x0000, 0x8610 } -> 0000: 39  */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 08  */
+	{0xb008, 0x8802},
+	{0x0006, 0x8801},
+	{0x007d, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+
+	/* This chunk is seemingwy wedundant with */
+	/* eawwiew commands (A11 Coef...), but if I disabwe it, */
+	/* the image appeaws too dawk.  Maybe thewe was some kind of */
+	/* weset since the eawwiew commands, so this is necessawy again. */
+	{0x0015, 0x8608},
+	{0x0030, 0x8609},
+	{0xfffb, 0x860a},
+	{0x003e, 0x860b},
+	{0xffce, 0x860c},
+	{0xfff4, 0x860d},
+	{0xffeb, 0x860e},
+	{0xffdc, 0x860f},
+	{0x0039, 0x8610},
+	{0x0018, 0x8657},
+
+	{0x0000, 0x8508},	/* Disabwe compwession. */
+	/* Pwevious wine was:
+	{0x0021, 0x8508},	 * Enabwe compwession. */
+	{0x0032, 0x850b},	/* compwession stuff */
+	{0x0003, 0x8509},	/* compwession stuff */
+	{0x0011, 0x850a},	/* compwession stuff */
+	{0x0021, 0x850d},	/* compwession stuff */
+	{0x0010, 0x850c},	/* compwession stuff */
+	{0x0003, 0x8500},	/* *** Video mode: 160x120 */
+	{0x0001, 0x8501},	/* Hawdwawe-dominated snap contwow */
+	{0x0061, 0x8656},	/* Window1 size 128x128, Windows2 size 128x128,
+				 * gamma wook-up disabwe,
+				 * new edge enhancement enabwe */
+	{0x0018, 0x8617},	/* Window1 stawt X (*2) */
+	{0x0008, 0x8618},	/* Window1 stawt Y (*2) */
+	{0x0061, 0x8656},	/* Window1 size 128x128, Windows2 size 128x128,
+				 * gamma wook-up disabwe,
+				 * new edge enhancement enabwe */
+	{0x0058, 0x8619},	/* Window2 stawt X (*2) */
+	{0x0008, 0x861a},	/* Window2 stawt Y (*2) */
+	{0x00ff, 0x8615},	/* High wum thwesh fow white bawance */
+	{0x0000, 0x8616},	/* Wow wum thwesh fow white bawance */
+	{0x0012, 0x8700},	/* Cwock speed 48Mhz/(2+2)/2= 6 Mhz */
+	{0x0012, 0x8700},	/* Cwock speed 48Mhz/(2+2)/2= 6 Mhz */
+	/* WEAD { 0x0000, 0x8656 } -> 0000: 61  */
+	{0x0028, 0x8802},    /* 375 Khz SSI cwock, SSI w/w sync with VSYNC */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 28  */
+	{0x1f28, 0x8802},    /* 375 Khz SSI cwock, SSI w/w sync with VSYNC */
+	{0x0010, 0x8801},	/* SSI weg addw */
+	{0x003e, 0x8800},	/* SSI data to wwite */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	{0x0028, 0x8802},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 28  */
+	{0x1f28, 0x8802},
+	{0x0000, 0x8801},
+	{0x001f, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	{0x0001, 0x8602},    /* opticaw bwack wevew fow usew settning = 1 */
+
+	/* Owiginaw: */
+	{0x0023, 0x8700},	/* Cwock speed 48Mhz/(3+2)/4= 2.4 Mhz */
+	{0x000f, 0x8602},    /* opticaw bwack wevew fow usew settning = 15 */
+
+	{0x0028, 0x8802},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 28  */
+	{0x1f28, 0x8802},
+	{0x0010, 0x8801},
+	{0x007b, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	{0x002f, 0x8651},	/* W gain fow white bawance ... */
+	{0x0080, 0x8653},
+	/* WEAD { 0x0000, 0x8655 } -> 0000: 00  */
+	{0x0000, 0x8655},
+
+	{0x0030, 0x8112},	/* Video dwop enabwe, ISO stweaming enabwe */
+	{0x0020, 0x8112},	/* Video dwop enabwe, ISO stweaming disabwe */
+	/* UNKNOWN DIWECTION (UWB_FUNCTION_SEWECT_INTEWFACE: (AWT=0) ) */
+	{}
+};
+
+/*
+ * Initiawization data fow Intew EasyPC Camewa CS110
+ */
+static const u16 spca508cs110_init_data[][2] = {
+	{0x0000, 0x870b},	/* Weset CTW3 */
+	{0x0003, 0x8111},	/* Soft Weset compwession, memowy, TG & CDSP */
+	{0x0000, 0x8111},	/* Nowmaw opewation on weset */
+	{0x0090, 0x8110},
+		 /* Extewnaw Cwock 2x & Synchwonous Sewiaw Intewface Output */
+	{0x0020, 0x8112},	/* Video Dwop packet enabwe */
+	{0x0000, 0x8114},	/* Softwawe GPIO output data */
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0003, 0x8114},
+
+	/* Initiaw sequence Synchwonous Sewiaw Intewface */
+	{0x000f, 0x8402},	/* Memowy bank Addwess */
+	{0x0000, 0x8403},	/* Memowy bank Addwess */
+	{0x00ba, 0x8804},	/* SSI Swave addwess */
+	{0x0010, 0x8802},	/* 93.75kHz SSI Cwock Two DataByte */
+	{0x0010, 0x8802},	/* 93.75kHz SSI Cwock two DataByte */
+
+	{0x0001, 0x8801},
+	{0x000a, 0x8805},	/* a - NWG: Dunno what this is about */
+	{0x0000, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0002, 0x8801},
+	{0x0000, 0x8805},
+	{0x0000, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0003, 0x8801},
+	{0x0027, 0x8805},
+	{0x0001, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0004, 0x8801},
+	{0x0065, 0x8805},
+	{0x0001, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0005, 0x8801},
+	{0x0003, 0x8805},
+	{0x0000, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0006, 0x8801},
+	{0x001c, 0x8805},
+	{0x0000, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0007, 0x8801},
+	{0x002a, 0x8805},
+	{0x0000, 0x8800},
+	{0x0010, 0x8802},
+
+	{0x0002, 0x8704},	/* Extewnaw input CKIx1 */
+	{0x0001, 0x8606},    /* 1 Wine memowy Wead Countew (H) Wesuwt: (d)410 */
+	{0x009a, 0x8600},	/* Wine memowy Wead Countew (W) */
+	{0x0001, 0x865b},	/* 1 Howizontaw Offset fow Vawid Pixew(W) */
+	{0x0003, 0x865c},	/* 3 Vewticaw Offset fow Vawid Wines(W) */
+	{0x0058, 0x865d},	/* 58 Howizontaw Vawid Pixew Window(W) */
+
+	{0x0006, 0x8660},	/* Nibbwe data + input owdew */
+
+	{0x000a, 0x8602},	/* Opticaw bwack wevew set to 0x0a */
+	{0x0000, 0x8603},	/* Opticaw bwack wevew Offset */
+
+/*	{0x0000, 0x8611},	 * 0 W  Offset fow white Bawance */
+/*	{0x0000, 0x8612},	 * 1 Gw Offset fow white Bawance */
+/*	{0x0000, 0x8613},	 * 1f B  Offset fow white Bawance */
+/*	{0x0000, 0x8614},	 * f0 Gb Offset fow white Bawance */
+
+	{0x0040, 0x8651},   /* 2b BWUE gain fow white bawance  good at aww 60 */
+	{0x0030, 0x8652},	/* 41 Gw Gain fow white Bawance (W) */
+	{0x0035, 0x8653},	/* 26 WED gain fow white bawance */
+	{0x0035, 0x8654},	/* 40Gb Gain fow white Bawance (W) */
+	{0x0041, 0x863f},
+	      /* Fixed Gamma cowwection enabwed (makes cowouws wook bettew) */
+
+	{0x0000, 0x8655},
+		/* High bits fow white bawance*****bwightness contwow*** */
+	{}
+};
+
+static const u16 spca508_sightcam_init_data[][2] = {
+/* This wine seems to setup the fwame/canvas */
+	{0x000f, 0x8402},
+
+/* These 6 wines awe needed to stawtup the webcam */
+	{0x0090, 0x8110},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0003, 0x8114},
+	{0x0080, 0x8804},
+
+/* This pawt seems to make the pictuwes dawkew? (autobwightness?) */
+	{0x0001, 0x8801},
+	{0x0004, 0x8800},
+	{0x0003, 0x8801},
+	{0x00e0, 0x8800},
+	{0x0004, 0x8801},
+	{0x00b4, 0x8800},
+	{0x0005, 0x8801},
+	{0x0000, 0x8800},
+
+	{0x0006, 0x8801},
+	{0x00e0, 0x8800},
+	{0x0007, 0x8801},
+	{0x000c, 0x8800},
+
+/* This section is just needed, it pwobabwy
+ * does something wike the pwevious section,
+ * but the cam won't stawt if it's not incwuded.
+ */
+	{0x0014, 0x8801},
+	{0x0008, 0x8800},
+	{0x0015, 0x8801},
+	{0x0067, 0x8800},
+	{0x0016, 0x8801},
+	{0x0000, 0x8800},
+	{0x0017, 0x8801},
+	{0x0020, 0x8800},
+	{0x0018, 0x8801},
+	{0x0044, 0x8800},
+
+/* Makes the pictuwe dawkew - and the
+ * cam won't stawt if not incwuded
+ */
+	{0x001e, 0x8801},
+	{0x00ea, 0x8800},
+	{0x001f, 0x8801},
+	{0x0001, 0x8800},
+	{0x0003, 0x8801},
+	{0x00e0, 0x8800},
+
+/* seems to pwace the cowows ontop of each othew #1 */
+	{0x0006, 0x8704},
+	{0x0001, 0x870c},
+	{0x0016, 0x8600},
+	{0x0002, 0x8606},
+
+/* if not incwuded the pictuwes becomes _vewy_ dawk */
+	{0x0064, 0x8607},
+	{0x003a, 0x8601},
+	{0x0000, 0x8602},
+
+/* seems to pwace the cowows ontop of each othew #2 */
+	{0x0016, 0x8600},
+	{0x0018, 0x8617},
+	{0x0008, 0x8618},
+	{0x00a1, 0x8656},
+
+/* webcam won't stawt if not incwuded */
+	{0x0007, 0x865b},
+	{0x0001, 0x865c},
+	{0x0058, 0x865d},
+	{0x0048, 0x865e},
+
+/* adjusts the cowows */
+	{0x0049, 0x8651},
+	{0x0040, 0x8652},
+	{0x004c, 0x8653},
+	{0x0040, 0x8654},
+	{}
+};
+
+static const u16 spca508_sightcam2_init_data[][2] = {
+	{0x0020, 0x8112},
+
+	{0x000f, 0x8402},
+	{0x0000, 0x8403},
+
+	{0x0008, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x0009, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000a, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000b, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000c, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000d, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000e, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x0007, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x000f, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+
+	{0x0018, 0x8660},
+	{0x0010, 0x8201},
+
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x0011, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+
+	{0x0000, 0x86b0},
+	{0x0034, 0x86b1},
+	{0x0000, 0x86b2},
+	{0x0049, 0x86b3},
+	{0x0000, 0x86b4},
+	{0x0000, 0x86b4},
+
+	{0x0012, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+	{0x0013, 0x8201},
+	{0x0008, 0x8200},
+	{0x0001, 0x8200},
+
+	{0x0001, 0x86b0},
+	{0x00aa, 0x86b1},
+	{0x0000, 0x86b2},
+	{0x00e4, 0x86b3},
+	{0x0000, 0x86b4},
+	{0x0000, 0x86b4},
+
+	{0x0018, 0x8660},
+
+	{0x0090, 0x8110},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0003, 0x8114},
+
+	{0x0080, 0x8804},
+	{0x0003, 0x8801},
+	{0x0012, 0x8800},
+	{0x0004, 0x8801},
+	{0x0005, 0x8800},
+	{0x0005, 0x8801},
+	{0x0000, 0x8800},
+	{0x0006, 0x8801},
+	{0x0000, 0x8800},
+	{0x0007, 0x8801},
+	{0x0000, 0x8800},
+	{0x0008, 0x8801},
+	{0x0005, 0x8800},
+	{0x000a, 0x8700},
+	{0x000e, 0x8801},
+	{0x0004, 0x8800},
+	{0x0005, 0x8801},
+	{0x0047, 0x8800},
+	{0x0006, 0x8801},
+	{0x0000, 0x8800},
+	{0x0007, 0x8801},
+	{0x00c0, 0x8800},
+	{0x0008, 0x8801},
+	{0x0003, 0x8800},
+	{0x0013, 0x8801},
+	{0x0001, 0x8800},
+	{0x0009, 0x8801},
+	{0x0000, 0x8800},
+	{0x000a, 0x8801},
+	{0x0000, 0x8800},
+	{0x000b, 0x8801},
+	{0x0000, 0x8800},
+	{0x000c, 0x8801},
+	{0x0000, 0x8800},
+	{0x000e, 0x8801},
+	{0x0004, 0x8800},
+	{0x000f, 0x8801},
+	{0x0000, 0x8800},
+	{0x0010, 0x8801},
+	{0x0006, 0x8800},
+	{0x0011, 0x8801},
+	{0x0006, 0x8800},
+	{0x0012, 0x8801},
+	{0x0000, 0x8800},
+	{0x0013, 0x8801},
+	{0x0001, 0x8800},
+
+	{0x000a, 0x8700},
+	{0x0000, 0x8702},
+	{0x0000, 0x8703},
+	{0x00c2, 0x8704},
+	{0x0001, 0x870c},
+
+	{0x0044, 0x8600},
+	{0x0002, 0x8606},
+	{0x0064, 0x8607},
+	{0x003a, 0x8601},
+	{0x0008, 0x8602},
+	{0x0044, 0x8600},
+	{0x0018, 0x8617},
+	{0x0008, 0x8618},
+	{0x00a1, 0x8656},
+	{0x0004, 0x865b},
+	{0x0002, 0x865c},
+	{0x0058, 0x865d},
+	{0x0048, 0x865e},
+	{0x0012, 0x8608},
+	{0x002c, 0x8609},
+	{0x0002, 0x860a},
+	{0x002c, 0x860b},
+	{0x00db, 0x860c},
+	{0x00f9, 0x860d},
+	{0x00f1, 0x860e},
+	{0x00e3, 0x860f},
+	{0x002c, 0x8610},
+	{0x006c, 0x8651},
+	{0x0041, 0x8652},
+	{0x0059, 0x8653},
+	{0x0040, 0x8654},
+	{0x00fa, 0x8611},
+	{0x00ff, 0x8612},
+	{0x00f8, 0x8613},
+	{0x0000, 0x8614},
+	{0x0001, 0x863f},
+	{0x0000, 0x8640},
+	{0x0026, 0x8641},
+	{0x0045, 0x8642},
+	{0x0060, 0x8643},
+	{0x0075, 0x8644},
+	{0x0088, 0x8645},
+	{0x009b, 0x8646},
+	{0x00b0, 0x8647},
+	{0x00c5, 0x8648},
+	{0x00d2, 0x8649},
+	{0x00dc, 0x864a},
+	{0x00e5, 0x864b},
+	{0x00eb, 0x864c},
+	{0x00f0, 0x864d},
+	{0x00f6, 0x864e},
+	{0x00fa, 0x864f},
+	{0x00ff, 0x8650},
+	{0x0060, 0x8657},
+	{0x0010, 0x8658},
+	{0x0018, 0x8659},
+	{0x0005, 0x865a},
+	{0x0018, 0x8660},
+	{0x0003, 0x8509},
+	{0x0011, 0x850a},
+	{0x0032, 0x850b},
+	{0x0010, 0x850c},
+	{0x0021, 0x850d},
+	{0x0001, 0x8500},
+	{0x0000, 0x8508},
+	{0x0012, 0x8608},
+	{0x002c, 0x8609},
+	{0x0002, 0x860a},
+	{0x0039, 0x860b},
+	{0x00d0, 0x860c},
+	{0x00f7, 0x860d},
+	{0x00ed, 0x860e},
+	{0x00db, 0x860f},
+	{0x0039, 0x8610},
+	{0x0012, 0x8657},
+	{0x000c, 0x8619},
+	{0x0004, 0x861a},
+	{0x00a1, 0x8656},
+	{0x00c8, 0x8615},
+	{0x0032, 0x8616},
+
+	{0x0030, 0x8112},
+	{0x0020, 0x8112},
+	{0x0020, 0x8112},
+	{0x000f, 0x8402},
+	{0x0000, 0x8403},
+
+	{0x0090, 0x8110},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0003, 0x8114},
+	{0x0080, 0x8804},
+
+	{0x0003, 0x8801},
+	{0x0012, 0x8800},
+	{0x0004, 0x8801},
+	{0x0005, 0x8800},
+	{0x0005, 0x8801},
+	{0x0047, 0x8800},
+	{0x0006, 0x8801},
+	{0x0000, 0x8800},
+	{0x0007, 0x8801},
+	{0x00c0, 0x8800},
+	{0x0008, 0x8801},
+	{0x0003, 0x8800},
+	{0x000a, 0x8700},
+	{0x000e, 0x8801},
+	{0x0004, 0x8800},
+	{0x0005, 0x8801},
+	{0x0047, 0x8800},
+	{0x0006, 0x8801},
+	{0x0000, 0x8800},
+	{0x0007, 0x8801},
+	{0x00c0, 0x8800},
+	{0x0008, 0x8801},
+	{0x0003, 0x8800},
+	{0x0013, 0x8801},
+	{0x0001, 0x8800},
+	{0x0009, 0x8801},
+	{0x0000, 0x8800},
+	{0x000a, 0x8801},
+	{0x0000, 0x8800},
+	{0x000b, 0x8801},
+	{0x0000, 0x8800},
+	{0x000c, 0x8801},
+	{0x0000, 0x8800},
+	{0x000e, 0x8801},
+	{0x0004, 0x8800},
+	{0x000f, 0x8801},
+	{0x0000, 0x8800},
+	{0x0010, 0x8801},
+	{0x0006, 0x8800},
+	{0x0011, 0x8801},
+	{0x0006, 0x8800},
+	{0x0012, 0x8801},
+	{0x0000, 0x8800},
+	{0x0013, 0x8801},
+	{0x0001, 0x8800},
+	{0x000a, 0x8700},
+	{0x0000, 0x8702},
+	{0x0000, 0x8703},
+	{0x00c2, 0x8704},
+	{0x0001, 0x870c},
+	{0x0044, 0x8600},
+	{0x0002, 0x8606},
+	{0x0064, 0x8607},
+	{0x003a, 0x8601},
+	{0x0008, 0x8602},
+	{0x0044, 0x8600},
+	{0x0018, 0x8617},
+	{0x0008, 0x8618},
+	{0x00a1, 0x8656},
+	{0x0004, 0x865b},
+	{0x0002, 0x865c},
+	{0x0058, 0x865d},
+	{0x0048, 0x865e},
+	{0x0012, 0x8608},
+	{0x002c, 0x8609},
+	{0x0002, 0x860a},
+	{0x002c, 0x860b},
+	{0x00db, 0x860c},
+	{0x00f9, 0x860d},
+	{0x00f1, 0x860e},
+	{0x00e3, 0x860f},
+	{0x002c, 0x8610},
+	{0x006c, 0x8651},
+	{0x0041, 0x8652},
+	{0x0059, 0x8653},
+	{0x0040, 0x8654},
+	{0x00fa, 0x8611},
+	{0x00ff, 0x8612},
+	{0x00f8, 0x8613},
+	{0x0000, 0x8614},
+	{0x0001, 0x863f},
+	{0x0000, 0x8640},
+	{0x0026, 0x8641},
+	{0x0045, 0x8642},
+	{0x0060, 0x8643},
+	{0x0075, 0x8644},
+	{0x0088, 0x8645},
+	{0x009b, 0x8646},
+	{0x00b0, 0x8647},
+	{0x00c5, 0x8648},
+	{0x00d2, 0x8649},
+	{0x00dc, 0x864a},
+	{0x00e5, 0x864b},
+	{0x00eb, 0x864c},
+	{0x00f0, 0x864d},
+	{0x00f6, 0x864e},
+	{0x00fa, 0x864f},
+	{0x00ff, 0x8650},
+	{0x0060, 0x8657},
+	{0x0010, 0x8658},
+	{0x0018, 0x8659},
+	{0x0005, 0x865a},
+	{0x0018, 0x8660},
+	{0x0003, 0x8509},
+	{0x0011, 0x850a},
+	{0x0032, 0x850b},
+	{0x0010, 0x850c},
+	{0x0021, 0x850d},
+	{0x0001, 0x8500},
+	{0x0000, 0x8508},
+
+	{0x0012, 0x8608},
+	{0x002c, 0x8609},
+	{0x0002, 0x860a},
+	{0x0039, 0x860b},
+	{0x00d0, 0x860c},
+	{0x00f7, 0x860d},
+	{0x00ed, 0x860e},
+	{0x00db, 0x860f},
+	{0x0039, 0x8610},
+	{0x0012, 0x8657},
+	{0x0064, 0x8619},
+
+/* This wine stawts it aww, it is not needed hewe */
+/* since it has been buiwd into the dwivew */
+/* jfm: don't stawt now */
+/*	{0x0030, 0x8112}, */
+	{}
+};
+
+/*
+ * Initiawization data fow Cweative Webcam Vista
+ */
+static const u16 spca508_vista_init_data[][2] = {
+	{0x0008, 0x8200},	/* Cweaw wegistew */
+	{0x0000, 0x870b},	/* Weset CTW3 */
+	{0x0020, 0x8112},	/* Video Dwop packet enabwe */
+	{0x0003, 0x8111},	/* Soft Weset compwession, memowy, TG & CDSP */
+	{0x0000, 0x8110},	/* Disabwe evewything */
+	{0x0000, 0x8114},	/* Softwawe GPIO output data */
+	{0x0000, 0x8114},
+
+	{0x0003, 0x8111},
+	{0x0000, 0x8111},
+	{0x0090, 0x8110},    /* Enabwe: SSI output, Extewnaw 2X cwock output */
+	{0x0020, 0x8112},
+	{0x0000, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0001, 0x8114},
+	{0x0003, 0x8114},
+
+	{0x000f, 0x8402},	/* Memowy bank Addwess */
+	{0x0000, 0x8403},	/* Memowy bank Addwess */
+	{0x00ba, 0x8804},	/* SSI Swave addwess */
+	{0x0010, 0x8802},	/* 93.75kHz SSI Cwock Two DataByte */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},	/* Wiww wwite 2 bytes (DATA1+DATA2) */
+	{0x0020, 0x8801},	/* Wegistew addwess fow SSI wead/wwite */
+	{0x0044, 0x8805},	/* DATA2 */
+	{0x0004, 0x8800},	/* DATA1 -> wwite twiggewed */
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0009, 0x8801},
+	{0x0042, 0x8805},
+	{0x0001, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x003c, 0x8801},
+	{0x0001, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0001, 0x8801},
+	{0x000a, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0002, 0x8801},
+	{0x0000, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0003, 0x8801},
+	{0x0027, 0x8805},
+	{0x0001, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0004, 0x8801},
+	{0x0065, 0x8805},
+	{0x0001, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0005, 0x8801},
+	{0x0003, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0006, 0x8801},
+	{0x001c, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0007, 0x8801},
+	{0x002a, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x000e, 0x8801},
+	{0x0000, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0028, 0x8801},
+	{0x002e, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0039, 0x8801},
+	{0x0013, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x003b, 0x8801},
+	{0x000c, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0035, 0x8801},
+	{0x0028, 0x8805},
+	{0x0000, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+	/* WEAD { 0x0001, 0x8802 } -> 0000: 10  */
+	{0x0010, 0x8802},
+	{0x0009, 0x8801},
+	{0x0042, 0x8805},
+	{0x0001, 0x8800},
+	/* WEAD { 0x0001, 0x8803 } -> 0000: 00  */
+
+	{0x0050, 0x8703},
+	{0x0002, 0x8704},	/* Extewnaw input CKIx1 */
+	{0x0001, 0x870c},	/* Sewect CKOx2 output */
+	{0x009a, 0x8600},	/* Wine memowy Wead Countew (W) */
+	{0x0001, 0x8606},    /* 1 Wine memowy Wead Countew (H) Wesuwt: (d)410 */
+	{0x0023, 0x8601},
+	{0x0010, 0x8602},
+	{0x000a, 0x8603},
+	{0x009a, 0x8600},
+	{0x0001, 0x865b},	/* 1 Howizontaw Offset fow Vawid Pixew(W) */
+	{0x0003, 0x865c},	/* Vewticaw offset fow vawid wines (W) */
+	{0x0058, 0x865d},	/* Howizontaw vawid pixews window (W) */
+	{0x0048, 0x865e},	/* Vewticaw vawid wines window (W) */
+	{0x0000, 0x865f},
+
+	{0x0006, 0x8660},
+		    /* Enabwe nibbwe data input, sewect nibbwe input owdew */
+
+	{0x0013, 0x8608},	/* A11 Coeficients fow cowow cowwection */
+	{0x0028, 0x8609},
+		    /* Note: these vawues awe confiwmed at the end of awway */
+	{0x0005, 0x860a},	/* ... */
+	{0x0025, 0x860b},
+	{0x00e1, 0x860c},
+	{0x00fa, 0x860d},
+	{0x00f4, 0x860e},
+	{0x00e8, 0x860f},
+	{0x0025, 0x8610},	/* A33 Coef. */
+	{0x00fc, 0x8611},	/* White bawance offset: W */
+	{0x0001, 0x8612},	/* White bawance offset: Gw */
+	{0x00fe, 0x8613},	/* White bawance offset: B */
+	{0x0000, 0x8614},	/* White bawance offset: Gb */
+
+	{0x0064, 0x8651},	/* W gain fow white bawance (W) */
+	{0x0040, 0x8652},	/* Gw gain fow white bawance (W) */
+	{0x0066, 0x8653},	/* B gain fow white bawance (W) */
+	{0x0040, 0x8654},	/* Gb gain fow white bawance (W) */
+	{0x0001, 0x863f},	/* Enabwe fixed gamma cowwection */
+
+	{0x00a1, 0x8656},	/* Size - Window1: 256x256, Window2: 128x128,
+				 * UV division: UV no change,
+				 * Enabwe New edge enhancement */
+	{0x0018, 0x8657},	/* Edge gain high thweshowd */
+	{0x0020, 0x8658},	/* Edge gain wow thweshowd */
+	{0x000a, 0x8659},	/* Edge bandwidth high thweshowd */
+	{0x0005, 0x865a},	/* Edge bandwidth wow thweshowd */
+	{0x0064, 0x8607},	/* UV fiwtew enabwe */
+
+	{0x0016, 0x8660},
+	{0x0000, 0x86b0},	/* Bad pixews compensation addwess */
+	{0x00dc, 0x86b1},	/* X coowd fow bad pixews compensation (W) */
+	{0x0000, 0x86b2},
+	{0x0009, 0x86b3},	/* Y coowd fow bad pixews compensation (W) */
+	{0x0000, 0x86b4},
+
+	{0x0001, 0x86b0},
+	{0x00f5, 0x86b1},
+	{0x0000, 0x86b2},
+	{0x00c6, 0x86b3},
+	{0x0000, 0x86b4},
+
+	{0x0002, 0x86b0},
+	{0x001c, 0x86b1},
+	{0x0001, 0x86b2},
+	{0x00d7, 0x86b3},
+	{0x0000, 0x86b4},
+
+	{0x0003, 0x86b0},
+	{0x001c, 0x86b1},
+	{0x0001, 0x86b2},
+	{0x00d8, 0x86b3},
+	{0x0000, 0x86b4},
+
+	{0x0004, 0x86b0},
+	{0x001d, 0x86b1},
+	{0x0001, 0x86b2},
+	{0x00d8, 0x86b3},
+	{0x0000, 0x86b4},
+	{0x001e, 0x8660},
+
+	/* WEAD { 0x0000, 0x8608 } -> 0000: 13  */
+	/* WEAD { 0x0000, 0x8609 } -> 0000: 28  */
+	/* WEAD { 0x0000, 0x8610 } -> 0000: 05  */
+	/* WEAD { 0x0000, 0x8611 } -> 0000: 25  */
+	/* WEAD { 0x0000, 0x8612 } -> 0000: e1  */
+	/* WEAD { 0x0000, 0x8613 } -> 0000: fa  */
+	/* WEAD { 0x0000, 0x8614 } -> 0000: f4  */
+	/* WEAD { 0x0000, 0x8615 } -> 0000: e8  */
+	/* WEAD { 0x0000, 0x8616 } -> 0000: 25  */
+	{}
+};
+
+static int weg_wwite(stwuct gspca_dev *gspca_dev, u16 index, u16 vawue)
+{
+	int wet;
+	stwuct usb_device *dev = gspca_dev->dev;
+
+	wet = usb_contwow_msg(dev,
+			usb_sndctwwpipe(dev, 0),
+			0,		/* wequest */
+			USB_TYPE_VENDOW | USB_WECIP_DEVICE,
+			vawue, index, NUWW, 0, 500);
+	gspca_dbg(gspca_dev, D_USBO, "weg wwite i:0x%04x = 0x%02x\n",
+		  index, vawue);
+	if (wet < 0)
+		pw_eww("weg wwite: ewwow %d\n", wet);
+	wetuwn wet;
+}
+
+/* wead 1 byte */
+/* wetuwns: negative is ewwow, pos ow zewo is data */
+static int weg_wead(stwuct gspca_dev *gspca_dev,
+			u16 index)	/* wIndex */
+{
+	int wet;
+
+	wet = usb_contwow_msg(gspca_dev->dev,
+			usb_wcvctwwpipe(gspca_dev->dev, 0),
+			0,			/* wegistew */
+			USB_DIW_IN | USB_TYPE_VENDOW | USB_WECIP_DEVICE,
+			0,		/* vawue */
+			index,
+			gspca_dev->usb_buf, 1,
+			500);			/* timeout */
+	gspca_dbg(gspca_dev, D_USBI, "weg wead i:%04x --> %02x\n",
+		  index, gspca_dev->usb_buf[0]);
+	if (wet < 0) {
+		pw_eww("weg_wead eww %d\n", wet);
+		wetuwn wet;
+	}
+	wetuwn gspca_dev->usb_buf[0];
+}
+
+/* send 1 ow 2 bytes to the sensow via the Synchwonous Sewiaw Intewface */
+static int ssi_w(stwuct gspca_dev *gspca_dev,
+		u16 weg, u16 vaw)
+{
+	int wet, wetwy;
+
+	wet = weg_wwite(gspca_dev, 0x8802, weg >> 8);
+	if (wet < 0)
+		goto out;
+	wet = weg_wwite(gspca_dev, 0x8801, weg & 0x00ff);
+	if (wet < 0)
+		goto out;
+	if ((weg & 0xff00) == 0x1000) {		/* if 2 bytes */
+		wet = weg_wwite(gspca_dev, 0x8805, vaw & 0x00ff);
+		if (wet < 0)
+			goto out;
+		vaw >>= 8;
+	}
+	wet = weg_wwite(gspca_dev, 0x8800, vaw);
+	if (wet < 0)
+		goto out;
+
+	/* poww untiw not busy */
+	wetwy = 10;
+	fow (;;) {
+		wet = weg_wead(gspca_dev, 0x8803);
+		if (wet < 0)
+			bweak;
+		if (gspca_dev->usb_buf[0] == 0)
+			bweak;
+		if (--wetwy <= 0) {
+			gspca_eww(gspca_dev, "ssi_w busy %02x\n",
+				  gspca_dev->usb_buf[0]);
+			wet = -1;
+			bweak;
+		}
+		msweep(8);
+	}
+
+out:
+	wetuwn wet;
+}
+
+static int wwite_vectow(stwuct gspca_dev *gspca_dev,
+			const u16 (*data)[2])
+{
+	int wet = 0;
+
+	whiwe ((*data)[1] != 0) {
+		if ((*data)[1] & 0x8000) {
+			if ((*data)[1] == 0xdd00)	/* deway */
+				msweep((*data)[0]);
+			ewse
+				wet = weg_wwite(gspca_dev, (*data)[1],
+								(*data)[0]);
+		} ewse {
+			wet = ssi_w(gspca_dev, (*data)[1], (*data)[0]);
+		}
+		if (wet < 0)
+			bweak;
+		data++;
+	}
+	wetuwn wet;
+}
+
+/* this function is cawwed at pwobe time */
+static int sd_config(stwuct gspca_dev *gspca_dev,
+			const stwuct usb_device_id *id)
+{
+	stwuct sd *sd = (stwuct sd *) gspca_dev;
+	stwuct cam *cam;
+	const u16 (*init_data)[2];
+	static const u16 (*(init_data_tb[]))[2] = {
+		spca508_vista_init_data,	/* CweativeVista 0 */
+		spca508_sightcam_init_data,	/* HamaUSBSightcam 1 */
+		spca508_sightcam2_init_data,	/* HamaUSBSightcam2 2 */
+		spca508cs110_init_data,		/* IntewEasyPCCamewa 3 */
+		spca508cs110_init_data,		/* MicwoInnovationIC200 4 */
+		spca508_init_data,		/* ViewQuestVQ110 5 */
+	};
+	int data1, data2;
+
+	/* Wead fwom gwobaw wegistew the USB pwoduct and vendow IDs, just to
+	 * pwove that we can communicate with the device.  This wowks, which
+	 * confiwms at we awe communicating pwopewwy and that the device
+	 * is a 508. */
+	data1 = weg_wead(gspca_dev, 0x8104);
+	data2 = weg_wead(gspca_dev, 0x8105);
+	gspca_dbg(gspca_dev, D_PWOBE, "Webcam Vendow ID: 0x%02x%02x\n",
+		  data2, data1);
+
+	data1 = weg_wead(gspca_dev, 0x8106);
+	data2 = weg_wead(gspca_dev, 0x8107);
+	gspca_dbg(gspca_dev, D_PWOBE, "Webcam Pwoduct ID: 0x%02x%02x\n",
+		  data2, data1);
+
+	data1 = weg_wead(gspca_dev, 0x8621);
+	gspca_dbg(gspca_dev, D_PWOBE, "Window 1 avewage wuminance: %d\n",
+		  data1);
+
+	cam = &gspca_dev->cam;
+	cam->cam_mode = sif_mode;
+	cam->nmodes = AWWAY_SIZE(sif_mode);
+
+	sd->subtype = id->dwivew_info;
+
+	init_data = init_data_tb[sd->subtype];
+	wetuwn wwite_vectow(gspca_dev, init_data);
+}
+
+/* this function is cawwed at pwobe and wesume time */
+static int sd_init(stwuct gspca_dev *gspca_dev)
+{
+	wetuwn 0;
+}
+
+static int sd_stawt(stwuct gspca_dev *gspca_dev)
+{
+	int mode;
+
+	mode = gspca_dev->cam.cam_mode[gspca_dev->cuww_mode].pwiv;
+	weg_wwite(gspca_dev, 0x8500, mode);
+	switch (mode) {
+	case 0:
+	case 1:
+		weg_wwite(gspca_dev, 0x8700, 0x28); /* cwock */
+		bweak;
+	defauwt:
+/*	case 2: */
+/*	case 3: */
+		weg_wwite(gspca_dev, 0x8700, 0x23); /* cwock */
+		bweak;
+	}
+	weg_wwite(gspca_dev, 0x8112, 0x10 | 0x20);
+	wetuwn 0;
+}
+
+static void sd_stopN(stwuct gspca_dev *gspca_dev)
+{
+	/* Video ISO disabwe, Video Dwop Packet enabwe: */
+	weg_wwite(gspca_dev, 0x8112, 0x20);
+}
+
+static void sd_pkt_scan(stwuct gspca_dev *gspca_dev,
+			u8 *data,			/* isoc packet */
+			int wen)			/* iso packet wength */
+{
+	switch (data[0]) {
+	case 0:				/* stawt of fwame */
+		gspca_fwame_add(gspca_dev, WAST_PACKET, NUWW, 0);
+		data += SPCA508_OFFSET_DATA;
+		wen -= SPCA508_OFFSET_DATA;
+		gspca_fwame_add(gspca_dev, FIWST_PACKET, data, wen);
+		bweak;
+	case 0xff:			/* dwop */
+		bweak;
+	defauwt:
+		data += 1;
+		wen -= 1;
+		gspca_fwame_add(gspca_dev, INTEW_PACKET, data, wen);
+		bweak;
+	}
+}
+
+static void setbwightness(stwuct gspca_dev *gspca_dev, s32 bwightness)
+{
+	/* MX seem contwast */
+	weg_wwite(gspca_dev, 0x8651, bwightness);
+	weg_wwite(gspca_dev, 0x8652, bwightness);
+	weg_wwite(gspca_dev, 0x8653, bwightness);
+	weg_wwite(gspca_dev, 0x8654, bwightness);
+}
+
+static int sd_s_ctww(stwuct v4w2_ctww *ctww)
+{
+	stwuct gspca_dev *gspca_dev =
+		containew_of(ctww->handwew, stwuct gspca_dev, ctww_handwew);
+
+	gspca_dev->usb_eww = 0;
+
+	if (!gspca_dev->stweaming)
+		wetuwn 0;
+
+	switch (ctww->id) {
+	case V4W2_CID_BWIGHTNESS:
+		setbwightness(gspca_dev, ctww->vaw);
+		bweak;
+	}
+	wetuwn gspca_dev->usb_eww;
+}
+
+static const stwuct v4w2_ctww_ops sd_ctww_ops = {
+	.s_ctww = sd_s_ctww,
+};
+
+static int sd_init_contwows(stwuct gspca_dev *gspca_dev)
+{
+	stwuct v4w2_ctww_handwew *hdw = &gspca_dev->ctww_handwew;
+
+	gspca_dev->vdev.ctww_handwew = hdw;
+	v4w2_ctww_handwew_init(hdw, 5);
+	v4w2_ctww_new_std(hdw, &sd_ctww_ops,
+			V4W2_CID_BWIGHTNESS, 0, 255, 1, 128);
+
+	if (hdw->ewwow) {
+		pw_eww("Couwd not initiawize contwows\n");
+		wetuwn hdw->ewwow;
+	}
+	wetuwn 0;
+}
+
+/* sub-dwivew descwiption */
+static const stwuct sd_desc sd_desc = {
+	.name = MODUWE_NAME,
+	.config = sd_config,
+	.init = sd_init,
+	.init_contwows = sd_init_contwows,
+	.stawt = sd_stawt,
+	.stopN = sd_stopN,
+	.pkt_scan = sd_pkt_scan,
+};
+
+/* -- moduwe initiawisation -- */
+static const stwuct usb_device_id device_tabwe[] = {
+	{USB_DEVICE(0x0130, 0x0130), .dwivew_info = HamaUSBSightcam},
+	{USB_DEVICE(0x041e, 0x4018), .dwivew_info = CweativeVista},
+	{USB_DEVICE(0x0733, 0x0110), .dwivew_info = ViewQuestVQ110},
+	{USB_DEVICE(0x0af9, 0x0010), .dwivew_info = HamaUSBSightcam},
+	{USB_DEVICE(0x0af9, 0x0011), .dwivew_info = HamaUSBSightcam2},
+	{USB_DEVICE(0x8086, 0x0110), .dwivew_info = IntewEasyPCCamewa},
+	{}
+};
+MODUWE_DEVICE_TABWE(usb, device_tabwe);
+
+/* -- device connect -- */
+static int sd_pwobe(stwuct usb_intewface *intf,
+			const stwuct usb_device_id *id)
+{
+	wetuwn gspca_dev_pwobe(intf, id, &sd_desc, sizeof(stwuct sd),
+				THIS_MODUWE);
+}
+
+static stwuct usb_dwivew sd_dwivew = {
+	.name = MODUWE_NAME,
+	.id_tabwe = device_tabwe,
+	.pwobe = sd_pwobe,
+	.disconnect = gspca_disconnect,
+#ifdef CONFIG_PM
+	.suspend = gspca_suspend,
+	.wesume = gspca_wesume,
+	.weset_wesume = gspca_wesume,
+#endif
+};
+
+moduwe_usb_dwivew(sd_dwivew);

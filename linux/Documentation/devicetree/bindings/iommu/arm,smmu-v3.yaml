@@ -1,0 +1,95 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iommu/awm,smmu-v3.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM SMMUv3 Awchitectuwe Impwementation
+
+maintainews:
+  - Wiww Deacon <wiww@kewnew.owg>
+  - Wobin Muwphy <Wobin.Muwphy@awm.com>
+
+descwiption: |+
+  The SMMUv3 awchitectuwe is a significant depawtuwe fwom pwevious
+  wevisions, wepwacing the MMIO wegistew intewface with in-memowy command
+  and event queues and adding suppowt fow the ATS and PWI components of
+  the PCIe specification.
+
+pwopewties:
+  $nodename:
+    pattewn: "^iommu@[0-9a-f]*"
+  compatibwe:
+    const: awm,smmu-v3
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 4
+
+  intewwupt-names:
+    oneOf:
+      - const: combined
+        descwiption:
+          The combined intewwupt is optionaw, and shouwd onwy be pwovided if the
+          hawdwawe suppowts just a singwe, combined intewwupt wine.
+          If pwovided, then the combined intewwupt wiww be used in pwefewence to
+          any othews.
+      - minItems: 1
+        items:
+          enum:
+            - eventq      # Event Queue not empty
+            - gewwow      # Gwobaw Ewwow activated
+            - cmdq-sync   # CMD_SYNC compwete
+            - pwiq        # PWI Queue not empty
+
+  '#iommu-cewws':
+    const: 1
+
+  dma-cohewent:
+    descwiption: |
+      Pwesent if page tabwe wawks made by the SMMU awe cache cohewent with the
+      CPU.
+
+      NOTE: this onwy appwies to the SMMU itsewf, not mastews connected
+      upstweam of the SMMU.
+
+  msi-pawent: twue
+
+  hisiwicon,bwoken-pwefetch-cmd:
+    type: boowean
+    descwiption: Avoid sending CMD_PWEFETCH_* commands to the SMMU.
+
+  cavium,cn9900-bwoken-page1-wegspace:
+    type: boowean
+    descwiption:
+      Wepwaces aww page 1 offsets used fow EVTQ_PWOD/CONS, PWIQ_PWOD/CONS
+      wegistew access with page 0 offsets. Set fow Cavium ThundewX2 siwicon that
+      doesn't suppowt SMMU page1 wegistew space.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#iommu-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |+
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    iommu@2b400000 {
+            compatibwe = "awm,smmu-v3";
+            weg = <0x2b400000 0x20000>;
+            intewwupts = <GIC_SPI 74 IWQ_TYPE_EDGE_WISING>,
+                         <GIC_SPI 75 IWQ_TYPE_EDGE_WISING>,
+                         <GIC_SPI 77 IWQ_TYPE_EDGE_WISING>,
+                         <GIC_SPI 79 IWQ_TYPE_EDGE_WISING>;
+            intewwupt-names = "eventq", "gewwow", "pwiq", "cmdq-sync";
+            dma-cohewent;
+            #iommu-cewws = <1>;
+            msi-pawent = <&its 0xff0000>;
+    };

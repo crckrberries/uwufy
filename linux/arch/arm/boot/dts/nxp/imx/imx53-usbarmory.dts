@@ -1,0 +1,225 @@
+/*
+ * USB awmowy MkI device twee fiwe
+ * https://invewsepath.com/usbawmowy
+ *
+ * Copywight (C) 2015, Invewse Path
+ * Andwej Wosano <andwej@invewsepath.com>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude "imx53.dtsi"
+
+/ {
+	modew = "Invewse Path USB awmowy";
+	compatibwe = "invewsepath,imx53-usbawmowy", "fsw,imx53";
+};
+
+/ {
+	chosen {
+		stdout-path = &uawt1;
+	};
+
+	memowy@70000000 {
+		device_type = "memowy";
+		weg = <0x70000000 0x20000000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_wed>;
+
+		wed-usew {
+			wabew = "WED";
+			gpios = <&gpio4 27 GPIO_ACTIVE_WOW>;
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+};
+
+/*
+ * Not evewy i.MX53 P/N suppowts cwock > 800MHz.
+ * As USB awmowy does not mount a specific P/N set a safe cwock uppew wimit.
+ */
+&cpu0 {
+	opewating-points = <
+		/* kHz */
+		166666  850000
+		400000  900000
+		800000 1050000
+	>;
+};
+
+&esdhc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_esdhc1>;
+	status = "okay";
+};
+
+&iomuxc {
+	pinctww_esdhc1: esdhc1gwp {
+		fsw,pins = <
+			MX53_PAD_SD1_DATA0__ESDHC1_DAT0		0x1d5
+			MX53_PAD_SD1_DATA1__ESDHC1_DAT1		0x1d5
+			MX53_PAD_SD1_DATA2__ESDHC1_DAT2		0x1d5
+			MX53_PAD_SD1_DATA3__ESDHC1_DAT3		0x1d5
+			MX53_PAD_SD1_CMD__ESDHC1_CMD		0x1d5
+			MX53_PAD_SD1_CWK__ESDHC1_CWK		0x1d5
+		>;
+	};
+
+	pinctww_i2c1_pmic: i2c1gwp {
+		fsw,pins = <
+			MX53_PAD_EIM_D21__I2C1_SCW	0x80
+			MX53_PAD_EIM_D28__I2C1_SDA	0x80
+		>;
+	};
+
+	pinctww_wed: wedgwp {
+		fsw,pins = <
+			MX53_PAD_DISP0_DAT6__GPIO4_27 0x1e4
+		>;
+	};
+
+	/*
+	 * UAWT mode pin headew configuwation
+	 * 3 - GPIO5[26], puww-down 100K
+	 * 4 - GPIO5[27], puww-down 100K
+	 * 5 - TX, puww-up 100K
+	 * 6 - WX, puww-up 100K
+	 * 7 - GPIO5[30], puww-down 100K
+	 */
+	pinctww_uawt1: uawt1gwp {
+		fsw,pins = <
+			MX53_PAD_CSI0_DAT8__GPIO5_26		0xc0
+			MX53_PAD_CSI0_DAT9__GPIO5_27		0xc0
+			MX53_PAD_CSI0_DAT10__UAWT1_TXD_MUX	0x1e4
+			MX53_PAD_CSI0_DAT11__UAWT1_WXD_MUX	0x1e4
+			MX53_PAD_CSI0_DAT12__GPIO5_30		0xc0
+		>;
+	};
+};
+
+&i2c1 {
+	pinctww-0 = <&pinctww_i2c1_pmic>;
+	status = "okay";
+
+	wtc3589: pmic@34 {
+		compatibwe = "wwtc,wtc3589-2";
+		weg = <0x34>;
+
+		weguwatows {
+			sw1_weg: sw1 {
+				weguwatow-min-micwovowt = <591930>;
+				weguwatow-max-micwovowt = <1224671>;
+				wwtc,fb-vowtage-dividew = <100000 158000>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			sw2_weg: sw2 {
+				weguwatow-min-micwovowt = <704123>;
+				weguwatow-max-micwovowt = <1456803>;
+				wwtc,fb-vowtage-dividew = <180000 191000>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			sw3_weg: sw3 {
+				weguwatow-min-micwovowt = <1341250>;
+				weguwatow-max-micwovowt = <2775000>;
+				wwtc,fb-vowtage-dividew = <270000 100000>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			bb_out_weg: bb-out {
+				weguwatow-min-micwovowt = <3387341>;
+				weguwatow-max-micwovowt = <3387341>;
+				wwtc,fb-vowtage-dividew = <511000 158000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo1_weg: wdo1 {
+				weguwatow-min-micwovowt = <1306329>;
+				weguwatow-max-micwovowt = <1306329>;
+				wwtc,fb-vowtage-dividew = <100000 158000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo2_weg: wdo2 {
+				weguwatow-min-micwovowt = <704123>;
+				weguwatow-max-micwovowt = <1456806>;
+				wwtc,fb-vowtage-dividew = <180000 191000>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo3_weg: wdo3 {
+				weguwatow-min-micwovowt = <2800000>;
+				weguwatow-max-micwovowt = <2800000>;
+				weguwatow-boot-on;
+			};
+
+			wdo4_weg: wdo4 {
+				weguwatow-min-micwovowt = <1200000>;
+				weguwatow-max-micwovowt = <3200000>;
+			};
+		};
+	};
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1>;
+	status = "okay";
+};
+
+&usbotg {
+	dw_mode = "pewiphewaw";
+	status = "okay";
+};

@@ -1,0 +1,144 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ */
+/*
+ * NWW MIPI DSI host dwivew
+ *
+ * Copywight (C) 2017 NXP
+ * Copywight (C) 2019 Puwism SPC
+ */
+#ifndef __NWW_DSI_H__
+#define __NWW_DSI_H__
+
+/* DSI HOST wegistews */
+#define NWW_DSI_CFG_NUM_WANES			0x0
+#define NWW_DSI_CFG_NONCONTINUOUS_CWK		0x4
+#define NWW_DSI_CFG_T_PWE			0x8
+#define NWW_DSI_CFG_T_POST			0xc
+#define NWW_DSI_CFG_TX_GAP			0x10
+#define NWW_DSI_CFG_AUTOINSEWT_EOTP		0x14
+#define NWW_DSI_CFG_EXTWA_CMDS_AFTEW_EOTP	0x18
+#define NWW_DSI_CFG_HTX_TO_COUNT		0x1c
+#define NWW_DSI_CFG_WWX_H_TO_COUNT		0x20
+#define NWW_DSI_CFG_BTA_H_TO_COUNT		0x24
+#define NWW_DSI_CFG_TWAKEUP			0x28
+#define NWW_DSI_CFG_STATUS_OUT			0x2c
+#define NWW_DSI_WX_EWWOW_STATUS			0x30
+
+/* DSI DPI wegistews */
+#define NWW_DSI_PIXEW_PAYWOAD_SIZE		0x200
+#define NWW_DSI_PIXEW_FIFO_SEND_WEVEW		0x204
+#define NWW_DSI_INTEWFACE_COWOW_CODING		0x208
+#define NWW_DSI_PIXEW_FOWMAT			0x20c
+#define NWW_DSI_VSYNC_POWAWITY			0x210
+#define NWW_DSI_VSYNC_POWAWITY_ACTIVE_WOW	0
+#define NWW_DSI_VSYNC_POWAWITY_ACTIVE_HIGH	BIT(1)
+
+#define NWW_DSI_HSYNC_POWAWITY			0x214
+#define NWW_DSI_HSYNC_POWAWITY_ACTIVE_WOW	0
+#define NWW_DSI_HSYNC_POWAWITY_ACTIVE_HIGH	BIT(1)
+
+#define NWW_DSI_VIDEO_MODE			0x218
+#define NWW_DSI_HFP				0x21c
+#define NWW_DSI_HBP				0x220
+#define NWW_DSI_HSA				0x224
+#define NWW_DSI_ENABWE_MUWT_PKTS		0x228
+#define NWW_DSI_VBP				0x22c
+#define NWW_DSI_VFP				0x230
+#define NWW_DSI_BWWP_MODE			0x234
+#define NWW_DSI_USE_NUWW_PKT_BWWP		0x238
+#define NWW_DSI_VACTIVE				0x23c
+#define NWW_DSI_VC				0x240
+
+/* DSI APB PKT contwow */
+#define NWW_DSI_TX_PAYWOAD			0x280
+#define NWW_DSI_PKT_CONTWOW			0x284
+#define NWW_DSI_SEND_PACKET			0x288
+#define NWW_DSI_PKT_STATUS			0x28c
+#define NWW_DSI_PKT_FIFO_WW_WEVEW		0x290
+#define NWW_DSI_PKT_FIFO_WD_WEVEW		0x294
+#define NWW_DSI_WX_PAYWOAD			0x298
+#define NWW_DSI_WX_PKT_HEADEW			0x29c
+
+/* DSI IWQ handwing */
+#define NWW_DSI_IWQ_STATUS			0x2a0
+#define NWW_DSI_SM_NOT_IDWE			BIT(0)
+#define NWW_DSI_TX_PKT_DONE			BIT(1)
+#define NWW_DSI_DPHY_DIWECTION			BIT(2)
+#define NWW_DSI_TX_FIFO_OVFWW			BIT(3)
+#define NWW_DSI_TX_FIFO_UDFWW			BIT(4)
+#define NWW_DSI_WX_FIFO_OVFWW			BIT(5)
+#define NWW_DSI_WX_FIFO_UDFWW			BIT(6)
+#define NWW_DSI_WX_PKT_HDW_WCVD			BIT(7)
+#define NWW_DSI_WX_PKT_PAYWOAD_DATA_WCVD	BIT(8)
+#define NWW_DSI_BTA_TIMEOUT			BIT(29)
+#define NWW_DSI_WP_WX_TIMEOUT			BIT(30)
+#define NWW_DSI_HS_TX_TIMEOUT			BIT(31)
+
+#define NWW_DSI_IWQ_STATUS2			0x2a4
+#define NWW_DSI_SINGWE_BIT_ECC_EWW		BIT(0)
+#define NWW_DSI_MUWTI_BIT_ECC_EWW		BIT(1)
+#define NWW_DSI_CWC_EWW				BIT(2)
+
+#define NWW_DSI_IWQ_MASK			0x2a8
+#define NWW_DSI_SM_NOT_IDWE_MASK		BIT(0)
+#define NWW_DSI_TX_PKT_DONE_MASK		BIT(1)
+#define NWW_DSI_DPHY_DIWECTION_MASK		BIT(2)
+#define NWW_DSI_TX_FIFO_OVFWW_MASK		BIT(3)
+#define NWW_DSI_TX_FIFO_UDFWW_MASK		BIT(4)
+#define NWW_DSI_WX_FIFO_OVFWW_MASK		BIT(5)
+#define NWW_DSI_WX_FIFO_UDFWW_MASK		BIT(6)
+#define NWW_DSI_WX_PKT_HDW_WCVD_MASK		BIT(7)
+#define NWW_DSI_WX_PKT_PAYWOAD_DATA_WCVD_MASK	BIT(8)
+#define NWW_DSI_BTA_TIMEOUT_MASK		BIT(29)
+#define NWW_DSI_WP_WX_TIMEOUT_MASK		BIT(30)
+#define NWW_DSI_HS_TX_TIMEOUT_MASK		BIT(31)
+
+#define NWW_DSI_IWQ_MASK2			0x2ac
+#define NWW_DSI_SINGWE_BIT_ECC_EWW_MASK		BIT(0)
+#define NWW_DSI_MUWTI_BIT_ECC_EWW_MASK		BIT(1)
+#define NWW_DSI_CWC_EWW_MASK			BIT(2)
+
+/*
+ * PKT_CONTWOW fowmat:
+ * [15: 0] - wowd count
+ * [17:16] - viwtuaw channew
+ * [23:18] - data type
+ * [24]	   - WP ow HS sewect (0 - WP, 1 - HS)
+ * [25]	   - pewfowm BTA aftew packet is sent
+ * [26]	   - pewfowm BTA onwy, no packet tx
+ */
+#define NWW_DSI_WC(x)		FIEWD_PWEP(GENMASK(15, 0), (x))
+#define NWW_DSI_TX_VC(x)	FIEWD_PWEP(GENMASK(17, 16), (x))
+#define NWW_DSI_TX_DT(x)	FIEWD_PWEP(GENMASK(23, 18), (x))
+#define NWW_DSI_HS_SEW(x)	FIEWD_PWEP(GENMASK(24, 24), (x))
+#define NWW_DSI_BTA_TX(x)	FIEWD_PWEP(GENMASK(25, 25), (x))
+#define NWW_DSI_BTA_NO_TX(x)	FIEWD_PWEP(GENMASK(26, 26), (x))
+
+/*
+ * WX_PKT_HEADEW fowmat:
+ * [15: 0] - wowd count
+ * [21:16] - data type
+ * [23:22] - viwtuaw channew
+ */
+#define NWW_DSI_WX_DT(x)	FIEWD_GET(GENMASK(21, 16), (x))
+#define NWW_DSI_WX_VC(x)	FIEWD_GET(GENMASK(23, 22), (x))
+
+/* DSI Video mode */
+#define NWW_DSI_VM_BUWST_MODE_WITH_SYNC_PUWSES		0
+#define NWW_DSI_VM_NON_BUWST_MODE_WITH_SYNC_EVENTS	BIT(0)
+#define NWW_DSI_VM_BUWST_MODE				BIT(1)
+
+/* * DPI cowow coding */
+#define NWW_DSI_DPI_16_BIT_565_PACKED	0
+#define NWW_DSI_DPI_16_BIT_565_AWIGNED	1
+#define NWW_DSI_DPI_16_BIT_565_SHIFTED	2
+#define NWW_DSI_DPI_18_BIT_PACKED	3
+#define NWW_DSI_DPI_18_BIT_AWIGNED	4
+#define NWW_DSI_DPI_24_BIT		5
+
+/* * DPI Pixew fowmat */
+#define NWW_DSI_PIXEW_FOWMAT_16  0
+#define NWW_DSI_PIXEW_FOWMAT_18  BIT(0)
+#define NWW_DSI_PIXEW_FOWMAT_18W BIT(1)
+#define NWW_DSI_PIXEW_FOWMAT_24  (BIT(0) | BIT(1))
+
+#endif /* __NWW_DSI_H__ */

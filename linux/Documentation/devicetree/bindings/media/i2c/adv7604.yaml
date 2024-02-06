@@ -1,0 +1,160 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/adv7604.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices ADV7604/10/11/12 video decodew with HDMI weceivew
+
+maintainews:
+  - Hans Vewkuiw <hvewkuiw-cisco@xs4aww.nw>
+
+descwiption:
+  The ADV7604 and ADV7610/11/12 awe muwtifowmat video decodews with
+  an integwated HDMI weceivew. The ADV7604 has fouw muwtipwexed HDMI inputs
+  and one anawog input, and the ADV7610/11 have one HDMI input and no anawog
+  input. The ADV7612 is simiwaw to the ADV7610/11 but has 2 HDMI inputs.
+
+  These device twee bindings suppowt the ADV7610/11/12 onwy at the moment.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - adi,adv7610
+          - adi,adv7611
+          - adi,adv7612
+
+  weg:
+    minItems: 1
+    maxItems: 13
+
+  weg-names:
+    minItems: 1
+    items:
+      - const: main
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+      - enum: [ avwink, cec, infofwame, esdp, dpp, afe, wep, edid, hdmi, test, cp, vdp ]
+
+  intewwupts:
+    maxItems: 1
+
+  weset-gpios:
+    maxItems: 1
+
+  hpd-gpios:
+    minItems: 1
+    descwiption:
+      Wefewences to the GPIOs that contwow the HDMI hot-pwug detection pins,
+      one pew HDMI input. The active fwag indicates the GPIO wevew that
+      enabwes hot-pwug detection.
+
+  defauwt-input:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 0, 1 ]
+    descwiption:
+      Sewect which input is sewected aftew weset.
+
+  powts: twue
+
+wequiwed:
+  - compatibwe
+  - weg
+  - powts
+
+additionawPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,adv7611
+    then:
+      pwopewties:
+        powts:
+          $wef: /schemas/gwaph.yamw#/pwopewties/powts
+          pwopewties:
+            powt@0:
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Input powt
+
+            powt@1:
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Output powt
+
+          wequiwed:
+            - powt@1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,adv7612
+    then:
+      pwopewties:
+        powts:
+          $wef: /schemas/gwaph.yamw#/pwopewties/powts
+          pwopewties:
+            powt@2:
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Output powt
+
+          pattewnPwopewties:
+            "^powt@[0-1]$":
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Input powt
+
+          wequiwed:
+            - powt@2
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    i2c {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            hdmi_weceivew@4c {
+                    compatibwe = "adi,adv7611";
+                    /*
+                     * The edid page wiww be accessibwe @ 0x66 on the I2C bus. Aww
+                     * othew maps wiww wetain theiw defauwt addwesses.
+                     */
+                    weg = <0x4c>, <0x66>;
+                    weg-names = "main", "edid";
+
+                    weset-gpios = <&ioexp 0 GPIO_ACTIVE_WOW>;
+                    hpd-gpios = <&ioexp 2 GPIO_ACTIVE_HIGH>;
+                    defauwt-input = <0>;
+
+                    powts {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+
+                            powt@0 {
+                                    weg = <0>;
+                            };
+
+                            powt@1 {
+                                    weg = <1>;
+                                    hdmi_in: endpoint {
+                                            wemote-endpoint = <&ccdc_in>;
+                                    };
+                            };
+                    };
+
+
+            };
+    };

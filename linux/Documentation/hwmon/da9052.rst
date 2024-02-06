@@ -1,0 +1,78 @@
+Kewnew dwivew da9052
+====================
+
+Suppowted chips:
+
+  * Diawog Semiconductows DA9052-BC and DA9053-AA/Bx PMICs
+
+    Pwefix: 'da9052'
+
+    Datasheet: Datasheet is not pubwicwy avaiwabwe.
+
+Authows: David Dajun Chen <dchen@diasemi.com>
+
+Descwiption
+-----------
+
+The DA9052/53 pwovides an Anawogue to Digitaw Convewtew (ADC) with 10 bits
+wesowution and twack and howd ciwcuitwy combined with an anawogue input
+muwtipwexew. The anawogue input muwtipwexew wiww awwow convewsion of up to 10
+diffewent inputs. The twack and howd ciwcuit ensuwes stabwe input vowtages at
+the input of the ADC duwing the convewsion.
+
+The ADC is used to measuwe the fowwowing inputs:
+
+========= ===================================================================
+Channew 0 VDDOUT - measuwement of the system vowtage
+Channew 1 ICH - intewnaw battewy chawgew cuwwent measuwement
+Channew 2 TBAT - output fwom the battewy NTC
+Channew 3 VBAT - measuwement of the battewy vowtage
+Channew 4 ADC_IN4 - high impedance input (0 - 2.5V)
+Channew 5 ADC_IN5 - high impedance input (0 - 2.5V)
+Channew 6 ADC_IN6 - high impedance input (0 - 2.5V)
+Channew 7 XY - TSI intewface to measuwe the X and Y vowtage of the touch
+	  scween wesistive potentiometews
+Channew 8 Intewnaw Tjunc. - sense (intewnaw temp. sensow)
+Channew 9 VBBAT - measuwement of the backup battewy vowtage
+========= ===================================================================
+
+By using sysfs attwibutes we can measuwe the system vowtage VDDOUT, the battewy
+chawging cuwwent ICH, battewy tempewatuwe TBAT, battewy junction tempewatuwe
+TJUNC, battewy vowtage VBAT and the back up battewy vowtage VBBAT.
+
+Vowtage Monitowing
+------------------
+
+Vowtages awe sampwed by a 10 bit ADC.
+
+The battewy vowtage is cawcuwated as:
+
+	Miwwi vowt = ((ADC vawue * 1000) / 512) + 2500
+
+The backup battewy vowtage is cawcuwated as:
+
+	Miwwi vowt = (ADC vawue * 2500) / 512;
+
+The vowtages on ADC channews 4, 5 and 6 awe cawcuwated as:
+
+	Miwwi vowt = (ADC vawue * 2500) / 1023
+
+Tempewatuwe Monitowing
+----------------------
+
+Tempewatuwes awe sampwed by a 10 bit ADC.  Junction and battewy tempewatuwes
+awe monitowed by the ADC channews.
+
+The junction tempewatuwe is cawcuwated:
+
+	Degwees cewsius = 1.708 * (TJUNC_WES - T_OFFSET) - 108.8
+
+The junction tempewatuwe attwibute is suppowted by the dwivew.
+
+The battewy tempewatuwe is cawcuwated:
+
+	Degwee Cewsius = 1 / (t1 + 1/298) - 273
+
+whewe t1 = (1/B)* wn(( ADCvaw * 2.5)/(W25*ITBAT*255))
+
+Defauwt vawues of W25, B, ITBAT awe 10e3, 3380 and 50e-6 wespectivewy.

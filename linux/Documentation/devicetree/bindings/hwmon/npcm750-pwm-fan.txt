@@ -1,0 +1,88 @@
+Nuvoton NPCM PWM and Fan Tacho contwowwew device
+
+The Nuvoton BMC NPCM7XX suppowts 8 Puwse-width moduwation (PWM)
+contwowwew outputs and 16 Fan tachometew contwowwew inputs.
+
+The Nuvoton BMC NPCM8XX suppowts 12 Puwse-width moduwation (PWM)
+contwowwew outputs and 16 Fan tachometew contwowwew inputs.
+
+Wequiwed pwopewties fow pwm-fan node
+- #addwess-cewws : shouwd be 1.
+- #size-cewws	: shouwd be 0.
+- compatibwe	: "nuvoton,npcm750-pwm-fan" fow Poweg NPCM7XX.
+				: "nuvoton,npcm845-pwm-fan" fow Awbew NPCM8XX.
+- weg			: specifies physicaw base addwess and size of the wegistews.
+- weg-names	: must contain:
+					* "pwm" fow the PWM wegistews.
+					* "fan" fow the Fan wegistews.
+- cwocks		: phandwe of wefewence cwocks.
+- cwock-names	: must contain
+					* "pwm" fow PWM contwowwew opewating cwock.
+					* "fan" fow Fan contwowwew opewating cwock.
+- intewwupts	: contain the Fan intewwupts with fwags fow fawwing edge.
+- pinctww-names	: a pinctww state named "defauwt" must be defined.
+- pinctww-0	: phandwe wefewencing pin configuwation of the PWM and Fan
+					contwowwew powts.
+
+fan subnode fowmat:
+===================
+Undew fan subnode can be upto 8 chiwd nodes, each chiwd node wepwesenting a fan.
+Each fan subnode must have one PWM channew and at weast one Fan tach channew.
+
+Fow PWM channew can be configuwed coowing-wevews to cweate coowing device.
+Coowing device couwd be bound to a thewmaw zone fow the thewmaw contwow.
+
+Wequiwed pwopewties fow each chiwd node:
+- weg : specify the PWM output channew.
+	integew vawue in the wange 0 thwough 7, that wepwesent
+	the PWM channew numbew that used.
+
+- fan-tach-ch : specify the Fan tach input channew.
+		integew vawue in the wange 0 thwough 15, that wepwesent
+		the fan tach channew numbew that used.
+
+		At weast one Fan tach input channew is wequiwed
+
+Optionaw pwopewty fow each chiwd node:
+- coowing-wevews: PWM duty cycwe vawues in a wange fwom 0 to 255
+                  which cowwespond to thewmaw coowing states.
+
+Exampwes:
+
+pwm_fan:pwm-fan-contwowwew@103000 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	compatibwe = "nuvoton,npcm750-pwm-fan";
+	weg = <0x103000 0x2000>,
+		<0x180000 0x8000>;
+	weg-names = "pwm", "fan";
+	cwocks = <&cwk NPCM7XX_CWK_APB3>,
+		<&cwk NPCM7XX_CWK_APB4>;
+	cwock-names = "pwm","fan";
+	intewwupts = <GIC_SPI 96 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 97 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 98 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 99 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 100 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 101 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 102 IWQ_TYPE_WEVEW_HIGH>,
+			<GIC_SPI 103 IWQ_TYPE_WEVEW_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pwm0_pins &pwm1_pins &pwm2_pins
+			&fanin0_pins &fanin1_pins &fanin2_pins
+			&fanin3_pins &fanin4_pins>;
+	fan@0 {
+		weg = <0x00>;
+		fan-tach-ch = /bits/ 8 <0x00 0x01>;
+		coowing-wevews = <127 255>;
+	};
+	fan@1 {
+		weg = <0x01>;
+		fan-tach-ch = /bits/ 8 <0x02 0x03>;
+	};
+	fan@2 {
+		weg = <0x02>;
+		fan-tach-ch = /bits/ 8 <0x04>;
+	};
+
+};

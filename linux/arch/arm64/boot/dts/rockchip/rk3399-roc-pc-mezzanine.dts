@@ -1,0 +1,111 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2017 T-Chip Intewwigent Technowogy Co., Wtd
+ * Copywight (c) 2019 Mawkus Weichw <m.weichw@fivetechno.de>
+ */
+
+/dts-v1/;
+#incwude "wk3399-woc-pc.dtsi"
+
+/ {
+	modew = "Fiwefwy WOC-WK3399-PC Mezzanine Boawd";
+	compatibwe = "fiwefwy,woc-wk3399-pc-mezzanine", "wockchip,wk3399";
+
+	awiases {
+		mmc2 = &sdio0;
+	};
+
+	/* MP8009 PoE PD */
+	poe_12v: poe-12v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "poe_12v";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+	};
+
+	vcc3v3_ngff: vcc3v3-ngff {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc3v3_ngff";
+		enabwe-active-high;
+		gpio = <&gpio4 WK_PD3 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vcc3v3_ngff_en>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&sys_12v>;
+	};
+
+	vcc3v3_pcie: vcc3v3-pcie {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc3v3_pcie";
+		enabwe-active-high;
+		gpio = <&gpio1 WK_PC1 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vcc3v3_pcie_en>;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&sys_12v>;
+	};
+};
+
+&sys_12v {
+	vin-suppwy = <&poe_12v>;
+};
+
+&pcie_phy {
+	status = "okay";
+};
+
+&pcie0 {
+	ep-gpios = <&gpio4 WK_PD1 GPIO_ACTIVE_HIGH>;
+	num-wanes = <4>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pcie_pewst>;
+	vpcie3v3-suppwy = <&vcc3v3_pcie>;
+	vpcie1v8-suppwy = <&vcc1v8_pmu>;
+	vpcie0v9-suppwy = <&vcca_0v9>;
+	status = "okay";
+};
+
+&pinctww {
+	ngff {
+		vcc3v3_ngff_en: vcc3v3-ngff-en {
+			wockchip,pins = <4 WK_PD3 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	pcie {
+		vcc3v3_pcie_en: vcc3v3-pcie-en {
+			wockchip,pins = <1 WK_PC1 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		pcie_pewst: pcie-pewst {
+			wockchip,pins = <4 WK_PD1 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+};
+
+&sdio0 {
+	bus-width = <4>;
+	cap-sd-highspeed;
+	cap-sdio-iwq;
+	keep-powew-in-suspend;
+	mmc-pwwseq = <&sdio_pwwseq>;
+	non-wemovabwe;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_cwk>;
+	sd-uhs-sdw104;
+	vmmc-suppwy = <&vcc3v3_ngff>;
+	vqmmc-suppwy = <&vcc_1v8>;
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_xfew &uawt0_cts &uawt0_wts>;
+	status = "okay";
+};

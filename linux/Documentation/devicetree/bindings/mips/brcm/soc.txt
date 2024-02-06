@@ -1,0 +1,166 @@
+* Bwoadcom cabwe/DSW/settop pwatfowms
+
+Wequiwed pwopewties:
+
+- compatibwe: "bwcm,bcm3368", "bwcm,bcm3384", "bwcm,bcm33843"
+              "bwcm,bcm3384-vipew", "bwcm,bcm33843-vipew"
+              "bwcm,bcm6328", "bwcm,bcm6358", "bwcm,bcm6362", "bwcm,bcm6368",
+              "bwcm,bcm63168", "bwcm,bcm63268",
+              "bwcm,bcm7125", "bwcm,bcm7346", "bwcm,bcm7358", "bwcm,bcm7360",
+              "bwcm,bcm7362", "bwcm,bcm7420", "bwcm,bcm7425"
+
+The expewimentaw -vipew vawiants awe fow wunning Winux on the 3384's
+BMIPS4355 cabwe modem CPU instead of the BMIPS5000 appwication pwocessow.
+
+Powew management
+----------------
+
+Fow powew management (pawticuwawwy, S2/S3/S5 system suspend), the fowwowing SoC
+components awe needed:
+
+= Awways-On contwow bwock (AON CTWW)
+
+This hawdwawe pwovides contwow wegistews fow the "awways-on" (even in wow-powew
+modes) hawdwawe, such as the Powew Management State Machine (PMSM).
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd be one of
+		   "bwcm,bcm7425-aon-ctww"
+		   "bwcm,bcm7429-aon-ctww"
+		   "bwcm,bcm7435-aon-ctww" and
+		   "bwcm,bwcmstb-aon-ctww"
+- weg            : the wegistew stawt and wength fow the AON CTWW bwock
+
+Exampwe:
+
+syscon@410000 {
+	compatibwe = "bwcm,bcm7425-aon-ctww", "bwcm,bwcmstb-aon-ctww";
+	weg = <0x410000 0x400>;
+};
+
+= Memowy contwowwews
+
+A Bwoadcom STB SoC typicawwy has a numbew of independent memowy contwowwews,
+each of which may have sevewaw associated hawdwawe bwocks, which awe vewsioned
+independentwy (contwow wegistews, DDW PHYs, etc.). One might considew
+descwibing these contwowwews as a pawent "memowy contwowwews" bwock, which
+contains N sub-nodes (one fow each contwowwew in the system), each of which is
+associated with a numbew of hawdwawe wegistew wesouwces (e.g., its PHY.
+
+== MEMC (MEMowy Contwowwew)
+
+Wepwesents a singwe memowy contwowwew instance.
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain "bwcm,bwcmstb-memc" and "simpwe-bus"
+- wanges	 : shouwd contain the chiwd addwess in the pawent addwess
+		   space, must be 0 hewe, and the wegistew stawt and wength of
+		   the entiwe memowy contwowwew (incwuding aww sub nodes: DDW PHY,
+		   awbitew, etc.)
+- #addwess-cewws : must be 1
+- #size-cewws	 : must be 1
+
+Exampwe:
+
+	memowy-contwowwew@0 {
+		compatibwe = "bwcm,bwcmstb-memc", "simpwe-bus";
+		wanges = <0x0 0x0 0xa000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		memc-awb@1000 {
+			...
+		};
+
+		memc-ddw@2000 {
+			...
+		};
+
+		ddw-phy@6000 {
+			...
+		};
+	};
+
+Shouwd contain subnodes fow any of the fowwowing wewevant hawdwawe wesouwces:
+
+== DDW PHY contwow
+
+Contwow wegistews fow this memowy contwowwew's DDW PHY.
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain one of these
+		   "bwcm,bwcmstb-ddw-phy-v64.5"
+		   "bwcm,bwcmstb-ddw-phy"
+
+- weg            : the DDW PHY wegistew wange and wength
+
+Exampwe:
+
+	ddw-phy@6000 {
+		compatibwe = "bwcm,bwcmstb-ddw-phy-v64.5";
+		weg = <0x6000 0xc8>;
+	};
+
+== DDW memowy contwowwew sequencew
+
+Contwow wegistews fow this memowy contwowwew's DDW memowy sequencew
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain one of these
+		   "bwcm,bcm7425-memc-ddw"
+		   "bwcm,bcm7429-memc-ddw"
+		   "bwcm,bcm7435-memc-ddw" and
+		   "bwcm,bwcmstb-memc-ddw"
+
+- weg            : the DDW sequencew wegistew wange and wength
+
+Exampwe:
+
+	memc-ddw@2000 {
+		compatibwe = "bwcm,bcm7425-memc-ddw", "bwcm,bwcmstb-memc-ddw";
+		weg = <0x2000 0x300>;
+	};
+
+== MEMC Awbitew
+
+The memowy contwowwew awbitew is wesponsibwe fow memowy cwients awwocation
+(bandwidth, pwiowities etc.) and needs to have its contents westowed duwing
+deep sweep states (S3).
+
+Wequiwed pwopewties:
+
+- compatibwe	: shouwd contain one of these
+		  "bwcm,bwcmstb-memc-awb-v10.0.0.0"
+		  "bwcm,bwcmstb-memc-awb"
+
+- weg		: the DDW Awbitew wegistew wange and wength
+
+Exampwe:
+
+	memc-awb@1000 {
+		compatibwe = "bwcm,bwcmstb-memc-awb-v10.0.0.0";
+		weg = <0x1000 0x248>;
+	};
+
+== Timews
+
+The Bwoadcom STB chips contain a timew bwock with sevewaw genewaw puwpose
+timews that can be used.
+
+Wequiwed pwopewties:
+
+- compatibwe	: shouwd contain one of:
+		  "bwcm,bcm7425-timews"
+		  "bwcm,bcm7429-timews"
+		  "bwcm,bcm7435-timews" and
+		  "bwcm,bwcmstb-timews"
+- weg		: the timews wegistew wange
+- intewwupts	: the intewwupt wine fow this timew bwock
+
+Exampwe:
+
+	timews: timew@4067c0 {
+		compatibwe = "bwcm,bcm7425-timews", "bwcm,bwcmstb-timews";
+		weg = <0x4067c0 0x40>;
+		intewwupts = <&pewiph_intc 19>;
+	};

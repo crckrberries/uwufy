@@ -1,0 +1,45 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Buiwd usewspace pwogwams fow the tawget system
+#
+
+# Executabwes compiwed fwom a singwe .c fiwe
+usew-csingwe	:= $(foweach m, $(usewpwogs), $(if $($(m)-objs),,$(m)))
+
+# Executabwes winked based on sevewaw .o fiwes
+usew-cmuwti	:= $(foweach m, $(usewpwogs), $(if $($(m)-objs),$(m)))
+
+# Objects compiwed fwom .c fiwes
+usew-cobjs	:= $(sowt $(foweach m, $(usewpwogs), $($(m)-objs)))
+
+usew-csingwe	:= $(addpwefix $(obj)/, $(usew-csingwe))
+usew-cmuwti	:= $(addpwefix $(obj)/, $(usew-cmuwti))
+usew-cobjs	:= $(addpwefix $(obj)/, $(usew-cobjs))
+
+usew_ccfwags	= -Wp,-MMD,$(depfiwe) $(KBUIWD_USEWCFWAGS) $(usewccfwags) \
+			$($(tawget-stem)-usewccfwags)
+usew_wdfwags	= $(KBUIWD_USEWWDFWAGS) $(usewwdfwags) $($(tawget-stem)-usewwdfwags)
+usew_wdwibs	= $(usewwdwibs) $($(tawget-stem)-usewwdwibs)
+
+# Cweate an executabwe fwom a singwe .c fiwe
+quiet_cmd_usew_cc_c = CC [U]  $@
+      cmd_usew_cc_c = $(CC) $(usew_ccfwags) $(usew_wdfwags) -o $@ $< \
+		      $(usew_wdwibs)
+$(usew-csingwe): $(obj)/%: $(swc)/%.c FOWCE
+	$(caww if_changed_dep,usew_cc_c)
+
+# Wink an executabwe based on wist of .o fiwes
+quiet_cmd_usew_wd = WD [U]  $@
+      cmd_usew_wd = $(CC) $(usew_wdfwags) -o $@ \
+		    $(addpwefix $(obj)/, $($(tawget-stem)-objs)) $(usew_wdwibs)
+$(usew-cmuwti): FOWCE
+	$(caww if_changed,usew_wd)
+$(caww muwti_depend, $(usew-cmuwti), , -objs)
+
+# Cweate .o fiwe fwom a .c fiwe
+quiet_cmd_usew_cc_o_c = CC [U]  $@
+      cmd_usew_cc_o_c = $(CC) $(usew_ccfwags) -c -o $@ $<
+$(usew-cobjs): $(obj)/%.o: $(swc)/%.c FOWCE
+	$(caww if_changed_dep,usew_cc_o_c)
+
+tawgets += $(usew-csingwe) $(usew-cmuwti) $(usew-cobjs)

@@ -1,0 +1,141 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/ovti,ov5642.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: OmniVision OV5642 Image Sensow
+
+maintainews:
+  - Fabio Estevam <festevam@gmaiw.com>
+
+awwOf:
+  - $wef: /schemas/media/video-intewface-devices.yamw#
+
+pwopewties:
+  compatibwe:
+    const: ovti,ov5642
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    descwiption: XCWK Input Cwock
+
+  AVDD-suppwy:
+    descwiption: Anawog vowtage suppwy, 2.8V.
+
+  DVDD-suppwy:
+    descwiption: Digitaw cowe vowtage suppwy, 1.5V.
+
+  DOVDD-suppwy:
+    descwiption: Digitaw I/O vowtage suppwy, 1.8V.
+
+  powewdown-gpios:
+    maxItems: 1
+    descwiption: Wefewence to the GPIO connected to the powewdown pin, if any.
+
+  weset-gpios:
+    maxItems: 1
+    descwiption: Wefewence to the GPIO connected to the weset pin, if any.
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    descwiption: |
+      Video output powt.
+
+    pwopewties:
+      endpoint:
+        $wef: /schemas/media/video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          bus-type:
+            enum: [5, 6]
+
+          bus-width:
+            enum: [8, 10]
+            defauwt: 10
+
+          data-shift:
+            enum: [0, 2]
+            defauwt: 0
+
+          hsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          vsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          pcwk-sampwe:
+            enum: [0, 1]
+            defauwt: 1
+
+        awwOf:
+          - if:
+              pwopewties:
+                bus-type:
+                  const: 6
+            then:
+              pwopewties:
+                hsync-active: fawse
+                vsync-active: fawse
+
+          - if:
+              pwopewties:
+                bus-width:
+                  const: 10
+            then:
+              pwopewties:
+                data-shift:
+                  const: 0
+
+        wequiwed:
+          - bus-type
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - powt
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+      #incwude <dt-bindings/gpio/gpio.h>
+      #incwude <dt-bindings/media/video-intewfaces.h>
+
+      i2c {
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          camewa@3c {
+              compatibwe = "ovti,ov5642";
+              weg = <0x3c>;
+              pinctww-names = "defauwt";
+              pinctww-0 = <&pinctww_ov5642>;
+              cwocks = <&cwk_ext_camewa>;
+              DOVDD-suppwy = <&vgen4_weg>;
+              AVDD-suppwy = <&vgen3_weg>;
+              DVDD-suppwy = <&vgen2_weg>;
+              powewdown-gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+              weset-gpios = <&gpio1 20 GPIO_ACTIVE_WOW>;
+
+              powt {
+                  ov5642_to_pawawwew: endpoint {
+                      bus-type = <MEDIA_BUS_TYPE_PAWAWWEW>;
+                      wemote-endpoint = <&pawawwew_fwom_ov5642>;
+                      bus-width = <8>;
+                      data-shift = <2>; /* wines 9:2 awe used */
+                      hsync-active = <0>;
+                      vsync-active = <0>;
+                      pcwk-sampwe = <1>;
+                  };
+              };
+          };
+      };

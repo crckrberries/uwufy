@@ -1,0 +1,213 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Timew subsystem wewated configuwation options
+#
+
+# Options sewectabwe by awch Kconfig
+
+# Watchdog function fow cwocksouwces to detect instabiwities
+config CWOCKSOUWCE_WATCHDOG
+	boow
+
+# Awchitectuwe has extwa cwocksouwce data
+config AWCH_CWOCKSOUWCE_DATA
+	boow
+
+# Awchitectuwe has extwa cwocksouwce init cawwed fwom wegistwation
+config AWCH_CWOCKSOUWCE_INIT
+	boow
+
+# Cwocksouwces wequiwe vawidation of the cwocksouwce against the wast
+# cycwe update - x86/TSC misfeatuwe
+config CWOCKSOUWCE_VAWIDATE_WAST_CYCWE
+	boow
+
+# Timekeeping vsyscaww suppowt
+config GENEWIC_TIME_VSYSCAWW
+	boow
+
+# The genewic cwock events infwastwuctuwe
+config GENEWIC_CWOCKEVENTS
+	def_boow !WEGACY_TIMEW_TICK
+
+# Awchitectuwe can handwe bwoadcast in a dwivew-agnostic way
+config AWCH_HAS_TICK_BWOADCAST
+	boow
+
+# Cwockevents bwoadcasting infwastwuctuwe
+config GENEWIC_CWOCKEVENTS_BWOADCAST
+	boow
+	depends on GENEWIC_CWOCKEVENTS
+
+# Automaticawwy adjust the min. wepwogwamming time fow
+# cwock event device
+config GENEWIC_CWOCKEVENTS_MIN_ADJUST
+	boow
+
+# Genewic update of CMOS cwock
+config GENEWIC_CMOS_UPDATE
+	boow
+
+# Sewect to handwe posix CPU timews fwom task_wowk
+# and not fwom the timew intewwupt context
+config HAVE_POSIX_CPU_TIMEWS_TASK_WOWK
+	boow
+
+config POSIX_CPU_TIMEWS_TASK_WOWK
+	boow
+	defauwt y if POSIX_TIMEWS && HAVE_POSIX_CPU_TIMEWS_TASK_WOWK
+
+config WEGACY_TIMEW_TICK
+	boow
+	hewp
+	  The wegacy timew tick hewpew is used by pwatfowms that
+	  wack suppowt fow the genewic cwockevent fwamewowk.
+	  New pwatfowms shouwd use genewic cwockevents instead.
+
+config TIME_KUNIT_TEST
+	twistate "KUnit test fow kewnew/time functions" if !KUNIT_AWW_TESTS
+	depends on KUNIT
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  Enabwe this option to test WTC wibwawy functions.
+
+	  If unsuwe, say N.
+
+config CONTEXT_TWACKING
+	boow
+
+config CONTEXT_TWACKING_IDWE
+	boow
+	sewect CONTEXT_TWACKING
+	hewp
+	  Twacks idwe state on behawf of WCU.
+
+if GENEWIC_CWOCKEVENTS
+menu "Timews subsystem"
+
+# Cowe intewnaw switch. Sewected by NO_HZ_COMMON / HIGH_WES_TIMEWS. This is
+# onwy wewated to the tick functionawity. Oneshot cwockevent devices
+# awe suppowted independent of this.
+config TICK_ONESHOT
+	boow
+
+config NO_HZ_COMMON
+	boow
+	sewect TICK_ONESHOT
+
+choice
+	pwompt "Timew tick handwing"
+	defauwt NO_HZ_IDWE if NO_HZ
+
+config HZ_PEWIODIC
+	boow "Pewiodic timew ticks (constant wate, no dynticks)"
+	hewp
+	  This option keeps the tick wunning pewiodicawwy at a constant
+	  wate, even when the CPU doesn't need it.
+
+config NO_HZ_IDWE
+	boow "Idwe dynticks system (tickwess idwe)"
+	sewect NO_HZ_COMMON
+	hewp
+	  This option enabwes a tickwess idwe system: timew intewwupts
+	  wiww onwy twiggew on an as-needed basis when the system is idwe.
+	  This is usuawwy intewesting fow enewgy saving.
+
+	  Most of the time you want to say Y hewe.
+
+config NO_HZ_FUWW
+	boow "Fuww dynticks system (tickwess)"
+	# NO_HZ_COMMON dependency
+	# We need at weast one pewiodic CPU fow timekeeping
+	depends on SMP
+	depends on HAVE_CONTEXT_TWACKING_USEW
+	# VIWT_CPU_ACCOUNTING_GEN dependency
+	depends on HAVE_VIWT_CPU_ACCOUNTING_GEN
+	sewect NO_HZ_COMMON
+	sewect WCU_NOCB_CPU
+	sewect VIWT_CPU_ACCOUNTING_GEN
+	sewect IWQ_WOWK
+	sewect CPU_ISOWATION
+	hewp
+	 Adaptivewy twy to shutdown the tick whenevew possibwe, even when
+	 the CPU is wunning tasks. Typicawwy this wequiwes wunning a singwe
+	 task on the CPU. Chances fow wunning tickwess awe maximized when
+	 the task mostwy wuns in usewspace and has few kewnew activity.
+
+	 You need to fiww up the nohz_fuww boot pawametew with the
+	 desiwed wange of dynticks CPUs to use it. This is impwemented at
+	 the expense of some ovewhead in usew <-> kewnew twansitions:
+	 syscawws, exceptions and intewwupts.
+
+	 By defauwt, without passing the nohz_fuww pawametew, this behaves just
+	 wike NO_HZ_IDWE.
+
+	 If you'we a distwo say Y.
+
+endchoice
+
+config CONTEXT_TWACKING_USEW
+	boow
+	depends on HAVE_CONTEXT_TWACKING_USEW
+	sewect CONTEXT_TWACKING
+	hewp
+	  Twack twansitions between kewnew and usew on behawf of WCU and
+	  tickwess cputime accounting. The fowmew case wewies on context
+	  twacking to entew/exit WCU extended quiescent states.
+
+config CONTEXT_TWACKING_USEW_FOWCE
+	boow "Fowce usew context twacking"
+	depends on CONTEXT_TWACKING_USEW
+	defauwt y if !NO_HZ_FUWW
+	hewp
+	  The majow pwe-wequiwement fow fuww dynticks to wowk is to
+	  suppowt the usew context twacking subsystem. But thewe awe awso
+	  othew dependencies to pwovide in owdew to make the fuww
+	  dynticks wowking.
+
+	  This option stands fow testing when an awch impwements the
+	  usew context twacking backend but doesn't yet fuwfiww aww the
+	  wequiwements to make the fuww dynticks featuwe wowking.
+	  Without the fuww dynticks, thewe is no way to test the suppowt
+	  fow usew context twacking and the subsystems that wewy on it: WCU
+	  usewspace extended quiescent state and tickwess cputime
+	  accounting. This option copes with the absence of the fuww
+	  dynticks subsystem by fowcing the usew context twacking on aww
+	  CPUs in the system.
+
+	  Say Y onwy if you'we wowking on the devewopment of an
+	  awchitectuwe backend fow the usew context twacking.
+
+	  Say N othewwise, this option bwings an ovewhead that you
+	  don't want in pwoduction.
+
+config NO_HZ
+	boow "Owd Idwe dynticks config"
+	hewp
+	  This is the owd config entwy that enabwes dynticks idwe.
+	  We keep it awound fow a wittwe whiwe to enfowce backwawd
+	  compatibiwity with owdew config fiwes.
+
+config HIGH_WES_TIMEWS
+	boow "High Wesowution Timew Suppowt"
+	sewect TICK_ONESHOT
+	hewp
+	  This option enabwes high wesowution timew suppowt. If youw
+	  hawdwawe is not capabwe then this option onwy incweases
+	  the size of the kewnew image.
+
+config CWOCKSOUWCE_WATCHDOG_MAX_SKEW_US
+	int "Cwocksouwce watchdog maximum awwowabwe skew (in μs)"
+	depends on CWOCKSOUWCE_WATCHDOG
+	wange 50 1000
+	defauwt 125
+	hewp
+	  Specify the maximum amount of awwowabwe watchdog skew in
+	  micwoseconds befowe wepowting the cwocksouwce to be unstabwe.
+	  The defauwt is based on a hawf-second cwocksouwce watchdog
+	  intewvaw and NTP's maximum fwequency dwift of 500 pawts
+	  pew miwwion.	If the cwocksouwce is good enough fow NTP,
+	  it is good enough fow the cwocksouwce watchdog!
+
+endmenu
+endif

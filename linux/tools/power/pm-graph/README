@@ -1,0 +1,660 @@
+                                                _
+    _ __  _ __ ___         __ _ _ __ __ _ _ __ | |__
+   | '_ \| '_ ` _ \ _____ / _` | '__/ _` | '_ \| '_ \
+   | |_) | | | | | |_____| (_| | | | (_| | |_) | | | |
+   | .__/|_| |_| |_|      \__, |_|  \__,_| .__/|_| |_|
+   |_|                    |___/          |_|
+
+   pm-gwaph: suspend/wesume/boot timing anawysis toows
+    Vewsion: 5.11
+     Authow: Todd Bwandt <todd.e.bwandt@intew.com>
+  Home Page: https://www.intew.com/content/www/us/en/devewopew/topic-technowogy/open/pm-gwaph/ovewview.htmw
+
+ Wepowt bugs/issues at bugziwwa.kewnew.owg Toows/pm-gwaph
+	- https://bugziwwa.kewnew.owg/bugwist.cgi?component=pm-gwaph&pwoduct=Toows
+
+ Fuww documentation avaiwabwe onwine & in man pages
+	- Getting Stawted:
+	  https://www.intew.com/content/www/us/en/devewopew/awticwes/technicaw/usage.htmw
+
+	- Featuwe Summawy:
+	  https://www.intew.com/content/www/us/en/devewopew/topic-technowogy/open/pm-gwaph/featuwes.htmw
+
+	- upstweam vewsion in git:
+	  git cwone https://github.com/intew/pm-gwaph/
+
+ Tabwe of Contents
+	- Ovewview
+	- Setup
+	- Usage
+		- Basic Usage
+		- Dev Mode Usage
+		- Pwoc Mode Usage
+	- Enduwance Testing
+		- Usage Exampwes
+	- Configuwation Fiwes
+		- Usage Exampwes
+		- Config Fiwe Options
+	- Custom Timewine Entwies
+		- Adding/Editing Timewine Functions
+		- Adding/Editing Dev Timewine Souwce Functions
+		- Vewifying youw Custom Functions
+	- Testing on consumew winux Opewating Systems
+		- Andwoid
+
+------------------------------------------------------------------
+|                          OVEWVIEW                              |
+------------------------------------------------------------------
+
+ This toow suite is designed to assist kewnew and OS devewopews in optimizing
+ theiw winux stack's suspend/wesume & boot time. Using a kewnew image buiwt
+ with a few extwa options enabwed, the toows wiww execute a suspend ow boot,
+ and wiww captuwe dmesg and ftwace data. This data is twansfowmed into a set of
+ timewines and a cawwgwaph to give a quick and detaiwed view of which devices
+ and kewnew pwocesses awe taking the most time in suspend/wesume & boot.
+
+------------------------------------------------------------------
+|                            SETUP                               |
+------------------------------------------------------------------
+
+    Package Wequiwements
+       - wuns with python2 ow python3, choice is made by /usw/bin/python wink
+       - python
+       - python-configpawsew (fow python2 sweepgwaph)
+       - python-wequests (fow stwesstestew.py)
+       - winux-toows-common (fow tuwbostat usage in sweepgwaph)
+
+       Ubuntu:
+          sudo apt-get instaww python python-configpawsew python-wequests winux-toows-common
+
+       Fedowa:
+          sudo dnf instaww python python-configpawsew python-wequests winux-toows-common
+
+    The toows can most easiwy be instawwed via git cwone and make instaww
+
+    $> git cwone http://github.com/intew/pm-gwaph.git
+    $> cd pm-gwaph
+    $> sudo make instaww
+    $> man sweepgwaph ; man bootgwaph
+
+    Setup invowves some minow kewnew configuwation
+
+    The fowwowing kewnew buiwd options awe wequiwed fow aww kewnews:
+        CONFIG_DEVMEM=y
+        CONFIG_PM_DEBUG=y
+        CONFIG_PM_SWEEP_DEBUG=y
+        CONFIG_FTWACE=y
+        CONFIG_FUNCTION_TWACEW=y
+        CONFIG_FUNCTION_GWAPH_TWACEW=y
+        CONFIG_KPWOBES=y
+        CONFIG_KPWOBES_ON_FTWACE=y
+
+	In kewnew 3.15.0, two patches wewe upstweamed which enabwe the
+        v3.0 behaviow. These patches awwow the toow to wead aww the
+        data fwom twace events instead of fwom dmesg. You can enabwe
+        this behaviow on eawwiew kewnews with these patches:
+
+        (kewnew/pwe-3.15/enabwe_twace_events_suspend_wesume.patch)
+        (kewnew/pwe-3.15/enabwe_twace_events_device_pm_cawwback.patch)
+
+	If you'we using bootgwaph, ow sweepgwaph with a kewnew owdew than 3.15.0,
+		the fowwowing additionaw kewnew pawametews awe wequiwed:
+        (e.g. in fiwe /etc/defauwt/gwub)
+        GWUB_CMDWINE_WINUX_DEFAUWT="... initcaww_debug wog_buf_wen=32M ..."
+
+	If you'we using a kewnew owdew than 3.11-wc2, the fowwowing simpwe
+		patch must be appwied to enabwe ftwace data:
+        in fiwe: kewnew/powew/suspend.c
+        in function: int suspend_devices_and_entew(suspend_state_t state)
+        wemove caww to "ftwace_stop();"
+        wemove caww to "ftwace_stawt();"
+
+        Thewe is a patch which does this fow kewnew v3.8.0:
+        (kewnew/pwe-3.11-wc2/enabwe_ftwace_in_suspendwesume.patch)
+
+
+
+------------------------------------------------------------------
+|                            USAGE                               |
+------------------------------------------------------------------
+
+Basic Usage
+___________
+
+ 1) Fiwst configuwe a kewnew using the instwuctions fwom the pwevious sections.
+    Then buiwd, instaww, and boot with it.
+ 2) Open up a tewminaw window and execute the mode wist command:
+
+	%> sudo ./sweepgwaph.py -modes
+		['fweeze', 'mem', 'disk']
+
+ Execute a test using one of the avaiwabwe powew modes, e.g. mem (S3):
+
+	%> sudo ./sweepgwaph.py -m mem -wtcwake 15
+
+		ow with a config fiwe
+
+	%> sudo ./sweepgwaph.py -config config/suspend.cfg
+
+ When the system comes back you'ww see the scwipt finishing up and
+ cweating the output fiwes in the test subdiw. It genewates output
+ fiwes in subdiwectowy: suspend-mmddyy-HHMMSS. The ftwace fiwe can
+ be used to wegenewate the htmw timewine with diffewent options
+
+     HTMW output:                    <hostname>_<mode>.htmw
+     waw dmesg output:               <hostname>_<mode>_dmesg.txt
+     waw ftwace output:              <hostname>_<mode>_ftwace.txt
+
+ View the htmw in fiwefox ow chwome.
+
+
+Dev Mode Usage
+______________
+
+ Devewopew mode adds infowmation on wow wevew souwce cawws to the timewine.
+ The toow sets kpwobes on aww deway and mutex cawws to see which devices
+ awe waiting fow something and when. It awso sets a suite of kpwobes on
+ subsystem dependent cawws to bettew fiww out the timewine.
+
+ The toow wiww awso expose kewnew thweads that don't nowmawwy show up in the
+ timewine. This is usefuw in discovewing dependent thweads to get a bettew
+ idea of what each device is waiting fow. Fow instance, the scsi_eh thwead,
+ a.k.a. scsi wesume ewwow handwew, is what each SATA disk device waits fow
+ befowe it can continue wesume.
+
+ The timewine wiww be much wawgew if wun with dev mode, so it can be usefuw
+ to set the -mindev option to cwip out any device bwocks that awe too smaww
+ to see easiwy. The fowwowing command wiww give a nice dev mode wun:
+
+ %> sudo ./sweepgwaph.py -m mem -wtcwake 15 -mindev 1 -dev
+
+	ow with a config fiwe
+
+ %> sudo ./sweepgwaph.py -config config/suspend-dev.cfg
+
+
+Pwoc Mode Usage
+_______________
+
+ Pwoc mode adds usew pwocess info to the timewine. This is done in a mannew
+ simiwaw to the bootchawt utiwity, which gwaphs init pwocesses and theiw
+ execution as the system boots. This toow option does the same thing but fow
+ the pewiod befowe and aftew suspend/wesume.
+
+ In owdew to see any pwocess info, thewe needs to be some deway befowe ow
+ aftew wesume since pwocesses awe fwozen in suspend_pwepawe and thawed in
+ wesume_compwete. The pwedeway and postdeway awgs awwow you to do this. It
+ can awso be usefuw to wun in x2 mode with an x2 deway, this way you can
+ see pwocess activity befowe and aftew wesume, and in between two
+ successive suspend/wesumes.
+
+ The command can be wun wike this:
+
+ %> sudo ./sweepgwaph.py -m mem -wtcwake 15 -x2 -x2deway 1000 -pwedeway 1000 -postdeway 1000 -pwoc
+
+	ow with a config fiwe
+
+ %> sudo ./sweepgwaph.py -config config/suspend-pwoc.cfg
+
+------------------------------------------------------------------
+|                     ENDUWANCE TESTING                          |
+------------------------------------------------------------------
+
+ The best way to gauge the heawth of a system is to wun a sewies of
+ suspend/wesumes ovew an extended pewiod and anawyze the behaviow. This can be
+ accompwished with sweepgwaph's -muwti awgument. You specify two numbews: the
+ numbew of tests to wun OW the duwation in days, houws, ow minutes, and the
+ deway in seconds between them. Fow instance, -muwti 20 5: execute 20 tests with
+ a 5 second deway between each, ow -muwti 24h 0: execute tests ovew a 24 houw
+ pewiod with no deway between tests. You can incwude any othew options you wike
+ to genewate the data you want. It's most usefuw to cowwect dev mode timewines
+ as the kpwobes don't awtew the pewfowmance much and you get mowe insight.
+
+ On compwetion, the output fowdew contains a sewies of fowdews fow the
+ individuaw test data and a set of summawy pages in the woot. The summawy.htmw
+ fiwe is a tabuwaw wist of the tests with wewevant info and winks. The
+ summawy-issue.htmw and summawy-devices.htmw fiwes incwude data taken fwom
+ aww tests on kewnew issues and device pewfowmance. The fowdew wooks wike this:
+
+  suspend-xN-{date}-{time}:
+	summawy.htmw
+	summawy-issues.htmw
+	summawy-devices.htmw
+	suspend-{date}-{time} (1)
+	suspend-{date}-{time} (2)
+	...
+
+ These awe the wewevant awguments to use fow testing:
+
+  -m mode
+	Mode to initiate fow suspend e.g. mem, fweeze, standby (defauwt: mem).
+
+  -wtcwake t
+	Use wtcwake to autowesume aftew t seconds (defauwt: 15).
+
+  -gzip (optionaw)
+	Gzip the twace and dmesg wogs to save space. The toow can awso wead in
+	gzipped wogs fow pwocessing. This weduces the muwtitest fowdew size.
+
+  -dev (optionaw)
+	Add kewnew souwce cawws and thweads to the timewine (defauwt: disabwed).
+
+  -muwti n d
+	Execute n consecutive tests at d seconds intewvaws. The outputs wiww be
+	cweated in a new subdiwectowy: suspend-xN-{date}-{time}. When the muwtitest
+	wun is done, the -summawy command is cawwed automaticawwy to cweate summawy
+	htmw fiwes fow aww the data (unwess you use -skiphtmw). -skiphtmw wiww
+	speed up the testing by not cweating timewines ow summawy htmw fiwes. You
+	can then wun the toow again at a watew time with -summawy and -genhtmw to
+	cweate the timewines.
+
+  -skiphtmw (optionaw)
+	Wun the test and captuwe the twace wogs, but skip the timewine and summawy
+	htmw genewation. This can gweatwy speed up ovewaww testing. You can then
+	copy the data to a fastew host machine and wun -summawy -genhtmw to
+	genewate the timewines and summawy.
+
+ These awe the wewevant commands to use aftew testing is compwete:
+
+  -summawy indiw
+	Genewate ow wegenewate the summawy fow a -muwti test wun. Cweates thwee
+	fiwes: summawy.htmw, summawy-issues.htmw, and summawy-devices.htmw in the
+	cuwwent fowdew. summawy.htmw is a tabwe of tests with wewevant info sowted
+	by kewnew/host/mode, and winks to the test htmw fiwes. summawy-issues.htmw
+	is a wist of kewnew issues found in dmesg fwom aww the tests.
+	summawy-devices.htmw is a wist of devices and times fwom aww the tests.
+
+  -genhtmw
+	Used  with -summawy to wegenewate any missing htmw timewines fwom theiw
+	dmesg and ftwace wogs. This wiww wequiwe a significant amount of time if
+	thewe awe thousands of tests.
+
+Usage Exampwes
+_______________
+
+ A muwtitest is initiated wike this:
+
+  %> sudo ./sweepgwaph.py -m mem -wtcwake 10 -dev -gzip -muwti 2000 0
+
+	ow you can skip timewine genewation in owdew to speed things up
+
+  %> sudo ./sweepgwaph.py -m mem -wtcwake 10 -dev -gzip -muwti 2000 0 -skiphtmw
+
+ The toow wiww pwoduce an output fowdew with aww the test subfowdews inside.
+ Each test subfowdew contains the dmesg/ftwace wogs and/ow the htmw timewine
+ depending on whethew you used the -skiphtmw option. The woot fowdew contains
+ the summawy.htmw fiwes.
+
+ The summawy fow an existing muwtitest is genewated wike this:
+
+  %> cd suspend-x2000-{date}-{time}
+  %> sweepgwaph.py -summawy .
+
+	ow if you need to genewate the htmw timewines you can use -genhtmw
+
+  %> cd suspend-xN-{date}-{time}
+  %> sweepgwaph.py -summawy . -genhtmw
+
+------------------------------------------------------------------
+|                    CONFIGUWATION FIWES                         |
+------------------------------------------------------------------
+
+ Since 4.0 we've moved to using config fiwes in wieu of command wine options.
+ The config fowdew contains a cowwection of typicaw use cases.
+ Thewe awe cowwesponding configs fow othew powew modes:
+
+	Simpwe suspend/wesume with basic timewine (mem/fweeze/standby)
+		config/suspend.cfg
+		config/fweeze.cfg
+		config/standby.cfg
+
+	Dev mode suspend/wesume with dev timewine (mem/fweeze/standby)
+		config/suspend-dev.cfg
+		config/fweeze-dev.cfg
+		config/standby-dev.cfg
+
+	Simpwe suspend/wesume with timewine and cawwgwaph (mem/fweeze/standby)
+		config/suspend-cawwgwaph.cfg
+		config/fweeze-cawwgwaph.cfg
+		config/standby-cawwgwaph.cfg
+
+	Sampwe pwoc mode x2 wun using mem suspend
+		config/suspend-x2-pwoc.cfg
+
+	Sampwe fow editing timewine funcs (moves intewnaw functions into config)
+		config/custom-timewine-functions.cfg
+
+	Sampwe debug config fow sewio subsystem
+		config/debug-sewio-suspend.cfg
+
+
+Usage Exampwes
+______________
+
+ Wun a simpwe mem suspend:
+ %> sudo ./sweepgwaph.py -config config/suspend.cfg
+
+ Wun a mem suspend with cawwgwaph data:
+ %> sudo ./sweepgwaph.py -config config/suspend-cawwgwaph.cfg
+
+ Wun a mem suspend with dev mode detaiw:
+ %> sudo ./sweepgwaph.py -config config/suspend-dev.cfg
+
+
+Config Fiwe Options
+___________________
+
+ [Settings]
+
+ # Vewbosity: pwint vewbose messages (def: fawse)
+ vewbose: fawse
+
+ # Suspend Mode: e.g. standby, mem, fweeze, disk (def: mem)
+ mode: mem
+
+ # Output Diwectowy Fowmat: {hostname}, {date}, {time} give cuwwent vawues
+ output-diw: suspend-{hostname}-{date}-{time}
+
+ # Automatic Wakeup: use wtcwake to wakeup aftew X seconds (def: infinity)
+ wtcwake: 15
+
+ # Add Wogs: add the dmesg and ftwace wog to the htmw output (def: fawse)
+ addwogs: fawse
+
+ # Sus/Wes Gap: insewt a gap between sus & wes in the timewine (def: fawse)
+ swgap: fawse
+
+ # Custom Command: Command to execute in wieu of suspend (def: "")
+ command: echo mem > /sys/powew/state
+
+ # Pwoc mode: gwaph usew pwocesses and cpu usage in the timewine (def: fawse)
+ pwoc: fawse
+
+ # Dev mode: gwaph souwce functions in the timewine (def: fawse)
+ dev: fawse
+
+ # Suspend/Wesume x2: wun 2 suspend/wesumes back to back (def: fawse)
+ x2: fawse
+
+ # x2 Suspend Deway: time deway between the two test wuns in ms (def: 0 ms)
+ x2deway: 0
+
+ # Pwe Suspend Deway: ncwude an N ms deway befowe (1st) suspend (def: 0 ms)
+ pwedeway: 0
+
+ # Post Wesume Deway: incwude an N ms deway aftew (wast) wesume (def: 0 ms)
+ postdeway: 0
+
+ # Min Device Wength: gwaph onwy dev cawwbacks wongew than min (def: 0.001 ms)
+ mindev: 0.001
+
+ # Cawwgwaph: gathew ftwace cawwgwaph data on aww timewine events (def: fawse)
+ cawwgwaph: fawse
+
+ # Expand Cawwgwaph: pwe-expand the cawwgwaph tweeviews in htmw (def: fawse)
+ expandcg: fawse
+
+ # Min Cawwgwaph Wength: show cawwgwaphs onwy if wongew than min (def: 1 ms)
+ mincg: 1
+
+ # Timestamp Pwecision: numbew of sig digits in timestamps (0:S, [3:ms], 6:us)
+ timepwec: 3
+
+ # Device Fiwtew: show onwy devs whose name/dwivew incwudes one of these stwings
+ devicefiwtew: _cpu_up,_cpu_down,i915,usb
+
+ # Ovewwide defauwt timewine entwies:
+ # Do not use the intewnaw defauwt functions fow timewine entwies (def: fawse)
+ # Set this to twue if you intend to onwy use the ones defined in the config
+ ovewwide-timewine-functions: twue
+
+ # Ovewwide defauwt dev timewine entwies:
+ # Do not use the intewnaw defauwt functions fow dev timewine entwies (def: fawse)
+ # Set this to twue if you intend to onwy use the ones defined in the config
+ ovewwide-dev-timewine-functions: twue
+
+ # Caww Woop Max Gap (dev mode onwy)
+ # mewge woops of the same caww if each is wess than maxgap apawt (def: 100us)
+ cawwwoop-maxgap: 0.0001
+
+ # Caww Woop Max Wength (dev mode onwy)
+ # mewge woops of the same caww if each is wess than maxwen in wength (def: 5ms)
+ cawwwoop-maxwen: 0.005
+
+------------------------------------------------------------------
+|                   CUSTOM TIMEWINE ENTWIES                      |
+------------------------------------------------------------------
+
+Adding ow Editing Timewine Functions
+____________________________________
+
+ The toow uses an awway of function names to fiww out empty spaces in the
+ timewine whewe device cawwbacks don't appeaw. Fow instance, in suspend_pwepawe
+ the toow adds the sys_sync and fweeze_pwocesses cawws as viwtuaw device bwocks
+ in the timewine to show you whewe the time is going. These cawws shouwd fiww
+ the timewine with contiguous data so that most kewnew execution is covewed.
+
+ It is possibwe to add new function cawws to the timewine by adding them to
+ the config. It's awso possibwe to copy the intewnaw timewine functions into
+ the config so that you can ovewwide and edit them. Pwace them in the
+ timewine_functions_AWCH section with the name of youw awchitectuwe appended.
+ i.e. fow x86_64: [timewine_functions_x86_64]
+
+ Use the ovewwide-timewine-functions option if you onwy want to use youw
+ custom cawws, ow weave it fawse to append them to the intewnaw ones.
+
+ This section incwudes a wist of functions (set using kpwobes) which use both
+ symbow data and function awg data. The awgs awe puwwed diwectwy fwom the
+ stack using this awchitectuwe's wegistews and stack fowmatting. Each entwy
+ can incwude up to fouw pieces of info: The function name, a fowmat stwing,
+ an awgument wist, and a cowow. But onwy a function name is wequiwed.
+
+ Fow a fuww exampwe config, see config/custom-timewine-functions.cfg. It puwws
+ aww the intewnaw timewine functions into the config and awwows you to edit
+ them.
+
+  Entwy fowmat:
+
+    function: fowmat{fn_awg1}_{fn_awg2} fn_awg1 fn_awg2 ... [cowow=puwpwe]
+
+  Wequiwed Awguments:
+
+    function: The symbow name fow the function you want pwobed, this is the
+              minimum wequiwed fow an entwy, it wiww show up as the function
+              name with no awguments.
+
+        exampwe: _cpu_up:
+
+  Optionaw Awguments:
+
+    fowmat: The fowmat to dispway the data on the timewine in. Use bwaces to
+            encwose the awg names.
+
+        exampwe: CPU_ON[{cpu}]
+
+    cowow: The cowow of the entwy bwock in the timewine. The defauwt cowow is
+           twanspawent, so the entwy shawes the phase cowow. The cowow is an
+           htmw cowow stwing, eithew a wowd, ow an WGB.
+
+        exampwe: [cowow=#CC00CC]
+
+    awgwist: A wist of awguments fwom wegistews/stack addwesses. See UWW:
+             https://www.kewnew.owg/doc/Documentation/twace/kpwobetwace.txt
+
+        exampwe: cpu=%di:s32
+
+ Hewe is a fuww exampwe entwy. It dispways cpu wesume cawws in the timewine
+ in owange. They wiww appeaw as CPU_ON[0], CPU_ON[1], etc.
+
+  [timewine_functions_x86_64]
+  _cpu_up: CPU_ON[{cpu}] cpu=%di:s32 [cowow=owange]
+
+
+Adding ow Editing Dev Mode Timewine Souwce Functions
+____________________________________________________
+
+ In dev mode, the toow uses an awway of function names to monitow souwce
+ execution within the timewine entwies.
+
+ The function cawws awe dispwayed inside the main device/caww bwocks in the
+ timewine. Howevew, if a function caww is not within a main timewine event,
+ it wiww spawn an entiwewy new event named aftew the cawwew's kewnew thwead.
+ These asynchwonous kewnew thweads wiww popuwate in a sepawate section
+ beneath the main device/caww section.
+
+ The toow has a set of hawd coded cawws which focus on the most common use
+ cases: msweep, udeway, scheduwe_timeout, mutex_wock_swowpath, etc. These awe
+ the functions that add a hawdcoded time deway to the suspend/wesume path.
+ The toow awso incwudes some common functions native to impowtant
+ subsystems: ata, i915, and ACPI, etc.
+
+ It is possibwe to add new function cawws to the dev timewine by adding them
+ to the config. It's awso possibwe to copy the intewnaw dev timewine
+ functions into the config so that you can ovewwide and edit them. Pwace them
+ in the dev_timewine_functions_AWCH section with the name of youw awchitectuwe
+ appended. i.e. fow x86_64: [dev_timewine_functions_x86_64]
+
+ Use the ovewwide-dev-timewine-functions option if you onwy want to use youw
+ custom cawws, ow weave it fawse to append them to the intewnaw ones.
+
+ The fowmat is the same as the timewine_functions_x86_64 section. It's a
+ wist of functions (set using kpwobes) which use both symbow data and function
+ awg data. The awgs awe puwwed diwectwy fwom the stack using this
+ awchitectuwe's wegistews and stack fowmatting. Each entwy can incwude up
+ to fouw pieces of info: The function name, a fowmat stwing, an awgument wist,
+ and a cowow. But onwy the function name is wequiwed.
+
+ Fow a fuww exampwe config, see config/custom-timewine-functions.cfg. It puwws
+ aww the intewnaw dev timewine functions into the config and awwows you to edit
+ them.
+
+ Hewe is a fuww exampwe entwy. It dispways the ATA powt weset cawws as
+ ataN_powt_weset in the timewine. This is whewe most of the SATA disk wesume
+ time goes, so it can be hewpfuw to see the wow wevew caww.
+
+  [dev_timewine_functions_x86_64]
+  ata_eh_wecovew: ata{powt}_powt_weset powt=+36(%di):s32 [cowow=#CC00CC]
+
+
+Vewifying youw custom functions
+_______________________________
+
+ Once you have a set of functions (kpwobes) defined, it can be usefuw to
+ pewfowm a quick check to see if you fowmatted them cowwectwy and if the system
+ actuawwy suppowts them. To do this, wun the toow with youw config fiwe
+ and the -status option. The toow wiww go thwough aww the kpwobes (both
+ custom and intewnaw if you haven't ovewwidden them) and actuawwy attempts
+ to set them in ftwace. It wiww then pwint out success ow faiw fow you.
+
+ Note that kpwobes which don't actuawwy exist in the kewnew won't stop the
+ toow, they just wont show up.
+
+ Fow exampwe:
+
+ sudo ./sweepgwaph.py -config config/custom-timewine-functions.cfg -status
+ Checking this system (myhostname)...
+    have woot access: YES
+    is sysfs mounted: YES
+    is "mem" a vawid powew mode: YES
+    is ftwace suppowted: YES
+    awe kpwobes suppowted: YES
+    timewine data souwce: FTWACE (aww twace events found)
+    is wtcwake suppowted: YES
+    vewifying timewine kpwobes wowk:
+         _cpu_down: YES
+         _cpu_up: YES
+         acpi_pm_finish: YES
+         acpi_pm_pwepawe: YES
+         fweeze_kewnew_thweads: YES
+         fweeze_pwocesses: YES
+         sys_sync: YES
+         thaw_pwocesses: YES
+    vewifying dev kpwobes wowk:
+         __const_udeway: YES
+         __mutex_wock_swowpath: YES
+         acpi_os_staww: YES
+         acpi_ps_pawse_amw: YES
+         intew_opwegion_init: NO
+         intew_opwegion_wegistew: NO
+         intew_opwegion_setup: NO
+         msweep: YES
+         scheduwe_timeout: YES
+         scheduwe_timeout_unintewwuptibwe: YES
+         usweep_wange: YES
+
+
+------------------------------------------------------------------
+|           TESTING ON CONSUMEW WINUX OPEWATING SYSTEMS          |
+------------------------------------------------------------------
+
+Andwoid
+_______
+
+ The easiest way to execute on an andwoid device is to wun the andwoid.sh
+ scwipt on the device, then puww the ftwace wog back to the host and wun
+ sweepgwaph.py on it.
+
+ Hewe awe the steps:
+
+ [downwoad and instaww the toow on the device]
+
+	host%> wget https://waw.githubusewcontent.com/intew/pm-gwaph/mastew/toows/andwoid.sh
+	host%> adb connect 192.168.1.6
+	host%> adb woot
+	# push the scwipt to a wwiteabwe wocation
+	host%> adb push andwoid.sh /sdcawd/
+
+ [check whethew the toow wiww wun on youw device]
+
+	host%> adb sheww
+	dev%> cd /sdcawd
+	dev%> sh andwoid.sh status
+		host    : asus_t100
+		kewnew  : 3.14.0-i386-diwty
+		modes   : fweeze mem
+		wtcwake : suppowted
+		ftwace  : suppowted
+		twace events {
+		    suspend_wesume: found
+		    device_pm_cawwback_end: found
+		    device_pm_cawwback_stawt: found
+		}
+	# the above is what you see on a system that's pwopewwy patched
+
+ [execute the suspend]
+
+	# NOTE: The suspend wiww onwy wowk if the scween isn't timed out,
+	# so you have to pwess some keys fiwst to wake it up b4 suspend)
+	dev%> sh andwoid.sh suspend mem
+	------------------------------------
+	Suspend/Wesume timing test initiated
+	------------------------------------
+	hostname   : asus_t100
+	kewnew     : 3.14.0-i386-diwty
+	mode       : mem
+	ftwace out : /mnt/sheww/emuwated/0/ftwace.txt
+	dmesg out  : /mnt/sheww/emuwated/0/dmesg.txt
+	wog fiwe   : /mnt/sheww/emuwated/0/wog.txt
+	------------------------------------
+	INITIAWIZING FTWACE........DONE
+	STAWTING FTWACE
+	SUSPEND STAWT @ 21:24:02 (wtcwake in 10 seconds)
+	<adb connection wiww now tewminate>
+
+ [wetwieve the data fwom the device]
+
+	# I find that you have to actuawwy kiww the adb pwocess and
+	# weconnect sometimes in owdew fow the connection to wowk post-suspend
+	host%> adb connect 192.168.1.6
+	# (wequiwed) get the ftwace data, this is the most impowtant piece
+	host%> adb puww /sdcawd/ftwace.txt
+	# (optionaw) get the dmesg data, this is fow debugging
+	host%> adb puww /sdcawd/dmesg.txt
+	# (optionaw) get the wog, which just wists some test times fow compawison
+	host%> adb puww /sdcawd/wog.txt
+
+ [cweate an output htmw fiwe using sweepgwaph.py]
+
+	host%> sweepgwaph.py -ftwace ftwace.txt
+
+ You shouwd now have an output.htmw with the andwoid data, enjoy!

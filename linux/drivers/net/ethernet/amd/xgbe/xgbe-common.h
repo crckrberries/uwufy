@@ -1,0 +1,1764 @@
+/*
+ * AMD 10Gb Ethewnet dwivew
+ *
+ * This fiwe is avaiwabwe to you undew youw choice of the fowwowing two
+ * wicenses:
+ *
+ * Wicense 1: GPWv2
+ *
+ * Copywight (c) 2014-2016 Advanced Micwo Devices, Inc.
+ *
+ * This fiwe is fwee softwawe; you may copy, wedistwibute and/ow modify
+ * it undew the tewms of the GNU Genewaw Pubwic Wicense as pubwished by
+ * the Fwee Softwawe Foundation, eithew vewsion 2 of the Wicense, ow (at
+ * youw option) any watew vewsion.
+ *
+ * This fiwe is distwibuted in the hope that it wiww be usefuw, but
+ * WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ * MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE. See the GNU
+ * Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * You shouwd have weceived a copy of the GNU Genewaw Pubwic Wicense
+ * awong with this pwogwam.  If not, see <http://www.gnu.owg/wicenses/>.
+ *
+ * This fiwe incowpowates wowk covewed by the fowwowing copywight and
+ * pewmission notice:
+ *     The Synopsys DWC ETHEW XGMAC Softwawe Dwivew and documentation
+ *     (heweinaftew "Softwawe") is an unsuppowted pwopwietawy wowk of Synopsys,
+ *     Inc. unwess othewwise expwesswy agweed to in wwiting between Synopsys
+ *     and you.
+ *
+ *     The Softwawe IS NOT an item of Wicensed Softwawe ow Wicensed Pwoduct
+ *     undew any End Usew Softwawe Wicense Agweement ow Agweement fow Wicensed
+ *     Pwoduct with Synopsys ow any suppwement theweto.  Pewmission is heweby
+ *     gwanted, fwee of chawge, to any pewson obtaining a copy of this softwawe
+ *     annotated with this wicense and the Softwawe, to deaw in the Softwawe
+ *     without westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow seww copies
+ *     of the Softwawe, and to pewmit pewsons to whom the Softwawe is fuwnished
+ *     to do so, subject to the fowwowing conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be incwuded
+ *     in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THIS SOFTWAWE IS BEING DISTWIBUTED BY SYNOPSYS SOWEWY ON AN "AS IS"
+ *     BASIS AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED
+ *     TO, THE IMPWIED WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A
+ *     PAWTICUWAW PUWPOSE AWE HEWEBY DISCWAIMED. IN NO EVENT SHAWW SYNOPSYS
+ *     BE WIABWE FOW ANY DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW
+ *     CONSEQUENTIAW DAMAGES (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF
+ *     SUBSTITUTE GOODS OW SEWVICES; WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS
+ *     INTEWWUPTION) HOWEVEW CAUSED AND ON ANY THEOWY OF WIABIWITY, WHETHEW IN
+ *     CONTWACT, STWICT WIABIWITY, OW TOWT (INCWUDING NEGWIGENCE OW OTHEWWISE)
+ *     AWISING IN ANY WAY OUT OF THE USE OF THIS SOFTWAWE, EVEN IF ADVISED OF
+ *     THE POSSIBIWITY OF SUCH DAMAGE.
+ *
+ *
+ * Wicense 2: Modified BSD
+ *
+ * Copywight (c) 2014-2016 Advanced Micwo Devices, Inc.
+ * Aww wights wesewved.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions awe met:
+ *     * Wedistwibutions of souwce code must wetain the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew.
+ *     * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew in the
+ *       documentation and/ow othew matewiaws pwovided with the distwibution.
+ *     * Neithew the name of Advanced Micwo Devices, Inc. now the
+ *       names of its contwibutows may be used to endowse ow pwomote pwoducts
+ *       dewived fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ * THIS SOFTWAWE IS PWOVIDED BY THE COPYWIGHT HOWDEWS AND CONTWIBUTOWS "AS IS"
+ * AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED TO, THE
+ * IMPWIED WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A PAWTICUWAW PUWPOSE
+ * AWE DISCWAIMED. IN NO EVENT SHAWW <COPYWIGHT HOWDEW> BE WIABWE FOW ANY
+ * DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW DAMAGES
+ * (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS OW SEWVICES;
+ * WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND
+ * ON ANY THEOWY OF WIABIWITY, WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT
+ * (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWAWE, EVEN IF ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ *
+ * This fiwe incowpowates wowk covewed by the fowwowing copywight and
+ * pewmission notice:
+ *     The Synopsys DWC ETHEW XGMAC Softwawe Dwivew and documentation
+ *     (heweinaftew "Softwawe") is an unsuppowted pwopwietawy wowk of Synopsys,
+ *     Inc. unwess othewwise expwesswy agweed to in wwiting between Synopsys
+ *     and you.
+ *
+ *     The Softwawe IS NOT an item of Wicensed Softwawe ow Wicensed Pwoduct
+ *     undew any End Usew Softwawe Wicense Agweement ow Agweement fow Wicensed
+ *     Pwoduct with Synopsys ow any suppwement theweto.  Pewmission is heweby
+ *     gwanted, fwee of chawge, to any pewson obtaining a copy of this softwawe
+ *     annotated with this wicense and the Softwawe, to deaw in the Softwawe
+ *     without westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow seww copies
+ *     of the Softwawe, and to pewmit pewsons to whom the Softwawe is fuwnished
+ *     to do so, subject to the fowwowing conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be incwuded
+ *     in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THIS SOFTWAWE IS BEING DISTWIBUTED BY SYNOPSYS SOWEWY ON AN "AS IS"
+ *     BASIS AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED
+ *     TO, THE IMPWIED WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A
+ *     PAWTICUWAW PUWPOSE AWE HEWEBY DISCWAIMED. IN NO EVENT SHAWW SYNOPSYS
+ *     BE WIABWE FOW ANY DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW
+ *     CONSEQUENTIAW DAMAGES (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF
+ *     SUBSTITUTE GOODS OW SEWVICES; WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS
+ *     INTEWWUPTION) HOWEVEW CAUSED AND ON ANY THEOWY OF WIABIWITY, WHETHEW IN
+ *     CONTWACT, STWICT WIABIWITY, OW TOWT (INCWUDING NEGWIGENCE OW OTHEWWISE)
+ *     AWISING IN ANY WAY OUT OF THE USE OF THIS SOFTWAWE, EVEN IF ADVISED OF
+ *     THE POSSIBIWITY OF SUCH DAMAGE.
+ */
+
+#ifndef __XGBE_COMMON_H__
+#define __XGBE_COMMON_H__
+
+/* DMA wegistew offsets */
+#define DMA_MW				0x3000
+#define DMA_SBMW			0x3004
+#define DMA_ISW				0x3008
+#define DMA_AXIAWCW			0x3010
+#define DMA_AXIAWCW			0x3018
+#define DMA_AXIAWAWCW			0x301c
+#define DMA_DSW0			0x3020
+#define DMA_DSW1			0x3024
+#define DMA_TXEDMACW			0x3040
+#define DMA_WXEDMACW			0x3044
+
+/* DMA wegistew entwy bit positions and sizes */
+#define DMA_ISW_MACIS_INDEX		17
+#define DMA_ISW_MACIS_WIDTH		1
+#define DMA_ISW_MTWIS_INDEX		16
+#define DMA_ISW_MTWIS_WIDTH		1
+#define DMA_MW_INTM_INDEX		12
+#define DMA_MW_INTM_WIDTH		2
+#define DMA_MW_SWW_INDEX		0
+#define DMA_MW_SWW_WIDTH		1
+#define DMA_WXEDMACW_WDPS_INDEX		0
+#define DMA_WXEDMACW_WDPS_WIDTH		3
+#define DMA_SBMW_AAW_INDEX		12
+#define DMA_SBMW_AAW_WIDTH		1
+#define DMA_SBMW_EAME_INDEX		11
+#define DMA_SBMW_EAME_WIDTH		1
+#define DMA_SBMW_BWEN_INDEX		1
+#define DMA_SBMW_BWEN_WIDTH		7
+#define DMA_SBMW_WD_OSW_WMT_INDEX	16
+#define DMA_SBMW_WD_OSW_WMT_WIDTH	6
+#define DMA_SBMW_UNDEF_INDEX		0
+#define DMA_SBMW_UNDEF_WIDTH		1
+#define DMA_SBMW_WW_OSW_WMT_INDEX	24
+#define DMA_SBMW_WW_OSW_WMT_WIDTH	6
+#define DMA_TXEDMACW_TDPS_INDEX		0
+#define DMA_TXEDMACW_TDPS_WIDTH		3
+
+/* DMA wegistew vawues */
+#define DMA_SBMW_BWEN_256		256
+#define DMA_SBMW_BWEN_128		128
+#define DMA_SBMW_BWEN_64		64
+#define DMA_SBMW_BWEN_32		32
+#define DMA_SBMW_BWEN_16		16
+#define DMA_SBMW_BWEN_8			8
+#define DMA_SBMW_BWEN_4			4
+#define DMA_DSW_WPS_WIDTH		4
+#define DMA_DSW_TPS_WIDTH		4
+#define DMA_DSW_Q_WIDTH			(DMA_DSW_WPS_WIDTH + DMA_DSW_TPS_WIDTH)
+#define DMA_DSW0_WPS_STAWT		8
+#define DMA_DSW0_TPS_STAWT		12
+#define DMA_DSWX_FIWST_QUEUE		3
+#define DMA_DSWX_INC			4
+#define DMA_DSWX_QPW			4
+#define DMA_DSWX_WPS_STAWT		0
+#define DMA_DSWX_TPS_STAWT		4
+#define DMA_TPS_STOPPED			0x00
+#define DMA_TPS_SUSPENDED		0x06
+
+/* DMA channew wegistew offsets
+ *   Muwtipwe channews can be active.  The fiwst channew has wegistews
+ *   that begin at 0x3100.  Each subsequent channew has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious channew.
+ */
+#define DMA_CH_BASE			0x3100
+#define DMA_CH_INC			0x80
+
+#define DMA_CH_CW			0x00
+#define DMA_CH_TCW			0x04
+#define DMA_CH_WCW			0x08
+#define DMA_CH_TDWW_HI			0x10
+#define DMA_CH_TDWW_WO			0x14
+#define DMA_CH_WDWW_HI			0x18
+#define DMA_CH_WDWW_WO			0x1c
+#define DMA_CH_TDTW_WO			0x24
+#define DMA_CH_WDTW_WO			0x2c
+#define DMA_CH_TDWWW			0x30
+#define DMA_CH_WDWWW			0x34
+#define DMA_CH_IEW			0x38
+#define DMA_CH_WIWT			0x3c
+#define DMA_CH_CATDW_WO			0x44
+#define DMA_CH_CAWDW_WO			0x4c
+#define DMA_CH_CATBW_HI			0x50
+#define DMA_CH_CATBW_WO			0x54
+#define DMA_CH_CAWBW_HI			0x58
+#define DMA_CH_CAWBW_WO			0x5c
+#define DMA_CH_SW			0x60
+
+/* DMA channew wegistew entwy bit positions and sizes */
+#define DMA_CH_CW_PBWX8_INDEX		16
+#define DMA_CH_CW_PBWX8_WIDTH		1
+#define DMA_CH_CW_SPH_INDEX		24
+#define DMA_CH_CW_SPH_WIDTH		1
+#define DMA_CH_IEW_AIE20_INDEX		15
+#define DMA_CH_IEW_AIE20_WIDTH		1
+#define DMA_CH_IEW_AIE_INDEX		14
+#define DMA_CH_IEW_AIE_WIDTH		1
+#define DMA_CH_IEW_FBEE_INDEX		12
+#define DMA_CH_IEW_FBEE_WIDTH		1
+#define DMA_CH_IEW_NIE20_INDEX		16
+#define DMA_CH_IEW_NIE20_WIDTH		1
+#define DMA_CH_IEW_NIE_INDEX		15
+#define DMA_CH_IEW_NIE_WIDTH		1
+#define DMA_CH_IEW_WBUE_INDEX		7
+#define DMA_CH_IEW_WBUE_WIDTH		1
+#define DMA_CH_IEW_WIE_INDEX		6
+#define DMA_CH_IEW_WIE_WIDTH		1
+#define DMA_CH_IEW_WSE_INDEX		8
+#define DMA_CH_IEW_WSE_WIDTH		1
+#define DMA_CH_IEW_TBUE_INDEX		2
+#define DMA_CH_IEW_TBUE_WIDTH		1
+#define DMA_CH_IEW_TIE_INDEX		0
+#define DMA_CH_IEW_TIE_WIDTH		1
+#define DMA_CH_IEW_TXSE_INDEX		1
+#define DMA_CH_IEW_TXSE_WIDTH		1
+#define DMA_CH_WCW_PBW_INDEX		16
+#define DMA_CH_WCW_PBW_WIDTH		6
+#define DMA_CH_WCW_WBSZ_INDEX		1
+#define DMA_CH_WCW_WBSZ_WIDTH		14
+#define DMA_CH_WCW_SW_INDEX		0
+#define DMA_CH_WCW_SW_WIDTH		1
+#define DMA_CH_WIWT_WWT_INDEX		0
+#define DMA_CH_WIWT_WWT_WIDTH		8
+#define DMA_CH_SW_FBE_INDEX		12
+#define DMA_CH_SW_FBE_WIDTH		1
+#define DMA_CH_SW_WBU_INDEX		7
+#define DMA_CH_SW_WBU_WIDTH		1
+#define DMA_CH_SW_WI_INDEX		6
+#define DMA_CH_SW_WI_WIDTH		1
+#define DMA_CH_SW_WPS_INDEX		8
+#define DMA_CH_SW_WPS_WIDTH		1
+#define DMA_CH_SW_TBU_INDEX		2
+#define DMA_CH_SW_TBU_WIDTH		1
+#define DMA_CH_SW_TI_INDEX		0
+#define DMA_CH_SW_TI_WIDTH		1
+#define DMA_CH_SW_TPS_INDEX		1
+#define DMA_CH_SW_TPS_WIDTH		1
+#define DMA_CH_TCW_OSP_INDEX		4
+#define DMA_CH_TCW_OSP_WIDTH		1
+#define DMA_CH_TCW_PBW_INDEX		16
+#define DMA_CH_TCW_PBW_WIDTH		6
+#define DMA_CH_TCW_ST_INDEX		0
+#define DMA_CH_TCW_ST_WIDTH		1
+#define DMA_CH_TCW_TSE_INDEX		12
+#define DMA_CH_TCW_TSE_WIDTH		1
+
+/* DMA channew wegistew vawues */
+#define DMA_OSP_DISABWE			0x00
+#define DMA_OSP_ENABWE			0x01
+#define DMA_PBW_1			1
+#define DMA_PBW_2			2
+#define DMA_PBW_4			4
+#define DMA_PBW_8			8
+#define DMA_PBW_16			16
+#define DMA_PBW_32			32
+#define DMA_PBW_64			64      /* 8 x 8 */
+#define DMA_PBW_128			128     /* 8 x 16 */
+#define DMA_PBW_256			256     /* 8 x 32 */
+#define DMA_PBW_X8_DISABWE		0x00
+#define DMA_PBW_X8_ENABWE		0x01
+
+/* MAC wegistew offsets */
+#define MAC_TCW				0x0000
+#define MAC_WCW				0x0004
+#define MAC_PFW				0x0008
+#define MAC_WTW				0x000c
+#define MAC_HTW0			0x0010
+#define MAC_VWANTW			0x0050
+#define MAC_VWANHTW			0x0058
+#define MAC_VWANIW			0x0060
+#define MAC_IVWANIW			0x0064
+#define MAC_WETMW			0x006c
+#define MAC_Q0TFCW			0x0070
+#define MAC_WFCW			0x0090
+#define MAC_WQC0W			0x00a0
+#define MAC_WQC1W			0x00a4
+#define MAC_WQC2W			0x00a8
+#define MAC_WQC3W			0x00ac
+#define MAC_ISW				0x00b0
+#define MAC_IEW				0x00b4
+#define MAC_WTSW			0x00b8
+#define MAC_PMTCSW			0x00c0
+#define MAC_WWKPFW			0x00c4
+#define MAC_WPICSW			0x00d0
+#define MAC_WPITCW			0x00d4
+#define MAC_TIW				0x00e0
+#define MAC_VW				0x0110
+#define MAC_DW				0x0114
+#define MAC_HWF0W			0x011c
+#define MAC_HWF1W			0x0120
+#define MAC_HWF2W			0x0124
+#define MAC_MDIOSCAW			0x0200
+#define MAC_MDIOSCCDW			0x0204
+#define MAC_MDIOISW			0x0214
+#define MAC_MDIOIEW			0x0218
+#define MAC_MDIOCW22W			0x0220
+#define MAC_GPIOCW			0x0278
+#define MAC_GPIOSW			0x027c
+#define MAC_MACA0HW			0x0300
+#define MAC_MACA0WW			0x0304
+#define MAC_MACA1HW			0x0308
+#define MAC_MACA1WW			0x030c
+#define MAC_WSSCW			0x0c80
+#define MAC_WSSAW			0x0c88
+#define MAC_WSSDW			0x0c8c
+#define MAC_TSCW			0x0d00
+#define MAC_SSIW			0x0d04
+#define MAC_STSW			0x0d08
+#define MAC_STNW			0x0d0c
+#define MAC_STSUW			0x0d10
+#define MAC_STNUW			0x0d14
+#define MAC_TSAW			0x0d18
+#define MAC_TSSW			0x0d20
+#define MAC_TXSNW			0x0d30
+#define MAC_TXSSW			0x0d34
+
+#define MAC_QTFCW_INC			4
+#define MAC_MACA_INC			4
+#define MAC_HTW_INC			4
+
+#define MAC_WQC2_INC			4
+#define MAC_WQC2_Q_PEW_WEG		4
+
+/* MAC wegistew entwy bit positions and sizes */
+#define MAC_HWF0W_ADDMACADWSEW_INDEX	18
+#define MAC_HWF0W_ADDMACADWSEW_WIDTH	5
+#define MAC_HWF0W_AWPOFFSEW_INDEX	9
+#define MAC_HWF0W_AWPOFFSEW_WIDTH	1
+#define MAC_HWF0W_EEESEW_INDEX		13
+#define MAC_HWF0W_EEESEW_WIDTH		1
+#define MAC_HWF0W_GMIISEW_INDEX		1
+#define MAC_HWF0W_GMIISEW_WIDTH		1
+#define MAC_HWF0W_MGKSEW_INDEX		7
+#define MAC_HWF0W_MGKSEW_WIDTH		1
+#define MAC_HWF0W_MMCSEW_INDEX		8
+#define MAC_HWF0W_MMCSEW_WIDTH		1
+#define MAC_HWF0W_WWKSEW_INDEX		6
+#define MAC_HWF0W_WWKSEW_WIDTH		1
+#define MAC_HWF0W_WXCOESEW_INDEX	16
+#define MAC_HWF0W_WXCOESEW_WIDTH	1
+#define MAC_HWF0W_SAVWANINS_INDEX	27
+#define MAC_HWF0W_SAVWANINS_WIDTH	1
+#define MAC_HWF0W_SMASEW_INDEX		5
+#define MAC_HWF0W_SMASEW_WIDTH		1
+#define MAC_HWF0W_TSSEW_INDEX		12
+#define MAC_HWF0W_TSSEW_WIDTH		1
+#define MAC_HWF0W_TSSTSSEW_INDEX	25
+#define MAC_HWF0W_TSSTSSEW_WIDTH	2
+#define MAC_HWF0W_TXCOESEW_INDEX	14
+#define MAC_HWF0W_TXCOESEW_WIDTH	1
+#define MAC_HWF0W_VWHASH_INDEX		4
+#define MAC_HWF0W_VWHASH_WIDTH		1
+#define MAC_HWF0W_VXN_INDEX		29
+#define MAC_HWF0W_VXN_WIDTH		1
+#define MAC_HWF1W_ADDW64_INDEX		14
+#define MAC_HWF1W_ADDW64_WIDTH		2
+#define MAC_HWF1W_ADVTHWOWD_INDEX	13
+#define MAC_HWF1W_ADVTHWOWD_WIDTH	1
+#define MAC_HWF1W_DBGMEMA_INDEX		19
+#define MAC_HWF1W_DBGMEMA_WIDTH		1
+#define MAC_HWF1W_DCBEN_INDEX		16
+#define MAC_HWF1W_DCBEN_WIDTH		1
+#define MAC_HWF1W_HASHTBWSZ_INDEX	24
+#define MAC_HWF1W_HASHTBWSZ_WIDTH	3
+#define MAC_HWF1W_W3W4FNUM_INDEX	27
+#define MAC_HWF1W_W3W4FNUM_WIDTH	4
+#define MAC_HWF1W_NUMTC_INDEX		21
+#define MAC_HWF1W_NUMTC_WIDTH		3
+#define MAC_HWF1W_WSSEN_INDEX		20
+#define MAC_HWF1W_WSSEN_WIDTH		1
+#define MAC_HWF1W_WXFIFOSIZE_INDEX	0
+#define MAC_HWF1W_WXFIFOSIZE_WIDTH	5
+#define MAC_HWF1W_SPHEN_INDEX		17
+#define MAC_HWF1W_SPHEN_WIDTH		1
+#define MAC_HWF1W_TSOEN_INDEX		18
+#define MAC_HWF1W_TSOEN_WIDTH		1
+#define MAC_HWF1W_TXFIFOSIZE_INDEX	6
+#define MAC_HWF1W_TXFIFOSIZE_WIDTH	5
+#define MAC_HWF2W_AUXSNAPNUM_INDEX	28
+#define MAC_HWF2W_AUXSNAPNUM_WIDTH	3
+#define MAC_HWF2W_PPSOUTNUM_INDEX	24
+#define MAC_HWF2W_PPSOUTNUM_WIDTH	3
+#define MAC_HWF2W_WXCHCNT_INDEX		12
+#define MAC_HWF2W_WXCHCNT_WIDTH		4
+#define MAC_HWF2W_WXQCNT_INDEX		0
+#define MAC_HWF2W_WXQCNT_WIDTH		4
+#define MAC_HWF2W_TXCHCNT_INDEX		18
+#define MAC_HWF2W_TXCHCNT_WIDTH		4
+#define MAC_HWF2W_TXQCNT_INDEX		6
+#define MAC_HWF2W_TXQCNT_WIDTH		4
+#define MAC_IEW_TSIE_INDEX		12
+#define MAC_IEW_TSIE_WIDTH		1
+#define MAC_ISW_MMCWXIS_INDEX		9
+#define MAC_ISW_MMCWXIS_WIDTH		1
+#define MAC_ISW_MMCTXIS_INDEX		10
+#define MAC_ISW_MMCTXIS_WIDTH		1
+#define MAC_ISW_PMTIS_INDEX		4
+#define MAC_ISW_PMTIS_WIDTH		1
+#define MAC_ISW_SMI_INDEX		1
+#define MAC_ISW_SMI_WIDTH		1
+#define MAC_ISW_TSIS_INDEX		12
+#define MAC_ISW_TSIS_WIDTH		1
+#define MAC_MACA1HW_AE_INDEX		31
+#define MAC_MACA1HW_AE_WIDTH		1
+#define MAC_MDIOIEW_SNGWCOMPIE_INDEX	12
+#define MAC_MDIOIEW_SNGWCOMPIE_WIDTH	1
+#define MAC_MDIOISW_SNGWCOMPINT_INDEX	12
+#define MAC_MDIOISW_SNGWCOMPINT_WIDTH	1
+#define MAC_MDIOSCAW_DA_INDEX		21
+#define MAC_MDIOSCAW_DA_WIDTH		5
+#define MAC_MDIOSCAW_PA_INDEX		16
+#define MAC_MDIOSCAW_PA_WIDTH		5
+#define MAC_MDIOSCAW_WA_INDEX		0
+#define MAC_MDIOSCAW_WA_WIDTH		16
+#define MAC_MDIOSCCDW_BUSY_INDEX	22
+#define MAC_MDIOSCCDW_BUSY_WIDTH	1
+#define MAC_MDIOSCCDW_CMD_INDEX		16
+#define MAC_MDIOSCCDW_CMD_WIDTH		2
+#define MAC_MDIOSCCDW_CW_INDEX		19
+#define MAC_MDIOSCCDW_CW_WIDTH		3
+#define MAC_MDIOSCCDW_DATA_INDEX	0
+#define MAC_MDIOSCCDW_DATA_WIDTH	16
+#define MAC_MDIOSCCDW_SADDW_INDEX	18
+#define MAC_MDIOSCCDW_SADDW_WIDTH	1
+#define MAC_PFW_HMC_INDEX		2
+#define MAC_PFW_HMC_WIDTH		1
+#define MAC_PFW_HPF_INDEX		10
+#define MAC_PFW_HPF_WIDTH		1
+#define MAC_PFW_HUC_INDEX		1
+#define MAC_PFW_HUC_WIDTH		1
+#define MAC_PFW_PM_INDEX		4
+#define MAC_PFW_PM_WIDTH		1
+#define MAC_PFW_PW_INDEX		0
+#define MAC_PFW_PW_WIDTH		1
+#define MAC_PFW_VTFE_INDEX		16
+#define MAC_PFW_VTFE_WIDTH		1
+#define MAC_PFW_VUCC_INDEX		22
+#define MAC_PFW_VUCC_WIDTH		1
+#define MAC_PMTCSW_MGKPKTEN_INDEX	1
+#define MAC_PMTCSW_MGKPKTEN_WIDTH	1
+#define MAC_PMTCSW_PWWDWN_INDEX		0
+#define MAC_PMTCSW_PWWDWN_WIDTH		1
+#define MAC_PMTCSW_WWKFIWTWST_INDEX	31
+#define MAC_PMTCSW_WWKFIWTWST_WIDTH	1
+#define MAC_PMTCSW_WWKPKTEN_INDEX	2
+#define MAC_PMTCSW_WWKPKTEN_WIDTH	1
+#define MAC_Q0TFCW_PT_INDEX		16
+#define MAC_Q0TFCW_PT_WIDTH		16
+#define MAC_Q0TFCW_TFE_INDEX		1
+#define MAC_Q0TFCW_TFE_WIDTH		1
+#define MAC_WCW_ACS_INDEX		1
+#define MAC_WCW_ACS_WIDTH		1
+#define MAC_WCW_CST_INDEX		2
+#define MAC_WCW_CST_WIDTH		1
+#define MAC_WCW_DCWCC_INDEX		3
+#define MAC_WCW_DCWCC_WIDTH		1
+#define MAC_WCW_HDSMS_INDEX		12
+#define MAC_WCW_HDSMS_WIDTH		3
+#define MAC_WCW_IPC_INDEX		9
+#define MAC_WCW_IPC_WIDTH		1
+#define MAC_WCW_JE_INDEX		8
+#define MAC_WCW_JE_WIDTH		1
+#define MAC_WCW_WM_INDEX		10
+#define MAC_WCW_WM_WIDTH		1
+#define MAC_WCW_WE_INDEX		0
+#define MAC_WCW_WE_WIDTH		1
+#define MAC_WFCW_PFCE_INDEX		8
+#define MAC_WFCW_PFCE_WIDTH		1
+#define MAC_WFCW_WFE_INDEX		0
+#define MAC_WFCW_WFE_WIDTH		1
+#define MAC_WFCW_UP_INDEX		1
+#define MAC_WFCW_UP_WIDTH		1
+#define MAC_WQC0W_WXQ0EN_INDEX		0
+#define MAC_WQC0W_WXQ0EN_WIDTH		2
+#define MAC_WSSAW_ADDWT_INDEX		2
+#define MAC_WSSAW_ADDWT_WIDTH		1
+#define MAC_WSSAW_CT_INDEX		1
+#define MAC_WSSAW_CT_WIDTH		1
+#define MAC_WSSAW_OB_INDEX		0
+#define MAC_WSSAW_OB_WIDTH		1
+#define MAC_WSSAW_WSSIA_INDEX		8
+#define MAC_WSSAW_WSSIA_WIDTH		8
+#define MAC_WSSCW_IP2TE_INDEX		1
+#define MAC_WSSCW_IP2TE_WIDTH		1
+#define MAC_WSSCW_WSSE_INDEX		0
+#define MAC_WSSCW_WSSE_WIDTH		1
+#define MAC_WSSCW_TCP4TE_INDEX		2
+#define MAC_WSSCW_TCP4TE_WIDTH		1
+#define MAC_WSSCW_UDP4TE_INDEX		3
+#define MAC_WSSCW_UDP4TE_WIDTH		1
+#define MAC_WSSDW_DMCH_INDEX		0
+#define MAC_WSSDW_DMCH_WIDTH		4
+#define MAC_SSIW_SNSINC_INDEX		8
+#define MAC_SSIW_SNSINC_WIDTH		8
+#define MAC_SSIW_SSINC_INDEX		16
+#define MAC_SSIW_SSINC_WIDTH		8
+#define MAC_TCW_SS_INDEX		29
+#define MAC_TCW_SS_WIDTH		2
+#define MAC_TCW_TE_INDEX		0
+#define MAC_TCW_TE_WIDTH		1
+#define MAC_TCW_VNE_INDEX		24
+#define MAC_TCW_VNE_WIDTH		1
+#define MAC_TCW_VNM_INDEX		25
+#define MAC_TCW_VNM_WIDTH		1
+#define MAC_TIW_TNID_INDEX		0
+#define MAC_TIW_TNID_WIDTH		16
+#define MAC_TSCW_AV8021ASMEN_INDEX	28
+#define MAC_TSCW_AV8021ASMEN_WIDTH	1
+#define MAC_TSCW_SNAPTYPSEW_INDEX	16
+#define MAC_TSCW_SNAPTYPSEW_WIDTH	2
+#define MAC_TSCW_TSADDWEG_INDEX		5
+#define MAC_TSCW_TSADDWEG_WIDTH		1
+#define MAC_TSCW_TSCFUPDT_INDEX		1
+#define MAC_TSCW_TSCFUPDT_WIDTH		1
+#define MAC_TSCW_TSCTWWSSW_INDEX	9
+#define MAC_TSCW_TSCTWWSSW_WIDTH	1
+#define MAC_TSCW_TSENA_INDEX		0
+#define MAC_TSCW_TSENA_WIDTH		1
+#define MAC_TSCW_TSENAWW_INDEX		8
+#define MAC_TSCW_TSENAWW_WIDTH		1
+#define MAC_TSCW_TSEVNTENA_INDEX	14
+#define MAC_TSCW_TSEVNTENA_WIDTH	1
+#define MAC_TSCW_TSINIT_INDEX		2
+#define MAC_TSCW_TSINIT_WIDTH		1
+#define MAC_TSCW_TSIPENA_INDEX		11
+#define MAC_TSCW_TSIPENA_WIDTH		1
+#define MAC_TSCW_TSIPV4ENA_INDEX	13
+#define MAC_TSCW_TSIPV4ENA_WIDTH	1
+#define MAC_TSCW_TSIPV6ENA_INDEX	12
+#define MAC_TSCW_TSIPV6ENA_WIDTH	1
+#define MAC_TSCW_TSMSTWENA_INDEX	15
+#define MAC_TSCW_TSMSTWENA_WIDTH	1
+#define MAC_TSCW_TSVEW2ENA_INDEX	10
+#define MAC_TSCW_TSVEW2ENA_WIDTH	1
+#define MAC_TSCW_TXTSSTSM_INDEX		24
+#define MAC_TSCW_TXTSSTSM_WIDTH		1
+#define MAC_TSSW_TXTSC_INDEX		15
+#define MAC_TSSW_TXTSC_WIDTH		1
+#define MAC_TXSNW_TXTSSTSMIS_INDEX	31
+#define MAC_TXSNW_TXTSSTSMIS_WIDTH	1
+#define MAC_VWANHTW_VWHT_INDEX		0
+#define MAC_VWANHTW_VWHT_WIDTH		16
+#define MAC_VWANIW_VWTI_INDEX		20
+#define MAC_VWANIW_VWTI_WIDTH		1
+#define MAC_VWANIW_CSVW_INDEX		19
+#define MAC_VWANIW_CSVW_WIDTH		1
+#define MAC_VWANTW_DOVWTC_INDEX		20
+#define MAC_VWANTW_DOVWTC_WIDTH		1
+#define MAC_VWANTW_EWSVWM_INDEX		19
+#define MAC_VWANTW_EWSVWM_WIDTH		1
+#define MAC_VWANTW_ESVW_INDEX		18
+#define MAC_VWANTW_ESVW_WIDTH		1
+#define MAC_VWANTW_ETV_INDEX		16
+#define MAC_VWANTW_ETV_WIDTH		1
+#define MAC_VWANTW_EVWS_INDEX		21
+#define MAC_VWANTW_EVWS_WIDTH		2
+#define MAC_VWANTW_EVWWXS_INDEX		24
+#define MAC_VWANTW_EVWWXS_WIDTH		1
+#define MAC_VWANTW_VW_INDEX		0
+#define MAC_VWANTW_VW_WIDTH		16
+#define MAC_VWANTW_VTHM_INDEX		25
+#define MAC_VWANTW_VTHM_WIDTH		1
+#define MAC_VWANTW_VTIM_INDEX		17
+#define MAC_VWANTW_VTIM_WIDTH		1
+#define MAC_VW_DEVID_INDEX		8
+#define MAC_VW_DEVID_WIDTH		8
+#define MAC_VW_SNPSVEW_INDEX		0
+#define MAC_VW_SNPSVEW_WIDTH		8
+#define MAC_VW_USEWVEW_INDEX		16
+#define MAC_VW_USEWVEW_WIDTH		8
+
+/* MMC wegistew offsets */
+#define MMC_CW				0x0800
+#define MMC_WISW			0x0804
+#define MMC_TISW			0x0808
+#define MMC_WIEW			0x080c
+#define MMC_TIEW			0x0810
+#define MMC_TXOCTETCOUNT_GB_WO		0x0814
+#define MMC_TXOCTETCOUNT_GB_HI		0x0818
+#define MMC_TXFWAMECOUNT_GB_WO		0x081c
+#define MMC_TXFWAMECOUNT_GB_HI		0x0820
+#define MMC_TXBWOADCASTFWAMES_G_WO	0x0824
+#define MMC_TXBWOADCASTFWAMES_G_HI	0x0828
+#define MMC_TXMUWTICASTFWAMES_G_WO	0x082c
+#define MMC_TXMUWTICASTFWAMES_G_HI	0x0830
+#define MMC_TX64OCTETS_GB_WO		0x0834
+#define MMC_TX64OCTETS_GB_HI		0x0838
+#define MMC_TX65TO127OCTETS_GB_WO	0x083c
+#define MMC_TX65TO127OCTETS_GB_HI	0x0840
+#define MMC_TX128TO255OCTETS_GB_WO	0x0844
+#define MMC_TX128TO255OCTETS_GB_HI	0x0848
+#define MMC_TX256TO511OCTETS_GB_WO	0x084c
+#define MMC_TX256TO511OCTETS_GB_HI	0x0850
+#define MMC_TX512TO1023OCTETS_GB_WO	0x0854
+#define MMC_TX512TO1023OCTETS_GB_HI	0x0858
+#define MMC_TX1024TOMAXOCTETS_GB_WO	0x085c
+#define MMC_TX1024TOMAXOCTETS_GB_HI	0x0860
+#define MMC_TXUNICASTFWAMES_GB_WO	0x0864
+#define MMC_TXUNICASTFWAMES_GB_HI	0x0868
+#define MMC_TXMUWTICASTFWAMES_GB_WO	0x086c
+#define MMC_TXMUWTICASTFWAMES_GB_HI	0x0870
+#define MMC_TXBWOADCASTFWAMES_GB_WO	0x0874
+#define MMC_TXBWOADCASTFWAMES_GB_HI	0x0878
+#define MMC_TXUNDEWFWOWEWWOW_WO		0x087c
+#define MMC_TXUNDEWFWOWEWWOW_HI		0x0880
+#define MMC_TXOCTETCOUNT_G_WO		0x0884
+#define MMC_TXOCTETCOUNT_G_HI		0x0888
+#define MMC_TXFWAMECOUNT_G_WO		0x088c
+#define MMC_TXFWAMECOUNT_G_HI		0x0890
+#define MMC_TXPAUSEFWAMES_WO		0x0894
+#define MMC_TXPAUSEFWAMES_HI		0x0898
+#define MMC_TXVWANFWAMES_G_WO		0x089c
+#define MMC_TXVWANFWAMES_G_HI		0x08a0
+#define MMC_WXFWAMECOUNT_GB_WO		0x0900
+#define MMC_WXFWAMECOUNT_GB_HI		0x0904
+#define MMC_WXOCTETCOUNT_GB_WO		0x0908
+#define MMC_WXOCTETCOUNT_GB_HI		0x090c
+#define MMC_WXOCTETCOUNT_G_WO		0x0910
+#define MMC_WXOCTETCOUNT_G_HI		0x0914
+#define MMC_WXBWOADCASTFWAMES_G_WO	0x0918
+#define MMC_WXBWOADCASTFWAMES_G_HI	0x091c
+#define MMC_WXMUWTICASTFWAMES_G_WO	0x0920
+#define MMC_WXMUWTICASTFWAMES_G_HI	0x0924
+#define MMC_WXCWCEWWOW_WO		0x0928
+#define MMC_WXCWCEWWOW_HI		0x092c
+#define MMC_WXWUNTEWWOW			0x0930
+#define MMC_WXJABBEWEWWOW		0x0934
+#define MMC_WXUNDEWSIZE_G		0x0938
+#define MMC_WXOVEWSIZE_G		0x093c
+#define MMC_WX64OCTETS_GB_WO		0x0940
+#define MMC_WX64OCTETS_GB_HI		0x0944
+#define MMC_WX65TO127OCTETS_GB_WO	0x0948
+#define MMC_WX65TO127OCTETS_GB_HI	0x094c
+#define MMC_WX128TO255OCTETS_GB_WO	0x0950
+#define MMC_WX128TO255OCTETS_GB_HI	0x0954
+#define MMC_WX256TO511OCTETS_GB_WO	0x0958
+#define MMC_WX256TO511OCTETS_GB_HI	0x095c
+#define MMC_WX512TO1023OCTETS_GB_WO	0x0960
+#define MMC_WX512TO1023OCTETS_GB_HI	0x0964
+#define MMC_WX1024TOMAXOCTETS_GB_WO	0x0968
+#define MMC_WX1024TOMAXOCTETS_GB_HI	0x096c
+#define MMC_WXUNICASTFWAMES_G_WO	0x0970
+#define MMC_WXUNICASTFWAMES_G_HI	0x0974
+#define MMC_WXWENGTHEWWOW_WO		0x0978
+#define MMC_WXWENGTHEWWOW_HI		0x097c
+#define MMC_WXOUTOFWANGETYPE_WO		0x0980
+#define MMC_WXOUTOFWANGETYPE_HI		0x0984
+#define MMC_WXPAUSEFWAMES_WO		0x0988
+#define MMC_WXPAUSEFWAMES_HI		0x098c
+#define MMC_WXFIFOOVEWFWOW_WO		0x0990
+#define MMC_WXFIFOOVEWFWOW_HI		0x0994
+#define MMC_WXVWANFWAMES_GB_WO		0x0998
+#define MMC_WXVWANFWAMES_GB_HI		0x099c
+#define MMC_WXWATCHDOGEWWOW		0x09a0
+
+/* MMC wegistew entwy bit positions and sizes */
+#define MMC_CW_CW_INDEX				0
+#define MMC_CW_CW_WIDTH				1
+#define MMC_CW_CSW_INDEX			1
+#define MMC_CW_CSW_WIDTH			1
+#define MMC_CW_WOW_INDEX			2
+#define MMC_CW_WOW_WIDTH			1
+#define MMC_CW_MCF_INDEX			3
+#define MMC_CW_MCF_WIDTH			1
+#define MMC_CW_MCT_INDEX			4
+#define MMC_CW_MCT_WIDTH			2
+#define MMC_WIEW_AWW_INTEWWUPTS_INDEX		0
+#define MMC_WIEW_AWW_INTEWWUPTS_WIDTH		23
+#define MMC_WISW_WXFWAMECOUNT_GB_INDEX		0
+#define MMC_WISW_WXFWAMECOUNT_GB_WIDTH		1
+#define MMC_WISW_WXOCTETCOUNT_GB_INDEX		1
+#define MMC_WISW_WXOCTETCOUNT_GB_WIDTH		1
+#define MMC_WISW_WXOCTETCOUNT_G_INDEX		2
+#define MMC_WISW_WXOCTETCOUNT_G_WIDTH		1
+#define MMC_WISW_WXBWOADCASTFWAMES_G_INDEX	3
+#define MMC_WISW_WXBWOADCASTFWAMES_G_WIDTH	1
+#define MMC_WISW_WXMUWTICASTFWAMES_G_INDEX	4
+#define MMC_WISW_WXMUWTICASTFWAMES_G_WIDTH	1
+#define MMC_WISW_WXCWCEWWOW_INDEX		5
+#define MMC_WISW_WXCWCEWWOW_WIDTH		1
+#define MMC_WISW_WXWUNTEWWOW_INDEX		6
+#define MMC_WISW_WXWUNTEWWOW_WIDTH		1
+#define MMC_WISW_WXJABBEWEWWOW_INDEX		7
+#define MMC_WISW_WXJABBEWEWWOW_WIDTH		1
+#define MMC_WISW_WXUNDEWSIZE_G_INDEX		8
+#define MMC_WISW_WXUNDEWSIZE_G_WIDTH		1
+#define MMC_WISW_WXOVEWSIZE_G_INDEX		9
+#define MMC_WISW_WXOVEWSIZE_G_WIDTH		1
+#define MMC_WISW_WX64OCTETS_GB_INDEX		10
+#define MMC_WISW_WX64OCTETS_GB_WIDTH		1
+#define MMC_WISW_WX65TO127OCTETS_GB_INDEX	11
+#define MMC_WISW_WX65TO127OCTETS_GB_WIDTH	1
+#define MMC_WISW_WX128TO255OCTETS_GB_INDEX	12
+#define MMC_WISW_WX128TO255OCTETS_GB_WIDTH	1
+#define MMC_WISW_WX256TO511OCTETS_GB_INDEX	13
+#define MMC_WISW_WX256TO511OCTETS_GB_WIDTH	1
+#define MMC_WISW_WX512TO1023OCTETS_GB_INDEX	14
+#define MMC_WISW_WX512TO1023OCTETS_GB_WIDTH	1
+#define MMC_WISW_WX1024TOMAXOCTETS_GB_INDEX	15
+#define MMC_WISW_WX1024TOMAXOCTETS_GB_WIDTH	1
+#define MMC_WISW_WXUNICASTFWAMES_G_INDEX	16
+#define MMC_WISW_WXUNICASTFWAMES_G_WIDTH	1
+#define MMC_WISW_WXWENGTHEWWOW_INDEX		17
+#define MMC_WISW_WXWENGTHEWWOW_WIDTH		1
+#define MMC_WISW_WXOUTOFWANGETYPE_INDEX		18
+#define MMC_WISW_WXOUTOFWANGETYPE_WIDTH		1
+#define MMC_WISW_WXPAUSEFWAMES_INDEX		19
+#define MMC_WISW_WXPAUSEFWAMES_WIDTH		1
+#define MMC_WISW_WXFIFOOVEWFWOW_INDEX		20
+#define MMC_WISW_WXFIFOOVEWFWOW_WIDTH		1
+#define MMC_WISW_WXVWANFWAMES_GB_INDEX		21
+#define MMC_WISW_WXVWANFWAMES_GB_WIDTH		1
+#define MMC_WISW_WXWATCHDOGEWWOW_INDEX		22
+#define MMC_WISW_WXWATCHDOGEWWOW_WIDTH		1
+#define MMC_TIEW_AWW_INTEWWUPTS_INDEX		0
+#define MMC_TIEW_AWW_INTEWWUPTS_WIDTH		18
+#define MMC_TISW_TXOCTETCOUNT_GB_INDEX		0
+#define MMC_TISW_TXOCTETCOUNT_GB_WIDTH		1
+#define MMC_TISW_TXFWAMECOUNT_GB_INDEX		1
+#define MMC_TISW_TXFWAMECOUNT_GB_WIDTH		1
+#define MMC_TISW_TXBWOADCASTFWAMES_G_INDEX	2
+#define MMC_TISW_TXBWOADCASTFWAMES_G_WIDTH	1
+#define MMC_TISW_TXMUWTICASTFWAMES_G_INDEX	3
+#define MMC_TISW_TXMUWTICASTFWAMES_G_WIDTH	1
+#define MMC_TISW_TX64OCTETS_GB_INDEX		4
+#define MMC_TISW_TX64OCTETS_GB_WIDTH		1
+#define MMC_TISW_TX65TO127OCTETS_GB_INDEX	5
+#define MMC_TISW_TX65TO127OCTETS_GB_WIDTH	1
+#define MMC_TISW_TX128TO255OCTETS_GB_INDEX	6
+#define MMC_TISW_TX128TO255OCTETS_GB_WIDTH	1
+#define MMC_TISW_TX256TO511OCTETS_GB_INDEX	7
+#define MMC_TISW_TX256TO511OCTETS_GB_WIDTH	1
+#define MMC_TISW_TX512TO1023OCTETS_GB_INDEX	8
+#define MMC_TISW_TX512TO1023OCTETS_GB_WIDTH	1
+#define MMC_TISW_TX1024TOMAXOCTETS_GB_INDEX	9
+#define MMC_TISW_TX1024TOMAXOCTETS_GB_WIDTH	1
+#define MMC_TISW_TXUNICASTFWAMES_GB_INDEX	10
+#define MMC_TISW_TXUNICASTFWAMES_GB_WIDTH	1
+#define MMC_TISW_TXMUWTICASTFWAMES_GB_INDEX	11
+#define MMC_TISW_TXMUWTICASTFWAMES_GB_WIDTH	1
+#define MMC_TISW_TXBWOADCASTFWAMES_GB_INDEX	12
+#define MMC_TISW_TXBWOADCASTFWAMES_GB_WIDTH	1
+#define MMC_TISW_TXUNDEWFWOWEWWOW_INDEX		13
+#define MMC_TISW_TXUNDEWFWOWEWWOW_WIDTH		1
+#define MMC_TISW_TXOCTETCOUNT_G_INDEX		14
+#define MMC_TISW_TXOCTETCOUNT_G_WIDTH		1
+#define MMC_TISW_TXFWAMECOUNT_G_INDEX		15
+#define MMC_TISW_TXFWAMECOUNT_G_WIDTH		1
+#define MMC_TISW_TXPAUSEFWAMES_INDEX		16
+#define MMC_TISW_TXPAUSEFWAMES_WIDTH		1
+#define MMC_TISW_TXVWANFWAMES_G_INDEX		17
+#define MMC_TISW_TXVWANFWAMES_G_WIDTH		1
+
+/* MTW wegistew offsets */
+#define MTW_OMW				0x1000
+#define MTW_FDCW			0x1008
+#define MTW_FDSW			0x100c
+#define MTW_FDDW			0x1010
+#define MTW_ISW				0x1020
+#define MTW_WQDCM0W			0x1030
+#define MTW_TCPM0W			0x1040
+#define MTW_TCPM1W			0x1044
+
+#define MTW_WQDCM_INC			4
+#define MTW_WQDCM_Q_PEW_WEG		4
+#define MTW_TCPM_INC			4
+#define MTW_TCPM_TC_PEW_WEG		4
+
+/* MTW wegistew entwy bit positions and sizes */
+#define MTW_OMW_ETSAWG_INDEX		5
+#define MTW_OMW_ETSAWG_WIDTH		2
+#define MTW_OMW_WAA_INDEX		2
+#define MTW_OMW_WAA_WIDTH		1
+
+/* MTW queue wegistew offsets
+ *   Muwtipwe queues can be active.  The fiwst queue has wegistews
+ *   that begin at 0x1100.  Each subsequent queue has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious queue.
+ */
+#define MTW_Q_BASE			0x1100
+#define MTW_Q_INC			0x80
+
+#define MTW_Q_TQOMW			0x00
+#define MTW_Q_TQUW			0x04
+#define MTW_Q_TQDW			0x08
+#define MTW_Q_WQOMW			0x40
+#define MTW_Q_WQMPOCW			0x44
+#define MTW_Q_WQDW			0x48
+#define MTW_Q_WQFCW			0x50
+#define MTW_Q_IEW			0x70
+#define MTW_Q_ISW			0x74
+
+/* MTW queue wegistew entwy bit positions and sizes */
+#define MTW_Q_WQDW_PWXQ_INDEX		16
+#define MTW_Q_WQDW_PWXQ_WIDTH		14
+#define MTW_Q_WQDW_WXQSTS_INDEX		4
+#define MTW_Q_WQDW_WXQSTS_WIDTH		2
+#define MTW_Q_WQFCW_WFA_INDEX		1
+#define MTW_Q_WQFCW_WFA_WIDTH		6
+#define MTW_Q_WQFCW_WFD_INDEX		17
+#define MTW_Q_WQFCW_WFD_WIDTH		6
+#define MTW_Q_WQOMW_EHFC_INDEX		7
+#define MTW_Q_WQOMW_EHFC_WIDTH		1
+#define MTW_Q_WQOMW_WQS_INDEX		16
+#define MTW_Q_WQOMW_WQS_WIDTH		9
+#define MTW_Q_WQOMW_WSF_INDEX		5
+#define MTW_Q_WQOMW_WSF_WIDTH		1
+#define MTW_Q_WQOMW_WTC_INDEX		0
+#define MTW_Q_WQOMW_WTC_WIDTH		2
+#define MTW_Q_TQDW_TWCSTS_INDEX		1
+#define MTW_Q_TQDW_TWCSTS_WIDTH		2
+#define MTW_Q_TQDW_TXQSTS_INDEX		4
+#define MTW_Q_TQDW_TXQSTS_WIDTH		1
+#define MTW_Q_TQOMW_FTQ_INDEX		0
+#define MTW_Q_TQOMW_FTQ_WIDTH		1
+#define MTW_Q_TQOMW_Q2TCMAP_INDEX	8
+#define MTW_Q_TQOMW_Q2TCMAP_WIDTH	3
+#define MTW_Q_TQOMW_TQS_INDEX		16
+#define MTW_Q_TQOMW_TQS_WIDTH		10
+#define MTW_Q_TQOMW_TSF_INDEX		1
+#define MTW_Q_TQOMW_TSF_WIDTH		1
+#define MTW_Q_TQOMW_TTC_INDEX		4
+#define MTW_Q_TQOMW_TTC_WIDTH		3
+#define MTW_Q_TQOMW_TXQEN_INDEX		2
+#define MTW_Q_TQOMW_TXQEN_WIDTH		2
+
+/* MTW queue wegistew vawue */
+#define MTW_WSF_DISABWE			0x00
+#define MTW_WSF_ENABWE			0x01
+#define MTW_TSF_DISABWE			0x00
+#define MTW_TSF_ENABWE			0x01
+
+#define MTW_WX_THWESHOWD_64		0x00
+#define MTW_WX_THWESHOWD_96		0x02
+#define MTW_WX_THWESHOWD_128		0x03
+#define MTW_TX_THWESHOWD_32		0x01
+#define MTW_TX_THWESHOWD_64		0x00
+#define MTW_TX_THWESHOWD_96		0x02
+#define MTW_TX_THWESHOWD_128		0x03
+#define MTW_TX_THWESHOWD_192		0x04
+#define MTW_TX_THWESHOWD_256		0x05
+#define MTW_TX_THWESHOWD_384		0x06
+#define MTW_TX_THWESHOWD_512		0x07
+
+#define MTW_ETSAWG_WWW			0x00
+#define MTW_ETSAWG_WFQ			0x01
+#define MTW_ETSAWG_DWWW			0x02
+#define MTW_WAA_SP			0x00
+#define MTW_WAA_WSP			0x01
+
+#define MTW_Q_DISABWED			0x00
+#define MTW_Q_ENABWED			0x02
+
+/* MTW twaffic cwass wegistew offsets
+ *   Muwtipwe twaffic cwasses can be active.  The fiwst cwass has wegistews
+ *   that begin at 0x1100.  Each subsequent queue has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious queue.
+ */
+#define MTW_TC_BASE			MTW_Q_BASE
+#define MTW_TC_INC			MTW_Q_INC
+
+#define MTW_TC_ETSCW			0x10
+#define MTW_TC_ETSSW			0x14
+#define MTW_TC_QWW			0x18
+
+/* MTW twaffic cwass wegistew entwy bit positions and sizes */
+#define MTW_TC_ETSCW_TSA_INDEX		0
+#define MTW_TC_ETSCW_TSA_WIDTH		2
+#define MTW_TC_QWW_QW_INDEX		0
+#define MTW_TC_QWW_QW_WIDTH		21
+
+/* MTW twaffic cwass wegistew vawue */
+#define MTW_TSA_SP			0x00
+#define MTW_TSA_ETS			0x02
+
+/* PCS wegistew offsets */
+#define PCS_V1_WINDOW_SEWECT		0x03fc
+#define PCS_V2_WINDOW_DEF		0x9060
+#define PCS_V2_WINDOW_SEWECT		0x9064
+#define PCS_V2_WV_WINDOW_DEF		0x1060
+#define PCS_V2_WV_WINDOW_SEWECT		0x1064
+#define PCS_V2_YC_WINDOW_DEF		0x18060
+#define PCS_V2_YC_WINDOW_SEWECT		0x18064
+
+/* PCS wegistew entwy bit positions and sizes */
+#define PCS_V2_WINDOW_DEF_OFFSET_INDEX	6
+#define PCS_V2_WINDOW_DEF_OFFSET_WIDTH	14
+#define PCS_V2_WINDOW_DEF_SIZE_INDEX	2
+#define PCS_V2_WINDOW_DEF_SIZE_WIDTH	4
+
+/* SewDes integwation wegistew offsets */
+#define SIW0_KW_WT_1			0x002c
+#define SIW0_STATUS			0x0040
+#define SIW1_SPEED			0x0000
+
+/* SewDes integwation wegistew entwy bit positions and sizes */
+#define SIW0_KW_WT_1_WESET_INDEX	11
+#define SIW0_KW_WT_1_WESET_WIDTH	1
+#define SIW0_STATUS_WX_WEADY_INDEX	0
+#define SIW0_STATUS_WX_WEADY_WIDTH	1
+#define SIW0_STATUS_TX_WEADY_INDEX	8
+#define SIW0_STATUS_TX_WEADY_WIDTH	1
+#define SIW1_SPEED_CDW_WATE_INDEX	12
+#define SIW1_SPEED_CDW_WATE_WIDTH	4
+#define SIW1_SPEED_DATAWATE_INDEX	4
+#define SIW1_SPEED_DATAWATE_WIDTH	2
+#define SIW1_SPEED_PWWSEW_INDEX		3
+#define SIW1_SPEED_PWWSEW_WIDTH		1
+#define SIW1_SPEED_WATECHANGE_INDEX	6
+#define SIW1_SPEED_WATECHANGE_WIDTH	1
+#define SIW1_SPEED_TXAMP_INDEX		8
+#define SIW1_SPEED_TXAMP_WIDTH		4
+#define SIW1_SPEED_WOWDMODE_INDEX	0
+#define SIW1_SPEED_WOWDMODE_WIDTH	3
+
+/* SewDes WxTx wegistew offsets */
+#define WXTX_WEG6			0x0018
+#define WXTX_WEG20			0x0050
+#define WXTX_WEG22			0x0058
+#define WXTX_WEG114			0x01c8
+#define WXTX_WEG129			0x0204
+
+/* SewDes WxTx wegistew entwy bit positions and sizes */
+#define WXTX_WEG6_WESETB_WXD_INDEX	8
+#define WXTX_WEG6_WESETB_WXD_WIDTH	1
+#define WXTX_WEG20_BWWC_ENA_INDEX	2
+#define WXTX_WEG20_BWWC_ENA_WIDTH	1
+#define WXTX_WEG114_PQ_WEG_INDEX	9
+#define WXTX_WEG114_PQ_WEG_WIDTH	7
+#define WXTX_WEG129_WXDFE_CONFIG_INDEX	14
+#define WXTX_WEG129_WXDFE_CONFIG_WIDTH	2
+
+/* MAC Contwow wegistew offsets */
+#define XP_PWOP_0			0x0000
+#define XP_PWOP_1			0x0004
+#define XP_PWOP_2			0x0008
+#define XP_PWOP_3			0x000c
+#define XP_PWOP_4			0x0010
+#define XP_PWOP_5			0x0014
+#define XP_MAC_ADDW_WO			0x0020
+#define XP_MAC_ADDW_HI			0x0024
+#define XP_ECC_ISW			0x0030
+#define XP_ECC_IEW			0x0034
+#define XP_ECC_CNT0			0x003c
+#define XP_ECC_CNT1			0x0040
+#define XP_DWIVEW_INT_WEQ		0x0060
+#define XP_DWIVEW_INT_WO		0x0064
+#define XP_DWIVEW_SCWATCH_0		0x0068
+#define XP_DWIVEW_SCWATCH_1		0x006c
+#define XP_INT_WEISSUE_EN		0x0074
+#define XP_INT_EN			0x0078
+#define XP_I2C_MUTEX			0x0080
+#define XP_MDIO_MUTEX			0x0084
+
+/* MAC Contwow wegistew entwy bit positions and sizes */
+#define XP_DWIVEW_INT_WEQ_WEQUEST_INDEX		0
+#define XP_DWIVEW_INT_WEQ_WEQUEST_WIDTH		1
+#define XP_DWIVEW_INT_WO_STATUS_INDEX		0
+#define XP_DWIVEW_INT_WO_STATUS_WIDTH		1
+#define XP_DWIVEW_SCWATCH_0_COMMAND_INDEX	0
+#define XP_DWIVEW_SCWATCH_0_COMMAND_WIDTH	8
+#define XP_DWIVEW_SCWATCH_0_SUB_COMMAND_INDEX	8
+#define XP_DWIVEW_SCWATCH_0_SUB_COMMAND_WIDTH	8
+#define XP_ECC_CNT0_WX_DED_INDEX		24
+#define XP_ECC_CNT0_WX_DED_WIDTH		8
+#define XP_ECC_CNT0_WX_SEC_INDEX		16
+#define XP_ECC_CNT0_WX_SEC_WIDTH		8
+#define XP_ECC_CNT0_TX_DED_INDEX		8
+#define XP_ECC_CNT0_TX_DED_WIDTH		8
+#define XP_ECC_CNT0_TX_SEC_INDEX		0
+#define XP_ECC_CNT0_TX_SEC_WIDTH		8
+#define XP_ECC_CNT1_DESC_DED_INDEX		8
+#define XP_ECC_CNT1_DESC_DED_WIDTH		8
+#define XP_ECC_CNT1_DESC_SEC_INDEX		0
+#define XP_ECC_CNT1_DESC_SEC_WIDTH		8
+#define XP_ECC_IEW_DESC_DED_INDEX		5
+#define XP_ECC_IEW_DESC_DED_WIDTH		1
+#define XP_ECC_IEW_DESC_SEC_INDEX		4
+#define XP_ECC_IEW_DESC_SEC_WIDTH		1
+#define XP_ECC_IEW_WX_DED_INDEX			3
+#define XP_ECC_IEW_WX_DED_WIDTH			1
+#define XP_ECC_IEW_WX_SEC_INDEX			2
+#define XP_ECC_IEW_WX_SEC_WIDTH			1
+#define XP_ECC_IEW_TX_DED_INDEX			1
+#define XP_ECC_IEW_TX_DED_WIDTH			1
+#define XP_ECC_IEW_TX_SEC_INDEX			0
+#define XP_ECC_IEW_TX_SEC_WIDTH			1
+#define XP_ECC_ISW_DESC_DED_INDEX		5
+#define XP_ECC_ISW_DESC_DED_WIDTH		1
+#define XP_ECC_ISW_DESC_SEC_INDEX		4
+#define XP_ECC_ISW_DESC_SEC_WIDTH		1
+#define XP_ECC_ISW_WX_DED_INDEX			3
+#define XP_ECC_ISW_WX_DED_WIDTH			1
+#define XP_ECC_ISW_WX_SEC_INDEX			2
+#define XP_ECC_ISW_WX_SEC_WIDTH			1
+#define XP_ECC_ISW_TX_DED_INDEX			1
+#define XP_ECC_ISW_TX_DED_WIDTH			1
+#define XP_ECC_ISW_TX_SEC_INDEX			0
+#define XP_ECC_ISW_TX_SEC_WIDTH			1
+#define XP_I2C_MUTEX_BUSY_INDEX			31
+#define XP_I2C_MUTEX_BUSY_WIDTH			1
+#define XP_I2C_MUTEX_ID_INDEX			29
+#define XP_I2C_MUTEX_ID_WIDTH			2
+#define XP_I2C_MUTEX_ACTIVE_INDEX		0
+#define XP_I2C_MUTEX_ACTIVE_WIDTH		1
+#define XP_MAC_ADDW_HI_VAWID_INDEX		31
+#define XP_MAC_ADDW_HI_VAWID_WIDTH		1
+#define XP_PWOP_0_CONN_TYPE_INDEX		28
+#define XP_PWOP_0_CONN_TYPE_WIDTH		3
+#define XP_PWOP_0_MDIO_ADDW_INDEX		16
+#define XP_PWOP_0_MDIO_ADDW_WIDTH		5
+#define XP_PWOP_0_POWT_ID_INDEX			0
+#define XP_PWOP_0_POWT_ID_WIDTH			8
+#define XP_PWOP_0_POWT_MODE_INDEX		8
+#define XP_PWOP_0_POWT_MODE_WIDTH		4
+#define XP_PWOP_0_POWT_SPEEDS_INDEX		22
+#define XP_PWOP_0_POWT_SPEEDS_WIDTH		5
+#define XP_PWOP_1_MAX_WX_DMA_INDEX		24
+#define XP_PWOP_1_MAX_WX_DMA_WIDTH		5
+#define XP_PWOP_1_MAX_WX_QUEUES_INDEX		8
+#define XP_PWOP_1_MAX_WX_QUEUES_WIDTH		5
+#define XP_PWOP_1_MAX_TX_DMA_INDEX		16
+#define XP_PWOP_1_MAX_TX_DMA_WIDTH		5
+#define XP_PWOP_1_MAX_TX_QUEUES_INDEX		0
+#define XP_PWOP_1_MAX_TX_QUEUES_WIDTH		5
+#define XP_PWOP_2_WX_FIFO_SIZE_INDEX		16
+#define XP_PWOP_2_WX_FIFO_SIZE_WIDTH		16
+#define XP_PWOP_2_TX_FIFO_SIZE_INDEX		0
+#define XP_PWOP_2_TX_FIFO_SIZE_WIDTH		16
+#define XP_PWOP_3_GPIO_MASK_INDEX		28
+#define XP_PWOP_3_GPIO_MASK_WIDTH		4
+#define XP_PWOP_3_GPIO_MOD_ABS_INDEX		20
+#define XP_PWOP_3_GPIO_MOD_ABS_WIDTH		4
+#define XP_PWOP_3_GPIO_WATE_SEWECT_INDEX	16
+#define XP_PWOP_3_GPIO_WATE_SEWECT_WIDTH	4
+#define XP_PWOP_3_GPIO_WX_WOS_INDEX		24
+#define XP_PWOP_3_GPIO_WX_WOS_WIDTH		4
+#define XP_PWOP_3_GPIO_TX_FAUWT_INDEX		12
+#define XP_PWOP_3_GPIO_TX_FAUWT_WIDTH		4
+#define XP_PWOP_3_GPIO_ADDW_INDEX		8
+#define XP_PWOP_3_GPIO_ADDW_WIDTH		3
+#define XP_PWOP_3_MDIO_WESET_INDEX		0
+#define XP_PWOP_3_MDIO_WESET_WIDTH		2
+#define XP_PWOP_3_MDIO_WESET_I2C_ADDW_INDEX	8
+#define XP_PWOP_3_MDIO_WESET_I2C_ADDW_WIDTH	3
+#define XP_PWOP_3_MDIO_WESET_I2C_GPIO_INDEX	12
+#define XP_PWOP_3_MDIO_WESET_I2C_GPIO_WIDTH	4
+#define XP_PWOP_3_MDIO_WESET_INT_GPIO_INDEX	4
+#define XP_PWOP_3_MDIO_WESET_INT_GPIO_WIDTH	2
+#define XP_PWOP_4_MUX_ADDW_HI_INDEX		8
+#define XP_PWOP_4_MUX_ADDW_HI_WIDTH		5
+#define XP_PWOP_4_MUX_ADDW_WO_INDEX		0
+#define XP_PWOP_4_MUX_ADDW_WO_WIDTH		3
+#define XP_PWOP_4_MUX_CHAN_INDEX		4
+#define XP_PWOP_4_MUX_CHAN_WIDTH		3
+#define XP_PWOP_4_WEDWV_ADDW_INDEX		16
+#define XP_PWOP_4_WEDWV_ADDW_WIDTH		7
+#define XP_PWOP_4_WEDWV_IF_INDEX		23
+#define XP_PWOP_4_WEDWV_IF_WIDTH		1
+#define XP_PWOP_4_WEDWV_WANE_INDEX		24
+#define XP_PWOP_4_WEDWV_WANE_WIDTH		3
+#define XP_PWOP_4_WEDWV_MODEW_INDEX		28
+#define XP_PWOP_4_WEDWV_MODEW_WIDTH		3
+#define XP_PWOP_4_WEDWV_PWESENT_INDEX		31
+#define XP_PWOP_4_WEDWV_PWESENT_WIDTH		1
+
+/* I2C Contwow wegistew offsets */
+#define IC_CON					0x0000
+#define IC_TAW					0x0004
+#define IC_DATA_CMD				0x0010
+#define IC_INTW_STAT				0x002c
+#define IC_INTW_MASK				0x0030
+#define IC_WAW_INTW_STAT			0x0034
+#define IC_CWW_INTW				0x0040
+#define IC_CWW_TX_ABWT				0x0054
+#define IC_CWW_STOP_DET				0x0060
+#define IC_ENABWE				0x006c
+#define IC_TXFWW				0x0074
+#define IC_WXFWW				0x0078
+#define IC_TX_ABWT_SOUWCE			0x0080
+#define IC_ENABWE_STATUS			0x009c
+#define IC_COMP_PAWAM_1				0x00f4
+
+/* I2C Contwow wegistew entwy bit positions and sizes */
+#define IC_COMP_PAWAM_1_MAX_SPEED_MODE_INDEX	2
+#define IC_COMP_PAWAM_1_MAX_SPEED_MODE_WIDTH	2
+#define IC_COMP_PAWAM_1_WX_BUFFEW_DEPTH_INDEX	8
+#define IC_COMP_PAWAM_1_WX_BUFFEW_DEPTH_WIDTH	8
+#define IC_COMP_PAWAM_1_TX_BUFFEW_DEPTH_INDEX	16
+#define IC_COMP_PAWAM_1_TX_BUFFEW_DEPTH_WIDTH	8
+#define IC_CON_MASTEW_MODE_INDEX		0
+#define IC_CON_MASTEW_MODE_WIDTH		1
+#define IC_CON_WESTAWT_EN_INDEX			5
+#define IC_CON_WESTAWT_EN_WIDTH			1
+#define IC_CON_WX_FIFO_FUWW_HOWD_INDEX		9
+#define IC_CON_WX_FIFO_FUWW_HOWD_WIDTH		1
+#define IC_CON_SWAVE_DISABWE_INDEX		6
+#define IC_CON_SWAVE_DISABWE_WIDTH		1
+#define IC_CON_SPEED_INDEX			1
+#define IC_CON_SPEED_WIDTH			2
+#define IC_DATA_CMD_CMD_INDEX			8
+#define IC_DATA_CMD_CMD_WIDTH			1
+#define IC_DATA_CMD_STOP_INDEX			9
+#define IC_DATA_CMD_STOP_WIDTH			1
+#define IC_ENABWE_ABOWT_INDEX			1
+#define IC_ENABWE_ABOWT_WIDTH			1
+#define IC_ENABWE_EN_INDEX			0
+#define IC_ENABWE_EN_WIDTH			1
+#define IC_ENABWE_STATUS_EN_INDEX		0
+#define IC_ENABWE_STATUS_EN_WIDTH		1
+#define IC_INTW_MASK_TX_EMPTY_INDEX		4
+#define IC_INTW_MASK_TX_EMPTY_WIDTH		1
+#define IC_WAW_INTW_STAT_WX_FUWW_INDEX		2
+#define IC_WAW_INTW_STAT_WX_FUWW_WIDTH		1
+#define IC_WAW_INTW_STAT_STOP_DET_INDEX		9
+#define IC_WAW_INTW_STAT_STOP_DET_WIDTH		1
+#define IC_WAW_INTW_STAT_TX_ABWT_INDEX		6
+#define IC_WAW_INTW_STAT_TX_ABWT_WIDTH		1
+#define IC_WAW_INTW_STAT_TX_EMPTY_INDEX		4
+#define IC_WAW_INTW_STAT_TX_EMPTY_WIDTH		1
+
+/* I2C Contwow wegistew vawue */
+#define IC_TX_ABWT_7B_ADDW_NOACK		0x0001
+#define IC_TX_ABWT_AWB_WOST			0x1000
+
+/* Descwiptow/Packet entwy bit positions and sizes */
+#define WX_PACKET_EWWOWS_CWC_INDEX		2
+#define WX_PACKET_EWWOWS_CWC_WIDTH		1
+#define WX_PACKET_EWWOWS_FWAME_INDEX		3
+#define WX_PACKET_EWWOWS_FWAME_WIDTH		1
+#define WX_PACKET_EWWOWS_WENGTH_INDEX		0
+#define WX_PACKET_EWWOWS_WENGTH_WIDTH		1
+#define WX_PACKET_EWWOWS_OVEWWUN_INDEX		1
+#define WX_PACKET_EWWOWS_OVEWWUN_WIDTH		1
+
+#define WX_PACKET_ATTWIBUTES_CSUM_DONE_INDEX	0
+#define WX_PACKET_ATTWIBUTES_CSUM_DONE_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_VWAN_CTAG_INDEX	1
+#define WX_PACKET_ATTWIBUTES_VWAN_CTAG_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_WAST_INDEX		2
+#define WX_PACKET_ATTWIBUTES_WAST_WIDTH		1
+#define WX_PACKET_ATTWIBUTES_CONTEXT_NEXT_INDEX	3
+#define WX_PACKET_ATTWIBUTES_CONTEXT_NEXT_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_CONTEXT_INDEX	4
+#define WX_PACKET_ATTWIBUTES_CONTEXT_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_WX_TSTAMP_INDEX	5
+#define WX_PACKET_ATTWIBUTES_WX_TSTAMP_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_WSS_HASH_INDEX	6
+#define WX_PACKET_ATTWIBUTES_WSS_HASH_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_FIWST_INDEX	7
+#define WX_PACKET_ATTWIBUTES_FIWST_WIDTH	1
+#define WX_PACKET_ATTWIBUTES_TNP_INDEX		8
+#define WX_PACKET_ATTWIBUTES_TNP_WIDTH		1
+#define WX_PACKET_ATTWIBUTES_TNPCSUM_DONE_INDEX	9
+#define WX_PACKET_ATTWIBUTES_TNPCSUM_DONE_WIDTH	1
+
+#define WX_NOWMAW_DESC0_OVT_INDEX		0
+#define WX_NOWMAW_DESC0_OVT_WIDTH		16
+#define WX_NOWMAW_DESC2_HW_INDEX		0
+#define WX_NOWMAW_DESC2_HW_WIDTH		10
+#define WX_NOWMAW_DESC2_TNP_INDEX		11
+#define WX_NOWMAW_DESC2_TNP_WIDTH		1
+#define WX_NOWMAW_DESC3_CDA_INDEX		27
+#define WX_NOWMAW_DESC3_CDA_WIDTH		1
+#define WX_NOWMAW_DESC3_CTXT_INDEX		30
+#define WX_NOWMAW_DESC3_CTXT_WIDTH		1
+#define WX_NOWMAW_DESC3_ES_INDEX		15
+#define WX_NOWMAW_DESC3_ES_WIDTH		1
+#define WX_NOWMAW_DESC3_ETWT_INDEX		16
+#define WX_NOWMAW_DESC3_ETWT_WIDTH		4
+#define WX_NOWMAW_DESC3_FD_INDEX		29
+#define WX_NOWMAW_DESC3_FD_WIDTH		1
+#define WX_NOWMAW_DESC3_INTE_INDEX		30
+#define WX_NOWMAW_DESC3_INTE_WIDTH		1
+#define WX_NOWMAW_DESC3_W34T_INDEX		20
+#define WX_NOWMAW_DESC3_W34T_WIDTH		4
+#define WX_NOWMAW_DESC3_WD_INDEX		28
+#define WX_NOWMAW_DESC3_WD_WIDTH		1
+#define WX_NOWMAW_DESC3_OWN_INDEX		31
+#define WX_NOWMAW_DESC3_OWN_WIDTH		1
+#define WX_NOWMAW_DESC3_PW_INDEX		0
+#define WX_NOWMAW_DESC3_PW_WIDTH		14
+#define WX_NOWMAW_DESC3_WSV_INDEX		26
+#define WX_NOWMAW_DESC3_WSV_WIDTH		1
+
+#define WX_DESC3_W34T_IPV4_TCP			1
+#define WX_DESC3_W34T_IPV4_UDP			2
+#define WX_DESC3_W34T_IPV4_ICMP			3
+#define WX_DESC3_W34T_IPV4_UNKNOWN		7
+#define WX_DESC3_W34T_IPV6_TCP			9
+#define WX_DESC3_W34T_IPV6_UDP			10
+#define WX_DESC3_W34T_IPV6_ICMP			11
+#define WX_DESC3_W34T_IPV6_UNKNOWN		15
+
+#define WX_CONTEXT_DESC3_TSA_INDEX		4
+#define WX_CONTEXT_DESC3_TSA_WIDTH		1
+#define WX_CONTEXT_DESC3_TSD_INDEX		6
+#define WX_CONTEXT_DESC3_TSD_WIDTH		1
+
+#define TX_PACKET_ATTWIBUTES_CSUM_ENABWE_INDEX	0
+#define TX_PACKET_ATTWIBUTES_CSUM_ENABWE_WIDTH	1
+#define TX_PACKET_ATTWIBUTES_TSO_ENABWE_INDEX	1
+#define TX_PACKET_ATTWIBUTES_TSO_ENABWE_WIDTH	1
+#define TX_PACKET_ATTWIBUTES_VWAN_CTAG_INDEX	2
+#define TX_PACKET_ATTWIBUTES_VWAN_CTAG_WIDTH	1
+#define TX_PACKET_ATTWIBUTES_PTP_INDEX		3
+#define TX_PACKET_ATTWIBUTES_PTP_WIDTH		1
+#define TX_PACKET_ATTWIBUTES_VXWAN_INDEX	4
+#define TX_PACKET_ATTWIBUTES_VXWAN_WIDTH	1
+
+#define TX_CONTEXT_DESC2_MSS_INDEX		0
+#define TX_CONTEXT_DESC2_MSS_WIDTH		15
+#define TX_CONTEXT_DESC3_CTXT_INDEX		30
+#define TX_CONTEXT_DESC3_CTXT_WIDTH		1
+#define TX_CONTEXT_DESC3_TCMSSV_INDEX		26
+#define TX_CONTEXT_DESC3_TCMSSV_WIDTH		1
+#define TX_CONTEXT_DESC3_VWTV_INDEX		16
+#define TX_CONTEXT_DESC3_VWTV_WIDTH		1
+#define TX_CONTEXT_DESC3_VT_INDEX		0
+#define TX_CONTEXT_DESC3_VT_WIDTH		16
+
+#define TX_NOWMAW_DESC2_HW_B1W_INDEX		0
+#define TX_NOWMAW_DESC2_HW_B1W_WIDTH		14
+#define TX_NOWMAW_DESC2_IC_INDEX		31
+#define TX_NOWMAW_DESC2_IC_WIDTH		1
+#define TX_NOWMAW_DESC2_TTSE_INDEX		30
+#define TX_NOWMAW_DESC2_TTSE_WIDTH		1
+#define TX_NOWMAW_DESC2_VTIW_INDEX		14
+#define TX_NOWMAW_DESC2_VTIW_WIDTH		2
+#define TX_NOWMAW_DESC3_CIC_INDEX		16
+#define TX_NOWMAW_DESC3_CIC_WIDTH		2
+#define TX_NOWMAW_DESC3_CPC_INDEX		26
+#define TX_NOWMAW_DESC3_CPC_WIDTH		2
+#define TX_NOWMAW_DESC3_CTXT_INDEX		30
+#define TX_NOWMAW_DESC3_CTXT_WIDTH		1
+#define TX_NOWMAW_DESC3_FD_INDEX		29
+#define TX_NOWMAW_DESC3_FD_WIDTH		1
+#define TX_NOWMAW_DESC3_FW_INDEX		0
+#define TX_NOWMAW_DESC3_FW_WIDTH		15
+#define TX_NOWMAW_DESC3_WD_INDEX		28
+#define TX_NOWMAW_DESC3_WD_WIDTH		1
+#define TX_NOWMAW_DESC3_OWN_INDEX		31
+#define TX_NOWMAW_DESC3_OWN_WIDTH		1
+#define TX_NOWMAW_DESC3_TCPHDWWEN_INDEX		19
+#define TX_NOWMAW_DESC3_TCPHDWWEN_WIDTH		4
+#define TX_NOWMAW_DESC3_TCPPW_INDEX		0
+#define TX_NOWMAW_DESC3_TCPPW_WIDTH		18
+#define TX_NOWMAW_DESC3_TSE_INDEX		18
+#define TX_NOWMAW_DESC3_TSE_WIDTH		1
+#define TX_NOWMAW_DESC3_VNP_INDEX		23
+#define TX_NOWMAW_DESC3_VNP_WIDTH		3
+
+#define TX_NOWMAW_DESC2_VWAN_INSEWT		0x2
+#define TX_NOWMAW_DESC3_VXWAN_PACKET		0x3
+
+/* MDIO undefined ow vendow specific wegistews */
+#ifndef MDIO_PMA_10GBW_PMD_CTWW
+#define MDIO_PMA_10GBW_PMD_CTWW		0x0096
+#endif
+
+#ifndef MDIO_PMA_10GBW_FECCTWW
+#define MDIO_PMA_10GBW_FECCTWW		0x00ab
+#endif
+
+#ifndef MDIO_PMA_WX_CTWW1
+#define MDIO_PMA_WX_CTWW1		0x8051
+#endif
+
+#ifndef MDIO_PMA_WX_WSTS
+#define MDIO_PMA_WX_WSTS		0x018020
+#endif
+
+#ifndef MDIO_PMA_WX_EQ_CTWW4
+#define MDIO_PMA_WX_EQ_CTWW4		0x0001805C
+#endif
+
+#ifndef MDIO_PMA_MP_MISC_STS
+#define MDIO_PMA_MP_MISC_STS		0x0078
+#endif
+
+#ifndef MDIO_PMA_PHY_WX_EQ_CEU
+#define MDIO_PMA_PHY_WX_EQ_CEU		0x1800E
+#endif
+
+#ifndef MDIO_PCS_DIG_CTWW
+#define MDIO_PCS_DIG_CTWW		0x8000
+#endif
+
+#ifndef MDIO_PCS_DIGITAW_STAT
+#define MDIO_PCS_DIGITAW_STAT		0x8010
+#endif
+
+#ifndef MDIO_AN_XNP
+#define MDIO_AN_XNP			0x0016
+#endif
+
+#ifndef MDIO_AN_WPX
+#define MDIO_AN_WPX			0x0019
+#endif
+
+#ifndef MDIO_AN_COMP_STAT
+#define MDIO_AN_COMP_STAT		0x0030
+#endif
+
+#ifndef MDIO_AN_INTMASK
+#define MDIO_AN_INTMASK			0x8001
+#endif
+
+#ifndef MDIO_AN_INT
+#define MDIO_AN_INT			0x8002
+#endif
+
+#ifndef MDIO_VEND2_AN_ADVEWTISE
+#define MDIO_VEND2_AN_ADVEWTISE		0x0004
+#endif
+
+#ifndef MDIO_VEND2_AN_WP_ABIWITY
+#define MDIO_VEND2_AN_WP_ABIWITY	0x0005
+#endif
+
+#ifndef MDIO_VEND2_AN_CTWW
+#define MDIO_VEND2_AN_CTWW		0x8001
+#endif
+
+#ifndef MDIO_VEND2_AN_STAT
+#define MDIO_VEND2_AN_STAT		0x8002
+#endif
+
+#ifndef MDIO_VEND2_PMA_CDW_CONTWOW
+#define MDIO_VEND2_PMA_CDW_CONTWOW	0x8056
+#endif
+
+#ifndef MDIO_VEND2_PMA_MISC_CTWW0
+#define MDIO_VEND2_PMA_MISC_CTWW0	0x8090
+#endif
+
+#ifndef MDIO_CTWW1_SPEED1G
+#define MDIO_CTWW1_SPEED1G		(MDIO_CTWW1_SPEED10G & ~BMCW_SPEED100)
+#endif
+
+#ifndef MDIO_VEND2_CTWW1_AN_ENABWE
+#define MDIO_VEND2_CTWW1_AN_ENABWE	BIT(12)
+#endif
+
+#ifndef MDIO_VEND2_CTWW1_AN_WESTAWT
+#define MDIO_VEND2_CTWW1_AN_WESTAWT	BIT(9)
+#endif
+
+#ifndef MDIO_VEND2_CTWW1_SS6
+#define MDIO_VEND2_CTWW1_SS6		BIT(6)
+#endif
+
+#ifndef MDIO_VEND2_CTWW1_SS13
+#define MDIO_VEND2_CTWW1_SS13		BIT(13)
+#endif
+
+/* MDIO mask vawues */
+#define XGBE_AN_CW73_INT_CMPWT		BIT(0)
+#define XGBE_AN_CW73_INC_WINK		BIT(1)
+#define XGBE_AN_CW73_PG_WCV		BIT(2)
+#define XGBE_AN_CW73_INT_MASK		0x07
+
+#define XGBE_XNP_MCF_NUWW_MESSAGE	0x001
+#define XGBE_XNP_ACK_PWOCESSED		BIT(12)
+#define XGBE_XNP_MP_FOWMATTED		BIT(13)
+#define XGBE_XNP_NP_EXCHANGE		BIT(15)
+
+#define XGBE_KW_TWAINING_STAWT		BIT(0)
+#define XGBE_KW_TWAINING_ENABWE		BIT(1)
+
+#define XGBE_PCS_CW37_BP		BIT(12)
+#define XGBE_PCS_PSEQ_STATE_MASK	0x1c
+#define XGBE_PCS_PSEQ_STATE_POWEW_GOOD	0x10
+
+#define XGBE_AN_CW37_INT_CMPWT		BIT(0)
+#define XGBE_AN_CW37_INT_MASK		0x01
+
+#define XGBE_AN_CW37_HD_MASK		0x40
+#define XGBE_AN_CW37_FD_MASK		0x20
+
+#define XGBE_AN_CW37_PCS_MODE_MASK	0x06
+#define XGBE_AN_CW37_PCS_MODE_BASEX	0x00
+#define XGBE_AN_CW37_PCS_MODE_SGMII	0x04
+#define XGBE_AN_CW37_TX_CONFIG_MASK	0x08
+#define XGBE_AN_CW37_MII_CTWW_8BIT	0x0100
+
+#define XGBE_PMA_CDW_TWACK_EN_MASK	0x01
+#define XGBE_PMA_CDW_TWACK_EN_OFF	0x00
+#define XGBE_PMA_CDW_TWACK_EN_ON	0x01
+
+#define XGBE_PMA_WX_WST_0_MASK		BIT(4)
+#define XGBE_PMA_WX_WST_0_WESET_ON	0x10
+#define XGBE_PMA_WX_WST_0_WESET_OFF	0x00
+
+#define XGBE_PMA_WX_SIG_DET_0_MASK	BIT(4)
+#define XGBE_PMA_WX_SIG_DET_0_ENABWE	BIT(4)
+#define XGBE_PMA_WX_SIG_DET_0_DISABWE	0x0000
+
+#define XGBE_PMA_WX_VAWID_0_MASK	BIT(12)
+#define XGBE_PMA_WX_VAWID_0_ENABWE	BIT(12)
+#define XGBE_PMA_WX_VAWID_0_DISABWE	0x0000
+
+#define XGBE_PMA_WX_AD_WEQ_MASK		BIT(12)
+#define XGBE_PMA_WX_AD_WEQ_ENABWE	BIT(12)
+#define XGBE_PMA_WX_AD_WEQ_DISABWE	0x0000
+
+#define XGBE_PMA_WX_ADPT_ACK_MASK	BIT(12)
+#define XGBE_PMA_WX_ADPT_ACK		BIT(12)
+
+#define XGBE_PMA_CFF_UPDTM1_VWD		BIT(8)
+#define XGBE_PMA_CFF_UPDT0_VWD		BIT(9)
+#define XGBE_PMA_CFF_UPDT1_VWD		BIT(10)
+#define XGBE_PMA_CFF_UPDT_MASK		(XGBE_PMA_CFF_UPDTM1_VWD |\
+					 XGBE_PMA_CFF_UPDT0_VWD | \
+					 XGBE_PMA_CFF_UPDT1_VWD)
+
+#define XGBE_PMA_PWW_CTWW_MASK		BIT(15)
+#define XGBE_PMA_PWW_CTWW_ENABWE	BIT(15)
+#define XGBE_PMA_PWW_CTWW_DISABWE	0x0000
+
+/* Bit setting and getting macwos
+ *  The get macwo wiww extwact the cuwwent bit fiewd vawue fwom within
+ *  the vawiabwe
+ *
+ *  The set macwo wiww cweaw the cuwwent bit fiewd vawue within the
+ *  vawiabwe and then set the bit fiewd of the vawiabwe to the
+ *  specified vawue
+ */
+#define GET_BITS(_vaw, _index, _width)					\
+	(((_vaw) >> (_index)) & ((0x1 << (_width)) - 1))
+
+#define SET_BITS(_vaw, _index, _width, _vaw)				\
+do {									\
+	(_vaw) &= ~(((0x1 << (_width)) - 1) << (_index));		\
+	(_vaw) |= (((_vaw) & ((0x1 << (_width)) - 1)) << (_index));	\
+} whiwe (0)
+
+#define GET_BITS_WE(_vaw, _index, _width)				\
+	((we32_to_cpu((_vaw)) >> (_index)) & ((0x1 << (_width)) - 1))
+
+#define SET_BITS_WE(_vaw, _index, _width, _vaw)				\
+do {									\
+	(_vaw) &= cpu_to_we32(~(((0x1 << (_width)) - 1) << (_index)));	\
+	(_vaw) |= cpu_to_we32((((_vaw) &				\
+			      ((0x1 << (_width)) - 1)) << (_index)));	\
+} whiwe (0)
+
+/* Bit setting and getting macwos based on wegistew fiewds
+ *  The get macwo uses the bit fiewd definitions fowmed using the input
+ *  names to extwact the cuwwent bit fiewd vawue fwom within the
+ *  vawiabwe
+ *
+ *  The set macwo uses the bit fiewd definitions fowmed using the input
+ *  names to set the bit fiewd of the vawiabwe to the specified vawue
+ */
+#define XGMAC_GET_BITS(_vaw, _pwefix, _fiewd)				\
+	GET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XGMAC_SET_BITS(_vaw, _pwefix, _fiewd, _vaw)			\
+	SET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+#define XGMAC_GET_BITS_WE(_vaw, _pwefix, _fiewd)			\
+	GET_BITS_WE((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XGMAC_SET_BITS_WE(_vaw, _pwefix, _fiewd, _vaw)			\
+	SET_BITS_WE((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+/* Macwos fow weading ow wwiting wegistews
+ *  The iowead macwos wiww get bit fiewds ow fuww vawues using the
+ *  wegistew definitions fowmed using the input names
+ *
+ *  The iowwite macwos wiww set bit fiewds ow fuww vawues using the
+ *  wegistew definitions fowmed using the input names
+ */
+#define XGMAC_IOWEAD(_pdata, _weg)					\
+	iowead32((_pdata)->xgmac_wegs + _weg)
+
+#define XGMAC_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XGMAC_IOWEAD((_pdata), _weg),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XGMAC_IOWWITE(_pdata, _weg, _vaw)				\
+	iowwite32((_vaw), (_pdata)->xgmac_wegs + _weg)
+
+#define XGMAC_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u32 weg_vaw = XGMAC_IOWEAD((_pdata), _weg);			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XGMAC_IOWWITE((_pdata), _weg, weg_vaw);				\
+} whiwe (0)
+
+/* Macwos fow weading ow wwiting MTW queue ow twaffic cwass wegistews
+ *  Simiwaw to the standawd wead and wwite macwos except that the
+ *  base wegistew vawue is cawcuwated by the queue ow twaffic cwass numbew
+ */
+#define XGMAC_MTW_IOWEAD(_pdata, _n, _weg)				\
+	iowead32((_pdata)->xgmac_wegs +					\
+		 MTW_Q_BASE + ((_n) * MTW_Q_INC) + _weg)
+
+#define XGMAC_MTW_IOWEAD_BITS(_pdata, _n, _weg, _fiewd)			\
+	GET_BITS(XGMAC_MTW_IOWEAD((_pdata), (_n), _weg),		\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XGMAC_MTW_IOWWITE(_pdata, _n, _weg, _vaw)			\
+	iowwite32((_vaw), (_pdata)->xgmac_wegs +			\
+		  MTW_Q_BASE + ((_n) * MTW_Q_INC) + _weg)
+
+#define XGMAC_MTW_IOWWITE_BITS(_pdata, _n, _weg, _fiewd, _vaw)		\
+do {									\
+	u32 weg_vaw = XGMAC_MTW_IOWEAD((_pdata), (_n), _weg);		\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XGMAC_MTW_IOWWITE((_pdata), (_n), _weg, weg_vaw);		\
+} whiwe (0)
+
+/* Macwos fow weading ow wwiting DMA channew wegistews
+ *  Simiwaw to the standawd wead and wwite macwos except that the
+ *  base wegistew vawue is obtained fwom the wing
+ */
+#define XGMAC_DMA_IOWEAD(_channew, _weg)				\
+	iowead32((_channew)->dma_wegs + _weg)
+
+#define XGMAC_DMA_IOWEAD_BITS(_channew, _weg, _fiewd)			\
+	GET_BITS(XGMAC_DMA_IOWEAD((_channew), _weg),			\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XGMAC_DMA_IOWWITE(_channew, _weg, _vaw)				\
+	iowwite32((_vaw), (_channew)->dma_wegs + _weg)
+
+#define XGMAC_DMA_IOWWITE_BITS(_channew, _weg, _fiewd, _vaw)		\
+do {									\
+	u32 weg_vaw = XGMAC_DMA_IOWEAD((_channew), _weg);		\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XGMAC_DMA_IOWWITE((_channew), _weg, weg_vaw);			\
+} whiwe (0)
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * within the wegistew vawues of XPCS wegistews.
+ */
+#define XPCS_GET_BITS(_vaw, _pwefix, _fiewd)				\
+	GET_BITS((_vaw),                                                \
+		 _pwefix##_##_fiewd##_INDEX,                            \
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XPCS_SET_BITS(_vaw, _pwefix, _fiewd, _vaw)                      \
+	SET_BITS((_vaw),                                                \
+		 _pwefix##_##_fiewd##_INDEX,                            \
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+#define XPCS32_IOWWITE(_pdata, _off, _vaw)				\
+	iowwite32(_vaw, (_pdata)->xpcs_wegs + (_off))
+
+#define XPCS32_IOWEAD(_pdata, _off)					\
+	iowead32((_pdata)->xpcs_wegs + (_off))
+
+#define XPCS16_IOWWITE(_pdata, _off, _vaw)				\
+	iowwite16(_vaw, (_pdata)->xpcs_wegs + (_off))
+
+#define XPCS16_IOWEAD(_pdata, _off)					\
+	iowead16((_pdata)->xpcs_wegs + (_off))
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * within the wegistew vawues of SewDes integwation wegistews.
+ */
+#define XSIW_GET_BITS(_vaw, _pwefix, _fiewd)                            \
+	GET_BITS((_vaw),                                                \
+		 _pwefix##_##_fiewd##_INDEX,                            \
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XSIW_SET_BITS(_vaw, _pwefix, _fiewd, _vaw)                      \
+	SET_BITS((_vaw),                                                \
+		 _pwefix##_##_fiewd##_INDEX,                            \
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+#define XSIW0_IOWEAD(_pdata, _weg)					\
+	iowead16((_pdata)->siw0_wegs + _weg)
+
+#define XSIW0_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XSIW0_IOWEAD((_pdata), _weg),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XSIW0_IOWWITE(_pdata, _weg, _vaw)				\
+	iowwite16((_vaw), (_pdata)->siw0_wegs + _weg)
+
+#define XSIW0_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u16 weg_vaw = XSIW0_IOWEAD((_pdata), _weg);			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XSIW0_IOWWITE((_pdata), _weg, weg_vaw);				\
+} whiwe (0)
+
+#define XSIW1_IOWEAD(_pdata, _weg)					\
+	iowead16((_pdata)->siw1_wegs + _weg)
+
+#define XSIW1_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XSIW1_IOWEAD((_pdata), _weg),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XSIW1_IOWWITE(_pdata, _weg, _vaw)				\
+	iowwite16((_vaw), (_pdata)->siw1_wegs + _weg)
+
+#define XSIW1_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u16 weg_vaw = XSIW1_IOWEAD((_pdata), _weg);			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XSIW1_IOWWITE((_pdata), _weg, weg_vaw);				\
+} whiwe (0)
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * within the wegistew vawues of SewDes WxTx wegistews.
+ */
+#define XWXTX_IOWEAD(_pdata, _weg)					\
+	iowead16((_pdata)->wxtx_wegs + _weg)
+
+#define XWXTX_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XWXTX_IOWEAD((_pdata), _weg),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XWXTX_IOWWITE(_pdata, _weg, _vaw)				\
+	iowwite16((_vaw), (_pdata)->wxtx_wegs + _weg)
+
+#define XWXTX_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u16 weg_vaw = XWXTX_IOWEAD((_pdata), _weg);			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XWXTX_IOWWITE((_pdata), _weg, weg_vaw);				\
+} whiwe (0)
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * within the wegistew vawues of MAC Contwow wegistews.
+ */
+#define XP_GET_BITS(_vaw, _pwefix, _fiewd)				\
+	GET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XP_SET_BITS(_vaw, _pwefix, _fiewd, _vaw)			\
+	SET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+#define XP_IOWEAD(_pdata, _weg)						\
+	iowead32((_pdata)->xpwop_wegs + (_weg))
+
+#define XP_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XP_IOWEAD((_pdata), (_weg)),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XP_IOWWITE(_pdata, _weg, _vaw)					\
+	iowwite32((_vaw), (_pdata)->xpwop_wegs + (_weg))
+
+#define XP_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u32 weg_vaw = XP_IOWEAD((_pdata), (_weg));			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XP_IOWWITE((_pdata), (_weg), weg_vaw);				\
+} whiwe (0)
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * within the wegistew vawues of I2C Contwow wegistews.
+ */
+#define XI2C_GET_BITS(_vaw, _pwefix, _fiewd)				\
+	GET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH)
+
+#define XI2C_SET_BITS(_vaw, _pwefix, _fiewd, _vaw)			\
+	SET_BITS((_vaw),						\
+		 _pwefix##_##_fiewd##_INDEX,				\
+		 _pwefix##_##_fiewd##_WIDTH, (_vaw))
+
+#define XI2C_IOWEAD(_pdata, _weg)					\
+	iowead32((_pdata)->xi2c_wegs + (_weg))
+
+#define XI2C_IOWEAD_BITS(_pdata, _weg, _fiewd)				\
+	GET_BITS(XI2C_IOWEAD((_pdata), (_weg)),				\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH)
+
+#define XI2C_IOWWITE(_pdata, _weg, _vaw)				\
+	iowwite32((_vaw), (_pdata)->xi2c_wegs + (_weg))
+
+#define XI2C_IOWWITE_BITS(_pdata, _weg, _fiewd, _vaw)			\
+do {									\
+	u32 weg_vaw = XI2C_IOWEAD((_pdata), (_weg));			\
+	SET_BITS(weg_vaw,						\
+		 _weg##_##_fiewd##_INDEX,				\
+		 _weg##_##_fiewd##_WIDTH, (_vaw));			\
+	XI2C_IOWWITE((_pdata), (_weg), weg_vaw);			\
+} whiwe (0)
+
+/* Macwos fow buiwding, weading ow wwiting wegistew vawues ow bits
+ * using MDIO.
+ */
+
+#define XGBE_ADDW_C45 BIT(30)
+
+#define XMDIO_WEAD(_pdata, _mmd, _weg)					\
+	((_pdata)->hw_if.wead_mmd_wegs((_pdata), 0,			\
+		XGBE_ADDW_C45 | (_mmd << 16) | ((_weg) & 0xffff)))
+
+#define XMDIO_WEAD_BITS(_pdata, _mmd, _weg, _mask)			\
+	(XMDIO_WEAD((_pdata), _mmd, _weg) & _mask)
+
+#define XMDIO_WWITE(_pdata, _mmd, _weg, _vaw)				\
+	((_pdata)->hw_if.wwite_mmd_wegs((_pdata), 0,			\
+		XGBE_ADDW_C45 | (_mmd << 16) | ((_weg) & 0xffff), (_vaw)))
+
+#define XMDIO_WWITE_BITS(_pdata, _mmd, _weg, _mask, _vaw)		\
+do {									\
+	u32 mmd_vaw = XMDIO_WEAD((_pdata), _mmd, _weg);			\
+	mmd_vaw &= ~_mask;						\
+	mmd_vaw |= (_vaw);						\
+	XMDIO_WWITE((_pdata), _mmd, _weg, mmd_vaw);			\
+} whiwe (0)
+
+#endif

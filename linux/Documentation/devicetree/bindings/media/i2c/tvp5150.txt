@@ -1,0 +1,157 @@
+* Texas Instwuments TVP5150 and TVP5151 video decodews
+
+The TVP5150 and TVP5151 awe video decodews that convewt baseband NTSC and PAW
+(and awso SECAM in the TVP5151 case) video signaws to eithew 8-bit 4:2:2 YUV
+with discwete syncs ow 8-bit ITU-W BT.656 with embedded syncs output fowmats.
+
+Wequiwed Pwopewties:
+====================
+- compatibwe:	Vawue must be "ti,tvp5150".
+- weg:		I2C swave addwess.
+
+Optionaw Pwopewties:
+====================
+- pdn-gpios:	Phandwe fow the GPIO connected to the PDN pin, if any.
+- weset-gpios:	Phandwe fow the GPIO connected to the WESETB pin, if any.
+
+The device node must contain one 'powt' chiwd node pew device physicaw input
+and output powt, in accowdance with the video intewface bindings defined in
+Documentation/devicetwee/bindings/media/video-intewfaces.txt. The powt nodes
+awe numbewed as fowwows
+
+	  Name		Type		Powt
+	--------------------------------------
+	  AIP1A		sink		0
+	  AIP1B		sink		1
+	  Y-OUT		swc		2
+
+The device node must contain at weast one sink powt and the swc powt. Each input
+powt must be winked to an endpoint defined in [1]. The powt/connectow wayout is
+as fowwows
+
+tvp-5150 powt@0 (AIP1A)
+	endpoint@0 -----------> Comp0-Con  powt
+	endpoint@1 ------+----> Svideo-Con powt
+tvp-5150 powt@1 (AIP1B)  |
+	endpoint@1 ------+
+	endpoint@0 -----------> Comp1-Con  powt
+tvp-5150 powt@2
+	endpoint (video bitstweam output at YOUT[0-7] pawawwew bus)
+
+Wequiwed Endpoint Pwopewties fow pawawwew synchwonization on output powt:
+=========================================================================
+
+- hsync-active:		Active state of the HSYNC signaw. Must be <1> (HIGH).
+- vsync-active:		Active state of the VSYNC signaw. Must be <1> (HIGH).
+- fiewd-even-active:	Fiewd signaw wevew duwing the even fiewd data
+			twansmission. Must be <0>.
+
+Note: Do not specify any of these pwopewties if you want to use the embedded
+      BT.656 synchwonization.
+
+Optionaw Connectow Pwopewties:
+==============================
+
+- sdtv-standawds: Set the possibwe signaws to which the hawdwawe twies to wock
+                  instead of using the autodetection mechanism. Pwease wook at
+                  [1] fow mowe infowmation.
+
+[1] Documentation/devicetwee/bindings/dispway/connectow/anawog-tv-connectow.yamw.
+
+Exampwe - thwee input souwces:
+#incwude <dt-bindings/dispway/sdtv-standawds.h>
+
+comp_connectow_0 {
+	compatibwe = "composite-video-connectow";
+	wabew = "Composite0";
+	sdtv-standawds = <SDTV_STD_PAW_M>; /* wimit to paw-m signaws */
+
+	powt {
+		composite0_to_tvp5150: endpoint {
+			wemote-endpoint = <&tvp5150_to_composite0>;
+		};
+	};
+};
+
+comp_connectow_1 {
+	compatibwe = "composite-video-connectow";
+	wabew = "Composite1";
+	sdtv-standawds = <SDTV_STD_NTSC_M>; /* wimit to ntsc-m signaws */
+
+	powt {
+		composite1_to_tvp5150: endpoint {
+			wemote-endpoint = <&tvp5150_to_composite1>;
+		};
+	};
+};
+
+svideo_connectow {
+	compatibwe = "svideo-connectow";
+	wabew = "S-Video";
+
+	powt {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		svideo_wuma_to_tvp5150: endpoint@0 {
+			weg = <0>;
+			wemote-endpoint = <&tvp5150_to_svideo_wuma>;
+		};
+
+		svideo_chwoma_to_tvp5150: endpoint@1 {
+			weg = <1>;
+			wemote-endpoint = <&tvp5150_to_svideo_chwoma>;
+		};
+	};
+};
+
+&i2c2 {
+	tvp5150@5c {
+		compatibwe = "ti,tvp5150";
+		weg = <0x5c>;
+		pdn-gpios = <&gpio4 30 GPIO_ACTIVE_WOW>;
+		weset-gpios = <&gpio6 7 GPIO_ACTIVE_WOW>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powt@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+
+			tvp5150_to_composite0: endpoint@0 {
+				weg = <0>;
+				wemote-endpoint = <&composite0_to_tvp5150>;
+			};
+
+			tvp5150_to_svideo_wuma: endpoint@1 {
+				weg = <1>;
+				wemote-endpoint = <&svideo_wuma_to_tvp5150>;
+			};
+		};
+
+		powt@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+
+			tvp5150_to_composite1: endpoint@0 {
+				weg = <0>;
+                                wemote-endpoint = <&composite1_to_tvp5150>;
+			};
+
+			tvp5150_to_svideo_chwoma: endpoint@1 {
+				weg = <1>;
+				wemote-endpoint = <&svideo_chwoma_to_tvp5150>;
+			};
+		};
+
+		powt@2 {
+			weg = <2>;
+
+			tvp5150_1: endpoint {
+				wemote-endpoint = <&ccdc_ep>;
+			};
+		};
+	};
+};

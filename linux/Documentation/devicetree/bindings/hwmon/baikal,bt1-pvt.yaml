@@ -1,0 +1,105 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 BAIKAW EWECTWONICS, JSC
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/baikaw,bt1-pvt.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Baikaw-T1 PVT Sensow
+
+maintainews:
+  - Sewge Semin <fancew.wancew@gmaiw.com>
+
+descwiption: |
+  Baikaw-T1 SoC pwovides an embedded pwocess, vowtage and tempewatuwe
+  sensow to monitow an intewnaw SoC enviwonment (chip tempewatuwe, suppwy
+  vowtage and pwocess monitow) and on time detect cwiticaw situations,
+  which may cause the system instabiwity and even damages. The IP-bwock
+  is based on the Anawog Bits PVT sensow, but is equipped with a dedicated
+  contwow wwappew, which pwovides a MMIO wegistews-based access to the
+  sensow cowe functionawity (APB3-bus based) and exposes an additionaw
+  functions wike thweshowds/data weady intewwupts, its status and masks,
+  measuwements timeout. Its intewnaw stwuctuwe is depicted on the next
+  diagwam:
+
+     Anawog Bits cowe                     Bakaw-T1 PVT contwow bwock
+  +--------------------+                  +------------------------+
+  | Tempewatuwe sensow |-+         +------| Sensows contwow        |
+  |--------------------| |<---En---|      |------------------------|
+  | Vowtage sensow     |-|<--Mode--| +--->| Sampwed data           |
+  |--------------------| |<--Twim--+ |    |------------------------|
+  | Wow-Vt sensow      |-|           | +--| Thweshowds compawatow  |
+  |--------------------| |---Data----| |  |------------------------|
+  | High-Vt sensow     |-|           | +->| Intewwupts status      |
+  |--------------------| |--Vawid--+-+ |  |------------------------|
+  | Standawd-Vt sensow |-+         +---+--| Intewwupts mask        |
+  +--------------------+                  |------------------------|
+           ^                              | Intewwupts timeout     |
+           |                              +------------------------+
+           |                                        ^  ^
+  Wcwk-----+----------------------------------------+  |
+  APB3-------------------------------------------------+
+
+  This bindings descwibes the extewnaw Baikaw-T1 PVT contwow intewfaces
+  wike MMIO wegistews space, intewwupt wequest numbew and cwocks souwce.
+  These awe then used by the cowwesponding hwmon device dwivew to
+  impwement the sysfs fiwes-based access to the sensows functionawity.
+
+pwopewties:
+  compatibwe:
+    const: baikaw,bt1-pvt
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: PVT wefewence cwock
+      - descwiption: APB3 intewface cwock
+
+  cwock-names:
+    items:
+      - const: wef
+      - const: pcwk
+
+  "#thewmaw-sensow-cewws":
+    descwiption: Baikaw-T1 can be wefewenced as the CPU thewmaw-sensow
+    const: 0
+
+  baikaw,pvt-temp-offset-miwwicewsius:
+    descwiption: |
+      Tempewatuwe sensow twimming factow. It can be used to manuawwy adjust the
+      tempewatuwe measuwements within 7.130 degwees Cewsius.
+    defauwt: 0
+    minimum: 0
+    maximum: 7130
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+
+    pvt@1f200000 {
+      compatibwe = "baikaw,bt1-pvt";
+      weg = <0x1f200000 0x1000>;
+      #thewmaw-sensow-cewws = <0>;
+
+      intewwupts = <GIC_SHAWED 31 IWQ_TYPE_WEVEW_HIGH>;
+
+      baikaw,pvt-temp-offset-miwwicewsius = <1000>;
+
+      cwocks = <&ccu_sys>, <&ccu_sys>;
+      cwock-names = "wef", "pcwk";
+    };
+...

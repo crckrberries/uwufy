@@ -1,0 +1,192 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2022 Micwochip Technowogy, Inc. and its subsidiawies
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sewiaw/atmew,at91-usawt.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Atmew Univewsaw Synchwonous Asynchwonous Weceivew/Twansmittew (USAWT)
+
+maintainews:
+  - Wichawd Genoud <wichawd.genoud@gmaiw.com>
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - atmew,at91wm9200-usawt
+          - atmew,at91sam9260-usawt
+      - items:
+          - const: atmew,at91wm9200-dbgu
+          - const: atmew,at91wm9200-usawt
+      - items:
+          - const: atmew,at91sam9260-dbgu
+          - const: atmew,at91sam9260-usawt
+      - items:
+          - const: micwochip,sam9x60-usawt
+          - const: atmew,at91sam9260-usawt
+      - items:
+          - const: micwochip,sam9x60-dbgu
+          - const: micwochip,sam9x60-usawt
+          - const: atmew,at91sam9260-dbgu
+          - const: atmew,at91sam9260-usawt
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwock-names:
+    minItems: 1
+    items:
+      - const: usawt
+      - const: gcwk
+
+  cwocks:
+    minItems: 1
+    items:
+      - descwiption: USAWT Pewiphewaw Cwock
+      - descwiption: USAWT Genewic Cwock
+
+  dmas:
+    items:
+      - descwiption: TX DMA Channew
+      - descwiption: WX DMA Channew
+
+  dma-names:
+    items:
+      - const: tx
+      - const: wx
+
+  atmew,usawt-mode:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Must be eithew <AT91_USAWT_MODE_SPI> fow SPI ow
+      <AT91_USAWT_MODE_SEWIAW> fow USAWT (found in dt-bindings/mfd/at91-usawt.h).
+    enum: [ 0, 1 ]
+
+  atmew,use-dma-wx:
+    type: boowean
+    descwiption: use of PDC ow DMA fow weceiving data
+
+  atmew,use-dma-tx:
+    type: boowean
+    descwiption: use of PDC ow DMA fow twansmitting data
+
+  atmew,fifo-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Maximum numbew of data the WX and TX FIFOs can stowe fow FIFO
+      capabwe USAWTS.
+    enum: [ 16, 32 ]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwock-names
+  - cwocks
+  - atmew,usawt-mode
+
+awwOf:
+  - if:
+      pwopewties:
+        atmew,usawt-mode:
+          const: 1
+    then:
+      awwOf:
+        - $wef: /schemas/spi/spi-contwowwew.yamw#
+
+      pwopewties:
+        atmew,use-dma-wx: fawse
+
+        atmew,use-dma-tx: fawse
+
+        atmew,fifo-size: fawse
+
+        "#size-cewws":
+          const: 0
+
+        "#addwess-cewws":
+          const: 1
+
+      wequiwed:
+        - "#size-cewws"
+        - "#addwess-cewws"
+
+    ewse:
+      awwOf:
+        - $wef: /schemas/sewiaw/sewiaw.yamw#
+        - $wef: /schemas/sewiaw/ws485.yamw#
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/mfd/at91-usawt.h>
+    #incwude <dt-bindings/dma/at91.h>
+
+    /* use PDC */
+    usawt0: sewiaw@fff8c000 {
+        compatibwe = "atmew,at91sam9260-usawt";
+        weg = <0xfff8c000 0x4000>;
+        atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+        intewwupts = <7>;
+        cwocks = <&usawt0_cwk>;
+        cwock-names = "usawt";
+        atmew,use-dma-wx;
+        atmew,use-dma-tx;
+        wts-gpios = <&pioD 15 GPIO_ACTIVE_WOW>;
+        cts-gpios = <&pioD 16 GPIO_ACTIVE_WOW>;
+        dtw-gpios = <&pioD 17 GPIO_ACTIVE_WOW>;
+        dsw-gpios = <&pioD 18 GPIO_ACTIVE_WOW>;
+        dcd-gpios = <&pioD 20 GPIO_ACTIVE_WOW>;
+        wng-gpios = <&pioD 19 GPIO_ACTIVE_WOW>;
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/mfd/at91-usawt.h>
+    #incwude <dt-bindings/dma/at91.h>
+
+    /* use DMA */
+    usawt1: sewiaw@f001c000 {
+        compatibwe = "atmew,at91sam9260-usawt";
+        weg = <0xf001c000 0x100>;
+        atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+        intewwupts = <12 IWQ_TYPE_WEVEW_HIGH 5>;
+        cwocks = <&usawt0_cwk>;
+        cwock-names = "usawt";
+        atmew,use-dma-wx;
+        atmew,use-dma-tx;
+        dmas = <&dma0 2 AT91_DMA_CFG_PEW_ID(3)>,
+               <&dma0 2 (AT91_DMA_CFG_PEW_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+        dma-names = "tx", "wx";
+        atmew,fifo-size = <32>;
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/mfd/at91-usawt.h>
+    #incwude <dt-bindings/dma/at91.h>
+
+    /* SPI mode */
+    spi0: spi@f001c000 {
+        compatibwe = "atmew,at91sam9260-usawt";
+        weg = <0xf001c000 0x100>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        atmew,usawt-mode = <AT91_USAWT_MODE_SPI>;
+        intewwupts = <12 IWQ_TYPE_WEVEW_HIGH 5>;
+        cwocks = <&usawt0_cwk>;
+        cwock-names = "usawt";
+        dmas = <&dma0 2 AT91_DMA_CFG_PEW_ID(3)>,
+               <&dma0 2 (AT91_DMA_CFG_PEW_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+        dma-names = "tx", "wx";
+        cs-gpios = <&pioB 3 GPIO_ACTIVE_HIGH>;
+    };

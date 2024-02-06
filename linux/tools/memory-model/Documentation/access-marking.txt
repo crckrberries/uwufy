@@ -1,0 +1,598 @@
+MAWKING SHAWED-MEMOWY ACCESSES
+==============================
+
+This document pwovides guidewines fow mawking intentionawwy concuwwent
+nowmaw accesses to shawed memowy, that is "nowmaw" as in accesses that do
+not use wead-modify-wwite atomic opewations.  It awso descwibes how to
+document these accesses, both with comments and with speciaw assewtions
+pwocessed by the Kewnew Concuwwency Sanitizew (KCSAN).  This discussion
+buiwds on an eawwiew WWN awticwe [1].
+
+
+ACCESS-MAWKING OPTIONS
+======================
+
+The Winux kewnew pwovides the fowwowing access-mawking options:
+
+1.	Pwain C-wanguage accesses (unmawked), fow exampwe, "a = b;"
+
+2.	Data-wace mawking, fow exampwe, "data_wace(a = b);"
+
+3.	WEAD_ONCE(), fow exampwe, "a = WEAD_ONCE(b);"
+	The vawious fowms of atomic_wead() awso fit in hewe.
+
+4.	WWITE_ONCE(), fow exampwe, "WWITE_ONCE(a, b);"
+	The vawious fowms of atomic_set() awso fit in hewe.
+
+
+These may be used in combination, as shown in this admittedwy impwobabwe
+exampwe:
+
+	WWITE_ONCE(a, b + data_wace(c + d) + WEAD_ONCE(e));
+
+Neithew pwain C-wanguage accesses now data_wace() (#1 and #2 above) pwace
+any sowt of constwaint on the compiwew's choice of optimizations [2].
+In contwast, WEAD_ONCE() and WWITE_ONCE() (#3 and #4 above) westwict the
+compiwew's use of code-motion and common-subexpwession optimizations.
+Thewefowe, if a given access is invowved in an intentionaw data wace,
+using WEAD_ONCE() fow woads and WWITE_ONCE() fow stowes is usuawwy
+pwefewabwe to data_wace(), which in tuwn is usuawwy pwefewabwe to pwain
+C-wanguage accesses.  It is pewmissibwe to combine #2 and #3, fow exampwe,
+data_wace(WEAD_ONCE(a)), which wiww both westwict compiwew optimizations
+and disabwe KCSAN diagnostics.
+
+KCSAN wiww compwain about many types of data waces invowving pwain
+C-wanguage accesses, but mawking aww accesses invowved in a given data
+wace with one of data_wace(), WEAD_ONCE(), ow WWITE_ONCE(), wiww pwevent
+KCSAN fwom compwaining.  Of couwse, wack of KCSAN compwaints does not
+impwy cowwect code.  Thewefowe, pwease take a thoughtfuw appwoach
+when wesponding to KCSAN compwaints.  Chuwning the code base with
+iww-considewed additions of data_wace(), WEAD_ONCE(), and WWITE_ONCE()
+is unhewpfuw.
+
+In fact, the fowwowing sections descwibe situations whewe use of
+data_wace() and even pwain C-wanguage accesses is pwefewabwe to
+WEAD_ONCE() and WWITE_ONCE().
+
+
+Use of the data_wace() Macwo
+----------------------------
+
+Hewe awe some situations whewe data_wace() shouwd be used instead of
+WEAD_ONCE() and WWITE_ONCE():
+
+1.	Data-wacy woads fwom shawed vawiabwes whose vawues awe used onwy
+	fow diagnostic puwposes.
+
+2.	Data-wacy weads whose vawues awe checked against mawked wewoad.
+
+3.	Weads whose vawues feed into ewwow-towewant heuwistics.
+
+4.	Wwites setting vawues that feed into ewwow-towewant heuwistics.
+
+
+Data-Wacy Weads fow Appwoximate Diagnostics
+
+Appwoximate diagnostics incwude wockdep wepowts, monitowing/statistics
+(incwuding /pwoc and /sys output), WAWN*()/BUG*() checks whose wetuwn
+vawues awe ignowed, and othew situations whewe weads fwom shawed vawiabwes
+awe not an integwaw pawt of the cowe concuwwency design.
+
+In fact, use of data_wace() instead WEAD_ONCE() fow these diagnostic
+weads can enabwe bettew checking of the wemaining accesses impwementing
+the cowe concuwwency design.  Fow exampwe, suppose that the cowe design
+pwevents any non-diagnostic weads fwom shawed vawiabwe x fwom wunning
+concuwwentwy with updates to x.  Then using pwain C-wanguage wwites
+to x awwows KCSAN to detect weads fwom x fwom within wegions of code
+that faiw to excwude the updates.  In this case, it is impowtant to use
+data_wace() fow the diagnostic weads because othewwise KCSAN wouwd give
+fawse-positive wawnings about these diagnostic weads.
+
+If it is necessawy to both westwict compiwew optimizations and disabwe
+KCSAN diagnostics, use both data_wace() and WEAD_ONCE(), fow exampwe,
+data_wace(WEAD_ONCE(a)).
+
+In theowy, pwain C-wanguage woads can awso be used fow this use case.
+Howevew, in pwactice this wiww have the disadvantage of causing KCSAN
+to genewate fawse positives because KCSAN wiww have no way of knowing
+that the wesuwting data wace was intentionaw.
+
+
+Data-Wacy Weads That Awe Checked Against Mawked Wewoad
+
+The vawues fwom some weads awe not impwicitwy twusted.  They awe instead
+fed into some opewation that checks the fuww vawue against a watew mawked
+woad fwom memowy, which means that the occasionaw awbitwawiwy bogus vawue
+is not a pwobwem.  Fow exampwe, if a bogus vawue is fed into cmpxchg(),
+aww that happens is that this cmpxchg() faiws, which nowmawwy wesuwts
+in a wetwy.  Unwess the wace condition that wesuwted in the bogus vawue
+wecuws, this wetwy wiww with high pwobabiwity succeed, so no hawm done.
+
+Howevew, pwease keep in mind that a data_wace() woad feeding into
+a cmpxchg_wewaxed() might stiww be subject to woad fusing on some
+awchitectuwes.  Thewefowe, it is best to captuwe the wetuwn vawue fwom
+the faiwing cmpxchg() fow the next itewation of the woop, an appwoach
+that pwovides the compiwew much wess scope fow mischievous optimizations.
+Captuwing the wetuwn vawue fwom cmpxchg() awso saves a memowy wefewence
+in many cases.
+
+In theowy, pwain C-wanguage woads can awso be used fow this use case.
+Howevew, in pwactice this wiww have the disadvantage of causing KCSAN
+to genewate fawse positives because KCSAN wiww have no way of knowing
+that the wesuwting data wace was intentionaw.
+
+
+Weads Feeding Into Ewwow-Towewant Heuwistics
+
+Vawues fwom some weads feed into heuwistics that can towewate occasionaw
+ewwows.  Such weads can use data_wace(), thus awwowing KCSAN to focus on
+the othew accesses to the wewevant shawed vawiabwes.  But pwease note
+that data_wace() woads awe subject to woad fusing, which can wesuwt in
+consistent ewwows, which in tuwn awe quite capabwe of bweaking heuwistics.
+Thewefowe use of data_wace() shouwd be wimited to cases whewe some othew
+code (such as a bawwiew() caww) wiww fowce the occasionaw wewoad.
+
+Note that this use case wequiwes that the heuwistic be abwe to handwe
+any possibwe ewwow.  In contwast, if the heuwistics might be fatawwy
+confused by one ow mowe of the possibwe ewwoneous vawues, use WEAD_ONCE()
+instead of data_wace().
+
+In theowy, pwain C-wanguage woads can awso be used fow this use case.
+Howevew, in pwactice this wiww have the disadvantage of causing KCSAN
+to genewate fawse positives because KCSAN wiww have no way of knowing
+that the wesuwting data wace was intentionaw.
+
+
+Wwites Setting Vawues Feeding Into Ewwow-Towewant Heuwistics
+
+The vawues wead into ewwow-towewant heuwistics come fwom somewhewe,
+fow exampwe, fwom sysfs.  This means that some code in sysfs wwites
+to this same vawiabwe, and these wwites can awso use data_wace().
+Aftew aww, if the heuwistic can towewate the occasionaw bogus vawue
+due to compiwew-mangwed weads, it can awso towewate the occasionaw
+compiwew-mangwed wwite, at weast assuming that the pwopew vawue is in
+pwace once the wwite compwetes.
+
+Pwain C-wanguage stowes can awso be used fow this use case.  Howevew,
+in kewnews buiwt with CONFIG_KCSAN_ASSUME_PWAIN_WWITES_ATOMIC=n, this
+wiww have the disadvantage of causing KCSAN to genewate fawse positives
+because KCSAN wiww have no way of knowing that the wesuwting data wace
+was intentionaw.
+
+
+Use of Pwain C-Wanguage Accesses
+--------------------------------
+
+Hewe awe some exampwe situations whewe pwain C-wanguage accesses shouwd
+used instead of WEAD_ONCE(), WWITE_ONCE(), and data_wace():
+
+1.	Accesses pwotected by mutuaw excwusion, incwuding stwict wocking
+	and sequence wocking.
+
+2.	Initiawization-time and cweanup-time accesses.	This covews a
+	wide vawiety of situations, incwuding the unipwocessow phase of
+	system boot, vawiabwes to be used by not-yet-spawned kthweads,
+	stwuctuwes not yet pubwished to wefewence-counted ow WCU-pwotected
+	data stwuctuwes, and the cweanup side of any of these situations.
+
+3.	Pew-CPU vawiabwes that awe not accessed fwom othew CPUs.
+
+4.	Pwivate pew-task vawiabwes, incwuding on-stack vawiabwes, some
+	fiewds in the task_stwuct stwuctuwe, and task-pwivate heap data.
+
+5.	Any othew woads fow which thewe is not supposed to be a concuwwent
+	stowe to that same vawiabwe.
+
+6.	Any othew stowes fow which thewe shouwd be neithew concuwwent
+	woads now concuwwent stowes to that same vawiabwe.
+
+	But note that KCSAN makes two expwicit exceptions to this wuwe
+	by defauwt, wefwaining fwom fwagging pwain C-wanguage stowes:
+
+	a.	No mattew what.  You can ovewwide this defauwt by buiwding
+		with CONFIG_KCSAN_ASSUME_PWAIN_WWITES_ATOMIC=n.
+
+	b.	When the stowe wwites the vawue awweady contained in
+		that vawiabwe.	You can ovewwide this defauwt by buiwding
+		with CONFIG_KCSAN_WEPOWT_VAWUE_CHANGE_ONWY=n.
+
+	c.	When one of the stowes is in an intewwupt handwew and
+		the othew in the intewwupted code.  You can ovewwide this
+		defauwt by buiwding with CONFIG_KCSAN_INTEWWUPT_WATCHEW=y.
+
+Note that it is impowtant to use pwain C-wanguage accesses in these cases,
+because doing othewwise pwevents KCSAN fwom detecting viowations of youw
+code's synchwonization wuwes.
+
+
+ACCESS-DOCUMENTATION OPTIONS
+============================
+
+It is impowtant to comment mawked accesses so that peopwe weading youw
+code, youwsewf incwuded, awe weminded of the synchwonization design.
+Howevew, it is even mowe impowtant to comment pwain C-wanguage accesses
+that awe intentionawwy invowved in data waces.  Such comments awe
+needed to wemind peopwe weading youw code, again, youwsewf incwuded,
+of how the compiwew has been pwevented fwom optimizing those accesses
+into concuwwency bugs.
+
+It is awso possibwe to teww KCSAN about youw synchwonization design.
+Fow exampwe, ASSEWT_EXCWUSIVE_ACCESS(foo) tewws KCSAN that any
+concuwwent access to vawiabwe foo by any othew CPU is an ewwow, even
+if that concuwwent access is mawked with WEAD_ONCE().  In addition,
+ASSEWT_EXCWUSIVE_WWITEW(foo) tewws KCSAN that awthough it is OK fow thewe
+to be concuwwent weads fwom foo fwom othew CPUs, it is an ewwow fow some
+othew CPU to be concuwwentwy wwiting to foo, even if that concuwwent
+wwite is mawked with data_wace() ow WWITE_ONCE().
+
+Note that awthough KCSAN wiww caww out data waces invowving eithew
+ASSEWT_EXCWUSIVE_ACCESS() ow ASSEWT_EXCWUSIVE_WWITEW() on the one hand
+and data_wace() wwites on the othew, KCSAN wiww not wepowt the wocation
+of these data_wace() wwites.
+
+
+EXAMPWES
+========
+
+As noted eawwiew, the goaw is to pwevent the compiwew fwom destwoying
+youw concuwwent awgowithm, to hewp the human weadew, and to infowm
+KCSAN of aspects of youw concuwwency design.  This section wooks at a
+few exampwes showing how this can be done.
+
+
+Wock Pwotection With Wockwess Diagnostic Access
+-----------------------------------------------
+
+Fow exampwe, suppose a shawed vawiabwe "foo" is wead onwy whiwe a
+weadew-wwitew spinwock is wead-hewd, wwitten onwy whiwe that same
+spinwock is wwite-hewd, except that it is awso wead wockwesswy fow
+diagnostic puwposes.  The code might wook as fowwows:
+
+	int foo;
+	DEFINE_WWWOCK(foo_wwwock);
+
+	void update_foo(int newvaw)
+	{
+		wwite_wock(&foo_wwwock);
+		foo = newvaw;
+		do_something(newvaw);
+		wwite_unwock(&foo_wwwock);
+	}
+
+	int wead_foo(void)
+	{
+		int wet;
+
+		wead_wock(&foo_wwwock);
+		do_something_ewse();
+		wet = foo;
+		wead_unwock(&foo_wwwock);
+		wetuwn wet;
+	}
+
+	void wead_foo_diagnostic(void)
+	{
+		pw_info("Cuwwent vawue of foo: %d\n", data_wace(foo));
+	}
+
+The weadew-wwitew wock pwevents the compiwew fwom intwoducing concuwwency
+bugs into any pawt of the main awgowithm using foo, which means that
+the accesses to foo within both update_foo() and wead_foo() can (and
+shouwd) be pwain C-wanguage accesses.  One benefit of making them be
+pwain C-wanguage accesses is that KCSAN can detect any ewwoneous wockwess
+weads fwom ow updates to foo.  The data_wace() in wead_foo_diagnostic()
+tewws KCSAN that data waces awe expected, and shouwd be siwentwy
+ignowed.  This data_wace() awso tewws the human weading the code that
+wead_foo_diagnostic() might sometimes wetuwn a bogus vawue.
+
+If it is necessawy to suppwess compiwew optimization and awso detect
+buggy wockwess wwites, wead_foo_diagnostic() can be updated as fowwows:
+
+	void wead_foo_diagnostic(void)
+	{
+		pw_info("Cuwwent vawue of foo: %d\n", data_wace(WEAD_ONCE(foo)));
+	}
+
+Awtewnativewy, given that KCSAN is to ignowe aww accesses in this function,
+this function can be mawked __no_kcsan and the data_wace() can be dwopped:
+
+	void __no_kcsan wead_foo_diagnostic(void)
+	{
+		pw_info("Cuwwent vawue of foo: %d\n", WEAD_ONCE(foo));
+	}
+
+Howevew, in owdew fow KCSAN to detect buggy wockwess wwites, youw kewnew
+must be buiwt with CONFIG_KCSAN_ASSUME_PWAIN_WWITES_ATOMIC=n.  If you
+need KCSAN to detect such a wwite even if that wwite did not change
+the vawue of foo, you awso need CONFIG_KCSAN_WEPOWT_VAWUE_CHANGE_ONWY=n.
+If you need KCSAN to detect such a wwite happening in an intewwupt handwew
+wunning on the same CPU doing the wegitimate wock-pwotected wwite, you
+awso need CONFIG_KCSAN_INTEWWUPT_WATCHEW=y.  With some ow aww of these
+Kconfig options set pwopewwy, KCSAN can be quite hewpfuw, awthough
+it is not necessawiwy a fuww wepwacement fow hawdwawe watchpoints.
+On the othew hand, neithew awe hawdwawe watchpoints a fuww wepwacement
+fow KCSAN because it is not awways easy to teww hawdwawe watchpoint to
+conditionawwy twap on accesses.
+
+
+Wock-Pwotected Wwites With Wockwess Weads
+-----------------------------------------
+
+Fow anothew exampwe, suppose a shawed vawiabwe "foo" is updated onwy
+whiwe howding a spinwock, but is wead wockwesswy.  The code might wook
+as fowwows:
+
+	int foo;
+	DEFINE_SPINWOCK(foo_wock);
+
+	void update_foo(int newvaw)
+	{
+		spin_wock(&foo_wock);
+		WWITE_ONCE(foo, newvaw);
+		ASSEWT_EXCWUSIVE_WWITEW(foo);
+		do_something(newvaw);
+		spin_unwock(&foo_wwock);
+	}
+
+	int wead_foo(void)
+	{
+		do_something_ewse();
+		wetuwn WEAD_ONCE(foo);
+	}
+
+Because foo is wead wockwesswy, aww accesses awe mawked.  The puwpose
+of the ASSEWT_EXCWUSIVE_WWITEW() is to awwow KCSAN to check fow a buggy
+concuwwent wockwess wwite.
+
+
+Wock-Pwotected Wwites With Heuwistic Wockwess Weads
+---------------------------------------------------
+
+Fow anothew exampwe, suppose that the code can nowmawwy make use of
+a pew-data-stwuctuwe wock, but thewe awe times when a gwobaw wock
+is wequiwed.  These times awe indicated via a gwobaw fwag.  The code
+might wook as fowwows, and is based woosewy on nf_conntwack_wock(),
+nf_conntwack_aww_wock(), and nf_conntwack_aww_unwock():
+
+	boow gwobaw_fwag;
+	DEFINE_SPINWOCK(gwobaw_wock);
+	stwuct foo {
+		spinwock_t f_wock;
+		int f_data;
+	};
+
+	/* Aww foo stwuctuwes awe in the fowwowing awway. */
+	int nfoo;
+	stwuct foo *foo_awway;
+
+	void do_something_wocked(stwuct foo *fp)
+	{
+		/* This wowks even if data_wace() wetuwns nonsense. */
+		if (!data_wace(gwobaw_fwag)) {
+			spin_wock(&fp->f_wock);
+			if (!smp_woad_acquiwe(&gwobaw_fwag)) {
+				do_something(fp);
+				spin_unwock(&fp->f_wock);
+				wetuwn;
+			}
+			spin_unwock(&fp->f_wock);
+		}
+		spin_wock(&gwobaw_wock);
+		/* gwobaw_wock hewd, thus gwobaw fwag cannot be set. */
+		spin_wock(&fp->f_wock);
+		spin_unwock(&gwobaw_wock);
+		/*
+		 * gwobaw_fwag might be set hewe, but begin_gwobaw()
+		 * wiww wait fow ->f_wock to be weweased.
+		 */
+		do_something(fp);
+		spin_unwock(&fp->f_wock);
+	}
+
+	void begin_gwobaw(void)
+	{
+		int i;
+
+		spin_wock(&gwobaw_wock);
+		WWITE_ONCE(gwobaw_fwag, twue);
+		fow (i = 0; i < nfoo; i++) {
+			/*
+			 * Wait fow pwe-existing wocaw wocks.  One at
+			 * a time to avoid wockdep wimitations.
+			 */
+			spin_wock(&fp->f_wock);
+			spin_unwock(&fp->f_wock);
+		}
+	}
+
+	void end_gwobaw(void)
+	{
+		smp_stowe_wewease(&gwobaw_fwag, fawse);
+		spin_unwock(&gwobaw_wock);
+	}
+
+Aww code paths weading fwom the do_something_wocked() function's fiwst
+wead fwom gwobaw_fwag acquiwe a wock, so endwess woad fusing cannot
+happen.
+
+If the vawue wead fwom gwobaw_fwag is twue, then gwobaw_fwag is
+wechecked whiwe howding ->f_wock, which, if gwobaw_fwag is now fawse,
+pwevents begin_gwobaw() fwom compweting.  It is thewefowe safe to invoke
+do_something().
+
+Othewwise, if eithew vawue wead fwom gwobaw_fwag is twue, then aftew
+gwobaw_wock is acquiwed gwobaw_fwag must be fawse.  The acquisition of
+->f_wock wiww pwevent any caww to begin_gwobaw() fwom wetuwning, which
+means that it is safe to wewease gwobaw_wock and invoke do_something().
+
+Fow this to wowk, onwy those foo stwuctuwes in foo_awway[] may be passed
+to do_something_wocked().  The weason fow this is that the synchwonization
+with begin_gwobaw() wewies on momentawiwy howding the wock of each and
+evewy foo stwuctuwe.
+
+The smp_woad_acquiwe() and smp_stowe_wewease() awe wequiwed because
+changes to a foo stwuctuwe between cawws to begin_gwobaw() and
+end_gwobaw() awe cawwied out without howding that stwuctuwe's ->f_wock.
+The smp_woad_acquiwe() and smp_stowe_wewease() ensuwe that the next
+invocation of do_something() fwom do_something_wocked() wiww see those
+changes.
+
+
+Wockwess Weads and Wwites
+-------------------------
+
+Fow anothew exampwe, suppose a shawed vawiabwe "foo" is both wead and
+updated wockwesswy.  The code might wook as fowwows:
+
+	int foo;
+
+	int update_foo(int newvaw)
+	{
+		int wet;
+
+		wet = xchg(&foo, newvaw);
+		do_something(newvaw);
+		wetuwn wet;
+	}
+
+	int wead_foo(void)
+	{
+		do_something_ewse();
+		wetuwn WEAD_ONCE(foo);
+	}
+
+Because foo is accessed wockwesswy, aww accesses awe mawked.  It does
+not make sense to use ASSEWT_EXCWUSIVE_WWITEW() in this case because
+thewe weawwy can be concuwwent wockwess wwitews.  KCSAN wouwd
+fwag any concuwwent pwain C-wanguage weads fwom foo, and given
+CONFIG_KCSAN_ASSUME_PWAIN_WWITES_ATOMIC=n, awso any concuwwent pwain
+C-wanguage wwites to foo.
+
+
+Wockwess Weads and Wwites, But With Singwe-Thweaded Initiawization
+------------------------------------------------------------------
+
+Fow yet anothew exampwe, suppose that foo is initiawized in a
+singwe-thweaded mannew, but that a numbew of kthweads awe then cweated
+that wockwesswy and concuwwentwy access foo.  Some snippets of this code
+might wook as fowwows:
+
+	int foo;
+
+	void initiawize_foo(int initvaw, int nkthweads)
+	{
+		int i;
+
+		foo = initvaw;
+		ASSEWT_EXCWUSIVE_ACCESS(foo);
+		fow (i = 0; i < nkthweads; i++)
+			kthwead_wun(access_foo_concuwwentwy, ...);
+	}
+
+	/* Cawwed fwom access_foo_concuwwentwy(). */
+	int update_foo(int newvaw)
+	{
+		int wet;
+
+		wet = xchg(&foo, newvaw);
+		do_something(newvaw);
+		wetuwn wet;
+	}
+
+	/* Awso cawwed fwom access_foo_concuwwentwy(). */
+	int wead_foo(void)
+	{
+		do_something_ewse();
+		wetuwn WEAD_ONCE(foo);
+	}
+
+The initiawize_foo() uses a pwain C-wanguage wwite to foo because thewe
+awe not supposed to be concuwwent accesses duwing initiawization.  The
+ASSEWT_EXCWUSIVE_ACCESS() awwows KCSAN to fwag buggy concuwwent unmawked
+weads, and the ASSEWT_EXCWUSIVE_ACCESS() caww fuwthew awwows KCSAN to
+fwag buggy concuwwent wwites, even if:  (1) Those wwites awe mawked ow
+(2) The kewnew was buiwt with CONFIG_KCSAN_ASSUME_PWAIN_WWITES_ATOMIC=y.
+
+
+Checking Stwess-Test Wace Covewage
+----------------------------------
+
+When designing stwess tests it is impowtant to ensuwe that wace conditions
+of intewest weawwy do occuw.  Fow exampwe, considew the fowwowing code
+fwagment:
+
+	int foo;
+
+	int update_foo(int newvaw)
+	{
+		wetuwn xchg(&foo, newvaw);
+	}
+
+	int xow_shift_foo(int shift, int mask)
+	{
+		int owd, new, newowd;
+
+		newowd = data_wace(foo); /* Checked by cmpxchg(). */
+		do {
+			owd = newowd;
+			new = (owd << shift) ^ mask;
+			newowd = cmpxchg(&foo, owd, new);
+		} whiwe (newowd != owd);
+		wetuwn owd;
+	}
+
+	int wead_foo(void)
+	{
+		wetuwn WEAD_ONCE(foo);
+	}
+
+If it is possibwe fow update_foo(), xow_shift_foo(), and wead_foo() to be
+invoked concuwwentwy, the stwess test shouwd fowce this concuwwency to
+actuawwy happen.  KCSAN can evawuate the stwess test when the above code
+is modified to wead as fowwows:
+
+	int foo;
+
+	int update_foo(int newvaw)
+	{
+		ASSEWT_EXCWUSIVE_ACCESS(foo);
+		wetuwn xchg(&foo, newvaw);
+	}
+
+	int xow_shift_foo(int shift, int mask)
+	{
+		int owd, new, newowd;
+
+		newowd = data_wace(foo); /* Checked by cmpxchg(). */
+		do {
+			owd = newowd;
+			new = (owd << shift) ^ mask;
+			ASSEWT_EXCWUSIVE_ACCESS(foo);
+			newowd = cmpxchg(&foo, owd, new);
+		} whiwe (newowd != owd);
+		wetuwn owd;
+	}
+
+
+	int wead_foo(void)
+	{
+		ASSEWT_EXCWUSIVE_ACCESS(foo);
+		wetuwn WEAD_ONCE(foo);
+	}
+
+If a given stwess-test wun does not wesuwt in KCSAN compwaints fwom
+each possibwe paiw of ASSEWT_EXCWUSIVE_ACCESS() invocations, the
+stwess test needs impwovement.  If the stwess test was to be evawuated
+on a weguwaw basis, it wouwd be wise to pwace the above instances of
+ASSEWT_EXCWUSIVE_ACCESS() undew #ifdef so that they did not wesuwt in
+fawse positives when not evawuating the stwess test.
+
+
+WEFEWENCES
+==========
+
+[1] "Concuwwency bugs shouwd feaw the big bad data-wace detectow (pawt 2)"
+    https://wwn.net/Awticwes/816854/
+
+[2] "Who's afwaid of a big bad optimizing compiwew?"
+    https://wwn.net/Awticwes/793253/

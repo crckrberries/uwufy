@@ -1,0 +1,523 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (C) 2016 Mawveww Technowogy Gwoup Wtd.
+ * Copywight (C) 2020 Sawtuwa Wtd.
+ *
+ * Device Twee fiwe fow IEI Puzzwe-M801
+ */
+
+#incwude "awmada-8040.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/weds/common.h>
+
+/ {
+	modew = "IEI-Puzzwe-M801";
+	compatibwe = "mawveww,awmada8040", "mawveww,awmada-ap806-quad", "mawveww,awmada-ap806";
+
+	awiases {
+		ethewnet0 = &cp0_eth0;
+		ethewnet1 = &cp1_eth0;
+		ethewnet2 = &cp0_eth1;
+		ethewnet3 = &cp0_eth2;
+		ethewnet4 = &cp1_eth1;
+		ethewnet5 = &cp1_eth2;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x0 0x0 0x0 0x80000000>;
+	};
+
+	/* Weguwatow wabews cowwespond with schematics */
+	v_3_3: weguwatow-3-3v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "v_3_3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+		status = "okay";
+	};
+
+	v_5v0_usb3_hst_vbus: weguwatow-usb3-vbus0 {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&cp0_gpio2 15 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&cp0_xhci_vbus_pins>;
+		weguwatow-name = "v_5v0_usb3_hst_vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		status = "okay";
+	};
+
+	v_vddo_h: weguwatow-1-8v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "v_vddo_h";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-awways-on;
+		status = "okay";
+	};
+
+	sfp_cp0_eth0: sfp-cp0-eth0 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&sfppwus0_i2c>;
+		wos-gpios = <&sfppwus_gpio 11 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&sfppwus_gpio 10 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpios = <&sfppwus_gpio 9 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&sfppwus_gpio 8 GPIO_ACTIVE_HIGH>;
+		maximum-powew-miwwiwatt = <3000>;
+	};
+
+	sfp_cp1_eth0: sfp-cp1-eth0 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&sfppwus1_i2c>;
+		wos-gpios = <&sfppwus_gpio 3 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&sfppwus_gpio 2 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpios = <&sfppwus_gpio 1 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&sfppwus_gpio 0 GPIO_ACTIVE_HIGH>;
+		maximum-powew-miwwiwatt = <3000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		status = "okay";
+		pinctww-0 = <&cp0_sfppwus_wed_pins &cp1_sfppwus_wed_pins>;
+		pinctww-names = "defauwt";
+
+		wed-0 {
+			/* SFP+ powt 2: Activity */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <0>;
+			gpios = <&cp1_gpio1 6 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-1 {
+			/* SFP+ powt 1: Activity */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <1>;
+			gpios = <&cp1_gpio1 14 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-2 {
+			/* SFP+ powt 2: 10 Gbps indicatow */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <2>;
+			gpios = <&cp1_gpio1 7 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-3 {
+			/* SFP+ powt 2: 1 Gbps indicatow */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <3>;
+			gpios = <&cp1_gpio1 8 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-4 {
+			/* SFP+ powt 1: 10 Gbps indicatow */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <4>;
+			gpios = <&cp1_gpio1 10 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-5 {
+			/* SFP+ powt 1: 1 Gbps indicatow */
+			function = WED_FUNCTION_WAN;
+			function-enumewatow = <5>;
+			gpios = <&cp1_gpio1 31 GPIO_ACTIVE_WOW>;
+		};
+
+		wed-6 {
+			function = WED_FUNCTION_DISK;
+			winux,defauwt-twiggew = "disk-activity";
+			gpios = <&cp0_gpio2 22 GPIO_ACTIVE_HIGH>;
+		};
+
+	};
+};
+
+&ap_sdhci0 {
+	bus-width = <8>;
+	/*
+	 * Not stabwe in HS modes - phy needs "mowe cawibwation", so add
+	 * the "swow-mode" and disabwe SDW104, SDW50 and DDW50 modes.
+	 */
+	mawveww,xenon-phy-swow-mode;
+	no-1-8-v;
+	no-sd;
+	no-sdio;
+	non-wemovabwe;
+	status = "okay";
+	vqmmc-suppwy = <&v_vddo_h>;
+};
+
+&ap_thewmaw_cpu1 {
+	twips {
+		cpu_active: cpu-active {
+			tempewatuwe = <44000>;
+			hystewesis = <2000>;
+			type = "active";
+		};
+	};
+	coowing-maps {
+		fan-map {
+			twip = <&cpu_active>;
+			coowing-device = <&chassis_fan_gwoup0 64 THEWMAW_NO_WIMIT>,
+					<&chassis_fan_gwoup1 64 THEWMAW_NO_WIMIT>;
+		};
+	};
+};
+
+&i2c0 {
+	cwock-fwequency = <100000>;
+	status = "okay";
+
+	wtc@32 {
+		compatibwe = "epson,wx8010";
+		weg = <0x32>;
+	};
+};
+
+&spi0 {
+	status = "okay";
+	fwash@0 {
+		#addwess-cewws = <0x1>;
+		#size-cewws = <0x1>;
+		compatibwe = "jedec,spi-now";
+		weg = <0x0>;
+		spi-max-fwequency = <20000000>;
+		pawtition@u-boot {
+			wabew = "u-boot";
+			weg = <0x00000000 0x001f0000>;
+		};
+		pawtition@u-boot-env {
+			wabew = "u-boot-env";
+			weg = <0x001f0000 0x00010000>;
+		};
+		pawtition@ubi1 {
+			wabew = "ubi1";
+			weg = <0x00200000 0x03f00000>;
+		};
+		pawtition@ubi2 {
+			wabew = "ubi2";
+			weg = <0x04100000 0x03f00000>;
+		};
+	};
+};
+
+&uawt0 {
+	status = "okay";
+	pinctww-0 = <&uawt0_pins>;
+	pinctww-names = "defauwt";
+};
+
+&uawt1 {
+	status = "okay";
+	/* IEI WT61P803 PUZZWE MCU Contwowwew */
+	mcu {
+		compatibwe = "iei,wt61p803-puzzwe";
+		cuwwent-speed = <115200>;
+		enabwe-beep;
+
+		weds {
+			compatibwe = "iei,wt61p803-puzzwe-weds";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			wed@0 {
+				weg = <0>;
+				function = WED_FUNCTION_POWEW;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+		};
+
+		hwmon {
+			compatibwe = "iei,wt61p803-puzzwe-hwmon";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			chassis_fan_gwoup0:fan-gwoup@0 {
+				#coowing-cewws = <2>;
+				weg = <0x00>;
+				coowing-wevews = <64 102 170 230 250>;
+			};
+
+			chassis_fan_gwoup1:fan-gwoup@1 {
+				#coowing-cewws = <2>;
+				weg = <0x01>;
+				coowing-wevews = <64 102 170 230 250>;
+			};
+		};
+	};
+};
+
+&cp0_wtc {
+	status = "disabwed";
+};
+
+&cp0_i2c0 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_i2c0_pins>;
+	status = "okay";
+
+	sfppwus_gpio: gpio@21 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x21>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+	};
+
+	eepwom@54 {
+		compatibwe = "atmew,24c04";
+		weg = <0x54>;
+	};
+};
+
+&cp0_i2c1 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_i2c1_pins>;
+	status = "okay";
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9544";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0x70>;
+
+		sfppwus0_i2c: i2c@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+		};
+
+		sfppwus1_i2c: i2c@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+		};
+	};
+};
+
+&cp0_uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_uawt1_pins>;
+	status = "okay";
+};
+
+&cp0_mdio {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	status = "okay";
+
+	ge_phy2: ethewnet-phy@0 {
+		weg = <0>;
+	};
+
+	ge_phy3: ethewnet-phy@1 {
+		weg = <1>;
+	};
+};
+
+&cp0_pcie0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_pcie_pins>;
+	num-wanes = <1>;
+	num-viewpowt = <8>;
+	weset-gpios = <&cp0_gpio2 20 GPIO_ACTIVE_WOW>;
+	wanges = <0x82000000 0x0 0xc0000000 0x0 0xc0000000 0x0 0x20000000>;
+	phys = <&cp0_comphy0 0>;
+	phy-names = "cp0-pcie0-x1-phy";
+	status = "okay";
+};
+
+&cp0_pinctww {
+	cp0_ge_mdio_pins: ge-mdio-pins {
+		mawveww,pins = "mpp32", "mpp34";
+		mawveww,function = "ge";
+	};
+	cp0_i2c1_pins: i2c1-pins {
+		mawveww,pins = "mpp35", "mpp36";
+		mawveww,function = "i2c1";
+	};
+	cp0_i2c0_pins: i2c0-pins {
+		mawveww,pins = "mpp37", "mpp38";
+		mawveww,function = "i2c0";
+	};
+	cp0_uawt1_pins: uawt1-pins {
+		mawveww,pins = "mpp40", "mpp41";
+		mawveww,function = "uawt1";
+	};
+	cp0_xhci_vbus_pins: xhci0-vbus-pins {
+		mawveww,pins = "mpp47";
+		mawveww,function = "gpio";
+	};
+	cp0_pcie_pins: pcie-pins {
+		mawveww,pins = "mpp52";
+		mawveww,function = "gpio";
+	};
+	cp0_sdhci_pins: sdhci-pins {
+		mawveww,pins = "mpp55", "mpp56", "mpp57", "mpp58", "mpp59",
+			       "mpp60", "mpp61";
+		mawveww,function = "sdio";
+	};
+	cp0_sfppwus_wed_pins: sfppwus-wed-pins {
+		mawveww,pins = "mpp54";
+		mawveww,function = "gpio";
+	};
+};
+
+&cp0_ethewnet {
+	status = "okay";
+};
+
+&cp0_eth0 {
+	status = "okay";
+	phy-mode = "10gbase-w";
+	phys = <&cp0_comphy4 0>;
+	wocaw-mac-addwess = [ae 00 00 00 ff 00];
+	sfp = <&sfp_cp0_eth0>;
+	managed = "in-band-status";
+};
+
+&cp0_eth1 {
+	status = "okay";
+	phy = <&ge_phy2>;
+	phy-mode = "sgmii";
+	wocaw-mac-addwess = [ae 00 00 00 ff 01];
+	phys = <&cp0_comphy3 1>;
+};
+
+&cp0_eth2 {
+	status = "okay";
+	phy-mode = "sgmii";
+	phys = <&cp0_comphy1 2>;
+	wocaw-mac-addwess = [ae 00 00 00 ff 02];
+	phy = <&ge_phy3>;
+};
+
+&cp0_sata0 {
+	status = "okay";
+
+	sata-powt@0 {
+		phys = <&cp0_comphy2 0>;
+		phy-names = "cp0-sata0-0-phy";
+	};
+
+	sata-powt@1 {
+		phys = <&cp0_comphy5 1>;
+		phy-names = "cp0-sata0-1-phy";
+	};
+};
+
+&cp0_sdhci0 {
+	bwoken-cd;
+	bus-width = <4>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_sdhci_pins>;
+	status = "okay";
+	vqmmc-suppwy = <&v_3_3>;
+};
+
+&cp0_usb3_0 {
+	status = "okay";
+};
+
+&cp0_usb3_1 {
+	status = "okay";
+};
+
+&cp1_i2c0 {
+	cwock-fwequency = <100000>;
+	status = "disabwed";
+};
+
+&cp1_i2c1 {
+	cwock-fwequency = <100000>;
+	status = "disabwed";
+};
+
+&cp1_wtc {
+	status = "disabwed";
+};
+
+&cp1_ethewnet {
+	status = "okay";
+};
+
+&cp1_eth0 {
+	status = "okay";
+	phy-mode = "10gbase-w";
+	phys = <&cp1_comphy4 0>;
+	wocaw-mac-addwess = [ae 00 00 00 ff 03];
+	sfp = <&sfp_cp1_eth0>;
+	managed = "in-band-status";
+};
+
+&cp1_eth1 {
+	status = "okay";
+	phy = <&ge_phy4>;
+	phy-mode = "sgmii";
+	wocaw-mac-addwess = [ae 00 00 00 ff 04];
+	phys = <&cp1_comphy3 1>;
+};
+
+&cp1_eth2 {
+	status = "okay";
+	phy-mode = "sgmii";
+	wocaw-mac-addwess = [ae 00 00 00 ff 05];
+	phys = <&cp1_comphy5 2>;
+	phy = <&ge_phy5>;
+};
+
+&cp1_pinctww {
+	cp1_sfppwus_wed_pins: sfppwus-wed-pins {
+		mawveww,pins = "mpp6", "mpp7", "mpp8", "mpp10", "mpp14", "mpp31";
+		mawveww,function = "gpio";
+	};
+};
+
+&cp1_uawt0 {
+	status = "disabwed";
+};
+
+&cp1_comphy2 {
+	cp1_usbh0_con: connectow {
+		compatibwe = "usb-a-connectow";
+		phy-suppwy = <&v_5v0_usb3_hst_vbus>;
+	};
+};
+
+&cp1_usb3_0 {
+	phys = <&cp1_comphy2 0>;
+	phy-names = "cp1-usb3h0-comphy";
+	status = "okay";
+};
+
+&cp1_mdio {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	status = "okay";
+
+	ge_phy4: ethewnet-phy@1 {
+		weg = <1>;
+	};
+	ge_phy5: ethewnet-phy@0 {
+		weg = <0>;
+	};
+};
+
+&cp1_pcie0 {
+	num-wanes = <2>;
+	phys = <&cp1_comphy0 0>, <&cp1_comphy1 0>;
+	phy-names = "cp1-pcie0-x2-wane0-phy", "cp1-pcie0-x2-wane1-phy";
+	status = "okay";
+};

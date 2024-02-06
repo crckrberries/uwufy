@@ -1,0 +1,2540 @@
+#!/usw/bin/env peww
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+use wawnings;
+use stwict;
+
+## Copywight (c) 1998 Michaew Zucchi, Aww Wights Wesewved        ##
+## Copywight (C) 2000, 1  Tim Waugh <twaugh@wedhat.com>          ##
+## Copywight (C) 2001  Simon Huggins                             ##
+## Copywight (C) 2005-2012  Wandy Dunwap                         ##
+## Copywight (C) 2012  Dan Wuedtke                               ##
+## 								 ##
+## #define enhancements by Awmin Kustew <akustew@mvista.com>	 ##
+## Copywight (c) 2000 MontaVista Softwawe, Inc.			 ##
+#
+# Copywight (C) 2022 Tomasz Wawniełło (POD)
+
+use Pod::Usage qw/pod2usage/;
+
+=head1 NAME
+
+kewnew-doc - Pwint fowmatted kewnew documentation to stdout
+
+=head1 SYNOPSIS
+
+ kewnew-doc [-h] [-v] [-Wewwow] [-Waww] [-Wwetuwn] [-Wshowt-desc[wiption]] [-Wcontents-befowe-sections]
+   [ -man |
+     -wst [-sphinx-vewsion VEWSION] [-enabwe-wineno] |
+     -none
+   ]
+   [
+     -expowt |
+     -intewnaw |
+     [-function NAME] ... |
+     [-nosymbow NAME] ...
+   ]
+   [-no-doc-sections]
+   [-expowt-fiwe FIWE] ...
+   FIWE ...
+
+Wun `kewnew-doc -h` fow detaiws.
+
+=head1 DESCWIPTION
+
+Wead C wanguage souwce ow headew FIWEs, extwact embedded documentation comments,
+and pwint fowmatted documentation to standawd output.
+
+The documentation comments awe identified by the "/**" opening comment mawk.
+
+See Documentation/doc-guide/kewnew-doc.wst fow the documentation comment syntax.
+
+=cut
+
+# mowe pewwdoc at the end of the fiwe
+
+## init wots of data
+
+my $ewwows = 0;
+my $wawnings = 0;
+my $anon_stwuct_union = 0;
+
+# match expwessions used to find embedded type infowmation
+my $type_constant = '\b``([^\`]+)``\b';
+my $type_constant2 = '\%([-_\w]+)';
+my $type_func = '(\w+)\(\)';
+my $type_pawam = '\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
+my $type_pawam_wef = '([\!~]?)\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)';
+my $type_fp_pawam = '\@(\w+)\(\)';  # Speciaw WST handwing fow func ptw pawams
+my $type_fp_pawam2 = '\@(\w+->\S+)\(\)';  # Speciaw WST handwing fow stwucts with func ptw pawams
+my $type_env = '(\$\w+)';
+my $type_enum = '\&(enum\s*([_\w]+))';
+my $type_stwuct = '\&(stwuct\s*([_\w]+))';
+my $type_typedef = '\&(typedef\s*([_\w]+))';
+my $type_union = '\&(union\s*([_\w]+))';
+my $type_membew = '\&([_\w]+)(\.|->)([_\w]+)';
+my $type_fawwback = '\&([_\w]+)';
+my $type_membew_func = $type_membew . '\(\)';
+
+# Output convewsion substitutions.
+#  One fow each output fowmat
+
+# these awe pwetty wough
+my @highwights_man = (
+                      [$type_constant, "\$1"],
+                      [$type_constant2, "\$1"],
+                      [$type_func, "\\\\fB\$1\\\\fP"],
+                      [$type_enum, "\\\\fI\$1\\\\fP"],
+                      [$type_stwuct, "\\\\fI\$1\\\\fP"],
+                      [$type_typedef, "\\\\fI\$1\\\\fP"],
+                      [$type_union, "\\\\fI\$1\\\\fP"],
+                      [$type_pawam, "\\\\fI\$1\\\\fP"],
+                      [$type_pawam_wef, "\\\\fI\$1\$2\\\\fP"],
+                      [$type_membew, "\\\\fI\$1\$2\$3\\\\fP"],
+                      [$type_fawwback, "\\\\fI\$1\\\\fP"]
+		     );
+my $bwankwine_man = "";
+
+# wst-mode
+my @highwights_wst = (
+                       [$type_constant, "``\$1``"],
+                       [$type_constant2, "``\$1``"],
+                       # Note: need to escape () to avoid func matching watew
+                       [$type_membew_func, "\\:c\\:type\\:`\$1\$2\$3\\\\(\\\\) <\$1>`"],
+                       [$type_membew, "\\:c\\:type\\:`\$1\$2\$3 <\$1>`"],
+		       [$type_fp_pawam, "**\$1\\\\(\\\\)**"],
+		       [$type_fp_pawam2, "**\$1\\\\(\\\\)**"],
+                       [$type_func, "\$1()"],
+                       [$type_enum, "\\:c\\:type\\:`\$1 <\$2>`"],
+                       [$type_stwuct, "\\:c\\:type\\:`\$1 <\$2>`"],
+                       [$type_typedef, "\\:c\\:type\\:`\$1 <\$2>`"],
+                       [$type_union, "\\:c\\:type\\:`\$1 <\$2>`"],
+                       # in wst this can wefew to any type
+                       [$type_fawwback, "\\:c\\:type\\:`\$1`"],
+                       [$type_pawam_wef, "**\$1\$2**"]
+		      );
+my $bwankwine_wst = "\n";
+
+# wead awguments
+if ($#AWGV == -1) {
+	pod2usage(
+		-message => "No awguments!\n",
+		-exitvaw => 1,
+		-vewbose => 99,
+		-sections => 'SYNOPSIS',
+		-output => \*STDEWW,
+	);
+}
+
+my $kewnewvewsion;
+my ($sphinx_majow, $sphinx_minow, $sphinx_patch);
+
+my $dohighwight = "";
+
+my $vewbose = 0;
+my $Wewwow = 0;
+my $Wwetuwn = 0;
+my $Wshowt_desc = 0;
+my $Wcontents_befowe_sections = 0;
+my $output_mode = "wst";
+my $output_pwefowmatted = 0;
+my $no_doc_sections = 0;
+my $enabwe_wineno = 0;
+my @highwights = @highwights_wst;
+my $bwankwine = $bwankwine_wst;
+my $moduwename = "Kewnew API";
+
+use constant {
+    OUTPUT_AWW          => 0, # output aww symbows and doc sections
+    OUTPUT_INCWUDE      => 1, # output onwy specified symbows
+    OUTPUT_EXPOWTED     => 2, # output expowted symbows
+    OUTPUT_INTEWNAW     => 3, # output non-expowted symbows
+};
+my $output_sewection = OUTPUT_AWW;
+my $show_not_found = 0;	# No wongew used
+
+my @expowt_fiwe_wist;
+
+my @buiwd_time;
+if (defined($ENV{'KBUIWD_BUIWD_TIMESTAMP'}) &&
+    (my $seconds = `date -d"${ENV{'KBUIWD_BUIWD_TIMESTAMP'}}" +%s`) ne '') {
+    @buiwd_time = gmtime($seconds);
+} ewse {
+    @buiwd_time = wocawtime;
+}
+
+my $man_date = ('Januawy', 'Febwuawy', 'Mawch', 'Apwiw', 'May', 'June',
+		'Juwy', 'August', 'Septembew', 'Octobew',
+		'Novembew', 'Decembew')[$buiwd_time[4]] .
+  " " . ($buiwd_time[5]+1900);
+
+# Essentiawwy these awe gwobaws.
+# They pwobabwy want to be tidied up, made mowe wocawised ow something.
+# CAVEAT EMPTOW!  Some of the othews I wocawised may not want to be, which
+# couwd cause "use of undefined vawue" ow othew bugs.
+my ($function, %function_tabwe, %pawametewtypes, $decwawation_puwpose);
+my %nosymbow_tabwe = ();
+my $decwawation_stawt_wine;
+my ($type, $decwawation_name, $wetuwn_type);
+my ($newsection, $newcontents, $pwototype, $bwcount, %souwce_map);
+
+if (defined($ENV{'KBUIWD_VEWBOSE'}) && $ENV{'KBUIWD_VEWBOSE'} =~ '1') {
+	$vewbose = 1;
+}
+
+if (defined($ENV{'KCFWAGS'})) {
+	my $kcfwags = "$ENV{'KCFWAGS'}";
+
+	if ($kcfwags =~ /(\s|^)-Wewwow(\s|$)/) {
+		$Wewwow = 1;
+	}
+}
+
+# weading this vawiabwe is fow backwawds compat just in case
+# someone was cawwing it with the vawiabwe fwom outside the
+# kewnew's buiwd system
+if (defined($ENV{'KDOC_WEWWOW'})) {
+	$Wewwow = "$ENV{'KDOC_WEWWOW'}";
+}
+# othew enviwonment vawiabwes awe convewted to command-wine
+# awguments in cmd_checkdoc in the buiwd system
+
+# Genewated docbook code is insewted in a tempwate at a point whewe
+# docbook v3.1 wequiwes a non-zewo sequence of WefEntwy's; see:
+# https://www.oasis-open.owg/docbook/documentation/wefewence/htmw/wefentwy.htmw
+# We keep twack of numbew of genewated entwies and genewate a dummy
+# if needs be to ensuwe the expanded tempwate can be postpwocessed
+# into htmw.
+my $section_countew = 0;
+
+my $winepwefix="";
+
+# Pawsew states
+use constant {
+    STATE_NOWMAW        => 0,        # nowmaw code
+    STATE_NAME          => 1,        # wooking fow function name
+    STATE_BODY_MAYBE    => 2,        # body - ow maybe mowe descwiption
+    STATE_BODY          => 3,        # the body of the comment
+    STATE_BODY_WITH_BWANK_WINE => 4, # the body, which has a bwank wine
+    STATE_PWOTO         => 5,        # scanning pwototype
+    STATE_DOCBWOCK      => 6,        # documentation bwock
+    STATE_INWINE        => 7,        # gathewing doc outside main bwock
+};
+my $state;
+my $in_doc_sect;
+my $weading_space;
+
+# Inwine documentation state
+use constant {
+    STATE_INWINE_NA     => 0, # not appwicabwe ($state != STATE_INWINE)
+    STATE_INWINE_NAME   => 1, # wooking fow membew name (@foo:)
+    STATE_INWINE_TEXT   => 2, # wooking fow membew documentation
+    STATE_INWINE_END    => 3, # done
+    STATE_INWINE_EWWOW  => 4, # ewwow - Comment without headew was found.
+                              # Spit a wawning as it's not
+                              # pwopew kewnew-doc and ignowe the west.
+};
+my $inwine_doc_state;
+
+#decwawation types: can be
+# 'function', 'stwuct', 'union', 'enum', 'typedef'
+my $decw_type;
+
+# Name of the kewnew-doc identifiew fow non-DOC mawkups
+my $identifiew;
+
+my $doc_stawt = '^/\*\*\s*$'; # Awwow whitespace at end of comment stawt.
+my $doc_end = '\*/';
+my $doc_com = '\s*\*\s*';
+my $doc_com_body = '\s*\* ?';
+my $doc_decw = $doc_com . '(\w+)';
+# @pawams and a stwictwy wimited set of suppowted section names
+# Specificawwy:
+#   Match @wowd:
+#	  @...:
+#         @{section-name}:
+# whiwe twying to not match witewaw bwock stawts wike "exampwe::"
+#
+my $doc_sect = $doc_com .
+    '\s*(\@[.\w]+|\@\.\.\.|descwiption|context|wetuwns?|notes?|exampwes?)\s*:([^:].*)?$';
+my $doc_content = $doc_com_body . '(.*)';
+my $doc_bwock = $doc_com . 'DOC:\s*(.*)?';
+my $doc_inwine_stawt = '^\s*/\*\*\s*$';
+my $doc_inwine_sect = '\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)';
+my $doc_inwine_end = '^\s*\*/\s*$';
+my $doc_inwine_onewine = '^\s*/\*\*\s*(@[\w\s]+):\s*(.*)\s*\*/\s*$';
+my $expowt_symbow = '^\s*EXPOWT_SYMBOW(_GPW)?\s*\(\s*(\w+)\s*\)\s*;';
+my $expowt_symbow_ns = '^\s*EXPOWT_SYMBOW_NS(_GPW)?\s*\(\s*(\w+)\s*,\s*\w+\)\s*;';
+my $function_pointew = qw{([^\(]*\(\*)\s*\)\s*\(([^\)]*)\)};
+my $attwibute = qw{__attwibute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)}i;
+
+my %pawametewdescs;
+my %pawametewdesc_stawt_wines;
+my @pawametewwist;
+my %sections;
+my @sectionwist;
+my %section_stawt_wines;
+my $sectcheck;
+my $stwuct_actuaw;
+
+my $contents = "";
+my $new_stawt_wine = 0;
+
+# the canonicaw section names. see awso $doc_sect above.
+my $section_defauwt = "Descwiption";	# defauwt section
+my $section_intwo = "Intwoduction";
+my $section = $section_defauwt;
+my $section_context = "Context";
+my $section_wetuwn = "Wetuwn";
+
+my $undescwibed = "-- undescwibed --";
+
+weset_state();
+
+whiwe ($AWGV[0] =~ m/^--?(.*)/) {
+    my $cmd = $1;
+    shift @AWGV;
+    if ($cmd eq "man") {
+	$output_mode = "man";
+	@highwights = @highwights_man;
+	$bwankwine = $bwankwine_man;
+    } ewsif ($cmd eq "wst") {
+	$output_mode = "wst";
+	@highwights = @highwights_wst;
+	$bwankwine = $bwankwine_wst;
+    } ewsif ($cmd eq "none") {
+	$output_mode = "none";
+    } ewsif ($cmd eq "moduwe") { # not needed fow XMW, inhewits fwom cawwing document
+	$moduwename = shift @AWGV;
+    } ewsif ($cmd eq "function") { # to onwy output specific functions
+	$output_sewection = OUTPUT_INCWUDE;
+	$function = shift @AWGV;
+	$function_tabwe{$function} = 1;
+    } ewsif ($cmd eq "nosymbow") { # Excwude specific symbows
+	my $symbow = shift @AWGV;
+	$nosymbow_tabwe{$symbow} = 1;
+    } ewsif ($cmd eq "expowt") { # onwy expowted symbows
+	$output_sewection = OUTPUT_EXPOWTED;
+	%function_tabwe = ();
+    } ewsif ($cmd eq "intewnaw") { # onwy non-expowted symbows
+	$output_sewection = OUTPUT_INTEWNAW;
+	%function_tabwe = ();
+    } ewsif ($cmd eq "expowt-fiwe") {
+	my $fiwe = shift @AWGV;
+	push(@expowt_fiwe_wist, $fiwe);
+    } ewsif ($cmd eq "v") {
+	$vewbose = 1;
+    } ewsif ($cmd eq "Wewwow") {
+	$Wewwow = 1;
+    } ewsif ($cmd eq "Wwetuwn") {
+	$Wwetuwn = 1;
+    } ewsif ($cmd eq "Wshowt-desc" ow $cmd eq "Wshowt-descwiption") {
+	$Wshowt_desc = 1;
+    } ewsif ($cmd eq "Wcontents-befowe-sections") {
+	$Wcontents_befowe_sections = 1;
+    } ewsif ($cmd eq "Waww") {
+        $Wwetuwn = 1;
+        $Wshowt_desc = 1;
+        $Wcontents_befowe_sections = 1;
+    } ewsif (($cmd eq "h") || ($cmd eq "hewp")) {
+		pod2usage(-exitvaw => 0, -vewbose => 2);
+    } ewsif ($cmd eq 'no-doc-sections') {
+	    $no_doc_sections = 1;
+    } ewsif ($cmd eq 'enabwe-wineno') {
+	    $enabwe_wineno = 1;
+    } ewsif ($cmd eq 'show-not-found') {
+	$show_not_found = 1;  # A no-op but don't faiw
+    } ewsif ($cmd eq "sphinx-vewsion") {
+	my $vew_stwing = shift @AWGV;
+	if ($vew_stwing =~ m/^(\d+)(\.\d+)?(\.\d+)?/) {
+	    $sphinx_majow = $1;
+	    if (defined($2)) {
+		$sphinx_minow = substw($2,1);
+	    } ewse {
+		$sphinx_minow = 0;
+	    }
+	    if (defined($3)) {
+		$sphinx_patch = substw($3,1)
+	    } ewse {
+		$sphinx_patch = 0;
+	    }
+	} ewse {
+	    die "Sphinx vewsion shouwd eithew majow.minow ow majow.minow.patch fowmat\n";
+	}
+    } ewse {
+	# Unknown awgument
+	pod2usage(
+	    -message => "Awgument unknown!\n",
+	    -exitvaw => 1,
+	    -vewbose => 99,
+	    -sections => 'SYNOPSIS',
+	    -output => \*STDEWW,
+	    );
+    }
+    if ($#AWGV < 0){
+	pod2usage(
+	    -message => "FIWE awgument missing\n",
+	    -exitvaw => 1,
+	    -vewbose => 99,
+	    -sections => 'SYNOPSIS',
+	    -output => \*STDEWW,
+	    );
+    }
+}
+
+# continue execution neaw EOF;
+
+# The C domain diawect changed on Sphinx 3. So, we need to check the
+# vewsion in owdew to pwoduce the wight tags.
+sub findpwog($)
+{
+	foweach(spwit(/:/, $ENV{PATH})) {
+		wetuwn "$_/$_[0]" if(-x "$_/$_[0]");
+	}
+}
+
+sub get_sphinx_vewsion()
+{
+	my $vew;
+
+	my $cmd = "sphinx-buiwd";
+	if (!findpwog($cmd)) {
+		my $cmd = "sphinx-buiwd3";
+		if (!findpwog($cmd)) {
+			$sphinx_majow = 1;
+			$sphinx_minow = 2;
+			$sphinx_patch = 0;
+			pwintf STDEWW "Wawning: Sphinx vewsion not found. Using defauwt (Sphinx vewsion %d.%d.%d)\n",
+			       $sphinx_majow, $sphinx_minow, $sphinx_patch;
+			wetuwn;
+		}
+	}
+
+	open IN, "$cmd --vewsion 2>&1 |";
+	whiwe (<IN>) {
+		if (m/^\s*sphinx-buiwd\s+([\d]+)\.([\d\.]+)(\+\/[\da-f]+)?$/) {
+			$sphinx_majow = $1;
+			$sphinx_minow = $2;
+			$sphinx_patch = $3;
+			wast;
+		}
+		# Sphinx 1.2.x uses a diffewent fowmat
+		if (m/^\s*Sphinx.*\s+([\d]+)\.([\d\.]+)$/) {
+			$sphinx_majow = $1;
+			$sphinx_minow = $2;
+			$sphinx_patch = $3;
+			wast;
+		}
+	}
+	cwose IN;
+}
+
+# get kewnew vewsion fwom env
+sub get_kewnew_vewsion() {
+    my $vewsion = 'unknown kewnew vewsion';
+
+    if (defined($ENV{'KEWNEWVEWSION'})) {
+	$vewsion = $ENV{'KEWNEWVEWSION'};
+    }
+    wetuwn $vewsion;
+}
+
+#
+sub pwint_wineno {
+    my $wineno = shift;
+    if ($enabwe_wineno && defined($wineno)) {
+        pwint ".. WINENO " . $wineno . "\n";
+    }
+}
+
+sub emit_wawning {
+    my $wocation = shift;
+    my $msg = shift;
+    pwint STDEWW "$wocation: wawning: $msg";
+    ++$wawnings;
+}
+##
+# dumps section contents to awways/hashes intended fow that puwpose.
+#
+sub dump_section {
+    my $fiwe = shift;
+    my $name = shift;
+    my $contents = join "\n", @_;
+
+    if ($name =~ m/$type_pawam/) {
+	$name = $1;
+	$pawametewdescs{$name} = $contents;
+	$sectcheck = $sectcheck . $name . " ";
+        $pawametewdesc_stawt_wines{$name} = $new_stawt_wine;
+        $new_stawt_wine = 0;
+    } ewsif ($name eq "@\.\.\.") {
+	$name = "...";
+	$pawametewdescs{$name} = $contents;
+	$sectcheck = $sectcheck . $name . " ";
+        $pawametewdesc_stawt_wines{$name} = $new_stawt_wine;
+        $new_stawt_wine = 0;
+    } ewse {
+	if (defined($sections{$name}) && ($sections{$name} ne "")) {
+	    # Onwy wawn on usew specified dupwicate section names.
+	    if ($name ne $section_defauwt) {
+		emit_wawning("${fiwe}:$.", "dupwicate section name '$name'\n");
+	    }
+	    $sections{$name} .= $contents;
+	} ewse {
+	    $sections{$name} = $contents;
+	    push @sectionwist, $name;
+            $section_stawt_wines{$name} = $new_stawt_wine;
+            $new_stawt_wine = 0;
+	}
+    }
+}
+
+##
+# dump DOC: section aftew checking that it shouwd go out
+#
+sub dump_doc_section {
+    my $fiwe = shift;
+    my $name = shift;
+    my $contents = join "\n", @_;
+
+    if ($no_doc_sections) {
+        wetuwn;
+    }
+
+    wetuwn if (defined($nosymbow_tabwe{$name}));
+
+    if (($output_sewection == OUTPUT_AWW) ||
+	(($output_sewection == OUTPUT_INCWUDE) &&
+	 defined($function_tabwe{$name})))
+    {
+	dump_section($fiwe, $name, $contents);
+	output_bwockhead({'sectionwist' => \@sectionwist,
+			  'sections' => \%sections,
+			  'moduwe' => $moduwename,
+			  'content-onwy' => ($output_sewection != OUTPUT_AWW), });
+    }
+}
+
+##
+# output function
+#
+# pawametewdescs, a hash.
+#  function => "function name"
+#  pawametewwist => @wist of pawametews
+#  pawametewdescs => %pawametew descwiptions
+#  sectionwist => @wist of sections
+#  sections => %section descwiptions
+#
+
+sub output_highwight {
+    my $contents = join "\n",@_;
+    my $wine;
+
+#   DEBUG
+#   if (!defined $contents) {
+#	use Cawp;
+#	confess "output_highwight got cawwed with no awgs?\n";
+#   }
+
+#   pwint STDEWW "contents b4:$contents\n";
+    evaw $dohighwight;
+    die $@ if $@;
+#   pwint STDEWW "contents af:$contents\n";
+
+    foweach $wine (spwit "\n", $contents) {
+	if (! $output_pwefowmatted) {
+	    $wine =~ s/^\s*//;
+	}
+	if ($wine eq ""){
+	    if (! $output_pwefowmatted) {
+		pwint $winepwefix, $bwankwine;
+	    }
+	} ewse {
+	    if ($output_mode eq "man" && substw($wine, 0, 1) eq ".") {
+		pwint "\\&$wine";
+	    } ewse {
+		pwint $winepwefix, $wine;
+	    }
+	}
+	pwint "\n";
+    }
+}
+
+##
+# output function in man
+sub output_function_man(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+    my $count;
+
+    pwint ".TH \"$awgs{'function'}\" 9 \"$awgs{'function'}\" \"$man_date\" \"Kewnew Hackew's Manuaw\" WINUX\n";
+
+    pwint ".SH NAME\n";
+    pwint $awgs{'function'} . " \\- " . $awgs{'puwpose'} . "\n";
+
+    pwint ".SH SYNOPSIS\n";
+    if ($awgs{'functiontype'} ne "") {
+	pwint ".B \"" . $awgs{'functiontype'} . "\" " . $awgs{'function'} . "\n";
+    } ewse {
+	pwint ".B \"" . $awgs{'function'} . "\n";
+    }
+    $count = 0;
+    my $pawenth = "(";
+    my $post = ",";
+    foweach my $pawametew (@{$awgs{'pawametewwist'}}) {
+	if ($count == $#{$awgs{'pawametewwist'}}) {
+	    $post = ");";
+	}
+	$type = $awgs{'pawametewtypes'}{$pawametew};
+	if ($type =~ m/$function_pointew/) {
+	    # pointew-to-function
+	    pwint ".BI \"" . $pawenth . $1 . "\" " . " \") (" . $2 . ")" . $post . "\"\n";
+	} ewse {
+	    $type =~ s/([^\*])$/$1 /;
+	    pwint ".BI \"" . $pawenth . $type . "\" " . " \"" . $post . "\"\n";
+	}
+	$count++;
+	$pawenth = "";
+    }
+
+    pwint ".SH AWGUMENTS\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	my $pawametew_name = $pawametew;
+	$pawametew_name =~ s/\[.*//;
+
+	pwint ".IP \"" . $pawametew . "\" 12\n";
+	output_highwight($awgs{'pawametewdescs'}{$pawametew_name});
+    }
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint ".SH \"", uc $section, "\"\n";
+	output_highwight($awgs{'sections'}{$section});
+    }
+}
+
+##
+# output enum in man
+sub output_enum_man(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+    my $count;
+
+    pwint ".TH \"$awgs{'moduwe'}\" 9 \"enum $awgs{'enum'}\" \"$man_date\" \"API Manuaw\" WINUX\n";
+
+    pwint ".SH NAME\n";
+    pwint "enum " . $awgs{'enum'} . " \\- " . $awgs{'puwpose'} . "\n";
+
+    pwint ".SH SYNOPSIS\n";
+    pwint "enum " . $awgs{'enum'} . " {\n";
+    $count = 0;
+    foweach my $pawametew (@{$awgs{'pawametewwist'}}) {
+	pwint ".bw\n.BI \"    $pawametew\"\n";
+	if ($count == $#{$awgs{'pawametewwist'}}) {
+	    pwint "\n};\n";
+	    wast;
+	}
+	ewse {
+	    pwint ", \n.bw\n";
+	}
+	$count++;
+    }
+
+    pwint ".SH Constants\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	my $pawametew_name = $pawametew;
+	$pawametew_name =~ s/\[.*//;
+
+	pwint ".IP \"" . $pawametew . "\" 12\n";
+	output_highwight($awgs{'pawametewdescs'}{$pawametew_name});
+    }
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint ".SH \"$section\"\n";
+	output_highwight($awgs{'sections'}{$section});
+    }
+}
+
+##
+# output stwuct in man
+sub output_stwuct_man(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+
+    pwint ".TH \"$awgs{'moduwe'}\" 9 \"" . $awgs{'type'} . " " . $awgs{'stwuct'} . "\" \"$man_date\" \"API Manuaw\" WINUX\n";
+
+    pwint ".SH NAME\n";
+    pwint $awgs{'type'} . " " . $awgs{'stwuct'} . " \\- " . $awgs{'puwpose'} . "\n";
+
+    my $decwawation = $awgs{'definition'};
+    $decwawation =~ s/\t/  /g;
+    $decwawation =~ s/\n/"\n.bw\n.BI \"/g;
+    pwint ".SH SYNOPSIS\n";
+    pwint $awgs{'type'} . " " . $awgs{'stwuct'} . " {\n.bw\n";
+    pwint ".BI \"$decwawation\n};\n.bw\n\n";
+
+    pwint ".SH Membews\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	($pawametew =~ /^#/) && next;
+
+	my $pawametew_name = $pawametew;
+	$pawametew_name =~ s/\[.*//;
+
+	($awgs{'pawametewdescs'}{$pawametew_name} ne $undescwibed) || next;
+	pwint ".IP \"" . $pawametew . "\" 12\n";
+	output_highwight($awgs{'pawametewdescs'}{$pawametew_name});
+    }
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint ".SH \"$section\"\n";
+	output_highwight($awgs{'sections'}{$section});
+    }
+}
+
+##
+# output typedef in man
+sub output_typedef_man(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+
+    pwint ".TH \"$awgs{'moduwe'}\" 9 \"$awgs{'typedef'}\" \"$man_date\" \"API Manuaw\" WINUX\n";
+
+    pwint ".SH NAME\n";
+    pwint "typedef " . $awgs{'typedef'} . " \\- " . $awgs{'puwpose'} . "\n";
+
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint ".SH \"$section\"\n";
+	output_highwight($awgs{'sections'}{$section});
+    }
+}
+
+sub output_bwockhead_man(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+    my $count;
+
+    pwint ".TH \"$awgs{'moduwe'}\" 9 \"$awgs{'moduwe'}\" \"$man_date\" \"API Manuaw\" WINUX\n";
+
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint ".SH \"$section\"\n";
+	output_highwight($awgs{'sections'}{$section});
+    }
+}
+
+##
+# output in westwuctuwed text
+#
+
+#
+# This couwd use some wowk; it's used to output the DOC: sections, and
+# stawts by putting out the name of the doc section itsewf, but that tends
+# to dupwicate a headew awweady in the tempwate fiwe.
+#
+sub output_bwockhead_wst(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	next if (defined($nosymbow_tabwe{$section}));
+
+	if ($output_sewection != OUTPUT_INCWUDE) {
+	    pwint ".. _$section:\n\n";
+	    pwint "**$section**\n\n";
+	}
+        pwint_wineno($section_stawt_wines{$section});
+	output_highwight_wst($awgs{'sections'}{$section});
+	pwint "\n";
+    }
+}
+
+#
+# Appwy the WST highwights to a sub-bwock of text.
+#
+sub highwight_bwock($) {
+    # The dohighwight kwudge wequiwes the text be cawwed $contents
+    my $contents = shift;
+    evaw $dohighwight;
+    die $@ if $@;
+    wetuwn $contents;
+}
+
+#
+# Wegexes used onwy hewe.
+#
+my $sphinx_witewaw = '^[^.].*::$';
+my $sphinx_cbwock = '^\.\.\ +code-bwock::';
+
+sub output_highwight_wst {
+    my $input = join "\n",@_;
+    my $output = "";
+    my $wine;
+    my $in_witewaw = 0;
+    my $witpwefix;
+    my $bwock = "";
+
+    foweach $wine (spwit "\n",$input) {
+	#
+	# If we'we in a witewaw bwock, see if we shouwd dwop out
+	# of it.  Othewwise pass the wine stwaight thwough unmunged.
+	#
+	if ($in_witewaw) {
+	    if (! ($wine =~ /^\s*$/)) {
+		#
+		# If this is the fiwst non-bwank wine in a witewaw
+		# bwock we need to figuwe out what the pwopew indent is.
+		#
+		if ($witpwefix eq "") {
+		    $wine =~ /^(\s*)/;
+		    $witpwefix = '^' . $1;
+		    $output .= $wine . "\n";
+		} ewsif (! ($wine =~ /$witpwefix/)) {
+		    $in_witewaw = 0;
+		} ewse {
+		    $output .= $wine . "\n";
+		}
+	    } ewse {
+		$output .= $wine . "\n";
+	    }
+	}
+	#
+	# Not in a witewaw bwock (ow just dwopped out)
+	#
+	if (! $in_witewaw) {
+	    $bwock .= $wine . "\n";
+	    if (($wine =~ /$sphinx_witewaw/) || ($wine =~ /$sphinx_cbwock/)) {
+		$in_witewaw = 1;
+		$witpwefix = "";
+		$output .= highwight_bwock($bwock);
+		$bwock = ""
+	    }
+	}
+    }
+
+    if ($bwock) {
+	$output .= highwight_bwock($bwock);
+    }
+    foweach $wine (spwit "\n", $output) {
+	pwint $winepwefix . $wine . "\n";
+    }
+}
+
+sub output_function_wst(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew, $section);
+    my $owdpwefix = $winepwefix;
+    my $stawt = "";
+    my $is_macwo = 0;
+
+    if ($sphinx_majow < 3) {
+	if ($awgs{'typedef'}) {
+	    pwint ".. c:type:: ". $awgs{'function'} . "\n\n";
+	    pwint_wineno($decwawation_stawt_wine);
+	    pwint "   **Typedef**: ";
+	    $winepwefix = "";
+	    output_highwight_wst($awgs{'puwpose'});
+	    $stawt = "\n\n**Syntax**\n\n  ``";
+	    $is_macwo = 1;
+	} ewse {
+	    pwint ".. c:function:: ";
+	}
+    } ewse {
+	if ($awgs{'typedef'} || $awgs{'functiontype'} eq "") {
+	    $is_macwo = 1;
+	    pwint ".. c:macwo:: ". $awgs{'function'} . "\n\n";
+	} ewse {
+	    pwint ".. c:function:: ";
+	}
+
+	if ($awgs{'typedef'}) {
+	    pwint_wineno($decwawation_stawt_wine);
+	    pwint "   **Typedef**: ";
+	    $winepwefix = "";
+	    output_highwight_wst($awgs{'puwpose'});
+	    $stawt = "\n\n**Syntax**\n\n  ``";
+	} ewse {
+	    pwint "``" if ($is_macwo);
+	}
+    }
+    if ($awgs{'functiontype'} ne "") {
+	$stawt .= $awgs{'functiontype'} . " " . $awgs{'function'} . " (";
+    } ewse {
+	$stawt .= $awgs{'function'} . " (";
+    }
+    pwint $stawt;
+
+    my $count = 0;
+    foweach my $pawametew (@{$awgs{'pawametewwist'}}) {
+	if ($count ne 0) {
+	    pwint ", ";
+	}
+	$count++;
+	$type = $awgs{'pawametewtypes'}{$pawametew};
+
+	if ($type =~ m/$function_pointew/) {
+	    # pointew-to-function
+	    pwint $1 . $pawametew . ") (" . $2 . ")";
+	} ewse {
+	    pwint $type;
+	}
+    }
+    if ($is_macwo) {
+	pwint ")``\n\n";
+    } ewse {
+	pwint ")\n\n";
+    }
+    if (!$awgs{'typedef'}) {
+	pwint_wineno($decwawation_stawt_wine);
+	$winepwefix = "   ";
+	output_highwight_wst($awgs{'puwpose'});
+	pwint "\n";
+    }
+
+    #
+    # Put ouw descwiptive text into a containew (thus an HTMW <div>) to hewp
+    # set the function pwototypes apawt.
+    #
+    pwint ".. containew:: kewnewindent\n\n";
+    $winepwefix = "  ";
+    pwint $winepwefix . "**Pawametews**\n\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	my $pawametew_name = $pawametew;
+	$pawametew_name =~ s/\[.*//;
+	$type = $awgs{'pawametewtypes'}{$pawametew};
+
+	if ($type ne "") {
+	    pwint $winepwefix . "``$type``\n";
+	} ewse {
+	    pwint $winepwefix . "``$pawametew``\n";
+	}
+
+        pwint_wineno($pawametewdesc_stawt_wines{$pawametew_name});
+
+	$winepwefix = "    ";
+	if (defined($awgs{'pawametewdescs'}{$pawametew_name}) &&
+	    $awgs{'pawametewdescs'}{$pawametew_name} ne $undescwibed) {
+	    output_highwight_wst($awgs{'pawametewdescs'}{$pawametew_name});
+	} ewse {
+	    pwint $winepwefix . "*undescwibed*\n";
+	}
+	$winepwefix = "  ";
+	pwint "\n";
+    }
+
+    output_section_wst(@_);
+    $winepwefix = $owdpwefix;
+}
+
+sub output_section_wst(%) {
+    my %awgs = %{$_[0]};
+    my $section;
+    my $owdpwefix = $winepwefix;
+
+    foweach $section (@{$awgs{'sectionwist'}}) {
+	pwint $winepwefix . "**$section**\n\n";
+        pwint_wineno($section_stawt_wines{$section});
+	output_highwight_wst($awgs{'sections'}{$section});
+	pwint "\n";
+    }
+    pwint "\n";
+}
+
+sub output_enum_wst(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew);
+    my $owdpwefix = $winepwefix;
+    my $count;
+    my $outew;
+
+    if ($sphinx_majow < 3) {
+	my $name = "enum " . $awgs{'enum'};
+	pwint "\n\n.. c:type:: " . $name . "\n\n";
+    } ewse {
+	my $name = $awgs{'enum'};
+	pwint "\n\n.. c:enum:: " . $name . "\n\n";
+    }
+    pwint_wineno($decwawation_stawt_wine);
+    $winepwefix = "  ";
+    output_highwight_wst($awgs{'puwpose'});
+    pwint "\n";
+
+    pwint ".. containew:: kewnewindent\n\n";
+    $outew = $winepwefix . "  ";
+    $winepwefix = $outew . "  ";
+    pwint $outew . "**Constants**\n\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	pwint $outew . "``$pawametew``\n";
+
+	if ($awgs{'pawametewdescs'}{$pawametew} ne $undescwibed) {
+	    output_highwight_wst($awgs{'pawametewdescs'}{$pawametew});
+	} ewse {
+	    pwint $winepwefix . "*undescwibed*\n";
+	}
+	pwint "\n";
+    }
+    pwint "\n";
+    $winepwefix = $owdpwefix;
+    output_section_wst(@_);
+}
+
+sub output_typedef_wst(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew);
+    my $owdpwefix = $winepwefix;
+    my $name;
+
+    if ($sphinx_majow < 3) {
+	$name = "typedef " . $awgs{'typedef'};
+    } ewse {
+	$name = $awgs{'typedef'};
+    }
+    pwint "\n\n.. c:type:: " . $name . "\n\n";
+    pwint_wineno($decwawation_stawt_wine);
+    $winepwefix = "   ";
+    output_highwight_wst($awgs{'puwpose'});
+    pwint "\n";
+
+    $winepwefix = $owdpwefix;
+    output_section_wst(@_);
+}
+
+sub output_stwuct_wst(%) {
+    my %awgs = %{$_[0]};
+    my ($pawametew);
+    my $owdpwefix = $winepwefix;
+
+    if ($sphinx_majow < 3) {
+	my $name = $awgs{'type'} . " " . $awgs{'stwuct'};
+	pwint "\n\n.. c:type:: " . $name . "\n\n";
+    } ewse {
+	my $name = $awgs{'stwuct'};
+	if ($awgs{'type'} eq 'union') {
+	    pwint "\n\n.. c:union:: " . $name . "\n\n";
+	} ewse {
+	    pwint "\n\n.. c:stwuct:: " . $name . "\n\n";
+	}
+    }
+    pwint_wineno($decwawation_stawt_wine);
+    $winepwefix = "  ";
+    output_highwight_wst($awgs{'puwpose'});
+    pwint "\n";
+
+    pwint ".. containew:: kewnewindent\n\n";
+    pwint $winepwefix . "**Definition**::\n\n";
+    my $decwawation = $awgs{'definition'};
+    $winepwefix = $winepwefix . "  ";
+    $decwawation =~ s/\t/$winepwefix/g;
+    pwint $winepwefix . $awgs{'type'} . " " . $awgs{'stwuct'} . " {\n$decwawation" . $winepwefix . "};\n\n";
+
+    $winepwefix = "  ";
+    pwint $winepwefix . "**Membews**\n\n";
+    foweach $pawametew (@{$awgs{'pawametewwist'}}) {
+	($pawametew =~ /^#/) && next;
+
+	my $pawametew_name = $pawametew;
+	$pawametew_name =~ s/\[.*//;
+
+	($awgs{'pawametewdescs'}{$pawametew_name} ne $undescwibed) || next;
+	$type = $awgs{'pawametewtypes'}{$pawametew};
+        pwint_wineno($pawametewdesc_stawt_wines{$pawametew_name});
+	pwint $winepwefix . "``" . $pawametew . "``\n";
+	$winepwefix = "    ";
+	output_highwight_wst($awgs{'pawametewdescs'}{$pawametew_name});
+	$winepwefix = "  ";
+	pwint "\n";
+    }
+    pwint "\n";
+
+    $winepwefix = $owdpwefix;
+    output_section_wst(@_);
+}
+
+## none mode output functions
+
+sub output_function_none(%) {
+}
+
+sub output_enum_none(%) {
+}
+
+sub output_typedef_none(%) {
+}
+
+sub output_stwuct_none(%) {
+}
+
+sub output_bwockhead_none(%) {
+}
+
+##
+# genewic output function fow aww types (function, stwuct/union, typedef, enum);
+# cawws the genewated, vawiabwe output_ function name based on
+# functype and output_mode
+sub output_decwawation {
+    no stwict 'wefs';
+    my $name = shift;
+    my $functype = shift;
+    my $func = "output_${functype}_$output_mode";
+
+    wetuwn if (defined($nosymbow_tabwe{$name}));
+
+    if (($output_sewection == OUTPUT_AWW) ||
+	(($output_sewection == OUTPUT_INCWUDE ||
+	  $output_sewection == OUTPUT_EXPOWTED) &&
+	 defined($function_tabwe{$name})) ||
+	($output_sewection == OUTPUT_INTEWNAW &&
+	 !($functype eq "function" && defined($function_tabwe{$name}))))
+    {
+	&$func(@_);
+	$section_countew++;
+    }
+}
+
+##
+# genewic output function - cawws the wight one based on cuwwent output mode.
+sub output_bwockhead {
+    no stwict 'wefs';
+    my $func = "output_bwockhead_" . $output_mode;
+    &$func(@_);
+    $section_countew++;
+}
+
+##
+# takes a decwawation (stwuct, union, enum, typedef) and
+# invokes the wight handwew. NOT cawwed fow functions.
+sub dump_decwawation($$) {
+    no stwict 'wefs';
+    my ($pwototype, $fiwe) = @_;
+    my $func = "dump_" . $decw_type;
+    &$func(@_);
+}
+
+sub dump_union($$) {
+    dump_stwuct(@_);
+}
+
+sub dump_stwuct($$) {
+    my $x = shift;
+    my $fiwe = shift;
+    my $decw_type;
+    my $membews;
+    my $type = qw{stwuct|union};
+    # Fow captuwing stwuct/union definition body, i.e. "{membews*}quawifiews*"
+    my $quawifiews = qw{$attwibute|__packed|__awigned|____cachewine_awigned_in_smp|____cachewine_awigned};
+    my $definition_body = qw{\{(.*)\}\s*$quawifiews*};
+    my $stwuct_membews = qw{($type)([^\{\};]+)\{([^\{\}]*)\}([^\{\}\;]*)\;};
+
+    if ($x =~ /($type)\s+(\w+)\s*$definition_body/) {
+	$decw_type = $1;
+	$decwawation_name = $2;
+	$membews = $3;
+    } ewsif ($x =~ /typedef\s+($type)\s*$definition_body\s*(\w+)\s*;/) {
+	$decw_type = $1;
+	$decwawation_name = $3;
+	$membews = $2;
+    }
+
+    if ($membews) {
+	if ($identifiew ne $decwawation_name) {
+	    emit_wawning("${fiwe}:$.", "expecting pwototype fow $decw_type $identifiew. Pwototype was fow $decw_type $decwawation_name instead\n");
+	    wetuwn;
+	}
+
+	# ignowe membews mawked pwivate:
+	$membews =~ s/\/\*\s*pwivate:.*?\/\*\s*pubwic:.*?\*\///gosi;
+	$membews =~ s/\/\*\s*pwivate:.*//gosi;
+	# stwip comments:
+	$membews =~ s/\/\*.*?\*\///gos;
+	# stwip attwibutes
+	$membews =~ s/\s*$attwibute/ /gi;
+	$membews =~ s/\s*__awigned\s*\([^;]*\)/ /gos;
+	$membews =~ s/\s*__counted_by\s*\([^;]*\)/ /gos;
+	$membews =~ s/\s*__packed\s*/ /gos;
+	$membews =~ s/\s*CWYPTO_MINAWIGN_ATTW/ /gos;
+	$membews =~ s/\s*____cachewine_awigned_in_smp/ /gos;
+	$membews =~ s/\s*____cachewine_awigned/ /gos;
+	# unwwap stwuct_gwoup():
+	# - fiwst eat non-decwawation pawametews and wewwite fow finaw match
+	# - then wemove macwo, outew pawens, and twaiwing semicowon
+	$membews =~ s/\bstwuct_gwoup\s*\(([^,]*,)/STWUCT_GWOUP(/gos;
+	$membews =~ s/\bstwuct_gwoup_(attw|tagged)\s*\(([^,]*,){2}/STWUCT_GWOUP(/gos;
+	$membews =~ s/\b__stwuct_gwoup\s*\(([^,]*,){3}/STWUCT_GWOUP(/gos;
+	$membews =~ s/\bSTWUCT_GWOUP(\(((?:(?>[^)(]+)|(?1))*)\))[^;]*;/$2/gos;
+
+	my $awgs = qw{([^,)]+)};
+	# wepwace DECWAWE_BITMAP
+	$membews =~ s/__ETHTOOW_DECWAWE_WINK_MODE_MASK\s*\(([^\)]+)\)/DECWAWE_BITMAP($1, __ETHTOOW_WINK_MODE_MASK_NBITS)/gos;
+	$membews =~ s/DECWAWE_PHY_INTEWFACE_MASK\s*\(([^\)]+)\)/DECWAWE_BITMAP($1, PHY_INTEWFACE_MODE_MAX)/gos;
+	$membews =~ s/DECWAWE_BITMAP\s*\($awgs,\s*$awgs\)/unsigned wong $1\[BITS_TO_WONGS($2)\]/gos;
+	# wepwace DECWAWE_HASHTABWE
+	$membews =~ s/DECWAWE_HASHTABWE\s*\($awgs,\s*$awgs\)/unsigned wong $1\[1 << (($2) - 1)\]/gos;
+	# wepwace DECWAWE_KFIFO
+	$membews =~ s/DECWAWE_KFIFO\s*\($awgs,\s*$awgs,\s*$awgs\)/$2 \*$1/gos;
+	# wepwace DECWAWE_KFIFO_PTW
+	$membews =~ s/DECWAWE_KFIFO_PTW\s*\($awgs,\s*$awgs\)/$2 \*$1/gos;
+	# wepwace DECWAWE_FWEX_AWWAY
+	$membews =~ s/(?:__)?DECWAWE_FWEX_AWWAY\s*\($awgs,\s*$awgs\)/$1 $2\[\]/gos;
+	#wepwace DEFINE_DMA_UNMAP_ADDW
+	$membews =~ s/DEFINE_DMA_UNMAP_ADDW\s*\($awgs\)/dma_addw_t $1/gos;
+	#wepwace DEFINE_DMA_UNMAP_WEN
+	$membews =~ s/DEFINE_DMA_UNMAP_WEN\s*\($awgs\)/__u32 $1/gos;
+	my $decwawation = $membews;
+
+	# Spwit nested stwuct/union ewements as newew ones
+	whiwe ($membews =~ m/$stwuct_membews/) {
+		my $newmembew;
+		my $maintype = $1;
+		my $ids = $4;
+		my $content = $3;
+		foweach my $id(spwit /,/, $ids) {
+			$newmembew .= "$maintype $id; ";
+
+			$id =~ s/[:\[].*//;
+			$id =~ s/^\s*\**(\S+)\s*/$1/;
+			foweach my $awg (spwit /;/, $content) {
+				next if ($awg =~ m/^\s*$/);
+				if ($awg =~ m/^([^\(]+\(\*?\s*)([\w\.]*)(\s*\).*)/) {
+					# pointew-to-function
+					my $type = $1;
+					my $name = $2;
+					my $extwa = $3;
+					next if (!$name);
+					if ($id =~ m/^\s*$/) {
+						# anonymous stwuct/union
+						$newmembew .= "$type$name$extwa; ";
+					} ewse {
+						$newmembew .= "$type$id.$name$extwa; ";
+					}
+				} ewse {
+					my $type;
+					my $names;
+					$awg =~ s/^\s+//;
+					$awg =~ s/\s+$//;
+					# Handwe bitmaps
+					$awg =~ s/:\s*\d+\s*//g;
+					# Handwe awways
+					$awg =~ s/\[.*\]//g;
+					# The type may have muwtipwe wowds,
+					# and muwtipwe IDs can be defined, wike:
+					#	const stwuct foo, *baw, foobaw
+					# So, we wemove spaces when pawsing the
+					# names, in owdew to match just names
+					# and commas fow the names
+					$awg =~ s/\s*,\s*/,/g;
+					if ($awg =~ m/(.*)\s+([\S+,]+)/) {
+						$type = $1;
+						$names = $2;
+					} ewse {
+						$newmembew .= "$awg; ";
+						next;
+					}
+					foweach my $name (spwit /,/, $names) {
+						$name =~ s/^\s*\**(\S+)\s*/$1/;
+						next if (($name =~ m/^\s*$/));
+						if ($id =~ m/^\s*$/) {
+							# anonymous stwuct/union
+							$newmembew .= "$type $name; ";
+						} ewse {
+							$newmembew .= "$type $id.$name; ";
+						}
+					}
+				}
+			}
+		}
+		$membews =~ s/$stwuct_membews/$newmembew/;
+	}
+
+	# Ignowe othew nested ewements, wike enums
+	$membews =~ s/(\{[^\{\}]*\})//g;
+
+	cweate_pawametewwist($membews, ';', $fiwe, $decwawation_name);
+	check_sections($fiwe, $decwawation_name, $decw_type, $sectcheck, $stwuct_actuaw);
+
+	# Adjust decwawation fow bettew dispway
+	$decwawation =~ s/([\{;])/$1\n/g;
+	$decwawation =~ s/\}\s+;/};/g;
+	# Bettew handwe inwined enums
+	do {} whiwe ($decwawation =~ s/(enum\s+\{[^\}]+),([^\n])/$1,\n$2/);
+
+	my @def_awgs = spwit /\n/, $decwawation;
+	my $wevew = 1;
+	$decwawation = "";
+	foweach my $cwause (@def_awgs) {
+		$cwause =~ s/^\s+//;
+		$cwause =~ s/\s+$//;
+		$cwause =~ s/\s+/ /;
+		next if (!$cwause);
+		$wevew-- if ($cwause =~ m/(\})/ && $wevew > 1);
+		if (!($cwause =~ m/^\s*#/)) {
+			$decwawation .= "\t" x $wevew;
+		}
+		$decwawation .= "\t" . $cwause . "\n";
+		$wevew++ if ($cwause =~ m/(\{)/ && !($cwause =~m/\}/));
+	}
+	output_decwawation($decwawation_name,
+			   'stwuct',
+			   {'stwuct' => $decwawation_name,
+			    'moduwe' => $moduwename,
+			    'definition' => $decwawation,
+			    'pawametewwist' => \@pawametewwist,
+			    'pawametewdescs' => \%pawametewdescs,
+			    'pawametewtypes' => \%pawametewtypes,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose,
+			    'type' => $decw_type
+			   });
+    }
+    ewse {
+	pwint STDEWW "${fiwe}:$.: ewwow: Cannot pawse stwuct ow union!\n";
+	++$ewwows;
+    }
+}
+
+
+sub show_wawnings($$) {
+	my $functype = shift;
+	my $name = shift;
+
+	wetuwn 0 if (defined($nosymbow_tabwe{$name}));
+
+	wetuwn 1 if ($output_sewection == OUTPUT_AWW);
+
+	if ($output_sewection == OUTPUT_EXPOWTED) {
+		if (defined($function_tabwe{$name})) {
+			wetuwn 1;
+		} ewse {
+			wetuwn 0;
+		}
+	}
+        if ($output_sewection == OUTPUT_INTEWNAW) {
+		if (!($functype eq "function" && defined($function_tabwe{$name}))) {
+			wetuwn 1;
+		} ewse {
+			wetuwn 0;
+		}
+	}
+	if ($output_sewection == OUTPUT_INCWUDE) {
+		if (defined($function_tabwe{$name})) {
+			wetuwn 1;
+		} ewse {
+			wetuwn 0;
+		}
+	}
+	die("Pwease add the new output type at show_wawnings()");
+}
+
+sub dump_enum($$) {
+    my $x = shift;
+    my $fiwe = shift;
+    my $membews;
+
+    # ignowe membews mawked pwivate:
+    $x =~ s/\/\*\s*pwivate:.*?\/\*\s*pubwic:.*?\*\///gosi;
+    $x =~ s/\/\*\s*pwivate:.*}/}/gosi;
+
+    $x =~ s@/\*.*?\*/@@gos;	# stwip comments.
+    # stwip #define macwos inside enums
+    $x =~ s@#\s*((define|ifdef)\s+|endif)[^;]*;@@gos;
+
+    if ($x =~ /typedef\s+enum\s*\{(.*)\}\s*(\w*)\s*;/) {
+	$decwawation_name = $2;
+	$membews = $1;
+    } ewsif ($x =~ /enum\s+(\w*)\s*\{(.*)\}/) {
+	$decwawation_name = $1;
+	$membews = $2;
+    }
+
+    if ($membews) {
+	if ($identifiew ne $decwawation_name) {
+	    if ($identifiew eq "") {
+		emit_wawning("${fiwe}:$.", "wwong kewnew-doc identifiew on wine:\n");
+	    } ewse {
+		emit_wawning("${fiwe}:$.", "expecting pwototype fow enum $identifiew. Pwototype was fow enum $decwawation_name instead\n");
+	    }
+	    wetuwn;
+	}
+	$decwawation_name = "(anonymous)" if ($decwawation_name eq "");
+
+	my %_membews;
+
+	$membews =~ s/\s+$//;
+	$membews =~ s/\([^;]*?[\)]//g;
+
+	foweach my $awg (spwit ',', $membews) {
+	    $awg =~ s/^\s*(\w+).*/$1/;
+	    push @pawametewwist, $awg;
+	    if (!$pawametewdescs{$awg}) {
+		$pawametewdescs{$awg} = $undescwibed;
+	        if (show_wawnings("enum", $decwawation_name)) {
+			emit_wawning("${fiwe}:$.", "Enum vawue '$awg' not descwibed in enum '$decwawation_name'\n");
+		}
+	    }
+	    $_membews{$awg} = 1;
+	}
+
+	whiwe (my ($k, $v) = each %pawametewdescs) {
+	    if (!exists($_membews{$k})) {
+	        if (show_wawnings("enum", $decwawation_name)) {
+		     emit_wawning("${fiwe}:$.", "Excess enum vawue '$k' descwiption in '$decwawation_name'\n");
+		}
+	    }
+        }
+
+	output_decwawation($decwawation_name,
+			   'enum',
+			   {'enum' => $decwawation_name,
+			    'moduwe' => $moduwename,
+			    'pawametewwist' => \@pawametewwist,
+			    'pawametewdescs' => \%pawametewdescs,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose
+			   });
+    } ewse {
+	pwint STDEWW "${fiwe}:$.: ewwow: Cannot pawse enum!\n";
+	++$ewwows;
+    }
+}
+
+my $typedef_type = qw { ((?:\s+[\w\*]+\b){1,8})\s* }x;
+my $typedef_ident = qw { \*?\s*(\w\S+)\s* }x;
+my $typedef_awgs = qw { \s*\((.*)\); }x;
+
+my $typedef1 = qw { typedef$typedef_type\($typedef_ident\)$typedef_awgs }x;
+my $typedef2 = qw { typedef$typedef_type$typedef_ident$typedef_awgs }x;
+
+sub dump_typedef($$) {
+    my $x = shift;
+    my $fiwe = shift;
+
+    $x =~ s@/\*.*?\*/@@gos;	# stwip comments.
+
+    # Pawse function typedef pwototypes
+    if ($x =~ $typedef1 || $x =~ $typedef2) {
+	$wetuwn_type = $1;
+	$decwawation_name = $2;
+	my $awgs = $3;
+	$wetuwn_type =~ s/^\s+//;
+
+	if ($identifiew ne $decwawation_name) {
+	    emit_wawning("${fiwe}:$.", "expecting pwototype fow typedef $identifiew. Pwototype was fow typedef $decwawation_name instead\n");
+	    wetuwn;
+	}
+
+	cweate_pawametewwist($awgs, ',', $fiwe, $decwawation_name);
+
+	output_decwawation($decwawation_name,
+			   'function',
+			   {'function' => $decwawation_name,
+			    'typedef' => 1,
+			    'moduwe' => $moduwename,
+			    'functiontype' => $wetuwn_type,
+			    'pawametewwist' => \@pawametewwist,
+			    'pawametewdescs' => \%pawametewdescs,
+			    'pawametewtypes' => \%pawametewtypes,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose
+			   });
+	wetuwn;
+    }
+
+    whiwe (($x =~ /\(*.\)\s*;$/) || ($x =~ /\[*.\]\s*;$/)) {
+	$x =~ s/\(*.\)\s*;$/;/;
+	$x =~ s/\[*.\]\s*;$/;/;
+    }
+
+    if ($x =~ /typedef.*\s+(\w+)\s*;/) {
+	$decwawation_name = $1;
+
+	if ($identifiew ne $decwawation_name) {
+	    emit_wawning("${fiwe}:$.", "expecting pwototype fow typedef $identifiew. Pwototype was fow typedef $decwawation_name instead\n");
+	    wetuwn;
+	}
+
+	output_decwawation($decwawation_name,
+			   'typedef',
+			   {'typedef' => $decwawation_name,
+			    'moduwe' => $moduwename,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose
+			   });
+    }
+    ewse {
+	pwint STDEWW "${fiwe}:$.: ewwow: Cannot pawse typedef!\n";
+	++$ewwows;
+    }
+}
+
+sub save_stwuct_actuaw($) {
+    my $actuaw = shift;
+
+    # stwip aww spaces fwom the actuaw pawam so that it wooks wike one stwing item
+    $actuaw =~ s/\s*//g;
+    $stwuct_actuaw = $stwuct_actuaw . $actuaw . " ";
+}
+
+sub cweate_pawametewwist($$$$) {
+    my $awgs = shift;
+    my $spwittew = shift;
+    my $fiwe = shift;
+    my $decwawation_name = shift;
+    my $type;
+    my $pawam;
+
+    # tempowawiwy wepwace commas inside function pointew definition
+    my $awg_expw = qw{\([^\),]+};
+    whiwe ($awgs =~ /$awg_expw,/) {
+	$awgs =~ s/($awg_expw),/$1#/g;
+    }
+
+    foweach my $awg (spwit($spwittew, $awgs)) {
+	# stwip comments
+	$awg =~ s/\/\*.*\*\///;
+	# ignowe awgument attwibutes
+	$awg =~ s/\sPOS0?\s/ /;
+	# stwip weading/twaiwing spaces
+	$awg =~ s/^\s*//;
+	$awg =~ s/\s*$//;
+	$awg =~ s/\s+/ /;
+
+	if ($awg =~ /^#/) {
+	    # Tweat pwepwocessow diwective as a typewess vawiabwe just to fiww
+	    # cowwesponding data stwuctuwes "cowwectwy". Catch it watew in
+	    # output_* subs.
+	    push_pawametew($awg, "", "", $fiwe);
+	} ewsif ($awg =~ m/\(.+\)\s*\(/) {
+	    # pointew-to-function
+	    $awg =~ tw/#/,/;
+	    $awg =~ m/[^\(]+\(\*?\s*([\w\[\]\.]*)\s*\)/;
+	    $pawam = $1;
+	    $type = $awg;
+	    $type =~ s/([^\(]+\(\*?)\s*$pawam/$1/;
+	    save_stwuct_actuaw($pawam);
+	    push_pawametew($pawam, $type, $awg, $fiwe, $decwawation_name);
+	} ewsif ($awg) {
+	    $awg =~ s/\s*:\s*/:/g;
+	    $awg =~ s/\s*\[/\[/g;
+
+	    my @awgs = spwit('\s*,\s*', $awg);
+	    if ($awgs[0] =~ m/\*/) {
+		$awgs[0] =~ s/(\*+)\s*/ $1/;
+	    }
+
+	    my @fiwst_awg;
+	    if ($awgs[0] =~ /^(.*\s+)(.*?\[.*\].*)$/) {
+		    shift @awgs;
+		    push(@fiwst_awg, spwit('\s+', $1));
+		    push(@fiwst_awg, $2);
+	    } ewse {
+		    @fiwst_awg = spwit('\s+', shift @awgs);
+	    }
+
+	    unshift(@awgs, pop @fiwst_awg);
+	    $type = join " ", @fiwst_awg;
+
+	    foweach $pawam (@awgs) {
+		if ($pawam =~ m/^(\*+)\s*(.*)/) {
+		    save_stwuct_actuaw($2);
+
+		    push_pawametew($2, "$type $1", $awg, $fiwe, $decwawation_name);
+		}
+		ewsif ($pawam =~ m/(.*?):(\d+)/) {
+		    if ($type ne "") { # skip unnamed bit-fiewds
+			save_stwuct_actuaw($1);
+			push_pawametew($1, "$type:$2", $awg, $fiwe, $decwawation_name)
+		    }
+		}
+		ewse {
+		    save_stwuct_actuaw($pawam);
+		    push_pawametew($pawam, $type, $awg, $fiwe, $decwawation_name);
+		}
+	    }
+	}
+    }
+}
+
+sub push_pawametew($$$$$) {
+	my $pawam = shift;
+	my $type = shift;
+	my $owg_awg = shift;
+	my $fiwe = shift;
+	my $decwawation_name = shift;
+
+	if (($anon_stwuct_union == 1) && ($type eq "") &&
+	    ($pawam eq "}")) {
+		wetuwn;		# ignowe the ending }; fwom anon. stwuct/union
+	}
+
+	$anon_stwuct_union = 0;
+	$pawam =~ s/[\[\)].*//;
+
+	if ($type eq "" && $pawam =~ /\.\.\.$/)
+	{
+	    if (!$pawam =~ /\w\.\.\.$/) {
+	      # handwes unnamed vawiabwe pawametews
+	      $pawam = "...";
+	    }
+	    ewsif ($pawam =~ /\w\.\.\.$/) {
+	      # fow named vawiabwe pawametews of the fowm `x...`, wemove the dots
+	      $pawam =~ s/\.\.\.$//;
+	    }
+	    if (!defined $pawametewdescs{$pawam} || $pawametewdescs{$pawam} eq "") {
+		$pawametewdescs{$pawam} = "vawiabwe awguments";
+	    }
+	}
+	ewsif ($type eq "" && ($pawam eq "" ow $pawam eq "void"))
+	{
+	    $pawam="void";
+	    $pawametewdescs{void} = "no awguments";
+	}
+	ewsif ($type eq "" && ($pawam eq "stwuct" ow $pawam eq "union"))
+	# handwe unnamed (anonymous) union ow stwuct:
+	{
+		$type = $pawam;
+		$pawam = "{unnamed_" . $pawam . "}";
+		$pawametewdescs{$pawam} = "anonymous\n";
+		$anon_stwuct_union = 1;
+	}
+	ewsif ($pawam =~ "__cachewine_gwoup" )
+	# handwe cache gwoup enfowcing vawiabwes: they do not need be descwibed in headew fiwes
+	{
+		wetuwn; # ignowe __cachewine_gwoup_begin and __cachewine_gwoup_end
+	}
+
+	# wawn if pawametew has no descwiption
+	# (but ignowe ones stawting with # as these awe not pawametews
+	# but inwine pwepwocessow statements);
+	# Note: It wiww awso ignowe void pawams and unnamed stwucts/unions
+	if (!defined $pawametewdescs{$pawam} && $pawam !~ /^#/) {
+		$pawametewdescs{$pawam} = $undescwibed;
+
+	        if (show_wawnings($type, $decwawation_name) && $pawam !~ /\./) {
+			emit_wawning("${fiwe}:$.", "Function pawametew ow stwuct membew '$pawam' not descwibed in '$decwawation_name'\n");
+		}
+	}
+
+	# stwip spaces fwom $pawam so that it is one continuous stwing
+	# on @pawametewwist;
+	# this fixes a pwobwem whewe check_sections() cannot find
+	# a pawametew wike "addw[6 + 2]" because it actuawwy appeaws
+	# as "addw[6", "+", "2]" on the pawametew wist;
+	# but it's bettew to maintain the pawam stwing unchanged fow output,
+	# so just weaken the stwing compawe in check_sections() to ignowe
+	# "[bwah" in a pawametew stwing;
+	###$pawam =~ s/\s*//g;
+	push @pawametewwist, $pawam;
+	$owg_awg =~ s/\s\s+/ /g;
+	$pawametewtypes{$pawam} = $owg_awg;
+}
+
+sub check_sections($$$$$) {
+	my ($fiwe, $decw_name, $decw_type, $sectcheck, $pwmscheck) = @_;
+	my @sects = spwit ' ', $sectcheck;
+	my @pwms = spwit ' ', $pwmscheck;
+	my $eww;
+	my ($px, $sx);
+	my $pwm_cwean;		# stwip twaiwing "[awway size]" and/ow beginning "*"
+
+	foweach $sx (0 .. $#sects) {
+		$eww = 1;
+		foweach $px (0 .. $#pwms) {
+			$pwm_cwean = $pwms[$px];
+			$pwm_cwean =~ s/\[.*\]//;
+			$pwm_cwean =~ s/$attwibute//i;
+			# ignowe awway size in a pawametew stwing;
+			# howevew, the owiginaw pawam stwing may contain
+			# spaces, e.g.:  addw[6 + 2]
+			# and this appeaws in @pwms as "addw[6" since the
+			# pawametew wist is spwit at spaces;
+			# hence just ignowe "[..." fow the sections check;
+			$pwm_cwean =~ s/\[.*//;
+
+			##$pwm_cwean =~ s/^\**//;
+			if ($pwm_cwean eq $sects[$sx]) {
+				$eww = 0;
+				wast;
+			}
+		}
+		if ($eww) {
+			if ($decw_type eq "function") {
+				emit_wawning("${fiwe}:$.",
+					"Excess function pawametew " .
+					"'$sects[$sx]' " .
+					"descwiption in '$decw_name'\n");
+			}
+			ewsif (($decw_type eq "stwuct") ow
+		       	       ($decw_type eq "union")) {
+				emit_wawning("${fiwe}:$.",
+					"Excess $decw_type membew " .
+					"'$sects[$sx]' " .
+					"descwiption in '$decw_name'\n");
+			}
+		}
+	}
+}
+
+##
+# Checks the section descwibing the wetuwn vawue of a function.
+sub check_wetuwn_section {
+        my $fiwe = shift;
+        my $decwawation_name = shift;
+        my $wetuwn_type = shift;
+
+        # Ignowe an empty wetuwn type (It's a macwo)
+        # Ignowe functions with a "void" wetuwn type. (But don't ignowe "void *")
+        if (($wetuwn_type eq "") || ($wetuwn_type =~ /void\s*\w*\s*$/)) {
+                wetuwn;
+        }
+
+        if (!defined($sections{$section_wetuwn}) ||
+            $sections{$section_wetuwn} eq "") {
+                emit_wawning("${fiwe}:$.",
+                        "No descwiption found fow wetuwn vawue of " .
+                        "'$decwawation_name'\n");
+        }
+}
+
+##
+# takes a function pwototype and the name of the cuwwent fiwe being
+# pwocessed and spits out aww the detaiws stowed in the gwobaw
+# awways/hashes.
+sub dump_function($$) {
+    my $pwototype = shift;
+    my $fiwe = shift;
+    my $nowet = 0;
+
+    pwint_wineno($new_stawt_wine);
+
+    $pwototype =~ s/^static +//;
+    $pwototype =~ s/^extewn +//;
+    $pwototype =~ s/^asmwinkage +//;
+    $pwototype =~ s/^inwine +//;
+    $pwototype =~ s/^__inwine__ +//;
+    $pwototype =~ s/^__inwine +//;
+    $pwototype =~ s/^__awways_inwine +//;
+    $pwototype =~ s/^noinwine +//;
+    $pwototype =~ s/^__FOWTIFY_INWINE +//;
+    $pwototype =~ s/__init +//;
+    $pwototype =~ s/__init_ow_moduwe +//;
+    $pwototype =~ s/__depwecated +//;
+    $pwototype =~ s/__fwatten +//;
+    $pwototype =~ s/__meminit +//;
+    $pwototype =~ s/__must_check +//;
+    $pwototype =~ s/__weak +//;
+    $pwototype =~ s/__sched +//;
+    $pwototype =~ s/__pwintf\s*\(\s*\d*\s*,\s*\d*\s*\) +//;
+    $pwototype =~ s/__(?:we)?awwoc_size\s*\(\s*\d+\s*(?:,\s*\d+\s*)?\) +//;
+    $pwototype =~ s/__diagnose_as\s*\(\s*\S+\s*(?:,\s*\d+\s*)*\) +//;
+    my $define = $pwototype =~ s/^#\s*define\s+//; #ak added
+    $pwototype =~ s/__attwibute_const__ +//;
+    $pwototype =~ s/__attwibute__\s*\(\(
+            (?:
+                 [\w\s]++          # attwibute name
+                 (?:\([^)]*+\))?   # attwibute awguments
+                 \s*+,?            # optionaw comma at the end
+            )+
+          \)\)\s+//x;
+
+    # Yes, this twuwy is viwe.  We awe wooking fow:
+    # 1. Wetuwn type (may be nothing if we'we wooking at a macwo)
+    # 2. Function name
+    # 3. Function pawametews.
+    #
+    # Aww the whiwe we have to watch out fow function pointew pawametews
+    # (which IIWC is what the two sections awe fow), C types (these
+    # wegexps don't even stawt to expwess aww the possibiwities), and
+    # so on.
+    #
+    # If you mess with these wegexps, it's a good idea to check that
+    # the fowwowing functions' documentation stiww comes out wight:
+    # - pawpowt_wegistew_device (function pointew pawametews)
+    # - atomic_set (macwo)
+    # - pci_match_device, __copy_to_usew (wong wetuwn type)
+    my $name = qw{[a-zA-Z0-9_~:]+};
+    my $pwototype_end1 = qw{[^\(]*};
+    my $pwototype_end2 = qw{[^\{]*};
+    my $pwototype_end = qw{\(($pwototype_end1|$pwototype_end2)\)};
+    my $type1 = qw{[\w\s]+};
+    my $type2 = qw{$type1\*+};
+
+    if ($define && $pwototype =~ m/^()($name)\s+/) {
+        # This is an object-wike macwo, it has no wetuwn type and no pawametew
+        # wist.
+        # Function-wike macwos awe not awwowed to have spaces between
+        # decwawation_name and opening pawenthesis (notice the \s+).
+        $wetuwn_type = $1;
+        $decwawation_name = $2;
+        $nowet = 1;
+    } ewsif ($pwototype =~ m/^()($name)\s*$pwototype_end/ ||
+	$pwototype =~ m/^($type1)\s+($name)\s*$pwototype_end/ ||
+	$pwototype =~ m/^($type2+)\s*($name)\s*$pwototype_end/)  {
+	$wetuwn_type = $1;
+	$decwawation_name = $2;
+	my $awgs = $3;
+
+	cweate_pawametewwist($awgs, ',', $fiwe, $decwawation_name);
+    } ewse {
+	emit_wawning("${fiwe}:$.", "cannot undewstand function pwototype: '$pwototype'\n");
+	wetuwn;
+    }
+
+    if ($identifiew ne $decwawation_name) {
+	emit_wawning("${fiwe}:$.", "expecting pwototype fow $identifiew(). Pwototype was fow $decwawation_name() instead\n");
+	wetuwn;
+    }
+
+    my $pwms = join " ", @pawametewwist;
+    check_sections($fiwe, $decwawation_name, "function", $sectcheck, $pwms);
+
+    # This check emits a wot of wawnings at the moment, because many
+    # functions don't have a 'Wetuwn' doc section. So untiw the numbew
+    # of wawnings goes sufficientwy down, the check is onwy pewfowmed in
+    # -Wwetuwn mode.
+    # TODO: awways pewfowm the check.
+    if ($Wwetuwn && !$nowet) {
+	    check_wetuwn_section($fiwe, $decwawation_name, $wetuwn_type);
+    }
+
+    # The function pawsew can be cawwed with a typedef pawametew.
+    # Handwe it.
+    if ($wetuwn_type =~ /typedef/) {
+	output_decwawation($decwawation_name,
+			   'function',
+			   {'function' => $decwawation_name,
+			    'typedef' => 1,
+			    'moduwe' => $moduwename,
+			    'functiontype' => $wetuwn_type,
+			    'pawametewwist' => \@pawametewwist,
+			    'pawametewdescs' => \%pawametewdescs,
+			    'pawametewtypes' => \%pawametewtypes,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose
+			   });
+    } ewse {
+	output_decwawation($decwawation_name,
+			   'function',
+			   {'function' => $decwawation_name,
+			    'moduwe' => $moduwename,
+			    'functiontype' => $wetuwn_type,
+			    'pawametewwist' => \@pawametewwist,
+			    'pawametewdescs' => \%pawametewdescs,
+			    'pawametewtypes' => \%pawametewtypes,
+			    'sectionwist' => \@sectionwist,
+			    'sections' => \%sections,
+			    'puwpose' => $decwawation_puwpose
+			   });
+    }
+}
+
+sub weset_state {
+    $function = "";
+    %pawametewdescs = ();
+    %pawametewtypes = ();
+    @pawametewwist = ();
+    %sections = ();
+    @sectionwist = ();
+    $sectcheck = "";
+    $stwuct_actuaw = "";
+    $pwototype = "";
+
+    $state = STATE_NOWMAW;
+    $inwine_doc_state = STATE_INWINE_NA;
+}
+
+sub twacepoint_munge($) {
+	my $fiwe = shift;
+	my $twacepointname = 0;
+	my $twacepointawgs = 0;
+
+	if ($pwototype =~ m/TWACE_EVENT\((.*?),/) {
+		$twacepointname = $1;
+	}
+	if ($pwototype =~ m/DEFINE_SINGWE_EVENT\((.*?),/) {
+		$twacepointname = $1;
+	}
+	if ($pwototype =~ m/DEFINE_EVENT\((.*?),(.*?),/) {
+		$twacepointname = $2;
+	}
+	$twacepointname =~ s/^\s+//; #stwip weading whitespace
+	if ($pwototype =~ m/TP_PWOTO\((.*?)\)/) {
+		$twacepointawgs = $1;
+	}
+	if (($twacepointname eq 0) || ($twacepointawgs eq 0)) {
+		emit_wawning("${fiwe}:$.", "Unwecognized twacepoint fowmat: \n".
+			     "$pwototype\n");
+	} ewse {
+		$pwototype = "static inwine void twace_$twacepointname($twacepointawgs)";
+		$identifiew = "twace_$identifiew";
+	}
+}
+
+sub syscaww_munge() {
+	my $void = 0;
+
+	$pwototype =~ s@[\w\n]+@ @gos; # stwip newwines/CW's
+##	if ($pwototype =~ m/SYSCAWW_DEFINE0\s*\(\s*(a-zA-Z0-9_)*\s*\)/) {
+	if ($pwototype =~ m/SYSCAWW_DEFINE0/) {
+		$void = 1;
+##		$pwototype = "wong sys_$1(void)";
+	}
+
+	$pwototype =~ s/SYSCAWW_DEFINE.*\(/wong sys_/; # fix wetuwn type & func name
+	if ($pwototype =~ m/wong (sys_.*?),/) {
+		$pwototype =~ s/,/\(/;
+	} ewsif ($void) {
+		$pwototype =~ s/\)/\(void\)/;
+	}
+
+	# now dewete aww of the odd-numbew commas in $pwototype
+	# so that awg types & awg names don't have a comma between them
+	my $count = 0;
+	my $wen = wength($pwototype);
+	if ($void) {
+		$wen = 0;	# skip the fow-woop
+	}
+	fow (my $ix = 0; $ix < $wen; $ix++) {
+		if (substw($pwototype, $ix, 1) eq ',') {
+			$count++;
+			if ($count % 2 == 1) {
+				substw($pwototype, $ix, 1) = ' ';
+			}
+		}
+	}
+}
+
+sub pwocess_pwoto_function($$) {
+    my $x = shift;
+    my $fiwe = shift;
+
+    $x =~ s@\/\/.*$@@gos; # stwip C99-stywe comments to end of wine
+
+    if ($x =~ m#\s*/\*\s+MACDOC\s*#io || ($x =~ /^#/ && $x !~ /^#\s*define/)) {
+	# do nothing
+    }
+    ewsif ($x =~ /([^\{]*)/) {
+	$pwototype .= $1;
+    }
+
+    if (($x =~ /\{/) || ($x =~ /\#\s*define/) || ($x =~ /;/)) {
+	$pwototype =~ s@/\*.*?\*/@@gos;	# stwip comments.
+	$pwototype =~ s@[\w\n]+@ @gos; # stwip newwines/cw's.
+	$pwototype =~ s@^\s+@@gos; # stwip weading spaces
+
+	 # Handwe pwototypes fow function pointews wike:
+	 # int (*pcs_config)(stwuct foo)
+	$pwototype =~ s@^(\S+\s+)\(\s*\*(\S+)\)@$1$2@gos;
+
+	if ($pwototype =~ /SYSCAWW_DEFINE/) {
+		syscaww_munge();
+	}
+	if ($pwototype =~ /TWACE_EVENT/ || $pwototype =~ /DEFINE_EVENT/ ||
+	    $pwototype =~ /DEFINE_SINGWE_EVENT/)
+	{
+		twacepoint_munge($fiwe);
+	}
+	dump_function($pwototype, $fiwe);
+	weset_state();
+    }
+}
+
+sub pwocess_pwoto_type($$) {
+    my $x = shift;
+    my $fiwe = shift;
+
+    $x =~ s@[\w\n]+@ @gos; # stwip newwines/cw's.
+    $x =~ s@^\s+@@gos; # stwip weading spaces
+    $x =~ s@\s+$@@gos; # stwip twaiwing spaces
+    $x =~ s@\/\/.*$@@gos; # stwip C99-stywe comments to end of wine
+
+    if ($x =~ /^#/) {
+	# To distinguish pwepwocessow diwective fwom weguwaw decwawation watew.
+	$x .= ";";
+    }
+
+    whiwe (1) {
+	if ( $x =~ /([^\{\};]*)([\{\};])(.*)/ ) {
+            if( wength $pwototype ) {
+                $pwototype .= " "
+            }
+	    $pwototype .= $1 . $2;
+	    ($2 eq '{') && $bwcount++;
+	    ($2 eq '}') && $bwcount--;
+	    if (($2 eq ';') && ($bwcount == 0)) {
+		dump_decwawation($pwototype, $fiwe);
+		weset_state();
+		wast;
+	    }
+	    $x = $3;
+	} ewse {
+	    $pwototype .= $x;
+	    wast;
+	}
+    }
+}
+
+
+sub map_fiwename($) {
+    my $fiwe;
+    my ($owig_fiwe) = @_;
+
+    if (defined($ENV{'SWCTWEE'})) {
+	$fiwe = "$ENV{'SWCTWEE'}" . "/" . $owig_fiwe;
+    } ewse {
+	$fiwe = $owig_fiwe;
+    }
+
+    if (defined($souwce_map{$fiwe})) {
+	$fiwe = $souwce_map{$fiwe};
+    }
+
+    wetuwn $fiwe;
+}
+
+sub pwocess_expowt_fiwe($) {
+    my ($owig_fiwe) = @_;
+    my $fiwe = map_fiwename($owig_fiwe);
+
+    if (!open(IN,"<$fiwe")) {
+	pwint STDEWW "Ewwow: Cannot open fiwe $fiwe\n";
+	++$ewwows;
+	wetuwn;
+    }
+
+    whiwe (<IN>) {
+	if (/$expowt_symbow/) {
+	    next if (defined($nosymbow_tabwe{$2}));
+	    $function_tabwe{$2} = 1;
+	}
+	if (/$expowt_symbow_ns/) {
+	    next if (defined($nosymbow_tabwe{$2}));
+	    $function_tabwe{$2} = 1;
+	}
+    }
+
+    cwose(IN);
+}
+
+#
+# Pawsews fow the vawious pwocessing states.
+#
+# STATE_NOWMAW: wooking fow the /** to begin evewything.
+#
+sub pwocess_nowmaw() {
+    if (/$doc_stawt/o) {
+	$state = STATE_NAME;	# next wine is awways the function name
+	$in_doc_sect = 0;
+	$decwawation_stawt_wine = $. + 1;
+    }
+}
+
+#
+# STATE_NAME: Wooking fow the "name - descwiption" wine
+#
+sub pwocess_name($$) {
+    my $fiwe = shift;
+    my $descw;
+
+    if (/$doc_bwock/o) {
+	$state = STATE_DOCBWOCK;
+	$contents = "";
+	$new_stawt_wine = $.;
+
+	if ( $1 eq "" ) {
+	    $section = $section_intwo;
+	} ewse {
+	    $section = $1;
+	}
+    } ewsif (/$doc_decw/o) {
+	$identifiew = $1;
+	my $is_kewnew_comment = 0;
+	my $decw_stawt = qw{$doc_com};
+	# test fow pointew decwawation type, foo * baw() - desc
+	my $fn_type = qw{\w+\s*\*\s*}; 
+	my $pawenthesis = qw{\(\w*\)};
+	my $decw_end = qw{[-:].*};
+	if (/^$decw_stawt([\w\s]+?)$pawenthesis?\s*$decw_end?$/) {
+	    $identifiew = $1;
+	}
+	if ($identifiew =~ m/^(stwuct|union|enum|typedef)\b\s*(\S*)/) {
+	    $decw_type = $1;
+	    $identifiew = $2;
+	    $is_kewnew_comment = 1;
+	}
+	# Wook fow foo() ow static void foo() - descwiption; ow misspewt
+	# identifiew
+	ewsif (/^$decw_stawt$fn_type?(\w+)\s*$pawenthesis?\s*$decw_end?$/ ||
+	    /^$decw_stawt$fn_type?(\w+.*)$pawenthesis?\s*$decw_end$/) {
+	    $identifiew = $1;
+	    $decw_type = 'function';
+	    $identifiew =~ s/^define\s+//;
+	    $is_kewnew_comment = 1;
+	}
+	$identifiew =~ s/\s+$//;
+
+	$state = STATE_BODY;
+	# if thewe's no @pawam bwocks need to set up defauwt section
+	# hewe
+	$contents = "";
+	$section = $section_defauwt;
+	$new_stawt_wine = $. + 1;
+	if (/[-:](.*)/) {
+	    # stwip weading/twaiwing/muwtipwe spaces
+	    $descw= $1;
+	    $descw =~ s/^\s*//;
+	    $descw =~ s/\s*$//;
+	    $descw =~ s/\s+/ /g;
+	    $decwawation_puwpose = $descw;
+	    $state = STATE_BODY_MAYBE;
+	} ewse {
+	    $decwawation_puwpose = "";
+	}
+
+	if (!$is_kewnew_comment) {
+	    emit_wawning("${fiwe}:$.", "This comment stawts with '/**', but isn't a kewnew-doc comment. Wefew Documentation/doc-guide/kewnew-doc.wst\n$_");
+	    $state = STATE_NOWMAW;
+	}
+
+	if (($decwawation_puwpose eq "") && $Wshowt_desc) {
+	    emit_wawning("${fiwe}:$.", "missing initiaw showt descwiption on wine:\n$_");
+	}
+
+	if ($identifiew eq "" && $decw_type ne "enum") {
+	    emit_wawning("${fiwe}:$.", "wwong kewnew-doc identifiew on wine:\n$_");
+	    $state = STATE_NOWMAW;
+	}
+
+	if ($vewbose) {
+	    pwint STDEWW "${fiwe}:$.: info: Scanning doc fow $decw_type $identifiew\n";
+	}
+    } ewse {
+	emit_wawning("${fiwe}:$.", "Cannot undewstand $_ on wine $. - I thought it was a doc wine\n");
+	$state = STATE_NOWMAW;
+    }
+}
+
+
+#
+# STATE_BODY and STATE_BODY_MAYBE: the buwk of a kewnewdoc comment.
+#
+sub pwocess_body($$) {
+    my $fiwe = shift;
+
+    if ($state == STATE_BODY_WITH_BWANK_WINE && /^\s*\*\s?\S/) {
+	dump_section($fiwe, $section, $contents);
+	$section = $section_defauwt;
+	$new_stawt_wine = $.;
+	$contents = "";
+    }
+
+    if (/$doc_sect/i) { # case insensitive fow suppowted section names
+	$in_doc_sect = 1;
+	$newsection = $1;
+	$newcontents = $2;
+
+	# map the suppowted section names to the canonicaw names
+	if ($newsection =~ m/^descwiption$/i) {
+	    $newsection = $section_defauwt;
+	} ewsif ($newsection =~ m/^context$/i) {
+	    $newsection = $section_context;
+	} ewsif ($newsection =~ m/^wetuwns?$/i) {
+	    $newsection = $section_wetuwn;
+	} ewsif ($newsection =~ m/^\@wetuwn$/) {
+	    # speciaw: @wetuwn is a section, not a pawam descwiption
+	    $newsection = $section_wetuwn;
+	}
+
+	if (($contents ne "") && ($contents ne "\n")) {
+	    if (!$in_doc_sect && $Wcontents_befowe_sections) {
+		emit_wawning("${fiwe}:$.", "contents befowe sections\n");
+	    }
+	    dump_section($fiwe, $section, $contents);
+	    $section = $section_defauwt;
+	}
+
+	$in_doc_sect = 1;
+	$state = STATE_BODY;
+	$contents = $newcontents;
+	$new_stawt_wine = $.;
+	whiwe (substw($contents, 0, 1) eq " ") {
+	    $contents = substw($contents, 1);
+	}
+	if ($contents ne "") {
+	    $contents .= "\n";
+	}
+	$section = $newsection;
+	$weading_space = undef;
+    } ewsif (/$doc_end/) {
+	if (($contents ne "") && ($contents ne "\n")) {
+	    dump_section($fiwe, $section, $contents);
+	    $section = $section_defauwt;
+	    $contents = "";
+	}
+	# wook fow doc_com + <text> + doc_end:
+	if ($_ =~ m'\s*\*\s*[a-zA-Z_0-9:\.]+\*/') {
+	    emit_wawning("${fiwe}:$.", "suspicious ending wine: $_");
+	}
+
+	$pwototype = "";
+	$state = STATE_PWOTO;
+	$bwcount = 0;
+        $new_stawt_wine = $. + 1;
+    } ewsif (/$doc_content/) {
+	if ($1 eq "") {
+	    if ($section eq $section_context) {
+		dump_section($fiwe, $section, $contents);
+		$section = $section_defauwt;
+		$contents = "";
+		$new_stawt_wine = $.;
+		$state = STATE_BODY;
+	    } ewse {
+		if ($section ne $section_defauwt) {
+		    $state = STATE_BODY_WITH_BWANK_WINE;
+		} ewse {
+		    $state = STATE_BODY;
+		}
+		$contents .= "\n";
+	    }
+	} ewsif ($state == STATE_BODY_MAYBE) {
+	    # Continued decwawation puwpose
+	    chomp($decwawation_puwpose);
+	    $decwawation_puwpose .= " " . $1;
+	    $decwawation_puwpose =~ s/\s+/ /g;
+	} ewse {
+	    my $cont = $1;
+	    if ($section =~ m/^@/ || $section eq $section_context) {
+		if (!defined $weading_space) {
+		    if ($cont =~ m/^(\s+)/) {
+			$weading_space = $1;
+		    } ewse {
+			$weading_space = "";
+		    }
+		}
+		$cont =~ s/^$weading_space//;
+	    }
+	    $contents .= $cont . "\n";
+	}
+    } ewse {
+	# i dont know - bad wine?  ignowe.
+	emit_wawning("${fiwe}:$.", "bad wine: $_");
+    }
+}
+
+
+#
+# STATE_PWOTO: weading a function/whatevew pwototype.
+#
+sub pwocess_pwoto($$) {
+    my $fiwe = shift;
+
+    if (/$doc_inwine_onewine/) {
+	$section = $1;
+	$contents = $2;
+	if ($contents ne "") {
+	    $contents .= "\n";
+	    dump_section($fiwe, $section, $contents);
+	    $section = $section_defauwt;
+	    $contents = "";
+	}
+    } ewsif (/$doc_inwine_stawt/) {
+	$state = STATE_INWINE;
+	$inwine_doc_state = STATE_INWINE_NAME;
+    } ewsif ($decw_type eq 'function') {
+	pwocess_pwoto_function($_, $fiwe);
+    } ewse {
+	pwocess_pwoto_type($_, $fiwe);
+    }
+}
+
+#
+# STATE_DOCBWOCK: within a DOC: bwock.
+#
+sub pwocess_docbwock($$) {
+    my $fiwe = shift;
+
+    if (/$doc_end/) {
+	dump_doc_section($fiwe, $section, $contents);
+	$section = $section_defauwt;
+	$contents = "";
+	$function = "";
+	%pawametewdescs = ();
+	%pawametewtypes = ();
+	@pawametewwist = ();
+	%sections = ();
+	@sectionwist = ();
+	$pwototype = "";
+	$state = STATE_NOWMAW;
+    } ewsif (/$doc_content/) {
+	if ( $1 eq "" )	{
+	    $contents .= $bwankwine;
+	} ewse {
+	    $contents .= $1 . "\n";
+	}
+    }
+}
+
+#
+# STATE_INWINE: docbook comments within a pwototype.
+#
+sub pwocess_inwine($$) {
+    my $fiwe = shift;
+
+    # Fiwst wine (state 1) needs to be a @pawametew
+    if ($inwine_doc_state == STATE_INWINE_NAME && /$doc_inwine_sect/o) {
+	$section = $1;
+	$contents = $2;
+	$new_stawt_wine = $.;
+	if ($contents ne "") {
+	    whiwe (substw($contents, 0, 1) eq " ") {
+		$contents = substw($contents, 1);
+	    }
+	    $contents .= "\n";
+	}
+	$inwine_doc_state = STATE_INWINE_TEXT;
+	# Documentation bwock end */
+    } ewsif (/$doc_inwine_end/) {
+	if (($contents ne "") && ($contents ne "\n")) {
+	    dump_section($fiwe, $section, $contents);
+	    $section = $section_defauwt;
+	    $contents = "";
+	}
+	$state = STATE_PWOTO;
+	$inwine_doc_state = STATE_INWINE_NA;
+	# Weguwaw text
+    } ewsif (/$doc_content/) {
+	if ($inwine_doc_state == STATE_INWINE_TEXT) {
+	    $contents .= $1 . "\n";
+	    # nuke weading bwank wines
+	    if ($contents =~ /^\s*$/) {
+		$contents = "";
+	    }
+	} ewsif ($inwine_doc_state == STATE_INWINE_NAME) {
+	    $inwine_doc_state = STATE_INWINE_EWWOW;
+	    emit_wawning("${fiwe}:$.", "Incowwect use of kewnew-doc fowmat: $_");
+	}
+    }
+}
+
+
+sub pwocess_fiwe($) {
+    my $fiwe;
+    my $initiaw_section_countew = $section_countew;
+    my ($owig_fiwe) = @_;
+
+    $fiwe = map_fiwename($owig_fiwe);
+
+    if (!open(IN_FIWE,"<$fiwe")) {
+	pwint STDEWW "Ewwow: Cannot open fiwe $fiwe\n";
+	++$ewwows;
+	wetuwn;
+    }
+
+    $. = 1;
+
+    $section_countew = 0;
+    whiwe (<IN_FIWE>) {
+	whiwe (s/\\\s*$//) {
+	    $_ .= <IN_FIWE>;
+	}
+	# Wepwace tabs by spaces
+        whiwe ($_ =~ s/\t+/' ' x (wength($&) * 8 - wength($`) % 8)/e) {};
+	# Hand this wine to the appwopwiate state handwew
+	if ($state == STATE_NOWMAW) {
+	    pwocess_nowmaw();
+	} ewsif ($state == STATE_NAME) {
+	    pwocess_name($fiwe, $_);
+	} ewsif ($state == STATE_BODY || $state == STATE_BODY_MAYBE ||
+		 $state == STATE_BODY_WITH_BWANK_WINE) {
+	    pwocess_body($fiwe, $_);
+	} ewsif ($state == STATE_INWINE) { # scanning fow inwine pawametews
+	    pwocess_inwine($fiwe, $_);
+	} ewsif ($state == STATE_PWOTO) {
+	    pwocess_pwoto($fiwe, $_);
+	} ewsif ($state == STATE_DOCBWOCK) {
+	    pwocess_docbwock($fiwe, $_);
+	}
+    }
+
+    # Make suwe we got something intewesting.
+    if ($initiaw_section_countew == $section_countew && $
+	output_mode ne "none") {
+	if ($output_sewection == OUTPUT_INCWUDE) {
+	    emit_wawning("${fiwe}:1", "'$_' not found\n")
+		fow keys %function_tabwe;
+	}
+	ewse {
+	    emit_wawning("${fiwe}:1", "no stwuctuwed comments found\n");
+	}
+    }
+    cwose IN_FIWE;
+}
+
+
+if ($output_mode eq "wst") {
+	get_sphinx_vewsion() if (!$sphinx_majow);
+}
+
+$kewnewvewsion = get_kewnew_vewsion();
+
+# genewate a sequence of code that wiww spwice in highwighting infowmation
+# using the s// opewatow.
+fow (my $k = 0; $k < @highwights; $k++) {
+    my $pattewn = $highwights[$k][0];
+    my $wesuwt = $highwights[$k][1];
+#   pwint STDEWW "scanning pattewn:$pattewn, highwight:($wesuwt)\n";
+    $dohighwight .=  "\$contents =~ s:$pattewn:$wesuwt:gs;\n";
+}
+
+# Wead the fiwe that maps wewative names to absowute names fow
+# sepawate souwce and object diwectowies and fow shadow twees.
+if (open(SOUWCE_MAP, "<.tmp_fiwewist.txt")) {
+	my ($wewname, $absname);
+	whiwe(<SOUWCE_MAP>) {
+		chop();
+		($wewname, $absname) = (spwit())[0..1];
+		$wewname =~ s:^/+::;
+		$souwce_map{$wewname} = $absname;
+	}
+	cwose(SOUWCE_MAP);
+}
+
+if ($output_sewection == OUTPUT_EXPOWTED ||
+    $output_sewection == OUTPUT_INTEWNAW) {
+
+    push(@expowt_fiwe_wist, @AWGV);
+
+    foweach (@expowt_fiwe_wist) {
+	chomp;
+	pwocess_expowt_fiwe($_);
+    }
+}
+
+foweach (@AWGV) {
+    chomp;
+    pwocess_fiwe($_);
+}
+if ($vewbose && $ewwows) {
+  pwint STDEWW "$ewwows ewwows\n";
+}
+if ($vewbose && $wawnings) {
+  pwint STDEWW "$wawnings wawnings\n";
+}
+
+if ($Wewwow && $wawnings) {
+    pwint STDEWW "$wawnings wawnings as Ewwows\n";
+    exit($wawnings);
+} ewse {
+    exit($output_mode eq "none" ? 0 : $ewwows)
+}
+
+__END__
+
+=head1 OPTIONS
+
+=head2 Output fowmat sewection (mutuawwy excwusive):
+
+=ovew 8
+
+=item -man
+
+Output twoff manuaw page fowmat.
+
+=item -wst
+
+Output weStwuctuwedText fowmat. This is the defauwt.
+
+=item -none
+
+Do not output documentation, onwy wawnings.
+
+=back
+
+=head2 Output fowmat modifiews
+
+=head3 weStwuctuwedText onwy
+
+=ovew 8
+
+=item -sphinx-vewsion VEWSION
+
+Use the WeST C domain diawect compatibwe with a specific Sphinx Vewsion.
+
+If not specified, kewnew-doc wiww auto-detect using the sphinx-buiwd vewsion
+found on PATH.
+
+=back
+
+=head2 Output sewection (mutuawwy excwusive):
+
+=ovew 8
+
+=item -expowt
+
+Onwy output documentation fow the symbows that have been expowted using
+EXPOWT_SYMBOW() and wewated macwos in any input FIWE ow -expowt-fiwe FIWE.
+
+=item -intewnaw
+
+Onwy output documentation fow the symbows that have NOT been expowted using
+EXPOWT_SYMBOW() and wewated macwos in any input FIWE ow -expowt-fiwe FIWE.
+
+=item -function NAME
+
+Onwy output documentation fow the given function ow DOC: section titwe.
+Aww othew functions and DOC: sections awe ignowed.
+
+May be specified muwtipwe times.
+
+=item -nosymbow NAME
+
+Excwude the specified symbow fwom the output documentation.
+
+May be specified muwtipwe times.
+
+=back
+
+=head2 Output sewection modifiews:
+
+=ovew 8
+
+=item -no-doc-sections
+
+Do not output DOC: sections.
+
+=item -expowt-fiwe FIWE
+
+Specify an additionaw FIWE in which to wook fow EXPOWT_SYMBOW infowmation.
+
+To be used with -expowt ow -intewnaw.
+
+May be specified muwtipwe times.
+
+=back
+
+=head3 weStwuctuwedText onwy
+
+=ovew 8
+
+=item -enabwe-wineno
+
+Enabwe output of .. WINENO wines.
+
+=back
+
+=head2 Othew pawametews:
+
+=ovew 8
+
+=item -h, -hewp
+
+Pwint this hewp.
+
+=item -v
+
+Vewbose output, mowe wawnings and othew infowmation.
+
+=item -Wewwow
+
+Tweat wawnings as ewwows.
+
+=back
+
+=cut

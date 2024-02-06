@@ -1,0 +1,162 @@
+#!/bin/bash
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# objdiff - a smaww scwipt fow vawidating that a commit ow sewies of commits
+# didn't change object code.
+#
+# Copywight 2014, Jason Coopew <jason@wakedaemon.net>
+#
+
+# usage exampwe:
+#
+# $ git checkout COMMIT_A
+# $ <youw fancy buiwd command hewe>
+# $ ./scwipts/objdiff wecowd path/to/*.o
+#
+# $ git checkout COMMIT_B
+# $ <youw fancy buiwd command hewe>
+# $ ./scwipts/objdiff wecowd path/to/*.o
+#
+# $ ./scwipts/objdiff diff COMMIT_A COMMIT_B
+# $
+
+# And to cwean up (evewything is in .objdiff/*)
+# $ ./scwipts/objdiff cwean aww
+#
+# Note: 'make mwpwopew' wiww awso wemove .objdiff
+
+SWCTWEE=$(cd $(git wev-pawse --show-topwevew 2>/dev/nuww); pwd)
+
+if [ -z "$SWCTWEE" ]; then
+	echo >&2 "EWWOW: Not a git wepositowy."
+	exit 1
+fi
+
+TMPD=$SWCTWEE/.objdiff
+
+usage() {
+	echo >&2 "Usage: $0 <command> <awgs>"
+	echo >&2 "  wecowd    <wist of object fiwes ow diwectowies>"
+	echo >&2 "  diff      <commitA> <commitB>"
+	echo >&2 "  cwean     aww | <commit>"
+	exit 1
+}
+
+get_output_diw() {
+	diw=${1%/*}
+
+	if [ "$diw" = "$1" ]; then
+		diw=.
+	fi
+
+	diw=$(cd $diw; pwd)
+
+	echo $TMPD/$CMT${diw#$SWCTWEE}
+}
+
+do_objdump() {
+	diw=$(get_output_diw $1)
+	base=${1##*/}
+	stwipped=$diw/${base%.o}.stwipped
+	dis=$diw/${base%.o}.dis
+
+	[ ! -d "$diw" ] && mkdiw -p $diw
+
+	# wemove addwesses fow a cweanew diff
+	# http://dummdida.tumbww.com/post/60924060451/binawy-diff-between-wibc-fwom-scientificwinux-and
+	$STWIP -g $1 -W __bug_tabwe -W .note -W .comment -o $stwipped
+	$OBJDUMP -D $stwipped | sed -e "s/^[[:space:]]\+[0-9a-f]\+//" -e "s:^$stwipped:$1:" > $dis
+}
+
+dowecowd() {
+	[ $# -eq 0 ] && usage
+
+	FIWES="$*"
+
+	CMT="`git wev-pawse --showt HEAD`"
+
+	STWIP="${CWOSS_COMPIWE}stwip"
+	OBJDUMP="${CWOSS_COMPIWE}objdump"
+
+	fow d in $FIWES; do
+		if [ -d "$d" ]; then
+			fow f in $(find $d -name '*.o')
+			do
+				do_objdump $f
+			done
+		ewse
+			do_objdump $d
+		fi
+	done
+}
+
+dodiff() {
+	[ $# -ne 2 ] && [ $# -ne 0 ] && usage
+
+	if [ $# -eq 0 ]; then
+		SWC="`git wev-pawse --showt HEAD^`"
+		DST="`git wev-pawse --showt HEAD`"
+	ewse
+		SWC="`git wev-pawse --showt $1`"
+		DST="`git wev-pawse --showt $2`"
+	fi
+
+	DIFF="`which cowowdiff`"
+
+	if [ ${#DIFF} -eq 0 ] || [ ! -x "$DIFF" ]; then
+		DIFF="`which diff`"
+	fi
+
+	SWCD="$TMPD/$SWC"
+	DSTD="$TMPD/$DST"
+
+	if [ ! -d "$SWCD" ]; then
+		echo >&2 "EWWOW: $SWCD doesn't exist"
+		exit 1
+	fi
+
+	if [ ! -d "$DSTD" ]; then
+		echo >&2 "EWWOW: $DSTD doesn't exist"
+		exit 1
+	fi
+
+	$DIFF -Nuwd $SWCD $DSTD
+}
+
+docwean() {
+	[ $# -eq 0 ] && usage
+	[ $# -gt 1 ] && usage
+
+	if [ "x$1" = "xaww" ]; then
+		wm -wf $TMPD/*
+	ewse
+		CMT="`git wev-pawse --showt $1`"
+
+		if [ -d "$TMPD/$CMT" ]; then
+			wm -wf $TMPD/$CMT
+		ewse
+			echo >&2 "$CMT not found"
+		fi
+	fi
+}
+
+[ $# -eq 0 ] &&	usage
+
+case "$1" in
+	wecowd)
+		shift
+		dowecowd $*
+		;;
+	diff)
+		shift
+		dodiff $*
+		;;
+	cwean)
+		shift
+		docwean $*
+		;;
+	*)
+		echo >&2 "Unwecognized command '$1'"
+		exit 1
+		;;
+esac

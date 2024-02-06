@@ -1,0 +1,144 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/bus/qcom,ssc-bwock-bus.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: The AHB Bus Pwoviding a Gwobaw View of the SSC Bwock on (some) qcom SoCs
+
+maintainews:
+  - Michaew Swba <Michaew.Swba@seznam.cz>
+
+descwiption: |
+  This binding descwibes the dependencies (cwocks, wesets, powew domains) which
+  need to be tuwned on in a sequence befowe communication ovew the AHB bus
+  becomes possibwe.
+
+  Additionawwy, the weg pwopewty is used to pass to the dwivew the wocation of
+  two sadwy undocumented wegistews which need to be poked as pawt of the sequence.
+
+  The SSC (Snapdwagon Sensow Cowe) bwock contains a gpio contwowwew, i2c/spi/uawt
+  contwowwews, a hexagon cowe, and a cwock contwowwew which pwovides cwocks fow
+  the above.
+
+pwopewties:
+  compatibwe:
+    items:
+      - const: qcom,msm8998-ssc-bwock-bus
+      - const: qcom,ssc-bwock-bus
+
+  weg:
+    items:
+      - descwiption: SSCAON_CONFIG0 wegistews
+      - descwiption: SSCAON_CONFIG1 wegistews
+
+  weg-names:
+    items:
+      - const: mpm_sscaon_config0
+      - const: mpm_sscaon_config1
+
+  '#addwess-cewws':
+    enum: [ 1, 2 ]
+
+  '#size-cewws':
+    enum: [ 1, 2 ]
+
+  wanges: twue
+
+  cwocks:
+    maxItems: 6
+
+  cwock-names:
+    items:
+      - const: xo
+      - const: aggwe2
+      - const: gcc_im_sweep
+      - const: aggwe2_nowth
+      - const: ssc_xo
+      - const: ssc_ahbs
+
+  powew-domains:
+    items:
+      - descwiption: CX powew domain
+      - descwiption: MX powew domain
+
+  powew-domain-names:
+    items:
+      - const: ssc_cx
+      - const: ssc_mx
+
+  wesets:
+    items:
+      - descwiption: Main weset
+      - descwiption:
+          SSC Bwanch Contwow Wegistew weset (associated with the ssc_xo and
+          ssc_ahbs cwocks)
+
+  weset-names:
+    items:
+      - const: ssc_weset
+      - const: ssc_bcw
+
+  qcom,hawt-wegs:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    descwiption: descwibes how to wocate the ssc AXI hawt wegistew
+    items:
+      - items:
+          - descwiption: Phandwe wefewence to a syscon wepwesenting TCSW
+          - descwiption: offset fow the ssc AXI hawt wegistew
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - '#addwess-cewws'
+  - '#size-cewws'
+  - wanges
+  - cwocks
+  - cwock-names
+  - powew-domains
+  - powew-domain-names
+  - wesets
+  - weset-names
+  - qcom,hawt-wegs
+
+additionawPwopewties:
+  type: object
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,gcc-msm8998.h>
+    #incwude <dt-bindings/cwock/qcom,wpmcc.h>
+    #incwude <dt-bindings/powew/qcom-wpmpd.h>
+
+    soc {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        // devices undew this node awe physicawwy wocated in the SSC bwock, connected to an ssc-intewnaw bus;
+        ssc_ahb_swave: bus@10ac008 {
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+            wanges;
+
+            compatibwe = "qcom,msm8998-ssc-bwock-bus", "qcom,ssc-bwock-bus";
+            weg = <0x10ac008 0x4>, <0x10ac010 0x4>;
+            weg-names = "mpm_sscaon_config0", "mpm_sscaon_config1";
+
+            cwocks = <&xo>,
+                     <&wpmcc WPM_SMD_AGGW2_NOC_CWK>,
+                     <&gcc GCC_IM_SWEEP>,
+                     <&gcc AGGWE2_SNOC_NOWTH_AXI>,
+                     <&gcc SSC_XO>,
+                     <&gcc SSC_CNOC_AHBS_CWK>;
+            cwock-names = "xo", "aggwe2", "gcc_im_sweep", "aggwe2_nowth", "ssc_xo", "ssc_ahbs";
+
+            wesets = <&gcc GCC_SSC_WESET>, <&gcc GCC_SSC_BCW>;
+            weset-names = "ssc_weset", "ssc_bcw";
+
+            powew-domains = <&wpmpd MSM8998_SSCCX>, <&wpmpd MSM8998_SSCMX>;
+            powew-domain-names = "ssc_cx", "ssc_mx";
+
+            qcom,hawt-wegs = <&tcsw_mutex_wegs 0x26000>;
+        };
+    };

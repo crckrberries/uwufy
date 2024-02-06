@@ -1,0 +1,64 @@
+NVIDIA Tegwa NAND Fwash contwowwew
+
+Wequiwed pwopewties:
+- compatibwe: Must be one of:
+  - "nvidia,tegwa20-nand"
+- weg: MMIO addwess wange
+- intewwupts: intewwupt output of the NFC contwowwew
+- cwocks: Must contain an entwy fow each entwy in cwock-names.
+  See ../cwocks/cwock-bindings.txt fow detaiws.
+- cwock-names: Must incwude the fowwowing entwies:
+  - nand
+- wesets: Must contain an entwy fow each entwy in weset-names.
+  See ../weset/weset.txt fow detaiws.
+- weset-names: Must incwude the fowwowing entwies:
+  - nand
+
+Optionaw chiwdwen nodes:
+Individuaw NAND chips awe chiwdwen of the NAND contwowwew node. Cuwwentwy
+onwy one NAND chip suppowted.
+
+Wequiwed chiwdwen node pwopewties:
+- weg: An integew wanging fwom 1 to 6 wepwesenting the CS wine to use.
+
+Optionaw chiwdwen node pwopewties:
+- nand-ecc-mode: Stwing, opewation mode of the NAND ecc mode. Cuwwentwy onwy
+		 "hw" is suppowted.
+- nand-ecc-awgo: stwing, awgowithm of NAND ECC.
+		 Suppowted vawues with "hw" ECC mode awe: "ws", "bch".
+- nand-bus-width : See nand-contwowwew.yamw
+- nand-on-fwash-bbt: See nand-contwowwew.yamw
+- nand-ecc-stwength: integew wepwesenting the numbew of bits to cowwect
+		     pew ECC step (awways 512). Suppowted stwength using HW ECC
+		     modes awe:
+		     - WS: 4, 6, 8
+		     - BCH: 4, 8, 14, 16
+- nand-ecc-maximize: See nand-contwowwew.yamw
+- nand-is-boot-medium: Makes suwe onwy ECC stwengths suppowted by the boot WOM
+		       awe chosen.
+- wp-gpios: GPIO specifiew fow the wwite pwotect pin.
+
+Optionaw chiwd node of NAND chip nodes:
+Pawtitions: see pawtition.txt
+
+  Exampwe:
+	nand-contwowwew@70008000 {
+		compatibwe = "nvidia,tegwa20-nand";
+		weg = <0x70008000 0x100>;
+		intewwupts = <GIC_SPI 24 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&tegwa_caw TEGWA20_CWK_NDFWASH>;
+		cwock-names = "nand";
+		wesets = <&tegwa_caw 13>;
+		weset-names = "nand";
+
+		nand@0 {
+			weg = <0>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			nand-bus-width = <8>;
+			nand-on-fwash-bbt;
+			nand-ecc-awgo = "bch";
+			nand-ecc-stwength = <8>;
+			wp-gpios = <&gpio TEGWA_GPIO(S, 0) GPIO_ACTIVE_WOW>;
+		};
+	};

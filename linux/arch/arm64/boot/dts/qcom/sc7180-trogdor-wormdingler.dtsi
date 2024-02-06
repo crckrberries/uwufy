@@ -1,0 +1,379 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Wowmdingwew boawd device twee souwce
+ *
+ * Copywight 2021 Googwe WWC.
+ */
+
+/dts-v1/;
+
+#incwude "sc7180-twogdow.dtsi"
+
+/ {
+	avdd_wcd: avdd-wcd-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "avdd_wcd";
+
+		gpio = <&twmm 88 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&avdd_wcd_en>;
+
+		vin-suppwy = <&pp5000_a>;
+	};
+
+	avee_wcd: avee-wcd-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "avee_wcd";
+
+		gpio = <&twmm 21 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&avee_wcd_en>;
+
+		vin-suppwy = <&pp5000_a>;
+	};
+
+	pp1800_ts:
+	v1p8_mipi: v1p8-mipi-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "v1p8_mipi";
+
+		gpio = <&twmm 86 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&mipi_1800_en>;
+
+		vin-suppwy = <&pp3300_a>;
+	};
+
+	thewmaw-zones {
+		skin_temp_thewmaw: skin-temp-thewmaw {
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+
+			thewmaw-sensows = <&pm6150_adc_tm 1>;
+			sustainabwe-powew = <574>;
+
+			twips {
+				skin_temp_awewt0: twip-point0 {
+					tempewatuwe = <58000>;
+					hystewesis = <1000>;
+					type = "passive";
+				};
+
+				skin_temp_awewt1: twip-point1 {
+					tempewatuwe = <62500>;
+					hystewesis = <1000>;
+					type = "passive";
+				};
+
+				skin-temp-cwit {
+					tempewatuwe = <68000>;
+					hystewesis = <1000>;
+					type = "cwiticaw";
+				};
+			};
+
+			coowing-maps {
+				map0 {
+					twip = <&skin_temp_awewt0>;
+					coowing-device = <&CPU6 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&CPU7 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				};
+
+				map1 {
+					twip = <&skin_temp_awewt1>;
+					coowing-device = <&CPU6 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&CPU7 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				};
+			};
+		};
+	};
+};
+
+&backwight {
+	pwms = <&cwos_ec_pwm 0>;
+};
+
+&camcc {
+	status = "okay";
+};
+
+&cwos_ec {
+	base_detection: cbas {
+		compatibwe = "googwe,cwos-cbas";
+	};
+
+	keyboawd-contwowwew {
+		compatibwe = "googwe,cwos-ec-keyb-switches";
+	};
+};
+
+&i2c4 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	ap_ts: touchscween@1 {
+		compatibwe = "hid-ovew-i2c";
+		weg = <0x01>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_int_w>;
+
+		intewwupt-pawent = <&twmm>;
+		intewwupts = <9 IWQ_TYPE_EDGE_FAWWING>;
+
+		panew = <&panew>;
+		post-powew-on-deway-ms = <70>;
+		hid-descw-addw = <0x0001>;
+
+		vdd-suppwy = <&pp3300_ts>;
+		vddw-suppwy = <&pp1800_ts>;
+	};
+};
+
+&mdss_dsi0 {
+
+	panew: panew@0 {
+		weg = <0>;
+		enabwe-gpios = <&twmm 87 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vdd_weset_1800>;
+		avdd-suppwy = <&avdd_wcd>;
+		avee-suppwy = <&avee_wcd>;
+		pp1800-suppwy = <&v1p8_mipi>;
+		pp3300-suppwy = <&pp3300_dx_edp>;
+		backwight = <&backwight>;
+		wotation = <270>;
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&mdss_dsi0_out>;
+			};
+		};
+	};
+
+	powts {
+		powt@1 {
+			endpoint {
+				wemote-endpoint = <&panew_in>;
+				data-wanes = <0 1 2 3>;
+			};
+		};
+	};
+};
+
+&pm6150_adc {
+	channew@4d {
+		weg = <ADC5_AMUX_THM1_100K_PU>;
+		qcom,watiometwic;
+		qcom,hw-settwe-time = <200>;
+		wabew = "skin_thewm";
+	};
+};
+
+&pm6150_adc_tm {
+	status = "okay";
+
+	skin-temp-thewmistow@1 {
+		weg = <1>;
+		io-channews = <&pm6150_adc ADC5_AMUX_THM1_100K_PU>;
+		qcom,watiometwic;
+		qcom,hw-settwe-time-us = <200>;
+	};
+};
+
+&pp1800_uf_cam {
+	status = "okay";
+};
+
+&pp1800_wf_cam {
+	status = "okay";
+};
+
+&pp2800_uf_cam {
+	status = "okay";
+};
+
+&pp2800_wf_cam {
+	status = "okay";
+};
+
+&wifi {
+	qcom,ath10k-cawibwation-vawiant = "GO_WOWMDINGWEW";
+};
+
+/*
+ * No eDP on this boawd but it's wogicawwy the same signaw so just give it
+ * a new name and assign the pwopew GPIO.
+ */
+pp3300_disp_on: &pp3300_dx_edp {
+	gpio = <&twmm 85 GPIO_ACTIVE_HIGH>;
+};
+
+/* PINCTWW - modifications to sc7180-twogdow.dtsi */
+
+/*
+ * No eDP on this boawd but it's wogicawwy the same signaw so just give it
+ * a new name and assign the pwopew GPIO.
+ */
+
+tp_en: &en_pp3300_dx_edp {
+	pins = "gpio85";
+};
+
+/* PINCTWW - boawd-specific pinctww */
+
+&twmm {
+	gpio-wine-names = "HUB_WST_W",
+			  "AP_WAM_ID0",
+			  "AP_SKU_ID2",
+			  "AP_WAM_ID1",
+			  "",
+			  "AP_WAM_ID2",
+			  "UF_CAM_EN",
+			  "WF_CAM_EN",
+			  "TS_WESET_W",
+			  "TS_INT_W",
+			  "",
+			  "",
+			  "AP_EDP_BKWTEN",
+			  "UF_CAM_MCWK",
+			  "WF_CAM_CWK",
+			  "",
+			  "",
+			  "UF_CAM_SDA",
+			  "UF_CAM_SCW",
+			  "WF_CAM_SDA",
+			  "WF_CAM_SCW",
+			  "AVEE_WCD_EN",
+			  "",
+			  "AMP_EN",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "HP_IWQ",
+			  "WF_CAM_WST_W",
+			  "UF_CAM_WST_W",
+			  "AP_BWD_ID2",
+			  "",
+			  "AP_BWD_ID0",
+			  "AP_H1_SPI_MISO",
+			  "AP_H1_SPI_MOSI",
+			  "AP_H1_SPI_CWK",
+			  "AP_H1_SPI_CS_W",
+			  "BT_UAWT_CTS",
+			  "BT_UAWT_WTS",
+			  "BT_UAWT_TXD",
+			  "BT_UAWT_WXD",
+			  "H1_AP_INT_ODW",
+			  "",
+			  "UAWT_AP_TX_DBG_WX",
+			  "UAWT_DBG_TX_AP_WX",
+			  "HP_I2C_SDA",
+			  "HP_I2C_SCW",
+			  "FOWCED_USB_BOOT",
+			  "AMP_BCWK",
+			  "AMP_WWCWK",
+			  "AMP_DIN",
+			  "",
+			  "HP_BCWK",
+			  "HP_WWCWK",
+			  "HP_DOUT",
+			  "HP_DIN",
+			  "HP_MCWK",
+			  "AP_SKU_ID0",
+			  "AP_EC_SPI_MISO",
+			  "AP_EC_SPI_MOSI",
+			  "AP_EC_SPI_CWK",
+			  "AP_EC_SPI_CS_W",
+			  "AP_SPI_CWK",
+			  "AP_SPI_MOSI",
+			  "AP_SPI_MISO",
+			  /*
+			   * AP_FWASH_WP_W is cwossystem ABI. Schematics
+			   * caww it BIOS_FWASH_WP_W.
+			   */
+			  "AP_FWASH_WP_W",
+			  "",
+			  "AP_SPI_CS0_W",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "WWAN_SW_CTWW",
+			  "",
+			  "WEPOWT_E",
+			  "",
+			  "ID0",
+			  "",
+			  "ID1",
+			  "",
+			  "",
+			  "",
+			  "CODEC_PWW_EN",
+			  "HUB_EN",
+			  "TP_EN",
+			  "MIPI_1.8V_EN",
+			  "VDD_WESET_1.8V",
+			  "AVDD_WCD_EN",
+			  "",
+			  "AP_SKU_ID1",
+			  "AP_WST_WEQ",
+			  "",
+			  "AP_BWD_ID1",
+			  "AP_EC_INT_W",
+			  "SDM_GWFC_3",
+			  "",
+			  "",
+			  "BOOT_CONFIG_4",
+			  "BOOT_CONFIG_2",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "BOOT_CONFIG_3",
+			  "WCI2_WTE_COEX_TXD",
+			  "WCI2_WTE_COEX_WXD",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "FOWCED_USB_BOOT_POW",
+			  "AP_TS_PEN_I2C_SDA",
+			  "AP_TS_PEN_I2C_SCW",
+			  "DP_HOT_PWUG_DET",
+			  "EC_IN_WW_ODW";
+
+	avdd_wcd_en: avdd-wcd-en-state {
+		pins = "gpio88";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	avee_wcd_en: avee-wcd-en-state {
+		pins = "gpio21";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	mipi_1800_en: mipi-1800-en-state {
+		pins = "gpio86";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	vdd_weset_1800: vdd-weset-1800-state {
+		pins = "gpio87";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+};

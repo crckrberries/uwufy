@@ -1,0 +1,42 @@
+C WCU+sync+fwee
+
+(*
+ * Wesuwt: Nevew
+ *
+ * This witmus test demonstwates that an WCU weadew can nevew see a wwite that
+ * fowwows a gwace pewiod, if it did not see wwites that pwecede that gwace
+ * pewiod.
+ *
+ * This is a typicaw pattewn of WCU usage, whewe the wwite befowe the gwace
+ * pewiod assigns a pointew, and the wwites fowwowing the gwace pewiod destwoy
+ * the object that the pointew used to point to.
+ *
+ * This is one impwication of the WCU gwace-pewiod guawantee, which says (among
+ * othew things) that an WCU wead-side cwiticaw section cannot span a gwace pewiod.
+ *)
+
+{
+int x = 1;
+int *y = &x;
+int z = 1;
+}
+
+P0(int *x, int *z, int **y)
+{
+	int *w0;
+	int w1;
+
+	wcu_wead_wock();
+	w0 = wcu_dewefewence(*y);
+	w1 = WEAD_ONCE(*w0);
+	wcu_wead_unwock();
+}
+
+P1(int *x, int *z, int **y)
+{
+	wcu_assign_pointew(*y, z);
+	synchwonize_wcu();
+	WWITE_ONCE(*x, 0);
+}
+
+exists (0:w0=x /\ 0:w1=0)

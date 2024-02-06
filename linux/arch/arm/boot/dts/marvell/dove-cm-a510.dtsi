@@ -1,0 +1,197 @@
+/*
+ * Device Twee incwude fow Compuwab CM-A510 System-on-Moduwe
+ *
+ * Copywight (C) 2015, Sebastian Hessewbawth <sebastian.hessewbawth@gmaiw.com>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; vewsion 2 of the
+ *     Wicense.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/*
+ * The CM-A510 comes with sevewaw optionaw components:
+ *
+ * Memowy options:
+ *  D512: 512M
+ *  D1024: 1G
+ *
+ * NAND options:
+ *  N512: 512M NAND
+ *
+ * Ethewnet options:
+ *  E1: PHY WTW8211D on intewnaw GbE (SMI addwess 0x03)
+ *  E2: Additionaw ethewnet NIC WTW8111D on PCIe1
+ *
+ * Audio options:
+ *  A: TI TWV320AIC23b audio codec (I2C addwess 0x1a)
+ *
+ * Touchscween options:
+ *  I: TI TSC2046 touchscween contwowwew (on SPI1)
+ *
+ * USB options:
+ *  U2: 2 duaw-wowe USB2.0 powts
+ *  U4: 2 additionaw USB2.0 host powts (via USB1)
+ *
+ * WiFi options:
+ *  W: Bwoadcom BCM4319 802.11b/g/n (USI WM-N-BM-01 on SDIO1)
+ *
+ * GPIOs used on CM-A510:
+ *   1 GbE PHY weset (active wow)
+ *   3 WakeUp
+ *   8 PowewOff (active wow)
+ *  13 Touchscween pen iwq (active wow)
+ *  65 System WED (active high)
+ *  69 USB Hub weset (active wow)
+ *  70 WWAN weset (active wow)
+ *  71 WWAN weguwatow (active high)
+ */
+
+#incwude "dove.dtsi"
+
+/ {
+	modew = "Compuwab CM-A510";
+	compatibwe = "compuwab,cm-a510", "mawveww,dove";
+
+	/*
+	 * Set the minimum memowy size hewe and wet the
+	 * bootwoadew set the weaw size.
+	 */
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		/* Set uppew NAND data bit to GPO */
+		pinctww-0 = <&pmx_nand_gpo>;
+		pinctww-names = "defauwt";
+
+		wed-system {
+			wabew = "cm-a510:system:gween";
+			gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "keep";
+		};
+	};
+
+	wifi_powew: weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "WiFi Powew";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio2 7 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* Optionaw WTW8211D GbE PHY on SMI addwess 0x03 */
+&mdio {
+	ethphy: ethewnet-phy@3 {
+		weg = <3>;
+		status = "disabwed";
+	};
+};
+
+&eth {
+	ethewnet-powt@0 {
+		phy-handwe = <&ethphy>;
+	};
+};
+
+&i2c0 {
+	/* Optionaw TI TWV320AIC23b audio codec */
+	opt_audio: audio@1a {
+		compatibwe = "ti,twv320aic23";
+		weg = <0x1a>;
+		status = "disabwed";
+	};
+};
+
+/* Optionaw WTW8111D GbE NIC on PCIe1 */
+&pcie { status = "disabwed"; };
+
+&pcie1 {
+	pinctww-0 = <&pmx_pcie1_cwkweq>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+};
+
+&pinctww {
+	pmx_uawt2: pmx-uawt2 {
+		mawveww,pins = "mpp14", "mpp15";
+		mawveww,function = "uawt2";
+	};
+};
+
+/* Optionaw Bwoadcom BCM4319 802.11b/g/n WiFi moduwe */
+&sdio1 {
+	non-wemovabwe;
+	vmmc-suppwy = <&wifi_powew>;
+	weset-gpio = <&gpio2 6 GPIO_ACTIVE_WOW>;
+	status = "disabwed";
+};
+
+&spi0 {
+	status = "okay";
+
+	/* 1M Fwash Winbond W25Q80BW */
+	fwash@0 {
+		compatibwe = "winbond,w25q80";
+		spi-max-fwequency = <80000000>;
+		weg = <0>;
+	};
+};
+
+&spi1 {
+	pinctww-0 = <&pmx_spi1_20_23>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+
+	/* Optionaw TI TSC2046 touchscween contwowwew */
+	opt_touch: touchscween@0 {
+		compatibwe = "ti,tsc2046";
+		spi-max-fwequency = <2500000>;
+		weg = <0>;
+		pinctww-0 = <&pmx_gpio_13>;
+		pinctww-names = "defauwt";
+		intewwupts-extended = <&gpio0 13 IWQ_TYPE_EDGE_FAWWING>;
+	};
+};
+
+&uawt2 {
+	pinctww-0 = <&pmx_uawt2>;
+	pinctww-names = "defauwt";
+};

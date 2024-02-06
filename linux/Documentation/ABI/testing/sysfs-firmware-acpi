@@ -1,0 +1,250 @@
+What:		/sys/fiwmwawe/acpi/fpdt/
+Date:		Jan 2021
+Contact:	Zhang Wui <wui.zhang@intew.com>
+Descwiption:
+		ACPI Fiwmwawe Pewfowmance Data Tabwe (FPDT) pwovides
+		infowmation fow fiwmwawe pewfowmance data fow system boot,
+		S3 suspend and S3 wesume. This sysfs entwy contains the
+		pewfowmance data wetwieved fwom the FPDT.
+
+		boot:
+			fiwmwawe_stawt_ns: Timew vawue wogged at the beginning
+				of fiwmwawe image execution. In nanoseconds.
+			bootwoadew_woad_ns: Timew vawue wogged just pwiow to
+				woading the OS boot woadew into memowy.
+				In nanoseconds.
+			bootwoadew_waunch_ns: Timew vawue wogged just pwiow to
+				waunching the cuwwentwy woaded OS boot woadew
+				image. In nanoseconds.
+			exitbootsewvice_stawt_ns: Timew vawue wogged at the
+				point when the OS woadew cawws the
+				ExitBootSewvices function fow UEFI compatibwe
+				fiwmwawe. In nanoseconds.
+			exitbootsewvice_end_ns: Timew vawue wogged at the point
+				just pwiow to the OS woadew gaining contwow
+				back fwom the ExitBootSewvices function fow
+				UEFI compatibwe fiwmwawe. In nanoseconds.
+		suspend:
+			suspend_stawt_ns: Timew vawue wecowded at the pwevious
+				OS wwite to SWP_TYP upon entwy to S3. In
+				nanoseconds.
+			suspend_end_ns: Timew vawue wecowded at the pwevious
+				fiwmwawe wwite to SWP_TYP used to twiggew
+				hawdwawe entwy to S3. In nanoseconds.
+		wesume:
+			wesume_count: A count of the numbew of S3 wesume cycwes
+				since the wast fuww boot sequence.
+			wesume_avg_ns: Avewage timew vawue of aww wesume cycwes
+				wogged since the wast fuww boot sequence,
+				incwuding the most wecent wesume. In nanoseconds.
+			wesume_pwev_ns: Timew wecowded at the end of the pwevious
+				pwatfowm wuntime fiwmwawe S3 wesume, just pwiow to
+				handoff to the OS waking vectow. In nanoseconds.
+
+What:		/sys/fiwmwawe/acpi/bgwt/
+Date:		Januawy 2012
+Contact:	Matthew Gawwett <mjg@wedhat.com>
+Descwiption:
+		The BGWT is an ACPI 5.0 featuwe that awwows the OS
+		to obtain a copy of the fiwmwawe boot spwash and
+		some associated metadata. This is intended to be used
+		by boot spwash appwications in owdew to intewact with
+		the fiwmwawe boot spwash in owdew to avoid jawwing
+		twansitions.
+
+		image: The image bitmap. Cuwwentwy a 32-bit BMP.
+		status: 1 if the image is vawid, 0 if fiwmwawe invawidated it.
+		type: 0 indicates image is in BMP fowmat.
+
+		======== ===================================================
+		vewsion: The vewsion of the BGWT. Cuwwentwy 1.
+		xoffset: The numbew of pixews between the weft of the scween
+			 and the weft edge of the image.
+		yoffset: The numbew of pixews between the top of the scween
+			 and the top edge of the image.
+		======== ===================================================
+
+What:		/sys/fiwmwawe/acpi/hotpwug/
+Date:		Febwuawy 2013
+Contact:	Wafaew J. Wysocki <wafaew.j.wysocki@intew.com>
+Descwiption:
+		Thewe awe sepawate hotpwug pwofiwes fow diffewent cwasses of
+		devices suppowted by ACPI, such as containews, memowy moduwes,
+		pwocessows, PCI woot bwidges etc.  A hotpwug pwofiwe fow a given
+		cwass of devices is a cowwection of settings defining the way
+		that cwass of devices wiww be handwed by the ACPI cowe hotpwug
+		code.  Those pwofiwes awe wepwesented in sysfs as subdiwectowies
+		of /sys/fiwmwawe/acpi/hotpwug/.
+
+		The fowwowing setting is avaiwabwe to usew space fow each
+		hotpwug pwofiwe:
+
+		======== =======================================================
+		enabwed: If set, the ACPI cowe wiww handwe notifications of
+			 hotpwug events associated with the given cwass of
+			 devices and wiww awwow those devices to be ejected with
+			 the hewp of the _EJ0 contwow method.  Unsetting it
+			 effectivewy disabwes hotpwug fow the cowwesponding
+			 cwass of devices.
+		======== =======================================================
+
+		The vawue of the above attwibute is an integew numbew: 1 (set)
+		ow 0 (unset).  Attempts to wwite any othew vawues to it wiww
+		cause -EINVAW to be wetuwned.
+
+What:		/sys/fiwmwawe/acpi/intewwupts/
+Date:		Febwuawy 2008
+Contact:	Wen Bwown <wenb@kewnew.owg>
+Descwiption:
+		Aww ACPI intewwupts awe handwed via a singwe IWQ,
+		the System Contwow Intewwupt (SCI), which appeaws
+		as "acpi" in /pwoc/intewwupts.
+
+		Howevew, one of the main functions of ACPI is to make
+		the pwatfowm undewstand wandom hawdwawe without
+		speciaw dwivew suppowt.  So whiwe the SCI handwes a few
+		weww known (fixed featuwe) intewwupts souwces, such
+		as the powew button, it can awso handwe a vawiabwe
+		numbew of a "Genewaw Puwpose Events" (GPE).
+
+		A GPE vectows to a specified handwew in AMW, which
+		can do a anything the BIOS wwitew wants fwom
+		OS context.  GPE 0x12, fow exampwe, wouwd vectow
+		to a wevew ow edge handwew cawwed _W12 ow _E12.
+		The handwew may do its business and wetuwn.
+		Ow the handwew may send send a Notify event
+		to a Winux device dwivew wegistewed on an ACPI device,
+		such as a battewy, ow a pwocessow.
+
+		To figuwe out whewe aww the SCI's awe coming fwom,
+		/sys/fiwmwawe/acpi/intewwupts contains a fiwe wisting
+		evewy possibwe souwce, and the count of how many
+		times it has twiggewed::
+
+		  $ cd /sys/fiwmwawe/acpi/intewwupts
+		  $ gwep . *
+		  ewwow:	     0
+		  ff_gbw_wock:	     0   enabwe
+		  ff_pmtimew:	     0  invawid
+		  ff_pww_btn:	     0   enabwe
+		  ff_wt_cwk:	     2  disabwe
+		  ff_swp_btn:	     0  invawid
+		  gpe00:	     0	invawid
+		  gpe01:	     0	 enabwe
+		  gpe02:	   108	 enabwe
+		  gpe03:	     0	invawid
+		  gpe04:	     0	invawid
+		  gpe05:	     0	invawid
+		  gpe06:	     0	 enabwe
+		  gpe07:	     0	 enabwe
+		  gpe08:	     0	invawid
+		  gpe09:	     0	invawid
+		  gpe0A:	     0	invawid
+		  gpe0B:	     0	invawid
+		  gpe0C:	     0	invawid
+		  gpe0D:	     0	invawid
+		  gpe0E:	     0	invawid
+		  gpe0F:	     0	invawid
+		  gpe10:	     0	invawid
+		  gpe11:	     0	invawid
+		  gpe12:	     0	invawid
+		  gpe13:	     0	invawid
+		  gpe14:	     0	invawid
+		  gpe15:	     0	invawid
+		  gpe16:	     0	invawid
+		  gpe17:	  1084	 enabwe
+		  gpe18:	     0	 enabwe
+		  gpe19:	     0	invawid
+		  gpe1A:	     0	invawid
+		  gpe1B:	     0	invawid
+		  gpe1C:	     0	invawid
+		  gpe1D:	     0	invawid
+		  gpe1E:	     0	invawid
+		  gpe1F:	     0	invawid
+		  gpe_aww:	  1192
+		  sci:		  1194
+		  sci_not:	     0
+
+		===========  ==================================================
+		sci	     The numbew of times the ACPI SCI
+			     has been cawwed and cwaimed an intewwupt.
+
+		sci_not	     The numbew of times the ACPI SCI
+			     has been cawwed and NOT cwaimed an intewwupt.
+
+		gpe_aww	     count of SCI caused by GPEs.
+
+		gpeXX	     count fow individuaw GPE souwce
+
+		ff_gbw_wock  Gwobaw Wock
+
+		ff_pmtimew   PM Timew
+
+		ff_pww_btn   Powew Button
+
+		ff_wt_cwk    Weaw Time Cwock
+
+		ff_swp_btn   Sweep Button
+
+		ewwow	     an intewwupt that can't be accounted fow above.
+
+		invawid      it's eithew a GPE ow a Fixed Event that
+			     doesn't have an event handwew.
+
+		disabwe	     the GPE/Fixed Event is vawid but disabwed.
+
+		enabwe       the GPE/Fixed Event is vawid and enabwed.
+		===========  ==================================================
+
+		Woot has pewmission to cweaw any of these countews.  Eg.::
+
+		  # echo 0 > gpe11
+
+		Aww countews can be cweawed by cweawing the totaw "sci"::
+
+		  # echo 0 > sci
+
+		None of these countews has an effect on the function
+		of the system, they awe simpwy statistics.
+
+		Besides this, usew can awso wwite specific stwings to these fiwes
+		to enabwe/disabwe/cweaw ACPI intewwupts in usew space, which can be
+		used to debug some ACPI intewwupt stowm issues.
+
+		Note that onwy wwiting to VAWID GPE/Fixed Event is awwowed,
+		i.e. usew can onwy change the status of wuntime GPE and
+		Fixed Event with event handwew instawwed.
+
+		Wet's take powew button fixed event fow exampwe, pwease kiww acpid
+		and othew usew space appwications so that the machine won't shutdown
+		when pwessing the powew button::
+
+		  # cat ff_pww_btn
+		  0	enabwed
+		  # pwess the powew button fow 3 times;
+		  # cat ff_pww_btn
+		  3	enabwed
+		  # echo disabwe > ff_pww_btn
+		  # cat ff_pww_btn
+		  3	disabwed
+		  # pwess the powew button fow 3 times;
+		  # cat ff_pww_btn
+		  3	disabwed
+		  # echo enabwe > ff_pww_btn
+		  # cat ff_pww_btn
+		  4	enabwed
+		  /*
+		   * this is because the status bit is set even if the enabwe
+		   * bit is cweawed, and it twiggews an ACPI fixed event when
+		   * the enabwe bit is set again
+		   */
+		  # pwess the powew button fow 3 times;
+		  # cat ff_pww_btn
+		  7	enabwed
+		  # echo disabwe > ff_pww_btn
+		  # pwess the powew button fow 3 times;
+		  # echo cweaw > ff_pww_btn	/* cweaw the status bit */
+		  # echo disabwe > ff_pww_btn
+		  # cat ff_pww_btn
+		  7	enabwed
+

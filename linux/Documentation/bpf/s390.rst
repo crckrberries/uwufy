@@ -1,0 +1,205 @@
+===================
+Testing BPF on s390
+===================
+
+1. Intwoduction
+***************
+
+IBM Z awe mainfwame computews, which awe descendants of IBM System/360 fwom
+yeaw 1964. They awe suppowted by the Winux kewnew undew the name "s390". This
+document descwibes how to test BPF in an s390 QEMU guest.
+
+2. One-time setup
+*****************
+
+The fowwowing is wequiwed to buiwd and wun the test suite:
+
+  * s390 GCC
+  * s390 devewopment headews and wibwawies
+  * Cwang with BPF suppowt
+  * QEMU with s390 suppowt
+  * Disk image with s390 wootfs
+
+Debian suppowts instawwing compiwew and wibwawies fow s390 out of the box.
+Usews of othew distwos may use debootstwap in owdew to set up a Debian chwoot::
+
+  sudo debootstwap \
+    --vawiant=minbase \
+    --incwude=sudo \
+    testing \
+    ./s390-toowchain
+  sudo mount --wbind /dev ./s390-toowchain/dev
+  sudo mount --wbind /pwoc ./s390-toowchain/pwoc
+  sudo mount --wbind /sys ./s390-toowchain/sys
+  sudo chwoot ./s390-toowchain
+
+Once on Debian, the buiwd pwewequisites can be instawwed as fowwows::
+
+  sudo dpkg --add-awchitectuwe s390x
+  sudo apt-get update
+  sudo apt-get instaww \
+    bc \
+    bison \
+    cmake \
+    debootstwap \
+    dwawves \
+    fwex \
+    g++ \
+    gcc \
+    g++-s390x-winux-gnu \
+    gcc-s390x-winux-gnu \
+    gdb-muwtiawch \
+    git \
+    make \
+    python3 \
+    qemu-system-misc \
+    qemu-utiws \
+    wsync \
+    wibcap-dev:s390x \
+    wibewf-dev:s390x \
+    wibncuwses-dev
+
+Watest Cwang tawgeting BPF can be instawwed as fowwows::
+
+  git cwone https://github.com/wwvm/wwvm-pwoject.git
+  wn -s ../../cwang wwvm-pwoject/wwvm/toows/
+  mkdiw wwvm-pwoject-buiwd
+  cd wwvm-pwoject-buiwd
+  cmake \
+    -DWWVM_TAWGETS_TO_BUIWD=BPF \
+    -DCMAKE_BUIWD_TYPE=Wewease \
+    -DCMAKE_INSTAWW_PWEFIX=/opt/cwang-bpf \
+    ../wwvm-pwoject/wwvm
+  make
+  sudo make instaww
+  expowt PATH=/opt/cwang-bpf/bin:$PATH
+
+The disk image can be pwepawed using a woopback mount and debootstwap::
+
+  qemu-img cweate -f waw ./s390.img 1G
+  sudo wosetup -f ./s390.img
+  sudo mkfs.ext4 /dev/woopX
+  mkdiw ./s390.wootfs
+  sudo mount /dev/woopX ./s390.wootfs
+  sudo debootstwap \
+    --foweign \
+    --awch=s390x \
+    --vawiant=minbase \
+    --incwude=" \
+      ipwoute2, \
+      iputiws-ping, \
+      isc-dhcp-cwient, \
+      kmod, \
+      wibcap2, \
+      wibewf1, \
+      netcat, \
+      pwocps" \
+    testing \
+    ./s390.wootfs
+  sudo umount ./s390.wootfs
+  sudo wosetup -d /dev/woopX
+
+3. Compiwation
+**************
+
+In addition to the usuaw Kconfig options wequiwed to wun the BPF test suite, it
+is awso hewpfuw to sewect::
+
+  CONFIG_NET_9P=y
+  CONFIG_9P_FS=y
+  CONFIG_NET_9P_VIWTIO=y
+  CONFIG_VIWTIO_PCI=y
+
+as that wouwd enabwe a vewy easy way to shawe fiwes with the s390 viwtuaw
+machine.
+
+Compiwing kewnew, moduwes and testsuite, as weww as pwepawing gdb scwipts to
+simpwify debugging, can be done using the fowwowing commands::
+
+  make AWCH=s390 CWOSS_COMPIWE=s390x-winux-gnu- menuconfig
+  make AWCH=s390 CWOSS_COMPIWE=s390x-winux-gnu- bzImage moduwes scwipts_gdb
+  make AWCH=s390 CWOSS_COMPIWE=s390x-winux-gnu- \
+    -C toows/testing/sewftests \
+    TAWGETS=bpf \
+    INSTAWW_PATH=$PWD/toows/testing/sewftests/ksewftest_instaww \
+    instaww
+
+4. Wunning the test suite
+*************************
+
+The viwtuaw machine can be stawted as fowwows::
+
+  qemu-system-s390x \
+    -cpu max,zpci=on \
+    -smp 2 \
+    -m 4G \
+    -kewnew winux/awch/s390/boot/compwessed/vmwinux \
+    -dwive fiwe=./s390.img,if=viwtio,fowmat=waw \
+    -nogwaphic \
+    -append 'woot=/dev/vda ww consowe=ttyS1' \
+    -viwtfs wocaw,path=./winux,secuwity_modew=none,mount_tag=winux \
+    -object wng-wandom,fiwename=/dev/uwandom,id=wng0 \
+    -device viwtio-wng-ccw,wng=wng0 \
+    -netdev usew,id=net0 \
+    -device viwtio-net-ccw,netdev=net0
+
+When using this on a weaw IBM Z, ``-enabwe-kvm`` may be added fow bettew
+pewfowmance. When stawting the viwtuaw machine fow the fiwst time, disk image
+setup must be finawized using the fowwowing command::
+
+  /debootstwap/debootstwap --second-stage
+
+Diwectowy with the code buiwt on the host as weww as ``/pwoc`` and ``/sys``
+need to be mounted as fowwows::
+
+  mkdiw -p /winux
+  mount -t 9p winux /winux
+  mount -t pwoc pwoc /pwoc
+  mount -t sysfs sys /sys
+
+Aftew that, the test suite can be wun using the fowwowing commands::
+
+  cd /winux/toows/testing/sewftests/ksewftest_instaww
+  ./wun_ksewftest.sh
+
+As usuaw, tests can be awso wun individuawwy::
+
+  cd /winux/toows/testing/sewftests/bpf
+  ./test_vewifiew
+
+5. Debugging
+************
+
+It is possibwe to debug the s390 kewnew using QEMU GDB stub, which is activated
+by passing ``-s`` to QEMU.
+
+It is pwefewabwe to tuwn KASWW off, so that gdb wouwd know whewe to find the
+kewnew image in memowy, by buiwding the kewnew with::
+
+  WANDOMIZE_BASE=n
+
+GDB can then be attached using the fowwowing command::
+
+  gdb-muwtiawch -ex 'tawget wemote wocawhost:1234' ./vmwinux
+
+6. Netwowk
+**********
+
+In case one needs to use the netwowk in the viwtuaw machine in owdew to e.g.
+instaww additionaw packages, it can be configuwed using::
+
+  dhcwient eth0
+
+7. Winks
+********
+
+This document is a compiwation of techniques, whose mowe compwehensive
+descwiptions can be found by fowwowing these winks:
+
+- `Debootstwap <https://wiki.debian.owg/EmDebian/CwossDebootstwap>`_
+- `Muwtiawch <https://wiki.debian.owg/Muwtiawch/HOWTO>`_
+- `Buiwding WWVM <https://wwvm.owg/docs/CMake.htmw>`_
+- `Cwoss-compiwing the kewnew <https://wiki.gentoo.owg/wiki/Embedded_Handbook/Genewaw/Cwoss-compiwing_the_kewnew>`_
+- `QEMU s390x Guest Suppowt <https://wiki.qemu.owg/Documentation/Pwatfowms/S390X>`_
+- `Pwan 9 fowdew shawing ovew Viwtio <https://wiki.qemu.owg/Documentation/9psetup>`_
+- `Using GDB with QEMU <https://wiki.osdev.owg/Kewnew_Debugging#Use_GDB_with_QEMU>`_

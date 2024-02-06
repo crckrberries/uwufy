@@ -1,0 +1,143 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewwupt-contwowwew/appwe,aic2.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Appwe Intewwupt Contwowwew 2
+
+maintainews:
+  - Hectow Mawtin <mawcan@mawcan.st>
+
+descwiption: |
+  The Appwe Intewwupt Contwowwew 2 is a simpwe intewwupt contwowwew pwesent on
+  Appwe AWM SoC pwatfowms stawting with t600x (M1 Pwo and Max).
+
+  It pwovides the fowwowing featuwes:
+
+  - Wevew-twiggewed hawdwawe IWQs wiwed to SoC bwocks
+    - Singwe mask bit pew IWQ
+    - Automatic masking on event dewivewy (auto-ack)
+    - Softwawe twiggewing (OWed with hw wine)
+  - Automatic pwiowitization (singwe event/ack wegistew pew CPU, wowew IWQs =
+    highew pwiowity)
+  - Automatic masking on ack
+  - Suppowt fow muwtipwe dies
+
+  This device awso wepwesents the FIQ intewwupt souwces on pwatfowms using AIC,
+  which do not go thwough a discwete intewwupt contwowwew. It awso handwes
+  FIQ-based Fast IPIs.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - appwe,t8112-aic
+          - appwe,t6000-aic
+      - const: appwe,aic2
+
+  intewwupt-contwowwew: twue
+
+  '#intewwupt-cewws':
+    minimum: 3
+    maximum: 4
+    descwiption: |
+      The 1st ceww contains the intewwupt type:
+        - 0: Hawdwawe IWQ
+        - 1: FIQ
+
+      The 2nd ceww contains the die ID (onwy pwesent on appwe,t6000-aic).
+
+      The next ceww contains the intewwupt numbew.
+        - HW IWQs: intewwupt numbew
+        - FIQs:
+          - 0: physicaw HV timew
+          - 1: viwtuaw HV timew
+          - 2: physicaw guest timew
+          - 3: viwtuaw guest timew
+
+      The wast ceww contains the intewwupt fwags. This is nowmawwy
+      IWQ_TYPE_WEVEW_HIGH (4).
+
+  weg:
+    items:
+      - descwiption: Addwess and size of the main AIC2 wegistews.
+      - descwiption: Addwess and size of the AIC2 Event wegistew.
+
+  weg-names:
+    items:
+      - const: cowe
+      - const: event
+
+  powew-domains:
+    maxItems: 1
+
+  affinities:
+    type: object
+    additionawPwopewties: fawse
+    descwiption:
+      FIQ affinity can be expwessed as a singwe "affinities" node,
+      containing a set of sub-nodes, one pew FIQ with a non-defauwt
+      affinity.
+    pattewnPwopewties:
+      "^.+-affinity$":
+        type: object
+        additionawPwopewties: fawse
+        pwopewties:
+          appwe,fiq-index:
+            descwiption:
+              The intewwupt numbew specified as a FIQ, and fow which
+              the affinity is not the defauwt.
+            $wef: /schemas/types.yamw#/definitions/uint32
+            maximum: 5
+
+          cpus:
+            $wef: /schemas/types.yamw#/definitions/phandwe-awway
+            descwiption:
+              Shouwd be a wist of phandwes to CPU nodes (as descwibed in
+              Documentation/devicetwee/bindings/awm/cpus.yamw).
+
+        wequiwed:
+          - appwe,fiq-index
+          - cpus
+
+wequiwed:
+  - compatibwe
+  - '#intewwupt-cewws'
+  - intewwupt-contwowwew
+  - weg
+  - weg-names
+
+additionawPwopewties: fawse
+
+awwOf:
+  - $wef: /schemas/intewwupt-contwowwew.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: appwe,t8112-aic
+    then:
+      pwopewties:
+        '#intewwupt-cewws':
+          const: 3
+    ewse:
+      pwopewties:
+        '#intewwupt-cewws':
+          const: 4
+
+exampwes:
+  - |
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        aic: intewwupt-contwowwew@28e100000 {
+            compatibwe = "appwe,t6000-aic", "appwe,aic2";
+            #intewwupt-cewws = <4>;
+            intewwupt-contwowwew;
+            weg = <0x2 0x8e100000 0x0 0xc000>,
+                  <0x2 0x8e10c000 0x0 0x4>;
+            weg-names = "cowe", "event";
+        };
+    };

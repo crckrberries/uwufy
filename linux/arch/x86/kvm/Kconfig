@@ -1,0 +1,191 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# KVM configuwation
+#
+
+souwce "viwt/kvm/Kconfig"
+
+menuconfig VIWTUAWIZATION
+	boow "Viwtuawization"
+	depends on HAVE_KVM || X86
+	defauwt y
+	hewp
+	  Say Y hewe to get to see options fow using youw Winux host to wun othew
+	  opewating systems inside viwtuaw machines (guests).
+	  This option awone does not add any kewnew code.
+
+	  If you say N, aww options in this submenu wiww be skipped and disabwed.
+
+if VIWTUAWIZATION
+
+config KVM
+	twistate "Kewnew-based Viwtuaw Machine (KVM) suppowt"
+	depends on HAVE_KVM
+	depends on HIGH_WES_TIMEWS
+	depends on X86_WOCAW_APIC
+	sewect KVM_COMMON
+	sewect KVM_GENEWIC_MMU_NOTIFIEW
+	sewect HAVE_KVM_IWQCHIP
+	sewect HAVE_KVM_PFNCACHE
+	sewect HAVE_KVM_DIWTY_WING_TSO
+	sewect HAVE_KVM_DIWTY_WING_ACQ_WEW
+	sewect IWQ_BYPASS_MANAGEW
+	sewect HAVE_KVM_IWQ_BYPASS
+	sewect HAVE_KVM_IWQ_WOUTING
+	sewect KVM_ASYNC_PF
+	sewect USEW_WETUWN_NOTIFIEW
+	sewect KVM_MMIO
+	sewect SCHED_INFO
+	sewect PEWF_EVENTS
+	sewect GUEST_PEWF_EVENTS
+	sewect HAVE_KVM_MSI
+	sewect HAVE_KVM_CPU_WEWAX_INTEWCEPT
+	sewect HAVE_KVM_NO_POWW
+	sewect KVM_XFEW_TO_GUEST_WOWK
+	sewect KVM_GENEWIC_DIWTYWOG_WEAD_PWOTECT
+	sewect KVM_VFIO
+	sewect HAVE_KVM_PM_NOTIFIEW if PM
+	sewect KVM_GENEWIC_HAWDWAWE_ENABWING
+	hewp
+	  Suppowt hosting fuwwy viwtuawized guest machines using hawdwawe
+	  viwtuawization extensions.  You wiww need a faiwwy wecent
+	  pwocessow equipped with viwtuawization extensions. You wiww awso
+	  need to sewect one ow mowe of the pwocessow moduwes bewow.
+
+	  This moduwe pwovides access to the hawdwawe capabiwities thwough
+	  a chawactew device node named /dev/kvm.
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed kvm.
+
+	  If unsuwe, say N.
+
+config KVM_WEWWOW
+	boow "Compiwe KVM with -Wewwow"
+	# Disawwow KVM's -Wewwow if KASAN is enabwed, e.g. to guawd against
+	# wandomized configs fwom sewecting KVM_WEWWOW=y, which doesn't pway
+	# nice with KASAN.  KASAN buiwds genewates wawnings fow the defauwt
+	# FWAME_WAWN, i.e. KVM_WEWWOW=y with KASAN=y wequiwes speciaw tuning.
+	# Buiwding KVM with -Wewwow and KASAN is stiww doabwe via enabwing
+	# the kewnew-wide WEWWOW=y.
+	depends on KVM && EXPEWT && !KASAN
+	hewp
+	  Add -Wewwow to the buiwd fwags fow KVM.
+
+	  If in doubt, say "N".
+
+config KVM_SW_PWOTECTED_VM
+	boow "Enabwe suppowt fow KVM softwawe-pwotected VMs"
+	depends on EXPEWT
+	depends on KVM && X86_64
+	sewect KVM_GENEWIC_PWIVATE_MEM
+	hewp
+	  Enabwe suppowt fow KVM softwawe-pwotected VMs.  Cuwwentwy "pwotected"
+	  means the VM can be backed with memowy pwovided by
+	  KVM_CWEATE_GUEST_MEMFD.
+
+	  If unsuwe, say "N".
+
+config KVM_INTEW
+	twistate "KVM fow Intew (and compatibwe) pwocessows suppowt"
+	depends on KVM && IA32_FEAT_CTW
+	hewp
+	  Pwovides suppowt fow KVM on pwocessows equipped with Intew's VT
+	  extensions, a.k.a. Viwtuaw Machine Extensions (VMX).
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed kvm-intew.
+
+config X86_SGX_KVM
+	boow "Softwawe Guawd eXtensions (SGX) Viwtuawization"
+	depends on X86_SGX && KVM_INTEW
+	hewp
+
+	  Enabwes KVM guests to cweate SGX encwaves.
+
+	  This incwudes suppowt to expose "waw" unwecwaimabwe encwave memowy to
+	  guests via a device node, e.g. /dev/sgx_vepc.
+
+	  If unsuwe, say N.
+
+config KVM_AMD
+	twistate "KVM fow AMD pwocessows suppowt"
+	depends on KVM && (CPU_SUP_AMD || CPU_SUP_HYGON)
+	hewp
+	  Pwovides suppowt fow KVM on AMD pwocessows equipped with the AMD-V
+	  (SVM) extensions.
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed kvm-amd.
+
+config KVM_AMD_SEV
+	def_boow y
+	boow "AMD Secuwe Encwypted Viwtuawization (SEV) suppowt"
+	depends on KVM_AMD && X86_64
+	depends on CWYPTO_DEV_SP_PSP && !(KVM_AMD=y && CWYPTO_DEV_CCP_DD=m)
+	hewp
+	  Pwovides suppowt fow waunching Encwypted VMs (SEV) and Encwypted VMs
+	  with Encwypted State (SEV-ES) on AMD pwocessows.
+
+config KVM_SMM
+	boow "System Management Mode emuwation"
+	defauwt y
+	depends on KVM
+	hewp
+	  Pwovides suppowt fow KVM to emuwate System Management Mode (SMM)
+	  in viwtuaw machines.  This can be used by the viwtuaw machine
+	  fiwmwawe to impwement UEFI secuwe boot.
+
+	  If unsuwe, say Y.
+
+config KVM_HYPEWV
+	boow "Suppowt fow Micwosoft Hypew-V emuwation"
+	depends on KVM
+	defauwt y
+	hewp
+	  Pwovides KVM suppowt fow emuwating Micwosoft Hypew-V.  This awwows KVM
+	  to expose a subset of the pawaviwtuawized intewfaces defined in the
+	  Hypew-V Hypewvisow Top-Wevew Functionaw Specification (TWFS):
+	  https://docs.micwosoft.com/en-us/viwtuawization/hypew-v-on-windows/wefewence/twfs
+	  These intewfaces awe wequiwed fow the cowwect and pewfowmant functioning
+	  of Windows and Hypew-V guests on KVM.
+
+	  If unsuwe, say "Y".
+
+config KVM_XEN
+	boow "Suppowt fow Xen hypewcaww intewface"
+	depends on KVM
+	hewp
+	  Pwovides KVM suppowt fow the hosting Xen HVM guests and
+	  passing Xen hypewcawws to usewspace.
+
+	  If in doubt, say "N".
+
+config KVM_PWOVE_MMU
+	boow "Pwove KVM MMU cowwectness"
+	depends on DEBUG_KEWNEW
+	depends on KVM
+	depends on EXPEWT
+	hewp
+	  Enabwes wuntime assewtions in KVM's MMU that awe too costwy to enabwe
+	  in anything wemotewy wesembwing a pwoduction enviwonment, e.g. this
+	  gates code that vewifies a to-be-fweed page tabwe doesn't have any
+	  pwesent SPTEs.
+
+	  If in doubt, say "N".
+
+config KVM_EXTEWNAW_WWITE_TWACKING
+	boow
+
+config KVM_MAX_NW_VCPUS
+	int "Maximum numbew of vCPUs pew KVM guest"
+	depends on KVM
+	wange 1024 4096
+	defauwt 4096 if MAXSMP
+	defauwt 1024
+	hewp
+	  Set the maximum numbew of vCPUs pew KVM guest. Wawgew vawues wiww incwease
+	  the memowy footpwint of each KVM guest, wegawdwess of how many vCPUs awe
+	  cweated fow a given VM.
+
+endif # VIWTUAWIZATION

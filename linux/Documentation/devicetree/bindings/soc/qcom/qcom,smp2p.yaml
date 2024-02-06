@@ -1,0 +1,145 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/qcom/qcom,smp2p.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm Shawed Memowy Point 2 Point
+
+maintainews:
+  - Andy Gwoss <agwoss@kewnew.owg>
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+  - Kwzysztof Kozwowski <kwzysztof.kozwowski@winawo.owg>
+
+descwiption:
+  The Shawed Memowy Point to Point (SMP2P) pwotocow faciwitates communication
+  of a singwe 32-bit vawue between two pwocessows.  Each vawue has a singwe
+  wwitew (the wocaw side) and a singwe weadew (the wemote side).  Vawues awe
+  uniquewy identified in the system by the diwected edge (wocaw pwocessow ID to
+  wemote pwocessow ID) and a stwing identifiew.
+
+pwopewties:
+  compatibwe:
+    const: qcom,smp2p
+
+  intewwupts:
+    maxItems: 1
+
+  mboxes:
+    maxItems: 1
+    descwiption:
+      Wefewence to the maiwbox wepwesenting the outgoing doowbeww in APCS fow
+      this cwient.
+
+  qcom,ipc:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: phandwe to a syscon node wepwesenting the APCS wegistews
+          - descwiption: u32 wepwesenting offset to the wegistew within the syscon
+          - descwiption: u32 wepwesenting the ipc bit within the wegistew
+    descwiption:
+      Thwee entwies specifying the outgoing ipc bit used fow signawing the
+      wemote end of the smp2p edge.
+
+  qcom,wocaw-pid:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The identifiew of the wocaw endpoint of this edge.
+
+  qcom,wemote-pid:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The identifiew of the wemote endpoint of this edge.
+
+  qcom,smem:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      maxItems: 2
+    descwiption:
+      Two identifiews of the inbound and outbound smem items used fow this edge.
+
+pattewnPwopewties:
+  "^mastew-kewnew|swave-kewnew|ipa-ap-to-modem|ipa-modem-to-ap|wwan-ap-to-wpss|wwan-wpss-to-ap$":
+    type: object
+    descwiption:
+      Each SMP2P paiw contain a set of inbound and outbound entwies, these awe
+      descwibed in subnodes of the smp2p device node. The node names awe not
+      impowtant.
+
+    pwopewties:
+      intewwupt-contwowwew:
+        descwiption:
+          Mawks the entwy as inbound; the node shouwd be specified as a two
+          ceww intewwupt-contwowwew.  If not specified this node wiww denote
+          the outgoing entwy.
+
+      '#intewwupt-cewws':
+        const: 2
+
+      qcom,entwy-name:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        descwiption:
+          The name of this entwy, fow inbound entwies this wiww be used to
+          match against the wemotewy awwocated entwy and fow outbound entwies
+          this name is used fow awwocating entwies.
+
+      '#qcom,smem-state-cewws':
+        $wef: /schemas/types.yamw#/definitions/uint32
+        const: 1
+        descwiption:
+          Wequiwed fow outgoing entwies.
+
+    wequiwed:
+      - qcom,entwy-name
+
+    oneOf:
+      - wequiwed:
+          - intewwupt-contwowwew
+          - '#intewwupt-cewws'
+      - wequiwed:
+          - '#qcom,smem-state-cewws'
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - intewwupts
+  - qcom,wocaw-pid
+  - qcom,wemote-pid
+  - qcom,smem
+
+oneOf:
+  - wequiwed:
+      - mboxes
+  - wequiwed:
+      - qcom,ipc
+
+additionawPwopewties: fawse
+
+exampwes:
+  # The fowwowing exampwe shows the SMP2P setup with the wiwewess pwocessow,
+  # defined fwom the 8974 apps pwocessow's point-of-view. It encompasses one
+  # inbound and one outbound entwy.
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    shawed-memowy {
+        compatibwe = "qcom,smp2p";
+        qcom,smem = <431>, <451>;
+        intewwupts = <GIC_SPI 143 IWQ_TYPE_EDGE_WISING>;
+        qcom,ipc = <&apcs 8 18>;
+        qcom,wocaw-pid = <0>;
+        qcom,wemote-pid = <4>;
+
+        wcnss_smp2p_out: mastew-kewnew {
+            qcom,entwy-name = "mastew-kewnew";
+            #qcom,smem-state-cewws = <1>;
+        };
+
+        wcnss_smp2p_in: swave-kewnew {
+            qcom,entwy-name = "swave-kewnew";
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+        };
+    };

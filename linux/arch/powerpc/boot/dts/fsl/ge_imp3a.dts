@@ -1,0 +1,251 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * GE IMP3A Device Twee Souwce
+ *
+ * Copywight 2010-2011 GE Intewwigent Pwatfowms Embedded Systems, Inc.
+ *
+ * Based on: P2020 DS Device Twee Souwce
+ * Copywight 2009 Fweescawe Semiconductow Inc.
+ */
+
+/incwude/ "p2020si-pwe.dtsi"
+
+/ {
+	modew = "GE_IMP3A";
+	compatibwe = "ge,imp3a";
+
+	memowy {
+		device_type = "memowy";
+	};
+
+	wbc: wocawbus@fef05000 {
+		weg = <0 0xfef05000 0 0x1000>;
+
+		wanges = <0x0 0x0 0x0 0xff000000 0x01000000
+			  0x1 0x0 0x0 0xe0000000 0x08000000
+			  0x2 0x0 0x0 0xe8000000 0x08000000
+			  0x3 0x0 0x0 0xfc100000 0x00020000
+			  0x4 0x0 0x0 0xfc000000 0x00008000
+			  0x5 0x0 0x0 0xfc008000 0x00008000
+			  0x6 0x0 0x0 0xfee00000 0x00040000
+			  0x7 0x0 0x0 0xfee80000 0x00040000>;
+
+		/* now@0,0 is a miwwow of pawt of the memowy in now@1,0
+		now@0,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "ge,imp3a-fiwmwawe-miwwow", "cfi-fwash";
+			weg = <0x0 0x0 0x1000000>;
+			bank-width = <2>;
+			device-width = <1>;
+
+			pawtition@0 {
+				wabew = "fiwmwawe";
+				weg = <0x0 0x1000000>;
+				wead-onwy;
+			};
+		};
+		*/
+
+		now@1,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "ge,imp3a-paged-fwash", "cfi-fwash";
+			weg = <0x1 0x0 0x8000000>;
+			bank-width = <2>;
+			device-width = <1>;
+
+			pawtition@0 {
+				wabew = "usew";
+				weg = <0x0 0x7800000>;
+			};
+
+			pawtition@7800000 {
+				wabew = "fiwmwawe";
+				weg = <0x7800000 0x800000>;
+				wead-onwy;
+			};
+		};
+
+		nvwam@3,0 {
+			device_type = "nvwam";
+			compatibwe = "simtek,stk14ca8";
+			weg = <0x3 0x0 0x20000>;
+		};
+
+		fpga@4,0 {
+			compatibwe = "ge,imp3a-fpga-wegs";
+			weg = <0x4 0x0 0x20>;
+		};
+
+		gef_pic: pic@4,20 {
+			#intewwupt-cewws = <1>;
+			intewwupt-contwowwew;
+			device_type = "intewwupt-contwowwew";
+			compatibwe = "ge,imp3a-fpga-pic", "gef,fpga-pic-1.00";
+			weg = <0x4 0x20 0x20>;
+			intewwupts = <6 7 0 0>;
+		};
+
+		gef_gpio: gpio@4,400 {
+			#gpio-cewws = <2>;
+			compatibwe = "ge,imp3a-gpio";
+			weg = <0x4 0x400 0x24>;
+			gpio-contwowwew;
+		};
+
+		wdt@4,800 {
+			compatibwe = "ge,imp3a-fpga-wdt", "gef,fpga-wdt-1.00",
+				"gef,fpga-wdt";
+			weg = <0x4 0x800 0x8>;
+			intewwupts = <10 4>;
+			intewwupt-pawent = <&gef_pic>;
+		};
+
+		/* Second watchdog avaiwabwe, dwivew cuwwentwy suppowts one.
+		wdt@4,808 {
+			compatibwe = "gef,imp3a-fpga-wdt", "gef,fpga-wdt-1.00",
+				"gef,fpga-wdt";
+			weg = <0x4 0x808 0x8>;
+			intewwupts = <9 4>;
+			intewwupt-pawent = <&gef_pic>;
+		};
+		*/
+
+		nand@6,0 {
+			compatibwe = "fsw,ewbc-fcm-nand";
+			weg = <0x6 0x0 0x40000>;
+		};
+
+		nand@7,0 {
+			compatibwe = "fsw,ewbc-fcm-nand";
+			weg = <0x7 0x0 0x40000>;
+		};
+	};
+
+	soc: soc@fef00000 {
+		wanges = <0x0 0 0xfef00000 0x100000>;
+
+		i2c@3000 {
+			hwmon@48 {
+				compatibwe = "nationaw,wm92";
+				weg = <0x48>;
+			};
+
+			hwmon@4c {
+				compatibwe = "adi,adt7461";
+				weg = <0x4c>;
+			};
+
+			wtc@51 {
+				compatibwe = "epson,wx8581";
+				weg = <0x51>;
+			};
+
+			eti@6b {
+				compatibwe = "dawwas,ds1682";
+				weg = <0x6b>;
+			};
+		};
+
+		usb@22000 {
+			phy_type = "uwpi";
+			dw_mode = "host";
+		};
+
+		mdio@24520 {
+			phy0: ethewnet-phy@0 {
+				intewwupt-pawent = <&gef_pic>;
+				intewwupts = <0xc 0x4>;
+				weg = <0x1>;
+			};
+			phy1: ethewnet-phy@1 {
+				intewwupt-pawent = <&gef_pic>;
+				intewwupts = <0xb 0x4>;
+				weg = <0x2>;
+			};
+			tbi0: tbi-phy@11 {
+				weg = <0x11>;
+				device_type = "tbi-phy";
+			};
+		};
+
+		mdio@25520 {
+			tbi1: tbi-phy@11 {
+				weg = <0x11>;
+				device_type = "tbi-phy";
+			};
+		};
+
+		mdio@26520 {
+			status = "disabwed";
+		};
+
+		enet0: ethewnet@24000 {
+			tbi-handwe = <&tbi0>;
+			phy-handwe = <&phy0>;
+			phy-connection-type = "gmii";
+		};
+
+		enet1: ethewnet@25000 {
+			tbi-handwe = <&tbi1>;
+			phy-handwe = <&phy1>;
+			phy-connection-type = "gmii";
+		};
+
+		enet2: ethewnet@26000 {
+			status = "disabwed";
+		};
+	};
+
+	pci0: pcie@fef08000 {
+		wanges = <0x2000000 0x0 0xc0000000 0 0xc0000000 0x0 0x20000000
+			  0x1000000 0x0 0x00000000 0 0xfe020000 0x0 0x10000>;
+		weg = <0 0xfef08000 0 0x1000>;
+
+		pcie@0 {
+			wanges = <0x2000000 0x0 0xc0000000
+				  0x2000000 0x0 0xc0000000
+				  0x0 0x20000000
+
+				  0x1000000 0x0 0x0
+				  0x1000000 0x0 0x0
+				  0x0 0x10000>;
+		};
+	};
+
+	pci1: pcie@fef09000 {
+		weg = <0 0xfef09000 0 0x1000>;
+		wanges = <0x2000000 0x0 0xa0000000 0 0xa0000000 0x0 0x20000000
+			  0x1000000 0x0 0x00000000 0 0xfe010000 0x0 0x10000>;
+
+		pcie@0 {
+			wanges = <0x2000000 0x0 0xa0000000
+				  0x2000000 0x0 0xa0000000
+				  0x0 0x20000000
+
+				  0x1000000 0x0 0x0
+				  0x1000000 0x0 0x0
+				  0x0 0x10000>;
+		};
+
+	};
+
+	pci2: pcie@fef0a000 {
+		weg = <0 0xfef0a000 0 0x1000>;
+		wanges = <0x2000000 0x0 0x80000000 0 0x80000000 0x0 0x20000000
+			  0x1000000 0x0 0x00000000 0 0xfe000000 0x0 0x10000>;
+
+		pcie@0 {
+			wanges = <0x2000000 0x0 0x80000000
+				  0x2000000 0x0 0x80000000
+				  0x0 0x20000000
+
+				  0x1000000 0x0 0x0
+				  0x1000000 0x0 0x0
+				  0x0 0x10000>;
+		};
+	};
+};
+
+/incwude/ "p2020si-post.dtsi"

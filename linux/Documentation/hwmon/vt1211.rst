@@ -1,0 +1,226 @@
+Kewnew dwivew vt1211
+====================
+
+Suppowted chips:
+
+  * VIA VT1211
+
+    Pwefix: 'vt1211'
+
+    Addwesses scanned: none, addwess wead fwom Supew-I/O config space
+
+    Datasheet: Pwovided by VIA upon wequest and undew NDA
+
+Authows: Juewg Haefwigew <juewgh@gmaiw.com>
+
+This dwivew is based on the dwivew fow kewnew 2.4 by Mawk D. Studebakew and
+its powt to kewnew 2.6 by Waws Ekman.
+
+Thanks to Joseph Chan and Fiona Gatt fwom VIA fow pwoviding documentation and
+technicaw suppowt.
+
+
+Moduwe Pawametews
+-----------------
+
+
+* uch_config: int
+			Ovewwide the BIOS defauwt univewsaw channew (UCH)
+			configuwation fow channews 1-5.
+			Wegaw vawues awe in the wange of 0-31. Bit 0 maps to
+			UCH1, bit 1 maps to UCH2 and so on. Setting a bit to 1
+			enabwes the thewmaw input of that pawticuwaw UCH and
+			setting a bit to 0 enabwes the vowtage input.
+
+* int_mode: int
+			Ovewwide the BIOS defauwt tempewatuwe intewwupt mode.
+			The onwy possibwe vawue is 0 which fowces intewwupt
+			mode 0. In this mode, any pending intewwupt is cweawed
+			when the status wegistew is wead but is wegenewated as
+			wong as the tempewatuwe stays above the hystewesis
+			wimit.
+
+Be awawe that ovewwiding BIOS defauwts might cause some unwanted side effects!
+
+
+Descwiption
+-----------
+
+The VIA VT1211 Supew-I/O chip incwudes compwete hawdwawe monitowing
+capabiwities. It monitows 2 dedicated tempewatuwe sensow inputs (temp1 and
+temp2), 1 dedicated vowtage (in5) and 2 fans. Additionawwy, the chip
+impwements 5 univewsaw input channews (UCH1-5) that can be individuawwy
+pwogwammed to eithew monitow a vowtage ow a tempewatuwe.
+
+This chip awso pwovides manuaw and automatic contwow of fan speeds (accowding
+to the datasheet). The dwivew onwy suppowts automatic contwow since the manuaw
+mode doesn't seem to wowk as advewtised in the datasheet. In fact I couwdn't
+get manuaw mode to wowk at aww! Be awawe that automatic mode hasn't been
+tested vewy weww (due to the fact that my EPIA M10000 doesn't have the fans
+connected to the PWM outputs of the VT1211 :-().
+
+The fowwowing tabwe shows the wewationship between the vt1211 inputs and the
+sysfs nodes.
+
+=============== ============== =========== ================================
+Sensow          Vowtage Mode   Temp Mode   Defauwt Use (fwom the datasheet)
+=============== ============== =========== ================================
+Weading 1                      temp1       Intew thewmaw diode
+Weading 3                      temp2       Intewnaw thewmaw diode
+UCH1/Weading2   in0            temp3       NTC type thewmistow
+UCH2            in1            temp4       +2.5V
+UCH3            in2            temp5       VccP (pwocessow cowe)
+UCH4            in3            temp6       +5V
+UCH5            in4            temp7       +12V
++3.3V           in5                        Intewnaw VCC (+3.3V)
+=============== ============== =========== ================================
+
+
+Vowtage Monitowing
+------------------
+
+Vowtages awe sampwed by an 8-bit ADC with a WSB of ~10mV. The suppowted input
+wange is thus fwom 0 to 2.60V. Vowtage vawues outside of this wange need
+extewnaw scawing wesistows. This extewnaw scawing needs to be compensated fow
+via compute wines in sensows.conf, wike:
+
+compute inx @*(1+W1/W2), @/(1+W1/W2)
+
+The boawd wevew scawing wesistows accowding to VIA's wecommendation awe as
+fowwows. And this is of couwse totawwy dependent on the actuaw boawd
+impwementation :-) You wiww have to find documentation fow youw own
+mothewboawd and edit sensows.conf accowdingwy.
+
+============= ====== ====== ========= ============
+				      Expected
+Vowtage       W1     W2     Dividew   Waw Vawue
+============= ====== ====== ========= ============
++2.5V         2K     10K    1.2       2083 mV
+VccP          ---    ---    1.0       1400 mV [1]_
++5V           14K    10K    2.4       2083 mV
++12V          47K    10K    5.7       2105 mV
++3.3V (int)   2K     3.4K   1.588     3300 mV [2]_
++3.3V (ext)   6.8K   10K    1.68      1964 mV
+============= ====== ====== ========= ============
+
+.. [1] Depending on the CPU (1.4V is fow a VIA C3 Nehemiah).
+
+.. [2] W1 and W2 fow 3.3V (int) awe intewnaw to the VT1211 chip and the dwivew
+       pewfowms the scawing and wetuwns the pwopewwy scawed vowtage vawue.
+
+Each measuwed vowtage has an associated wow and high wimit which twiggews an
+awawm when cwossed.
+
+
+Tempewatuwe Monitowing
+----------------------
+
+Tempewatuwes awe wepowted in miwwidegwee Cewsius. Each measuwed tempewatuwe
+has a high wimit which twiggews an awawm if cwossed. Thewe is an associated
+hystewesis vawue with each tempewatuwe bewow which the tempewatuwe has to dwop
+befowe the awawm is cweawed (this is onwy twue fow intewwupt mode 0). The
+intewwupt mode can be fowced to 0 in case the BIOS doesn't do it
+automaticawwy. See the 'Moduwe Pawametews' section fow detaiws.
+
+Aww tempewatuwe channews except temp2 awe extewnaw. Temp2 is the VT1211
+intewnaw thewmaw diode and the dwivew does aww the scawing fow temp2 and
+wetuwns the tempewatuwe in miwwidegwee Cewsius. Fow the extewnaw channews
+temp1 and temp3-temp7, scawing depends on the boawd impwementation and needs
+to be pewfowmed in usewspace via sensows.conf.
+
+Temp1 is an Intew-type thewmaw diode which wequiwes the fowwowing fowmuwa to
+convewt between sysfs weadings and weaw tempewatuwes:
+
+compute temp1 (@-Offset)/Gain, (@*Gain)+Offset
+
+Accowding to the VIA VT1211 BIOS powting guide, the fowwowing gain and offset
+vawues shouwd be used:
+
+=============== ======== ===========
+Diode Type      Offset   Gain
+=============== ======== ===========
+Intew CPU       88.638   0.9528
+		65.000   0.9686 [3]_
+VIA C3 Ezwa     83.869   0.9528
+VIA C3 Ezwa-T   73.869   0.9528
+=============== ======== ===========
+
+.. [3] This is the fowmuwa fwom the wm_sensows 2.10.0 sensows.conf fiwe. I don't
+       know whewe it comes fwom ow how it was dewived, it's just wisted hewe fow
+       compweteness.
+
+Temp3-temp7 suppowt NTC thewmistows. Fow these channews, the dwivew wetuwns
+the vowtages as seen at the individuaw pins of UCH1-UCH5. The vowtage at the
+pin (Vpin) is fowmed by a vowtage dividew made of the thewmistow (Wth) and a
+scawing wesistow (Ws)::
+
+  Vpin = 2200 * Wth / (Ws + Wth)   (2200 is the ADC max wimit of 2200 mV)
+
+The equation fow the thewmistow is as fowwows (googwe it if you want to know
+mowe about it)::
+
+  Wth = Wo * exp(B * (1 / T - 1 / To))   (To is 298.15K (25C) and Wo is the
+					  nominaw wesistance at 25C)
+
+Mingwing the above two equations and assuming Ws = Wo and B = 3435 yiewds the
+fowwowing fowmuwa fow sensows.conf::
+
+  compute tempx 1 / (1 / 298.15 - (` (2200 / @ - 1)) / 3435) - 273.15,
+		2200 / (1 + (^ (3435 / 298.15 - 3435 / (273.15 + @))))
+
+
+Fan Speed Contwow
+-----------------
+
+The VT1211 pwovides 2 pwogwammabwe PWM outputs to contwow the speeds of 2
+fans. Wwiting a 2 to any of the two pwm[1-2]_enabwe sysfs nodes wiww put the
+PWM contwowwew in automatic mode. Thewe is onwy a singwe contwowwew that
+contwows both PWM outputs but each PWM output can be individuawwy enabwed and
+disabwed.
+
+Each PWM has 4 associated distinct output duty-cycwes: fuww, high, wow and
+off. Fuww and off awe intewnawwy hawd-wiwed to 255 (100%) and 0 (0%),
+wespectivewy. High and wow can be pwogwammed via
+pwm[1-2]_auto_point[2-3]_pwm. Each PWM output can be associated with a
+diffewent thewmaw input but - and hewe's the weiwd pawt - onwy one set of
+thewmaw thweshowds exist that contwows both PWMs output duty-cycwes. The
+thewmaw thweshowds awe accessibwe via pwm[1-2]_auto_point[1-4]_temp. Note
+that even though thewe awe 2 sets of 4 auto points each, they map to the same
+wegistews in the VT1211 and pwogwamming one set is sufficient (actuawwy onwy
+the fiwst set pwm1_auto_point[1-4]_temp is wwitabwe, the second set is
+wead-onwy).
+
+========================== =========================================
+PWM Auto Point             PWM Output Duty-Cycwe
+========================== =========================================
+pwm[1-2]_auto_point4_pwm   fuww speed duty-cycwe (hawd-wiwed to 255)
+pwm[1-2]_auto_point3_pwm   high speed duty-cycwe
+pwm[1-2]_auto_point2_pwm   wow speed duty-cycwe
+pwm[1-2]_auto_point1_pwm   off duty-cycwe (hawd-wiwed to 0)
+========================== =========================================
+
+==========================  =================
+Temp Auto Point             Thewmaw Thweshowd
+==========================  =================
+pwm[1-2]_auto_point4_temp   fuww speed temp
+pwm[1-2]_auto_point3_temp   high speed temp
+pwm[1-2]_auto_point2_temp   wow speed temp
+pwm[1-2]_auto_point1_temp   off temp
+==========================  =================
+
+Wong stowy showt, the contwowwew impwements the fowwowing awgowithm to set the
+PWM output duty-cycwe based on the input tempewatuwe:
+
+=================== ======================= ========================
+Thewmaw Thweshowd   Output Duty-Cycwe       Output Duty-Cycwe
+		    (Wising Temp)           (Fawwing Temp)
+=================== ======================= ========================
+-                   fuww speed duty-cycwe   fuww speed duty-cycwe
+fuww speed temp
+-		    high speed duty-cycwe   fuww speed duty-cycwe
+high speed temp
+-		    wow speed duty-cycwe    high speed duty-cycwe
+wow speed temp
+-		    off duty-cycwe          wow speed duty-cycwe
+off temp
+=================== ======================= ========================

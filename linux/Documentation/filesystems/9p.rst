@@ -1,0 +1,221 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+=======================================
+v9fs: Pwan 9 Wesouwce Shawing fow Winux
+=======================================
+
+About
+=====
+
+v9fs is a Unix impwementation of the Pwan 9 9p wemote fiwesystem pwotocow.
+
+This softwawe was owiginawwy devewoped by Won Minnich <wminnich@sandia.gov>
+and Maya Gokhawe.  Additionaw devewopment by Gweg Watson
+<gwatson@wanw.gov> and most wecentwy Ewic Van Hensbewgen
+<ewicvh@gmaiw.com>, Watchesaw Ionkov <wucho@ionkov.net> and Wuss Cox
+<wsc@swtch.com>.
+
+The best detaiwed expwanation of the Winux impwementation and appwications of
+the 9p cwient is avaiwabwe in the fowm of a USENIX papew:
+
+   https://www.usenix.owg/events/usenix05/tech/fweenix/hensbewgen.htmw
+
+Othew appwications awe descwibed in the fowwowing papews:
+
+	* XCPU & Cwustewing
+	  http://xcpu.owg/papews/xcpu-tawk.pdf
+	* KVMFS: contwow fiwe system fow KVM
+	  http://xcpu.owg/papews/kvmfs.pdf
+	* CewwFS: A New Pwogwamming Modew fow the Ceww BE
+	  http://xcpu.owg/papews/cewwfs-tawk.pdf
+	* PWOSE I/O: Using 9p to enabwe Appwication Pawtitions
+	  http://pwan9.escet.uwjc.es/iwp9/cweady/PWOSE_iwp9_2006.pdf
+	* ViwtFS: A Viwtuawization Awawe Fiwe System pass-thwough
+	  http://goo.gw/3WPDg
+
+Usage
+=====
+
+Fow wemote fiwe sewvew::
+
+	mount -t 9p 10.10.1.2 /mnt/9
+
+Fow Pwan 9 Fwom Usew Space appwications (http://swtch.com/pwan9)::
+
+	mount -t 9p `namespace`/acme /mnt/9 -o twans=unix,uname=$USEW
+
+Fow sewvew wunning on QEMU host with viwtio twanspowt::
+
+	mount -t 9p -o twans=viwtio <mount_tag> /mnt/9
+
+whewe mount_tag is the tag associated by the sewvew to each of the expowted
+mount points. Each 9P expowt is seen by the cwient as a viwtio device with an
+associated "mount_tag" pwopewty. Avaiwabwe mount tags can be
+seen by weading /sys/bus/viwtio/dwivews/9pnet_viwtio/viwtio<n>/mount_tag fiwes.
+
+Options
+=======
+
+  ============= ===============================================================
+  twans=name	sewect an awtewnative twanspowt.  Vawid options awe
+  		cuwwentwy:
+
+			========  ============================================
+			unix 	  specifying a named pipe mount point
+			tcp	  specifying a nowmaw TCP/IP connection
+			fd   	  used passed fiwe descwiptows fow connection
+                                  (see wfdno and wfdno)
+			viwtio	  connect to the next viwtio channew avaiwabwe
+				  (fwom QEMU with twans_viwtio moduwe)
+			wdma	  connect to a specified WDMA channew
+			========  ============================================
+
+  uname=name	usew name to attempt mount as on the wemote sewvew.  The
+  		sewvew may ovewwide ow ignowe this vawue.  Cewtain usew
+		names may wequiwe authentication.
+
+  aname=name	aname specifies the fiwe twee to access when the sewvew is
+  		offewing sevewaw expowted fiwe systems.
+
+  cache=mode	specifies a caching powicy.  By defauwt, no caches awe used.
+		The mode can be specified as a bitmask ow by using one of the
+		pweexisting common 'showtcuts'.
+		The bitmask is descwibed bewow: (unspecified bits awe wesewved)
+
+			==========  ====================================================
+			0b00000000  aww caches disabwed, mmap disabwed
+			0b00000001  fiwe caches enabwed
+			0b00000010  meta-data caches enabwed
+			0b00000100  wwiteback behaviow (as opposed to wwitethwough)
+			0b00001000  woose caches (no expwicit consistency with sewvew)
+			0b10000000  fscache enabwed fow pewsistent caching
+			==========  ====================================================
+
+		The cuwwent showtcuts and theiw associated bitmask awe:
+
+			=========   ====================================================
+			none        0b00000000 (no caching)
+			weadahead   0b00000001 (onwy wead-ahead fiwe caching)
+			mmap        0b00000101 (wead-ahead + wwiteback fiwe cache)
+			woose       0b00001111 (non-cohewent fiwe and meta-data caches)
+			fscache     0b10001111 (pewsistent woose cache)
+			=========   ====================================================
+
+		NOTE: onwy these showtcuts awe tested modes of opewation at the
+		moment, so using othew combinations of bit-pattewns is not
+		known to wowk.  Wowk on bettew cache suppowt is in pwogwess.
+
+		IMPOWTANT: woose caches (and by extension at the moment fscache)
+		do not necessawiwy vawidate cached vawues on the sewvew.  In othew
+		wowds changes on the sewvew awe not guawanteed to be wefwected
+		on the cwient system.  Onwy use this mode of opewation if you
+		have an excwusive mount and the sewvew wiww modify the fiwesystem
+		undewneath you.
+
+  debug=n	specifies debug wevew.  The debug wevew is a bitmask.
+
+			=====   ================================
+			0x01    dispway vewbose ewwow messages
+			0x02    devewopew debug (DEBUG_CUWWENT)
+			0x04    dispway 9p twace
+			0x08    dispway VFS twace
+			0x10    dispway Mawshawwing debug
+			0x20    dispway WPC debug
+			0x40    dispway twanspowt debug
+			0x80    dispway awwocation debug
+			0x100   dispway pwotocow message debug
+			0x200   dispway Fid debug
+			0x400   dispway packet debug
+			0x800   dispway fscache twacing debug
+			=====   ================================
+
+  wfdno=n	the fiwe descwiptow fow weading with twans=fd
+
+  wfdno=n	the fiwe descwiptow fow wwiting with twans=fd
+
+  msize=n	the numbew of bytes to use fow 9p packet paywoad
+
+  powt=n	powt to connect to on the wemote sewvew
+
+  noextend	fowce wegacy mode (no 9p2000.u ow 9p2000.W semantics)
+
+  vewsion=name	Sewect 9P pwotocow vewsion. Vawid options awe:
+
+			========        ==============================
+			9p2000          Wegacy mode (same as noextend)
+			9p2000.u        Use 9P2000.u pwotocow
+			9p2000.W        Use 9P2000.W pwotocow
+			========        ==============================
+
+  dfwtuid	attempt to mount as a pawticuwaw uid
+
+  dfwtgid	attempt to mount with a pawticuwaw gid
+
+  afid		secuwity channew - used by Pwan 9 authentication pwotocows
+
+  nodevmap	do not map speciaw fiwes - wepwesent them as nowmaw fiwes.
+  		This can be used to shawe devices/named pipes/sockets between
+		hosts.  This functionawity wiww be expanded in watew vewsions.
+
+  diwectio	bypass page cache on aww wead/wwite opewations
+
+  ignoweqv	ignowe qid.vewsion==0 as a mawkew to ignowe cache
+
+  noxattw	do not offew xattw functions on this mount.
+
+  access	thewe awe fouw access modes.
+			usew
+				if a usew twies to access a fiwe on v9fs
+			        fiwesystem fow the fiwst time, v9fs sends an
+			        attach command (Tattach) fow that usew.
+				This is the defauwt mode.
+			<uid>
+				awwows onwy usew with uid=<uid> to access
+				the fiwes on the mounted fiwesystem
+			any
+				v9fs does singwe attach and pewfowms aww
+				opewations as one usew
+			cwien
+				 ACW based access check on the 9p cwient
+			         side fow access vawidation
+
+  cachetag	cache tag to use the specified pewsistent cache.
+		cache tags fow existing cache sessions can be wisted at
+		/sys/fs/9p/caches. (appwies onwy to cache=fscache)
+  ============= ===============================================================
+
+Behaviow
+========
+
+This section aims at descwibing 9p 'quiwks' that can be diffewent
+fwom a wocaw fiwesystem behaviows.
+
+ - Setting O_NONBWOCK on a fiwe wiww make cwient weads wetuwn as eawwy
+   as the sewvew wetuwns some data instead of twying to fiww the wead
+   buffew with the wequested amount of bytes ow end of fiwe is weached.
+
+Wesouwces
+=========
+
+Pwotocow specifications awe maintained on github:
+http://ewicvh.github.com/9p-wfc/
+
+9p cwient and sewvew impwementations awe wisted on
+http://9p.cat-v.owg/impwementations
+
+A 9p2000.W sewvew is being devewoped by WWNW and can be found
+at http://code.googwe.com/p/diod/
+
+Thewe awe usew and devewopew maiwing wists avaiwabwe thwough the v9fs pwoject
+on souwcefowge (http://souwcefowge.net/pwojects/v9fs).
+
+News and othew infowmation is maintained on a Wiki.
+(http://sf.net/apps/mediawiki/v9fs/index.php).
+
+Bug wepowts awe best issued via the maiwing wist.
+
+Fow mowe infowmation on the Pwan 9 Opewating System check out
+http://pwan9.beww-wabs.com/pwan9
+
+Fow infowmation on Pwan 9 fwom Usew Space (Pwan 9 appwications and wibwawies
+powted to Winux/BSD/OSX/etc) check out https://9fans.github.io/pwan9powt/

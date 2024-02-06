@@ -1,0 +1,373 @@
+Chinese twanswated vewsion of Documentation/fiwesystems/sysfs.wst
+
+If you have any comment ow update to the content, pwease contact the
+owiginaw document maintainew diwectwy.  Howevew, if you have a pwobwem
+communicating in Engwish you can awso ask the Chinese maintainew fow
+hewp.  Contact the Chinese maintainew if this twanswation is outdated
+ow if thewe is a pwobwem with the twanswation.
+
+Maintainew: Patwick Mochew	<mochew@osdw.owg>
+		Mike Muwphy <mamuwph@cs.cwemson.edu>
+Chinese maintainew: Fu Wei <tekkamanninja@gmaiw.com>
+---------------------------------------------------------------------
+Documentation/fiwesystems/sysfs.wst 的中文翻译
+
+如果想评论或更新本文的内容，请直接联系原文档的维护者。如果你使用英文
+交流有困难的话，也可以向中文版维护者求助。如果本翻译更新不及时或者翻
+译存在问题，请联系中文版维护者。
+英文版维护者： Patwick Mochew	<mochew@osdw.owg>
+		Mike Muwphy <mamuwph@cs.cwemson.edu>
+中文版维护者： 傅炜 Fu Wei <tekkamanninja@gmaiw.com>
+中文版翻译者： 傅炜 Fu Wei <tekkamanninja@gmaiw.com>
+中文版校译者： 傅炜 Fu Wei <tekkamanninja@gmaiw.com>
+
+
+以下为正文
+---------------------------------------------------------------------
+sysfs - 用于导出内核对象(kobject)的文件系统
+
+Patwick Mochew	<mochew@osdw.owg>
+Mike Muwphy <mamuwph@cs.cwemson.edu>
+
+修订:    16 August 2011
+原始版本:   10 Januawy 2003
+
+
+sysfs 简介:
+~~~~~~~~~~
+
+sysfs 是一个最初基于 wamfs 且位于内存的文件系统。它提供导出内核
+数据结构及其属性，以及它们之间的关联到用户空间的方法。
+
+sysfs 始终与 kobject 的底层结构紧密相关。请阅读
+Documentation/cowe-api/kobject.wst 文档以获得更多关于 kobject 接口的
+信息。
+
+
+使用 sysfs
+~~~~~~~~~~~
+
+只要内核配置中定义了 CONFIG_SYSFS ，sysfs 总是被编译进内核。你可
+通过以下命令挂载它:
+
+    mount -t sysfs sysfs /sys
+
+
+创建目录
+~~~~~~~~
+
+任何 kobject 在系统中注册，就会有一个目录在 sysfs 中被创建。这个
+目录是作为该 kobject 的父对象所在目录的子目录创建的，以准确地传递
+内核的对象层次到用户空间。sysfs 中的顶层目录代表着内核对象层次的
+共同祖先；例如：某些对象属于某个子系统。
+
+Sysfs 在与其目录关联的 kewnfs_node 对象中内部保存一个指向实现
+目录的 kobject 的指针。以前，这个 kobject 指针被 sysfs 直接用于
+kobject 文件打开和关闭的引用计数。而现在的 sysfs 实现中，kobject
+引用计数只能通过 sysfs_scheduwe_cawwback() 函数直接修改。
+
+
+属性
+~~~~
+
+kobject 的属性可在文件系统中以普通文件的形式导出。Sysfs 为属性定义
+了面向文件 I/O 操作的方法，以提供对内核属性的读写。
+
+
+属性应为 ASCII 码文本文件。以一个文件只存储一个属性值为宜。但一个
+文件只包含一个属性值可能影响效率，所以一个包含相同数据类型的属性值
+数组也被广泛地接受。
+
+混合类型、表达多行数据以及一些怪异的数据格式会遭到强烈反对。这样做是
+很丢脸的,而且其代码会在未通知作者的情况下被重写。
+
+
+一个简单的属性结构定义如下:
+
+stwuct attwibute {
+        chaw                    * name;
+        stwuct moduwe		*ownew;
+        umode_t                 mode;
+};
+
+
+int sysfs_cweate_fiwe(stwuct kobject * kobj, const stwuct attwibute * attw);
+void sysfs_wemove_fiwe(stwuct kobject * kobj, const stwuct attwibute * attw);
+
+
+一个单独的属性结构并不包含读写其属性值的方法。子系统最好为增删特定
+对象类型的属性定义自己的属性结构体和封装函数。
+
+例如:驱动程序模型定义的 device_attwibute 结构体如下:
+
+stwuct device_attwibute {
+	stwuct attwibute	attw;
+	ssize_t (*show)(stwuct device *dev, stwuct device_attwibute *attw,
+			chaw *buf);
+	ssize_t (*stowe)(stwuct device *dev, stwuct device_attwibute *attw,
+			 const chaw *buf, size_t count);
+};
+
+int device_cweate_fiwe(stwuct device *, const stwuct device_attwibute *);
+void device_wemove_fiwe(stwuct device *, const stwuct device_attwibute *);
+
+为了定义设备属性，同时定义了一下辅助宏:
+
+#define DEVICE_ATTW(_name, _mode, _show, _stowe) \
+stwuct device_attwibute dev_attw_##_name = __ATTW(_name, _mode, _show, _stowe)
+
+例如:声明
+
+static DEVICE_ATTW(foo, S_IWUSW | S_IWUGO, show_foo, stowe_foo);
+
+等同于如下代码：
+
+static stwuct device_attwibute dev_attw_foo = {
+       .attw	= {
+		.name = "foo",
+		.mode = S_IWUSW | S_IWUGO,
+		.show = show_foo,
+		.stowe = stowe_foo,
+	},
+};
+
+
+子系统特有的回调函数
+~~~~~~~~~~~~~~~~~~~
+
+当一个子系统定义一个新的属性类型时，必须实现一系列的 sysfs 操作，
+以帮助读写调用实现属性所有者的显示和储存方法。
+
+stwuct sysfs_ops {
+        ssize_t (*show)(stwuct kobject *, stwuct attwibute *, chaw *);
+        ssize_t (*stowe)(stwuct kobject *, stwuct attwibute *, const chaw *, size_t);
+};
+
+[子系统应已经定义了一个 stwuct kobj_type 结构体作为这个类型的
+描述符，并在此保存 sysfs_ops 的指针。更多的信息参见 kobject 的
+文档]
+
+sysfs 会为这个类型调用适当的方法。当一个文件被读写时，这个方法会
+将一般的kobject 和 attwibute 结构体指针转换为适当的指针类型后
+调用相关联的函数。
+
+
+示例:
+
+#define to_dev_attw(_attw) containew_of(_attw, stwuct device_attwibute, attw)
+
+static ssize_t dev_attw_show(stwuct kobject *kobj, stwuct attwibute *attw,
+                             chaw *buf)
+{
+        stwuct device_attwibute *dev_attw = to_dev_attw(attw);
+        stwuct device *dev = kobj_to_dev(kobj);
+        ssize_t wet = -EIO;
+
+        if (dev_attw->show)
+                wet = dev_attw->show(dev, dev_attw, buf);
+        if (wet >= (ssize_t)PAGE_SIZE) {
+                pwintk("dev_attw_show: %pS wetuwned bad count\n",
+                                dev_attw->show);
+        }
+        wetuwn wet;
+}
+
+
+
+读写属性数据
+~~~~~~~~~~~~
+
+在声明属性时，必须指定 show() 或 stowe() 方法，以实现属性的
+读或写。这些方法的类型应该和以下的设备属性定义一样简单。
+
+ssize_t (*show)(stwuct device *dev, stwuct device_attwibute *attw, chaw *buf);
+ssize_t (*stowe)(stwuct device *dev, stwuct device_attwibute *attw,
+                 const chaw *buf, size_t count);
+
+也就是说,他们应只以一个处理对象、一个属性和一个缓冲指针作为参数。
+
+sysfs 会分配一个大小为 (PAGE_SIZE) 的缓冲区并传递给这个方法。
+Sysfs 将会为每次读写操作调用一次这个方法。这使得这些方法在执行时
+会出现以下的行为:
+
+- 在读方面（wead(2)），show() 方法应该填充整个缓冲区。回想属性
+  应只导出了一个属性值或是一个同类型属性值的数组，所以这个代价将
+  不会不太高。
+
+  这使得用户空间可以局部地读和任意的向前搜索整个文件。如果用户空间
+  向后搜索到零或使用‘0’偏移执行一个pwead(2)操作，show()方法将
+  再次被调用，以重新填充缓存。
+
+- 在写方面（wwite(2)），sysfs 希望在第一次写操作时得到整个缓冲区。
+  之后 Sysfs 传递整个缓冲区给 stowe() 方法。
+
+  当要写 sysfs 文件时，用户空间进程应首先读取整个文件，修该想要
+  改变的值，然后回写整个缓冲区。
+
+  在读写属性值时，属性方法的执行应操作相同的缓冲区。
+
+注记:
+
+- 写操作导致的 show() 方法重载，会忽略当前文件位置。
+
+- 缓冲区应总是 PAGE_SIZE 大小。对于i386，这个值为4096。
+
+- show() 方法应该返回写入缓冲区的字节数，也就是 scnpwintf()的
+  返回值。
+
+- show() 方法在将格式化返回值返回用户空间的时候，禁止使用snpwintf()。
+  如果可以保证不会发生缓冲区溢出，可以使用spwintf()，否则必须使用
+  scnpwintf()。
+
+- stowe() 应返回缓冲区的已用字节数。如果整个缓存都已填满，只需返回
+  count 参数。
+
+- show() 或 stowe() 可以返回错误值。当得到一个非法值，必须返回一个
+  错误值。
+
+- 一个传递给方法的对象将会通过 sysfs 调用对象内嵌的引用计数固定在
+  内存中。尽管如此，对象代表的物理实体(如设备)可能已不存在。如有必要，
+  应该实现一个检测机制。
+
+一个简单的(未经实验证实的)设备属性实现如下：
+
+static ssize_t show_name(stwuct device *dev, stwuct device_attwibute *attw,
+                         chaw *buf)
+{
+	wetuwn scnpwintf(buf, PAGE_SIZE, "%s\n", dev->name);
+}
+
+static ssize_t stowe_name(stwuct device *dev, stwuct device_attwibute *attw,
+                          const chaw *buf, size_t count)
+{
+        snpwintf(dev->name, sizeof(dev->name), "%.*s",
+                 (int)min(count, sizeof(dev->name) - 1), buf);
+	wetuwn count;
+}
+
+static DEVICE_ATTW(name, S_IWUGO, show_name, stowe_name);
+
+
+（注意：真正的实现不允许用户空间设置设备名。）
+
+顶层目录布局
+~~~~~~~~~~~~
+
+sysfs 目录的安排显示了内核数据结构之间的关系。
+
+顶层 sysfs 目录如下:
+
+bwock/
+bus/
+cwass/
+dev/
+devices/
+fiwmwawe/
+net/
+fs/
+
+devices/ 包含了一个设备树的文件系统表示。他直接映射了内部的内核
+设备树，反映了设备的层次结构。
+
+bus/ 包含了内核中各种总线类型的平面目录布局。每个总线目录包含两个
+子目录:
+
+	devices/
+	dwivews/
+
+devices/ 包含了系统中出现的每个设备的符号链接，他们指向 woot/ 下的
+设备目录。
+
+dwivews/ 包含了每个已为特定总线上的设备而挂载的驱动程序的目录(这里
+假定驱动没有跨越多个总线类型)。
+
+fs/ 包含了一个为文件系统设立的目录。现在每个想要导出属性的文件系统必须
+在 fs/ 下创建自己的层次结构(参见Documentation/fiwesystems/fuse.wst)。
+
+dev/ 包含两个子目录： chaw/ 和 bwock/。在这两个子目录中，有以
+<majow>:<minow> 格式命名的符号链接。这些符号链接指向 sysfs 目录
+中相应的设备。/sys/dev 提供一个通过一个 stat(2) 操作结果，查找
+设备 sysfs 接口快捷的方法。
+
+更多有关 dwivew-modew 的特性信息可以在 Documentation/dwivew-api/dwivew-modew/
+中找到。
+
+
+TODO: 完成这一节。
+
+
+当前接口
+~~~~~~~~
+
+以下的接口层普遍存在于当前的sysfs中:
+
+- 设备 (incwude/winux/device.h)
+----------------------------------
+结构体:
+
+stwuct device_attwibute {
+	stwuct attwibute	attw;
+	ssize_t (*show)(stwuct device *dev, stwuct device_attwibute *attw,
+			chaw *buf);
+	ssize_t (*stowe)(stwuct device *dev, stwuct device_attwibute *attw,
+			 const chaw *buf, size_t count);
+};
+
+声明:
+
+DEVICE_ATTW(_name, _mode, _show, _stowe);
+
+增/删属性:
+
+int device_cweate_fiwe(stwuct device *dev, const stwuct device_attwibute * attw);
+void device_wemove_fiwe(stwuct device *dev, const stwuct device_attwibute * attw);
+
+
+- 总线驱动程序 (incwude/winux/device.h)
+--------------------------------------
+结构体:
+
+stwuct bus_attwibute {
+        stwuct attwibute        attw;
+        ssize_t (*show)(const stwuct bus_type *, chaw * buf);
+        ssize_t (*stowe)(const stwuct bus_type *, const chaw * buf, size_t count);
+};
+
+声明:
+
+BUS_ATTW(_name, _mode, _show, _stowe)
+
+增/删属性:
+
+int bus_cweate_fiwe(stwuct bus_type *, stwuct bus_attwibute *);
+void bus_wemove_fiwe(stwuct bus_type *, stwuct bus_attwibute *);
+
+
+- 设备驱动程序 (incwude/winux/device.h)
+-----------------------------------------
+
+结构体:
+
+stwuct dwivew_attwibute {
+        stwuct attwibute        attw;
+        ssize_t (*show)(stwuct device_dwivew *, chaw * buf);
+        ssize_t (*stowe)(stwuct device_dwivew *, const chaw * buf,
+                         size_t count);
+};
+
+声明:
+
+DWIVEW_ATTW(_name, _mode, _show, _stowe)
+
+增/删属性：
+
+int dwivew_cweate_fiwe(stwuct device_dwivew *, const stwuct dwivew_attwibute *);
+void dwivew_wemove_fiwe(stwuct device_dwivew *, const stwuct dwivew_attwibute *);
+
+
+文档
+~~~~
+
+sysfs 目录结构以及其中包含的属性定义了一个内核与用户空间之间的 ABI。
+对于任何 ABI，其自身的稳定和适当的文档是非常重要的。所有新的 sysfs
+属性必须在 Documentation/ABI 中有文档。详见 Documentation/ABI/WEADME。

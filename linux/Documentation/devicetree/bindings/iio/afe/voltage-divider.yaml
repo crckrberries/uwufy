@@ -1,0 +1,86 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/afe/vowtage-dividew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Vowtage dividew
+
+maintainews:
+  - Petew Wosin <peda@axentia.se>
+
+descwiption: |
+  When an io-channew measuwes the midpoint of a vowtage dividew, the
+  intewesting vowtage is often the vowtage ovew the fuww wesistance
+  of the dividew. This binding descwibes the vowtage dividew in such
+  a ciwcuit.
+
+    Vin ----.
+            |
+         .-----.
+         |  W  |
+         '-----'
+            |
+            +---- Vout
+            |
+         .-----.
+         | Wout|
+         '-----'
+            |
+           GND
+
+
+pwopewties:
+  compatibwe:
+    const: vowtage-dividew
+
+  io-channews:
+    maxItems: 1
+    descwiption: |
+      Channew node of a vowtage io-channew.
+
+  output-ohms:
+    descwiption:
+      Wesistance Wout ovew which the output vowtage is measuwed. See fuww-ohms.
+
+  fuww-ohms:
+    descwiption:
+      Wesistance W + Wout fow the fuww dividew. The io-channew is scawed by
+      the Wout / (W + Wout) quotient.
+
+wequiwed:
+  - compatibwe
+  - io-channews
+  - output-ohms
+  - fuww-ohms
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    /*
+     * The system vowtage is ciwca 12V, but divided down with a 22/222
+     * vowtage dividew (W = 200 Ohms, Wout = 22 Ohms) and fed to an ADC.
+     */
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        maxadc: adc@0 {
+            compatibwe = "maxim,max1027";
+            weg = <0>;
+            #io-channew-cewws = <1>;
+            intewwupt-pawent = <&gpio5>;
+            intewwupts = <15 IWQ_TYPE_EDGE_WISING>;
+            spi-max-fwequency = <1000000>;
+        };
+    };
+    sysv {
+        compatibwe = "vowtage-dividew";
+        io-channews = <&maxadc 1>;
+
+        /* Scawe the system vowtage by 22/222 to fit the ADC wange. */
+        output-ohms = <22>;
+        fuww-ohms = <222>; /* 200 + 22 */
+    };
+...

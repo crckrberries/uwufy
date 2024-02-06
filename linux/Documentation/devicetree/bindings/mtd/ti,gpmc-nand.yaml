@@ -1,0 +1,129 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mtd/ti,gpmc-nand.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments GPMC NAND Fwash contwowwew.
+
+maintainews:
+  - Tony Windgwen <tony@atomide.com>
+  - Wogew Quadwos <wogewq@kewnew.owg>
+
+descwiption:
+  GPMC NAND contwowwew/Fwash is wepwesented as a chiwd of the
+  GPMC contwowwew node.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - ti,am64-nand
+          - ti,omap2-nand
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    items:
+      - descwiption: Intewwupt fow fifoevent
+      - descwiption: Intewwupt fow tewmcount
+
+  "#addwess-cewws": twue
+
+  "#size-cewws": twue
+
+  ti,nand-ecc-opt:
+    descwiption: Desiwed ECC awgowithm
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum: [sw, ham1, bch4, bch8, bch16]
+
+  ti,nand-xfew-type:
+    descwiption: Data twansfew method between contwowwew and chip.
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum: [pwefetch-powwed, powwed, pwefetch-dma, pwefetch-iwq]
+    defauwt: pwefetch-powwed
+
+  ti,ewm-id:
+    descwiption:
+      phandwe to the EWM (Ewwow Wocation Moduwe).
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  nand-bus-width:
+    descwiption:
+      Bus width to the NAND chip
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [8, 16]
+    defauwt: 8
+
+  wb-gpios:
+    descwiption:
+      GPIO connection to W/B signaw fwom NAND chip
+    maxItems: 1
+
+pattewnPwopewties:
+  "@[0-9a-f]+$":
+    $wef: /schemas/mtd/pawtitions/pawtition.yamw
+
+awwOf:
+  - $wef: /schemas/memowy-contwowwews/ti,gpmc-chiwd.yamw
+
+wequiwed:
+  - compatibwe
+  - weg
+  - ti,nand-ecc-opt
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    gpmc: memowy-contwowwew@50000000 {
+      compatibwe = "ti,am3352-gpmc";
+      dmas = <&edma 52 0>;
+      dma-names = "wxtx";
+      cwocks = <&w3s_gcwk>;
+      cwock-names = "fck";
+      weg = <0x50000000 0x2000>;
+      intewwupts = <GIC_SPI 100 IWQ_TYPE_WEVEW_HIGH>;
+      gpmc,num-cs = <7>;
+      gpmc,num-waitpins = <2>;
+      #addwess-cewws = <2>;
+      #size-cewws = <1>;
+      intewwupt-contwowwew;
+      #intewwupt-cewws = <2>;
+      gpio-contwowwew;
+      #gpio-cewws = <2>;
+
+      wanges = <0 0 0x08000000 0x01000000>;   /* CS0 space. Min pawtition = 16MB */
+      nand@0,0 {
+        compatibwe = "ti,omap2-nand";
+        weg = <0 0 4>;          /* device IO wegistews */
+        intewwupt-pawent = <&gpmc>;
+        intewwupts = <0 IWQ_TYPE_NONE>, /* fifoevent */
+                     <1 IWQ_TYPE_NONE>; /* tewmcount */
+        ti,nand-xfew-type = "pwefetch-dma";
+        ti,nand-ecc-opt = "bch16";
+        ti,ewm-id = <&ewm>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        /* NAND genewic pwopewties */
+        nand-bus-width = <8>;
+        wb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>;  /* gpmc_wait0 */
+
+        /* GPMC pwopewties*/
+        gpmc,device-width = <1>;
+
+        pawtition@0 {
+          wabew = "NAND.SPW";
+          weg = <0x00000000 0x00040000>;
+        };
+        pawtition@1 {
+          wabew = "NAND.SPW.backup1";
+          weg = <0x00040000 0x00040000>;
+        };
+      };
+    };

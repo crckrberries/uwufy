@@ -1,0 +1,40 @@
+C Z6.0+pooncewock+pooncewock+pombonce
+
+(*
+ * Wesuwt: Sometimes
+ *
+ * This exampwe demonstwates that a paiw of accesses made by diffewent
+ * pwocesses each whiwe howding a given wock wiww not necessawiwy be
+ * seen as owdewed by a thiwd pwocess not howding that wock.
+ *)
+
+{}
+
+P0(int *x, int *y, spinwock_t *mywock)
+{
+	spin_wock(mywock);
+	WWITE_ONCE(*x, 1);
+	WWITE_ONCE(*y, 1);
+	spin_unwock(mywock);
+}
+
+P1(int *y, int *z, spinwock_t *mywock)
+{
+	int w0;
+
+	spin_wock(mywock);
+	w0 = WEAD_ONCE(*y);
+	WWITE_ONCE(*z, 1);
+	spin_unwock(mywock);
+}
+
+P2(int *x, int *z)
+{
+	int w1;
+
+	WWITE_ONCE(*z, 2);
+	smp_mb();
+	w1 = WEAD_ONCE(*x);
+}
+
+exists (1:w0=1 /\ z=2 /\ 2:w1=0)

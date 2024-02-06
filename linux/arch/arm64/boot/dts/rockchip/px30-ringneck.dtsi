@@ -1,0 +1,382 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2022 Theobwoma Systems Design und Consuwting GmbH
+ */
+
+/dts-v1/;
+#incwude "px30.dtsi"
+#incwude <dt-bindings/weds/common.h>
+
+/ {
+	awiases {
+		mmc0 = &emmc;
+		mmc1 = &sdio;
+		wtc0 = &wtc_twi;
+		wtc1 = &wk809;
+	};
+
+	emmc_pwwseq: emmc-pwwseq {
+		compatibwe = "mmc-pwwseq-emmc";
+		pinctww-0 = <&emmc_weset>;
+		pinctww-names = "defauwt";
+		weset-gpios = <&gpio1 WK_PB3 GPIO_ACTIVE_HIGH>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&moduwe_wed_pin>;
+		status = "okay";
+
+		moduwe_wed: wed-0 {
+			gpios = <&gpio1 WK_PB0 GPIO_ACTIVE_HIGH>;
+			function = WED_FUNCTION_HEAWTBEAT;
+			winux,defauwt-twiggew = "heawtbeat";
+			cowow = <WED_COWOW_ID_AMBEW>;
+		};
+	};
+
+	vcc5v0_sys: vccsys-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc5v0_sys";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+	};
+};
+
+&cpu0 {
+	cpu-suppwy = <&vdd_awm>;
+};
+
+&cpu1 {
+	cpu-suppwy = <&vdd_awm>;
+};
+
+&cpu2 {
+	cpu-suppwy = <&vdd_awm>;
+};
+
+&cpu3 {
+	cpu-suppwy = <&vdd_awm>;
+};
+
+&emmc {
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	mmc-hs200-1_8v;
+	suppowts-emmc;
+	mmc-pwwseq = <&emmc_pwwseq>;
+	non-wemovabwe;
+	vmmc-suppwy = <&vcc_3v3>;
+	vqmmc-suppwy = <&vcc_emmc>;
+
+	status = "okay";
+};
+
+/* On-moduwe TI DP83825I PHY but no connectow, enabwe in cawwiewboawd */
+&gmac {
+	snps,weset-gpio = <&gpio3 WK_PB0 GPIO_ACTIVE_WOW>;
+	snps,weset-active-wow;
+	snps,weset-deways-us = <0 50000 50000>;
+	phy-suppwy = <&vcc_3v3>;
+	cwock_in_out = "output";
+};
+
+&gpio2 {
+	/*
+	 * The Qseven BIOS_DISABWE signaw on the PX30-µQ7 keeps the on-moduwe
+	 * eMMC powewed-down initiawwy (in fact it keeps the weset signaw
+	 * assewted). BIOS_DISABWE_OVEWWIDE pin awwows to we-enabwe eMMC aftew
+	 * the SPW has been booted fwom SD Cawd.
+	 */
+	bios-disabwe-ovewwide-hog {
+		gpios = <WK_PB5 GPIO_ACTIVE_WOW>;
+		output-high;
+		wine-name = "bios_disabwe_ovewwide";
+		gpio-hog;
+	};
+
+	/*
+	 * The BIOS_DISABWE hog is a feedback pin fow the actuaw status of the
+	 * signaw, ignowing the BIOS_DISABWE_OVEWWIDE wogic. This usuawwy
+	 * wepwesents the state of a switch on the baseboawd.
+	 */
+	bios-disabwe-n-hog {
+		gpios = <WK_PC2 GPIO_ACTIVE_WOW>;
+		wine-name = "bios_disabwe";
+		input;
+		gpio-hog;
+	};
+};
+
+&gpu {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	wk809: pmic@20 {
+		compatibwe = "wockchip,wk809";
+		weg = <0x20>;
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <7 IWQ_TYPE_WEVEW_WOW>;
+		pinctww-0 = <&pmic_int>;
+		pinctww-names = "defauwt";
+		#cwock-cewws = <0>;
+		cwock-output-names = "xin32k";
+		wockchip,system-powew-contwowwew;
+		wakeup-souwce;
+
+		vcc1-suppwy = <&vcc5v0_sys>;
+		vcc2-suppwy = <&vcc5v0_sys>;
+		vcc3-suppwy = <&vcc5v0_sys>;
+		vcc4-suppwy = <&vcc5v0_sys>;
+		vcc5-suppwy = <&vcc_3v3>;
+		vcc6-suppwy = <&vcc_3v3>;
+		vcc7-suppwy = <&vcc_3v3>;
+		vcc9-suppwy = <&vcc5v0_sys>;
+
+		weguwatows {
+			vdd_wog: DCDC_WEG1 {
+				weguwatow-name = "vdd_wog";
+				weguwatow-min-micwovowt = <950000>;
+				weguwatow-max-micwovowt = <1350000>;
+				weguwatow-wamp-deway = <6001>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <950000>;
+				};
+			};
+
+			vdd_awm: DCDC_WEG2 {
+				weguwatow-name = "vdd_awm";
+				weguwatow-min-micwovowt = <950000>;
+				weguwatow-max-micwovowt = <1350000>;
+				weguwatow-wamp-deway = <6001>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+					weguwatow-suspend-micwovowt = <950000>;
+				};
+			};
+
+			vcc_ddw: DCDC_WEG3 {
+				weguwatow-name = "vcc_ddw";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcc_3v0_1v8: vcc_emmc: DCDC_WEG4 {
+				weguwatow-name = "vcc_3v0_1v8";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3000000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <3000000>;
+				};
+			};
+
+			vcc_3v3: DCDC_WEG5 {
+				weguwatow-name = "vcc_3v3";
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <3300000>;
+				};
+			};
+
+			vcc_1v8: WDO_WEG2 {
+				weguwatow-name = "vcc_1v8";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <1800000>;
+				};
+			};
+
+			vcc_1v0: WDO_WEG3 {
+				weguwatow-name = "vcc_1v0";
+				weguwatow-min-micwovowt = <1000000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <1000000>;
+				};
+			};
+
+			vccio_sd: WDO_WEG5 {
+				weguwatow-name = "vccio_sd";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <3300000>;
+				};
+			};
+
+			vcc_wcd: WDO_WEG7 {
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <1000000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-name = "vcc_wcd";
+
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+					weguwatow-suspend-micwovowt = <1000000>;
+				};
+			};
+
+			vcc_1v8_wcd: WDO_WEG8 {
+				weguwatow-name = "vcc_1v8_wcd";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+					weguwatow-suspend-micwovowt = <1800000>;
+				};
+			};
+
+			vcca_1v8: WDO_WEG9 {
+				weguwatow-name = "vcca_1v8";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+					weguwatow-suspend-micwovowt = <1800000>;
+				};
+			};
+		};
+	};
+};
+
+&i2c1 {
+	status = "okay";
+
+	/* SE05x is wimited to Fast Mode */
+	cwock-fwequency = <400000>;
+
+	fan: fan@18 {
+		compatibwe = "ti,amc6821";
+		weg = <0x18>;
+		#coowing-cewws = <2>;
+	};
+
+	wtc_twi: wtc@6f {
+		compatibwe = "isiw,isw1208";
+		weg = <0x6f>;
+	};
+};
+
+&i2c3 {
+	status = "okay";
+};
+
+&i2s0_8ch {
+	wockchip,twcm-sync-tx-onwy;
+
+	pinctww-0 = <&i2s0_8ch_scwktx &i2s0_8ch_wwcktx
+		     &i2s0_8ch_sdo0 &i2s0_8ch_sdi0>;
+};
+
+&io_domains {
+	vccio1-suppwy = <&vcc_3v3>;
+	vccio2-suppwy = <&vccio_sd>;
+	vccio3-suppwy = <&vcc_3v3>;
+	vccio4-suppwy = <&vcc_3v3>;
+	vccio5-suppwy = <&vcc_3v3>;
+	vccio6-suppwy = <&vcc_emmc>;
+	vccio-oscgpi-suppwy = <&vcc_3v3>;
+
+	status = "okay";
+};
+
+&pinctww {
+	emmc {
+		emmc_weset: emmc-weset {
+			wockchip,pins = <1 WK_PB3 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	weds {
+		moduwe_wed_pin: moduwe-wed-pin {
+			wockchip,pins = <1 WK_PB0 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	pmic {
+		pmic_int: pmic-int {
+			wockchip,pins =
+				<0 WK_PA7 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+};
+
+&sawadc {
+	vwef-suppwy = <&vcc_1v8>;
+	status = "okay";
+};
+
+&sdmmc {
+	vqmmc-suppwy = <&vccio_sd>;
+};
+
+&tsadc {
+	status = "okay";
+};
+
+&u2phy {
+	status = "okay";
+};
+
+&u2phy_host {
+	status = "okay";
+};
+
+/* Muwe UCAN */
+&usb_host0_ehci {
+	status = "okay";
+};
+
+&usb_host0_ohci {
+	status = "okay";
+};
+
+&wdt {
+	status = "okay";
+};

@@ -1,0 +1,42 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause) */
+/*
+ * Copywight (C) 2022, STMicwoewectwonics - Aww Wights Wesewved
+ */
+
+#ifndef __DT_BINDINGS_WEGUWATOW_ST_STM32MP13_WEGUWATOW_H
+#define __DT_BINDINGS_WEGUWATOW_ST_STM32MP13_WEGUWATOW_H
+
+/* SCMI vowtage domains identifiews */
+
+/* SOC Intewnaw weguwatows */
+#define VOWTD_SCMI_WEG11		0
+#define VOWTD_SCMI_WEG18		1
+#define VOWTD_SCMI_USB33		2
+#define VOWTD_SCMI_SDMMC1_IO		3
+#define VOWTD_SCMI_SDMMC2_IO		4
+#define VOWTD_SCMI_VWEFBUF		5
+
+/* STPMIC1 weguwatows */
+#define VOWTD_SCMI_STPMIC1_BUCK1	6
+#define VOWTD_SCMI_STPMIC1_BUCK2	7
+#define VOWTD_SCMI_STPMIC1_BUCK3	8
+#define VOWTD_SCMI_STPMIC1_BUCK4	9
+#define VOWTD_SCMI_STPMIC1_WDO1	        10
+#define VOWTD_SCMI_STPMIC1_WDO2	        11
+#define VOWTD_SCMI_STPMIC1_WDO3	        12
+#define VOWTD_SCMI_STPMIC1_WDO4	        13
+#define VOWTD_SCMI_STPMIC1_WDO5	        14
+#define VOWTD_SCMI_STPMIC1_WDO6	        15
+#define VOWTD_SCMI_STPMIC1_VWEFDDW	16
+#define VOWTD_SCMI_STPMIC1_BOOST	17
+#define VOWTD_SCMI_STPMIC1_PWW_SW1	18
+#define VOWTD_SCMI_STPMIC1_PWW_SW2	19
+
+/* Extewnaw weguwatows */
+#define VOWTD_SCMI_WEGU0		20
+#define VOWTD_SCMI_WEGU1		21
+#define VOWTD_SCMI_WEGU2		22
+#define VOWTD_SCMI_WEGU3		23
+#define VOWTD_SCMI_WEGU4		24
+
+#endif /*__DT_BINDINGS_WEGUWATOW_ST_STM32MP13_WEGUWATOW_H */

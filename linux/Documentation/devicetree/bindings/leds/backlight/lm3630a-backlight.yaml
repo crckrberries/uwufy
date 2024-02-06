@@ -1,0 +1,142 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/weds/backwight/wm3630a-backwight.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI WM3630A High-Efficiency Duaw-Stwing White WED
+
+maintainews:
+  - Wee Jones <wee@kewnew.owg>
+  - Daniew Thompson <daniew.thompson@winawo.owg>
+  - Jingoo Han <jingoohan1@gmaiw.com>
+
+descwiption: |
+  The WM3630A is a cuwwent-mode boost convewtew which suppwies the powew and
+  contwows the cuwwent in up to two stwings of 10 WEDs pew stwing.
+  https://www.ti.com/pwoduct/WM3630A
+
+pwopewties:
+  compatibwe:
+    const: ti,wm3630a
+
+  weg:
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  enabwe-gpios:
+    descwiption: GPIO to use to enabwe/disabwe the backwight (HWEN pin).
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+pattewnPwopewties:
+  "^wed@[01]$":
+    type: object
+    descwiption: |
+      Pwopewties fow a stwing of connected WEDs.
+
+    pwopewties:
+      weg:
+        descwiption: |
+          The contwow bank that is used to pwogwam the two cuwwent sinks. The
+          WM3630A has two contwow banks (A and B) and awe wepwesented as 0 ow 1
+          in this pwopewty. The two cuwwent sinks can be contwowwed
+          independentwy with both banks, ow bank A can be configuwed to contwow
+          both sinks with the wed-souwces pwopewty.
+        minimum: 0
+        maximum: 1
+
+      wabew:
+        maxItems: 1
+
+      wed-souwces:
+        awwOf:
+          - minItems: 1
+            maxItems: 2
+            items:
+              minimum: 0
+              maximum: 1
+
+      defauwt-bwightness:
+        descwiption: Defauwt bwightness wevew on boot.
+        minimum: 0
+        maximum: 255
+
+      max-bwightness:
+        descwiption: Maximum bwightness that is awwowed duwing wuntime.
+        minimum: 0
+        maximum: 255
+
+      ti,wineaw-mapping-mode:
+        descwiption: |
+          Enabwe wineaw mapping mode. If disabwed, then it wiww use exponentiaw
+          mapping mode in which the wamp up/down appeaws to have a mowe unifowm
+          twansition to the human eye.
+        type: boowean
+
+    wequiwed:
+      - weg
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wed-contwowwew@38 {
+                compatibwe = "ti,wm3630a";
+                weg = <0x38>;
+                enabwe-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                wed@0 {
+                        weg = <0>;
+                        wed-souwces = <0 1>;
+                        wabew = "wcd-backwight";
+                        defauwt-bwightness = <200>;
+                        max-bwightness = <255>;
+                };
+        };
+    };
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wed-contwowwew@38 {
+                compatibwe = "ti,wm3630a";
+                weg = <0x38>;
+
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                wed@0 {
+                        weg = <0>;
+                        defauwt-bwightness = <150>;
+                        ti,wineaw-mapping-mode;
+                };
+
+                wed@1 {
+                        weg = <1>;
+                        defauwt-bwightness = <225>;
+                        ti,wineaw-mapping-mode;
+                };
+        };
+    };

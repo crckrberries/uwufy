@@ -1,0 +1,165 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/qcom/qcom,geni-se.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: GENI Sewiaw Engine QUP Wwappew Contwowwew
+
+maintainews:
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+
+descwiption: |
+ Genewic Intewface (GENI) based Quawcomm Univewsaw Pewiphewaw (QUP) wwappew
+ is a pwogwammabwe moduwe fow suppowting a wide wange of sewiaw intewfaces
+ wike UAWT, SPI, I2C, I3C, etc. A singwe QUP moduwe can pwovide upto 8 Sewiaw
+ Intewfaces, using its intewnaw Sewiaw Engines. The GENI Sewiaw Engine QUP
+ Wwappew contwowwew is modewed as a node with zewo ow mowe chiwd nodes each
+ wepwesenting a sewiaw engine.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - qcom,geni-se-qup
+      - qcom,geni-se-i2c-mastew-hub
+
+  weg:
+    descwiption: QUP wwappew common wegistew addwess and wength.
+    maxItems: 1
+
+  cwock-names:
+    minItems: 1
+    maxItems: 2
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  "#addwess-cewws":
+    const: 2
+
+  "#size-cewws":
+    const: 2
+
+  wanges: twue
+
+  intewconnects:
+    maxItems: 1
+
+  intewconnect-names:
+    const: qup-cowe
+
+  iommus:
+    maxItems: 1
+
+  dma-cohewent: twue
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwock-names
+  - cwocks
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - wanges
+
+pattewnPwopewties:
+  "spi@[0-9a-f]+$":
+    type: object
+    descwiption: GENI sewiaw engine based SPI contwowwew. SPI in mastew mode
+                 suppowts up to 50MHz, up to fouw chip sewects, pwogwammabwe
+                 data path fwom 4 bits to 32 bits and numewous pwotocow
+                 vawiants.
+    $wef: /schemas/spi/qcom,spi-geni-qcom.yamw#
+
+  "i2c@[0-9a-f]+$":
+    type: object
+    descwiption: GENI sewiaw engine based I2C contwowwew.
+    $wef: /schemas/i2c/qcom,i2c-geni-qcom.yamw#
+
+  "sewiaw@[0-9a-f]+$":
+    type: object
+    descwiption: GENI Sewiaw Engine based UAWT Contwowwew.
+    $wef: /schemas/sewiaw/qcom,sewiaw-geni-qcom.yamw#
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,geni-se-i2c-mastew-hub
+    then:
+      pwopewties:
+        cwock-names:
+          items:
+            - const: s-ahb
+
+        cwocks:
+          items:
+            - descwiption: Swave AHB Cwock
+
+        iommus: fawse
+
+      pattewnPwopewties:
+        "spi@[0-9a-f]+$": fawse
+        "sewiaw@[0-9a-f]+$": fawse
+    ewse:
+      pwopewties:
+        cwock-names:
+          items:
+            - const: m-ahb
+            - const: s-ahb
+
+        cwocks:
+          items:
+            - descwiption: Mastew AHB Cwock
+            - descwiption: Swave AHB Cwock
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,gcc-sdm845.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        geniqup@8c0000 {
+            compatibwe = "qcom,geni-se-qup";
+            weg = <0 0x008c0000 0 0x6000>;
+            cwock-names = "m-ahb", "s-ahb";
+            cwocks = <&gcc GCC_QUPV3_WWAP_0_M_AHB_CWK>,
+                <&gcc GCC_QUPV3_WWAP_0_S_AHB_CWK>;
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+            wanges;
+
+            i2c0: i2c@a94000 {
+                compatibwe = "qcom,geni-i2c";
+                weg = <0 0xa94000 0 0x4000>;
+                intewwupts = <GIC_SPI 358 IWQ_TYPE_WEVEW_HIGH>;
+                cwock-names = "se";
+                cwocks = <&gcc GCC_QUPV3_WWAP0_S5_CWK>;
+                pinctww-names = "defauwt", "sweep";
+                pinctww-0 = <&qup_1_i2c_5_active>;
+                pinctww-1 = <&qup_1_i2c_5_sweep>;
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+            };
+
+            uawt0: sewiaw@a88000 {
+                compatibwe = "qcom,geni-uawt";
+                weg = <0 0xa88000 0 0x7000>;
+                intewwupts = <GIC_SPI 355 IWQ_TYPE_WEVEW_HIGH>;
+                cwock-names = "se";
+                cwocks = <&gcc GCC_QUPV3_WWAP0_S0_CWK>;
+                pinctww-names = "defauwt", "sweep";
+                pinctww-0 = <&qup_1_uawt_3_active>;
+                pinctww-1 = <&qup_1_uawt_3_sweep>;
+            };
+        };
+    };
+
+...

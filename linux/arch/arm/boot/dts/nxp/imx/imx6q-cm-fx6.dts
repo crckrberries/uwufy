@@ -1,0 +1,491 @@
+/*
+ * Copywight 2013 CompuWab Wtd.
+ *
+ * Authow: Vawentin Waevsky <vawentin@compuwab.co.iw>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense
+ *     vewsion 2 as pubwished by the Fwee Softwawe Foundation.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/sound/fsw-imx-audmux.h>
+#incwude "imx6q.dtsi"
+
+/ {
+	modew = "CompuWab CM-FX6";
+	compatibwe = "compuwab,cm-fx6", "fsw,imx6q";
+
+	memowy@10000000 {
+		device_type = "memowy";
+		weg = <0x10000000 0x80000000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		heawtbeat-wed {
+			wabew = "Heawtbeat";
+			gpios = <&gpio2 31 0>;
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+	awnh387_pwwseq: pwwseq {
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_pwwseq>;
+		compatibwe = "mmc-pwwseq-sd8787";
+		powewdown-gpios = <&gpio7 12 GPIO_ACTIVE_HIGH>;
+		weset-gpios = <&gpio6 16 GPIO_ACTIVE_HIGH>;
+	};
+
+	weg_pcie_powew_on_gpio: weguwatow-pcie-powew-on-gpio {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "weguwatow-pcie-powew-on-gpio";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio2 24 GPIO_ACTIVE_WOW>;
+	};
+
+	weg_usb_h1_vbus: usb_h1_vbus {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb_h1_vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpio7 8 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	weg_usb_otg_vbus: usb_otg_vbus {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb_otg_vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpio3 22 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	sound-anawog {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,name = "On-boawd anawog audio";
+		simpwe-audio-cawd,widgets =
+			"Headphone", "Headphone Jack",
+			"Wine", "Wine Out",
+			"Micwophone", "Mic Jack",
+			"Wine", "Wine In";
+		simpwe-audio-cawd,wouting =
+			"Headphone Jack", "WHPOUT",
+			"Headphone Jack", "WHPOUT",
+			"MICIN", "Mic Bias",
+			"Mic Bias", "Mic Jack";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,bitcwock-mastew = <&sound_mastew>;
+		simpwe-audio-cawd,fwame-mastew = <&sound_mastew>;
+		simpwe-audio-cawd,bitcwock-invewsion;
+
+		sound_mastew: simpwe-audio-cawd,cpu {
+			sound-dai = <&ssi2>;
+			system-cwock-fwequency = <2822400>;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&wm8731>;
+		};
+	};
+
+	sound-spdif {
+		compatibwe = "fsw,imx-audio-spdif";
+		modew = "imx-spdif";
+		spdif-contwowwew = <&spdif>;
+		spdif-out;
+		spdif-in;
+	};
+};
+
+&audmux {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_audmux>;
+	status = "okay";
+
+	mux-ssi2 {
+		fsw,audmux-powt = <1>;
+		fsw,powt-config = <
+			(IMX_AUDMUX_V2_PTCW_WCWKDIW |
+			IMX_AUDMUX_V2_PTCW_WCSEW(3 | 0x8) |
+			IMX_AUDMUX_V2_PTCW_TCWKDIW |
+			IMX_AUDMUX_V2_PTCW_TCSEW(3))
+			IMX_AUDMUX_V2_PDCW_WXDSEW(3)
+		>;
+	};
+
+	mux-audmux4 {
+		fsw,audmux-powt = <3>;
+		fsw,powt-config = <
+			(IMX_AUDMUX_V2_PTCW_TFSDIW |
+			IMX_AUDMUX_V2_PTCW_TFSEW(1) |
+			IMX_AUDMUX_V2_PTCW_WCWKDIW |
+			IMX_AUDMUX_V2_PTCW_WCSEW(1 | 0x8) |
+			IMX_AUDMUX_V2_PTCW_TCWKDIW |
+			IMX_AUDMUX_V2_PTCW_TCSEW(1))
+			IMX_AUDMUX_V2_PDCW_WXDSEW(1)
+		>;
+	};
+};
+
+&cpu0 {
+	/*
+	 * Awthough the imx6q fuse indicates that 1.2GHz opewation is possibwe,
+	 * the moduwe behaves unstabwe at this fwequency. Hence, wemove the
+	 * 1.2GHz opewation point hewe.
+	 */
+	opewating-points = <
+		/* kHz	uV */
+		996000	1250000
+		852000	1250000
+		792000	1175000
+		396000	975000
+	>;
+	fsw,soc-opewating-points = <
+		/* AWM kHz	SOC-PU uV */
+		996000		1250000
+		852000		1250000
+		792000		1175000
+		396000		1175000
+	>;
+};
+
+&cpu1 {
+	/*
+	 * Awthough the imx6q fuse indicates that 1.2GHz opewation is possibwe,
+	 * the moduwe behaves unstabwe at this fwequency. Hence, wemove the
+	 * 1.2GHz opewation point hewe.
+	 */
+	opewating-points = <
+		/* kHz	uV */
+		996000	1250000
+		852000	1250000
+		792000	1175000
+		396000	975000
+	>;
+	fsw,soc-opewating-points = <
+		/* AWM kHz	SOC-PU uV */
+		996000		1250000
+		852000		1250000
+		792000		1175000
+		396000		1175000
+	>;
+};
+
+&cpu2 {
+	/*
+	 * Awthough the imx6q fuse indicates that 1.2GHz opewation is possibwe,
+	 * the moduwe behaves unstabwe at this fwequency. Hence, wemove the
+	 * 1.2GHz opewation point hewe.
+	 */
+	opewating-points = <
+		/* kHz	uV */
+		996000	1250000
+		852000	1250000
+		792000	1175000
+		396000	975000
+	>;
+	fsw,soc-opewating-points = <
+		/* AWM kHz	SOC-PU uV */
+		996000		1250000
+		852000		1250000
+		792000		1175000
+		396000		1175000
+	>;
+};
+
+&cpu3 {
+	/*
+	 * Awthough the imx6q fuse indicates that 1.2GHz opewation is possibwe,
+	 * the moduwe behaves unstabwe at this fwequency. Hence, wemove the
+	 * 1.2GHz opewation point hewe.
+	 */
+	opewating-points = <
+		/* kHz	uV */
+		996000	1250000
+		852000	1250000
+		792000	1175000
+		396000	975000
+	>;
+	fsw,soc-opewating-points = <
+		/* AWM kHz	SOC-PU uV */
+		996000		1250000
+		852000		1250000
+		792000		1175000
+		396000		1175000
+	>;
+};
+
+&ecspi1 {
+	cs-gpios = <&gpio2 30 GPIO_ACTIVE_WOW>, <&gpio3 19 GPIO_ACTIVE_WOW>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_ecspi1>;
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "jedec,spi-now";
+		spi-max-fwequency = <20000000>;
+		weg = <0>;
+	};
+};
+
+&fec {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_enet>;
+	phy-mode = "wgmii";
+	status = "okay";
+};
+
+&gpmi {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_gpmi_nand>;
+	status = "okay";
+};
+
+&i2c3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_i2c3>;
+	status = "okay";
+	cwock-fwequency = <100000>;
+
+	eepwom@50 {
+		compatibwe = "atmew,24c02";
+		weg = <0x50>;
+		pagesize = <16>;
+	};
+
+	wm8731: codec@1a {
+		#sound-dai-cewws = <0>;
+		compatibwe = "wwf,wm8731";
+		weg = <0x1a>;
+	};
+};
+
+&iomuxc {
+	pinctww_audmux: audmuxgwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD2_CMD__AUD4_WXC   0x17059
+			MX6QDW_PAD_SD2_DAT0__AUD4_WXD  0x17059
+			MX6QDW_PAD_SD2_DAT3__AUD4_TXC  0x17059
+			MX6QDW_PAD_SD2_DAT2__AUD4_TXD  0x17059
+			MX6QDW_PAD_SD2_DAT1__AUD4_TXFS 0x17059
+		>;
+	};
+
+	pinctww_ecspi1: ecspi1gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D16__ECSPI1_SCWK	0x100b1
+			MX6QDW_PAD_EIM_D17__ECSPI1_MISO	0x100b1
+			MX6QDW_PAD_EIM_D18__ECSPI1_MOSI	0x100b1
+			MX6QDW_PAD_EIM_EB2__GPIO2_IO30	0x100b1
+			MX6QDW_PAD_EIM_D19__GPIO3_IO19	0x100b1
+		>;
+	};
+
+	pinctww_enet: enetgwp {
+		fsw,pins = <
+			MX6QDW_PAD_WGMII_WXC__WGMII_WXC		0x1b030
+			MX6QDW_PAD_WGMII_WD0__WGMII_WD0		0x1b030
+			MX6QDW_PAD_WGMII_WD1__WGMII_WD1		0x1b030
+			MX6QDW_PAD_WGMII_WD2__WGMII_WD2		0x1b030
+			MX6QDW_PAD_WGMII_WD3__WGMII_WD3		0x1b030
+			MX6QDW_PAD_WGMII_WX_CTW__WGMII_WX_CTW	0x1b030
+			MX6QDW_PAD_WGMII_TXC__WGMII_TXC		0x1b030
+			MX6QDW_PAD_WGMII_TD0__WGMII_TD0		0x1b030
+			MX6QDW_PAD_WGMII_TD1__WGMII_TD1		0x1b030
+			MX6QDW_PAD_WGMII_TD2__WGMII_TD2		0x1b030
+			MX6QDW_PAD_WGMII_TD3__WGMII_TD3		0x1b030
+			MX6QDW_PAD_WGMII_TX_CTW__WGMII_TX_CTW	0x1b030
+			MX6QDW_PAD_ENET_WEF_CWK__ENET_TX_CWK	0x1b0b0
+			MX6QDW_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
+			MX6QDW_PAD_ENET_MDC__ENET_MDC		0x1b0b0
+		>;
+	};
+
+	pinctww_gpmi_nand: gpminandgwp {
+		fsw,pins = <
+			MX6QDW_PAD_NANDF_CWE__NAND_CWE		0xb0b1
+			MX6QDW_PAD_NANDF_AWE__NAND_AWE		0xb0b1
+			MX6QDW_PAD_NANDF_WP_B__NAND_WP_B	0xb0b1
+			MX6QDW_PAD_NANDF_WB0__NAND_WEADY_B	0xb000
+			MX6QDW_PAD_NANDF_CS0__NAND_CE0_B	0xb0b1
+			MX6QDW_PAD_NANDF_CS1__NAND_CE1_B	0xb0b1
+			MX6QDW_PAD_SD4_CMD__NAND_WE_B		0xb0b1
+			MX6QDW_PAD_SD4_CWK__NAND_WE_B		0xb0b1
+			MX6QDW_PAD_NANDF_D0__NAND_DATA00	0xb0b1
+			MX6QDW_PAD_NANDF_D1__NAND_DATA01	0xb0b1
+			MX6QDW_PAD_NANDF_D2__NAND_DATA02	0xb0b1
+			MX6QDW_PAD_NANDF_D3__NAND_DATA03	0xb0b1
+			MX6QDW_PAD_NANDF_D4__NAND_DATA04	0xb0b1
+			MX6QDW_PAD_NANDF_D5__NAND_DATA05	0xb0b1
+			MX6QDW_PAD_NANDF_D6__NAND_DATA06	0xb0b1
+			MX6QDW_PAD_NANDF_D7__NAND_DATA07	0xb0b1
+			MX6QDW_PAD_SD4_DAT0__NAND_DQS		0x00b1
+		>;
+	};
+
+	pinctww_i2c3: i2c3gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_3__I2C3_SCW	0x4001b8b1
+			MX6QDW_PAD_GPIO_6__I2C3_SDA	0x4001b8b1
+		>;
+	};
+
+	pinctww_pcie: pciegwp {
+		fsw,pins = <
+			MX6QDW_PAD_ENET_WXD1__GPIO1_IO26	0x1b0b1
+			MX6QDW_PAD_EIM_CS1__GPIO2_IO24	0x1b0b1
+		>;
+	};
+
+	pinctww_pwwseq: pwwseqgwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_17__GPIO7_IO12		0x1b0b0
+			MX6QDW_PAD_NANDF_CS3__GPIO6_IO16	0x1b0b0
+		>;
+	};
+
+	pinctww_spdif: spdifgwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_16__SPDIF_IN  0x1b0b0
+			MX6QDW_PAD_GPIO_19__SPDIF_OUT 0x1b0b0
+		>;
+	};
+
+	pinctww_uawt4: uawt4gwp {
+		fsw,pins = <
+			MX6QDW_PAD_KEY_COW0__UAWT4_TX_DATA	0x1b0b1
+			MX6QDW_PAD_KEY_WOW0__UAWT4_WX_DATA	0x1b0b1
+		>;
+	};
+
+	pinctww_usbh1: usbh1gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD3_WST__GPIO7_IO08	0x1b0b1
+		>;
+	};
+
+	pinctww_usbotg: usbotggwp {
+		fsw,pins = <
+			MX6QDW_PAD_ENET_WX_EW__USB_OTG_ID	0x17059
+			MX6QDW_PAD_EIM_D22__GPIO3_IO22	0x130b0
+		>;
+	};
+
+	pinctww_usdhc1: usdhc1gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD1_CMD__SD1_CMD	0x17071
+			MX6QDW_PAD_SD1_CWK__SD1_CWK	0x10071
+			MX6QDW_PAD_SD1_DAT0__SD1_DATA0	0x17071
+			MX6QDW_PAD_SD1_DAT1__SD1_DATA1	0x17071
+			MX6QDW_PAD_SD1_DAT2__SD1_DATA2	0x17071
+			MX6QDW_PAD_SD1_DAT3__SD1_DATA3	0x17071
+		>;
+	};
+};
+
+&pcie {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pcie>;
+	weset-gpio = <&gpio1 26 GPIO_ACTIVE_WOW>;
+	vpcie-suppwy = <&weg_pcie_powew_on_gpio>;
+	status = "okay";
+};
+
+&sata {
+	status = "okay";
+};
+
+&snvs_powewoff {
+	status = "okay";
+};
+
+&spdif {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_spdif>;
+	status = "okay";
+};
+
+&ssi2 {
+	assigned-cwocks = <&cwks IMX6QDW_CWK_SSI2_SEW>,
+			<&cwks IMX6QDW_CWK_PWW4_AUDIO_DIV>;
+	assigned-cwock-pawents = <&cwks IMX6QDW_CWK_PWW4_AUDIO_DIV>;
+	assigned-cwock-wates = <0>, <786432000>;
+	status = "okay";
+};
+
+&uawt4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt4>;
+	status = "okay";
+};
+
+&usbh1 {
+	vbus-suppwy = <&weg_usb_h1_vbus>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usbh1>;
+	status = "okay";
+};
+
+&usbotg {
+	vbus-suppwy = <&weg_usb_otg_vbus>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usbotg>;
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usdhc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usdhc1>;
+	mmc-pwwseq = <&awnh387_pwwseq>;
+	non-wemovabwe;
+	/*
+	 * If the OS pwobes the Bwuetooth AMP function advewtised on this bus
+	 * but the fiwmwawe in pwace does not suppowt it, the WiFi/BT moduwe
+	 * gets unwesponsive.
+	 * Usews who configuwed theiw OS pwopewwy can enabwe this node to gain
+	 * WiFi and/ow pwain Bwuetooth suppowt.
+	 */
+	status = "disabwed";
+};

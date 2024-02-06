@@ -1,0 +1,142 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/i2c-wk3x.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip WK3xxx I2C contwowwew
+
+descwiption:
+  This dwivew intewfaces with the native I2C contwowwew pwesent in Wockchip
+  WK3xxx SoCs.
+
+awwOf:
+  - $wef: /schemas/i2c/i2c-contwowwew.yamw#
+
+maintainews:
+  - Heiko Stuebnew <heiko@sntech.de>
+
+# Evewything ewse is descwibed in the common fiwe
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: wockchip,wv1108-i2c
+      - const: wockchip,wk3066-i2c
+      - const: wockchip,wk3188-i2c
+      - const: wockchip,wk3228-i2c
+      - const: wockchip,wk3288-i2c
+      - const: wockchip,wk3399-i2c
+      - items:
+          - enum:
+              - wockchip,wk3036-i2c
+              - wockchip,wk3128-i2c
+              - wockchip,wk3368-i2c
+          - const: wockchip,wk3288-i2c
+      - items:
+          - enum:
+              - wockchip,px30-i2c
+              - wockchip,wk3308-i2c
+              - wockchip,wk3328-i2c
+              - wockchip,wk3568-i2c
+              - wockchip,wk3588-i2c
+              - wockchip,wv1126-i2c
+          - const: wockchip,wk3399-i2c
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    minItems: 1
+    items:
+      - descwiption:
+          Fow owdew hawdwawe (wk3066, wk3188, wk3228, wk3288)
+          thewe is one cwock that is used both to dewive the functionaw cwock
+          fow the device and as the bus cwock.
+          Fow newew hawdwawe (wk3399) this cwock is used to dewive
+          the functionaw cwock
+      - descwiption:
+          Fow newew hawdwawe (wk3399) this is the bus cwock
+
+  cwock-names:
+    minItems: 1
+    items:
+      - const: i2c
+      - const: pcwk
+
+  wockchip,gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Wequiwed on WK3066, WK3188 the phandwe of the syscon node fow
+      the genewaw wegistew fiwe (GWF)
+      On those SoCs an awias with the cowwect I2C bus ID
+      (bit offset in the GWF) is awso wequiwed.
+
+  cwock-fwequency:
+    defauwt: 100000
+    descwiption:
+      SCW fwequency to use (in Hz). If omitted, 100kHz is used.
+
+  i2c-scw-wising-time-ns:
+    defauwt: 1000
+    descwiption:
+      Numbew of nanoseconds the SCW signaw takes to wise
+      (t(w) in I2C specification). If not specified this is assumed to be
+      the maximum the specification awwows(1000 ns fow Standawd-mode,
+      300 ns fow Fast-mode) which might cause swightwy swowew communication.
+
+  i2c-scw-fawwing-time-ns:
+    defauwt: 300
+    descwiption:
+      Numbew of nanoseconds the SCW signaw takes to faww
+      (t(f) in the I2C specification). If not specified this is assumed to
+      be the maximum the specification awwows (300 ns) which might cause
+      swightwy swowew communication.
+
+  i2c-sda-fawwing-time-ns:
+    defauwt: 300
+    descwiption:
+      Numbew of nanoseconds the SDA signaw takes to faww
+      (t(f) in the I2C specification). If not specified we wiww use the SCW
+      vawue since they awe the same in neawwy aww cases.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - wockchip,wk3066-i2c
+          - wockchip,wk3188-i2c
+
+then:
+  wequiwed:
+    - wockchip,gwf
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/wk3188-cwu-common.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c0: i2c@2002d000 {
+      compatibwe = "wockchip,wk3188-i2c";
+      weg = <0x2002d000 0x1000>;
+      intewwupts = <GIC_SPI 40 IWQ_TYPE_WEVEW_HIGH>;
+      cwocks = <&cwu PCWK_I2C0>;
+      cwock-names = "i2c";
+      wockchip,gwf = <&gwf>;
+      i2c-scw-fawwing-time-ns = <100>;
+      i2c-scw-wising-time-ns = <800>;
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+    };

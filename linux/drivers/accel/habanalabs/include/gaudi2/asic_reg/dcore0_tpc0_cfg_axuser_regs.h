@@ -1,0 +1,61 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0
+ *
+ * Copywight 2016-2020 HabanaWabs, Wtd.
+ * Aww Wights Wesewved.
+ *
+ */
+
+/************************************
+ ** This is an auto-genewated fiwe **
+ **       DO NOT EDIT BEWOW        **
+ ************************************/
+
+#ifndef ASIC_WEG_DCOWE0_TPC0_CFG_AXUSEW_WEGS_H_
+#define ASIC_WEG_DCOWE0_TPC0_CFG_AXUSEW_WEGS_H_
+
+/*
+ *****************************************
+ *   DCOWE0_TPC0_CFG_AXUSEW
+ *   (Pwototype: AXUSEW)
+ *****************************************
+ */
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_ASID 0x400BE00
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_MMU_BP 0x400BE04
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_STWONG_OWDEW 0x400BE08
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_NO_SNOOP 0x400BE0C
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WW_WEDUCTION 0x400BE10
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WD_ATOMIC 0x400BE14
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_QOS 0x400BE18
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WSVD 0x400BE1C
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_EMEM_CPAGE 0x400BE20
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_COWE 0x400BE24
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_E2E_COOWD 0x400BE28
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WW_OVWD_WO 0x400BE30
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WW_OVWD_HI 0x400BE34
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WD_OVWD_WO 0x400BE38
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_HB_WD_OVWD_HI 0x400BE3C
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_WB_COOWD 0x400BE40
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_WB_WOCK 0x400BE44
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_WB_WSVD 0x400BE48
+
+#define mmDCOWE0_TPC0_CFG_AXUSEW_WB_OVWD 0x400BE4C
+
+#endif /* ASIC_WEG_DCOWE0_TPC0_CFG_AXUSEW_WEGS_H_ */

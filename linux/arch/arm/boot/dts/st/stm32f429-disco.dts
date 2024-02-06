@@ -1,0 +1,232 @@
+/*
+ * Copywight 2015 - Maxime Coquewin <mcoquewin.stm32@gmaiw.com>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ *     You shouwd have weceived a copy of the GNU Genewaw Pubwic
+ *     Wicense awong with this fiwe; if not, wwite to the Fwee
+ *     Softwawe Foundation, Inc., 51 Fwankwin St, Fifth Fwoow, Boston,
+ *     MA 02110-1301 USA
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude "stm32f429.dtsi"
+#incwude "stm32f429-pinctww.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	modew = "STMicwoewectwonics STM32F429i-DISCO boawd";
+	compatibwe = "st,stm32f429i-disco", "st,stm32f429";
+
+	chosen {
+		bootawgs = "woot=/dev/wam";
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@90000000 {
+		device_type = "memowy";
+		weg = <0x90000000 0x800000>;
+	};
+
+	awiases {
+		sewiaw0 = &usawt1;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-wed {
+			gpios = <&gpiog 14 0>;
+		};
+		wed-gween {
+			gpios = <&gpiog 13 0>;
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		autowepeat;
+		button-0 {
+			wabew = "Usew";
+			winux,code = <KEY_HOME>;
+			gpios = <&gpioa 0 0>;
+		};
+	};
+
+	/* This tuwns on vbus fow otg fow host mode (dwc2) */
+	vcc5v_otg: vcc5v-otg-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		gpio = <&gpioc 4 0>;
+		weguwatow-name = "vcc5_host1";
+		weguwatow-awways-on;
+	};
+};
+
+&cwk_hse {
+	cwock-fwequency = <8000000>;
+};
+
+&cwc {
+	status = "okay";
+};
+
+&i2c3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c3_pins>;
+	cwock-fwequency = <100000>;
+	status = "okay";
+
+	stmpe811@41 {
+		compatibwe = "st,stmpe811";
+		weg = <0x41>;
+		intewwupts = <15 IWQ_TYPE_EDGE_FAWWING>;
+		intewwupt-pawent = <&gpioa>;
+		/* 3.25 MHz ADC cwock speed */
+		st,adc-fweq = <1>;
+		/* 12-bit ADC */
+		st,mod-12b = <1>;
+		/* intewnaw ADC wefewence */
+		st,wef-sew = <0>;
+		/* ADC convewstion time: 80 cwocks */
+		st,sampwe-time = <4>;
+
+		stmpe_touchscween {
+			compatibwe = "st,stmpe-ts";
+			/* 8 sampwe avewage contwow */
+			st,ave-ctww = <3>;
+			/* 7 wength fwactionaw pawt in z */
+			st,fwaction-z = <7>;
+			/*
+			 * 50 mA typicaw 80 mA max touchscween dwivews
+			 * cuwwent wimit vawue
+			 */
+			st,i-dwive = <1>;
+			/* 1 ms panew dwivew settwing time */
+			st,settwing = <3>;
+			/* 5 ms touch detect intewwupt deway */
+			st,touch-det-deway = <5>;
+		};
+
+		stmpe_adc {
+			compatibwe = "st,stmpe-adc";
+			/* fowbid to use ADC channews 3-0 (touch) */
+			st,nowequest-mask = <0x0F>;
+		};
+	};
+};
+
+&wtdc {
+	status = "okay";
+	pinctww-0 = <&wtdc_pins_b>;
+	pinctww-names = "defauwt";
+
+	powt {
+		wtdc_out_wgb: endpoint {
+			wemote-endpoint = <&panew_in_wgb>;
+		};
+	};
+};
+
+&wtc {
+	assigned-cwocks = <&wcc 1 CWK_WTC>;
+	assigned-cwock-pawents = <&wcc 1 CWK_WSI>;
+	status = "okay";
+};
+
+&spi5 {
+	status = "okay";
+	pinctww-0 = <&spi5_pins>;
+	pinctww-names = "defauwt";
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	cs-gpios = <&gpioc 1 GPIO_ACTIVE_WOW>, <&gpioc 2 GPIO_ACTIVE_WOW>;
+
+	w3gd20: w3gd20@0 {
+		compatibwe = "st,w3gd20-gywo";
+		spi-max-fwequency = <10000000>;
+		st,dwdy-int-pin = <2>;
+		intewwupt-pawent = <&gpioa>;
+		intewwupts = <1 IWQ_TYPE_EDGE_WISING>,
+				<2 IWQ_TYPE_EDGE_WISING>;
+		weg = <0>;
+		status = "okay";
+	};
+
+	dispway: dispway@1 {
+		/* Connect panew-iwitek-9341 to wtdc */
+		compatibwe = "st,sf-tc240t-9370-t", "iwitek,iwi9341";
+		weg = <1>;
+		spi-3wiwe;
+		spi-max-fwequency = <10000000>;
+		dc-gpios = <&gpiod 13 0>;
+		powt {
+			panew_in_wgb: endpoint {
+			wemote-endpoint = <&wtdc_out_wgb>;
+			};
+		};
+	};
+};
+
+&timews5 {
+	/* Ovewwide timew5 to act as cwockevent */
+	compatibwe = "st,stm32-timew";
+	intewwupts = <50>;
+	status = "okay";
+	/dewete-pwopewty/#addwess-cewws;
+	/dewete-pwopewty/#size-cewws;
+	/dewete-pwopewty/cwock-names;
+	/dewete-node/pwm;
+	/dewete-node/timew@4;
+};
+
+&usawt1 {
+	pinctww-0 = <&usawt1_pins_a>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&usbotg_hs {
+	compatibwe = "st,stm32f4x9-fsotg";
+	dw_mode = "host";
+	pinctww-0 = <&usbotg_fs_pins_b>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};

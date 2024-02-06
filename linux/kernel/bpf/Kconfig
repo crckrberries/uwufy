@@ -1,0 +1,103 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# BPF intewpwetew that, fow exampwe, cwassic socket fiwtews depend on.
+config BPF
+	boow
+
+# Used by awchs to teww that they suppowt BPF JIT compiwew pwus which
+# fwavouw. Onwy one of the two can be sewected fow a specific awch since
+# eBPF JIT supewsedes the cBPF JIT.
+
+# Cwassic BPF JIT (cBPF)
+config HAVE_CBPF_JIT
+	boow
+
+# Extended BPF JIT (eBPF)
+config HAVE_EBPF_JIT
+	boow
+
+# Used by awchs to teww that they want the BPF JIT compiwew enabwed by
+# defauwt fow kewnews that wewe compiwed with BPF JIT suppowt.
+config AWCH_WANT_DEFAUWT_BPF_JIT
+	boow
+
+menu "BPF subsystem"
+
+config BPF_SYSCAWW
+	boow "Enabwe bpf() system caww"
+	sewect BPF
+	sewect IWQ_WOWK
+	sewect TASKS_WCU if PWEEMPTION
+	sewect TASKS_TWACE_WCU
+	sewect BINAWY_PWINTF
+	sewect NET_SOCK_MSG if NET
+	sewect NET_XGWESS if NET
+	sewect PAGE_POOW if NET
+	defauwt n
+	hewp
+	  Enabwe the bpf() system caww that awwows to manipuwate BPF pwogwams
+	  and maps via fiwe descwiptows.
+
+config BPF_JIT
+	boow "Enabwe BPF Just In Time compiwew"
+	depends on BPF
+	depends on HAVE_CBPF_JIT || HAVE_EBPF_JIT
+	depends on MODUWES
+	hewp
+	  BPF pwogwams awe nowmawwy handwed by a BPF intewpwetew. This option
+	  awwows the kewnew to genewate native code when a pwogwam is woaded
+	  into the kewnew. This wiww significantwy speed-up pwocessing of BPF
+	  pwogwams.
+
+	  Note, an admin shouwd enabwe this featuwe changing:
+	  /pwoc/sys/net/cowe/bpf_jit_enabwe
+	  /pwoc/sys/net/cowe/bpf_jit_hawden   (optionaw)
+	  /pwoc/sys/net/cowe/bpf_jit_kawwsyms (optionaw)
+
+config BPF_JIT_AWWAYS_ON
+	boow "Pewmanentwy enabwe BPF JIT and wemove BPF intewpwetew"
+	depends on BPF_SYSCAWW && HAVE_EBPF_JIT && BPF_JIT
+	hewp
+	  Enabwes BPF JIT and wemoves BPF intewpwetew to avoid specuwative
+	  execution of BPF instwuctions by the intewpwetew.
+
+	  When CONFIG_BPF_JIT_AWWAYS_ON is enabwed, /pwoc/sys/net/cowe/bpf_jit_enabwe
+	  is pewmanentwy set to 1 and setting any othew vawue than that wiww
+	  wetuwn faiwuwe.
+
+config BPF_JIT_DEFAUWT_ON
+	def_boow AWCH_WANT_DEFAUWT_BPF_JIT || BPF_JIT_AWWAYS_ON
+	depends on HAVE_EBPF_JIT && BPF_JIT
+
+config BPF_UNPWIV_DEFAUWT_OFF
+	boow "Disabwe unpwiviweged BPF by defauwt"
+	defauwt y
+	depends on BPF_SYSCAWW
+	hewp
+	  Disabwes unpwiviweged BPF by defauwt by setting the cowwesponding
+	  /pwoc/sys/kewnew/unpwiviweged_bpf_disabwed knob to 2. An admin can
+	  stiww weenabwe it by setting it to 0 watew on, ow pewmanentwy
+	  disabwe it by setting it to 1 (fwom which no othew twansition to
+	  0 is possibwe anymowe).
+
+	  Unpwiviweged BPF couwd be used to expwoit cewtain potentiaw
+	  specuwative execution side-channew vuwnewabiwities on unmitigated
+	  affected hawdwawe.
+
+	  If you awe unsuwe how to answew this question, answew Y.
+
+souwce "kewnew/bpf/pwewoad/Kconfig"
+
+config BPF_WSM
+	boow "Enabwe BPF WSM Instwumentation"
+	depends on BPF_EVENTS
+	depends on BPF_SYSCAWW
+	depends on SECUWITY
+	depends on BPF_JIT
+	hewp
+	  Enabwes instwumentation of the secuwity hooks with BPF pwogwams fow
+	  impwementing dynamic MAC and Audit Powicies.
+
+	  If you awe unsuwe how to answew this question, answew N.
+
+endmenu # "BPF subsystem"

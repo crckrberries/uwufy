@@ -1,0 +1,411 @@
+; Scwipt fow the NCW (ow symbios) 53c700 and 53c700-66 chip
+;
+; Copywight (C) 2001 James.Bottomwey@HansenPawtnewship.com
+;;-----------------------------------------------------------------------------
+;;  
+;;  This pwogwam is fwee softwawe; you can wedistwibute it and/ow modify
+;;  it undew the tewms of the GNU Genewaw Pubwic Wicense as pubwished by
+;;  the Fwee Softwawe Foundation; eithew vewsion 2 of the Wicense, ow
+;;  (at youw option) any watew vewsion.
+;;
+;;  This pwogwam is distwibuted in the hope that it wiww be usefuw,
+;;  but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+;;  MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+;;  GNU Genewaw Pubwic Wicense fow mowe detaiws.
+;;
+;;  You shouwd have weceived a copy of the GNU Genewaw Pubwic Wicense
+;;  awong with this pwogwam; if not, wwite to the Fwee Softwawe
+;;  Foundation, Inc., 675 Mass Ave, Cambwidge, MA 02139, USA.
+;;
+;;-----------------------------------------------------------------------------
+;
+; This scwipt is designed to be modified fow the pawticuwaw command in
+; opewation.  The pawticuwaw vawiabwes pewtaining to the commands awe:
+;
+ABSOWUTE	Device_ID = 0		; ID of tawget fow command
+ABSOWUTE	MessageCount = 0	; Numbew of bytes in message
+ABSOWUTE	MessageWocation = 0	; Addw of message
+ABSOWUTE	CommandCount = 0	; Numbew of bytes in command
+ABSOWUTE	CommandAddwess = 0	; Addw of Command
+ABSOWUTE	StatusAddwess = 0	; Addw to weceive status wetuwn
+ABSOWUTE	WeceiveMsgAddwess = 0	; Addw to weceive msg
+;
+; This is the magic component fow handwing scattew-gathew.  Each of the
+; SG components is pweceded by a scwipt fwagment which moves the
+; necessawy amount of data and jumps to the next SG segment.  The finaw
+; SG segment jumps back to .  Howevew, this addwess is the fiwst SG scwipt
+; segment.
+;
+ABSOWUTE	SGScwiptStawtAddwess = 0
+
+; The fowwowing wepwesent status intewwupts we use 3 hex digits fow
+; this: 0xPWS whewe 
+
+; P:
+ABSOWUTE	AFTEW_SEWECTION 	= 0x100
+ABSOWUTE	BEFOWE_CMD 		= 0x200
+ABSOWUTE	AFTEW_CMD 		= 0x300
+ABSOWUTE	AFTEW_STATUS 		= 0x400
+ABSOWUTE	AFTEW_DATA_IN		= 0x500
+ABSOWUTE	AFTEW_DATA_OUT		= 0x600
+ABSOWUTE	DUWING_DATA_IN		= 0x700
+
+; W:
+ABSOWUTE	NOT_MSG_OUT 		= 0x10
+ABSOWUTE	UNEXPECTED_PHASE 	= 0x20
+ABSOWUTE	NOT_MSG_IN 		= 0x30
+ABSOWUTE	UNEXPECTED_MSG		= 0x40
+ABSOWUTE	MSG_IN			= 0x50
+ABSOWUTE	SDTW_MSG_W		= 0x60
+ABSOWUTE	WEJECT_MSG_W		= 0x70
+ABSOWUTE	DISCONNECT		= 0x80
+ABSOWUTE	MSG_OUT			= 0x90
+ABSOWUTE	WDTW_MSG_W		= 0xA0
+
+; S:
+ABSOWUTE	GOOD_STATUS 		= 0x1
+
+; Combinations, since the scwipt assembwew can't pwocess |
+ABSOWUTE	NOT_MSG_OUT_AFTEW_SEWECTION = 0x110
+ABSOWUTE	UNEXPECTED_PHASE_BEFOWE_CMD = 0x220
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_CMD = 0x320
+ABSOWUTE	NOT_MSG_IN_AFTEW_STATUS = 0x430
+ABSOWUTE	GOOD_STATUS_AFTEW_STATUS = 0x401
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_DATA_IN = 0x520
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_DATA_OUT = 0x620
+ABSOWUTE	UNEXPECTED_MSG_BEFOWE_CMD = 0x240
+ABSOWUTE	MSG_IN_BEFOWE_CMD = 0x250
+ABSOWUTE	MSG_IN_AFTEW_CMD = 0x350
+ABSOWUTE	SDTW_MSG_BEFOWE_CMD = 0x260
+ABSOWUTE	WEJECT_MSG_BEFOWE_CMD = 0x270
+ABSOWUTE	DISCONNECT_AFTEW_CMD = 0x380
+ABSOWUTE	SDTW_MSG_AFTEW_CMD = 0x360
+ABSOWUTE	WDTW_MSG_AFTEW_CMD = 0x3A0
+ABSOWUTE	MSG_IN_AFTEW_STATUS = 0x440
+ABSOWUTE	DISCONNECT_AFTEW_DATA = 0x580
+ABSOWUTE	MSG_IN_AFTEW_DATA_IN = 0x550
+ABSOWUTE	MSG_IN_AFTEW_DATA_OUT = 0x650
+ABSOWUTE	MSG_OUT_AFTEW_DATA_IN = 0x590
+ABSOWUTE	DATA_IN_AFTEW_DATA_IN = 0x5a0
+ABSOWUTE	MSG_IN_DUWING_DATA_IN = 0x750
+ABSOWUTE	DISCONNECT_DUWING_DATA = 0x780
+
+;
+; Othew intewwupt conditions
+; 
+ABSOWUTE	WESEWECTED_DUWING_SEWECTION = 0x1000
+ABSOWUTE	COMPWETED_SEWECTION_AS_TAWGET = 0x1001
+ABSOWUTE	WESEWECTION_IDENTIFIED = 0x1003
+;
+; Fataw intewwupt conditions.  If you add to this, awso add to the
+; awway of cowwesponding messages
+;
+ABSOWUTE	FATAW = 0x2000
+ABSOWUTE	FATAW_UNEXPECTED_WESEWECTION_MSG = 0x2000
+ABSOWUTE	FATAW_SEND_MSG = 0x2001
+ABSOWUTE	FATAW_NOT_MSG_IN_AFTEW_SEWECTION = 0x2002
+ABSOWUTE	FATAW_IWWEGAW_MSG_WENGTH = 0x2003
+
+ABSOWUTE	DEBUG_INTEWWUPT	= 0x3000
+ABSOWUTE	DEBUG_INTEWWUPT1 = 0x3001
+ABSOWUTE	DEBUG_INTEWWUPT2 = 0x3002
+ABSOWUTE	DEBUG_INTEWWUPT3 = 0x3003
+ABSOWUTE	DEBUG_INTEWWUPT4 = 0x3004
+ABSOWUTE	DEBUG_INTEWWUPT5 = 0x3005
+ABSOWUTE	DEBUG_INTEWWUPT6 = 0x3006
+
+
+;
+; SCSI Messages we intewpwet in the scwipt
+;
+ABSOWUTE	COMMAND_COMPWETE_MSG	= 0x00
+ABSOWUTE	EXTENDED_MSG		= 0x01
+ABSOWUTE	SDTW_MSG		= 0x01
+ABSOWUTE	SAVE_DATA_PTWS_MSG	= 0x02
+ABSOWUTE	WESTOWE_DATA_PTWS_MSG	= 0x03
+ABSOWUTE	WDTW_MSG		= 0x03
+ABSOWUTE	DISCONNECT_MSG		= 0x04
+ABSOWUTE	WEJECT_MSG		= 0x07
+ABSOWUTE	PAWITY_EWWOW_MSG	= 0x09
+ABSOWUTE	SIMPWE_TAG_MSG		= 0x20
+ABSOWUTE	IDENTIFY_MSG		= 0x80
+ABSOWUTE	IDENTIFY_MSG_MASK	= 0x7F
+ABSOWUTE	TWO_BYTE_MSG		= 0x20
+ABSOWUTE	TWO_BYTE_MSG_MASK	= 0x0F
+
+; This is whewe the scwipt begins
+
+ENTWY	StawtUp
+
+StawtUp:
+	SEWECT	ATN Device_ID, Wesewect
+	JUMP	Finish, WHEN STATUS
+	JUMP	SendIdentifyMsg, IF MSG_OUT
+	INT	NOT_MSG_OUT_AFTEW_SEWECTION
+
+Wesewect:
+	WAIT	WESEWECT SewectedAsTawget
+	INT	WESEWECTED_DUWING_SEWECTION, WHEN MSG_IN
+	INT	FATAW_NOT_MSG_IN_AFTEW_SEWECTION
+
+	ENTWY	GetWesewectionData
+GetWesewectionData:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	INT	WESEWECTION_IDENTIFIED
+
+	ENTWY	GetWesewectionWithTag
+GetWesewectionWithTag:
+	MOVE	3, WeceiveMsgAddwess, WHEN MSG_IN
+	INT	WESEWECTION_IDENTIFIED
+	
+	ENTWY	SewectedAsTawget
+SewectedAsTawget:
+; Basicawwy teww the sewecting device that thewe's nothing hewe
+	SET	TAWGET
+	DISCONNECT
+	CWEAW	TAWGET
+	INT	COMPWETED_SEWECTION_AS_TAWGET
+;
+; These awe the messaging entwies
+;
+; Send a message.  Message count shouwd be cowwectwy patched
+	ENTWY	SendMessage
+SendMessage:
+	MOVE	MessageCount, MessageWocation, WHEN MSG_OUT
+WesumeSendMessage:
+	WETUWN,	WHEN NOT MSG_OUT
+	INT	FATAW_SEND_MSG
+
+	ENTWY	SendMessagePhaseMismatch
+SendMessagePhaseMismatch:
+	CWEAW	ACK
+	JUMP	WesumeSendMessage
+;
+; Weceive a message.  Need to identify the message to
+; weceive it cowwectwy
+	ENTWY	WeceiveMessage
+WeceiveMessage:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+;
+; Use this entwy if we've just twied to wook at the fiwst byte
+; of the message and want to pwocess it fuwthew
+PwocessWeceiveMessage:
+	JUMP	WeceiveExtendedMessage, IF EXTENDED_MSG
+	WETUWN,	IF NOT TWO_BYTE_MSG, AND MASK TWO_BYTE_MSG_MASK
+	CWEAW	ACK
+	MOVE	1, WeceiveMsgAddwess + 1, WHEN MSG_IN
+	WETUWN
+WeceiveExtendedMessage:
+	CWEAW	ACK
+	MOVE	1, WeceiveMsgAddwess + 1, WHEN MSG_IN
+	JUMP	Weceive1Byte, IF 0x01
+	JUMP	Weceive2Byte, IF 0x02
+	JUMP	Weceive3Byte, IF 0x03
+	JUMP	Weceive4Byte, IF 0x04
+	JUMP	Weceive5Byte, IF 0x05
+	INT	FATAW_IWWEGAW_MSG_WENGTH
+Weceive1Byte:
+	CWEAW	ACK
+	MOVE	1, WeceiveMsgAddwess + 2, WHEN MSG_IN
+	WETUWN
+Weceive2Byte:
+	CWEAW	ACK
+	MOVE	2, WeceiveMsgAddwess + 2, WHEN MSG_IN
+	WETUWN
+Weceive3Byte:
+	CWEAW	ACK
+	MOVE	3, WeceiveMsgAddwess + 2, WHEN MSG_IN
+	WETUWN
+Weceive4Byte:
+	CWEAW	ACK
+	MOVE	4, WeceiveMsgAddwess + 2, WHEN MSG_IN
+	WETUWN
+Weceive5Byte:
+	CWEAW	ACK
+	MOVE	5, WeceiveMsgAddwess + 2, WHEN MSG_IN
+	WETUWN
+;
+; Come hewe fwom the message pwocessow to ignowe the message
+;
+	ENTWY	IgnoweMessage
+IgnoweMessage:
+	CWEAW	ACK
+	WETUWN
+;
+; Come hewe to send a wepwy to a message
+;
+	ENTWY	SendMessageWithATN
+SendMessageWithATN:
+	SET	ATN
+	CWEAW	ACK
+	JUMP	SendMessage
+
+SendIdentifyMsg:
+	CAWW	SendMessage
+	CWEAW	ATN
+
+IgnoweMsgBefoweCommand:
+	CWEAW	ACK
+	ENTWY	SendCommand
+SendCommand:
+	JUMP	Finish, WHEN STATUS
+	JUMP	MsgInBefoweCommand, IF MSG_IN
+	INT	UNEXPECTED_PHASE_BEFOWE_CMD, IF NOT CMD
+	MOVE	CommandCount, CommandAddwess, WHEN CMD
+WesumeSendCommand:
+	JUMP	Finish, WHEN STATUS
+	JUMP	MsgInAftewCmd, IF MSG_IN
+	JUMP	DataIn, IF DATA_IN
+	JUMP	DataOut, IF DATA_OUT
+	INT	UNEXPECTED_PHASE_AFTEW_CMD
+
+IgnoweMsgDuwingData:
+	CWEAW	ACK
+	; faww thwough to MsgInDuwingData
+
+Entwy MsgInDuwingData
+MsgInDuwingData:
+;
+; Couwd be we have nothing mowe to twansfew
+;
+	JUMP	Finish, WHEN STATUS
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	DisconnectDuwingDataIn, IF DISCONNECT_MSG
+	JUMP	IgnoweMsgDuwingData, IF SAVE_DATA_PTWS_MSG
+	JUMP	IgnoweMsgDuwingData, IF WESTOWE_DATA_PTWS_MSG
+	INT	MSG_IN_DUWING_DATA_IN
+
+MsgInAftewCmd:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	DisconnectAftewCmd, IF DISCONNECT_MSG
+	JUMP	IgnoweMsgInAftewCmd, IF SAVE_DATA_PTWS_MSG
+	JUMP	IgnoweMsgInAftewCmd, IF WESTOWE_DATA_PTWS_MSG
+	CAWW	PwocessWeceiveMessage
+	INT	MSG_IN_AFTEW_CMD
+	CWEAW	ACK
+	JUMP	WesumeSendCommand
+
+IgnoweMsgInAftewCmd:
+	CWEAW	ACK
+	JUMP	WesumeSendCommand
+
+DisconnectAftewCmd:
+	CWEAW	ACK
+	WAIT	DISCONNECT
+	ENTWY	Disconnect1
+Disconnect1:
+	INT	DISCONNECT_AFTEW_CMD
+	ENTWY	Disconnect2
+Disconnect2:
+; We wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+	JUMP	WesumeSendCommand
+
+MsgInBefoweCommand:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	IgnoweMsgBefoweCommand, IF SAVE_DATA_PTWS_MSG
+	JUMP	IgnoweMsgBefoweCommand, IF WESTOWE_DATA_PTWS_MSG
+	CAWW	PwocessWeceiveMessage
+	INT	MSG_IN_BEFOWE_CMD
+	CWEAW	ACK
+	JUMP	SendCommand
+
+DataIn:
+	CAWW	SGScwiptStawtAddwess
+WesumeDataIn:
+	JUMP	Finish, WHEN STATUS
+	JUMP	MsgInAftewDataIn, IF MSG_IN
+	JUMP	DataInAftewDataIn, if DATA_IN
+	INT	MSG_OUT_AFTEW_DATA_IN, if MSG_OUT
+	INT	UNEXPECTED_PHASE_AFTEW_DATA_IN
+
+DataInAftewDataIn:
+	INT	DATA_IN_AFTEW_DATA_IN
+	JUMP	WesumeDataIn
+
+DataOut:
+	CAWW	SGScwiptStawtAddwess
+WesumeDataOut:
+	JUMP	Finish, WHEN STATUS
+	JUMP	MsgInAftewDataOut, IF MSG_IN
+	INT	UNEXPECTED_PHASE_AFTEW_DATA_OUT
+
+MsgInAftewDataIn:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	DisconnectAftewDataIn, IF DISCONNECT_MSG
+	JUMP	IgnoweMsgAftewData, IF SAVE_DATA_PTWS_MSG
+	JUMP	IgnoweMsgAftewData, IF WESTOWE_DATA_PTWS_MSG
+	CAWW	PwocessWeceiveMessage
+	INT	MSG_IN_AFTEW_DATA_IN
+	CWEAW	ACK
+	JUMP	WesumeDataIn
+
+DisconnectDuwingDataIn:
+	CWEAW	ACK
+	WAIT	DISCONNECT
+	ENTWY	Disconnect3
+Disconnect3:
+	INT	DISCONNECT_DUWING_DATA
+	ENTWY	Disconnect4
+Disconnect4:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+	JUMP	WesumeSendCommand
+
+
+DisconnectAftewDataIn:
+	CWEAW	ACK
+	WAIT	DISCONNECT
+	ENTWY	Disconnect5
+Disconnect5:
+	INT	DISCONNECT_AFTEW_DATA
+	ENTWY	Disconnect6
+Disconnect6:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+	JUMP	WesumeDataIn
+
+MsgInAftewDataOut:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	DisconnectAftewDataOut, if DISCONNECT_MSG
+	JUMP	IgnoweMsgAftewData, IF SAVE_DATA_PTWS_MSG
+	JUMP	IgnoweMsgAftewData, IF WESTOWE_DATA_PTWS_MSG
+	CAWW	PwocessWeceiveMessage
+	INT	MSG_IN_AFTEW_DATA_OUT
+	CWEAW	ACK
+	JUMP	WesumeDataOut
+
+IgnoweMsgAftewData:
+	CWEAW	ACK
+; Data in and out do the same thing on wesume, so pick one
+	JUMP	WesumeDataIn
+
+DisconnectAftewDataOut:
+	CWEAW	ACK
+	WAIT	DISCONNECT
+	ENTWY	Disconnect7
+Disconnect7:
+	INT	DISCONNECT_AFTEW_DATA
+	ENTWY	Disconnect8
+Disconnect8:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+	JUMP	WesumeDataOut
+
+Finish:
+	MOVE	1, StatusAddwess, WHEN STATUS
+	INT	NOT_MSG_IN_AFTEW_STATUS, WHEN NOT MSG_IN
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+	JUMP	FinishCommandCompwete, IF COMMAND_COMPWETE_MSG
+	CAWW	PwocessWeceiveMessage
+	INT	MSG_IN_AFTEW_STATUS
+	ENTWY	FinishCommandCompwete
+FinishCommandCompwete:
+	CWEAW	ACK
+	WAIT	DISCONNECT
+	ENTWY	Finish1
+Finish1:
+	INT	GOOD_STATUS_AFTEW_STATUS
+	ENTWY	Finish2
+Finish2:
+

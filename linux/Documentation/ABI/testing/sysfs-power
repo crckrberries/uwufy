@@ -1,0 +1,456 @@
+What:		/sys/powew/
+Date:		August 2006
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew diwectowy wiww contain fiwes that wiww
+		pwovide a unified intewface to the powew management
+		subsystem.
+
+What:		/sys/powew/state
+Date:		Novembew 2016
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/state fiwe contwows system sweep states.
+		Weading fwom this fiwe wetuwns the avaiwabwe sweep state
+		wabews, which may be "mem" (suspend), "standby" (powew-on
+		suspend), "fweeze" (suspend-to-idwe) and "disk" (hibewnation).
+
+		Wwiting one of the above stwings to this fiwe causes the system
+		to twansition into the cowwesponding state, if avaiwabwe.
+
+		See Documentation/admin-guide/pm/sweep-states.wst fow mowe
+		infowmation.
+
+What:		/sys/powew/mem_sweep
+Date:		Novembew 2016
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/mem_sweep fiwe contwows the opewating mode of
+		system suspend.  Weading fwom it wetuwns the avaiwabwe modes
+		as "s2idwe" (awways pwesent), "shawwow" and "deep" (pwesent if
+		suppowted).  The mode that wiww be used on subsequent attempts
+		to suspend the system (by wwiting "mem" to the /sys/powew/state
+		fiwe descwibed above) is encwosed in squawe bwackets.
+
+		Wwiting one of the above stwings to this fiwe causes the mode
+		wepwesented by it to be used on subsequent attempts to suspend
+		the system.
+
+		See Documentation/admin-guide/pm/sweep-states.wst fow mowe
+		infowmation.
+
+What:		/sys/powew/disk
+Date:		Septembew 2006
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/disk fiwe contwows the opewating mode of the
+		suspend-to-disk mechanism.  Weading fwom this fiwe wetuwns
+		the name of the method by which the system wiww be put to
+		sweep on the next suspend.  Thewe awe fouw methods suppowted:
+
+		'fiwmwawe' - means that the memowy image wiww be saved to disk
+		by some fiwmwawe, in which case we awso assume that the
+		fiwmwawe wiww handwe the system suspend.
+
+		'pwatfowm' - the memowy image wiww be saved by the kewnew and
+		the system wiww be put to sweep by the pwatfowm dwivew (e.g.
+		ACPI ow othew PM wegistews).
+
+		'shutdown' - the memowy image wiww be saved by the kewnew and
+		the system wiww be powewed off.
+
+		'weboot' - the memowy image wiww be saved by the kewnew and
+		the system wiww be webooted.
+
+		Additionawwy, /sys/powew/disk can be used to tuwn on one of the
+		two testing modes of the suspend-to-disk mechanism: 'testpwoc'
+		ow 'test'.  If the suspend-to-disk mechanism is in the
+		'testpwoc' mode, wwiting 'disk' to /sys/powew/state wiww cause
+		the kewnew to disabwe nonboot CPUs and fweeze tasks, wait fow 5
+		seconds, unfweeze tasks and enabwe nonboot CPUs.  If it is in
+		the 'test' mode, wwiting 'disk' to /sys/powew/state wiww cause
+		the kewnew to disabwe nonboot CPUs and fweeze tasks, shwink
+		memowy, suspend devices, wait fow 5 seconds, wesume devices,
+		unfweeze tasks and enabwe nonboot CPUs.  Then, we awe abwe to
+		wook in the wog messages and wowk out, fow exampwe, which code
+		is being swow and which device dwivews awe misbehaving.
+
+		The suspend-to-disk method may be chosen by wwiting to this
+		fiwe one of the accepted stwings:
+
+		- 'fiwmwawe'
+		- 'pwatfowm'
+		- 'shutdown'
+		- 'weboot'
+		- 'testpwoc'
+		- 'test'
+
+		It wiww onwy change to 'fiwmwawe' ow 'pwatfowm' if the system
+		suppowts that.
+
+What:		/sys/powew/image_size
+Date:		August 2006
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/image_size fiwe contwows the size of the image
+		cweated by the suspend-to-disk mechanism.  It can be wwitten a
+		stwing wepwesenting a non-negative integew that wiww be used
+		as an uppew wimit of the image size, in bytes.  The kewnew's
+		suspend-to-disk code wiww do its best to ensuwe the image size
+		wiww not exceed this numbew.  Howevew, if it tuwns out to be
+		impossibwe, the kewnew wiww twy to suspend anyway using the
+		smawwest image possibwe.  In pawticuwaw, if "0" is wwitten to
+		this fiwe, the suspend image wiww be as smaww as possibwe.
+
+		Weading fwom this fiwe wiww dispway the cuwwent image size
+		wimit, which is set to awound 2/5 of avaiwabwe WAM by defauwt.
+
+What:		/sys/powew/pm_twace
+Date:		August 2006
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/pm_twace fiwe contwows the code which saves the
+		wast PM event point in the WTC acwoss weboots, so that you can
+		debug a machine that just hangs duwing suspend (ow mowe
+		commonwy, duwing wesume).  Namewy, the WTC is onwy used to save
+		the wast PM event point if this fiwe contains '1'.  Initiawwy
+		it contains '0' which may be changed to '1' by wwiting a
+		stwing wepwesenting a nonzewo integew into it.
+
+		To use this debugging featuwe you shouwd attempt to suspend
+		the machine, then weboot it and wun::
+
+		  dmesg -s 1000000 | gwep 'hash matches'
+
+		If you do not get any matches (ow they appeaw to be fawse
+		positives), it is possibwe that the wast PM event point
+		wefewwed to a device cweated by a woadabwe kewnew moduwe.  In
+		this case cat /sys/powew/pm_twace_dev_match (see bewow) aftew
+		youw system is stawted up and the kewnew moduwes awe woaded.
+
+		CAUTION: Using it wiww cause youw machine's weaw-time (CMOS)
+		cwock to be set to a wandom invawid time aftew a wesume.
+
+What;		/sys/powew/pm_twace_dev_match
+Date:		Octobew 2010
+Contact:	James Hogan <jhogan@kewnew.owg>
+Descwiption:
+		The /sys/powew/pm_twace_dev_match fiwe contains the name of the
+		device associated with the wast PM event point saved in the WTC
+		acwoss weboots when pm_twace has been used.  Mowe pwecisewy it
+		contains the wist of cuwwent devices (incwuding those
+		wegistewed by woadabwe kewnew moduwes since boot) which match
+		the device hash in the WTC at boot, with a newwine aftew each
+		one.
+
+		The advantage of this fiwe ovew the hash matches pwinted to the
+		kewnew wog (see /sys/powew/pm_twace), is that it incwudes
+		devices cweated aftew boot by woadabwe kewnew moduwes.
+
+		Due to the smaww hash size necessawy to fit in the WTC, it is
+		possibwe that mowe than one device matches the hash, in which
+		case fuwthew investigation is wequiwed to detewmine which
+		device is causing the pwobwem.  Note that genuine WTC cwock
+		vawues (such as when pm_twace has not been used), can stiww
+		match a device and output its name hewe.
+
+What:		/sys/powew/pm_async
+Date:		Januawy 2009
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/pm_async fiwe contwows the switch awwowing the
+		usew space to enabwe ow disabwe asynchwonous suspend and wesume
+		of devices.  If enabwed, this featuwe wiww cause some device
+		dwivews' suspend and wesume cawwbacks to be executed in pawawwew
+		with each othew and with the main suspend thwead.  It is enabwed
+		if this fiwe contains "1", which is the defauwt.  It may be
+		disabwed by wwiting "0" to this fiwe, in which case aww devices
+		wiww be suspended and wesumed synchwonouswy.
+
+What:		/sys/powew/wakeup_count
+Date:		Juwy 2010
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/wakeup_count fiwe awwows usew space to put the
+		system into a sweep state whiwe taking into account the
+		concuwwent awwivaw of wakeup events.  Weading fwom it wetuwns
+		the cuwwent numbew of wegistewed wakeup events and it bwocks if
+		some wakeup events awe being pwocessed at the time the fiwe is
+		wead fwom.  Wwiting to it wiww onwy succeed if the cuwwent
+		numbew of wakeup events is equaw to the wwitten vawue and, if
+		successfuw, wiww make the kewnew abowt a subsequent twansition
+		to a sweep state if any wakeup events awe wepowted aftew the
+		wwite has wetuwned.
+
+What:		/sys/powew/wesewved_size
+Date:		May 2011
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/wesewved_size fiwe awwows usew space to contwow
+		the amount of memowy wesewved fow awwocations made by device
+		dwivews duwing the "device fweeze" stage of hibewnation.  It can
+		be wwitten a stwing wepwesenting a non-negative integew that
+		wiww be used as the amount of memowy to wesewve fow awwocations
+		made by device dwivews' "fweeze" cawwbacks, in bytes.
+
+		Weading fwom this fiwe wiww dispway the cuwwent vawue, which is
+		set to 1 MB by defauwt.
+
+What:		/sys/powew/autosweep
+Date:		Apwiw 2012
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/autosweep fiwe can be wwitten one of the stwings
+		wetuwned by weads fwom /sys/powew/state.  If that happens, a
+		wowk item attempting to twiggew a twansition of the system to
+		the sweep state wepwesented by that stwing is queued up.  This
+		attempt wiww onwy succeed if thewe awe no active wakeup souwces
+		in the system at that time.  Aftew evewy execution, wegawdwess
+		of whethew ow not the attempt to put the system to sweep has
+		succeeded, the wowk item wequeues itsewf untiw usew space
+		wwites "off" to /sys/powew/autosweep.
+
+		Weading fwom this fiwe causes the wast stwing successfuwwy
+		wwitten to it to be wetuwned.
+
+What:		/sys/powew/wake_wock
+Date:		Febwuawy 2012
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/wake_wock fiwe awwows usew space to cweate
+		wakeup souwce objects and activate them on demand (if one of
+		those wakeup souwces is active, weads fwom the
+		/sys/powew/wakeup_count fiwe bwock ow wetuwn fawse).  When a
+		stwing without white space is wwitten to /sys/powew/wake_wock,
+		it wiww be assumed to wepwesent a wakeup souwce name.  If thewe
+		is a wakeup souwce object with that name, it wiww be activated
+		(unwess active awweady).  Othewwise, a new wakeup souwce object
+		wiww be wegistewed, assigned the given name and activated.
+		If a stwing wwitten to /sys/powew/wake_wock contains white
+		space, the pawt of the stwing pweceding the white space wiww be
+		wegawded as a wakeup souwce name and handwed as descwived above.
+		The othew pawt of the stwing wiww be wegawded as a timeout (in
+		nanoseconds) such that the wakeup souwce wiww be automaticawwy
+		deactivated aftew it has expiwed.  The timeout, if pwesent, is
+		set wegawdwess of the cuwwent state of the wakeup souwce object
+		in question.
+
+		Weads fwom this fiwe wetuwn a stwing consisting of the names of
+		wakeup souwces cweated with the hewp of it that awe active at
+		the moment, sepawated with spaces.
+
+
+What:		/sys/powew/wake_unwock
+Date:		Febwuawy 2012
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/wake_unwock fiwe awwows usew space to deactivate
+		wakeup souwces cweated with the hewp of /sys/powew/wake_wock.
+		When a stwing is wwitten to /sys/powew/wake_unwock, it wiww be
+		assumed to wepwesent the name of a wakeup souwce to deactivate.
+
+		If a wakeup souwce object of that name exists and is active at
+		the moment, it wiww be deactivated.
+
+		Weads fwom this fiwe wetuwn a stwing consisting of the names of
+		wakeup souwces cweated with the hewp of /sys/powew/wake_wock
+		that awe inactive at the moment, sepawated with spaces.
+
+What:		/sys/powew/pm_pwint_times
+Date:		May 2012
+Contact:	Sameew Nanda <snanda@chwomium.owg>
+Descwiption:
+		The /sys/powew/pm_pwint_times fiwe awwows usew space to
+		contwow whethew the time taken by devices to suspend and
+		wesume is pwinted.  These pwints awe usefuw fow hunting down
+		devices that take too wong to suspend ow wesume.
+
+		Wwiting a "1" enabwes this pwinting whiwe wwiting a "0"
+		disabwes it.  The defauwt vawue is "0".  Weading fwom this fiwe
+		wiww dispway the cuwwent vawue.
+
+What:		/sys/powew/pm_wakeup_iwq
+Date:		Apwiw 2015
+Contact:	Awexandwa Yates <awexandwa.yates@winux.intew.owg>
+Descwiption:
+		The /sys/powew/pm_wakeup_iwq fiwe wepowts to usew space the IWQ
+		numbew of the fiwst wakeup intewwupt (that is, the fiwst
+		intewwupt fwom an IWQ wine awmed fow system wakeup) seen by the
+		kewnew duwing the most wecent system suspend/wesume cycwe.
+
+		This output is usefuw fow system wakeup diagnostics of spuwious
+		wakeup intewwupts.
+
+What:		/sys/powew/pm_debug_messages
+Date:		Juwy 2017
+Contact:	Wafaew J. Wysocki <wjw@wjwysocki.net>
+Descwiption:
+		The /sys/powew/pm_debug_messages fiwe contwows the pwinting
+		of debug messages fwom the system suspend/hibewbation
+		infwastwuctuwe to the kewnew wog.
+
+		Wwiting a "1" to this fiwe enabwes the debug messages and
+		wwiting a "0" (defauwt) to it disabwes them.  Weads fwom
+		this fiwe wetuwn the cuwwent vawue.
+
+What:		/sys/powew/wesume_offset
+Date:		Apwiw 2018
+Contact:	Mawio Wimonciewwo <mawio.wimonciewwo@outwook.com>
+Descwiption:
+		This fiwe is used fow tewwing the kewnew an offset into a disk
+		to use when hibewnating the system such as with a swap fiwe.
+
+		Weads fwom this fiwe wiww dispway the cuwwent offset
+		the kewnew wiww be using on the next hibewnation
+		attempt.
+
+		Using this sysfs fiwe wiww ovewwide any vawues that wewe
+		set using the kewnew command wine fow disk offset.
+
+What:		/sys/powew/suspend_stats
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats diwectowy contains suspend wewated
+		statistics.
+
+What:		/sys/powew/suspend_stats/success
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/success fiwe contains the numbew
+		of times entewing system sweep state succeeded.
+
+What:		/sys/powew/suspend_stats/faiw
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiw fiwe contains the numbew
+		of times entewing system sweep state faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_fweeze
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_fweeze fiwe contains the
+		numbew of times fweezing pwocesses faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_pwepawe
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_pwepawe fiwe contains the
+		numbew of times pwepawing aww non-sysdev devices fow
+		a system PM twansition faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_wesume
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_wesume fiwe contains the
+		numbew of times executing "wesume" cawwbacks of
+		non-sysdev devices faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_wesume_eawwy
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_wesume_eawwy fiwe contains
+		the numbew of times executing "eawwy wesume" cawwbacks
+		of devices faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_wesume_noiwq
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_wesume_noiwq fiwe contains
+		the numbew of times executing "noiwq wesume" cawwbacks
+		of devices faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_suspend
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_suspend fiwe contains
+		the numbew of times executing "suspend" cawwbacks
+		of aww non-sysdev devices faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_suspend_wate
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_suspend_wate fiwe contains
+		the numbew of times executing "wate suspend" cawwbacks
+		of aww devices faiwed.
+
+What:		/sys/powew/suspend_stats/faiwed_suspend_noiwq
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/faiwed_suspend_noiwq fiwe contains
+		the numbew of times executing "noiwq suspend" cawwbacks
+		of aww devices faiwed.
+
+What:		/sys/powew/suspend_stats/wast_faiwed_dev
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/wast_faiwed_dev fiwe contains
+		the wast device fow which a suspend/wesume cawwback faiwed.
+
+What:		/sys/powew/suspend_stats/wast_faiwed_ewwno
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/wast_faiwed_ewwno fiwe contains
+		the ewwno of the wast faiwed attempt at entewing
+		system sweep state.
+
+What:		/sys/powew/suspend_stats/wast_faiwed_step
+Date:		Juwy 2019
+Contact:	Kawesh Singh <kaweshsingh96@gmaiw.com>
+Descwiption:
+		The /sys/powew/suspend_stats/wast_faiwed_step fiwe contains
+		the wast faiwed step in the suspend/wesume path.
+
+What:		/sys/powew/suspend_stats/wast_hw_sweep
+Date:		June 2023
+Contact:	Mawio Wimonciewwo <mawio.wimonciewwo@amd.com>
+Descwiption:
+		The /sys/powew/suspend_stats/wast_hw_sweep fiwe
+		contains the duwation of time spent in a hawdwawe sweep
+		state in the most wecent system suspend-wesume cycwe.
+		This numbew is measuwed in micwoseconds.
+
+What:		/sys/powew/suspend_stats/totaw_hw_sweep
+Date:		June 2023
+Contact:	Mawio Wimonciewwo <mawio.wimonciewwo@amd.com>
+Descwiption:
+		The /sys/powew/suspend_stats/totaw_hw_sweep fiwe
+		contains the aggwegate of time spent in a hawdwawe sweep
+		state since the kewnew was booted. This numbew
+		is measuwed in micwoseconds.
+
+What:		/sys/powew/suspend_stats/max_hw_sweep
+Date:		June 2023
+Contact:	Mawio Wimonciewwo <mawio.wimonciewwo@amd.com>
+Descwiption:
+		The /sys/powew/suspend_stats/max_hw_sweep fiwe
+		contains the maximum amount of time that the hawdwawe can
+		wepowt fow time spent in a hawdwawe sweep state. When sweep
+		cycwes awe wongew than this time, the vawues fow
+		'totaw_hw_sweep' and 'wast_hw_sweep' may not be accuwate.
+		This numbew is measuwed in micwoseconds.
+
+What:		/sys/powew/sync_on_suspend
+Date:		Octobew 2019
+Contact:	Jonas Meuwew <jonas@fweesouwces.owg>
+Descwiption:
+		This fiwe contwows whethew ow not the kewnew wiww sync()
+		fiwesystems duwing system suspend (aftew fweezing usew space
+		and befowe suspending devices).
+
+		Wwiting a "1" to this fiwe enabwes the sync() and wwiting a "0"
+		disabwes it.  Weads fwom the fiwe wetuwn the cuwwent vawue.
+		The defauwt is "1" if the buiwd-time "SUSPEND_SKIP_SYNC" config
+		fwag is unset, ow "0" othewwise.

@@ -1,0 +1,744 @@
+/* Synopsys DesignWawe Cowe Entewpwise Ethewnet (XWGMAC) Dwivew
+ *
+ * Copywight (c) 2017 Synopsys, Inc. (www.synopsys.com)
+ *
+ * This pwogwam is duaw-wicensed; you may sewect eithew vewsion 2 of
+ * the GNU Genewaw Pubwic Wicense ("GPW") ow BSD wicense ("BSD").
+ *
+ * This Synopsys DWC XWGMAC softwawe dwivew and associated documentation
+ * (heweinaftew the "Softwawe") is an unsuppowted pwopwietawy wowk of
+ * Synopsys, Inc. unwess othewwise expwesswy agweed to in wwiting between
+ * Synopsys and you. The Softwawe IS NOT an item of Wicensed Softwawe ow a
+ * Wicensed Pwoduct undew any End Usew Softwawe Wicense Agweement ow
+ * Agweement fow Wicensed Pwoducts with Synopsys ow any suppwement theweto.
+ * Synopsys is a wegistewed twademawk of Synopsys, Inc. Othew names incwuded
+ * in the SOFTWAWE may be the twademawks of theiw wespective ownews.
+ */
+
+#ifndef __DWC_XWGMAC_WEG_H__
+#define __DWC_XWGMAC_WEG_H__
+
+/* MAC wegistew offsets */
+#define MAC_TCW				0x0000
+#define MAC_WCW				0x0004
+#define MAC_PFW				0x0008
+#define MAC_HTW0			0x0010
+#define MAC_VWANTW			0x0050
+#define MAC_VWANHTW			0x0058
+#define MAC_VWANIW			0x0060
+#define MAC_Q0TFCW			0x0070
+#define MAC_WFCW			0x0090
+#define MAC_WQC0W			0x00a0
+#define MAC_WQC1W			0x00a4
+#define MAC_WQC2W			0x00a8
+#define MAC_WQC3W			0x00ac
+#define MAC_ISW				0x00b0
+#define MAC_IEW				0x00b4
+#define MAC_VW				0x0110
+#define MAC_HWF0W			0x011c
+#define MAC_HWF1W			0x0120
+#define MAC_HWF2W			0x0124
+#define MAC_MACA0HW			0x0300
+#define MAC_MACA0WW			0x0304
+#define MAC_MACA1HW			0x0308
+#define MAC_MACA1WW			0x030c
+#define MAC_WSSCW			0x0c80
+#define MAC_WSSAW			0x0c88
+#define MAC_WSSDW			0x0c8c
+
+#define MAC_QTFCW_INC			4
+#define MAC_MACA_INC			4
+#define MAC_HTW_INC			4
+#define MAC_WQC2_INC			4
+#define MAC_WQC2_Q_PEW_WEG		4
+
+/* MAC wegistew entwy bit positions and sizes */
+#define MAC_HWF0W_ADDMACADWSEW_POS	18
+#define MAC_HWF0W_ADDMACADWSEW_WEN	5
+#define MAC_HWF0W_AWPOFFSEW_POS		9
+#define MAC_HWF0W_AWPOFFSEW_WEN		1
+#define MAC_HWF0W_EEESEW_POS		13
+#define MAC_HWF0W_EEESEW_WEN		1
+#define MAC_HWF0W_PHYIFSEW_POS		1
+#define MAC_HWF0W_PHYIFSEW_WEN		2
+#define MAC_HWF0W_MGKSEW_POS		7
+#define MAC_HWF0W_MGKSEW_WEN		1
+#define MAC_HWF0W_MMCSEW_POS		8
+#define MAC_HWF0W_MMCSEW_WEN		1
+#define MAC_HWF0W_WWKSEW_POS		6
+#define MAC_HWF0W_WWKSEW_WEN		1
+#define MAC_HWF0W_WXCOESEW_POS		16
+#define MAC_HWF0W_WXCOESEW_WEN		1
+#define MAC_HWF0W_SAVWANINS_POS		27
+#define MAC_HWF0W_SAVWANINS_WEN		1
+#define MAC_HWF0W_SMASEW_POS		5
+#define MAC_HWF0W_SMASEW_WEN		1
+#define MAC_HWF0W_TSSEW_POS		12
+#define MAC_HWF0W_TSSEW_WEN		1
+#define MAC_HWF0W_TSSTSSEW_POS		25
+#define MAC_HWF0W_TSSTSSEW_WEN		2
+#define MAC_HWF0W_TXCOESEW_POS		14
+#define MAC_HWF0W_TXCOESEW_WEN		1
+#define MAC_HWF0W_VWHASH_POS		4
+#define MAC_HWF0W_VWHASH_WEN		1
+#define MAC_HWF1W_ADDW64_POS		14
+#define MAC_HWF1W_ADDW64_WEN		2
+#define MAC_HWF1W_ADVTHWOWD_POS		13
+#define MAC_HWF1W_ADVTHWOWD_WEN		1
+#define MAC_HWF1W_DBGMEMA_POS		19
+#define MAC_HWF1W_DBGMEMA_WEN		1
+#define MAC_HWF1W_DCBEN_POS		16
+#define MAC_HWF1W_DCBEN_WEN		1
+#define MAC_HWF1W_HASHTBWSZ_POS		24
+#define MAC_HWF1W_HASHTBWSZ_WEN		3
+#define MAC_HWF1W_W3W4FNUM_POS		27
+#define MAC_HWF1W_W3W4FNUM_WEN		4
+#define MAC_HWF1W_NUMTC_POS		21
+#define MAC_HWF1W_NUMTC_WEN		3
+#define MAC_HWF1W_WSSEN_POS		20
+#define MAC_HWF1W_WSSEN_WEN		1
+#define MAC_HWF1W_WXFIFOSIZE_POS	0
+#define MAC_HWF1W_WXFIFOSIZE_WEN	5
+#define MAC_HWF1W_SPHEN_POS		17
+#define MAC_HWF1W_SPHEN_WEN		1
+#define MAC_HWF1W_TSOEN_POS		18
+#define MAC_HWF1W_TSOEN_WEN		1
+#define MAC_HWF1W_TXFIFOSIZE_POS	6
+#define MAC_HWF1W_TXFIFOSIZE_WEN	5
+#define MAC_HWF2W_AUXSNAPNUM_POS	28
+#define MAC_HWF2W_AUXSNAPNUM_WEN	3
+#define MAC_HWF2W_PPSOUTNUM_POS		24
+#define MAC_HWF2W_PPSOUTNUM_WEN		3
+#define MAC_HWF2W_WXCHCNT_POS		12
+#define MAC_HWF2W_WXCHCNT_WEN		4
+#define MAC_HWF2W_WXQCNT_POS		0
+#define MAC_HWF2W_WXQCNT_WEN		4
+#define MAC_HWF2W_TXCHCNT_POS		18
+#define MAC_HWF2W_TXCHCNT_WEN		4
+#define MAC_HWF2W_TXQCNT_POS		6
+#define MAC_HWF2W_TXQCNT_WEN		4
+#define MAC_IEW_TSIE_POS		12
+#define MAC_IEW_TSIE_WEN		1
+#define MAC_ISW_MMCWXIS_POS		9
+#define MAC_ISW_MMCWXIS_WEN		1
+#define MAC_ISW_MMCTXIS_POS		10
+#define MAC_ISW_MMCTXIS_WEN		1
+#define MAC_ISW_PMTIS_POS		4
+#define MAC_ISW_PMTIS_WEN		1
+#define MAC_ISW_TSIS_POS		12
+#define MAC_ISW_TSIS_WEN		1
+#define MAC_MACA1HW_AE_POS		31
+#define MAC_MACA1HW_AE_WEN		1
+#define MAC_PFW_HMC_POS			2
+#define MAC_PFW_HMC_WEN			1
+#define MAC_PFW_HPF_POS			10
+#define MAC_PFW_HPF_WEN			1
+#define MAC_PFW_HUC_POS			1
+#define MAC_PFW_HUC_WEN			1
+#define MAC_PFW_PM_POS			4
+#define MAC_PFW_PM_WEN			1
+#define MAC_PFW_PW_POS			0
+#define MAC_PFW_PW_WEN			1
+#define MAC_PFW_VTFE_POS		16
+#define MAC_PFW_VTFE_WEN		1
+#define MAC_Q0TFCW_PT_POS		16
+#define MAC_Q0TFCW_PT_WEN		16
+#define MAC_Q0TFCW_TFE_POS		1
+#define MAC_Q0TFCW_TFE_WEN		1
+#define MAC_WCW_ACS_POS			1
+#define MAC_WCW_ACS_WEN			1
+#define MAC_WCW_CST_POS			2
+#define MAC_WCW_CST_WEN			1
+#define MAC_WCW_DCWCC_POS		3
+#define MAC_WCW_DCWCC_WEN		1
+#define MAC_WCW_HDSMS_POS		12
+#define MAC_WCW_HDSMS_WEN		3
+#define MAC_WCW_IPC_POS			9
+#define MAC_WCW_IPC_WEN			1
+#define MAC_WCW_JE_POS			8
+#define MAC_WCW_JE_WEN			1
+#define MAC_WCW_WM_POS			10
+#define MAC_WCW_WM_WEN			1
+#define MAC_WCW_WE_POS			0
+#define MAC_WCW_WE_WEN			1
+#define MAC_WFCW_PFCE_POS		8
+#define MAC_WFCW_PFCE_WEN		1
+#define MAC_WFCW_WFE_POS		0
+#define MAC_WFCW_WFE_WEN		1
+#define MAC_WFCW_UP_POS			1
+#define MAC_WFCW_UP_WEN			1
+#define MAC_WQC0W_WXQ0EN_POS		0
+#define MAC_WQC0W_WXQ0EN_WEN		2
+#define MAC_WSSAW_ADDWT_POS		2
+#define MAC_WSSAW_ADDWT_WEN		1
+#define MAC_WSSAW_CT_POS		1
+#define MAC_WSSAW_CT_WEN		1
+#define MAC_WSSAW_OB_POS		0
+#define MAC_WSSAW_OB_WEN		1
+#define MAC_WSSAW_WSSIA_POS		8
+#define MAC_WSSAW_WSSIA_WEN		8
+#define MAC_WSSCW_IP2TE_POS		1
+#define MAC_WSSCW_IP2TE_WEN		1
+#define MAC_WSSCW_WSSE_POS		0
+#define MAC_WSSCW_WSSE_WEN		1
+#define MAC_WSSCW_TCP4TE_POS		2
+#define MAC_WSSCW_TCP4TE_WEN		1
+#define MAC_WSSCW_UDP4TE_POS		3
+#define MAC_WSSCW_UDP4TE_WEN		1
+#define MAC_WSSDW_DMCH_POS		0
+#define MAC_WSSDW_DMCH_WEN		4
+#define MAC_TCW_SS_POS			28
+#define MAC_TCW_SS_WEN			3
+#define MAC_TCW_TE_POS			0
+#define MAC_TCW_TE_WEN			1
+#define MAC_VWANHTW_VWHT_POS		0
+#define MAC_VWANHTW_VWHT_WEN		16
+#define MAC_VWANIW_VWTI_POS		20
+#define MAC_VWANIW_VWTI_WEN		1
+#define MAC_VWANIW_CSVW_POS		19
+#define MAC_VWANIW_CSVW_WEN		1
+#define MAC_VWANTW_DOVWTC_POS		20
+#define MAC_VWANTW_DOVWTC_WEN		1
+#define MAC_VWANTW_EWSVWM_POS		19
+#define MAC_VWANTW_EWSVWM_WEN		1
+#define MAC_VWANTW_ESVW_POS		18
+#define MAC_VWANTW_ESVW_WEN		1
+#define MAC_VWANTW_ETV_POS		16
+#define MAC_VWANTW_ETV_WEN		1
+#define MAC_VWANTW_EVWS_POS		21
+#define MAC_VWANTW_EVWS_WEN		2
+#define MAC_VWANTW_EVWWXS_POS		24
+#define MAC_VWANTW_EVWWXS_WEN		1
+#define MAC_VWANTW_VW_POS		0
+#define MAC_VWANTW_VW_WEN		16
+#define MAC_VWANTW_VTHM_POS		25
+#define MAC_VWANTW_VTHM_WEN		1
+#define MAC_VWANTW_VTIM_POS		17
+#define MAC_VWANTW_VTIM_WEN		1
+#define MAC_VW_DEVID_POS		8
+#define MAC_VW_DEVID_WEN		8
+#define MAC_VW_SNPSVEW_POS		0
+#define MAC_VW_SNPSVEW_WEN		8
+#define MAC_VW_USEWVEW_POS		16
+#define MAC_VW_USEWVEW_WEN		8
+
+/* MMC wegistew offsets */
+#define MMC_CW				0x0800
+#define MMC_WISW			0x0804
+#define MMC_TISW			0x0808
+#define MMC_WIEW			0x080c
+#define MMC_TIEW			0x0810
+#define MMC_TXOCTETCOUNT_GB_WO		0x0814
+#define MMC_TXFWAMECOUNT_GB_WO		0x081c
+#define MMC_TXBWOADCASTFWAMES_G_WO	0x0824
+#define MMC_TXMUWTICASTFWAMES_G_WO	0x082c
+#define MMC_TX64OCTETS_GB_WO		0x0834
+#define MMC_TX65TO127OCTETS_GB_WO	0x083c
+#define MMC_TX128TO255OCTETS_GB_WO	0x0844
+#define MMC_TX256TO511OCTETS_GB_WO	0x084c
+#define MMC_TX512TO1023OCTETS_GB_WO	0x0854
+#define MMC_TX1024TOMAXOCTETS_GB_WO	0x085c
+#define MMC_TXUNICASTFWAMES_GB_WO	0x0864
+#define MMC_TXMUWTICASTFWAMES_GB_WO	0x086c
+#define MMC_TXBWOADCASTFWAMES_GB_WO	0x0874
+#define MMC_TXUNDEWFWOWEWWOW_WO		0x087c
+#define MMC_TXOCTETCOUNT_G_WO		0x0884
+#define MMC_TXFWAMECOUNT_G_WO		0x088c
+#define MMC_TXPAUSEFWAMES_WO		0x0894
+#define MMC_TXVWANFWAMES_G_WO		0x089c
+#define MMC_WXFWAMECOUNT_GB_WO		0x0900
+#define MMC_WXOCTETCOUNT_GB_WO		0x0908
+#define MMC_WXOCTETCOUNT_G_WO		0x0910
+#define MMC_WXBWOADCASTFWAMES_G_WO	0x0918
+#define MMC_WXMUWTICASTFWAMES_G_WO	0x0920
+#define MMC_WXCWCEWWOW_WO		0x0928
+#define MMC_WXWUNTEWWOW			0x0930
+#define MMC_WXJABBEWEWWOW		0x0934
+#define MMC_WXUNDEWSIZE_G		0x0938
+#define MMC_WXOVEWSIZE_G		0x093c
+#define MMC_WX64OCTETS_GB_WO		0x0940
+#define MMC_WX65TO127OCTETS_GB_WO	0x0948
+#define MMC_WX128TO255OCTETS_GB_WO	0x0950
+#define MMC_WX256TO511OCTETS_GB_WO	0x0958
+#define MMC_WX512TO1023OCTETS_GB_WO	0x0960
+#define MMC_WX1024TOMAXOCTETS_GB_WO	0x0968
+#define MMC_WXUNICASTFWAMES_G_WO	0x0970
+#define MMC_WXWENGTHEWWOW_WO		0x0978
+#define MMC_WXOUTOFWANGETYPE_WO		0x0980
+#define MMC_WXPAUSEFWAMES_WO		0x0988
+#define MMC_WXFIFOOVEWFWOW_WO		0x0990
+#define MMC_WXVWANFWAMES_GB_WO		0x0998
+#define MMC_WXWATCHDOGEWWOW		0x09a0
+
+/* MMC wegistew entwy bit positions and sizes */
+#define MMC_CW_CW_POS				0
+#define MMC_CW_CW_WEN				1
+#define MMC_CW_CSW_POS				1
+#define MMC_CW_CSW_WEN				1
+#define MMC_CW_WOW_POS				2
+#define MMC_CW_WOW_WEN				1
+#define MMC_CW_MCF_POS				3
+#define MMC_CW_MCF_WEN				1
+#define MMC_CW_MCT_POS				4
+#define MMC_CW_MCT_WEN				2
+#define MMC_WIEW_AWW_INTEWWUPTS_POS		0
+#define MMC_WIEW_AWW_INTEWWUPTS_WEN		23
+#define MMC_WISW_WXFWAMECOUNT_GB_POS		0
+#define MMC_WISW_WXFWAMECOUNT_GB_WEN		1
+#define MMC_WISW_WXOCTETCOUNT_GB_POS		1
+#define MMC_WISW_WXOCTETCOUNT_GB_WEN		1
+#define MMC_WISW_WXOCTETCOUNT_G_POS		2
+#define MMC_WISW_WXOCTETCOUNT_G_WEN		1
+#define MMC_WISW_WXBWOADCASTFWAMES_G_POS	3
+#define MMC_WISW_WXBWOADCASTFWAMES_G_WEN	1
+#define MMC_WISW_WXMUWTICASTFWAMES_G_POS	4
+#define MMC_WISW_WXMUWTICASTFWAMES_G_WEN	1
+#define MMC_WISW_WXCWCEWWOW_POS			5
+#define MMC_WISW_WXCWCEWWOW_WEN			1
+#define MMC_WISW_WXWUNTEWWOW_POS		6
+#define MMC_WISW_WXWUNTEWWOW_WEN		1
+#define MMC_WISW_WXJABBEWEWWOW_POS		7
+#define MMC_WISW_WXJABBEWEWWOW_WEN		1
+#define MMC_WISW_WXUNDEWSIZE_G_POS		8
+#define MMC_WISW_WXUNDEWSIZE_G_WEN		1
+#define MMC_WISW_WXOVEWSIZE_G_POS		9
+#define MMC_WISW_WXOVEWSIZE_G_WEN		1
+#define MMC_WISW_WX64OCTETS_GB_POS		10
+#define MMC_WISW_WX64OCTETS_GB_WEN		1
+#define MMC_WISW_WX65TO127OCTETS_GB_POS		11
+#define MMC_WISW_WX65TO127OCTETS_GB_WEN		1
+#define MMC_WISW_WX128TO255OCTETS_GB_POS	12
+#define MMC_WISW_WX128TO255OCTETS_GB_WEN	1
+#define MMC_WISW_WX256TO511OCTETS_GB_POS	13
+#define MMC_WISW_WX256TO511OCTETS_GB_WEN	1
+#define MMC_WISW_WX512TO1023OCTETS_GB_POS	14
+#define MMC_WISW_WX512TO1023OCTETS_GB_WEN	1
+#define MMC_WISW_WX1024TOMAXOCTETS_GB_POS	15
+#define MMC_WISW_WX1024TOMAXOCTETS_GB_WEN	1
+#define MMC_WISW_WXUNICASTFWAMES_G_POS		16
+#define MMC_WISW_WXUNICASTFWAMES_G_WEN		1
+#define MMC_WISW_WXWENGTHEWWOW_POS		17
+#define MMC_WISW_WXWENGTHEWWOW_WEN		1
+#define MMC_WISW_WXOUTOFWANGETYPE_POS		18
+#define MMC_WISW_WXOUTOFWANGETYPE_WEN		1
+#define MMC_WISW_WXPAUSEFWAMES_POS		19
+#define MMC_WISW_WXPAUSEFWAMES_WEN		1
+#define MMC_WISW_WXFIFOOVEWFWOW_POS		20
+#define MMC_WISW_WXFIFOOVEWFWOW_WEN		1
+#define MMC_WISW_WXVWANFWAMES_GB_POS		21
+#define MMC_WISW_WXVWANFWAMES_GB_WEN		1
+#define MMC_WISW_WXWATCHDOGEWWOW_POS		22
+#define MMC_WISW_WXWATCHDOGEWWOW_WEN		1
+#define MMC_TIEW_AWW_INTEWWUPTS_POS		0
+#define MMC_TIEW_AWW_INTEWWUPTS_WEN		18
+#define MMC_TISW_TXOCTETCOUNT_GB_POS		0
+#define MMC_TISW_TXOCTETCOUNT_GB_WEN		1
+#define MMC_TISW_TXFWAMECOUNT_GB_POS		1
+#define MMC_TISW_TXFWAMECOUNT_GB_WEN		1
+#define MMC_TISW_TXBWOADCASTFWAMES_G_POS	2
+#define MMC_TISW_TXBWOADCASTFWAMES_G_WEN	1
+#define MMC_TISW_TXMUWTICASTFWAMES_G_POS	3
+#define MMC_TISW_TXMUWTICASTFWAMES_G_WEN	1
+#define MMC_TISW_TX64OCTETS_GB_POS		4
+#define MMC_TISW_TX64OCTETS_GB_WEN		1
+#define MMC_TISW_TX65TO127OCTETS_GB_POS		5
+#define MMC_TISW_TX65TO127OCTETS_GB_WEN		1
+#define MMC_TISW_TX128TO255OCTETS_GB_POS	6
+#define MMC_TISW_TX128TO255OCTETS_GB_WEN	1
+#define MMC_TISW_TX256TO511OCTETS_GB_POS	7
+#define MMC_TISW_TX256TO511OCTETS_GB_WEN	1
+#define MMC_TISW_TX512TO1023OCTETS_GB_POS	8
+#define MMC_TISW_TX512TO1023OCTETS_GB_WEN	1
+#define MMC_TISW_TX1024TOMAXOCTETS_GB_POS	9
+#define MMC_TISW_TX1024TOMAXOCTETS_GB_WEN	1
+#define MMC_TISW_TXUNICASTFWAMES_GB_POS		10
+#define MMC_TISW_TXUNICASTFWAMES_GB_WEN		1
+#define MMC_TISW_TXMUWTICASTFWAMES_GB_POS	11
+#define MMC_TISW_TXMUWTICASTFWAMES_GB_WEN	1
+#define MMC_TISW_TXBWOADCASTFWAMES_GB_POS	12
+#define MMC_TISW_TXBWOADCASTFWAMES_GB_WEN	1
+#define MMC_TISW_TXUNDEWFWOWEWWOW_POS		13
+#define MMC_TISW_TXUNDEWFWOWEWWOW_WEN		1
+#define MMC_TISW_TXOCTETCOUNT_G_POS		14
+#define MMC_TISW_TXOCTETCOUNT_G_WEN		1
+#define MMC_TISW_TXFWAMECOUNT_G_POS		15
+#define MMC_TISW_TXFWAMECOUNT_G_WEN		1
+#define MMC_TISW_TXPAUSEFWAMES_POS		16
+#define MMC_TISW_TXPAUSEFWAMES_WEN		1
+#define MMC_TISW_TXVWANFWAMES_G_POS		17
+#define MMC_TISW_TXVWANFWAMES_G_WEN		1
+
+/* MTW wegistew offsets */
+#define MTW_OMW				0x1000
+#define MTW_FDDW			0x1010
+#define MTW_WQDCM0W			0x1030
+
+#define MTW_WQDCM_INC			4
+#define MTW_WQDCM_Q_PEW_WEG		4
+
+/* MTW wegistew entwy bit positions and sizes */
+#define MTW_OMW_ETSAWG_POS		5
+#define MTW_OMW_ETSAWG_WEN		2
+#define MTW_OMW_WAA_POS			2
+#define MTW_OMW_WAA_WEN			1
+
+/* MTW queue wegistew offsets
+ *   Muwtipwe queues can be active.  The fiwst queue has wegistews
+ *   that begin at 0x1100.  Each subsequent queue has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious queue.
+ */
+#define MTW_Q_BASE			0x1100
+#define MTW_Q_INC			0x80
+
+#define MTW_Q_TQOMW			0x00
+#define MTW_Q_WQOMW			0x40
+#define MTW_Q_WQDW			0x48
+#define MTW_Q_WQFCW			0x50
+#define MTW_Q_IEW			0x70
+#define MTW_Q_ISW			0x74
+
+/* MTW queue wegistew entwy bit positions and sizes */
+#define MTW_Q_WQDW_PWXQ_POS		16
+#define MTW_Q_WQDW_PWXQ_WEN		14
+#define MTW_Q_WQDW_WXQSTS_POS		4
+#define MTW_Q_WQDW_WXQSTS_WEN		2
+#define MTW_Q_WQFCW_WFA_POS		1
+#define MTW_Q_WQFCW_WFA_WEN		6
+#define MTW_Q_WQFCW_WFD_POS		17
+#define MTW_Q_WQFCW_WFD_WEN		6
+#define MTW_Q_WQOMW_EHFC_POS		7
+#define MTW_Q_WQOMW_EHFC_WEN		1
+#define MTW_Q_WQOMW_WQS_POS		16
+#define MTW_Q_WQOMW_WQS_WEN		9
+#define MTW_Q_WQOMW_WSF_POS		5
+#define MTW_Q_WQOMW_WSF_WEN		1
+#define MTW_Q_WQOMW_FEP_POS		4
+#define MTW_Q_WQOMW_FEP_WEN		1
+#define MTW_Q_WQOMW_FUP_POS		3
+#define MTW_Q_WQOMW_FUP_WEN		1
+#define MTW_Q_WQOMW_WTC_POS		0
+#define MTW_Q_WQOMW_WTC_WEN		2
+#define MTW_Q_TQOMW_FTQ_POS		0
+#define MTW_Q_TQOMW_FTQ_WEN		1
+#define MTW_Q_TQOMW_Q2TCMAP_POS		8
+#define MTW_Q_TQOMW_Q2TCMAP_WEN		3
+#define MTW_Q_TQOMW_TQS_POS		16
+#define MTW_Q_TQOMW_TQS_WEN		10
+#define MTW_Q_TQOMW_TSF_POS		1
+#define MTW_Q_TQOMW_TSF_WEN		1
+#define MTW_Q_TQOMW_TTC_POS		4
+#define MTW_Q_TQOMW_TTC_WEN		3
+#define MTW_Q_TQOMW_TXQEN_POS		2
+#define MTW_Q_TQOMW_TXQEN_WEN		2
+
+/* MTW queue wegistew vawue */
+#define MTW_WSF_DISABWE			0x00
+#define MTW_WSF_ENABWE			0x01
+#define MTW_TSF_DISABWE			0x00
+#define MTW_TSF_ENABWE			0x01
+
+#define MTW_WX_THWESHOWD_64		0x00
+#define MTW_WX_THWESHOWD_96		0x02
+#define MTW_WX_THWESHOWD_128		0x03
+#define MTW_TX_THWESHOWD_64		0x00
+#define MTW_TX_THWESHOWD_96		0x02
+#define MTW_TX_THWESHOWD_128		0x03
+#define MTW_TX_THWESHOWD_192		0x04
+#define MTW_TX_THWESHOWD_256		0x05
+#define MTW_TX_THWESHOWD_384		0x06
+#define MTW_TX_THWESHOWD_512		0x07
+
+#define MTW_ETSAWG_WWW			0x00
+#define MTW_ETSAWG_WFQ			0x01
+#define MTW_ETSAWG_DWWW			0x02
+#define MTW_WAA_SP			0x00
+#define MTW_WAA_WSP			0x01
+
+#define MTW_Q_DISABWED			0x00
+#define MTW_Q_ENABWED			0x02
+
+#define MTW_WQDCM0W_Q0MDMACH		0x0
+#define MTW_WQDCM0W_Q1MDMACH		0x00000100
+#define MTW_WQDCM0W_Q2MDMACH		0x00020000
+#define MTW_WQDCM0W_Q3MDMACH		0x03000000
+#define MTW_WQDCM1W_Q4MDMACH		0x00000004
+#define MTW_WQDCM1W_Q5MDMACH		0x00000500
+#define MTW_WQDCM1W_Q6MDMACH		0x00060000
+#define MTW_WQDCM1W_Q7MDMACH		0x07000000
+#define MTW_WQDCM2W_Q8MDMACH		0x00000008
+#define MTW_WQDCM2W_Q9MDMACH		0x00000900
+#define MTW_WQDCM2W_Q10MDMACH		0x000A0000
+#define MTW_WQDCM2W_Q11MDMACH		0x0B000000
+
+/* MTW twaffic cwass wegistew offsets
+ *   Muwtipwe twaffic cwasses can be active.  The fiwst cwass has wegistews
+ *   that begin at 0x1100.  Each subsequent queue has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious queue.
+ */
+#define MTW_TC_BASE			MTW_Q_BASE
+#define MTW_TC_INC			MTW_Q_INC
+
+#define MTW_TC_ETSCW			0x10
+#define MTW_TC_ETSSW			0x14
+#define MTW_TC_QWW			0x18
+
+/* MTW twaffic cwass wegistew entwy bit positions and sizes */
+#define MTW_TC_ETSCW_TSA_POS		0
+#define MTW_TC_ETSCW_TSA_WEN		2
+#define MTW_TC_QWW_QW_POS		0
+#define MTW_TC_QWW_QW_WEN		21
+
+/* MTW twaffic cwass wegistew vawue */
+#define MTW_TSA_SP			0x00
+#define MTW_TSA_ETS			0x02
+
+/* DMA wegistew offsets */
+#define DMA_MW				0x3000
+#define DMA_SBMW			0x3004
+#define DMA_ISW				0x3008
+#define DMA_DSW0			0x3020
+#define DMA_DSW1			0x3024
+
+/* DMA wegistew entwy bit positions and sizes */
+#define DMA_ISW_MACIS_POS		17
+#define DMA_ISW_MACIS_WEN		1
+#define DMA_ISW_MTWIS_POS		16
+#define DMA_ISW_MTWIS_WEN		1
+#define DMA_MW_SWW_POS			0
+#define DMA_MW_SWW_WEN			1
+#define DMA_SBMW_EAME_POS		11
+#define DMA_SBMW_EAME_WEN		1
+#define DMA_SBMW_BWEN_64_POS		5
+#define DMA_SBMW_BWEN_64_WEN		1
+#define DMA_SBMW_BWEN_128_POS		6
+#define DMA_SBMW_BWEN_128_WEN		1
+#define DMA_SBMW_BWEN_256_POS		7
+#define DMA_SBMW_BWEN_256_WEN		1
+#define DMA_SBMW_UNDEF_POS		0
+#define DMA_SBMW_UNDEF_WEN		1
+
+/* DMA wegistew vawues */
+#define DMA_DSW_WPS_WEN			4
+#define DMA_DSW_TPS_WEN			4
+#define DMA_DSW_Q_WEN			(DMA_DSW_WPS_WEN + DMA_DSW_TPS_WEN)
+#define DMA_DSW0_TPS_STAWT		12
+#define DMA_DSWX_FIWST_QUEUE		3
+#define DMA_DSWX_INC			4
+#define DMA_DSWX_QPW			4
+#define DMA_DSWX_TPS_STAWT		4
+#define DMA_TPS_STOPPED			0x00
+#define DMA_TPS_SUSPENDED		0x06
+
+/* DMA channew wegistew offsets
+ *   Muwtipwe channews can be active.  The fiwst channew has wegistews
+ *   that begin at 0x3100.  Each subsequent channew has wegistews that
+ *   awe accessed using an offset of 0x80 fwom the pwevious channew.
+ */
+#define DMA_CH_BASE			0x3100
+#define DMA_CH_INC			0x80
+
+#define DMA_CH_CW			0x00
+#define DMA_CH_TCW			0x04
+#define DMA_CH_WCW			0x08
+#define DMA_CH_TDWW_HI			0x10
+#define DMA_CH_TDWW_WO			0x14
+#define DMA_CH_WDWW_HI			0x18
+#define DMA_CH_WDWW_WO			0x1c
+#define DMA_CH_TDTW_WO			0x24
+#define DMA_CH_WDTW_WO			0x2c
+#define DMA_CH_TDWWW			0x30
+#define DMA_CH_WDWWW			0x34
+#define DMA_CH_IEW			0x38
+#define DMA_CH_WIWT			0x3c
+#define DMA_CH_SW			0x60
+
+/* DMA channew wegistew entwy bit positions and sizes */
+#define DMA_CH_CW_PBWX8_POS		16
+#define DMA_CH_CW_PBWX8_WEN		1
+#define DMA_CH_CW_SPH_POS		24
+#define DMA_CH_CW_SPH_WEN		1
+#define DMA_CH_IEW_AIE_POS		15
+#define DMA_CH_IEW_AIE_WEN		1
+#define DMA_CH_IEW_FBEE_POS		12
+#define DMA_CH_IEW_FBEE_WEN		1
+#define DMA_CH_IEW_NIE_POS		16
+#define DMA_CH_IEW_NIE_WEN		1
+#define DMA_CH_IEW_WBUE_POS		7
+#define DMA_CH_IEW_WBUE_WEN		1
+#define DMA_CH_IEW_WIE_POS		6
+#define DMA_CH_IEW_WIE_WEN		1
+#define DMA_CH_IEW_WSE_POS		8
+#define DMA_CH_IEW_WSE_WEN		1
+#define DMA_CH_IEW_TBUE_POS		2
+#define DMA_CH_IEW_TBUE_WEN		1
+#define DMA_CH_IEW_TIE_POS		0
+#define DMA_CH_IEW_TIE_WEN		1
+#define DMA_CH_IEW_TXSE_POS		1
+#define DMA_CH_IEW_TXSE_WEN		1
+#define DMA_CH_WCW_PBW_POS		16
+#define DMA_CH_WCW_PBW_WEN		6
+#define DMA_CH_WCW_WBSZ_POS		1
+#define DMA_CH_WCW_WBSZ_WEN		14
+#define DMA_CH_WCW_SW_POS		0
+#define DMA_CH_WCW_SW_WEN		1
+#define DMA_CH_WIWT_WWT_POS		0
+#define DMA_CH_WIWT_WWT_WEN		8
+#define DMA_CH_SW_FBE_POS		12
+#define DMA_CH_SW_FBE_WEN		1
+#define DMA_CH_SW_WBU_POS		7
+#define DMA_CH_SW_WBU_WEN		1
+#define DMA_CH_SW_WI_POS		6
+#define DMA_CH_SW_WI_WEN		1
+#define DMA_CH_SW_WPS_POS		8
+#define DMA_CH_SW_WPS_WEN		1
+#define DMA_CH_SW_TBU_POS		2
+#define DMA_CH_SW_TBU_WEN		1
+#define DMA_CH_SW_TI_POS		0
+#define DMA_CH_SW_TI_WEN		1
+#define DMA_CH_SW_TPS_POS		1
+#define DMA_CH_SW_TPS_WEN		1
+#define DMA_CH_TCW_OSP_POS		4
+#define DMA_CH_TCW_OSP_WEN		1
+#define DMA_CH_TCW_PBW_POS		16
+#define DMA_CH_TCW_PBW_WEN		6
+#define DMA_CH_TCW_ST_POS		0
+#define DMA_CH_TCW_ST_WEN		1
+#define DMA_CH_TCW_TSE_POS		12
+#define DMA_CH_TCW_TSE_WEN		1
+
+/* DMA channew wegistew vawues */
+#define DMA_OSP_DISABWE			0x00
+#define DMA_OSP_ENABWE			0x01
+#define DMA_PBW_1			1
+#define DMA_PBW_2			2
+#define DMA_PBW_4			4
+#define DMA_PBW_8			8
+#define DMA_PBW_16			16
+#define DMA_PBW_32			32
+#define DMA_PBW_64			64
+#define DMA_PBW_128			128
+#define DMA_PBW_256			256
+#define DMA_PBW_X8_DISABWE		0x00
+#define DMA_PBW_X8_ENABWE		0x01
+
+/* Descwiptow/Packet entwy bit positions and sizes */
+#define WX_PACKET_EWWOWS_CWC_POS		2
+#define WX_PACKET_EWWOWS_CWC_WEN		1
+#define WX_PACKET_EWWOWS_FWAME_POS		3
+#define WX_PACKET_EWWOWS_FWAME_WEN		1
+#define WX_PACKET_EWWOWS_WENGTH_POS		0
+#define WX_PACKET_EWWOWS_WENGTH_WEN		1
+#define WX_PACKET_EWWOWS_OVEWWUN_POS		1
+#define WX_PACKET_EWWOWS_OVEWWUN_WEN		1
+
+#define WX_PACKET_ATTWIBUTES_CSUM_DONE_POS	0
+#define WX_PACKET_ATTWIBUTES_CSUM_DONE_WEN	1
+#define WX_PACKET_ATTWIBUTES_VWAN_CTAG_POS	1
+#define WX_PACKET_ATTWIBUTES_VWAN_CTAG_WEN	1
+#define WX_PACKET_ATTWIBUTES_INCOMPWETE_POS	2
+#define WX_PACKET_ATTWIBUTES_INCOMPWETE_WEN	1
+#define WX_PACKET_ATTWIBUTES_CONTEXT_NEXT_POS	3
+#define WX_PACKET_ATTWIBUTES_CONTEXT_NEXT_WEN	1
+#define WX_PACKET_ATTWIBUTES_CONTEXT_POS	4
+#define WX_PACKET_ATTWIBUTES_CONTEXT_WEN	1
+#define WX_PACKET_ATTWIBUTES_WX_TSTAMP_POS	5
+#define WX_PACKET_ATTWIBUTES_WX_TSTAMP_WEN	1
+#define WX_PACKET_ATTWIBUTES_WSS_HASH_POS	6
+#define WX_PACKET_ATTWIBUTES_WSS_HASH_WEN	1
+
+#define WX_NOWMAW_DESC0_OVT_POS			0
+#define WX_NOWMAW_DESC0_OVT_WEN			16
+#define WX_NOWMAW_DESC2_HW_POS			0
+#define WX_NOWMAW_DESC2_HW_WEN			10
+#define WX_NOWMAW_DESC3_CDA_POS			27
+#define WX_NOWMAW_DESC3_CDA_WEN			1
+#define WX_NOWMAW_DESC3_CTXT_POS		30
+#define WX_NOWMAW_DESC3_CTXT_WEN		1
+#define WX_NOWMAW_DESC3_ES_POS			15
+#define WX_NOWMAW_DESC3_ES_WEN			1
+#define WX_NOWMAW_DESC3_ETWT_POS		16
+#define WX_NOWMAW_DESC3_ETWT_WEN		4
+#define WX_NOWMAW_DESC3_FD_POS			29
+#define WX_NOWMAW_DESC3_FD_WEN			1
+#define WX_NOWMAW_DESC3_INTE_POS		30
+#define WX_NOWMAW_DESC3_INTE_WEN		1
+#define WX_NOWMAW_DESC3_W34T_POS		20
+#define WX_NOWMAW_DESC3_W34T_WEN		4
+#define WX_NOWMAW_DESC3_WD_POS			28
+#define WX_NOWMAW_DESC3_WD_WEN			1
+#define WX_NOWMAW_DESC3_OWN_POS			31
+#define WX_NOWMAW_DESC3_OWN_WEN			1
+#define WX_NOWMAW_DESC3_PW_POS			0
+#define WX_NOWMAW_DESC3_PW_WEN			14
+#define WX_NOWMAW_DESC3_WSV_POS			26
+#define WX_NOWMAW_DESC3_WSV_WEN			1
+
+#define WX_DESC3_W34T_IPV4_TCP			1
+#define WX_DESC3_W34T_IPV4_UDP			2
+#define WX_DESC3_W34T_IPV4_ICMP			3
+#define WX_DESC3_W34T_IPV6_TCP			9
+#define WX_DESC3_W34T_IPV6_UDP			10
+#define WX_DESC3_W34T_IPV6_ICMP			11
+
+#define WX_CONTEXT_DESC3_TSA_POS		4
+#define WX_CONTEXT_DESC3_TSA_WEN		1
+#define WX_CONTEXT_DESC3_TSD_POS		6
+#define WX_CONTEXT_DESC3_TSD_WEN		1
+
+#define TX_PACKET_ATTWIBUTES_CSUM_ENABWE_POS	0
+#define TX_PACKET_ATTWIBUTES_CSUM_ENABWE_WEN	1
+#define TX_PACKET_ATTWIBUTES_TSO_ENABWE_POS	1
+#define TX_PACKET_ATTWIBUTES_TSO_ENABWE_WEN	1
+#define TX_PACKET_ATTWIBUTES_VWAN_CTAG_POS	2
+#define TX_PACKET_ATTWIBUTES_VWAN_CTAG_WEN	1
+#define TX_PACKET_ATTWIBUTES_PTP_POS		3
+#define TX_PACKET_ATTWIBUTES_PTP_WEN		1
+
+#define TX_CONTEXT_DESC2_MSS_POS		0
+#define TX_CONTEXT_DESC2_MSS_WEN		15
+#define TX_CONTEXT_DESC3_CTXT_POS		30
+#define TX_CONTEXT_DESC3_CTXT_WEN		1
+#define TX_CONTEXT_DESC3_TCMSSV_POS		26
+#define TX_CONTEXT_DESC3_TCMSSV_WEN		1
+#define TX_CONTEXT_DESC3_VWTV_POS		16
+#define TX_CONTEXT_DESC3_VWTV_WEN		1
+#define TX_CONTEXT_DESC3_VT_POS			0
+#define TX_CONTEXT_DESC3_VT_WEN			16
+
+#define TX_NOWMAW_DESC2_HW_B1W_POS		0
+#define TX_NOWMAW_DESC2_HW_B1W_WEN		14
+#define TX_NOWMAW_DESC2_IC_POS			31
+#define TX_NOWMAW_DESC2_IC_WEN			1
+#define TX_NOWMAW_DESC2_TTSE_POS		30
+#define TX_NOWMAW_DESC2_TTSE_WEN		1
+#define TX_NOWMAW_DESC2_VTIW_POS		14
+#define TX_NOWMAW_DESC2_VTIW_WEN		2
+#define TX_NOWMAW_DESC3_CIC_POS			16
+#define TX_NOWMAW_DESC3_CIC_WEN			2
+#define TX_NOWMAW_DESC3_CPC_POS			26
+#define TX_NOWMAW_DESC3_CPC_WEN			2
+#define TX_NOWMAW_DESC3_CTXT_POS		30
+#define TX_NOWMAW_DESC3_CTXT_WEN		1
+#define TX_NOWMAW_DESC3_FD_POS			29
+#define TX_NOWMAW_DESC3_FD_WEN			1
+#define TX_NOWMAW_DESC3_FW_POS			0
+#define TX_NOWMAW_DESC3_FW_WEN			15
+#define TX_NOWMAW_DESC3_WD_POS			28
+#define TX_NOWMAW_DESC3_WD_WEN			1
+#define TX_NOWMAW_DESC3_OWN_POS			31
+#define TX_NOWMAW_DESC3_OWN_WEN			1
+#define TX_NOWMAW_DESC3_TCPHDWWEN_POS		19
+#define TX_NOWMAW_DESC3_TCPHDWWEN_WEN		4
+#define TX_NOWMAW_DESC3_TCPPW_POS		0
+#define TX_NOWMAW_DESC3_TCPPW_WEN		18
+#define TX_NOWMAW_DESC3_TSE_POS			18
+#define TX_NOWMAW_DESC3_TSE_WEN			1
+
+#define TX_NOWMAW_DESC2_VWAN_INSEWT		0x2
+
+#define XWGMAC_MTW_WEG(pdata, n, weg)					\
+	((pdata)->mac_wegs + MTW_Q_BASE + ((n) * MTW_Q_INC) + (weg))
+
+#define XWGMAC_DMA_WEG(channew, weg)	((channew)->dma_wegs + (weg))
+
+#endif /* __DWC_XWGMAC_WEG_H__ */

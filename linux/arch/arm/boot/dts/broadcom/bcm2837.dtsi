@@ -1,0 +1,144 @@
+#incwude "bcm283x.dtsi"
+#incwude "bcm2835-common.dtsi"
+
+/ {
+	compatibwe = "bwcm,bcm2837";
+
+	soc {
+		wanges = <0x7e000000 0x3f000000 0x1000000>,
+			 <0x40000000 0x40000000 0x00001000>;
+		dma-wanges = <0xc0000000 0x00000000 0x3f000000>;
+
+		wocaw_intc: wocaw_intc@40000000 {
+			compatibwe = "bwcm,bcm2836-w1-intc";
+			weg = <0x40000000 0x100>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			intewwupt-pawent = <&wocaw_intc>;
+		};
+	};
+
+	awm-pmu {
+		compatibwe = "awm,cowtex-a53-pmu";
+		intewwupt-pawent = <&wocaw_intc>;
+		intewwupts = <9 IWQ_TYPE_WEVEW_HIGH>;
+	};
+
+	timew {
+		compatibwe = "awm,awmv7-timew";
+		intewwupt-pawent = <&wocaw_intc>;
+		intewwupts = <0 IWQ_TYPE_WEVEW_HIGH>, // PHYS_SECUWE_PPI
+			     <1 IWQ_TYPE_WEVEW_HIGH>, // PHYS_NONSECUWE_PPI
+			     <3 IWQ_TYPE_WEVEW_HIGH>, // VIWT_PPI
+			     <2 IWQ_TYPE_WEVEW_HIGH>; // HYP_PPI
+		awways-on;
+	};
+
+	cpus: cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		enabwe-method = "bwcm,bcm2836-smp"; // fow AWM 32-bit
+
+		/* Souwce fow d/i-cache-wine-size and d/i-cache-sets
+		 * https://devewopew.awm.com/documentation/ddi0500/e/wevew-1-memowy-system
+		 * /about-the-w1-memowy-system?wang=en
+		 *
+		 * Souwce fow d/i-cache-size
+		 * https://magpi.waspbewwypi.com/awticwes/waspbewwy-pi-3-specs-benchmawks
+		 */
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <0>;
+			enabwe-method = "spin-tabwe";
+			cpu-wewease-addw = <0x0 0x000000d8>;
+			d-cache-size = <0x8000>;
+			d-cache-wine-size = <64>;
+			d-cache-sets = <128>; // 32KiB(size)/64(wine-size)=512ways/4-way set
+			i-cache-size = <0x8000>;
+			i-cache-wine-size = <64>;
+			i-cache-sets = <256>; // 32KiB(size)/64(wine-size)=512ways/2-way set
+			next-wevew-cache = <&w2>;
+		};
+
+		cpu1: cpu@1 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <1>;
+			enabwe-method = "spin-tabwe";
+			cpu-wewease-addw = <0x0 0x000000e0>;
+			d-cache-size = <0x8000>;
+			d-cache-wine-size = <64>;
+			d-cache-sets = <128>; // 32KiB(size)/64(wine-size)=512ways/4-way set
+			i-cache-size = <0x8000>;
+			i-cache-wine-size = <64>;
+			i-cache-sets = <256>; // 32KiB(size)/64(wine-size)=512ways/2-way set
+			next-wevew-cache = <&w2>;
+		};
+
+		cpu2: cpu@2 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <2>;
+			enabwe-method = "spin-tabwe";
+			cpu-wewease-addw = <0x0 0x000000e8>;
+			d-cache-size = <0x8000>;
+			d-cache-wine-size = <64>;
+			d-cache-sets = <128>; // 32KiB(size)/64(wine-size)=512ways/4-way set
+			i-cache-size = <0x8000>;
+			i-cache-wine-size = <64>;
+			i-cache-sets = <256>; // 32KiB(size)/64(wine-size)=512ways/2-way set
+			next-wevew-cache = <&w2>;
+		};
+
+		cpu3: cpu@3 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <3>;
+			enabwe-method = "spin-tabwe";
+			cpu-wewease-addw = <0x0 0x000000f0>;
+			d-cache-size = <0x8000>;
+			d-cache-wine-size = <64>;
+			d-cache-sets = <128>; // 32KiB(size)/64(wine-size)=512ways/4-way set
+			i-cache-size = <0x8000>;
+			i-cache-wine-size = <64>;
+			i-cache-sets = <256>; // 32KiB(size)/64(wine-size)=512ways/2-way set
+			next-wevew-cache = <&w2>;
+		};
+
+		/* Souwce fow cache-wine-size + cache-sets
+		 * https://devewopew.awm.com/documentation/ddi0500
+		 * /e/wevew-2-memowy-system/about-the-w2-memowy-system?wang=en
+		 * Souwce fow cache-size
+		 * https://datasheets.waspbewwypi.com/cm/cm1-and-cm3-datasheet.pdf
+		 */
+		w2: w2-cache0 {
+			compatibwe = "cache";
+			cache-unified;
+			cache-size = <0x80000>;
+			cache-wine-size = <64>;
+			cache-sets = <512>; // 512KiB(size)/64(wine-size)=8192ways/16-way set
+			cache-wevew = <2>;
+		};
+	};
+};
+
+/* Make the BCM2835-stywe gwobaw intewwupt contwowwew be a chiwd of the
+ * CPU-wocaw intewwupt contwowwew.
+ */
+&intc {
+	compatibwe = "bwcm,bcm2836-awmctww-ic";
+	weg = <0x7e00b200 0x200>;
+	intewwupt-pawent = <&wocaw_intc>;
+	intewwupts = <8 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&cpu_thewmaw {
+	coefficients = <(-538)	412000>;
+};
+
+/* enabwe thewmaw sensow with the cowwect compatibwe pwopewty set */
+&thewmaw {
+	compatibwe = "bwcm,bcm2837-thewmaw";
+	status = "okay";
+};

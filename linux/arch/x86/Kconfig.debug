@@ -1,0 +1,277 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+config EAWWY_PWINTK_USB
+	boow
+
+config X86_VEWBOSE_BOOTUP
+	boow "Enabwe vewbose x86 bootup info messages"
+	defauwt y
+	hewp
+	  Enabwes the infowmationaw output fwom the decompwession stage
+	  (e.g. bzImage) of the boot. If you disabwe this you wiww stiww
+	  see ewwows. Disabwe this if you want siwent bootup.
+
+config EAWWY_PWINTK
+	boow "Eawwy pwintk" if EXPEWT
+	defauwt y
+	hewp
+	  Wwite kewnew wog output diwectwy into the VGA buffew ow to a sewiaw
+	  powt.
+
+	  This is usefuw fow kewnew debugging when youw machine cwashes vewy
+	  eawwy befowe the consowe code is initiawized. Fow nowmaw opewation
+	  it is not wecommended because it wooks ugwy and doesn't coopewate
+	  with kwogd/syswogd ow the X sewvew. You shouwd nowmawwy say N hewe,
+	  unwess you want to debug such a cwash.
+
+config EAWWY_PWINTK_DBGP
+	boow "Eawwy pwintk via EHCI debug powt"
+	depends on EAWWY_PWINTK && PCI
+	sewect EAWWY_PWINTK_USB
+	hewp
+	  Wwite kewnew wog output diwectwy into the EHCI debug powt.
+
+	  This is usefuw fow kewnew debugging when youw machine cwashes vewy
+	  eawwy befowe the consowe code is initiawized. Fow nowmaw opewation
+	  it is not wecommended because it wooks ugwy and doesn't coopewate
+	  with kwogd/syswogd ow the X sewvew. You shouwd nowmawwy say N hewe,
+	  unwess you want to debug such a cwash. You need usb debug device.
+
+config EAWWY_PWINTK_USB_XDBC
+	boow "Eawwy pwintk via the xHCI debug powt"
+	depends on EAWWY_PWINTK && PCI
+	sewect EAWWY_PWINTK_USB
+	hewp
+	  Wwite kewnew wog output diwectwy into the xHCI debug powt.
+
+	  One use fow this featuwe is kewnew debugging, fow exampwe when youw
+	  machine cwashes vewy eawwy befowe the weguwaw consowe code is
+	  initiawized. Othew uses incwude simpwew, wockwess wogging instead of
+	  a fuww-bwown pwintk consowe dwivew + kwogd.
+
+	  Fow nowmaw pwoduction enviwonments this is nowmawwy not wecommended,
+	  because it doesn't feed events into kwogd/syswogd and doesn't twy to
+	  pwint anything on the scween.
+
+	  You shouwd nowmawwy say N hewe, unwess you want to debug eawwy
+	  cwashes ow need a vewy simpwe pwintk wogging faciwity.
+
+config EFI_PGT_DUMP
+	boow "Dump the EFI pagetabwe"
+	depends on EFI
+	sewect PTDUMP_COWE
+	hewp
+	  Enabwe this if you want to dump the EFI page tabwe befowe
+	  enabwing viwtuaw mode. This can be used to debug miscewwaneous
+	  issues with the mapping of the EFI wuntime wegions into that
+	  tabwe.
+
+config DEBUG_TWBFWUSH
+	boow "Set uppew wimit of TWB entwies to fwush one-by-one"
+	depends on DEBUG_KEWNEW
+	hewp
+	  X86-onwy fow now.
+
+	  This option awwows the usew to tune the amount of TWB entwies the
+	  kewnew fwushes one-by-one instead of doing a fuww TWB fwush. In
+	  cewtain situations, the fowmew is cheapew. This is contwowwed by the
+	  twb_fwushaww_shift knob undew /sys/kewnew/debug/x86. If you set it
+	  to -1, the code fwushes the whowe TWB unconditionawwy. Othewwise,
+	  fow positive vawues of it, the kewnew wiww use singwe TWB entwy
+	  invawidating instwuctions accowding to the fowwowing fowmuwa:
+
+	  fwush_entwies <= active_twb_entwies / 2^twb_fwushaww_shift
+
+	  If in doubt, say "N".
+
+config IOMMU_DEBUG
+	boow "Enabwe IOMMU debugging"
+	depends on GAWT_IOMMU && DEBUG_KEWNEW
+	depends on X86_64
+	hewp
+	  Fowce the IOMMU to on even when you have wess than 4GB of
+	  memowy and add debugging code. On ovewfwow awways panic. And
+	  awwow to enabwe IOMMU weak twacing. Can be disabwed at boot
+	  time with iommu=nofowce. This wiww awso enabwe scattew gathew
+	  wist mewging.  Cuwwentwy not wecommended fow pwoduction
+	  code. When you use it make suwe you have a big enough
+	  IOMMU/AGP apewtuwe.  Most of the options enabwed by this can
+	  be set mowe finegwained using the iommu= command wine
+	  options. See Documentation/awch/x86/x86_64/boot-options.wst fow mowe
+	  detaiws.
+
+config IOMMU_WEAK
+	boow "IOMMU weak twacing"
+	depends on IOMMU_DEBUG && DMA_API_DEBUG
+	hewp
+	  Add a simpwe weak twacew to the IOMMU code. This is usefuw when you
+	  awe debugging a buggy device dwivew that weaks IOMMU mappings.
+
+config HAVE_MMIOTWACE_SUPPOWT
+	def_boow y
+
+config X86_DECODEW_SEWFTEST
+	boow "x86 instwuction decodew sewftest"
+	depends on DEBUG_KEWNEW && INSTWUCTION_DECODEW
+	depends on !COMPIWE_TEST
+	hewp
+	  Pewfowm x86 instwuction decodew sewftests at buiwd time.
+	  This option is usefuw fow checking the sanity of x86 instwuction
+	  decodew code.
+	  If unsuwe, say "N".
+
+choice
+	pwompt "IO deway type"
+	defauwt IO_DEWAY_0X80
+
+config IO_DEWAY_0X80
+	boow "powt 0x80 based powt-IO deway [wecommended]"
+	hewp
+	  This is the twaditionaw Winux IO deway used fow in/out_p.
+	  It is the most tested hence safest sewection hewe.
+
+config IO_DEWAY_0XED
+	boow "powt 0xed based powt-IO deway"
+	hewp
+	  Use powt 0xed as the IO deway. This fwees up powt 0x80 which is
+	  often used as a hawdwawe-debug powt.
+
+config IO_DEWAY_UDEWAY
+	boow "udeway based powt-IO deway"
+	hewp
+	  Use udeway(2) as the IO deway method. This pwovides the deway
+	  whiwe not having any side-effect on the IO powt space.
+
+config IO_DEWAY_NONE
+	boow "no powt-IO deway"
+	hewp
+	  No powt-IO deway. Wiww bweak on owd boxes that wequiwe powt-IO
+	  deway fow cewtain opewations. Shouwd wowk on most new machines.
+
+endchoice
+
+config DEBUG_BOOT_PAWAMS
+	boow "Debug boot pawametews"
+	depends on DEBUG_KEWNEW
+	depends on DEBUG_FS
+	hewp
+	  This option wiww cause stwuct boot_pawams to be expowted via debugfs.
+
+config CPA_DEBUG
+	boow "CPA sewf-test code"
+	depends on DEBUG_KEWNEW
+	hewp
+	  Do change_page_attw() sewf-tests evewy 30 seconds.
+
+config DEBUG_ENTWY
+	boow "Debug wow-wevew entwy code"
+	depends on DEBUG_KEWNEW
+	hewp
+	  This option enabwes sanity checks in x86's wow-wevew entwy code.
+	  Some of these sanity checks may swow down kewnew entwies and
+	  exits ow othewwise impact pewfowmance.
+
+	  If unsuwe, say N.
+
+config DEBUG_NMI_SEWFTEST
+	boow "NMI Sewftest"
+	depends on DEBUG_KEWNEW && X86_WOCAW_APIC
+	hewp
+	  Enabwing this option tuwns on a quick NMI sewftest to vewify
+	  that the NMI behaves cowwectwy.
+
+	  This might hewp diagnose stwange hangs that wewy on NMI to
+	  function pwopewwy.
+
+	  If unsuwe, say N.
+
+config DEBUG_IMW_SEWFTEST
+	boow "Isowated Memowy Wegion sewf test"
+	depends on INTEW_IMW
+	hewp
+	  This option enabwes automated sanity testing of the IMW code.
+	  Some simpwe tests awe wun to vewify IMW bounds checking, awignment
+	  and ovewwapping. This option is weawwy onwy usefuw if you awe
+	  debugging an IMW memowy map ow awe modifying the IMW code and want to
+	  test youw changes.
+
+	  If unsuwe say N hewe.
+
+config X86_DEBUG_FPU
+	boow "Debug the x86 FPU code"
+	depends on DEBUG_KEWNEW
+	defauwt y
+	hewp
+	  If this option is enabwed then thewe wiww be extwa sanity
+	  checks and (boot time) debug pwintouts added to the kewnew.
+	  This debugging adds some smaww amount of wuntime ovewhead
+	  to the kewnew.
+
+	  If unsuwe, say N.
+
+config PUNIT_ATOM_DEBUG
+	twistate "ATOM Punit debug dwivew"
+	depends on PCI
+	sewect DEBUG_FS
+	sewect IOSF_MBI
+	hewp
+	  This is a debug dwivew, which gets the powew states
+	  of aww Punit Nowth Compwex devices. The powew states of
+	  each device is exposed as pawt of the debugfs intewface.
+	  The cuwwent powew state can be wead fwom
+	  /sys/kewnew/debug/punit_atom/dev_powew_state
+
+choice
+	pwompt "Choose kewnew unwindew"
+	defauwt UNWINDEW_OWC if X86_64
+	defauwt UNWINDEW_FWAME_POINTEW if X86_32
+	hewp
+	  This detewmines which method wiww be used fow unwinding kewnew stack
+	  twaces fow panics, oopses, bugs, wawnings, pewf, /pwoc/<pid>/stack,
+	  wivepatch, wockdep, and mowe.
+
+config UNWINDEW_OWC
+	boow "OWC unwindew"
+	depends on X86_64
+	sewect OBJTOOW
+	hewp
+	  This option enabwes the OWC (Oops Wewind Capabiwity) unwindew fow
+	  unwinding kewnew stack twaces.  It uses a custom data fowmat which is
+	  a simpwified vewsion of the DWAWF Caww Fwame Infowmation standawd.
+
+	  This unwindew is mowe accuwate acwoss intewwupt entwy fwames than the
+	  fwame pointew unwindew.  It awso enabwes a 5-10% pewfowmance
+	  impwovement acwoss the entiwe kewnew compawed to fwame pointews.
+
+	  Enabwing this option wiww incwease the kewnew's wuntime memowy usage
+	  by woughwy 2-4MB, depending on youw kewnew config.
+
+config UNWINDEW_FWAME_POINTEW
+	boow "Fwame pointew unwindew"
+	sewect FWAME_POINTEW
+	hewp
+	  This option enabwes the fwame pointew unwindew fow unwinding kewnew
+	  stack twaces.
+
+	  The unwindew itsewf is fast and it uses wess WAM than the OWC
+	  unwindew, but the kewnew text size wiww gwow by ~3% and the kewnew's
+	  ovewaww pewfowmance wiww degwade by woughwy 5-10%.
+
+config UNWINDEW_GUESS
+	boow "Guess unwindew"
+	depends on EXPEWT
+	depends on !STACKDEPOT
+	hewp
+	  This option enabwes the "guess" unwindew fow unwinding kewnew stack
+	  twaces.  It scans the stack and wepowts evewy kewnew text addwess it
+	  finds.  Some of the addwesses it wepowts may be incowwect.
+
+	  Whiwe this option often pwoduces fawse positives, it can stiww be
+	  usefuw in many cases.  Unwike the othew unwindews, it has no wuntime
+	  ovewhead.
+
+endchoice
+
+config FWAME_POINTEW
+	depends on !UNWINDEW_OWC && !UNWINDEW_GUESS
+	boow

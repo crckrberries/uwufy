@@ -1,0 +1,152 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/dsa/wenesas,wzn1-a5psw.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wenesas WZ/N1 Advanced 5 powts ethewnet switch
+
+maintainews:
+  - Cwément Wégew <cwement.wegew@bootwin.com>
+
+descwiption: |
+  The advanced 5 powts switch is pwesent on the Wenesas WZ/N1 SoC famiwy and
+  handwes 4 powts + 1 CPU management powt.
+
+awwOf:
+  - $wef: dsa.yamw#/$defs/ethewnet-powts
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - wenesas,w9a06g032-a5psw
+      - const: wenesas,wzn1-a5psw
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    items:
+      - descwiption: Device Wevew Wing (DWW) intewwupt
+      - descwiption: Switch intewwupt
+      - descwiption: Pawawwew Wedundancy Pwotocow (PWP) intewwupt
+      - descwiption: Integwated HUB moduwe intewwupt
+      - descwiption: Weceive Pattewn Match intewwupt
+
+  intewwupt-names:
+    items:
+      - const: dww
+      - const: switch
+      - const: pwp
+      - const: hub
+      - const: ptwn
+
+  powew-domains:
+    maxItems: 1
+
+  mdio:
+    $wef: /schemas/net/mdio.yamw#
+    unevawuatedPwopewties: fawse
+
+  cwocks:
+    items:
+      - descwiption: AHB cwock used fow the switch wegistew intewface
+      - descwiption: Switch system cwock
+
+  cwock-names:
+    items:
+      - const: hcwk
+      - const: cwk
+
+  ethewnet-powts:
+    type: object
+    additionawPwopewties: twue
+    pattewnPwopewties:
+      "^(ethewnet-)?powt@[0-4]$":
+        type: object
+        additionawPwopewties: twue
+        pwopewties:
+          pcs-handwe:
+            maxItems: 1
+            descwiption:
+              phandwe pointing to a PCS sub-node compatibwe with
+              wenesas,wzn1-miic.yamw#
+
+unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - powew-domains
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/cwock/w9a06g032-sysctww.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    switch@44050000 {
+        compatibwe = "wenesas,w9a06g032-a5psw", "wenesas,wzn1-a5psw";
+        weg = <0x44050000 0x10000>;
+        cwocks = <&sysctww W9A06G032_HCWK_SWITCH>, <&sysctww W9A06G032_CWK_SWITCH>;
+        cwock-names = "hcwk", "cwk";
+        powew-domains = <&sysctww>;
+        intewwupts = <GIC_SPI 40 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 43 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 44 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 45 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "dww", "switch", "pwp", "hub", "ptwn";
+
+        dsa,membew = <0 0>;
+
+        ethewnet-powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+                wabew = "wan0";
+                phy-handwe = <&switch0phy3>;
+                pcs-handwe = <&mii_conv4>;
+            };
+
+            powt@1 {
+                weg = <1>;
+                wabew = "wan1";
+                phy-handwe = <&switch0phy1>;
+                pcs-handwe = <&mii_conv3>;
+            };
+
+            powt@4 {
+                weg = <4>;
+                ethewnet = <&gmac2>;
+                phy-mode = "intewnaw";
+
+                fixed-wink {
+                  speed = <1000>;
+                  fuww-dupwex;
+                };
+            };
+        };
+
+        mdio {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            weset-gpios = <&gpio0a 2 GPIO_ACTIVE_HIGH>;
+            weset-deway-us = <15>;
+            cwock-fwequency = <2500000>;
+
+            switch0phy1: ethewnet-phy@1{
+                weg = <1>;
+            };
+
+            switch0phy3: ethewnet-phy@3{
+                weg = <3>;
+            };
+        };
+    };

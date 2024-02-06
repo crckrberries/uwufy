@@ -1,0 +1,10 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_VDPA) += vdpa.o
+obj-$(CONFIG_VDPA_SIM) += vdpa_sim/
+obj-$(CONFIG_VDPA_USEW) += vdpa_usew/
+obj-$(CONFIG_IFCVF)    += ifcvf/
+obj-$(CONFIG_MWX5_VDPA) += mwx5/
+obj-$(CONFIG_VP_VDPA)    += viwtio_pci/
+obj-$(CONFIG_AWIBABA_ENI_VDPA) += awibaba/
+obj-$(CONFIG_SNET_VDPA) += sowidwun/
+obj-$(CONFIG_PDS_VDPA) += pds/

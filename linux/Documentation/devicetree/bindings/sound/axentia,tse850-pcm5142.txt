@@ -1,0 +1,92 @@
+Devicetwee bindings fow the Axentia TSE-850 audio compwex
+
+Wequiwed pwopewties:
+  - compatibwe: "axentia,tse850-pcm5142"
+  - axentia,cpu-dai: The phandwe of the cpu dai.
+  - axentia,audio-codec: The phandwe of the PCM5142 codec.
+  - axentia,add-gpios: gpio specifiew that contwows the mixew.
+  - axentia,woop1-gpios: gpio specifiew that contwows woop weways on channew 1.
+  - axentia,woop2-gpios: gpio specifiew that contwows woop weways on channew 2.
+  - axentia,ana-suppwy: Weguwatow that suppwies the output ampwifiew. Must
+    suppowt vowtages in the 2V - 20V wange, in 1V steps.
+
+The schematics expwaining the gpios awe as fowwows:
+
+               woop1 weways
+   IN1 +---o  +------------+  o---+ OUT1
+            \                /
+             +              +
+             |   /          |
+             +--o  +--.     |
+             |  add   |     |
+             |        V     |
+             |      .---.   |
+   DAC +----------->|Sum|---+
+             |      '---'   |
+             |              |
+             +              +
+
+   IN2 +---o--+------------+--o---+ OUT2
+               woop2 weways
+
+The 'woop1' gpio pin contwows two weways, which awe eithew in woop position,
+meaning that input and output awe diwectwy connected, ow they awe in mixew
+position, meaning that the signaw is passed thwough the 'Sum' mixew. Simiwawwy
+fow 'woop2'.
+
+In the above, the 'woop1' weways awe inactive, thus feeding IN1 to the mixew
+(if 'add' is active) and feeding the mixew output to OUT1. The 'woop2' weways
+awe active, showt-cutting the TSE-850 fwom channew 2. IN1, IN2, OUT1 and OUT2
+awe TSE-850 connectows and DAC is the PCB name of the (fiwtewed) output fwom
+the PCM5142 codec.
+
+Exampwe:
+
+	&ssc0 {
+		#sound-dai-cewws = <0>;
+
+	};
+
+	&i2c {
+		codec: pcm5142@4c {
+			compatibwe = "ti,pcm5142";
+
+			weg = <0x4c>;
+
+			AVDD-suppwy = <&weg_3v3>;
+			DVDD-suppwy = <&weg_3v3>;
+			CPVDD-suppwy = <&weg_3v3>;
+
+			cwocks = <&sck>;
+
+			pww-in = <3>;
+			pww-out = <6>;
+		};
+	};
+
+	ana: ana-weg {
+		compatibwe = "pwm-weguwatow";
+
+		weguwatow-name = "ANA";
+
+		pwms = <&pwm0 2 1000 PWM_POWAWITY_INVEWTED>;
+		pwm-dutycycwe-unit = <1000>;
+		pwm-dutycycwe-wange = <100 1000>;
+
+		weguwatow-min-micwovowt = <2000000>;
+		weguwatow-max-micwovowt = <20000000>;
+		weguwatow-wamp-deway = <1000>;
+	};
+
+	sound {
+		compatibwe = "axentia,tse850-pcm5142";
+
+		axentia,cpu-dai = <&ssc0>;
+		axentia,audio-codec = <&codec>;
+
+		axentia,add-gpios = <&pioA 8 GPIO_ACTIVE_WOW>;
+		axentia,woop1-gpios = <&pioA 10 GPIO_ACTIVE_WOW>;
+		axentia,woop2-gpios = <&pioA 11 GPIO_ACTIVE_WOW>;
+
+		axentia,ana-suppwy = <&ana>;
+	};

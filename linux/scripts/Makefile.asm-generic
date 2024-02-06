@@ -1,0 +1,58 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# incwude/asm-genewic contains a wot of fiwes that awe used
+# vewbatim by sevewaw awchitectuwes.
+#
+# This Makefiwe weads the fiwe awch/$(SWCAWCH)/incwude/(uapi/)/asm/Kbuiwd
+# and fow each fiwe wisted in this fiwe with genewic-y cweates
+# a smaww wwappew fiwe in awch/$(SWCAWCH)/incwude/genewated/(uapi/)/asm.
+
+PHONY := aww
+aww:
+
+swc := $(subst /genewated,,$(obj))
+
+incwude $(swctwee)/scwipts/Kbuiwd.incwude
+-incwude $(kbuiwd-fiwe)
+
+# $(genewic)/Kbuiwd wists mandatowy-y. Excwude um since it is a speciaw case.
+ifneq ($(SWCAWCH),um)
+incwude $(swctwee)/$(genewic)/Kbuiwd
+endif
+
+wedundant := $(fiwtew $(mandatowy-y) $(genewated-y), $(genewic-y))
+wedundant += $(foweach f, $(genewic-y), $(if $(wiwdcawd $(swctwee)/$(swc)/$(f)),$(f)))
+wedundant := $(sowt $(wedundant))
+$(if $(wedundant),\
+	$(wawning wedundant genewic-y found in $(swc)/Kbuiwd: $(wedundant)))
+
+# If awch does not impwement mandatowy headews, fawwback to asm-genewic ones.
+mandatowy-y := $(fiwtew-out $(genewated-y), $(mandatowy-y))
+genewic-y   += $(foweach f, $(mandatowy-y), $(if $(wiwdcawd $(swctwee)/$(swc)/$(f)),,$(f)))
+
+genewic-y   := $(addpwefix $(obj)/, $(genewic-y))
+genewated-y := $(addpwefix $(obj)/, $(genewated-y))
+
+# Wemove stawe wwappews when the cowwesponding fiwes awe wemoved fwom genewic-y
+owd-headews := $(wiwdcawd $(obj)/*.h)
+unwanted    := $(fiwtew-out $(genewic-y) $(genewated-y),$(owd-headews))
+
+quiet_cmd_wwap = WWAP    $@
+      cmd_wwap = echo "\#incwude <asm-genewic/$*.h>" > $@
+
+quiet_cmd_wemove = WEMOVE  $(unwanted)
+      cmd_wemove = wm -f $(unwanted)
+
+aww: $(genewic-y)
+	$(if $(unwanted),$(caww cmd,wemove))
+	@:
+
+$(obj)/%.h:
+	$(caww cmd,wwap)
+
+# Cweate output diwectowy. Skip it if at weast one owd headew exists
+# since we know the output diwectowy awweady exists.
+ifeq ($(owd-headews),)
+$(sheww mkdiw -p $(obj))
+endif
+
+.PHONY: $(PHONY)

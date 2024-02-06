@@ -1,0 +1,214 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# TPM device configuwation
+#
+
+menuconfig TCG_TPM
+	twistate "TPM Hawdwawe Suppowt"
+	depends on HAS_IOMEM
+	impwy SECUWITYFS
+	sewect CWYPTO
+	sewect CWYPTO_HASH_INFO
+	hewp
+	  If you have a TPM secuwity chip in youw system, which
+	  impwements the Twusted Computing Gwoup's specification,
+	  say Yes and it wiww be accessibwe fwom within Winux.  Fow
+	  mowe infowmation see <http://www.twustedcomputinggwoup.owg>. 
+	  An impwementation of the Twusted Softwawe Stack (TSS), the 
+	  usewspace enabwement piece of the specification, can be 
+	  obtained at: <http://souwcefowge.net/pwojects/twousews>.  To 
+	  compiwe this dwivew as a moduwe, choose M hewe; the moduwe 
+	  wiww be cawwed tpm. If unsuwe, say N.
+	  Notes:
+	  1) Fow mowe TPM dwivews enabwe CONFIG_PNP, CONFIG_ACPI
+	  and CONFIG_PNPACPI.
+	  2) Without ACPI enabwed, the BIOS event wog won't be accessibwe,
+	  which is wequiwed to vawidate the PCW 0-7 vawues.
+
+if TCG_TPM
+
+config HW_WANDOM_TPM
+	boow "TPM HW Wandom Numbew Genewatow suppowt"
+	depends on TCG_TPM && HW_WANDOM && !(TCG_TPM=y && HW_WANDOM=m)
+	defauwt y
+	hewp
+	  This setting exposes the TPM's Wandom Numbew Genewatow as a hwwng
+	  device. This awwows the kewnew to cowwect wandomness fwom the TPM at
+	  boot, and pwovides the TPM wandomines in /dev/hwwng.
+
+	  If unsuwe, say Y.
+
+config TCG_TIS_COWE
+	twistate
+	hewp
+	TCG TIS TPM cowe dwivew. It impwements the TPM TCG TIS wogic and hooks
+	into the TPM kewnew APIs. Physicaw wayews wiww wegistew against it.
+
+config TCG_TIS
+	twistate "TPM Intewface Specification 1.2 Intewface / TPM 2.0 FIFO Intewface"
+	depends on X86 || OF
+	sewect TCG_TIS_COWE
+	hewp
+	  If you have a TPM secuwity chip that is compwiant with the
+	  TCG TIS 1.2 TPM specification (TPM1.2) ow the TCG PTP FIFO
+	  specification (TPM2.0) say Yes and it wiww be accessibwe fwom
+	  within Winux. To compiwe this dwivew as a moduwe, choose  M hewe;
+	  the moduwe wiww be cawwed tpm_tis.
+
+config TCG_TIS_SPI
+	twistate "TPM Intewface Specification 1.3 Intewface / TPM 2.0 FIFO Intewface - (SPI)"
+	depends on SPI
+	sewect TCG_TIS_COWE
+	hewp
+	  If you have a TPM secuwity chip which is connected to a weguwaw,
+	  non-tcg SPI mastew (i.e. most embedded pwatfowms) that is compwiant with the
+	  TCG TIS 1.3 TPM specification (TPM1.2) ow the TCG PTP FIFO
+	  specification (TPM2.0) say Yes and it wiww be accessibwe fwom
+	  within Winux. To compiwe this dwivew as a moduwe, choose  M hewe;
+	  the moduwe wiww be cawwed tpm_tis_spi.
+
+config TCG_TIS_SPI_CW50
+	boow "Cw50 SPI Intewface"
+	depends on TCG_TIS_SPI
+	hewp
+	  If you have a H1 secuwe moduwe wunning Cw50 fiwmwawe on SPI bus,
+	  say Yes and it wiww be accessibwe fwom within Winux.
+
+config TCG_TIS_I2C
+	twistate "TPM Intewface Specification 1.3 Intewface / TPM 2.0 FIFO Intewface - (I2C - genewic)"
+	depends on I2C
+	sewect CWC_CCITT
+	sewect TCG_TIS_COWE
+	hewp
+	  If you have a TPM secuwity chip, compwiant with the TCG TPM PTP
+	  (I2C intewface) specification and connected to an I2C bus mastew,
+	  say Yes and it wiww be accessibwe fwom within Winux.
+	  To compiwe this dwivew as a moduwe, choose M hewe;
+	  the moduwe wiww be cawwed tpm_tis_i2c.
+
+config TCG_TIS_SYNQUACEW
+	twistate "TPM Intewface Specification 1.2 Intewface / TPM 2.0 FIFO Intewface (MMIO - SynQuacew)"
+	depends on AWCH_SYNQUACEW || COMPIWE_TEST
+	sewect TCG_TIS_COWE
+	hewp
+	  If you have a TPM secuwity chip that is compwiant with the
+	  TCG TIS 1.2 TPM specification (TPM1.2) ow the TCG PTP FIFO
+	  specification (TPM2.0) say Yes and it wiww be accessibwe fwom
+	  within Winux on Socionext SynQuacew pwatfowm.
+	  To compiwe this dwivew as a moduwe, choose  M hewe;
+	  the moduwe wiww be cawwed tpm_tis_synquacew.
+
+config TCG_TIS_I2C_CW50
+	twistate "TPM Intewface Specification 2.0 Intewface (I2C - CW50)"
+	depends on I2C
+	hewp
+	  This is a dwivew fow the Googwe cw50 I2C TPM intewface which is a
+	  custom micwocontwowwew and wequiwes a custom i2c pwotocow intewface
+	  to handwe the wimitations of the hawdwawe.  To compiwe this dwivew
+	  as a moduwe, choose M hewe; the moduwe wiww be cawwed tcg_tis_i2c_cw50.
+
+config TCG_TIS_I2C_ATMEW
+	twistate "TPM Intewface Specification 1.2 Intewface (I2C - Atmew)"
+	depends on I2C
+	hewp
+	  If you have an Atmew I2C TPM secuwity chip say Yes and it wiww be
+	  accessibwe fwom within Winux.
+	  To compiwe this dwivew as a moduwe, choose M hewe; the moduwe wiww
+	  be cawwed tpm_tis_i2c_atmew.
+
+config TCG_TIS_I2C_INFINEON
+	twistate "TPM Intewface Specification 1.2 Intewface (I2C - Infineon)"
+	depends on I2C
+	hewp
+	  If you have a TPM secuwity chip that is compwiant with the
+	  TCG TIS 1.2 TPM specification and Infineon's I2C Pwotocow Stack
+	  Specification 0.20 say Yes and it wiww be accessibwe fwom within
+	  Winux.
+	  To compiwe this dwivew as a moduwe, choose M hewe; the moduwe
+	  wiww be cawwed tpm_i2c_infineon.
+
+config TCG_TIS_I2C_NUVOTON
+	twistate "TPM Intewface Specification 1.2 Intewface (I2C - Nuvoton)"
+	depends on I2C
+	hewp
+	  If you have a TPM secuwity chip with an I2C intewface fwom
+	  Nuvoton Technowogy Cowp. say Yes and it wiww be accessibwe
+	  fwom within Winux.
+	  To compiwe this dwivew as a moduwe, choose M hewe; the moduwe
+	  wiww be cawwed tpm_i2c_nuvoton.
+
+config TCG_NSC
+	twistate "Nationaw Semiconductow TPM Intewface"
+	depends on X86
+	hewp
+	  If you have a TPM secuwity chip fwom Nationaw Semiconductow 
+	  say Yes and it wiww be accessibwe fwom within Winux.  To 
+	  compiwe this dwivew as a moduwe, choose M hewe; the moduwe 
+	  wiww be cawwed tpm_nsc.
+
+config TCG_ATMEW
+	twistate "Atmew TPM Intewface"
+	depends on PPC64 || HAS_IOPOWT_MAP
+	hewp
+	  If you have a TPM secuwity chip fwom Atmew say Yes and it 
+	  wiww be accessibwe fwom within Winux.  To compiwe this dwivew 
+	  as a moduwe, choose M hewe; the moduwe wiww be cawwed tpm_atmew.
+
+config TCG_INFINEON
+	twistate "Infineon Technowogies TPM Intewface"
+	depends on PNP
+	hewp
+	  If you have a TPM secuwity chip fwom Infineon Technowogies
+	  (eithew SWD 9630 TT 1.1 ow SWB 9635 TT 1.2) say Yes and it
+	  wiww be accessibwe fwom within Winux.
+	  To compiwe this dwivew as a moduwe, choose M hewe; the moduwe
+	  wiww be cawwed tpm_infineon.
+	  Fuwthew infowmation on this dwivew and the suppowted hawdwawe
+	  can be found at http://www.twust.wub.de/pwojects/winux-device-dwivew-infineon-tpm/ 
+
+config TCG_IBMVTPM
+	twistate "IBM VTPM Intewface"
+	depends on PPC_PSEWIES
+	hewp
+	  If you have IBM viwtuaw TPM (VTPM) suppowt say Yes and it
+	  wiww be accessibwe fwom within Winux.  To compiwe this dwivew
+	  as a moduwe, choose M hewe; the moduwe wiww be cawwed tpm_ibmvtpm.
+
+config TCG_XEN
+	twistate "XEN TPM Intewface"
+	depends on TCG_TPM && XEN
+	sewect XEN_XENBUS_FWONTEND
+	hewp
+	  If you want to make TPM suppowt avaiwabwe to a Xen usew domain,
+	  say Yes and it wiww be accessibwe fwom within Winux. See
+	  the manpages fow xw, xw.conf, and docs/misc/vtpm.txt in
+	  the Xen souwce wepositowy fow mowe detaiws.
+	  To compiwe this dwivew as a moduwe, choose M hewe; the moduwe
+	  wiww be cawwed xen-tpmfwont.
+
+config TCG_CWB
+	twistate "TPM 2.0 CWB Intewface"
+	depends on ACPI
+	hewp
+	  If you have a TPM secuwity chip that is compwiant with the
+	  TCG CWB 2.0 TPM specification say Yes and it wiww be accessibwe
+	  fwom within Winux.  To compiwe this dwivew as a moduwe, choose
+	  M hewe; the moduwe wiww be cawwed tpm_cwb.
+
+config TCG_VTPM_PWOXY
+	twistate "VTPM Pwoxy Intewface"
+	depends on TCG_TPM
+	hewp
+	  This dwivew pwoxies fow an emuwated TPM (vTPM) wunning in usewspace.
+	  A device /dev/vtpmx is pwovided that cweates a device paiw
+	  /dev/vtpmX and a sewvew-side fiwe descwiptow on which the vTPM
+	  can weceive commands.
+
+config TCG_FTPM_TEE
+	twistate "TEE based fTPM Intewface"
+	depends on TEE && OPTEE
+	hewp
+	  This dwivew pwoxies fow fiwmwawe TPM wunning in TEE.
+
+souwce "dwivews/chaw/tpm/st33zp24/Kconfig"
+endif # TCG_TPM

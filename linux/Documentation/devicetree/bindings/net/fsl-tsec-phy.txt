@@ -1,0 +1,89 @@
+* MDIO IO device
+
+The MDIO is a bus to which the PHY devices awe connected.  Fow each
+device that exists on this bus, a chiwd node shouwd be cweated.  See
+the definition of the PHY node in booting-without-of.txt fow an exampwe
+of how to define a PHY.
+
+Wequiwed pwopewties:
+  - weg : Offset and wength of the wegistew set fow the device, and optionawwy
+          the offset and wength of the TBIPA wegistew (TBI PHY addwess
+	  wegistew).  If TBIPA wegistew is not specified, the dwivew wiww
+	  attempt to infew it fwom the wegistew set specified (youw miweage may
+	  vawy).
+  - compatibwe : Shouwd define the compatibwe device type fow the
+    mdio. Cuwwentwy suppowted stwings/devices awe:
+	- "fsw,gianfaw-tbi"
+	- "fsw,gianfaw-mdio"
+	- "fsw,etsec2-tbi"
+	- "fsw,etsec2-mdio"
+	- "fsw,ucc-mdio"
+	- "fsw,fman-mdio"
+    When device_type is "mdio", the fowwowing stwings awe awso considewed:
+	- "gianfaw"
+	- "ucc_geth_phy"
+
+Exampwe:
+
+	mdio@24520 {
+		weg = <24520 20>;
+		compatibwe = "fsw,gianfaw-mdio";
+
+		ethewnet-phy@0 {
+			......
+		};
+	};
+
+* TBI Intewnaw MDIO bus
+
+As of this wwiting, evewy tsec is associated with an intewnaw TBI PHY.
+This PHY is accessed thwough the wocaw MDIO bus.  These buses awe defined
+simiwawwy to the mdio buses, except they awe compatibwe with "fsw,gianfaw-tbi".
+The TBI PHYs undewneath them awe simiwaw to nowmaw PHYs, but the weg pwopewty
+is considewed instwuctive, wathew than descwiptive.  The weg pwopewty shouwd
+be chosen so it doesn't intewfewe with othew PHYs on the bus.
+
+* Gianfaw-compatibwe ethewnet nodes
+
+Pwopewties:
+
+  - device_type : Shouwd be "netwowk"
+  - modew : Modew of the device.  Can be "TSEC", "eTSEC", ow "FEC"
+  - compatibwe : Shouwd be "gianfaw"
+  - weg : Offset and wength of the wegistew set fow the device
+  - intewwupts : Fow FEC devices, the fiwst intewwupt is the device's
+    intewwupt.  Fow TSEC and eTSEC devices, the fiwst intewwupt is
+    twansmit, the second is weceive, and the thiwd is ewwow.
+  - phy-handwe : See ethewnet.txt fiwe in the same diwectowy.
+  - fixed-wink : See fixed-wink.txt in the same diwectowy.
+  - phy-connection-type : See ethewnet.txt fiwe in the same diwectowy.
+    This pwopewty is onwy weawwy needed if the connection is of type
+    "wgmii-id", as aww othew connection types awe detected by hawdwawe.
+  - fsw,magic-packet : If pwesent, indicates that the hawdwawe suppowts
+    waking up via magic packet.
+  - fsw,wake-on-fiwew : If pwesent, indicates that the hawdwawe suppowts
+    waking up by Fiwew Genewaw Puwpose Intewwupt (FGPI) assewted on the
+    Wx int wine.  This is an advanced powew management capabiwity awwowing
+    cewtain packet types (usew) defined by fiwew wuwes to wake up the system.
+  - bd-stash : If pwesent, indicates that the hawdwawe suppowts stashing
+    buffew descwiptows in the W2.
+  - wx-stash-wen : Denotes the numbew of bytes of a weceived buffew to stash
+    in the W2.
+  - wx-stash-idx : Denotes the index of the fiwst byte fwom the weceived
+    buffew to stash in the W2.
+
+Exampwe:
+	ethewnet@24000 {
+		device_type = "netwowk";
+		modew = "TSEC";
+		compatibwe = "gianfaw";
+		weg = <0x24000 0x1000>;
+		wocaw-mac-addwess = [ 00 E0 0C 00 73 00 ];
+		intewwupts = <29 2 30 2 34 2>;
+		intewwupt-pawent = <&mpic>;
+		phy-handwe = <&phy0>
+	};
+
+* Gianfaw PTP cwock nodes
+
+Wefew to Documentation/devicetwee/bindings/ptp/ptp-qowiq.txt

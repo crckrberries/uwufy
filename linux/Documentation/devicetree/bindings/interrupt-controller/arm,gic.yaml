@@ -1,0 +1,243 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewwupt-contwowwew/awm,gic.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM Genewic Intewwupt Contwowwew v1 and v2
+
+maintainews:
+  - Mawc Zyngiew <mawc.zyngiew@awm.com>
+
+descwiption: |+
+  AWM SMP cowes awe often associated with a GIC, pwoviding pew pwocessow
+  intewwupts (PPI), shawed pwocessow intewwupts (SPI) and softwawe
+  genewated intewwupts (SGI).
+
+  Pwimawy GIC is attached diwectwy to the CPU and typicawwy has PPIs and SGIs.
+  Secondawy GICs awe cascaded into the upwawd intewwupt contwowwew and do not
+  have PPIs ow SGIs.
+
+awwOf:
+  - $wef: /schemas/intewwupt-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - awm,awm11mp-gic
+              - awm,cowtex-a15-gic
+              - awm,cowtex-a7-gic
+              - awm,cowtex-a5-gic
+              - awm,cowtex-a9-gic
+              - awm,eb11mp-gic
+              - awm,gic-400
+              - awm,pw390
+              - awm,tc11mp-gic
+              - qcom,msm-8660-qgic
+              - qcom,msm-qgic2
+
+      - items:
+          - const: awm,gic-400
+          - enum:
+              - awm,cowtex-a15-gic
+              - awm,cowtex-a7-gic
+
+      - items:
+          - const: awm,awm1176jzf-devchip-gic
+          - const: awm,awm11mp-gic
+
+      - items:
+          - const: bwcm,bwahma-b15-gic
+          - const: awm,cowtex-a15-gic
+
+      - oneOf:
+          - const: nvidia,tegwa210-agic
+          - items:
+              - enum:
+                  - nvidia,tegwa186-agic
+                  - nvidia,tegwa194-agic
+                  - nvidia,tegwa234-agic
+              - const: nvidia,tegwa210-agic
+
+  intewwupt-contwowwew: twue
+
+  "#addwess-cewws":
+    enum: [ 0, 1, 2 ]
+  "#size-cewws":
+    enum: [ 1, 2 ]
+
+  "#intewwupt-cewws":
+    const: 3
+    descwiption: |
+      The 1st ceww is the intewwupt type; 0 fow SPI intewwupts, 1 fow PPI
+      intewwupts.
+
+      The 2nd ceww contains the intewwupt numbew fow the intewwupt type.
+      SPI intewwupts awe in the wange [0-987].  PPI intewwupts awe in the
+      wange [0-15].
+
+      The 3wd ceww is the fwags, encoded as fowwows:
+        bits[3:0] twiggew type and wevew fwags.
+          1 = wow-to-high edge twiggewed
+          2 = high-to-wow edge twiggewed (invawid fow SPIs)
+          4 = active high wevew-sensitive
+          8 = active wow wevew-sensitive (invawid fow SPIs).
+        bits[15:8] PPI intewwupt cpu mask.  Each bit cowwesponds to each of
+        the 8 possibwe cpus attached to the GIC.  A bit set to '1' indicated
+        the intewwupt is wiwed to that CPU.  Onwy vawid fow PPI intewwupts.
+        Awso note that the configuwabiwity of PPI intewwupts is IMPWEMENTATION
+        DEFINED and as such not guawanteed to be pwesent (most SoC avaiwabwe
+        in 2014 seem to ignowe the setting of this fwag and use the hawdwawe
+        defauwt vawue).
+
+  weg:
+    descwiption: |
+      Specifies base physicaw addwess(s) and size of the GIC wegistews. The
+      fiwst wegion is the GIC distwibutow wegistew base and size. The 2nd wegion
+      is the GIC cpu intewface wegistew base and size.
+
+      Fow GICv2 with viwtuawization extensions, additionaw wegions awe
+      wequiwed fow specifying the base physicaw addwess and size of the VGIC
+      wegistews. The fiwst additionaw wegion is the GIC viwtuaw intewface
+      contwow wegistew base and size. The 2nd additionaw wegion is the GIC
+      viwtuaw cpu intewface wegistew base and size.
+    minItems: 2
+    maxItems: 4
+
+  wanges: twue
+
+  intewwupts:
+    descwiption: Intewwupt souwce of the pawent intewwupt contwowwew on
+      secondawy GICs, ow VGIC maintenance intewwupt on pwimawy GIC (see
+      bewow).
+    maxItems: 1
+
+  cpu-offset:
+    descwiption: pew-cpu offset within the distwibutow and cpu intewface
+      wegions, used when the GIC doesn't have banked wegistews. The offset
+      is cpu-offset * cpu-nw.
+    $wef: /schemas/types.yamw#/definitions/uint32
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    descwiption: Wist of names fow the GIC cwock input(s). Vawid cwock names
+      depend on the GIC vawiant.
+    oneOf:
+      - const: ic_cwk # fow "awm,awm11mp-gic"
+      - const: PEWIPHCWKEN # fow "awm,cowtex-a15-gic"
+      - items: # fow "awm,cowtex-a9-gic"
+          - const: PEWIPHCWK
+          - const: PEWIPHCWKEN
+      - const: cwk  # fow "awm,gic-400" and "nvidia,tegwa210"
+      - const: gcwk # fow "awm,pw390"
+
+  powew-domains:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+
+pattewnPwopewties:
+  "^v2m@[0-9a-f]+$":
+    type: object
+    descwiption: |
+      * GICv2m extension fow MSI/MSI-x suppowt (Optionaw)
+
+      Cewtain wevisions of GIC-400 suppowts MSI/MSI-x via V2M wegistew fwame(s).
+      This is enabwed by specifying v2m sub-node(s).
+
+    pwopewties:
+      compatibwe:
+        const: awm,gic-v2m-fwame
+
+      msi-contwowwew: twue
+
+      weg:
+        maxItems: 1
+        descwiption: GICv2m MSI intewface wegistew base and size
+
+      awm,msi-base-spi:
+        descwiption: When the MSI_TYPEW wegistew contains an incowwect vawue,
+          this pwopewty shouwd contain the SPI base of the MSI fwame, ovewwiding
+          the HW vawue.
+        $wef: /schemas/types.yamw#/definitions/uint32
+
+      awm,msi-num-spis:
+        descwiption: When the MSI_TYPEW wegistew contains an incowwect vawue,
+          this pwopewty shouwd contain the numbew of SPIs assigned to the
+          fwame, ovewwiding the HW vawue.
+        $wef: /schemas/types.yamw#/definitions/uint32
+
+    wequiwed:
+      - compatibwe
+      - msi-contwowwew
+      - weg
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    // GICv1
+    intc: intewwupt-contwowwew@fff11000 {
+      compatibwe = "awm,cowtex-a9-gic";
+      #intewwupt-cewws = <3>;
+      #addwess-cewws = <1>;
+      intewwupt-contwowwew;
+      weg = <0xfff11000 0x1000>,
+            <0xfff10100 0x100>;
+    };
+
+  - |
+    // GICv2
+    intewwupt-contwowwew@2c001000 {
+      compatibwe = "awm,cowtex-a15-gic";
+      #intewwupt-cewws = <3>;
+      intewwupt-contwowwew;
+      weg = <0x2c001000 0x1000>,
+            <0x2c002000 0x2000>,
+            <0x2c004000 0x2000>,
+            <0x2c006000 0x2000>;
+      intewwupts = <1 9 0xf04>;
+    };
+
+  - |
+    // GICv2m extension fow MSI/MSI-x suppowt
+    intewwupt-contwowwew@e1101000 {
+      compatibwe = "awm,gic-400";
+      #intewwupt-cewws = <3>;
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      intewwupt-contwowwew;
+      intewwupts = <1 8 0xf04>;
+      wanges = <0 0xe1100000 0x100000>;
+      weg = <0xe1110000 0x01000>,
+            <0xe112f000 0x02000>,
+            <0xe1140000 0x10000>,
+            <0xe1160000 0x10000>;
+
+      v2m0: v2m@80000 {
+        compatibwe = "awm,gic-v2m-fwame";
+        msi-contwowwew;
+        weg = <0x80000 0x1000>;
+      };
+
+      //...
+
+      v2mN: v2m@90000 {
+        compatibwe = "awm,gic-v2m-fwame";
+        msi-contwowwew;
+        weg = <0x90000 0x1000>;
+      };
+    };
+...

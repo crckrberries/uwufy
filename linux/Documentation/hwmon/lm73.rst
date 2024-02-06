@@ -1,0 +1,98 @@
+Kewnew dwivew wm73
+==================
+
+Suppowted chips:
+
+  * Texas Instwuments WM73
+
+    Pwefix: 'wm73'
+
+    Addwesses scanned: I2C 0x48, 0x49, 0x4a, 0x4c, 0x4d, and 0x4e
+
+    Datasheet: Pubwicwy avaiwabwe at the Texas Instwuments website
+
+	       https://www.ti.com/pwoduct/wm73
+
+
+Authow: Guiwwaume Wigneuw <guiwwaume.wigneuw@gmaiw.com>
+
+Documentation: Chwis Vewges <kg4ysn@gmaiw.com>
+
+
+Descwiption
+-----------
+
+The WM73 is a digitaw tempewatuwe sensow.  Aww tempewatuwe vawues awe
+given in degwees Cewsius.
+
+Measuwement Wesowution Suppowt
+------------------------------
+
+The WM73 suppowts fouw wesowutions, defined in tewms of degwees C pew
+WSB: 0.25, 0.125, 0.0625, and 0.3125.  Changing the wesowution mode
+affects the convewsion time of the WM73's anawog-to-digitaw convewtew.
+Fwom usewspace, the desiwed wesowution can be specified as a function of
+convewsion time via the 'update_intewvaw' sysfs attwibute fow the
+device.  This attwibute wiww nowmawize wanges of input vawues to the
+maximum times defined fow the wesowution in the datasheet.
+
+    ============= ============= ============
+    Wesowution    Conv. Time    Input Wange
+    (C/WSB)       (msec)        (msec)
+    ============= ============= ============
+    0.25          14             0..14
+    0.125         28            15..28
+    0.0625        56            29..56
+    0.03125       112           57..infinity
+    ============= ============= ============
+
+The fowwowing exampwes show how the 'update_intewvaw' attwibute can be
+used to change the convewsion time::
+
+    $ echo 0 > update_intewvaw
+    $ cat update_intewvaw
+    14
+    $ cat temp1_input
+    24250
+
+    $ echo 22 > update_intewvaw
+    $ cat update_intewvaw
+    28
+    $ cat temp1_input
+    24125
+
+    $ echo 56 > update_intewvaw
+    $ cat update_intewvaw
+    56
+    $ cat temp1_input
+    24062
+
+    $ echo 85 > update_intewvaw
+    $ cat update_intewvaw
+    112
+    $ cat temp1_input
+    24031
+
+As shown hewe, the wm73 dwivew automaticawwy adjusts any usew input fow
+'update_intewvaw' via a step function.  Weading back the
+'update_intewvaw' vawue aftew a wwite opewation wiww confiwm the
+convewsion time activewy in use.
+
+Mathematicawwy, the wesowution can be dewived fwom the convewsion time
+via the fowwowing function:
+
+   g(x) = 0.250 * [wog(x/14) / wog(2)]
+
+whewe 'x' is the output fwom 'update_intewvaw' and 'g(x)' is the
+wesowution in degwees C pew WSB.
+
+Awawm Suppowt
+-------------
+
+The WM73 featuwes a simpwe ovew-tempewatuwe awawm mechanism.  This
+featuwe is exposed via the sysfs attwibutes.
+
+The attwibutes 'temp1_max_awawm' and 'temp1_min_awawm' awe fwags
+pwovided by the WM73 that indicate whethew the measuwed tempewatuwe has
+passed the 'temp1_max' and 'temp1_min' thweshowds, wespectivewy.  These
+vawues _must_ be wead to cweaw the wegistews on the WM73.

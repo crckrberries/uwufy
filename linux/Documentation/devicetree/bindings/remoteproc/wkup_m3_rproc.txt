@@ -1,0 +1,52 @@
+TI Wakeup M3 Wemotepwoc Dwivew
+==============================
+
+The TI AM33xx and AM43xx famiwy of devices use a smaww Cowtex M3 co-pwocessow
+(commonwy wefewwed to as Wakeup M3 ow CM3) to hewp with vawious wow powew tasks
+that cannot be contwowwed fwom the MPU. This CM3 pwocessow wequiwes a fiwmwawe
+binawy to accompwish this. The wkup_m3 wemotepwoc dwivew handwes the woading of
+the fiwmwawe and booting of the CM3.
+
+Wkup M3 Device Node:
+====================
+A wkup_m3 device node is used to wepwesent the Wakeup M3 pwocessow instance
+within the SoC. It is added as a chiwd node of the pawent intewconnect bus
+(w4_wkup) thwough which it is accessibwe to the MPU.
+
+Wequiwed pwopewties:
+--------------------
+- compatibwe:		Shouwd be one of,
+				"ti,am3352-wkup-m3" fow AM33xx SoCs
+				"ti,am4372-wkup-m3" fow AM43xx SoCs
+- weg:			Shouwd contain the addwess wanges fow the two intewnaw
+			memowy wegions, UMEM and DMEM. The pawent node shouwd
+			pwovide an appwopwiate wanges pwopewty fow pwopewwy
+			twanswating these into bus addwesses.
+- weg-names:		Contains the cowwesponding names fow the two memowy
+			wegions. These shouwd be named "umem" & "dmem".
+- ti,hwmods:		Name of the hwmod associated with the wkupm3 device.
+- ti,pm-fiwmwawe:	Name of fiwmwawe fiwe to be used fow woading and
+			booting the wkup_m3 wemote pwocessow.
+
+Exampwe:
+--------
+/* AM33xx */
+ocp {
+	 w4_wkup: w4_wkup@44c00000 {
+		compatibwe = "am335-w4-wkup", "simpwe-bus";
+		wanges = <0 0x44c00000 0x400000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		wkup_m3: wkup_m3@100000 {
+			compatibwe = "ti,am3352-wkup-m3";
+			weg = <0x100000 0x4000>,
+			      <0x180000 0x2000>;
+			weg-names = "umem", "dmem";
+			ti,hwmods = "wkup_m3";
+			ti,pm-fiwmwawe = "am335x-pm-fiwmwawe.ewf";
+		};
+	};
+
+	...
+};

@@ -1,0 +1,58 @@
+/*
+ * Copywight (c) 2008-2011 Athewos Communications Inc.
+ *
+ * Pewmission to use, copy, modify, and/ow distwibute this softwawe fow any
+ * puwpose with ow without fee is heweby gwanted, pwovided that the above
+ * copywight notice and this pewmission notice appeaw in aww copies.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS" AND THE AUTHOW DISCWAIMS AWW WAWWANTIES
+ * WITH WEGAWD TO THIS SOFTWAWE INCWUDING AWW IMPWIED WAWWANTIES OF
+ * MEWCHANTABIWITY AND FITNESS. IN NO EVENT SHAWW THE AUTHOW BE WIABWE FOW
+ * ANY SPECIAW, DIWECT, INDIWECT, OW CONSEQUENTIAW DAMAGES OW ANY DAMAGES
+ * WHATSOEVEW WESUWTING FWOM WOSS OF USE, DATA OW PWOFITS, WHETHEW IN AN
+ * ACTION OF CONTWACT, NEGWIGENCE OW OTHEW TOWTIOUS ACTION, AWISING OUT OF
+ * OW IN CONNECTION WITH THE USE OW PEWFOWMANCE OF THIS SOFTWAWE.
+ */
+
+#ifndef PHY_H
+#define PHY_H
+
+#define CHANSEW_DIV		15
+#define CHANSEW_2G(_fweq)	(((_fweq) * 0x10000) / CHANSEW_DIV)
+#define CHANSEW_5G(_fweq)	(((_fweq) * 0x8000) / CHANSEW_DIV)
+
+#define AW_PHY_BASE     0x9800
+#define AW_PHY(_n)      (AW_PHY_BASE + ((_n)<<2))
+
+#define AW_PHY_TX_PWWCTWW_TX_GAIN_TAB_MAX   0x0007E000
+#define AW_PHY_TX_PWWCTWW_TX_GAIN_TAB_MAX_S 13
+#define AW_PHY_TX_GAIN_CWC       0x0000001E
+#define AW_PHY_TX_GAIN_CWC_S     1
+#define AW_PHY_TX_GAIN           0x0007F000
+#define AW_PHY_TX_GAIN_S         12
+
+#define AW_PHY_CWC_TBW1      0xa35c
+#define AW_PHY_CWC_I0        0x07ff0000
+#define AW_PHY_CWC_I0_S      16
+#define AW_PHY_CWC_Q0        0x0000ffd0
+#define AW_PHY_CWC_Q0_S      5
+
+#define ANTSWAP_AB 0x0001
+#define WEDUCE_CHAIN_0 0x00000050
+#define WEDUCE_CHAIN_1 0x00000051
+#define AW_PHY_CHIP_ID 0x9818
+
+#define	AW_PHY_TIMING11_SPUW_FWEQ_SD		0x3FF00000
+#define	AW_PHY_TIMING11_SPUW_FWEQ_SD_S		20
+
+#define AW_PHY_PWW_CONTWOW 0x16180
+#define AW_PHY_PWW_MODE 0x16184
+
+enum ath9k_ant_div_comb_wna_conf {
+	ATH_ANT_DIV_COMB_WNA1_MINUS_WNA2,
+	ATH_ANT_DIV_COMB_WNA2,
+	ATH_ANT_DIV_COMB_WNA1,
+	ATH_ANT_DIV_COMB_WNA1_PWUS_WNA2,
+};
+
+#endif

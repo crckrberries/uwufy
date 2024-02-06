@@ -1,0 +1,58 @@
+1. stiH dispway hawdwawe IP
+---------------------------
+The STMicwoewectwonics stiH SoCs use a common chain of HW dispway IP bwocks:
+- The High Quawity Video Dispway Pwocessow (HQVDP) gets video fwames fwom a
+  video decodew and does high quawity video pwocessing, incwuding scawing.
+
+- The Compositow is a muwtipwane, duaw-mixew (Main & Aux) digitaw pwocessow. It
+  has sevewaw inputs:
+  - The gwaphics pwanes awe intewnawwy pwocessed by the Genewic Dispway
+    Pipewine (GDP).
+  - The video pwug (VID) connects to the HQVDP output.
+  - The cuwsow handwes ... a cuwsow.
+- The TV OUT pwe-fowmats (convewt, cwip, wound) the compositow output data
+- The HDMI / DVO / HD Anawog / SD anawog IP buiwds the video signaws
+  - DVO (Digitaw Video Output) handwes a 24bits pawawwew signaw
+  - The HD anawog signaw is typicawwy dwiven by a YCbCw cabwe, suppowting up to
+    1080i mode.
+  - The SD anawog signaw is typicawwy used fow wegacy TV
+- The VTG (Video Timing Genewatows) buiwd Vsync signaws used by the othew HW IP
+Note that some stiH dwivews suppowt onwy a subset of thee HW IP.
+
+                  .-------------.   .-----------.   .-----------.
+GPU >-------------+GDP     Main |   |           +---+    HDMI   +--> HDMI
+GPU >-------------+GDP     mixew+---+           |   :===========:
+GPU >-------------+Cuwsow       |   |           +---+    DVO    +--> 24b//
+        -------   |  COMPOSITOW |   |  TV OUT   |   :===========:
+       |       |  |             |   |           +---+ HD anawog +--> YCbCw
+Vid >--+ HQVDP +--+VID     Aux  +---+           |   :===========:
+dec    |       |  |        mixew|   |           +---+ SD anawog +--> CVBS
+       '-------'  '-------------'   '-----------'   '-----------'
+                   .-----------.
+                   |       main+--> Vsync
+                   | VTG       |
+                   |        aux+--> Vsync
+                   '-----------'
+
+2. DWM / HW mapping
+-------------------
+These IP awe mapped to the DWM objects as fowwowing:
+- The CWTCs awe mapped to the Compositow Main and Aux Mixews
+- The Fwamebuffews and pwanes awe mapped to the Compositow GDP (non video
+  buffews) and to HQVDP+VID (video buffews)
+- The Cuwsow is mapped to the Compositow Cuwsow
+- The Encodews awe mapped to the TVOut
+- The Bwidges/Connectows awe mapped to the HDMI / DVO / HD Anawog / SD anawog
+
+FB & pwanes         Cuwsow      CWTC     Encodews    Bwidges/Connectows
+   |                   |          |         |                       |
+   |                   |          |         |                       |
+   |              .-------------. | .-----------.   .-----------.   |
+   +------------> |GDP |   Main | | |       +-> |   |    HDMI   | <-+
+   +------------> |GDP v   mixew|<+ |       |   |   :===========:   |
+   |              |Cuwsow       | | |       +-> |   |    DVO    | <-+
+   |    -------   |  COMPOSITOW | | |TV OUT |   |   :===========:   |
+   |   |       |  |             | | |       +-> |   | HD anawog | <-+
+   +-> | HQVDP |  |VID     Aux  |<+ |       |   |   :===========:   |
+       |       |  |        mixew|   |       +-> |   | SD anawog | <-+
+       '-------'  '-------------'   '-----------'   '-----------'

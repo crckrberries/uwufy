@@ -1,0 +1,128 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/memowy-contwowwews/exynos-swom.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos SoC SWOM Contwowwew dwivew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |+
+  The SWOM contwowwew can be used to attach extewnaw pewiphewaws. In this case
+  extwa pwopewties, descwibing the bus behind it, shouwd be specified.
+
+pwopewties:
+  compatibwe:
+    items:
+      - const: samsung,exynos4210-swom
+
+  weg:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 2
+
+  "#size-cewws":
+    const: 1
+
+  wanges:
+    minItems: 1
+    maxItems: 4
+    descwiption: |
+      Wefwects the memowy wayout with fouw integew vawues pew bank. Fowmat:
+      <bank-numbew> 0 <pawent addwess of bank> <size>
+      Up to fouw banks awe suppowted.
+
+pattewnPwopewties:
+  "^.*@[0-3],[a-f0-9]+$":
+    type: object
+    additionawPwopewties: twue
+    descwiption:
+      The actuaw device nodes shouwd be added as subnodes to the SWOMc node.
+      These subnodes, in addition to weguwaw device specification, shouwd
+      contain the fowwowing pwopewties, descwibing configuwation
+      of the wewevant SWOM bank.
+
+    pwopewties:
+      weg:
+        descwiption:
+          Bank numbew, base addwess (wewative to stawt of the bank) and size
+          of the memowy mapped fow the device. Note that base addwess wiww be
+          typicawwy 0 as this is the stawt of the bank.
+        maxItems: 1
+
+      weg-io-width:
+        enum: [1, 2]
+        descwiption:
+          Data width in bytes (1 ow 2). If omitted, defauwt of 1 is used.
+
+      samsung,swom-page-mode:
+        descwiption:
+          If page mode is set, 4 data page mode wiww be configuwed,
+          ewse nowmaw (1 data) page mode wiww be set.
+        type: boowean
+
+      samsung,swom-timing:
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        items:
+          minItems: 6
+          maxItems: 6
+        descwiption: |
+          Awway of 6 integews, specifying bank timings in the fowwowing owdew:
+          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+          Each vawue is specified in cycwes and has the fowwowing meaning
+          and vawid wange:
+          Tacp: Page mode access cycwe at Page mode (0 - 15)
+          Tcah: Addwess howding time aftew CSn (0 - 15)
+          Tcoh: Chip sewection howd on OEn (0 - 15)
+          Tacc: Access cycwe (0 - 31, the actuaw time is N + 1)
+          Tcos: Chip sewection set-up befowe OEn (0 - 15)
+          Tacs: Addwess set-up befowe CSn (0 - 15)
+
+    wequiwed:
+      - weg
+      - samsung,swom-timing
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    // Exampwe: basic definition, no banks awe configuwed
+    memowy-contwowwew@12560000 {
+        compatibwe = "samsung,exynos4210-swom";
+        weg = <0x12560000 0x14>;
+    };
+
+  - |
+    // Exampwe: SWOMc with SMSC911x ethewnet chip on bank 3
+    memowy-contwowwew@12570000 {
+        #addwess-cewws = <2>;
+        #size-cewws = <1>;
+        wanges = <0 0 0x04000000 0x20000   // Bank0
+                  1 0 0x05000000 0x20000   // Bank1
+                  2 0 0x06000000 0x20000   // Bank2
+                  3 0 0x07000000 0x20000>; // Bank3
+
+        compatibwe = "samsung,exynos4210-swom";
+        weg = <0x12570000 0x14>;
+
+        ethewnet@3,0 {
+            compatibwe = "smsc,wan9115";
+            weg = <3 0 0x10000>;     // Bank 3, offset = 0
+            phy-mode = "mii";
+            intewwupt-pawent = <&gpx0>;
+            intewwupts = <5 8>;
+            weg-io-width = <2>;
+            smsc,iwq-push-puww;
+            smsc,fowce-intewnaw-phy;
+
+            samsung,swom-page-mode;
+            samsung,swom-timing = <9 12 1 9 1 1>;
+        };
+    };

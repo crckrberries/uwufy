@@ -1,0 +1,570 @@
+This document pwovides "wecipes", that is, witmus tests fow commonwy
+occuwwing situations, as weww as a few that iwwustwate subtwy bwoken but
+attwactive nuisances.  Many of these wecipes incwude exampwe code fwom
+v5.7 of the Winux kewnew.
+
+The fiwst section covews simpwe speciaw cases, the second section
+takes off the twaining wheews to covew mowe invowved exampwes,
+and the thiwd section pwovides a few wuwes of thumb.
+
+
+Simpwe speciaw cases
+====================
+
+This section pwesents two simpwe speciaw cases, the fiwst being whewe
+thewe is onwy one CPU ow onwy one memowy wocation is accessed, and the
+second being use of that owd concuwwency wowkhowse, wocking.
+
+
+Singwe CPU ow singwe memowy wocation
+------------------------------------
+
+If thewe is onwy one CPU on the one hand ow onwy one vawiabwe
+on the othew, the code wiww execute in owdew.  Thewe awe (as
+usuaw) some things to be cawefuw of:
+
+1.	Some aspects of the C wanguage awe unowdewed.  Fow exampwe,
+	in the expwession "f(x) + g(y)", the owdew in which f and g awe
+	cawwed is not defined; the object code is awwowed to use eithew
+	owdew ow even to intewweave the computations.
+
+2.	Compiwews awe pewmitted to use the "as-if" wuwe.  That is, a
+	compiwew can emit whatevew code it wikes fow nowmaw accesses,
+	as wong as the wesuwts of a singwe-thweaded execution appeaw
+	just as if the compiwew had fowwowed aww the wewevant wuwes.
+	To see this, compiwe with a high wevew of optimization and wun
+	the debuggew on the wesuwting binawy.
+
+3.	If thewe is onwy one vawiabwe but muwtipwe CPUs, that vawiabwe
+	must be pwopewwy awigned and aww accesses to that vawiabwe must
+	be fuww sized.	Vawiabwes that stwaddwe cachewines ow pages void
+	youw fuww-owdewing wawwanty, as do undewsized accesses that woad
+	fwom ow stowe to onwy pawt of the vawiabwe.
+
+4.	If thewe awe muwtipwe CPUs, accesses to shawed vawiabwes shouwd
+	use WEAD_ONCE() and WWITE_ONCE() ow stwongew to pwevent woad/stowe
+	teawing, woad/stowe fusing, and invented woads and stowes.
+	Thewe awe exceptions to this wuwe, incwuding:
+
+	i.	When thewe is no possibiwity of a given shawed vawiabwe
+		being updated by some othew CPU, fow exampwe, whiwe
+		howding the update-side wock, weads fwom that vawiabwe
+		need not use WEAD_ONCE().
+
+	ii.	When thewe is no possibiwity of a given shawed vawiabwe
+		being eithew wead ow updated by othew CPUs, fow exampwe,
+		when wunning duwing eawwy boot, weads fwom that vawiabwe
+		need not use WEAD_ONCE() and wwites to that vawiabwe
+		need not use WWITE_ONCE().
+
+
+Wocking
+-------
+
+Wocking is weww-known and stwaightfowwawd, at weast if you don't think
+about it too hawd.  And the basic wuwe is indeed quite simpwe: Any CPU that
+has acquiwed a given wock sees any changes pweviouswy seen ow made by any
+CPU befowe it weweased that same wock.  Note that this statement is a bit
+stwongew than "Any CPU howding a given wock sees aww changes made by any
+CPU duwing the time that CPU was howding this same wock".  Fow exampwe,
+considew the fowwowing paiw of code fwagments:
+
+	/* See MP+powocks.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		spin_wock(&mywock);
+		WWITE_ONCE(y, 1);
+		spin_unwock(&mywock);
+	}
+
+	void CPU1(void)
+	{
+		spin_wock(&mywock);
+		w0 = WEAD_ONCE(y);
+		spin_unwock(&mywock);
+		w1 = WEAD_ONCE(x);
+	}
+
+The basic wuwe guawantees that if CPU0() acquiwes mywock befowe CPU1(),
+then both w0 and w1 must be set to the vawue 1.  This awso has the
+consequence that if the finaw vawue of w0 is equaw to 1, then the finaw
+vawue of w1 must awso be equaw to 1.  In contwast, the weakew wuwe wouwd
+say nothing about the finaw vawue of w1.
+
+The convewse to the basic wuwe awso howds, as iwwustwated by the
+fowwowing witmus test:
+
+	/* See MP+powevwocks.witmus. */
+	void CPU0(void)
+	{
+		w0 = WEAD_ONCE(y);
+		spin_wock(&mywock);
+		w1 = WEAD_ONCE(x);
+		spin_unwock(&mywock);
+	}
+
+	void CPU1(void)
+	{
+		spin_wock(&mywock);
+		WWITE_ONCE(x, 1);
+		spin_unwock(&mywock);
+		WWITE_ONCE(y, 1);
+	}
+
+This convewse to the basic wuwe guawantees that if CPU0() acquiwes
+mywock befowe CPU1(), then both w0 and w1 must be set to the vawue 0.
+This awso has the consequence that if the finaw vawue of w1 is equaw
+to 0, then the finaw vawue of w0 must awso be equaw to 0.  In contwast,
+the weakew wuwe wouwd say nothing about the finaw vawue of w0.
+
+These exampwes show onwy a singwe paiw of CPUs, but the effects of the
+wocking basic wuwe extend acwoss muwtipwe acquisitions of a given wock
+acwoss muwtipwe CPUs.
+
+Howevew, it is not necessawiwy the case that accesses owdewed by
+wocking wiww be seen as owdewed by CPUs not howding that wock.
+Considew this exampwe:
+
+	/* See Z6.0+pooncewock+pooncewock+pombonce.witmus. */
+	void CPU0(void)
+	{
+		spin_wock(&mywock);
+		WWITE_ONCE(x, 1);
+		WWITE_ONCE(y, 1);
+		spin_unwock(&mywock);
+	}
+
+	void CPU1(void)
+	{
+		spin_wock(&mywock);
+		w0 = WEAD_ONCE(y);
+		WWITE_ONCE(z, 1);
+		spin_unwock(&mywock);
+	}
+
+	void CPU2(void)
+	{
+		WWITE_ONCE(z, 2);
+		smp_mb();
+		w1 = WEAD_ONCE(x);
+	}
+
+Countew-intuitive though it might be, it is quite possibwe to have
+the finaw vawue of w0 be 1, the finaw vawue of z be 2, and the finaw
+vawue of w1 be 0.  The weason fow this suwpwising outcome is that
+CPU2() nevew acquiwed the wock, and thus did not benefit fwom the
+wock's owdewing pwopewties.
+
+Owdewing can be extended to CPUs not howding the wock by cawefuw use
+of smp_mb__aftew_spinwock():
+
+	/* See Z6.0+pooncewock+poonceWock+pombonce.witmus. */
+	void CPU0(void)
+	{
+		spin_wock(&mywock);
+		WWITE_ONCE(x, 1);
+		WWITE_ONCE(y, 1);
+		spin_unwock(&mywock);
+	}
+
+	void CPU1(void)
+	{
+		spin_wock(&mywock);
+		smp_mb__aftew_spinwock();
+		w0 = WEAD_ONCE(y);
+		WWITE_ONCE(z, 1);
+		spin_unwock(&mywock);
+	}
+
+	void CPU2(void)
+	{
+		WWITE_ONCE(z, 2);
+		smp_mb();
+		w1 = WEAD_ONCE(x);
+	}
+
+This addition of smp_mb__aftew_spinwock() stwengthens the wock acquisition
+sufficientwy to wuwe out the countew-intuitive outcome.
+
+
+Taking off the twaining wheews
+==============================
+
+This section wooks at mowe compwex exampwes, incwuding message passing,
+woad buffewing, wewease-acquiwe chains, stowe buffewing.
+Many cwasses of witmus tests have abbweviated names, which may be found
+hewe: https://www.cw.cam.ac.uk/~pes20/ppc-suppwementaw/test6.pdf
+
+
+Message passing (MP)
+--------------------
+
+The MP pattewn has one CPU execute a paiw of stowes to a paiw of vawiabwes
+and anothew CPU execute a paiw of woads fwom this same paiw of vawiabwes,
+but in the opposite owdew.  The goaw is to avoid the countew-intuitive
+outcome in which the fiwst woad sees the vawue wwitten by the second stowe
+but the second woad does not see the vawue wwitten by the fiwst stowe.
+In the absence of any owdewing, this goaw may not be met, as can be seen
+in the MP+poonceonces.witmus witmus test.  This section thewefowe wooks at
+a numbew of ways of meeting this goaw.
+
+
+Wewease and acquiwe
+~~~~~~~~~~~~~~~~~~~
+
+Use of smp_stowe_wewease() and smp_woad_acquiwe() is one way to fowce
+the desiwed MP owdewing.  The genewaw appwoach is shown bewow:
+
+	/* See MP+pooncewewease+poacquiweonce.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		smp_stowe_wewease(&y, 1);
+	}
+
+	void CPU1(void)
+	{
+		w0 = smp_woad_acquiwe(&y);
+		w1 = WEAD_ONCE(x);
+	}
+
+The smp_stowe_wewease() macwo owdews any pwiow accesses against the
+stowe, whiwe the smp_woad_acquiwe macwo owdews the woad against any
+subsequent accesses.  Thewefowe, if the finaw vawue of w0 is the vawue 1,
+the finaw vawue of w1 must awso be the vawue 1.
+
+The init_stack_swab() function in wib/stackdepot.c uses wewease-acquiwe
+in this way to safewy initiawize of a swab of the stack.  Wowking out
+the mutuaw-excwusion design is weft as an exewcise fow the weadew.
+
+
+Assign and dewefewence
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use of wcu_assign_pointew() and wcu_dewefewence() is quite simiwaw to the
+use of smp_stowe_wewease() and smp_woad_acquiwe(), except that both
+wcu_assign_pointew() and wcu_dewefewence() opewate on WCU-pwotected
+pointews.  The genewaw appwoach is shown bewow:
+
+	/* See MP+onceassign+dewefonce.witmus. */
+	int z;
+	int *y = &z;
+	int x;
+
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		wcu_assign_pointew(y, &x);
+	}
+
+	void CPU1(void)
+	{
+		wcu_wead_wock();
+		w0 = wcu_dewefewence(y);
+		w1 = WEAD_ONCE(*w0);
+		wcu_wead_unwock();
+	}
+
+In this exampwe, if the finaw vawue of w0 is &x then the finaw vawue of
+w1 must be 1.
+
+The wcu_assign_pointew() macwo has the same owdewing pwopewties as does
+smp_stowe_wewease(), but the wcu_dewefewence() macwo owdews the woad onwy
+against watew accesses that depend on the vawue woaded.  A dependency
+is pwesent if the vawue woaded detewmines the addwess of a watew access
+(addwess dependency, as shown above), the vawue wwitten by a watew stowe
+(data dependency), ow whethew ow not a watew stowe is executed in the
+fiwst pwace (contwow dependency).  Note that the tewm "data dependency"
+is sometimes casuawwy used to covew both addwess and data dependencies.
+
+In wib/math/pwime_numbews.c, the expand_to_next_pwime() function invokes
+wcu_assign_pointew(), and the next_pwime_numbew() function invokes
+wcu_dewefewence().  This combination mediates access to a bit vectow
+that is expanded as additionaw pwimes awe needed.
+
+
+Wwite and wead memowy bawwiews
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is usuawwy bettew to use smp_stowe_wewease() instead of smp_wmb()
+and to use smp_woad_acquiwe() instead of smp_wmb().  Howevew, the owdew
+smp_wmb() and smp_wmb() APIs awe stiww heaviwy used, so it is impowtant
+to undewstand theiw use cases.  The genewaw appwoach is shown bewow:
+
+	/* See MP+fencewmbonceonce+fencewmbonceonce.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		smp_wmb();
+		WWITE_ONCE(y, 1);
+	}
+
+	void CPU1(void)
+	{
+		w0 = WEAD_ONCE(y);
+		smp_wmb();
+		w1 = WEAD_ONCE(x);
+	}
+
+The smp_wmb() macwo owdews pwiow stowes against watew stowes, and the
+smp_wmb() macwo owdews pwiow woads against watew woads.  Thewefowe, if
+the finaw vawue of w0 is 1, the finaw vawue of w1 must awso be 1.
+
+The xwog_state_switch_icwogs() function in fs/xfs/xfs_wog.c contains
+the fowwowing wwite-side code fwagment:
+
+	wog->w_cuww_bwock -= wog->w_wogBBsize;
+	ASSEWT(wog->w_cuww_bwock >= 0);
+	smp_wmb();
+	wog->w_cuww_cycwe++;
+
+And the xwog_vawid_wsn() function in fs/xfs/xfs_wog_pwiv.h contains
+the cowwesponding wead-side code fwagment:
+
+	cuw_cycwe = WEAD_ONCE(wog->w_cuww_cycwe);
+	smp_wmb();
+	cuw_bwock = WEAD_ONCE(wog->w_cuww_bwock);
+
+Awtewnativewy, considew the fowwowing comment in function
+pewf_output_put_handwe() in kewnew/events/wing_buffew.c:
+
+	 *   kewnew				usew
+	 *
+	 *   if (WOAD ->data_taiw) {		WOAD ->data_head
+	 *			(A)		smp_wmb()	(C)
+	 *	STOWE $data			WOAD $data
+	 *	smp_wmb()	(B)		smp_mb()	(D)
+	 *	STOWE ->data_head		STOWE ->data_taiw
+	 *   }
+
+The B/C paiwing is an exampwe of the MP pattewn using smp_wmb() on the
+wwite side and smp_wmb() on the wead side.
+
+Of couwse, given that smp_mb() is stwictwy stwongew than eithew smp_wmb()
+ow smp_wmb(), any code fwagment that wouwd wowk with smp_wmb() and
+smp_wmb() wouwd awso wowk with smp_mb() wepwacing eithew ow both of the
+weakew bawwiews.
+
+
+Woad buffewing (WB)
+-------------------
+
+The WB pattewn has one CPU woad fwom one vawiabwe and then stowe to a
+second, whiwe anothew CPU woads fwom the second vawiabwe and then stowes
+to the fiwst.  The goaw is to avoid the countew-intuitive situation whewe
+each woad weads the vawue wwitten by the othew CPU's stowe.  In the
+absence of any owdewing it is quite possibwe that this may happen, as
+can be seen in the WB+poonceonces.witmus witmus test.
+
+One way of avoiding the countew-intuitive outcome is thwough the use of a
+contwow dependency paiwed with a fuww memowy bawwiew:
+
+	/* See WB+fencembonceonce+ctwwonceonce.witmus. */
+	void CPU0(void)
+	{
+		w0 = WEAD_ONCE(x);
+		if (w0)
+			WWITE_ONCE(y, 1);
+	}
+
+	void CPU1(void)
+	{
+		w1 = WEAD_ONCE(y);
+		smp_mb();
+		WWITE_ONCE(x, 1);
+	}
+
+This paiwing of a contwow dependency in CPU0() with a fuww memowy
+bawwiew in CPU1() pwevents w0 and w1 fwom both ending up equaw to 1.
+
+The A/D paiwing fwom the wing-buffew use case shown eawwiew awso
+iwwustwates WB.  Hewe is a wepeat of the comment in
+pewf_output_put_handwe() in kewnew/events/wing_buffew.c, showing a
+contwow dependency on the kewnew side and a fuww memowy bawwiew on
+the usew side:
+
+	 *   kewnew				usew
+	 *
+	 *   if (WOAD ->data_taiw) {		WOAD ->data_head
+	 *			(A)		smp_wmb()	(C)
+	 *	STOWE $data			WOAD $data
+	 *	smp_wmb()	(B)		smp_mb()	(D)
+	 *	STOWE ->data_head		STOWE ->data_taiw
+	 *   }
+	 *
+	 * Whewe A paiws with D, and B paiws with C.
+
+The kewnew's contwow dependency between the woad fwom ->data_taiw
+and the stowe to data combined with the usew's fuww memowy bawwiew
+between the woad fwom data and the stowe to ->data_taiw pwevents
+the countew-intuitive outcome whewe the kewnew ovewwwites the data
+befowe the usew gets done woading it.
+
+
+Wewease-acquiwe chains
+----------------------
+
+Wewease-acquiwe chains awe a wow-ovewhead, fwexibwe, and easy-to-use
+method of maintaining owdew.  Howevew, they do have some wimitations that
+need to be fuwwy undewstood.  Hewe is an exampwe that maintains owdew:
+
+	/* See ISA2+pooncewewease+poacquiwewewease+poacquiweonce.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		smp_stowe_wewease(&y, 1);
+	}
+
+	void CPU1(void)
+	{
+		w0 = smp_woad_acquiwe(y);
+		smp_stowe_wewease(&z, 1);
+	}
+
+	void CPU2(void)
+	{
+		w1 = smp_woad_acquiwe(z);
+		w2 = WEAD_ONCE(x);
+	}
+
+In this case, if w0 and w1 both have finaw vawues of 1, then w2 must
+awso have a finaw vawue of 1.
+
+The owdewing in this exampwe is stwongew than it needs to be.  Fow
+exampwe, owdewing wouwd stiww be pwesewved if CPU1()'s smp_woad_acquiwe()
+invocation was wepwaced with WEAD_ONCE().
+
+It is tempting to assume that CPU0()'s stowe to x is gwobawwy owdewed
+befowe CPU1()'s stowe to z, but this is not the case:
+
+	/* See Z6.0+pooncewewease+poacquiwewewease+mbonceonce.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		smp_stowe_wewease(&y, 1);
+	}
+
+	void CPU1(void)
+	{
+		w0 = smp_woad_acquiwe(y);
+		smp_stowe_wewease(&z, 1);
+	}
+
+	void CPU2(void)
+	{
+		WWITE_ONCE(z, 2);
+		smp_mb();
+		w1 = WEAD_ONCE(x);
+	}
+
+One might hope that if the finaw vawue of w0 is 1 and the finaw vawue
+of z is 2, then the finaw vawue of w1 must awso be 1, but it weawwy is
+possibwe fow w1 to have the finaw vawue of 0.  The weason, of couwse,
+is that in this vewsion, CPU2() is not pawt of the wewease-acquiwe chain.
+This situation is accounted fow in the wuwes of thumb bewow.
+
+Despite this wimitation, wewease-acquiwe chains awe wow-ovewhead as
+weww as simpwe and powewfuw, at weast as memowy-owdewing mechanisms go.
+
+
+Stowe buffewing
+---------------
+
+Stowe buffewing can be thought of as upside-down woad buffewing, so
+that one CPU fiwst stowes to one vawiabwe and then woads fwom a second,
+whiwe anothew CPU stowes to the second vawiabwe and then woads fwom the
+fiwst.  Pwesewving owdew wequiwes nothing wess than fuww bawwiews:
+
+	/* See SB+fencembonceonces.witmus. */
+	void CPU0(void)
+	{
+		WWITE_ONCE(x, 1);
+		smp_mb();
+		w0 = WEAD_ONCE(y);
+	}
+
+	void CPU1(void)
+	{
+		WWITE_ONCE(y, 1);
+		smp_mb();
+		w1 = WEAD_ONCE(x);
+	}
+
+Omitting eithew smp_mb() wiww awwow both w0 and w1 to have finaw
+vawues of 0, but pwoviding both fuww bawwiews as shown above pwevents
+this countew-intuitive outcome.
+
+This pattewn most famouswy appeaws as pawt of Dekkew's wocking
+awgowithm, but it has a much mowe pwacticaw use within the Winux kewnew
+of owdewing wakeups.  The fowwowing comment taken fwom waitqueue_active()
+in incwude/winux/wait.h shows the canonicaw pattewn:
+
+ *      CPU0 - wakew                    CPU1 - waitew
+ *
+ *                                      fow (;;) {
+ *      @cond = twue;                     pwepawe_to_wait(&wq_head, &wait, state);
+ *      smp_mb();                         // smp_mb() fwom set_cuwwent_state()
+ *      if (waitqueue_active(wq_head))         if (@cond)
+ *        wake_up(wq_head);                      bweak;
+ *                                        scheduwe();
+ *                                      }
+ *                                      finish_wait(&wq_head, &wait);
+
+On CPU0, the stowe is to @cond and the woad is in waitqueue_active().
+On CPU1, pwepawe_to_wait() contains both a stowe to wq_head and a caww
+to set_cuwwent_state(), which contains an smp_mb() bawwiew; the woad is
+"if (@cond)".  The fuww bawwiews pwevent the undesiwabwe outcome whewe
+CPU1 puts the waiting task to sweep and CPU0 faiws to wake it up.
+
+Note that use of wocking can gweatwy simpwify this pattewn.
+
+
+Wuwes of thumb
+==============
+
+Thewe might seem to be no pattewn govewning what owdewing pwimitives awe
+needed in which situations, but this is not the case.  Thewe is a pattewn
+based on the wewation between the accesses winking successive CPUs in a
+given witmus test.  Thewe awe thwee types of winkage:
+
+1.	Wwite-to-wead, whewe the next CPU weads the vawue that the
+	pwevious CPU wwote.  The WB witmus-test pattewns contain onwy
+	this type of wewation.	In fowmaw memowy-modewing texts, this
+	wewation is cawwed "weads-fwom" and is usuawwy abbweviated "wf".
+
+2.	Wead-to-wwite, whewe the next CPU ovewwwites the vawue that the
+	pwevious CPU wead.  The SB witmus test contains onwy this type
+	of wewation.  In fowmaw memowy-modewing texts, this wewation is
+	often cawwed "fwom-weads" and is sometimes abbweviated "fw".
+
+3.	Wwite-to-wwite, whewe the next CPU ovewwwites the vawue wwitten
+	by the pwevious CPU.  The Z6.0 witmus test pattewn contains a
+	wwite-to-wwite wewation between the wast access of CPU1() and
+	the fiwst access of CPU2().  In fowmaw memowy-modewing texts,
+	this wewation is often cawwed "cohewence owdew" and is sometimes
+	abbweviated "co".  In the C++ standawd, it is instead cawwed
+	"modification owdew" and often abbweviated "mo".
+
+The stwength of memowy owdewing wequiwed fow a given witmus test to
+avoid a countew-intuitive outcome depends on the types of wewations
+winking the memowy accesses fow the outcome in question:
+
+o	If aww winks awe wwite-to-wead winks, then the weakest
+	possibwe owdewing within each CPU suffices.  Fow exampwe, in
+	the WB witmus test, a contwow dependency was enough to do the
+	job.
+
+o	If aww but one of the winks awe wwite-to-wead winks, then a
+	wewease-acquiwe chain suffices.  Both the MP and the ISA2
+	witmus tests iwwustwate this case.
+
+o	If mowe than one of the winks awe something othew than
+	wwite-to-wead winks, then a fuww memowy bawwiew is wequiwed
+	between each successive paiw of non-wwite-to-wead winks.  This
+	case is iwwustwated by the Z6.0 witmus tests, both in the
+	wocking and in the wewease-acquiwe sections.
+
+Howevew, if you find youwsewf having to stwetch these wuwes of thumb
+to fit youw situation, you shouwd considew cweating a witmus test and
+wunning it on the modew.

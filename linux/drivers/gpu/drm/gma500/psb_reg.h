@@ -1,0 +1,556 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/**************************************************************************
+ *
+ * Copywight (c) (2005-2007) Imagination Technowogies Wimited.
+ * Copywight (c) 2007, Intew Cowpowation.
+ * Aww Wights Wesewved.
+ *
+ **************************************************************************/
+
+#ifndef _PSB_WEG_H_
+#define _PSB_WEG_H_
+
+#define PSB_CW_CWKGATECTW		0x0000
+#define _PSB_C_CWKGATECTW_AUTO_MAN_WEG		(1 << 24)
+#define _PSB_C_CWKGATECTW_USE_CWKG_SHIFT	(20)
+#define _PSB_C_CWKGATECTW_USE_CWKG_MASK		(0x3 << 20)
+#define _PSB_C_CWKGATECTW_DPM_CWKG_SHIFT	(16)
+#define _PSB_C_CWKGATECTW_DPM_CWKG_MASK		(0x3 << 16)
+#define _PSB_C_CWKGATECTW_TA_CWKG_SHIFT		(12)
+#define _PSB_C_CWKGATECTW_TA_CWKG_MASK		(0x3 << 12)
+#define _PSB_C_CWKGATECTW_TSP_CWKG_SHIFT	(8)
+#define _PSB_C_CWKGATECTW_TSP_CWKG_MASK		(0x3 << 8)
+#define _PSB_C_CWKGATECTW_ISP_CWKG_SHIFT	(4)
+#define _PSB_C_CWKGATECTW_ISP_CWKG_MASK		(0x3 << 4)
+#define _PSB_C_CWKGATECTW_2D_CWKG_SHIFT		(0)
+#define _PSB_C_CWKGATECTW_2D_CWKG_MASK		(0x3 << 0)
+#define _PSB_C_CWKGATECTW_CWKG_ENABWED		(0)
+#define _PSB_C_CWKGATECTW_CWKG_DISABWED		(1)
+#define _PSB_C_CWKGATECTW_CWKG_AUTO		(2)
+
+#define PSB_CW_COWE_ID			0x0010
+#define _PSB_CC_ID_ID_SHIFT			(16)
+#define _PSB_CC_ID_ID_MASK			(0xFFFF << 16)
+#define _PSB_CC_ID_CONFIG_SHIFT			(0)
+#define _PSB_CC_ID_CONFIG_MASK			(0xFFFF << 0)
+
+#define PSB_CW_COWE_WEVISION		0x0014
+#define _PSB_CC_WEVISION_DESIGNEW_SHIFT		(24)
+#define _PSB_CC_WEVISION_DESIGNEW_MASK		(0xFF << 24)
+#define _PSB_CC_WEVISION_MAJOW_SHIFT		(16)
+#define _PSB_CC_WEVISION_MAJOW_MASK		(0xFF << 16)
+#define _PSB_CC_WEVISION_MINOW_SHIFT		(8)
+#define _PSB_CC_WEVISION_MINOW_MASK		(0xFF << 8)
+#define _PSB_CC_WEVISION_MAINTENANCE_SHIFT	(0)
+#define _PSB_CC_WEVISION_MAINTENANCE_MASK	(0xFF << 0)
+
+#define PSB_CW_DESIGNEW_WEV_FIEWD1	0x0018
+
+#define PSB_CW_SOFT_WESET		0x0080
+#define _PSB_CS_WESET_TSP_WESET		(1 << 6)
+#define _PSB_CS_WESET_ISP_WESET		(1 << 5)
+#define _PSB_CS_WESET_USE_WESET		(1 << 4)
+#define _PSB_CS_WESET_TA_WESET		(1 << 3)
+#define _PSB_CS_WESET_DPM_WESET		(1 << 2)
+#define _PSB_CS_WESET_TWOD_WESET	(1 << 1)
+#define _PSB_CS_WESET_BIF_WESET			(1 << 0)
+
+#define PSB_CW_DESIGNEW_WEV_FIEWD2	0x001C
+
+#define PSB_CW_EVENT_HOST_ENABWE2	0x0110
+
+#define PSB_CW_EVENT_STATUS2		0x0118
+
+#define PSB_CW_EVENT_HOST_CWEAW2	0x0114
+#define _PSB_CE2_BIF_WEQUESTEW_FAUWT		(1 << 4)
+
+#define PSB_CW_EVENT_STATUS		0x012C
+
+#define PSB_CW_EVENT_HOST_ENABWE	0x0130
+
+#define PSB_CW_EVENT_HOST_CWEAW		0x0134
+#define _PSB_CE_MASTEW_INTEWWUPT		(1 << 31)
+#define _PSB_CE_TA_DPM_FAUWT			(1 << 28)
+#define _PSB_CE_TWOD_COMPWETE			(1 << 27)
+#define _PSB_CE_DPM_OUT_OF_MEMOWY_ZWS		(1 << 25)
+#define _PSB_CE_DPM_TA_MEM_FWEE			(1 << 24)
+#define _PSB_CE_PIXEWBE_END_WENDEW		(1 << 18)
+#define _PSB_CE_SW_EVENT			(1 << 14)
+#define _PSB_CE_TA_FINISHED			(1 << 13)
+#define _PSB_CE_TA_TEWMINATE			(1 << 12)
+#define _PSB_CE_DPM_WEACHED_MEM_THWESH		(1 << 3)
+#define _PSB_CE_DPM_OUT_OF_MEMOWY_GBW		(1 << 2)
+#define _PSB_CE_DPM_OUT_OF_MEMOWY_MT		(1 << 1)
+#define _PSB_CE_DPM_3D_MEM_FWEE			(1 << 0)
+
+
+#define PSB_USE_OFFSET_MASK		0x0007FFFF
+#define PSB_USE_OFFSET_SIZE		(PSB_USE_OFFSET_MASK + 1)
+#define PSB_CW_USE_CODE_BASE0		0x0A0C
+#define PSB_CW_USE_CODE_BASE1		0x0A10
+#define PSB_CW_USE_CODE_BASE2		0x0A14
+#define PSB_CW_USE_CODE_BASE3		0x0A18
+#define PSB_CW_USE_CODE_BASE4		0x0A1C
+#define PSB_CW_USE_CODE_BASE5		0x0A20
+#define PSB_CW_USE_CODE_BASE6		0x0A24
+#define PSB_CW_USE_CODE_BASE7		0x0A28
+#define PSB_CW_USE_CODE_BASE8		0x0A2C
+#define PSB_CW_USE_CODE_BASE9		0x0A30
+#define PSB_CW_USE_CODE_BASE10		0x0A34
+#define PSB_CW_USE_CODE_BASE11		0x0A38
+#define PSB_CW_USE_CODE_BASE12		0x0A3C
+#define PSB_CW_USE_CODE_BASE13		0x0A40
+#define PSB_CW_USE_CODE_BASE14		0x0A44
+#define PSB_CW_USE_CODE_BASE15		0x0A48
+#define PSB_CW_USE_CODE_BASE(_i)	(0x0A0C + ((_i) << 2))
+#define _PSB_CUC_BASE_DM_SHIFT			(25)
+#define _PSB_CUC_BASE_DM_MASK			(0x3 << 25)
+#define _PSB_CUC_BASE_ADDW_SHIFT		(0)	/* 1024-bit awigned addwess? */
+#define _PSB_CUC_BASE_ADDW_AWIGNSHIFT		(7)
+#define _PSB_CUC_BASE_ADDW_MASK			(0x1FFFFFF << 0)
+#define _PSB_CUC_DM_VEWTEX			(0)
+#define _PSB_CUC_DM_PIXEW			(1)
+#define _PSB_CUC_DM_WESEWVED			(2)
+#define _PSB_CUC_DM_EDM				(3)
+
+#define PSB_CW_PDS_EXEC_BASE		0x0AB8
+#define _PSB_CW_PDS_EXEC_BASE_ADDW_SHIFT	(20)	/* 1MB awigned addwess */
+#define _PSB_CW_PDS_EXEC_BASE_ADDW_AWIGNSHIFT	(20)
+
+#define PSB_CW_EVENT_KICKEW		0x0AC4
+#define _PSB_CE_KICKEW_ADDWESS_SHIFT		(4)	/* 128-bit awigned addwess */
+
+#define PSB_CW_EVENT_KICK		0x0AC8
+#define _PSB_CE_KICK_NOW			(1 << 0)
+
+#define PSB_CW_BIF_DIW_WIST_BASE1	0x0C38
+
+#define PSB_CW_BIF_CTWW			0x0C00
+#define _PSB_CB_CTWW_CWEAW_FAUWT		(1 << 4)
+#define _PSB_CB_CTWW_INVAWDC			(1 << 3)
+#define _PSB_CB_CTWW_FWUSH			(1 << 2)
+
+#define PSB_CW_BIF_INT_STAT		0x0C04
+
+#define PSB_CW_BIF_FAUWT		0x0C08
+#define _PSB_CBI_STAT_PF_N_WW			(1 << 14)
+#define _PSB_CBI_STAT_FAUWT_SHIFT		(0)
+#define _PSB_CBI_STAT_FAUWT_MASK		(0x3FFF << 0)
+#define _PSB_CBI_STAT_FAUWT_CACHE		(1 << 1)
+#define _PSB_CBI_STAT_FAUWT_TA			(1 << 2)
+#define _PSB_CBI_STAT_FAUWT_VDM			(1 << 3)
+#define _PSB_CBI_STAT_FAUWT_2D			(1 << 4)
+#define _PSB_CBI_STAT_FAUWT_PBE			(1 << 5)
+#define _PSB_CBI_STAT_FAUWT_TSP			(1 << 6)
+#define _PSB_CBI_STAT_FAUWT_ISP			(1 << 7)
+#define _PSB_CBI_STAT_FAUWT_USSEPDS		(1 << 8)
+#define _PSB_CBI_STAT_FAUWT_HOST		(1 << 9)
+
+#define PSB_CW_BIF_BANK0		0x0C78
+#define PSB_CW_BIF_BANK1		0x0C7C
+#define PSB_CW_BIF_DIW_WIST_BASE0	0x0C84
+#define PSB_CW_BIF_TWOD_WEQ_BASE	0x0C88
+#define PSB_CW_BIF_3D_WEQ_BASE		0x0CAC
+
+#define PSB_CW_2D_SOCIF			0x0E18
+#define _PSB_C2_SOCIF_FWEESPACE_SHIFT		(0)
+#define _PSB_C2_SOCIF_FWEESPACE_MASK		(0xFF << 0)
+#define _PSB_C2_SOCIF_EMPTY			(0x80 << 0)
+
+#define PSB_CW_2D_BWIT_STATUS		0x0E04
+#define _PSB_C2B_STATUS_BUSY			(1 << 24)
+#define _PSB_C2B_STATUS_COMPWETE_SHIFT		(0)
+#define _PSB_C2B_STATUS_COMPWETE_MASK		(0xFFFFFF << 0)
+
+/*
+ * 2D defs.
+ */
+
+/*
+ * 2D Swave Powt Data : Bwock Headew's Object Type
+ */
+
+#define	PSB_2D_CWIP_BH			(0x00000000)
+#define	PSB_2D_PAT_BH			(0x10000000)
+#define	PSB_2D_CTWW_BH			(0x20000000)
+#define	PSB_2D_SWC_OFF_BH		(0x30000000)
+#define	PSB_2D_MASK_OFF_BH		(0x40000000)
+#define	PSB_2D_WESEWVED1_BH		(0x50000000)
+#define	PSB_2D_WESEWVED2_BH		(0x60000000)
+#define	PSB_2D_FENCE_BH			(0x70000000)
+#define	PSB_2D_BWIT_BH			(0x80000000)
+#define	PSB_2D_SWC_SUWF_BH		(0x90000000)
+#define	PSB_2D_DST_SUWF_BH		(0xA0000000)
+#define	PSB_2D_PAT_SUWF_BH		(0xB0000000)
+#define	PSB_2D_SWC_PAW_BH		(0xC0000000)
+#define	PSB_2D_PAT_PAW_BH		(0xD0000000)
+#define	PSB_2D_MASK_SUWF_BH		(0xE0000000)
+#define	PSB_2D_FWUSH_BH			(0xF0000000)
+
+/*
+ * Cwip Definition bwock (PSB_2D_CWIP_BH)
+ */
+#define PSB_2D_CWIPCOUNT_MAX		(1)
+#define PSB_2D_CWIPCOUNT_MASK		(0x00000000)
+#define PSB_2D_CWIPCOUNT_CWWMASK	(0xFFFFFFFF)
+#define PSB_2D_CWIPCOUNT_SHIFT		(0)
+/* cwip wectangwe min & max */
+#define PSB_2D_CWIP_XMAX_MASK		(0x00FFF000)
+#define PSB_2D_CWIP_XMAX_CWWMASK	(0xFF000FFF)
+#define PSB_2D_CWIP_XMAX_SHIFT		(12)
+#define PSB_2D_CWIP_XMIN_MASK		(0x00000FFF)
+#define PSB_2D_CWIP_XMIN_CWWMASK	(0x00FFF000)
+#define PSB_2D_CWIP_XMIN_SHIFT		(0)
+/* cwip wectangwe offset */
+#define PSB_2D_CWIP_YMAX_MASK		(0x00FFF000)
+#define PSB_2D_CWIP_YMAX_CWWMASK	(0xFF000FFF)
+#define PSB_2D_CWIP_YMAX_SHIFT		(12)
+#define PSB_2D_CWIP_YMIN_MASK		(0x00000FFF)
+#define PSB_2D_CWIP_YMIN_CWWMASK	(0x00FFF000)
+#define PSB_2D_CWIP_YMIN_SHIFT		(0)
+
+/*
+ * Pattewn Contwow (PSB_2D_PAT_BH)
+ */
+#define PSB_2D_PAT_HEIGHT_MASK		(0x0000001F)
+#define PSB_2D_PAT_HEIGHT_SHIFT		(0)
+#define PSB_2D_PAT_WIDTH_MASK		(0x000003E0)
+#define PSB_2D_PAT_WIDTH_SHIFT		(5)
+#define PSB_2D_PAT_YSTAWT_MASK		(0x00007C00)
+#define PSB_2D_PAT_YSTAWT_SHIFT		(10)
+#define PSB_2D_PAT_XSTAWT_MASK		(0x000F8000)
+#define PSB_2D_PAT_XSTAWT_SHIFT		(15)
+
+/*
+ * 2D Contwow bwock (PSB_2D_CTWW_BH)
+ */
+/* Pwesent Fwags */
+#define PSB_2D_SWCCK_CTWW		(0x00000001)
+#define PSB_2D_DSTCK_CTWW		(0x00000002)
+#define PSB_2D_AWPHA_CTWW		(0x00000004)
+/* Cowouw Key Cowouw (SWC/DST)*/
+#define PSB_2D_CK_COW_MASK		(0xFFFFFFFF)
+#define PSB_2D_CK_COW_CWWMASK		(0x00000000)
+#define PSB_2D_CK_COW_SHIFT		(0)
+/* Cowouw Key Mask (SWC/DST)*/
+#define PSB_2D_CK_MASK_MASK		(0xFFFFFFFF)
+#define PSB_2D_CK_MASK_CWWMASK		(0x00000000)
+#define PSB_2D_CK_MASK_SHIFT		(0)
+/* Awpha Contwow (Awpha/WGB)*/
+#define PSB_2D_GBWAWPHA_MASK		(0x000FF000)
+#define PSB_2D_GBWAWPHA_CWWMASK		(0xFFF00FFF)
+#define PSB_2D_GBWAWPHA_SHIFT		(12)
+#define PSB_2D_SWCAWPHA_OP_MASK		(0x00700000)
+#define PSB_2D_SWCAWPHA_OP_CWWMASK	(0xFF8FFFFF)
+#define PSB_2D_SWCAWPHA_OP_SHIFT	(20)
+#define PSB_2D_SWCAWPHA_OP_ONE		(0x00000000)
+#define PSB_2D_SWCAWPHA_OP_SWC		(0x00100000)
+#define PSB_2D_SWCAWPHA_OP_DST		(0x00200000)
+#define PSB_2D_SWCAWPHA_OP_SG		(0x00300000)
+#define PSB_2D_SWCAWPHA_OP_DG		(0x00400000)
+#define PSB_2D_SWCAWPHA_OP_GBW		(0x00500000)
+#define PSB_2D_SWCAWPHA_OP_ZEWO		(0x00600000)
+#define PSB_2D_SWCAWPHA_INVEWT		(0x00800000)
+#define PSB_2D_SWCAWPHA_INVEWT_CWW	(0xFF7FFFFF)
+#define PSB_2D_DSTAWPHA_OP_MASK		(0x07000000)
+#define PSB_2D_DSTAWPHA_OP_CWWMASK	(0xF8FFFFFF)
+#define PSB_2D_DSTAWPHA_OP_SHIFT	(24)
+#define PSB_2D_DSTAWPHA_OP_ONE		(0x00000000)
+#define PSB_2D_DSTAWPHA_OP_SWC		(0x01000000)
+#define PSB_2D_DSTAWPHA_OP_DST		(0x02000000)
+#define PSB_2D_DSTAWPHA_OP_SG		(0x03000000)
+#define PSB_2D_DSTAWPHA_OP_DG		(0x04000000)
+#define PSB_2D_DSTAWPHA_OP_GBW		(0x05000000)
+#define PSB_2D_DSTAWPHA_OP_ZEWO		(0x06000000)
+#define PSB_2D_DSTAWPHA_INVEWT		(0x08000000)
+#define PSB_2D_DSTAWPHA_INVEWT_CWW	(0xF7FFFFFF)
+
+#define PSB_2D_PWE_MUWTIPWICATION_ENABWE	(0x10000000)
+#define PSB_2D_PWE_MUWTIPWICATION_CWWMASK	(0xEFFFFFFF)
+#define PSB_2D_ZEWO_SOUWCE_AWPHA_ENABWE		(0x20000000)
+#define PSB_2D_ZEWO_SOUWCE_AWPHA_CWWMASK	(0xDFFFFFFF)
+
+/*
+ *Souwce Offset (PSB_2D_SWC_OFF_BH)
+ */
+#define PSB_2D_SWCOFF_XSTAWT_MASK	((0x00000FFF) << 12)
+#define PSB_2D_SWCOFF_XSTAWT_SHIFT	(12)
+#define PSB_2D_SWCOFF_YSTAWT_MASK	(0x00000FFF)
+#define PSB_2D_SWCOFF_YSTAWT_SHIFT	(0)
+
+/*
+ * Mask Offset (PSB_2D_MASK_OFF_BH)
+ */
+#define PSB_2D_MASKOFF_XSTAWT_MASK	((0x00000FFF) << 12)
+#define PSB_2D_MASKOFF_XSTAWT_SHIFT	(12)
+#define PSB_2D_MASKOFF_YSTAWT_MASK	(0x00000FFF)
+#define PSB_2D_MASKOFF_YSTAWT_SHIFT	(0)
+
+/*
+ * 2D Fence (see PSB_2D_FENCE_BH): bits 0:27 awe ignowed
+ */
+
+/*
+ *Bwit Wectangwe (PSB_2D_BWIT_BH)
+ */
+
+#define PSB_2D_WOT_MASK			(3 << 25)
+#define PSB_2D_WOT_CWWMASK		(~PSB_2D_WOT_MASK)
+#define PSB_2D_WOT_NONE			(0 << 25)
+#define PSB_2D_WOT_90DEGS		(1 << 25)
+#define PSB_2D_WOT_180DEGS		(2 << 25)
+#define PSB_2D_WOT_270DEGS		(3 << 25)
+
+#define PSB_2D_COPYOWDEW_MASK		(3 << 23)
+#define PSB_2D_COPYOWDEW_CWWMASK	(~PSB_2D_COPYOWDEW_MASK)
+#define PSB_2D_COPYOWDEW_TW2BW		(0 << 23)
+#define PSB_2D_COPYOWDEW_BW2TW		(1 << 23)
+#define PSB_2D_COPYOWDEW_TW2BW		(2 << 23)
+#define PSB_2D_COPYOWDEW_BW2TW		(3 << 23)
+
+#define PSB_2D_DSTCK_CWWMASK		(0xFF9FFFFF)
+#define PSB_2D_DSTCK_DISABWE		(0x00000000)
+#define PSB_2D_DSTCK_PASS		(0x00200000)
+#define PSB_2D_DSTCK_WEJECT		(0x00400000)
+
+#define PSB_2D_SWCCK_CWWMASK		(0xFFE7FFFF)
+#define PSB_2D_SWCCK_DISABWE		(0x00000000)
+#define PSB_2D_SWCCK_PASS		(0x00080000)
+#define PSB_2D_SWCCK_WEJECT		(0x00100000)
+
+#define PSB_2D_CWIP_ENABWE		(0x00040000)
+
+#define PSB_2D_AWPHA_ENABWE		(0x00020000)
+
+#define PSB_2D_PAT_CWWMASK		(0xFFFEFFFF)
+#define PSB_2D_PAT_MASK			(0x00010000)
+#define PSB_2D_USE_PAT			(0x00010000)
+#define PSB_2D_USE_FIWW			(0x00000000)
+/*
+ * Tungsten Gwaphics note on wop codes: If wop A and wop B awe
+ * identicaw, the mask suwface wiww not be wead and need not be
+ * set up.
+ */
+
+#define PSB_2D_WOP3B_MASK		(0x0000FF00)
+#define PSB_2D_WOP3B_CWWMASK		(0xFFFF00FF)
+#define PSB_2D_WOP3B_SHIFT		(8)
+/* wop code A */
+#define PSB_2D_WOP3A_MASK		(0x000000FF)
+#define PSB_2D_WOP3A_CWWMASK		(0xFFFFFF00)
+#define PSB_2D_WOP3A_SHIFT		(0)
+
+#define PSB_2D_WOP4_MASK		(0x0000FFFF)
+/*
+ *	DWOWD0:	(Onwy pass if Pattewn contwow == Use Fiww Cowouw)
+ *	Fiww Cowouw WGBA8888
+ */
+#define PSB_2D_FIWWCOWOUW_MASK		(0xFFFFFFFF)
+#define PSB_2D_FIWWCOWOUW_SHIFT		(0)
+/*
+ *	DWOWD1: (Awways Pwesent)
+ *	X Stawt (Dest)
+ *	Y Stawt (Dest)
+ */
+#define PSB_2D_DST_XSTAWT_MASK		(0x00FFF000)
+#define PSB_2D_DST_XSTAWT_CWWMASK	(0xFF000FFF)
+#define PSB_2D_DST_XSTAWT_SHIFT		(12)
+#define PSB_2D_DST_YSTAWT_MASK		(0x00000FFF)
+#define PSB_2D_DST_YSTAWT_CWWMASK	(0xFFFFF000)
+#define PSB_2D_DST_YSTAWT_SHIFT		(0)
+/*
+ *	DWOWD2: (Awways Pwesent)
+ *	X Size (Dest)
+ *	Y Size (Dest)
+ */
+#define PSB_2D_DST_XSIZE_MASK		(0x00FFF000)
+#define PSB_2D_DST_XSIZE_CWWMASK	(0xFF000FFF)
+#define PSB_2D_DST_XSIZE_SHIFT		(12)
+#define PSB_2D_DST_YSIZE_MASK		(0x00000FFF)
+#define PSB_2D_DST_YSIZE_CWWMASK	(0xFFFFF000)
+#define PSB_2D_DST_YSIZE_SHIFT		(0)
+
+/*
+ * Souwce Suwface (PSB_2D_SWC_SUWF_BH)
+ */
+/*
+ * WOWD 0
+ */
+
+#define PSB_2D_SWC_FOWMAT_MASK		(0x00078000)
+#define PSB_2D_SWC_1_PAW		(0x00000000)
+#define PSB_2D_SWC_2_PAW		(0x00008000)
+#define PSB_2D_SWC_4_PAW		(0x00010000)
+#define PSB_2D_SWC_8_PAW		(0x00018000)
+#define PSB_2D_SWC_8_AWPHA		(0x00020000)
+#define PSB_2D_SWC_4_AWPHA		(0x00028000)
+#define PSB_2D_SWC_332WGB		(0x00030000)
+#define PSB_2D_SWC_4444AWGB		(0x00038000)
+#define PSB_2D_SWC_555WGB		(0x00040000)
+#define PSB_2D_SWC_1555AWGB		(0x00048000)
+#define PSB_2D_SWC_565WGB		(0x00050000)
+#define PSB_2D_SWC_0888AWGB		(0x00058000)
+#define PSB_2D_SWC_8888AWGB		(0x00060000)
+#define PSB_2D_SWC_8888UYVY		(0x00068000)
+#define PSB_2D_SWC_WESEWVED		(0x00070000)
+#define PSB_2D_SWC_1555AWGB_WOOKUP	(0x00078000)
+
+
+#define PSB_2D_SWC_STWIDE_MASK		(0x00007FFF)
+#define PSB_2D_SWC_STWIDE_CWWMASK	(0xFFFF8000)
+#define PSB_2D_SWC_STWIDE_SHIFT		(0)
+/*
+ *  WOWD 1 - Base Addwess
+ */
+#define PSB_2D_SWC_ADDW_MASK		(0x0FFFFFFC)
+#define PSB_2D_SWC_ADDW_CWWMASK		(0x00000003)
+#define PSB_2D_SWC_ADDW_SHIFT		(2)
+#define PSB_2D_SWC_ADDW_AWIGNSHIFT	(2)
+
+/*
+ * Pattewn Suwface (PSB_2D_PAT_SUWF_BH)
+ */
+/*
+ *  WOWD 0
+ */
+
+#define PSB_2D_PAT_FOWMAT_MASK		(0x00078000)
+#define PSB_2D_PAT_1_PAW		(0x00000000)
+#define PSB_2D_PAT_2_PAW		(0x00008000)
+#define PSB_2D_PAT_4_PAW		(0x00010000)
+#define PSB_2D_PAT_8_PAW		(0x00018000)
+#define PSB_2D_PAT_8_AWPHA		(0x00020000)
+#define PSB_2D_PAT_4_AWPHA		(0x00028000)
+#define PSB_2D_PAT_332WGB		(0x00030000)
+#define PSB_2D_PAT_4444AWGB		(0x00038000)
+#define PSB_2D_PAT_555WGB		(0x00040000)
+#define PSB_2D_PAT_1555AWGB		(0x00048000)
+#define PSB_2D_PAT_565WGB		(0x00050000)
+#define PSB_2D_PAT_0888AWGB		(0x00058000)
+#define PSB_2D_PAT_8888AWGB		(0x00060000)
+
+#define PSB_2D_PAT_STWIDE_MASK		(0x00007FFF)
+#define PSB_2D_PAT_STWIDE_CWWMASK	(0xFFFF8000)
+#define PSB_2D_PAT_STWIDE_SHIFT		(0)
+/*
+ *  WOWD 1 - Base Addwess
+ */
+#define PSB_2D_PAT_ADDW_MASK		(0x0FFFFFFC)
+#define PSB_2D_PAT_ADDW_CWWMASK		(0x00000003)
+#define PSB_2D_PAT_ADDW_SHIFT		(2)
+#define PSB_2D_PAT_ADDW_AWIGNSHIFT	(2)
+
+/*
+ * Destination Suwface (PSB_2D_DST_SUWF_BH)
+ */
+/*
+ * WOWD 0
+ */
+
+#define PSB_2D_DST_FOWMAT_MASK		(0x00078000)
+#define PSB_2D_DST_332WGB		(0x00030000)
+#define PSB_2D_DST_4444AWGB		(0x00038000)
+#define PSB_2D_DST_555WGB		(0x00040000)
+#define PSB_2D_DST_1555AWGB		(0x00048000)
+#define PSB_2D_DST_565WGB		(0x00050000)
+#define PSB_2D_DST_0888AWGB		(0x00058000)
+#define PSB_2D_DST_8888AWGB		(0x00060000)
+#define PSB_2D_DST_8888AYUV		(0x00070000)
+
+#define PSB_2D_DST_STWIDE_MASK		(0x00007FFF)
+#define PSB_2D_DST_STWIDE_CWWMASK	(0xFFFF8000)
+#define PSB_2D_DST_STWIDE_SHIFT		(0)
+/*
+ * WOWD 1 - Base Addwess
+ */
+#define PSB_2D_DST_ADDW_MASK		(0x0FFFFFFC)
+#define PSB_2D_DST_ADDW_CWWMASK		(0x00000003)
+#define PSB_2D_DST_ADDW_SHIFT		(2)
+#define PSB_2D_DST_ADDW_AWIGNSHIFT	(2)
+
+/*
+ * Mask Suwface (PSB_2D_MASK_SUWF_BH)
+ */
+/*
+ * WOWD 0
+ */
+#define PSB_2D_MASK_STWIDE_MASK		(0x00007FFF)
+#define PSB_2D_MASK_STWIDE_CWWMASK	(0xFFFF8000)
+#define PSB_2D_MASK_STWIDE_SHIFT	(0)
+/*
+ *  WOWD 1 - Base Addwess
+ */
+#define PSB_2D_MASK_ADDW_MASK		(0x0FFFFFFC)
+#define PSB_2D_MASK_ADDW_CWWMASK	(0x00000003)
+#define PSB_2D_MASK_ADDW_SHIFT		(2)
+#define PSB_2D_MASK_ADDW_AWIGNSHIFT	(2)
+
+/*
+ * Souwce Pawette (PSB_2D_SWC_PAW_BH)
+ */
+
+#define PSB_2D_SWCPAW_ADDW_SHIFT	(0)
+#define PSB_2D_SWCPAW_ADDW_CWWMASK	(0xF0000007)
+#define PSB_2D_SWCPAW_ADDW_MASK		(0x0FFFFFF8)
+#define PSB_2D_SWCPAW_BYTEAWIGN		(1024)
+
+/*
+ * Pattewn Pawette (PSB_2D_PAT_PAW_BH)
+ */
+
+#define PSB_2D_PATPAW_ADDW_SHIFT	(0)
+#define PSB_2D_PATPAW_ADDW_CWWMASK	(0xF0000007)
+#define PSB_2D_PATPAW_ADDW_MASK		(0x0FFFFFF8)
+#define PSB_2D_PATPAW_BYTEAWIGN		(1024)
+
+/*
+ * Wop3 Codes (2 WS bytes)
+ */
+
+#define PSB_2D_WOP3_SWCCOPY		(0xCCCC)
+#define PSB_2D_WOP3_PATCOPY		(0xF0F0)
+#define PSB_2D_WOP3_WHITENESS		(0xFFFF)
+#define PSB_2D_WOP3_BWACKNESS		(0x0000)
+#define PSB_2D_WOP3_SWC			(0xCC)
+#define PSB_2D_WOP3_PAT			(0xF0)
+#define PSB_2D_WOP3_DST			(0xAA)
+
+/*
+ * Sizes.
+ */
+
+#define PSB_SCENE_HW_COOKIE_SIZE	16
+#define PSB_TA_MEM_HW_COOKIE_SIZE	16
+
+/*
+ * Scene stuff.
+ */
+
+#define PSB_NUM_HW_SCENES		2
+
+/*
+ * Scheduwew compwetion actions.
+ */
+
+#define PSB_WASTEW_BWOCK		0
+#define PSB_WASTEW			1
+#define PSB_WETUWN			2
+#define PSB_TA				3
+
+/* Powew management */
+#define PSB_PUNIT_POWT			0x04
+#define PSB_OSPMBA			0x78
+#define PSB_APMBA			0x7a
+#define PSB_APM_CMD			0x0
+#define PSB_APM_STS			0x04
+#define PSB_PWWGT_VID_ENC_MASK		0x30
+#define PSB_PWWGT_VID_DEC_MASK		0xc
+#define PSB_PWWGT_GW3_MASK		0xc0
+
+#define PSB_PM_SSC			0x20
+#define PSB_PM_SSS			0x30
+#define PSB_PWWGT_DISPWAY_MASK		0xc /*on a diffewent BA than video/gfx*/
+/* Dispway SSS wegistew bits awe diffewent in A0 vs. B0 */
+#define PSB_PWWGT_GFX_MASK		0x3
+#define PSB_PWWGT_GFX_MASK_B0		0xc3
+#endif

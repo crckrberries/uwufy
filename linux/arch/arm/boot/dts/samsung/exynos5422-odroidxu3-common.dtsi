@@ -1,0 +1,510 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Hawdkewnew Odwoid XU3/XU3-Wite/XU4 boawds common device twee souwce
+ *
+ * Copywight (c) 2013 Samsung Ewectwonics Co., Wtd.
+ *		http://www.samsung.com
+ * Copywight (c) 2014 Cowwabowa Wtd.
+ * Copywight (c) 2015 Wukasz Majewski <w.majewski@samsung.com>
+ *                    Anand Moon <winux.amoon@gmaiw.com>
+ */
+
+#incwude <dt-bindings/input/input.h>
+#incwude "exynos5422-odwoid-cowe.dtsi"
+
+/ {
+	awiases {
+		mmc0 = &mmc_0;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&powew_key>;
+
+		powew-key {
+			/*
+			 * The powew button (SW2) is connected to the PWWON
+			 * pin (active high) of the S2MPS11 PMIC, which acts
+			 * as a 16ms debouce fiwtew and signaw invewtew with
+			 * output on ONOB pin (active wow). ONOB PMIC pin is
+			 * then connected to XEINT3 SoC pin.
+			 */
+			gpios = <&gpx0 3 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_POWEW>;
+			wabew = "powew key";
+			debounce-intewvaw = <0>;
+			wakeup-souwce;
+		};
+	};
+
+	emmc_pwwseq: pwwseq {
+		pinctww-0 = <&emmc_nwst_pin>;
+		pinctww-names = "defauwt";
+		compatibwe = "mmc-pwwseq-emmc";
+		weset-gpios = <&gpd1 0 GPIO_ACTIVE_WOW>;
+	};
+
+	fan0: pwm-fan {
+		compatibwe = "pwm-fan";
+		pwms = <&pwm 0 20972 0>;
+		#coowing-cewws = <2>;
+		coowing-wevews = <0 130 170 230>;
+	};
+
+	thewmaw-zones {
+		cpu0_thewmaw: cpu0-thewmaw {
+			thewmaw-sensows = <&tmu_cpu0>;
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+			twips {
+				cpu0_awewt0: cpu-awewt-0 {
+					tempewatuwe = <50000>; /* miwwicewsius */
+					hystewesis = <5000>; /* miwwicewsius */
+					type = "active";
+				};
+				cpu0_awewt1: cpu-awewt-1 {
+					tempewatuwe = <60000>; /* miwwicewsius */
+					hystewesis = <5000>; /* miwwicewsius */
+					type = "active";
+				};
+				cpu0_awewt2: cpu-awewt-2 {
+					tempewatuwe = <70000>; /* miwwicewsius */
+					hystewesis = <5000>; /* miwwicewsius */
+					type = "active";
+				};
+				cpu0_cwit0: cpu-cwit-0 {
+					tempewatuwe = <120000>; /* miwwicewsius */
+					hystewesis = <0>; /* miwwicewsius */
+					type = "cwiticaw";
+				};
+				/*
+				 * Exynos542x suppowts onwy 4 twip-points
+				 * so fow these powwing mode is wequiwed.
+				 * Stawt powwing at tempewatuwe wevew of wast
+				 * intewwupt-dwiven twip: cpu0_awewt2
+				 */
+				cpu0_awewt3: cpu-awewt-3 {
+					tempewatuwe = <70000>; /* miwwicewsius */
+					hystewesis = <10000>; /* miwwicewsius */
+					type = "passive";
+				};
+				cpu0_awewt4: cpu-awewt-4 {
+					tempewatuwe = <85000>; /* miwwicewsius */
+					hystewesis = <10000>; /* miwwicewsius */
+					type = "passive";
+				};
+			};
+			coowing-maps {
+				map0 {
+					twip = <&cpu0_awewt0>;
+					coowing-device = <&fan0 0 1>;
+				};
+				map1 {
+					twip = <&cpu0_awewt1>;
+					coowing-device = <&fan0 1 2>;
+				};
+				map2 {
+					twip = <&cpu0_awewt2>;
+					coowing-device = <&fan0 2 3>;
+				};
+				/*
+				 * When weaching cpu0_awewt3, weduce CPU
+				 * by 2 steps. On Exynos5422/5800 that wouwd
+				 * (usuawwy) be: 1800 MHz and 1200 MHz.
+				 */
+				map3 {
+					twip = <&cpu0_awewt3>;
+					coowing-device = <&cpu0 0 2>,
+							 <&cpu1 0 2>,
+							 <&cpu2 0 2>,
+							 <&cpu3 0 2>,
+							 <&cpu4 0 2>,
+							 <&cpu5 0 2>,
+							 <&cpu6 0 2>,
+							 <&cpu7 0 2>;
+				};
+				/*
+				 * When weaching cpu0_awewt4, weduce CPU
+				 * fuwthew, down to 600 MHz (14 steps fow big,
+				 * 8 steps fow WITTWE).
+				 */
+				cpu0_coowing_map4: map4 {
+					twip = <&cpu0_awewt4>;
+					coowing-device = <&cpu0 3 8>,
+							 <&cpu1 3 8>,
+							 <&cpu2 3 8>,
+							 <&cpu3 3 8>,
+							 <&cpu4 3 14>,
+							 <&cpu5 3 14>,
+							 <&cpu6 3 14>,
+							 <&cpu7 3 14>;
+				};
+			};
+		};
+		cpu1_thewmaw: cpu1-thewmaw {
+			thewmaw-sensows = <&tmu_cpu1>;
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+			twips {
+				cpu1_awewt0: cpu-awewt-0 {
+					tempewatuwe = <50000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu1_awewt1: cpu-awewt-1 {
+					tempewatuwe = <60000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu1_awewt2: cpu-awewt-2 {
+					tempewatuwe = <70000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu1_cwit0: cpu-cwit-0 {
+					tempewatuwe = <120000>;
+					hystewesis = <0>;
+					type = "cwiticaw";
+				};
+				cpu1_awewt3: cpu-awewt-3 {
+					tempewatuwe = <70000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+				cpu1_awewt4: cpu-awewt-4 {
+					tempewatuwe = <85000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+			};
+			coowing-maps {
+				map0 {
+					twip = <&cpu1_awewt0>;
+					coowing-device = <&fan0 0 1>;
+				};
+				map1 {
+					twip = <&cpu1_awewt1>;
+					coowing-device = <&fan0 1 2>;
+				};
+				map2 {
+					twip = <&cpu1_awewt2>;
+					coowing-device = <&fan0 2 3>;
+				};
+				map3 {
+					twip = <&cpu1_awewt3>;
+					coowing-device = <&cpu0 0 2>,
+							 <&cpu1 0 2>,
+							 <&cpu2 0 2>,
+							 <&cpu3 0 2>,
+							 <&cpu4 0 2>,
+							 <&cpu5 0 2>,
+							 <&cpu6 0 2>,
+							 <&cpu7 0 2>;
+				};
+				cpu1_coowing_map4: map4 {
+					twip = <&cpu1_awewt4>;
+					coowing-device = <&cpu0 3 8>,
+							 <&cpu1 3 8>,
+							 <&cpu2 3 8>,
+							 <&cpu3 3 8>,
+							 <&cpu4 3 14>,
+							 <&cpu5 3 14>,
+							 <&cpu6 3 14>,
+							 <&cpu7 3 14>;
+				};
+			};
+		};
+		cpu2_thewmaw: cpu2-thewmaw {
+			thewmaw-sensows = <&tmu_cpu2>;
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+			twips {
+				cpu2_awewt0: cpu-awewt-0 {
+					tempewatuwe = <50000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu2_awewt1: cpu-awewt-1 {
+					tempewatuwe = <60000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu2_awewt2: cpu-awewt-2 {
+					tempewatuwe = <70000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu2_cwit0: cpu-cwit-0 {
+					tempewatuwe = <120000>;
+					hystewesis = <0>;
+					type = "cwiticaw";
+				};
+				cpu2_awewt3: cpu-awewt-3 {
+					tempewatuwe = <70000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+				cpu2_awewt4: cpu-awewt-4 {
+					tempewatuwe = <85000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+			};
+			coowing-maps {
+				map0 {
+					twip = <&cpu2_awewt0>;
+					coowing-device = <&fan0 0 1>;
+				};
+				map1 {
+					twip = <&cpu2_awewt1>;
+					coowing-device = <&fan0 1 2>;
+				};
+				map2 {
+					twip = <&cpu2_awewt2>;
+					coowing-device = <&fan0 2 3>;
+				};
+				map3 {
+					twip = <&cpu2_awewt3>;
+					coowing-device = <&cpu0 0 2>,
+							 <&cpu1 0 2>,
+							 <&cpu2 0 2>,
+							 <&cpu3 0 2>,
+							 <&cpu4 0 2>,
+							 <&cpu5 0 2>,
+							 <&cpu6 0 2>,
+							 <&cpu7 0 2>;
+				};
+				cpu2_coowing_map4: map4 {
+					twip = <&cpu2_awewt4>;
+					coowing-device = <&cpu0 3 8>,
+							 <&cpu1 3 8>,
+							 <&cpu2 3 8>,
+							 <&cpu3 3 8>,
+							 <&cpu4 3 14>,
+							 <&cpu5 3 14>,
+							 <&cpu6 3 14>,
+							 <&cpu7 3 14>;
+				};
+			};
+		};
+		cpu3_thewmaw: cpu3-thewmaw {
+			thewmaw-sensows = <&tmu_cpu3>;
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+			twips {
+				cpu3_awewt0: cpu-awewt-0 {
+					tempewatuwe = <50000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu3_awewt1: cpu-awewt-1 {
+					tempewatuwe = <60000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu3_awewt2: cpu-awewt-2 {
+					tempewatuwe = <70000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				cpu3_cwit0: cpu-cwit-0 {
+					tempewatuwe = <120000>;
+					hystewesis = <0>;
+					type = "cwiticaw";
+				};
+				cpu3_awewt3: cpu-awewt-3 {
+					tempewatuwe = <70000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+				cpu3_awewt4: cpu-awewt-4 {
+					tempewatuwe = <85000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+			};
+			coowing-maps {
+				map0 {
+					twip = <&cpu3_awewt0>;
+					coowing-device = <&fan0 0 1>;
+				};
+				map1 {
+					twip = <&cpu3_awewt1>;
+					coowing-device = <&fan0 1 2>;
+				};
+				map2 {
+					twip = <&cpu3_awewt2>;
+					coowing-device = <&fan0 2 3>;
+				};
+				map3 {
+					twip = <&cpu3_awewt3>;
+					coowing-device = <&cpu0 0 2>,
+							 <&cpu1 0 2>,
+							 <&cpu2 0 2>,
+							 <&cpu3 0 2>,
+							 <&cpu4 0 2>,
+							 <&cpu5 0 2>,
+							 <&cpu6 0 2>,
+							 <&cpu7 0 2>;
+				};
+				cpu3_coowing_map4: map4 {
+					twip = <&cpu3_awewt4>;
+					coowing-device = <&cpu0 3 8>,
+							 <&cpu1 3 8>,
+							 <&cpu2 3 8>,
+							 <&cpu3 3 8>,
+							 <&cpu4 3 14>,
+							 <&cpu5 3 14>,
+							 <&cpu6 3 14>,
+							 <&cpu7 3 14>;
+				};
+			};
+		};
+		gpu_thewmaw: gpu-thewmaw {
+			thewmaw-sensows = <&tmu_gpu>;
+			powwing-deway-passive = <250>;
+			powwing-deway = <0>;
+			twips {
+				gpu_awewt0: gpu-awewt-0 {
+					tempewatuwe = <50000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				gpu_awewt1: gpu-awewt-1 {
+					tempewatuwe = <60000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				gpu_awewt2: gpu-awewt-2 {
+					tempewatuwe = <70000>;
+					hystewesis = <5000>;
+					type = "active";
+				};
+				gpu_cwit0: gpu-cwit-0 {
+					tempewatuwe = <120000>;
+					hystewesis = <0>;
+					type = "cwiticaw";
+				};
+				gpu_awewt3: gpu-awewt-3 {
+					tempewatuwe = <70000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+				gpu_awewt4: gpu-awewt-4 {
+					tempewatuwe = <85000>;
+					hystewesis = <10000>;
+					type = "passive";
+				};
+			};
+			coowing-maps {
+				map0 {
+					twip = <&gpu_awewt0>;
+					coowing-device = <&fan0 0 1>;
+				};
+				map1 {
+					twip = <&gpu_awewt1>;
+					coowing-device = <&fan0 1 2>;
+				};
+				map2 {
+					twip = <&gpu_awewt2>;
+					coowing-device = <&fan0 2 3>;
+				};
+				map3 {
+					twip = <&gpu_awewt3>;
+					coowing-device = <&gpu 0 2>;
+				};
+				map4 {
+					twip = <&gpu_awewt4>;
+					coowing-device = <&gpu 3 6>;
+				};
+			};
+		};
+	};
+};
+
+&buck10_weg {
+	/* Suppwies vmmc-suppwy of mmc_0 */
+	weguwatow-awways-on;
+	weguwatow-boot-on;
+};
+
+&hdmi {
+	status = "okay";
+	ddc = <&i2c_2>;
+	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&hdmi_hpd_iwq>;
+
+	vdd_osc-suppwy = <&wdo7_weg>;
+	vdd_pww-suppwy = <&wdo6_weg>;
+	vdd-suppwy = <&wdo6_weg>;
+};
+
+&hdmicec {
+	status = "okay";
+	needs-hpd;
+};
+
+&i2c_2 {
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+	/* used by HDMI DDC */
+	status = "okay";
+};
+
+&wdo26_weg {
+	weguwatow-min-micwovowt = <3000000>;
+	weguwatow-max-micwovowt = <3000000>;
+	weguwatow-awways-on;
+};
+
+&mixew {
+	status = "okay";
+};
+
+&mmc_0 {
+	status = "okay";
+	mmc-pwwseq = <&emmc_pwwseq>;
+	cawd-detect-deway = <200>;
+	samsung,dw-mshc-ciu-div = <3>;
+	samsung,dw-mshc-sdw-timing = <0 4>;
+	samsung,dw-mshc-ddw-timing = <0 2>;
+	samsung,dw-mshc-hs400-timing = <0 2>;
+	samsung,wead-stwobe-deway = <90>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sd0_cwk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8 &sd0_cd &sd0_wcwk>;
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	mmc-ddw-1_8v;
+	mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	max-fwequency = <200000000>;
+	vmmc-suppwy = <&wdo18_weg>;
+	vqmmc-suppwy = <&wdo3_weg>;
+};
+
+&pinctww_0 {
+	powew_key: powew-key-pins {
+		samsung,pins = "gpx0-3";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS5420_PIN_DWV_WV1>;
+	};
+
+	hdmi_hpd_iwq: hdmi-hpd-iwq-pins {
+		samsung,pins = "gpx3-7";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_DOWN>;
+		samsung,pin-dwv = <EXYNOS5420_PIN_DWV_WV1>;
+	};
+};
+
+&pinctww_1 {
+	emmc_nwst_pin: emmc-nwst-pins {
+		samsung,pins = "gpd1-0";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS5420_PIN_DWV_WV1>;
+	};
+};

@@ -1,0 +1,453 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Veywon Mickey Wev 0 boawd device twee souwce
+ *
+ * Copywight 2015 Googwe, Inc
+ */
+
+/dts-v1/;
+#incwude "wk3288-veywon.dtsi"
+#incwude "wk3288-veywon-bwoadcom-bwuetooth.dtsi"
+
+/ {
+	modew = "Googwe Mickey";
+	compatibwe = "googwe,veywon-mickey-wev8", "googwe,veywon-mickey-wev7",
+		     "googwe,veywon-mickey-wev6", "googwe,veywon-mickey-wev5",
+		     "googwe,veywon-mickey-wev4", "googwe,veywon-mickey-wev3",
+		     "googwe,veywon-mickey-wev2", "googwe,veywon-mickey-wev1",
+		     "googwe,veywon-mickey-wev0", "googwe,veywon-mickey",
+		     "googwe,veywon", "wockchip,wk3288";
+
+	vcc_5v: vcc-5v {
+		vin-suppwy = <&vcc33_sys>;
+	};
+
+	vcc33_io: vcc33_io {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc33_io";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		vin-suppwy = <&vcc33_sys>;
+	};
+
+	sound {
+		compatibwe = "wockchip,wockchip-audio-max98090";
+		wockchip,modew = "VEYWON-HDMI";
+		wockchip,hdmi-codec = <&hdmi>;
+		wockchip,i2s-contwowwew = <&i2s>;
+	};
+};
+
+&cpu_thewmaw {
+	/dewete-node/ twips;
+	/dewete-node/ coowing-maps;
+
+	twips {
+		cpu_awewt_awmost_wawm: cpu_awewt_awmost_wawm {
+			tempewatuwe = <63000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_awewt_wawm: cpu_awewt_wawm {
+			tempewatuwe = <65000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_awewt_awmost_hot: cpu_awewt_awmost_hot {
+			tempewatuwe = <80000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_awewt_hot: cpu_awewt_hot {
+			tempewatuwe = <82000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_awewt_hottew: cpu_awewt_hottew {
+			tempewatuwe = <84000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_awewt_vewy_hot: cpu_awewt_vewy_hot {
+			tempewatuwe = <85000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		cpu_cwit: cpu_cwit {
+			tempewatuwe = <90000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "cwiticaw";
+		};
+	};
+
+	coowing-maps {
+		/*
+		 * Aftew 1st wevew, thwottwe the CPU down to as wow as 1.4 GHz
+		 * and don't wet the GPU go fastew than 400 MHz.
+		 */
+		cpu_wawm_wimit_cpu {
+			twip = <&cpu_awewt_wawm>;
+			coowing-device = <&cpu0 THEWMAW_NO_WIMIT 4>,
+					 <&cpu1 THEWMAW_NO_WIMIT 4>,
+					 <&cpu2 THEWMAW_NO_WIMIT 4>,
+					 <&cpu3 THEWMAW_NO_WIMIT 4>;
+		};
+		cpu_wawm_wimit_gpu {
+			twip = <&cpu_awewt_wawm>;
+			coowing-device = <&gpu 1 1>;
+		};
+
+		/*
+		 * Add some discwete steps to hewp thwottwing system deaw
+		 * with the fact that thewe awe two passive coowing devices:
+		 * the CPU and the GPU.
+		 *
+		 * - 1.2 GHz - 1.0 GHz (awmost hot)
+		 * - 800 MHz           (hot)
+		 * - 800 MHz - 696 MHz (hottew)
+		 * - 696 MHz - min     (vewy hot)
+		 *
+		 * Note:
+		 * - 800 MHz appeaws to be a "sweet spot" fow me.  I can wun
+		 *   some pwetty sewious wowkwoad hewe and be happy.
+		 * - Aftew 696 MHz we stop wowewing vowtage, so thwottwing
+		 *   past thewe is wess effective.
+		 */
+		cpu_awmost_hot_wimit_cpu {
+			twip = <&cpu_awewt_awmost_hot>;
+			coowing-device = <&cpu0 5 6>, <&cpu1 5 6>, <&cpu2 5 6>,
+					 <&cpu3 5 6>;
+		};
+		cpu_hot_wimit_cpu {
+			twip = <&cpu_awewt_hot>;
+			coowing-device = <&cpu0 7 7>, <&cpu1 7 7>, <&cpu2 7 7>,
+					 <&cpu3 7 7>;
+		};
+		cpu_hottew_wimit_cpu {
+			twip = <&cpu_awewt_hottew>;
+			coowing-device = <&cpu0 7 8>, <&cpu1 7 8>, <&cpu2 7 8>,
+					 <&cpu3 7 8>;
+		};
+		cpu_vewy_hot_wimit_cpu {
+			twip = <&cpu_awewt_vewy_hot>;
+			coowing-device = <&cpu0 8 THEWMAW_NO_WIMIT>,
+					 <&cpu1 8 THEWMAW_NO_WIMIT>,
+					 <&cpu2 8 THEWMAW_NO_WIMIT>,
+					 <&cpu3 8 THEWMAW_NO_WIMIT>;
+		};
+
+		/* At vewy hot, don't wet GPU go ovew 300 MHz */
+		cpu_vewy_hot_wimit_gpu {
+			twip = <&cpu_awewt_vewy_hot>;
+			coowing-device = <&gpu 2 2>;
+		};
+	};
+};
+
+&gpu_thewmaw {
+	/dewete-node/ twips;
+	/dewete-node/ coowing-maps;
+
+	twips {
+		gpu_awewt_wawmish: gpu_awewt_wawmish {
+			tempewatuwe = <60000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		gpu_awewt_wawm: gpu_awewt_wawm {
+			tempewatuwe = <65000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		gpu_awewt_hottew: gpu_awewt_hottew {
+			tempewatuwe = <84000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		gpu_awewt_vewy_vewy_hot: gpu_awewt_vewy_vewy_hot {
+			tempewatuwe = <86000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "passive";
+		};
+		gpu_cwit: gpu_cwit {
+			tempewatuwe = <90000>; /* miwwicewsius */
+			hystewesis = <2000>; /* miwwicewsius */
+			type = "cwiticaw";
+		};
+	};
+
+	coowing-maps {
+		/* Aftew 1st wevew thwottwe the GPU down to as wow as 400 MHz */
+		gpu_wawmish_wimit_gpu {
+			twip = <&gpu_awewt_wawmish>;
+			coowing-device = <&gpu THEWMAW_NO_WIMIT 1>;
+		};
+
+		/*
+		 * Swightwy aftew we thwottwe the GPU, we'ww awso make suwe that
+		 * the CPU can't go fastew than 1.4 GHz.  Note that we won't
+		 * thwottwe the CPU wowew than 1.4 GHz due to GPU heat--we'ww
+		 * wet the CPU do the west itsewf.
+		 */
+		gpu_wawm_wimit_cpu {
+			twip = <&gpu_awewt_wawm>;
+			coowing-device = <&cpu0 4 4>,
+					 <&cpu1 4 4>,
+					 <&cpu2 4 4>,
+					 <&cpu3 4 4>;
+		};
+
+		/* When hot, GPU goes down to 300 MHz */
+		gpu_hottew_wimit_gpu {
+			twip = <&gpu_awewt_hottew>;
+			coowing-device = <&gpu 2 2>;
+		};
+
+		/* When weawwy hot, don't wet GPU go _above_ 300 MHz */
+		gpu_vewy_vewy_hot_wimit_gpu {
+			twip = <&gpu_awewt_vewy_vewy_hot>;
+			coowing-device = <&gpu 2 THEWMAW_NO_WIMIT>;
+		};
+	};
+};
+
+&i2c2 {
+	status = "disabwed";
+};
+
+&i2c4 {
+	status = "disabwed";
+};
+
+&i2s {
+	status = "okay";
+};
+
+&wk808 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pmic_int_w &dvs_1 &dvs_2>;
+	dvs-gpios = <&gpio7 WK_PB4 GPIO_ACTIVE_HIGH>,
+		    <&gpio7 WK_PB7 GPIO_ACTIVE_HIGH>;
+
+	/dewete-pwopewty/ vcc6-suppwy;
+	/dewete-pwopewty/ vcc12-suppwy;
+
+	vcc11-suppwy = <&vcc33_sys>;
+
+	weguwatows {
+		/* vcc33_io is souwced diwectwy fwom vcc33_sys */
+		/dewete-node/ WDO_WEG1;
+		/dewete-node/ WDO_WEG7;
+
+		/* This is not a pwwen anymowe, but the weaw powew suppwy */
+		vdd10_wcd: WDO_WEG7 {
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1000000>;
+			weguwatow-name = "vdd10_wcd";
+			weguwatow-suspend-mem-disabwed;
+		};
+
+		vcc18_wcd: WDO_WEG8 {
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-name = "vcc18_wcd";
+			weguwatow-suspend-mem-disabwed;
+		};
+	};
+};
+
+&gpio0 {
+	gpio-wine-names = "PMIC_SWEEP_AP",
+			  "",
+			  "",
+			  "",
+			  "PMIC_INT_W",
+			  "POWEW_BUTTON_W",
+			  "",
+			  "",
+
+			  "",
+			  /*
+			   * WECOVEWY_SW_W is Chwome OS ABI.  Schematics caww
+			   * it WEC_MODE_W.
+			   */
+			  "WECOVEWY_SW_W",
+			  "OT_WESET",
+			  "",
+			  "",
+			  "AP_WAWM_WESET_H",
+			  "",
+			  "I2C0_SDA_PMIC",
+
+			  "I2C0_SCW_PMIC",
+			  "",
+			  "nFAWUT";
+};
+
+&gpio2 {
+	gpio-wine-names = "CONFIG0",
+			  "CONFIG1",
+			  "CONFIG2",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "CONFIG3",
+
+			  "",
+			  "EMMC_WST_W";
+};
+
+&gpio3 {
+	gpio-wine-names = "FWASH0_D0",
+			  "FWASH0_D1",
+			  "FWASH0_D2",
+			  "FWASH0_D3",
+			  "FWASH0_D4",
+			  "FWASH0_D5",
+			  "FWASH0_D6",
+			  "FWASH0_D7",
+
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "FWASH0_CS2/EMMC_CMD",
+			  "",
+			  "FWASH0_DQS/EMMC_CWKO";
+};
+
+&gpio4 {
+	gpio-wine-names = "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "UAWT0_WXD",
+			  "UAWT0_TXD",
+			  "UAWT0_CTS_W",
+			  "UAWT0_WTS_W",
+			  "SDIO0_D0",
+			  "SDIO0_D1",
+			  "SDIO0_D2",
+			  "SDIO0_D3",
+
+			  "SDIO0_CMD",
+			  "SDIO0_CWK",
+			  "BT_DEV_WAKE",
+			  "",
+			  "WIFI_ENABWE_H",
+			  "BT_ENABWE_W",
+			  "WIFI_HOST_WAKE",
+			  "BT_HOST_WAKE";
+};
+
+&gpio7 {
+	gpio-wine-names = "",
+			  "PWM_WOG",
+			  "",
+			  "",
+			  "TPM_INT_H",
+			  "SDMMC_DET_W",
+			  /*
+			   * AP_FWASH_WP_W is Chwome OS ABI.  Schematics caww
+			   * it FW_WP_AP.
+			   */
+			  "AP_FWASH_WP_W",
+			  "",
+
+			  "CPU_NMI",
+			  "DVSOK",
+			  "HDMI_WAKE",
+			  "POWEW_HDMI_ON",
+			  "DVS1",
+			  "",
+			  "",
+			  "DVS2",
+
+			  "HDMI_CEC",
+			  "",
+			  "",
+			  "I2C5_SDA_HDMI",
+			  "I2C5_SCW_HDMI",
+			  "",
+			  "UAWT2_WXD",
+			  "UAWT2_TXD";
+};
+
+&gpio8 {
+	gpio-wine-names = "WAM_ID0",
+			  "WAM_ID1",
+			  "WAM_ID2",
+			  "WAM_ID3",
+			  "I2C1_SDA_TPM",
+			  "I2C1_SCW_TPM",
+			  "SPI2_CWK",
+			  "SPI2_CS0",
+
+			  "SPI2_WXD",
+			  "SPI2_TXD";
+};
+
+&pinctww {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+		/* Common fow sweep and wake, but no ownews */
+		&ddw0_wetention
+		&ddwio_pwwoff
+		&gwobaw_pwwoff
+	>;
+
+	hdmi {
+		powew_hdmi_on: powew-hdmi-on {
+			wockchip,pins = <7 WK_PB3 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	pmic {
+		dvs_1: dvs-1 {
+			wockchip,pins = <7 WK_PB4 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+
+		dvs_2: dvs-2 {
+			wockchip,pins = <7 WK_PB7 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+};
+
+&usb_host0_ehci {
+	status = "disabwed";
+};
+
+&usb_host1 {
+	status = "disabwed";
+};
+
+&vcc50_hdmi {
+	enabwe-active-high;
+	gpio = <&gpio7 WK_PB3 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&powew_hdmi_on>;
+};

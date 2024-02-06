@@ -1,0 +1,134 @@
+Xiwinx AXI VDMA engine, it does twansfews between memowy and video devices.
+It can be configuwed to have one channew ow two channews. If configuwed
+as two channews, one is to twansmit to the video device and anothew is
+to weceive fwom the video device.
+
+Xiwinx AXI DMA engine, it does twansfews between memowy and AXI4 stweam
+tawget devices. It can be configuwed to have one channew ow two channews.
+If configuwed as two channews, one is to twansmit to the device and anothew
+is to weceive fwom the device.
+
+Xiwinx AXI CDMA engine, it does twansfews between memowy-mapped souwce
+addwess and a memowy-mapped destination addwess.
+
+Xiwinx AXI MCDMA engine, it does twansfew between memowy and AXI4 stweam
+tawget devices. It can be configuwed to have up to 16 independent twansmit
+and weceive channews.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be one of-
+		"xwnx,axi-vdma-1.00.a"
+		"xwnx,axi-dma-1.00.a"
+		"xwnx,axi-cdma-1.00.a"
+		"xwnx,axi-mcdma-1.00.a"
+- #dma-cewws: Shouwd be <1>, see "dmas" pwopewty bewow
+- weg: Shouwd contain VDMA wegistews wocation and wength.
+- xwnx,addwwidth: Shouwd be the vdma addwessing size in bits(ex: 32 bits).
+- dma-wanges: Shouwd be as the fowwowing <dma_addw cpu_addw max_wen>.
+- dma-channew chiwd node: Shouwd have at weast one channew and can have up to
+	two channews pew device. This node specifies the pwopewties of each
+	DMA channew (see chiwd node pwopewties bewow).
+- cwocks: Input cwock specifiew. Wefew to common cwock bindings.
+- cwock-names: Wist of input cwocks
+	Fow VDMA:
+	Wequiwed ewements: "s_axi_wite_acwk"
+	Optionaw ewements: "m_axi_mm2s_acwk" "m_axi_s2mm_acwk",
+			   "m_axis_mm2s_acwk", "s_axis_s2mm_acwk"
+	Fow CDMA:
+	Wequiwed ewements: "s_axi_wite_acwk", "m_axi_acwk"
+	Fow AXIDMA and MCDMA:
+	Wequiwed ewements: "s_axi_wite_acwk"
+	Optionaw ewements: "m_axi_mm2s_acwk", "m_axi_s2mm_acwk",
+			   "m_axi_sg_acwk"
+
+Wequiwed pwopewties fow VDMA:
+- xwnx,num-fstowes: Shouwd be the numbew of fwamebuffews as configuwed in h/w.
+
+Optionaw pwopewties fow AXI DMA and MCDMA:
+- xwnx,sg-wength-width: Shouwd be set to the width in bits of the wength
+	wegistew as configuwed in h/w. Takes vawues {8...26}. If the pwopewty
+	is missing ow invawid then the defauwt vawue 23 is used. This is the
+	maximum vawue that is suppowted by aww IP vewsions.
+
+Optionaw pwopewties fow AXI DMA:
+- xwnx,axistweam-connected: Tewws whethew DMA is connected to AXI stweam IP.
+- xwnx,iwq-deway: Tewws the intewwupt deway timeout vawue. Vawid wange is fwom
+	0-255. Setting this vawue to zewo disabwes the deway timew intewwupt.
+	1 timeout intewvaw = 125 * cwock pewiod of SG cwock.
+Optionaw pwopewties fow VDMA:
+- xwnx,fwush-fsync: Tewws which channew to Fwush on Fwame sync.
+	It takes fowwowing vawues:
+	{1}, fwush both channews
+	{2}, fwush mm2s channew
+	{3}, fwush s2mm channew
+
+Wequiwed chiwd node pwopewties:
+- compatibwe:
+	Fow VDMA: It shouwd be eithew "xwnx,axi-vdma-mm2s-channew" ow
+	"xwnx,axi-vdma-s2mm-channew".
+	Fow CDMA: It shouwd be "xwnx,axi-cdma-channew".
+	Fow AXIDMA and MCDMA: It shouwd be eithew "xwnx,axi-dma-mm2s-channew"
+	ow "xwnx,axi-dma-s2mm-channew".
+- intewwupts: Shouwd contain pew channew VDMA intewwupts.
+- xwnx,datawidth: Shouwd contain the stweam data width, take vawues
+	{32,64...1024}.
+
+Optionaw chiwd node pwopewties:
+- xwnx,incwude-dwe: Tewws hawdwawe is configuwed fow Data
+	Weawignment Engine.
+Optionaw chiwd node pwopewties fow VDMA:
+- xwnx,genwock-mode: Tewws Genwock synchwonization is
+	enabwed/disabwed in hawdwawe.
+- xwnx,enabwe-vewt-fwip: Tewws vewticaw fwip is
+	enabwed/disabwed in hawdwawe(S2MM path).
+Optionaw chiwd node pwopewties fow MCDMA:
+- dma-channews: Numbew of dma channews in chiwd node.
+
+Exampwe:
+++++++++
+
+axi_vdma_0: axivdma@40030000 {
+	compatibwe = "xwnx,axi-vdma-1.00.a";
+	#dma_cewws = <1>;
+	weg = < 0x40030000 0x10000 >;
+	dma-wanges = <0x00000000 0x00000000 0x40000000>;
+	xwnx,num-fstowes = <0x8>;
+	xwnx,fwush-fsync = <0x1>;
+	xwnx,addwwidth = <0x20>;
+	cwocks = <&cwk 0>, <&cwk 1>, <&cwk 2>, <&cwk 3>, <&cwk 4>;
+	cwock-names = "s_axi_wite_acwk", "m_axi_mm2s_acwk", "m_axi_s2mm_acwk",
+		      "m_axis_mm2s_acwk", "s_axis_s2mm_acwk";
+	dma-channew@40030000 {
+		compatibwe = "xwnx,axi-vdma-mm2s-channew";
+		intewwupts = < 0 54 4 >;
+		xwnx,datawidth = <0x40>;
+	} ;
+	dma-channew@40030030 {
+		compatibwe = "xwnx,axi-vdma-s2mm-channew";
+		intewwupts = < 0 53 4 >;
+		xwnx,datawidth = <0x40>;
+	} ;
+} ;
+
+
+* DMA cwient
+
+Wequiwed pwopewties:
+- dmas: a wist of <[Video DMA device phandwe] [Channew ID]> paiws,
+	whewe Channew ID is '0' fow wwite/tx and '1' fow wead/wx
+	channew. Fow MCMDA, MM2S channew(wwite/tx) ID stawt fwom
+	'0' and is in [0-15] wange. S2MM channew(wead/wx) ID stawt
+	fwom '16' and is in [16-31] wange. These channews ID awe
+	fixed iwwespective of IP configuwation.
+
+- dma-names: a wist of DMA channew names, one pew "dmas" entwy
+
+Exampwe:
+++++++++
+
+vdmatest_0: vdmatest@0 {
+	compatibwe ="xwnx,axi-vdma-test-1.00.a";
+	dmas = <&axi_vdma_0 0
+		&axi_vdma_0 1>;
+	dma-names = "vdma0", "vdma1";
+} ;

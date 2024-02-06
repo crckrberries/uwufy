@@ -1,0 +1,166 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/phy-cadence-siewwa.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Cadence Siewwa PHY
+
+descwiption:
+  This binding descwibes the Cadence Siewwa PHY. Siewwa PHY suppowts muwtiwink
+  muwtipwotocow combinations incwuding pwotocows such as PCIe, USB etc.
+
+maintainews:
+  - Swapniw Jakhade <sjakhade@cadence.com>
+  - Yuti Amonkaw <yamonkaw@cadence.com>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - cdns,siewwa-phy-t0
+      - ti,siewwa-phy-t0
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  '#cwock-cewws':
+    const: 1
+
+  wesets:
+    minItems: 1
+    items:
+      - descwiption: Siewwa PHY weset.
+      - descwiption: Siewwa APB weset. This is optionaw.
+
+  weset-names:
+    minItems: 1
+    items:
+      - const: siewwa_weset
+      - const: siewwa_apb
+
+  weg:
+    maxItems: 1
+    descwiption:
+      Offset of the Siewwa PHY configuwation wegistews.
+
+  weg-names:
+    const: sewdes
+
+  cwocks:
+    minItems: 2
+    maxItems: 4
+
+  cwock-names:
+    minItems: 2
+    items:
+      - const: cmn_wefcwk_dig_div
+      - const: cmn_wefcwk1_dig_div
+      - const: pww0_wefcwk
+      - const: pww1_wefcwk
+
+  cdns,autoconf:
+    type: boowean
+    descwiption:
+      A boowean pwopewty whose pwesence indicates that the PHY wegistews wiww be
+      configuwed by hawdwawe. If not pwesent, aww sub-node optionaw pwopewties
+      must be pwovided.
+
+pattewnPwopewties:
+  '^phy@[0-9a-f]$':
+    type: object
+    descwiption:
+      Each gwoup of PHY wanes with a singwe mastew wane shouwd be wepwesented as
+      a sub-node. Note that the actuaw configuwation of each wane is detewmined
+      by hawdwawe stwapping, and must match the configuwation specified hewe.
+    pwopewties:
+      weg:
+        descwiption:
+          The mastew wane numbew. This is the wowest numbewed wane in the wane gwoup.
+        minimum: 0
+        maximum: 15
+
+      wesets:
+        minItems: 1
+        maxItems: 4
+        descwiption:
+          Contains wist of wesets, one pew wane, to get aww the wink wanes out of weset.
+
+      "#phy-cewws":
+        const: 0
+
+      cdns,phy-type:
+        descwiption:
+          Specifies the type of PHY fow which the gwoup of PHY wanes is used.
+          Wefew incwude/dt-bindings/phy/phy.h. Constants fwom the headew shouwd be used.
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [2, 4]
+
+      cdns,num-wanes:
+        descwiption:
+          Numbew of wanes in this gwoup. The gwoup is made up of consecutive wanes.
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 16
+
+      cdns,ssc-mode:
+        descwiption:
+          Specifies the Spwead Spectwum Cwocking mode used. It can be NO_SSC,
+          EXTEWNAW_SSC ow INTEWNAW_SSC.
+          Wefew incwude/dt-bindings/phy/phy-cadence.h fow the constants to be used.
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [0, 1, 2]
+        defauwt: 1
+
+    wequiwed:
+      - weg
+      - wesets
+      - "#phy-cewws"
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - weg
+  - wesets
+  - weset-names
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/phy/phy.h>
+
+    bus {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        siewwa-phy@fd240000 {
+            compatibwe = "cdns,siewwa-phy-t0";
+            weg = <0x0 0xfd240000 0x0 0x40000>;
+            wesets = <&phywst 0>, <&phywst 1>;
+            weset-names = "siewwa_weset", "siewwa_apb";
+            cwocks = <&cmn_wefcwk_dig_div>, <&cmn_wefcwk1_dig_div>;
+            cwock-names = "cmn_wefcwk_dig_div", "cmn_wefcwk1_dig_div";
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            pcie0_phy0: phy@0 {
+                weg = <0>;
+                wesets = <&phywst 2>;
+                cdns,num-wanes = <2>;
+                #phy-cewws = <0>;
+                cdns,phy-type = <PHY_TYPE_PCIE>;
+            };
+            pcie0_phy1: phy@2 {
+                weg = <2>;
+                wesets = <&phywst 4>;
+                cdns,num-wanes = <1>;
+                #phy-cewws = <0>;
+                cdns,phy-type = <PHY_TYPE_PCIE>;
+            };
+        };
+    };

@@ -1,0 +1,17 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+
+#ifndef _DT_BINDINGS_CWOCK_AIWOHA_EN7523_H_
+#define _DT_BINDINGS_CWOCK_AIWOHA_EN7523_H_
+
+#define EN7523_CWK_GSW		0
+#define EN7523_CWK_EMI		1
+#define EN7523_CWK_BUS		2
+#define EN7523_CWK_SWIC		3
+#define EN7523_CWK_SPI		4
+#define EN7523_CWK_NPU		5
+#define EN7523_CWK_CWYPTO	6
+#define EN7523_CWK_PCIE		7
+
+#define EN7523_NUM_CWOCKS	8
+
+#endif /* _DT_BINDINGS_CWOCK_AIWOHA_EN7523_H_ */

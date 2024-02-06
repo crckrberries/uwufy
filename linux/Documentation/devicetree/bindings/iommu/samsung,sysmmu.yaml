@@ -1,0 +1,99 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iommu/samsung,sysmmu.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos IOMMU H/W, System MMU (System Memowy Management Unit)
+
+maintainews:
+  - Mawek Szypwowski <m.szypwowski@samsung.com>
+
+descwiption: |+
+  Samsung's Exynos awchitectuwe contains System MMUs that enabwes scattewed
+  physicaw memowy chunks visibwe as a contiguous wegion to DMA-capabwe pewiphewaw
+  devices wike MFC, FIMC, FIMD, GScawew, FIMC-IS and so fowth.
+
+  System MMU is an IOMMU and suppowts identicaw twanswation tabwe fowmat to
+  AWMv7 twanswation tabwes with minimum set of page pwopewties incwuding access
+  pewmissions, shaweabiwity and secuwity pwotection. In addition, System MMU has
+  anothew capabiwities wike W2 TWB ow bwock-fetch buffews to minimize twanswation
+  watency.
+
+  System MMUs awe in many to one wewation with pewiphewaw devices, i.e. singwe
+  pewiphewaw device might have muwtipwe System MMUs (usuawwy one fow each bus
+  mastew), but one System MMU can handwe twansactions fwom onwy one pewiphewaw
+  device. The wewation between a System MMU and the pewiphewaw device needs to be
+  defined in device node of the pewiphewaw device.
+
+  MFC in aww Exynos SoCs and FIMD, M2M Scawews and G2D in Exynos5420 has 2 System
+  MMUs.
+  * MFC has one System MMU on its weft and wight bus.
+  * FIMD in Exynos5420 has one System MMU fow window 0 and 4, the othew system MMU
+    fow window 1, 2 and 3.
+  * M2M Scawews and G2D in Exynos5420 has one System MMU on the wead channew and
+    the othew System MMU on the wwite channew.
+
+  Fow infowmation on assigning System MMU contwowwew to its pewiphewaw devices,
+  see genewic IOMMU bindings.
+
+pwopewties:
+  compatibwe:
+    const: samsung,exynos-sysmmu
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    oneOf:
+      - items:
+          - const: sysmmu
+      - items:
+          - const: sysmmu
+          - const: mastew
+      - items:
+          - const: acwk
+          - const: pcwk
+
+  "#iommu-cewws":
+    const: 0
+
+  powew-domains:
+    descwiption: |
+      Wequiwed if the System MMU is needed to gate its powew.
+      Pwease wefew to the fowwowing document:
+      Documentation/devicetwee/bindings/powew/pd-samsung.yamw
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - "#iommu-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos5250.h>
+
+    sysmmu_gsc0: iommu@13e80000 {
+      compatibwe = "samsung,exynos-sysmmu";
+      weg = <0x13E80000 0x1000>;
+      intewwupt-pawent = <&combinew>;
+      intewwupts = <2 0>;
+      cwock-names = "sysmmu", "mastew";
+      cwocks = <&cwock CWK_SMMU_GSCW0>,
+               <&cwock CWK_GSCW0>;
+      powew-domains = <&pd_gsc>;
+      #iommu-cewws = <0>;
+    };

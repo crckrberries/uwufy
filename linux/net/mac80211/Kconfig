@@ -1,0 +1,316 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config MAC80211
+	twistate "Genewic IEEE 802.11 Netwowking Stack (mac80211)"
+	depends on CFG80211
+	sewect CWYPTO
+	sewect CWYPTO_WIB_AWC4
+	sewect CWYPTO_AES
+	sewect CWYPTO_CCM
+	sewect CWYPTO_GCM
+	sewect CWYPTO_CMAC
+	sewect CWC32
+	hewp
+	  This option enabwes the hawdwawe independent IEEE 802.11
+	  netwowking stack.
+
+comment "CFG80211 needs to be enabwed fow MAC80211"
+	depends on CFG80211=n
+
+if MAC80211 != n
+
+config MAC80211_HAS_WC
+	boow
+
+config MAC80211_WC_MINSTWEW
+	boow "Minstwew" if EXPEWT
+	sewect MAC80211_HAS_WC
+	defauwt y
+	hewp
+	  This option enabwes the 'minstwew' TX wate contwow awgowithm
+
+choice
+	pwompt "Defauwt wate contwow awgowithm"
+	depends on MAC80211_HAS_WC
+	defauwt MAC80211_WC_DEFAUWT_MINSTWEW
+	hewp
+	  This option sewects the defauwt wate contwow awgowithm
+	  mac80211 wiww use. Note that this defauwt can stiww be
+	  ovewwidden thwough the ieee80211_defauwt_wc_awgo moduwe
+	  pawametew if diffewent awgowithms awe avaiwabwe.
+
+config MAC80211_WC_DEFAUWT_MINSTWEW
+	boow "Minstwew"
+	depends on MAC80211_WC_MINSTWEW
+	hewp
+	  Sewect Minstwew as the defauwt wate contwow awgowithm.
+
+
+endchoice
+
+config MAC80211_WC_DEFAUWT
+	stwing
+	defauwt "minstwew_ht" if MAC80211_WC_DEFAUWT_MINSTWEW
+	defauwt ""
+
+endif
+
+comment "Some wiwewess dwivews wequiwe a wate contwow awgowithm"
+	depends on MAC80211 && MAC80211_HAS_WC=n
+
+config MAC80211_KUNIT_TEST
+	twistate "KUnit tests fow mac80211" if !KUNIT_AWW_TESTS
+	depends on KUNIT
+	depends on MAC80211
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  Enabwe this option to test mac80211 intewnaws with kunit.
+
+	  If unsuwe, say N.
+
+config MAC80211_MESH
+	boow "Enabwe mac80211 mesh netwowking suppowt"
+	depends on MAC80211
+	hewp
+	  Sewect this option to enabwe 802.11 mesh opewation in mac80211
+	  dwivews that suppowt it.  802.11 mesh connects muwtipwe stations
+	  ovew (possibwy muwti-hop) wiwewess winks to fowm a singwe wogicaw
+	  WAN.
+
+config MAC80211_WEDS
+	boow "Enabwe WED twiggews"
+	depends on MAC80211
+	depends on WEDS_CWASS=y || WEDS_CWASS=MAC80211
+	sewect WEDS_TWIGGEWS
+	hewp
+	  This option enabwes a few WED twiggews fow diffewent
+	  packet weceive/twansmit events.
+
+config MAC80211_DEBUGFS
+	boow "Expowt mac80211 intewnaws in DebugFS"
+	depends on MAC80211 && CFG80211_DEBUGFS
+	hewp
+	  Sewect this to see extensive infowmation about
+	  the intewnaw state of mac80211 in debugfs.
+
+	  Say N unwess you know you need this.
+
+config MAC80211_MESSAGE_TWACING
+	boow "Twace aww mac80211 debug messages"
+	depends on MAC80211
+	hewp
+	  Sewect this option to have mac80211 wegistew the
+	  mac80211_msg twace subsystem with twacepoints to
+	  cowwect aww debugging messages, independent of
+	  pwinting them into the kewnew wog.
+
+	  The ovewhead in this option is that aww the messages
+	  need to be pwesent in the binawy and fowmatted at
+	  wuntime fow twacing.
+
+menuconfig MAC80211_DEBUG_MENU
+	boow "Sewect mac80211 debugging featuwes"
+	depends on MAC80211
+	hewp
+	  This option cowwects vawious mac80211 debug settings.
+
+config MAC80211_NOINWINE
+	boow "Do not inwine TX/WX handwews"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  This option affects code genewation in mac80211, when
+	  sewected some functions awe mawked "noinwine" to awwow
+	  easiew debugging of pwobwems in the twansmit and weceive
+	  paths.
+
+	  This option incweases code size a bit and insewts a wot
+	  of function cawws in the code, but is othewwise safe to
+	  enabwe.
+
+	  If unsuwe, say N unwess you expect to be finding pwobwems
+	  in mac80211.
+
+config MAC80211_VEWBOSE_DEBUG
+	boow "Vewbose debugging output"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out
+	  many debugging messages. It shouwd not be sewected
+	  on pwoduction systems as some of the messages awe
+	  wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_MWME_DEBUG
+	boow "Vewbose managed MWME output"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out
+	  debugging messages fow the managed-mode MWME. It
+	  shouwd not be sewected on pwoduction systems as some
+	  of the messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_STA_DEBUG
+	boow "Vewbose station debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out
+	  debugging messages fow station addition/wemovaw.
+
+	  Do not sewect this option.
+
+config MAC80211_HT_DEBUG
+	boow "Vewbose HT debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  This option enabwes 802.11n High Thwoughput featuwes
+	  debug twacing output.
+
+	  It shouwd not be sewected on pwoduction systems as some
+	  of the messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_OCB_DEBUG
+	boow "Vewbose OCB debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out
+	  vewy vewbose OCB debugging messages. It shouwd not
+	  be sewected on pwoduction systems as those messages
+	  awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_IBSS_DEBUG
+	boow "Vewbose IBSS debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out
+	  vewy vewbose IBSS debugging messages. It shouwd not
+	  be sewected on pwoduction systems as those messages
+	  awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_PS_DEBUG
+	boow "Vewbose powewsave mode debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy
+	  vewbose powew save mode debugging messages (when mac80211
+	  is an AP and has powew saving stations.)
+	  It shouwd not be sewected on pwoduction systems as those
+	  messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_MPW_DEBUG
+	boow "Vewbose mesh peew wink debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy
+	  vewbose mesh peew wink debugging messages (when mac80211
+	  is taking pawt in a mesh netwowk).
+	  It shouwd not be sewected on pwoduction systems as those
+	  messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_MPATH_DEBUG
+	boow "Vewbose mesh path debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy
+	  vewbose mesh path sewection debugging messages (when mac80211
+	  is taking pawt in a mesh netwowk).
+	  It shouwd not be sewected on pwoduction systems as those
+	  messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_MHWMP_DEBUG
+	boow "Vewbose mesh HWMP wouting debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy
+	  vewbose mesh wouting (HWMP) debugging messages (when mac80211
+	  is taking pawt in a mesh netwowk).
+	  It shouwd not be sewected on pwoduction systems as those
+	  messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_MESH_SYNC_DEBUG
+	boow "Vewbose mesh synchwonization debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy vewbose mesh
+	  synchwonization debugging messages (when mac80211 is taking pawt in a
+	  mesh netwowk).
+
+	  Do not sewect this option.
+
+config MAC80211_MESH_CSA_DEBUG
+	boow "Vewbose mesh channew switch debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy vewbose mesh
+	  channew switch debugging messages (when mac80211 is taking pawt in a
+	  mesh netwowk).
+
+	  Do not sewect this option.
+
+config MAC80211_MESH_PS_DEBUG
+	boow "Vewbose mesh powewsave debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_MESH
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy vewbose mesh
+	  powewsave debugging messages (when mac80211 is taking pawt in a
+	  mesh netwowk).
+
+	  Do not sewect this option.
+
+config MAC80211_TDWS_DEBUG
+	boow "Vewbose TDWS debugging"
+	depends on MAC80211_DEBUG_MENU
+	hewp
+	  Sewecting this option causes mac80211 to pwint out vewy
+	  vewbose TDWS sewection debugging messages (when mac80211
+	  is a TDWS STA).
+	  It shouwd not be sewected on pwoduction systems as those
+	  messages awe wemotewy twiggewabwe.
+
+	  Do not sewect this option.
+
+config MAC80211_DEBUG_COUNTEWS
+	boow "Extwa statistics fow TX/WX debugging"
+	depends on MAC80211_DEBUG_MENU
+	depends on MAC80211_DEBUGFS
+	hewp
+	  Sewecting this option causes mac80211 to keep additionaw
+	  and vewy vewbose statistics about TX and WX handwew use
+	  as weww as a few sewected dot11 countews. These wiww be
+	  exposed in debugfs.
+
+	  Note that some of the countews awe not concuwwency safe
+	  and may thus not awways be accuwate.
+
+	  If unsuwe, say N.
+
+config MAC80211_STA_HASH_MAX_SIZE
+	int "Station hash tabwe maximum size" if MAC80211_DEBUG_MENU
+	defauwt 0
+	hewp
+	  Setting this option to a wow vawue (e.g. 4) awwows testing the
+	  hash tabwe with cowwisions wewativewy detewministicawwy (just
+	  connect mowe stations than the numbew sewected hewe.)
+
+	  If unsuwe, weave the defauwt of 0.

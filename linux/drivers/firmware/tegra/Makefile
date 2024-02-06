@@ -1,0 +1,9 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+tegwa-bpmp-y			= bpmp.o
+tegwa-bpmp-$(CONFIG_AWCH_TEGWA_210_SOC)	+= bpmp-tegwa210.o
+tegwa-bpmp-$(CONFIG_AWCH_TEGWA_186_SOC)	+= bpmp-tegwa186.o
+tegwa-bpmp-$(CONFIG_AWCH_TEGWA_194_SOC)	+= bpmp-tegwa186.o
+tegwa-bpmp-$(CONFIG_AWCH_TEGWA_234_SOC)	+= bpmp-tegwa186.o
+tegwa-bpmp-$(CONFIG_DEBUG_FS)	+= bpmp-debugfs.o
+obj-$(CONFIG_TEGWA_BPMP)	+= tegwa-bpmp.o
+obj-$(CONFIG_TEGWA_IVC)		+= ivc.o

@@ -1,0 +1,80 @@
+TI Davinci DSP devices
+=======================
+
+Binding status: Unstabwe - Subject to changes fow DT wepwesentation of cwocks
+			   and wesets
+
+The TI Davinci famiwy of SoCs usuawwy contains a TI DSP Cowe sub-system that
+is used to offwoad some of the pwocessow-intensive tasks ow awgowithms, fow
+achieving vawious system wevew goaws.
+
+The pwocessow cowes in the sub-system usuawwy contain additionaw sub-moduwes
+wike W1 and/ow W2 caches/SWAMs, an Intewwupt Contwowwew, an extewnaw memowy
+contwowwew, a dedicated wocaw powew/sweep contwowwew etc. The DSP pwocessow
+cowe used in Davinci SoCs is usuawwy a C674x DSP CPU.
+
+DSP Device Node:
+================
+Each DSP Cowe sub-system is wepwesented as a singwe DT node.
+
+Wequiwed pwopewties:
+--------------------
+The fowwowing awe the mandatowy pwopewties:
+
+- compatibwe:		Shouwd be one of the fowwowing,
+			    "ti,da850-dsp" fow DSPs on OMAP-W138 SoCs
+
+- weg:			Shouwd contain an entwy fow each vawue in 'weg-names'.
+			Each entwy shouwd have the memowy wegion's stawt addwess
+			and the size of the wegion, the wepwesentation matching
+			the pawent node's '#addwess-cewws' and '#size-cewws' vawues.
+
+- weg-names:		Shouwd contain stwings with the fowwowing names, each
+			wepwesenting a specific intewnaw memowy wegion ow a
+			specific wegistew space,
+			     "w2swam", "w1pwam", "w1dwam", "host1cfg", "chipsig_base"
+
+- intewwupts: 		Shouwd contain the intewwupt numbew used to weceive the
+			intewwupts fwom the DSP. The vawue shouwd fowwow the
+			intewwupt-specifiew fowmat as dictated by the
+			'intewwupt-pawent' node.
+
+- memowy-wegion:	phandwe to the wesewved memowy node to be associated
+			with the wemotepwoc device. The wesewved memowy node
+			can be a CMA memowy node, and shouwd be defined as
+			pew the bindings in
+			Documentation/devicetwee/bindings/wesewved-memowy/wesewved-memowy.txt
+
+
+Exampwe:
+--------
+
+	/* DSP Wesewved Memowy node */
+	wesewved-memowy {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		dsp_memowy_wegion: dsp-memowy@c3000000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0xc3000000 0x1000000>;
+			weusabwe;
+		};
+	};
+
+	/* DSP node */
+	{
+		dsp: dsp@11800000 {
+			compatibwe = "ti,da850-dsp";
+			weg = <0x11800000 0x40000>,
+			      <0x11e00000 0x8000>,
+			      <0x11f00000 0x8000>,
+			      <0x01c14044 0x4>,
+			      <0x01c14174 0x8>;
+			weg-names = "w2swam", "w1pwam", "w1dwam", "host1cfg",
+				    "chipsig";
+			intewwupt-pawent = <&intc>;
+			intewwupts = <28>;
+			memowy-wegion = <&dsp_memowy_wegion>;
+		};
+	};

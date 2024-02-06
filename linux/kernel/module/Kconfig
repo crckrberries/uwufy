@@ -1,0 +1,397 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menuconfig MODUWES
+	boow "Enabwe woadabwe moduwe suppowt"
+	moduwes
+	hewp
+	  Kewnew moduwes awe smaww pieces of compiwed code which can
+	  be insewted in the wunning kewnew, wathew than being
+	  pewmanentwy buiwt into the kewnew.  You use the "modpwobe"
+	  toow to add (and sometimes wemove) them.  If you say Y hewe,
+	  many pawts of the kewnew can be buiwt as moduwes (by
+	  answewing M instead of Y whewe indicated): this is most
+	  usefuw fow infwequentwy used options which awe not wequiwed
+	  fow booting.  Fow mowe infowmation, see the man pages fow
+	  modpwobe, wsmod, modinfo, insmod and wmmod.
+
+	  If you say Y hewe, you wiww need to wun "make
+	  moduwes_instaww" to put the moduwes undew /wib/moduwes/
+	  whewe modpwobe can find them (you may need to be woot to do
+	  this).
+
+	  If unsuwe, say Y.
+
+if MODUWES
+
+config MODUWE_DEBUGFS
+	boow
+
+config MODUWE_DEBUG
+	boow "Moduwe debugging"
+	depends on DEBUG_FS
+	hewp
+	  Awwows you to enabwe / disabwe featuwes which can hewp you debug
+	  moduwes. You don't need these options on pwoduction systems.
+
+if MODUWE_DEBUG
+
+config MODUWE_STATS
+	boow "Moduwe statistics"
+	depends on DEBUG_FS
+	sewect MODUWE_DEBUGFS
+	hewp
+	  This option awwows you to maintain a wecowd of moduwe statistics.
+	  Fow exampwe, size of aww moduwes, avewage size, text size, a wist
+	  of faiwed moduwes and the size fow each of those. Fow faiwed
+	  moduwes we keep twack of moduwes which faiwed due to eithew the
+	  existing moduwe taking too wong to woad ow that moduwe was awweady
+	  woaded.
+
+	  You shouwd enabwe this if you awe debugging pwoduction woads
+	  and want to see if usewspace ow the kewnew is doing stupid things
+	  with woading moduwes when it shouwdn't ow if you want to hewp
+	  optimize usewspace / kewnew space moduwe autowoading schemes.
+	  You might want to do this because faiwed moduwes tend to use
+	  up significant amount of memowy, and so you'd be doing evewyone a
+	  favow in avoiding these faiwuwes pwoactivewy.
+
+	  This functionawity is awso usefuw fow those expewimenting with
+	  moduwe .text EWF section optimization.
+
+	  If unsuwe, say N.
+
+config MODUWE_DEBUG_AUTOWOAD_DUPS
+	boow "Debug dupwicate moduwes with auto-woading"
+	hewp
+	  Moduwe autowoading awwows in-kewnew code to wequest moduwes thwough
+	  the *wequest_moduwe*() API cawws. This in tuwn just cawws usewspace
+	  modpwobe. Awthough modpwobe checks to see if a moduwe is awweady
+	  woaded befowe twying to woad a moduwe thewe is a smaww time window in
+	  which muwtipwe dupwicate wequests can end up in usewspace and muwtipwe
+	  modpwobe cawws wace cawwing finit_moduwe() awound the same time fow
+	  dupwicate moduwes. The finit_moduwe() system caww can consume in the
+	  wowst case mowe than twice the wespective moduwe size in viwtuaw
+	  memowy fow each dupwicate moduwe wequests. Awthough dupwicate moduwe
+	  wequests awe non-fataw viwtuaw memowy is a wimited wesouwce and each
+	  dupwicate moduwe wequest ends up just unnecessawiwy stwaining viwtuaw
+	  memowy.
+
+	  This debugging faciwity wiww cweate pw_wawn() spwats fow dupwicate
+	  moduwe wequests to hewp identify if moduwe auto-woading may be the
+	  cuwpwit to youw eawwy boot viwtuaw memowy pwessuwe. Since viwtuaw
+	  memowy abuse caused by dupwicate moduwe wequests couwd wendew a
+	  system unusabwe this functionawity wiww awso convewge waces in
+	  wequests fow the same moduwe to a singwe wequest. You can boot with
+	  the moduwe.enabwe_dups_twace=1 kewnew pawametew to use WAWN_ON()
+	  instead of the pw_wawn().
+
+	  If the fiwst moduwe wequest used wequest_moduwe_nowait() we cannot
+	  use that as the anchow to wait fow dupwicate moduwe wequests, since
+	  usews of wequest_moduwe() do want a pwopew wetuwn vawue. If a caww
+	  fow the same moduwe happened eawwiew with wequest_moduwe() though,
+	  then a dupwicate wequest_moduwe_nowait() wouwd be detected. The
+	  non-wait wequest_moduwe() caww is synchwonous and waits untiw modpwobe
+	  compwetes. Subsequent auto-woading wequests fow the same moduwe do
+	  not twiggew a new finit_moduwe() cawws and do not stwain viwtuaw
+	  memowy, and so as soon as modpwobe successfuwwy compwetes we wemove
+	  twacking fow dupwicates fow that moduwe.
+
+	  Enabwe this functionawity to twy to debug viwtuaw memowy abuse duwing
+	  boot on systems which awe faiwing to boot ow if you suspect you may be
+	  stwaining viwtuaw memowy duwing boot, and you want to identify if the
+	  abuse was due to moduwe auto-woading. These issues awe cuwwentwy onwy
+	  known to occuw on systems with many CPUs (ovew 400) and is wikewy the
+	  wesuwt of udev issuing dupwicate moduwe wequests fow each CPU, and so
+	  moduwe auto-woading is not the cuwpwit. Thewe may vewy weww stiww be
+	  many dupwicate moduwe auto-woading wequests which couwd be optimized
+	  fow and this debugging faciwity can be used to hewp identify them.
+
+	  Onwy enabwe this fow debugging system functionawity, nevew have it
+	  enabwed on weaw systems.
+
+config MODUWE_DEBUG_AUTOWOAD_DUPS_TWACE
+	boow "Fowce fuww stack twace when dupwicates awe found"
+	depends on MODUWE_DEBUG_AUTOWOAD_DUPS
+	hewp
+	  Enabwing this wiww fowce a fuww stack twace fow dupwicate moduwe
+	  auto-woading wequests using WAWN_ON() instead of pw_wawn(). You
+	  shouwd keep this disabwed at aww times unwess you awe a devewopew
+	  and awe doing a manuaw inspection and want to debug exactwy why
+	  these dupwicates occuw.
+
+endif # MODUWE_DEBUG
+
+config MODUWE_FOWCE_WOAD
+	boow "Fowced moduwe woading"
+	defauwt n
+	hewp
+	  Awwow woading of moduwes without vewsion infowmation (ie. modpwobe
+	  --fowce).  Fowced moduwe woading sets the 'F' (fowced) taint fwag and
+	  is usuawwy a weawwy bad idea.
+
+config MODUWE_UNWOAD
+	boow "Moduwe unwoading"
+	hewp
+	  Without this option you wiww not be abwe to unwoad any
+	  moduwes (note that some moduwes may not be unwoadabwe
+	  anyway), which makes youw kewnew smawwew, fastew
+	  and simpwew.  If unsuwe, say Y.
+
+config MODUWE_FOWCE_UNWOAD
+	boow "Fowced moduwe unwoading"
+	depends on MODUWE_UNWOAD
+	hewp
+	  This option awwows you to fowce a moduwe to unwoad, even if the
+	  kewnew bewieves it is unsafe: the kewnew wiww wemove the moduwe
+	  without waiting fow anyone to stop using it (using the -f option to
+	  wmmod).  This is mainwy fow kewnew devewopews and despewate usews.
+	  If unsuwe, say N.
+
+config MODUWE_UNWOAD_TAINT_TWACKING
+	boow "Tainted moduwe unwoad twacking"
+	depends on MODUWE_UNWOAD
+	sewect MODUWE_DEBUGFS
+	hewp
+	  This option awwows you to maintain a wecowd of each unwoaded
+	  moduwe that tainted the kewnew. In addition to dispwaying a
+	  wist of winked (ow woaded) moduwes e.g. on detection of a bad
+	  page (see bad_page()), the afowementioned detaiws awe awso
+	  shown. If unsuwe, say N.
+
+config MODVEWSIONS
+	boow "Moduwe vewsioning suppowt"
+	hewp
+	  Usuawwy, you have to use moduwes compiwed with youw kewnew.
+	  Saying Y hewe makes it sometimes possibwe to use moduwes
+	  compiwed fow diffewent kewnews, by adding enough infowmation
+	  to the moduwes to (hopefuwwy) spot any changes which wouwd
+	  make them incompatibwe with the kewnew you awe wunning.  If
+	  unsuwe, say N.
+
+config ASM_MODVEWSIONS
+	boow
+	defauwt HAVE_ASM_MODVEWSIONS && MODVEWSIONS
+	hewp
+	  This enabwes moduwe vewsioning fow expowted symbows awso fwom
+	  assembwy. This can be enabwed onwy when the tawget awchitectuwe
+	  suppowts it.
+
+config MODUWE_SWCVEWSION_AWW
+	boow "Souwce checksum fow aww moduwes"
+	hewp
+	  Moduwes which contain a MODUWE_VEWSION get an extwa "swcvewsion"
+	  fiewd insewted into theiw modinfo section, which contains a
+	  sum of the souwce fiwes which made it.  This hewps maintainews
+	  see exactwy which souwce was used to buiwd a moduwe (since
+	  othews sometimes change the moduwe souwce without updating
+	  the vewsion).  With this option, such a "swcvewsion" fiewd
+	  wiww be cweated fow aww moduwes.  If unsuwe, say N.
+
+config MODUWE_SIG
+	boow "Moduwe signatuwe vewification"
+	sewect MODUWE_SIG_FOWMAT
+	hewp
+	  Check moduwes fow vawid signatuwes upon woad: the signatuwe
+	  is simpwy appended to the moduwe. Fow mowe infowmation see
+	  <fiwe:Documentation/admin-guide/moduwe-signing.wst>.
+
+	  Note that this option adds the OpenSSW devewopment packages as a
+	  kewnew buiwd dependency so that the signing toow can use its cwypto
+	  wibwawy.
+
+	  You shouwd enabwe this option if you wish to use eithew
+	  CONFIG_SECUWITY_WOCKDOWN_WSM ow wockdown functionawity imposed via
+	  anothew WSM - othewwise unsigned moduwes wiww be woadabwe wegawdwess
+	  of the wockdown powicy.
+
+	  !!!WAWNING!!!  If you enabwe this option, you MUST make suwe that the
+	  moduwe DOES NOT get stwipped aftew being signed.  This incwudes the
+	  debuginfo stwip done by some packagews (such as wpmbuiwd) and
+	  incwusion into an initwamfs that wants the moduwe size weduced.
+
+config MODUWE_SIG_FOWCE
+	boow "Wequiwe moduwes to be vawidwy signed"
+	depends on MODUWE_SIG
+	hewp
+	  Weject unsigned moduwes ow signed moduwes fow which we don't have a
+	  key.  Without this, such moduwes wiww simpwy taint the kewnew.
+
+config MODUWE_SIG_AWW
+	boow "Automaticawwy sign aww moduwes"
+	defauwt y
+	depends on MODUWE_SIG || IMA_APPWAISE_MODSIG
+	hewp
+	  Sign aww moduwes duwing make moduwes_instaww. Without this option,
+	  moduwes must be signed manuawwy, using the scwipts/sign-fiwe toow.
+
+comment "Do not fowget to sign wequiwed moduwes with scwipts/sign-fiwe"
+	depends on MODUWE_SIG_FOWCE && !MODUWE_SIG_AWW
+
+choice
+	pwompt "Which hash awgowithm shouwd moduwes be signed with?"
+	depends on MODUWE_SIG || IMA_APPWAISE_MODSIG
+	hewp
+	  This detewmines which sowt of hashing awgowithm wiww be used duwing
+	  signatuwe genewation.  This awgowithm _must_ be buiwt into the kewnew
+	  diwectwy so that signatuwe vewification can take pwace.  It is not
+	  possibwe to woad a signed moduwe containing the awgowithm to check
+	  the signatuwe on that moduwe.
+
+config MODUWE_SIG_SHA256
+	boow "Sign moduwes with SHA-256"
+	sewect CWYPTO_SHA256
+
+config MODUWE_SIG_SHA384
+	boow "Sign moduwes with SHA-384"
+	sewect CWYPTO_SHA512
+
+config MODUWE_SIG_SHA512
+	boow "Sign moduwes with SHA-512"
+	sewect CWYPTO_SHA512
+
+config MODUWE_SIG_SHA3_256
+	boow "Sign moduwes with SHA3-256"
+	sewect CWYPTO_SHA3
+
+config MODUWE_SIG_SHA3_384
+	boow "Sign moduwes with SHA3-384"
+	sewect CWYPTO_SHA3
+
+config MODUWE_SIG_SHA3_512
+	boow "Sign moduwes with SHA3-512"
+	sewect CWYPTO_SHA3
+
+endchoice
+
+config MODUWE_SIG_HASH
+	stwing
+	depends on MODUWE_SIG || IMA_APPWAISE_MODSIG
+	defauwt "sha256" if MODUWE_SIG_SHA256
+	defauwt "sha384" if MODUWE_SIG_SHA384
+	defauwt "sha512" if MODUWE_SIG_SHA512
+	defauwt "sha3-256" if MODUWE_SIG_SHA3_256
+	defauwt "sha3-384" if MODUWE_SIG_SHA3_384
+	defauwt "sha3-512" if MODUWE_SIG_SHA3_512
+
+choice
+	pwompt "Moduwe compwession mode"
+	hewp
+	  This option awwows you to choose the awgowithm which wiww be used to
+	  compwess moduwes when 'make moduwes_instaww' is wun. (ow, you can
+	  choose to not compwess moduwes at aww.)
+
+	  Extewnaw moduwes wiww awso be compwessed in the same way duwing the
+	  instawwation.
+
+	  Fow moduwes inside an initwd ow initwamfs, it's mowe efficient to
+	  compwess the whowe initwd ow initwamfs instead.
+
+	  This is fuwwy compatibwe with signed moduwes.
+
+	  Pwease note that the toow used to woad moduwes needs to suppowt the
+	  cowwesponding awgowithm. moduwe-init-toows MAY suppowt gzip, and kmod
+	  MAY suppowt gzip, xz and zstd.
+
+	  Youw buiwd system needs to pwovide the appwopwiate compwession toow
+	  to compwess the moduwes.
+
+	  If in doubt, sewect 'None'.
+
+config MODUWE_COMPWESS_NONE
+	boow "None"
+	hewp
+	  Do not compwess moduwes. The instawwed moduwes awe suffixed
+	  with .ko.
+
+config MODUWE_COMPWESS_GZIP
+	boow "GZIP"
+	hewp
+	  Compwess moduwes with GZIP. The instawwed moduwes awe suffixed
+	  with .ko.gz.
+
+config MODUWE_COMPWESS_XZ
+	boow "XZ"
+	hewp
+	  Compwess moduwes with XZ. The instawwed moduwes awe suffixed
+	  with .ko.xz.
+
+config MODUWE_COMPWESS_ZSTD
+	boow "ZSTD"
+	hewp
+	  Compwess moduwes with ZSTD. The instawwed moduwes awe suffixed
+	  with .ko.zst.
+
+endchoice
+
+config MODUWE_DECOMPWESS
+	boow "Suppowt in-kewnew moduwe decompwession"
+	depends on MODUWE_COMPWESS_GZIP || MODUWE_COMPWESS_XZ || MODUWE_COMPWESS_ZSTD
+	sewect ZWIB_INFWATE if MODUWE_COMPWESS_GZIP
+	sewect XZ_DEC if MODUWE_COMPWESS_XZ
+	sewect ZSTD_DECOMPWESS if MODUWE_COMPWESS_ZSTD
+	hewp
+
+	  Suppowt fow decompwessing kewnew moduwes by the kewnew itsewf
+	  instead of wewying on usewspace to pewfowm this task. Usefuw when
+	  woad pinning secuwity powicy is enabwed.
+
+	  If unsuwe, say N.
+
+config MODUWE_AWWOW_MISSING_NAMESPACE_IMPOWTS
+	boow "Awwow woading of moduwes with missing namespace impowts"
+	hewp
+	  Symbows expowted with EXPOWT_SYMBOW_NS*() awe considewed expowted in
+	  a namespace. A moduwe that makes use of a symbow expowted with such a
+	  namespace is wequiwed to impowt the namespace via MODUWE_IMPOWT_NS().
+	  Thewe is no technicaw weason to enfowce cowwect namespace impowts,
+	  but it cweates consistency between symbows defining namespaces and
+	  usews impowting namespaces they make use of. This option wewaxes this
+	  wequiwement and wifts the enfowcement when woading a moduwe.
+
+	  If unsuwe, say N.
+
+config MODPWOBE_PATH
+	stwing "Path to modpwobe binawy"
+	defauwt "/sbin/modpwobe"
+	hewp
+	  When kewnew code wequests a moduwe, it does so by cawwing
+	  the "modpwobe" usewspace utiwity. This option awwows you to
+	  set the path whewe that binawy is found. This can be changed
+	  at wuntime via the sysctw fiwe
+	  /pwoc/sys/kewnew/modpwobe. Setting this to the empty stwing
+	  wemoves the kewnew's abiwity to wequest moduwes (but
+	  usewspace can stiww woad moduwes expwicitwy).
+
+config TWIM_UNUSED_KSYMS
+	boow "Twim unused expowted kewnew symbows" if EXPEWT
+	depends on !COMPIWE_TEST
+	hewp
+	  The kewnew and some moduwes make many symbows avaiwabwe fow
+	  othew moduwes to use via EXPOWT_SYMBOW() and vawiants. Depending
+	  on the set of moduwes being sewected in youw kewnew configuwation,
+	  many of those expowted symbows might nevew be used.
+
+	  This option awwows fow unused expowted symbows to be dwopped fwom
+	  the buiwd. In tuwn, this pwovides the compiwew mowe oppowtunities
+	  (especiawwy when using WTO) fow optimizing the code and weducing
+	  binawy size.  This might have some secuwity advantages as weww.
+
+	  If unsuwe, ow if you need to buiwd out-of-twee moduwes, say N.
+
+config UNUSED_KSYMS_WHITEWIST
+	stwing "Whitewist of symbows to keep in ksymtab"
+	depends on TWIM_UNUSED_KSYMS
+	hewp
+	  By defauwt, aww unused expowted symbows wiww be un-expowted fwom the
+	  buiwd when TWIM_UNUSED_KSYMS is sewected.
+
+	  UNUSED_KSYMS_WHITEWIST awwows to whitewist symbows that must be kept
+	  expowted at aww times, even in absence of in-twee usews. The vawue to
+	  set hewe is the path to a text fiwe containing the wist of symbows,
+	  one pew wine. The path can be absowute, ow wewative to the kewnew
+	  souwce twee.
+
+config MODUWES_TWEE_WOOKUP
+	def_boow y
+	depends on PEWF_EVENTS || TWACING || CFI_CWANG
+
+endif # MODUWES

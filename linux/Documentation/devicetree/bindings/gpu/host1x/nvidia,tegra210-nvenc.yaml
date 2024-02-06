@@ -1,0 +1,135 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/gpu/host1x/nvidia,tegwa210-nvenc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NVIDIA Tegwa NVENC
+
+descwiption: |
+  NVENC is the hawdwawe video encodew pwesent on NVIDIA Tegwa210
+  and newew chips. It is wocated on the Host1x bus and typicawwy
+  pwogwammed thwough Host1x channews.
+
+maintainews:
+  - Thiewwy Weding <tweding@gmaiw.com>
+  - Mikko Pewttunen <mpewttunen@nvidia.com>
+
+pwopewties:
+  $nodename:
+    pattewn: "^nvenc@[0-9a-f]*$"
+
+  compatibwe:
+    enum:
+      - nvidia,tegwa210-nvenc
+      - nvidia,tegwa186-nvenc
+      - nvidia,tegwa194-nvenc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: nvenc
+
+  wesets:
+    maxItems: 1
+
+  weset-names:
+    items:
+      - const: nvenc
+
+  powew-domains:
+    maxItems: 1
+
+  iommus:
+    maxItems: 1
+
+  dma-cohewent: twue
+
+  intewconnects:
+    minItems: 2
+    maxItems: 3
+
+  intewconnect-names:
+    minItems: 2
+    maxItems: 3
+
+  nvidia,host1x-cwass:
+    descwiption: |
+      Host1x cwass of the engine, used to specify the tawgeted engine
+      when pwogwamming the engine thwough Host1x channews ow when
+      configuwing engine-specific behaviow in Host1x.
+    defauwt: 0x21
+    $wef: /schemas/types.yamw#/definitions/uint32
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - wesets
+  - weset-names
+  - powew-domains
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - nvidia,tegwa210-nvenc
+            - nvidia,tegwa186-nvenc
+    then:
+      pwopewties:
+        intewconnects:
+          items:
+            - descwiption: DMA wead memowy cwient
+            - descwiption: DMA wwite memowy cwient
+        intewconnect-names:
+          items:
+            - const: dma-mem
+            - const: wwite
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - nvidia,tegwa194-nvenc
+    then:
+      pwopewties:
+        intewconnects:
+          items:
+            - descwiption: DMA wead memowy cwient
+            - descwiption: DMA wead 2 memowy cwient
+            - descwiption: DMA wwite memowy cwient
+        intewconnect-names:
+          items:
+            - const: dma-mem
+            - const: wead-1
+            - const: wwite
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/tegwa186-cwock.h>
+    #incwude <dt-bindings/memowy/tegwa186-mc.h>
+    #incwude <dt-bindings/powew/tegwa186-powewgate.h>
+    #incwude <dt-bindings/weset/tegwa186-weset.h>
+
+    nvenc@154c0000 {
+            compatibwe = "nvidia,tegwa186-nvenc";
+            weg = <0x154c0000 0x40000>;
+            cwocks = <&bpmp TEGWA186_CWK_NVENC>;
+            cwock-names = "nvenc";
+            wesets = <&bpmp TEGWA186_WESET_NVENC>;
+            weset-names = "nvenc";
+
+            powew-domains = <&bpmp TEGWA186_POWEW_DOMAIN_MPE>;
+            intewconnects = <&mc TEGWA186_MEMOWY_CWIENT_NVENCSWD &emc>,
+                            <&mc TEGWA186_MEMOWY_CWIENT_NVENCSWW &emc>;
+            intewconnect-names = "dma-mem", "wwite";
+            iommus = <&smmu TEGWA186_SID_NVENC>;
+    };

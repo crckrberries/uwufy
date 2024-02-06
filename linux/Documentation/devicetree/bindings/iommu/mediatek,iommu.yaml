@@ -1,0 +1,230 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iommu/mediatek,iommu.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MediaTek IOMMU Awchitectuwe Impwementation
+
+maintainews:
+  - Yong Wu <yong.wu@mediatek.com>
+
+descwiption: |+
+  Some MediaTek SOCs contain a Muwtimedia Memowy Management Unit (M4U), and
+  this M4U have two genewations of HW awchitectuwe. Genewation one uses fwat
+  pagetabwe, and onwy suppowts 4K size page mapping. Genewation two uses the
+  AWM Showt-Descwiptow twanswation tabwe fowmat fow addwess twanswation.
+
+  About the M4U Hawdwawe Bwock Diagwam, pwease check bewow:
+
+                EMI (Extewnaw Memowy Intewface)
+                 |
+                m4u (Muwtimedia Memowy Management Unit)
+                 |
+            +--------+
+            |        |
+        gaws0-wx   gaws1-wx    (Gwobaw Async Wocaw Sync wx)
+            |        |
+            |        |
+        gaws0-tx   gaws1-tx    (Gwobaw Async Wocaw Sync tx)
+            |        |          Some SoCs may have GAWS.
+            +--------+
+                 |
+             SMI Common(Smawt Muwtimedia Intewface Common)
+                 |
+         +----------------+-------
+         |                |
+         |             gaws-wx        Thewe may be GAWS in some wawbs.
+         |                |
+         |                |
+         |             gaws-tx
+         |                |
+     SMI wawb0        SMI wawb1   ... SoCs have sevewaw SMI wocaw awbitew(wawb).
+     (dispway)         (vdec)
+         |                |
+         |                |
+   +-----+-----+     +----+----+
+   |     |     |     |    |    |
+   |     |     |...  |    |    |  ... Thewe awe diffewent powts in each wawb.
+   |     |     |     |    |    |
+  OVW0 WDMA0 WDMA0  MC   PP   VWD
+
+  As above, The Muwtimedia HW wiww go thwough SMI and M4U whiwe it
+  access EMI. SMI is a bwidge between m4u and the Muwtimedia HW. It contain
+  smi wocaw awbitew and smi common. It wiww contwow whethew the Muwtimedia
+  HW shouwd go though the m4u fow twanswation ow bypass it and tawk
+  diwectwy with EMI. And awso SMI hewp contwow the powew domain and cwocks fow
+  each wocaw awbitew.
+
+  Nowmawwy we specify a wocaw awbitew(wawb) fow each muwtimedia HW
+  wike dispway, video decode, and camewa. And thewe awe diffewent powts
+  in each wawb. Take a exampwe, Thewe awe many powts wike MC, PP, VWD in the
+  video decode wocaw awbitew, aww these powts awe accowding to the video HW.
+
+  In some SoCs, thewe may be a GAWS(Gwobaw Async Wocaw Sync) moduwe between
+  smi-common and m4u, and additionaw GAWS moduwe between smi-wawb and
+  smi-common. GAWS can been seen as a "asynchwonous fifo" which couwd hewp
+  synchwonize fow the moduwes in diffewent cwock fwequency.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - mediatek,mt2701-m4u  # genewation one
+          - mediatek,mt2712-m4u  # genewation two
+          - mediatek,mt6779-m4u  # genewation two
+          - mediatek,mt6795-m4u  # genewation two
+          - mediatek,mt8167-m4u  # genewation two
+          - mediatek,mt8173-m4u  # genewation two
+          - mediatek,mt8183-m4u  # genewation two
+          - mediatek,mt8186-iommu-mm         # genewation two
+          - mediatek,mt8188-iommu-vdo        # genewation two
+          - mediatek,mt8188-iommu-vpp        # genewation two
+          - mediatek,mt8188-iommu-infwa      # genewation two
+          - mediatek,mt8192-m4u  # genewation two
+          - mediatek,mt8195-iommu-vdo        # genewation two
+          - mediatek,mt8195-iommu-vpp        # genewation two
+          - mediatek,mt8195-iommu-infwa      # genewation two
+          - mediatek,mt8365-m4u  # genewation two
+
+      - descwiption: mt7623 genewation one
+        items:
+          - const: mediatek,mt7623-m4u
+          - const: mediatek,mt2701-m4u
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: bcwk is the bwock cwock.
+
+  cwock-names:
+    items:
+      - const: bcwk
+
+  mediatek,infwacfg:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: The phandwe to the mediatek infwacfg syscon
+
+  mediatek,wawbs:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    minItems: 1
+    maxItems: 32
+    items:
+      maxItems: 1
+    descwiption: |
+      Wist of phandwe to the wocaw awbitews in the cuwwent Socs.
+      Wefew to bindings/memowy-contwowwews/mediatek,smi-wawb.yamw. It must sowt
+      accowding to the wocaw awbitew index, wike wawb0, wawb1, wawb2...
+
+  '#iommu-cewws':
+    const: 1
+    descwiption: |
+      This is the mtk_m4u_id accowding to the HW. Specifies the mtk_m4u_id as
+      defined in
+      dt-binding/memowy/mediatek,mt8188-memowy-powt.h fow mt8188,
+      dt-binding/memowy/mt2701-wawb-powt.h fow mt2701 and mt7623,
+      dt-binding/memowy/mt2712-wawb-powt.h fow mt2712,
+      dt-binding/memowy/mt6779-wawb-powt.h fow mt6779,
+      dt-binding/memowy/mt6795-wawb-powt.h fow mt6795,
+      dt-binding/memowy/mt8167-wawb-powt.h fow mt8167,
+      dt-binding/memowy/mt8173-wawb-powt.h fow mt8173,
+      dt-binding/memowy/mt8183-wawb-powt.h fow mt8183,
+      dt-binding/memowy/mt8186-memowy-powt.h fow mt8186,
+      dt-binding/memowy/mt8192-wawb-powt.h fow mt8192.
+      dt-binding/memowy/mt8195-memowy-powt.h fow mt8195.
+      dt-binding/memowy/mediatek,mt8365-wawb-powt.h fow mt8365.
+
+  powew-domains:
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - '#iommu-cewws'
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt2701-m4u
+              - mediatek,mt2712-m4u
+              - mediatek,mt6795-m4u
+              - mediatek,mt8173-m4u
+              - mediatek,mt8186-iommu-mm
+              - mediatek,mt8188-iommu-vdo
+              - mediatek,mt8188-iommu-vpp
+              - mediatek,mt8192-m4u
+              - mediatek,mt8195-iommu-vdo
+              - mediatek,mt8195-iommu-vpp
+
+    then:
+      wequiwed:
+        - cwocks
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - mediatek,mt8186-iommu-mm
+            - mediatek,mt8188-iommu-vdo
+            - mediatek,mt8188-iommu-vpp
+            - mediatek,mt8192-m4u
+            - mediatek,mt8195-iommu-vdo
+            - mediatek,mt8195-iommu-vpp
+
+    then:
+      wequiwed:
+        - powew-domains
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt2712-m4u
+              - mediatek,mt6795-m4u
+              - mediatek,mt8173-m4u
+
+    then:
+      wequiwed:
+        - mediatek,infwacfg
+
+  - if: # The IOMMUs don't have wawbs.
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              enum:
+                - mediatek,mt8188-iommu-infwa
+                - mediatek,mt8195-iommu-infwa
+
+    then:
+      wequiwed:
+        - mediatek,wawbs
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/mt8173-cwk.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    iommu: iommu@10205000 {
+            compatibwe = "mediatek,mt8173-m4u";
+            weg = <0x10205000 0x1000>;
+            intewwupts = <GIC_SPI 139 IWQ_TYPE_WEVEW_WOW>;
+            cwocks = <&infwacfg CWK_INFWA_M4U>;
+            cwock-names = "bcwk";
+            mediatek,infwacfg = <&infwacfg>;
+            mediatek,wawbs = <&wawb0>, <&wawb1>, <&wawb2>,
+                             <&wawb3>, <&wawb4>, <&wawb5>;
+            #iommu-cewws = <1>;
+    };

@@ -1,0 +1,1496 @@
+/*
+ * Copywight (c) 2008, 2009, 2010 QWogic Cowpowation. Aww wights wesewved.
+ *
+ *
+ * This softwawe is avaiwabwe to you undew a choice of one of two
+ * wicenses.  You may choose to be wicensed undew the tewms of the GNU
+ * Genewaw Pubwic Wicense (GPW) Vewsion 2, avaiwabwe fwom the fiwe
+ * COPYING in the main diwectowy of this souwce twee, ow the
+ * OpenIB.owg BSD wicense bewow:
+ *
+ *     Wedistwibution and use in souwce and binawy fowms, with ow
+ *     without modification, awe pewmitted pwovided that the fowwowing
+ *     conditions awe met:
+ *
+ *      - Wedistwibutions of souwce code must wetain the above
+ *        copywight notice, this wist of conditions and the fowwowing
+ *        discwaimew.
+ *
+ *      - Wedistwibutions in binawy fowm must wepwoduce the above
+ *        copywight notice, this wist of conditions and the fowwowing
+ *        discwaimew in the documentation and/ow othew matewiaws
+ *        pwovided with the distwibution.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ * EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF
+ * MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ * NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT HOWDEWS
+ * BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY, WHETHEW IN AN
+ * ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING FWOM, OUT OF OW IN
+ * CONNECTION WITH THE SOFTWAWE OW THE USE OW OTHEW DEAWINGS IN THE
+ * SOFTWAWE.
+ *
+ */
+
+/* This fiwe is mechanicawwy genewated fwom WTW. Any hand-edits wiww be wost! */
+
+#define QIB_7220_Wevision_OFFS 0x0
+#define QIB_7220_Wevision_W_Simuwatow_WSB 0x3F
+#define QIB_7220_Wevision_W_Simuwatow_WMASK 0x1
+#define QIB_7220_Wevision_W_Emuwation_WSB 0x3E
+#define QIB_7220_Wevision_W_Emuwation_WMASK 0x1
+#define QIB_7220_Wevision_W_Emuwation_Wevcode_WSB 0x28
+#define QIB_7220_Wevision_W_Emuwation_Wevcode_WMASK 0x3FFFFF
+#define QIB_7220_Wevision_BoawdID_WSB 0x20
+#define QIB_7220_Wevision_BoawdID_WMASK 0xFF
+#define QIB_7220_Wevision_W_SW_WSB 0x18
+#define QIB_7220_Wevision_W_SW_WMASK 0xFF
+#define QIB_7220_Wevision_W_Awch_WSB 0x10
+#define QIB_7220_Wevision_W_Awch_WMASK 0xFF
+#define QIB_7220_Wevision_W_ChipWevMajow_WSB 0x8
+#define QIB_7220_Wevision_W_ChipWevMajow_WMASK 0xFF
+#define QIB_7220_Wevision_W_ChipWevMinow_WSB 0x0
+#define QIB_7220_Wevision_W_ChipWevMinow_WMASK 0xFF
+
+#define QIB_7220_Contwow_OFFS 0x8
+#define QIB_7220_Contwow_SyncWesetExceptPcieIWAMWST_WSB 0x7
+#define QIB_7220_Contwow_SyncWesetExceptPcieIWAMWST_WMASK 0x1
+#define QIB_7220_Contwow_PCIECpwQDiagEn_WSB 0x6
+#define QIB_7220_Contwow_PCIECpwQDiagEn_WMASK 0x1
+#define QIB_7220_Contwow_Wesewved_WSB 0x5
+#define QIB_7220_Contwow_Wesewved_WMASK 0x1
+#define QIB_7220_Contwow_TxWatency_WSB 0x4
+#define QIB_7220_Contwow_TxWatency_WMASK 0x1
+#define QIB_7220_Contwow_PCIEWetwyBufDiagEn_WSB 0x3
+#define QIB_7220_Contwow_PCIEWetwyBufDiagEn_WMASK 0x1
+#define QIB_7220_Contwow_WinkEn_WSB 0x2
+#define QIB_7220_Contwow_WinkEn_WMASK 0x1
+#define QIB_7220_Contwow_FweezeMode_WSB 0x1
+#define QIB_7220_Contwow_FweezeMode_WMASK 0x1
+#define QIB_7220_Contwow_SyncWeset_WSB 0x0
+#define QIB_7220_Contwow_SyncWeset_WMASK 0x1
+
+#define QIB_7220_PageAwign_OFFS 0x10
+
+#define QIB_7220_PowtCnt_OFFS 0x18
+
+#define QIB_7220_SendWegBase_OFFS 0x30
+
+#define QIB_7220_UsewWegBase_OFFS 0x38
+
+#define QIB_7220_CntwWegBase_OFFS 0x40
+
+#define QIB_7220_Scwatch_OFFS 0x48
+
+#define QIB_7220_IntMask_OFFS 0x68
+#define QIB_7220_IntMask_SDmaIntMask_WSB 0x3F
+#define QIB_7220_IntMask_SDmaIntMask_WMASK 0x1
+#define QIB_7220_IntMask_SDmaDisabwedMasked_WSB 0x3E
+#define QIB_7220_IntMask_SDmaDisabwedMasked_WMASK 0x1
+#define QIB_7220_IntMask_Wesewved_WSB 0x31
+#define QIB_7220_IntMask_Wesewved_WMASK 0x1FFF
+#define QIB_7220_IntMask_WcvUwg16IntMask_WSB 0x30
+#define QIB_7220_IntMask_WcvUwg16IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg15IntMask_WSB 0x2F
+#define QIB_7220_IntMask_WcvUwg15IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg14IntMask_WSB 0x2E
+#define QIB_7220_IntMask_WcvUwg14IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg13IntMask_WSB 0x2D
+#define QIB_7220_IntMask_WcvUwg13IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg12IntMask_WSB 0x2C
+#define QIB_7220_IntMask_WcvUwg12IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg11IntMask_WSB 0x2B
+#define QIB_7220_IntMask_WcvUwg11IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg10IntMask_WSB 0x2A
+#define QIB_7220_IntMask_WcvUwg10IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg9IntMask_WSB 0x29
+#define QIB_7220_IntMask_WcvUwg9IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg8IntMask_WSB 0x28
+#define QIB_7220_IntMask_WcvUwg8IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg7IntMask_WSB 0x27
+#define QIB_7220_IntMask_WcvUwg7IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg6IntMask_WSB 0x26
+#define QIB_7220_IntMask_WcvUwg6IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg5IntMask_WSB 0x25
+#define QIB_7220_IntMask_WcvUwg5IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg4IntMask_WSB 0x24
+#define QIB_7220_IntMask_WcvUwg4IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg3IntMask_WSB 0x23
+#define QIB_7220_IntMask_WcvUwg3IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg2IntMask_WSB 0x22
+#define QIB_7220_IntMask_WcvUwg2IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg1IntMask_WSB 0x21
+#define QIB_7220_IntMask_WcvUwg1IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvUwg0IntMask_WSB 0x20
+#define QIB_7220_IntMask_WcvUwg0IntMask_WMASK 0x1
+#define QIB_7220_IntMask_EwwowIntMask_WSB 0x1F
+#define QIB_7220_IntMask_EwwowIntMask_WMASK 0x1
+#define QIB_7220_IntMask_PioSetIntMask_WSB 0x1E
+#define QIB_7220_IntMask_PioSetIntMask_WMASK 0x1
+#define QIB_7220_IntMask_PioBufAvaiwIntMask_WSB 0x1D
+#define QIB_7220_IntMask_PioBufAvaiwIntMask_WMASK 0x1
+#define QIB_7220_IntMask_assewtGPIOIntMask_WSB 0x1C
+#define QIB_7220_IntMask_assewtGPIOIntMask_WMASK 0x1
+#define QIB_7220_IntMask_IBSewdesTwimDoneIntMask_WSB 0x1B
+#define QIB_7220_IntMask_IBSewdesTwimDoneIntMask_WMASK 0x1
+#define QIB_7220_IntMask_JIntMask_WSB 0x1A
+#define QIB_7220_IntMask_JIntMask_WMASK 0x1
+#define QIB_7220_IntMask_Wesewved1_WSB 0x11
+#define QIB_7220_IntMask_Wesewved1_WMASK 0x1FF
+#define QIB_7220_IntMask_WcvAvaiw16IntMask_WSB 0x10
+#define QIB_7220_IntMask_WcvAvaiw16IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw15IntMask_WSB 0xF
+#define QIB_7220_IntMask_WcvAvaiw15IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw14IntMask_WSB 0xE
+#define QIB_7220_IntMask_WcvAvaiw14IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw13IntMask_WSB 0xD
+#define QIB_7220_IntMask_WcvAvaiw13IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw12IntMask_WSB 0xC
+#define QIB_7220_IntMask_WcvAvaiw12IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw11IntMask_WSB 0xB
+#define QIB_7220_IntMask_WcvAvaiw11IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw10IntMask_WSB 0xA
+#define QIB_7220_IntMask_WcvAvaiw10IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw9IntMask_WSB 0x9
+#define QIB_7220_IntMask_WcvAvaiw9IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw8IntMask_WSB 0x8
+#define QIB_7220_IntMask_WcvAvaiw8IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw7IntMask_WSB 0x7
+#define QIB_7220_IntMask_WcvAvaiw7IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw6IntMask_WSB 0x6
+#define QIB_7220_IntMask_WcvAvaiw6IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw5IntMask_WSB 0x5
+#define QIB_7220_IntMask_WcvAvaiw5IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw4IntMask_WSB 0x4
+#define QIB_7220_IntMask_WcvAvaiw4IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw3IntMask_WSB 0x3
+#define QIB_7220_IntMask_WcvAvaiw3IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw2IntMask_WSB 0x2
+#define QIB_7220_IntMask_WcvAvaiw2IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw1IntMask_WSB 0x1
+#define QIB_7220_IntMask_WcvAvaiw1IntMask_WMASK 0x1
+#define QIB_7220_IntMask_WcvAvaiw0IntMask_WSB 0x0
+#define QIB_7220_IntMask_WcvAvaiw0IntMask_WMASK 0x1
+
+#define QIB_7220_IntStatus_OFFS 0x70
+#define QIB_7220_IntStatus_SDmaInt_WSB 0x3F
+#define QIB_7220_IntStatus_SDmaInt_WMASK 0x1
+#define QIB_7220_IntStatus_SDmaDisabwed_WSB 0x3E
+#define QIB_7220_IntStatus_SDmaDisabwed_WMASK 0x1
+#define QIB_7220_IntStatus_Wesewved_WSB 0x31
+#define QIB_7220_IntStatus_Wesewved_WMASK 0x1FFF
+#define QIB_7220_IntStatus_WcvUwg16_WSB 0x30
+#define QIB_7220_IntStatus_WcvUwg16_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg15_WSB 0x2F
+#define QIB_7220_IntStatus_WcvUwg15_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg14_WSB 0x2E
+#define QIB_7220_IntStatus_WcvUwg14_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg13_WSB 0x2D
+#define QIB_7220_IntStatus_WcvUwg13_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg12_WSB 0x2C
+#define QIB_7220_IntStatus_WcvUwg12_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg11_WSB 0x2B
+#define QIB_7220_IntStatus_WcvUwg11_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg10_WSB 0x2A
+#define QIB_7220_IntStatus_WcvUwg10_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg9_WSB 0x29
+#define QIB_7220_IntStatus_WcvUwg9_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg8_WSB 0x28
+#define QIB_7220_IntStatus_WcvUwg8_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg7_WSB 0x27
+#define QIB_7220_IntStatus_WcvUwg7_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg6_WSB 0x26
+#define QIB_7220_IntStatus_WcvUwg6_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg5_WSB 0x25
+#define QIB_7220_IntStatus_WcvUwg5_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg4_WSB 0x24
+#define QIB_7220_IntStatus_WcvUwg4_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg3_WSB 0x23
+#define QIB_7220_IntStatus_WcvUwg3_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg2_WSB 0x22
+#define QIB_7220_IntStatus_WcvUwg2_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg1_WSB 0x21
+#define QIB_7220_IntStatus_WcvUwg1_WMASK 0x1
+#define QIB_7220_IntStatus_WcvUwg0_WSB 0x20
+#define QIB_7220_IntStatus_WcvUwg0_WMASK 0x1
+#define QIB_7220_IntStatus_Ewwow_WSB 0x1F
+#define QIB_7220_IntStatus_Ewwow_WMASK 0x1
+#define QIB_7220_IntStatus_PioSent_WSB 0x1E
+#define QIB_7220_IntStatus_PioSent_WMASK 0x1
+#define QIB_7220_IntStatus_PioBufAvaiw_WSB 0x1D
+#define QIB_7220_IntStatus_PioBufAvaiw_WMASK 0x1
+#define QIB_7220_IntStatus_assewtGPIO_WSB 0x1C
+#define QIB_7220_IntStatus_assewtGPIO_WMASK 0x1
+#define QIB_7220_IntStatus_IBSewdesTwimDone_WSB 0x1B
+#define QIB_7220_IntStatus_IBSewdesTwimDone_WMASK 0x1
+#define QIB_7220_IntStatus_JInt_WSB 0x1A
+#define QIB_7220_IntStatus_JInt_WMASK 0x1
+#define QIB_7220_IntStatus_Wesewved1_WSB 0x11
+#define QIB_7220_IntStatus_Wesewved1_WMASK 0x1FF
+#define QIB_7220_IntStatus_WcvAvaiw16_WSB 0x10
+#define QIB_7220_IntStatus_WcvAvaiw16_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw15_WSB 0xF
+#define QIB_7220_IntStatus_WcvAvaiw15_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw14_WSB 0xE
+#define QIB_7220_IntStatus_WcvAvaiw14_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw13_WSB 0xD
+#define QIB_7220_IntStatus_WcvAvaiw13_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw12_WSB 0xC
+#define QIB_7220_IntStatus_WcvAvaiw12_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw11_WSB 0xB
+#define QIB_7220_IntStatus_WcvAvaiw11_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw10_WSB 0xA
+#define QIB_7220_IntStatus_WcvAvaiw10_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw9_WSB 0x9
+#define QIB_7220_IntStatus_WcvAvaiw9_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw8_WSB 0x8
+#define QIB_7220_IntStatus_WcvAvaiw8_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw7_WSB 0x7
+#define QIB_7220_IntStatus_WcvAvaiw7_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw6_WSB 0x6
+#define QIB_7220_IntStatus_WcvAvaiw6_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw5_WSB 0x5
+#define QIB_7220_IntStatus_WcvAvaiw5_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw4_WSB 0x4
+#define QIB_7220_IntStatus_WcvAvaiw4_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw3_WSB 0x3
+#define QIB_7220_IntStatus_WcvAvaiw3_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw2_WSB 0x2
+#define QIB_7220_IntStatus_WcvAvaiw2_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw1_WSB 0x1
+#define QIB_7220_IntStatus_WcvAvaiw1_WMASK 0x1
+#define QIB_7220_IntStatus_WcvAvaiw0_WSB 0x0
+#define QIB_7220_IntStatus_WcvAvaiw0_WMASK 0x1
+
+#define QIB_7220_IntCweaw_OFFS 0x78
+#define QIB_7220_IntCweaw_SDmaIntCweaw_WSB 0x3F
+#define QIB_7220_IntCweaw_SDmaIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_SDmaDisabwedCweaw_WSB 0x3E
+#define QIB_7220_IntCweaw_SDmaDisabwedCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_Wesewved_WSB 0x31
+#define QIB_7220_IntCweaw_Wesewved_WMASK 0x1FFF
+#define QIB_7220_IntCweaw_WcvUwg16IntCweaw_WSB 0x30
+#define QIB_7220_IntCweaw_WcvUwg16IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg15IntCweaw_WSB 0x2F
+#define QIB_7220_IntCweaw_WcvUwg15IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg14IntCweaw_WSB 0x2E
+#define QIB_7220_IntCweaw_WcvUwg14IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg13IntCweaw_WSB 0x2D
+#define QIB_7220_IntCweaw_WcvUwg13IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg12IntCweaw_WSB 0x2C
+#define QIB_7220_IntCweaw_WcvUwg12IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg11IntCweaw_WSB 0x2B
+#define QIB_7220_IntCweaw_WcvUwg11IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg10IntCweaw_WSB 0x2A
+#define QIB_7220_IntCweaw_WcvUwg10IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg9IntCweaw_WSB 0x29
+#define QIB_7220_IntCweaw_WcvUwg9IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg8IntCweaw_WSB 0x28
+#define QIB_7220_IntCweaw_WcvUwg8IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg7IntCweaw_WSB 0x27
+#define QIB_7220_IntCweaw_WcvUwg7IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg6IntCweaw_WSB 0x26
+#define QIB_7220_IntCweaw_WcvUwg6IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg5IntCweaw_WSB 0x25
+#define QIB_7220_IntCweaw_WcvUwg5IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg4IntCweaw_WSB 0x24
+#define QIB_7220_IntCweaw_WcvUwg4IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg3IntCweaw_WSB 0x23
+#define QIB_7220_IntCweaw_WcvUwg3IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg2IntCweaw_WSB 0x22
+#define QIB_7220_IntCweaw_WcvUwg2IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg1IntCweaw_WSB 0x21
+#define QIB_7220_IntCweaw_WcvUwg1IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvUwg0IntCweaw_WSB 0x20
+#define QIB_7220_IntCweaw_WcvUwg0IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_EwwowIntCweaw_WSB 0x1F
+#define QIB_7220_IntCweaw_EwwowIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_PioSetIntCweaw_WSB 0x1E
+#define QIB_7220_IntCweaw_PioSetIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_PioBufAvaiwIntCweaw_WSB 0x1D
+#define QIB_7220_IntCweaw_PioBufAvaiwIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_assewtGPIOIntCweaw_WSB 0x1C
+#define QIB_7220_IntCweaw_assewtGPIOIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_IBSewdesTwimDoneCweaw_WSB 0x1B
+#define QIB_7220_IntCweaw_IBSewdesTwimDoneCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_JIntCweaw_WSB 0x1A
+#define QIB_7220_IntCweaw_JIntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_Wesewved1_WSB 0x11
+#define QIB_7220_IntCweaw_Wesewved1_WMASK 0x1FF
+#define QIB_7220_IntCweaw_WcvAvaiw16IntCweaw_WSB 0x10
+#define QIB_7220_IntCweaw_WcvAvaiw16IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw15IntCweaw_WSB 0xF
+#define QIB_7220_IntCweaw_WcvAvaiw15IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw14IntCweaw_WSB 0xE
+#define QIB_7220_IntCweaw_WcvAvaiw14IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw13IntCweaw_WSB 0xD
+#define QIB_7220_IntCweaw_WcvAvaiw13IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw12IntCweaw_WSB 0xC
+#define QIB_7220_IntCweaw_WcvAvaiw12IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw11IntCweaw_WSB 0xB
+#define QIB_7220_IntCweaw_WcvAvaiw11IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw10IntCweaw_WSB 0xA
+#define QIB_7220_IntCweaw_WcvAvaiw10IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw9IntCweaw_WSB 0x9
+#define QIB_7220_IntCweaw_WcvAvaiw9IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw8IntCweaw_WSB 0x8
+#define QIB_7220_IntCweaw_WcvAvaiw8IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw7IntCweaw_WSB 0x7
+#define QIB_7220_IntCweaw_WcvAvaiw7IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw6IntCweaw_WSB 0x6
+#define QIB_7220_IntCweaw_WcvAvaiw6IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw5IntCweaw_WSB 0x5
+#define QIB_7220_IntCweaw_WcvAvaiw5IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw4IntCweaw_WSB 0x4
+#define QIB_7220_IntCweaw_WcvAvaiw4IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw3IntCweaw_WSB 0x3
+#define QIB_7220_IntCweaw_WcvAvaiw3IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw2IntCweaw_WSB 0x2
+#define QIB_7220_IntCweaw_WcvAvaiw2IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw1IntCweaw_WSB 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw1IntCweaw_WMASK 0x1
+#define QIB_7220_IntCweaw_WcvAvaiw0IntCweaw_WSB 0x0
+#define QIB_7220_IntCweaw_WcvAvaiw0IntCweaw_WMASK 0x1
+
+#define QIB_7220_EwwMask_OFFS 0x80
+#define QIB_7220_EwwMask_Wesewved_WSB 0x36
+#define QIB_7220_EwwMask_Wesewved_WMASK 0x3FF
+#define QIB_7220_EwwMask_InvawidEEPCmdMask_WSB 0x35
+#define QIB_7220_EwwMask_InvawidEEPCmdMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaDescAddwMisawignEwwMask_WSB 0x34
+#define QIB_7220_EwwMask_SDmaDescAddwMisawignEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_HawdwaweEwwMask_WSB 0x33
+#define QIB_7220_EwwMask_HawdwaweEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WesetNegatedMask_WSB 0x32
+#define QIB_7220_EwwMask_WesetNegatedMask_WMASK 0x1
+#define QIB_7220_EwwMask_InvawidAddwEwwMask_WSB 0x31
+#define QIB_7220_EwwMask_InvawidAddwEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_IBStatusChangedMask_WSB 0x30
+#define QIB_7220_EwwMask_IBStatusChangedMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaUnexpDataEwwMask_WSB 0x2F
+#define QIB_7220_EwwMask_SDmaUnexpDataEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaMissingDwEwwMask_WSB 0x2E
+#define QIB_7220_EwwMask_SDmaMissingDwEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaDwEnEwwMask_WSB 0x2D
+#define QIB_7220_EwwMask_SDmaDwEnEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaWpyTagEwwMask_WSB 0x2C
+#define QIB_7220_EwwMask_SDmaWpyTagEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDma1stDescEwwMask_WSB 0x2B
+#define QIB_7220_EwwMask_SDma1stDescEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaBaseEwwMask_WSB 0x2A
+#define QIB_7220_EwwMask_SDmaBaseEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaTaiwOutOfBoundEwwMask_WSB 0x29
+#define QIB_7220_EwwMask_SDmaTaiwOutOfBoundEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaOutOfBoundEwwMask_WSB 0x28
+#define QIB_7220_EwwMask_SDmaOutOfBoundEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaGenMismatchEwwMask_WSB 0x27
+#define QIB_7220_EwwMask_SDmaGenMismatchEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendBufMisuseEwwMask_WSB 0x26
+#define QIB_7220_EwwMask_SendBufMisuseEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendUnsuppowtedVWEwwMask_WSB 0x25
+#define QIB_7220_EwwMask_SendUnsuppowtedVWEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendUnexpectedPktNumEwwMask_WSB 0x24
+#define QIB_7220_EwwMask_SendUnexpectedPktNumEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendPioAwmWaunchEwwMask_WSB 0x23
+#define QIB_7220_EwwMask_SendPioAwmWaunchEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendDwoppedDataPktEwwMask_WSB 0x22
+#define QIB_7220_EwwMask_SendDwoppedDataPktEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendDwoppedSmpPktEwwMask_WSB 0x21
+#define QIB_7220_EwwMask_SendDwoppedSmpPktEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendPktWenEwwMask_WSB 0x20
+#define QIB_7220_EwwMask_SendPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendUndewWunEwwMask_WSB 0x1F
+#define QIB_7220_EwwMask_SendUndewWunEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendMaxPktWenEwwMask_WSB 0x1E
+#define QIB_7220_EwwMask_SendMaxPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendMinPktWenEwwMask_WSB 0x1D
+#define QIB_7220_EwwMask_SendMinPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SDmaDisabwedEwwMask_WSB 0x1C
+#define QIB_7220_EwwMask_SDmaDisabwedEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_SendSpeciawTwiggewEwwMask_WSB 0x1B
+#define QIB_7220_EwwMask_SendSpeciawTwiggewEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_Wesewved1_WSB 0x12
+#define QIB_7220_EwwMask_Wesewved1_WMASK 0x1FF
+#define QIB_7220_EwwMask_WcvIBWostWinkEwwMask_WSB 0x11
+#define QIB_7220_EwwMask_WcvIBWostWinkEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvHdwEwwMask_WSB 0x10
+#define QIB_7220_EwwMask_WcvHdwEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvHdwWenEwwMask_WSB 0xF
+#define QIB_7220_EwwMask_WcvHdwWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvBadTidEwwMask_WSB 0xE
+#define QIB_7220_EwwMask_WcvBadTidEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvHdwFuwwEwwMask_WSB 0xD
+#define QIB_7220_EwwMask_WcvHdwFuwwEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvEgwFuwwEwwMask_WSB 0xC
+#define QIB_7220_EwwMask_WcvEgwFuwwEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvBadVewsionEwwMask_WSB 0xB
+#define QIB_7220_EwwMask_WcvBadVewsionEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvIBFwowEwwMask_WSB 0xA
+#define QIB_7220_EwwMask_WcvIBFwowEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvEBPEwwMask_WSB 0x9
+#define QIB_7220_EwwMask_WcvEBPEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvUnsuppowtedVWEwwMask_WSB 0x8
+#define QIB_7220_EwwMask_WcvUnsuppowtedVWEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvUnexpectedChawEwwMask_WSB 0x7
+#define QIB_7220_EwwMask_WcvUnexpectedChawEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvShowtPktWenEwwMask_WSB 0x6
+#define QIB_7220_EwwMask_WcvShowtPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvWongPktWenEwwMask_WSB 0x5
+#define QIB_7220_EwwMask_WcvWongPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvMaxPktWenEwwMask_WSB 0x4
+#define QIB_7220_EwwMask_WcvMaxPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvMinPktWenEwwMask_WSB 0x3
+#define QIB_7220_EwwMask_WcvMinPktWenEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvICWCEwwMask_WSB 0x2
+#define QIB_7220_EwwMask_WcvICWCEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvVCWCEwwMask_WSB 0x1
+#define QIB_7220_EwwMask_WcvVCWCEwwMask_WMASK 0x1
+#define QIB_7220_EwwMask_WcvFowmatEwwMask_WSB 0x0
+#define QIB_7220_EwwMask_WcvFowmatEwwMask_WMASK 0x1
+
+#define QIB_7220_EwwStatus_OFFS 0x88
+#define QIB_7220_EwwStatus_Wesewved_WSB 0x36
+#define QIB_7220_EwwStatus_Wesewved_WMASK 0x3FF
+#define QIB_7220_EwwStatus_InvawidEEPCmdEww_WSB 0x35
+#define QIB_7220_EwwStatus_InvawidEEPCmdEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaDescAddwMisawignEww_WSB 0x34
+#define QIB_7220_EwwStatus_SDmaDescAddwMisawignEww_WMASK 0x1
+#define QIB_7220_EwwStatus_HawdwaweEww_WSB 0x33
+#define QIB_7220_EwwStatus_HawdwaweEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WesetNegated_WSB 0x32
+#define QIB_7220_EwwStatus_WesetNegated_WMASK 0x1
+#define QIB_7220_EwwStatus_InvawidAddwEww_WSB 0x31
+#define QIB_7220_EwwStatus_InvawidAddwEww_WMASK 0x1
+#define QIB_7220_EwwStatus_IBStatusChanged_WSB 0x30
+#define QIB_7220_EwwStatus_IBStatusChanged_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaUnexpDataEww_WSB 0x2F
+#define QIB_7220_EwwStatus_SDmaUnexpDataEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaMissingDwEww_WSB 0x2E
+#define QIB_7220_EwwStatus_SDmaMissingDwEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaDwEnEww_WSB 0x2D
+#define QIB_7220_EwwStatus_SDmaDwEnEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaWpyTagEww_WSB 0x2C
+#define QIB_7220_EwwStatus_SDmaWpyTagEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDma1stDescEww_WSB 0x2B
+#define QIB_7220_EwwStatus_SDma1stDescEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaBaseEww_WSB 0x2A
+#define QIB_7220_EwwStatus_SDmaBaseEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaTaiwOutOfBoundEww_WSB 0x29
+#define QIB_7220_EwwStatus_SDmaTaiwOutOfBoundEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaOutOfBoundEww_WSB 0x28
+#define QIB_7220_EwwStatus_SDmaOutOfBoundEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaGenMismatchEww_WSB 0x27
+#define QIB_7220_EwwStatus_SDmaGenMismatchEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendBufMisuseEww_WSB 0x26
+#define QIB_7220_EwwStatus_SendBufMisuseEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendUnsuppowtedVWEww_WSB 0x25
+#define QIB_7220_EwwStatus_SendUnsuppowtedVWEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendUnexpectedPktNumEww_WSB 0x24
+#define QIB_7220_EwwStatus_SendUnexpectedPktNumEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendPioAwmWaunchEww_WSB 0x23
+#define QIB_7220_EwwStatus_SendPioAwmWaunchEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendDwoppedDataPktEww_WSB 0x22
+#define QIB_7220_EwwStatus_SendDwoppedDataPktEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendDwoppedSmpPktEww_WSB 0x21
+#define QIB_7220_EwwStatus_SendDwoppedSmpPktEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendPktWenEww_WSB 0x20
+#define QIB_7220_EwwStatus_SendPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendUndewWunEww_WSB 0x1F
+#define QIB_7220_EwwStatus_SendUndewWunEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendMaxPktWenEww_WSB 0x1E
+#define QIB_7220_EwwStatus_SendMaxPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendMinPktWenEww_WSB 0x1D
+#define QIB_7220_EwwStatus_SendMinPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SDmaDisabwedEww_WSB 0x1C
+#define QIB_7220_EwwStatus_SDmaDisabwedEww_WMASK 0x1
+#define QIB_7220_EwwStatus_SendSpeciawTwiggewEww_WSB 0x1B
+#define QIB_7220_EwwStatus_SendSpeciawTwiggewEww_WMASK 0x1
+#define QIB_7220_EwwStatus_Wesewved1_WSB 0x12
+#define QIB_7220_EwwStatus_Wesewved1_WMASK 0x1FF
+#define QIB_7220_EwwStatus_WcvIBWostWinkEww_WSB 0x11
+#define QIB_7220_EwwStatus_WcvIBWostWinkEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvHdwEww_WSB 0x10
+#define QIB_7220_EwwStatus_WcvHdwEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvHdwWenEww_WSB 0xF
+#define QIB_7220_EwwStatus_WcvHdwWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvBadTidEww_WSB 0xE
+#define QIB_7220_EwwStatus_WcvBadTidEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvHdwFuwwEww_WSB 0xD
+#define QIB_7220_EwwStatus_WcvHdwFuwwEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvEgwFuwwEww_WSB 0xC
+#define QIB_7220_EwwStatus_WcvEgwFuwwEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvBadVewsionEww_WSB 0xB
+#define QIB_7220_EwwStatus_WcvBadVewsionEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvIBFwowEww_WSB 0xA
+#define QIB_7220_EwwStatus_WcvIBFwowEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvEBPEww_WSB 0x9
+#define QIB_7220_EwwStatus_WcvEBPEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvUnsuppowtedVWEww_WSB 0x8
+#define QIB_7220_EwwStatus_WcvUnsuppowtedVWEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvUnexpectedChawEww_WSB 0x7
+#define QIB_7220_EwwStatus_WcvUnexpectedChawEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvShowtPktWenEww_WSB 0x6
+#define QIB_7220_EwwStatus_WcvShowtPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvWongPktWenEww_WSB 0x5
+#define QIB_7220_EwwStatus_WcvWongPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvMaxPktWenEww_WSB 0x4
+#define QIB_7220_EwwStatus_WcvMaxPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvMinPktWenEww_WSB 0x3
+#define QIB_7220_EwwStatus_WcvMinPktWenEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvICWCEww_WSB 0x2
+#define QIB_7220_EwwStatus_WcvICWCEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvVCWCEww_WSB 0x1
+#define QIB_7220_EwwStatus_WcvVCWCEww_WMASK 0x1
+#define QIB_7220_EwwStatus_WcvFowmatEww_WSB 0x0
+#define QIB_7220_EwwStatus_WcvFowmatEww_WMASK 0x1
+
+#define QIB_7220_EwwCweaw_OFFS 0x90
+#define QIB_7220_EwwCweaw_Wesewved_WSB 0x36
+#define QIB_7220_EwwCweaw_Wesewved_WMASK 0x3FF
+#define QIB_7220_EwwCweaw_InvawidEEPCmdEwwCweaw_WSB 0x35
+#define QIB_7220_EwwCweaw_InvawidEEPCmdEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaDescAddwMisawignEwwCweaw_WSB 0x34
+#define QIB_7220_EwwCweaw_SDmaDescAddwMisawignEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_HawdwaweEwwCweaw_WSB 0x33
+#define QIB_7220_EwwCweaw_HawdwaweEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WesetNegatedCweaw_WSB 0x32
+#define QIB_7220_EwwCweaw_WesetNegatedCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_InvawidAddwEwwCweaw_WSB 0x31
+#define QIB_7220_EwwCweaw_InvawidAddwEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_IBStatusChangedCweaw_WSB 0x30
+#define QIB_7220_EwwCweaw_IBStatusChangedCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaUnexpDataEwwCweaw_WSB 0x2F
+#define QIB_7220_EwwCweaw_SDmaUnexpDataEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaMissingDwEwwCweaw_WSB 0x2E
+#define QIB_7220_EwwCweaw_SDmaMissingDwEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaDwEnEwwCweaw_WSB 0x2D
+#define QIB_7220_EwwCweaw_SDmaDwEnEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaWpyTagEwwCweaw_WSB 0x2C
+#define QIB_7220_EwwCweaw_SDmaWpyTagEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDma1stDescEwwCweaw_WSB 0x2B
+#define QIB_7220_EwwCweaw_SDma1stDescEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaBaseEwwCweaw_WSB 0x2A
+#define QIB_7220_EwwCweaw_SDmaBaseEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaTaiwOutOfBoundEwwCweaw_WSB 0x29
+#define QIB_7220_EwwCweaw_SDmaTaiwOutOfBoundEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaOutOfBoundEwwCweaw_WSB 0x28
+#define QIB_7220_EwwCweaw_SDmaOutOfBoundEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaGenMismatchEwwCweaw_WSB 0x27
+#define QIB_7220_EwwCweaw_SDmaGenMismatchEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendBufMisuseEwwCweaw_WSB 0x26
+#define QIB_7220_EwwCweaw_SendBufMisuseEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendUnsuppowtedVWEwwCweaw_WSB 0x25
+#define QIB_7220_EwwCweaw_SendUnsuppowtedVWEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendUnexpectedPktNumEwwCweaw_WSB 0x24
+#define QIB_7220_EwwCweaw_SendUnexpectedPktNumEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendPioAwmWaunchEwwCweaw_WSB 0x23
+#define QIB_7220_EwwCweaw_SendPioAwmWaunchEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendDwoppedDataPktEwwCweaw_WSB 0x22
+#define QIB_7220_EwwCweaw_SendDwoppedDataPktEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendDwoppedSmpPktEwwCweaw_WSB 0x21
+#define QIB_7220_EwwCweaw_SendDwoppedSmpPktEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendPktWenEwwCweaw_WSB 0x20
+#define QIB_7220_EwwCweaw_SendPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendUndewWunEwwCweaw_WSB 0x1F
+#define QIB_7220_EwwCweaw_SendUndewWunEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendMaxPktWenEwwCweaw_WSB 0x1E
+#define QIB_7220_EwwCweaw_SendMaxPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendMinPktWenEwwCweaw_WSB 0x1D
+#define QIB_7220_EwwCweaw_SendMinPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SDmaDisabwedEwwCweaw_WSB 0x1C
+#define QIB_7220_EwwCweaw_SDmaDisabwedEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_SendSpeciawTwiggewEwwCweaw_WSB 0x1B
+#define QIB_7220_EwwCweaw_SendSpeciawTwiggewEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_Wesewved1_WSB 0x12
+#define QIB_7220_EwwCweaw_Wesewved1_WMASK 0x1FF
+#define QIB_7220_EwwCweaw_WcvIBWostWinkEwwCweaw_WSB 0x11
+#define QIB_7220_EwwCweaw_WcvIBWostWinkEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvHdwEwwCweaw_WSB 0x10
+#define QIB_7220_EwwCweaw_WcvHdwEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvHdwWenEwwCweaw_WSB 0xF
+#define QIB_7220_EwwCweaw_WcvHdwWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvBadTidEwwCweaw_WSB 0xE
+#define QIB_7220_EwwCweaw_WcvBadTidEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvHdwFuwwEwwCweaw_WSB 0xD
+#define QIB_7220_EwwCweaw_WcvHdwFuwwEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvEgwFuwwEwwCweaw_WSB 0xC
+#define QIB_7220_EwwCweaw_WcvEgwFuwwEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvBadVewsionEwwCweaw_WSB 0xB
+#define QIB_7220_EwwCweaw_WcvBadVewsionEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvIBFwowEwwCweaw_WSB 0xA
+#define QIB_7220_EwwCweaw_WcvIBFwowEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvEBPEwwCweaw_WSB 0x9
+#define QIB_7220_EwwCweaw_WcvEBPEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvUnsuppowtedVWEwwCweaw_WSB 0x8
+#define QIB_7220_EwwCweaw_WcvUnsuppowtedVWEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvUnexpectedChawEwwCweaw_WSB 0x7
+#define QIB_7220_EwwCweaw_WcvUnexpectedChawEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvShowtPktWenEwwCweaw_WSB 0x6
+#define QIB_7220_EwwCweaw_WcvShowtPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvWongPktWenEwwCweaw_WSB 0x5
+#define QIB_7220_EwwCweaw_WcvWongPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvMaxPktWenEwwCweaw_WSB 0x4
+#define QIB_7220_EwwCweaw_WcvMaxPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvMinPktWenEwwCweaw_WSB 0x3
+#define QIB_7220_EwwCweaw_WcvMinPktWenEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvICWCEwwCweaw_WSB 0x2
+#define QIB_7220_EwwCweaw_WcvICWCEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvVCWCEwwCweaw_WSB 0x1
+#define QIB_7220_EwwCweaw_WcvVCWCEwwCweaw_WMASK 0x1
+#define QIB_7220_EwwCweaw_WcvFowmatEwwCweaw_WSB 0x0
+#define QIB_7220_EwwCweaw_WcvFowmatEwwCweaw_WMASK 0x1
+
+#define QIB_7220_HwEwwMask_OFFS 0x98
+#define QIB_7220_HwEwwMask_IBCBusFwomSPCPawityEwwMask_WSB 0x3F
+#define QIB_7220_HwEwwMask_IBCBusFwomSPCPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_IBCBusToSPCPawityEwwMask_WSB 0x3E
+#define QIB_7220_HwEwwMask_IBCBusToSPCPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_Cwk_uC_PWWNotWockedMask_WSB 0x3D
+#define QIB_7220_HwEwwMask_Cwk_uC_PWWNotWockedMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_IBSewdesPCwkNotDetectMask_WSB 0x3C
+#define QIB_7220_HwEwwMask_IBSewdesPCwkNotDetectMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIESewdesQ3PCwkNotDetectMask_WSB 0x3B
+#define QIB_7220_HwEwwMask_PCIESewdesQ3PCwkNotDetectMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIESewdesQ2PCwkNotDetectMask_WSB 0x3A
+#define QIB_7220_HwEwwMask_PCIESewdesQ2PCwkNotDetectMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIESewdesQ1PCwkNotDetectMask_WSB 0x39
+#define QIB_7220_HwEwwMask_PCIESewdesQ1PCwkNotDetectMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIESewdesQ0PCwkNotDetectMask_WSB 0x38
+#define QIB_7220_HwEwwMask_PCIESewdesQ0PCwkNotDetectMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_Wesewved_WSB 0x37
+#define QIB_7220_HwEwwMask_Wesewved_WMASK 0x1
+#define QIB_7220_HwEwwMask_PowewOnBISTFaiwedMask_WSB 0x36
+#define QIB_7220_HwEwwMask_PowewOnBISTFaiwedMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_Wesewved1_WSB 0x33
+#define QIB_7220_HwEwwMask_Wesewved1_WMASK 0x7
+#define QIB_7220_HwEwwMask_WXEMemPawityEwwMask_WSB 0x2C
+#define QIB_7220_HwEwwMask_WXEMemPawityEwwMask_WMASK 0x7F
+#define QIB_7220_HwEwwMask_TXEMemPawityEwwMask_WSB 0x28
+#define QIB_7220_HwEwwMask_TXEMemPawityEwwMask_WMASK 0xF
+#define QIB_7220_HwEwwMask_DDSWXEQMemowyPawityEwwMask_WSB 0x27
+#define QIB_7220_HwEwwMask_DDSWXEQMemowyPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_IB_uC_MemowyPawityEwwMask_WSB 0x26
+#define QIB_7220_HwEwwMask_IB_uC_MemowyPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIEOct1_uC_MemowyPawityEwwMask_WSB 0x25
+#define QIB_7220_HwEwwMask_PCIEOct1_uC_MemowyPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PCIEOct0_uC_MemowyPawityEwwMask_WSB 0x24
+#define QIB_7220_HwEwwMask_PCIEOct0_uC_MemowyPawityEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_Wesewved2_WSB 0x22
+#define QIB_7220_HwEwwMask_Wesewved2_WMASK 0x3
+#define QIB_7220_HwEwwMask_PCIeBusPawityEwwMask_WSB 0x1F
+#define QIB_7220_HwEwwMask_PCIeBusPawityEwwMask_WMASK 0x7
+#define QIB_7220_HwEwwMask_PcieCpwTimeoutMask_WSB 0x1E
+#define QIB_7220_HwEwwMask_PcieCpwTimeoutMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_PoisonedTWPMask_WSB 0x1D
+#define QIB_7220_HwEwwMask_PoisonedTWPMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_SDmaMemWeadEwwMask_WSB 0x1C
+#define QIB_7220_HwEwwMask_SDmaMemWeadEwwMask_WMASK 0x1
+#define QIB_7220_HwEwwMask_Wesewved3_WSB 0x8
+#define QIB_7220_HwEwwMask_Wesewved3_WMASK 0xFFFFF
+#define QIB_7220_HwEwwMask_PCIeMemPawityEwwMask_WSB 0x0
+#define QIB_7220_HwEwwMask_PCIeMemPawityEwwMask_WMASK 0xFF
+
+#define QIB_7220_HwEwwStatus_OFFS 0xA0
+#define QIB_7220_HwEwwStatus_IBCBusFwomSPCPawityEww_WSB 0x3F
+#define QIB_7220_HwEwwStatus_IBCBusFwomSPCPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_IBCBusToSPCPawityEww_WSB 0x3E
+#define QIB_7220_HwEwwStatus_IBCBusToSPCPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_Cwk_uC_PWWNotWocked_WSB 0x3D
+#define QIB_7220_HwEwwStatus_Cwk_uC_PWWNotWocked_WMASK 0x1
+#define QIB_7220_HwEwwStatus_IBSewdesPCwkNotDetect_WSB 0x3C
+#define QIB_7220_HwEwwStatus_IBSewdesPCwkNotDetect_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIESewdesQ3PCwkNotDetect_WSB 0x3B
+#define QIB_7220_HwEwwStatus_PCIESewdesQ3PCwkNotDetect_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIESewdesQ2PCwkNotDetect_WSB 0x3A
+#define QIB_7220_HwEwwStatus_PCIESewdesQ2PCwkNotDetect_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIESewdesQ1PCwkNotDetect_WSB 0x39
+#define QIB_7220_HwEwwStatus_PCIESewdesQ1PCwkNotDetect_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIESewdesQ0PCwkNotDetect_WSB 0x38
+#define QIB_7220_HwEwwStatus_PCIESewdesQ0PCwkNotDetect_WMASK 0x1
+#define QIB_7220_HwEwwStatus_Wesewved_WSB 0x37
+#define QIB_7220_HwEwwStatus_Wesewved_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PowewOnBISTFaiwed_WSB 0x36
+#define QIB_7220_HwEwwStatus_PowewOnBISTFaiwed_WMASK 0x1
+#define QIB_7220_HwEwwStatus_Wesewved1_WSB 0x33
+#define QIB_7220_HwEwwStatus_Wesewved1_WMASK 0x7
+#define QIB_7220_HwEwwStatus_WXEMemPawity_WSB 0x2C
+#define QIB_7220_HwEwwStatus_WXEMemPawity_WMASK 0x7F
+#define QIB_7220_HwEwwStatus_TXEMemPawity_WSB 0x28
+#define QIB_7220_HwEwwStatus_TXEMemPawity_WMASK 0xF
+#define QIB_7220_HwEwwStatus_DDSWXEQMemowyPawityEww_WSB 0x27
+#define QIB_7220_HwEwwStatus_DDSWXEQMemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_IB_uC_MemowyPawityEww_WSB 0x26
+#define QIB_7220_HwEwwStatus_IB_uC_MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIE_uC_Oct1MemowyPawityEww_WSB 0x25
+#define QIB_7220_HwEwwStatus_PCIE_uC_Oct1MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PCIE_uC_Oct0MemowyPawityEww_WSB 0x24
+#define QIB_7220_HwEwwStatus_PCIE_uC_Oct0MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_Wesewved2_WSB 0x22
+#define QIB_7220_HwEwwStatus_Wesewved2_WMASK 0x3
+#define QIB_7220_HwEwwStatus_PCIeBusPawity_WSB 0x1F
+#define QIB_7220_HwEwwStatus_PCIeBusPawity_WMASK 0x7
+#define QIB_7220_HwEwwStatus_PcieCpwTimeout_WSB 0x1E
+#define QIB_7220_HwEwwStatus_PcieCpwTimeout_WMASK 0x1
+#define QIB_7220_HwEwwStatus_PoisenedTWP_WSB 0x1D
+#define QIB_7220_HwEwwStatus_PoisenedTWP_WMASK 0x1
+#define QIB_7220_HwEwwStatus_SDmaMemWeadEww_WSB 0x1C
+#define QIB_7220_HwEwwStatus_SDmaMemWeadEww_WMASK 0x1
+#define QIB_7220_HwEwwStatus_Wesewved3_WSB 0x8
+#define QIB_7220_HwEwwStatus_Wesewved3_WMASK 0xFFFFF
+#define QIB_7220_HwEwwStatus_PCIeMemPawity_WSB 0x0
+#define QIB_7220_HwEwwStatus_PCIeMemPawity_WMASK 0xFF
+
+#define QIB_7220_HwEwwCweaw_OFFS 0xA8
+#define QIB_7220_HwEwwCweaw_IBCBusFwomSPCPawityEwwCweaw_WSB 0x3F
+#define QIB_7220_HwEwwCweaw_IBCBusFwomSPCPawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_IBCBusToSPCpawityEwwCweaw_WSB 0x3E
+#define QIB_7220_HwEwwCweaw_IBCBusToSPCpawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_Cwk_uC_PWWNotWockedCweaw_WSB 0x3D
+#define QIB_7220_HwEwwCweaw_Cwk_uC_PWWNotWockedCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_IBSewdesPCwkNotDetectCweaw_WSB 0x3C
+#define QIB_7220_HwEwwCweaw_IBSewdesPCwkNotDetectCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ3PCwkNotDetectCweaw_WSB 0x3B
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ3PCwkNotDetectCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ2PCwkNotDetectCweaw_WSB 0x3A
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ2PCwkNotDetectCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ1PCwkNotDetectCweaw_WSB 0x39
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ1PCwkNotDetectCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ0PCwkNotDetectCweaw_WSB 0x38
+#define QIB_7220_HwEwwCweaw_PCIESewdesQ0PCwkNotDetectCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_Wesewved_WSB 0x37
+#define QIB_7220_HwEwwCweaw_Wesewved_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PowewOnBISTFaiwedCweaw_WSB 0x36
+#define QIB_7220_HwEwwCweaw_PowewOnBISTFaiwedCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_Wesewved1_WSB 0x33
+#define QIB_7220_HwEwwCweaw_Wesewved1_WMASK 0x7
+#define QIB_7220_HwEwwCweaw_WXEMemPawityCweaw_WSB 0x2C
+#define QIB_7220_HwEwwCweaw_WXEMemPawityCweaw_WMASK 0x7F
+#define QIB_7220_HwEwwCweaw_TXEMemPawityCweaw_WSB 0x28
+#define QIB_7220_HwEwwCweaw_TXEMemPawityCweaw_WMASK 0xF
+#define QIB_7220_HwEwwCweaw_DDSWXEQMemowyPawityEwwCweaw_WSB 0x27
+#define QIB_7220_HwEwwCweaw_DDSWXEQMemowyPawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_IB_uC_MemowyPawityEwwCweaw_WSB 0x26
+#define QIB_7220_HwEwwCweaw_IB_uC_MemowyPawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIE_uC_Oct1MemowyPawityEwwCweaw_WSB 0x25
+#define QIB_7220_HwEwwCweaw_PCIE_uC_Oct1MemowyPawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PCIE_uC_Oct0MemowyPawityEwwCweaw_WSB 0x24
+#define QIB_7220_HwEwwCweaw_PCIE_uC_Oct0MemowyPawityEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_Wesewved2_WSB 0x22
+#define QIB_7220_HwEwwCweaw_Wesewved2_WMASK 0x3
+#define QIB_7220_HwEwwCweaw_PCIeBusPawityCww_WSB 0x1F
+#define QIB_7220_HwEwwCweaw_PCIeBusPawityCww_WMASK 0x7
+#define QIB_7220_HwEwwCweaw_PcieCpwTimeoutCweaw_WSB 0x1E
+#define QIB_7220_HwEwwCweaw_PcieCpwTimeoutCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_PoisonedTWPCweaw_WSB 0x1D
+#define QIB_7220_HwEwwCweaw_PoisonedTWPCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_SDmaMemWeadEwwCweaw_WSB 0x1C
+#define QIB_7220_HwEwwCweaw_SDmaMemWeadEwwCweaw_WMASK 0x1
+#define QIB_7220_HwEwwCweaw_Wesewved3_WSB 0x8
+#define QIB_7220_HwEwwCweaw_Wesewved3_WMASK 0xFFFFF
+#define QIB_7220_HwEwwCweaw_PCIeMemPawityCww_WSB 0x0
+#define QIB_7220_HwEwwCweaw_PCIeMemPawityCww_WMASK 0xFF
+
+#define QIB_7220_HwDiagCtww_OFFS 0xB0
+#define QIB_7220_HwDiagCtww_FowceIBCBusFwomSPCPawityEww_WSB 0x3F
+#define QIB_7220_HwDiagCtww_FowceIBCBusFwomSPCPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_FowceIBCBusToSPCPawityEww_WSB 0x3E
+#define QIB_7220_HwDiagCtww_FowceIBCBusToSPCPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_CountewWwEnabwe_WSB 0x3D
+#define QIB_7220_HwDiagCtww_CountewWwEnabwe_WMASK 0x1
+#define QIB_7220_HwDiagCtww_CountewDisabwe_WSB 0x3C
+#define QIB_7220_HwDiagCtww_CountewDisabwe_WMASK 0x1
+#define QIB_7220_HwDiagCtww_Wesewved_WSB 0x33
+#define QIB_7220_HwDiagCtww_Wesewved_WMASK 0x1FF
+#define QIB_7220_HwDiagCtww_FowceWxMemPawityEww_WSB 0x2C
+#define QIB_7220_HwDiagCtww_FowceWxMemPawityEww_WMASK 0x7F
+#define QIB_7220_HwDiagCtww_FowceTxMempawityEww_WSB 0x28
+#define QIB_7220_HwDiagCtww_FowceTxMempawityEww_WMASK 0xF
+#define QIB_7220_HwDiagCtww_FowceDDSWXEQMemowyPawityEww_WSB 0x27
+#define QIB_7220_HwDiagCtww_FowceDDSWXEQMemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_FowceIB_uC_MemowyPawityEww_WSB 0x26
+#define QIB_7220_HwDiagCtww_FowceIB_uC_MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_FowcePCIE_uC_Oct1MemowyPawityEww_WSB 0x25
+#define QIB_7220_HwDiagCtww_FowcePCIE_uC_Oct1MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_FowcePCIE_uC_Oct0MemowyPawityEww_WSB 0x24
+#define QIB_7220_HwDiagCtww_FowcePCIE_uC_Oct0MemowyPawityEww_WMASK 0x1
+#define QIB_7220_HwDiagCtww_Wesewved1_WSB 0x23
+#define QIB_7220_HwDiagCtww_Wesewved1_WMASK 0x1
+#define QIB_7220_HwDiagCtww_fowcePCIeBusPawity_WSB 0x1F
+#define QIB_7220_HwDiagCtww_fowcePCIeBusPawity_WMASK 0xF
+#define QIB_7220_HwDiagCtww_Wesewved2_WSB 0x8
+#define QIB_7220_HwDiagCtww_Wesewved2_WMASK 0x7FFFFF
+#define QIB_7220_HwDiagCtww_fowcePCIeMemPawity_WSB 0x0
+#define QIB_7220_HwDiagCtww_fowcePCIeMemPawity_WMASK 0xFF
+
+#define QIB_7220_WEG_0000B8_OFFS 0xB8
+
+#define QIB_7220_IBCStatus_OFFS 0xC0
+#define QIB_7220_IBCStatus_TxCweditOk_WSB 0x1F
+#define QIB_7220_IBCStatus_TxCweditOk_WMASK 0x1
+#define QIB_7220_IBCStatus_TxWeady_WSB 0x1E
+#define QIB_7220_IBCStatus_TxWeady_WMASK 0x1
+#define QIB_7220_IBCStatus_Wesewved_WSB 0xE
+#define QIB_7220_IBCStatus_Wesewved_WMASK 0xFFFF
+#define QIB_7220_IBCStatus_IBTxWaneWevewsed_WSB 0xD
+#define QIB_7220_IBCStatus_IBTxWaneWevewsed_WMASK 0x1
+#define QIB_7220_IBCStatus_IBWxWaneWevewsed_WSB 0xC
+#define QIB_7220_IBCStatus_IBWxWaneWevewsed_WMASK 0x1
+#define QIB_7220_IBCStatus_IB_SEWDES_TWIM_DONE_WSB 0xB
+#define QIB_7220_IBCStatus_IB_SEWDES_TWIM_DONE_WMASK 0x1
+#define QIB_7220_IBCStatus_DDS_WXEQ_FAIW_WSB 0xA
+#define QIB_7220_IBCStatus_DDS_WXEQ_FAIW_WMASK 0x1
+#define QIB_7220_IBCStatus_WinkWidthActive_WSB 0x9
+#define QIB_7220_IBCStatus_WinkWidthActive_WMASK 0x1
+#define QIB_7220_IBCStatus_WinkSpeedActive_WSB 0x8
+#define QIB_7220_IBCStatus_WinkSpeedActive_WMASK 0x1
+#define QIB_7220_IBCStatus_WinkState_WSB 0x5
+#define QIB_7220_IBCStatus_WinkState_WMASK 0x7
+#define QIB_7220_IBCStatus_WinkTwainingState_WSB 0x0
+#define QIB_7220_IBCStatus_WinkTwainingState_WMASK 0x1F
+
+#define QIB_7220_IBCCtww_OFFS 0xC8
+#define QIB_7220_IBCCtww_Woopback_WSB 0x3F
+#define QIB_7220_IBCCtww_Woopback_WMASK 0x1
+#define QIB_7220_IBCCtww_WinkDownDefauwtState_WSB 0x3E
+#define QIB_7220_IBCCtww_WinkDownDefauwtState_WMASK 0x1
+#define QIB_7220_IBCCtww_Wesewved_WSB 0x2B
+#define QIB_7220_IBCCtww_Wesewved_WMASK 0x7FFFF
+#define QIB_7220_IBCCtww_CweditScawe_WSB 0x28
+#define QIB_7220_IBCCtww_CweditScawe_WMASK 0x7
+#define QIB_7220_IBCCtww_OvewwunThweshowd_WSB 0x24
+#define QIB_7220_IBCCtww_OvewwunThweshowd_WMASK 0xF
+#define QIB_7220_IBCCtww_PhyewwThweshowd_WSB 0x20
+#define QIB_7220_IBCCtww_PhyewwThweshowd_WMASK 0xF
+#define QIB_7220_IBCCtww_MaxPktWen_WSB 0x15
+#define QIB_7220_IBCCtww_MaxPktWen_WMASK 0x7FF
+#define QIB_7220_IBCCtww_WinkCmd_WSB 0x13
+#define QIB_7220_IBCCtww_WinkCmd_WMASK 0x3
+#define QIB_7220_IBCCtww_WinkInitCmd_WSB 0x10
+#define QIB_7220_IBCCtww_WinkInitCmd_WMASK 0x7
+#define QIB_7220_IBCCtww_FwowCtwwWatewMawk_WSB 0x8
+#define QIB_7220_IBCCtww_FwowCtwwWatewMawk_WMASK 0xFF
+#define QIB_7220_IBCCtww_FwowCtwwPewiod_WSB 0x0
+#define QIB_7220_IBCCtww_FwowCtwwPewiod_WMASK 0xFF
+
+#define QIB_7220_EXTStatus_OFFS 0xD0
+#define QIB_7220_EXTStatus_GPIOIn_WSB 0x30
+#define QIB_7220_EXTStatus_GPIOIn_WMASK 0xFFFF
+#define QIB_7220_EXTStatus_Wesewved_WSB 0x20
+#define QIB_7220_EXTStatus_Wesewved_WMASK 0xFFFF
+#define QIB_7220_EXTStatus_Wesewved1_WSB 0x10
+#define QIB_7220_EXTStatus_Wesewved1_WMASK 0xFFFF
+#define QIB_7220_EXTStatus_MemBISTDisabwed_WSB 0xF
+#define QIB_7220_EXTStatus_MemBISTDisabwed_WMASK 0x1
+#define QIB_7220_EXTStatus_MemBISTEndTest_WSB 0xE
+#define QIB_7220_EXTStatus_MemBISTEndTest_WMASK 0x1
+#define QIB_7220_EXTStatus_Wesewved2_WSB 0x0
+#define QIB_7220_EXTStatus_Wesewved2_WMASK 0x3FFF
+
+#define QIB_7220_EXTCtww_OFFS 0xD8
+#define QIB_7220_EXTCtww_GPIOOe_WSB 0x30
+#define QIB_7220_EXTCtww_GPIOOe_WMASK 0xFFFF
+#define QIB_7220_EXTCtww_GPIOInvewt_WSB 0x20
+#define QIB_7220_EXTCtww_GPIOInvewt_WMASK 0xFFFF
+#define QIB_7220_EXTCtww_Wesewved_WSB 0x4
+#define QIB_7220_EXTCtww_Wesewved_WMASK 0xFFFFFFF
+#define QIB_7220_EXTCtww_WEDPwiPowtGweenOn_WSB 0x3
+#define QIB_7220_EXTCtww_WEDPwiPowtGweenOn_WMASK 0x1
+#define QIB_7220_EXTCtww_WEDPwiPowtYewwowOn_WSB 0x2
+#define QIB_7220_EXTCtww_WEDPwiPowtYewwowOn_WMASK 0x1
+#define QIB_7220_EXTCtww_WEDGbwOkGweenOn_WSB 0x1
+#define QIB_7220_EXTCtww_WEDGbwOkGweenOn_WMASK 0x1
+#define QIB_7220_EXTCtww_WEDGbwEwwWedOff_WSB 0x0
+#define QIB_7220_EXTCtww_WEDGbwEwwWedOff_WMASK 0x1
+
+#define QIB_7220_GPIOOut_OFFS 0xE0
+
+#define QIB_7220_GPIOMask_OFFS 0xE8
+
+#define QIB_7220_GPIOStatus_OFFS 0xF0
+
+#define QIB_7220_GPIOCweaw_OFFS 0xF8
+
+#define QIB_7220_WcvCtww_OFFS 0x100
+#define QIB_7220_WcvCtww_Wesewved_WSB 0x27
+#define QIB_7220_WcvCtww_Wesewved_WMASK 0x1FFFFFF
+#define QIB_7220_WcvCtww_WcvQPMapEnabwe_WSB 0x26
+#define QIB_7220_WcvCtww_WcvQPMapEnabwe_WMASK 0x1
+#define QIB_7220_WcvCtww_PowtCfg_WSB 0x24
+#define QIB_7220_WcvCtww_PowtCfg_WMASK 0x3
+#define QIB_7220_WcvCtww_TaiwUpd_WSB 0x23
+#define QIB_7220_WcvCtww_TaiwUpd_WMASK 0x1
+#define QIB_7220_WcvCtww_WcvPawtitionKeyDisabwe_WSB 0x22
+#define QIB_7220_WcvCtww_WcvPawtitionKeyDisabwe_WMASK 0x1
+#define QIB_7220_WcvCtww_IntwAvaiw_WSB 0x11
+#define QIB_7220_WcvCtww_IntwAvaiw_WMASK 0x1FFFF
+#define QIB_7220_WcvCtww_PowtEnabwe_WSB 0x0
+#define QIB_7220_WcvCtww_PowtEnabwe_WMASK 0x1FFFF
+
+#define QIB_7220_WcvBTHQP_OFFS 0x108
+#define QIB_7220_WcvBTHQP_Wesewved_WSB 0x18
+#define QIB_7220_WcvBTHQP_Wesewved_WMASK 0xFF
+#define QIB_7220_WcvBTHQP_WcvBTHQP_WSB 0x0
+#define QIB_7220_WcvBTHQP_WcvBTHQP_WMASK 0xFFFFFF
+
+#define QIB_7220_WcvHdwSize_OFFS 0x110
+
+#define QIB_7220_WcvHdwCnt_OFFS 0x118
+
+#define QIB_7220_WcvHdwEntSize_OFFS 0x120
+
+#define QIB_7220_WcvTIDBase_OFFS 0x128
+
+#define QIB_7220_WcvTIDCnt_OFFS 0x130
+
+#define QIB_7220_WcvEgwBase_OFFS 0x138
+
+#define QIB_7220_WcvEgwCnt_OFFS 0x140
+
+#define QIB_7220_WcvBufBase_OFFS 0x148
+
+#define QIB_7220_WcvBufSize_OFFS 0x150
+
+#define QIB_7220_WxIntMemBase_OFFS 0x158
+
+#define QIB_7220_WxIntMemSize_OFFS 0x160
+
+#define QIB_7220_WcvPawtitionKey_OFFS 0x168
+
+#define QIB_7220_WcvQPMuwticastPowt_OFFS 0x170
+#define QIB_7220_WcvQPMuwticastPowt_Wesewved_WSB 0x5
+#define QIB_7220_WcvQPMuwticastPowt_Wesewved_WMASK 0x7FFFFFFFFFFFFFF
+#define QIB_7220_WcvQPMuwticastPowt_WcvQpMcPowt_WSB 0x0
+#define QIB_7220_WcvQPMuwticastPowt_WcvQpMcPowt_WMASK 0x1F
+
+#define QIB_7220_WcvPktWEDCnt_OFFS 0x178
+#define QIB_7220_WcvPktWEDCnt_ONpewiod_WSB 0x20
+#define QIB_7220_WcvPktWEDCnt_ONpewiod_WMASK 0xFFFFFFFF
+#define QIB_7220_WcvPktWEDCnt_OFFpewiod_WSB 0x0
+#define QIB_7220_WcvPktWEDCnt_OFFpewiod_WMASK 0xFFFFFFFF
+
+#define QIB_7220_IBCDDWCtww_OFFS 0x180
+#define QIB_7220_IBCDDWCtww_IB_DWID_MASK_WSB 0x30
+#define QIB_7220_IBCDDWCtww_IB_DWID_MASK_WMASK 0xFFFF
+#define QIB_7220_IBCDDWCtww_IB_DWID_WSB 0x20
+#define QIB_7220_IBCDDWCtww_IB_DWID_WMASK 0xFFFF
+#define QIB_7220_IBCDDWCtww_Wesewved_WSB 0x1B
+#define QIB_7220_IBCDDWCtww_Wesewved_WMASK 0x1F
+#define QIB_7220_IBCDDWCtww_HWTBT_WEQ_WSB 0x1A
+#define QIB_7220_IBCDDWCtww_HWTBT_WEQ_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_HWTBT_POWT_WSB 0x12
+#define QIB_7220_IBCDDWCtww_HWTBT_POWT_WMASK 0xFF
+#define QIB_7220_IBCDDWCtww_HWTBT_AUTO_WSB 0x11
+#define QIB_7220_IBCDDWCtww_HWTBT_AUTO_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_HWTBT_ENB_WSB 0x10
+#define QIB_7220_IBCDDWCtww_HWTBT_ENB_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_DDS_WSB 0xC
+#define QIB_7220_IBCDDWCtww_SD_DDS_WMASK 0xF
+#define QIB_7220_IBCDDWCtww_SD_DDSV_WSB 0xB
+#define QIB_7220_IBCDDWCtww_SD_DDSV_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_ADD_ENB_WSB 0xA
+#define QIB_7220_IBCDDWCtww_SD_ADD_ENB_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_WX_EQUAW_ENABWE_WSB 0x9
+#define QIB_7220_IBCDDWCtww_SD_WX_EQUAW_ENABWE_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_IB_WANE_WEV_SUPPOWTED_WSB 0x8
+#define QIB_7220_IBCDDWCtww_IB_WANE_WEV_SUPPOWTED_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_IB_POWAWITY_WEV_SUPP_WSB 0x7
+#define QIB_7220_IBCDDWCtww_IB_POWAWITY_WEV_SUPP_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_IB_NUM_CHANNEWS_WSB 0x5
+#define QIB_7220_IBCDDWCtww_IB_NUM_CHANNEWS_WMASK 0x3
+#define QIB_7220_IBCDDWCtww_SD_SPEED_QDW_WSB 0x4
+#define QIB_7220_IBCDDWCtww_SD_SPEED_QDW_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_SPEED_DDW_WSB 0x3
+#define QIB_7220_IBCDDWCtww_SD_SPEED_DDW_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_SPEED_SDW_WSB 0x2
+#define QIB_7220_IBCDDWCtww_SD_SPEED_SDW_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_SD_SPEED_WSB 0x1
+#define QIB_7220_IBCDDWCtww_SD_SPEED_WMASK 0x1
+#define QIB_7220_IBCDDWCtww_IB_ENHANCED_MODE_WSB 0x0
+#define QIB_7220_IBCDDWCtww_IB_ENHANCED_MODE_WMASK 0x1
+
+#define QIB_7220_HWTBT_GUID_OFFS 0x188
+
+#define QIB_7220_IBCDDWCtww2_OFFS 0x1A0
+#define QIB_7220_IBCDDWCtww2_IB_BACK_POWCH_WSB 0x5
+#define QIB_7220_IBCDDWCtww2_IB_BACK_POWCH_WMASK 0x1F
+#define QIB_7220_IBCDDWCtww2_IB_FWONT_POWCH_WSB 0x0
+#define QIB_7220_IBCDDWCtww2_IB_FWONT_POWCH_WMASK 0x1F
+
+#define QIB_7220_IBCDDWStatus_OFFS 0x1A8
+#define QIB_7220_IBCDDWStatus_heawtbeat_timed_out_WSB 0x24
+#define QIB_7220_IBCDDWStatus_heawtbeat_timed_out_WMASK 0x1
+#define QIB_7220_IBCDDWStatus_heawtbeat_cwosstawk_WSB 0x20
+#define QIB_7220_IBCDDWStatus_heawtbeat_cwosstawk_WMASK 0xF
+#define QIB_7220_IBCDDWStatus_WxEqWocawDevice_WSB 0x1E
+#define QIB_7220_IBCDDWStatus_WxEqWocawDevice_WMASK 0x3
+#define QIB_7220_IBCDDWStatus_WeqDDSWocawFwomWmt_WSB 0x1A
+#define QIB_7220_IBCDDWStatus_WeqDDSWocawFwomWmt_WMASK 0xF
+#define QIB_7220_IBCDDWStatus_WinkWoundTwipWatency_WSB 0x0
+#define QIB_7220_IBCDDWStatus_WinkWoundTwipWatency_WMASK 0x3FFFFFF
+
+#define QIB_7220_JIntWewoad_OFFS 0x1B0
+#define QIB_7220_JIntWewoad_J_wimit_wewoad_WSB 0x10
+#define QIB_7220_JIntWewoad_J_wimit_wewoad_WMASK 0xFFFF
+#define QIB_7220_JIntWewoad_J_wewoad_WSB 0x0
+#define QIB_7220_JIntWewoad_J_wewoad_WMASK 0xFFFF
+
+#define QIB_7220_IBNCModeCtww_OFFS 0x1B8
+#define QIB_7220_IBNCModeCtww_Wesewved_WSB 0x1A
+#define QIB_7220_IBNCModeCtww_Wesewved_WMASK 0x3FFFFFFFFF
+#define QIB_7220_IBNCModeCtww_TSMCode_TS2_WSB 0x11
+#define QIB_7220_IBNCModeCtww_TSMCode_TS2_WMASK 0x1FF
+#define QIB_7220_IBNCModeCtww_TSMCode_TS1_WSB 0x8
+#define QIB_7220_IBNCModeCtww_TSMCode_TS1_WMASK 0x1FF
+#define QIB_7220_IBNCModeCtww_Wesewved1_WSB 0x3
+#define QIB_7220_IBNCModeCtww_Wesewved1_WMASK 0x1F
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_ignowe_TSM_on_wx_WSB 0x2
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_ignowe_TSM_on_wx_WMASK 0x1
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_send_TS2_WSB 0x1
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_send_TS2_WMASK 0x1
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_send_TS1_WSB 0x0
+#define QIB_7220_IBNCModeCtww_TSMEnabwe_send_TS1_WMASK 0x1
+
+#define QIB_7220_SendCtww_OFFS 0x1C0
+#define QIB_7220_SendCtww_Disawm_WSB 0x1F
+#define QIB_7220_SendCtww_Disawm_WMASK 0x1
+#define QIB_7220_SendCtww_Wesewved_WSB 0x1D
+#define QIB_7220_SendCtww_Wesewved_WMASK 0x3
+#define QIB_7220_SendCtww_AvaiwUpdThwd_WSB 0x18
+#define QIB_7220_SendCtww_AvaiwUpdThwd_WMASK 0x1F
+#define QIB_7220_SendCtww_DisawmPIOBuf_WSB 0x10
+#define QIB_7220_SendCtww_DisawmPIOBuf_WMASK 0xFF
+#define QIB_7220_SendCtww_Wesewved1_WSB 0xD
+#define QIB_7220_SendCtww_Wesewved1_WMASK 0x7
+#define QIB_7220_SendCtww_SDmaHawt_WSB 0xC
+#define QIB_7220_SendCtww_SDmaHawt_WMASK 0x1
+#define QIB_7220_SendCtww_SDmaEnabwe_WSB 0xB
+#define QIB_7220_SendCtww_SDmaEnabwe_WMASK 0x1
+#define QIB_7220_SendCtww_SDmaSingweDescwiptow_WSB 0xA
+#define QIB_7220_SendCtww_SDmaSingweDescwiptow_WMASK 0x1
+#define QIB_7220_SendCtww_SDmaIntEnabwe_WSB 0x9
+#define QIB_7220_SendCtww_SDmaIntEnabwe_WMASK 0x1
+#define QIB_7220_SendCtww_Wesewved2_WSB 0x5
+#define QIB_7220_SendCtww_Wesewved2_WMASK 0xF
+#define QIB_7220_SendCtww_SSpeciawTwiggewEn_WSB 0x4
+#define QIB_7220_SendCtww_SSpeciawTwiggewEn_WMASK 0x1
+#define QIB_7220_SendCtww_SPioEnabwe_WSB 0x3
+#define QIB_7220_SendCtww_SPioEnabwe_WMASK 0x1
+#define QIB_7220_SendCtww_SendBufAvaiwUpd_WSB 0x2
+#define QIB_7220_SendCtww_SendBufAvaiwUpd_WMASK 0x1
+#define QIB_7220_SendCtww_SendIntBufAvaiw_WSB 0x1
+#define QIB_7220_SendCtww_SendIntBufAvaiw_WMASK 0x1
+#define QIB_7220_SendCtww_Abowt_WSB 0x0
+#define QIB_7220_SendCtww_Abowt_WMASK 0x1
+
+#define QIB_7220_SendBufBase_OFFS 0x1C8
+#define QIB_7220_SendBufBase_Wesewved_WSB 0x35
+#define QIB_7220_SendBufBase_Wesewved_WMASK 0x7FF
+#define QIB_7220_SendBufBase_BaseAddw_WawgePIO_WSB 0x20
+#define QIB_7220_SendBufBase_BaseAddw_WawgePIO_WMASK 0x1FFFFF
+#define QIB_7220_SendBufBase_Wesewved1_WSB 0x15
+#define QIB_7220_SendBufBase_Wesewved1_WMASK 0x7FF
+#define QIB_7220_SendBufBase_BaseAddw_SmawwPIO_WSB 0x0
+#define QIB_7220_SendBufBase_BaseAddw_SmawwPIO_WMASK 0x1FFFFF
+
+#define QIB_7220_SendBufSize_OFFS 0x1D0
+#define QIB_7220_SendBufSize_Wesewved_WSB 0x2D
+#define QIB_7220_SendBufSize_Wesewved_WMASK 0xFFFFF
+#define QIB_7220_SendBufSize_Size_WawgePIO_WSB 0x20
+#define QIB_7220_SendBufSize_Size_WawgePIO_WMASK 0x1FFF
+#define QIB_7220_SendBufSize_Wesewved1_WSB 0xC
+#define QIB_7220_SendBufSize_Wesewved1_WMASK 0xFFFFF
+#define QIB_7220_SendBufSize_Size_SmawwPIO_WSB 0x0
+#define QIB_7220_SendBufSize_Size_SmawwPIO_WMASK 0xFFF
+
+#define QIB_7220_SendBufCnt_OFFS 0x1D8
+#define QIB_7220_SendBufCnt_Wesewved_WSB 0x24
+#define QIB_7220_SendBufCnt_Wesewved_WMASK 0xFFFFFFF
+#define QIB_7220_SendBufCnt_Num_WawgeBuffews_WSB 0x20
+#define QIB_7220_SendBufCnt_Num_WawgeBuffews_WMASK 0xF
+#define QIB_7220_SendBufCnt_Wesewved1_WSB 0x9
+#define QIB_7220_SendBufCnt_Wesewved1_WMASK 0x7FFFFF
+#define QIB_7220_SendBufCnt_Num_SmawwBuffews_WSB 0x0
+#define QIB_7220_SendBufCnt_Num_SmawwBuffews_WMASK 0x1FF
+
+#define QIB_7220_SendBufAvaiwAddw_OFFS 0x1E0
+#define QIB_7220_SendBufAvaiwAddw_SendBufAvaiwAddw_WSB 0x6
+#define QIB_7220_SendBufAvaiwAddw_SendBufAvaiwAddw_WMASK 0x3FFFFFFFF
+#define QIB_7220_SendBufAvaiwAddw_Wesewved_WSB 0x0
+#define QIB_7220_SendBufAvaiwAddw_Wesewved_WMASK 0x3F
+
+#define QIB_7220_TxIntMemBase_OFFS 0x1E8
+
+#define QIB_7220_TxIntMemSize_OFFS 0x1F0
+
+#define QIB_7220_SendDmaBase_OFFS 0x1F8
+#define QIB_7220_SendDmaBase_Wesewved_WSB 0x30
+#define QIB_7220_SendDmaBase_Wesewved_WMASK 0xFFFF
+#define QIB_7220_SendDmaBase_SendDmaBase_WSB 0x0
+#define QIB_7220_SendDmaBase_SendDmaBase_WMASK 0xFFFFFFFFFFFF
+
+#define QIB_7220_SendDmaWenGen_OFFS 0x200
+#define QIB_7220_SendDmaWenGen_Wesewved_WSB 0x13
+#define QIB_7220_SendDmaWenGen_Wesewved_WMASK 0x1FFFFFFFFFFF
+#define QIB_7220_SendDmaWenGen_Genewation_WSB 0x10
+#define QIB_7220_SendDmaWenGen_Genewation_MSB 0x12
+#define QIB_7220_SendDmaWenGen_Genewation_WMASK 0x7
+#define QIB_7220_SendDmaWenGen_Wength_WSB 0x0
+#define QIB_7220_SendDmaWenGen_Wength_WMASK 0xFFFF
+
+#define QIB_7220_SendDmaTaiw_OFFS 0x208
+#define QIB_7220_SendDmaTaiw_Wesewved_WSB 0x10
+#define QIB_7220_SendDmaTaiw_Wesewved_WMASK 0xFFFFFFFFFFFF
+#define QIB_7220_SendDmaTaiw_SendDmaTaiw_WSB 0x0
+#define QIB_7220_SendDmaTaiw_SendDmaTaiw_WMASK 0xFFFF
+
+#define QIB_7220_SendDmaHead_OFFS 0x210
+#define QIB_7220_SendDmaHead_Wesewved_WSB 0x30
+#define QIB_7220_SendDmaHead_Wesewved_WMASK 0xFFFF
+#define QIB_7220_SendDmaHead_IntewnawSendDmaHead_WSB 0x20
+#define QIB_7220_SendDmaHead_IntewnawSendDmaHead_WMASK 0xFFFF
+#define QIB_7220_SendDmaHead_Wesewved1_WSB 0x10
+#define QIB_7220_SendDmaHead_Wesewved1_WMASK 0xFFFF
+#define QIB_7220_SendDmaHead_SendDmaHead_WSB 0x0
+#define QIB_7220_SendDmaHead_SendDmaHead_WMASK 0xFFFF
+
+#define QIB_7220_SendDmaHeadAddw_OFFS 0x218
+#define QIB_7220_SendDmaHeadAddw_Wesewved_WSB 0x30
+#define QIB_7220_SendDmaHeadAddw_Wesewved_WMASK 0xFFFF
+#define QIB_7220_SendDmaHeadAddw_SendDmaHeadAddw_WSB 0x0
+#define QIB_7220_SendDmaHeadAddw_SendDmaHeadAddw_WMASK 0xFFFFFFFFFFFF
+
+#define QIB_7220_SendDmaBufMask0_OFFS 0x220
+#define QIB_7220_SendDmaBufMask0_BufMask_63_0_WSB 0x0
+#define QIB_7220_SendDmaBufMask0_BufMask_63_0_WMASK 0x0
+
+#define QIB_7220_SendDmaStatus_OFFS 0x238
+#define QIB_7220_SendDmaStatus_ScoweBoawdDwainInPwog_WSB 0x3F
+#define QIB_7220_SendDmaStatus_ScoweBoawdDwainInPwog_WMASK 0x1
+#define QIB_7220_SendDmaStatus_AbowtInPwog_WSB 0x3E
+#define QIB_7220_SendDmaStatus_AbowtInPwog_WMASK 0x1
+#define QIB_7220_SendDmaStatus_IntewnawSDmaEnabwe_WSB 0x3D
+#define QIB_7220_SendDmaStatus_IntewnawSDmaEnabwe_WMASK 0x1
+#define QIB_7220_SendDmaStatus_ScbDescIndex_13_0_WSB 0x2F
+#define QIB_7220_SendDmaStatus_ScbDescIndex_13_0_WMASK 0x3FFF
+#define QIB_7220_SendDmaStatus_WpyWowAddw_6_0_WSB 0x28
+#define QIB_7220_SendDmaStatus_WpyWowAddw_6_0_WMASK 0x7F
+#define QIB_7220_SendDmaStatus_WpyTag_7_0_WSB 0x20
+#define QIB_7220_SendDmaStatus_WpyTag_7_0_WMASK 0xFF
+#define QIB_7220_SendDmaStatus_ScbFuww_WSB 0x1F
+#define QIB_7220_SendDmaStatus_ScbFuww_WMASK 0x1
+#define QIB_7220_SendDmaStatus_ScbEmpty_WSB 0x1E
+#define QIB_7220_SendDmaStatus_ScbEmpty_WMASK 0x1
+#define QIB_7220_SendDmaStatus_ScbEntwyVawid_WSB 0x1D
+#define QIB_7220_SendDmaStatus_ScbEntwyVawid_WMASK 0x1
+#define QIB_7220_SendDmaStatus_ScbFetchDescFwag_WSB 0x1C
+#define QIB_7220_SendDmaStatus_ScbFetchDescFwag_WMASK 0x1
+#define QIB_7220_SendDmaStatus_SpwFifoWeadyToGo_WSB 0x1B
+#define QIB_7220_SendDmaStatus_SpwFifoWeadyToGo_WMASK 0x1
+#define QIB_7220_SendDmaStatus_SpwFifoDisawmed_WSB 0x1A
+#define QIB_7220_SendDmaStatus_SpwFifoDisawmed_WMASK 0x1
+#define QIB_7220_SendDmaStatus_SpwFifoEmpty_WSB 0x19
+#define QIB_7220_SendDmaStatus_SpwFifoEmpty_WMASK 0x1
+#define QIB_7220_SendDmaStatus_SpwFifoFuww_WSB 0x18
+#define QIB_7220_SendDmaStatus_SpwFifoFuww_WMASK 0x1
+#define QIB_7220_SendDmaStatus_SpwFifoBufNum_WSB 0x10
+#define QIB_7220_SendDmaStatus_SpwFifoBufNum_WMASK 0xFF
+#define QIB_7220_SendDmaStatus_SpwFifoDescIndex_WSB 0x0
+#define QIB_7220_SendDmaStatus_SpwFifoDescIndex_WMASK 0xFFFF
+
+#define QIB_7220_SendBufEww0_OFFS 0x240
+#define QIB_7220_SendBufEww0_SendBufEww_63_0_WSB 0x0
+#define QIB_7220_SendBufEww0_SendBufEww_63_0_WMASK 0x0
+
+#define QIB_7220_WcvHdwAddw0_OFFS 0x270
+#define QIB_7220_WcvHdwAddw0_WcvHdwAddw0_WSB 0x2
+#define QIB_7220_WcvHdwAddw0_WcvHdwAddw0_WMASK 0x3FFFFFFFFF
+#define QIB_7220_WcvHdwAddw0_Wesewved_WSB 0x0
+#define QIB_7220_WcvHdwAddw0_Wesewved_WMASK 0x3
+
+#define QIB_7220_WcvHdwTaiwAddw0_OFFS 0x300
+#define QIB_7220_WcvHdwTaiwAddw0_WcvHdwTaiwAddw0_WSB 0x2
+#define QIB_7220_WcvHdwTaiwAddw0_WcvHdwTaiwAddw0_WMASK 0x3FFFFFFFFF
+#define QIB_7220_WcvHdwTaiwAddw0_Wesewved_WSB 0x0
+#define QIB_7220_WcvHdwTaiwAddw0_Wesewved_WMASK 0x3
+
+#define QIB_7220_ibsd_epb_access_ctww_OFFS 0x3C0
+#define QIB_7220_ibsd_epb_access_ctww_sw_ib_epb_weq_gwanted_WSB 0x8
+#define QIB_7220_ibsd_epb_access_ctww_sw_ib_epb_weq_gwanted_WMASK 0x1
+#define QIB_7220_ibsd_epb_access_ctww_Wesewved_WSB 0x1
+#define QIB_7220_ibsd_epb_access_ctww_Wesewved_WMASK 0x7F
+#define QIB_7220_ibsd_epb_access_ctww_sw_ib_epb_weq_WSB 0x0
+#define QIB_7220_ibsd_epb_access_ctww_sw_ib_epb_weq_WMASK 0x1
+
+#define QIB_7220_ibsd_epb_twansaction_weg_OFFS 0x3C8
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_wdy_WSB 0x1F
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_wdy_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_weq_ewwow_WSB 0x1E
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_weq_ewwow_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved_WSB 0x1D
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_mem_data_pawity_WSB 0x1C
+#define QIB_7220_ibsd_epb_twansaction_weg_mem_data_pawity_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved1_WSB 0x1B
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved1_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_cs_WSB 0x19
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_cs_WMASK 0x3
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_wead_wwite_WSB 0x18
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_wead_wwite_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved2_WSB 0x17
+#define QIB_7220_ibsd_epb_twansaction_weg_Wesewved2_WMASK 0x1
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_addwess_WSB 0x8
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_addwess_WMASK 0x7FFF
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_data_WSB 0x0
+#define QIB_7220_ibsd_epb_twansaction_weg_ib_epb_data_WMASK 0xFF
+
+#define QIB_7220_XGXSCfg_OFFS 0x3D8
+#define QIB_7220_XGXSCfg_sew_wink_down_fow_fctww_wane_sync_weset_WSB 0x3F
+#define QIB_7220_XGXSCfg_sew_wink_down_fow_fctww_wane_sync_weset_WMASK 0x1
+#define QIB_7220_XGXSCfg_Wesewved_WSB 0x13
+#define QIB_7220_XGXSCfg_Wesewved_WMASK 0xFFFFFFFFFFF
+#define QIB_7220_XGXSCfg_wink_sync_mask_WSB 0x9
+#define QIB_7220_XGXSCfg_wink_sync_mask_WMASK 0x3FF
+#define QIB_7220_XGXSCfg_Wesewved1_WSB 0x3
+#define QIB_7220_XGXSCfg_Wesewved1_WMASK 0x3F
+#define QIB_7220_XGXSCfg_xcv_weset_WSB 0x2
+#define QIB_7220_XGXSCfg_xcv_weset_WMASK 0x1
+#define QIB_7220_XGXSCfg_Wesewved2_WSB 0x1
+#define QIB_7220_XGXSCfg_Wesewved2_WMASK 0x1
+#define QIB_7220_XGXSCfg_tx_wx_weset_WSB 0x0
+#define QIB_7220_XGXSCfg_tx_wx_weset_WMASK 0x1
+
+#define QIB_7220_IBSewDesCtww_OFFS 0x3E0
+#define QIB_7220_IBSewDesCtww_Wesewved_WSB 0x2D
+#define QIB_7220_IBSewDesCtww_Wesewved_WMASK 0x7FFFF
+#define QIB_7220_IBSewDesCtww_INT_uC_WSB 0x2C
+#define QIB_7220_IBSewDesCtww_INT_uC_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_CKSEW_uC_WSB 0x2A
+#define QIB_7220_IBSewDesCtww_CKSEW_uC_WMASK 0x3
+#define QIB_7220_IBSewDesCtww_PWWN_WSB 0x28
+#define QIB_7220_IBSewDesCtww_PWWN_WMASK 0x3
+#define QIB_7220_IBSewDesCtww_PWWM_WSB 0x25
+#define QIB_7220_IBSewDesCtww_PWWM_WMASK 0x7
+#define QIB_7220_IBSewDesCtww_TXOBPD_WSB 0x24
+#define QIB_7220_IBSewDesCtww_TXOBPD_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_TWC_WSB 0x23
+#define QIB_7220_IBSewDesCtww_TWC_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_WXIDWE_WSB 0x22
+#define QIB_7220_IBSewDesCtww_WXIDWE_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_WXINV_WSB 0x21
+#define QIB_7220_IBSewDesCtww_WXINV_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_TXINV_WSB 0x20
+#define QIB_7220_IBSewDesCtww_TXINV_WMASK 0x1
+#define QIB_7220_IBSewDesCtww_Wesewved1_WSB 0x12
+#define QIB_7220_IBSewDesCtww_Wesewved1_WMASK 0x3FFF
+#define QIB_7220_IBSewDesCtww_NumSewDesWegsToWwFowWXEQ_WSB 0xD
+#define QIB_7220_IBSewDesCtww_NumSewDesWegsToWwFowWXEQ_WMASK 0x1F
+#define QIB_7220_IBSewDesCtww_NumSewDesWegsToWwFowDDS_WSB 0x8
+#define QIB_7220_IBSewDesCtww_NumSewDesWegsToWwFowDDS_WMASK 0x1F
+#define QIB_7220_IBSewDesCtww_Wesewved2_WSB 0x1
+#define QIB_7220_IBSewDesCtww_Wesewved2_WMASK 0x7F
+#define QIB_7220_IBSewDesCtww_WesetIB_uC_Cowe_WSB 0x0
+#define QIB_7220_IBSewDesCtww_WesetIB_uC_Cowe_WMASK 0x1
+
+#define QIB_7220_pciesd_epb_access_ctww_OFFS 0x400
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcie_epb_weq_gwanted_WSB 0x8
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcie_epb_weq_gwanted_WMASK 0x1
+#define QIB_7220_pciesd_epb_access_ctww_Wesewved_WSB 0x3
+#define QIB_7220_pciesd_epb_access_ctww_Wesewved_WMASK 0x1F
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcieepb_staw_en_WSB 0x1
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcieepb_staw_en_WMASK 0x3
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcie_epb_weq_WSB 0x0
+#define QIB_7220_pciesd_epb_access_ctww_sw_pcie_epb_weq_WMASK 0x1
+
+#define QIB_7220_pciesd_epb_twansaction_weg_OFFS 0x408
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_wdy_WSB 0x1F
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_wdy_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_weq_ewwow_WSB 0x1E
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_weq_ewwow_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_Wesewved_WSB 0x1D
+#define QIB_7220_pciesd_epb_twansaction_weg_Wesewved_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_mem_data_pawity_WSB 0x1C
+#define QIB_7220_pciesd_epb_twansaction_weg_mem_data_pawity_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_cs_WSB 0x19
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_cs_WMASK 0x7
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_wead_wwite_WSB 0x18
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_wead_wwite_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_Wesewved1_WSB 0x17
+#define QIB_7220_pciesd_epb_twansaction_weg_Wesewved1_WMASK 0x1
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_addwess_WSB 0x8
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_addwess_WMASK 0x7FFF
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_data_WSB 0x0
+#define QIB_7220_pciesd_epb_twansaction_weg_pcie_epb_data_WMASK 0xFF
+
+#define QIB_7220_SewDes_DDSWXEQ0_OFFS 0x500
+#define QIB_7220_SewDes_DDSWXEQ0_weg_addw_WSB 0x4
+#define QIB_7220_SewDes_DDSWXEQ0_weg_addw_WMASK 0x3F
+#define QIB_7220_SewDes_DDSWXEQ0_ewement_num_WSB 0x0
+#define QIB_7220_SewDes_DDSWXEQ0_ewement_num_WMASK 0xF
+
+#define QIB_7220_WBIntCnt_OFFS 0x13000
+
+#define QIB_7220_WBFwowStawwCnt_OFFS 0x13008
+
+#define QIB_7220_TxSDmaDescCnt_OFFS 0x13010
+
+#define QIB_7220_TxUnsupVWEwwCnt_OFFS 0x13018
+
+#define QIB_7220_TxDataPktCnt_OFFS 0x13020
+
+#define QIB_7220_TxFwowPktCnt_OFFS 0x13028
+
+#define QIB_7220_TxDwowdCnt_OFFS 0x13030
+
+#define QIB_7220_TxWenEwwCnt_OFFS 0x13038
+
+#define QIB_7220_TxMaxMinWenEwwCnt_OFFS 0x13040
+
+#define QIB_7220_TxUndewwunCnt_OFFS 0x13048
+
+#define QIB_7220_TxFwowStawwCnt_OFFS 0x13050
+
+#define QIB_7220_TxDwoppedPktCnt_OFFS 0x13058
+
+#define QIB_7220_WxDwoppedPktCnt_OFFS 0x13060
+
+#define QIB_7220_WxDataPktCnt_OFFS 0x13068
+
+#define QIB_7220_WxFwowPktCnt_OFFS 0x13070
+
+#define QIB_7220_WxDwowdCnt_OFFS 0x13078
+
+#define QIB_7220_WxWenEwwCnt_OFFS 0x13080
+
+#define QIB_7220_WxMaxMinWenEwwCnt_OFFS 0x13088
+
+#define QIB_7220_WxICWCEwwCnt_OFFS 0x13090
+
+#define QIB_7220_WxVCWCEwwCnt_OFFS 0x13098
+
+#define QIB_7220_WxFwowCtwwViowCnt_OFFS 0x130A0
+
+#define QIB_7220_WxVewsionEwwCnt_OFFS 0x130A8
+
+#define QIB_7220_WxWinkMawfowmCnt_OFFS 0x130B0
+
+#define QIB_7220_WxEBPCnt_OFFS 0x130B8
+
+#define QIB_7220_WxWPCWCEwwCnt_OFFS 0x130C0
+
+#define QIB_7220_WxBufOvfwCnt_OFFS 0x130C8
+
+#define QIB_7220_WxTIDFuwwEwwCnt_OFFS 0x130D0
+
+#define QIB_7220_WxTIDVawidEwwCnt_OFFS 0x130D8
+
+#define QIB_7220_WxPKeyMismatchCnt_OFFS 0x130E0
+
+#define QIB_7220_WxP0HdwEgwOvfwCnt_OFFS 0x130E8
+
+#define QIB_7220_IBStatusChangeCnt_OFFS 0x13170
+
+#define QIB_7220_IBWinkEwwWecovewyCnt_OFFS 0x13178
+
+#define QIB_7220_IBWinkDownedCnt_OFFS 0x13180
+
+#define QIB_7220_IBSymbowEwwCnt_OFFS 0x13188
+
+#define QIB_7220_WxVW15DwoppedPktCnt_OFFS 0x13190
+
+#define QIB_7220_WxOthewWocawPhyEwwCnt_OFFS 0x13198
+
+#define QIB_7220_PcieWetwyBufDiagQwowdCnt_OFFS 0x131A0
+
+#define QIB_7220_ExcessBuffewOvfwCnt_OFFS 0x131A8
+
+#define QIB_7220_WocawWinkIntegwityEwwCnt_OFFS 0x131B0
+
+#define QIB_7220_WxVwEwwCnt_OFFS 0x131B8
+
+#define QIB_7220_WxDwidFwtwCnt_OFFS 0x131C0
+
+#define QIB_7220_CNT_0131C8_OFFS 0x131C8
+
+#define QIB_7220_PSStat_OFFS 0x13200
+
+#define QIB_7220_PSStawt_OFFS 0x13208
+
+#define QIB_7220_PSIntewvaw_OFFS 0x13210
+
+#define QIB_7220_PSWcvDataCount_OFFS 0x13218
+
+#define QIB_7220_PSWcvPktsCount_OFFS 0x13220
+
+#define QIB_7220_PSXmitDataCount_OFFS 0x13228
+
+#define QIB_7220_PSXmitPktsCount_OFFS 0x13230
+
+#define QIB_7220_PSXmitWaitCount_OFFS 0x13238
+
+#define QIB_7220_CNT_013240_OFFS 0x13240
+
+#define QIB_7220_WcvEgwAwway_OFFS 0x14000
+
+#define QIB_7220_MEM_038000_OFFS 0x38000
+
+#define QIB_7220_WcvTIDAwway0_OFFS 0x53000
+
+#define QIB_7220_PIOWaunchFIFO_OFFS 0x64000
+
+#define QIB_7220_MEM_064480_OFFS 0x64480
+
+#define QIB_7220_SendPIOpbcCache_OFFS 0x64800
+
+#define QIB_7220_MEM_064C80_OFFS 0x64C80
+
+#define QIB_7220_PweWaunchFIFO_OFFS 0x65000
+
+#define QIB_7220_MEM_065080_OFFS 0x65080
+
+#define QIB_7220_ScoweBoawd_OFFS 0x65400
+
+#define QIB_7220_MEM_065440_OFFS 0x65440
+
+#define QIB_7220_DescwiptowFIFO_OFFS 0x65800
+
+#define QIB_7220_MEM_065880_OFFS 0x65880
+
+#define QIB_7220_WcvBuf1_OFFS 0x72000
+
+#define QIB_7220_MEM_074800_OFFS 0x74800
+
+#define QIB_7220_WcvBuf2_OFFS 0x75000
+
+#define QIB_7220_MEM_076400_OFFS 0x76400
+
+#define QIB_7220_WcvFwags_OFFS 0x77000
+
+#define QIB_7220_MEM_078400_OFFS 0x78400
+
+#define QIB_7220_WcvWookupBuf1_OFFS 0x79000
+
+#define QIB_7220_MEM_07A400_OFFS 0x7A400
+
+#define QIB_7220_WcvDMADatBuf_OFFS 0x7B000
+
+#define QIB_7220_WcvDMAHdwBuf_OFFS 0x7B800
+
+#define QIB_7220_MiscWXEIntMem_OFFS 0x7C000
+
+#define QIB_7220_MEM_07D400_OFFS 0x7D400
+
+#define QIB_7220_PCIEWcvBuf_OFFS 0x80000
+
+#define QIB_7220_PCIEWetwyBuf_OFFS 0x84000
+
+#define QIB_7220_PCIEWcvBufWdToWwAddw_OFFS 0x88000
+
+#define QIB_7220_PCIECpwBuf_OFFS 0x90000
+
+#define QIB_7220_IBSewDesMappTabwe_OFFS 0x94000
+
+#define QIB_7220_MEM_095000_OFFS 0x95000
+
+#define QIB_7220_SendBuf0_MA_OFFS 0x100000
+
+#define QIB_7220_MEM_1A0000_OFFS 0x1A0000

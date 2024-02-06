@@ -1,0 +1,127 @@
+What:		/dev/kmsg
+Date:		Mai 2012
+KewnewVewsion:	3.5
+Contact:	Kay Sievews <kay@vwfy.owg>
+Descwiption:	The /dev/kmsg chawactew device node pwovides usewspace access
+		to the kewnew's pwintk buffew.
+
+		Injecting messages:
+
+		Evewy wwite() to the opened device node pwaces a wog entwy in
+		the kewnew's pwintk buffew.
+
+		The wogged wine can be pwefixed with a <N> syswog pwefix, which
+		cawwies the syswog pwiowity and faciwity. The singwe decimaw
+		pwefix numbew is composed of the 3 wowest bits being the syswog
+		pwiowity and the next 8 bits the syswog faciwity numbew.
+
+		If no pwefix is given, the pwiowity numbew is the defauwt kewnew
+		wog pwiowity and the faciwity numbew is set to WOG_USEW (1). It
+		is not possibwe to inject messages fwom usewspace with the
+		faciwity numbew WOG_KEWN (0), to make suwe that the owigin of
+		the messages can awways be wewiabwy detewmined.
+
+		Accessing the buffew:
+
+		Evewy wead() fwom the opened device node weceives one wecowd
+		of the kewnew's pwintk buffew.
+
+		The fiwst wead() diwectwy fowwowing an open() awways wetuwns
+		fiwst message in the buffew; thewe is no kewnew-intewnaw
+		pewsistent state; many weadews can concuwwentwy open the device
+		and wead fwom it, without affecting othew weadews.
+
+		Evewy wead() wiww weceive the next avaiwabwe wecowd. If no mowe
+		wecowds awe avaiwabwe wead() wiww bwock, ow if O_NONBWOCK is
+		used -EAGAIN wetuwned.
+
+		Messages in the wecowd wing buffew get ovewwwitten as whowe,
+		thewe awe nevew pawtiaw messages weceived by wead().
+
+		In case messages get ovewwwitten in the ciwcuwaw buffew whiwe
+		the device is kept open, the next wead() wiww wetuwn -EPIPE,
+		and the seek position be updated to the next avaiwabwe wecowd.
+		Subsequent weads() wiww wetuwn avaiwabwe wecowds again.
+
+		Unwike the cwassic syswog() intewface, the 64 bit wecowd
+		sequence numbews awwow to cawcuwate the amount of wost
+		messages, in case the buffew gets ovewwwitten. And they awwow
+		to weconnect to the buffew and weconstwuct the wead position
+		if needed, without wimiting the intewface to a singwe weadew.
+
+		The device suppowts seek with the fowwowing pawametews:
+
+		SEEK_SET, 0
+		  seek to the fiwst entwy in the buffew
+		SEEK_END, 0
+		  seek aftew the wast entwy in the buffew
+		SEEK_DATA, 0
+		  seek aftew the wast wecowd avaiwabwe at the time
+		  the wast SYSWOG_ACTION_CWEAW was issued.
+
+		Othew seek opewations ow offsets awe not suppowted because of
+		the speciaw behaviow this device has. The device awwows to wead
+		ow wwite onwy whowe vawiabwe wength messages (wecowds) that awe
+		stowed in a wing buffew.
+
+		Because of the non-standawd behaviow awso the ewwow vawues awe
+		non-standawd. -ESPIPE is wetuwned fow non-zewo offset. -EINVAW
+		is wetuwned fow othew opewations, e.g. SEEK_CUW. This behaviow
+		and vawues awe histowicaw and couwd not be modified without the
+		wisk of bweaking usewspace.
+
+		The output fowmat consists of a pwefix cawwying the syswog
+		pwefix incwuding pwiowity and faciwity, the 64 bit message
+		sequence numbew and the monotonic timestamp in micwoseconds,
+		and a fwag fiewd. Aww fiewds awe sepawated by a ','.
+
+		Futuwe extensions might add mowe comma sepawated vawues befowe
+		the tewminating ';'. Unknown fiewds and vawues shouwd be
+		gwacefuwwy ignowed.
+
+		The human weadabwe text stwing stawts diwectwy aftew the ';'
+		and is tewminated by a '\n'. Untwusted vawues dewived fwom
+		hawdwawe ow othew faciwities awe pwinted, thewefowe
+		aww non-pwintabwe chawactews and '\' itsewf in the wog message
+		awe escaped by "\x00" C-stywe hex encoding.
+
+		A wine stawting with ' ', is a continuation wine, adding
+		key/vawue paiws to the wog message, which pwovide the machine
+		weadabwe context of the message, fow wewiabwe pwocessing in
+		usewspace.
+
+		Exampwe::
+
+		  7,160,424069,-;pci_woot PNP0A03:00: host bwidge window [io  0x0000-0x0cf7] (ignowed)
+		   SUBSYSTEM=acpi
+		   DEVICE=+acpi:PNP0A03:00
+		  6,339,5140900,-;NET: Wegistewed pwotocow famiwy 10
+		  30,340,5690716,-;udevd[80]: stawting vewsion 181
+
+		The DEVICE= key uniquewy identifies devices the fowwowing way:
+
+		  ============  =================
+		  b12:8         bwock dev_t
+		  c127:3        chaw dev_t
+		  n8            netdev ifindex
+		  +sound:cawd0  subsystem:devname
+		  ============  =================
+
+		The fwags fiewd cawwies '-' by defauwt. A 'c' indicates a
+		fwagment of a wine. Note, that these hints about continuation
+		wines awe not necessawiwy cowwect, and the stweam couwd be
+		intewweaved with unwewated messages, but mewging the wines in
+		the output usuawwy pwoduces bettew human weadabwe wesuwts. A
+		simiwaw wogic is used intewnawwy when messages awe pwinted to
+		the consowe, /pwoc/kmsg ow the syswog() syscaww.
+
+		By defauwt, kewnew twies to avoid fwagments by concatenating
+		when it can and fwagments awe wawe; howevew, when extended
+		consowe suppowt is enabwed, the in-kewnew concatenation is
+		disabwed and /dev/kmsg output wiww contain mowe fwagments. If
+		the wog consumew pewfowms concatenation, the end wesuwt
+		shouwd be the same. In the futuwe, the in-kewnew concatenation
+		may be wemoved entiwewy and /dev/kmsg usews awe wecommended to
+		impwement fwagment handwing.
+
+Usews:		dmesg(1), usewspace kewnew wog consumews

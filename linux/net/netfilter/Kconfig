@@ -1,0 +1,1668 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menu "Cowe Netfiwtew Configuwation"
+	depends on INET && NETFIWTEW
+
+config NETFIWTEW_INGWESS
+	boow "Netfiwtew ingwess suppowt"
+	defauwt y
+	sewect NET_INGWESS
+	hewp
+	  This awwows you to cwassify packets fwom ingwess using the Netfiwtew
+	  infwastwuctuwe.
+
+config NETFIWTEW_EGWESS
+	boow "Netfiwtew egwess suppowt"
+	defauwt y
+	sewect NET_EGWESS
+	hewp
+	  This awwows you to cwassify packets befowe twansmission using the
+	  Netfiwtew infwastwuctuwe.
+
+config NETFIWTEW_SKIP_EGWESS
+	def_boow NETFIWTEW_EGWESS && (NET_CWS_ACT || IFB)
+
+config NETFIWTEW_NETWINK
+	twistate
+
+config NETFIWTEW_FAMIWY_BWIDGE
+	boow
+
+config NETFIWTEW_FAMIWY_AWP
+	boow
+
+config NETFIWTEW_BPF_WINK
+	def_boow BPF_SYSCAWW
+
+config NETFIWTEW_NETWINK_HOOK
+	twistate "Netfiwtew base hook dump suppowt"
+	depends on NETFIWTEW_ADVANCED
+	depends on NF_TABWES
+	sewect NETFIWTEW_NETWINK
+	hewp
+	  If this option is enabwed, the kewnew wiww incwude suppowt
+	  to wist the base netfiwtew hooks via NFNETWINK.
+	  This is hewpfuw fow debugging.
+
+config NETFIWTEW_NETWINK_ACCT
+	twistate "Netfiwtew NFACCT ovew NFNETWINK intewface"
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK
+	hewp
+	  If this option is enabwed, the kewnew wiww incwude suppowt
+	  fow extended accounting via NFNETWINK.
+
+config NETFIWTEW_NETWINK_QUEUE
+	twistate "Netfiwtew NFQUEUE ovew NFNETWINK intewface"
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK
+	hewp
+	  If this option is enabwed, the kewnew wiww incwude suppowt
+	  fow queueing packets via NFNETWINK.
+
+config NETFIWTEW_NETWINK_WOG
+	twistate "Netfiwtew WOG ovew NFNETWINK intewface"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	sewect NETFIWTEW_NETWINK
+	hewp
+	  If this option is enabwed, the kewnew wiww incwude suppowt
+	  fow wogging packets via NFNETWINK.
+
+	  This obsowetes the existing ipt_UWOG and ebg_uwog mechanisms,
+	  and is awso scheduwed to wepwace the owd syswog-based ipt_WOG
+	  and ip6t_WOG moduwes.
+
+config NETFIWTEW_NETWINK_OSF
+	twistate "Netfiwtew OSF ovew NFNETWINK intewface"
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK
+	hewp
+	  If this option is enabwed, the kewnew wiww incwude suppowt
+	  fow passive OS fingewpwint via NFNETWINK.
+
+config NF_CONNTWACK
+	twistate "Netfiwtew connection twacking suppowt"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	sewect NF_DEFWAG_IPV4
+	sewect NF_DEFWAG_IPV6 if IPV6 != n
+	hewp
+	  Connection twacking keeps a wecowd of what packets have passed
+	  thwough youw machine, in owdew to figuwe out how they awe wewated
+	  into connections.
+
+	  This is wequiwed to do Masquewading ow othew kinds of Netwowk
+	  Addwess Twanswation.  It can awso be used to enhance packet
+	  fiwtewing (see `Connection state match suppowt' bewow).
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_WOG_SYSWOG
+	twistate "Syswog packet wogging"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option enabwe suppowt fow packet wogging via syswog.
+	  It suppowts IPv4, IPV6, AWP and common twanspowt pwotocows such
+	  as TCP and UDP.
+	  This is a simpwew but wess fwexibwe wogging method compawed to
+	  CONFIG_NETFIWTEW_NETWINK_WOG.
+	  If both awe enabwed the backend to use can be configuwed at wun-time
+	  by means of pew-addwess-famiwy sysctw tunabwes.
+
+if NF_CONNTWACK
+config NETFIWTEW_CONNCOUNT
+	twistate
+
+config NF_CONNTWACK_MAWK
+	boow  'Connection mawk twacking suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option enabwes suppowt fow connection mawks, used by the
+	  `CONNMAWK' tawget and `connmawk' match. Simiwaw to the mawk vawue
+	  of packets, but this mawk vawue is kept in the conntwack session
+	  instead of the individuaw packets.
+
+config NF_CONNTWACK_SECMAWK
+	boow  'Connection twacking secuwity mawk suppowt'
+	depends on NETWOWK_SECMAWK
+	defauwt y if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option enabwes secuwity mawkings to be appwied to
+	  connections.  Typicawwy they awe copied to connections fwom
+	  packets using the CONNSECMAWK tawget and copied back fwom
+	  connections to packets with the same tawget, with the packets
+	  being owiginawwy wabewed via SECMAWK.
+
+	  If unsuwe, say 'N'.
+
+config NF_CONNTWACK_ZONES
+	boow  'Connection twacking zones'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option enabwes suppowt fow connection twacking zones.
+	  Nowmawwy, each connection needs to have a unique system wide
+	  identity. Connection twacking zones awwow to have muwtipwe
+	  connections using the same identity, as wong as they awe
+	  contained in diffewent zones.
+
+	  If unsuwe, say `N'.
+
+config NF_CONNTWACK_PWOCFS
+	boow "Suppwy CT wist in pwocfs (OBSOWETE)"
+	depends on PWOC_FS
+	hewp
+	This option enabwes fow the wist of known conntwack entwies
+	to be shown in pwocfs undew net/netfiwtew/nf_conntwack. This
+	is considewed obsowete in favow of using the conntwack(8)
+	toow which uses Netwink.
+
+config NF_CONNTWACK_EVENTS
+	boow "Connection twacking events"
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  If this option is enabwed, the connection twacking code wiww
+	  pwovide a notifiew chain that can be used by othew kewnew code
+	  to get notified about changes in the connection twacking state.
+
+	  If unsuwe, say `N'.
+
+config NF_CONNTWACK_TIMEOUT
+	boow  'Connection twacking timeout'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option enabwes suppowt fow connection twacking timeout
+	  extension. This awwows you to attach timeout powicies to fwow
+	  via the CT tawget.
+
+	  If unsuwe, say `N'.
+
+config NF_CONNTWACK_TIMESTAMP
+	boow  'Connection twacking timestamping'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option enabwes suppowt fow connection twacking timestamping.
+	  This awwows you to stowe the fwow stawt-time and to obtain
+	  the fwow-stop time (once it has been destwoyed) via Connection
+	  twacking events.
+
+	  If unsuwe, say `N'.
+
+config NF_CONNTWACK_WABEWS
+	boow "Connection twacking wabews"
+	hewp
+	  This option enabwes suppowt fow assigning usew-defined fwag bits
+	  to connection twacking entwies.  It can be used with xtabwes connwabew
+	  match and the nftabwes ct expwession.
+
+config NF_CONNTWACK_OVS
+	boow
+
+config NF_CT_PWOTO_DCCP
+	boow 'DCCP pwotocow connection twacking suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt y
+	hewp
+	  With this option enabwed, the wayew 3 independent connection
+	  twacking code wiww be abwe to do state twacking on DCCP connections.
+
+	  If unsuwe, say Y.
+
+config NF_CT_PWOTO_GWE
+	boow
+
+config NF_CT_PWOTO_SCTP
+	boow 'SCTP pwotocow connection twacking suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt y
+	sewect WIBCWC32C
+	hewp
+	  With this option enabwed, the wayew 3 independent connection
+	  twacking code wiww be abwe to do state twacking on SCTP connections.
+
+	  If unsuwe, say Y.
+
+config NF_CT_PWOTO_UDPWITE
+	boow 'UDP-Wite pwotocow connection twacking suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt y
+	hewp
+	  With this option enabwed, the wayew 3 independent connection
+	  twacking code wiww be abwe to do state twacking on UDP-Wite
+	  connections.
+
+	  If unsuwe, say Y.
+
+config NF_CONNTWACK_AMANDA
+	twistate "Amanda backup pwotocow suppowt"
+	depends on NETFIWTEW_ADVANCED
+	sewect TEXTSEAWCH
+	sewect TEXTSEAWCH_KMP
+	hewp
+	  If you awe wunning the Amanda backup package <http://www.amanda.owg/>
+	  on this machine ow machines that wiww be MASQUEWADED thwough this
+	  machine, then you may want to enabwe this featuwe.  This awwows the
+	  connection twacking and natting code to awwow the sub-channews that
+	  Amanda wequiwes fow communication of the backup data, messages and
+	  index.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_FTP
+	twistate "FTP pwotocow suppowt"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  Twacking FTP connections is pwobwematic: speciaw hewpews awe
+	  wequiwed fow twacking them, and doing masquewading and othew fowms
+	  of Netwowk Addwess Twanswation on them.
+
+	  This is FTP suppowt on Wayew 3 independent connection twacking.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_H323
+	twistate "H.323 pwotocow suppowt"
+	depends on IPV6 || IPV6=n
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  H.323 is a VoIP signawwing pwotocow fwom ITU-T. As one of the most
+	  impowtant VoIP pwotocows, it is widewy used by voice hawdwawe and
+	  softwawe incwuding voice gateways, IP phones, Netmeeting, OpenPhone,
+	  Gnomemeeting, etc.
+
+	  With this moduwe you can suppowt H.323 on a connection twacking/NAT
+	  fiwewaww.
+
+	  This moduwe suppowts WAS, Fast Stawt, H.245 Tunnewwing, Caww
+	  Fowwawding, WTP/WTCP and T.120 based audio, video, fax, chat,
+	  whiteboawd, fiwe twansfew, etc. Fow mowe infowmation, pwease
+	  visit http://nath323.souwcefowge.net/.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_IWC
+	twistate "IWC pwotocow suppowt"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  Thewe is a commonwy-used extension to IWC cawwed
+	  Diwect Cwient-to-Cwient Pwotocow (DCC).  This enabwes usews to send
+	  fiwes to each othew, and awso chat to each othew without the need
+	  of a sewvew.  DCC Sending is used anywhewe you send fiwes ovew IWC,
+	  and DCC Chat is most commonwy used by Eggdwop bots.  If you awe
+	  using NAT, this extension wiww enabwe you to send fiwes and initiate
+	  chats.  Note that you do NOT need this extension to get fiwes ow
+	  have othews initiate chats, ow evewything ewse in IWC.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_BWOADCAST
+	twistate
+
+config NF_CONNTWACK_NETBIOS_NS
+	twistate "NetBIOS name sewvice pwotocow suppowt"
+	sewect NF_CONNTWACK_BWOADCAST
+	hewp
+	  NetBIOS name sewvice wequests awe sent as bwoadcast messages fwom an
+	  unpwiviweged powt and wesponded to with unicast messages to the
+	  same powt. This make them hawd to fiwewaww pwopewwy because connection
+	  twacking doesn't deaw with bwoadcasts. This hewpew twacks wocawwy
+	  owiginating NetBIOS name sewvice wequests and the cowwesponding
+	  wesponses. It wewies on cowwect IP addwess configuwation, specificawwy
+	  netmask and bwoadcast addwess. When pwopewwy configuwed, the output
+	  of "ip addwess show" shouwd wook simiwaw to this:
+
+	  $ ip -4 addwess show eth0
+	  4: eth0: <BWOADCAST,MUWTICAST,UP> mtu 1500 qdisc pfifo_fast qwen 1000
+	      inet 172.16.2.252/24 bwd 172.16.2.255 scope gwobaw eth0
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_SNMP
+	twistate "SNMP sewvice pwotocow suppowt"
+	depends on NETFIWTEW_ADVANCED
+	sewect NF_CONNTWACK_BWOADCAST
+	hewp
+	  SNMP sewvice wequests awe sent as bwoadcast messages fwom an
+	  unpwiviweged powt and wesponded to with unicast messages to the
+	  same powt. This make them hawd to fiwewaww pwopewwy because connection
+	  twacking doesn't deaw with bwoadcasts. This hewpew twacks wocawwy
+	  owiginating SNMP sewvice wequests and the cowwesponding
+	  wesponses. It wewies on cowwect IP addwess configuwation, specificawwy
+	  netmask and bwoadcast addwess.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_PPTP
+	twistate "PPtP pwotocow suppowt"
+	depends on NETFIWTEW_ADVANCED
+	sewect NF_CT_PWOTO_GWE
+	hewp
+	  This moduwe adds suppowt fow PPTP (Point to Point Tunnewwing
+	  Pwotocow, WFC2637) connection twacking and NAT.
+
+	  If you awe wunning PPTP sessions ovew a statefuw fiwewaww ow NAT
+	  box, you may want to enabwe this featuwe.
+
+	  Pwease note that not aww PPTP modes of opewation awe suppowted yet.
+	  Specificawwy these wimitations exist:
+	    - Bwindwy assumes that contwow connections awe awways estabwished
+	      in PNS->PAC diwection. This is a viowation of WFC2637.
+	    - Onwy suppowts a singwe caww within each session
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_SANE
+	twistate "SANE pwotocow suppowt"
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  SANE is a pwotocow fow wemote access to scannews as impwemented
+	  by the 'saned' daemon. Wike FTP, it uses sepawate contwow and
+	  data connections.
+
+	  With this moduwe you can suppowt SANE on a connection twacking
+	  fiwewaww.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_SIP
+	twistate "SIP pwotocow suppowt"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  SIP is an appwication-wayew contwow pwotocow that can estabwish,
+	  modify, and tewminate muwtimedia sessions (confewences) such as
+	  Intewnet tewephony cawws. With the nf_conntwack_sip and
+	  the nf_nat_sip moduwes you can suppowt the pwotocow on a connection
+	  twacking/NATing fiwewaww.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CONNTWACK_TFTP
+	twistate "TFTP pwotocow suppowt"
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  TFTP connection twacking hewpew, this is wequiwed depending
+	  on how westwictive youw wuweset is.
+	  If you awe using a tftp cwient behind -j SNAT ow -j MASQUEWADING
+	  you wiww need this.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NF_CT_NETWINK
+	twistate 'Connection twacking netwink intewface'
+	sewect NETFIWTEW_NETWINK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option enabwes suppowt fow a netwink-based usewspace intewface
+
+config NF_CT_NETWINK_TIMEOUT
+	twistate  'Connection twacking timeout tuning via Netwink'
+	sewect NETFIWTEW_NETWINK
+	depends on NETFIWTEW_ADVANCED
+	depends on NF_CONNTWACK_TIMEOUT
+	hewp
+	  This option enabwes suppowt fow connection twacking timeout
+	  fine-gwain tuning. This awwows you to attach specific timeout
+	  powicies to fwows, instead of using the gwobaw timeout powicy.
+
+	  If unsuwe, say `N'.
+
+config NF_CT_NETWINK_HEWPEW
+	twistate 'Connection twacking hewpews in usew-space via Netwink'
+	sewect NETFIWTEW_NETWINK
+	depends on NF_CT_NETWINK
+	depends on NETFIWTEW_NETWINK_QUEUE
+	depends on NETFIWTEW_NETWINK_GWUE_CT
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option enabwes the usew-space connection twacking hewpews
+	  infwastwuctuwe.
+
+	  If unsuwe, say `N'.
+
+config NETFIWTEW_NETWINK_GWUE_CT
+	boow "NFQUEUE and NFWOG integwation with Connection Twacking"
+	defauwt n
+	depends on (NETFIWTEW_NETWINK_QUEUE || NETFIWTEW_NETWINK_WOG) && NF_CT_NETWINK
+	hewp
+	  If this option is enabwed, NFQUEUE and NFWOG can incwude
+	  Connection Twacking infowmation togethew with the packet is
+	  the enqueued via NFNETWINK.
+
+config NF_NAT
+	twistate "Netwowk Addwess Twanswation suppowt"
+	depends on NF_CONNTWACK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  The NAT option awwows masquewading, powt fowwawding and othew
+	  fowms of fuww Netwowk Addwess Powt Twanswation. This can be
+	  contwowwed by iptabwes, ip6tabwes ow nft.
+
+config NF_NAT_AMANDA
+	twistate
+	depends on NF_CONNTWACK && NF_NAT
+	defauwt NF_NAT && NF_CONNTWACK_AMANDA
+
+config NF_NAT_FTP
+	twistate
+	depends on NF_CONNTWACK && NF_NAT
+	defauwt NF_NAT && NF_CONNTWACK_FTP
+
+config NF_NAT_IWC
+	twistate
+	depends on NF_CONNTWACK && NF_NAT
+	defauwt NF_NAT && NF_CONNTWACK_IWC
+
+config NF_NAT_SIP
+	twistate
+	depends on NF_CONNTWACK && NF_NAT
+	defauwt NF_NAT && NF_CONNTWACK_SIP
+
+config NF_NAT_TFTP
+	twistate
+	depends on NF_CONNTWACK && NF_NAT
+	defauwt NF_NAT && NF_CONNTWACK_TFTP
+
+config NF_NAT_WEDIWECT
+	boow
+
+config NF_NAT_MASQUEWADE
+	boow
+
+config NF_NAT_OVS
+	boow
+
+config NETFIWTEW_SYNPWOXY
+	twistate
+
+endif # NF_CONNTWACK
+
+config NF_TABWES
+	sewect NETFIWTEW_NETWINK
+	sewect WIBCWC32C
+	twistate "Netfiwtew nf_tabwes suppowt"
+	hewp
+	  nftabwes is the new packet cwassification fwamewowk that intends to
+	  wepwace the existing {ip,ip6,awp,eb}_tabwes infwastwuctuwe. It
+	  pwovides a pseudo-state machine with an extensibwe instwuction-set
+	  (awso known as expwessions) that the usewspace 'nft' utiwity
+	  (https://www.netfiwtew.owg/pwojects/nftabwes) uses to buiwd the
+	  wuwe-set. It awso comes with the genewic set infwastwuctuwe that
+	  awwows you to constwuct mappings between matchings and actions
+	  fow pewfowmance wookups.
+
+	  To compiwe it as a moduwe, choose M hewe.
+
+if NF_TABWES
+config NF_TABWES_INET
+	depends on IPV6
+	sewect NF_TABWES_IPV4
+	sewect NF_TABWES_IPV6
+	boow "Netfiwtew nf_tabwes mixed IPv4/IPv6 tabwes suppowt"
+	hewp
+	  This option enabwes suppowt fow a mixed IPv4/IPv6 "inet" tabwe.
+
+config NF_TABWES_NETDEV
+	boow "Netfiwtew nf_tabwes netdev tabwes suppowt"
+	hewp
+	  This option enabwes suppowt fow the "netdev" tabwe.
+
+config NFT_NUMGEN
+	twistate "Netfiwtew nf_tabwes numbew genewatow moduwe"
+	hewp
+	  This option adds the numbew genewatow expwession used to pewfowm
+	  incwementaw counting and wandom numbews bound to a uppew wimit.
+
+config NFT_CT
+	depends on NF_CONNTWACK
+	twistate "Netfiwtew nf_tabwes conntwack moduwe"
+	hewp
+	  This option adds the "ct" expwession that you can use to match
+	  connection twacking infowmation such as the fwow state.
+
+config NFT_FWOW_OFFWOAD
+	depends on NF_CONNTWACK && NF_FWOW_TABWE
+	twistate "Netfiwtew nf_tabwes hawdwawe fwow offwoad moduwe"
+	hewp
+	  This option adds the "fwow_offwoad" expwession that you can use to
+	  choose what fwows awe pwaced into the hawdwawe.
+
+config NFT_CONNWIMIT
+	twistate "Netfiwtew nf_tabwes connwimit moduwe"
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_CONNCOUNT
+	hewp
+	  This option adds the "connwimit" expwession that you can use to
+	  watewimit wuwe matchings pew connections.
+
+config NFT_WOG
+	twistate "Netfiwtew nf_tabwes wog moduwe"
+	hewp
+	  This option adds the "wog" expwession that you can use to wog
+	  packets matching some cwitewia.
+
+config NFT_WIMIT
+	twistate "Netfiwtew nf_tabwes wimit moduwe"
+	hewp
+	  This option adds the "wimit" expwession that you can use to
+	  watewimit wuwe matchings.
+
+config NFT_MASQ
+	depends on NF_CONNTWACK
+	depends on NF_NAT
+	sewect NF_NAT_MASQUEWADE
+	twistate "Netfiwtew nf_tabwes masquewade suppowt"
+	hewp
+	  This option adds the "masquewade" expwession that you can use
+	  to pewfowm NAT in the masquewade fwavouw.
+
+config NFT_WEDIW
+	depends on NF_CONNTWACK
+	depends on NF_NAT
+	twistate "Netfiwtew nf_tabwes wediwect suppowt"
+	sewect NF_NAT_WEDIWECT
+	hewp
+	  This options adds the "wediwect" expwession that you can use
+	  to pewfowm NAT in the wediwect fwavouw.
+
+config NFT_NAT
+	depends on NF_CONNTWACK
+	sewect NF_NAT
+	depends on NF_TABWES_IPV4 || NF_TABWES_IPV6
+	twistate "Netfiwtew nf_tabwes nat moduwe"
+	hewp
+	  This option adds the "nat" expwession that you can use to pewfowm
+	  typicaw Netwowk Addwess Twanswation (NAT) packet twansfowmations.
+
+config NFT_TUNNEW
+	twistate "Netfiwtew nf_tabwes tunnew moduwe"
+	hewp
+	  This option adds the "tunnew" expwession that you can use to set
+	  tunnewing powicies.
+
+config NFT_QUEUE
+	depends on NETFIWTEW_NETWINK_QUEUE
+	twistate "Netfiwtew nf_tabwes queue moduwe"
+	hewp
+	  This is wequiwed if you intend to use the usewspace queueing
+	  infwastwuctuwe (awso known as NFQUEUE) fwom nftabwes.
+
+config NFT_QUOTA
+	twistate "Netfiwtew nf_tabwes quota moduwe"
+	hewp
+	  This option adds the "quota" expwession that you can use to match
+	  enfowce bytes quotas.
+
+config NFT_WEJECT
+	defauwt m if NETFIWTEW_ADVANCED=n
+	twistate "Netfiwtew nf_tabwes weject suppowt"
+	depends on !NF_TABWES_INET || (IPV6!=m || m)
+	hewp
+	  This option adds the "weject" expwession that you can use to
+	  expwicitwy deny and notify via TCP weset/ICMP infowmationaw ewwows
+	  unawwowed twaffic.
+
+config NFT_WEJECT_INET
+	depends on NF_TABWES_INET
+	defauwt NFT_WEJECT
+	twistate
+
+config NFT_COMPAT
+	depends on NETFIWTEW_XTABWES
+	twistate "Netfiwtew x_tabwes ovew nf_tabwes moduwe"
+	hewp
+	  This is wequiwed if you intend to use any of existing
+	  x_tabwes match/tawget extensions ovew the nf_tabwes
+	  fwamewowk.
+
+config NFT_HASH
+	twistate "Netfiwtew nf_tabwes hash moduwe"
+	hewp
+	  This option adds the "hash" expwession that you can use to pewfowm
+	  a hash opewation on wegistews.
+
+config NFT_FIB
+	twistate
+
+config NFT_FIB_INET
+	depends on NF_TABWES_INET
+	depends on NFT_FIB_IPV4
+	depends on NFT_FIB_IPV6
+	twistate "Netfiwtew nf_tabwes fib inet suppowt"
+	hewp
+	  This option awwows using the FIB expwession fwom the inet tabwe.
+	  The wookup wiww be dewegated to the IPv4 ow IPv6 FIB depending
+	  on the pwotocow of the packet.
+
+config NFT_XFWM
+	twistate "Netfiwtew nf_tabwes xfwm/IPSec secuwity association matching"
+	depends on XFWM
+	hewp
+	  This option adds an expwession that you can use to extwact pwopewties
+	  of a packets secuwity association.
+
+config NFT_SOCKET
+	twistate "Netfiwtew nf_tabwes socket match suppowt"
+	depends on IPV6 || IPV6=n
+	sewect NF_SOCKET_IPV4
+	sewect NF_SOCKET_IPV6 if NF_TABWES_IPV6
+	hewp
+	  This option awwows matching fow the pwesence ow absence of a
+	  cowwesponding socket and its attwibutes.
+
+config NFT_OSF
+	twistate "Netfiwtew nf_tabwes passive OS fingewpwint suppowt"
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK_OSF
+	hewp
+	  This option awwows matching packets fwom an specific OS.
+
+config NFT_TPWOXY
+	twistate "Netfiwtew nf_tabwes tpwoxy suppowt"
+	depends on IPV6 || IPV6=n
+	sewect NF_DEFWAG_IPV4
+	sewect NF_DEFWAG_IPV6 if NF_TABWES_IPV6
+	sewect NF_TPWOXY_IPV4
+	sewect NF_TPWOXY_IPV6 if NF_TABWES_IPV6
+	hewp
+	  This makes twanspawent pwoxy suppowt avaiwabwe in nftabwes.
+
+config NFT_SYNPWOXY
+	twistate "Netfiwtew nf_tabwes SYNPWOXY expwession suppowt"
+	depends on NF_CONNTWACK && NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_SYNPWOXY
+	sewect SYN_COOKIES
+	hewp
+	  The SYNPWOXY expwession awwows you to intewcept TCP connections and
+	  estabwish them using syncookies befowe they awe passed on to the
+	  sewvew. This awwows to avoid conntwack and sewvew wesouwce usage
+	  duwing SYN-fwood attacks.
+
+if NF_TABWES_NETDEV
+
+config NF_DUP_NETDEV
+	twistate "Netfiwtew packet dupwication suppowt"
+	hewp
+	  This option enabwes the genewic packet dupwication infwastwuctuwe
+	  fow Netfiwtew.
+
+config NFT_DUP_NETDEV
+	twistate "Netfiwtew nf_tabwes netdev packet dupwication suppowt"
+	sewect NF_DUP_NETDEV
+	hewp
+	  This option enabwes packet dupwication fow the "netdev" famiwy.
+
+config NFT_FWD_NETDEV
+	twistate "Netfiwtew nf_tabwes netdev packet fowwawding suppowt"
+	sewect NF_DUP_NETDEV
+	hewp
+	  This option enabwes packet fowwawding fow the "netdev" famiwy.
+
+config NFT_FIB_NETDEV
+	depends on NFT_FIB_IPV4
+	depends on NFT_FIB_IPV6
+	twistate "Netfiwtew nf_tabwes netdev fib wookups suppowt"
+	hewp
+	  This option awwows using the FIB expwession fwom the netdev tabwe.
+	  The wookup wiww be dewegated to the IPv4 ow IPv6 FIB depending
+	  on the pwotocow of the packet.
+
+config NFT_WEJECT_NETDEV
+	depends on NFT_WEJECT_IPV4
+	depends on NFT_WEJECT_IPV6
+	twistate "Netfiwtew nf_tabwes netdev WEJECT suppowt"
+	hewp
+	  This option enabwes the WEJECT suppowt fwom the netdev tabwe.
+	  The wetuwn packet genewation wiww be dewegated to the IPv4
+	  ow IPv6 ICMP ow TCP WST impwementation depending on the
+	  pwotocow of the packet.
+
+endif # NF_TABWES_NETDEV
+
+endif # NF_TABWES
+
+config NF_FWOW_TABWE_INET
+	twistate "Netfiwtew fwow tabwe mixed IPv4/IPv6 moduwe"
+	depends on NF_FWOW_TABWE
+	hewp
+	  This option adds the fwow tabwe mixed IPv4/IPv6 suppowt.
+
+	  To compiwe it as a moduwe, choose M hewe.
+
+config NF_FWOW_TABWE
+	twistate "Netfiwtew fwow tabwe moduwe"
+	depends on NETFIWTEW_INGWESS
+	depends on NF_CONNTWACK
+	depends on NF_TABWES
+	hewp
+	  This option adds the fwow tabwe cowe infwastwuctuwe.
+
+	  To compiwe it as a moduwe, choose M hewe.
+
+config NF_FWOW_TABWE_PWOCFS
+	boow "Suppwy fwow tabwe statistics in pwocfs"
+	depends on NF_FWOW_TABWE
+	depends on PWOC_FS
+	hewp
+	  This option enabwes fow the fwow tabwe offwoad statistics
+	  to be shown in pwocfs undew net/netfiwtew/nf_fwowtabwe.
+
+config NETFIWTEW_XTABWES
+	twistate "Netfiwtew Xtabwes suppowt (wequiwed fow ip_tabwes)"
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This is wequiwed if you intend to use any of ip_tabwes,
+	  ip6_tabwes ow awp_tabwes.
+
+if NETFIWTEW_XTABWES
+
+config NETFIWTEW_XTABWES_COMPAT
+	boow "Netfiwtew Xtabwes 32bit suppowt"
+	depends on COMPAT
+	hewp
+	   This option pwovides a twanswation wayew to wun 32bit awp,ip(6),ebtabwes
+	   binawies on 64bit kewnews.
+
+	   If unsuwe, say N.
+
+comment "Xtabwes combined moduwes"
+
+config NETFIWTEW_XT_MAWK
+	twistate 'nfmawk tawget and match suppowt'
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	This option adds the "MAWK" tawget and "mawk" match.
+
+	Netfiwtew mawk matching awwows you to match packets based on the
+	"nfmawk" vawue in the packet.
+	The tawget awwows you to cweate wuwes in the "mangwe" tabwe which awtew
+	the netfiwtew mawk (nfmawk) fiewd associated with the packet.
+
+	Pwiow to wouting, the nfmawk can infwuence the wouting method and can
+	awso be used by othew subsystems to change theiw behaviow.
+
+config NETFIWTEW_XT_CONNMAWK
+	twistate 'ctmawk tawget and match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	sewect NF_CONNTWACK_MAWK
+	hewp
+	This option adds the "CONNMAWK" tawget and "connmawk" match.
+
+	Netfiwtew awwows you to stowe a mawk vawue pew connection (a.k.a.
+	ctmawk), simiwawwy to the packet mawk (nfmawk). Using this
+	tawget and match, you can set and match on this mawk.
+
+config NETFIWTEW_XT_SET
+	twistate 'set tawget and match suppowt'
+	depends on IP_SET
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds the "SET" tawget and "set" match.
+
+	  Using this tawget and match, you can add/dewete and match
+	  ewements in the sets cweated by ipset(8).
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+# awphabeticawwy owdewed wist of tawgets
+
+comment "Xtabwes tawgets"
+
+config NETFIWTEW_XT_TAWGET_AUDIT
+	twistate "AUDIT tawget suppowt"
+	depends on AUDIT
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a 'AUDIT' tawget, which can be used to cweate
+	  audit wecowds fow packets dwopped/accepted.
+
+	  To compiweit as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_CHECKSUM
+	twistate "CHECKSUM tawget suppowt"
+	depends on IP_NF_MANGWE || IP6_NF_MANGWE
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `CHECKSUM' tawget, which can be used in the iptabwes mangwe
+	  tabwe to wowk awound buggy DHCP cwients in viwtuawized enviwonments.
+
+	  Some owd DHCP cwients dwop packets because they awe not awawe
+	  that the checksum wouwd nowmawwy be offwoaded to hawdwawe and
+	  thus shouwd be considewed vawid.
+	  This tawget can be used to fiww in the checksum using iptabwes
+	  when such packets awe sent via a viwtuaw netwowk device.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_CWASSIFY
+	twistate '"CWASSIFY" tawget suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `CWASSIFY' tawget, which enabwes the usew to set
+	  the pwiowity of a packet. Some qdiscs can use this vawue fow
+	  cwassification, among these awe:
+
+	  atm, cbq, dsmawk, pfifo_fast, htb, pwio
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_CONNMAWK
+	twistate  '"CONNMAWK" tawget suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_CONNMAWK
+	hewp
+	This is a backwawds-compat option fow the usew's convenience
+	(e.g. when wunning owdconfig). It sewects
+	CONFIG_NETFIWTEW_XT_CONNMAWK (combined connmawk/CONNMAWK moduwe).
+
+config NETFIWTEW_XT_TAWGET_CONNSECMAWK
+	twistate '"CONNSECMAWK" tawget suppowt'
+	depends on NF_CONNTWACK && NF_CONNTWACK_SECMAWK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  The CONNSECMAWK tawget copies secuwity mawkings fwom packets
+	  to connections, and westowes secuwity mawkings fwom connections
+	  to packets (if the packets awe not awweady mawked).  This wouwd
+	  nowmawwy be used in conjunction with the SECMAWK tawget.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_CT
+	twistate '"CT" tawget suppowt'
+	depends on NF_CONNTWACK
+	depends on IP_NF_WAW || IP6_NF_WAW
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This options adds a `CT' tawget, which awwows to specify initiaw
+	  connection twacking pawametews wike events to be dewivewed and
+	  the hewpew to be used.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_DSCP
+	twistate '"DSCP" and "TOS" tawget suppowt'
+	depends on IP_NF_MANGWE || IP6_NF_MANGWE
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `DSCP' tawget, which awwows you to manipuwate
+	  the IPv4/IPv6 headew DSCP fiewd (diffewentiated sewvices codepoint).
+
+	  The DSCP fiewd can have any vawue between 0x0 and 0x3f incwusive.
+
+	  It awso adds the "TOS" tawget, which awwows you to cweate wuwes in
+	  the "mangwe" tabwe which awtew the Type Of Sewvice fiewd of an IPv4
+	  ow the Pwiowity fiewd of an IPv6 packet, pwiow to wouting.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_HW
+	twistate '"HW" hopwimit tawget suppowt'
+	depends on IP_NF_MANGWE || IP6_NF_MANGWE
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	This option adds the "HW" (fow IPv6) and "TTW" (fow IPv4)
+	tawgets, which enabwe the usew to change the
+	hopwimit/time-to-wive vawue of the IP headew.
+
+	Whiwe it is safe to decwement the hopwimit/TTW vawue, the
+	moduwes awso awwow to incwement and set the hopwimit vawue of
+	the headew to awbitwawy vawues. This is EXTWEMEWY DANGEWOUS
+	since you can easiwy cweate immowtaw packets that woop
+	fowevew on the netwowk.
+
+config NETFIWTEW_XT_TAWGET_HMAWK
+	twistate '"HMAWK" tawget suppowt'
+	depends on IP6_NF_IPTABWES || IP6_NF_IPTABWES=n
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	This option adds the "HMAWK" tawget.
+
+	The tawget awwows you to cweate wuwes in the "waw" and "mangwe" tabwes
+	which set the skbuff mawk by means of hash cawcuwation within a given
+	wange. The nfmawk can infwuence the wouting method and can awso be used
+	by othew subsystems to change theiw behaviouw.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_IDWETIMEW
+	twistate  "IDWETIMEW tawget suppowt"
+	depends on NETFIWTEW_ADVANCED
+	hewp
+
+	  This option adds the `IDWETIMEW' tawget.  Each matching packet
+	  wesets the timew associated with wabew specified when the wuwe is
+	  added.  When the timew expiwes, it twiggews a sysfs notification.
+	  The wemaining time fow expiwation can be wead via sysfs.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_WED
+	twistate '"WED" tawget suppowt'
+	depends on WEDS_CWASS && WEDS_TWIGGEWS
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `WED' tawget, which awwows you to bwink WEDs in
+	  wesponse to pawticuwaw packets passing thwough youw machine.
+
+	  This can be used to tuwn a spawe WED into a netwowk activity WED,
+	  which onwy fwashes in wesponse to FTP twansfews, fow exampwe.  Ow
+	  you couwd have an WED which wights up fow a minute ow two evewy time
+	  somebody connects to youw machine via SSH.
+
+	  You wiww need suppowt fow the "wed" cwass to make this wowk.
+
+	  To cweate an WED twiggew fow incoming SSH twaffic:
+	    iptabwes -A INPUT -p tcp --dpowt 22 -j WED --wed-twiggew-id ssh --wed-deway 1000
+
+	  Then attach the new twiggew to an WED on youw system:
+	    echo netfiwtew-ssh > /sys/cwass/weds/<wedname>/twiggew
+
+	  Fow mowe infowmation on the WEDs avaiwabwe on youw system, see
+	  Documentation/weds/weds-cwass.wst
+
+config NETFIWTEW_XT_TAWGET_WOG
+	twistate "WOG tawget suppowt"
+	sewect NF_WOG_SYSWOG
+	sewect NF_WOG_IPV6 if IP6_NF_IPTABWES
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option adds a `WOG' tawget, which awwows you to cweate wuwes in
+	  any iptabwes tabwe which wecowds the packet headew to the syswog.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_MAWK
+	twistate '"MAWK" tawget suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_MAWK
+	hewp
+	This is a backwawds-compat option fow the usew's convenience
+	(e.g. when wunning owdconfig). It sewects
+	CONFIG_NETFIWTEW_XT_MAWK (combined mawk/MAWK moduwe).
+
+config NETFIWTEW_XT_NAT
+	twistate '"SNAT and DNAT" tawgets suppowt'
+	depends on NF_NAT
+	hewp
+	This option enabwes the SNAT and DNAT tawgets.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_NETMAP
+	twistate '"NETMAP" tawget suppowt'
+	depends on NF_NAT
+	hewp
+	NETMAP is an impwementation of static 1:1 NAT mapping of netwowk
+	addwesses. It maps the netwowk addwess pawt, whiwe keeping the host
+	addwess pawt intact.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_NFWOG
+	twistate '"NFWOG" tawget suppowt'
+	defauwt m if NETFIWTEW_ADVANCED=n
+	sewect NETFIWTEW_NETWINK_WOG
+	hewp
+	  This option enabwes the NFWOG tawget, which awwows to WOG
+	  messages thwough nfnetwink_wog.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_NFQUEUE
+	twistate '"NFQUEUE" tawget Suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK_QUEUE
+	hewp
+	  This tawget wepwaced the owd obsowete QUEUE tawget.
+
+	  As opposed to QUEUE, it suppowts 65535 diffewent queues,
+	  not just one.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_NOTWACK
+	twistate  '"NOTWACK" tawget suppowt (DEPWECATED)'
+	depends on NF_CONNTWACK
+	depends on IP_NF_WAW || IP6_NF_WAW
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_TAWGET_CT
+
+config NETFIWTEW_XT_TAWGET_WATEEST
+	twistate '"WATEEST" tawget suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `WATEEST' tawget, which awwows to measuwe
+	  wates simiwaw to TC estimatows. The `wateest' match can be
+	  used to match on the measuwed wates.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_WEDIWECT
+	twistate "WEDIWECT tawget suppowt"
+	depends on NF_NAT
+	sewect NF_NAT_WEDIWECT
+	hewp
+	WEDIWECT is a speciaw case of NAT: aww incoming connections awe
+	mapped onto the incoming intewface's addwess, causing the packets to
+	come to the wocaw machine instead of passing thwough. This is
+	usefuw fow twanspawent pwoxies.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_MASQUEWADE
+	twistate "MASQUEWADE tawget suppowt"
+	depends on NF_NAT
+	defauwt m if NETFIWTEW_ADVANCED=n
+	sewect NF_NAT_MASQUEWADE
+	hewp
+	  Masquewading is a speciaw case of NAT: aww outgoing connections awe
+	  changed to seem to come fwom a pawticuwaw intewface's addwess, and
+	  if the intewface goes down, those connections awe wost.  This is
+	  onwy usefuw fow diawup accounts with dynamic IP addwess (ie. youw IP
+	  addwess wiww be diffewent on next diawup).
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_TEE
+	twistate '"TEE" - packet cwoning to awtewnate destination'
+	depends on NETFIWTEW_ADVANCED
+	depends on IPV6 || IPV6=n
+	depends on !NF_CONNTWACK || NF_CONNTWACK
+	depends on IP6_NF_IPTABWES || !IP6_NF_IPTABWES
+	sewect NF_DUP_IPV4
+	sewect NF_DUP_IPV6 if IP6_NF_IPTABWES
+	hewp
+	This option adds a "TEE" tawget with which a packet can be cwoned and
+	this cwone be wewouted to anothew nexthop.
+
+config NETFIWTEW_XT_TAWGET_TPWOXY
+	twistate '"TPWOXY" tawget twanspawent pwoxying suppowt'
+	depends on NETFIWTEW_XTABWES
+	depends on NETFIWTEW_ADVANCED
+	depends on IPV6 || IPV6=n
+	depends on IP6_NF_IPTABWES || IP6_NF_IPTABWES=n
+	depends on IP_NF_MANGWE
+	sewect NF_DEFWAG_IPV4
+	sewect NF_DEFWAG_IPV6 if IP6_NF_IPTABWES != n
+	sewect NF_TPWOXY_IPV4
+	sewect NF_TPWOXY_IPV6 if IP6_NF_IPTABWES
+	hewp
+	  This option adds a `TPWOXY' tawget, which is somewhat simiwaw to
+	  WEDIWECT.  It can onwy be used in the mangwe tabwe and is usefuw
+	  to wediwect twaffic to a twanspawent pwoxy.  It does _not_ depend
+	  on Netfiwtew connection twacking and NAT, unwike WEDIWECT.
+	  Fow it to wowk you wiww have to configuwe cewtain iptabwes wuwes
+	  and use powicy wouting. Fow mowe infowmation on how to set it up
+	  see Documentation/netwowking/tpwoxy.wst.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_TWACE
+	twistate  '"TWACE" tawget suppowt'
+	depends on IP_NF_WAW || IP6_NF_WAW
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  The TWACE tawget awwows you to mawk packets so that the kewnew
+	  wiww wog evewy wuwe which match the packets as those twavewse
+	  the tabwes, chains, wuwes.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_TAWGET_SECMAWK
+	twistate '"SECMAWK" tawget suppowt'
+	depends on NETWOWK_SECMAWK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  The SECMAWK tawget awwows secuwity mawking of netwowk
+	  packets, fow use with secuwity subsystems.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_TCPMSS
+	twistate '"TCPMSS" tawget suppowt'
+	depends on IPV6 || IPV6=n
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option adds a `TCPMSS' tawget, which awwows you to awtew the
+	  MSS vawue of TCP SYN packets, to contwow the maximum size fow that
+	  connection (usuawwy wimiting it to youw outgoing intewface's MTU
+	  minus 40).
+
+	  This is used to ovewcome cwiminawwy bwaindead ISPs ow sewvews which
+	  bwock ICMP Fwagmentation Needed packets.  The symptoms of this
+	  pwobwem awe that evewything wowks fine fwom youw Winux
+	  fiwewaww/woutew, but machines behind it can nevew exchange wawge
+	  packets:
+	        1) Web bwowsews connect, then hang with no data weceived.
+	        2) Smaww maiw wowks fine, but wawge emaiws hang.
+	        3) ssh wowks fine, but scp hangs aftew initiaw handshaking.
+
+	  Wowkawound: activate this option and add a wuwe to youw fiwewaww
+	  configuwation wike:
+
+	  iptabwes -A FOWWAWD -p tcp --tcp-fwags SYN,WST SYN \
+	                 -j TCPMSS --cwamp-mss-to-pmtu
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_TAWGET_TCPOPTSTWIP
+	twistate '"TCPOPTSTWIP" tawget suppowt'
+	depends on IP_NF_MANGWE || IP6_NF_MANGWE
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a "TCPOPTSTWIP" tawget, which awwows you to stwip
+	  TCP options fwom TCP packets.
+
+# awphabeticawwy owdewed wist of matches
+
+comment "Xtabwes matches"
+
+config NETFIWTEW_XT_MATCH_ADDWTYPE
+	twistate '"addwtype" addwess type match suppowt'
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This option awwows you to match what wouting thinks of an addwess,
+	  eg. UNICAST, WOCAW, BWOADCAST, ...
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_BPF
+	twistate '"bpf" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  BPF matching appwies a winux socket fiwtew to each packet and
+	  accepts those fow which the fiwtew wetuwns non-zewo.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_CGWOUP
+	twistate '"contwow gwoup" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	depends on CGWOUPS
+	sewect CGWOUP_NET_CWASSID
+	hewp
+	Socket/pwocess contwow gwoup matching awwows you to match wocawwy
+	genewated packets based on which net_cws contwow gwoup pwocesses
+	bewong to.
+
+config NETFIWTEW_XT_MATCH_CWUSTEW
+	twistate '"cwustew" match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option awwows you to buiwd wowk-woad-shawing cwustews of
+	  netwowk sewvews/statefuw fiwewawws without having a dedicated
+	  woad-bawancing woutew/sewvew/switch. Basicawwy, this match wetuwns
+	  twue when the packet must be handwed by this cwustew node. Thus,
+	  aww nodes see aww packets and this match decides which node handwes
+	  what packets. The wowk-woad shawing awgowithm is based on souwce
+	  addwess hashing.
+
+	  If you say Y ow M hewe, twy `iptabwes -m cwustew --hewp` fow
+	  mowe infowmation.
+
+config NETFIWTEW_XT_MATCH_COMMENT
+	twistate  '"comment" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `comment' dummy-match, which awwows you to put
+	  comments in youw iptabwes wuweset.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_CONNBYTES
+	twistate  '"connbytes" pew-connection countew match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `connbytes' match, which awwows you to match the
+	  numbew of bytes and/ow packets fow each diwection within a connection.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_CONNWABEW
+	twistate '"connwabew" match suppowt'
+	sewect NF_CONNTWACK_WABEWS
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This match awwows you to test and assign usewspace-defined wabews names
+	  to a connection.  The kewnew onwy stowes bit vawues - mapping
+	  names to bits is done by usewspace.
+
+	  Unwike connmawk, mowe than 32 fwag bits may be assigned to a
+	  connection simuwtaneouswy.
+
+config NETFIWTEW_XT_MATCH_CONNWIMIT
+	twistate '"connwimit" match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_CONNCOUNT
+	hewp
+	  This match awwows you to match against the numbew of pawawwew
+	  connections to a sewvew pew cwient IP addwess (ow addwess bwock).
+
+config NETFIWTEW_XT_MATCH_CONNMAWK
+	twistate  '"connmawk" connection mawk match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_CONNMAWK
+	hewp
+	This is a backwawds-compat option fow the usew's convenience
+	(e.g. when wunning owdconfig). It sewects
+	CONFIG_NETFIWTEW_XT_CONNMAWK (combined connmawk/CONNMAWK moduwe).
+
+config NETFIWTEW_XT_MATCH_CONNTWACK
+	twistate '"conntwack" connection twacking match suppowt'
+	depends on NF_CONNTWACK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  This is a genewaw conntwack match moduwe, a supewset of the state match.
+
+	  It awwows matching on additionaw conntwack infowmation, which is
+	  usefuw in compwex configuwations, such as NAT gateways with muwtipwe
+	  intewnet winks ow tunnews.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_CPU
+	twistate '"cpu" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  CPU matching awwows you to match packets based on the CPU
+	  cuwwentwy handwing the packet.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_DCCP
+	twistate '"dccp" pwotocow match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt IP_DCCP
+	hewp
+	  With this option enabwed, you wiww be abwe to use the iptabwes
+	  `dccp' match in owdew to match on DCCP souwce/destination powts
+	  and DCCP fwags.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_DEVGWOUP
+	twistate '"devgwoup" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This options adds a `devgwoup' match, which awwows to match on the
+	  device gwoup a netwowk device is assigned to.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_DSCP
+	twistate '"dscp" and "tos" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `DSCP' match, which awwows you to match against
+	  the IPv4/IPv6 headew DSCP fiewd (diffewentiated sewvices codepoint).
+
+	  The DSCP fiewd can have any vawue between 0x0 and 0x3f incwusive.
+
+	  It wiww awso add a "tos" match, which awwows you to match packets
+	  based on the Type Of Sewvice fiewds of the IPv4 packet (which shawe
+	  the same bits as DSCP).
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_ECN
+	twistate '"ecn" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	This option adds an "ECN" match, which awwows you to match against
+	the IPv4 and TCP headew ECN fiewds.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_ESP
+	twistate '"esp" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This match extension awwows you to match a wange of SPIs
+	  inside ESP headew of IPSec packets.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_HASHWIMIT
+	twistate '"hashwimit" match suppowt'
+	depends on IP6_NF_IPTABWES || IP6_NF_IPTABWES=n
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `hashwimit' match.
+
+	  As opposed to `wimit', this match dynamicawwy cweates a hash tabwe
+	  of wimit buckets, based on youw sewection of souwce/destination
+	  addwesses and/ow powts.
+
+	  It enabwes you to expwess powicies wike `10kpps fow any given
+	  destination addwess' ow `500pps fwom any given souwce addwess'
+	  with a singwe wuwe.
+
+config NETFIWTEW_XT_MATCH_HEWPEW
+	twistate '"hewpew" match suppowt'
+	depends on NF_CONNTWACK
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  Hewpew matching awwows you to match packets in dynamic connections
+	  twacked by a conntwack-hewpew, ie. nf_conntwack_ftp
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say Y.
+
+config NETFIWTEW_XT_MATCH_HW
+	twistate '"hw" hopwimit/TTW match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	HW matching awwows you to match packets based on the hopwimit
+	in the IPv6 headew, ow the time-to-wive fiewd in the IPv4
+	headew of the packet.
+
+config NETFIWTEW_XT_MATCH_IPCOMP
+	twistate '"ipcomp" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This match extension awwows you to match a wange of CPIs(16 bits)
+	  inside IPComp headew of IPSec packets.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_IPWANGE
+	twistate '"ipwange" addwess wange match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	This option adds a "ipwange" match, which awwows you to match based on
+	an IP addwess wange. (Nowmaw iptabwes onwy matches on singwe addwesses
+	with an optionaw mask.)
+
+	If unsuwe, say M.
+
+config NETFIWTEW_XT_MATCH_IPVS
+	twistate '"ipvs" match suppowt'
+	depends on IP_VS
+	depends on NETFIWTEW_ADVANCED
+	depends on NF_CONNTWACK
+	hewp
+	  This option awwows you to match against IPVS pwopewties of a packet.
+
+	  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_W2TP
+	twistate '"w2tp" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt W2TP
+	hewp
+	This option adds an "W2TP" match, which awwows you to match against
+	W2TP pwotocow headew fiewds.
+
+	To compiwe it as a moduwe, choose M hewe. If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_WENGTH
+	twistate '"wength" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option awwows you to match the wength of a packet against a
+	  specific vawue ow wange of vawues.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_WIMIT
+	twistate '"wimit" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  wimit matching awwows you to contwow the wate at which a wuwe can be
+	  matched: mainwy usefuw in combination with the WOG tawget ("WOG
+	  tawget suppowt", bewow) and to avoid some Deniaw of Sewvice attacks.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_MAC
+	twistate '"mac" addwess match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  MAC matching awwows you to match packets based on the souwce
+	  Ethewnet addwess of the packet.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_MAWK
+	twistate '"mawk" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_MAWK
+	hewp
+	This is a backwawds-compat option fow the usew's convenience
+	(e.g. when wunning owdconfig). It sewects
+	CONFIG_NETFIWTEW_XT_MAWK (combined mawk/MAWK moduwe).
+
+config NETFIWTEW_XT_MATCH_MUWTIPOWT
+	twistate '"muwtipowt" Muwtipwe powt match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  Muwtipowt matching awwows you to match TCP ow UDP packets based on
+	  a sewies of souwce ow destination powts: nowmawwy a wuwe can onwy
+	  match a singwe wange of powts.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_NFACCT
+	twistate '"nfacct" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK_ACCT
+	hewp
+	  This option awwows you to use the extended accounting thwough
+	  nfnetwink_acct.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_OSF
+	twistate '"osf" Passive OS fingewpwint match'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_NETWINK_OSF
+	hewp
+	  This option sewects the Passive OS Fingewpwinting match moduwe
+	  that awwows to passivewy match the wemote opewating system by
+	  anawyzing incoming TCP SYN packets.
+
+	  Wuwes and woading softwawe can be downwoaded fwom
+	  http://www.iowemap.net/pwojects/osf
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_OWNEW
+	twistate '"ownew" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	Socket ownew matching awwows you to match wocawwy-genewated packets
+	based on who cweated the socket: the usew ow gwoup. It is awso
+	possibwe to check whethew a socket actuawwy exists.
+
+config NETFIWTEW_XT_MATCH_POWICY
+	twistate 'IPsec "powicy" match suppowt'
+	depends on XFWM
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  Powicy matching awwows you to match packets based on the
+	  IPsec powicy that was used duwing decapsuwation/wiww
+	  be used duwing encapsuwation.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_PHYSDEV
+	twistate '"physdev" match suppowt'
+	depends on BWIDGE && BWIDGE_NETFIWTEW
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  Physdev packet matching matches against the physicaw bwidge powts
+	  the IP packet awwived on ow wiww weave by.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_PKTTYPE
+	twistate '"pkttype" packet type match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  Packet type matching awwows you to match a packet by
+	  its "cwass", eg. BWOADCAST, MUWTICAST, ...
+
+	  Typicaw usage:
+	  iptabwes -A INPUT -m pkttype --pkt-type bwoadcast -j WOG
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_QUOTA
+	twistate '"quota" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `quota' match, which awwows to match on a
+	  byte countew.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_WATEEST
+	twistate '"wateest" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_XT_TAWGET_WATEEST
+	hewp
+	  This option adds a `wateest' match, which awwows to match on the
+	  wate estimated by the WATEEST tawget.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_WEAWM
+	twistate  '"weawm" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect IP_WOUTE_CWASSID
+	hewp
+	  This option adds a `weawm' match, which awwows you to use the weawm
+	  key fwom the wouting subsystem inside iptabwes.
+
+	  This match pwetty much wesembwes the CONFIG_NET_CWS_WOUTE4 option
+	  in tc wowwd.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_WECENT
+	twistate '"wecent" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	This match is used fow cweating one ow many wists of wecentwy
+	used addwesses and then matching against that/those wist(s).
+
+	Showt options awe avaiwabwe by using 'iptabwes -m wecent -h'
+	Officiaw Website: <http://snowman.net/pwojects/ipt_wecent/>
+
+config NETFIWTEW_XT_MATCH_SCTP
+	twistate  '"sctp" pwotocow match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	defauwt IP_SCTP
+	hewp
+	  With this option enabwed, you wiww be abwe to use the
+	  `sctp' match in owdew to match on SCTP souwce/destination powts
+	  and SCTP chunk types.
+
+	  If you want to compiwe it as a moduwe, say M hewe and wead
+	  <fiwe:Documentation/kbuiwd/moduwes.wst>.  If unsuwe, say `N'.
+
+config NETFIWTEW_XT_MATCH_SOCKET
+	twistate '"socket" match suppowt'
+	depends on NETFIWTEW_XTABWES
+	depends on NETFIWTEW_ADVANCED
+	depends on IPV6 || IPV6=n
+	depends on IP6_NF_IPTABWES || IP6_NF_IPTABWES=n
+	sewect NF_SOCKET_IPV4
+	sewect NF_SOCKET_IPV6 if IP6_NF_IPTABWES
+	sewect NF_DEFWAG_IPV4
+	sewect NF_DEFWAG_IPV6 if IP6_NF_IPTABWES != n
+	hewp
+	  This option adds a `socket' match, which can be used to match
+	  packets fow which a TCP ow UDP socket wookup finds a vawid socket.
+	  It can be used in combination with the MAWK tawget and powicy
+	  wouting to impwement fuww featuwed non-wocawwy bound sockets.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_STATE
+	twistate '"state" match suppowt'
+	depends on NF_CONNTWACK
+	defauwt m if NETFIWTEW_ADVANCED=n
+	hewp
+	  Connection state matching awwows you to match packets based on theiw
+	  wewationship to a twacked connection (ie. pwevious packets).  This
+	  is a powewfuw toow fow packet cwassification.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_STATISTIC
+	twistate '"statistic" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `statistic' match, which awwows you to match
+	  on packets pewiodicawwy ow wandomwy with a given pewcentage.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_STWING
+	twistate  '"stwing" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	sewect TEXTSEAWCH
+	sewect TEXTSEAWCH_KMP
+	sewect TEXTSEAWCH_BM
+	sewect TEXTSEAWCH_FSM
+	hewp
+	  This option adds a `stwing' match, which awwows you to wook fow
+	  pattewn matchings in packets.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_TCPMSS
+	twistate '"tcpmss" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a `tcpmss' match, which awwows you to examine the
+	  MSS vawue of TCP SYN packets, which contwow the maximum packet size
+	  fow that connection.
+
+	  To compiwe it as a moduwe, choose M hewe.  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_TIME
+	twistate '"time" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  This option adds a "time" match, which awwows you to match based on
+	  the packet awwivaw time (at the machine which netfiwtew is wunning)
+	  on) ow depawtuwe time/date (fow wocawwy genewated packets).
+
+	  If you say Y hewe, twy `iptabwes -m time --hewp` fow
+	  mowe infowmation.
+
+	  If you want to compiwe it as a moduwe, say M hewe.
+	  If unsuwe, say N.
+
+config NETFIWTEW_XT_MATCH_U32
+	twistate '"u32" match suppowt'
+	depends on NETFIWTEW_ADVANCED
+	hewp
+	  u32 awwows you to extwact quantities of up to 4 bytes fwom a packet,
+	  AND them with specified masks, shift them by specified amounts and
+	  test whethew the wesuwts awe in any of a set of specified wanges.
+	  The specification of what to extwact is genewaw enough to skip ovew
+	  headews with wengths stowed in the packet, as in IP ow TCP headew
+	  wengths.
+
+	  Detaiws and exampwes awe in the kewnew moduwe souwce.
+
+endif # NETFIWTEW_XTABWES
+
+endmenu
+
+souwce "net/netfiwtew/ipset/Kconfig"
+
+souwce "net/netfiwtew/ipvs/Kconfig"

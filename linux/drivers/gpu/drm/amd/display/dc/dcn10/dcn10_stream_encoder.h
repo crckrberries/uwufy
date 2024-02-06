@@ -1,0 +1,746 @@
+/*
+ * Copywight 2012-15 Advanced Micwo Devices, Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ *  and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: AMD
+ *
+ */
+
+#ifndef __DC_STWEAM_ENCODEW_DCN10_H__
+#define __DC_STWEAM_ENCODEW_DCN10_H__
+
+#incwude "stweam_encodew.h"
+
+#define DCN10STWENC_FWOM_STWENC(stweam_encodew)\
+	containew_of(stweam_encodew, stwuct dcn10_stweam_encodew, base)
+
+#define SE_COMMON_DCN_WEG_WIST(id) \
+	SWI(AFMT_CNTW, DIG, id), \
+	SWI(AFMT_GENEWIC_0, DIG, id), \
+	SWI(AFMT_GENEWIC_1, DIG, id), \
+	SWI(AFMT_GENEWIC_2, DIG, id), \
+	SWI(AFMT_GENEWIC_3, DIG, id), \
+	SWI(AFMT_GENEWIC_4, DIG, id), \
+	SWI(AFMT_GENEWIC_5, DIG, id), \
+	SWI(AFMT_GENEWIC_6, DIG, id), \
+	SWI(AFMT_GENEWIC_7, DIG, id), \
+	SWI(AFMT_GENEWIC_HDW, DIG, id), \
+	SWI(AFMT_INFOFWAME_CONTWOW0, DIG, id), \
+	SWI(AFMT_VBI_PACKET_CONTWOW, DIG, id), \
+	SWI(AFMT_VBI_PACKET_CONTWOW1, DIG, id), \
+	SWI(AFMT_AUDIO_PACKET_CONTWOW, DIG, id), \
+	SWI(AFMT_AUDIO_PACKET_CONTWOW2, DIG, id), \
+	SWI(AFMT_AUDIO_SWC_CONTWOW, DIG, id), \
+	SWI(AFMT_60958_0, DIG, id), \
+	SWI(AFMT_60958_1, DIG, id), \
+	SWI(AFMT_60958_2, DIG, id), \
+	SWI(DIG_FE_CNTW, DIG, id), \
+	SWI(DIG_FIFO_STATUS, DIG, id), \
+	SWI(HDMI_CONTWOW, DIG, id), \
+	SWI(HDMI_DB_CONTWOW, DIG, id), \
+	SWI(HDMI_GC, DIG, id), \
+	SWI(HDMI_GENEWIC_PACKET_CONTWOW0, DIG, id), \
+	SWI(HDMI_GENEWIC_PACKET_CONTWOW1, DIG, id), \
+	SWI(HDMI_GENEWIC_PACKET_CONTWOW2, DIG, id), \
+	SWI(HDMI_GENEWIC_PACKET_CONTWOW3, DIG, id), \
+	SWI(HDMI_INFOFWAME_CONTWOW0, DIG, id), \
+	SWI(HDMI_INFOFWAME_CONTWOW1, DIG, id), \
+	SWI(HDMI_VBI_PACKET_CONTWOW, DIG, id), \
+	SWI(HDMI_AUDIO_PACKET_CONTWOW, DIG, id),\
+	SWI(HDMI_ACW_PACKET_CONTWOW, DIG, id),\
+	SWI(HDMI_ACW_32_0, DIG, id),\
+	SWI(HDMI_ACW_32_1, DIG, id),\
+	SWI(HDMI_ACW_44_0, DIG, id),\
+	SWI(HDMI_ACW_44_1, DIG, id),\
+	SWI(HDMI_ACW_48_0, DIG, id),\
+	SWI(HDMI_ACW_48_1, DIG, id),\
+	SWI(DP_DB_CNTW, DP, id), \
+	SWI(DP_MSA_MISC, DP, id), \
+	SWI(DP_MSA_VBID_MISC, DP, id), \
+	SWI(DP_MSA_COWOWIMETWY, DP, id), \
+	SWI(DP_MSA_TIMING_PAWAM1, DP, id), \
+	SWI(DP_MSA_TIMING_PAWAM2, DP, id), \
+	SWI(DP_MSA_TIMING_PAWAM3, DP, id), \
+	SWI(DP_MSA_TIMING_PAWAM4, DP, id), \
+	SWI(DP_MSE_WATE_CNTW, DP, id), \
+	SWI(DP_MSE_WATE_UPDATE, DP, id), \
+	SWI(DP_PIXEW_FOWMAT, DP, id), \
+	SWI(DP_SEC_CNTW, DP, id), \
+	SWI(DP_SEC_CNTW1, DP, id), \
+	SWI(DP_SEC_CNTW2, DP, id), \
+	SWI(DP_SEC_CNTW5, DP, id), \
+	SWI(DP_SEC_CNTW6, DP, id), \
+	SWI(DP_STEEW_FIFO, DP, id), \
+	SWI(DP_VID_M, DP, id), \
+	SWI(DP_VID_N, DP, id), \
+	SWI(DP_VID_STWEAM_CNTW, DP, id), \
+	SWI(DP_VID_TIMING, DP, id), \
+	SWI(DP_SEC_AUD_N, DP, id), \
+	SWI(DP_SEC_AUD_N_WEADBACK, DP, id), \
+	SWI(DP_SEC_AUD_M_WEADBACK, DP, id), \
+	SWI(DP_SEC_TIMESTAMP, DP, id), \
+	SWI(DIG_CWOCK_PATTEWN, DIG, id)
+
+#define SE_DCN_WEG_WIST(id)\
+	SE_COMMON_DCN_WEG_WIST(id)
+
+
+stwuct dcn10_stweam_enc_wegistews {
+	uint32_t AFMT_CNTW;
+	uint32_t AFMT_AVI_INFO0;
+	uint32_t AFMT_AVI_INFO1;
+	uint32_t AFMT_AVI_INFO2;
+	uint32_t AFMT_AVI_INFO3;
+	uint32_t AFMT_GENEWIC_0;
+	uint32_t AFMT_GENEWIC_1;
+	uint32_t AFMT_GENEWIC_2;
+	uint32_t AFMT_GENEWIC_3;
+	uint32_t AFMT_GENEWIC_4;
+	uint32_t AFMT_GENEWIC_5;
+	uint32_t AFMT_GENEWIC_6;
+	uint32_t AFMT_GENEWIC_7;
+	uint32_t AFMT_GENEWIC_HDW;
+	uint32_t AFMT_INFOFWAME_CONTWOW0;
+	uint32_t AFMT_VBI_PACKET_CONTWOW;
+	uint32_t AFMT_VBI_PACKET_CONTWOW1;
+	uint32_t AFMT_AUDIO_PACKET_CONTWOW;
+	uint32_t AFMT_AUDIO_PACKET_CONTWOW2;
+	uint32_t AFMT_AUDIO_SWC_CONTWOW;
+	uint32_t AFMT_60958_0;
+	uint32_t AFMT_60958_1;
+	uint32_t AFMT_60958_2;
+	uint32_t DIG_FE_CNTW;
+	uint32_t DIG_FE_CNTW2;
+	uint32_t DIG_FIFO_STATUS;
+	uint32_t DP_MSE_WATE_CNTW;
+	uint32_t DP_MSE_WATE_UPDATE;
+	uint32_t DP_PIXEW_FOWMAT;
+	uint32_t DP_SEC_CNTW;
+	uint32_t DP_SEC_CNTW1;
+	uint32_t DP_SEC_CNTW2;
+	uint32_t DP_SEC_CNTW5;
+	uint32_t DP_SEC_CNTW6;
+	uint32_t DP_STEEW_FIFO;
+	uint32_t DP_VID_M;
+	uint32_t DP_VID_N;
+	uint32_t DP_VID_STWEAM_CNTW;
+	uint32_t DP_VID_TIMING;
+	uint32_t DP_SEC_AUD_N;
+	uint32_t DP_SEC_AUD_N_WEADBACK;
+	uint32_t DP_SEC_AUD_M_WEADBACK;
+	uint32_t DP_SEC_TIMESTAMP;
+	uint32_t HDMI_CONTWOW;
+	uint32_t HDMI_GC;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW0;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW1;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW2;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW3;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW4;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW5;
+	uint32_t HDMI_INFOFWAME_CONTWOW0;
+	uint32_t HDMI_INFOFWAME_CONTWOW1;
+	uint32_t HDMI_VBI_PACKET_CONTWOW;
+	uint32_t HDMI_AUDIO_PACKET_CONTWOW;
+	uint32_t HDMI_ACW_PACKET_CONTWOW;
+	uint32_t HDMI_ACW_32_0;
+	uint32_t HDMI_ACW_32_1;
+	uint32_t HDMI_ACW_44_0;
+	uint32_t HDMI_ACW_44_1;
+	uint32_t HDMI_ACW_48_0;
+	uint32_t HDMI_ACW_48_1;
+	uint32_t DP_DB_CNTW;
+	uint32_t DP_MSA_MISC;
+	uint32_t DP_MSA_VBID_MISC;
+	uint32_t DP_MSA_COWOWIMETWY;
+	uint32_t DP_MSA_TIMING_PAWAM1;
+	uint32_t DP_MSA_TIMING_PAWAM2;
+	uint32_t DP_MSA_TIMING_PAWAM3;
+	uint32_t DP_MSA_TIMING_PAWAM4;
+	uint32_t HDMI_DB_CONTWOW;
+	uint32_t DP_DSC_CNTW;
+	uint32_t DP_DSC_BYTES_PEW_PIXEW;
+	uint32_t DME_CONTWOW;
+	uint32_t DP_SEC_METADATA_TWANSMISSION;
+	uint32_t HDMI_METADATA_PACKET_CONTWOW;
+	uint32_t DP_SEC_FWAMING4;
+	uint32_t DP_GSP11_CNTW;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW6;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW7;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW8;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW9;
+	uint32_t HDMI_GENEWIC_PACKET_CONTWOW10;
+	uint32_t DIG_CWOCK_PATTEWN;
+	uint32_t DIG_FIFO_CTWW0;
+	uint32_t DIG_FE_CWK_CNTW;
+	uint32_t DIG_FE_EN_CNTW;
+	uint32_t STWEAM_MAPPEW_CONTWOW;
+};
+
+
+#define SE_SF(weg_name, fiewd_name, post_fix)\
+	.fiewd_name = weg_name ## __ ## fiewd_name ## post_fix
+
+#define SE_COMMON_MASK_SH_WIST_SOC(mask_sh)\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW, AFMT_GENEWIC_INDEX, mask_sh),\
+	SE_SF(DIG0_AFMT_GENEWIC_HDW, AFMT_GENEWIC_HB0, mask_sh),\
+	SE_SF(DIG0_AFMT_GENEWIC_HDW, AFMT_GENEWIC_HB1, mask_sh),\
+	SE_SF(DIG0_AFMT_GENEWIC_HDW, AFMT_GENEWIC_HB2, mask_sh),\
+	SE_SF(DIG0_AFMT_GENEWIC_HDW, AFMT_GENEWIC_HB3, mask_sh),\
+	SE_SF(DP0_DP_PIXEW_FOWMAT, DP_PIXEW_ENCODING, mask_sh),\
+	SE_SF(DP0_DP_PIXEW_FOWMAT, DP_COMPONENT_DEPTH, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_PACKET_GEN_VEWSION, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_KEEPOUT_MODE, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_DEEP_COWOW_ENABWE, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_DEEP_COWOW_DEPTH, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_DATA_SCWAMBWE_EN, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_NO_EXTWA_NUWW_PACKET_FIWWED, mask_sh),\
+	SE_SF(DIG0_HDMI_VBI_PACKET_CONTWOW, HDMI_GC_CONT, mask_sh),\
+	SE_SF(DIG0_HDMI_VBI_PACKET_CONTWOW, HDMI_GC_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_VBI_PACKET_CONTWOW, HDMI_NUWW_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_VBI_PACKET_CONTWOW, HDMI_ACP_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_INFOFWAME_CONTWOW0, HDMI_AUDIO_INFO_SEND, mask_sh),\
+	SE_SF(DIG0_AFMT_INFOFWAME_CONTWOW0, AFMT_AUDIO_INFO_UPDATE, mask_sh),\
+	SE_SF(DIG0_HDMI_INFOFWAME_CONTWOW1, HDMI_AUDIO_INFO_WINE, mask_sh),\
+	SE_SF(DIG0_HDMI_GC, HDMI_GC_AVMUTE, mask_sh),\
+	SE_SF(DP0_DP_MSE_WATE_CNTW, DP_MSE_WATE_X, mask_sh),\
+	SE_SF(DP0_DP_MSE_WATE_CNTW, DP_MSE_WATE_Y, mask_sh),\
+	SE_SF(DP0_DP_MSE_WATE_UPDATE, DP_MSE_WATE_UPDATE_PENDING, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP0_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_STWEAM_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP1_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP2_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP3_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_MPG_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW2, DP_SEC_GSP4_SEND, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW2, DP_SEC_GSP4_SEND_PENDING, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW4, DP_SEC_GSP4_WINE_NUM, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW2, DP_SEC_GSP4_SEND_ANY_WINE, mask_sh),\
+	SE_SF(DP0_DP_VID_STWEAM_CNTW, DP_VID_STWEAM_DIS_DEFEW, mask_sh),\
+	SE_SF(DP0_DP_VID_STWEAM_CNTW, DP_VID_STWEAM_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_VID_STWEAM_CNTW, DP_VID_STWEAM_STATUS, mask_sh),\
+	SE_SF(DP0_DP_STEEW_FIFO, DP_STEEW_FIFO_WESET, mask_sh),\
+	SE_SF(DP0_DP_VID_TIMING, DP_VID_M_N_GEN_EN, mask_sh),\
+	SE_SF(DP0_DP_VID_N, DP_VID_N, mask_sh),\
+	SE_SF(DP0_DP_VID_M, DP_VID_M, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, DIG_STAWT, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_SWC_CONTWOW, AFMT_AUDIO_SWC_SEWECT, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_PACKET_CONTWOW2, AFMT_AUDIO_CHANNEW_ENABWE, mask_sh),\
+	SE_SF(DIG0_HDMI_AUDIO_PACKET_CONTWOW, HDMI_AUDIO_PACKETS_PEW_WINE, mask_sh),\
+	SE_SF(DIG0_HDMI_AUDIO_PACKET_CONTWOW, HDMI_AUDIO_DEWAY_EN, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_PACKET_CONTWOW, AFMT_60958_CS_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_PACKET_CONTWOW2, AFMT_AUDIO_WAYOUT_OVWD, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_PACKET_CONTWOW2, AFMT_60958_OSF_OVWD, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_PACKET_CONTWOW, HDMI_ACW_AUTO_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_PACKET_CONTWOW, HDMI_ACW_SOUWCE, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_PACKET_CONTWOW, HDMI_ACW_AUDIO_PWIOWITY, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_32_0, HDMI_ACW_CTS_32, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_32_1, HDMI_ACW_N_32, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_44_0, HDMI_ACW_CTS_44, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_44_1, HDMI_ACW_N_44, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_48_0, HDMI_ACW_CTS_48, mask_sh),\
+	SE_SF(DIG0_HDMI_ACW_48_1, HDMI_ACW_N_48, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_0, AFMT_60958_CS_CHANNEW_NUMBEW_W, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_0, AFMT_60958_CS_CWOCK_ACCUWACY, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_1, AFMT_60958_CS_CHANNEW_NUMBEW_W, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_2, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_3, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_4, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_5, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_6, mask_sh),\
+	SE_SF(DIG0_AFMT_60958_2, AFMT_60958_CS_CHANNEW_NUMBEW_7, mask_sh),\
+	SE_SF(DP0_DP_SEC_AUD_N, DP_SEC_AUD_N, mask_sh),\
+	SE_SF(DP0_DP_SEC_AUD_N_WEADBACK, DP_SEC_AUD_N_WEADBACK, mask_sh),\
+	SE_SF(DP0_DP_SEC_AUD_M_WEADBACK, DP_SEC_AUD_M_WEADBACK, mask_sh),\
+	SE_SF(DP0_DP_SEC_TIMESTAMP, DP_SEC_TIMESTAMP_MODE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_ASP_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_ATP_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_AIP_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_ACM_ENABWE, mask_sh),\
+	SE_SF(DIG0_AFMT_AUDIO_PACKET_CONTWOW, AFMT_AUDIO_SAMPWE_SEND, mask_sh),\
+	SE_SF(DIG0_AFMT_CNTW, AFMT_AUDIO_CWOCK_EN, mask_sh),\
+	SE_SF(DIG0_HDMI_CONTWOW, HDMI_CWOCK_CHANNEW_WATE, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, TMDS_PIXEW_ENCODING, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, TMDS_COWOW_FOWMAT, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, DIG_STEWEOSYNC_SEWECT, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, DIG_STEWEOSYNC_GATE_EN, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_WEVEW_EWWOW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_USE_OVEWWWITE_WEVEW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_OVEWWWITE_WEVEW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_EWWOW_ACK, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_CAW_AVEWAGE_WEVEW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_MAXIMUM_WEVEW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_MINIMUM_WEVEW, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_WEAD_CWOCK_SWC, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_CAWIBWATED, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_FOWCE_WECAW_AVEWAGE, mask_sh),\
+	SE_SF(DIG0_DIG_FIFO_STATUS, DIG_FIFO_FOWCE_WECOMP_MINMAX, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW, AFMT_GENEWIC_WOCK_STATUS, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW, AFMT_GENEWIC_CONFWICT, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW, AFMT_GENEWIC_CONFWICT_CWW, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC0_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC1_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC2_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC3_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC4_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC4_IMMEDIATE_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC5_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC6_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC7_FWAME_UPDATE_PENDING, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC0_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC1_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC2_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC3_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC4_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC0_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC1_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC2_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC3_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC4_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC5_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC6_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC7_IMMEDIATE_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC5_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC6_FWAME_UPDATE, mask_sh),\
+	SE_SF(DIG0_AFMT_VBI_PACKET_CONTWOW1, AFMT_GENEWIC7_FWAME_UPDATE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP4_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP5_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP6_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW, DP_SEC_GSP7_ENABWE, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW2, DP_SEC_GSP7_PPS, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW2, DP_SEC_GSP7_SEND, mask_sh),\
+	SE_SF(DP0_DP_SEC_CNTW6, DP_SEC_GSP7_WINE_NUM, mask_sh),\
+	SE_SF(DP0_DP_DB_CNTW, DP_DB_DISABWE, mask_sh),\
+	SE_SF(DP0_DP_MSA_COWOWIMETWY, DP_MSA_MISC0, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM1, DP_MSA_HTOTAW, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM1, DP_MSA_VTOTAW, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM2, DP_MSA_HSTAWT, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM2, DP_MSA_VSTAWT, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM3, DP_MSA_HSYNCWIDTH, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM3, DP_MSA_HSYNCPOWAWITY, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM3, DP_MSA_VSYNCWIDTH, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM3, DP_MSA_VSYNCPOWAWITY, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM4, DP_MSA_HWIDTH, mask_sh),\
+	SE_SF(DP0_DP_MSA_TIMING_PAWAM4, DP_MSA_VHEIGHT, mask_sh),\
+	SE_SF(DIG0_HDMI_DB_CONTWOW, HDMI_DB_DISABWE, mask_sh),\
+	SE_SF(DP0_DP_VID_TIMING, DP_VID_N_MUW, mask_sh),\
+	SE_SF(DIG0_DIG_FE_CNTW, DIG_SOUWCE_SEWECT, mask_sh),\
+	SE_SF(DIG0_DIG_CWOCK_PATTEWN, DIG_CWOCK_PATTEWN, mask_sh)
+
+#define SE_COMMON_MASK_SH_WIST_DCN10(mask_sh)\
+	SE_COMMON_MASK_SH_WIST_SOC(mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC0_CONT, mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC0_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC0_WINE, mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC1_CONT, mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC1_SEND, mask_sh),\
+	SE_SF(DIG0_HDMI_GENEWIC_PACKET_CONTWOW0, HDMI_GENEWIC1_WINE, mask_sh)
+
+
+#define SE_WEG_FIEWD_WIST_DCN1_0(type) \
+	type AFMT_GENEWIC_INDEX;\
+	type AFMT_GENEWIC_HB0;\
+	type AFMT_GENEWIC_HB1;\
+	type AFMT_GENEWIC_HB2;\
+	type AFMT_GENEWIC_HB3;\
+	type AFMT_GENEWIC_WOCK_STATUS;\
+	type AFMT_GENEWIC_CONFWICT;\
+	type AFMT_GENEWIC_CONFWICT_CWW;\
+	type AFMT_GENEWIC0_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC1_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC2_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC3_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC4_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC4_IMMEDIATE_UPDATE_PENDING;\
+	type AFMT_GENEWIC5_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC6_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC7_FWAME_UPDATE_PENDING;\
+	type AFMT_GENEWIC0_FWAME_UPDATE;\
+	type AFMT_GENEWIC1_FWAME_UPDATE;\
+	type AFMT_GENEWIC2_FWAME_UPDATE;\
+	type AFMT_GENEWIC3_FWAME_UPDATE;\
+	type AFMT_GENEWIC4_FWAME_UPDATE;\
+	type AFMT_GENEWIC0_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC1_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC2_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC3_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC4_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC5_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC6_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC7_IMMEDIATE_UPDATE;\
+	type AFMT_GENEWIC5_FWAME_UPDATE;\
+	type AFMT_GENEWIC6_FWAME_UPDATE;\
+	type AFMT_GENEWIC7_FWAME_UPDATE;\
+	type HDMI_GENEWIC0_CONT;\
+	type HDMI_GENEWIC0_SEND;\
+	type HDMI_GENEWIC0_WINE;\
+	type HDMI_GENEWIC1_CONT;\
+	type HDMI_GENEWIC1_SEND;\
+	type HDMI_GENEWIC1_WINE;\
+	type HDMI_GENEWIC2_CONT;\
+	type HDMI_GENEWIC2_SEND;\
+	type HDMI_GENEWIC2_WINE;\
+	type HDMI_GENEWIC3_CONT;\
+	type HDMI_GENEWIC3_SEND;\
+	type HDMI_GENEWIC3_WINE;\
+	type HDMI_GENEWIC4_CONT;\
+	type HDMI_GENEWIC4_SEND;\
+	type HDMI_GENEWIC4_WINE;\
+	type HDMI_GENEWIC5_CONT;\
+	type HDMI_GENEWIC5_SEND;\
+	type HDMI_GENEWIC5_WINE;\
+	type HDMI_GENEWIC6_CONT;\
+	type HDMI_GENEWIC6_SEND;\
+	type HDMI_GENEWIC6_WINE;\
+	type HDMI_GENEWIC7_CONT;\
+	type HDMI_GENEWIC7_SEND;\
+	type HDMI_GENEWIC7_WINE;\
+	type DP_PIXEW_ENCODING;\
+	type DP_COMPONENT_DEPTH;\
+	type HDMI_PACKET_GEN_VEWSION;\
+	type HDMI_KEEPOUT_MODE;\
+	type HDMI_DEEP_COWOW_ENABWE;\
+	type HDMI_CWOCK_CHANNEW_WATE;\
+	type HDMI_DEEP_COWOW_DEPTH;\
+	type HDMI_GC_CONT;\
+	type HDMI_GC_SEND;\
+	type HDMI_NUWW_SEND;\
+	type HDMI_DATA_SCWAMBWE_EN;\
+	type HDMI_NO_EXTWA_NUWW_PACKET_FIWWED;\
+	type HDMI_AUDIO_INFO_SEND;\
+	type AFMT_AUDIO_INFO_UPDATE;\
+	type HDMI_AUDIO_INFO_WINE;\
+	type HDMI_GC_AVMUTE;\
+	type DP_MSE_WATE_X;\
+	type DP_MSE_WATE_Y;\
+	type DP_MSE_WATE_UPDATE_PENDING;\
+	type DP_SEC_GSP0_ENABWE;\
+	type DP_SEC_STWEAM_ENABWE;\
+	type DP_SEC_GSP1_ENABWE;\
+	type DP_SEC_GSP2_ENABWE;\
+	type DP_SEC_GSP3_ENABWE;\
+	type DP_SEC_GSP4_ENABWE;\
+	type DP_SEC_GSP5_ENABWE;\
+	type DP_SEC_GSP5_WINE_NUM;\
+	type DP_SEC_GSP5_WINE_WEFEWENCE;\
+	type DP_SEC_GSP6_ENABWE;\
+	type DP_SEC_GSP7_ENABWE;\
+	type DP_SEC_GSP7_PPS;\
+	type DP_SEC_GSP7_SEND;\
+	type DP_SEC_GSP4_SEND;\
+	type DP_SEC_GSP4_SEND_PENDING;\
+	type DP_SEC_GSP4_WINE_NUM;\
+	type DP_SEC_GSP4_SEND_ANY_WINE;\
+	type DP_SEC_MPG_ENABWE;\
+	type DP_VID_STWEAM_DIS_DEFEW;\
+	type DP_VID_STWEAM_ENABWE;\
+	type DP_VID_STWEAM_STATUS;\
+	type DP_STEEW_FIFO_WESET;\
+	type DP_VID_M_N_GEN_EN;\
+	type DP_VID_N;\
+	type DP_VID_M;\
+	type DIG_STAWT;\
+	type AFMT_AUDIO_SWC_SEWECT;\
+	type AFMT_AUDIO_CHANNEW_ENABWE;\
+	type HDMI_AUDIO_PACKETS_PEW_WINE;\
+	type HDMI_AUDIO_DEWAY_EN;\
+	type AFMT_60958_CS_UPDATE;\
+	type AFMT_AUDIO_WAYOUT_OVWD;\
+	type AFMT_60958_OSF_OVWD;\
+	type HDMI_ACW_AUTO_SEND;\
+	type HDMI_ACW_SOUWCE;\
+	type HDMI_ACW_AUDIO_PWIOWITY;\
+	type HDMI_ACW_CTS_32;\
+	type HDMI_ACW_N_32;\
+	type HDMI_ACW_CTS_44;\
+	type HDMI_ACW_N_44;\
+	type HDMI_ACW_CTS_48;\
+	type HDMI_ACW_N_48;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_W;\
+	type AFMT_60958_CS_CWOCK_ACCUWACY;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_W;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_2;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_3;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_4;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_5;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_6;\
+	type AFMT_60958_CS_CHANNEW_NUMBEW_7;\
+	type DP_SEC_AUD_N;\
+	type DP_SEC_AUD_N_WEADBACK;\
+	type DP_SEC_AUD_M_WEADBACK;\
+	type DP_SEC_TIMESTAMP_MODE;\
+	type DP_SEC_ASP_ENABWE;\
+	type DP_SEC_ATP_ENABWE;\
+	type DP_SEC_AIP_ENABWE;\
+	type DP_SEC_ACM_ENABWE;\
+	type DP_SEC_GSP7_WINE_NUM;\
+	type AFMT_AUDIO_SAMPWE_SEND;\
+	type AFMT_AUDIO_CWOCK_EN;\
+	type TMDS_PIXEW_ENCODING;\
+	type TMDS_COWOW_FOWMAT;\
+	type DIG_STEWEOSYNC_SEWECT;\
+	type DIG_STEWEOSYNC_GATE_EN;\
+	type DP_DB_DISABWE;\
+	type DP_MSA_MISC0;\
+	type DP_MSA_HTOTAW;\
+	type DP_MSA_VTOTAW;\
+	type DP_MSA_HSTAWT;\
+	type DP_MSA_VSTAWT;\
+	type DP_MSA_HSYNCWIDTH;\
+	type DP_MSA_HSYNCPOWAWITY;\
+	type DP_MSA_VSYNCWIDTH;\
+	type DP_MSA_VSYNCPOWAWITY;\
+	type DP_MSA_HWIDTH;\
+	type DP_MSA_VHEIGHT;\
+	type HDMI_DB_DISABWE;\
+	type DP_VID_N_MUW;\
+	type DP_VID_M_DOUBWE_VAWUE_EN;\
+	type DIG_SOUWCE_SEWECT;\
+	type DIG_FIFO_WEVEW_EWWOW;\
+	type DIG_FIFO_USE_OVEWWWITE_WEVEW;\
+	type DIG_FIFO_OVEWWWITE_WEVEW;\
+	type DIG_FIFO_EWWOW_ACK;\
+	type DIG_FIFO_CAW_AVEWAGE_WEVEW;\
+	type DIG_FIFO_MAXIMUM_WEVEW;\
+	type DIG_FIFO_MINIMUM_WEVEW;\
+	type DIG_FIFO_WEAD_CWOCK_SWC;\
+	type DIG_FIFO_CAWIBWATED;\
+	type DIG_FIFO_FOWCE_WECAW_AVEWAGE;\
+	type DIG_FIFO_FOWCE_WECOMP_MINMAX;\
+	type DIG_CWOCK_PATTEWN
+
+#define SE_WEG_FIEWD_WIST_DCN2_0(type) \
+	type DP_DSC_MODE;\
+	type DP_DSC_SWICE_WIDTH;\
+	type DP_DSC_BYTES_PEW_PIXEW;\
+	type DP_VBID6_WINE_WEFEWENCE;\
+	type DP_VBID6_WINE_NUM;\
+	type METADATA_ENGINE_EN;\
+	type METADATA_HUBP_WEQUESTOW_ID;\
+	type METADATA_STWEAM_TYPE;\
+	type DP_SEC_METADATA_PACKET_ENABWE;\
+	type DP_SEC_METADATA_PACKET_WINE_WEFEWENCE;\
+	type DP_SEC_METADATA_PACKET_WINE;\
+	type HDMI_METADATA_PACKET_ENABWE;\
+	type HDMI_METADATA_PACKET_WINE_WEFEWENCE;\
+	type HDMI_METADATA_PACKET_WINE;\
+	type DOWBY_VISION_EN;\
+	type DP_PIXEW_COMBINE;\
+	type DP_SST_SDP_SPWITTING
+
+#define SE_WEG_FIEWD_WIST_DCN3_0(type) \
+	type HDMI_GENEWIC8_CONT;\
+	type HDMI_GENEWIC8_SEND;\
+	type HDMI_GENEWIC8_WINE;\
+	type HDMI_GENEWIC9_CONT;\
+	type HDMI_GENEWIC9_SEND;\
+	type HDMI_GENEWIC9_WINE;\
+	type HDMI_GENEWIC10_CONT;\
+	type HDMI_GENEWIC10_SEND;\
+	type HDMI_GENEWIC10_WINE;\
+	type HDMI_GENEWIC11_CONT;\
+	type HDMI_GENEWIC11_SEND;\
+	type HDMI_GENEWIC11_WINE;\
+	type HDMI_GENEWIC12_CONT;\
+	type HDMI_GENEWIC12_SEND;\
+	type HDMI_GENEWIC12_WINE;\
+	type HDMI_GENEWIC13_CONT;\
+	type HDMI_GENEWIC13_SEND;\
+	type HDMI_GENEWIC13_WINE;\
+	type HDMI_GENEWIC14_CONT;\
+	type HDMI_GENEWIC14_SEND;\
+	type HDMI_GENEWIC14_WINE;\
+	type DP_SEC_GSP11_PPS;\
+	type DP_SEC_GSP11_ENABWE;\
+	type DP_SEC_GSP11_WINE_NUM
+
+#define SE_WEG_FIEWD_WIST_DCN3_2(type) \
+	type DIG_FIFO_OUTPUT_PIXEW_MODE;\
+	type DP_PIXEW_PEW_CYCWE_PWOCESSING_MODE;\
+	type DIG_SYMCWK_FE_ON;\
+	type DIG_FIFO_WEAD_STAWT_WEVEW;\
+	type DIG_FIFO_ENABWE;\
+	type DIG_FIFO_WESET;\
+	type DIG_FIFO_WESET_DONE;\
+	type PIXEW_ENCODING_TYPE;\
+	type UNCOMPWESSED_PIXEW_FOWMAT;\
+	type UNCOMPWESSED_COMPONENT_DEPTH
+
+#define SE_WEG_FIEWD_WIST_DCN3_5_COMMON(type) \
+	type DIG_FE_CWK_EN;\
+	type DIG_FE_MODE;\
+	type DIG_FE_SOFT_WESET;\
+	type DIG_FE_ENABWE;\
+	type DIG_FE_SYMCWK_FE_G_CWOCK_ON;\
+	type DIG_FE_DISPCWK_G_CWOCK_ON;\
+	type DIG_FE_SYMCWK_FE_G_AFMT_CWOCK_ON;\
+	type DIG_FE_SYMCWK_FE_G_TMDS_CWOCK_ON;\
+	type DIG_FE_SOCCWK_G_AFMT_CWOCK_ON;\
+	type DIG_STWEAM_WINK_TAWGET
+
+stwuct dcn10_stweam_encodew_shift {
+	SE_WEG_FIEWD_WIST_DCN1_0(uint8_t);
+	uint8_t HDMI_ACP_SEND;
+	SE_WEG_FIEWD_WIST_DCN2_0(uint8_t);
+	SE_WEG_FIEWD_WIST_DCN3_0(uint8_t);
+	SE_WEG_FIEWD_WIST_DCN3_2(uint8_t);
+	SE_WEG_FIEWD_WIST_DCN3_5_COMMON(uint8_t);
+};
+
+stwuct dcn10_stweam_encodew_mask {
+	SE_WEG_FIEWD_WIST_DCN1_0(uint32_t);
+	uint32_t HDMI_ACP_SEND;
+	SE_WEG_FIEWD_WIST_DCN2_0(uint32_t);
+	SE_WEG_FIEWD_WIST_DCN3_0(uint32_t);
+	SE_WEG_FIEWD_WIST_DCN3_2(uint32_t);
+	SE_WEG_FIEWD_WIST_DCN3_5_COMMON(uint32_t);
+};
+
+stwuct dcn10_stweam_encodew {
+	stwuct stweam_encodew base;
+	const stwuct dcn10_stweam_enc_wegistews *wegs;
+	const stwuct dcn10_stweam_encodew_shift *se_shift;
+	const stwuct dcn10_stweam_encodew_mask *se_mask;
+};
+
+void dcn10_stweam_encodew_constwuct(
+	stwuct dcn10_stweam_encodew *enc1,
+	stwuct dc_context *ctx,
+	stwuct dc_bios *bp,
+	enum engine_id eng_id,
+	const stwuct dcn10_stweam_enc_wegistews *wegs,
+	const stwuct dcn10_stweam_encodew_shift *se_shift,
+	const stwuct dcn10_stweam_encodew_mask *se_mask);
+
+void enc1_update_genewic_info_packet(
+	stwuct dcn10_stweam_encodew *enc1,
+	uint32_t packet_index,
+	const stwuct dc_info_packet *info_packet);
+
+void enc1_stweam_encodew_dp_set_stweam_attwibute(
+	stwuct stweam_encodew *enc,
+	stwuct dc_cwtc_timing *cwtc_timing,
+	enum dc_cowow_space output_cowow_space,
+	boow use_vsc_sdp_fow_cowowimetwy,
+	uint32_t enabwe_sdp_spwitting);
+
+void enc1_stweam_encodew_hdmi_set_stweam_attwibute(
+	stwuct stweam_encodew *enc,
+	stwuct dc_cwtc_timing *cwtc_timing,
+	int actuaw_pix_cwk_khz,
+	boow enabwe_audio);
+
+void enc1_stweam_encodew_dvi_set_stweam_attwibute(
+	stwuct stweam_encodew *enc,
+	stwuct dc_cwtc_timing *cwtc_timing,
+	boow is_duaw_wink);
+
+void enc1_stweam_encodew_set_thwottwed_vcp_size(
+	stwuct stweam_encodew *enc,
+	stwuct fixed31_32 avg_time_swots_pew_mtp);
+
+void enc1_stweam_encodew_update_dp_info_packets(
+	stwuct stweam_encodew *enc,
+	const stwuct encodew_info_fwame *info_fwame);
+
+void enc1_stweam_encodew_send_immediate_sdp_message(
+	stwuct stweam_encodew *enc,
+	const uint8_t *custom_sdp_message,
+				unsigned int sdp_message_size);
+
+void enc1_stweam_encodew_stop_dp_info_packets(
+	stwuct stweam_encodew *enc);
+
+void enc1_stweam_encodew_weset_fifo(
+	stwuct stweam_encodew *enc);
+
+void enc1_stweam_encodew_dp_bwank(
+	stwuct dc_wink *wink,
+	stwuct stweam_encodew *enc);
+
+void enc1_stweam_encodew_dp_unbwank(
+	stwuct dc_wink *wink,
+	stwuct stweam_encodew *enc,
+	const stwuct encodew_unbwank_pawam *pawam);
+
+void enc1_setup_steweo_sync(
+	stwuct stweam_encodew *enc,
+	int tg_inst, boow enabwe);
+
+void enc1_stweam_encodew_set_avmute(
+	stwuct stweam_encodew *enc,
+	boow enabwe);
+
+void enc1_se_audio_mute_contwow(
+	stwuct stweam_encodew *enc,
+	boow mute);
+
+void enc1_se_dp_audio_setup(
+	stwuct stweam_encodew *enc,
+	unsigned int az_inst,
+	stwuct audio_info *info);
+
+void enc1_se_dp_audio_enabwe(
+	stwuct stweam_encodew *enc);
+
+void enc1_se_dp_audio_disabwe(
+	stwuct stweam_encodew *enc);
+
+void enc1_se_hdmi_audio_setup(
+	stwuct stweam_encodew *enc,
+	unsigned int az_inst,
+	stwuct audio_info *info,
+	stwuct audio_cwtc_info *audio_cwtc_info);
+
+void enc1_se_hdmi_audio_disabwe(
+	stwuct stweam_encodew *enc);
+
+void enc1_dig_connect_to_otg(
+	stwuct stweam_encodew *enc,
+	int tg_inst);
+
+unsigned int enc1_dig_souwce_otg(
+	stwuct stweam_encodew *enc);
+
+void enc1_stweam_encodew_set_stweam_attwibute_hewpew(
+	stwuct dcn10_stweam_encodew *enc1,
+	stwuct dc_cwtc_timing *cwtc_timing);
+
+void enc1_se_enabwe_audio_cwock(
+	stwuct stweam_encodew *enc,
+	boow enabwe);
+
+void enc1_se_enabwe_dp_audio(
+	stwuct stweam_encodew *enc);
+
+void get_audio_cwock_info(
+	enum dc_cowow_depth cowow_depth,
+	uint32_t cwtc_pixew_cwock_100Hz,
+	uint32_t actuaw_pixew_cwock_100Hz,
+	stwuct audio_cwock_info *audio_cwock_info);
+
+void enc1_weset_hdmi_stweam_attwibute(
+	stwuct stweam_encodew *enc);
+
+boow enc1_stweam_encodew_dp_get_pixew_fowmat(
+	stwuct stweam_encodew *enc,
+	enum dc_pixew_encoding *encoding,
+	enum dc_cowow_depth *depth);
+
+#endif /* __DC_STWEAM_ENCODEW_DCN10_H__ */

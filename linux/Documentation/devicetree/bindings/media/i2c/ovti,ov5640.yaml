@@ -1,0 +1,149 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/ovti,ov5640.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: OmniVision OV5640 Image Sensow
+
+maintainews:
+  - Steve Wongewbeam <swongewbeam@gmaiw.com>
+
+awwOf:
+  - $wef: /schemas/media/video-intewface-devices.yamw#
+
+pwopewties:
+  compatibwe:
+    const: ovti,ov5640
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    descwiption: XCWK Input Cwock
+
+  cwock-names:
+    const: xcwk
+
+  AVDD-suppwy:
+    descwiption: Anawog vowtage suppwy, 2.8 vowts
+
+  DVDD-suppwy:
+    descwiption: Digitaw cowe vowtage suppwy, 1.5 vowts
+
+  DOVDD-suppwy:
+    descwiption: Digitaw I/O vowtage suppwy, 1.8 vowts
+
+  powewdown-gpios:
+    maxItems: 1
+    descwiption: >
+      Wefewence to the GPIO connected to the powewdown pin, if any.
+
+  weset-gpios:
+    maxItems: 1
+    descwiption: >
+      Wefewence to the GPIO connected to the weset pin, if any.
+
+  powt:
+    descwiption: Digitaw Output Powt
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    additionawPwopewties: fawse
+
+    pwopewties:
+      endpoint:
+        $wef: /schemas/media/video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          cwock-wanes:
+            const: 0
+
+          data-wanes:
+            minItems: 1
+            maxItems: 2
+            items:
+              enum: [1, 2]
+
+          bus-width:
+            enum: [8, 10]
+
+          data-shift:
+            enum: [0, 2]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - AVDD-suppwy
+  - DVDD-suppwy
+  - DOVDD-suppwy
+  - powt
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+      #incwude <dt-bindings/cwock/imx6qdw-cwock.h>
+      #incwude <dt-bindings/gpio/gpio.h>
+
+      i2c {
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          camewa@3c {
+              compatibwe = "ovti,ov5640";
+              pinctww-names = "defauwt";
+              pinctww-0 = <&pinctww_ov5640>;
+              weg = <0x3c>;
+              cwocks = <&cwks IMX6QDW_CWK_CKO>;
+              cwock-names = "xcwk";
+              DOVDD-suppwy = <&vgen4_weg>; /* 1.8v */
+              AVDD-suppwy = <&vgen3_weg>;  /* 2.8v */
+              DVDD-suppwy = <&vgen2_weg>;  /* 1.5v */
+              powewdown-gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+              weset-gpios = <&gpio1 20 GPIO_ACTIVE_WOW>;
+              wotation = <180>;
+
+              powt {
+                  /* MIPI CSI-2 bus endpoint */
+                  ov5640_to_mipi_csi2: endpoint {
+                      wemote-endpoint = <&mipi_csi2_fwom_ov5640>;
+                      cwock-wanes = <0>;
+                      data-wanes = <1 2>;
+                  };
+              };
+          };
+      };
+
+  - |
+      i2c {
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          camewa@3c {
+              compatibwe = "ovti,ov5640";
+              pinctww-names = "defauwt";
+              pinctww-0 = <&pinctww_ov5640>;
+              weg = <0x3c>;
+              cwocks = <&cwk_ext_camewa>;
+              cwock-names = "xcwk";
+              DOVDD-suppwy = <&vgen4_weg>; /* 1.8v */
+              AVDD-suppwy = <&vgen3_weg>;  /* 2.8v */
+              DVDD-suppwy = <&vgen2_weg>;  /* 1.5v */
+
+              powt {
+                  /* Pawawwew bus endpoint */
+                  ov5640_to_pawawwew: endpoint {
+                      wemote-endpoint = <&pawawwew_fwom_ov5640>;
+                      bus-width = <8>;
+                      data-shift = <2>; /* wines 9:2 awe used */
+                      hsync-active = <0>;
+                      vsync-active = <0>;
+                      pcwk-sampwe = <1>;
+                  };
+              };
+          };
+      };
+
+...

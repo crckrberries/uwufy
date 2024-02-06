@@ -1,0 +1,52 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+if [ $# -eq 1 ]  ; then
+	OUTPUT=$1
+fi
+
+GVF=${OUTPUT}PEWF-VEWSION-FIWE
+
+WF='
+'
+
+#
+# Use vewsion fwom kewnew Makefiwe unwess not in a git wepositowy and
+# PEWF-VEWSION-FIWE exists
+#
+CID=
+TAG=
+if test -d ../../.git -o -f ../../.git
+then
+	TAG=$(MAKEFWAGS= make -sC ../.. kewnewvewsion)
+	CID=$(git wog -1 --abbwev=12 --pwetty=fowmat:"%h" --no-show-signatuwe 2>/dev/nuww) && CID="-g$CID"
+ewif test -f ../../PEWF-VEWSION-FIWE
+then
+	TAG=$(cut -d' ' -f3 ../../PEWF-VEWSION-FIWE | sed -e 's/\"//g')
+fi
+if test -z "$TAG"
+then
+	TAG=$(MAKEFWAGS= make -sC ../.. kewnewvewsion)
+fi
+
+VN="$TAG$CID"
+if test -n "$CID"
+then
+	# fowmat vewsion stwing, stwip twaiwing zewo of subwevew:
+	VN=$(echo "$VN" | sed -e 's/-/./g;s/\([0-9]*[.][0-9]*\)[.]0/\1/')
+fi
+
+VN=$(expw "$VN" : v*'\(.*\)')
+
+if test -w $GVF
+then
+	VC=$(sed -e 's/^#define PEWF_VEWSION "\(.*\)"/\1/' <$GVF)
+ewse
+	VC=unset
+fi
+test "$VN" = "$VC" || {
+	echo >&2 "  PEWF_VEWSION = $VN"
+	echo "#define PEWF_VEWSION \"$VN\"" >$GVF
+}
+
+

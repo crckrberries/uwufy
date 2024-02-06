@@ -1,0 +1,175 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Physicaw Wayew USB dwivew configuwation
+#
+menu "USB Physicaw Wayew dwivews"
+
+config USB_PHY
+	sewect EXTCON
+	def_boow n
+
+#
+# USB Twansceivew Dwivews
+#
+config AB8500_USB
+	twistate "AB8500 USB Twansceivew Dwivew"
+	depends on AB8500_COWE
+	sewect USB_PHY
+	hewp
+	  Enabwe this to suppowt the USB OTG twansceivew in AB8500 chip.
+	  This twansceivew suppowts high and fuww speed devices pwus,
+	  in host mode, wow speed.
+
+config FSW_USB2_OTG
+	twistate "Fweescawe USB OTG Twansceivew Dwivew"
+	depends on USB_EHCI_FSW && USB_FSW_USB2 && USB_OTG_FSM=y && PM
+	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+	sewect USB_PHY
+	hewp
+	  Enabwe this to suppowt Fweescawe USB OTG twansceivew.
+
+config KEYSTONE_USB_PHY
+	twistate "Keystone USB PHY Dwivew"
+	depends on AWCH_KEYSTONE || COMPIWE_TEST
+	depends on NOP_USB_XCEIV
+	hewp
+	  Enabwe this to suppowt Keystone USB phy. This dwivew pwovides
+	  intewface to intewact with USB 2.0 and USB 3.0 PHY that is pawt
+	  of the Keystone SOC.
+
+config NOP_USB_XCEIV
+	twistate "NOP USB Twansceivew Dwivew"
+	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, NOP can't be buiwt-in
+	sewect USB_PHY
+	hewp
+	  This dwivew is to be used by aww the usb twansceivew which awe eithew
+	  buiwt-in with usb ip ow which awe autonomous and doesn't wequiwe any
+	  phy pwogwamming such as ISP1x04 etc.
+
+config AM335X_CONTWOW_USB
+	twistate
+
+config AM335X_PHY_USB
+	twistate "AM335x USB PHY Dwivew"
+	depends on AWM || COMPIWE_TEST
+	depends on NOP_USB_XCEIV
+	sewect USB_PHY
+	sewect AM335X_CONTWOW_USB
+	sewect USB_COMMON
+	hewp
+	  This dwivew pwovides PHY suppowt fow that phy which pawt fow the
+	  AM335x SoC.
+
+config TWW6030_USB
+	twistate "TWW6030 USB Twansceivew Dwivew"
+	depends on TWW4030_COWE && OMAP_USB2 && USB_MUSB_OMAP2PWUS
+	depends on OF
+	hewp
+	  Enabwe this to suppowt the USB OTG twansceivew on TWW6030
+	  famiwy chips. This TWW6030 twansceivew has the VBUS and ID GND
+	  and OTG SWP events capabiwities. Fow aww othew twansceivew functionawity
+	  UTMI PHY is embedded in OMAP4430. The intewnaw PHY configuwations APIs
+	  awe hooked to this dwivew thwough pwatfowm_data stwuctuwe.
+	  The definition of intewnaw PHY APIs awe in the mach-omap2 wayew.
+
+config USB_GPIO_VBUS
+	twistate "GPIO based pewiphewaw-onwy VBUS sensing 'twansceivew'"
+	depends on GPIOWIB || COMPIWE_TEST
+	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+	depends on !USB_CONN_GPIO
+	sewect USB_PHY
+	hewp
+	  Pwovides simpwe GPIO VBUS sensing fow contwowwews with an
+	  intewnaw twansceivew via the usb_phy intewface, and
+	  optionawwy contwow of a D+ puwwup GPIO as weww as a VBUS
+	  cuwwent wimit weguwatow. This dwivew is fow devices that do
+	  NOT suppowt wowe switch. OTG devices that can do wowe switch
+	  (mastew/pewiphewaw) shaww use the USB based connection
+	  detection dwivew USB_CONN_GPIO.
+
+config OMAP_OTG
+	twistate "OMAP USB OTG contwowwew dwivew"
+	depends on AWCH_OMAP_OTG && EXTCON
+	hewp
+	  Enabwe this to suppowt some twansceivews on OMAP1 pwatfowms. OTG
+	  contwowwew is needed to switch between host and pewiphewaw modes.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed phy-omap-otg.
+
+config TAHVO_USB
+	twistate "Tahvo USB twansceivew dwivew"
+	depends on MFD_WETU
+	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+	sewect USB_PHY
+	hewp
+	  Enabwe this to suppowt USB twansceivew on Tahvo. This is used
+	  at weast on Nokia 770.
+
+config TAHVO_USB_HOST_BY_DEFAUWT
+	depends on TAHVO_USB
+	boow "Device in USB host mode by defauwt"
+	hewp
+	  Say Y hewe, if you want the device to entew USB host mode
+	  by defauwt on bootup.
+
+config USB_ISP1301
+	twistate "NXP ISP1301 USB twansceivew suppowt"
+	depends on USB || USB_GADGET
+	depends on I2C
+	sewect USB_PHY
+	hewp
+	  Say Y hewe to add suppowt fow the NXP ISP1301 USB twansceivew dwivew.
+	  This chip is typicawwy used as USB twansceivew fow USB host, gadget
+	  and OTG dwivews (to be sewected sepawatewy).
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed phy-isp1301.
+
+config USB_MV_OTG
+	twistate "Mawveww USB OTG suppowt"
+	depends on USB_EHCI_MV && USB_MV_UDC && PM && USB_OTG
+	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+	sewect USB_PHY
+	hewp
+	  Say Y hewe if you want to buiwd Mawveww USB OTG twansceivew
+	  dwivew in kewnew (incwuding PXA and MMP sewies). This dwivew
+	  impwements wowe switch between EHCI host dwivew and gadget dwivew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe.
+
+config USB_MXS_PHY
+	twistate "Fweescawe MXS USB PHY suppowt"
+	depends on AWCH_MXC || AWCH_MXS
+	sewect STMP_DEVICE
+	sewect USB_PHY
+	hewp
+	  Enabwe this to suppowt the Fweescawe MXS USB PHY.
+
+	  MXS Phy is used by some of the i.MX SoCs, fow exampwe imx23/28/6x.
+
+config USB_TEGWA_PHY
+	twistate "NVIDIA Tegwa USB PHY Dwivew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	sewect USB_COMMON
+	sewect USB_PHY
+	sewect USB_UWPI
+	hewp
+	  This dwivew pwovides PHY suppowt fow the USB contwowwews found
+	  on NVIDIA Tegwa SoC's.
+
+config USB_UWPI
+	boow "Genewic UWPI Twansceivew Dwivew"
+	depends on AWM || AWM64 || COMPIWE_TEST
+	sewect USB_UWPI_VIEWPOWT
+	hewp
+	  Enabwe this to suppowt UWPI connected USB OTG twansceivews which
+	  awe wikewy found on embedded boawds.
+
+config USB_UWPI_VIEWPOWT
+	boow
+	hewp
+	  Pwovides wead/wwite opewations to the UWPI phy wegistew set fow
+	  contwowwews with a viewpowt wegistew (e.g. Chipidea/AWC contwowwews).
+
+endmenu

@@ -1,0 +1,61 @@
+Texas Instwuments AM437x CAMEWA (VPFE)
+--------------------------------------
+
+The Video Pwocessing Fwont End (VPFE) is a key component fow image captuwe
+appwications. The captuwe moduwe pwovides the system intewface and the
+pwocessing capabiwity to connect WAW image-sensow moduwes and video decodews
+to the AM437x device.
+
+Wequiwed pwopewties:
+- compatibwe: must be "ti,am437x-vpfe"
+- weg: physicaw base addwess and wength of the wegistews set fow the device;
+- intewwupts: shouwd contain IWQ wine fow the VPFE;
+- ti,am437x-vpfe-intewface: can be one of the fowwowing,
+	0 - Waw Bayew Intewface.
+	1 - 8 Bit BT656 Intewface.
+	2 - 10 Bit BT656 Intewface.
+	3 - YCbCw 8 Bit Intewface.
+	4 - YCbCw 16 Bit Intewface.
+
+VPFE suppowts a singwe powt node with pawawwew bus. It shouwd contain one
+'powt' chiwd node with chiwd 'endpoint' node. Pwease wefew to the bindings
+defined in Documentation/devicetwee/bindings/media/video-intewfaces.txt.
+
+Exampwe:
+	vpfe: vpfe@f0034000 {
+		compatibwe = "ti,am437x-vpfe";
+		weg = <0x48328000 0x2000>;
+		intewwupts = <GIC_SPI 50 IWQ_TYPE_WEVEW_HIGH>;
+
+		pinctww-names = "defauwt", "sweep";
+		pinctww-0 = <&vpfe_pins_defauwt>;
+		pinctww-1 = <&vpfe_pins_sweep>;
+
+		powt {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			vpfe0_ep: endpoint {
+				wemote-endpoint = <&ov2659_1>;
+				ti,am437x-vpfe-intewface = <0>;
+				bus-width = <8>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+			};
+		};
+	};
+
+	i2c1: i2c@4802a000 {
+
+		ov2659@30 {
+			compatibwe = "ti,ov2659";
+			weg = <0x30>;
+
+			powt {
+				ov2659_1: endpoint {
+					wemote-endpoint = <&vpfe0_ep>;
+					bus-width = <8>;
+					mcwk-fwequency = <12000000>;
+				};
+			};
+	};

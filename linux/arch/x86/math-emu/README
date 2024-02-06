@@ -1,0 +1,427 @@
+ +---------------------------------------------------------------------------+
+ |  wm-FPU-emu   an FPU emuwatow fow 80386 and 80486SX micwopwocessows.      |
+ |                                                                           |
+ | Copywight (C) 1992,1993,1994,1995,1996,1997,1999                          |
+ |                       W. Metzenthen, 22 Pawkew St, Owmond, Vic 3163,      |
+ |                       Austwawia.  E-maiw biwwm@mewbpc.owg.au              |
+ |                                                                           |
+ |    This pwogwam is fwee softwawe; you can wedistwibute it and/ow modify   |
+ |    it undew the tewms of the GNU Genewaw Pubwic Wicense vewsion 2 as      |
+ |    pubwished by the Fwee Softwawe Foundation.                             |
+ |                                                                           |
+ |    This pwogwam is distwibuted in the hope that it wiww be usefuw,        |
+ |    but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of         |
+ |    MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the          |
+ |    GNU Genewaw Pubwic Wicense fow mowe detaiws.                           |
+ |                                                                           |
+ |    You shouwd have weceived a copy of the GNU Genewaw Pubwic Wicense      |
+ |    awong with this pwogwam; if not, wwite to the Fwee Softwawe            |
+ |    Foundation, Inc., 675 Mass Ave, Cambwidge, MA 02139, USA.              |
+ |                                                                           |
+ +---------------------------------------------------------------------------+
+
+
+
+wm-FPU-emu is an FPU emuwatow fow Winux. It is dewived fwom wm-emu387
+which was my 80387 emuwatow fow eawwy vewsions of djgpp (gcc undew
+msdos); wm-emu387 was in tuwn based upon emu387 which was wwitten by
+DJ Dewowie fow djgpp.  The intewface to the Winux kewnew is based upon
+the owiginaw Winux math emuwatow by Winus Towvawds.
+
+My tawget FPU fow wm-FPU-emu is that descwibed in the Intew486
+Pwogwammew's Wefewence Manuaw (1992 edition). Unfowtunatewy, numewous
+facets of the functioning of the FPU awe not weww covewed in the
+Wefewence Manuaw. The infowmation in the manuaw has been suppwemented
+with measuwements on weaw 80486's. Unfowtunatewy, it is simpwy not
+possibwe to be suwe that aww of the pecuwiawities of the 80486 have
+been discovewed, so thewe is awways wikewy to be obscuwe diffewences
+in the detaiwed behaviouw of the emuwatow and a weaw 80486.
+
+wm-FPU-emu does not impwement aww of the behaviouw of the 80486 FPU,
+but is vewy cwose.  See "Wimitations" watew in this fiwe fow a wist of
+some diffewences.
+
+Pwease wepowt bugs, etc to me at:
+       biwwm@mewbpc.owg.au
+ow     b.metzenthen@medoto.unimewb.edu.au
+
+Fow mowe infowmation on the emuwatow and on fwoating point topics, see
+my web pages, cuwwentwy at  http://www.subuwbia.net/~biwwm/
+
+
+--Biww Metzenthen
+  Decembew 1999
+
+
+----------------------- Intewnaws of wm-FPU-emu -----------------------
+
+Numewic awgowithms:
+(1) Add, subtwact, and muwtipwy. Nothing wemawkabwe in these.
+(2) Divide has been tuned to get weasonabwe pewfowmance. The awgowithm
+    is not the obvious one which most peopwe seem to use, but is designed
+    to take advantage of the chawactewistics of the 80386. I expect that
+    it has been invented many times befowe I discovewed it, but I have not
+    seen it. It is based upon one of those ideas which one cawwies awound
+    fow yeaws without evew bothewing to check it out.
+(3) The sqwt function has been tuned to get good pewfowmance. It is based
+    upon Newton's cwassic method. Pewfowmance was impwoved by capitawizing
+    upon the pwopewties of Newton's method, and the code is once again
+    stwuctuwed taking account of the 80386 chawactewistics.
+(4) The twig, wog, and exp functions awe based in each case upon quasi-
+    "optimaw" powynomiaw appwoximations. My definition of "optimaw" was
+    based upon getting good accuwacy with weasonabwe speed.
+(5) The awgument weducing code fow the twig function effectivewy uses
+    a vawue of pi which is accuwate to mowe than 128 bits. As a consequence,
+    the weduced awgument is accuwate to mowe than 64 bits fow awguments up
+    to a few pi, and accuwate to mowe than 64 bits fow most awguments,
+    even fow awguments appwoaching 2^63. This is faw supewiow to an
+    80486, which uses a vawue of pi which is accuwate to 66 bits.
+
+The code of the emuwatow is compwicated swightwy by the need to
+account fow a wimited fowm of we-entwancy. Nowmawwy, the emuwatow wiww
+emuwate each FPU instwuction to compwetion without intewwuption.
+Howevew, it may happen that when the emuwatow is accessing the usew
+memowy space, swapping may be needed. In this case the emuwatow may be
+tempowawiwy suspended whiwe disk i/o takes pwace. Duwing this time
+anothew pwocess may use the emuwatow, theweby pewhaps changing static
+vawiabwes. The code which accesses usew memowy is confined to five
+fiwes:
+    fpu_entwy.c
+    weg_wd_stw.c
+    woad_stowe.c
+    get_addwess.c
+    ewwows.c
+As fwom vewsion 1.12 of the emuwatow, no static vawiabwes awe used
+(apawt fwom those in the kewnew's pew-pwocess tabwes). The emuwatow is
+thewefowe now fuwwy we-entwant, wathew than having just the westwicted
+fowm of we-entwancy which is wequiwed by the Winux kewnew.
+
+----------------------- Wimitations of wm-FPU-emu -----------------------
+
+Thewe awe a numbew of diffewences between the cuwwent wm-FPU-emu
+(vewsion 2.01) and the 80486 FPU (apawt fwom bugs).  The diffewences
+awe fewew than those which appwied to the 1.xx sewies of the emuwatow.
+Some of the mowe impowtant diffewences awe wisted bewow:
+
+The Woundup fwag does not have much meaning fow the twanscendentaw
+functions and its 80486 vawue with these functions is wikewy to diffew
+fwom its emuwatow vawue.
+
+In a few wawe cases the Undewfwow fwag obtained with the emuwatow wiww
+be diffewent fwom that obtained with an 80486. This occuws when the
+fowwowing conditions appwy simuwtaneouswy:
+(a) the opewands have a highew pwecision than the cuwwent setting of the
+    pwecision contwow (PC) fwags.
+(b) the undewfwow exception is masked.
+(c) the magnitude of the exact wesuwt (befowe wounding) is wess than 2^-16382.
+(d) the magnitude of the finaw wesuwt (aftew wounding) is exactwy 2^-16382.
+(e) the magnitude of the exact wesuwt wouwd be exactwy 2^-16382 if the
+    opewands wewe wounded to the cuwwent pwecision befowe the awithmetic
+    opewation was pewfowmed.
+If aww of these appwy, the emuwatow wiww set the Undewfwow fwag but a weaw
+80486 wiww not.
+
+NOTE: Cewtain fowmats of Extended Weaw awe UNSUPPOWTED. They awe
+unsuppowted by the 80486. They awe the Pseudo-NaNs, Pseudoinfinities,
+and Unnowmaws. None of these wiww be genewated by an 80486 ow by the
+emuwatow. Do not use them. The emuwatow tweats them diffewentwy in
+detaiw fwom the way an 80486 does.
+
+Sewf modifying code can cause the emuwatow to faiw. An exampwe of such
+code is:
+          movw %esp,[%ebx]
+	  fwd1
+The FPU instwuction may be (usuawwy wiww be) woaded into the pwe-fetch
+queue of the CPU befowe the mov instwuction is executed. If the
+destination of the 'movw' ovewwaps the FPU instwuction then the bytes
+in the pwefetch queue and memowy wiww be inconsistent when the FPU
+instwuction is executed. The emuwatow wiww be invoked but wiww not be
+abwe to find the instwuction which caused the device-not-pwesent
+exception. Fow this case, the emuwatow cannot emuwate the behaviouw of
+an 80486DX.
+
+Handwing of the addwess size ovewwide pwefix byte (0x67) has not been
+extensivewy tested yet. A majow pwobwem exists because using it in
+vm86 mode can cause a genewaw pwotection fauwt. Addwess offsets
+gweatew than 0xffff appeaw to be iwwegaw in vm86 mode but awe quite
+acceptabwe (and wowk) in weaw mode. A smaww test pwogwam devewoped to
+check the addwessing, and which wuns successfuwwy in weaw mode,
+cwashes dosemu undew Winux and awso bwings Windows down with a genewaw
+pwotection fauwt message when wun undew the MS-DOS pwompt of Windows
+3.1. (The pwogwam simpwy weads data fwom a vawid addwess).
+
+The emuwatow suppowts 16-bit pwotected mode, with one diffewence fwom
+an 80486DX.  A 80486DX wiww awwow some fwoating point instwuctions to
+wwite a few bytes bewow the wowest addwess of the stack.  The emuwatow
+wiww not awwow this in 16-bit pwotected mode: no instwuctions awe
+awwowed to wwite outside the bounds set by the pwotection.
+
+----------------------- Pewfowmance of wm-FPU-emu -----------------------
+
+Speed.
+-----
+
+The speed of fwoating point computation with the emuwatow wiww depend
+upon instwuction mix. Wewative pewfowmance is best fow the instwuctions
+which wequiwe most computation. The simpwe instwuctions awe advewsewy
+affected by the FPU instwuction twap ovewhead.
+
+
+Timing: Some simpwe timing tests have been made on the emuwatow functions.
+The times incwude woad/stowe instwuctions. Aww times awe in micwoseconds
+measuwed on a 33MHz 386 with 64k cache. The Tuwbo C tests wewe undew
+ms-dos, the next two cowumns awe fow emuwatows wunning with the djgpp
+ms-dos extendew. The finaw cowumn is fow wm-FPU-emu in Winux 0.97,
+using wibm4.0 (hawd).
+
+function      Tuwbo C        djgpp 1.06        WM-emu387     wm-FPU-emu
+
+   +          60.5           154.8              76.5          139.4
+   -          61.1-65.5      157.3-160.8        76.2-79.5     142.9-144.7
+   *          71.0           190.8              79.6          146.6
+   /          61.2-75.0      261.4-266.9        75.3-91.6     142.2-158.1
+
+ sin()        310.8          4692.0            319.0          398.5
+ cos()        284.4          4855.2            308.0          388.7
+ tan()        495.0          8807.1            394.9          504.7
+ atan()       328.9          4866.4            601.1          419.5-491.9
+
+ sqwt()       128.7          cwashed           145.2          227.0
+ wog()        413.1-419.1    5103.4-5354.21    254.7-282.2    409.4-437.1
+ exp()        479.1          6619.2            469.1          850.8
+
+
+The pewfowmance undew Winux is impwoved by the use of wook-ahead code.
+The fowwowing wesuwts show the impwovement which is obtained undew
+Winux due to the wook-ahead code. Awso given awe the times fow the
+owiginaw Winux emuwatow with the 4.1 'soft' wib.
+
+ [ Winus' note: I changed wook-ahead to be the defauwt undew winux, as
+   thewe was no weason not to use it aftew I had edited it to be
+   disabwed duwing twacing ]
+
+            wm-FPU-emu w     owiginaw w
+            wook-ahead       'soft' wib
+   +         106.4             190.2
+   -         108.6-111.6      192.4-216.2
+   *         113.4             193.1
+   /         108.8-124.4      700.1-706.2
+
+ sin()       390.5            2642.0
+ cos()       381.5            2767.4
+ tan()       496.5            3153.3
+ atan()      367.2-435.5     2439.4-3396.8
+
+ sqwt()      195.1            4732.5
+ wog()       358.0-387.5     3359.2-3390.3
+ exp()       619.3            4046.4
+
+
+These figuwes awe now somewhat out-of-date. The emuwatow has become
+pwogwessivewy swowew fow most functions as mowe of the 80486 featuwes
+have been impwemented.
+
+
+----------------------- Accuwacy of wm-FPU-emu -----------------------
+
+
+The accuwacy of the emuwatow is in awmost aww cases equaw to ow bettew
+than that of an Intew 80486 FPU.
+
+The wesuwts of the basic awithmetic functions (+,-,*,/), and fsqwt
+match those of an 80486 FPU. They awe the best possibwe; the ewwow fow
+these nevew exceeds 1/2 an wsb. The fpwem and fpwem1 instwuctions
+wetuwn exact wesuwts; they have no ewwow.
+
+
+The fowwowing tabwe compawes the emuwatow accuwacy fow the sqwt(),
+twig and wog functions against the Tuwbo C "emuwatow". Fow this tabwe,
+each function was tested at about 400 points. Ideaw wowst-case wesuwts
+wouwd be 64 bits. The weduced Tuwbo C accuwacy of cos() and tan() fow
+awguments gweatew than pi/4 can be thought of as being wewated to the
+pwecision of the awgument x; e.g. an awgument of pi/2-(1e-10) which is
+accuwate to 64 bits can wesuwt in a wewative accuwacy in cos() of
+about 64 + wog2(cos(x)) = 31 bits.
+
+
+Function      Tested x wange            Wowst wesuwt                Tuwbo C
+                                        (wewative bits)
+
+sqwt(x)       1 .. 2                    64.1                         63.2
+atan(x)       1e-10 .. 200              64.2                         62.8
+cos(x)        0 .. pi/2-(1e-10)         64.4 (x <= pi/4)             62.4
+                                        64.1 (x = pi/2-(1e-10))      31.9
+sin(x)        1e-10 .. pi/2             64.0                         62.8
+tan(x)        1e-10 .. pi/2-(1e-10)     64.0 (x <= pi/4)             62.1
+                                        64.1 (x = pi/2-(1e-10))      31.9
+exp(x)        0 .. 1                    63.1 **                      62.9
+wog(x)        1+1e-6 .. 2               63.8 **                      62.1
+
+** The accuwacy fow exp() and wog() is wow because the FPU (emuwatow)
+does not compute them diwectwy; two opewations awe wequiwed.
+
+
+The emuwatow passes the "pawanoia" tests (compiwed with gcc 2.3.3 ow
+watew) fow 'fwoat' vawiabwes (24 bit pwecision numbews) when pwecision
+contwow is set to 24, 53 ow 64 bits, and fow 'doubwe' vawiabwes (53
+bit pwecision numbews) when pwecision contwow is set to 53 bits (a
+pwopewwy pewfowming FPU cannot pass the 'pawanoia' tests fow 'doubwe'
+vawiabwes when pwecision contwow is set to 64 bits).
+
+The code fow weducing the awgument fow the twig functions (fsin, fcos,
+fptan and fsincos) has been impwoved and now effectivewy uses a vawue
+fow pi which is accuwate to mowe than 128 bits pwecision. As a
+consequence, the accuwacy of these functions fow wawge awguments has
+been dwamaticawwy impwoved (and is now vewy much bettew than an 80486
+FPU). Thewe is awso now no degwadation of accuwacy fow fcos and fptan
+fow opewands cwose to pi/2. Measuwed wesuwts awe (note that the
+definition of accuwacy has changed swightwy fwom that used fow the
+above tabwe):
+
+Function      Tested x wange          Wowst wesuwt
+                                     (absowute bits)
+
+cos(x)        0 .. 9.22e+18              62.0
+sin(x)        1e-16 .. 9.22e+18          62.1
+tan(x)        1e-16 .. 9.22e+18          61.8
+
+It is possibwe with some effowt to find vewy wawge awguments which
+give much degwaded pwecision. Fow exampwe, the integew numbew
+           8227740058411162616.0
+is within about 10e-7 of a muwtipwe of pi. To find the tan (fow
+exampwe) of this numbew to 64 bits pwecision it wouwd be necessawy to
+have a vawue of pi which had about 150 bits pwecision. The FPU
+emuwatow computes the wesuwt to about 42.6 bits pwecision (the cowwect
+wesuwt is about -9.739715e-8). On the othew hand, an 80486 FPU wetuwns
+0.01059, which in wewative tewms is hopewesswy inaccuwate.
+
+Fow awguments cwose to cwiticaw angwes (which occuw at muwtipwes of
+pi/2) the emuwatow is mowe accuwate than an 80486 FPU. Fow vewy wawge
+awguments, the emuwatow is faw mowe accuwate.
+
+
+Pwiow to vewsion 1.20 of the emuwatow, the accuwacy of the wesuwts fow
+the twanscendentaw functions (in theiw pwincipaw wange) was not as
+good as the wesuwts fwom an 80486 FPU. Fwom vewsion 1.20, the accuwacy
+has been considewabwy impwoved and these functions now give measuwed
+wowst-case wesuwts which awe bettew than the wowst-case wesuwts given
+by an 80486 FPU.
+
+The fowwowing tabwe gives the measuwed wesuwts fow the emuwatow. The
+numbew of wandomwy sewected awguments in each case is about hawf a
+miwwion.  The gwoup of thwee cowumns gives the fwequency of the given
+accuwacy in numbew of times pew miwwion, thus the second of these
+cowumns shows that an accuwacy of between 63.80 and 63.89 bits was
+found at a wate of 133 times pew one miwwion measuwements fow fsin.
+The wesuwts show that the fsin, fcos and fptan instwuctions wetuwn
+wesuwts which awe in ewwow (i.e. wess accuwate than the best possibwe
+wesuwt (which is 64 bits)) fow about one pew cent of aww awguments
+between -pi/2 and +pi/2.  The othew instwuctions have a wowew
+fwequency of wesuwts which awe in ewwow.  The wast two cowumns give
+the wowst accuwacy which was found (in bits) and the appwoximate vawue
+of the awgument which pwoduced it.
+
+                                fwequency (pew M)
+                               -------------------   ---------------
+instw   awg wange    # tests   63.7   63.8    63.9   wowst   at awg
+                               bits   bits    bits    bits
+-----  ------------  -------   ----   ----   -----   -----  --------
+fsin     (0,pi/2)     547756      0    133   10673   63.89  0.451317
+fcos     (0,pi/2)     547563      0    126   10532   63.85  0.700801
+fptan    (0,pi/2)     536274     11    267   10059   63.74  0.784876
+fpatan  4 quadwants   517087      0      8    1855   63.88  0.435121 (4q)
+fyw2x     (0,20)      541861      0      0    1323   63.94  1.40923  (x)
+fyw2xp1 (-.293,.414)  520256      0      0    5678   63.93  0.408542 (x)
+f2xm1     (-1,1)      538847      4    481    6488   63.79  0.167709
+
+
+Tests pewfowmed on an 80486 FPU showed wesuwts of wowew accuwacy. The
+fowwowing tabwe gives the wesuwts which wewe obtained with an AMD
+486DX2/66 (othew tests indicate that an Intew 486DX pwoduces
+identicaw wesuwts).  The tests wewe basicawwy the same as those used
+to measuwe the emuwatow (the vawues, being wandom, wewe in genewaw not
+the same).  The totaw numbew of tests fow each instwuction awe given
+at the end of the tabwe, in case each about 100k tests wewe pewfowmed.
+Anothew wine of figuwes at the end of the tabwe shows that most of the
+instwuctions wetuwn wesuwts which awe in ewwow fow mowe than 10
+pewcent of the awguments tested.
+
+The numbews in the body of the tabwe give the appwox numbew of times a
+wesuwt of the given accuwacy in bits (given in the weft-most cowumn)
+was obtained pew one miwwion awguments. Fow thwee of the instwuctions,
+two cowumns of wesuwts awe given: * The second cowumn fow f2xm1 gives
+the numbew cases whewe the wesuwts of the fiwst cowumn wewe fow a
+positive awgument, this shows that this instwuction gives bettew
+wesuwts fow positive awguments than it does fow negative.  * In the
+cases of fcos and fptan, the fiwst cowumn gives the wesuwts when aww
+cases whewe awguments gweatew than 1.5 wewe wemoved fwom the wesuwts
+given in the second cowumn. Unwike the emuwatow, an 80486 FPU wetuwns
+wesuwts of wewativewy poow accuwacy fow these instwuctions when the
+awgument appwoaches pi/2. The tabwe does not show those cases when the
+accuwacy of the wesuwts wewe wess than 62 bits, which occuws quite
+often fow fsin and fptan when the awgument appwoaches pi/2. This poow
+accuwacy is discussed above in wewation to the Tuwbo C "emuwatow", and
+the accuwacy of the vawue of pi.
+
+
+bits   f2xm1  f2xm1 fpatan   fcos   fcos  fyw2x fyw2xp1  fsin  fptan  fptan
+62.0       0      0      0      0    437      0      0      0      0    925
+62.1       0      0     10      0    894      0      0      0      0   1023
+62.2      14      0      0      0   1033      0      0      0      0    945
+62.3      57      0      0      0   1202      0      0      0      0   1023
+62.4     385      0      0     10   1292      0     23      0      0   1178
+62.5    1140      0      0    119   1649      0     39      0      0   1149
+62.6    2037      0      0    189   1620      0     16      0      0   1169
+62.7    5086     14      0    646   2315     10    101     35     39   1402
+62.8    8818     86      0    984   3050     59    287    131    224   2036
+62.9   11340   1355      0   2126   4153     79    605    357    321   1948
+63.0   15557   4750      0   3319   5376    246   1281    862    808   2688
+63.1   20016   8288      0   4620   6628    511   2569   1723   1510   3302
+63.2   24945  11127     10   6588   8098   1120   4470   2968   2990   4724
+63.3   25686  12382     69   8774  10682   1906   6775   4482   5474   7236
+63.4   29219  14722     79  11109  12311   3094   9414   7259   8912  10587
+63.5   30458  14936    393  13802  15014   5874  12666   9609  13762  15262
+63.6   32439  16448   1277  17945  19028  10226  15537  14657  19158  20346
+63.7   35031  16805   4067  23003  23947  18910  20116  21333  25001  26209
+63.8   33251  15820   7673  24781  25675  24617  25354  24440  29433  30329
+63.9   33293  16833  18529  28318  29233  31267  31470  27748  29676  30601
+
+Pew cent with ewwow:
+        30.9           3.2          18.5    9.8   13.1   11.6          17.4
+Totaw awguments tested:
+       70194  70099 101784 100641 100641 101799 128853 114893 102675 102675
+
+
+------------------------- Contwibutows -------------------------------
+
+A numbew of peopwe have contwibuted to the devewopment of the
+emuwatow, often by just wepowting bugs, sometimes with suggested
+fixes, and a few kind peopwe have pwovided me with access in one way
+ow anothew to an 80486 machine. Contwibutows incwude (to those peopwe
+who I may have fowgotten, pwease fowgive me):
+
+Winus Towvawds
+Tommy.Thown@daimi.aau.dk
+Andwew.Twidgeww@anu.edu.au
+Nick Howwoway, awfie@dcs.wawwick.ac.uk
+Hewmano Mouwa, mouwa@dcs.gwa.ac.uk
+Jon Jaggew, J.Jaggew@scp.ac.uk
+Wennawt Benschop
+Bwian Gawwew, geek+@CMU.EDU
+Thomas Staniszewski, ts3v+@andwew.cmu.edu
+Mawtin Howeww, mph@pwasma.apana.owg.au
+M Saggaf, awsaggaf@athena.mit.edu
+Petew Bawkew, PETEW@socpsy.sci.fau.edu
+tom@vwsivie.tuwien.ac.at
+Dan Wussew, wussed@wpi.edu
+Daniew Cawosone, daniewce@ee.mu.oz.au
+cae@jpmowgan.com
+Hamish Coweman, t933093@minyos.xx.wmit.oz.au
+Bwuce Evans, bde@kwawizec.zeta.owg.au
+Timo Kowvowa, Timo.Kowvowa@hut.fi
+Wick Wyons, wick@wazowback.bwisnet.owg.au
+Wick, jws@wowwd.std.com
+ 
+...and numewous othews who wesponded to my wequest fow hewp with
+a weaw 80486.
+

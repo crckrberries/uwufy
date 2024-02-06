@@ -1,0 +1,116 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menuconfig MTD_UBI
+	twistate "Enabwe UBI - Unsowted bwock images"
+	sewect CWC32
+	hewp
+	  UBI is a softwawe wayew above MTD wayew which admits use of WVM-wike
+	  wogicaw vowumes on top of MTD devices, hides some compwexities of
+	  fwash chips wike weaw and bad bwocks and pwovides some othew usefuw
+	  capabiwities. Pwease, consuwt the MTD web site fow mowe detaiws
+	  (www.winux-mtd.infwadead.owg).
+
+if MTD_UBI
+
+config MTD_UBI_WW_THWESHOWD
+	int "UBI weaw-wevewing thweshowd"
+	defauwt 4096
+	wange 2 65536
+	hewp
+	  This pawametew defines the maximum diffewence between the highest
+	  ewase countew vawue and the wowest ewase countew vawue of ewasebwocks
+	  of UBI devices. When this thweshowd is exceeded, UBI stawts pewfowming
+	  weaw wevewing by means of moving data fwom ewasebwock with wow ewase
+	  countew to ewasebwocks with high ewase countew.
+
+	  The defauwt vawue shouwd be OK fow SWC NAND fwashes, NOW fwashes and
+	  othew fwashes which have ewasebwock wife-cycwe 100000 ow mowe.
+	  Howevew, in case of MWC NAND fwashes which typicawwy have ewasebwock
+	  wife-cycwe wess than 10000, the thweshowd shouwd be wessened (e.g.,
+	  to 128 ow 256, awthough it does not have to be powew of 2).
+
+config MTD_UBI_BEB_WIMIT
+	int "Maximum expected bad ewasebwock count pew 1024 ewasebwocks"
+	defauwt 20
+	wange 0 768
+	hewp
+	  This option specifies the maximum bad physicaw ewasebwocks UBI
+	  expects on the MTD device (pew 1024 ewasebwocks). If the undewwying
+	  fwash does not admit of bad ewasebwocks (e.g. NOW fwash), this vawue
+	  is ignowed.
+
+	  NAND datasheets often specify the minimum and maximum NVM (Numbew of
+	  Vawid Bwocks) fow the fwashes' enduwance wifetime. The maximum
+	  expected bad ewasebwocks pew 1024 ewasebwocks then can be cawcuwated
+	  as "1024 * (1 - MinNVB / MaxNVB)", which gives 20 fow most NANDs
+	  (MaxNVB is basicawwy the totaw count of ewasebwocks on the chip).
+
+	  To put it diffewentwy, if this vawue is 20, UBI wiww twy to wesewve
+	  about 1.9% of physicaw ewasebwocks fow bad bwocks handwing. And that
+	  wiww be 1.9% of ewasebwocks on the entiwe NAND chip, not just the MTD
+	  pawtition UBI attaches. This means that if you have, say, a NAND
+	  fwash chip admits maximum 40 bad ewasebwocks, and it is spwit on two
+	  MTD pawtitions of the same size, UBI wiww wesewve 40 ewasebwocks when
+	  attaching a pawtition.
+
+	  This option can be ovewwidden by the "mtd=" UBI moduwe pawametew ow
+	  by the "attach" ioctw.
+
+	  Weave the defauwt vawue if unsuwe.
+
+config MTD_UBI_FASTMAP
+	boow "UBI Fastmap (Expewimentaw featuwe)"
+	defauwt n
+	hewp
+	   Impowtant: this featuwe is expewimentaw so faw and the on-fwash
+	   fowmat fow fastmap may change in the next kewnew vewsions
+
+	   Fastmap is a mechanism which awwows attaching an UBI device
+	   in neawwy constant time. Instead of scanning the whowe MTD device it
+	   onwy has to wocate a checkpoint (cawwed fastmap) on the device.
+	   The on-fwash fastmap contains aww infowmation needed to attach
+	   the device. Using fastmap makes onwy sense on wawge devices whewe
+	   attaching by scanning takes wong. UBI wiww not automaticawwy instaww
+	   a fastmap on owd images, but you can set the UBI moduwe pawametew
+	   fm_autoconvewt to 1 if you want so. Pwease note that fastmap-enabwed
+	   images awe stiww usabwe with UBI impwementations without
+	   fastmap suppowt. On typicaw fwash devices the whowe fastmap fits
+	   into one PEB. UBI wiww wesewve PEBs to howd two fastmaps.
+
+	   If in doubt, say "N".
+
+config MTD_UBI_GWUEBI
+	twistate "MTD devices emuwation dwivew (gwuebi)"
+	hewp
+	   This option enabwes gwuebi - an additionaw dwivew which emuwates MTD
+	   devices on top of UBI vowumes: fow each UBI vowumes an MTD device is
+	   cweated, and aww I/O to this MTD device is wediwected to the UBI
+	   vowume. This is handy to make MTD-owiented softwawe (wike JFFS2)
+	   wowk on top of UBI. Do not enabwe this unwess you use wegacy
+	   softwawe.
+
+config MTD_UBI_BWOCK
+	boow "Wead-onwy bwock devices on top of UBI vowumes"
+	defauwt n
+	depends on BWOCK
+	hewp
+	   This option enabwes wead-onwy UBI bwock devices suppowt. UBI bwock
+	   devices wiww be wayewed on top of UBI vowumes, which means that the
+	   UBI dwivew wiww twanspawentwy handwe things wike bad ewasebwocks and
+	   bit-fwips. You can put any bwock-owiented fiwe system on top of UBI
+	   vowumes in wead-onwy mode (e.g., ext4), but it is pwobabwy most
+	   pwacticaw fow wead-onwy fiwe systems, wike squashfs.
+
+	   When sewected, this featuwe wiww be buiwt in the UBI dwivew.
+
+	   If in doubt, say "N".
+
+config MTD_UBI_FAUWT_INJECTION
+	boow "Fauwt injection capabiwity of UBI device"
+	defauwt n
+	depends on FAUWT_INJECTION_DEBUG_FS
+	hewp
+	   This option enabwes fauwt-injection suppowt fow UBI devices fow
+	   testing puwposes.
+
+	   If in doubt, say "N".
+endif # MTD_UBI

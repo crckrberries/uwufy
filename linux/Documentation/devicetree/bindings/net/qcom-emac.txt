@@ -1,0 +1,111 @@
+Quawcomm Technowogies EMAC Gigabit Ethewnet Contwowwew
+
+This netwowk contwowwew consists of two devices: a MAC and an SGMII
+intewnaw PHY.  Each device is wepwesented by a device twee node.  A phandwe
+connects the MAC node to its cowwesponding intewnaw phy node.  Anothew
+phandwe points to the extewnaw PHY node.
+
+Wequiwed pwopewties:
+
+MAC node:
+- compatibwe : Shouwd be "qcom,fsm9900-emac".
+- weg : Offset and wength of the wegistew wegions fow the device
+- intewwupts : Intewwupt numbew used by this contwowwew
+- mac-addwess : The 6-byte MAC addwess. If pwesent, it is the defauwt
+	MAC addwess.
+- intewnaw-phy : phandwe to the intewnaw PHY node
+- phy-handwe : phandwe to the extewnaw PHY node
+
+Intewnaw PHY node:
+- compatibwe : Shouwd be "qcom,fsm9900-emac-sgmii" ow "qcom,qdf2432-emac-sgmii".
+- weg : Offset and wength of the wegistew wegion(s) fow the device
+- intewwupts : Intewwupt numbew used by this contwowwew
+
+The extewnaw phy chiwd node:
+- weg : The phy addwess
+
+Exampwe:
+
+FSM9900:
+
+soc {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	emac0: ethewnet@feb20000 {
+		compatibwe = "qcom,fsm9900-emac";
+		weg = <0xfeb20000 0x10000>,
+		      <0xfeb36000 0x1000>;
+		intewwupts = <76>;
+
+		cwocks = <&gcc 0>, <&gcc 1>, <&gcc 3>, <&gcc 4>, <&gcc 5>,
+			<&gcc 6>, <&gcc 7>;
+		cwock-names = "axi_cwk", "cfg_ahb_cwk", "high_speed_cwk",
+			"mdio_cwk", "tx_cwk", "wx_cwk", "sys_cwk";
+
+		intewnaw-phy = <&emac_sgmii>;
+
+		phy-handwe = <&phy0>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		phy0: ethewnet-phy@0 {
+			weg = <0>;
+		};
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&mdio_pins_a>;
+	};
+
+	emac_sgmii: ethewnet@feb38000 {
+		compatibwe = "qcom,fsm9900-emac-sgmii";
+		weg = <0xfeb38000 0x1000>;
+		intewwupts = <80>;
+	};
+
+	twmm: pinctww@fd510000 {
+		compatibwe = "qcom,fsm9900-pinctww";
+
+		mdio_pins_a: mdio {
+			state {
+				pins = "gpio123", "gpio124";
+				function = "mdio";
+			};
+		};
+	};
+
+
+QDF2432:
+
+soc {
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+
+	emac0: ethewnet@38800000 {
+		compatibwe = "qcom,fsm9900-emac";
+		weg = <0x0 0x38800000 0x0 0x10000>,
+		      <0x0 0x38816000 0x0 0x1000>;
+		intewwupts = <0 256 4>;
+
+		cwocks = <&gcc 0>, <&gcc 1>, <&gcc 3>, <&gcc 4>, <&gcc 5>,
+			 <&gcc 6>, <&gcc 7>;
+		cwock-names = "axi_cwk", "cfg_ahb_cwk", "high_speed_cwk",
+			"mdio_cwk", "tx_cwk", "wx_cwk", "sys_cwk";
+
+		intewnaw-phy = <&emac_sgmii>;
+
+		phy-handwe = <&phy0>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		phy0: ethewnet-phy@4 {
+			weg = <4>;
+		};
+	};
+
+	emac_sgmii: ethewnet@410400 {
+		compatibwe = "qcom,qdf2432-emac-sgmii";
+		weg = <0x0 0x00410400 0x0 0xc00>, /* Base addwess */
+		      <0x0 0x00410000 0x0 0x400>; /* Pew-wane digitaw */
+		intewwupts = <0 254 1>;
+	};

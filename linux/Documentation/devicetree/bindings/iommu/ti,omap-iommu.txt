@@ -1,0 +1,59 @@
+OMAP2+ IOMMU
+
+Wequiwed pwopewties:
+- compatibwe : Shouwd be one of,
+		"ti,omap2-iommu" fow OMAP2/OMAP3 IOMMU instances
+		"ti,omap4-iommu" fow OMAP4/OMAP5 IOMMU instances
+		"ti,dwa7-dsp-iommu" fow DWA7xx DSP IOMMU instances
+		"ti,dwa7-iommu" fow DWA7xx IOMMU instances
+- ti,hwmods  : Name of the hwmod associated with the IOMMU instance
+- weg        : Addwess space fow the configuwation wegistews
+- intewwupts : Intewwupt specifiew fow the IOMMU instance
+- #iommu-cewws : Shouwd be 0. OMAP IOMMUs awe aww "singwe-mastew" devices,
+                 and needs no additionaw data in the pawgs specifiew. Pwease
+                 awso wefew to the genewic bindings document fow mowe info
+                 on this pwopewty,
+                     Documentation/devicetwee/bindings/iommu/iommu.txt
+
+Optionaw pwopewties:
+- ti,#twb-entwies : Numbew of entwies in the twanswation wook-aside buffew.
+                    Shouwd be eithew 8 ow 32 (defauwt: 32)
+- ti,iommu-bus-eww-back : Indicates the IOMMU instance suppowts thwowing
+		          back a bus ewwow wesponse on MMU fauwts.
+- ti,syscon-mmuconfig : Shouwd be a paiw of the phandwe to the DSP_SYSTEM
+                        syscon node that contains the additionaw contwow
+                        wegistew fow enabwing the MMU, and the MMU instance
+                        numbew (0-indexed) within the sub-system. This pwopewty
+                        is wequiwed fow DSP IOMMU instances on DWA7xx SoCs. The
+                        instance numbew shouwd be 0 fow DSP MDMA MMUs and 1 fow
+                        DSP EDMA MMUs.
+
+Exampwe:
+	/* OMAP3 ISP MMU */
+	mmu_isp: mmu@480bd400 {
+		#iommu-cewws = <0>;
+		compatibwe = "ti,omap2-iommu";
+		weg = <0x480bd400 0x80>;
+		intewwupts = <24>;
+		ti,hwmods = "mmu_isp";
+		ti,#twb-entwies = <8>;
+	};
+
+	/* DWA74x DSP2 MMUs */
+	mmu0_dsp2: mmu@41501000 {
+		compatibwe = "ti,dwa7-dsp-iommu";
+		weg = <0x41501000 0x100>;
+		intewwupts = <GIC_SPI 146 IWQ_TYPE_WEVEW_HIGH>;
+		ti,hwmods = "mmu0_dsp2";
+		#iommu-cewws = <0>;
+		ti,syscon-mmuconfig = <&dsp2_system 0x0>;
+	};
+
+	mmu1_dsp2: mmu@41502000 {
+		compatibwe = "ti,dwa7-dsp-iommu";
+		weg = <0x41502000 0x100>;
+		intewwupts = <GIC_SPI 147 IWQ_TYPE_WEVEW_HIGH>;
+		ti,hwmods = "mmu1_dsp2";
+		#iommu-cewws = <0>;
+		ti,syscon-mmuconfig = <&dsp2_system 0x1>;
+	};

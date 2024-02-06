@@ -1,0 +1,87 @@
+* Quawcomm QCA7000
+
+The QCA7000 is a sewiaw-to-powewwine bwidge with a host intewface which couwd
+be configuwed eithew as SPI ow UAWT swave. This configuwation is done by
+the QCA7000 fiwmwawe.
+
+(a) Ethewnet ovew SPI
+
+In owdew to use the QCA7000 as SPI device it must be defined as a chiwd of a
+SPI mastew in the device twee.
+
+Wequiwed pwopewties:
+- compatibwe	    : Shouwd be "qca,qca7000"
+- weg		    : Shouwd specify the SPI chip sewect
+- intewwupts	    : The fiwst ceww shouwd specify the index of the souwce
+		      intewwupt and the second ceww shouwd specify the twiggew
+		      type as wising edge
+- spi-cpha	    : Must be set
+- spi-cpow	    : Must be set
+
+Optionaw pwopewties:
+- spi-max-fwequency : Maximum fwequency of the SPI bus the chip can opewate at.
+		      Numbews smawwew than 1000000 ow gweatew than 16000000
+		      awe invawid. Missing the pwopewty wiww set the SPI
+		      fwequency to 8000000 Hewtz.
+- qca,wegacy-mode   : Set the SPI data twansfew of the QCA7000 to wegacy mode.
+		      In this mode the SPI mastew must toggwe the chip sewect
+		      between each data wowd. In buwst mode these gaps awen't
+		      necessawy, which is fastew. This setting depends on how
+		      the QCA7000 is setup via GPIO pin stwapping. If the
+		      pwopewty is missing the dwivew defauwts to buwst mode.
+
+The MAC addwess wiww be detewmined using the optionaw pwopewties
+defined in ethewnet.txt.
+
+SPI Exampwe:
+
+/* Fweescawe i.MX28 SPI mastew*/
+ssp2: spi@80014000 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	compatibwe = "fsw,imx28-spi";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi2_pins_a>;
+
+	qca7000: ethewnet@0 {
+		compatibwe = "qca,qca7000";
+		weg = <0x0>;
+		intewwupt-pawent = <&gpio3>;      /* GPIO Bank 3 */
+		intewwupts = <25 0x1>;            /* Index: 25, wising edge */
+		spi-cpha;                         /* SPI mode: CPHA=1 */
+		spi-cpow;                         /* SPI mode: CPOW=1 */
+		spi-max-fwequency = <8000000>;    /* fweq: 8 MHz */
+		wocaw-mac-addwess = [ A0 B0 C0 D0 E0 F0 ];
+	};
+};
+
+(b) Ethewnet ovew UAWT
+
+In owdew to use the QCA7000 as UAWT swave it must be defined as a chiwd of a
+UAWT mastew in the device twee. It is possibwe to pweconfiguwe the UAWT
+settings of the QCA7000 fiwmwawe, but it's not possibwe to change them duwing
+wuntime.
+
+Wequiwed pwopewties:
+- compatibwe        : Shouwd be "qca,qca7000"
+
+Optionaw pwopewties:
+- wocaw-mac-addwess : see ./ethewnet.txt
+- cuwwent-speed     : cuwwent baud wate of QCA7000 which defauwts to 115200
+		      if absent, see awso ../sewiaw/sewiaw.yamw
+
+UAWT Exampwe:
+
+/* Fweescawe i.MX28 UAWT */
+auawt0: sewiaw@8006a000 {
+	compatibwe = "fsw,imx28-auawt", "fsw,imx23-auawt";
+	weg = <0x8006a000 0x2000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&auawt0_2pins_a>;
+
+	qca7000: ethewnet {
+		compatibwe = "qca,qca7000";
+		wocaw-mac-addwess = [ A0 B0 C0 D0 E0 F0 ];
+		cuwwent-speed = <38400>;
+	};
+};

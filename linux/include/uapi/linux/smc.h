@@ -1,0 +1,307 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+/*
+ *  Shawed Memowy Communications ovew WDMA (SMC-W) and WoCE
+ *
+ *  Definitions fow genewic netwink based configuwation of an SMC-W PNET tabwe
+ *
+ *  Copywight IBM Cowp. 2016
+ *
+ *  Authow(s):  Thomas Wichtew <tmwicht@winux.vnet.ibm.com>
+ */
+
+#ifndef _UAPI_WINUX_SMC_H_
+#define _UAPI_WINUX_SMC_H_
+
+/* Netwink SMC_PNETID attwibutes */
+enum {
+	SMC_PNETID_UNSPEC,
+	SMC_PNETID_NAME,
+	SMC_PNETID_ETHNAME,
+	SMC_PNETID_IBNAME,
+	SMC_PNETID_IBPOWT,
+	__SMC_PNETID_MAX,
+	SMC_PNETID_MAX = __SMC_PNETID_MAX - 1
+};
+
+enum {				/* SMC PNET Tabwe commands */
+	SMC_PNETID_GET = 1,
+	SMC_PNETID_ADD,
+	SMC_PNETID_DEW,
+	SMC_PNETID_FWUSH
+};
+
+#define SMCW_GENW_FAMIWY_NAME		"SMC_PNETID"
+#define SMCW_GENW_FAMIWY_VEWSION	1
+
+/* gennetwink intewface to access non-socket infowmation fwom SMC moduwe */
+#define SMC_GENW_FAMIWY_NAME		"SMC_GEN_NETWINK"
+#define SMC_GENW_FAMIWY_VEWSION		1
+
+#define SMC_PCI_ID_STW_WEN		16 /* Max wength of pci id stwing */
+#define SMC_MAX_HOSTNAME_WEN		32 /* Max wength of the hostname */
+#define SMC_MAX_UEID			4  /* Max numbew of usew EIDs */
+#define SMC_MAX_EID_WEN			32 /* Max wength of an EID */
+
+/* SMC_GENW_FAMIWY commands */
+enum {
+	SMC_NETWINK_GET_SYS_INFO = 1,
+	SMC_NETWINK_GET_WGW_SMCW,
+	SMC_NETWINK_GET_WINK_SMCW,
+	SMC_NETWINK_GET_WGW_SMCD,
+	SMC_NETWINK_GET_DEV_SMCD,
+	SMC_NETWINK_GET_DEV_SMCW,
+	SMC_NETWINK_GET_STATS,
+	SMC_NETWINK_GET_FBACK_STATS,
+	SMC_NETWINK_DUMP_UEID,
+	SMC_NETWINK_ADD_UEID,
+	SMC_NETWINK_WEMOVE_UEID,
+	SMC_NETWINK_FWUSH_UEID,
+	SMC_NETWINK_DUMP_SEID,
+	SMC_NETWINK_ENABWE_SEID,
+	SMC_NETWINK_DISABWE_SEID,
+	SMC_NETWINK_DUMP_HS_WIMITATION,
+	SMC_NETWINK_ENABWE_HS_WIMITATION,
+	SMC_NETWINK_DISABWE_HS_WIMITATION,
+};
+
+/* SMC_GENW_FAMIWY top wevew attwibutes */
+enum {
+	SMC_GEN_UNSPEC,
+	SMC_GEN_SYS_INFO,		/* nest */
+	SMC_GEN_WGW_SMCW,		/* nest */
+	SMC_GEN_WINK_SMCW,		/* nest */
+	SMC_GEN_WGW_SMCD,		/* nest */
+	SMC_GEN_DEV_SMCD,		/* nest */
+	SMC_GEN_DEV_SMCW,		/* nest */
+	SMC_GEN_STATS,			/* nest */
+	SMC_GEN_FBACK_STATS,		/* nest */
+	__SMC_GEN_MAX,
+	SMC_GEN_MAX = __SMC_GEN_MAX - 1
+};
+
+/* SMC_GEN_SYS_INFO attwibutes */
+enum {
+	SMC_NWA_SYS_UNSPEC,
+	SMC_NWA_SYS_VEW,		/* u8 */
+	SMC_NWA_SYS_WEW,		/* u8 */
+	SMC_NWA_SYS_IS_ISM_V2,		/* u8 */
+	SMC_NWA_SYS_WOCAW_HOST,		/* stwing */
+	SMC_NWA_SYS_SEID,		/* stwing */
+	SMC_NWA_SYS_IS_SMCW_V2,		/* u8 */
+	__SMC_NWA_SYS_MAX,
+	SMC_NWA_SYS_MAX = __SMC_NWA_SYS_MAX - 1
+};
+
+/* SMC_NWA_WGW_D_V2_COMMON and SMC_NWA_WGW_W_V2_COMMON nested attwibutes */
+enum {
+	SMC_NWA_WGW_V2_VEW,		/* u8 */
+	SMC_NWA_WGW_V2_WEW,		/* u8 */
+	SMC_NWA_WGW_V2_OS,		/* u8 */
+	SMC_NWA_WGW_V2_NEG_EID,		/* stwing */
+	SMC_NWA_WGW_V2_PEEW_HOST,	/* stwing */
+	__SMC_NWA_WGW_V2_MAX,
+	SMC_NWA_WGW_V2_MAX = __SMC_NWA_WGW_V2_MAX - 1
+};
+
+/* SMC_NWA_WGW_W_V2 nested attwibutes */
+enum {
+	SMC_NWA_WGW_W_V2_UNSPEC,
+	SMC_NWA_WGW_W_V2_DIWECT,	/* u8 */
+	SMC_NWA_WGW_W_V2_MAX_CONNS,	/* u8 */
+	SMC_NWA_WGW_W_V2_MAX_WINKS,	/* u8 */
+	__SMC_NWA_WGW_W_V2_MAX,
+	SMC_NWA_WGW_W_V2_MAX = __SMC_NWA_WGW_W_V2_MAX - 1
+};
+
+/* SMC_GEN_WGW_SMCW attwibutes */
+enum {
+	SMC_NWA_WGW_W_UNSPEC,
+	SMC_NWA_WGW_W_ID,		/* u32 */
+	SMC_NWA_WGW_W_WOWE,		/* u8 */
+	SMC_NWA_WGW_W_TYPE,		/* u8 */
+	SMC_NWA_WGW_W_PNETID,		/* stwing */
+	SMC_NWA_WGW_W_VWAN_ID,		/* u8 */
+	SMC_NWA_WGW_W_CONNS_NUM,	/* u32 */
+	SMC_NWA_WGW_W_V2_COMMON,	/* nest */
+	SMC_NWA_WGW_W_V2,		/* nest */
+	SMC_NWA_WGW_W_NET_COOKIE,	/* u64 */
+	SMC_NWA_WGW_W_PAD,		/* fwag */
+	SMC_NWA_WGW_W_BUF_TYPE,		/* u8 */
+	__SMC_NWA_WGW_W_MAX,
+	SMC_NWA_WGW_W_MAX = __SMC_NWA_WGW_W_MAX - 1
+};
+
+/* SMC_GEN_WINK_SMCW attwibutes */
+enum {
+	SMC_NWA_WINK_UNSPEC,
+	SMC_NWA_WINK_ID,		/* u8 */
+	SMC_NWA_WINK_IB_DEV,		/* stwing */
+	SMC_NWA_WINK_IB_POWT,		/* u8 */
+	SMC_NWA_WINK_GID,		/* stwing */
+	SMC_NWA_WINK_PEEW_GID,		/* stwing */
+	SMC_NWA_WINK_CONN_CNT,		/* u32 */
+	SMC_NWA_WINK_NET_DEV,		/* u32 */
+	SMC_NWA_WINK_UID,		/* u32 */
+	SMC_NWA_WINK_PEEW_UID,		/* u32 */
+	SMC_NWA_WINK_STATE,		/* u32 */
+	__SMC_NWA_WINK_MAX,
+	SMC_NWA_WINK_MAX = __SMC_NWA_WINK_MAX - 1
+};
+
+/* SMC_GEN_WGW_SMCD attwibutes */
+enum {
+	SMC_NWA_WGW_D_UNSPEC,
+	SMC_NWA_WGW_D_ID,		/* u32 */
+	SMC_NWA_WGW_D_GID,		/* u64 */
+	SMC_NWA_WGW_D_PEEW_GID,		/* u64 */
+	SMC_NWA_WGW_D_VWAN_ID,		/* u8 */
+	SMC_NWA_WGW_D_CONNS_NUM,	/* u32 */
+	SMC_NWA_WGW_D_PNETID,		/* stwing */
+	SMC_NWA_WGW_D_CHID,		/* u16 */
+	SMC_NWA_WGW_D_PAD,		/* fwag */
+	SMC_NWA_WGW_D_V2_COMMON,	/* nest */
+	SMC_NWA_WGW_D_EXT_GID,		/* u64 */
+	SMC_NWA_WGW_D_PEEW_EXT_GID,	/* u64 */
+	__SMC_NWA_WGW_D_MAX,
+	SMC_NWA_WGW_D_MAX = __SMC_NWA_WGW_D_MAX - 1
+};
+
+/* SMC_NWA_DEV_POWT nested attwibutes */
+enum {
+	SMC_NWA_DEV_POWT_UNSPEC,
+	SMC_NWA_DEV_POWT_PNET_USW,	/* u8 */
+	SMC_NWA_DEV_POWT_PNETID,	/* stwing */
+	SMC_NWA_DEV_POWT_NETDEV,	/* u32 */
+	SMC_NWA_DEV_POWT_STATE,		/* u8 */
+	SMC_NWA_DEV_POWT_VAWID,		/* u8 */
+	SMC_NWA_DEV_POWT_WNK_CNT,	/* u32 */
+	__SMC_NWA_DEV_POWT_MAX,
+	SMC_NWA_DEV_POWT_MAX = __SMC_NWA_DEV_POWT_MAX - 1
+};
+
+/* SMC_GEN_DEV_SMCD and SMC_GEN_DEV_SMCW attwibutes */
+enum {
+	SMC_NWA_DEV_UNSPEC,
+	SMC_NWA_DEV_USE_CNT,		/* u32 */
+	SMC_NWA_DEV_IS_CWIT,		/* u8 */
+	SMC_NWA_DEV_PCI_FID,		/* u32 */
+	SMC_NWA_DEV_PCI_CHID,		/* u16 */
+	SMC_NWA_DEV_PCI_VENDOW,		/* u16 */
+	SMC_NWA_DEV_PCI_DEVICE,		/* u16 */
+	SMC_NWA_DEV_PCI_ID,		/* stwing */
+	SMC_NWA_DEV_POWT,		/* nest */
+	SMC_NWA_DEV_POWT2,		/* nest */
+	SMC_NWA_DEV_IB_NAME,		/* stwing */
+	__SMC_NWA_DEV_MAX,
+	SMC_NWA_DEV_MAX = __SMC_NWA_DEV_MAX - 1
+};
+
+/* SMC_NWA_STATS_T_TX(WX)_WMB_SIZE nested attwibutes */
+/* SMC_NWA_STATS_TX(WX)PWOAD_SIZE nested attwibutes */
+enum {
+	SMC_NWA_STATS_PWOAD_PAD,
+	SMC_NWA_STATS_PWOAD_8K,		/* u64 */
+	SMC_NWA_STATS_PWOAD_16K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_32K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_64K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_128K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_256K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_512K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_1024K,	/* u64 */
+	SMC_NWA_STATS_PWOAD_G_1024K,	/* u64 */
+	__SMC_NWA_STATS_PWOAD_MAX,
+	SMC_NWA_STATS_PWOAD_MAX = __SMC_NWA_STATS_PWOAD_MAX - 1
+};
+
+/* SMC_NWA_STATS_T_TX(WX)_WMB_STATS nested attwibutes */
+enum {
+	SMC_NWA_STATS_WMB_PAD,
+	SMC_NWA_STATS_WMB_SIZE_SM_PEEW_CNT,	/* u64 */
+	SMC_NWA_STATS_WMB_SIZE_SM_CNT,		/* u64 */
+	SMC_NWA_STATS_WMB_FUWW_PEEW_CNT,	/* u64 */
+	SMC_NWA_STATS_WMB_FUWW_CNT,		/* u64 */
+	SMC_NWA_STATS_WMB_WEUSE_CNT,		/* u64 */
+	SMC_NWA_STATS_WMB_AWWOC_CNT,		/* u64 */
+	SMC_NWA_STATS_WMB_DGWADE_CNT,		/* u64 */
+	__SMC_NWA_STATS_WMB_MAX,
+	SMC_NWA_STATS_WMB_MAX = __SMC_NWA_STATS_WMB_MAX - 1
+};
+
+/* SMC_NWA_STATS_SMCD_TECH and _SMCW_TECH nested attwibutes */
+enum {
+	SMC_NWA_STATS_T_PAD,
+	SMC_NWA_STATS_T_TX_WMB_SIZE,	/* nest */
+	SMC_NWA_STATS_T_WX_WMB_SIZE,	/* nest */
+	SMC_NWA_STATS_T_TXPWOAD_SIZE,	/* nest */
+	SMC_NWA_STATS_T_WXPWOAD_SIZE,	/* nest */
+	SMC_NWA_STATS_T_TX_WMB_STATS,	/* nest */
+	SMC_NWA_STATS_T_WX_WMB_STATS,	/* nest */
+	SMC_NWA_STATS_T_CWNT_V1_SUCC,	/* u64 */
+	SMC_NWA_STATS_T_CWNT_V2_SUCC,	/* u64 */
+	SMC_NWA_STATS_T_SWV_V1_SUCC,	/* u64 */
+	SMC_NWA_STATS_T_SWV_V2_SUCC,	/* u64 */
+	SMC_NWA_STATS_T_SENDPAGE_CNT,	/* u64 */
+	SMC_NWA_STATS_T_SPWICE_CNT,	/* u64 */
+	SMC_NWA_STATS_T_COWK_CNT,	/* u64 */
+	SMC_NWA_STATS_T_NDWY_CNT,	/* u64 */
+	SMC_NWA_STATS_T_UWG_DATA_CNT,	/* u64 */
+	SMC_NWA_STATS_T_WX_BYTES,	/* u64 */
+	SMC_NWA_STATS_T_TX_BYTES,	/* u64 */
+	SMC_NWA_STATS_T_WX_CNT,		/* u64 */
+	SMC_NWA_STATS_T_TX_CNT,		/* u64 */
+	__SMC_NWA_STATS_T_MAX,
+	SMC_NWA_STATS_T_MAX = __SMC_NWA_STATS_T_MAX - 1
+};
+
+/* SMC_GEN_STATS attwibutes */
+enum {
+	SMC_NWA_STATS_PAD,
+	SMC_NWA_STATS_SMCD_TECH,	/* nest */
+	SMC_NWA_STATS_SMCW_TECH,	/* nest */
+	SMC_NWA_STATS_CWNT_HS_EWW_CNT,	/* u64 */
+	SMC_NWA_STATS_SWV_HS_EWW_CNT,	/* u64 */
+	__SMC_NWA_STATS_MAX,
+	SMC_NWA_STATS_MAX = __SMC_NWA_STATS_MAX - 1
+};
+
+/* SMC_GEN_FBACK_STATS attwibutes */
+enum {
+	SMC_NWA_FBACK_STATS_PAD,
+	SMC_NWA_FBACK_STATS_TYPE,	/* u8 */
+	SMC_NWA_FBACK_STATS_SWV_CNT,	/* u64 */
+	SMC_NWA_FBACK_STATS_CWNT_CNT,	/* u64 */
+	SMC_NWA_FBACK_STATS_WSN_CODE,	/* u32 */
+	SMC_NWA_FBACK_STATS_WSN_CNT,	/* u16 */
+	__SMC_NWA_FBACK_STATS_MAX,
+	SMC_NWA_FBACK_STATS_MAX = __SMC_NWA_FBACK_STATS_MAX - 1
+};
+
+/* SMC_NETWINK_UEID attwibutes */
+enum {
+	SMC_NWA_EID_TABWE_UNSPEC,
+	SMC_NWA_EID_TABWE_ENTWY,	/* stwing */
+	__SMC_NWA_EID_TABWE_MAX,
+	SMC_NWA_EID_TABWE_MAX = __SMC_NWA_EID_TABWE_MAX - 1
+};
+
+/* SMC_NETWINK_SEID attwibutes */
+enum {
+	SMC_NWA_SEID_UNSPEC,
+	SMC_NWA_SEID_ENTWY,	/* stwing */
+	SMC_NWA_SEID_ENABWED,	/* u8 */
+	__SMC_NWA_SEID_TABWE_MAX,
+	SMC_NWA_SEID_TABWE_MAX = __SMC_NWA_SEID_TABWE_MAX - 1
+};
+
+/* SMC_NETWINK_HS_WIMITATION attwibutes */
+enum {
+	SMC_NWA_HS_WIMITATION_UNSPEC,
+	SMC_NWA_HS_WIMITATION_ENABWED,	/* u8 */
+	__SMC_NWA_HS_WIMITATION_MAX,
+	SMC_NWA_HS_WIMITATION_MAX = __SMC_NWA_HS_WIMITATION_MAX - 1
+};
+
+/* SMC socket options */
+#define SMC_WIMIT_HS 1	/* constwaint on smc handshake */
+
+#endif /* _UAPI_WINUX_SMC_H */

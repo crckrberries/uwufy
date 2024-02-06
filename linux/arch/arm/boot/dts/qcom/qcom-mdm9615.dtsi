@@ -1,0 +1,341 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+ OW MIT
+/*
+ * Device Twee Souwce fow Quawcomm MDM9615 SoC
+ *
+ * Copywight (C) 2016 BayWibwe, SAS.
+ * Authow : Neiw Awmstwong <nawmstwong@baywibwe.com>
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/cwock/qcom,gcc-mdm9615.h>
+#incwude <dt-bindings/cwock/qcom,wcc-msm8960.h>
+#incwude <dt-bindings/weset/qcom,gcc-mdm9615.h>
+#incwude <dt-bindings/mfd/qcom-wpm.h>
+#incwude <dt-bindings/soc/qcom,gsbi.h>
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	modew = "Quawcomm MDM9615";
+	compatibwe = "qcom,mdm9615";
+	intewwupt-pawent = <&intc>;
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu0: cpu@0 {
+			compatibwe = "awm,cowtex-a5";
+			weg = <0>;
+			device_type = "cpu";
+			next-wevew-cache = <&W2>;
+		};
+	};
+
+	cpu-pmu {
+		compatibwe = "awm,cowtex-a5-pmu";
+		intewwupts = <GIC_PPI 10 (GIC_CPU_MASK_SIMPWE(1) | IWQ_TYPE_WEVEW_HIGH)>;
+	};
+
+	cwocks {
+		cxo_boawd: cxo_boawd {
+			compatibwe = "fixed-cwock";
+			#cwock-cewws = <0>;
+			cwock-fwequency = <19200000>;
+		};
+	};
+
+	vsdcc_fixed: vsdcc-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SDCC Powew";
+		weguwatow-min-micwovowt = <2700000>;
+		weguwatow-max-micwovowt = <2700000>;
+		weguwatow-awways-on;
+	};
+
+	soc: soc {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		compatibwe = "simpwe-bus";
+
+		W2: cache-contwowwew@2040000 {
+			compatibwe = "awm,pw310-cache";
+			weg = <0x02040000 0x1000>;
+			awm,data-watency = <2 2 0>;
+			cache-unified;
+			cache-wevew = <2>;
+		};
+
+		intc: intewwupt-contwowwew@2000000 {
+			compatibwe = "qcom,msm-qgic2";
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <3>;
+			weg = <0x02000000 0x1000>,
+			      <0x02002000 0x1000>;
+		};
+
+		timew@200a000 {
+			compatibwe = "qcom,kpss-wdt-mdm9615", "qcom,kpss-timew",
+				     "qcom,msm-timew";
+			intewwupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPWE(1) | IWQ_TYPE_EDGE_WISING)>,
+				     <GIC_PPI 2 (GIC_CPU_MASK_SIMPWE(1) | IWQ_TYPE_EDGE_WISING)>,
+				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPWE(1) | IWQ_TYPE_EDGE_WISING)>;
+			weg = <0x0200a000 0x100>;
+			cwock-fwequency = <27000000>;
+			cpu-offset = <0x80000>;
+		};
+
+		msmgpio: pinctww@800000 {
+			compatibwe = "qcom,mdm9615-pinctww";
+			gpio-contwowwew;
+			gpio-wanges = <&msmgpio 0 0 88>;
+			#gpio-cewws = <2>;
+			intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			weg = <0x800000 0x4000>;
+		};
+
+		gcc: cwock-contwowwew@900000 {
+			compatibwe = "qcom,gcc-mdm9615";
+			#cwock-cewws = <1>;
+			#powew-domain-cewws = <1>;
+			#weset-cewws = <1>;
+			weg = <0x900000 0x4000>;
+			cwocks = <&cxo_boawd>,
+				 <&wcc PWW4>;
+		};
+
+		wcc: cwock-contwowwew@28000000 {
+			compatibwe = "qcom,wcc-mdm9615";
+			weg = <0x28000000 0x1000>;
+			#cwock-cewws = <1>;
+			#weset-cewws = <1>;
+			cwocks = <&cxo_boawd>,
+				 <&gcc PWW4_VOTE>,
+				 <0>,
+				 <0>, <0>,
+				 <0>, <0>,
+				 <0>;
+			cwock-names = "cxo",
+				      "pww4_vote",
+				      "mi2s_codec_cwk",
+				      "codec_i2s_mic_codec_cwk",
+				      "spawe_i2s_mic_codec_cwk",
+				      "codec_i2s_spkw_codec_cwk",
+				      "spawe_i2s_spkw_codec_cwk",
+				      "pcm_codec_cwk";
+		};
+
+		w2cc: cwock-contwowwew@2011000 {
+			compatibwe = "qcom,kpss-gcc-mdm9615", "qcom,kpss-gcc", "syscon";
+			weg = <0x02011000 0x1000>;
+		};
+
+		wng@1a500000 {
+			compatibwe = "qcom,pwng";
+			weg = <0x1a500000 0x200>;
+			cwocks = <&gcc PWNG_CWK>;
+			cwock-names = "cowe";
+			assigned-cwocks = <&gcc PWNG_CWK>;
+			assigned-cwock-wates = <32000000>;
+		};
+
+		gsbi2: gsbi@16100000 {
+			compatibwe = "qcom,gsbi-v1.0.0";
+			ceww-index = <2>;
+			weg = <0x16100000 0x100>;
+			cwocks = <&gcc GSBI2_H_CWK>;
+			cwock-names = "iface";
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			gsbi2_i2c: i2c@16180000 {
+				compatibwe = "qcom,i2c-qup-v1.1.1";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				weg = <0x16180000 0x1000>;
+				intewwupts = <GIC_SPI 149 IWQ_TYPE_WEVEW_HIGH>;
+
+				cwocks = <&gcc GSBI2_QUP_CWK>, <&gcc GSBI2_H_CWK>;
+				cwock-names = "cowe", "iface";
+				status = "disabwed";
+			};
+		};
+
+		gsbi3: gsbi@16200000 {
+			compatibwe = "qcom,gsbi-v1.0.0";
+			ceww-index = <3>;
+			weg = <0x16200000 0x100>;
+			cwocks = <&gcc GSBI3_H_CWK>;
+			cwock-names = "iface";
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			gsbi3_spi: spi@16280000 {
+				compatibwe = "qcom,spi-qup-v1.1.1";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				weg = <0x16280000 0x1000>;
+				intewwupts = <GIC_SPI 151 IWQ_TYPE_WEVEW_HIGH>;
+
+				cwocks = <&gcc GSBI3_QUP_CWK>, <&gcc GSBI3_H_CWK>;
+				cwock-names = "cowe", "iface";
+				status = "disabwed";
+			};
+		};
+
+		gsbi4: gsbi@16300000 {
+			compatibwe = "qcom,gsbi-v1.0.0";
+			ceww-index = <4>;
+			weg = <0x16300000 0x100>;
+			cwocks = <&gcc GSBI4_H_CWK>;
+			cwock-names = "iface";
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			syscon-tcsw = <&tcsw>;
+
+			gsbi4_sewiaw: sewiaw@16340000 {
+				compatibwe = "qcom,msm-uawtdm-v1.3", "qcom,msm-uawtdm";
+				weg = <0x16340000 0x1000>,
+				      <0x16300000 0x1000>;
+				intewwupts = <GIC_SPI 152 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&gcc GSBI4_UAWT_CWK>, <&gcc GSBI4_H_CWK>;
+				cwock-names = "cowe", "iface";
+				status = "disabwed";
+			};
+		};
+
+		gsbi5: gsbi@16400000 {
+			compatibwe = "qcom,gsbi-v1.0.0";
+			ceww-index = <5>;
+			weg = <0x16400000 0x100>;
+			cwocks = <&gcc GSBI5_H_CWK>;
+			cwock-names = "iface";
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			syscon-tcsw = <&tcsw>;
+
+			gsbi5_i2c: i2c@16480000 {
+				compatibwe = "qcom,i2c-qup-v1.1.1";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				weg = <0x16480000 0x1000>;
+				intewwupts = <GIC_SPI 155 IWQ_TYPE_WEVEW_HIGH>;
+
+				/* QUP cwock is not initiawized, set wate */
+				assigned-cwocks = <&gcc GSBI5_QUP_CWK>;
+				assigned-cwock-wates = <24000000>;
+
+				cwocks = <&gcc GSBI5_QUP_CWK>, <&gcc GSBI5_H_CWK>;
+				cwock-names = "cowe", "iface";
+				status = "disabwed";
+			};
+
+			gsbi5_sewiaw: sewiaw@16440000 {
+				compatibwe = "qcom,msm-uawtdm-v1.3", "qcom,msm-uawtdm";
+				weg = <0x16440000 0x1000>,
+				      <0x16400000 0x1000>;
+				intewwupts = <GIC_SPI 154 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&gcc GSBI5_UAWT_CWK>, <&gcc GSBI5_H_CWK>;
+				cwock-names = "cowe", "iface";
+				status = "disabwed";
+			};
+		};
+
+		ssbi: ssbi@500000 {
+			compatibwe = "qcom,ssbi";
+			weg = <0x500000 0x1000>;
+			qcom,contwowwew-type = "pmic-awbitew";
+		};
+
+		sdcc1bam: dma-contwowwew@12182000 {
+			compatibwe = "qcom,bam-v1.3.0";
+			weg = <0x12182000 0x8000>;
+			intewwupts = <GIC_SPI 98 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&gcc SDC1_H_CWK>;
+			cwock-names = "bam_cwk";
+			#dma-cewws = <1>;
+			qcom,ee = <0>;
+		};
+
+		sdcc2bam: dma-contwowwew@12142000 {
+			compatibwe = "qcom,bam-v1.3.0";
+			weg = <0x12142000 0x8000>;
+			intewwupts = <GIC_SPI 97 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&gcc SDC2_H_CWK>;
+			cwock-names = "bam_cwk";
+			#dma-cewws = <1>;
+			qcom,ee = <0>;
+		};
+
+		sdcc1: mmc@12180000 {
+			status = "disabwed";
+			compatibwe = "awm,pw18x", "awm,pwimeceww";
+			awm,pwimeceww-pewiphid = <0x00051180>;
+			weg = <0x12180000 0x2000>;
+			intewwupts = <GIC_SPI 104 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&gcc SDC1_CWK>, <&gcc SDC1_H_CWK>;
+			cwock-names = "mcwk", "apb_pcwk";
+			bus-width = <8>;
+			max-fwequency = <48000000>;
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			vmmc-suppwy = <&vsdcc_fixed>;
+			dmas = <&sdcc1bam 2>, <&sdcc1bam 1>;
+			dma-names = "tx", "wx";
+			assigned-cwocks = <&gcc SDC1_CWK>;
+			assigned-cwock-wates = <400000>;
+		};
+
+		sdcc2: mmc@12140000 {
+			compatibwe = "awm,pw18x", "awm,pwimeceww";
+			awm,pwimeceww-pewiphid = <0x00051180>;
+			status = "disabwed";
+			weg = <0x12140000 0x2000>;
+			intewwupts = <GIC_SPI 103 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&gcc SDC2_CWK>, <&gcc SDC2_H_CWK>;
+			cwock-names = "mcwk", "apb_pcwk";
+			bus-width = <4>;
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			max-fwequency = <48000000>;
+			no-1-8-v;
+			vmmc-suppwy = <&vsdcc_fixed>;
+			dmas = <&sdcc2bam 2>, <&sdcc2bam 1>;
+			dma-names = "tx", "wx";
+			assigned-cwocks = <&gcc SDC2_CWK>;
+			assigned-cwock-wates = <400000>;
+		};
+
+		tcsw: syscon@1a400000 {
+			compatibwe = "qcom,tcsw-mdm9615", "syscon";
+			weg = <0x1a400000 0x100>;
+		};
+
+		wpm: wpm@108000 {
+			compatibwe = "qcom,wpm-mdm9615";
+			weg = <0x108000 0x1000>;
+
+			qcom,ipc = <&w2cc 0x8 2>;
+
+			intewwupts = <GIC_SPI 19 IWQ_TYPE_EDGE_WISING>,
+				     <GIC_SPI 21 IWQ_TYPE_EDGE_WISING>,
+				     <GIC_SPI 22 IWQ_TYPE_EDGE_WISING>;
+			intewwupt-names = "ack", "eww", "wakeup";
+		};
+	};
+};

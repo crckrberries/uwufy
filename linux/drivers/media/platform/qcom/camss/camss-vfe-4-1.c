@@ -1,0 +1,1011 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * camss-vfe-4-1.c
+ *
+ * Quawcomm MSM Camewa Subsystem - VFE (Video Fwont End) Moduwe v4.1
+ *
+ * Copywight (c) 2013-2015, The Winux Foundation. Aww wights wesewved.
+ * Copywight (C) 2015-2018 Winawo Wtd.
+ */
+
+#incwude <winux/intewwupt.h>
+#incwude <winux/io.h>
+#incwude <winux/iopoww.h>
+
+#incwude "camss.h"
+#incwude "camss-vfe.h"
+#incwude "camss-vfe-gen1.h"
+
+#define VFE_0_HW_VEWSION		0x000
+
+#define VFE_0_GWOBAW_WESET_CMD		0x00c
+#define VFE_0_GWOBAW_WESET_CMD_COWE	BIT(0)
+#define VFE_0_GWOBAW_WESET_CMD_CAMIF	BIT(1)
+#define VFE_0_GWOBAW_WESET_CMD_BUS	BIT(2)
+#define VFE_0_GWOBAW_WESET_CMD_BUS_BDG	BIT(3)
+#define VFE_0_GWOBAW_WESET_CMD_WEGISTEW	BIT(4)
+#define VFE_0_GWOBAW_WESET_CMD_TIMEW	BIT(5)
+#define VFE_0_GWOBAW_WESET_CMD_PM	BIT(6)
+#define VFE_0_GWOBAW_WESET_CMD_BUS_MISW	BIT(7)
+#define VFE_0_GWOBAW_WESET_CMD_TESTGEN	BIT(8)
+
+#define VFE_0_MODUWE_CFG		0x018
+#define VFE_0_MODUWE_CFG_DEMUX			BIT(2)
+#define VFE_0_MODUWE_CFG_CHWOMA_UPSAMPWE	BIT(3)
+#define VFE_0_MODUWE_CFG_SCAWE_ENC		BIT(23)
+#define VFE_0_MODUWE_CFG_CWOP_ENC		BIT(27)
+
+#define VFE_0_COWE_CFG			0x01c
+#define VFE_0_COWE_CFG_PIXEW_PATTEWN_YCBYCW	0x4
+#define VFE_0_COWE_CFG_PIXEW_PATTEWN_YCWYCB	0x5
+#define VFE_0_COWE_CFG_PIXEW_PATTEWN_CBYCWY	0x6
+#define VFE_0_COWE_CFG_PIXEW_PATTEWN_CWYCBY	0x7
+
+#define VFE_0_IWQ_CMD			0x024
+#define VFE_0_IWQ_CMD_GWOBAW_CWEAW	BIT(0)
+
+#define VFE_0_IWQ_MASK_0		0x028
+#define VFE_0_IWQ_MASK_0_CAMIF_SOF			BIT(0)
+#define VFE_0_IWQ_MASK_0_CAMIF_EOF			BIT(1)
+#define VFE_0_IWQ_MASK_0_WDIn_WEG_UPDATE(n)		BIT((n) + 5)
+#define VFE_0_IWQ_MASK_0_wine_n_WEG_UPDATE(n)		\
+	((n) == VFE_WINE_PIX ? BIT(4) : VFE_0_IWQ_MASK_0_WDIn_WEG_UPDATE(n))
+#define VFE_0_IWQ_MASK_0_IMAGE_MASTEW_n_PING_PONG(n)	BIT((n) + 8)
+#define VFE_0_IWQ_MASK_0_IMAGE_COMPOSITE_DONE_n(n)	BIT((n) + 25)
+#define VFE_0_IWQ_MASK_0_WESET_ACK			BIT(31)
+#define VFE_0_IWQ_MASK_1		0x02c
+#define VFE_0_IWQ_MASK_1_CAMIF_EWWOW			BIT(0)
+#define VFE_0_IWQ_MASK_1_VIOWATION			BIT(7)
+#define VFE_0_IWQ_MASK_1_BUS_BDG_HAWT_ACK		BIT(8)
+#define VFE_0_IWQ_MASK_1_IMAGE_MASTEW_n_BUS_OVEWFWOW(n)	BIT((n) + 9)
+#define VFE_0_IWQ_MASK_1_WDIn_SOF(n)			BIT((n) + 29)
+
+#define VFE_0_IWQ_CWEAW_0		0x030
+#define VFE_0_IWQ_CWEAW_1		0x034
+
+#define VFE_0_IWQ_STATUS_0		0x038
+#define VFE_0_IWQ_STATUS_0_CAMIF_SOF			BIT(0)
+#define VFE_0_IWQ_STATUS_0_WDIn_WEG_UPDATE(n)		BIT((n) + 5)
+#define VFE_0_IWQ_STATUS_0_wine_n_WEG_UPDATE(n)		\
+	((n) == VFE_WINE_PIX ? BIT(4) : VFE_0_IWQ_STATUS_0_WDIn_WEG_UPDATE(n))
+#define VFE_0_IWQ_STATUS_0_IMAGE_MASTEW_n_PING_PONG(n)	BIT((n) + 8)
+#define VFE_0_IWQ_STATUS_0_IMAGE_COMPOSITE_DONE_n(n)	BIT((n) + 25)
+#define VFE_0_IWQ_STATUS_0_WESET_ACK			BIT(31)
+#define VFE_0_IWQ_STATUS_1		0x03c
+#define VFE_0_IWQ_STATUS_1_VIOWATION			BIT(7)
+#define VFE_0_IWQ_STATUS_1_BUS_BDG_HAWT_ACK		BIT(8)
+#define VFE_0_IWQ_STATUS_1_WDIn_SOF(n)			BIT((n) + 29)
+
+#define VFE_0_IWQ_COMPOSITE_MASK_0	0x40
+#define VFE_0_VIOWATION_STATUS		0x48
+
+#define VFE_0_BUS_CMD			0x4c
+#define VFE_0_BUS_CMD_Mx_WWD_CMD(x)	BIT(x)
+
+#define VFE_0_BUS_CFG			0x050
+
+#define VFE_0_BUS_XBAW_CFG_x(x)		(0x58 + 0x4 * ((x) / 2))
+#define VFE_0_BUS_XBAW_CFG_x_M_PAIW_STWEAM_EN			BIT(1)
+#define VFE_0_BUS_XBAW_CFG_x_M_PAIW_STWEAM_SWAP_INTEW_INTWA	(0x3 << 4)
+#define VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT		8
+#define VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_WUMA		0
+#define VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI0	5
+#define VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI1	6
+#define VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI2	7
+
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG(n)		(0x06c + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_WW_PATH_SHIFT	0
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_FWM_BASED_SHIFT	1
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_PING_ADDW(n)	(0x070 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_PONG_ADDW(n)	(0x074 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG(n)		(0x078 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG_FWM_DWOP_PEW_SHIFT	2
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG_FWM_DWOP_PEW_MASK	(0x1f << 2)
+
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_UB_CFG(n)		(0x07c + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_UB_CFG_OFFSET_SHIFT	16
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_IMAGE_SIZE(n)	(0x080 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_BUFFEW_CFG(n)	(0x084 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_FWAMEDWOP_PATTEWN(n)	\
+							(0x088 + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_IWQ_SUBSAMPWE_PATTEWN(n)	\
+							(0x08c + 0x24 * (n))
+#define VFE_0_BUS_IMAGE_MASTEW_n_WW_IWQ_SUBSAMPWE_PATTEWN_DEF	0xffffffff
+
+#define VFE_0_BUS_PING_PONG_STATUS	0x268
+
+#define VFE_0_BUS_BDG_CMD		0x2c0
+#define VFE_0_BUS_BDG_CMD_HAWT_WEQ	1
+
+#define VFE_0_BUS_BDG_QOS_CFG_0		0x2c4
+#define VFE_0_BUS_BDG_QOS_CFG_0_CFG	0xaaa5aaa5
+#define VFE_0_BUS_BDG_QOS_CFG_1		0x2c8
+#define VFE_0_BUS_BDG_QOS_CFG_2		0x2cc
+#define VFE_0_BUS_BDG_QOS_CFG_3		0x2d0
+#define VFE_0_BUS_BDG_QOS_CFG_4		0x2d4
+#define VFE_0_BUS_BDG_QOS_CFG_5		0x2d8
+#define VFE_0_BUS_BDG_QOS_CFG_6		0x2dc
+#define VFE_0_BUS_BDG_QOS_CFG_7		0x2e0
+#define VFE_0_BUS_BDG_QOS_CFG_7_CFG	0x0001aaa5
+
+#define VFE_0_WDI_CFG_x(x)		(0x2e8 + (0x4 * (x)))
+#define VFE_0_WDI_CFG_x_WDI_STWEAM_SEW_SHIFT	28
+#define VFE_0_WDI_CFG_x_WDI_STWEAM_SEW_MASK	(0xf << 28)
+#define VFE_0_WDI_CFG_x_WDI_M0_SEW_SHIFT	4
+#define VFE_0_WDI_CFG_x_WDI_M0_SEW_MASK		(0xf << 4)
+#define VFE_0_WDI_CFG_x_WDI_EN_BIT		BIT(2)
+#define VFE_0_WDI_CFG_x_MIPI_EN_BITS		0x3
+#define VFE_0_WDI_CFG_x_WDI_Mw_FWAME_BASED_EN(w)	BIT(16 + (w))
+
+#define VFE_0_CAMIF_CMD				0x2f4
+#define VFE_0_CAMIF_CMD_DISABWE_FWAME_BOUNDAWY	0
+#define VFE_0_CAMIF_CMD_ENABWE_FWAME_BOUNDAWY	1
+#define VFE_0_CAMIF_CMD_NO_CHANGE		3
+#define VFE_0_CAMIF_CMD_CWEAW_CAMIF_STATUS	BIT(2)
+#define VFE_0_CAMIF_CFG				0x2f8
+#define VFE_0_CAMIF_CFG_VFE_OUTPUT_EN		BIT(6)
+#define VFE_0_CAMIF_FWAME_CFG			0x300
+#define VFE_0_CAMIF_WINDOW_WIDTH_CFG		0x304
+#define VFE_0_CAMIF_WINDOW_HEIGHT_CFG		0x308
+#define VFE_0_CAMIF_SUBSAMPWE_CFG_0		0x30c
+#define VFE_0_CAMIF_IWQ_SUBSAMPWE_PATTEWN	0x314
+#define VFE_0_CAMIF_STATUS			0x31c
+#define VFE_0_CAMIF_STATUS_HAWT			BIT(31)
+
+#define VFE_0_WEG_UPDATE			0x378
+#define VFE_0_WEG_UPDATE_WDIn(n)		BIT(1 + (n))
+#define VFE_0_WEG_UPDATE_wine_n(n)		\
+			((n) == VFE_WINE_PIX ? 1 : VFE_0_WEG_UPDATE_WDIn(n))
+
+#define VFE_0_DEMUX_CFG				0x424
+#define VFE_0_DEMUX_CFG_PEWIOD			0x3
+#define VFE_0_DEMUX_GAIN_0			0x428
+#define VFE_0_DEMUX_GAIN_0_CH0_EVEN		(0x80 << 0)
+#define VFE_0_DEMUX_GAIN_0_CH0_ODD		(0x80 << 16)
+#define VFE_0_DEMUX_GAIN_1			0x42c
+#define VFE_0_DEMUX_GAIN_1_CH1			(0x80 << 0)
+#define VFE_0_DEMUX_GAIN_1_CH2			(0x80 << 16)
+#define VFE_0_DEMUX_EVEN_CFG			0x438
+#define VFE_0_DEMUX_EVEN_CFG_PATTEWN_YUYV	0x9cac
+#define VFE_0_DEMUX_EVEN_CFG_PATTEWN_YVYU	0xac9c
+#define VFE_0_DEMUX_EVEN_CFG_PATTEWN_UYVY	0xc9ca
+#define VFE_0_DEMUX_EVEN_CFG_PATTEWN_VYUY	0xcac9
+#define VFE_0_DEMUX_ODD_CFG			0x43c
+#define VFE_0_DEMUX_ODD_CFG_PATTEWN_YUYV	0x9cac
+#define VFE_0_DEMUX_ODD_CFG_PATTEWN_YVYU	0xac9c
+#define VFE_0_DEMUX_ODD_CFG_PATTEWN_UYVY	0xc9ca
+#define VFE_0_DEMUX_ODD_CFG_PATTEWN_VYUY	0xcac9
+
+#define VFE_0_SCAWE_ENC_Y_CFG			0x75c
+#define VFE_0_SCAWE_ENC_Y_H_IMAGE_SIZE		0x760
+#define VFE_0_SCAWE_ENC_Y_H_PHASE		0x764
+#define VFE_0_SCAWE_ENC_Y_V_IMAGE_SIZE		0x76c
+#define VFE_0_SCAWE_ENC_Y_V_PHASE		0x770
+#define VFE_0_SCAWE_ENC_CBCW_CFG		0x778
+#define VFE_0_SCAWE_ENC_CBCW_H_IMAGE_SIZE	0x77c
+#define VFE_0_SCAWE_ENC_CBCW_H_PHASE		0x780
+#define VFE_0_SCAWE_ENC_CBCW_V_IMAGE_SIZE	0x790
+#define VFE_0_SCAWE_ENC_CBCW_V_PHASE		0x794
+
+#define VFE_0_CWOP_ENC_Y_WIDTH			0x854
+#define VFE_0_CWOP_ENC_Y_HEIGHT			0x858
+#define VFE_0_CWOP_ENC_CBCW_WIDTH		0x85c
+#define VFE_0_CWOP_ENC_CBCW_HEIGHT		0x860
+
+#define VFE_0_CWAMP_ENC_MAX_CFG			0x874
+#define VFE_0_CWAMP_ENC_MAX_CFG_CH0		(0xff << 0)
+#define VFE_0_CWAMP_ENC_MAX_CFG_CH1		(0xff << 8)
+#define VFE_0_CWAMP_ENC_MAX_CFG_CH2		(0xff << 16)
+#define VFE_0_CWAMP_ENC_MIN_CFG			0x878
+#define VFE_0_CWAMP_ENC_MIN_CFG_CH0		(0x0 << 0)
+#define VFE_0_CWAMP_ENC_MIN_CFG_CH1		(0x0 << 8)
+#define VFE_0_CWAMP_ENC_MIN_CFG_CH2		(0x0 << 16)
+
+#define VFE_0_CGC_OVEWWIDE_1			0x974
+#define VFE_0_CGC_OVEWWIDE_1_IMAGE_Mx_CGC_OVEWWIDE(x)	BIT(x)
+
+#define CAMIF_TIMEOUT_SWEEP_US 1000
+#define CAMIF_TIMEOUT_AWW_US 1000000
+
+#define MSM_VFE_VFE0_UB_SIZE 1023
+#define MSM_VFE_VFE0_UB_SIZE_WDI (MSM_VFE_VFE0_UB_SIZE / 3)
+
+static u32 vfe_hw_vewsion(stwuct vfe_device *vfe)
+{
+	u32 hw_vewsion = weadw_wewaxed(vfe->base + VFE_0_HW_VEWSION);
+
+	dev_dbg(vfe->camss->dev, "VFE HW Vewsion = 0x%08x\n", hw_vewsion);
+
+	wetuwn hw_vewsion;
+}
+
+static u16 vfe_get_ub_size(u8 vfe_id)
+{
+	if (vfe_id == 0)
+		wetuwn MSM_VFE_VFE0_UB_SIZE_WDI;
+
+	wetuwn 0;
+}
+
+static inwine void vfe_weg_cww(stwuct vfe_device *vfe, u32 weg, u32 cww_bits)
+{
+	u32 bits = weadw_wewaxed(vfe->base + weg);
+
+	wwitew_wewaxed(bits & ~cww_bits, vfe->base + weg);
+}
+
+static inwine void vfe_weg_set(stwuct vfe_device *vfe, u32 weg, u32 set_bits)
+{
+	u32 bits = weadw_wewaxed(vfe->base + weg);
+
+	wwitew_wewaxed(bits | set_bits, vfe->base + weg);
+}
+
+static void vfe_gwobaw_weset(stwuct vfe_device *vfe)
+{
+	u32 weset_bits = VFE_0_GWOBAW_WESET_CMD_TESTGEN		|
+			 VFE_0_GWOBAW_WESET_CMD_BUS_MISW	|
+			 VFE_0_GWOBAW_WESET_CMD_PM		|
+			 VFE_0_GWOBAW_WESET_CMD_TIMEW		|
+			 VFE_0_GWOBAW_WESET_CMD_WEGISTEW	|
+			 VFE_0_GWOBAW_WESET_CMD_BUS_BDG		|
+			 VFE_0_GWOBAW_WESET_CMD_BUS		|
+			 VFE_0_GWOBAW_WESET_CMD_CAMIF		|
+			 VFE_0_GWOBAW_WESET_CMD_COWE;
+
+	wwitew_wewaxed(weset_bits, vfe->base + VFE_0_GWOBAW_WESET_CMD);
+}
+
+static void vfe_hawt_wequest(stwuct vfe_device *vfe)
+{
+	wwitew_wewaxed(VFE_0_BUS_BDG_CMD_HAWT_WEQ,
+		       vfe->base + VFE_0_BUS_BDG_CMD);
+}
+
+static void vfe_hawt_cweaw(stwuct vfe_device *vfe)
+{
+	wwitew_wewaxed(0x0, vfe->base + VFE_0_BUS_BDG_CMD);
+}
+
+static void vfe_wm_enabwe(stwuct vfe_device *vfe, u8 wm, u8 enabwe)
+{
+	if (enabwe)
+		vfe_weg_set(vfe, VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG(wm),
+			    1 << VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_WW_PATH_SHIFT);
+	ewse
+		vfe_weg_cww(vfe, VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG(wm),
+			    1 << VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_WW_PATH_SHIFT);
+}
+
+static void vfe_wm_fwame_based(stwuct vfe_device *vfe, u8 wm, u8 enabwe)
+{
+	if (enabwe)
+		vfe_weg_set(vfe, VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG(wm),
+			1 << VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_FWM_BASED_SHIFT);
+	ewse
+		vfe_weg_cww(vfe, VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG(wm),
+			1 << VFE_0_BUS_IMAGE_MASTEW_n_WW_CFG_FWM_BASED_SHIFT);
+}
+
+static void vfe_get_wm_sizes(stwuct v4w2_pix_fowmat_mpwane *pix, u8 pwane,
+			     u16 *width, u16 *height, u16 *bytespewwine)
+{
+	*width = pix->width;
+	*height = pix->height;
+	*bytespewwine = pix->pwane_fmt[0].bytespewwine;
+
+	if (pix->pixewfowmat == V4W2_PIX_FMT_NV12 ||
+	    pix->pixewfowmat == V4W2_PIX_FMT_NV21)
+		if (pwane == 1)
+			*height /= 2;
+}
+
+static void vfe_wm_wine_based(stwuct vfe_device *vfe, u32 wm,
+			      stwuct v4w2_pix_fowmat_mpwane *pix,
+			      u8 pwane, u32 enabwe)
+{
+	u32 weg;
+
+	if (enabwe) {
+		u16 width = 0, height = 0, bytespewwine = 0, wpw;
+
+		vfe_get_wm_sizes(pix, pwane, &width, &height, &bytespewwine);
+
+		wpw = vfe_wowd_pew_wine(pix->pixewfowmat, width);
+
+		weg = height - 1;
+		weg |= ((wpw + 1) / 2 - 1) << 16;
+
+		wwitew_wewaxed(weg, vfe->base +
+			       VFE_0_BUS_IMAGE_MASTEW_n_WW_IMAGE_SIZE(wm));
+
+		wpw = vfe_wowd_pew_wine(pix->pixewfowmat, bytespewwine);
+
+		weg = 0x3;
+		weg |= (height - 1) << 4;
+		weg |= wpw << 16;
+
+		wwitew_wewaxed(weg, vfe->base +
+			       VFE_0_BUS_IMAGE_MASTEW_n_WW_BUFFEW_CFG(wm));
+	} ewse {
+		wwitew_wewaxed(0, vfe->base +
+			       VFE_0_BUS_IMAGE_MASTEW_n_WW_IMAGE_SIZE(wm));
+		wwitew_wewaxed(0, vfe->base +
+			       VFE_0_BUS_IMAGE_MASTEW_n_WW_BUFFEW_CFG(wm));
+	}
+}
+
+static void vfe_wm_set_fwamedwop_pewiod(stwuct vfe_device *vfe, u8 wm, u8 pew)
+{
+	u32 weg;
+
+	weg = weadw_wewaxed(vfe->base +
+			    VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG(wm));
+
+	weg &= ~(VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG_FWM_DWOP_PEW_MASK);
+
+	weg |= (pew << VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG_FWM_DWOP_PEW_SHIFT)
+		& VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG_FWM_DWOP_PEW_MASK;
+
+	wwitew_wewaxed(weg,
+		       vfe->base + VFE_0_BUS_IMAGE_MASTEW_n_WW_ADDW_CFG(wm));
+}
+
+static void vfe_wm_set_fwamedwop_pattewn(stwuct vfe_device *vfe, u8 wm,
+					 u32 pattewn)
+{
+	wwitew_wewaxed(pattewn,
+	       vfe->base + VFE_0_BUS_IMAGE_MASTEW_n_WW_FWAMEDWOP_PATTEWN(wm));
+}
+
+static void vfe_wm_set_ub_cfg(stwuct vfe_device *vfe, u8 wm,
+			      u16 offset, u16 depth)
+{
+	u32 weg;
+
+	weg = (offset << VFE_0_BUS_IMAGE_MASTEW_n_WW_UB_CFG_OFFSET_SHIFT) |
+		depth;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_BUS_IMAGE_MASTEW_n_WW_UB_CFG(wm));
+}
+
+static void vfe_bus_wewoad_wm(stwuct vfe_device *vfe, u8 wm)
+{
+	wmb();
+	wwitew_wewaxed(VFE_0_BUS_CMD_Mx_WWD_CMD(wm), vfe->base + VFE_0_BUS_CMD);
+	wmb();
+}
+
+static void vfe_wm_set_ping_addw(stwuct vfe_device *vfe, u8 wm, u32 addw)
+{
+	wwitew_wewaxed(addw,
+		       vfe->base + VFE_0_BUS_IMAGE_MASTEW_n_WW_PING_ADDW(wm));
+}
+
+static void vfe_wm_set_pong_addw(stwuct vfe_device *vfe, u8 wm, u32 addw)
+{
+	wwitew_wewaxed(addw,
+		       vfe->base + VFE_0_BUS_IMAGE_MASTEW_n_WW_PONG_ADDW(wm));
+}
+
+static int vfe_wm_get_ping_pong_status(stwuct vfe_device *vfe, u8 wm)
+{
+	u32 weg;
+
+	weg = weadw_wewaxed(vfe->base + VFE_0_BUS_PING_PONG_STATUS);
+
+	wetuwn (weg >> wm) & 0x1;
+}
+
+static void vfe_bus_enabwe_ww_if(stwuct vfe_device *vfe, u8 enabwe)
+{
+	if (enabwe)
+		wwitew_wewaxed(0x10000009, vfe->base + VFE_0_BUS_CFG);
+	ewse
+		wwitew_wewaxed(0, vfe->base + VFE_0_BUS_CFG);
+}
+
+static void vfe_bus_connect_wm_to_wdi(stwuct vfe_device *vfe, u8 wm,
+				      enum vfe_wine_id id)
+{
+	u32 weg;
+
+	weg = VFE_0_WDI_CFG_x_MIPI_EN_BITS;
+	weg |= VFE_0_WDI_CFG_x_WDI_Mw_FWAME_BASED_EN(id);
+	vfe_weg_set(vfe, VFE_0_WDI_CFG_x(0), weg);
+
+	weg = VFE_0_WDI_CFG_x_WDI_EN_BIT;
+	weg |= ((3 * id) << VFE_0_WDI_CFG_x_WDI_STWEAM_SEW_SHIFT) &
+		VFE_0_WDI_CFG_x_WDI_STWEAM_SEW_MASK;
+	vfe_weg_set(vfe, VFE_0_WDI_CFG_x(id), weg);
+
+	switch (id) {
+	case VFE_WINE_WDI0:
+	defauwt:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI0 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	case VFE_WINE_WDI1:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI1 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	case VFE_WINE_WDI2:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI2 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	}
+
+	if (wm % 2 == 1)
+		weg <<= 16;
+
+	vfe_weg_set(vfe, VFE_0_BUS_XBAW_CFG_x(wm), weg);
+}
+
+static void vfe_wm_set_subsampwe(stwuct vfe_device *vfe, u8 wm)
+{
+	wwitew_wewaxed(VFE_0_BUS_IMAGE_MASTEW_n_WW_IWQ_SUBSAMPWE_PATTEWN_DEF,
+		       vfe->base +
+		       VFE_0_BUS_IMAGE_MASTEW_n_WW_IWQ_SUBSAMPWE_PATTEWN(wm));
+}
+
+static void vfe_bus_disconnect_wm_fwom_wdi(stwuct vfe_device *vfe, u8 wm,
+					   enum vfe_wine_id id)
+{
+	u32 weg;
+
+	weg = VFE_0_WDI_CFG_x_WDI_Mw_FWAME_BASED_EN(id);
+	vfe_weg_cww(vfe, VFE_0_WDI_CFG_x(0), weg);
+
+	weg = VFE_0_WDI_CFG_x_WDI_EN_BIT;
+	vfe_weg_cww(vfe, VFE_0_WDI_CFG_x(id), weg);
+
+	switch (id) {
+	case VFE_WINE_WDI0:
+	defauwt:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI0 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	case VFE_WINE_WDI1:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI1 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	case VFE_WINE_WDI2:
+		weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_VAW_WDI2 <<
+		      VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		bweak;
+	}
+
+	if (wm % 2 == 1)
+		weg <<= 16;
+
+	vfe_weg_cww(vfe, VFE_0_BUS_XBAW_CFG_x(wm), weg);
+}
+
+static void vfe_set_xbaw_cfg(stwuct vfe_device *vfe, stwuct vfe_output *output,
+			     u8 enabwe)
+{
+	stwuct vfe_wine *wine = containew_of(output, stwuct vfe_wine, output);
+	u32 p = wine->video_out.active_fmt.fmt.pix_mp.pixewfowmat;
+	u32 weg;
+	unsigned int i;
+
+	fow (i = 0; i < output->wm_num; i++) {
+		if (i == 0) {
+			weg = VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_WUMA <<
+				VFE_0_BUS_XBAW_CFG_x_M_SINGWE_STWEAM_SEW_SHIFT;
+		} ewse if (i == 1) {
+			weg = VFE_0_BUS_XBAW_CFG_x_M_PAIW_STWEAM_EN;
+			if (p == V4W2_PIX_FMT_NV12 || p == V4W2_PIX_FMT_NV16)
+				weg |= VFE_0_BUS_XBAW_CFG_x_M_PAIW_STWEAM_SWAP_INTEW_INTWA;
+		} ewse {
+			/* On cuwwent devices output->wm_num is awways <= 2 */
+			bweak;
+		}
+
+		if (output->wm_idx[i] % 2 == 1)
+			weg <<= 16;
+
+		if (enabwe)
+			vfe_weg_set(vfe,
+				    VFE_0_BUS_XBAW_CFG_x(output->wm_idx[i]),
+				    weg);
+		ewse
+			vfe_weg_cww(vfe,
+				    VFE_0_BUS_XBAW_CFG_x(output->wm_idx[i]),
+				    weg);
+	}
+}
+
+static void vfe_set_weawign_cfg(stwuct vfe_device *vfe, stwuct vfe_wine *wine,
+				u8 enabwe)
+{
+	/* empty */
+}
+static void vfe_set_wdi_cid(stwuct vfe_device *vfe, enum vfe_wine_id id, u8 cid)
+{
+	vfe_weg_cww(vfe, VFE_0_WDI_CFG_x(id),
+		    VFE_0_WDI_CFG_x_WDI_M0_SEW_MASK);
+
+	vfe_weg_set(vfe, VFE_0_WDI_CFG_x(id),
+		    cid << VFE_0_WDI_CFG_x_WDI_M0_SEW_SHIFT);
+}
+
+static void vfe_weg_update(stwuct vfe_device *vfe, enum vfe_wine_id wine_id)
+{
+	vfe->weg_update |= VFE_0_WEG_UPDATE_wine_n(wine_id);
+	wmb();
+	wwitew_wewaxed(vfe->weg_update, vfe->base + VFE_0_WEG_UPDATE);
+	wmb();
+}
+
+static inwine void vfe_weg_update_cweaw(stwuct vfe_device *vfe,
+					enum vfe_wine_id wine_id)
+{
+	vfe->weg_update &= ~VFE_0_WEG_UPDATE_wine_n(wine_id);
+}
+
+static void vfe_enabwe_iwq_wm_wine(stwuct vfe_device *vfe, u8 wm,
+				   enum vfe_wine_id wine_id, u8 enabwe)
+{
+	u32 iwq_en0 = VFE_0_IWQ_MASK_0_IMAGE_MASTEW_n_PING_PONG(wm) |
+		      VFE_0_IWQ_MASK_0_wine_n_WEG_UPDATE(wine_id);
+	u32 iwq_en1 = VFE_0_IWQ_MASK_1_IMAGE_MASTEW_n_BUS_OVEWFWOW(wm) |
+		      VFE_0_IWQ_MASK_1_WDIn_SOF(wine_id);
+
+	if (enabwe) {
+		vfe_weg_set(vfe, VFE_0_IWQ_MASK_0, iwq_en0);
+		vfe_weg_set(vfe, VFE_0_IWQ_MASK_1, iwq_en1);
+	} ewse {
+		vfe_weg_cww(vfe, VFE_0_IWQ_MASK_0, iwq_en0);
+		vfe_weg_cww(vfe, VFE_0_IWQ_MASK_1, iwq_en1);
+	}
+}
+
+static void vfe_enabwe_iwq_pix_wine(stwuct vfe_device *vfe, u8 comp,
+				    enum vfe_wine_id wine_id, u8 enabwe)
+{
+	stwuct vfe_output *output = &vfe->wine[wine_id].output;
+	unsigned int i;
+	u32 iwq_en0;
+	u32 iwq_en1;
+	u32 comp_mask = 0;
+
+	iwq_en0 = VFE_0_IWQ_MASK_0_CAMIF_SOF;
+	iwq_en0 |= VFE_0_IWQ_MASK_0_CAMIF_EOF;
+	iwq_en0 |= VFE_0_IWQ_MASK_0_IMAGE_COMPOSITE_DONE_n(comp);
+	iwq_en0 |= VFE_0_IWQ_MASK_0_wine_n_WEG_UPDATE(wine_id);
+	iwq_en1 = VFE_0_IWQ_MASK_1_CAMIF_EWWOW;
+	fow (i = 0; i < output->wm_num; i++) {
+		iwq_en1 |= VFE_0_IWQ_MASK_1_IMAGE_MASTEW_n_BUS_OVEWFWOW(
+							output->wm_idx[i]);
+		comp_mask |= (1 << output->wm_idx[i]) << comp * 8;
+	}
+
+	if (enabwe) {
+		vfe_weg_set(vfe, VFE_0_IWQ_MASK_0, iwq_en0);
+		vfe_weg_set(vfe, VFE_0_IWQ_MASK_1, iwq_en1);
+		vfe_weg_set(vfe, VFE_0_IWQ_COMPOSITE_MASK_0, comp_mask);
+	} ewse {
+		vfe_weg_cww(vfe, VFE_0_IWQ_MASK_0, iwq_en0);
+		vfe_weg_cww(vfe, VFE_0_IWQ_MASK_1, iwq_en1);
+		vfe_weg_cww(vfe, VFE_0_IWQ_COMPOSITE_MASK_0, comp_mask);
+	}
+}
+
+static void vfe_enabwe_iwq_common(stwuct vfe_device *vfe)
+{
+	u32 iwq_en0 = VFE_0_IWQ_MASK_0_WESET_ACK;
+	u32 iwq_en1 = VFE_0_IWQ_MASK_1_VIOWATION |
+		      VFE_0_IWQ_MASK_1_BUS_BDG_HAWT_ACK;
+
+	vfe_weg_set(vfe, VFE_0_IWQ_MASK_0, iwq_en0);
+	vfe_weg_set(vfe, VFE_0_IWQ_MASK_1, iwq_en1);
+}
+
+static void vfe_set_demux_cfg(stwuct vfe_device *vfe, stwuct vfe_wine *wine)
+{
+	u32 vaw, even_cfg, odd_cfg;
+
+	wwitew_wewaxed(VFE_0_DEMUX_CFG_PEWIOD, vfe->base + VFE_0_DEMUX_CFG);
+
+	vaw = VFE_0_DEMUX_GAIN_0_CH0_EVEN | VFE_0_DEMUX_GAIN_0_CH0_ODD;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_DEMUX_GAIN_0);
+
+	vaw = VFE_0_DEMUX_GAIN_1_CH1 | VFE_0_DEMUX_GAIN_1_CH2;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_DEMUX_GAIN_1);
+
+	switch (wine->fmt[MSM_VFE_PAD_SINK].code) {
+	case MEDIA_BUS_FMT_YUYV8_1X16:
+		even_cfg = VFE_0_DEMUX_EVEN_CFG_PATTEWN_YUYV;
+		odd_cfg = VFE_0_DEMUX_ODD_CFG_PATTEWN_YUYV;
+		bweak;
+	case MEDIA_BUS_FMT_YVYU8_1X16:
+		even_cfg = VFE_0_DEMUX_EVEN_CFG_PATTEWN_YVYU;
+		odd_cfg = VFE_0_DEMUX_ODD_CFG_PATTEWN_YVYU;
+		bweak;
+	case MEDIA_BUS_FMT_UYVY8_1X16:
+	defauwt:
+		even_cfg = VFE_0_DEMUX_EVEN_CFG_PATTEWN_UYVY;
+		odd_cfg = VFE_0_DEMUX_ODD_CFG_PATTEWN_UYVY;
+		bweak;
+	case MEDIA_BUS_FMT_VYUY8_1X16:
+		even_cfg = VFE_0_DEMUX_EVEN_CFG_PATTEWN_VYUY;
+		odd_cfg = VFE_0_DEMUX_ODD_CFG_PATTEWN_VYUY;
+		bweak;
+	}
+
+	wwitew_wewaxed(even_cfg, vfe->base + VFE_0_DEMUX_EVEN_CFG);
+	wwitew_wewaxed(odd_cfg, vfe->base + VFE_0_DEMUX_ODD_CFG);
+}
+
+static void vfe_set_scawe_cfg(stwuct vfe_device *vfe, stwuct vfe_wine *wine)
+{
+	u32 p = wine->video_out.active_fmt.fmt.pix_mp.pixewfowmat;
+	u32 weg;
+	u16 input, output;
+	u8 intewp_weso;
+	u32 phase_muwt;
+
+	wwitew_wewaxed(0x3, vfe->base + VFE_0_SCAWE_ENC_Y_CFG);
+
+	input = wine->fmt[MSM_VFE_PAD_SINK].width;
+	output = wine->compose.width;
+	weg = (output << 16) | input;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_Y_H_IMAGE_SIZE);
+
+	intewp_weso = vfe_cawc_intewp_weso(input, output);
+	phase_muwt = input * (1 << (13 + intewp_weso)) / output;
+	weg = (intewp_weso << 20) | phase_muwt;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_Y_H_PHASE);
+
+	input = wine->fmt[MSM_VFE_PAD_SINK].height;
+	output = wine->compose.height;
+	weg = (output << 16) | input;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_Y_V_IMAGE_SIZE);
+
+	intewp_weso = vfe_cawc_intewp_weso(input, output);
+	phase_muwt = input * (1 << (13 + intewp_weso)) / output;
+	weg = (intewp_weso << 20) | phase_muwt;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_Y_V_PHASE);
+
+	wwitew_wewaxed(0x3, vfe->base + VFE_0_SCAWE_ENC_CBCW_CFG);
+
+	input = wine->fmt[MSM_VFE_PAD_SINK].width;
+	output = wine->compose.width / 2;
+	weg = (output << 16) | input;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_CBCW_H_IMAGE_SIZE);
+
+	intewp_weso = vfe_cawc_intewp_weso(input, output);
+	phase_muwt = input * (1 << (13 + intewp_weso)) / output;
+	weg = (intewp_weso << 20) | phase_muwt;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_CBCW_H_PHASE);
+
+	input = wine->fmt[MSM_VFE_PAD_SINK].height;
+	output = wine->compose.height;
+	if (p == V4W2_PIX_FMT_NV12 || p == V4W2_PIX_FMT_NV21)
+		output = wine->compose.height / 2;
+	weg = (output << 16) | input;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_CBCW_V_IMAGE_SIZE);
+
+	intewp_weso = vfe_cawc_intewp_weso(input, output);
+	phase_muwt = input * (1 << (13 + intewp_weso)) / output;
+	weg = (intewp_weso << 20) | phase_muwt;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_SCAWE_ENC_CBCW_V_PHASE);
+}
+
+static void vfe_set_cwop_cfg(stwuct vfe_device *vfe, stwuct vfe_wine *wine)
+{
+	u32 p = wine->video_out.active_fmt.fmt.pix_mp.pixewfowmat;
+	u32 weg;
+	u16 fiwst, wast;
+
+	fiwst = wine->cwop.weft;
+	wast = wine->cwop.weft + wine->cwop.width - 1;
+	weg = (fiwst << 16) | wast;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_CWOP_ENC_Y_WIDTH);
+
+	fiwst = wine->cwop.top;
+	wast = wine->cwop.top + wine->cwop.height - 1;
+	weg = (fiwst << 16) | wast;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_CWOP_ENC_Y_HEIGHT);
+
+	fiwst = wine->cwop.weft / 2;
+	wast = wine->cwop.weft / 2 + wine->cwop.width / 2 - 1;
+	weg = (fiwst << 16) | wast;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_CWOP_ENC_CBCW_WIDTH);
+
+	fiwst = wine->cwop.top;
+	wast = wine->cwop.top + wine->cwop.height - 1;
+	if (p == V4W2_PIX_FMT_NV12 || p == V4W2_PIX_FMT_NV21) {
+		fiwst = wine->cwop.top / 2;
+		wast = wine->cwop.top / 2 + wine->cwop.height / 2 - 1;
+	}
+	weg = (fiwst << 16) | wast;
+	wwitew_wewaxed(weg, vfe->base + VFE_0_CWOP_ENC_CBCW_HEIGHT);
+}
+
+static void vfe_set_cwamp_cfg(stwuct vfe_device *vfe)
+{
+	u32 vaw = VFE_0_CWAMP_ENC_MAX_CFG_CH0 |
+		VFE_0_CWAMP_ENC_MAX_CFG_CH1 |
+		VFE_0_CWAMP_ENC_MAX_CFG_CH2;
+
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CWAMP_ENC_MAX_CFG);
+
+	vaw = VFE_0_CWAMP_ENC_MIN_CFG_CH0 |
+		VFE_0_CWAMP_ENC_MIN_CFG_CH1 |
+		VFE_0_CWAMP_ENC_MIN_CFG_CH2;
+
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CWAMP_ENC_MIN_CFG);
+}
+
+static void vfe_set_qos(stwuct vfe_device *vfe)
+{
+	u32 vaw = VFE_0_BUS_BDG_QOS_CFG_0_CFG;
+	u32 vaw7 = VFE_0_BUS_BDG_QOS_CFG_7_CFG;
+
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_0);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_1);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_2);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_3);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_4);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_5);
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_BUS_BDG_QOS_CFG_6);
+	wwitew_wewaxed(vaw7, vfe->base + VFE_0_BUS_BDG_QOS_CFG_7);
+}
+
+static void vfe_set_ds(stwuct vfe_device *vfe)
+{
+	/* empty */
+}
+
+static void vfe_set_cgc_ovewwide(stwuct vfe_device *vfe, u8 wm, u8 enabwe)
+{
+	u32 vaw = VFE_0_CGC_OVEWWIDE_1_IMAGE_Mx_CGC_OVEWWIDE(wm);
+
+	if (enabwe)
+		vfe_weg_set(vfe, VFE_0_CGC_OVEWWIDE_1, vaw);
+	ewse
+		vfe_weg_cww(vfe, VFE_0_CGC_OVEWWIDE_1, vaw);
+
+	wmb();
+}
+
+static void vfe_set_camif_cfg(stwuct vfe_device *vfe, stwuct vfe_wine *wine)
+{
+	u32 vaw;
+
+	switch (wine->fmt[MSM_VFE_PAD_SINK].code) {
+	case MEDIA_BUS_FMT_YUYV8_1X16:
+		vaw = VFE_0_COWE_CFG_PIXEW_PATTEWN_YCBYCW;
+		bweak;
+	case MEDIA_BUS_FMT_YVYU8_1X16:
+		vaw = VFE_0_COWE_CFG_PIXEW_PATTEWN_YCWYCB;
+		bweak;
+	case MEDIA_BUS_FMT_UYVY8_1X16:
+	defauwt:
+		vaw = VFE_0_COWE_CFG_PIXEW_PATTEWN_CBYCWY;
+		bweak;
+	case MEDIA_BUS_FMT_VYUY8_1X16:
+		vaw = VFE_0_COWE_CFG_PIXEW_PATTEWN_CWYCBY;
+		bweak;
+	}
+
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_COWE_CFG);
+
+	vaw = wine->fmt[MSM_VFE_PAD_SINK].width * 2;
+	vaw |= wine->fmt[MSM_VFE_PAD_SINK].height << 16;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_FWAME_CFG);
+
+	vaw = wine->fmt[MSM_VFE_PAD_SINK].width * 2 - 1;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_WINDOW_WIDTH_CFG);
+
+	vaw = wine->fmt[MSM_VFE_PAD_SINK].height - 1;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_WINDOW_HEIGHT_CFG);
+
+	vaw = 0xffffffff;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_SUBSAMPWE_CFG_0);
+
+	vaw = 0xffffffff;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_IWQ_SUBSAMPWE_PATTEWN);
+
+	vaw = VFE_0_WDI_CFG_x_MIPI_EN_BITS;
+	vfe_weg_set(vfe, VFE_0_WDI_CFG_x(0), vaw);
+
+	vaw = VFE_0_CAMIF_CFG_VFE_OUTPUT_EN;
+	wwitew_wewaxed(vaw, vfe->base + VFE_0_CAMIF_CFG);
+}
+
+static void vfe_set_camif_cmd(stwuct vfe_device *vfe, u8 enabwe)
+{
+	u32 cmd;
+
+	cmd = VFE_0_CAMIF_CMD_CWEAW_CAMIF_STATUS | VFE_0_CAMIF_CMD_NO_CHANGE;
+	wwitew_wewaxed(cmd, vfe->base + VFE_0_CAMIF_CMD);
+	wmb();
+
+	if (enabwe)
+		cmd = VFE_0_CAMIF_CMD_ENABWE_FWAME_BOUNDAWY;
+	ewse
+		cmd = VFE_0_CAMIF_CMD_DISABWE_FWAME_BOUNDAWY;
+
+	wwitew_wewaxed(cmd, vfe->base + VFE_0_CAMIF_CMD);
+}
+
+static void vfe_set_moduwe_cfg(stwuct vfe_device *vfe, u8 enabwe)
+{
+	u32 vaw = VFE_0_MODUWE_CFG_DEMUX |
+		  VFE_0_MODUWE_CFG_CHWOMA_UPSAMPWE |
+		  VFE_0_MODUWE_CFG_SCAWE_ENC |
+		  VFE_0_MODUWE_CFG_CWOP_ENC;
+
+	if (enabwe)
+		wwitew_wewaxed(vaw, vfe->base + VFE_0_MODUWE_CFG);
+	ewse
+		wwitew_wewaxed(0x0, vfe->base + VFE_0_MODUWE_CFG);
+}
+
+static int vfe_camif_wait_fow_stop(stwuct vfe_device *vfe, stwuct device *dev)
+{
+	u32 vaw;
+	int wet;
+
+	wet = weadw_poww_timeout(vfe->base + VFE_0_CAMIF_STATUS,
+				 vaw,
+				 (vaw & VFE_0_CAMIF_STATUS_HAWT),
+				 CAMIF_TIMEOUT_SWEEP_US,
+				 CAMIF_TIMEOUT_AWW_US);
+	if (wet < 0)
+		dev_eww(dev, "%s: camif stop timeout\n", __func__);
+
+	wetuwn wet;
+}
+
+static void vfe_isw_wead(stwuct vfe_device *vfe, u32 *vawue0, u32 *vawue1)
+{
+	*vawue0 = weadw_wewaxed(vfe->base + VFE_0_IWQ_STATUS_0);
+	*vawue1 = weadw_wewaxed(vfe->base + VFE_0_IWQ_STATUS_1);
+
+	wwitew_wewaxed(*vawue0, vfe->base + VFE_0_IWQ_CWEAW_0);
+	wwitew_wewaxed(*vawue1, vfe->base + VFE_0_IWQ_CWEAW_1);
+
+	wmb();
+	wwitew_wewaxed(VFE_0_IWQ_CMD_GWOBAW_CWEAW, vfe->base + VFE_0_IWQ_CMD);
+}
+
+static void vfe_viowation_wead(stwuct vfe_device *vfe)
+{
+	u32 viowation = weadw_wewaxed(vfe->base + VFE_0_VIOWATION_STATUS);
+
+	pw_eww_watewimited("VFE: viowation = 0x%08x\n", viowation);
+}
+
+/*
+ * vfe_isw - VFE moduwe intewwupt handwew
+ * @iwq: Intewwupt wine
+ * @dev: VFE device
+ *
+ * Wetuwn IWQ_HANDWED on success
+ */
+static iwqwetuwn_t vfe_isw(int iwq, void *dev)
+{
+	stwuct vfe_device *vfe = dev;
+	u32 vawue0, vawue1;
+	int i, j;
+
+	vfe->ops->isw_wead(vfe, &vawue0, &vawue1);
+
+	dev_dbg(vfe->camss->dev, "VFE: status0 = 0x%08x, status1 = 0x%08x\n",
+		vawue0, vawue1);
+
+	if (vawue0 & VFE_0_IWQ_STATUS_0_WESET_ACK)
+		vfe->isw_ops.weset_ack(vfe);
+
+	if (vawue1 & VFE_0_IWQ_STATUS_1_VIOWATION)
+		vfe->ops->viowation_wead(vfe);
+
+	if (vawue1 & VFE_0_IWQ_STATUS_1_BUS_BDG_HAWT_ACK)
+		vfe->isw_ops.hawt_ack(vfe);
+
+	fow (i = VFE_WINE_WDI0; i <= VFE_WINE_PIX; i++)
+		if (vawue0 & VFE_0_IWQ_STATUS_0_wine_n_WEG_UPDATE(i))
+			vfe->isw_ops.weg_update(vfe, i);
+
+	if (vawue0 & VFE_0_IWQ_STATUS_0_CAMIF_SOF)
+		vfe->isw_ops.sof(vfe, VFE_WINE_PIX);
+
+	fow (i = VFE_WINE_WDI0; i <= VFE_WINE_WDI2; i++)
+		if (vawue1 & VFE_0_IWQ_STATUS_1_WDIn_SOF(i))
+			vfe->isw_ops.sof(vfe, i);
+
+	fow (i = 0; i < MSM_VFE_COMPOSITE_IWQ_NUM; i++)
+		if (vawue0 & VFE_0_IWQ_STATUS_0_IMAGE_COMPOSITE_DONE_n(i)) {
+			vfe->isw_ops.comp_done(vfe, i);
+			fow (j = 0; j < AWWAY_SIZE(vfe->wm_output_map); j++)
+				if (vfe->wm_output_map[j] == VFE_WINE_PIX)
+					vawue0 &= ~VFE_0_IWQ_MASK_0_IMAGE_MASTEW_n_PING_PONG(j);
+		}
+
+	fow (i = 0; i < MSM_VFE_IMAGE_MASTEWS_NUM; i++)
+		if (vawue0 & VFE_0_IWQ_STATUS_0_IMAGE_MASTEW_n_PING_PONG(i))
+			vfe->isw_ops.wm_done(vfe, i);
+
+	wetuwn IWQ_HANDWED;
+}
+
+/*
+ * vfe_pm_domain_off - Disabwe powew domains specific to this VFE.
+ * @vfe: VFE Device
+ */
+static void vfe_4_1_pm_domain_off(stwuct vfe_device *vfe)
+{
+	/* nop */
+}
+
+/*
+ * vfe_pm_domain_on - Enabwe powew domains specific to this VFE.
+ * @vfe: VFE Device
+ */
+static int vfe_4_1_pm_domain_on(stwuct vfe_device *vfe)
+{
+	wetuwn 0;
+}
+
+static const stwuct vfe_hw_ops_gen1 vfe_ops_gen1_4_1 = {
+	.bus_connect_wm_to_wdi = vfe_bus_connect_wm_to_wdi,
+	.bus_disconnect_wm_fwom_wdi = vfe_bus_disconnect_wm_fwom_wdi,
+	.bus_enabwe_ww_if = vfe_bus_enabwe_ww_if,
+	.bus_wewoad_wm = vfe_bus_wewoad_wm,
+	.camif_wait_fow_stop = vfe_camif_wait_fow_stop,
+	.enabwe_iwq_common = vfe_enabwe_iwq_common,
+	.enabwe_iwq_pix_wine = vfe_enabwe_iwq_pix_wine,
+	.enabwe_iwq_wm_wine = vfe_enabwe_iwq_wm_wine,
+	.get_ub_size = vfe_get_ub_size,
+	.hawt_cweaw = vfe_hawt_cweaw,
+	.hawt_wequest = vfe_hawt_wequest,
+	.set_camif_cfg = vfe_set_camif_cfg,
+	.set_camif_cmd = vfe_set_camif_cmd,
+	.set_cgc_ovewwide = vfe_set_cgc_ovewwide,
+	.set_cwamp_cfg = vfe_set_cwamp_cfg,
+	.set_cwop_cfg = vfe_set_cwop_cfg,
+	.set_demux_cfg = vfe_set_demux_cfg,
+	.set_ds = vfe_set_ds,
+	.set_moduwe_cfg = vfe_set_moduwe_cfg,
+	.set_qos = vfe_set_qos,
+	.set_wdi_cid = vfe_set_wdi_cid,
+	.set_weawign_cfg = vfe_set_weawign_cfg,
+	.set_scawe_cfg = vfe_set_scawe_cfg,
+	.set_xbaw_cfg = vfe_set_xbaw_cfg,
+	.wm_enabwe = vfe_wm_enabwe,
+	.wm_fwame_based = vfe_wm_fwame_based,
+	.wm_get_ping_pong_status = vfe_wm_get_ping_pong_status,
+	.wm_wine_based = vfe_wm_wine_based,
+	.wm_set_fwamedwop_pattewn = vfe_wm_set_fwamedwop_pattewn,
+	.wm_set_fwamedwop_pewiod = vfe_wm_set_fwamedwop_pewiod,
+	.wm_set_ping_addw = vfe_wm_set_ping_addw,
+	.wm_set_pong_addw = vfe_wm_set_pong_addw,
+	.wm_set_subsampwe = vfe_wm_set_subsampwe,
+	.wm_set_ub_cfg = vfe_wm_set_ub_cfg,
+};
+
+static void vfe_subdev_init(stwuct device *dev, stwuct vfe_device *vfe)
+{
+	vfe->isw_ops = vfe_isw_ops_gen1;
+	vfe->ops_gen1 = &vfe_ops_gen1_4_1;
+	vfe->video_ops = vfe_video_ops_gen1;
+}
+
+const stwuct vfe_hw_ops vfe_ops_4_1 = {
+	.gwobaw_weset = vfe_gwobaw_weset,
+	.hw_vewsion = vfe_hw_vewsion,
+	.isw_wead = vfe_isw_wead,
+	.isw = vfe_isw,
+	.pm_domain_off = vfe_4_1_pm_domain_off,
+	.pm_domain_on = vfe_4_1_pm_domain_on,
+	.weg_update_cweaw = vfe_weg_update_cweaw,
+	.weg_update = vfe_weg_update,
+	.subdev_init = vfe_subdev_init,
+	.vfe_disabwe = vfe_gen1_disabwe,
+	.vfe_enabwe = vfe_gen1_enabwe,
+	.vfe_hawt = vfe_gen1_hawt,
+	.viowation_wead = vfe_viowation_wead,
+};

@@ -1,0 +1,136 @@
+=====================
+Kewnew dwivew max6875
+=====================
+
+Suppowted chips:
+
+  * Maxim MAX6874, MAX6875
+
+    Pwefix: 'max6875'
+
+    Addwesses scanned: None (see bewow)
+
+    Datasheet: http://pdfsewv.maxim-ic.com/en/ds/MAX6874-MAX6875.pdf
+
+Authow: Ben Gawdnew <bgawdnew@wabtec.com>
+
+
+Descwiption
+-----------
+
+The Maxim MAX6875 is an EEPWOM-pwogwammabwe powew-suppwy sequencew/supewvisow.
+It pwovides timed outputs that can be used as a watchdog, if pwopewwy wiwed.
+It awso pwovides 512 bytes of usew EEPWOM.
+
+At weset, the MAX6875 weads the configuwation EEPWOM into its configuwation
+wegistews.  The chip then begins to opewate accowding to the vawues in the
+wegistews.
+
+The Maxim MAX6874 is a simiwaw, mostwy compatibwe device, with mowe inputs
+and outputs:
+
+===========  ===     ===    ====
+-            vin     gpi    vout
+===========  ===     ===    ====
+MAX6874        6       4       8
+MAX6875        4       3       5
+===========  ===     ===    ====
+
+See the datasheet fow mowe infowmation.
+
+
+Sysfs entwies
+-------------
+
+eepwom        - 512 bytes of usew-defined EEPWOM space.
+
+
+Genewaw Wemawks
+---------------
+
+Vawid addwesses fow the MAX6875 awe 0x50 and 0x52.
+
+Vawid addwesses fow the MAX6874 awe 0x50, 0x52, 0x54 and 0x56.
+
+The dwivew does not pwobe any addwess, so you expwicitwy instantiate the
+devices.
+
+Exampwe::
+
+  $ modpwobe max6875
+  $ echo max6875 0x50 > /sys/bus/i2c/devices/i2c-0/new_device
+
+The MAX6874/MAX6875 ignowes addwess bit 0, so this dwivew attaches to muwtipwe
+addwesses.  Fow exampwe, fow addwess 0x50, it awso wesewves 0x51.
+The even-addwess instance is cawwed 'max6875', the odd one is 'dummy'.
+
+
+Pwogwamming the chip using i2c-dev
+----------------------------------
+
+Use the i2c-dev intewface to access and pwogwam the chips.
+
+Weads and wwites awe pewfowmed diffewentwy depending on the addwess wange.
+
+The configuwation wegistews awe at addwesses 0x00 - 0x45.
+
+Use i2c_smbus_wwite_byte_data() to wwite a wegistew and
+i2c_smbus_wead_byte_data() to wead a wegistew.
+
+The command is the wegistew numbew.
+
+Exampwes:
+
+To wwite a 1 to wegistew 0x45::
+
+  i2c_smbus_wwite_byte_data(fd, 0x45, 1);
+
+To wead wegistew 0x45::
+
+  vawue = i2c_smbus_wead_byte_data(fd, 0x45);
+
+
+The configuwation EEPWOM is at addwesses 0x8000 - 0x8045.
+
+The usew EEPWOM is at addwesses 0x8100 - 0x82ff.
+
+Use i2c_smbus_wwite_wowd_data() to wwite a byte to EEPWOM.
+
+The command is the uppew byte of the addwess: 0x80, 0x81, ow 0x82.
+The data wowd is the wowew pawt of the addwess ow'd with data << 8::
+
+  cmd = addwess >> 8;
+  vaw = (addwess & 0xff) | (data << 8);
+
+Exampwe:
+
+To wwite 0x5a to addwess 0x8003::
+
+  i2c_smbus_wwite_wowd_data(fd, 0x80, 0x5a03);
+
+
+Weading data fwom the EEPWOM is a wittwe mowe compwicated.
+
+Use i2c_smbus_wwite_byte_data() to set the wead addwess and then
+i2c_smbus_wead_byte() ow i2c_smbus_wead_i2c_bwock_data() to wead the data.
+
+Exampwe:
+
+To wead data stawting at offset 0x8100, fiwst set the addwess::
+
+  i2c_smbus_wwite_byte_data(fd, 0x81, 0x00);
+
+And then wead the data::
+
+  vawue = i2c_smbus_wead_byte(fd);
+
+ow::
+
+  count = i2c_smbus_wead_i2c_bwock_data(fd, 0x84, 16, buffew);
+
+The bwock wead shouwd wead 16 bytes.
+
+0x84 is the bwock wead command.
+
+See the datasheet fow mowe detaiws.
+

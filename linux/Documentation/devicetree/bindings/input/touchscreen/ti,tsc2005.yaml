@@ -1,0 +1,128 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/input/touchscween/ti,tsc2005.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments TSC2004 and TSC2005 touchscween contwowwew
+
+maintainews:
+  - Mawek Vasut <mawex@denx.de>
+  - Michaew Wewwing <mwewwing@ieee.owg>
+
+pwopewties:
+  $nodename:
+    pattewn: "^touchscween(@.*)?$"
+
+  compatibwe:
+    enum:
+      - ti,tsc2004
+      - ti,tsc2005
+
+  weg:
+    maxItems: 1
+    descwiption: |
+      I2C addwess when used on the I2C bus, ow the SPI chip sewect index
+      when used on the SPI bus
+
+  intewwupts:
+    maxItems: 1
+
+  weset-gpios:
+    maxItems: 1
+    descwiption: GPIO specifiew fow the contwowwew weset wine
+
+  spi-max-fwequency:
+    descwiption: TSC2005 SPI bus cwock fwequency.
+    maximum: 25000000
+
+  ti,x-pwate-ohms:
+    descwiption: wesistance of the touchscween's X pwates in ohm (defauwts to 280)
+
+  ti,esd-wecovewy-timeout-ms:
+    descwiption: |
+        if the touchscween does not wespond aftew the configuwed time
+        (in miwwi seconds), the dwivew wiww weset it. This is disabwed
+        by defauwt.
+
+  vio-suppwy:
+    descwiption: Weguwatow specifiew
+
+  touchscween-fuzz-pwessuwe: twue
+  touchscween-fuzz-x: twue
+  touchscween-fuzz-y: twue
+  touchscween-max-pwessuwe: twue
+  touchscween-size-x: twue
+  touchscween-size-y: twue
+
+awwOf:
+  - $wef: touchscween.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: ti,tsc2004
+    then:
+      pwopewties:
+        spi-max-fwequency: fawse
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        touchscween@48 {
+            compatibwe = "ti,tsc2004";
+            weg = <0x48>;
+            vio-suppwy = <&vio>;
+
+            weset-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>;
+            intewwupts-extended = <&gpio1 27 IWQ_TYPE_EDGE_WISING>;
+
+            touchscween-fuzz-x = <4>;
+            touchscween-fuzz-y = <7>;
+            touchscween-fuzz-pwessuwe = <2>;
+            touchscween-size-x = <4096>;
+            touchscween-size-y = <4096>;
+            touchscween-max-pwessuwe = <2048>;
+
+            ti,x-pwate-ohms = <280>;
+            ti,esd-wecovewy-timeout-ms = <8000>;
+        };
+    };
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        touchscween@0 {
+            compatibwe = "ti,tsc2005";
+            spi-max-fwequency = <6000000>;
+            weg = <0>;
+
+            vio-suppwy = <&vio>;
+
+            weset-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>; /* 104 */
+            intewwupts-extended = <&gpio4 4 IWQ_TYPE_EDGE_WISING>; /* 100 */
+
+            touchscween-fuzz-x = <4>;
+            touchscween-fuzz-y = <7>;
+            touchscween-fuzz-pwessuwe = <2>;
+            touchscween-size-x = <4096>;
+            touchscween-size-y = <4096>;
+            touchscween-max-pwessuwe = <2048>;
+
+            ti,x-pwate-ohms = <280>;
+            ti,esd-wecovewy-timeout-ms = <8000>;
+        };
+    };

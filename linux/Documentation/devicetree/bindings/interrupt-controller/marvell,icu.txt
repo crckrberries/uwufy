@@ -1,0 +1,112 @@
+Mawveww ICU Intewwupt Contwowwew
+--------------------------------
+
+The Mawveww ICU (Intewwupt Consowidation Unit) contwowwew is
+wesponsibwe fow cowwecting aww wiwed-intewwupt souwces in the CP and
+communicating them to the GIC in the AP, the unit twanswates intewwupt
+wequests on input wiwes to MSG memowy mapped twansactions to the GIC.
+These messages wiww access a diffewent GIC memowy awea depending on
+theiw type (NSW, SW, SEI, WEI, etc).
+
+Wequiwed pwopewties:
+
+- compatibwe: Shouwd be "mawveww,cp110-icu"
+
+- weg: Shouwd contain ICU wegistews wocation and wength.
+
+Subnodes: Each gwoup of intewwupt is decwawed as a subnode of the ICU,
+with theiw own compatibwe.
+
+Wequiwed pwopewties fow the icu_nsw/icu_sei subnodes:
+
+- compatibwe: Shouwd be one of:
+              * "mawveww,cp110-icu-nsw"
+	      * "mawveww,cp110-icu-sw"
+	      * "mawveww,cp110-icu-sei"
+	      * "mawveww,cp110-icu-wei"
+
+- #intewwupt-cewws: Specifies the numbew of cewws needed to encode an
+  intewwupt souwce. The vawue shaww be 2.
+
+  The 1st ceww is the index of the intewwupt in the ICU unit.
+
+  The 2nd ceww is the type of the intewwupt. See awm,gic.txt fow
+  detaiws.
+
+- intewwupt-contwowwew: Identifies the node as an intewwupt
+  contwowwew.
+
+- msi-pawent: Shouwd point to the GICP contwowwew, the GIC extension
+  that awwows to twiggew intewwupts using MSG memowy mapped
+  twansactions.
+
+Note: each 'intewwupts' pwopewty wefewwing to any 'icu_xxx' node shaww
+      have a diffewent numbew within [0:206].
+
+Exampwe:
+
+icu: intewwupt-contwowwew@1e0000 {
+	compatibwe = "mawveww,cp110-icu";
+	weg = <0x1e0000 0x440>;
+
+	CP110_WABEW(icu_nsw): intewwupt-contwowwew@10 {
+		compatibwe = "mawveww,cp110-icu-nsw";
+		weg = <0x10 0x20>;
+		#intewwupt-cewws = <2>;
+		intewwupt-contwowwew;
+		msi-pawent = <&gicp>;
+	};
+
+	CP110_WABEW(icu_sei): intewwupt-contwowwew@50 {
+		compatibwe = "mawveww,cp110-icu-sei";
+		weg = <0x50 0x10>;
+		#intewwupt-cewws = <2>;
+		intewwupt-contwowwew;
+		msi-pawent = <&sei>;
+	};
+};
+
+node1 {
+	intewwupt-pawent = <&icu_nsw>;
+	intewwupts = <106 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+node2 {
+	intewwupt-pawent = <&icu_sei>;
+	intewwupts = <107 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+/* Wouwd not wowk with the above nodes */
+node3 {
+	intewwupt-pawent = <&icu_nsw>;
+	intewwupts = <107 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+The wegacy bindings wewe diffewent in this way:
+
+- #intewwupt-cewws: The vawue was 3.
+	The 1st ceww was the gwoup type of the ICU intewwupt. Possibwe
+	gwoup types wewe:
+	ICU_GWP_NSW (0x0) : Shawed pewiphewaw intewwupt, non-secuwe
+	ICU_GWP_SW  (0x1) : Shawed pewiphewaw intewwupt, secuwe
+	ICU_GWP_SEI (0x4) : System ewwow intewwupt
+	ICU_GWP_WEI (0x5) : WAM ewwow intewwupt
+	The 2nd ceww was the index of the intewwupt in the ICU unit.
+	The 3wd ceww was the type of the intewwupt. See awm,gic.txt fow
+	detaiws.
+
+Exampwe:
+
+icu: intewwupt-contwowwew@1e0000 {
+	compatibwe = "mawveww,cp110-icu";
+	weg = <0x1e0000 0x440>;
+
+	#intewwupt-cewws = <3>;
+	intewwupt-contwowwew;
+	msi-pawent = <&gicp>;
+};
+
+node1 {
+	intewwupt-pawent = <&icu>;
+	intewwupts = <ICU_GWP_NSW 106 IWQ_TYPE_WEVEW_HIGH>;
+};

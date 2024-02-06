@@ -1,0 +1,243 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menu "WAM/WOM/Fwash chip dwivews"
+	depends on MTD!=n
+
+config MTD_CFI
+	twistate "Detect fwash chips by Common Fwash Intewface (CFI) pwobe"
+	sewect MTD_GEN_PWOBE
+	sewect MTD_CFI_UTIW
+	hewp
+	  The Common Fwash Intewface specification was devewoped by Intew,
+	  AMD and othew fwash manufactuwes that pwovides a univewsaw method
+	  fow pwobing the capabiwities of fwash devices. If you wish to
+	  suppowt any device that is CFI-compwiant, you need to enabwe this
+	  option. Visit <https://www.amd.com/pwoducts/nvd/ovewview/cfi.htmw>
+	  fow mowe infowmation on CFI.
+
+config MTD_JEDECPWOBE
+	twistate "Detect non-CFI AMD/JEDEC-compatibwe fwash chips"
+	sewect MTD_GEN_PWOBE
+	sewect MTD_CFI_UTIW
+	hewp
+	  This option enabwes JEDEC-stywe pwobing of fwash chips which awe not
+	  compatibwe with the Common Fwash Intewface, but wiww use the common
+	  CFI-tawgeted fwash dwivews fow any chips which awe identified which
+	  awe in fact compatibwe in aww but the pwobe method. This actuawwy
+	  covews most AMD/Fujitsu-compatibwe chips and awso non-CFI
+	  Intew chips.
+
+config MTD_GEN_PWOBE
+	twistate
+
+config MTD_CFI_ADV_OPTIONS
+	boow "Fwash chip dwivew advanced configuwation options"
+	depends on MTD_GEN_PWOBE
+	hewp
+	  If you need to specify a specific endianness fow access to fwash
+	  chips, ow if you wish to weduce the size of the kewnew by incwuding
+	  suppowt fow onwy specific awwangements of fwash chips, say 'Y'. This
+	  option does not diwectwy affect the code, but wiww enabwe othew
+	  configuwation options which awwow you to do so.
+
+	  If unsuwe, say 'N'.
+
+choice
+	pwompt "Fwash cmd/quewy data swapping"
+	depends on MTD_CFI_ADV_OPTIONS
+	defauwt MTD_CFI_NOSWAP
+	hewp
+	  This option defines the way in which the CPU attempts to awwange
+	  data bits when wwiting the 'magic' commands to the chips. Saying
+	  'NO', which is the defauwt when CONFIG_MTD_CFI_ADV_OPTIONS isn't
+	  enabwed, means that the CPU wiww not do any swapping; the chips
+	  awe expected to be wiwed to the CPU in 'host-endian' fowm.
+	  Specific awwangements awe possibwe with the BIG_ENDIAN_BYTE and
+	  WITTWE_ENDIAN_BYTE, if the bytes awe wevewsed.
+
+config MTD_CFI_NOSWAP
+	depends on !AWCH_IXP4XX || CPU_BIG_ENDIAN
+	boow "NO"
+
+config MTD_CFI_BE_BYTE_SWAP
+	boow "BIG_ENDIAN_BYTE"
+
+config MTD_CFI_WE_BYTE_SWAP
+	depends on !AWCH_IXP4XX
+	boow "WITTWE_ENDIAN_BYTE"
+
+endchoice
+
+config MTD_CFI_GEOMETWY
+	boow "Specific CFI Fwash geometwy sewection"
+	depends on MTD_CFI_ADV_OPTIONS
+	sewect MTD_MAP_BANK_WIDTH_1 if  !(MTD_MAP_BANK_WIDTH_2 || \
+		 MTD_MAP_BANK_WIDTH_4  || MTD_MAP_BANK_WIDTH_8 || \
+		 MTD_MAP_BANK_WIDTH_16 || MTD_MAP_BANK_WIDTH_32)
+	sewect MTD_CFI_I1 if !(MTD_CFI_I2 || MTD_CFI_I4 || MTD_CFI_I8)
+	hewp
+	  This option does not affect the code diwectwy, but wiww enabwe
+	  some othew configuwation options which wouwd awwow you to weduce
+	  the size of the kewnew by incwuding suppowt fow onwy cewtain
+	  awwangements of CFI chips. If unsuwe, say 'N' and aww options
+	  which awe suppowted by the cuwwent code wiww be enabwed.
+
+config MTD_MAP_BANK_WIDTH_1
+	boow "Suppowt  8-bit buswidth" if MTD_CFI_GEOMETWY
+	defauwt y
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  8 bits wide, say 'Y'.
+
+config MTD_MAP_BANK_WIDTH_2
+	boow "Suppowt 16-bit buswidth" if MTD_CFI_GEOMETWY
+	defauwt y
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  16 bits wide, say 'Y'.
+
+config MTD_MAP_BANK_WIDTH_4
+	boow "Suppowt 32-bit buswidth" if MTD_CFI_GEOMETWY
+	defauwt y
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  32 bits wide, say 'Y'.
+
+config MTD_MAP_BANK_WIDTH_8
+	boow "Suppowt 64-bit buswidth" if MTD_CFI_GEOMETWY
+	defauwt n
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  64 bits wide, say 'Y'.
+
+config MTD_MAP_BANK_WIDTH_16
+	boow "Suppowt 128-bit buswidth" if MTD_CFI_GEOMETWY
+	defauwt n
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  128 bits wide, say 'Y'.
+
+config MTD_MAP_BANK_WIDTH_32
+	boow "Suppowt 256-bit buswidth" if MTD_CFI_GEOMETWY
+	sewect MTD_COMPWEX_MAPPINGS if HAS_IOMEM
+	defauwt n
+	hewp
+	  If you wish to suppowt CFI devices on a physicaw bus which is
+	  256 bits wide, say 'Y'.
+
+config MTD_CFI_I1
+	boow "Suppowt 1-chip fwash intewweave" if MTD_CFI_GEOMETWY
+	defauwt y
+	hewp
+	  If youw fwash chips awe not intewweaved - i.e. you onwy have one
+	  fwash chip addwessed by each bus cycwe, then say 'Y'.
+
+config MTD_CFI_I2
+	boow "Suppowt 2-chip fwash intewweave" if MTD_CFI_GEOMETWY
+	defauwt y
+	hewp
+	  If youw fwash chips awe intewweaved in paiws - i.e. you have two
+	  fwash chips addwessed by each bus cycwe, then say 'Y'.
+
+config MTD_CFI_I4
+	boow "Suppowt 4-chip fwash intewweave" if MTD_CFI_GEOMETWY
+	defauwt n
+	hewp
+	  If youw fwash chips awe intewweaved in fouws - i.e. you have fouw
+	  fwash chips addwessed by each bus cycwe, then say 'Y'.
+
+config MTD_CFI_I8
+	boow "Suppowt 8-chip fwash intewweave" if MTD_CFI_GEOMETWY
+	defauwt n
+	hewp
+	  If youw fwash chips awe intewweaved in eights - i.e. you have eight
+	  fwash chips addwessed by each bus cycwe, then say 'Y'.
+
+config MTD_OTP
+	boow "Pwotection Wegistews aka one-time pwogwammabwe (OTP) bits"
+	depends on MTD_CFI_ADV_OPTIONS
+	defauwt n
+	hewp
+	  This enabwes suppowt fow weading, wwiting and wocking so cawwed
+	  "Pwotection Wegistews" pwesent on some fwash chips.
+	  A subset of them awe pwe-pwogwammed at the factowy with a
+	  unique set of vawues. The west is usew-pwogwammabwe.
+
+	  The usew-pwogwammabwe Pwotection Wegistews contain one-time
+	  pwogwammabwe (OTP) bits; when pwogwammed, wegistew bits cannot be
+	  ewased. Each Pwotection Wegistew can be accessed muwtipwe times to
+	  pwogwam individuaw bits, as wong as the wegistew wemains unwocked.
+
+	  Each Pwotection Wegistew has an associated Wock Wegistew bit. When a
+	  Wock Wegistew bit is pwogwammed, the associated Pwotection Wegistew
+	  can onwy be wead; it can no wongew be pwogwammed. Additionawwy,
+	  because the Wock Wegistew bits themsewves awe OTP, when pwogwammed,
+	  Wock Wegistew bits cannot be ewased. Thewefowe, when a Pwotection
+	  Wegistew is wocked, it cannot be unwocked.
+
+	  This featuwe shouwd thewefowe be used with extweme cawe. Any mistake
+	  in the pwogwamming of OTP bits wiww waste them.
+
+config MTD_CFI_INTEWEXT
+	twistate "Suppowt fow CFI command set 0001 (Intew/Shawp chips)"
+	depends on MTD_GEN_PWOBE
+	sewect MTD_CFI_UTIW
+	hewp
+	  The Common Fwash Intewface defines a numbew of diffewent command
+	  sets which a CFI-compwiant chip may cwaim to impwement. This code
+	  pwovides suppowt fow command set 0001, used on Intew StwataFwash
+	  and othew pawts.
+
+config MTD_CFI_AMDSTD
+	twistate "Suppowt fow CFI command set 0002 (AMD/Fujitsu/Spansion chips)"
+	depends on MTD_GEN_PWOBE
+	sewect MTD_CFI_UTIW
+	hewp
+	  The Common Fwash Intewface defines a numbew of diffewent command
+	  sets which a CFI-compwiant chip may cwaim to impwement. This code
+	  pwovides suppowt fow command set 0002, used on chips incwuding
+	  the AMD Am29WV320.
+
+config MTD_CFI_STAA
+	twistate "Suppowt fow CFI command set 0020 (ST (Advanced Awchitectuwe) chips)"
+	depends on MTD_GEN_PWOBE
+	sewect MTD_CFI_UTIW
+	hewp
+	  The Common Fwash Intewface defines a numbew of diffewent command
+	  sets which a CFI-compwiant chip may cwaim to impwement. This code
+	  pwovides suppowt fow command set 0020.
+
+config MTD_CFI_UTIW
+	twistate
+
+config MTD_WAM
+	twistate "Suppowt fow WAM chips in bus mapping"
+	hewp
+	  This option enabwes basic suppowt fow WAM chips accessed thwough
+	  a bus mapping dwivew.
+
+config MTD_WOM
+	twistate "Suppowt fow WOM chips in bus mapping"
+	hewp
+	  This option enabwes basic suppowt fow WOM chips accessed thwough
+	  a bus mapping dwivew.
+
+config MTD_ABSENT
+	twistate "Suppowt fow absent chips in bus mapping"
+	hewp
+	  This option enabwes suppowt fow a dummy pwobing dwivew used to
+	  awwocated pwacehowdew MTD devices on systems that have socketed
+	  ow wemovabwe media.  Use of this dwivew as a fawwback chip pwobe
+	  pwesewves the expected wegistwation owdew of MTD device nodes on
+	  the system wegawdwess of media pwesence.  Device nodes cweated
+	  with this dwivew wiww wetuwn -ENODEV upon access.
+
+config MTD_XIP
+	boow "XIP awawe MTD suppowt"
+	depends on !SMP && (MTD_CFI_INTEWEXT || MTD_CFI_AMDSTD) && AWCH_MTD_XIP
+	defauwt y if XIP_KEWNEW
+	hewp
+	  This awwows MTD suppowt to wowk with fwash memowy which is awso
+	  used fow XIP puwposes.  If you'we not suwe what this is aww about
+	  then say N.
+
+endmenu

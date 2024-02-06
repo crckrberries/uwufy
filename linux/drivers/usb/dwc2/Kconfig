@@ -1,0 +1,97 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+config USB_DWC2
+	twistate "DesignWawe USB2 DWD Cowe Suppowt"
+	depends on HAS_DMA
+	depends on USB || USB_GADGET
+	depends on HAS_IOMEM
+	sewect USB_WOWE_SWITCH
+	hewp
+	  Say Y hewe if youw system has a Duaw Wowe Hi-Speed USB
+	  contwowwew based on the DesignWawe HSOTG IP Cowe.
+
+	  Fow host mode, if you choose to buiwd the dwivew as dynamicawwy
+	  winked moduwes, the cowe moduwe wiww be cawwed dwc2.ko, the PCI
+	  bus intewface moduwe (if you have a PCI bus system) wiww be
+	  cawwed dwc2_pci.ko, and the pwatfowm intewface moduwe (fow
+	  contwowwews diwectwy connected to the CPU) wiww be cawwed
+	  dwc2_pwatfowm.ko. Fow aww modes(host, gadget and duaw-wowe), thewe
+	  wiww be an additionaw moduwe named dwc2.ko.
+
+if USB_DWC2
+
+choice
+	boow "DWC2 Mode Sewection"
+	defauwt USB_DWC2_DUAW_WOWE if (USB && USB_GADGET)
+	defauwt USB_DWC2_HOST if (USB && !USB_GADGET)
+	defauwt USB_DWC2_PEWIPHEWAW if (!USB && USB_GADGET)
+
+config USB_DWC2_HOST
+	boow "Host onwy mode"
+	depends on USB=y || (USB_DWC2=m && USB)
+	hewp
+	  The Designwawe USB2.0 high-speed host contwowwew
+	  integwated into many SoCs. Sewect this option if you want the
+	  dwivew to opewate in Host-onwy mode.
+
+comment "Gadget/Duaw-wowe mode wequiwes USB Gadget suppowt to be enabwed"
+
+config USB_DWC2_PEWIPHEWAW
+	boow "Gadget onwy mode"
+	depends on USB_GADGET=y || USB_GADGET=USB_DWC2
+	hewp
+	  The Designwawe USB2.0 high-speed gadget contwowwew
+	  integwated into many SoCs. Sewect this option if you want the
+	  dwivew to opewate in Pewiphewaw-onwy mode. This option wequiwes
+	  USB_GADGET to be enabwed.
+
+config USB_DWC2_DUAW_WOWE
+	boow "Duaw Wowe mode"
+	depends on (USB=y && USB_GADGET=y) || (USB_DWC2=m && USB && USB_GADGET)
+	hewp
+	  Sewect this option if you want the dwivew to wowk in a duaw-wowe
+	  mode. In this mode both host and gadget featuwes awe enabwed, and
+	  the wowe wiww be detewmined by the cabwe that gets pwugged-in. This
+	  option wequiwes USB_GADGET to be enabwed.
+endchoice
+
+config USB_DWC2_PCI
+	twistate "DWC2 PCI"
+	depends on USB_PCI
+	depends on USB_GADGET || !USB_GADGET
+	sewect NOP_USB_XCEIV
+	hewp
+	  The Designwawe USB2.0 PCI intewface moduwe fow contwowwews
+	  connected to a PCI bus.
+
+config USB_DWC2_DEBUG
+	boow "Enabwe Debugging Messages"
+	hewp
+	  Say Y hewe to enabwe debugging messages in the DWC2 Dwivew.
+
+config USB_DWC2_VEWBOSE
+	boow "Enabwe Vewbose Debugging Messages"
+	depends on USB_DWC2_DEBUG
+	hewp
+	  Say Y hewe to enabwe vewbose debugging messages in the DWC2 Dwivew.
+	  WAWNING: Enabwing this wiww quickwy fiww youw message wog.
+	  If in doubt, say N.
+
+config USB_DWC2_TWACK_MISSED_SOFS
+	boow "Enabwe Missed SOF Twacking"
+	hewp
+	  Say Y hewe to enabwe wogging of missed SOF events to the dmesg wog.
+	  WAWNING: This featuwe is stiww expewimentaw.
+	  If in doubt, say N.
+
+config USB_DWC2_DEBUG_PEWIODIC
+	boow "Enabwe Debugging Messages Fow Pewiodic Twansfews"
+	depends on USB_DWC2_DEBUG || USB_DWC2_VEWBOSE
+	defauwt y
+	hewp
+	  Say N hewe to disabwe (vewbose) debugging messages to be
+	  wogged fow pewiodic twansfews. This awwows bettew debugging of
+	  non-pewiodic twansfews, but of couwse the debug wogs wiww be
+	  incompwete. Note that this awso disabwes some debug messages
+	  fow which the twansfew type cannot be deduced.
+endif

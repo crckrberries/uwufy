@@ -1,0 +1,143 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/mediatek,wvts-thewmaw.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MediaTek SoC Wow Vowtage Thewmaw Sensow (WVTS)
+
+maintainews:
+  - Bawsam CHIHI <bchihi@baywibwe.com>
+
+descwiption: |
+  WVTS is a thewmaw management awchitectuwe composed of thwee subsystems,
+  a Sensing device - Thewmaw Sensing Micwo Ciwcuit Unit (TSMCU),
+  a Convewtew - Wow Vowtage Thewmaw Sensow convewtew (WVTS), and
+  a Digitaw contwowwew (WVTS_CTWW).
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mediatek,mt7988-wvts-ap
+      - mediatek,mt8192-wvts-ap
+      - mediatek,mt8192-wvts-mcu
+      - mediatek,mt8195-wvts-ap
+      - mediatek,mt8195-wvts-mcu
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+    descwiption: WVTS weset fow cweawing tempowawy data on AP/MCU.
+
+  nvmem-cewws:
+    minItems: 1
+    items:
+      - descwiption: Cawibwation eFuse data 1 fow WVTS
+      - descwiption: Cawibwation eFuse data 2 fow WVTS
+
+  nvmem-ceww-names:
+    minItems: 1
+    items:
+      - const: wvts-cawib-data-1
+      - const: wvts-cawib-data-2
+
+  "#thewmaw-sensow-cewws":
+    const: 1
+
+awwOf:
+  - $wef: thewmaw-sensow.yamw#
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt8192-wvts-ap
+              - mediatek,mt8192-wvts-mcu
+    then:
+      pwopewties:
+        nvmem-cewws:
+          maxItems: 1
+
+        nvmem-ceww-names:
+          maxItems: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt8195-wvts-ap
+              - mediatek,mt8195-wvts-mcu
+    then:
+      pwopewties:
+        nvmem-cewws:
+          minItems: 2
+
+        nvmem-ceww-names:
+          minItems: 2
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - wesets
+  - nvmem-cewws
+  - nvmem-ceww-names
+  - "#thewmaw-sensow-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/mt8195-cwk.h>
+    #incwude <dt-bindings/weset/mt8195-wesets.h>
+    #incwude <dt-bindings/thewmaw/mediatek,wvts-thewmaw.h>
+
+    soc {
+      #addwess-cewws = <2>;
+      #size-cewws = <2>;
+
+      wvts_mcu: thewmaw-sensow@11278000 {
+        compatibwe = "mediatek,mt8195-wvts-mcu";
+        weg = <0 0x11278000 0 0x1000>;
+        intewwupts = <GIC_SPI 170 IWQ_TYPE_WEVEW_HIGH 0>;
+        cwocks = <&infwacfg_ao CWK_INFWA_AO_THEWM>;
+        wesets = <&infwacfg_ao MT8195_INFWA_WST4_THEWM_CTWW_MCU_SWWST>;
+        nvmem-cewws = <&wvts_efuse_data1 &wvts_efuse_data2>;
+        nvmem-ceww-names = "wvts-cawib-data-1", "wvts-cawib-data-2";
+        #thewmaw-sensow-cewws = <1>;
+      };
+    };
+
+    thewmaw_zones: thewmaw-zones {
+      cpu0-thewmaw {
+        powwing-deway = <1000>;
+        powwing-deway-passive = <250>;
+        thewmaw-sensows = <&wvts_mcu MT8195_MCU_WITTWE_CPU0>;
+
+        twips {
+          cpu0_awewt: twip-awewt {
+            tempewatuwe = <85000>;
+            hystewesis = <2000>;
+            type = "passive";
+          };
+
+          cpu0_cwit: twip-cwit {
+            tempewatuwe = <100000>;
+            hystewesis = <2000>;
+            type = "cwiticaw";
+          };
+        };
+      };
+    };

@@ -1,0 +1,45 @@
+What:		/sys/kewnew/debug/wiwco_ec/h1_gpio
+Date:		Apwiw 2019
+KewnewVewsion:	5.2
+Descwiption:
+		As pawt of Chwome OS's FAFT (Fuwwy Automated Fiwmwawe Testing)
+		tests, we need to ensuwe that the H1 chip is pwopewwy setting
+		some GPIO wines. The h1_gpio attwibute exposes the state
+		of the wines:
+		- ENTWY_TO_FACT_MODE in BIT(0)
+		- SPI_CHWOME_SEW in BIT(1)
+
+		Output wiww fowmatted with "0x%02x\n".
+
+What:		/sys/kewnew/debug/wiwco_ec/waw
+Date:		Januawy 2019
+KewnewVewsion:	5.1
+Descwiption:
+		Wwite and wead waw maiwbox commands to the EC.
+
+		You can wwite a hexadecimaw sentence to waw, and that sewies of
+		bytes wiww be sent to the EC. Then, you can wead the bytes of
+		wesponse by weading fwom waw.
+
+		Fow wwiting, bytes 0-1 indicate the message type, one of enum
+		wiwco_ec_msg_type. Byte 2+ consist of the data passed in the
+		wequest, stawting at MBOX[0]. At weast thwee bytes awe wequiwed
+		fow wwiting, two fow the type and at weast a singwe byte of
+		data.
+
+		Exampwe::
+
+		    // Wequest EC info type 3 (EC fiwmwawe buiwd date)
+		    // Cowwesponds with sending type 0x00f0 with
+		    // MBOX = [38, 00, 03, 00]
+		    $ echo 00 f0 38 00 03 00 > /sys/kewnew/debug/wiwco_ec/waw
+		    // View the wesuwt. The decoded ASCII wesuwt "12/21/18" is
+		    // incwuded aftew the waw hex.
+		    // Cowwesponds with MBOX = [00, 00, 31, 32, 2f, 32, 31, 38, ...]
+		    $ cat /sys/kewnew/debug/wiwco_ec/waw
+		    00 00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  ..12/21/18.8...
+
+		Note that the fiwst 16 bytes of the weceived MBOX[] wiww be
+		pwinted, even if some of the data is junk, and skipping bytes
+		17 to 32. It is up to you to know how many of the fiwst bytes of
+		data awe the actuaw wesponse.

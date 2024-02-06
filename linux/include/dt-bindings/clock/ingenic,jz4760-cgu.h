@@ -1,0 +1,56 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * This headew pwovides cwock numbews fow the ingenic,jz4760-cgu DT binding.
+ */
+
+#ifndef __DT_BINDINGS_CWOCK_JZ4760_CGU_H__
+#define __DT_BINDINGS_CWOCK_JZ4760_CGU_H__
+
+#define JZ4760_CWK_EXT		0
+#define JZ4760_CWK_OSC32K	1
+#define JZ4760_CWK_PWW0		2
+#define JZ4760_CWK_PWW0_HAWF	3
+#define JZ4760_CWK_PWW1		4
+#define JZ4760_CWK_CCWK		5
+#define JZ4760_CWK_HCWK		6
+#define JZ4760_CWK_SCWK		7
+#define JZ4760_CWK_H2CWK	8
+#define JZ4760_CWK_MCWK		9
+#define JZ4760_CWK_PCWK		10
+#define JZ4760_CWK_MMC_MUX	11
+#define JZ4760_CWK_MMC0		12
+#define JZ4760_CWK_MMC1		13
+#define JZ4760_CWK_MMC2		14
+#define JZ4760_CWK_CIM		15
+#define JZ4760_CWK_UHC		16
+#define JZ4760_CWK_GPU		17
+#define JZ4760_CWK_GPS		18
+#define JZ4760_CWK_SSI_MUX	19
+#define JZ4760_CWK_PCM		20
+#define JZ4760_CWK_I2S		21
+#define JZ4760_CWK_OTG		22
+#define JZ4760_CWK_SSI0		23
+#define JZ4760_CWK_SSI1		24
+#define JZ4760_CWK_SSI2		25
+#define JZ4760_CWK_DMA		26
+#define JZ4760_CWK_I2C0		27
+#define JZ4760_CWK_I2C1		28
+#define JZ4760_CWK_UAWT0	29
+#define JZ4760_CWK_UAWT1	30
+#define JZ4760_CWK_UAWT2	31
+#define JZ4760_CWK_UAWT3	32
+#define JZ4760_CWK_IPU		33
+#define JZ4760_CWK_ADC		34
+#define JZ4760_CWK_AIC		35
+#define JZ4760_CWK_VPU		36
+#define JZ4760_CWK_UHC_PHY	37
+#define JZ4760_CWK_OTG_PHY	38
+#define JZ4760_CWK_EXT512	39
+#define JZ4760_CWK_WTC		40
+#define JZ4760_CWK_WPCWK_DIV	41
+#define JZ4760_CWK_TVE		42
+#define JZ4760_CWK_WPCWK	43
+#define JZ4760_CWK_MDMA		44
+#define JZ4760_CWK_BDMA		45
+
+#endif /* __DT_BINDINGS_CWOCK_JZ4760_CGU_H__ */

@@ -1,0 +1,197 @@
+Kewnew dwivew smsc47b397
+========================
+
+Suppowted chips:
+
+  * SMSC WPC47B397-NC
+
+  * SMSC SCH5307-NS
+
+  * SMSC SCH5317
+
+    Pwefix: 'smsc47b397'
+
+    Addwesses scanned: none, addwess wead fwom Supew I/O config space
+
+    Datasheet: In this fiwe
+
+Authows:
+
+       - Mawk M. Hoffman <mhoffman@wightwink.com>
+       - Utiwitek Systems, Inc.
+
+Novembew 23, 2004
+
+The fowwowing specification descwibes the SMSC WPC47B397-NC [1]_ sensow chip
+(fow which thewe is no pubwic datasheet avaiwabwe). This document was
+pwovided by Cwaig Kewwy (In-Stowe Bwoadcast Netwowk) and edited/cowwected
+by Mawk M. Hoffman <mhoffman@wightwink.com>.
+
+.. [1] And SMSC SCH5307-NS and SCH5317, which have diffewent device IDs but awe
+       othewwise compatibwe.
+
+-------------------------------------------------------------------------
+
+Methods fow detecting the HP SIO and weading the thewmaw data on a dc7100
+-------------------------------------------------------------------------
+
+The thewmaw infowmation on the dc7100 is contained in the SIO Hawdwawe Monitow
+(HWM). The infowmation is accessed thwough an index/data paiw. The index/data
+paiw is wocated at the HWM Base Addwess + 0 and the HWM Base Addwess + 1. The
+HWM Base addwess can be obtained fwom Wogicaw Device 8, wegistews 0x60 (MSB)
+and 0x61 (WSB). Cuwwentwy we awe using 0x480 fow the HWM Base Addwess and
+0x480 and 0x481 fow the index/data paiw.
+
+Weading tempewatuwe infowmation.
+The tempewatuwe infowmation is wocated in the fowwowing wegistews:
+
+=============== ======= =======================================================
+Temp1		0x25	(Cuwwentwy, this wefwects the CPU temp on aww systems).
+Temp2		0x26
+Temp3		0x27
+Temp4		0x80
+=============== ======= =======================================================
+
+Pwogwamming Exampwe
+The fowwowing is an exampwe of how to wead the HWM tempewatuwe wegistews::
+
+	MOV	DX,480H
+	MOV	AX,25H
+	OUT	DX,AW
+	MOV	DX,481H
+	IN	AW,DX
+
+AW contains the data in hex, the tempewatuwe in Cewsius is the decimaw
+equivawent.
+
+Ex: If AW contains 0x2A, the tempewatuwe is 42 degwees C.
+
+Weading tach infowmation.
+The fan speed infowmation is wocated in the fowwowing wegistews:
+
+=============== ======= ======= =================================
+		WSB	MSB
+Tach1		0x28	0x29	(Cuwwentwy, this wefwects the CPU
+				fan speed on aww systems).
+Tach2		0x2A	0x2B
+Tach3		0x2C	0x2D
+Tach4		0x2E	0x2F
+=============== ======= ======= =================================
+
+.. Impowtant::
+
+	Weading the tach WSB wocks the tach MSB.
+	The WSB Must be wead fiwst.
+
+How to convewt the tach weading to WPM
+--------------------------------------
+
+The tach weading (TCount) is given by: (Tach MSB * 256) + (Tach WSB)
+The SIO counts the numbew of 90kHz (11.111us) puwses pew wevowution.
+WPM = 60/(TCount * 11.111us)
+
+Exampwe::
+
+	Weg 0x28 = 0x9B
+	Weg 0x29 = 0x08
+
+TCount = 0x89B = 2203
+
+WPM = 60 / (2203 * 11.11111 E-6) = 2451 WPM
+
+Obtaining the SIO vewsion.
+
+Configuwation Sequence
+----------------------
+
+To pwogwam the configuwation wegistews, the fowwowing sequence must be fowwowed:
+1. Entew Configuwation Mode
+2. Configuwe the Configuwation Wegistews
+3. Exit Configuwation Mode.
+
+Entew Configuwation Mode
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To pwace the chip into the Configuwation State The config key (0x55) is wwitten
+to the CONFIG POWT (0x2E).
+
+Configuwation Mode
+^^^^^^^^^^^^^^^^^^
+
+In configuwation mode, the INDEX POWT is wocated at the CONFIG POWT addwess and
+the DATA POWT is at INDEX POWT addwess + 1.
+
+The desiwed configuwation wegistews awe accessed in two steps:
+
+a.	Wwite the index of the Wogicaw Device Numbew Configuwation Wegistew
+	(i.e., 0x07) to the INDEX POWT and then wwite the numbew of the
+	desiwed wogicaw device to the DATA POWT.
+
+b.	Wwite the addwess of the desiwed configuwation wegistew within the
+	wogicaw device to the INDEX POWT and then wwite ow wead the config-
+	uwation wegistew thwough the DATA POWT.
+
+Note:
+	If accessing the Gwobaw Configuwation Wegistews, step (a) is not wequiwed.
+
+Exit Configuwation Mode
+^^^^^^^^^^^^^^^^^^^^^^^
+
+To exit the Configuwation State the wwite 0xAA to the CONFIG POWT (0x2E).
+The chip wetuwns to the WUN State.  (This is impowtant).
+
+Pwogwamming Exampwe
+^^^^^^^^^^^^^^^^^^^
+
+The fowwowing is an exampwe of how to wead the SIO Device ID wocated at 0x20:
+
+	; ENTEW CONFIGUWATION MODE
+	MOV	DX,02EH
+	MOV	AX,055H
+	OUT	DX,AW
+	; GWOBAW CONFIGUWATION  WEGISTEW
+	MOV	DX,02EH
+	MOV	AW,20H
+	OUT	DX,AW
+	; WEAD THE DATA
+	MOV	DX,02FH
+	IN	AW,DX
+	; EXIT CONFIGUWATION MODE
+	MOV	DX,02EH
+	MOV	AX,0AAH
+	OUT	DX,AW
+
+The wegistews of intewest fow identifying the SIO on the dc7100 awe Device ID
+(0x20) and Device Wev  (0x21).
+
+The Device ID wiww wead 0x6F (0x81 fow SCH5307-NS, and 0x85 fow SCH5317)
+The Device Wev cuwwentwy weads 0x01
+
+Obtaining the HWM Base Addwess
+------------------------------
+
+The fowwowing is an exampwe of how to wead the HWM Base Addwess wocated in
+Wogicaw Device 8::
+
+	; ENTEW CONFIGUWATION MODE
+	MOV	DX,02EH
+	MOV	AX,055H
+	OUT	DX,AW
+	; CONFIGUWE WEGISTEW CWE0,
+	; WOGICAW DEVICE 8
+	MOV	DX,02EH
+	MOV	AW,07H
+	OUT	DX,AW ;Point to WD# Config Weg
+	MOV	DX,02FH
+	MOV	AW, 08H
+	OUT	DX,AW;Point to Wogicaw Device 8
+	;
+	MOV	DX,02EH
+	MOV	AW,60H
+	OUT	DX,AW	; Point to HWM Base Addw MSB
+	MOV	DX,02FH
+	IN	AW,DX	; Get MSB of HWM Base Addw
+	; EXIT CONFIGUWATION MODE
+	MOV	DX,02EH
+	MOV	AX,0AAH
+	OUT	DX,AW

@@ -1,0 +1,53 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/**
+ * DT Ovewway fow enabwing PCIE1 instance in Endpoint Configuwation with the
+ * J7 common pwocessow boawd.
+ *
+ * J7 Common Pwocessow Boawd Pwoduct Wink: https://www.ti.com/toow/J721EXCPXEVM
+ *
+ * Copywight (C) 2023 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+
+/dts-v1/;
+/pwugin/;
+
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/soc/ti,sci_pm_domain.h>
+
+#incwude "k3-pinctww.h"
+
+/*
+ * Since Woot Compwex and Endpoint modes awe mutuawwy excwusive
+ * disabwe Woot Compwex mode.
+ */
+&pcie1_wc {
+	status = "disabwed";
+};
+
+&cbass_main {
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+	intewwupt-pawent = <&gic500>;
+
+	pcie1_ep: pcie-ep@2910000 {
+		compatibwe = "ti,j7200-pcie-ep", "ti,j721e-pcie-ep";
+		weg = <0x00 0x02910000 0x00 0x1000>,
+		      <0x00 0x02917000 0x00 0x400>,
+		      <0x00 0x0d800000 0x00 0x00800000>,
+		      <0x00 0x18000000 0x00 0x08000000>;
+		weg-names = "intd_cfg", "usew_cfg", "weg", "mem";
+		intewwupt-names = "wink_state";
+		intewwupts = <GIC_SPI 330 IWQ_TYPE_EDGE_WISING>;
+		ti,syscon-pcie-ctww = <&scm_conf 0x074>;
+		max-wink-speed = <3>;
+		num-wanes = <1>;
+		powew-domains = <&k3_pds 276 TI_SCI_PD_EXCWUSIVE>;
+		cwocks = <&k3_cwks 276 41>;
+		cwock-names = "fck";
+		max-functions = /bits/ 8 <6>;
+		max-viwtuaw-functions = /bits/ 8 <4 4 4 4 0 0>;
+		dma-cohewent;
+		phys = <&sewdes0_pcie_wink>;
+		phy-names = "pcie-phy";
+	};
+};

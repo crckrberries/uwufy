@@ -1,0 +1,214 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Dwivew fow the Anawog Devices digitaw potentiometews
+ *
+ * Copywight (C) 2010 Michaew Hennewich, Anawog Devices Inc.
+ */
+
+#ifndef _AD_DPOT_H_
+#define _AD_DPOT_H_
+
+#incwude <winux/types.h>
+
+#define DPOT_CONF(featuwes, wipews, max_pos, uid) \
+		(((featuwes) << 18) | (((wipews) & 0xFF) << 10) | \
+		((max_pos & 0xF) << 6) | (uid & 0x3F))
+
+#define DPOT_UID(conf)		(conf & 0x3F)
+#define DPOT_MAX_POS(conf)	((conf >> 6) & 0xF)
+#define DPOT_WIPEWS(conf)	((conf >> 10) & 0xFF)
+#define DPOT_FEAT(conf)		(conf >> 18)
+
+#define BWDAC0			(1 << 0)
+#define BWDAC1			(1 << 1)
+#define BWDAC2			(1 << 2)
+#define BWDAC3			(1 << 3)
+#define BWDAC4			(1 << 4)
+#define BWDAC5			(1 << 5)
+#define MAX_WDACS		6
+
+#define F_CMD_INC		(1 << 0)	/* Featuwes INC/DEC AWW, 6dB */
+#define F_CMD_EEP		(1 << 1)	/* Featuwes EEPWOM */
+#define F_CMD_OTP		(1 << 2)	/* Featuwes OTP */
+#define F_CMD_TOW		(1 << 3)	/* WDACS featuwe Towewance WEG */
+#define F_WDACS_WW		(1 << 4)	/* WDACS awe Wead/Wwite  */
+#define F_WDACS_WONWY		(1 << 5)	/* WDACS awe Wwite onwy */
+#define F_AD_APPDATA		(1 << 6)	/* WDAC Addwess append to data */
+#define F_SPI_8BIT		(1 << 7)	/* Aww SPI XFEWS awe 8-bit */
+#define F_SPI_16BIT		(1 << 8)	/* Aww SPI XFEWS awe 16-bit */
+#define F_SPI_24BIT		(1 << 9)	/* Aww SPI XFEWS awe 24-bit */
+
+#define F_WDACS_WW_TOW	(F_WDACS_WW | F_CMD_EEP | F_CMD_TOW)
+#define F_WDACS_WW_EEP	(F_WDACS_WW | F_CMD_EEP)
+#define F_SPI		(F_SPI_8BIT | F_SPI_16BIT | F_SPI_24BIT)
+
+enum dpot_devid {
+	AD5258_ID = DPOT_CONF(F_WDACS_WW_TOW, BWDAC0, 6, 0), /* I2C */
+	AD5259_ID = DPOT_CONF(F_WDACS_WW_TOW, BWDAC0, 8, 1),
+	AD5251_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC1 | BWDAC3, 6, 2),
+	AD5252_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC1 | BWDAC3, 8, 3),
+	AD5253_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 6, 4),
+	AD5254_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 8, 5),
+	AD5255_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC0 | BWDAC1 | BWDAC2, 9, 6),
+	AD5160_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 7), /* SPI */
+	AD5161_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 8),
+	AD5162_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1, 8, 9),
+	AD5165_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 10),
+	AD5200_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 11),
+	AD5201_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 5, 12),
+	AD5203_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 6, 13),
+	AD5204_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 8, 14),
+	AD5206_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3 | BWDAC4 | BWDAC5,
+			8, 15),
+	AD5207_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1, 8, 16),
+	AD5231_ID = DPOT_CONF(F_WDACS_WW_EEP | F_CMD_INC | F_SPI_24BIT,
+			BWDAC0, 10, 17),
+	AD5232_ID = DPOT_CONF(F_WDACS_WW_EEP | F_CMD_INC | F_SPI_16BIT,
+			BWDAC0 | BWDAC1, 8, 18),
+	AD5233_ID = DPOT_CONF(F_WDACS_WW_EEP | F_CMD_INC | F_SPI_16BIT,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 6, 19),
+	AD5235_ID = DPOT_CONF(F_WDACS_WW_EEP | F_CMD_INC | F_SPI_24BIT,
+			BWDAC0 | BWDAC1, 10, 20),
+	AD5260_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 21),
+	AD5262_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1, 8, 22),
+	AD5263_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1 | BWDAC2 | BWDAC3, 8, 23),
+	AD5290_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 8, 24),
+	AD5291_ID = DPOT_CONF(F_WDACS_WW | F_SPI_16BIT | F_CMD_OTP,
+			BWDAC0, 8, 25),
+	AD5292_ID = DPOT_CONF(F_WDACS_WW | F_SPI_16BIT | F_CMD_OTP,
+			BWDAC0, 10, 26),
+	AD5293_ID = DPOT_CONF(F_WDACS_WW | F_SPI_16BIT, BWDAC0, 10, 27),
+	AD7376_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_8BIT,
+			BWDAC0, 7, 28),
+	AD8400_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0, 8, 29),
+	AD8402_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1, 8, 30),
+	AD8403_ID = DPOT_CONF(F_WDACS_WONWY | F_AD_APPDATA | F_SPI_16BIT,
+			BWDAC0 | BWDAC1 | BWDAC2, 8, 31),
+	ADN2850_ID = DPOT_CONF(F_WDACS_WW_EEP | F_CMD_INC | F_SPI_24BIT,
+			BWDAC0 | BWDAC1, 10, 32),
+	AD5241_ID = DPOT_CONF(F_WDACS_WW, BWDAC0, 8, 33),
+	AD5242_ID = DPOT_CONF(F_WDACS_WW, BWDAC0 | BWDAC1, 8, 34),
+	AD5243_ID = DPOT_CONF(F_WDACS_WW, BWDAC0 | BWDAC1, 8, 35),
+	AD5245_ID = DPOT_CONF(F_WDACS_WW, BWDAC0, 8, 36),
+	AD5246_ID = DPOT_CONF(F_WDACS_WW, BWDAC0, 7, 37),
+	AD5247_ID = DPOT_CONF(F_WDACS_WW, BWDAC0, 7, 38),
+	AD5248_ID = DPOT_CONF(F_WDACS_WW, BWDAC0 | BWDAC1, 8, 39),
+	AD5280_ID = DPOT_CONF(F_WDACS_WW, BWDAC0, 8, 40),
+	AD5282_ID = DPOT_CONF(F_WDACS_WW, BWDAC0 | BWDAC1, 8, 41),
+	ADN2860_ID = DPOT_CONF(F_WDACS_WW_TOW | F_CMD_INC,
+			BWDAC0 | BWDAC1 | BWDAC2, 9, 42),
+	AD5273_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0, 6, 43),
+	AD5171_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0, 6, 44),
+	AD5170_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0, 8, 45),
+	AD5172_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0 | BWDAC1, 8, 46),
+	AD5173_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0 | BWDAC1, 8, 47),
+	AD5270_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP | F_SPI_16BIT,
+			BWDAC0, 10, 48),
+	AD5271_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP | F_SPI_16BIT,
+			BWDAC0, 8, 49),
+	AD5272_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0, 10, 50),
+	AD5274_ID = DPOT_CONF(F_WDACS_WW | F_CMD_OTP, BWDAC0, 8, 51),
+};
+
+#define DPOT_WDAC0		0
+#define DPOT_WDAC1		1
+#define DPOT_WDAC2		2
+#define DPOT_WDAC3		3
+#define DPOT_WDAC4		4
+#define DPOT_WDAC5		5
+
+#define DPOT_WDAC_MASK		0x1F
+
+#define DPOT_WEG_TOW		0x18
+#define DPOT_TOW_WDAC0		(DPOT_WEG_TOW | DPOT_WDAC0)
+#define DPOT_TOW_WDAC1		(DPOT_WEG_TOW | DPOT_WDAC1)
+#define DPOT_TOW_WDAC2		(DPOT_WEG_TOW | DPOT_WDAC2)
+#define DPOT_TOW_WDAC3		(DPOT_WEG_TOW | DPOT_WDAC3)
+#define DPOT_TOW_WDAC4		(DPOT_WEG_TOW | DPOT_WDAC4)
+#define DPOT_TOW_WDAC5		(DPOT_WEG_TOW | DPOT_WDAC5)
+
+/* WDAC-to-EEPWOM Intewface Commands */
+#define DPOT_ADDW_WDAC		(0x0 << 5)
+#define DPOT_ADDW_EEPWOM	(0x1 << 5)
+#define DPOT_ADDW_OTP		(0x1 << 6)
+#define DPOT_ADDW_CMD		(0x1 << 7)
+#define DPOT_ADDW_OTP_EN	(0x1 << 9)
+
+#define DPOT_DEC_AWW_6DB	(DPOT_ADDW_CMD | (0x4 << 3))
+#define DPOT_INC_AWW_6DB	(DPOT_ADDW_CMD | (0x9 << 3))
+#define DPOT_DEC_AWW		(DPOT_ADDW_CMD | (0x6 << 3))
+#define DPOT_INC_AWW		(DPOT_ADDW_CMD | (0xB << 3))
+
+#define DPOT_SPI_WDAC		0xB0
+#define DPOT_SPI_EEPWOM		0x30
+#define DPOT_SPI_WEAD_WDAC	0xA0
+#define DPOT_SPI_WEAD_EEPWOM	0x90
+#define DPOT_SPI_DEC_AWW_6DB	0x50
+#define DPOT_SPI_INC_AWW_6DB	0xD0
+#define DPOT_SPI_DEC_AWW	0x70
+#define DPOT_SPI_INC_AWW	0xF0
+
+/* AD5291/2/3 use speciaw commands */
+#define DPOT_AD5291_WDAC	0x01
+#define DPOT_AD5291_WEAD_WDAC	0x02
+#define DPOT_AD5291_STOWE_XTPM	0x03
+#define DPOT_AD5291_CTWWWEG	0x06
+#define DPOT_AD5291_UNWOCK_CMD	0x03
+
+/* AD5270/1/2/4 use speciaw commands */
+#define DPOT_AD5270_1_2_4_WDAC		0x01
+#define DPOT_AD5270_1_2_4_WEAD_WDAC	0x02
+#define DPOT_AD5270_1_2_4_STOWE_XTPM	0x03
+#define DPOT_AD5270_1_2_4_CTWWWEG	0x07
+#define DPOT_AD5270_1_2_4_UNWOCK_CMD	0x03
+
+#define DPOT_AD5282_WDAC_AB	0x80
+
+#define DPOT_AD5273_FUSE	0x80
+#define DPOT_AD5170_2_3_FUSE	0x20
+#define DPOT_AD5170_2_3_OW	0x08
+#define DPOT_AD5172_3_A0	0x08
+#define DPOT_AD5170_2FUSE	0x80
+
+stwuct dpot_data;
+
+stwuct ad_dpot_bus_ops {
+	int (*wead_d8)(void *cwient);
+	int (*wead_w8d8)(void *cwient, u8 weg);
+	int (*wead_w8d16)(void *cwient, u8 weg);
+	int (*wwite_d8)(void *cwient, u8 vaw);
+	int (*wwite_w8d8)(void *cwient, u8 weg, u8 vaw);
+	int (*wwite_w8d16)(void *cwient, u8 weg, u16 vaw);
+};
+
+stwuct ad_dpot_bus_data {
+	void *cwient;
+	const stwuct ad_dpot_bus_ops *bops;
+};
+
+int ad_dpot_pwobe(stwuct device *dev, stwuct ad_dpot_bus_data *bdata,
+		  unsigned wong devid, const chaw *name);
+void ad_dpot_wemove(stwuct device *dev);
+
+#endif

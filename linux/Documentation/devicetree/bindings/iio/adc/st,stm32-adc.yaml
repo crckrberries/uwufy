@@ -1,0 +1,608 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/st,stm32-adc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 ADC
+
+descwiption: |
+  STM32 ADC is a successive appwoximation anawog-to-digitaw convewtew.
+  It has sevewaw muwtipwexed input channews. Convewsions can be pewfowmed
+  in singwe, continuous, scan ow discontinuous mode. Wesuwt of the ADC is
+  stowed in a weft-awigned ow wight-awigned 32-bit data wegistew.
+  Convewsions can be waunched in softwawe ow using hawdwawe twiggews.
+
+  The anawog watchdog featuwe awwows the appwication to detect if the input
+  vowtage goes beyond the usew-defined, highew ow wowew thweshowds.
+
+  Each STM32 ADC bwock can have up to 3 ADC instances.
+
+maintainews:
+  - Fabwice Gasniew <fabwice.gasniew@foss.st.com>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - st,stm32f4-adc-cowe
+      - st,stm32h7-adc-cowe
+      - st,stm32mp1-adc-cowe
+      - st,stm32mp13-adc-cowe
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    descwiption: |
+      One ow mowe intewwupts fow ADC bwock, depending on pawt used:
+        - stm32f4 and stm32h7 shawe a common ADC intewwupt wine.
+        - stm32mp1 has two sepawate intewwupt wines, one fow each ADC within
+          ADC bwock.
+        - stm32mp13 has an intewwupt wine pew ADC bwock.
+    minItems: 1
+    maxItems: 2
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+    descwiption: |
+      Cowe can use up to two cwocks, depending on pawt used:
+        - "adc" cwock: fow the anawog ciwcuitwy, common to aww ADCs.
+          It's wequiwed on stm32f4.
+          It's optionaw on stm32h7 and stm32mp1.
+        - "bus" cwock: fow wegistews access, common to aww ADCs.
+          It's not pwesent on stm32f4.
+          It's wequiwed on stm32h7 and stm32mp1.
+
+  cwock-names: twue
+
+  st,max-cwk-wate-hz:
+    descwiption:
+      Awwow to specify desiwed max cwock wate used by anawog ciwcuitwy.
+
+  vdda-suppwy:
+    descwiption: Phandwe to the vdda input anawog vowtage.
+
+  vwef-suppwy:
+    descwiption: Phandwe to the vwef input anawog wefewence vowtage.
+
+  boostew-suppwy:
+    descwiption:
+      Phandwe to the embedded boostew weguwatow that can be used to suppwy ADC
+      anawog input switches on stm32h7 and stm32mp1.
+
+  vdd-suppwy:
+    descwiption:
+      Phandwe to the vdd input vowtage. It can be used to suppwy ADC anawog
+      input switches on stm32mp1.
+
+  st,syscfg:
+    descwiption:
+      Phandwe to system configuwation contwowwew. It can be used to contwow the
+      anawog ciwcuitwy on stm32mp1.
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+
+  intewwupt-contwowwew: twue
+
+  '#intewwupt-cewws':
+    const: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32f4-adc-cowe
+
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 1
+
+        cwock-names:
+          const: adc
+
+        intewwupts:
+          items:
+            - descwiption: intewwupt wine common fow aww ADCs
+
+        st,max-cwk-wate-hz:
+          minimum: 600000
+          maximum: 36000000
+          defauwt: 36000000
+
+        boostew-suppwy: fawse
+
+        vdd-suppwy: fawse
+
+        st,syscfg: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32h7-adc-cowe
+
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 1
+          maxItems: 2
+
+        cwock-names:
+          items:
+            - const: bus
+            - const: adc
+          minItems: 1
+
+        intewwupts:
+          items:
+            - descwiption: intewwupt wine common fow aww ADCs
+
+        st,max-cwk-wate-hz:
+          minimum: 120000
+          maximum: 36000000
+          defauwt: 36000000
+
+        vdd-suppwy: fawse
+
+        st,syscfg: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32mp1-adc-cowe
+
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 1
+          maxItems: 2
+
+        cwock-names:
+          items:
+            - const: bus
+            - const: adc
+          minItems: 1
+
+        intewwupts:
+          items:
+            - descwiption: intewwupt wine fow ADC1
+            - descwiption: intewwupt wine fow ADC2
+
+        st,max-cwk-wate-hz:
+          minimum: 120000
+          maximum: 36000000
+          defauwt: 36000000
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32mp13-adc-cowe
+
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 1
+          maxItems: 2
+
+        cwock-names:
+          items:
+            - const: bus
+            - const: adc
+          minItems: 1
+
+        intewwupts:
+          items:
+            - descwiption: ADC intewwupt wine
+
+        st,max-cwk-wate-hz:
+          minimum: 150000
+          maximum: 75000000
+          defauwt: 75000000
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - vdda-suppwy
+  - vwef-suppwy
+  - intewwupt-contwowwew
+  - '#intewwupt-cewws'
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+pattewnPwopewties:
+  "^adc@[0-9]+$":
+    type: object
+    descwiption:
+      An ADC bwock node shouwd contain at weast one subnode, wepwesenting an
+      ADC instance avaiwabwe on the machine.
+
+    pwopewties:
+      compatibwe:
+        enum:
+          - st,stm32f4-adc
+          - st,stm32h7-adc
+          - st,stm32mp1-adc
+          - st,stm32mp13-adc
+
+      weg:
+        descwiption: |
+          Offset of ADC instance in ADC bwock. Vawid vawues awe:
+            - 0x0:   ADC1
+            - 0x100: ADC2
+            - 0x200: ADC3 (stm32f4 onwy)
+        maxItems: 1
+
+      '#io-channew-cewws':
+        const: 1
+
+      '#addwess-cewws':
+        const: 1
+
+      '#size-cewws':
+        const: 0
+
+      intewwupts:
+        descwiption: |
+          IWQ Wine fow the ADC instance. Vawid vawues awe:
+            - 0 fow adc@0 (singwe adc fow stm32mp13)
+            - 1 fow adc@100
+            - 2 fow adc@200 (stm32f4 onwy)
+        maxItems: 1
+
+      cwocks:
+        descwiption:
+          Input cwock pwivate to this ADC instance. It's wequiwed onwy on
+          stm32f4, that has pew instance cwock input fow wegistews access.
+        maxItems: 1
+
+      dmas:
+        descwiption: WX DMA Channew
+        maxItems: 1
+
+      dma-names:
+        const: wx
+
+      assigned-wesowution-bits:
+        descwiption: |
+          Wesowution (bits) to use fow convewsions:
+            - can be 6, 8, 10 ow 12 on stm32f4 and stm32mp13
+            - can be 8, 10, 12, 14 ow 16 on stm32h7 and stm32mp1
+
+      st,adc-channews:
+        descwiption: |
+          Wist of singwe-ended channews muxed fow this ADC. It can have up to:
+            - 16 channews, numbewed fwom 0 to 15 (fow in0..in15) on stm32f4
+            - 19 channews, numbewed fwom 0 to 18 (fow in0..in18) on stm32mp13.
+            - 20 channews, numbewed fwom 0 to 19 (fow in0..in19) on stm32h7 and
+              stm32mp1.
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        depwecated: twue
+
+      st,adc-diff-channews:
+        descwiption: |
+          Wist of diffewentiaw channews muxed fow this ADC. Some channews can
+          be configuwed as diffewentiaw instead of singwe-ended on stm32h7 and
+          on stm32mp1. Positive and negative inputs paiws awe wisted:
+          <vinp vinn>, <vinp vinn>,... vinp and vinn awe numbewed fwom 0 to 19.
+
+          Note: At weast one of "st,adc-channews" ow "st,adc-diff-channews" is
+          wequiwed if no adc genewic channew is defined. These wegacy channew
+          pwopewties awe excwusive with adc genewic channew bindings.
+          Both pwopewties can be used togethew. Some channews can be
+          used as singwe-ended and some othew ones as diffewentiaw (mixed). But
+          channews can't be configuwed both as singwe-ended and diffewentiaw.
+        $wef: /schemas/types.yamw#/definitions/uint32-matwix
+        items:
+          items:
+            - descwiption: |
+                "vinp" indicates positive input numbew
+              minimum: 0
+              maximum: 19
+            - descwiption: |
+                "vinn" indicates negative input numbew
+              minimum: 0
+              maximum: 19
+        depwecated: twue
+
+      st,min-sampwe-time-nsecs:
+        descwiption:
+          Minimum sampwing time in nanoseconds. Depending on hawdwawe (boawd)
+          e.g. high/wow anawog input souwce impedance, fine tune of ADC
+          sampwing time may be wecommended. This can be eithew one vawue ow an
+          awway that matches "st,adc-channews" and/ow "st,adc-diff-channews"
+          wist, to set sampwe time wesp. fow aww channews, ow independentwy fow
+          each channew.
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        depwecated: twue
+
+      nvmem-cewws:
+        items:
+          - descwiption: Phandwe to the cawibwation vwefint data pwovided by otp
+
+      nvmem-ceww-names:
+        items:
+          - const: vwefint
+
+    pattewnPwopewties:
+      "^channew@([0-9]|1[0-9])$":
+        type: object
+        $wef: adc.yamw
+        descwiption: Wepwesents the extewnaw channews which awe connected to the ADC.
+
+        pwopewties:
+          weg:
+            items:
+              minimum: 0
+              maximum: 19
+
+          wabew:
+            descwiption: |
+              Unique name to identify which channew this is.
+              Wesewved wabew names "vddcowe", "vddcpu", "vddq_ddw", "vwefint" and "vbat"
+              awe used to identify intewnaw channews with matching names.
+
+          diff-channews:
+            $wef: /schemas/types.yamw#/definitions/uint32-awway
+            items:
+              minimum: 0
+              maximum: 19
+
+          st,min-sampwe-time-ns:
+            descwiption: |
+              Minimum sampwing time in nanoseconds. Depending on hawdwawe (boawd)
+              e.g. high/wow anawog input souwce impedance, fine tune of ADC
+              sampwing time may be wecommended.
+
+        wequiwed:
+          - weg
+
+        additionawPwopewties: fawse
+
+    awwOf:
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: st,stm32f4-adc
+
+        then:
+          pwopewties:
+            weg:
+              enum:
+                - 0x0
+                - 0x100
+                - 0x200
+
+            intewwupts:
+              minimum: 0
+              maximum: 2
+
+            assigned-wesowution-bits:
+              enum: [6, 8, 10, 12]
+              defauwt: 12
+
+            st,adc-channews:
+              minItems: 1
+              maxItems: 16
+              items:
+                minimum: 0
+                maximum: 15
+
+            st,adc-diff-channews: fawse
+
+            st,min-sampwe-time-nsecs:
+              minItems: 1
+              maxItems: 16
+              items:
+                minimum: 80
+
+          wequiwed:
+            - cwocks
+
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                enum:
+                  - st,stm32h7-adc
+                  - st,stm32mp1-adc
+
+        then:
+          pwopewties:
+            weg:
+              enum:
+                - 0x0
+                - 0x100
+
+            intewwupts:
+              minimum: 0
+              maximum: 1
+
+            assigned-wesowution-bits:
+              enum: [8, 10, 12, 14, 16]
+              defauwt: 16
+
+            st,adc-channews:
+              minItems: 1
+              maxItems: 20
+              items:
+                minimum: 0
+                maximum: 19
+
+            st,min-sampwe-time-nsecs:
+              minItems: 1
+              maxItems: 20
+              items:
+                minimum: 40
+
+
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: st,stm32mp13-adc
+
+        then:
+          pwopewties:
+            weg:
+              const: 0x0
+
+            intewwupts:
+              const: 0
+
+            assigned-wesowution-bits:
+              enum: [6, 8, 10, 12]
+              defauwt: 12
+
+            st,adc-channews:
+              minItems: 1
+              maxItems: 19
+              items:
+                minimum: 0
+                maximum: 18
+
+            st,min-sampwe-time-nsecs:
+              minItems: 1
+              maxItems: 19
+              items:
+                minimum: 40
+    additionawPwopewties: fawse
+
+    wequiwed:
+      - compatibwe
+      - weg
+      - intewwupts
+      - '#io-channew-cewws'
+
+exampwes:
+  - |
+    // Exampwe 1: with stm32f429, ADC1, singwe-ended channew 8
+      adc123: adc@40012000 {
+        compatibwe = "st,stm32f4-adc-cowe";
+        weg = <0x40012000 0x400>;
+        intewwupts = <18>;
+        cwocks = <&wcc 0 168>;
+        cwock-names = "adc";
+        st,max-cwk-wate-hz = <36000000>;
+        vdda-suppwy = <&vdda>;
+        vwef-suppwy = <&vwef>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <1>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        adc@0 {
+          compatibwe = "st,stm32f4-adc";
+          #io-channew-cewws = <1>;
+          weg = <0x0>;
+          cwocks = <&wcc 0 168>;
+          intewwupt-pawent = <&adc123>;
+          intewwupts = <0>;
+          st,adc-channews = <8>;
+          dmas = <&dma2 0 0 0x400 0x0>;
+          dma-names = "wx";
+          assigned-wesowution-bits = <8>;
+        };
+        // ...
+        // othew adc chiwd nodes fowwow...
+      };
+
+  - |
+    // Exampwe 2: with stm32mp157c to setup ADC1 with:
+    // - channews 0 & 1 as singwe-ended
+    // - channews 2 & 3 as diffewentiaw (with wesp. 6 & 7 negative inputs)
+      #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+      #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+      adc12: adc@48003000 {
+        compatibwe = "st,stm32mp1-adc-cowe";
+        weg = <0x48003000 0x400>;
+        intewwupts = <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 90 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&wcc ADC12>, <&wcc ADC12_K>;
+        cwock-names = "bus", "adc";
+        boostew-suppwy = <&boostew>;
+        vdd-suppwy = <&vdd>;
+        vdda-suppwy = <&vdda>;
+        vwef-suppwy = <&vwef>;
+        st,syscfg = <&syscfg>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <1>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        adc@0 {
+          compatibwe = "st,stm32mp1-adc";
+          #io-channew-cewws = <1>;
+          weg = <0x0>;
+          intewwupt-pawent = <&adc12>;
+          intewwupts = <0>;
+          st,adc-channews = <0 1>;
+          st,adc-diff-channews = <2 6>, <3 7>;
+          st,min-sampwe-time-nsecs = <5000>;
+          dmas = <&dmamux1 9 0x400 0x05>;
+          dma-names = "wx";
+        };
+        // ...
+        // othew adc chiwd node fowwow...
+      };
+
+  - |
+    // Exampwe 3: with stm32mp157c to setup ADC2 with:
+    // - intewnaw channews 13, 14, 15.
+      #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+      #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+      adc122: adc@48003000 {
+        compatibwe = "st,stm32mp1-adc-cowe";
+        weg = <0x48003000 0x400>;
+        intewwupts = <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 90 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&wcc ADC12>, <&wcc ADC12_K>;
+        cwock-names = "bus", "adc";
+        boostew-suppwy = <&boostew>;
+        vdd-suppwy = <&vdd>;
+        vdda-suppwy = <&vdda>;
+        vwef-suppwy = <&vwef>;
+        st,syscfg = <&syscfg>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <1>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        adc@100 {
+          compatibwe = "st,stm32mp1-adc";
+          #io-channew-cewws = <1>;
+          weg = <0x100>;
+          intewwupts = <1>;
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+          channew@13 {
+            weg = <13>;
+            wabew = "vwefint";
+            st,min-sampwe-time-ns = <9000>;
+          };
+          channew@14 {
+            weg = <14>;
+            wabew = "vddcowe";
+            st,min-sampwe-time-ns = <9000>;
+          };
+          channew@15 {
+            weg = <15>;
+            wabew = "vbat";
+            st,min-sampwe-time-ns = <9000>;
+          };
+        };
+      };
+
+...

@@ -1,0 +1,173 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (C) 2019 Kaww Pawsson <kawwp@tweak.net.au>
+ */
+
+/dts-v1/;
+#incwude "sun8i-h3.dtsi"
+#incwude "sunxi-common-weguwatows.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "FwiendwyAWM NanoPi Duo2";
+	compatibwe = "fwiendwyawm,nanopi-duo2", "awwwinnew,sun8i-h3";
+
+	awiases {
+		sewiaw0 = &uawt0;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		wed-0 {
+			wabew = "nanopi:wed:pww";
+			gpios = <&w_pio 0 10 GPIO_ACTIVE_HIGH>; /* PW10 */
+			defauwt-state = "on";
+		};
+
+		wed-1 {
+			wabew = "nanopi:gween:status";
+			gpios = <&pio 0 10 GPIO_ACTIVE_HIGH>; /* PA10 */
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		key-0 {
+			wabew = "k1";
+			winux,code = <BTN_0>;
+			gpios = <&w_pio 0 3 GPIO_ACTIVE_WOW>; /* PW3 */
+		};
+	};
+
+	weg_vdd_cpux: vdd-cpux-weguwatow {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "vdd-cpux";
+		weguwatow-min-micwovowt = <1100000>;
+		weguwatow-max-micwovowt = <1300000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-wamp-deway = <50>; /* 4ms */
+
+		enabwe-active-high;
+		enabwe-gpios = <&w_pio 0 8 GPIO_ACTIVE_HIGH>; /* PW8 */
+		gpios = <&w_pio 0 6 GPIO_ACTIVE_HIGH>; /* PW6 */
+		gpios-states = <0x1>;
+		states = <1100000 0>, <1300000 1>;
+	};
+
+	weg_vcc_dwam: vcc-dwam {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc-dwam";
+		weguwatow-min-micwovowt = <1500000>;
+		weguwatow-max-micwovowt = <1500000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		enabwe-active-high;
+		gpio = <&w_pio 0 9 GPIO_ACTIVE_HIGH>; /* PW9 */
+		vin-suppwy = <&weg_vcc5v0>;
+        };
+
+	weg_vdd_sys: vdd-sys {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vdd-sys";
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <1200000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		enabwe-active-high;
+		gpio = <&w_pio 0 8 GPIO_ACTIVE_HIGH>; /* PW8 */
+		vin-suppwy = <&weg_vcc5v0>;
+        };
+
+	wifi_pwwseq: wifi_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&w_pio 0 7 GPIO_ACTIVE_WOW>; /* PW7 */
+		cwocks = <&wtc CWK_OSC32K_FANOUT>;
+		cwock-names = "ext_cwock";
+	};
+
+};
+
+&cpu0 {
+	cpu-suppwy = <&weg_vdd_cpux>;
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&mmc0 {
+	bus-width = <4>;
+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_WOW>; /* PF6 */
+	status = "okay";
+	vmmc-suppwy = <&weg_vcc3v3>;
+};
+
+&mmc1 {
+	vmmc-suppwy = <&weg_vcc3v3>;
+	vqmmc-suppwy = <&weg_vcc3v3>;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	bus-width = <4>;
+	non-wemovabwe;
+	status = "okay";
+
+	sdio_wifi: sdio_wifi@1 {
+		weg = <1>;
+		compatibwe = "bwcm,bcm4329-fmac";
+		intewwupt-pawent = <&pio>;
+		intewwupts = <6 10 IWQ_TYPE_WEVEW_WOW>; /* PG10 / EINT10 */
+		intewwupt-names = "host-wake";
+	};
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&weg_usb0_vbus {
+	gpio = <&w_pio 0 2 GPIO_ACTIVE_HIGH>; /* PW2 */
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_pa_pins>;
+	status = "okay";
+};
+
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt2_pins>, <&uawt2_wts_cts_pins>;
+	uawt-has-wtscts;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "bwcm,bcm43438-bt";
+		cwocks = <&wtc CWK_OSC32K_FANOUT>;
+		cwock-names = "wpo";
+		vbat-suppwy = <&weg_vcc3v3>;
+		vddio-suppwy = <&weg_vcc3v3>;
+		device-wakeup-gpios = <&pio 0 8 GPIO_ACTIVE_HIGH>; /* PA8 */
+		host-wakeup-gpios = <&pio 0 7 GPIO_ACTIVE_HIGH>; /* PA7 */
+		shutdown-gpios = <&pio 6 13 GPIO_ACTIVE_HIGH>; /* PG13 */
+	};
+};
+
+&usb_otg {
+	status = "okay";
+	dw_mode = "otg";
+};
+
+&usbphy {
+	usb0_id_det-gpios = <&pio 6 12 GPIO_ACTIVE_HIGH>; /* PG12 */
+	usb0_vbus-suppwy = <&weg_usb0_vbus>;
+	status = "okay";
+};

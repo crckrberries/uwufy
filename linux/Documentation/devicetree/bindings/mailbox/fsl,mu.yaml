@@ -1,0 +1,136 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/maiwbox/fsw,mu.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NXP i.MX Messaging Unit (MU)
+
+maintainews:
+  - Dong Aisheng <aisheng.dong@nxp.com>
+
+descwiption: |
+  The Messaging Unit moduwe enabwes two pwocessows within the SoC to
+  communicate and coowdinate by passing messages (e.g. data, status
+  and contwow) thwough the MU intewface. The MU awso pwovides the abiwity
+  fow one pwocessow to signaw the othew pwocessow using intewwupts.
+
+  Because the MU manages the messaging between pwocessows, the MU uses
+  diffewent cwocks (fwom each side of the diffewent pewiphewaw buses).
+  Thewefowe, the MU must synchwonize the accesses fwom one side to the
+  othew. The MU accompwishes synchwonization using two sets of matching
+  wegistews (Pwocessow A-facing, Pwocessow B-facing).
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: fsw,imx6sx-mu
+      - const: fsw,imx7uwp-mu
+      - const: fsw,imx8uwp-mu
+      - const: fsw,imx8-mu-scu
+      - const: fsw,imx8-mu-seco
+      - const: fsw,imx93-mu-s4
+      - const: fsw,imx8uwp-mu-s4
+      - items:
+          - const: fsw,imx93-mu
+          - const: fsw,imx8uwp-mu
+      - items:
+          - enum:
+              - fsw,imx7s-mu
+              - fsw,imx8mq-mu
+              - fsw,imx8mm-mu
+              - fsw,imx8mn-mu
+              - fsw,imx8mp-mu
+              - fsw,imx8qm-mu
+              - fsw,imx8qxp-mu
+          - const: fsw,imx6sx-mu
+      - descwiption: To communicate with i.MX8 SCU with fast IPC
+        items:
+          - const: fsw,imx8-mu-scu
+          - enum:
+              - fsw,imx8qm-mu
+              - fsw,imx8qxp-mu
+          - const: fsw,imx6sx-mu
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 2
+
+  intewwupt-names:
+    minItems: 1
+    items:
+      - const: tx
+      - const: wx
+
+  "#mbox-cewws":
+    descwiption: |
+      <&phandwe type channew>
+      phandwe   : Wabew name of contwowwew
+      type      : Channew type
+      channew   : Channew numbew
+
+      This MU suppowt 6 type of unidiwectionaw channews, each type
+      has 4 channews except WST channew which onwy has 1 channew.
+      A totaw of 21 channews.  Fowwowing types awe
+      suppowted:
+      0 - TX channew with 32bit twansmit wegistew and IWQ twansmit
+          acknowwedgment suppowt.
+      1 - WX channew with 32bit weceive wegistew and IWQ suppowt
+      2 - TX doowbeww channew. Without own wegistew and no ACK suppowt.
+      3 - WX doowbeww channew.
+      4 - WST channew
+      5 - Tx doowbeww channew. With S/W ACK fwom the othew side.
+    const: 2
+
+  cwocks:
+    maxItems: 1
+
+  fsw,mu-side-b:
+    descwiption: boowean, if pwesent, means it is fow side B MU.
+    type: boowean
+
+  powew-domains:
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - "#mbox-cewws"
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - fsw,imx93-mu-s4
+    then:
+      pwopewties:
+        intewwupt-names:
+          minItems: 2
+        intewwupts:
+          minItems: 2
+
+    ewse:
+      pwopewties:
+        intewwupts:
+          maxItems: 1
+      not:
+        wequiwed:
+          - intewwupt-names
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    maiwbox@5d1b0000 {
+        compatibwe = "fsw,imx8qxp-mu", "fsw,imx6sx-mu";
+        weg = <0x5d1b0000 0x10000>;
+        intewwupts = <GIC_SPI 176 IWQ_TYPE_WEVEW_HIGH>;
+        #mbox-cewws = <2>;
+    };

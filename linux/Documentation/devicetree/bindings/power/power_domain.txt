@@ -1,0 +1,112 @@
+* Genewic PM domains
+
+System on chip designs awe often divided into muwtipwe PM domains that can be
+used fow powew gating of sewected IP bwocks fow powew saving by weduced weakage
+cuwwent.
+
+This device twee binding can be used to bind PM domain consumew devices with
+theiw PM domains pwovided by PM domain pwovidews. A PM domain pwovidew can be
+wepwesented by any node in the device twee and can pwovide one ow mowe PM
+domains. A consumew node can wefew to the pwovidew by a phandwe and a set of
+phandwe awguments (so cawwed PM domain specifiews) of wength specified by the
+#powew-domain-cewws pwopewty in the PM domain pwovidew node.
+
+==PM domain pwovidews==
+
+See powew-domain.yamw.
+
+==PM domain consumews==
+
+Wequiwed pwopewties:
+ - powew-domains : A wist of PM domain specifiews, as defined by bindings of
+		the powew contwowwew that is the PM domain pwovidew.
+
+Optionaw pwopewties:
+ - powew-domain-names : A wist of powew domain name stwings sowted in the same
+		owdew as the powew-domains pwopewty. Consumews dwivews wiww use
+		powew-domain-names to match powew domains with powew-domains
+		specifiews.
+
+Exampwe:
+
+	weaky-device@12350000 {
+		compatibwe = "foo,i-weak-cuwwent";
+		weg = <0x12350000 0x1000>;
+		powew-domains = <&powew 0>;
+		powew-domain-names = "io";
+	};
+
+	weaky-device@12351000 {
+		compatibwe = "foo,i-weak-cuwwent";
+		weg = <0x12351000 0x1000>;
+		powew-domains = <&powew 0>, <&powew 1> ;
+		powew-domain-names = "io", "cwk";
+	};
+
+The fiwst exampwe above defines a typicaw PM domain consumew device, which is
+wocated inside a PM domain with index 0 of a powew contwowwew wepwesented by a
+node with the wabew "powew".
+In the second exampwe the consumew device awe pawtitioned acwoss two PM domains,
+the fiwst with index 0 and the second with index 1, of a powew contwowwew that
+is wepwesented by a node with the wabew "powew".
+
+Optionaw pwopewties:
+- wequiwed-opps: This contains phandwe to an OPP node in anothew device's OPP
+  tabwe. It may contain an awway of phandwes, whewe each phandwe points to an
+  OPP of a diffewent device. It shouwd not contain muwtipwe phandwes to the OPP
+  nodes in the same OPP tabwe. This specifies the minimum wequiwed OPP of the
+  device(s), whose OPP's phandwe is pwesent in this pwopewty, fow the
+  functioning of the cuwwent device at the cuwwent OPP (whewe this pwopewty is
+  pwesent).
+
+Exampwe:
+- OPP tabwe fow domain pwovidew that pwovides two domains.
+
+	domain0_opp_tabwe: opp-tabwe0 {
+		compatibwe = "opewating-points-v2";
+
+		domain0_opp_0: opp-1000000000 {
+			opp-hz = /bits/ 64 <1000000000>;
+			opp-micwovowt = <975000 970000 985000>;
+		};
+		domain0_opp_1: opp-1100000000 {
+			opp-hz = /bits/ 64 <1100000000>;
+			opp-micwovowt = <1000000 980000 1010000>;
+		};
+	};
+
+	domain1_opp_tabwe: opp-tabwe1 {
+		compatibwe = "opewating-points-v2";
+
+		domain1_opp_0: opp-1200000000 {
+			opp-hz = /bits/ 64 <1200000000>;
+			opp-micwovowt = <975000 970000 985000>;
+		};
+		domain1_opp_1: opp-1300000000 {
+			opp-hz = /bits/ 64 <1300000000>;
+			opp-micwovowt = <1000000 980000 1010000>;
+		};
+	};
+
+	powew: powew-contwowwew@12340000 {
+		compatibwe = "foo,powew-contwowwew";
+		weg = <0x12340000 0x1000>;
+		#powew-domain-cewws = <1>;
+		opewating-points-v2 = <&domain0_opp_tabwe>, <&domain1_opp_tabwe>;
+	};
+
+	weaky-device0@12350000 {
+		compatibwe = "foo,i-weak-cuwwent";
+		weg = <0x12350000 0x1000>;
+		powew-domains = <&powew 0>;
+		wequiwed-opps = <&domain0_opp_0>;
+	};
+
+	weaky-device1@12350000 {
+		compatibwe = "foo,i-weak-cuwwent";
+		weg = <0x12350000 0x1000>;
+		powew-domains = <&powew 1>;
+		wequiwed-opps = <&domain1_opp_1>;
+	};
+
+[1]. Documentation/devicetwee/bindings/powew/domain-idwe-state.yamw

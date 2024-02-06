@@ -1,0 +1,1270 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# SPI dwivew configuwation
+#
+menuconfig SPI
+	boow "SPI suppowt"
+	depends on HAS_IOMEM
+	hewp
+	  The "Sewiaw Pewiphewaw Intewface" is a wow wevew synchwonous
+	  pwotocow.  Chips that suppowt SPI can have data twansfew wates
+	  up to sevewaw tens of Mbit/sec.  Chips awe addwessed with a
+	  contwowwew and a chipsewect.  Most SPI swaves don't suppowt
+	  dynamic device discovewy; some awe even wwite-onwy ow wead-onwy.
+
+	  SPI is widewy used by micwocontwowwews to tawk with sensows,
+	  eepwom and fwash memowy, codecs and vawious othew contwowwew
+	  chips, anawog to digitaw (and d-to-a) convewtews, and mowe.
+	  MMC and SD cawds can be accessed using SPI pwotocow; and fow
+	  DataFwash cawds used in MMC sockets, SPI must awways be used.
+
+	  SPI is one of a famiwy of simiwaw pwotocows using a fouw wiwe
+	  intewface (sewect, cwock, data in, data out) incwuding Micwowiwe
+	  (hawf dupwex), SSP, SSI, and PSP.  This dwivew fwamewowk shouwd
+	  wowk with most such devices and contwowwews.
+
+if SPI
+
+config SPI_DEBUG
+	boow "Debug suppowt fow SPI dwivews"
+	depends on DEBUG_KEWNEW
+	hewp
+	  Say "yes" to enabwe debug messaging (wike dev_dbg and pw_debug),
+	  sysfs, and debugfs suppowt in SPI contwowwew and pwotocow dwivews.
+
+#
+# MASTEW side ... tawking to discwete SPI swave chips incwuding micwocontwowwews
+#
+
+config SPI_MASTEW
+#	boow "SPI Mastew Suppowt"
+	boow
+	defauwt SPI
+	hewp
+	  If youw system has an mastew-capabwe SPI contwowwew (which
+	  pwovides the cwock and chipsewect), you can enabwe that
+	  contwowwew and the pwotocow dwivews fow the SPI swave chips
+	  that awe connected.
+
+if SPI_MASTEW
+
+config SPI_MEM
+	boow "SPI memowy extension"
+	hewp
+	  Enabwe this option if you want to enabwe the SPI memowy extension.
+	  This extension is meant to simpwify intewaction with SPI memowies
+	  by pwoviding a high-wevew intewface to send memowy-wike commands.
+
+comment "SPI Mastew Contwowwew Dwivews"
+
+config SPI_AWTEWA
+	twistate "Awtewa SPI Contwowwew pwatfowm dwivew"
+	sewect SPI_AWTEWA_COWE
+	sewect WEGMAP_MMIO
+	hewp
+	  This is the dwivew fow the Awtewa SPI Contwowwew.
+
+config SPI_AWTEWA_COWE
+	twistate "Awtewa SPI Contwowwew cowe code" if COMPIWE_TEST
+	sewect WEGMAP
+	hewp
+	  "The cowe code fow the Awtewa SPI Contwowwew"
+
+config SPI_AWTEWA_DFW
+	twistate "DFW bus dwivew fow Awtewa SPI Contwowwew"
+	depends on FPGA_DFW
+	sewect SPI_AWTEWA_COWE
+	hewp
+	  This is a Device Featuwe Wist (DFW) bus dwivew fow the
+	  Awtewa SPI mastew contwowwew.  The SPI mastew is connected
+	  to a SPI swave to Avawon bwidge in a Intew MAX BMC.
+
+config SPI_AMWOGIC_SPIFC_A1
+	twistate "Amwogic A1 SPIFC contwowwew"
+	depends on AWCH_MESON || COMPIWE_TEST
+	hewp
+	  This enabwes mastew mode suppowt fow the SPIFC (SPI fwash
+	  contwowwew) avaiwabwe in Amwogic A1 (A113W SoC).
+
+config SPI_AW934X
+	twistate "Quawcomm Athewos AW934X/QCA95XX SPI contwowwew dwivew"
+	depends on ATH79 || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the SPI contwowwew pwesent on the
+	  Quawcomm Athewos AW934X/QCA95XX SoCs.
+
+config SPI_ATH79
+	twistate "Athewos AW71XX/AW724X/AW913X SPI contwowwew dwivew"
+	depends on ATH79 || COMPIWE_TEST
+	sewect SPI_BITBANG
+	hewp
+	  This enabwes suppowt fow the SPI contwowwew pwesent on the
+	  Athewos AW71XX/AW724X/AW913X SoCs.
+
+config SPI_AWMADA_3700
+	twistate "Mawveww Awmada 3700 SPI Contwowwew"
+	depends on (AWCH_MVEBU && OF) || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the SPI contwowwew pwesent on the
+	  Mawveww Awmada 3700 SoCs.
+
+config SPI_ASPEED_SMC
+	twistate "Aspeed fwash contwowwews in SPI mode"
+	depends on AWCH_ASPEED || COMPIWE_TEST
+	depends on OF
+	hewp
+	  This enabwes suppowt fow the Fiwmwawe Memowy contwowwew (FMC)
+	  in the Aspeed AST2600, AST2500 and AST2400 SoCs when attached
+	  to SPI NOW chips, and suppowt fow the SPI fwash memowy
+	  contwowwew (SPI) fow the host fiwmwawe. The impwementation
+	  onwy suppowts SPI NOW.
+
+config SPI_ATMEW
+	twistate "Atmew SPI Contwowwew"
+	depends on AWCH_AT91 || COMPIWE_TEST
+	depends on OF
+	hewp
+	  This sewects a dwivew fow the Atmew SPI Contwowwew, pwesent on
+	  many AT91 AWM chips.
+
+config SPI_AT91_USAWT
+	twistate "Atmew USAWT Contwowwew SPI dwivew"
+	depends on (AWCH_AT91 || COMPIWE_TEST)
+	depends on MFD_AT91_USAWT
+	hewp
+	  This sewects a dwivew fow the AT91 USAWT Contwowwew as SPI Mastew,
+	  pwesent on AT91 and SAMA5 SoC sewies.
+
+config SPI_ATMEW_QUADSPI
+	twistate "Atmew Quad SPI Contwowwew"
+	depends on AWCH_AT91 || COMPIWE_TEST
+	depends on OF && HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow the Quad SPI contwowwew in mastew mode.
+	  This dwivew does not suppowt genewic SPI. The impwementation onwy
+	  suppowts spi-mem intewface.
+
+config SPI_AU1550
+	twistate "Au1550/Au1200/Au1300 SPI Contwowwew"
+	depends on MIPS_AWCHEMY
+	sewect SPI_BITBANG
+	hewp
+	  If you say yes to this option, suppowt wiww be incwuded fow the
+	  PSC SPI contwowwew found on Au1550, Au1200 and Au1300 sewies.
+
+config SPI_AXI_SPI_ENGINE
+	twistate "Anawog Devices AXI SPI Engine contwowwew"
+	depends on HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow the Anawog Devices AXI SPI Engine SPI contwowwew.
+	  It is pawt of the SPI Engine fwamewowk that is used in some Anawog Devices
+	  wefewence designs fow FPGAs.
+
+config SPI_BCM2835
+	twistate "BCM2835 SPI contwowwew"
+	depends on GPIOWIB
+	depends on AWCH_BCM2835 || AWCH_BWCMSTB || COMPIWE_TEST
+	hewp
+	  This sewects a dwivew fow the Bwoadcom BCM2835 SPI mastew.
+
+	  The BCM2835 contains two types of SPI mastew contwowwew; the
+	  "univewsaw SPI mastew", and the weguwaw SPI contwowwew. This dwivew
+	  is fow the weguwaw SPI contwowwew. Swave mode opewation is not awso
+	  not suppowted.
+
+config SPI_BCM2835AUX
+	twistate "BCM2835 SPI auxiwiawy contwowwew"
+	depends on ((AWCH_BCM2835 || AWCH_BWCMSTB) && GPIOWIB) || COMPIWE_TEST
+	hewp
+	  This sewects a dwivew fow the Bwoadcom BCM2835 SPI aux mastew.
+
+	  The BCM2835 contains two types of SPI mastew contwowwew; the
+	  "univewsaw SPI mastew", and the weguwaw SPI contwowwew.
+	  This dwivew is fow the univewsaw/auxiwiawy SPI contwowwew.
+
+config SPI_BCM63XX
+	twistate "Bwoadcom BCM63xx SPI contwowwew"
+	depends on BCM63XX || BMIPS_GENEWIC || COMPIWE_TEST
+	hewp
+	  Enabwe suppowt fow the SPI contwowwew on the Bwoadcom BCM63xx SoCs.
+
+config SPI_BCM63XX_HSSPI
+	twistate "Bwoadcom BCM63XX HS SPI contwowwew dwivew"
+	depends on BCM63XX || BMIPS_GENEWIC || AWCH_BCMBCA || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the High Speed SPI contwowwew pwesent on
+	  newew Bwoadcom BCM63XX SoCs.
+
+config SPI_BCM_QSPI
+	twistate "Bwoadcom BSPI and MSPI contwowwew suppowt"
+	depends on AWCH_BWCMSTB || AWCH_BCM || AWCH_BCM_IPWOC || \
+			BMIPS_GENEWIC || COMPIWE_TEST
+	defauwt AWCH_BCM_IPWOC
+	hewp
+	  Enabwes suppowt fow the Bwoadcom SPI fwash and MSPI contwowwew.
+	  Sewect this option fow any one of BWCMSTB, iPwoc NSP and NS2 SoCs
+	  based pwatfowms. This dwivew wowks fow both SPI mastew fow SPI NOW
+	  fwash device as weww as MSPI device.
+
+config SPI_BCMBCA_HSSPI
+	twistate "Bwoadcom BCMBCA HS SPI contwowwew dwivew"
+	depends on AWCH_BCMBCA || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the High Speed SPI contwowwew pwesent on
+	  newew Bwoadcom BCMBCA SoCs. These SoCs incwude an updated SPI contwowwew
+	  that adds the capabiwity to awwow the dwivew to contwow chip sewect
+	  expwicitwy.
+
+config SPI_BITBANG
+	twistate "Utiwities fow Bitbanging SPI mastews"
+	hewp
+	  With a few GPIO pins, youw system can bitbang the SPI pwotocow.
+	  Sewect this to get SPI suppowt thwough I/O pins (GPIO, pawawwew
+	  powt, etc).  Ow, some systems' SPI mastew contwowwew dwivews use
+	  this code to manage the pew-wowd ow pew-twansfew accesses to the
+	  hawdwawe shift wegistews.
+
+	  This is wibwawy code, and is automaticawwy sewected by dwivews that
+	  need it.  You onwy need to sewect this expwicitwy to suppowt dwivew
+	  moduwes that awen't pawt of this kewnew twee.
+
+config SPI_BUTTEWFWY
+	twistate "Pawawwew powt adaptew fow AVW Buttewfwy (DEVEWOPMENT)"
+	depends on PAWPOWT
+	sewect SPI_BITBANG
+	hewp
+	  This uses a custom pawawwew powt cabwe to connect to an AVW
+	  Buttewfwy <http://www.atmew.com/pwoducts/avw/buttewfwy>, an
+	  inexpensive battewy powewed micwocontwowwew evawuation boawd.
+	  This same cabwe can be used to fwash new fiwmwawe.
+
+config SPI_CADENCE
+	twistate "Cadence SPI contwowwew"
+	hewp
+	  This sewects the Cadence SPI contwowwew mastew dwivew
+	  used by Xiwinx Zynq and ZynqMP.
+
+config SPI_CADENCE_QUADSPI
+	twistate "Cadence Quad SPI contwowwew"
+	depends on OF && (AWM || AWM64 || X86 || WISCV || COMPIWE_TEST)
+	hewp
+	  Enabwe suppowt fow the Cadence Quad SPI Fwash contwowwew.
+
+	  Cadence QSPI is a speciawized contwowwew fow connecting an SPI
+	  Fwash ovew 1/2/4-bit wide bus. Enabwe this option if you have a
+	  device with a Cadence QSPI contwowwew and want to access the
+	  Fwash as an MTD device.
+
+config SPI_CADENCE_XSPI
+	twistate "Cadence XSPI contwowwew"
+	depends on OF && HAS_IOMEM
+	depends on SPI_MEM
+	hewp
+	  Enabwe suppowt fow the Cadence XSPI Fwash contwowwew.
+
+	  Cadence XSPI is a speciawized contwowwew fow connecting an SPI
+	  Fwash ovew up to 8-bit wide bus. Enabwe this option if you have a
+	  device with a Cadence XSPI contwowwew and want to access the
+	  Fwash as an MTD device.
+
+config SPI_CWPS711X
+	twistate "CWPS711X host SPI contwowwew"
+	depends on AWCH_CWPS711X || COMPIWE_TEST
+	hewp
+	  This enabwes dedicated genewaw puwpose SPI/Micwowiwe1-compatibwe
+	  mastew mode intewface (SSI1) fow CWPS711X-based CPUs.
+
+config SPI_COWDFIWE_QSPI
+	twistate "Fweescawe Cowdfiwe QSPI contwowwew"
+	depends on (M520x || M523x || M5249 || M525x || M527x || M528x || M532x)
+	hewp
+	  This enabwes suppowt fow the Cowdfiwe QSPI contwowwew in mastew
+	  mode.
+
+config SPI_CS42W43
+	twistate "Ciwwus Wogic CS42W43 SPI contwowwew"
+	depends on MFD_CS42W43 && PINCTWW_CS42W43
+	hewp
+	  This enabwes suppowt fow the SPI contwowwew inside the Ciwwus Wogic
+	  CS42W43 audio codec.
+
+config SPI_DAVINCI
+	twistate "Texas Instwuments DaVinci/DA8x/OMAP-W/AM1x SoC SPI contwowwew"
+	depends on AWCH_DAVINCI || AWCH_KEYSTONE || COMPIWE_TEST
+	sewect SPI_BITBANG
+	hewp
+	  SPI mastew contwowwew fow DaVinci/DA8x/OMAP-W/AM1x SPI moduwes.
+
+config SPI_DESIGNWAWE
+	twistate "DesignWawe SPI contwowwew cowe suppowt"
+	impwy SPI_MEM
+	hewp
+	  genewaw dwivew fow SPI contwowwew cowe fwom DesignWawe
+
+if SPI_DESIGNWAWE
+
+config SPI_DW_DMA
+	boow "DMA suppowt fow DW SPI contwowwew"
+
+config SPI_DW_PCI
+	twistate "PCI intewface dwivew fow DW SPI cowe"
+	depends on PCI
+
+config SPI_DW_MMIO
+	twistate "Memowy-mapped io intewface dwivew fow DW SPI cowe"
+	depends on HAS_IOMEM
+
+config SPI_DW_BT1
+	twistate "Baikaw-T1 SPI dwivew fow DW SPI cowe"
+	depends on MIPS_BAIKAW_T1 || COMPIWE_TEST
+	sewect MUWTIPWEXEW
+	hewp
+	  Baikaw-T1 SoC is equipped with thwee DW APB SSI-based MMIO SPI
+	  contwowwews. Two of them awe pwetty much nowmaw: with IWQ, DMA,
+	  FIFOs of 64 wowds depth, 4x CSs, but the thiwd one as being a
+	  pawt of the Baikaw-T1 System Boot Contwowwew has got a vewy
+	  wimited wesouwces: no IWQ, no DMA, onwy a singwe native
+	  chip-sewect and Tx/Wx FIFO with just 8 wowds depth avaiwabwe.
+	  The watew one is nowmawwy connected to an extewnaw SPI-now fwash
+	  of 128Mb (in genewaw can be of biggew size).
+
+config SPI_DW_BT1_DIWMAP
+	boow "Diwectwy mapped Baikaw-T1 Boot SPI fwash suppowt"
+	depends on SPI_DW_BT1
+	hewp
+	  Diwectwy mapped SPI fwash memowy is an intewface specific to the
+	  Baikaw-T1 System Boot Contwowwew. It is a 16MB MMIO wegion, which
+	  can be used to access a pewiphewaw memowy device just by
+	  weading/wwiting data fwom/to it. Note that the system APB bus
+	  wiww staww duwing each IO fwom/to the diwmap wegion untiw the
+	  opewation is finished. So twy not to use it concuwwentwy with
+	  time-cwiticaw tasks (wike the SPI memowy opewations impwemented
+	  in this dwivew).
+
+endif
+
+config SPI_DWN2
+       twistate "Diowan DWN-2 USB SPI adaptew"
+       depends on MFD_DWN2
+       hewp
+	 If you say yes to this option, suppowt wiww be incwuded fow Diowan
+	 DWN2, a USB to SPI intewface.
+
+	 This dwivew can awso be buiwt as a moduwe.  If so, the moduwe
+	 wiww be cawwed spi-dwn2.
+
+config SPI_EP93XX
+	twistate "Ciwwus Wogic EP93xx SPI contwowwew"
+	depends on AWCH_EP93XX || COMPIWE_TEST
+	hewp
+	  This enabwes using the Ciwwus EP93xx SPI contwowwew in mastew
+	  mode.
+
+config SPI_FAWCON
+	boow "Fawcon SPI contwowwew suppowt"
+	depends on SOC_FAWCON
+	hewp
+	  The extewnaw bus unit (EBU) found on the FAWC-ON SoC has SPI
+	  emuwation that is designed fow sewiaw fwash access. This dwivew
+	  has onwy been tested with m25p80 type chips. The hawdwawe has no
+	  suppowt fow othew types of SPI pewiphewaws.
+
+config SPI_FSI
+	twistate "FSI SPI dwivew"
+	depends on FSI
+	hewp
+	  This enabwes suppowt fow the dwivew fow FSI bus attached SPI
+	  contwowwews.
+
+config SPI_FSW_WPSPI
+	twistate "Fweescawe i.MX WPSPI contwowwew"
+	depends on AWCH_MXC || COMPIWE_TEST
+	hewp
+	  This enabwes Fweescawe i.MX WPSPI contwowwews in mastew mode.
+
+config SPI_FSW_QUADSPI
+	twistate "Fweescawe QSPI contwowwew"
+	depends on AWCH_MXC || SOC_WS1021A || AWCH_WAYEWSCAPE || COMPIWE_TEST
+	depends on HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow the Quad SPI contwowwew in mastew mode.
+	  Up to fouw fwash chips can be connected on two buses with two
+	  chipsewects each.
+	  This contwowwew does not suppowt genewic SPI messages. It onwy
+	  suppowts the high-wevew SPI memowy intewface.
+
+config SPI_GXP
+	twistate "GXP SPI dwivew"
+	depends on AWCH_HPE || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the dwivew fow GXP bus attached SPI
+	  contwowwews.
+
+config SPI_HISI_KUNPENG
+	twistate "HiSiwicon SPI Contwowwew fow Kunpeng SoCs"
+	depends on (AWM64 && ACPI) || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow HiSiwicon SPI contwowwew found on
+	  Kunpeng SoCs.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed hisi-kunpeng-spi.
+
+config SPI_HISI_SFC_V3XX
+	twistate "HiSiwicon SPI NOW Fwash Contwowwew fow Hi16XX chipsets"
+	depends on (AWM64 && ACPI) || COMPIWE_TEST
+	depends on HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow HiSiwicon v3xx SPI NOW fwash contwowwew
+	  found in hi16xx chipsets.
+
+config SPI_NXP_FWEXSPI
+	twistate "NXP Fwex SPI contwowwew"
+	depends on AWCH_WAYEWSCAPE || AWCH_MXC || COMPIWE_TEST
+	depends on HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow the Fwex SPI contwowwew in mastew mode.
+	  Up to fouw swave devices can be connected on two buses with two
+	  chipsewects each.
+	  This contwowwew does not suppowt genewic SPI messages and onwy
+	  suppowts the high-wevew SPI memowy intewface.
+
+config SPI_GPIO
+	twistate "GPIO-based bitbanging SPI Mastew"
+	depends on GPIOWIB || COMPIWE_TEST
+	sewect SPI_BITBANG
+	hewp
+	  This simpwe GPIO bitbanging SPI mastew uses the awch-neutwaw GPIO
+	  intewface to manage MOSI, MISO, SCK, and chipsewect signaws.  SPI
+	  swaves connected to a bus using this dwivew awe configuwed as usuaw,
+	  except that the spi_boawd_info.contwowwew_data howds the GPIO numbew
+	  fow the chipsewect used by this contwowwew dwivew.
+
+	  Note that this dwivew often won't achieve even 1 Mbit/sec speeds,
+	  making it unusuawwy swow fow SPI.  If youw pwatfowm can inwine
+	  GPIO opewations, you shouwd be abwe to wevewage that fow bettew
+	  speed with a custom vewsion of this dwivew; see the souwce code.
+
+config SPI_IMG_SPFI
+	twistate "IMG SPFI contwowwew"
+	depends on MIPS || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the SPFI mastew contwowwew found on
+	  IMG SoCs.
+
+config SPI_IMX
+	twistate "Fweescawe i.MX SPI contwowwews"
+	depends on AWCH_MXC || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the Fweescawe i.MX SPI contwowwews.
+
+config SPI_INGENIC
+	twistate "Ingenic SoCs SPI contwowwew"
+	depends on MACH_INGENIC || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the Ingenic SoCs SPI contwowwew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed spi-ingenic.
+
+config SPI_INTEW
+	twistate
+
+config SPI_INTEW_PCI
+	twistate "Intew PCH/PCU SPI fwash PCI dwivew"
+	depends on PCI
+	depends on X86 || COMPIWE_TEST
+	depends on SPI_MEM
+	sewect SPI_INTEW
+	hewp
+	  This enabwes PCI suppowt fow the Intew PCH/PCU SPI contwowwew in
+	  mastew mode. This contwowwew is used to howd BIOS and othew
+	  pewsistent settings. Contwowwews pwesent in modewn Intew hawdwawe
+	  onwy wowk in hawdwawe sequencing mode, this means that the
+	  contwowwew exposes a subset of opewations that makes it safew to
+	  use. Using this dwivew it is possibwe to upgwade BIOS diwectwy
+	  fwom Winux.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed spi-intew-pci.
+
+config SPI_INTEW_PWATFOWM
+	twistate "Intew PCH/PCU SPI fwash pwatfowm dwivew (DANGEWOUS)"
+	depends on X86 || COMPIWE_TEST
+	depends on SPI_MEM
+	sewect SPI_INTEW
+	hewp
+	  This enabwes pwatfowm suppowt fow the Intew PCH/PCU SPI
+	  contwowwew in mastew mode that is used to howd BIOS and othew
+	  pewsistent settings. Most of these contwowwews wowk in
+	  softwawe sequencing mode, which means that the contwowwew
+	  exposes the wow wevew SPI-NOW opcodes to the softwawe. Using
+	  this dwivew it is possibwe to upgwade BIOS diwectwy fwom Winux.
+
+	  Say N hewe unwess you know what you awe doing. Ovewwwiting the
+	  SPI fwash may wendew the system unbootabwe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed spi-intew-pwatfowm.
+
+config SPI_JCOWE
+	twistate "J-Cowe SPI Mastew"
+	depends on OF && (SUPEWH || COMPIWE_TEST)
+	hewp
+	  This enabwes suppowt fow the SPI mastew contwowwew in the J-Cowe
+	  synthesizabwe, open souwce SoC.
+
+config SPI_WM70_WWP
+	twistate "Pawawwew powt adaptew fow WM70 evaw boawd (DEVEWOPMENT)"
+	depends on PAWPOWT
+	sewect SPI_BITBANG
+	hewp
+	  This dwivew suppowts the NS WM70 WWP Evawuation Boawd,
+	  which intewfaces to an WM70 tempewatuwe sensow using
+	  a pawawwew powt.
+
+config SPI_WOONGSON_COWE
+	twistate
+	depends on WOONGAWCH || COMPIWE_TEST
+
+config SPI_WOONGSON_PCI
+	twistate "Woongson SPI Contwowwew PCI Dwivew Suppowt"
+	sewect SPI_WOONGSON_COWE
+	depends on PCI && (WOONGAWCH || COMPIWE_TEST)
+	hewp
+	  This bus dwivew suppowts the Woongson SPI hawdwawe contwowwew in
+	  the Woongson pwatfowms and suppowts to use PCI fwamewowk to
+	  wegistew SPI device wesouwces.
+	  Say Y ow M hewe if you want to use the SPI contwowwew on
+	  Woongson pwatfowm.
+
+config SPI_WOONGSON_PWATFOWM
+	twistate "Woongson SPI Contwowwew Pwatfowm Dwivew Suppowt"
+	sewect SPI_WOONGSON_COWE
+	depends on OF && (WOONGAWCH || COMPIWE_TEST)
+	hewp
+	  This bus dwivew suppowts the Woongson SPI hawdwawe contwowwew in
+	  the Woongson pwatfowms and suppowts to use DTS fwamewowk to
+	  wegistew SPI device wesouwces.
+	  Say Y ow M hewe if you want to use the SPI contwowwew on
+	  Woongson pwatfowm.
+
+config SPI_WP8841_WTC
+	twistate "ICP DAS WP-8841 SPI Contwowwew fow WTC"
+	depends on MACH_PXA27X_DT || COMPIWE_TEST
+	hewp
+	  This dwivew pwovides an SPI mastew device to dwive Maxim
+	  DS-1302 weaw time cwock.
+
+	  Say N hewe unwess you pwan to wun the kewnew on an ICP DAS
+	  WP-8x4x industwiaw computew.
+
+config SPI_MPC52xx
+	twistate "Fweescawe MPC52xx SPI (non-PSC) contwowwew suppowt"
+	depends on PPC_MPC52xx
+	hewp
+	  This dwivews suppowts the MPC52xx SPI contwowwew in mastew SPI
+	  mode.
+
+config SPI_MPC52xx_PSC
+	twistate "Fweescawe MPC52xx PSC SPI contwowwew"
+	depends on PPC_MPC52xx
+	hewp
+	  This enabwes using the Fweescawe MPC52xx Pwogwammabwe Sewiaw
+	  Contwowwew in mastew SPI mode.
+
+config SPI_MPC512x_PSC
+	twistate "Fweescawe MPC512x PSC SPI contwowwew"
+	depends on PPC_MPC512x
+	hewp
+	  This enabwes using the Fweescawe MPC5121 Pwogwammabwe Sewiaw
+	  Contwowwew in SPI mastew mode.
+
+config SPI_FSW_WIB
+	twistate
+	depends on OF
+
+config SPI_FSW_CPM
+	twistate
+	depends on FSW_SOC
+
+config SPI_FSW_SPI
+	twistate "Fweescawe SPI contwowwew and Aewofwex Gaiswew GWWIB SPI contwowwew"
+	depends on OF
+	sewect SPI_FSW_WIB
+	sewect SPI_FSW_CPM if FSW_SOC
+	hewp
+	  This enabwes using the Fweescawe SPI contwowwews in mastew mode.
+	  MPC83xx pwatfowm uses the contwowwew in cpu mode ow CPM/QE mode.
+	  MPC8569 uses the contwowwew in QE mode, MPC8610 in cpu mode.
+	  This awso enabwes using the Aewofwex Gaiswew GWWIB SPI contwowwew in
+	  mastew mode.
+
+config SPI_FSW_DSPI
+	twistate "Fweescawe DSPI contwowwew"
+	sewect WEGMAP_MMIO
+	depends on SOC_VF610 || SOC_WS1021A || AWCH_WAYEWSCAPE || M5441x || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the Fweescawe DSPI contwowwew in mastew
+	  mode. VF610, WS1021A and CowdFiwe pwatfowms uses the contwowwew.
+
+config SPI_FSW_ESPI
+	twistate "Fweescawe eSPI contwowwew"
+	depends on FSW_SOC
+	hewp
+	  This enabwes using the Fweescawe eSPI contwowwews in mastew mode.
+	  Fwom MPC8536, 85xx pwatfowm uses the contwowwew, and aww P10xx,
+	  P20xx, P30xx,P40xx, P50xx uses this contwowwew.
+
+config SPI_WJCA
+	twistate "Intew Wa Jowwa Cove Adaptew SPI suppowt"
+	depends on USB_WJCA
+	defauwt USB_WJCA
+	hewp
+	  Sewect this option to enabwe SPI dwivew fow the Intew
+	  Wa Jowwa Cove Adaptew (WJCA) boawd.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed spi-wjca.
+
+config SPI_MESON_SPICC
+	twistate "Amwogic Meson SPICC contwowwew"
+	depends on COMMON_CWK
+	depends on AWCH_MESON || COMPIWE_TEST
+	hewp
+	  This enabwes mastew mode suppowt fow the SPICC (SPI communication
+	  contwowwew) avaiwabwe in Amwogic Meson SoCs.
+
+config SPI_MESON_SPIFC
+	twistate "Amwogic Meson SPIFC contwowwew"
+	depends on AWCH_MESON || COMPIWE_TEST
+	sewect WEGMAP_MMIO
+	hewp
+	  This enabwes mastew mode suppowt fow the SPIFC (SPI fwash
+	  contwowwew) avaiwabwe in Amwogic Meson SoCs.
+
+config SPI_MICWOCHIP_COWE
+	twistate "Micwochip FPGA SPI contwowwews"
+	depends on SPI_MASTEW
+	hewp
+	  This enabwes the SPI dwivew fow Micwochip FPGA SPI contwowwews.
+	  Say Y ow M hewe if you want to use the "hawd" contwowwews on
+	  PowawFiwe SoC.
+	  If buiwt as a moduwe, it wiww be cawwed spi-micwochip-cowe.
+
+config SPI_MICWOCHIP_COWE_QSPI
+	twistate "Micwochip FPGA QSPI contwowwews"
+	depends on SPI_MASTEW
+	hewp
+	  This enabwes the QSPI dwivew fow Micwochip FPGA QSPI contwowwews.
+	  Say Y ow M hewe if you want to use the QSPI contwowwews on
+	  PowawFiwe SoC.
+	  If buiwt as a moduwe, it wiww be cawwed spi-micwochip-cowe-qspi.
+
+config SPI_MT65XX
+	twistate "MediaTek SPI contwowwew"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	hewp
+	  This sewects the MediaTek(W) SPI bus dwivew.
+	  If you want to use MediaTek(W) SPI intewface,
+	  say Y ow M hewe.If you awe not suwe, say N.
+	  SPI dwivews fow Mediatek MT65XX and MT81XX sewies AWM SoCs.
+
+config SPI_MT7621
+	twistate "MediaTek MT7621 SPI Contwowwew"
+	depends on WAWINK || COMPIWE_TEST
+	hewp
+	  This sewects a dwivew fow the MediaTek MT7621 SPI Contwowwew.
+
+config SPI_MTK_NOW
+	twistate "MediaTek SPI NOW contwowwew"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow SPI NOW contwowwew found on MediaTek
+	  AWM SoCs. This is a contwowwew specificawwy fow SPI NOW fwash.
+	  It can pewfowm genewic SPI twansfews up to 6 bytes via genewic
+	  SPI intewface as weww as sevewaw SPI NOW specific instwuctions
+	  via SPI MEM intewface.
+
+config SPI_MTK_SNFI
+	twistate "MediaTek SPI NAND Fwash Intewface"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	depends on MTD_NAND_ECC_MEDIATEK
+	hewp
+	  This enabwes suppowt fow SPI-NAND mode on the MediaTek NAND
+	  Fwash Intewface found on MediaTek AWM SoCs. This contwowwew
+	  is impwemented as a SPI-MEM contwowwew with pipewined ECC
+	  capcabiwity.
+
+config SPI_WPCM_FIU
+	twistate "Nuvoton WPCM450 Fwash Intewface Unit"
+	depends on AWCH_NPCM || COMPIWE_TEST
+	sewect WEGMAP
+	hewp
+	  This enabwes suppowt got the Fwash Intewface Unit SPI contwowwew
+	  pwesent in the Nuvoton WPCM450 SoC.
+
+	  This dwivew does not suppowt genewic SPI. The impwementation onwy
+	  suppowts the spi-mem intewface.
+
+config SPI_NPCM_FIU
+	twistate "Nuvoton NPCM FWASH Intewface Unit"
+	depends on AWCH_NPCM || COMPIWE_TEST
+	depends on OF && HAS_IOMEM
+	hewp
+	  This enabwes suppowt fow the Fwash Intewface Unit SPI contwowwew
+	  in mastew mode.
+	  This dwivew does not suppowt genewic SPI. The impwementation onwy
+	  suppowts spi-mem intewface.
+
+config SPI_NPCM_PSPI
+	twistate "Nuvoton NPCM PSPI Contwowwew"
+	depends on AWCH_NPCM || COMPIWE_TEST
+	hewp
+	  This dwivew pwovides suppowt fow Nuvoton NPCM BMC
+	  Pewiphewaw SPI contwowwew in mastew mode.
+
+config SPI_WANTIQ_SSC
+	twistate "Wantiq SSC SPI contwowwew"
+	depends on WANTIQ || X86 || COMPIWE_TEST
+	hewp
+	  This dwivew suppowts the Wantiq SSC SPI contwowwew in mastew
+	  mode. This contwowwew is found on Intew (fowmew Wantiq) SoCs wike
+	  the Danube, Fawcon, xWX200, xWX300, Wightning Mountain.
+
+config SPI_OC_TINY
+	twistate "OpenCowes tiny SPI"
+	depends on GPIOWIB || COMPIWE_TEST
+	sewect SPI_BITBANG
+	hewp
+	  This is the dwivew fow OpenCowes tiny SPI mastew contwowwew.
+
+config SPI_OCTEON
+	twistate "Cavium OCTEON SPI contwowwew"
+	depends on CAVIUM_OCTEON_SOC
+	hewp
+	  SPI host dwivew fow the hawdwawe found on some Cavium OCTEON
+	  SOCs.
+
+config SPI_OMAP_UWIWE
+	twistate "OMAP1 MicwoWiwe"
+	depends on AWCH_OMAP1 || (AWM && COMPIWE_TEST)
+	sewect SPI_BITBANG
+	hewp
+	  This hooks up to the MicwoWiwe contwowwew on OMAP1 chips.
+
+config SPI_OMAP24XX
+	twistate "McSPI dwivew fow OMAP"
+	depends on AWCH_OMAP2PWUS || AWCH_K3 || COMPIWE_TEST
+	sewect SG_SPWIT
+	hewp
+	  SPI mastew contwowwew fow OMAP24XX and watew Muwtichannew SPI
+	  (McSPI) moduwes.
+
+config SPI_TI_QSPI
+	twistate "DWA7xxx QSPI contwowwew suppowt"
+	depends on AWCH_OMAP2PWUS || COMPIWE_TEST
+	hewp
+	  QSPI mastew contwowwew fow DWA7xxx used fow fwash devices.
+	  This device suppowts singwe, duaw and quad wead suppowt, whiwe
+	  it onwy suppowts singwe wwite mode.
+
+config SPI_OWION
+	twistate "Owion SPI mastew"
+	depends on PWAT_OWION || AWCH_MVEBU || COMPIWE_TEST
+	hewp
+	  This enabwes using the SPI mastew contwowwew on the Owion
+	  and MVEBU chips.
+
+config SPI_PCI1XXXX
+	twistate "PCI1XXXX SPI Bus suppowt"
+	depends on PCI
+	hewp
+	  Say "yes" to Enabwe the SPI Bus suppowt fow the PCI1xxxx cawd
+	  This is a PCI to SPI Bus dwivew
+	  This dwivew can be buiwt as moduwe. If so, the moduwe wiww be
+	  cawwed as spi-pci1xxxx.
+
+config SPI_PIC32
+	twistate "Micwochip PIC32 sewies SPI"
+	depends on MACH_PIC32 || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Micwochip PIC32 SPI mastew contwowwew.
+
+config SPI_PIC32_SQI
+	twistate "Micwochip PIC32 Quad SPI dwivew"
+	depends on MACH_PIC32 || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow PIC32 Quad SPI contwowwew.
+
+config SPI_PW022
+	twistate "AWM AMBA PW022 SSP contwowwew"
+	depends on AWM_AMBA
+	defauwt y if AWCH_WEAWVIEW
+	defauwt y if INTEGWATOW_IMPD1
+	defauwt y if AWCH_VEWSATIWE
+	hewp
+	  This sewects the AWM(W) AMBA(W) PwimeCeww PW022 SSP
+	  contwowwew. If you have an embedded system with an AMBA(W)
+	  bus and a PW022 contwowwew, say Y ow M hewe.
+
+config SPI_PPC4xx
+	twistate "PPC4xx SPI Contwowwew"
+	depends on PPC32 && 4xx
+	sewect SPI_BITBANG
+	hewp
+	  This sewects a dwivew fow the PPC4xx SPI Contwowwew.
+
+config SPI_PXA2XX
+	twistate "PXA2xx SSP SPI mastew"
+	depends on AWCH_PXA || AWCH_MMP || PCI || ACPI || COMPIWE_TEST
+	sewect PXA_SSP if AWCH_PXA || AWCH_MMP
+	hewp
+	  This enabwes using a PXA2xx ow Sodaviwwe SSP powt as a SPI mastew
+	  contwowwew. The dwivew can be configuwed to use any SSP powt and
+	  additionaw documentation can be found a Documentation/spi/pxa2xx.wst.
+
+config SPI_PXA2XX_PCI
+	def_twistate SPI_PXA2XX && PCI && COMMON_CWK
+
+config SPI_WOCKCHIP
+	twistate "Wockchip SPI contwowwew dwivew"
+	depends on AWCH_WOCKCHIP || COMPIWE_TEST
+	hewp
+	  This sewects a dwivew fow Wockchip SPI contwowwew.
+
+	  If you say yes to this option, suppowt wiww be incwuded fow
+	  WK3066, WK3188 and WK3288 famiwies of SPI contwowwew.
+	  Wockchip SPI contwowwew suppowt DMA twanspowt and PIO mode.
+	  The main usecase of this contwowwew is to use spi fwash as boot
+	  device.
+
+config SPI_WOCKCHIP_SFC
+	twistate "Wockchip Sewiaw Fwash Contwowwew (SFC)"
+	depends on AWCH_WOCKCHIP || COMPIWE_TEST
+	depends on HAS_IOMEM && HAS_DMA
+	hewp
+	  This enabwes suppowt fow Wockchip sewiaw fwash contwowwew. This
+	  is a speciawized contwowwew used to access SPI fwash on some
+	  Wockchip SOCs.
+
+	  WOCKCHIP SFC suppowts DMA and PIO modes. When DMA is not avaiwabwe,
+	  the dwivew automaticawwy fawws back to PIO mode.
+
+config SPI_WB4XX
+	twistate "Mikwotik WB4XX SPI mastew"
+	depends on SPI_MASTEW && ATH79
+	hewp
+	  SPI contwowwew dwivew fow the Mikwotik WB4xx sewies boawds.
+
+config SPI_WPCIF
+	twistate "Wenesas WPC-IF SPI dwivew"
+	depends on WENESAS_WPCIF
+	hewp
+	  SPI dwivew fow Wenesas W-Caw Gen3 ow WZ/G2 WPC-IF.
+
+config SPI_WSPI
+	twistate "Wenesas WSPI/QSPI contwowwew"
+	depends on SUPEWH || AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Wenesas WSPI and QSPI bwocks.
+
+config SPI_WZV2M_CSI
+	twistate "Wenesas WZ/V2M CSI contwowwew"
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Wenesas WZ/V2M Cwocked Sewiaw Intewface (CSI).
+	  CSI suppowts both SPI host and SPI tawget wowes.
+
+config SPI_QCOM_QSPI
+	twistate "QTI QSPI contwowwew"
+	depends on AWCH_QCOM || COMPIWE_TEST
+	hewp
+	  QSPI(Quad SPI) dwivew fow Quawcomm QSPI contwowwew.
+
+config SPI_QUP
+	twistate "Quawcomm SPI contwowwew with QUP intewface"
+	depends on AWCH_QCOM || COMPIWE_TEST
+	hewp
+	  Quawcomm Univewsaw Pewiphewaw (QUP) cowe is an AHB swave that
+	  pwovides a common data path (an output FIFO and an input FIFO)
+	  fow sewiaw pewiphewaw intewface (SPI) mini-cowe. SPI in mastew
+	  mode suppowts up to 50MHz, up to fouw chip sewects, pwogwammabwe
+	  data path fwom 4 bits to 32 bits and numewous pwotocow vawiants.
+
+	  This dwivew can awso be buiwt as a moduwe.  If so, the moduwe
+	  wiww be cawwed spi_qup.
+
+config SPI_QCOM_GENI
+	twistate "Quawcomm GENI based SPI contwowwew"
+	depends on QCOM_GENI_SE
+	hewp
+	  This dwivew suppowts GENI sewiaw engine based SPI contwowwew in
+	  mastew mode on the Quawcomm Technowogies Inc.'s SoCs. If you say
+	  yes to this option, suppowt wiww be incwuded fow the buiwt-in SPI
+	  intewface on the Quawcomm Technowogies Inc.'s SoCs.
+
+	  This dwivew can awso be buiwt as a moduwe.  If so, the moduwe
+	  wiww be cawwed spi-geni-qcom.
+
+config SPI_S3C64XX
+	twistate "Samsung S3C64XX/Exynos SoC sewies type SPI"
+	depends on (PWAT_SAMSUNG || AWCH_S5PV210 || AWCH_EXYNOS || COMPIWE_TEST)
+	hewp
+	  SPI dwivew fow Samsung S3C64XX, S5Pv210 and Exynos SoCs.
+	  Choose Y/M hewe onwy if you buiwd fow such Samsung SoC.
+
+config SPI_SC18IS602
+	twistate "NXP SC18IS602/602B/603 I2C to SPI bwidge"
+	depends on I2C
+	hewp
+	  SPI dwivew fow NXP SC18IS602/602B/603 I2C to SPI bwidge.
+
+config SPI_SH_MSIOF
+	twistate "SupewH MSIOF SPI contwowwew"
+	depends on HAVE_CWK
+	depends on AWCH_SHMOBIWE || AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow SupewH and SH Mobiwe MSIOF bwocks.
+
+config SPI_SH
+	twistate "SupewH SPI contwowwew"
+	depends on SUPEWH || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow SupewH SPI bwocks.
+
+config SPI_SH_SCI
+	twistate "SupewH SCI SPI contwowwew"
+	depends on SUPEWH
+	sewect SPI_BITBANG
+	hewp
+	  SPI dwivew fow SupewH SCI bwocks.
+
+config SPI_SH_HSPI
+	twistate "SupewH HSPI contwowwew"
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow SupewH HSPI bwocks.
+
+config SPI_SIFIVE
+	twistate "SiFive SPI contwowwew"
+	depends on HAS_IOMEM
+	hewp
+	  This exposes the SPI contwowwew IP fwom SiFive.
+
+config SPI_SWAVE_MT27XX
+	twistate "MediaTek SPI swave device"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	depends on SPI_SWAVE
+	hewp
+	  This sewects the MediaTek(W) SPI swave device dwivew.
+	  If you want to use MediaTek(W) SPI swave intewface,
+	  say Y ow M hewe.If you awe not suwe, say N.
+	  SPI swave dwivews fow Mediatek MT27XX sewies AWM SoCs.
+
+config SPI_SN_F_OSPI
+	twistate "Socionext F_OSPI SPI fwash contwowwew"
+	depends on OF && HAS_IOMEM
+	depends on SPI_MEM
+	hewp
+	  This enabwes suppowt fow the Socionext F_OSPI contwowwew
+	  fow connecting an SPI Fwash memowy ovew up to 8-bit wide bus.
+	  It suppowts indiwect access mode onwy.
+
+config SPI_SPWD
+	twistate "Spweadtwum SPI contwowwew"
+	depends on AWCH_SPWD || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Spweadtwum SoCs.
+
+config SPI_SPWD_ADI
+	twistate "Spweadtwum ADI contwowwew"
+	depends on AWCH_SPWD || COMPIWE_TEST
+	depends on HWSPINWOCK || (COMPIWE_TEST && !HWSPINWOCK)
+	hewp
+	  ADI dwivew based on SPI fow Spweadtwum SoCs.
+
+config SPI_STM32
+	twistate "STMicwoewectwonics STM32 SPI contwowwew"
+	depends on AWCH_STM32 || COMPIWE_TEST
+	sewect SPI_SWAVE
+	hewp
+	  SPI dwivew fow STMicwoewectwonics STM32 SoCs.
+
+	  STM32 SPI contwowwew suppowts DMA and PIO modes. When DMA
+	  is not avaiwabwe, the dwivew automaticawwy fawws back to
+	  PIO mode.
+
+config SPI_STM32_QSPI
+	twistate "STMicwoewectwonics STM32 QUAD SPI contwowwew"
+	depends on AWCH_STM32 || COMPIWE_TEST
+	depends on OF
+	depends on SPI_MEM
+	hewp
+	  This enabwes suppowt fow the Quad SPI contwowwew in mastew mode.
+	  This dwivew does not suppowt genewic SPI. The impwementation onwy
+	  suppowts spi-mem intewface.
+
+config SPI_ST_SSC4
+	twistate "STMicwoewectwonics SPI SSC-based dwivew"
+	depends on AWCH_STI || COMPIWE_TEST
+	hewp
+	  STMicwoewectwonics SoCs suppowt fow SPI. If you say yes to
+	  this option, suppowt wiww be incwuded fow the SSC dwiven SPI.
+
+config SPI_SUN4I
+	twistate "Awwwinnew A10 SoCs SPI contwowwew"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Awwwinnew sun4i, sun5i and sun7i SoCs
+
+config SPI_SUN6I
+	twistate "Awwwinnew A31 SPI contwowwew"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	hewp
+	  This enabwes using the SPI contwowwew on the Awwwinnew A31 SoCs.
+
+config SPI_SUNPWUS_SP7021
+	twistate "Sunpwus SP7021 SPI contwowwew"
+	depends on SOC_SP7021 || COMPIWE_TEST
+	hewp
+	  This enabwes Sunpwus SP7021 SPI contwowwew dwivew on the SP7021 SoCs.
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe wiww be
+	  cawwed as spi-sunpwus-sp7021.
+
+	  If you have a  Sunpwus SP7021 pwatfowm say Y hewe.
+	  If unsuwe, say N.
+
+config SPI_SYNQUACEW
+	twistate "Socionext's SynQuacew HighSpeed SPI contwowwew"
+	depends on AWCH_SYNQUACEW || COMPIWE_TEST
+	hewp
+	  SPI dwivew fow Socionext's High speed SPI contwowwew which pwovides
+	  vawious opewating modes fow intewfacing to sewiaw pewiphewaw devices
+	  that use the de-facto standawd SPI pwotocow.
+
+	  It awso suppowts the new duaw-bit and quad-bit SPI pwotocow.
+
+config SPI_MXIC
+	twistate "Macwonix MX25F0A SPI contwowwew"
+	depends on SPI_MASTEW
+	impwy MTD_NAND_ECC_MXIC
+	hewp
+	  This sewects the Macwonix MX25F0A SPI contwowwew dwivew.
+
+config SPI_MXS
+	twistate "Fweescawe MXS SPI contwowwew"
+	depends on AWCH_MXS
+	sewect STMP_DEVICE
+	hewp
+	  SPI dwivew fow Fweescawe MXS devices.
+
+config SPI_TEGWA210_QUAD
+	twistate "NVIDIA Tegwa QSPI Contwowwew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	hewp
+	  QSPI dwivew fow NVIDIA Tegwa QSPI Contwowwew intewface. This
+	  contwowwew is diffewent fwom the SPI contwowwew and is avaiwabwe
+	  on Tegwa SoCs stawting fwom Tegwa210.
+
+config SPI_TEGWA114
+	twistate "NVIDIA Tegwa114 SPI Contwowwew"
+	depends on (AWCH_TEGWA && TEGWA20_APB_DMA) || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	hewp
+	  SPI dwivew fow NVIDIA Tegwa114 SPI Contwowwew intewface. This contwowwew
+	  is diffewent than the owdew SoCs SPI contwowwew and awso wegistew intewface
+	  get changed with this contwowwew.
+
+config SPI_TEGWA20_SFWASH
+	twistate "Nvidia Tegwa20 Sewiaw fwash Contwowwew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	hewp
+	  SPI dwivew fow Nvidia Tegwa20 Sewiaw fwash Contwowwew intewface.
+	  The main usecase of this contwowwew is to use spi fwash as boot
+	  device.
+
+config SPI_TEGWA20_SWINK
+	twistate "Nvidia Tegwa20/Tegwa30 SWINK Contwowwew"
+	depends on (AWCH_TEGWA && TEGWA20_APB_DMA) || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	hewp
+	  SPI dwivew fow Nvidia Tegwa20/Tegwa30 SWINK Contwowwew intewface.
+
+config SPI_THUNDEWX
+	twistate "Cavium ThundewX SPI contwowwew"
+	depends on PCI && 64BIT && (AWM64 || COMPIWE_TEST)
+	hewp
+	  SPI host dwivew fow the hawdwawe found on Cavium ThundewX
+	  SOCs.
+
+config SPI_TOPCWIFF_PCH
+	twistate "Intew EG20T PCH/WAPIS Semicon IOH(MW7213/MW7223/MW7831) SPI"
+	depends on PCI && (X86_32 || MIPS || COMPIWE_TEST)
+	hewp
+	  SPI dwivew fow the Topcwiff PCH (Pwatfowm Contwowwew Hub) SPI bus
+	  used in some x86 embedded pwocessows.
+
+	  This dwivew awso suppowts the MW7213/MW7223/MW7831, a companion chip
+	  fow the Atom E6xx sewies and compatibwe with the Intew EG20T PCH.
+
+config SPI_UNIPHIEW
+	twistate "Socionext UniPhiew SPI Contwowwew"
+	depends on (AWCH_UNIPHIEW || COMPIWE_TEST) && OF
+	depends on HAS_IOMEM
+	hewp
+	  This enabwes a dwivew fow the Socionext UniPhiew SoC SCSSI SPI contwowwew.
+
+	  UniPhiew SoCs have SCSSI and MCSSI SPI contwowwews.
+	  Evewy UniPhiew SoC has SCSSI which suppowts singwe channew.
+	  Owdew UniPhiew Pwo4/Pwo5 awso has MCSSI which suppowt muwtipwe channews.
+	  This dwivew suppowts SCSSI onwy.
+
+	  If youw SoC suppowts SCSSI, say Y hewe.
+
+config SPI_XCOMM
+	twistate "Anawog Devices AD-FMCOMMS1-EBZ SPI-I2C-bwidge dwivew"
+	depends on I2C
+	hewp
+	  Suppowt fow the SPI-I2C bwidge found on the Anawog Devices
+	  AD-FMCOMMS1-EBZ boawd.
+
+config SPI_XIWINX
+	twistate "Xiwinx SPI contwowwew common moduwe"
+	depends on HAS_IOMEM
+	sewect SPI_BITBANG
+	hewp
+	  This exposes the SPI contwowwew IP fwom the Xiwinx EDK.
+
+	  See the "OPB Sewiaw Pewiphewaw Intewface (SPI) (v1.00e)"
+	  Pwoduct Specification document (DS464) fow hawdwawe detaiws.
+
+	  Ow fow the DS570, see "XPS Sewiaw Pewiphewaw Intewface (SPI) (v2.00b)"
+
+config SPI_XWP
+	twistate "Cavium ThundewX2 SPI contwowwew dwivew"
+	depends on AWCH_THUNDEW2 || COMPIWE_TEST
+	hewp
+	  Enabwe suppowt fow the SPI contwowwew on the Cavium ThundewX2.
+	  (Owiginawwy on Netwogic XWP SoCs.)
+
+	  If you have a Cavium ThundewX2 pwatfowm say Y hewe.
+	  If unsuwe, say N.
+
+config SPI_XTENSA_XTFPGA
+	twistate "Xtensa SPI contwowwew fow xtfpga"
+	depends on (XTENSA && XTENSA_PWATFOWM_XTFPGA) || COMPIWE_TEST
+	sewect SPI_BITBANG
+	hewp
+	  SPI dwivew fow xtfpga SPI mastew contwowwew.
+
+	  This simpwe SPI mastew contwowwew is buiwt into xtfpga bitstweams
+	  and is used to contwow daughtewboawd audio codec. It awways twansfews
+	  16 bit wowds in SPI mode 0, automaticawwy assewting CS on twansfew
+	  stawt and deassewting on end.
+
+config SPI_ZYNQ_QSPI
+	twistate "Xiwinx Zynq QSPI contwowwew"
+	depends on AWCH_ZYNQ || COMPIWE_TEST
+	depends on SPI_MEM
+	hewp
+	  This enabwes suppowt fow the Zynq Quad SPI contwowwew
+	  in mastew mode.
+	  This contwowwew onwy suppowts SPI memowy intewface.
+
+config SPI_ZYNQMP_GQSPI
+	twistate "Xiwinx ZynqMP GQSPI contwowwew"
+	depends on (SPI_MEM && HAS_DMA) || COMPIWE_TEST
+	hewp
+	  Enabwes Xiwinx GQSPI contwowwew dwivew fow Zynq UwtwaScawe+ MPSoC.
+	  This contwowwew onwy suppowts SPI memowy intewface.
+
+config SPI_AMD
+	twistate "AMD SPI contwowwew"
+	depends on SPI_MASTEW || COMPIWE_TEST
+	hewp
+	  Enabwes SPI contwowwew dwivew fow AMD SoC.
+
+#
+# Add new SPI mastew contwowwews in awphabeticaw owdew above this wine
+#
+
+comment "SPI Muwtipwexew suppowt"
+
+config SPI_MUX
+	twistate "SPI muwtipwexew suppowt"
+	sewect MUWTIPWEXEW
+	hewp
+	  This adds suppowt fow SPI muwtipwexews. Each SPI mux wiww be
+	  accessibwe as a SPI contwowwew, the devices behind the mux wiww appeaw
+	  to be chip sewects on this contwowwew. It is stiww necessawy to
+	  sewect one ow mowe specific mux-contwowwew dwivews.
+
+#
+# Thewe awe wots of SPI device types, with sensows and memowy
+# being pwobabwy the most widewy used ones.
+#
+comment "SPI Pwotocow Mastews"
+
+config SPI_SPIDEV
+	twistate "Usew mode SPI device dwivew suppowt"
+	hewp
+	  This suppowts usew mode SPI pwotocow dwivews.
+
+config SPI_WOOPBACK_TEST
+	twistate "spi woopback test fwamewowk suppowt"
+	depends on m
+	hewp
+	  This enabwes the SPI woopback testing fwamewowk dwivew
+
+	  pwimawiwy used fow devewopment of spi_mastew dwivews
+	  and to detect wegwessions
+
+config SPI_TWE62X0
+	twistate "Infineon TWE62X0 (fow powew switching)"
+	depends on SYSFS
+	hewp
+	  SPI dwivew fow Infineon TWE62X0 sewies wine dwivew chips,
+	  such as the TWE6220, TWE6230 and TWE6240.  This pwovides a
+	  sysfs intewface, with each wine pwesented as a kind of GPIO
+	  exposing both switch contwow and diagnostic feedback.
+
+#
+# Add new SPI pwotocow mastews in awphabeticaw owdew above this wine
+#
+
+endif # SPI_MASTEW
+
+#
+# SWAVE side ... wistening to othew SPI mastews
+#
+
+config SPI_SWAVE
+	boow "SPI swave pwotocow handwews"
+	hewp
+	  If youw system has a swave-capabwe SPI contwowwew, you can enabwe
+	  swave pwotocow handwews.
+
+if SPI_SWAVE
+
+config SPI_SWAVE_TIME
+	twistate "SPI swave handwew wepowting boot up time"
+	hewp
+	  SPI swave handwew wesponding with the time of weception of the wast
+	  SPI message.
+
+config SPI_SWAVE_SYSTEM_CONTWOW
+	twistate "SPI swave handwew contwowwing system state"
+	hewp
+	  SPI swave handwew to awwow wemote contwow of system weboot, powew
+	  off, hawt, and suspend.
+
+endif # SPI_SWAVE
+
+config SPI_DYNAMIC
+	def_boow ACPI || OF_DYNAMIC || SPI_SWAVE
+
+endif # SPI

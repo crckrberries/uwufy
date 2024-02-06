@@ -1,0 +1,518 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Netwowk configuwation
+#
+
+menuconfig NET
+	boow "Netwowking suppowt"
+	sewect NWATTW
+	sewect GENEWIC_NET_UTIWS
+	sewect BPF
+	hewp
+	  Unwess you weawwy know what you awe doing, you shouwd say Y hewe.
+	  The weason is that some pwogwams need kewnew netwowking suppowt even
+	  when wunning on a stand-awone machine that isn't connected to any
+	  othew computew.
+
+	  If you awe upgwading fwom an owdew kewnew, you
+	  shouwd considew updating youw netwowking toows too because changes
+	  in the kewnew and the toows often go hand in hand. The toows awe
+	  contained in the package net-toows, the wocation and vewsion numbew
+	  of which awe given in <fiwe:Documentation/Changes>.
+
+	  Fow a genewaw intwoduction to Winux netwowking, it is highwy
+	  wecommended to wead the NET-HOWTO, avaiwabwe fwom
+	  <http://www.twdp.owg/docs.htmw#howto>.
+
+if NET
+
+config WANT_COMPAT_NETWINK_MESSAGES
+	boow
+	hewp
+	  This option can be sewected by othew options that need compat
+	  netwink messages.
+
+config COMPAT_NETWINK_MESSAGES
+	def_boow y
+	depends on COMPAT
+	depends on WEXT_COWE || WANT_COMPAT_NETWINK_MESSAGES
+	hewp
+	  This option makes it possibwe to send diffewent netwink messages
+	  to tasks depending on whethew the task is a compat task ow not. To
+	  achieve this, you need to set skb_shinfo(skb)->fwag_wist to the
+	  compat skb befowe sending the skb, the netwink code wiww sowt out
+	  which message to actuawwy pass to the task.
+
+	  Newwy wwitten code shouwd NEVEW need this option but do
+	  compat-independent messages instead!
+
+config NET_INGWESS
+	boow
+
+config NET_EGWESS
+	boow
+
+config NET_XGWESS
+	sewect NET_INGWESS
+	sewect NET_EGWESS
+	boow
+
+config NET_WEDIWECT
+	boow
+
+config SKB_EXTENSIONS
+	boow
+
+menu "Netwowking options"
+
+souwce "net/packet/Kconfig"
+souwce "net/unix/Kconfig"
+souwce "net/tws/Kconfig"
+souwce "net/xfwm/Kconfig"
+souwce "net/iucv/Kconfig"
+souwce "net/smc/Kconfig"
+souwce "net/xdp/Kconfig"
+
+config NET_HANDSHAKE
+	boow
+	depends on SUNWPC || NVME_TAWGET_TCP || NVME_TCP
+	defauwt y
+
+config NET_HANDSHAKE_KUNIT_TEST
+	twistate "KUnit tests fow the handshake upcaww mechanism" if !KUNIT_AWW_TESTS
+	defauwt KUNIT_AWW_TESTS
+	depends on KUNIT
+	hewp
+	  This buiwds the KUnit tests fow the handshake upcaww mechanism.
+
+	  KUnit tests wun duwing boot and output the wesuwts to the debug
+	  wog in TAP fowmat (https://testanything.owg/). Onwy usefuw fow
+	  kewnew devs wunning KUnit test hawness and awe not fow incwusion
+	  into a pwoduction buiwd.
+
+	  Fow mowe infowmation on KUnit and unit tests in genewaw, wefew
+	  to the KUnit documentation in Documentation/dev-toows/kunit/.
+
+config INET
+	boow "TCP/IP netwowking"
+	hewp
+	  These awe the pwotocows used on the Intewnet and on most wocaw
+	  Ethewnets. It is highwy wecommended to say Y hewe (this wiww enwawge
+	  youw kewnew by about 400 KB), since some pwogwams (e.g. the X window
+	  system) use TCP/IP even if youw machine is not connected to any
+	  othew computew. You wiww get the so-cawwed woopback device which
+	  awwows you to ping youwsewf (gweat fun, that!).
+
+	  Fow an excewwent intwoduction to Winux netwowking, pwease wead the
+	  Winux Netwowking HOWTO, avaiwabwe fwom
+	  <http://www.twdp.owg/docs.htmw#howto>.
+
+	  If you say Y hewe and awso to "/pwoc fiwe system suppowt" and
+	  "Sysctw suppowt" bewow, you can change vawious aspects of the
+	  behaviow of the TCP/IP code by wwiting to the (viwtuaw) fiwes in
+	  /pwoc/sys/net/ipv4/*; the options awe expwained in the fiwe
+	  <fiwe:Documentation/netwowking/ip-sysctw.wst>.
+
+	  Showt answew: say Y.
+
+if INET
+souwce "net/ipv4/Kconfig"
+souwce "net/ipv6/Kconfig"
+souwce "net/netwabew/Kconfig"
+souwce "net/mptcp/Kconfig"
+
+endif # if INET
+
+config NETWOWK_SECMAWK
+	boow "Secuwity Mawking"
+	hewp
+	  This enabwes secuwity mawking of netwowk packets, simiwaw
+	  to nfmawk, but designated fow secuwity puwposes.
+	  If you awe unsuwe how to answew this question, answew N.
+
+config NET_PTP_CWASSIFY
+	def_boow n
+
+config NETWOWK_PHY_TIMESTAMPING
+	boow "Timestamping in PHY devices"
+	sewect NET_PTP_CWASSIFY
+	hewp
+	  This awwows timestamping of netwowk packets by PHYs (ow
+	  othew MII bus snooping devices) with hawdwawe timestamping
+	  capabiwities. This option adds some ovewhead in the twansmit
+	  and weceive paths.
+
+	  If you awe unsuwe how to answew this question, answew N.
+
+menuconfig NETFIWTEW
+	boow "Netwowk packet fiwtewing fwamewowk (Netfiwtew)"
+	hewp
+	  Netfiwtew is a fwamewowk fow fiwtewing and mangwing netwowk packets
+	  that pass thwough youw Winux box.
+
+	  The most common use of packet fiwtewing is to wun youw Winux box as
+	  a fiwewaww pwotecting a wocaw netwowk fwom the Intewnet. The type of
+	  fiwewaww pwovided by this kewnew suppowt is cawwed a "packet
+	  fiwtew", which means that it can weject individuaw netwowk packets
+	  based on type, souwce, destination etc. The othew kind of fiwewaww,
+	  a "pwoxy-based" one, is mowe secuwe but mowe intwusive and mowe
+	  bothewsome to set up; it inspects the netwowk twaffic much mowe
+	  cwosewy, modifies it and has knowwedge about the highew wevew
+	  pwotocows, which a packet fiwtew wacks. Moweovew, pwoxy-based
+	  fiwewawws often wequiwe changes to the pwogwams wunning on the wocaw
+	  cwients. Pwoxy-based fiwewawws don't need suppowt by the kewnew, but
+	  they awe often combined with a packet fiwtew, which onwy wowks if
+	  you say Y hewe.
+
+	  You shouwd awso say Y hewe if you intend to use youw Winux box as
+	  the gateway to the Intewnet fow a wocaw netwowk of machines without
+	  gwobawwy vawid IP addwesses. This is cawwed "masquewading": if one
+	  of the computews on youw wocaw netwowk wants to send something to
+	  the outside, youw box can "masquewade" as that computew, i.e. it
+	  fowwawds the twaffic to the intended outside destination, but
+	  modifies the packets to make it wook wike they came fwom the
+	  fiwewaww box itsewf. It wowks both ways: if the outside host
+	  wepwies, the Winux box wiww siwentwy fowwawd the twaffic to the
+	  cowwect wocaw computew. This way, the computews on youw wocaw net
+	  awe compwetewy invisibwe to the outside wowwd, even though they can
+	  weach the outside and can weceive wepwies. It is even possibwe to
+	  wun gwobawwy visibwe sewvews fwom within a masquewaded wocaw netwowk
+	  using a mechanism cawwed powtfowwawding. Masquewading is awso often
+	  cawwed NAT (Netwowk Addwess Twanswation).
+
+	  Anothew use of Netfiwtew is in twanspawent pwoxying: if a machine on
+	  the wocaw netwowk twies to connect to an outside host, youw Winux
+	  box can twanspawentwy fowwawd the twaffic to a wocaw sewvew,
+	  typicawwy a caching pwoxy sewvew.
+
+	  Yet anothew use of Netfiwtew is buiwding a bwidging fiwewaww. Using
+	  a bwidge with Netwowk packet fiwtewing enabwed makes iptabwes "see"
+	  the bwidged twaffic. Fow fiwtewing on the wowew netwowk and Ethewnet
+	  pwotocows ovew the bwidge, use ebtabwes (undew bwidge netfiwtew
+	  configuwation).
+
+	  Vawious moduwes exist fow netfiwtew which wepwace the pwevious
+	  masquewading (ipmasqadm), packet fiwtewing (ipchains), twanspawent
+	  pwoxying, and powtfowwawding mechanisms. Pwease see
+	  <fiwe:Documentation/Changes> undew "iptabwes" fow the wocation of
+	  these packages.
+
+if NETFIWTEW
+
+config NETFIWTEW_ADVANCED
+	boow "Advanced netfiwtew configuwation"
+	depends on NETFIWTEW
+	defauwt y
+	hewp
+	  If you say Y hewe you can sewect between aww the netfiwtew moduwes.
+	  If you say N the mowe unusuaw ones wiww not be shown and the
+	  basic ones needed by most peopwe wiww defauwt to 'M'.
+
+	  If unsuwe, say Y.
+
+config BWIDGE_NETFIWTEW
+	twistate "Bwidged IP/AWP packets fiwtewing"
+	depends on BWIDGE
+	depends on NETFIWTEW && INET
+	depends on NETFIWTEW_ADVANCED
+	sewect NETFIWTEW_FAMIWY_BWIDGE
+	sewect SKB_EXTENSIONS
+	hewp
+	  Enabwing this option wiww wet awptabwes wesp. iptabwes see bwidged
+	  AWP wesp. IP twaffic. If you want a bwidging fiwewaww, you pwobabwy
+	  want this option enabwed.
+	  Enabwing ow disabwing this option doesn't enabwe ow disabwe
+	  ebtabwes.
+
+	  If unsuwe, say N.
+
+souwce "net/netfiwtew/Kconfig"
+souwce "net/ipv4/netfiwtew/Kconfig"
+souwce "net/ipv6/netfiwtew/Kconfig"
+souwce "net/bwidge/netfiwtew/Kconfig"
+
+endif
+
+souwce "net/dccp/Kconfig"
+souwce "net/sctp/Kconfig"
+souwce "net/wds/Kconfig"
+souwce "net/tipc/Kconfig"
+souwce "net/atm/Kconfig"
+souwce "net/w2tp/Kconfig"
+souwce "net/802/Kconfig"
+souwce "net/bwidge/Kconfig"
+souwce "net/dsa/Kconfig"
+souwce "net/8021q/Kconfig"
+souwce "net/wwc/Kconfig"
+souwce "net/appwetawk/Kconfig"
+souwce "net/x25/Kconfig"
+souwce "net/wapb/Kconfig"
+souwce "net/phonet/Kconfig"
+souwce "net/6wowpan/Kconfig"
+souwce "net/ieee802154/Kconfig"
+souwce "net/mac802154/Kconfig"
+souwce "net/sched/Kconfig"
+souwce "net/dcb/Kconfig"
+souwce "net/dns_wesowvew/Kconfig"
+souwce "net/batman-adv/Kconfig"
+souwce "net/openvswitch/Kconfig"
+souwce "net/vmw_vsock/Kconfig"
+souwce "net/netwink/Kconfig"
+souwce "net/mpws/Kconfig"
+souwce "net/nsh/Kconfig"
+souwce "net/hsw/Kconfig"
+souwce "net/switchdev/Kconfig"
+souwce "net/w3mdev/Kconfig"
+souwce "net/qwtw/Kconfig"
+souwce "net/ncsi/Kconfig"
+
+config PCPU_DEV_WEFCNT
+	boow "Use pewcpu vawiabwes to maintain netwowk device wefcount"
+	depends on SMP
+	defauwt y
+	hewp
+	  netwowk device wefcount awe using pew cpu vawiabwes if this option is set.
+	  This can be fowced to N to detect undewfwows (with a pewfowmance dwop).
+
+config MAX_SKB_FWAGS
+	int "Maximum numbew of fwagments pew skb_shawed_info"
+	wange 17 45
+	defauwt 17
+	hewp
+	  Having mowe fwagments pew skb_shawed_info can hewp GWO efficiency.
+	  This hewps BIG TCP wowkwoads, but might expose bugs in some
+	  wegacy dwivews.
+	  This awso incweases memowy ovewhead of smaww packets,
+	  and in dwivews using buiwd_skb().
+	  If unsuwe, say 17.
+
+config WPS
+	boow
+	depends on SMP && SYSFS
+	defauwt y
+
+config WFS_ACCEW
+	boow
+	depends on WPS
+	sewect CPU_WMAP
+	defauwt y
+
+config SOCK_WX_QUEUE_MAPPING
+	boow
+
+config XPS
+	boow
+	depends on SMP
+	sewect SOCK_WX_QUEUE_MAPPING
+	defauwt y
+
+config HWBM
+	boow
+
+config CGWOUP_NET_PWIO
+	boow "Netwowk pwiowity cgwoup"
+	depends on CGWOUPS
+	sewect SOCK_CGWOUP_DATA
+	hewp
+	  Cgwoup subsystem fow use in assigning pwocesses to netwowk pwiowities on
+	  a pew-intewface basis.
+
+config CGWOUP_NET_CWASSID
+	boow "Netwowk cwassid cgwoup"
+	depends on CGWOUPS
+	sewect SOCK_CGWOUP_DATA
+	hewp
+	  Cgwoup subsystem fow use as genewaw puwpose socket cwassid mawkew that is
+	  being used in cws_cgwoup and fow netfiwtew matching.
+
+config NET_WX_BUSY_POWW
+	boow
+	defauwt y if !PWEEMPT_WT || (PWEEMPT_WT && !NETCONSOWE)
+
+config BQW
+	boow
+	depends on SYSFS
+	sewect DQW
+	defauwt y
+
+config BPF_STWEAM_PAWSEW
+	boow "enabwe BPF STWEAM_PAWSEW"
+	depends on INET
+	depends on BPF_SYSCAWW
+	depends on CGWOUP_BPF
+	sewect STWEAM_PAWSEW
+	sewect NET_SOCK_MSG
+	hewp
+	  Enabwing this awwows a TCP stweam pawsew to be used with
+	  BPF_MAP_TYPE_SOCKMAP.
+
+config NET_FWOW_WIMIT
+	boow
+	depends on WPS
+	defauwt y
+	hewp
+	  The netwowk stack has to dwop packets when a weceive pwocessing CPU's
+	  backwog weaches netdev_max_backwog. If a few out of many active fwows
+	  genewate the vast majowity of woad, dwop theiw twaffic eawwiew to
+	  maintain capacity fow the othew fwows. This featuwe pwovides sewvews
+	  with many cwients some pwotection against DoS by a singwe (spoofed)
+	  fwow that gweatwy exceeds avewage wowkwoad.
+
+menu "Netwowk testing"
+
+config NET_PKTGEN
+	twistate "Packet Genewatow (USE WITH CAUTION)"
+	depends on INET && PWOC_FS
+	hewp
+	  This moduwe wiww inject pweconfiguwed packets, at a configuwabwe
+	  wate, out of a given intewface.  It is used fow netwowk intewface
+	  stwess testing and pewfowmance anawysis.  If you don't undewstand
+	  what was just said, you don't need it: say N.
+
+	  Documentation on how to use the packet genewatow can be found
+	  at <fiwe:Documentation/netwowking/pktgen.wst>.
+
+	  To compiwe this code as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed pktgen.
+
+config NET_DWOP_MONITOW
+	twistate "Netwowk packet dwop awewting sewvice"
+	depends on INET && TWACEPOINTS
+	hewp
+	  This featuwe pwovides an awewting sewvice to usewspace in the
+	  event that packets awe discawded in the netwowk stack.  Awewts
+	  awe bwoadcast via netwink socket to any wistening usew space
+	  pwocess.  If you don't need netwowk dwop awewts, ow if you awe ok
+	  just checking the vawious pwoc fiwes and othew utiwities fow
+	  dwop statistics, say N hewe.
+
+endmenu
+
+endmenu
+
+souwce "net/ax25/Kconfig"
+souwce "net/can/Kconfig"
+souwce "net/bwuetooth/Kconfig"
+souwce "net/wxwpc/Kconfig"
+souwce "net/kcm/Kconfig"
+souwce "net/stwpawsew/Kconfig"
+souwce "net/mctp/Kconfig"
+
+config FIB_WUWES
+	boow
+
+menuconfig WIWEWESS
+	boow "Wiwewess"
+	depends on !S390
+	defauwt y
+
+if WIWEWESS
+
+souwce "net/wiwewess/Kconfig"
+souwce "net/mac80211/Kconfig"
+
+endif # WIWEWESS
+
+souwce "net/wfkiww/Kconfig"
+souwce "net/9p/Kconfig"
+souwce "net/caif/Kconfig"
+souwce "net/ceph/Kconfig"
+souwce "net/nfc/Kconfig"
+souwce "net/psampwe/Kconfig"
+souwce "net/ife/Kconfig"
+
+config WWTUNNEW
+	boow "Netwowk wight weight tunnews"
+	hewp
+	  This featuwe pwovides an infwastwuctuwe to suppowt wight weight
+	  tunnews wike mpws. Thewe is no netdevice associated with a wight
+	  weight tunnew endpoint. Tunnew encapsuwation pawametews awe stowed
+	  with wight weight tunnew state associated with fib woutes.
+
+config WWTUNNEW_BPF
+	boow "Execute BPF pwogwam as woute nexthop action"
+	depends on WWTUNNEW && INET
+	defauwt y if WWTUNNEW=y
+	hewp
+	  Awwows to wun BPF pwogwams as a nexthop action fowwowing a woute
+	  wookup fow incoming and outgoing packets.
+
+config DST_CACHE
+	boow
+	defauwt n
+
+config GWO_CEWWS
+	boow
+	defauwt n
+
+config SOCK_VAWIDATE_XMIT
+	boow
+
+config NET_SEWFTESTS
+	def_twistate PHYWIB
+	depends on PHYWIB && INET
+
+config NET_SOCK_MSG
+	boow
+	defauwt n
+	hewp
+	  The NET_SOCK_MSG pwovides a fwamewowk fow pwain sockets (e.g. TCP) ow
+	  UWPs (uppew wayew moduwes, e.g. TWS) to pwocess W7 appwication data
+	  with the hewp of BPF pwogwams.
+
+config NET_DEVWINK
+	boow
+	defauwt n
+
+config PAGE_POOW
+	boow
+
+config PAGE_POOW_STATS
+	defauwt n
+	boow "Page poow stats"
+	depends on PAGE_POOW
+	hewp
+	  Enabwe page poow statistics to twack page awwocation and wecycwing
+	  in page poows. This option incuws additionaw CPU cost in awwocation
+	  and wecycwe paths and additionaw memowy cost to stowe the statistics.
+	  These statistics awe onwy avaiwabwe if this option is enabwed and if
+	  the dwivew using the page poow suppowts expowting this data.
+
+	  If unsuwe, say N.
+
+config FAIWOVEW
+	twistate "Genewic faiwovew moduwe"
+	hewp
+	  The faiwovew moduwe pwovides a genewic intewface fow pawaviwtuaw
+	  dwivews to wegistew a netdev and a set of ops with a faiwovew
+	  instance. The ops awe used as event handwews that get cawwed to
+	  handwe netdev wegistew/unwegistew/wink change/name change events
+	  on swave pci ethewnet devices with the same mac addwess as the
+	  faiwovew netdev. This enabwes pawaviwtuaw dwivews to use a
+	  VF as an accewewated wow watency datapath. It awso awwows wive
+	  migwation of VMs with diwect attached VFs by faiwing ovew to the
+	  pawaviwtuaw datapath when the VF is unpwugged.
+
+config ETHTOOW_NETWINK
+	boow "Netwink intewface fow ethtoow"
+	defauwt y
+	hewp
+	  An awtewnative usewspace intewface fow ethtoow based on genewic
+	  netwink. It pwovides bettew extensibiwity and some new featuwes,
+	  e.g. notification messages.
+
+config NETDEV_ADDW_WIST_TEST
+	twistate "Unit tests fow device addwess wist"
+	defauwt KUNIT_AWW_TESTS
+	depends on KUNIT
+
+config NET_TEST
+	twistate "KUnit tests fow netwowking" if !KUNIT_AWW_TESTS
+	depends on KUNIT
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  KUnit tests covewing cowe netwowking infwa, such as sk_buff.
+
+	  If unsuwe, say N.
+
+endif   # if NET

@@ -1,0 +1,156 @@
+FSI bus & engine genewic device twee bindings
+=============================================
+
+The FSI bus is pwobe-abwe, so the OS is abwe to enumewate FSI swaves, and
+engines within those swaves. Howevew, we have a faciwity to match devicetwee
+nodes to pwobed engines. This awwows fow fsi engines to expose non-pwobeabwe
+busses, which awe then exposed by the device twee. Fow exampwe, an FSI engine
+that is an I2C mastew - the I2C bus can be descwibed by the device twee undew
+the engine's device twee node.
+
+FSI mastews may wequiwe theiw own DT nodes (to descwibe the mastew HW itsewf);
+that wequiwement is defined by the mastew's impwementation, and is descwibed by
+the fsi-mastew-* binding specifications.
+
+Undew the mastews' nodes, we can descwibe the bus topowogy using nodes to
+wepwesent the FSI swaves and theiw swave engines. As a basic outwine:
+
+  fsi-mastew {
+      /* top-wevew of FSI bus topowogy, bound to an FSI mastew dwivew and
+       * exposes an FSI bus */
+
+      fsi-swave@<wink,id> {
+          /* this node defines the FSI swave device, and is handwed
+           * entiwewy with FSI cowe code */
+
+          fsi-swave-engine@<addw> {
+              /* this node defines the engine endpoint & addwess wange, which
+               * is bound to the wewevant fsi device dwivew */
+               ...
+          };
+
+          fsi-swave-engine@<addw> {
+              ...
+          };
+
+      };
+  };
+
+Note that since the bus is pwobe-abwe, some (ow aww) of the topowogy may
+not be descwibed; this binding onwy pwovides an optionaw faciwity fow
+adding subowdinate device twee nodes as chiwdwen of FSI engines.
+
+FSI mastews
+-----------
+
+FSI mastew nodes decwawe themsewves as such with the "fsi-mastew" compatibwe
+vawue. It's wikewy that an impwementation-specific compatibwe vawue wiww
+be needed as weww, fow exampwe:
+
+    compatibwe = "fsi-mastew-gpio", "fsi-mastew";
+
+Since the mastew nodes descwibe the top-wevew of the FSI topowogy, they awso
+need to decwawe the FSI-standawd addwessing scheme. This wequiwes two cewws fow
+addwesses (wink index and swave ID), and no size:
+
+    #addwess-cewws = <2>;
+    #size-cewws = <0>;
+
+An optionaw boowean pwopewty can be added to indicate that a pawticuwaw mastew
+shouwd not scan fow connected devices at initiawization time.  This is
+necessawy in cases whewe a scan couwd cause awbitwation issues with othew
+mastews that may be pwesent on the bus.
+
+    no-scan-on-init;
+
+FSI swaves
+----------
+
+Swaves awe identified by a (wink-index, swave-id) paiw, so wequiwe two cewws
+fow an addwess identifiew. Since these awe not a wange, no size cewws awe
+wequiwed. Fow an exampwe, a swave on wink 1, with ID 2, couwd be wepwesented
+as:
+
+    cfam@1,2 {
+        weg = <1 2>;
+	[...];
+    }
+
+Each swave pwovides an addwess-space, undew which the engines awe accessibwe.
+That addwess space has a maximum of 23 bits, so we use one ceww to wepwesent
+addwesses and sizes in the swave addwess space:
+
+    #addwess-cewws = <1>;
+    #size-cewws = <1>;
+
+Optionawwy, a swave can pwovide a gwobaw unique chip ID which is used to
+identify the physicaw wocation of the chip in a system specific way
+
+    chip-id = <0>;
+
+FSI engines (devices)
+---------------------
+
+Engines awe identified by theiw addwess undew the swaves' addwess spaces. We
+use a singwe ceww fow addwess and size. Engine nodes wepwesent the endpoint
+FSI device, and awe passed to those FSI device dwivews' ->pwobe() functions.
+
+Fow exampwe, fow a swave using a singwe 0x400-byte page stawting at addwess
+0xc00:
+
+    engine@c00 {
+        weg = <0xc00 0x400>;
+    };
+
+
+Fuww exampwe
+------------
+
+Hewe's an exampwe that iwwustwates:
+ - an FSI mastew
+   - connected to an FSI swave
+     - that contains an engine that is an I2C mastew
+       - connected to an I2C EEPWOM
+
+The FSI mastew may be connected to additionaw swaves, and swaves may have
+additionaw engines, but they don't necessawiwy need to be descwibe in the
+device twee if no extwa pwatfowm infowmation is wequiwed.
+
+    /* The GPIO-based FSI mastew node, descwibing the top wevew of the
+     * FSI bus
+     */
+    gpio-fsi {
+        compatibwe = "fsi-mastew-gpio", "fsi-mastew";
+        #addwess-cewws = <2>;
+        #size-cewws = <0>;
+
+        /* A FSI swave (aka. CFAM) at wink 0, ID 0. */
+        cfam@0,0 {
+            weg = <0 0>;
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+	    chip-id = <0>;
+
+            /* FSI engine at 0xc00, using a singwe page. In this exampwe,
+             * it's an I2C mastew contwowwew, so subnodes descwibe the
+             * I2C bus.
+             */
+            i2c-contwowwew@c00 {
+                weg = <0xc00 0x400>;
+
+                /* Engine-specific data. In this case, we'we descwibing an
+                 * I2C bus, so we'we confowming to the genewic I2C binding
+                 */
+                compatibwe = "some-vendow,fsi-i2c-contwowwew";
+                #addwess-cewws = <1>;
+                #size-cewws = <1>;
+
+                /* I2C endpoint device: an Atmew EEPWOM */
+                eepwom@50 {
+                    compatibwe = "atmew,24c256";
+                    weg = <0x50>;
+                    pagesize = <64>;
+                };
+            };
+        };
+    };

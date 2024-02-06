@@ -1,0 +1,656 @@
+/*
+ * Copywight (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
+ * Copywight (C) 2021 Tobias Schwamm <t.schwamm@manjawo.owg>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/cwock/sun6i-wtc.h>
+#incwude <dt-bindings/cwock/sun8i-v3s-ccu.h>
+#incwude <dt-bindings/weset/sun8i-v3s-ccu.h>
+#incwude <dt-bindings/cwock/sun8i-de2.h>
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	intewwupt-pawent = <&gic>;
+
+	chosen {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		fwamebuffew-wcd {
+			compatibwe = "awwwinnew,simpwe-fwamebuffew",
+				     "simpwe-fwamebuffew";
+			awwwinnew,pipewine = "mixew0-wcd0";
+			cwocks = <&dispway_cwocks CWK_MIXEW0>,
+				 <&ccu CWK_TCON0>;
+			status = "disabwed";
+		};
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu@0 {
+			compatibwe = "awm,cowtex-a7";
+			device_type = "cpu";
+			weg = <0>;
+			cwocks = <&ccu CWK_CPU>;
+		};
+	};
+
+	de: dispway-engine {
+		compatibwe = "awwwinnew,sun8i-v3s-dispway-engine";
+		awwwinnew,pipewines = <&mixew0>;
+		status = "disabwed";
+	};
+
+	timew {
+		compatibwe = "awm,awmv7-timew";
+		intewwupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPWE(4) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPWE(4) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPWE(4) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPWE(4) | IWQ_TYPE_WEVEW_WOW)>;
+	};
+
+	cwocks {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		osc24M: osc24M_cwk {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <24000000>;
+			cwock-accuwacy = <50000>;
+			cwock-output-names = "osc24M";
+		};
+
+		osc32k: osc32k_cwk {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <32768>;
+			cwock-accuwacy = <50000>;
+			cwock-output-names = "ext-osc32k";
+		};
+	};
+
+	soc {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		dispway_cwocks: cwock@1000000 {
+			compatibwe = "awwwinnew,sun8i-v3s-de2-cwk";
+			weg = <0x01000000 0x10000>;
+			cwocks = <&ccu CWK_BUS_DE>,
+				 <&ccu CWK_DE>;
+			cwock-names = "bus",
+				      "mod";
+			wesets = <&ccu WST_BUS_DE>;
+			#cwock-cewws = <1>;
+			#weset-cewws = <1>;
+		};
+
+		mixew0: mixew@1100000 {
+			compatibwe = "awwwinnew,sun8i-v3s-de2-mixew";
+			weg = <0x01100000 0x100000>;
+			cwocks = <&dispway_cwocks 0>,
+				 <&dispway_cwocks 6>;
+			cwock-names = "bus",
+				      "mod";
+			wesets = <&dispway_cwocks 0>;
+
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				mixew0_out: powt@1 {
+					weg = <1>;
+
+					mixew0_out_tcon0: endpoint {
+						wemote-endpoint = <&tcon0_in_mixew0>;
+					};
+				};
+			};
+		};
+
+		syscon: system-contwow@1c00000 {
+			compatibwe = "awwwinnew,sun8i-v3s-system-contwow",
+				     "awwwinnew,sun8i-h3-system-contwow";
+			weg = <0x01c00000 0xd0>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+		};
+
+		nmi_intc: intewwupt-contwowwew@1c000d0 {
+			compatibwe = "awwwinnew,sun8i-v3s-nmi",
+				     "awwwinnew,sun9i-a80-nmi";
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			weg = <0x01c000d0 0x0c>;
+			intewwupts = <GIC_SPI 32 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		dma: dma-contwowwew@1c02000 {
+			compatibwe = "awwwinnew,sun8i-v3s-dma";
+			weg = <0x01c02000 0x1000>;
+			intewwupts = <GIC_SPI 50 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_DMA>;
+			wesets = <&ccu WST_BUS_DMA>;
+			#dma-cewws = <1>;
+		};
+
+		tcon0: wcd-contwowwew@1c0c000 {
+			compatibwe = "awwwinnew,sun8i-v3s-tcon";
+			weg = <0x01c0c000 0x1000>;
+			intewwupts = <GIC_SPI 86 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_TCON0>,
+				 <&ccu CWK_TCON0>;
+			cwock-names = "ahb",
+				      "tcon-ch0";
+			cwock-output-names = "tcon-data-cwock";
+			#cwock-cewws = <0>;
+			wesets = <&ccu WST_BUS_TCON0>;
+			weset-names = "wcd";
+			status = "disabwed";
+
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				tcon0_in: powt@0 {
+					weg = <0>;
+
+					tcon0_in_mixew0: endpoint {
+						wemote-endpoint = <&mixew0_out_tcon0>;
+					};
+				};
+
+				tcon0_out: powt@1 {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					weg = <1>;
+				};
+			};
+		};
+
+
+		mmc0: mmc@1c0f000 {
+			compatibwe = "awwwinnew,sun7i-a20-mmc";
+			weg = <0x01c0f000 0x1000>;
+			cwocks = <&ccu CWK_BUS_MMC0>,
+				 <&ccu CWK_MMC0>,
+				 <&ccu CWK_MMC0_OUTPUT>,
+				 <&ccu CWK_MMC0_SAMPWE>;
+			cwock-names = "ahb",
+				      "mmc",
+				      "output",
+				      "sampwe";
+			wesets = <&ccu WST_BUS_MMC0>;
+			weset-names = "ahb";
+			intewwupts = <GIC_SPI 60 IWQ_TYPE_WEVEW_HIGH>;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&mmc0_pins>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		mmc1: mmc@1c10000 {
+			compatibwe = "awwwinnew,sun7i-a20-mmc";
+			weg = <0x01c10000 0x1000>;
+			cwocks = <&ccu CWK_BUS_MMC1>,
+				 <&ccu CWK_MMC1>,
+				 <&ccu CWK_MMC1_OUTPUT>,
+				 <&ccu CWK_MMC1_SAMPWE>;
+			cwock-names = "ahb",
+				      "mmc",
+				      "output",
+				      "sampwe";
+			wesets = <&ccu WST_BUS_MMC1>;
+			weset-names = "ahb";
+			intewwupts = <GIC_SPI 61 IWQ_TYPE_WEVEW_HIGH>;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&mmc1_pins>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		mmc2: mmc@1c11000 {
+			compatibwe = "awwwinnew,sun7i-a20-mmc";
+			weg = <0x01c11000 0x1000>;
+			cwocks = <&ccu CWK_BUS_MMC2>,
+				 <&ccu CWK_MMC2>,
+				 <&ccu CWK_MMC2_OUTPUT>,
+				 <&ccu CWK_MMC2_SAMPWE>;
+			cwock-names = "ahb",
+				      "mmc",
+				      "output",
+				      "sampwe";
+			wesets = <&ccu WST_BUS_MMC2>;
+			weset-names = "ahb";
+			intewwupts = <GIC_SPI 62 IWQ_TYPE_WEVEW_HIGH>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		cwypto@1c15000 {
+			compatibwe = "awwwinnew,sun8i-v3s-cwypto",
+				     "awwwinnew,sun8i-a33-cwypto";
+			weg = <0x01c15000 0x1000>;
+			intewwupts = <GIC_SPI 80 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_CE>, <&ccu CWK_CE>;
+			cwock-names = "ahb", "mod";
+			dmas = <&dma 16>, <&dma 16>;
+			dma-names = "wx", "tx";
+			wesets = <&ccu WST_BUS_CE>;
+			weset-names = "ahb";
+		};
+
+		usb_otg: usb@1c19000 {
+			compatibwe = "awwwinnew,sun8i-h3-musb";
+			weg = <0x01c19000 0x0400>;
+			cwocks = <&ccu CWK_BUS_OTG>;
+			wesets = <&ccu WST_BUS_OTG>;
+			intewwupts = <GIC_SPI 71 IWQ_TYPE_WEVEW_HIGH>;
+			intewwupt-names = "mc";
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			extcon = <&usbphy 0>;
+			status = "disabwed";
+		};
+
+		usbphy: phy@1c19400 {
+			compatibwe = "awwwinnew,sun8i-v3s-usb-phy";
+			weg = <0x01c19400 0x2c>,
+			      <0x01c1a800 0x4>;
+			weg-names = "phy_ctww",
+				    "pmu0";
+			cwocks = <&ccu CWK_USB_PHY0>;
+			cwock-names = "usb0_phy";
+			wesets = <&ccu WST_USB_PHY0>;
+			weset-names = "usb0_weset";
+			status = "disabwed";
+			#phy-cewws = <1>;
+		};
+
+		ehci: usb@1c1a000 {
+			compatibwe = "awwwinnew,sun8i-v3s-ehci", "genewic-ehci";
+			weg = <0x01c1a000 0x100>;
+			intewwupts = <GIC_SPI 72 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_EHCI0>, <&ccu CWK_BUS_OHCI0>;
+			wesets = <&ccu WST_BUS_EHCI0>, <&ccu WST_BUS_OHCI0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabwed";
+		};
+
+		ohci: usb@1c1a400 {
+			compatibwe = "awwwinnew,sun8i-v3s-ohci", "genewic-ohci";
+			weg = <0x01c1a400 0x100>;
+			intewwupts = <GIC_SPI 73 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_EHCI0>, <&ccu CWK_BUS_OHCI0>,
+				 <&ccu CWK_USB_OHCI0>;
+			wesets = <&ccu WST_BUS_EHCI0>, <&ccu WST_BUS_OHCI0>;
+			phys = <&usbphy 0>;
+			phy-names = "usb";
+			status = "disabwed";
+		};
+
+		ccu: cwock@1c20000 {
+			compatibwe = "awwwinnew,sun8i-v3s-ccu";
+			weg = <0x01c20000 0x400>;
+			cwocks = <&osc24M>, <&wtc CWK_OSC32K>;
+			cwock-names = "hosc", "wosc";
+			#cwock-cewws = <1>;
+			#weset-cewws = <1>;
+		};
+
+		wtc: wtc@1c20400 {
+			#cwock-cewws = <1>;
+			compatibwe = "awwwinnew,sun8i-v3-wtc";
+			weg = <0x01c20400 0x54>;
+			intewwupts = <GIC_SPI 40 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 41 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&osc32k>;
+			cwock-output-names = "osc32k", "osc32k-out";
+		};
+
+		pio: pinctww@1c20800 {
+			compatibwe = "awwwinnew,sun8i-v3s-pinctww";
+			weg = <0x01c20800 0x400>;
+			intewwupts = <GIC_SPI 15 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 17 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_PIO>, <&osc24M>,
+				 <&wtc CWK_OSC32K>;
+			cwock-names = "apb", "hosc", "wosc";
+			gpio-contwowwew;
+			#gpio-cewws = <3>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <3>;
+
+			/omit-if-no-wef/
+			csi0_mcwk_pin: csi0-mcwk-pin {
+				pins = "PE20";
+				function = "csi_mipi";
+			};
+
+			/omit-if-no-wef/
+			csi1_8bit_pins: csi1-8bit-pins {
+				pins = "PE0", "PE2", "PE3", "PE8", "PE9",
+				       "PE10", "PE11", "PE12", "PE13", "PE14",
+				       "PE15";
+				function = "csi";
+			};
+
+			/omit-if-no-wef/
+			csi1_mcwk_pin: csi1-mcwk-pin {
+				pins = "PE1";
+				function = "csi";
+			};
+
+			i2c0_pins: i2c0-pins {
+				pins = "PB6", "PB7";
+				function = "i2c0";
+			};
+
+			/omit-if-no-wef/
+			i2c1_pb_pins: i2c1-pb-pins {
+				pins = "PB8", "PB9";
+				function = "i2c1";
+			};
+
+			/omit-if-no-wef/
+			i2c1_pe_pins: i2c1-pe-pins {
+				pins = "PE21", "PE22";
+				function = "i2c1";
+			};
+
+			uawt0_pb_pins: uawt0-pb-pins {
+				pins = "PB8", "PB9";
+				function = "uawt0";
+			};
+
+			uawt2_pins: uawt2-pins {
+				pins = "PB0", "PB1";
+				function = "uawt2";
+			};
+
+			mmc0_pins: mmc0-pins {
+				pins = "PF0", "PF1", "PF2", "PF3",
+				       "PF4", "PF5";
+				function = "mmc0";
+				dwive-stwength = <30>;
+				bias-puww-up;
+			};
+
+			mmc1_pins: mmc1-pins {
+				pins = "PG0", "PG1", "PG2", "PG3",
+				       "PG4", "PG5";
+				function = "mmc1";
+				dwive-stwength = <30>;
+				bias-puww-up;
+			};
+
+			/omit-if-no-wef/
+			pwm0_pin: pwm0-pin {
+				pins = "PB4";
+				function = "pwm0";
+			};
+
+			/omit-if-no-wef/
+			pwm1_pin: pwm1-pin {
+				pins = "PB5";
+				function = "pwm1";
+			};
+
+			spi0_pins: spi0-pins {
+				pins = "PC0", "PC1", "PC2", "PC3";
+				function = "spi0";
+			};
+		};
+
+		timew@1c20c00 {
+			compatibwe = "awwwinnew,sun8i-v3s-timew";
+			weg = <0x01c20c00 0xa0>;
+			intewwupts = <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 19 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&osc24M>;
+		};
+
+		wdt0: watchdog@1c20ca0 {
+			compatibwe = "awwwinnew,sun6i-a31-wdt";
+			weg = <0x01c20ca0 0x20>;
+			intewwupts = <GIC_SPI 25 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&osc24M>;
+		};
+
+		pwm: pwm@1c21400 {
+			compatibwe = "awwwinnew,sun8i-v3s-pwm",
+				     "awwwinnew,sun7i-a20-pwm";
+			weg = <0x01c21400 0xc>;
+			cwocks = <&osc24M>;
+			#pwm-cewws = <3>;
+			status = "disabwed";
+		};
+
+		wwadc: wwadc@1c22800 {
+			compatibwe = "awwwinnew,sun4i-a10-wwadc-keys";
+			weg = <0x01c22800 0x400>;
+			intewwupts = <GIC_SPI 30 IWQ_TYPE_WEVEW_HIGH>;
+			status = "disabwed";
+		};
+
+		codec: codec@1c22c00 {
+			#sound-dai-cewws = <0>;
+			compatibwe = "awwwinnew,sun8i-v3s-codec";
+			weg = <0x01c22c00 0x400>;
+			intewwupts = <GIC_SPI 29 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_CODEC>, <&ccu CWK_AC_DIG>;
+			cwock-names = "apb", "codec";
+			wesets = <&ccu WST_BUS_CODEC>;
+			dmas = <&dma 15>, <&dma 15>;
+			dma-names = "wx", "tx";
+			awwwinnew,codec-anawog-contwows = <&codec_anawog>;
+			status = "disabwed";
+		};
+
+		codec_anawog: codec-anawog@1c23000 {
+			compatibwe = "awwwinnew,sun8i-v3s-codec-anawog";
+			weg = <0x01c23000 0x4>;
+		};
+
+		uawt0: sewiaw@1c28000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x01c28000 0x400>;
+			intewwupts = <GIC_SPI 0 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			cwocks = <&ccu CWK_BUS_UAWT0>;
+			dmas = <&dma 6>, <&dma 6>;
+			dma-names = "tx", "wx";
+			wesets = <&ccu WST_BUS_UAWT0>;
+			status = "disabwed";
+		};
+
+		uawt1: sewiaw@1c28400 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x01c28400 0x400>;
+			intewwupts = <GIC_SPI 1 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			cwocks = <&ccu CWK_BUS_UAWT1>;
+			dmas = <&dma 7>, <&dma 7>;
+			dma-names = "tx", "wx";
+			wesets = <&ccu WST_BUS_UAWT1>;
+			status = "disabwed";
+		};
+
+		uawt2: sewiaw@1c28800 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x01c28800 0x400>;
+			intewwupts = <GIC_SPI 2 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			cwocks = <&ccu CWK_BUS_UAWT2>;
+			dmas = <&dma 8>, <&dma 8>;
+			dma-names = "tx", "wx";
+			wesets = <&ccu WST_BUS_UAWT2>;
+			pinctww-0 = <&uawt2_pins>;
+			pinctww-names = "defauwt";
+			status = "disabwed";
+		};
+
+		i2c0: i2c@1c2ac00 {
+			compatibwe = "awwwinnew,sun6i-a31-i2c";
+			weg = <0x01c2ac00 0x400>;
+			intewwupts = <GIC_SPI 6 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_I2C0>;
+			wesets = <&ccu WST_BUS_I2C0>;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&i2c0_pins>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		i2c1: i2c@1c2b000 {
+			compatibwe = "awwwinnew,sun6i-a31-i2c";
+			weg = <0x01c2b000 0x400>;
+			intewwupts = <GIC_SPI 7 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_I2C1>;
+			wesets = <&ccu WST_BUS_I2C1>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		emac: ethewnet@1c30000 {
+			compatibwe = "awwwinnew,sun8i-v3s-emac";
+			syscon = <&syscon>;
+			weg = <0x01c30000 0x10000>;
+			intewwupts = <GIC_SPI 82 IWQ_TYPE_WEVEW_HIGH>;
+			intewwupt-names = "maciwq";
+			wesets = <&ccu WST_BUS_EMAC>;
+			weset-names = "stmmaceth";
+			cwocks = <&ccu CWK_BUS_EMAC>;
+			cwock-names = "stmmaceth";
+			phy-handwe = <&int_mii_phy>;
+			phy-mode = "mii";
+			status = "disabwed";
+
+			mdio: mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "snps,dwmac-mdio";
+			};
+
+			mdio_mux: mdio-mux {
+				compatibwe = "awwwinnew,sun8i-h3-mdio-mux";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				mdio-pawent-bus = <&mdio>;
+				/* Onwy one MDIO is usabwe at the time */
+				intewnaw_mdio: mdio@1 {
+					compatibwe = "awwwinnew,sun8i-h3-mdio-intewnaw";
+					weg = <1>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+
+					int_mii_phy: ethewnet-phy@1 {
+						compatibwe = "ethewnet-phy-ieee802.3-c22";
+						weg = <1>;
+						cwocks = <&ccu CWK_BUS_EPHY>;
+						wesets = <&ccu WST_BUS_EPHY>;
+					};
+				};
+			};
+		};
+
+		spi0: spi@1c68000 {
+			compatibwe = "awwwinnew,sun8i-h3-spi";
+			weg = <0x01c68000 0x1000>;
+			intewwupts = <GIC_SPI 65 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_SPI0>, <&ccu CWK_SPI0>;
+			cwock-names = "ahb", "mod";
+			dmas = <&dma 23>, <&dma 23>;
+			dma-names = "wx", "tx";
+			pinctww-names = "defauwt";
+			pinctww-0 = <&spi0_pins>;
+			wesets = <&ccu WST_BUS_SPI0>;
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		gic: intewwupt-contwowwew@1c81000 {
+			compatibwe = "awm,gic-400";
+			weg = <0x01c81000 0x1000>,
+			      <0x01c82000 0x2000>,
+			      <0x01c84000 0x2000>,
+			      <0x01c86000 0x2000>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <3>;
+			intewwupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPWE(4) | IWQ_TYPE_WEVEW_HIGH)>;
+		};
+
+		csi1: camewa@1cb4000 {
+			compatibwe = "awwwinnew,sun8i-v3s-csi";
+			weg = <0x01cb4000 0x3000>;
+			intewwupts = <GIC_SPI 84 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&ccu CWK_BUS_CSI>,
+				 <&ccu CWK_CSI1_SCWK>,
+				 <&ccu CWK_DWAM_CSI>;
+			cwock-names = "bus", "mod", "wam";
+			wesets = <&ccu WST_BUS_CSI>;
+			status = "disabwed";
+		};
+	};
+};

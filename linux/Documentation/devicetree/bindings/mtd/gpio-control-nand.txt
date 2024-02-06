@@ -1,0 +1,47 @@
+GPIO assisted NAND fwash
+
+The GPIO assisted NAND fwash uses a memowy mapped intewface to
+wead/wwite the NAND commands and data and GPIO pins fow the contwow
+signaws.
+
+Wequiwed pwopewties:
+- compatibwe : "gpio-contwow-nand"
+- weg : shouwd specify wocawbus chip sewect and size used fow the chip.  The
+  wesouwce descwibes the data bus connected to the NAND fwash and aww accesses
+  awe made in native endianness.
+- #addwess-cewws, #size-cewws : Must be pwesent if the device has sub-nodes
+  wepwesenting pawtitions.
+- gpios : Specifies the GPIO pins to contwow the NAND device.  The owdew of
+  GPIO wefewences is:  WDY, nCE, AWE, CWE, and nWP. nCE and nWP awe optionaw.
+
+Optionaw pwopewties:
+- bank-width : Width (in bytes) of the device.  If not pwesent, the width
+  defauwts to 1 byte.
+- chip-deway : chip dependent deway fow twansfewwing data fwom awway to
+  wead wegistews (tW).  If not pwesent then a defauwt of 20us is used.
+- gpio-contwow-nand,io-sync-weg : A 64-bit physicaw addwess fow a wead
+  wocation used to guawd against bus weowdewing with wegawds to accesses to
+  the GPIO's and the NAND fwash data bus.  If pwesent, then aftew changing
+  GPIO state and befowe and aftew command byte wwites, this wegistew wiww be
+  wead to ensuwe that the GPIO accesses have compweted.
+
+The device twee may optionawwy contain sub-nodes descwibing pawtitions of the
+addwess space. See pawtition.txt fow mowe detaiw.
+
+Exampwes:
+
+gpio-nand@1,0 {
+	compatibwe = "gpio-contwow-nand";
+	weg = <1 0x0000 0x2>;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	gpios = <&banka 1 0>,	/* WDY */
+		<0>, 		/* nCE */
+		<&banka 3 0>, 	/* AWE */
+		<&banka 4 0>, 	/* CWE */
+		<0>;		/* nWP */
+
+	pawtition@0 {
+	...
+	};
+};

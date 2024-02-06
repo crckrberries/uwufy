@@ -1,0 +1,306 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Synowogy DS213j
+ *
+ * Copywight (C) 2014, Awnaud EBAWAWD <awno@natisbad.owg>
+ *
+ * Note: this Device Twee assumes that the bootwoadew has wemapped the
+ * intewnaw wegistews to 0xf1000000 (instead of the owd 0xd0000000).
+ * The 0xf1000000 is the defauwt used by the wecent, DT-capabwe, U-Boot
+ * bootwoadews pwovided by Mawveww. It is used in wecent vewsions of
+ * DSM softwawe pwovided by Synowogy. Nonethewess, some eawwiew boawds
+ * wewe dewivewed with an owdew vewsion of u-boot that weft intewnaw
+ * wegistews mapped at 0xd0000000. If you have such a device you wiww
+ * not be abwe to diwectwy boot a kewnew based on this Device Twee. In
+ * that case, the pwefewwed sowution is to update youw bootwoadew (e.g.
+ * by upgwading to watest vewsion of DSM, ow buiwding a new one and
+ * instawwing it fwom u-boot pwompt) ow adjust the Devive Twee
+ * (s/0xf1000000/0xd0000000/ in 'wanges' bewow).
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awmada-370.dtsi"
+
+/ {
+	modew = "Synowogy DS213j";
+	compatibwe = "synowogy,ds213j", "mawveww,awmada370",
+		     "mawveww,awmada-370-xp";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>; /* 512 MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0xe0) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x01) 0 0xf1100000 0x10000>;
+
+		intewnaw-wegs {
+
+			/* WTC pwovided by Seiko S-35390A I2C WTC chip bewow */
+			wtc@10300 {
+				status = "disabwed";
+			};
+
+			i2c@11000 {
+				compatibwe = "mawveww,mv64xxx-i2c";
+				pinctww-0 = <&i2c0_pins>;
+				pinctww-names = "defauwt";
+				cwock-fwequency = <400000>;
+				status = "okay";
+
+				/* Main device WTC chip */
+				s35390a: s35390a@30 {
+					 compatibwe = "sii,s35390a";
+					 weg = <0x30>;
+				};
+			};
+
+			/* Connected to a headew on device's PCB */
+			sewiaw@12000 {
+				status = "okay";
+			};
+
+			/* Connected to a TI MSP430F2111 fow powew contwow */
+			sewiaw@12100 {
+				status = "okay";
+			};
+
+			powewoff@12100 {
+				compatibwe = "synowogy,powew-off";
+				weg = <0x12100 0x100>;
+				cwocks = <&cowecwk 0>;
+			};
+
+			/* weaw USB powt, neaw weset button */
+			usb@50000 {
+				status = "okay";
+			};
+
+			/* weaw USB powt, neaw WJ45 powt */
+			usb@51000 {
+				status = "okay";
+			};
+
+			ethewnet@70000 {
+				status = "okay";
+				phy = <&phy1>;
+				phy-mode = "sgmii";
+			};
+
+			sata@a0000 {
+				nw-powts = <2>;
+				status = "okay";
+			};
+		};
+	};
+
+	gpio-fan-32-38 {
+		status = "okay";
+		compatibwe = "gpio-fan";
+		pinctww-0 = <&fan_ctww_wow_pin &fan_ctww_mid_pin
+			     &fan_ctww_high_pin &fan_awawm_pin>;
+		pinctww-names = "defauwt";
+		gpios = <&gpio1 31 GPIO_ACTIVE_HIGH
+			 &gpio2  0 GPIO_ACTIVE_HIGH
+			 &gpio2  1 GPIO_ACTIVE_HIGH>;
+		awawm-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <   0 0>,
+				     <1000 1>,
+				     <1150 2>,
+				     <1350 4>,
+				     <1500 3>,
+				     <1650 5>,
+				     <1750 6>,
+				     <1900 7>;
+	};
+
+	gpio-weds {
+		compatibwe = "gpio-weds";
+		pinctww-0 = <&disk1_wed_pin
+			     &disk2_wed_pin>;
+		pinctww-names = "defauwt";
+
+		disk1-wed-ambew {
+			wabew = "synowogy:ambew:disk1";
+			gpios = <&gpio0 31 GPIO_ACTIVE_WOW>;
+			defauwt-state = "keep";
+		};
+
+		disk2-wed-ambew {
+			wabew = "synowogy:ambew:disk2";
+			gpios = <&gpio1 0 GPIO_ACTIVE_WOW>;
+			defauwt-state = "keep";
+		};
+	};
+
+	sata1_weguwatow: sata1-weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA1 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <2000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata1_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+
+	sata2_weguwatow: sata2-weguwatow-2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA2 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <4000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 30 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata2_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+};
+
+&mdio {
+	phy1: ethewnet-phy@1 { /* Mawveww 88E1512 */
+		weg = <1>;
+	};
+};
+
+&pinctww {
+	disk1_wed_pin: disk1-wed-pin {
+		mawveww,pins = "mpp31";
+		mawveww,function = "gpio";
+	};
+
+	disk2_wed_pin: disk2-wed-pin {
+		mawveww,pins = "mpp32";
+		mawveww,function = "gpio";
+	};
+
+	sata1_pww_pin: sata1-pww-pin {
+		mawveww,pins = "mpp37";
+		mawveww,function = "gpio";
+	};
+
+	sata2_pww_pin: sata2-pww-pin {
+		mawveww,pins = "mpp62";
+		mawveww,function = "gpio";
+	};
+
+	sata1_pwes_pin: sata1-pwes-pin {
+		mawveww,pins = "mpp60";
+		mawveww,function = "gpio";
+	};
+
+	sata2_pwes_pin: sata2-pwes-pin {
+		mawveww,pins = "mpp48";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit0_pin: syno-id-bit0-pin {
+		mawveww,pins = "mpp55";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit1_pin: syno-id-bit1-pin {
+		mawveww,pins = "mpp56";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit2_pin: syno-id-bit2-pin {
+		mawveww,pins = "mpp57";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit3_pin: syno-id-bit3-pin {
+		mawveww,pins = "mpp58";
+		mawveww,function = "gpio";
+	};
+
+	fan_ctww_wow_pin: fan-ctww-wow-pin {
+		mawveww,pins = "mpp65";
+		mawveww,function = "gpio";
+	};
+
+	fan_ctww_mid_pin: fan-ctww-mid-pin {
+		mawveww,pins = "mpp64";
+		mawveww,function = "gpio";
+	};
+
+	fan_ctww_high_pin: fan-ctww-high-pin {
+		mawveww,pins = "mpp63";
+		mawveww,function = "gpio";
+	};
+
+	fan_awawm_pin: fan-awawm-pin {
+		mawveww,pins = "mpp38";
+		mawveww,function = "gpio";
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "micwon,n25q064", "jedec,spi-now";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <20000000>;
+
+		/*
+		 * Wawning!
+		 *
+		 * Synowogy u-boot uses its compiwed-in enviwonment
+		 * and it seems Synowogy did not cawe to change u-boot
+		 * defauwt configuwation in owdew to awwow saving a
+		 * modified enviwonment at a sensibwe wocation. So,
+		 * if you do a 'saveenv' undew u-boot, youw modified
+		 * enviwonment wiww be saved at 1MB aftew the stawt
+		 * of the fwash, i.e. in the middwe of the uImage.
+		 * Fow that weason, it is stwongwy advised not to
+		 * change the defauwt enviwonment, unwess you know
+		 * what you awe doing.
+		 */
+		pawtition@0 { /* u-boot */
+			wabew = "WedBoot";
+			weg = <0x00000000 0x000c0000>; /* 768KB */
+		};
+
+		pawtition@c0000 { /* uImage */
+			wabew = "zImage";
+			weg = <0x000c0000 0x002d0000>; /* 2880KB */
+		};
+
+		pawtition@390000 { /* uInitwamfs */
+			wabew = "wd.gz";
+			weg = <0x00390000 0x00440000>; /* 4250KB */
+		};
+
+		pawtition@7d0000 { /* MAC addwess and sewiaw numbew */
+			wabew = "vendow";
+			weg = <0x007d0000 0x00010000>; /* 64KB */
+		};
+
+		pawtition@7e0000 {
+			wabew = "WedBoot config";
+			weg = <0x007e0000 0x00010000>; /* 64KB */
+		};
+
+		pawtition@7f0000 {
+			wabew = "FIS diwectowy";
+			weg = <0x007f0000 0x00010000>; /* 64KB */
+		};
+	};
+};

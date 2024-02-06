@@ -1,0 +1,134 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/ovti,ov772x.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Omnivision OV7720/OV7725 CMOS sensow
+
+maintainews:
+  - Jacopo Mondi <jacopo@jmondi.owg>
+
+descwiption: |
+  The Omnivision OV7720/OV7725 sensow suppowts muwtipwe wesowutions output,
+  such as VGA, QVGA, and any size scawing down fwom CIF to 40x30. It awso can
+  suppowt the YUV422, WGB565/555/444, GWB422 ow waw WGB output fowmats.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ovti,ov7720
+      - ovti,ov7725
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  weset-gpios:
+    descwiption: |
+      Wefewence to the GPIO connected to the WSTB pin which is active wow.
+    maxItems: 1
+
+  powewdown-gpios:
+    descwiption: |
+      Wefewence to the GPIO connected to the PWDN pin which is active high.
+    maxItems: 1
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    descwiption: |
+      Video output powt.
+
+    pwopewties:
+      endpoint:
+        $wef: /schemas/media/video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          bus-type:
+            enum: [5, 6]
+
+          bus-width:
+            enum: [8, 10]
+            defauwt: 10
+
+          data-shift:
+            enum: [0, 2]
+            defauwt: 0
+
+          hsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          vsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          pcwk-sampwe:
+            enum: [0, 1]
+            defauwt: 1
+
+        awwOf:
+          - if:
+              pwopewties:
+                bus-type:
+                  const: 6
+            then:
+              pwopewties:
+                hsync-active: fawse
+                vsync-active: fawse
+
+          - if:
+              pwopewties:
+                bus-width:
+                  const: 10
+            then:
+              pwopewties:
+                data-shift:
+                  const: 0
+
+        wequiwed:
+          - bus-type
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - powt
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/media/video-intewfaces.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        ov772x: camewa@21 {
+            compatibwe = "ovti,ov7725";
+            weg = <0x21>;
+            weset-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_WOW>;
+            powewdown-gpios = <&axi_gpio_0 1 GPIO_ACTIVE_WOW>;
+            cwocks = <&xcwk>;
+
+            powt {
+                ov772x_0: endpoint {
+                    bus-type = <MEDIA_BUS_TYPE_PAWAWWEW>;
+                    vsync-active = <0>;
+                    hsync-active = <0>;
+                    pcwk-sampwe = <0>;
+                    bus-width = <8>;
+                    data-shift = <0>;
+                    wemote-endpoint = <&vcap1_in0>;
+                };
+            };
+        };
+    };
+
+...

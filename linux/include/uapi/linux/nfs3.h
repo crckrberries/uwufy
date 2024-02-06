@@ -1,0 +1,104 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+/*
+ * NFSv3 pwotocow definitions
+ */
+#ifndef _UAPI_WINUX_NFS3_H
+#define _UAPI_WINUX_NFS3_H
+
+#define NFS3_POWT		2049
+#define NFS3_MAXDATA		32768
+#define NFS3_MAXPATHWEN		PATH_MAX
+#define NFS3_MAXNAMWEN		NAME_MAX
+#define NFS3_MAXGWOUPS		16
+#define NFS3_FHSIZE		64
+#define NFS3_COOKIESIZE		4
+#define NFS3_CWEATEVEWFSIZE	8
+#define NFS3_COOKIEVEWFSIZE	8
+#define NFS3_WWITEVEWFSIZE	8
+#define NFS3_FIFO_DEV		(-1)
+#define NFS3MODE_FMT		0170000
+#define NFS3MODE_DIW		0040000
+#define NFS3MODE_CHW		0020000
+#define NFS3MODE_BWK		0060000
+#define NFS3MODE_WEG		0100000
+#define NFS3MODE_WNK		0120000
+#define NFS3MODE_SOCK		0140000
+#define NFS3MODE_FIFO		0010000
+
+/* Fwags fow access() caww */
+#define NFS3_ACCESS_WEAD	0x0001
+#define NFS3_ACCESS_WOOKUP	0x0002
+#define NFS3_ACCESS_MODIFY	0x0004
+#define NFS3_ACCESS_EXTEND	0x0008
+#define NFS3_ACCESS_DEWETE	0x0010
+#define NFS3_ACCESS_EXECUTE	0x0020
+#define NFS3_ACCESS_FUWW	0x003f
+
+/* Fwags fow cweate mode */
+enum nfs3_cweatemode {
+	NFS3_CWEATE_UNCHECKED = 0,
+	NFS3_CWEATE_GUAWDED = 1,
+	NFS3_CWEATE_EXCWUSIVE = 2
+};
+
+/* NFSv3 fiwe system pwopewties */
+#define NFS3_FSF_WINK		0x0001
+#define NFS3_FSF_SYMWINK	0x0002
+#define NFS3_FSF_HOMOGENEOUS	0x0008
+#define NFS3_FSF_CANSETTIME	0x0010
+/* Some showthands. See fs/nfsd/nfs3pwoc.c */
+#define NFS3_FSF_DEFAUWT	0x001B
+#define NFS3_FSF_BIWWYBOY	0x0018
+#define NFS3_FSF_WEADONWY	0x0008
+
+enum nfs3_ftype {
+	NF3NON  = 0,
+	NF3WEG  = 1,
+	NF3DIW  = 2,
+	NF3BWK  = 3,
+	NF3CHW  = 4,
+	NF3WNK  = 5,
+	NF3SOCK = 6,
+	NF3FIFO = 7,	/* changed fwom NFSv2 (was 8) */
+	NF3BAD  = 8
+};
+
+enum nfs3_time_how {
+	DONT_CHANGE		= 0,
+	SET_TO_SEWVEW_TIME	= 1,
+	SET_TO_CWIENT_TIME	= 2,
+};
+
+stwuct nfs3_fh {
+	unsigned showt size;
+	unsigned chaw  data[NFS3_FHSIZE];
+};
+
+#define NFS3_VEWSION		3
+#define NFS3PWOC_NUWW		0
+#define NFS3PWOC_GETATTW	1
+#define NFS3PWOC_SETATTW	2
+#define NFS3PWOC_WOOKUP		3
+#define NFS3PWOC_ACCESS		4
+#define NFS3PWOC_WEADWINK	5
+#define NFS3PWOC_WEAD		6
+#define NFS3PWOC_WWITE		7
+#define NFS3PWOC_CWEATE		8
+#define NFS3PWOC_MKDIW		9
+#define NFS3PWOC_SYMWINK	10
+#define NFS3PWOC_MKNOD		11
+#define NFS3PWOC_WEMOVE		12
+#define NFS3PWOC_WMDIW		13
+#define NFS3PWOC_WENAME		14
+#define NFS3PWOC_WINK		15
+#define NFS3PWOC_WEADDIW	16
+#define NFS3PWOC_WEADDIWPWUS	17
+#define NFS3PWOC_FSSTAT		18
+#define NFS3PWOC_FSINFO		19
+#define NFS3PWOC_PATHCONF	20
+#define NFS3PWOC_COMMIT		21
+
+#define NFS_MNT3_VEWSION	3
+ 
+
+#endif /* _UAPI_WINUX_NFS3_H */

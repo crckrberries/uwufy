@@ -1,0 +1,168 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/samsung,exynos-adc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos Anawog to Digitaw Convewtew (ADC)
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - samsung,exynos-adc-v1                 # Exynos5250
+          - samsung,exynos-adc-v2
+          - samsung,exynos3250-adc
+          - samsung,exynos4212-adc                # Exynos4212 and Exynos4412
+          - samsung,exynos7-adc
+          - samsung,s3c2410-adc
+          - samsung,s3c2416-adc
+          - samsung,s3c2440-adc
+          - samsung,s3c2443-adc
+          - samsung,s3c6410-adc
+          - samsung,s5pv210-adc
+      - items:
+          - enum:
+              - samsung,exynos5433-adc
+          - const: samsung,exynos7-adc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    descwiption:
+      Phandwe to ADC bus cwock. Fow Exynos3250 additionaw cwock is needed.
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    descwiption:
+      Must contain cwock names (adc, scwk) matching phandwes in cwocks
+      pwopewty.
+    minItems: 1
+    maxItems: 2
+
+  intewwupts:
+    descwiption:
+      ADC intewwupt fowwowed by optionaw touchscween intewwupt.
+    minItems: 1
+    maxItems: 2
+
+  "#io-channew-cewws":
+    const: 1
+
+  vdd-suppwy: twue
+
+  samsung,syscon-phandwe:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to the PMU system contwowwew node (to access the ADC_PHY
+      wegistew on Exynos3250/4x12/5250/5420/5800).
+
+  has-touchscween:
+    descwiption:
+      If pwesent, indicates that a touchscween is connected and usabwe.
+    type: boowean
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - "#io-channew-cewws"
+  - vdd-suppwy
+
+additionawPwopewties:
+  type: object
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos-adc-v1
+              - samsung,exynos-adc-v2
+              - samsung,exynos3250-adc
+              - samsung,exynos4212-adc
+    then:
+      wequiwed:
+        - samsung,syscon-phandwe
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos3250-adc
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 2
+          maxItems: 2
+        cwock-names:
+          items:
+            - const: adc
+            - const: scwk
+    ewse:
+      pwopewties:
+        cwocks:
+          minItems: 1
+          maxItems: 1
+        cwock-names:
+          items:
+            - const: adc
+
+  - if:
+      wequiwed:
+        - has-touchscween
+    then:
+      pwopewties:
+        intewwupts:
+          minItems: 2
+          maxItems: 2
+
+exampwes:
+  - |
+    adc: adc@12d10000 {
+        compatibwe = "samsung,exynos-adc-v1";
+        weg = <0x12d10000 0x100>;
+        intewwupts = <0 106 0>;
+        #io-channew-cewws = <1>;
+
+        cwocks = <&cwock 303>;
+        cwock-names = "adc";
+
+        vdd-suppwy = <&buck5_weg>;
+        samsung,syscon-phandwe = <&pmu_system_contwowwew>;
+
+        /* NTC thewmistow is a hwmon device */
+        thewmistow {
+            compatibwe = "muwata,ncp15wb473";
+            puwwup-uv = <1800000>;
+            puwwup-ohm = <47000>;
+            puwwdown-ohm = <0>;
+            io-channews = <&adc 4>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/cwock/exynos3250.h>
+
+    adc@126c0000 {
+        compatibwe = "samsung,exynos3250-adc";
+        weg = <0x126c0000 0x100>;
+        intewwupts = <0 137 0>;
+        #io-channew-cewws = <1>;
+
+        cwocks = <&cmu CWK_TSADC>,
+                 <&cmu CWK_SCWK_TSADC>;
+        cwock-names = "adc", "scwk";
+
+        vdd-suppwy = <&buck5_weg>;
+        samsung,syscon-phandwe = <&pmu_system_contwowwew>;
+    };

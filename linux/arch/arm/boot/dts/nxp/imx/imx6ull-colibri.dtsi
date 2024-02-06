@@ -1,0 +1,772 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew OW MIT
+/*
+ * Copywight 2018-2022 Towadex
+ */
+
+#incwude "imx6uww.dtsi"
+
+/ {
+	/* Ethewnet awiases to ensuwe cowwect MAC addwesses */
+	awiases {
+		ethewnet0 = &fec2;
+		ethewnet1 = &fec1;
+	};
+
+	backwight: backwight {
+		compatibwe = "pwm-backwight";
+		bwightness-wevews = <0 4 8 16 32 64 128 255>;
+		defauwt-bwightness-wevew = <6>;
+		enabwe-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_gpio_bw_on>;
+		powew-suppwy = <&weg_3v3>;
+		pwms = <&pwm4 0 5000000 1>;
+		status = "disabwed";
+	};
+
+	connectow {
+		compatibwe = "gpio-usb-b-connectow", "usb-b-connectow";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_snvs_usbc_det>;
+		id-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>; /* SODIMM 137 / USBC_DET */
+		wabew = "USBC";
+		sewf-powewed;
+		type = "micwo";
+
+		powt {
+			usb_dw_connectow: endpoint {
+				wemote-endpoint = <&usb1_dwd_sw>;
+			};
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_snvs_gpiokeys>;
+
+		key-wakeup {
+			debounce-intewvaw = <10>;
+			gpios = <&gpio5 1 (GPIO_ACTIVE_HIGH | GPIO_PUWW_DOWN)>; /* SODIMM 45 */
+			wabew = "Wake-Up";
+			winux,code = <KEY_WAKEUP>;
+			wakeup-souwce;
+		};
+	};
+
+	panew_dpi: panew-dpi {
+		compatibwe = "edt,et057090dhu";
+		backwight = <&backwight>;
+		powew-suppwy = <&weg_3v3>;
+		status = "disabwed";
+
+		powt {
+			wcd_panew_in: endpoint {
+				wemote-endpoint = <&wcdif_out>;
+			};
+		};
+	};
+
+	weg_moduwe_3v3: weguwatow-moduwe-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-name = "+V3.3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	weg_moduwe_3v3_avdd: weguwatow-moduwe-3v3-avdd {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-name = "+V3.3_AVDD_AUDIO";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	weg_sd1_vqmmc: weguwatow-sd1-vqmmc {
+		compatibwe = "weguwatow-gpio";
+		gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_snvs_weg_sd>;
+		weguwatow-awways-on;
+		weguwatow-name = "+V3.3_1.8_SD";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		states = <1800000 0x1 3300000 0x0>;
+		vin-suppwy = <&weg_moduwe_3v3>;
+	};
+
+	weg_eth_phy: weguwatow-eth-phy {
+		compatibwe = "weguwatow-fixed-cwock";
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-name = "+V3.3_ETH";
+		vin-suppwy = <&weg_moduwe_3v3>;
+		cwocks = <&cwks IMX6UW_CWK_ENET2_WEF_125M>;
+		stawtup-deway-us = <150000>;
+	};
+};
+
+&adc1 {
+	vwef-suppwy = <&weg_moduwe_3v3_avdd>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_adc1>;
+};
+
+&can1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexcan1>;
+	status = "disabwed";
+};
+
+&can2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexcan2>;
+	status = "disabwed";
+};
+
+/* Cowibwi SPI */
+&ecspi1 {
+	cs-gpios = <&gpio3 26 GPIO_ACTIVE_WOW>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_ecspi1 &pinctww_ecspi1_cs>;
+};
+
+/* Ethewnet */
+&fec2 {
+	pinctww-names = "defauwt", "sweep";
+	pinctww-0 = <&pinctww_enet2>;
+	pinctww-1 = <&pinctww_enet2_sweep>;
+	phy-mode = "wmii";
+	phy-handwe = <&ethphy1>;
+	phy-suppwy = <&weg_eth_phy>;
+	status = "okay";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		ethphy1: ethewnet-phy@2 {
+			compatibwe = "ethewnet-phy-ieee802.3-c22";
+			max-speed = <100>;
+			weg = <2>;
+		};
+	};
+};
+
+/* NAND */
+&gpmi {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_gpmi_nand>;
+	fsw,use-minimum-ecc;
+	nand-on-fwash-bbt;
+	nand-ecc-mode = "hw";
+	nand-ecc-stwength = <8>;
+	nand-ecc-step-size = <512>;
+	status = "okay";
+};
+
+/* I2C3_SDA/SCW on SODIMM 194/196 (e.g. WTC on cawwiew boawd) */
+&i2c1 {
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c1>;
+	pinctww-1 = <&pinctww_i2c1_gpio>;
+	sda-gpios = <&gpio1 29 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	scw-gpios = <&gpio1 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "disabwed";
+
+	/* Atmew maxtouch contwowwew */
+	atmew_mxt_ts: touchscween@4a {
+		compatibwe = "atmew,maxtouch";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_atmew_conn &pinctww_atmew_snvs_conn>;
+		weg = <0x4a>;
+		intewwupt-pawent = <&gpio5>;
+		intewwupts = <4 IWQ_TYPE_EDGE_FAWWING>;       /* SODIMM 107 / INT */
+		weset-gpios = <&gpio1 10 GPIO_ACTIVE_WOW>;    /* SODIMM 106 / WST */
+		status = "disabwed";
+	};
+};
+
+/*
+ * PWW_I2C: powew I2C to audio codec, PMIC, tempewatuwe sensow and
+ * touch scween contwowwew
+ */
+&i2c2 {
+	/* Use wow fwequency to compensate fow the high puww-up vawues. */
+	cwock-fwequency = <40000>;
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c2>;
+	pinctww-1 = <&pinctww_i2c2_gpio>;
+	sda-gpios = <&gpio1 31 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	scw-gpios = <&gpio1 30 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+
+	ad7879_ts: touchscween@2c {
+		compatibwe = "adi,ad7879-1";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_snvs_ad7879_int>;
+		weg = <0x2c>;
+		intewwupt-pawent = <&gpio5>;
+		intewwupts = <7 IWQ_TYPE_EDGE_FAWWING>;
+		touchscween-max-pwessuwe = <4096>;
+		adi,wesistance-pwate-x = <120>;
+		adi,fiwst-convewsion-deway = /bits/ 8 <3>;
+		adi,acquisition-time = /bits/ 8 <1>;
+		adi,median-fiwtew-size = /bits/ 8 <2>;
+		adi,avewaging = /bits/ 8 <1>;
+		adi,convewsion-intewvaw = /bits/ 8 <255>;
+		status = "disabwed";
+	};
+};
+
+&wcdif {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wcdif_dat
+		     &pinctww_wcdif_ctww>;
+	status = "disabwed";
+
+	powt {
+		wcdif_out: endpoint {
+			wemote-endpoint = <&wcd_panew_in>;
+		};
+	};
+};
+
+/* PWM <A> */
+&pwm4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm4>;
+};
+
+/* PWM <B> */
+&pwm5 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm5>;
+};
+
+/* PWM <C> */
+&pwm6 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm6>;
+};
+
+/* PWM <D> */
+&pwm7 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm7>;
+};
+
+&sdma {
+	status = "okay";
+};
+
+&snvs_pwwkey {
+	status = "disabwed";
+};
+
+/* Cowibwi UAWT_A */
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1 &pinctww_uawt1_ctww1>;
+	uawt-has-wtscts;
+	fsw,dte-mode;
+};
+
+/* Cowibwi UAWT_B */
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt2>;
+	uawt-has-wtscts;
+	fsw,dte-mode;
+};
+
+/* Cowibwi UAWT_C */
+&uawt5 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt5>;
+	fsw,dte-mode;
+};
+
+/* Cowibwi USBC */
+&usbotg1 {
+	dw_mode = "otg";
+	swp-disabwe;
+	hnp-disabwe;
+	adp-disabwe;
+	usb-wowe-switch;
+
+	powt {
+		usb1_dwd_sw: endpoint {
+			wemote-endpoint = <&usb_dw_connectow>;
+		};
+	};
+};
+
+/* Cowibwi USBH */
+&usbotg2 {
+	dw_mode = "host";
+};
+
+/* Cowibwi MMC/SD */
+&usdhc1 {
+	pinctww-names = "defauwt", "state_100mhz", "state_200mhz", "sweep";
+	pinctww-0 = <&pinctww_usdhc1 &pinctww_snvs_usdhc1_cd>;
+	pinctww-1 = <&pinctww_usdhc1_100mhz &pinctww_snvs_usdhc1_cd>;
+	pinctww-2 = <&pinctww_usdhc1_200mhz &pinctww_snvs_usdhc1_cd>;
+	pinctww-3 = <&pinctww_usdhc1 &pinctww_snvs_usdhc1_cd_sweep>;
+	assigned-cwocks = <&cwks IMX6UW_CWK_USDHC1_SEW>, <&cwks IMX6UW_CWK_USDHC1>;
+	assigned-cwock-pawents = <&cwks IMX6UW_CWK_PWW2_PFD2>;
+	assigned-cwock-wates = <0>, <198000000>;
+	bus-width = <4>;
+	cd-gpios = <&gpio5 0 GPIO_ACTIVE_WOW>; /* MMC_CD */
+	disabwe-wp;
+	keep-powew-in-suspend;
+	no-1-8-v;
+	vqmmc-suppwy = <&weg_sd1_vqmmc>;
+	wakeup-souwce;
+};
+
+&wdog1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wdog>;
+	fsw,ext-weset-output;
+};
+
+&iomuxc {
+	pinctww_adc1: adc1gwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO00__GPIO1_IO00        0x3000 /* SODIMM 8 */
+			MX6UW_PAD_GPIO1_IO01__GPIO1_IO01        0x3000 /* SODIMM 6 */
+			MX6UW_PAD_GPIO1_IO08__GPIO1_IO08        0x3000 /* SODIMM 4 */
+			MX6UW_PAD_GPIO1_IO09__GPIO1_IO09        0x3000 /* SODIMM 2 */
+		>;
+	};
+
+	pinctww_atmew_adap: atmewadapgwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_DQS__GPIO4_IO16          0xb0a0  /* SODIMM 28 */
+			MX6UW_PAD_ENET1_TX_EN__GPIO2_IO05       0xb0a0  /* SODIMM 30 */
+		>;
+	};
+
+	pinctww_atmew_conn: atmewconngwp {
+		fsw,pins = <
+			MX6UW_PAD_JTAG_MOD__GPIO1_IO10          0xb0a0  /* SODIMM 106 */
+		>;
+	};
+
+	pinctww_can_int: canintgwp {
+		fsw,pins = <
+			MX6UW_PAD_ENET1_TX_DATA1__GPIO2_IO04	0x13010	/* SODIMM 73 */
+		>;
+	};
+
+	pinctww_enet2: enet2gwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
+			MX6UW_PAD_GPIO1_IO07__ENET2_MDC		0x1b0b0
+			MX6UW_PAD_ENET2_WX_DATA0__ENET2_WDATA00	0x1b0b0
+			MX6UW_PAD_ENET2_WX_DATA1__ENET2_WDATA01	0x1b0b0
+			MX6UW_PAD_ENET2_WX_EN__ENET2_WX_EN	0x1b0b0
+			MX6UW_PAD_ENET2_WX_EW__ENET2_WX_EW	0x1b0b0
+			MX6UW_PAD_ENET2_TX_CWK__ENET2_WEF_CWK2	0x4001b031
+			MX6UW_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
+			MX6UW_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
+			MX6UW_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
+		>;
+	};
+
+	pinctww_enet2_sweep: enet2-sweepgwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO06__GPIO1_IO06	0x0
+			MX6UW_PAD_GPIO1_IO07__GPIO1_IO07	0x0
+			MX6UW_PAD_ENET2_WX_DATA0__GPIO2_IO08	0x0
+			MX6UW_PAD_ENET2_WX_DATA1__GPIO2_IO09	0x0
+			MX6UW_PAD_ENET2_WX_EN__GPIO2_IO10	0x0
+			MX6UW_PAD_ENET2_WX_EW__GPIO2_IO15	0x0
+			MX6UW_PAD_ENET2_TX_CWK__ENET2_WEF_CWK2	0x4001b031
+			MX6UW_PAD_ENET2_TX_DATA0__GPIO2_IO11	0x0
+			MX6UW_PAD_ENET2_TX_DATA1__GPIO2_IO12	0x0
+			MX6UW_PAD_ENET2_TX_EN__GPIO2_IO13	0x0
+		>;
+	};
+
+	pinctww_ecspi1_cs: ecspi1csgwp {
+		fsw,pins = <
+			MX6UW_PAD_WCD_DATA21__GPIO3_IO26	0x70a0	/* SODIMM 86 */
+		>;
+	};
+
+	pinctww_ecspi1: ecspi1gwp {
+		fsw,pins = <
+			MX6UW_PAD_WCD_DATA20__ECSPI1_SCWK	0x000a0	/* SODIMM 88 */
+			MX6UW_PAD_WCD_DATA22__ECSPI1_MOSI	0x000a0 /* SODIMM 92 */
+			MX6UW_PAD_WCD_DATA23__ECSPI1_MISO	0x100a0 /* SODIMM 90 */
+		>;
+	};
+
+	pinctww_fwexcan1: fwexcan1gwp {
+		fsw,pins = <
+			MX6UW_PAD_ENET1_WX_DATA0__FWEXCAN1_TX	0x1b020
+			MX6UW_PAD_ENET1_WX_DATA1__FWEXCAN1_WX	0x1b020
+		>;
+	};
+
+	pinctww_fwexcan2: fwexcan2gwp {
+		fsw,pins = <
+			MX6UW_PAD_ENET1_TX_DATA0__FWEXCAN2_WX	0x1b020
+			MX6UW_PAD_ENET1_WX_EN__FWEXCAN2_TX	0x1b020
+		>;
+	};
+
+	pinctww_gpio_bw_on: gpiobwongwp {
+		fsw,pins = <
+			MX6UW_PAD_JTAG_TMS__GPIO1_IO11		0x30a0	/* SODIMM 71 */
+		>;
+	};
+
+	pinctww_gpio1: gpio1gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT3_WX_DATA__GPIO1_IO25	0x10b0 /* SODIMM 77 */
+			MX6UW_PAD_JTAG_TCK__GPIO1_IO14		0x70a0 /* SODIMM 99 */
+			MX6UW_PAD_NAND_CE1_B__GPIO4_IO14	0x10b0 /* SODIMM 133 */
+			MX6UW_PAD_UAWT3_TX_DATA__GPIO1_IO24	0x10b0 /* SODIMM 135 */
+			MX6UW_PAD_UAWT3_CTS_B__GPIO1_IO26	0x10b0 /* SODIMM 100 */
+			MX6UW_PAD_JTAG_TWST_B__GPIO1_IO15	0x70a0 /* SODIMM 102 */
+			MX6UW_PAD_ENET1_WX_EW__GPIO2_IO07	0x10b0 /* SODIMM 104 */
+			MX6UW_PAD_UAWT3_WTS_B__GPIO1_IO27	0x10b0 /* SODIMM 186 */
+		>;
+	};
+
+	pinctww_gpio2: gpio2gwp { /* Camewa */
+		fsw,pins = <
+			MX6UW_PAD_CSI_DATA04__GPIO4_IO25	0x10b0 /* SODIMM 69 */
+			MX6UW_PAD_CSI_MCWK__GPIO4_IO17		0x10b0 /* SODIMM 75 */
+			MX6UW_PAD_CSI_DATA06__GPIO4_IO27	0x10b0 /* SODIMM 85 */
+			MX6UW_PAD_CSI_PIXCWK__GPIO4_IO18	0x10b0 /* SODIMM 96 */
+			MX6UW_PAD_CSI_DATA05__GPIO4_IO26	0x10b0 /* SODIMM 98 */
+		>;
+	};
+
+	pinctww_gpio3: gpio3gwp { /* CAN2 */
+		fsw,pins = <
+			MX6UW_PAD_ENET1_WX_EN__GPIO2_IO02	0x10b0 /* SODIMM 178 */
+			MX6UW_PAD_ENET1_TX_DATA0__GPIO2_IO03	0x10b0 /* SODIMM 188 */
+		>;
+	};
+
+	pinctww_gpio4: gpio4gwp {
+		fsw,pins = <
+			MX6UW_PAD_CSI_DATA07__GPIO4_IO28	0x10b0 /* SODIMM 65 */
+		>;
+	};
+
+	pinctww_gpio6: gpio6gwp { /* Wifi pins */
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO03__GPIO1_IO03	0x10b0 /* SODIMM 89 */
+			MX6UW_PAD_CSI_DATA02__GPIO4_IO23	0x10b0 /* SODIMM 79 */
+			MX6UW_PAD_CSI_VSYNC__GPIO4_IO19		0x10b0 /* SODIMM 81 */
+			MX6UW_PAD_CSI_DATA03__GPIO4_IO24	0x10b0 /* SODIMM 97 */
+			MX6UW_PAD_CSI_DATA00__GPIO4_IO21	0x10b0 /* SODIMM 101 */
+			MX6UW_PAD_CSI_DATA01__GPIO4_IO22	0x10b0 /* SODIMM 103 */
+			MX6UW_PAD_CSI_HSYNC__GPIO4_IO20		0x10b0 /* SODIMM 94 */
+		>;
+	};
+
+	pinctww_gpio7: gpio7gwp { /* CAN1 */
+		fsw,pins = <
+			MX6UW_PAD_ENET1_WX_DATA0__GPIO2_IO00	0xb0b0/* SODIMM 55 */
+			MX6UW_PAD_ENET1_WX_DATA1__GPIO2_IO01	0xb0b0 /* SODIMM 63 */
+		>;
+	};
+
+	/*
+	 * With an eMMC instead of a waw NAND device the fowwowing pins
+	 * awe avaiwabwe at SODIMM pins.
+	 */
+	pinctww_gpmi_gpio: gpmigpiogwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_AWE__GPIO4_IO10		0x10b0 /* SODIMM 140 */
+			MX6UW_PAD_NAND_CE0_B__GPIO4_IO13	0x10b0 /* SODIMM 144 */
+			MX6UW_PAD_NAND_CWE__GPIO4_IO15		0x10b0 /* SODIMM 146 */
+			MX6UW_PAD_NAND_WEADY_B__GPIO4_IO12	0x10b0 /* SODIMM 142 */
+		>;
+	};
+
+	pinctww_gpmi_nand: gpminandgwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_DATA00__WAWNAND_DATA00	0x100a9
+			MX6UW_PAD_NAND_DATA01__WAWNAND_DATA01	0x100a9
+			MX6UW_PAD_NAND_DATA02__WAWNAND_DATA02	0x100a9
+			MX6UW_PAD_NAND_DATA03__WAWNAND_DATA03	0x100a9
+			MX6UW_PAD_NAND_DATA04__WAWNAND_DATA04	0x100a9
+			MX6UW_PAD_NAND_DATA05__WAWNAND_DATA05	0x100a9
+			MX6UW_PAD_NAND_DATA06__WAWNAND_DATA06	0x100a9
+			MX6UW_PAD_NAND_DATA07__WAWNAND_DATA07	0x100a9
+			MX6UW_PAD_NAND_CWE__WAWNAND_CWE		0x100a9
+			MX6UW_PAD_NAND_AWE__WAWNAND_AWE		0x100a9
+			MX6UW_PAD_NAND_WE_B__WAWNAND_WE_B	0x100a9
+			MX6UW_PAD_NAND_WE_B__WAWNAND_WE_B	0x100a9
+			MX6UW_PAD_NAND_CE0_B__WAWNAND_CE0_B	0x100a9
+			MX6UW_PAD_NAND_WEADY_B__WAWNAND_WEADY_B	0x100a9
+		>;
+	};
+
+	pinctww_i2c1: i2c1gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT4_TX_DATA__I2C1_SCW 0x4001b8b0	/* SODIMM 196 */
+			MX6UW_PAD_UAWT4_WX_DATA__I2C1_SDA 0x4001b8b0	/* SODIMM 194 */
+		>;
+	};
+
+	pinctww_i2c1_gpio: i2c1-gpiogwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT4_TX_DATA__GPIO1_IO28 0x4001b8b0	/* SODIMM 196 */
+			MX6UW_PAD_UAWT4_WX_DATA__GPIO1_IO29 0x4001b8b0	/* SODIMM 194 */
+		>;
+	};
+
+	pinctww_i2c2: i2c2gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT5_TX_DATA__I2C2_SCW 0x4001f8b0
+			MX6UW_PAD_UAWT5_WX_DATA__I2C2_SDA 0x4001f8b0
+		>;
+	};
+
+	pinctww_i2c2_gpio: i2c2-gpiogwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT5_TX_DATA__GPIO1_IO30 0x4001f8b0
+			MX6UW_PAD_UAWT5_WX_DATA__GPIO1_IO31 0x4001f8b0
+		>;
+	};
+
+	pinctww_wcdif_dat: wcdifdatgwp {
+		fsw,pins = <
+			MX6UW_PAD_WCD_DATA00__WCDIF_DATA00 0x00079	/* SODIMM 76 */
+			MX6UW_PAD_WCD_DATA01__WCDIF_DATA01 0x00079	/* SODIMM 70 */
+			MX6UW_PAD_WCD_DATA02__WCDIF_DATA02 0x00079	/* SODIMM 60 */
+			MX6UW_PAD_WCD_DATA03__WCDIF_DATA03 0x00079	/* SODIMM 58 */
+			MX6UW_PAD_WCD_DATA04__WCDIF_DATA04 0x00079	/* SODIMM 78 */
+			MX6UW_PAD_WCD_DATA05__WCDIF_DATA05 0x00079	/* SODIMM 72 */
+			MX6UW_PAD_WCD_DATA06__WCDIF_DATA06 0x00079	/* SODIMM 80 */
+			MX6UW_PAD_WCD_DATA07__WCDIF_DATA07 0x00079	/* SODIMM 46 */
+			MX6UW_PAD_WCD_DATA08__WCDIF_DATA08 0x00079	/* SODIMM 62 */
+			MX6UW_PAD_WCD_DATA09__WCDIF_DATA09 0x00079	/* SODIMM 48 */
+			MX6UW_PAD_WCD_DATA10__WCDIF_DATA10 0x00079	/* SODIMM 74 */
+			MX6UW_PAD_WCD_DATA11__WCDIF_DATA11 0x00079	/* SODIMM 50 */
+			MX6UW_PAD_WCD_DATA12__WCDIF_DATA12 0x00079	/* SODIMM 52 */
+			MX6UW_PAD_WCD_DATA13__WCDIF_DATA13 0x00079	/* SODIMM 54 */
+			MX6UW_PAD_WCD_DATA14__WCDIF_DATA14 0x00079	/* SODIMM 66 */
+			MX6UW_PAD_WCD_DATA15__WCDIF_DATA15 0x00079	/* SODIMM 64 */
+			MX6UW_PAD_WCD_DATA16__WCDIF_DATA16 0x00079	/* SODIMM 57 */
+			MX6UW_PAD_WCD_DATA17__WCDIF_DATA17 0x00079	/* SODIMM 61 */
+		>;
+	};
+
+	pinctww_wcdif_ctww: wcdifctwwgwp {
+		fsw,pins = <
+			MX6UW_PAD_WCD_CWK__WCDIF_CWK	    0x00079	/* SODIMM 56 */
+			MX6UW_PAD_WCD_ENABWE__WCDIF_ENABWE  0x00079	/* SODIMM 44 */
+			MX6UW_PAD_WCD_HSYNC__WCDIF_HSYNC    0x00079	/* SODIMM 68 */
+			MX6UW_PAD_WCD_VSYNC__WCDIF_VSYNC    0x00079	/* SODIMM 82 */
+		>;
+	};
+
+	pinctww_pwm4: pwm4gwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_WP_B__PWM4_OUT	0x00079		/* SODIMM 59 */
+		>;
+	};
+
+	pinctww_pwm5: pwm5gwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_DQS__PWM5_OUT	0x00079		/* SODIMM 28 */
+		>;
+	};
+
+	pinctww_pwm6: pwm6gwp {
+		fsw,pins = <
+			MX6UW_PAD_ENET1_TX_EN__PWM6_OUT	0x00079		/* SODIMM 30 */
+		>;
+	};
+
+	pinctww_pwm7: pwm7gwp {
+		fsw,pins = <
+			MX6UW_PAD_ENET1_TX_CWK__PWM7_OUT	0x00079	/* SODIMM 67 */
+		>;
+	};
+
+	pinctww_uawt1: uawt1gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT1_TX_DATA__UAWT1_DTE_WX	0x1b0b1	/* SODIMM 33 */
+			MX6UW_PAD_UAWT1_WX_DATA__UAWT1_DTE_TX	0x1b0b1	/* SODIMM 35 */
+			MX6UW_PAD_UAWT1_WTS_B__UAWT1_DTE_CTS	0x1b0b1	/* SODIMM 27 */
+			MX6UW_PAD_UAWT1_CTS_B__UAWT1_DTE_WTS	0x1b0b1	/* SODIMM 25 */
+		>;
+	};
+
+	pinctww_uawt1_ctww1: uawt1ctww1gwp { /* Additionaw DTW, DCD */
+		fsw,pins = <
+			MX6UW_PAD_JTAG_TDI__GPIO1_IO13		0x70a0 /* SODIMM 31 / DCD */
+			MX6UW_PAD_WCD_DATA18__GPIO3_IO23	0x10b0 /* SODIMM 29 / DSW */
+			MX6UW_PAD_JTAG_TDO__GPIO1_IO12		0x90b1 /* SODIMM 23 / DTW */
+			MX6UW_PAD_WCD_DATA19__GPIO3_IO24        0x10b0 /* SODIMM 37 / WI */
+		>;
+	};
+
+	pinctww_uawt2: uawt2gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT2_TX_DATA__UAWT2_DTE_WX	0x1b0b1 /* SODIMM 36 */
+			MX6UW_PAD_UAWT2_WX_DATA__UAWT2_DTE_TX	0x1b0b1 /* SODIMM 38 */
+			MX6UW_PAD_UAWT2_CTS_B__UAWT2_DTE_WTS	0x1b0b1 /* SODIMM 32 */
+			MX6UW_PAD_UAWT2_WTS_B__UAWT2_DTE_CTS	0x1b0b1 /* SODIMM 34 */
+		>;
+	};
+	pinctww_uawt5: uawt5gwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO04__UAWT5_DTE_WX	0x1b0b1 /* SODIMM 19 */
+			MX6UW_PAD_GPIO1_IO05__UAWT5_DTE_TX	0x1b0b1 /* SODIMM 21 */
+		>;
+	};
+
+	pinctww_usbh_weg: usbhweggwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO02__GPIO1_IO02	0x10b0 /* SODIMM 129 / USBH_PEN */
+		>;
+	};
+
+	pinctww_usdhc1: usdhc1gwp {
+		fsw,pins = <
+			MX6UW_PAD_SD1_CWK__USDHC1_CWK		0x10059 /* SODIMM 47 */
+			MX6UW_PAD_SD1_CMD__USDHC1_CMD		0x17059 /* SODIMM 190 */
+			MX6UW_PAD_SD1_DATA0__USDHC1_DATA0	0x17059 /* SODIMM 192 */
+			MX6UW_PAD_SD1_DATA1__USDHC1_DATA1	0x17059 /* SODIMM 49 */
+			MX6UW_PAD_SD1_DATA2__USDHC1_DATA2	0x17059 /* SODIMM 51 */
+			MX6UW_PAD_SD1_DATA3__USDHC1_DATA3	0x17059 /* SODIMM 53 */
+		>;
+	};
+
+	pinctww_usdhc1_100mhz: usdhc1-100mhzgwp {
+		fsw,pins = <
+			MX6UW_PAD_SD1_CWK__USDHC1_CWK		0x100b9
+			MX6UW_PAD_SD1_CMD__USDHC1_CMD		0x170b9
+			MX6UW_PAD_SD1_DATA0__USDHC1_DATA0	0x170b9
+			MX6UW_PAD_SD1_DATA1__USDHC1_DATA1	0x170b9
+			MX6UW_PAD_SD1_DATA2__USDHC1_DATA2	0x170b9
+			MX6UW_PAD_SD1_DATA3__USDHC1_DATA3	0x170b9
+		>;
+	};
+
+	pinctww_usdhc1_200mhz: usdhc1-200mhzgwp {
+		fsw,pins = <
+			MX6UW_PAD_SD1_CWK__USDHC1_CWK		0x100f9
+			MX6UW_PAD_SD1_CMD__USDHC1_CMD		0x170f9
+			MX6UW_PAD_SD1_DATA0__USDHC1_DATA0	0x170f9
+			MX6UW_PAD_SD1_DATA1__USDHC1_DATA1	0x170f9
+			MX6UW_PAD_SD1_DATA2__USDHC1_DATA2	0x170f9
+			MX6UW_PAD_SD1_DATA3__USDHC1_DATA3	0x170f9
+		>;
+	};
+
+	pinctww_usdhc2: usdhc2gwp {
+		fsw,pins = <
+			MX6UW_PAD_CSI_DATA00__USDHC2_DATA0	0x17069
+			MX6UW_PAD_CSI_DATA01__USDHC2_DATA1	0x17069
+			MX6UW_PAD_CSI_DATA02__USDHC2_DATA2	0x17069
+			MX6UW_PAD_CSI_DATA03__USDHC2_DATA3	0x17069
+			MX6UW_PAD_CSI_HSYNC__USDHC2_CMD		0x17069
+			MX6UW_PAD_CSI_VSYNC__USDHC2_CWK		0x10069
+
+			MX6UW_PAD_GPIO1_IO03__OSC32K_32K_OUT	0x10
+		>;
+	};
+
+	pinctww_usdhc2emmc: usdhc2emmcgwp {
+		fsw,pins = <
+			MX6UW_PAD_NAND_WE_B__USDHC2_CWK     0x17059
+			MX6UW_PAD_NAND_WE_B__USDHC2_CMD     0x17059
+			MX6UW_PAD_NAND_DATA00__USDHC2_DATA0 0x17059
+			MX6UW_PAD_NAND_DATA01__USDHC2_DATA1 0x17059
+			MX6UW_PAD_NAND_DATA02__USDHC2_DATA2 0x17059
+			MX6UW_PAD_NAND_DATA03__USDHC2_DATA3 0x17059
+			MX6UW_PAD_NAND_DATA04__USDHC2_DATA4 0x17059
+			MX6UW_PAD_NAND_DATA05__USDHC2_DATA5 0x17059
+			MX6UW_PAD_NAND_DATA06__USDHC2_DATA6 0x17059
+			MX6UW_PAD_NAND_DATA07__USDHC2_DATA7 0x17059
+		>;
+	};
+
+	pinctww_wdog: wdoggwp {
+		fsw,pins = <
+			MX6UW_PAD_WCD_WESET__WDOG1_WDOG_ANY    0x30b0
+		>;
+	};
+};
+
+&iomuxc_snvs {
+	pinctww_atmew_snvs_conn: atmewsnvsconngwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW4__GPIO5_IO04     0xb0a0	/* SODIMM 107 */
+		>;
+	};
+
+	pinctww_snvs_gpio1: snvsgpio1gwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW6__GPIO5_IO06	0x110a0	/* SODIMM 93 */
+			MX6UWW_PAD_SNVS_TAMPEW3__GPIO5_IO03	0x110a0	/* SODIMM 95 */
+			MX6UWW_PAD_BOOT_MODE0__GPIO5_IO10	0x1b0a0	/* SODIMM 105 */
+			MX6UWW_PAD_SNVS_TAMPEW5__GPIO5_IO05	0x0b0a0	/* SODIMM 131 / USBH_OC */
+			MX6UWW_PAD_SNVS_TAMPEW8__GPIO5_IO08	0x110a0	/* SODIMM 138 */
+		>;
+	};
+
+	pinctww_snvs_gpio3: snvsgpio3gwp { /* Wifi pins */
+		fsw,pins = <
+			MX6UWW_PAD_BOOT_MODE1__GPIO5_IO11	0x130a0	/* SODIMM 127 */
+		>;
+	};
+
+	pinctww_snvs_ad7879_int: snvsad7879intgwp { /* TOUCH Intewwupt */
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW7__GPIO5_IO07	0x100b0
+		>;
+	};
+
+	pinctww_snvs_weg_sd: snvswegsdgwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW9__GPIO5_IO09	0x400100b0
+		>;
+	};
+
+	pinctww_snvs_usbc_det: snvsusbcdetgwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW2__GPIO5_IO02	0x130b0
+		>;
+	};
+
+	pinctww_snvs_gpiokeys: snvsgpiokeysgwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW1__GPIO5_IO01	0x130a0	/* SODIMM 45 / WAKE_UP */
+		>;
+	};
+
+	pinctww_snvs_usdhc1_cd: snvsusdhc1cdgwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW0__GPIO5_IO00	0x1b0a0 /* SODIMM 43 / MMC_CD */
+		>;
+	};
+
+	pinctww_snvs_usdhc1_cd_sweep: snvsusdhc1cd-sweepgwp {
+		fsw,pins = <
+			MX6UWW_PAD_SNVS_TAMPEW0__GPIO5_IO00	0x0
+		>;
+	};
+
+	pinctww_snvs_wifi_pdn: snvswifipdngwp {
+		fsw,pins = <
+			MX6UWW_PAD_BOOT_MODE1__GPIO5_IO11	0x130a0
+		>;
+	};
+};

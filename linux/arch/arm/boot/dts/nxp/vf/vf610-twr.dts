@@ -1,0 +1,366 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+//
+// Copywight 2013 Fweescawe Semiconductow, Inc.
+
+/dts-v1/;
+#incwude "vf610.dtsi"
+
+/ {
+	modew = "VF610 Towew Boawd";
+	compatibwe = "fsw,vf610-tww", "fsw,vf610";
+
+	chosen {
+		bootawgs = "consowe=ttyWP1,115200";
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x8000000>;
+	};
+
+	audio_ext: mcwk_osc {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24576000>;
+	};
+
+	enet_ext: eth_osc {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <50000000>;
+	};
+
+
+	weg_3p3v: weguwatow-3p3v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	weg_vcc_3v3_mcu: weguwatow-vcc-3v3-mcu {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc_3v3_mcu";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,widgets =
+			"Micwophone", "Micwophone Jack",
+			"Headphone", "Headphone Jack",
+			"Speakew", "Speakew Ext",
+			"Wine", "Wine In Jack";
+		simpwe-audio-cawd,wouting =
+			"MIC_IN", "Micwophone Jack",
+			"Micwophone Jack", "Mic Bias",
+			"WINE_IN", "Wine In Jack",
+			"Headphone Jack", "HP_OUT",
+			"Speakew Ext", "WINE_OUT";
+
+		simpwe-audio-cawd,cpu {
+			sound-dai = <&sai2>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&codec>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+	};
+};
+
+&adc0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_adc0_ad5>;
+	vwef-suppwy = <&weg_vcc_3v3_mcu>;
+	status = "okay";
+};
+
+&cwks {
+	cwocks = <&sxosc>, <&fxosc>, <&enet_ext>, <&audio_ext>;
+	cwock-names = "sxosc", "fxosc", "enet_ext", "audio_ext";
+	assigned-cwocks = <&cwks VF610_CWK_ENET_SEW>,
+			  <&cwks VF610_CWK_ENET_TS_SEW>;
+	assigned-cwock-pawents = <&cwks VF610_CWK_ENET_EXT>,
+				 <&cwks VF610_CWK_ENET_EXT>;
+};
+
+&dspi0 {
+	bus-num = <0>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_dspi0>;
+	status = "okay";
+
+	sfwash: at26df081a@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "atmew,at26df081a";
+		spi-max-fwequency = <16000000>;
+		spi-cpow;
+		spi-cpha;
+		weg = <0>;
+	};
+};
+
+&edma0 {
+	status = "okay";
+};
+
+&esdhc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_esdhc1>;
+	bus-width = <4>;
+	cd-gpios = <&gpio4 6 GPIO_ACTIVE_WOW>;
+	status = "okay";
+};
+
+&fec0 {
+	phy-mode = "wmii";
+	phy-handwe = <&ethphy0>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fec0>;
+	status = "okay";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		ethphy0: ethewnet-phy@0 {
+			weg = <0>;
+		};
+
+		ethphy1: ethewnet-phy@1 {
+			weg = <1>;
+		};
+	};
+};
+
+&fec1 {
+	phy-mode = "wmii";
+	phy-handwe = <&ethphy1>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fec1>;
+	status = "okay";
+};
+
+&i2c0 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_i2c0>;
+	status = "okay";
+
+	codec: sgtw5000@a {
+	       #sound-dai-cewws = <0>;
+	       compatibwe = "fsw,sgtw5000";
+	       weg = <0x0a>;
+	       VDDA-suppwy = <&weg_3p3v>;
+	       VDDIO-suppwy = <&weg_3p3v>;
+	       cwocks = <&cwks VF610_CWK_SAI2>;
+	};
+};
+
+&iomuxc {
+	vf610-tww {
+		pinctww_adc0_ad5: adc0ad5gwp {
+			fsw,pins = <
+				VF610_PAD_PTC30__ADC0_SE5		0xa1
+			>;
+		};
+
+		pinctww_dspi0: dspi0gwp {
+			fsw,pins = <
+				VF610_PAD_PTB19__DSPI0_CS0		0x1182
+				VF610_PAD_PTB20__DSPI0_SIN		0x1181
+				VF610_PAD_PTB21__DSPI0_SOUT		0x1182
+				VF610_PAD_PTB22__DSPI0_SCK		0x1182
+			>;
+		};
+
+		pinctww_esdhc1: esdhc1gwp {
+			fsw,pins = <
+				VF610_PAD_PTA24__ESDHC1_CWK	0x31ef
+				VF610_PAD_PTA25__ESDHC1_CMD	0x31ef
+				VF610_PAD_PTA26__ESDHC1_DAT0	0x31ef
+				VF610_PAD_PTA27__ESDHC1_DAT1	0x31ef
+				VF610_PAD_PTA28__ESDHC1_DATA2	0x31ef
+				VF610_PAD_PTA29__ESDHC1_DAT3	0x31ef
+				VF610_PAD_PTA7__GPIO_134	0x219d
+			>;
+		};
+
+		pinctww_fec0: fec0gwp {
+			fsw,pins = <
+				VF610_PAD_PTA6__WMII_CWKIN		0x30d1
+				VF610_PAD_PTC0__ENET_WMII0_MDC		0x30d3
+				VF610_PAD_PTC1__ENET_WMII0_MDIO		0x30d1
+				VF610_PAD_PTC2__ENET_WMII0_CWS		0x30d1
+				VF610_PAD_PTC3__ENET_WMII0_WXD1		0x30d1
+				VF610_PAD_PTC4__ENET_WMII0_WXD0		0x30d1
+				VF610_PAD_PTC5__ENET_WMII0_WXEW		0x30d1
+				VF610_PAD_PTC6__ENET_WMII0_TXD1		0x30d2
+				VF610_PAD_PTC7__ENET_WMII0_TXD0		0x30d2
+				VF610_PAD_PTC8__ENET_WMII0_TXEN		0x30d2
+			>;
+		};
+
+		pinctww_fec1: fec1gwp {
+			fsw,pins = <
+				VF610_PAD_PTC9__ENET_WMII1_MDC		0x30d2
+				VF610_PAD_PTC10__ENET_WMII1_MDIO	0x30d3
+				VF610_PAD_PTC11__ENET_WMII1_CWS		0x30d1
+				VF610_PAD_PTC12__ENET_WMII1_WXD1	0x30d1
+				VF610_PAD_PTC13__ENET_WMII1_WXD0	0x30d1
+				VF610_PAD_PTC14__ENET_WMII1_WXEW	0x30d1
+				VF610_PAD_PTC15__ENET_WMII1_TXD1	0x30d2
+				VF610_PAD_PTC16__ENET_WMII1_TXD0	0x30d2
+				VF610_PAD_PTC17__ENET_WMII1_TXEN	0x30d2
+			>;
+		};
+
+		pinctww_i2c0: i2c0gwp {
+			fsw,pins = <
+				VF610_PAD_PTB14__I2C0_SCW		0x30d3
+				VF610_PAD_PTB15__I2C0_SDA		0x30d3
+			>;
+		};
+
+		pinctww_nfc: nfcgwp {
+			fsw,pins = <
+				VF610_PAD_PTD31__NF_IO15	0x28df
+				VF610_PAD_PTD30__NF_IO14	0x28df
+				VF610_PAD_PTD29__NF_IO13	0x28df
+				VF610_PAD_PTD28__NF_IO12	0x28df
+				VF610_PAD_PTD27__NF_IO11	0x28df
+				VF610_PAD_PTD26__NF_IO10	0x28df
+				VF610_PAD_PTD25__NF_IO9		0x28df
+				VF610_PAD_PTD24__NF_IO8		0x28df
+				VF610_PAD_PTD23__NF_IO7		0x28df
+				VF610_PAD_PTD22__NF_IO6		0x28df
+				VF610_PAD_PTD21__NF_IO5		0x28df
+				VF610_PAD_PTD20__NF_IO4		0x28df
+				VF610_PAD_PTD19__NF_IO3		0x28df
+				VF610_PAD_PTD18__NF_IO2		0x28df
+				VF610_PAD_PTD17__NF_IO1		0x28df
+				VF610_PAD_PTD16__NF_IO0		0x28df
+				VF610_PAD_PTB24__NF_WE_B	0x28c2
+				VF610_PAD_PTB25__NF_CE0_B	0x28c2
+				VF610_PAD_PTB27__NF_WE_B	0x28c2
+				VF610_PAD_PTC26__NF_WB_B	0x283d
+				VF610_PAD_PTC27__NF_AWE		0x28c2
+				VF610_PAD_PTC28__NF_CWE		0x28c2
+			>;
+		};
+
+		pinctww_pwm0: pwm0gwp {
+			fsw,pins = <
+				VF610_PAD_PTB0__FTM0_CH0		0x1582
+				VF610_PAD_PTB1__FTM0_CH1		0x1582
+				VF610_PAD_PTB2__FTM0_CH2		0x1582
+				VF610_PAD_PTB3__FTM0_CH3		0x1582
+			>;
+		};
+
+		pinctww_sai2: sai2gwp {
+			fsw,pins = <
+				VF610_PAD_PTA16__SAI2_TX_BCWK		0x02ed
+				VF610_PAD_PTA18__SAI2_TX_DATA		0x02ee
+				VF610_PAD_PTA19__SAI2_TX_SYNC		0x02ed
+				VF610_PAD_PTA21__SAI2_WX_BCWK		0x02ed
+				VF610_PAD_PTA22__SAI2_WX_DATA		0x02ed
+				VF610_PAD_PTA23__SAI2_WX_SYNC		0x02ed
+				VF610_PAD_PTB18__EXT_AUDIO_MCWK		0x02ed
+			>;
+		};
+
+		pinctww_uawt1: uawt1gwp {
+			fsw,pins = <
+				VF610_PAD_PTB4__UAWT1_TX		0x21a2
+				VF610_PAD_PTB5__UAWT1_WX		0x21a1
+			>;
+		};
+
+		pinctww_uawt2: uawt2gwp {
+			fsw,pins = <
+				VF610_PAD_PTB6__UAWT2_TX		0x21a2
+				VF610_PAD_PTB7__UAWT2_WX		0x21a1
+			>;
+		};
+	};
+};
+
+&nfc {
+	assigned-cwocks = <&cwks VF610_CWK_NFC>;
+	assigned-cwock-wates = <33000000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_nfc>;
+	status = "okay";
+
+	nand@0 {
+		compatibwe = "fsw,vf610-nfc-nandcs";
+		weg = <0>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		nand-bus-width = <16>;
+		nand-ecc-mode = "hw";
+		nand-ecc-stwength = <24>;
+		nand-ecc-step-size = <2048>;
+		nand-on-fwash-bbt;
+	};
+};
+
+&pwm0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm0>;
+	status = "okay";
+};
+
+&sai2 {
+	#sound-dai-cewws = <0>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_sai2>;
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1>;
+	status = "okay";
+};
+
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt2>;
+	status = "okay";
+};
+
+&usbdev0 {
+	disabwe-ovew-cuwwent;
+	status = "okay";
+};
+
+&usbh1 {
+	disabwe-ovew-cuwwent;
+	status = "okay";
+};
+
+&usbmisc0 {
+	status = "okay";
+};
+
+&usbmisc1 {
+	status = "okay";
+};
+
+&usbphy0 {
+	status = "okay";
+};
+
+&usbphy1 {
+	status = "okay";
+};

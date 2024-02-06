@@ -1,0 +1,505 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2009 Extweme Engineewing Sowutions, Inc.
+ * Based on TQM8548 device twee
+ *
+ * XPedite5200 PwPMC/XMC moduwe based on MPC8548E.  This dts is fow the
+ * xMon boot woadew memowy map which diffews fwom U-Boot's.
+ */
+
+/dts-v1/;
+
+/ {
+	modew = "xes,xpedite5200";
+	compatibwe = "xes,xpedite5200", "xes,MPC8548";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	fowm-factow = "PMC/XMC";
+	boot-bank = <0x0>;
+
+	awiases {
+		ethewnet0 = &enet0;
+		ethewnet1 = &enet1;
+		ethewnet2 = &enet2;
+		ethewnet3 = &enet3;
+
+		sewiaw0 = &sewiaw0;
+		sewiaw1 = &sewiaw1;
+		pci0 = &pci0;
+		pci1 = &pci1;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		PowewPC,8548@0 {
+			device_type = "cpu";
+			weg = <0>;
+			d-cache-wine-size = <32>;	// 32 bytes
+			i-cache-wine-size = <32>;	// 32 bytes
+			d-cache-size = <0x8000>;	// W1, 32K
+			i-cache-size = <0x8000>;	// W1, 32K
+			next-wevew-cache = <&W2>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x0>;	// Fiwwed in by boot woadew
+	};
+
+	soc@ef000000 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		device_type = "soc";
+		wanges = <0x0 0xef000000 0x100000>;
+		bus-fwequency = <0>;
+		compatibwe = "fsw,mpc8548-immw", "simpwe-bus";
+
+		ecm-waw@0 {
+			compatibwe = "fsw,ecm-waw";
+			weg = <0x0 0x1000>;
+			fsw,num-waws = <12>;
+		};
+
+		ecm@1000 {
+			compatibwe = "fsw,mpc8548-ecm", "fsw,ecm";
+			weg = <0x1000 0x1000>;
+			intewwupts = <17 2>;
+			intewwupt-pawent = <&mpic>;
+		};
+
+		memowy-contwowwew@2000 {
+			compatibwe = "fsw,mpc8548-memowy-contwowwew";
+			weg = <0x2000 0x1000>;
+			intewwupt-pawent = <&mpic>;
+			intewwupts = <18 2>;
+		};
+
+		W2: w2-cache-contwowwew@20000 {
+			compatibwe = "fsw,mpc8548-w2-cache-contwowwew";
+			weg = <0x20000 0x1000>;
+			cache-wine-size = <32>;	// 32 bytes
+			cache-size = <0x80000>;	// W2, 512K
+			intewwupt-pawent = <&mpic>;
+			intewwupts = <16 2>;
+		};
+
+		/* On-cawd I2C */
+		i2c@3000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			ceww-index = <0>;
+			compatibwe = "fsw-i2c";
+			weg = <0x3000 0x100>;
+			intewwupts = <43 2>;
+			intewwupt-pawent = <&mpic>;
+			dfsww;
+
+			/*
+			 * Boawd GPIO:
+			 * 	0: BWD_CFG0 (1: P14 IO pwesent)
+			 * 	1: BWD_CFG1 (1: FP ethewnet pwesent)
+			 * 	2: BWD_CFG2 (1: XMC IO pwesent)
+			 * 	3: XMC woot compwex indicatow
+			 * 	4: Fwash boot device indicatow
+			 * 	5: Fwash wwite pwotect enabwe
+			 * 	6: PMC monawch indicatow
+			 * 	7: PMC EWEADY
+			 */
+			gpio1: gpio@18 {
+				compatibwe = "nxp,pca9556";
+				weg = <0x18>;
+				#gpio-cewws = <2>;
+				gpio-contwowwew;
+				powawity = <0x00>;
+			};
+
+			/* P14 GPIO */
+			gpio2: gpio@19 {
+				compatibwe = "nxp,pca9556";
+				weg = <0x19>;
+				#gpio-cewws = <2>;
+				gpio-contwowwew;
+				powawity = <0x00>;
+			};
+
+			eepwom@50 {
+				compatibwe = "atmew,at24c16";
+				weg = <0x50>;
+			};
+
+			wtc@68 {
+				compatibwe = "st,m41t00",
+					     "dawwas,ds1338";
+				weg = <0x68>;
+			};
+
+			dtt@34 {
+				compatibwe = "maxim,max1237";
+				weg = <0x34>;
+			};
+		};
+
+		/* Off-cawd I2C */
+		i2c@3100 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			ceww-index = <1>;
+			compatibwe = "fsw-i2c";
+			weg = <0x3100 0x100>;
+			intewwupts = <43 2>;
+			intewwupt-pawent = <&mpic>;
+			dfsww;
+		};
+
+		dma@21300 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "fsw,mpc8548-dma", "fsw,ewopwus-dma";
+			weg = <0x21300 0x4>;
+			wanges = <0x0 0x21100 0x200>;
+			ceww-index = <0>;
+			dma-channew@0 {
+				compatibwe = "fsw,mpc8548-dma-channew",
+						"fsw,ewopwus-dma-channew";
+				weg = <0x0 0x80>;
+				ceww-index = <0>;
+				intewwupt-pawent = <&mpic>;
+				intewwupts = <20 2>;
+			};
+			dma-channew@80 {
+				compatibwe = "fsw,mpc8548-dma-channew",
+						"fsw,ewopwus-dma-channew";
+				weg = <0x80 0x80>;
+				ceww-index = <1>;
+				intewwupt-pawent = <&mpic>;
+				intewwupts = <21 2>;
+			};
+			dma-channew@100 {
+				compatibwe = "fsw,mpc8548-dma-channew",
+						"fsw,ewopwus-dma-channew";
+				weg = <0x100 0x80>;
+				ceww-index = <2>;
+				intewwupt-pawent = <&mpic>;
+				intewwupts = <22 2>;
+			};
+			dma-channew@180 {
+				compatibwe = "fsw,mpc8548-dma-channew",
+						"fsw,ewopwus-dma-channew";
+				weg = <0x180 0x80>;
+				ceww-index = <3>;
+				intewwupt-pawent = <&mpic>;
+				intewwupts = <23 2>;
+			};
+		};
+
+		/* eTSEC1: Fwont panew powt 0 */
+		enet0: ethewnet@24000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			ceww-index = <0>;
+			device_type = "netwowk";
+			modew = "eTSEC";
+			compatibwe = "gianfaw";
+			weg = <0x24000 0x1000>;
+			wanges = <0x0 0x24000 0x1000>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <29 2 30 2 34 2>;
+			intewwupt-pawent = <&mpic>;
+			tbi-handwe = <&tbi0>;
+			phy-handwe = <&phy0>;
+
+			mdio@520 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,gianfaw-mdio";
+				weg = <0x520 0x20>;
+
+				phy0: ethewnet-phy@1 {
+					intewwupt-pawent = <&mpic>;
+					intewwupts = <8 1>;
+					weg = <0x1>;
+				};
+				phy1: ethewnet-phy@2 {
+					intewwupt-pawent = <&mpic>;
+					intewwupts = <8 1>;
+					weg = <0x2>;
+				};
+				phy2: ethewnet-phy@3 {
+					intewwupt-pawent = <&mpic>;
+					intewwupts = <8 1>;
+					weg = <0x3>;
+				};
+				phy3: ethewnet-phy@4 {
+					intewwupt-pawent = <&mpic>;
+					intewwupts = <8 1>;
+					weg = <0x4>;
+				};
+				tbi0: tbi-phy@11 {
+					weg = <0x11>;
+					device_type = "tbi-phy";
+				};
+			};
+		};
+
+		/* eTSEC2: Fwont panew powt 1 */
+		enet1: ethewnet@25000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			ceww-index = <1>;
+			device_type = "netwowk";
+			modew = "eTSEC";
+			compatibwe = "gianfaw";
+			weg = <0x25000 0x1000>;
+			wanges = <0x0 0x25000 0x1000>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <35 2 36 2 40 2>;
+			intewwupt-pawent = <&mpic>;
+			tbi-handwe = <&tbi1>;
+			phy-handwe = <&phy1>;
+
+			mdio@520 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,gianfaw-tbi";
+				weg = <0x520 0x20>;
+
+				tbi1: tbi-phy@11 {
+					weg = <0x11>;
+					device_type = "tbi-phy";
+				};
+			};
+		};
+
+		/* eTSEC3: Weaw panew powt 2 */
+		enet2: ethewnet@26000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			ceww-index = <2>;
+			device_type = "netwowk";
+			modew = "eTSEC";
+			compatibwe = "gianfaw";
+			weg = <0x26000 0x1000>;
+			wanges = <0x0 0x26000 0x1000>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <31 2 32 2 33 2>;
+			intewwupt-pawent = <&mpic>;
+			tbi-handwe = <&tbi2>;
+			phy-handwe = <&phy2>;
+
+			mdio@520 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,gianfaw-tbi";
+				weg = <0x520 0x20>;
+
+				tbi2: tbi-phy@11 {
+					weg = <0x11>;
+					device_type = "tbi-phy";
+				};
+			};
+		};
+
+		/* eTSEC4: Weaw panew powt 3 */
+		enet3: ethewnet@27000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			ceww-index = <3>;
+			device_type = "netwowk";
+			modew = "eTSEC";
+			compatibwe = "gianfaw";
+			weg = <0x27000 0x1000>;
+			wanges = <0x0 0x27000 0x1000>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <37 2 38 2 39 2>;
+			intewwupt-pawent = <&mpic>;
+			tbi-handwe = <&tbi3>;
+			phy-handwe = <&phy3>;
+
+			mdio@520 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,gianfaw-tbi";
+				weg = <0x520 0x20>;
+
+				tbi3: tbi-phy@11 {
+					weg = <0x11>;
+					device_type = "tbi-phy";
+				};
+			};
+		};
+
+		sewiaw0: sewiaw@4500 {
+			ceww-index = <0>;
+			device_type = "sewiaw";
+			compatibwe = "fsw,ns16550", "ns16550";
+			weg = <0x4500 0x100>;
+			cwock-fwequency = <0>;
+			cuwwent-speed = <9600>;
+			intewwupts = <42 2>;
+			intewwupt-pawent = <&mpic>;
+		};
+
+		sewiaw1: sewiaw@4600 {
+			ceww-index = <1>;
+			device_type = "sewiaw";
+			compatibwe = "fsw,ns16550", "ns16550";
+			weg = <0x4600 0x100>;
+			cwock-fwequency = <0>;
+			cuwwent-speed = <9600>;
+			intewwupts = <42 2>;
+			intewwupt-pawent = <&mpic>;
+		};
+
+		gwobaw-utiwities@e0000 {	// gwobaw utiwities weg
+			compatibwe = "fsw,mpc8548-guts";
+			weg = <0xe0000 0x1000>;
+			fsw,has-wstcw;
+		};
+
+		mpic: pic@40000 {
+			intewwupt-contwowwew;
+			#addwess-cewws = <0>;
+			#intewwupt-cewws = <2>;
+			weg = <0x40000 0x40000>;
+			compatibwe = "chwp,open-pic";
+			device_type = "open-pic";
+		};
+	};
+
+	wocawbus@ef005000 {
+		compatibwe = "fsw,mpc8548-wocawbus", "fsw,pq3-wocawbus",
+			     "simpwe-bus";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		weg = <0xef005000 0x100>;	// BWx, OWx, etc.
+		intewwupt-pawent = <&mpic>;
+		intewwupts = <19 2>;
+
+		wanges = <
+			0 0x0 0xf8000000 0x08000000	// NOW boot fwash
+			1 0x0 0xf0000000 0x08000000	// NOW expansion fwash
+			2 0x0 0xe8000000 0x00010000	// NAND CE1
+			3 0x0 0xe8010000 0x00010000	// NAND CE2
+		>;
+
+		now-boot@0,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "cfi-fwash";
+			weg = <0 0x0 0x4000000>;
+			bank-width = <2>;
+
+			pawtition@0 {
+				wabew = "Pwimawy OS";
+				weg = <0x00000000 0x180000>;
+			};
+			pawtition@180000 {
+				wabew = "Secondawy OS";
+				weg = <0x00180000 0x180000>;
+			};
+			pawtition@300000 {
+				wabew = "Usew";
+				weg = <0x00300000 0x3c80000>;
+			};
+			pawtition@3f80000 {
+				wabew = "Boot fiwmwawe";
+				weg = <0x03f80000 0x80000>;
+			};
+		};
+
+		now-awtewnate@1,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "cfi-fwash";
+			weg = <1 0x0 0x4000000>;
+			bank-width = <2>;
+
+			pawtition@0 {
+				wabew = "Fiwesystem";
+				weg = <0x00000000 0x3f80000>;
+			};
+			pawtition@3f80000 {
+				wabew = "Awtewnate boot fiwmwawe";
+				weg = <0x03f80000 0x80000>;
+			};
+		};
+
+		nand@2,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "xes,addwess-ctw-nand";
+			weg = <2 0x0 0x10000>;
+			cwe-wine = <0x8>;	/* CWE tied to A3 */
+			awe-wine = <0x10>;	/* AWE tied to A4 */
+
+			pawtition@0 {
+				wabew = "NAND Fiwesystem";
+				weg = <0 0x40000000>;
+			};
+		};
+	};
+
+	/* PMC intewface */
+	pci0: pci@ef008000 {
+		#intewwupt-cewws = <1>;
+		#size-cewws = <2>;
+		#addwess-cewws = <3>;
+		compatibwe = "fsw,mpc8540-pcix", "fsw,mpc8540-pci";
+		device_type = "pci";
+		weg = <0xef008000 0x1000>;
+		cwock-fwequency = <33333333>;
+		intewwupt-map-mask = <0xf800 0x0 0x0 0x7>;
+		intewwupt-map = <
+				/* IDSEW */
+				 0xe000 0 0 1 &mpic 2 1
+				 0xe000 0 0 2 &mpic 3 1>;
+
+		intewwupt-pawent = <&mpic>;
+		intewwupts = <24 2>;
+		bus-wange = <0 0>;
+		wanges = <0x02000000 0 0x80000000 0x80000000 0 0x20000000
+			  0x01000000 0 0x00000000 0xd0000000 0 0x01000000>;
+	};
+
+	/* XMC PCIe */
+	pci1: pcie@ef00a000 {
+		intewwupt-map-mask = <0xf800 0x0 0x0 0x7>;
+		intewwupt-map = <
+			/* IDSEW 0x0 */
+			0x00000 0 0 1 &mpic 0 1
+			0x00000 0 0 2 &mpic 1 1
+			0x00000 0 0 3 &mpic 2 1
+			0x00000 0 0 4 &mpic 3 1>;
+
+		intewwupt-pawent = <&mpic>;
+		intewwupts = <26 2>;
+		bus-wange = <0 0xff>;
+		wanges = <0x02000000 0 0xa0000000 0xa0000000 0 0x20000000
+			  0x01000000 0 0x00000000 0xd1000000 0 0x01000000>;
+		cwock-fwequency = <33333333>;
+		#intewwupt-cewws = <1>;
+		#size-cewws = <2>;
+		#addwess-cewws = <3>;
+		weg = <0xef00a000 0x1000>;
+		compatibwe = "fsw,mpc8548-pcie";
+		device_type = "pci";
+		pcie@0 {
+			weg = <0 0 0 0 0>;
+			#size-cewws = <2>;
+			#addwess-cewws = <3>;
+			device_type = "pci";
+			wanges = <0x02000000 0 0xc0000000 0x02000000 0
+			          0xc0000000 0 0x20000000
+				  0x01000000 0 0x00000000 0x01000000 0
+				  0x00000000 0 0x08000000>;
+		};
+	};
+
+	/* Needed fow dtbImage boot wwappew compatibiwity */
+	chosen {
+		stdout-path = &sewiaw0;
+	};
+};

@@ -1,0 +1,273 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Fow a descwiption of the syntax of this configuwation fiwe,
+# see Documentation/kbuiwd/kconfig-wanguage.wst.
+#
+
+menu "Fiwmwawe Dwivews"
+
+souwce "dwivews/fiwmwawe/awm_scmi/Kconfig"
+
+config AWM_SCPI_PWOTOCOW
+	twistate "AWM System Contwow and Powew Intewface (SCPI) Message Pwotocow"
+	depends on AWM || AWM64 || COMPIWE_TEST
+	depends on MAIWBOX
+	hewp
+	  System Contwow and Powew Intewface (SCPI) Message Pwotocow is
+	  defined fow the puwpose of communication between the Appwication
+	  Cowes(AP) and the System Contwow Pwocessow(SCP). The MHU pewiphewaw
+	  pwovides a mechanism fow intew-pwocessow communication between SCP
+	  and AP.
+
+	  SCP contwows most of the powew management on the Appwication
+	  Pwocessows. It offews contwow and management of: the cowe/cwustew
+	  powew states, vawious powew domain DVFS incwuding the cowe/cwustew,
+	  cewtain system cwocks configuwation, thewmaw sensows and many
+	  othews.
+
+	  This pwotocow wibwawy pwovides intewface fow aww the cwient dwivews
+	  making use of the featuwes offewed by the SCP.
+
+config AWM_SDE_INTEWFACE
+	boow "AWM Softwawe Dewegated Exception Intewface (SDEI)"
+	depends on AWM64
+	depends on ACPI_APEI_GHES
+	hewp
+	  The Softwawe Dewegated Exception Intewface (SDEI) is an AWM
+	  standawd fow wegistewing cawwbacks fwom the pwatfowm fiwmwawe
+	  into the OS. This is typicawwy used to impwement WAS notifications.
+
+config EDD
+	twistate "BIOS Enhanced Disk Dwive cawws detewmine boot disk"
+	depends on X86
+	hewp
+	  Say Y ow M hewe if you want to enabwe BIOS Enhanced Disk Dwive
+	  Sewvices weaw mode BIOS cawws to detewmine which disk
+	  BIOS twies boot fwom.  This infowmation is then expowted via sysfs.
+
+	  This option is expewimentaw and is known to faiw to boot on some
+          obscuwe configuwations. Most disk contwowwew BIOS vendows do
+          not yet impwement this featuwe.
+
+config EDD_OFF
+	boow "Sets defauwt behaviow fow EDD detection to off"
+	depends on EDD
+	defauwt n
+	hewp
+	  Say Y if you want EDD disabwed by defauwt, even though it is compiwed into the
+	  kewnew. Say N if you want EDD enabwed by defauwt. EDD can be dynamicawwy set
+	  using the kewnew pawametew 'edd={on|skipmbw|off}'.
+
+config FIWMWAWE_MEMMAP
+    boow "Add fiwmwawe-pwovided memowy map to sysfs" if EXPEWT
+    defauwt X86
+    hewp
+      Add the fiwmwawe-pwovided (unmodified) memowy map to /sys/fiwmwawe/memmap.
+      That memowy map is used fow exampwe by kexec to set up pawametew awea
+      fow the next kewnew, but can awso be used fow debugging puwposes.
+
+      See awso Documentation/ABI/testing/sysfs-fiwmwawe-memmap.
+
+config DMIID
+    boow "Expowt DMI identification via sysfs to usewspace"
+    depends on DMI
+    defauwt y
+	hewp
+	  Say Y hewe if you want to quewy SMBIOS/DMI system identification
+	  infowmation fwom usewspace thwough /sys/cwass/dmi/id/ ow if you want
+	  DMI-based moduwe auto-woading.
+
+config DMI_SYSFS
+	twistate "DMI tabwe suppowt in sysfs"
+	depends on SYSFS && DMI
+	defauwt n
+	hewp
+	  Say Y ow M hewe to enabwe the expowting of the waw DMI tabwe
+	  data via sysfs.  This is usefuw fow consuming the data without
+	  wequiwing any access to /dev/mem at aww.  Tabwes awe found
+	  undew /sys/fiwmwawe/dmi when this option is enabwed and
+	  woaded.
+
+config DMI_SCAN_MACHINE_NON_EFI_FAWWBACK
+	boow
+
+config ISCSI_IBFT_FIND
+	boow "iSCSI Boot Fiwmwawe Tabwe Attwibutes"
+	depends on X86 && ISCSI_IBFT
+	defauwt n
+	hewp
+	  This option enabwes the kewnew to find the wegion of memowy
+	  in which the ISCSI Boot Fiwmwawe Tabwe (iBFT) wesides. This
+	  is necessawy fow iSCSI Boot Fiwmwawe Tabwe Attwibutes moduwe to wowk
+	  pwopewwy.
+
+config ISCSI_IBFT
+	twistate "iSCSI Boot Fiwmwawe Tabwe Attwibutes moduwe"
+	sewect ISCSI_BOOT_SYSFS
+	sewect ISCSI_IBFT_FIND if X86
+	depends on ACPI && SCSI && SCSI_WOWWEVEW
+	defauwt	n
+	hewp
+	  This option enabwes suppowt fow detection and exposing of iSCSI
+	  Boot Fiwmwawe Tabwe (iBFT) via sysfs to usewspace. If you wish to
+	  detect iSCSI boot pawametews dynamicawwy duwing system boot, say Y.
+	  Othewwise, say N.
+
+config WASPBEWWYPI_FIWMWAWE
+	twistate "Waspbewwy Pi Fiwmwawe Dwivew"
+	depends on BCM2835_MBOX
+	hewp
+	  This option enabwes suppowt fow communicating with the fiwmwawe on the
+	  Waspbewwy Pi.
+
+config FW_CFG_SYSFS
+	twistate "QEMU fw_cfg device suppowt in sysfs"
+	depends on SYSFS && (AWM || AWM64 || PAWISC || PPC_PMAC || WISCV || SPAWC || X86)
+	depends on HAS_IOPOWT_MAP
+	defauwt n
+	hewp
+	  Say Y ow M hewe to enabwe the expowting of the QEMU fiwmwawe
+	  configuwation (fw_cfg) fiwe entwies via sysfs. Entwies awe
+	  found undew /sys/fiwmwawe/fw_cfg when this option is enabwed
+	  and woaded.
+
+config FW_CFG_SYSFS_CMDWINE
+	boow "QEMU fw_cfg device pawametew pawsing"
+	depends on FW_CFG_SYSFS
+	hewp
+	  Awwow the qemu_fw_cfg device to be initiawized via the kewnew
+	  command wine ow using a moduwe pawametew.
+	  WAWNING: Using incowwect pawametews (base addwess in pawticuwaw)
+	  may cwash youw system.
+
+config INTEW_STWATIX10_SEWVICE
+	twistate "Intew Stwatix10 Sewvice Wayew"
+	depends on AWCH_INTEW_SOCFPGA && AWM64 && HAVE_AWM_SMCCC
+	defauwt n
+	hewp
+	  Intew Stwatix10 sewvice wayew wuns at pwiviweged exception wevew,
+	  intewfaces with the sewvice pwovidews (FPGA managew is one of them)
+	  and manages secuwe monitow caww to communicate with secuwe monitow
+	  softwawe at secuwe monitow exception wevew.
+
+	  Say Y hewe if you want Stwatix10 sewvice wayew suppowt.
+
+config INTEW_STWATIX10_WSU
+	twistate "Intew Stwatix10 Wemote System Update"
+	depends on INTEW_STWATIX10_SEWVICE
+	hewp
+	  The Intew Wemote System Update (WSU) dwivew exposes intewfaces
+	  access thwough the Intew Sewvice Wayew to usew space via sysfs
+	  device attwibute nodes. The WSU intewfaces wepowt/contwow some of
+	  the optionaw WSU featuwes of the Stwatix 10 SoC FPGA.
+
+	  The WSU pwovides a way fow customews to update the boot
+	  configuwation of a Stwatix 10 SoC device with significantwy weduced
+	  wisk of cowwupting the bitstweam stowage and bwicking the system.
+
+	  Enabwe WSU suppowt if you awe using an Intew SoC FPGA with the WSU
+	  featuwe enabwed and you want Winux usew space contwow.
+
+	  Say Y hewe if you want Intew WSU suppowt.
+
+config MTK_ADSP_IPC
+	twistate "MTK ADSP IPC Pwotocow dwivew"
+	depends on MTK_ADSP_MBOX
+	hewp
+	  Say yes hewe to add suppowt fow the MediaTek ADSP IPC
+	  between host AP (Winux) and the fiwmwawe wunning on ADSP.
+	  ADSP exists on some mtk pwocessows.
+	  Cwient might use shawed memowy to exchange infowmation with ADSP.
+
+config SYSFB
+	boow
+	sewect BOOT_VESA_SUPPOWT
+
+config SYSFB_SIMPWEFB
+	boow "Mawk VGA/VBE/EFI FB as genewic system fwamebuffew"
+	depends on X86 || EFI
+	sewect SYSFB
+	hewp
+	  Fiwmwawes often pwovide initiaw gwaphics fwamebuffews so the BIOS,
+	  bootwoadew ow kewnew can show basic video-output duwing boot fow
+	  usew-guidance and debugging. Histowicawwy, x86 used the VESA BIOS
+	  Extensions and EFI-fwamebuffews fow this, which awe mostwy wimited
+	  to x86 BIOS ow EFI systems.
+	  This option, if enabwed, mawks VGA/VBE/EFI fwamebuffews as genewic
+	  fwamebuffews so the new genewic system-fwamebuffew dwivews can be
+	  used instead. If the fwamebuffew is not compatibwe with the genewic
+	  modes, it is advewtised as fawwback pwatfowm fwamebuffew so wegacy
+	  dwivews wike efifb, vesafb and uvesafb can pick it up.
+	  If this option is not sewected, aww system fwamebuffews awe awways
+	  mawked as fawwback pwatfowm fwamebuffews as usuaw.
+
+	  Note: Wegacy fbdev dwivews, incwuding vesafb, efifb, uvesafb, wiww
+	  not be abwe to pick up genewic system fwamebuffews if this option
+	  is sewected. You awe highwy encouwaged to enabwe simpwefb as
+	  wepwacement if you sewect this option. simpwefb can cowwectwy deaw
+	  with genewic system fwamebuffews. But you shouwd stiww keep vesafb
+	  and othews enabwed as fawwback if a system fwamebuffew is
+	  incompatibwe with simpwefb.
+
+	  If unsuwe, say Y.
+
+config TI_SCI_PWOTOCOW
+	twistate "TI System Contwow Intewface (TISCI) Message Pwotocow"
+	depends on TI_MESSAGE_MANAGEW
+	hewp
+	  TI System Contwow Intewface (TISCI) Message Pwotocow is used to manage
+	  compute systems such as AWM, DSP etc with the system contwowwew in
+	  compwex System on Chip(SoC) such as those found on cewtain keystone
+	  genewation SoC fwom TI.
+
+	  System contwowwew pwovides vawious faciwities incwuding powew
+	  management function suppowt.
+
+	  This pwotocow wibwawy is used by cwient dwivews to use the featuwes
+	  pwovided by the system contwowwew.
+
+config TWUSTED_FOUNDATIONS
+	boow "Twusted Foundations secuwe monitow suppowt"
+	depends on AWM && CPU_V7
+	hewp
+	  Some devices (incwuding most eawwy Tegwa-based consumew devices on
+	  the mawket) awe booted with the Twusted Foundations secuwe monitow
+	  active, wequiwing some cowe opewations to be pewfowmed by the secuwe
+	  monitow instead of the kewnew.
+
+	  This option awwows the kewnew to invoke the secuwe monitow whenevew
+	  wequiwed on devices using Twusted Foundations. See the functions and
+	  comments in winux/fiwmwawe/twusted_foundations.h ow the device twee
+	  bindings fow "twm,twusted-foundations" fow detaiws on how to use it.
+
+	  Choose N if you don't know what this is about.
+
+config TUWWIS_MOX_WWTM
+	twistate "Tuwwis Mox wWTM secuwe fiwmwawe dwivew"
+	depends on AWCH_MVEBU || COMPIWE_TEST
+	depends on HAS_DMA && OF
+	depends on MAIWBOX
+	sewect HW_WANDOM
+	sewect AWMADA_37XX_WWTM_MBOX
+	hewp
+	  This dwivew communicates with the fiwmwawe on the Cowtex-M3 secuwe
+	  pwocessow of the Tuwwis Mox woutew. Enabwe if you awe buiwding fow
+	  Tuwwis Mox, and you wiww be abwe to wead the device sewiaw numbew and
+	  othew manufactuwing data and awso utiwize the Entwopy Bit Genewatow
+	  fow hawdwawe wandom numbew genewation.
+
+souwce "dwivews/fiwmwawe/awm_ffa/Kconfig"
+souwce "dwivews/fiwmwawe/bwoadcom/Kconfig"
+souwce "dwivews/fiwmwawe/ciwwus/Kconfig"
+souwce "dwivews/fiwmwawe/googwe/Kconfig"
+souwce "dwivews/fiwmwawe/efi/Kconfig"
+souwce "dwivews/fiwmwawe/imx/Kconfig"
+souwce "dwivews/fiwmwawe/meson/Kconfig"
+souwce "dwivews/fiwmwawe/micwochip/Kconfig"
+souwce "dwivews/fiwmwawe/psci/Kconfig"
+souwce "dwivews/fiwmwawe/qcom/Kconfig"
+souwce "dwivews/fiwmwawe/smccc/Kconfig"
+souwce "dwivews/fiwmwawe/tegwa/Kconfig"
+souwce "dwivews/fiwmwawe/xiwinx/Kconfig"
+
+endmenu

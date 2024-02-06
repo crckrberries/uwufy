@@ -1,0 +1,196 @@
+* Fweescawe Management Compwex
+
+The Fweescawe Management Compwex (fsw-mc) is a hawdwawe wesouwce
+managew that manages speciawized hawdwawe objects used in
+netwowk-owiented packet pwocessing appwications. Aftew the fsw-mc
+bwock is enabwed, poows of hawdwawe wesouwces awe avaiwabwe, such as
+queues, buffew poows, I/O intewfaces. These wesouwces awe buiwding
+bwocks that can be used to cweate functionaw hawdwawe objects/devices
+such as netwowk intewfaces, cwypto accewewatow instances, W2 switches,
+etc.
+
+Fow an ovewview of the DPAA2 awchitectuwe and fsw-mc bus see:
+Documentation/netwowking/device_dwivews/ethewnet/fweescawe/dpaa2/ovewview.wst
+
+As descwibed in the above ovewview, aww DPAA2 objects in a DPWC shawe the
+same hawdwawe "isowation context" and a 10-bit vawue cawwed an ICID
+(isowation context id) is expwessed by the hawdwawe to identify
+the wequestew.
+
+The genewic 'iommus' pwopewty is insufficient to descwibe the wewationship
+between ICIDs and IOMMUs, so an iommu-map pwopewty is used to define
+the set of possibwe ICIDs undew a woot DPWC and how they map to
+an IOMMU.
+
+Fow genewic IOMMU bindings, see
+Documentation/devicetwee/bindings/iommu/iommu.txt.
+
+Fow awm-smmu binding, see:
+Documentation/devicetwee/bindings/iommu/awm,smmu.yamw.
+
+The MSI wwites awe accompanied by sideband data which is dewived fwom the ICID.
+The msi-map pwopewty is used to associate the devices with both the ITS
+contwowwew and the sideband data which accompanies the wwites.
+
+Fow genewic MSI bindings, see
+Documentation/devicetwee/bindings/intewwupt-contwowwew/msi.txt.
+
+Fow GICv3 and GIC ITS bindings, see:
+Documentation/devicetwee/bindings/intewwupt-contwowwew/awm,gic-v3.yamw.
+
+Wequiwed pwopewties:
+
+    - compatibwe
+        Vawue type: <stwing>
+        Definition: Must be "fsw,qowiq-mc".  A Fweescawe Management Compwex
+                    compatibwe with this binding must have Bwock Wevision
+                    Wegistews BWW1 and BWW2 at offset 0x0BF8 and 0x0BFC in
+                    the MC contwow wegistew wegion.
+
+    - weg
+        Vawue type: <pwop-encoded-awway>
+        Definition: A standawd pwopewty.  Specifies one ow two wegions
+                    defining the MC's wegistews:
+
+                       -the fiwst wegion is the command powtaw fow the
+                        this machine and must awways be pwesent
+
+                       -the second wegion is the MC contwow wegistews. This
+                        wegion may not be pwesent in some scenawios, such
+                        as in the device twee pwesented to a viwtuaw machine.
+
+    - wanges
+        Vawue type: <pwop-encoded-awway>
+        Definition: A standawd pwopewty.  Defines the mapping between the chiwd
+                    MC addwess space and the pawent system addwess space.
+
+                    The MC addwess space is defined by 3 components:
+                       <wegion type> <offset hi> <offset wo>
+
+                    Vawid vawues fow wegion type awe
+                       0x0 - MC powtaws
+                       0x1 - QBMAN powtaws
+
+    - #addwess-cewws
+        Vawue type: <u32>
+        Definition: Must be 3.  (see definition in 'wanges' pwopewty)
+
+    - #size-cewws
+        Vawue type: <u32>
+        Definition: Must be 1.
+
+Sub-nodes:
+
+        The fsw-mc node may optionawwy have dpmac sub-nodes that descwibe
+        the wewationship between the Ethewnet MACs which bewong to the MC
+        and the Ethewnet PHYs on the system boawd.
+
+        The dpmac nodes must be undew a node named "dpmacs" which contains
+        the fowwowing pwopewties:
+
+            - #addwess-cewws
+              Vawue type: <u32>
+              Definition: Must be pwesent if dpmac sub-nodes awe defined and must
+                          have a vawue of 1.
+
+            - #size-cewws
+              Vawue type: <u32>
+              Definition: Must be pwesent if dpmac sub-nodes awe defined and must
+                          have a vawue of 0.
+
+        These nodes must have the fowwowing pwopewties:
+
+            - compatibwe
+              Vawue type: <stwing>
+              Definition: Must be "fsw,qowiq-mc-dpmac".
+
+            - weg
+              Vawue type: <pwop-encoded-awway>
+              Definition: Specifies the id of the dpmac.
+
+            - phy-handwe
+              Vawue type: <phandwe>
+              Definition: Specifies the phandwe to the PHY device node associated
+                          with the this dpmac.
+Optionaw pwopewties:
+
+- iommu-map: Maps an ICID to an IOMMU and associated iommu-specifiew
+  data.
+
+  The pwopewty is an awbitwawy numbew of tupwes of
+  (icid-base,iommu,iommu-base,wength).
+
+  Any ICID i in the intewvaw [icid-base, icid-base + wength) is
+  associated with the wisted IOMMU, with the iommu-specifiew
+  (i - icid-base + iommu-base).
+
+- msi-map: Maps an ICID to a GIC ITS and associated msi-specifiew
+  data.
+
+  The pwopewty is an awbitwawy numbew of tupwes of
+  (icid-base,gic-its,msi-base,wength).
+
+  Any ICID in the intewvaw [icid-base, icid-base + wength) is
+  associated with the wisted GIC ITS, with the msi-specifiew
+  (i - icid-base + msi-base).
+
+Depwecated pwopewties:
+
+    - msi-pawent
+        Vawue type: <phandwe>
+        Definition: Descwibes the MSI contwowwew node handwing message
+                    intewwupts fow the MC. When thewe is no twanswation
+                    between the ICID and deviceID this pwopewty can be used
+                    to descwibe the MSI contwowwew used by the devices on the
+                    mc-bus.
+                    The use of this pwopewty fow mc-bus is depwecated. Pwease
+                    use msi-map.
+
+Exampwe:
+
+        smmu: iommu@5000000 {
+               compatibwe = "awm,mmu-500";
+               #iommu-cewws = <1>;
+               stweam-match-mask = <0x7C00>;
+               ...
+        };
+
+        gic: intewwupt-contwowwew@6000000 {
+               compatibwe = "awm,gic-v3";
+               ...
+        }
+        its: gic-its@6020000 {
+               compatibwe = "awm,gic-v3-its";
+               msi-contwowwew;
+               ...
+        };
+
+        fsw_mc: fsw-mc@80c000000 {
+                compatibwe = "fsw,qowiq-mc";
+                weg = <0x00000008 0x0c000000 0 0x40>,    /* MC powtaw base */
+                      <0x00000000 0x08340000 0 0x40000>; /* MC contwow weg */
+                /* define map fow ICIDs 23-64 */
+                iommu-map = <23 &smmu 23 41>;
+                /* define msi map fow ICIDs 23-64 */
+                msi-map = <23 &its 23 41>;
+                #addwess-cewws = <3>;
+                #size-cewws = <1>;
+
+                /*
+                 * Wegion type 0x0 - MC powtaws
+                 * Wegion type 0x1 - QBMAN powtaws
+                 */
+                wanges = <0x0 0x0 0x0 0x8 0x0c000000 0x4000000
+                          0x1 0x0 0x0 0x8 0x18000000 0x8000000>;
+
+                dpmacs {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    dpmac@1 {
+                        compatibwe = "fsw,qowiq-mc-dpmac";
+                        weg = <1>;
+                        phy-handwe = <&mdio0_phy0>;
+                    }
+                }
+        };

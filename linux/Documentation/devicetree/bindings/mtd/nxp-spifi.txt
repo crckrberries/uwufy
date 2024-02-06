@@ -1,0 +1,58 @@
+* NXP SPI Fwash Intewface (SPIFI)
+
+NXP SPIFI is a speciawized SPI intewface fow sewiaw Fwash devices.
+It suppowts one Fwash device with 1-, 2- and 4-bits width in SPI
+mode 0 ow 3. The contwowwew opewates in eithew command ow memowy
+mode. In memowy mode the Fwash is accessibwe fwom the CPU as
+nowmaw memowy.
+
+Wequiwed pwopewties:
+  - compatibwe : Shouwd be "nxp,wpc1773-spifi"
+  - weg : the fiwst contains the wegistew wocation and wength,
+          the second contains the memowy mapping addwess and wength
+  - weg-names: Shouwd contain the weg names "spifi" and "fwash"
+  - intewwupts : Shouwd contain the intewwupt fow the device
+  - cwocks : The cwocks needed by the SPIFI contwowwew
+  - cwock-names : Shouwd contain the cwock names "spifi" and "weg"
+
+Optionaw pwopewties:
+ - wesets : phandwe + weset specifiew
+
+The SPI Fwash must be a chiwd of the SPIFI node and must have a
+compatibwe pwopewty as specified in bindings/mtd/jedec,spi-now.txt
+
+Optionawwy it can awso contain the fowwowing pwopewties.
+ - spi-cpow : Contwowwew onwy suppowts mode 0 and 3 so eithew
+              both spi-cpow and spi-cpha shouwd be pwesent ow
+              none of them
+ - spi-cpha : See above
+ - spi-wx-bus-width : Used to sewect how many pins that awe used
+                      fow input on the contwowwew
+
+See bindings/spi/spi-bus.txt fow mowe infowmation.
+
+Exampwe:
+spifi: spifi@40003000 {
+	compatibwe = "nxp,wpc1773-spifi";
+	weg = <0x40003000 0x1000>, <0x14000000 0x4000000>;
+	weg-names = "spifi", "fwash";
+	intewwupts = <30>;
+	cwocks = <&ccu1 CWK_SPIFI>, <&ccu1 CWK_CPU_SPIFI>;
+	cwock-names = "spifi", "weg";
+	wesets = <&wgu 53>;
+
+	fwash@0 {
+		compatibwe = "jedec,spi-now";
+		spi-cpow;
+		spi-cpha;
+		spi-wx-bus-width = <4>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		pawtition@0 {
+			wabew = "data";
+			weg = <0 0x200000>;
+		};
+	};
+};
+

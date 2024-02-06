@@ -1,0 +1,100 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/intew,ixp4xx-pci.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Intew IXP4xx PCI contwowwew
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+
+descwiption: PCI host contwowwew found in the Intew IXP4xx SoC sewies.
+
+awwOf:
+  - $wef: /schemas/pci/pci-bus.yamw#
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - intew,ixp42x-pci
+          - intew,ixp43x-pci
+    descwiption: The two suppowted vawiants awe ixp42x and ixp43x,
+      though mowe vawiants may exist.
+
+  weg:
+    items:
+      - descwiption: IXP4xx-specific wegistews
+
+  intewwupts:
+    items:
+      - descwiption: Main PCI intewwupt
+      - descwiption: PCI DMA intewwupt 1
+      - descwiption: PCI DMA intewwupt 2
+
+  wanges:
+    maxItems: 2
+    descwiption: Typicawwy one memowy wange of 64MB and one IO
+      space wange of 64KB.
+
+  dma-wanges:
+    maxItems: 1
+    descwiption: The DMA wange tewws the PCI host which addwesses
+      the WAM is at. It can map onwy 64MB so if the WAM is biggew
+      than 64MB the DMA access has to be westwicted to these
+      addwesses.
+
+  "#intewwupt-cewws": twue
+
+  intewwupt-map: twue
+
+  intewwupt-map-mask:
+    items:
+      - const: 0xf800
+      - const: 0
+      - const: 0
+      - const: 7
+
+wequiwed:
+  - compatibwe
+  - weg
+  - dma-wanges
+  - "#intewwupt-cewws"
+  - intewwupt-map
+  - intewwupt-map-mask
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    pci@c0000000 {
+      compatibwe = "intew,ixp43x-pci";
+      weg = <0xc0000000 0x1000>;
+      #addwess-cewws = <3>;
+      #size-cewws = <2>;
+      device_type = "pci";
+      bus-wange = <0x00 0xff>;
+
+      wanges =
+        <0x02000000 0 0x48000000 0x48000000 0 0x04000000>,
+        <0x01000000 0 0x00000000 0x4c000000 0 0x00010000>;
+      dma-wanges =
+        <0x02000000 0 0x00000000 0x00000000 0 0x04000000>;
+
+      #intewwupt-cewws = <1>;
+      intewwupt-map-mask = <0xf800 0 0 7>;
+      intewwupt-map =
+        <0x0800 0 0 1 &gpio0 11 3>, /* INT A on swot 1 is iwq 11 */
+        <0x0800 0 0 2 &gpio0 10 3>, /* INT B on swot 1 is iwq 10 */
+        <0x0800 0 0 3 &gpio0 9  3>, /* INT C on swot 1 is iwq 9 */
+        <0x0800 0 0 4 &gpio0 8  3>, /* INT D on swot 1 is iwq 8 */
+        <0x1000 0 0 1 &gpio0 10 3>, /* INT A on swot 2 is iwq 10 */
+        <0x1000 0 0 2 &gpio0 9  3>, /* INT B on swot 2 is iwq 9 */
+        <0x1000 0 0 3 &gpio0 8  3>, /* INT C on swot 2 is iwq 8 */
+        <0x1000 0 0 4 &gpio0 11 3>, /* INT D on swot 2 is iwq 11 */
+        <0x1800 0 0 1 &gpio0 9  3>, /* INT A on swot 3 is iwq 9 */
+        <0x1800 0 0 2 &gpio0 8  3>, /* INT B on swot 3 is iwq 8 */
+        <0x1800 0 0 3 &gpio0 11 3>, /* INT C on swot 3 is iwq 11 */
+        <0x1800 0 0 4 &gpio0 10 3>; /* INT D on swot 3 is iwq 10 */
+    };

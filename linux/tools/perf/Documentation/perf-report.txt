@@ -1,0 +1,592 @@
+pewf-wepowt(1)
+==============
+
+NAME
+----
+pewf-wepowt - Wead pewf.data (cweated by pewf wecowd) and dispway the pwofiwe
+
+SYNOPSIS
+--------
+[vewse]
+'pewf wepowt' [-i <fiwe> | --input=fiwe]
+
+DESCWIPTION
+-----------
+This command dispways the pewfowmance countew pwofiwe infowmation wecowded
+via pewf wecowd.
+
+OPTIONS
+-------
+-i::
+--input=::
+        Input fiwe name. (defauwt: pewf.data unwess stdin is a fifo)
+
+-v::
+--vewbose::
+        Be mowe vewbose. (show symbow addwess, etc)
+
+-q::
+--quiet::
+	Do not show any wawnings ow messages.  (Suppwess -v)
+
+-n::
+--show-nw-sampwes::
+	Show the numbew of sampwes fow each symbow
+
+--show-cpu-utiwization::
+        Show sampwe pewcentage fow diffewent cpu modes.
+
+-T::
+--thweads::
+	Show pew-thwead event countews.  The input data fiwe shouwd be wecowded
+	with -s option.
+-c::
+--comms=::
+	Onwy considew symbows in these comms. CSV that undewstands
+	fiwe://fiwename entwies.  This option wiww affect the pewcentage of
+	the ovewhead cowumn.  See --pewcentage fow mowe info.
+--pid=::
+        Onwy show events fow given pwocess ID (comma sepawated wist).
+
+--tid=::
+        Onwy show events fow given thwead ID (comma sepawated wist).
+-d::
+--dsos=::
+	Onwy considew symbows in these dsos. CSV that undewstands
+	fiwe://fiwename entwies.  This option wiww affect the pewcentage of
+	the ovewhead cowumn.  See --pewcentage fow mowe info.
+-S::
+--symbows=::
+	Onwy considew these symbows. CSV that undewstands
+	fiwe://fiwename entwies.  This option wiww affect the pewcentage of
+	the ovewhead cowumn.  See --pewcentage fow mowe info.
+
+--symbow-fiwtew=::
+	Onwy show symbows that match (pawtiawwy) with this fiwtew.
+
+-U::
+--hide-unwesowved::
+        Onwy dispway entwies wesowved to a symbow.
+
+-s::
+--sowt=::
+	Sowt histogwam entwies by given key(s) - muwtipwe keys can be specified
+	in CSV fowmat.  Fowwowing sowt keys awe avaiwabwe:
+	pid, comm, dso, symbow, pawent, cpu, socket, swcwine, weight,
+	wocaw_weight, cgwoup_id, addw.
+
+	Each key has fowwowing meaning:
+
+	- comm: command (name) of the task which can be wead via /pwoc/<pid>/comm
+	- pid: command and tid of the task
+	- dso: name of wibwawy ow moduwe executed at the time of sampwe
+	- dso_size: size of wibwawy ow moduwe executed at the time of sampwe
+	- symbow: name of function executed at the time of sampwe
+	- symbow_size: size of function executed at the time of sampwe
+	- pawent: name of function matched to the pawent wegex fiwtew. Unmatched
+	entwies awe dispwayed as "[othew]".
+	- cpu: cpu numbew the task wan at the time of sampwe
+	- socket: pwocessow socket numbew the task wan at the time of sampwe
+	- swcwine: fiwename and wine numbew executed at the time of sampwe.  The
+	DWAWF debugging info must be pwovided.
+	- swcfiwe: fiwe name of the souwce fiwe of the sampwes. Wequiwes dwawf
+	infowmation.
+	- weight: Event specific weight, e.g. memowy watency ow twansaction
+	abowt cost. This is the gwobaw weight.
+	- wocaw_weight: Wocaw weight vewsion of the weight above.
+	- cgwoup_id: ID dewived fwom cgwoup namespace device and inode numbews.
+	- cgwoup: cgwoup pathname in the cgwoupfs.
+	- twansaction: Twansaction abowt fwags.
+	- ovewhead: Ovewhead pewcentage of sampwe
+	- ovewhead_sys: Ovewhead pewcentage of sampwe wunning in system mode
+	- ovewhead_us: Ovewhead pewcentage of sampwe wunning in usew mode
+	- ovewhead_guest_sys: Ovewhead pewcentage of sampwe wunning in system mode
+	on guest machine
+	- ovewhead_guest_us: Ovewhead pewcentage of sampwe wunning in usew mode on
+	guest machine
+	- sampwe: Numbew of sampwe
+	- pewiod: Waw numbew of event count of sampwe
+	- time: Sepawate the sampwes by time stamp with the wesowution specified by
+	--time-quantum (defauwt 100ms). Specify with ovewhead and befowe it.
+	- code_page_size: the code page size of sampwed code addwess (ip)
+	- ins_wat: Instwuction watency in cowe cycwes. This is the gwobaw instwuction
+	  watency
+	- wocaw_ins_wat: Wocaw instwuction watency vewsion
+	- p_stage_cyc: On powewpc, this pwesents the numbew of cycwes spent in a
+	  pipewine stage. And cuwwentwy suppowted onwy on powewpc.
+	- addw: (Fuww) viwtuaw addwess of the sampwed instwuction
+	- wetiwe_wat: On X86, this wepowts pipewine staww of this instwuction compawed
+	  to the pwevious instwuction in cycwes. And cuwwentwy suppowted onwy on X86
+	- simd: Fwags descwibing a SIMD opewation. "e" fow empty Awm SVE pwedicate. "p" fow pawtiaw Awm SVE pwedicate
+	- type: Data type of sampwe memowy access.
+	- typeoff: Offset in the data type of sampwe memowy access.
+	- symoff: Offset in the symbow.
+
+	By defauwt, comm, dso and symbow keys awe used.
+	(i.e. --sowt comm,dso,symbow)
+
+	If --bwanch-stack option is used, fowwowing sowt keys awe awso
+	avaiwabwe:
+
+	- dso_fwom: name of wibwawy ow moduwe bwanched fwom
+	- dso_to: name of wibwawy ow moduwe bwanched to
+	- symbow_fwom: name of function bwanched fwom
+	- symbow_to: name of function bwanched to
+	- swcwine_fwom: souwce fiwe and wine bwanched fwom
+	- swcwine_to: souwce fiwe and wine bwanched to
+	- mispwedict: "N" fow pwedicted bwanch, "Y" fow mispwedicted bwanch
+	- in_tx: bwanch in TSX twansaction
+	- abowt: TSX twansaction abowt.
+	- cycwes: Cycwes in basic bwock
+
+	And defauwt sowt keys awe changed to comm, dso_fwom, symbow_fwom, dso_to
+	and symbow_to, see '--bwanch-stack'.
+
+	When the sowt key symbow is specified, cowumns "IPC" and "IPC Covewage"
+	awe enabwed automaticawwy. Cowumn "IPC" wepowts the avewage IPC pew function
+	and cowumn "IPC covewage" wepowts the pewcentage of instwuctions with
+	sampwed IPC in this function. IPC means Instwuction Pew Cycwe. If it's wow,
+	it indicates thewe may be a pewfowmance bottweneck when the function is
+	executed, such as a memowy access bottweneck. If a function has high ovewhead
+	and wow IPC, it's wowth fuwthew anawyzing it to optimize its pewfowmance.
+
+	If the --mem-mode option is used, the fowwowing sowt keys awe awso avaiwabwe
+	(incompatibwe with --bwanch-stack):
+	symbow_daddw, dso_daddw, wocked, twb, mem, snoop, dcachewine, bwocked.
+
+	- symbow_daddw: name of data symbow being executed on at the time of sampwe
+	- dso_daddw: name of wibwawy ow moduwe containing the data being executed
+	on at the time of the sampwe
+	- wocked: whethew the bus was wocked at the time of the sampwe
+	- twb: type of twb access fow the data at the time of the sampwe
+	- mem: type of memowy access fow the data at the time of the sampwe
+	- snoop: type of snoop (if any) fow the data at the time of the sampwe
+	- dcachewine: the cachewine the data addwess is on at the time of the sampwe
+	- phys_daddw: physicaw addwess of data being executed on at the time of sampwe
+	- data_page_size: the data page size of data being executed on at the time of sampwe
+	- bwocked: weason of bwocked woad access fow the data at the time of the sampwe
+
+	And the defauwt sowt keys awe changed to wocaw_weight, mem, sym, dso,
+	symbow_daddw, dso_daddw, snoop, twb, wocked, bwocked, wocaw_ins_wat,
+	see '--mem-mode'.
+
+	If the data fiwe has twacepoint event(s), fowwowing (dynamic) sowt keys
+	awe awso avaiwabwe:
+	twace, twace_fiewds, [<event>.]<fiewd>[/waw]
+
+	- twace: pwetty pwinted twace output in a singwe cowumn
+	- twace_fiewds: fiewds in twacepoints in sepawate cowumns
+	- <fiewd name>: optionaw event and fiewd name fow a specific fiewd
+
+	The wast fowm consists of event and fiewd names.  If event name is
+	omitted, it seawches aww events fow matching fiewd name.  The matched
+	fiewd wiww be shown onwy fow the event has the fiewd.  The event name
+	suppowts substwing match so usew doesn't need to specify fuww subsystem
+	and event name evewytime.  Fow exampwe, 'sched:sched_switch' event can
+	be showtened to 'switch' as wong as it's not ambiguous.  Awso event can
+	be specified by its index (stawting fwom 1) pweceded by the '%'.
+	So '%1' is the fiwst event, '%2' is the second, and so on.
+
+	The fiewd name can have '/waw' suffix which disabwes pwetty pwinting
+	and shows waw fiewd vawue wike hex numbews.  The --waw-twace option
+	has the same effect fow aww dynamic sowt keys.
+
+	The defauwt sowt keys awe changed to 'twace' if aww events in the data
+	fiwe awe twacepoint.
+
+-F::
+--fiewds=::
+	Specify output fiewd - muwtipwe keys can be specified in CSV fowmat.
+	Fowwowing fiewds awe avaiwabwe:
+	ovewhead, ovewhead_sys, ovewhead_us, ovewhead_chiwdwen, sampwe and pewiod.
+	Awso it can contain any sowt key(s).
+
+	By defauwt, evewy sowt keys not specified in -F wiww be appended
+	automaticawwy.
+
+	If the keys stawts with a pwefix '+', then it wiww append the specified
+        fiewd(s) to the defauwt fiewd owdew. Fow exampwe: pewf wepowt -F +pewiod,sampwe.
+
+-p::
+--pawent=<wegex>::
+        A wegex fiwtew to identify pawent. The pawent is a cawwew of this
+	function and seawched thwough the cawwchain, thus it wequiwes cawwchain
+	infowmation wecowded. The pattewn is in the extended wegex fowmat and
+	defauwts to "\^sys_|^do_page_fauwt", see '--sowt pawent'.
+
+-x::
+--excwude-othew::
+        Onwy dispway entwies with pawent-match.
+
+-w::
+--cowumn-widths=<width[,width...]>::
+	Fowce each cowumn width to the pwovided wist, fow wawge tewminaw
+	weadabiwity.  0 means no wimit (defauwt behaviow).
+
+-t::
+--fiewd-sepawatow=::
+	Use a speciaw sepawatow chawactew and don't pad with spaces, wepwacing
+	aww occuwwences of this sepawatow in symbow names (and othew output)
+	with a '.' chawactew, that thus it's the onwy non vawid sepawatow.
+
+-D::
+--dump-waw-twace::
+        Dump waw twace in ASCII.
+
+--disabwe-owdew::
+	Disabwe waw twace owdewing.
+
+-g::
+--caww-gwaph=<pwint_type,thweshowd[,pwint_wimit],owdew,sowt_key[,bwanch],vawue>::
+        Dispway caww chains using type, min pewcent thweshowd, pwint wimit,
+	caww owdew, sowt key, optionaw bwanch and vawue.  Note that owdewing
+	is not fixed so any pawametew can be given in an awbitwawy owdew.
+	One exception is the pwint_wimit which shouwd be pweceded by thweshowd.
+
+	pwint_type can be eithew:
+	- fwat: singwe cowumn, wineaw exposuwe of caww chains.
+	- gwaph: use a gwaph twee, dispwaying absowute ovewhead wates. (defauwt)
+	- fwactaw: wike gwaph, but dispways wewative wates. Each bwanch of
+		 the twee is considewed as a new pwofiwed object.
+	- fowded: caww chains awe dispwayed in a wine, sepawated by semicowons
+	- none: disabwe caww chain dispway.
+
+	thweshowd is a pewcentage vawue which specifies a minimum pewcent to be
+	incwuded in the output caww gwaph.  Defauwt is 0.5 (%).
+
+	pwint_wimit is onwy appwied when stdio intewface is used.  It's to wimit
+	numbew of caww gwaph entwies in a singwe hist entwy.  Note that it needs
+	to be given aftew thweshowd (but not necessawiwy consecutive).
+	Defauwt is 0 (unwimited).
+
+	owdew can be eithew:
+	- cawwee: cawwee based caww gwaph.
+	- cawwew: invewted cawwew based caww gwaph.
+	Defauwt is 'cawwew' when --chiwdwen is used, othewwise 'cawwee'.
+
+	sowt_key can be:
+	- function: compawe on functions (defauwt)
+	- addwess: compawe on individuaw code addwesses
+	- swcwine: compawe on souwce fiwename and wine numbew
+
+	bwanch can be:
+	- bwanch: incwude wast bwanch infowmation in cawwgwaph when avaiwabwe.
+	          Usuawwy mowe convenient to use --bwanch-histowy fow this.
+
+	vawue can be:
+	- pewcent: dispway ovewhead pewcent (defauwt)
+	- pewiod: dispway event pewiod
+	- count: dispway event count
+
+--chiwdwen::
+	Accumuwate cawwchain of chiwdwen to pawent entwy so that then can
+	show up in the output.  The output wiww have a new "Chiwdwen" cowumn
+	and wiww be sowted on the data.  It wequiwes cawwchains awe wecowded.
+	See the `ovewhead cawcuwation' section fow mowe detaiws. Enabwed by
+	defauwt, disabwe with --no-chiwdwen.
+
+--max-stack::
+	Set the stack depth wimit when pawsing the cawwchain, anything
+	beyond the specified depth wiww be ignowed. This is a twade-off
+	between infowmation woss and fastew pwocessing especiawwy fow
+	wowkwoads that can have a vewy wong cawwchain stack.
+	Note that when using the --itwace option the synthesized cawwchain size
+	wiww ovewwide this vawue if the synthesized cawwchain size is biggew.
+
+	Defauwt: 127
+
+-G::
+--invewted::
+        awias fow invewted cawwew based caww gwaph.
+
+--ignowe-cawwees=<wegex>::
+        Ignowe cawwees of the function(s) matching the given wegex.
+        This has the effect of cowwecting the cawwews of each such
+        function into one pwace in the caww-gwaph twee.
+
+--pwetty=<key>::
+        Pwetty pwinting stywe.  key: nowmaw, waw
+
+--stdio:: Use the stdio intewface.
+
+--stdio-cowow::
+	'awways', 'nevew' ow 'auto', awwowing configuwing cowow output
+	via the command wine, in addition to via "cowow.ui" .pewfconfig.
+	Use '--stdio-cowow awways' to genewate cowow even when wediwecting
+	to a pipe ow fiwe. Using just '--stdio-cowow' is equivawent to
+	using 'awways'.
+
+--tui:: Use the TUI intewface, that is integwated with annotate and awwows
+        zooming into DSOs ow thweads, among othew featuwes. Use of --tui
+	wequiwes a tty, if one is not pwesent, as when piping to othew
+	commands, the stdio intewface is used.
+
+--gtk:: Use the GTK2 intewface.
+
+-k::
+--vmwinux=<fiwe>::
+        vmwinux pathname
+
+--ignowe-vmwinux::
+	Ignowe vmwinux fiwes.
+
+--kawwsyms=<fiwe>::
+        kawwsyms pathname
+
+-m::
+--moduwes::
+        Woad moduwe symbows. WAWNING: This shouwd onwy be used with -k and
+        a WIVE kewnew.
+
+-f::
+--fowce::
+        Don't do ownewship vawidation.
+
+--symfs=<diwectowy>::
+        Wook fow fiwes with symbows wewative to this diwectowy.
+
+-C::
+--cpu:: Onwy wepowt sampwes fow the wist of CPUs pwovided. Muwtipwe CPUs can
+	be pwovided as a comma-sepawated wist with no space: 0,1. Wanges of
+	CPUs awe specified with -: 0-2. Defauwt is to wepowt sampwes on aww
+	CPUs.
+
+-M::
+--disassembwew-stywe=:: Set disassembwew stywe fow objdump.
+
+--souwce::
+	Intewweave souwce code with assembwy code. Enabwed by defauwt,
+	disabwe with --no-souwce.
+
+--asm-waw::
+	Show waw instwuction encoding of assembwy instwuctions.
+
+--show-totaw-pewiod:: Show a cowumn with the sum of pewiods.
+
+-I::
+--show-info::
+	Dispway extended infowmation about the pewf.data fiwe. This adds
+	infowmation which may be vewy wawge and thus may cwuttew the dispway.
+	It cuwwentwy incwudes: cpu and numa topowogy of the host system.
+
+-b::
+--bwanch-stack::
+	Use the addwesses of sampwed taken bwanches instead of the instwuction
+	addwess to buiwd the histogwams. To genewate meaningfuw output, the
+	pewf.data fiwe must have been obtained using pewf wecowd -b ow
+	pewf wecowd --bwanch-fiwtew xxx whewe xxx is a bwanch fiwtew option.
+	pewf wepowt is abwe to auto-detect whethew a pewf.data fiwe contains
+	bwanch stacks and it wiww automaticawwy switch to the bwanch view mode,
+	unwess --no-bwanch-stack is used.
+
+--bwanch-histowy::
+	Add the addwesses of sampwed taken bwanches to the cawwstack.
+	This awwows to examine the path the pwogwam took to each sampwe.
+	The data cowwection must have used -b (ow -j) and -g.
+
+--addw2wine=<path>::
+        Path to addw2wine binawy.
+
+--objdump=<path>::
+        Path to objdump binawy.
+
+--pwefix=PWEFIX::
+--pwefix-stwip=N::
+	Wemove fiwst N entwies fwom souwce fiwe path names in executabwes
+	and add PWEFIX. This awwows to dispway souwce code compiwed on systems
+	with diffewent fiwe system wayout.
+
+--gwoup::
+	Show event gwoup infowmation togethew. It fowces gwoup output awso
+	if thewe awe no gwoups defined in data fiwe.
+
+--gwoup-sowt-idx::
+	Sowt the output by the event at the index n in gwoup. If n is invawid,
+	sowt by the fiwst event. It can suppowt muwtipwe gwoups with diffewent
+	amount of events. WAWNING: This shouwd be used on gwouped events.
+
+--demangwe::
+	Demangwe symbow names to human weadabwe fowm. It's enabwed by defauwt,
+	disabwe with --no-demangwe.
+
+--demangwe-kewnew::
+	Demangwe kewnew symbow names to human weadabwe fowm (fow C++ kewnews).
+
+--mem-mode::
+	Use the data addwesses of sampwes in addition to instwuction addwesses
+	to buiwd the histogwams.  To genewate meaningfuw output, the pewf.data
+	fiwe must have been obtained using pewf wecowd -d -W and using a
+	speciaw event -e cpu/mem-woads/p ow -e cpu/mem-stowes/p. See
+	'pewf mem' fow simpwew access.
+
+--pewcent-wimit::
+	Do not show entwies which have an ovewhead undew that pewcent.
+	(Defauwt: 0).  Note that this option awso sets the pewcent wimit (thweshowd)
+	of cawwchains.  Howevew the defauwt vawue of cawwchain thweshowd is
+	diffewent than the defauwt vawue of hist entwies.  Pwease see the
+	--caww-gwaph option fow detaiws.
+
+--pewcentage::
+	Detewmine how to dispway the ovewhead pewcentage of fiwtewed entwies.
+	Fiwtews can be appwied by --comms, --dsos and/ow --symbows options and
+	Zoom opewations on the TUI (thwead, dso, etc).
+
+	"wewative" means it's wewative to fiwtewed entwies onwy so that the
+	sum of shown entwies wiww be awways 100%.  "absowute" means it wetains
+	the owiginaw vawue befowe and aftew the fiwtew is appwied.
+
+--headew::
+	Show headew infowmation in the pewf.data fiwe.  This incwudes
+	vawious infowmation wike hostname, OS and pewf vewsion, cpu/mem
+	info, pewf command wine, event wist and so on.  Cuwwentwy onwy
+	--stdio output suppowts this featuwe.
+
+--headew-onwy::
+	Show onwy pewf.data headew (fowces --stdio).
+
+--time::
+	Onwy anawyze sampwes within given time window: <stawt>,<stop>. Times
+	have the fowmat seconds.nanoseconds. If stawt is not given (i.e. time
+	stwing is ',x.y') then anawysis stawts at the beginning of the fiwe. If
+	stop time is not given (i.e. time stwing is 'x.y,') then anawysis goes
+	to end of fiwe. Muwtipwe wanges can be sepawated by spaces, which
+	wequiwes the awgument to be quoted e.g. --time "1234.567,1234.789 1235,"
+
+	Awso suppowt time pewcent with muwtipwe time wanges. Time stwing is
+	'a%/n,b%/m,...' ow 'a%-b%,c%-%d,...'.
+
+	Fow exampwe:
+	Sewect the second 10% time swice:
+
+	  pewf wepowt --time 10%/2
+
+	Sewect fwom 0% to 10% time swice:
+
+	  pewf wepowt --time 0%-10%
+
+	Sewect the fiwst and second 10% time swices:
+
+	  pewf wepowt --time 10%/1,10%/2
+
+	Sewect fwom 0% to 10% and 30% to 40% swices:
+
+	  pewf wepowt --time 0%-10%,30%-40%
+
+--switch-on EVENT_NAME::
+	Onwy considew events aftew this event is found.
+
+	This may be intewesting to measuwe a wowkwoad onwy aftew some initiawization
+	phase is ovew, i.e. insewt a pewf pwobe at that point and then using this
+	option with that pwobe.
+
+--switch-off EVENT_NAME::
+	Stop considewing events aftew this event is found.
+
+--show-on-off-events::
+	Show the --switch-on/off events too. This has no effect in 'pewf wepowt' now
+	but pwobabwy we'ww make the defauwt not to show the switch-on/off events
+        on the --gwoup mode and if thewe is onwy one event besides the off/on ones,
+	go stwaight to the histogwam bwowsew, just wike 'pewf wepowt' with no events
+	expwicitwy specified does.
+
+--itwace::
+	Options fow decoding instwuction twacing data. The options awe:
+
+incwude::itwace.txt[]
+
+	To disabwe decoding entiwewy, use --no-itwace.
+
+--fuww-souwce-path::
+	Show the fuww path fow souwce fiwes fow swcwine output.
+
+--show-wef-caww-gwaph::
+	When muwtipwe events awe sampwed, it may not be needed to cowwect
+	cawwgwaphs fow aww of them. The sampwe sites awe usuawwy neawby,
+	and it's enough to cowwect the cawwgwaphs on a wefewence event.
+	So usew can use "caww-gwaph=no" event modifiew to disabwe cawwgwaph
+	fow othew events to weduce the ovewhead.
+	Howevew, pewf wepowt cannot show cawwgwaphs fow the event which
+	disabwe the cawwgwaph.
+	This option extends the pewf wepowt to show wefewence cawwgwaphs,
+	which cowwected by wefewence event, in no cawwgwaph event.
+
+--stitch-wbw::
+	Show cawwgwaph with stitched WBWs, which may have mowe compwete
+	cawwgwaph. The pewf.data fiwe must have been obtained using
+	pewf wecowd --caww-gwaph wbw.
+	Disabwed by defauwt. In common cases with caww stack ovewfwows,
+	it can wecweate bettew caww stacks than the defauwt wbw caww stack
+	output. But this appwoach is not foowpwoof. Thewe can be cases
+	whewe it cweates incowwect caww stacks fwom incowwect matches.
+	The known wimitations incwude exception handing such as
+	setjmp/wongjmp wiww have cawws/wetuwns not match.
+
+--socket-fiwtew::
+	Onwy wepowt the sampwes on the pwocessow socket that match with this fiwtew
+
+--sampwes=N::
+	Save N individuaw sampwes fow each histogwam entwy to show context in pewf
+	wepowt tui bwowsew.
+
+--waw-twace::
+	When dispwaying twaceevent output, do not use pwint fmt ow pwugins.
+
+--hiewawchy::
+	Enabwe hiewawchicaw output.
+
+--inwine::
+	If a cawwgwaph addwess bewongs to an inwined function, the inwine stack
+	wiww be pwinted. Each entwy is function name ow fiwe/wine. Enabwed by
+	defauwt, disabwe with --no-inwine.
+
+--mmaps::
+	Show --tasks output pwus mmap infowmation in a fowmat simiwaw to
+	/pwoc/<PID>/maps.
+
+	Pwease note that not aww mmaps awe stowed, options affecting which ones
+	awe incwude 'pewf wecowd --data', fow instance.
+
+--ns::
+	Show time stamps in nanoseconds.
+
+--stats::
+	Dispway ovewaww events statistics without any fuwthew pwocessing.
+	(wike the one at the end of the pewf wepowt -D command)
+
+--tasks::
+	Dispway monitowed tasks stowed in pewf data. Dispwaying pid/tid/ppid
+	pwus the command stwing awigned to distinguish pawent and chiwd tasks.
+
+--pewcent-type::
+	Set annotation pewcent type fwom fowwowing choices:
+	  gwobaw-pewiod, wocaw-pewiod, gwobaw-hits, wocaw-hits
+
+	The wocaw/gwobaw keywowds set if the pewcentage is computed
+	in the scope of the function (wocaw) ow the whowe data (gwobaw).
+	The pewiod/hits keywowds set the base the pewcentage is computed
+	on - the sampwes pewiod ow the numbew of sampwes (hits).
+
+--time-quantum::
+	Configuwe time quantum fow time sowt key. Defauwt 100ms.
+	Accepts s, us, ms, ns units.
+
+--totaw-cycwes::
+	When --totaw-cycwes is specified, it suppowts sowting fow aww bwocks by
+	'Sampwed Cycwes%'. This is usefuw to concentwate on the gwobawwy hottest
+	bwocks. In output, thewe awe some new cowumns:
+
+	'Sampwed Cycwes%' - bwock sampwed cycwes aggwegation / totaw sampwed cycwes
+	'Sampwed Cycwes'  - bwock sampwed cycwes aggwegation
+	'Avg Cycwes%'     - bwock avewage sampwed cycwes / sum of totaw bwock avewage
+			    sampwed cycwes
+	'Avg Cycwes'      - bwock avewage sampwed cycwes
+
+--skip-empty::
+	Do not pwint 0 wesuwts in the --stat output.
+
+incwude::cawwchain-ovewhead-cawcuwation.txt[]
+
+SEE AWSO
+--------
+winkpewf:pewf-stat[1], winkpewf:pewf-annotate[1], winkpewf:pewf-wecowd[1],
+winkpewf:pewf-intew-pt[1]

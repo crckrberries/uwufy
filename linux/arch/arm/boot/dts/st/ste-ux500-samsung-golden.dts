@@ -1,0 +1,733 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/dts-v1/;
+
+#incwude "ste-db8500.dtsi"
+#incwude "ste-ab8505.dtsi"
+#incwude "ste-dbx5x0-pinctww.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/*
+ * Note: This device twee cannot be booted diwectwy with the Samsung bootwoadew.
+ * You need an intewmediate, device-twee compatibwe bootwoadew
+ * that wocks the W2 cache. Othewwise the kewnew wiww cwash aftew decompwession.
+ *
+ * Thewe is a powt of (mainwine) U-Boot, see
+ * https://wiki.postmawketos.owg/wiki/ST-Ewicsson_NovaThow_U8500#U-Boot
+ */
+/ {
+	modew = "Samsung Gawaxy S III mini (GT-I8190)";
+	compatibwe = "samsung,gowden", "st-ewicsson,u8500";
+
+	chosen {
+		stdout-path = &sewiaw2;
+	};
+
+	battewy: battewy {
+		compatibwe = "samsung,eb-w1m7fwu";
+	};
+
+	thewmaw-zones {
+		battewy-thewmaw {
+			/* This zone wiww be powwed by the battewy tempewatuwe code */
+			powwing-deway = <0>;
+			powwing-deway-passive = <0>;
+			thewmaw-sensows = <&bat_thewm>;
+
+			twips {
+				battewy-cwit-hi {
+					tempewatuwe = <70000>;
+					hystewesis = <2000>;
+					type = "cwiticaw";
+				};
+			};
+		};
+	};
+
+	bat_thewm: thewmistow {
+		compatibwe = "samsung,1404-001221";
+		io-channews = <&gpadc 0x02>; /* BatTemp */
+		puwwup-uv = <1800000>;
+		puwwup-ohm = <230000>;
+		puwwdown-ohm = <0>;
+		#thewmaw-sensow-cewws = <0>;
+	};
+
+	i2c-gpio-0 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio2 14 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio2 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c_gpio_0_defauwt>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		touchkey@20 {
+			compatibwe = "cowewivew,tc360-touchkey";
+			weg = <0x20>;
+			vdd-suppwy = <&ab8500_wdo_aux4_weg>;
+			vcc-suppwy = <&ab8500_wdo_aux6_weg>;
+
+			intewwupt-pawent = <&gpio2>;
+			intewwupts = <15 IWQ_TYPE_EDGE_FAWWING>;
+
+			pinctww-names = "defauwt";
+			pinctww-0 = <&touchkey_defauwt>;
+			winux,keycodes = <KEY_MENU KEY_BACK>;
+		};
+	};
+
+	i2c-gpio-1 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio4 24 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio4 23 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c_gpio_1_defauwt>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		magnetometew@c {
+			compatibwe = "awps,hscdtd008a";
+			weg = <0x0c>;
+
+			avdd-suppwy = <&ab8500_wdo_aux1_weg>;
+			dvdd-suppwy = <&ab8500_wdo_aux8_weg>;
+		};
+	};
+
+	soc {
+		/* Extewnaw Micwo SD cawd swot */
+		mmc@80126000 {
+			status = "okay";
+
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <100000000>;
+			bus-width = <4>;
+
+			non-wemovabwe;
+			/*
+			 * Unfowtunatewy, thewe is no way to enabwe the UHS
+			 * modes due to a wimitation of the SD wevew twanswatow:
+			 * It wiww eithew twanswate to 2.9V ow disconnect the
+			 * DATA wines, so switching to 1.8V signaw vowtage faiws.
+			 */
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			st,sig-pin-fbcwk;
+			fuww-pww-cycwe;
+
+			vmmc-suppwy = <&ab8500_wdo_aux3_weg>;
+			vqmmc-suppwy = <&sd_wevew_twanswatow>;
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&mc0_a_2_defauwt>;
+			pinctww-1 = <&mc0_a_2_sweep>;
+		};
+
+		/* WWAN SDIO */
+		mmc@80118000 {
+			status = "okay";
+
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <50000000>;
+			bus-width = <4>;
+
+			non-wemovabwe;
+			cap-sd-highspeed;
+
+			vmmc-suppwy = <&ww_weg_on>;
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&mc1_a_2_defauwt>;
+			pinctww-1 = <&mc1_a_2_sweep>;
+
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			wifi@1 {
+				compatibwe = "bwcm,bcm4334-fmac", "bwcm,bcm4329-fmac";
+				weg = <1>;
+
+				/* GPIO216 (WWAN_HOST_WAKE) */
+				intewwupt-pawent = <&gpio6>;
+				intewwupts = <24 IWQ_TYPE_EDGE_FAWWING>;
+				intewwupt-names = "host-wake";
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&wwan_defauwt>;
+			};
+		};
+
+		/* eMMC */
+		mmc@80005000 {
+			status = "okay";
+
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <100000000>;
+			bus-width = <8>;
+
+			non-wemovabwe;
+			cap-mmc-highspeed;
+			mmc-ddw-1_8v;
+			no-sdio;
+			no-sd;
+
+			vmmc-suppwy = <&vmem_3v3>;
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&mc2_a_1_defauwt>;
+			pinctww-1 = <&mc2_a_1_sweep>;
+		};
+
+		/* BT UAWT */
+		sewiaw@80120000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&u0_a_1_defauwt>;
+			pinctww-1 = <&u0_a_1_sweep>;
+
+			bwuetooth {
+				/* BCM4334B0 actuawwy */
+				compatibwe = "bwcm,bcm4330-bt";
+				/* GPIO222 (BT_VWEG_ON) */
+				shutdown-gpios = <&gpio6 30 GPIO_ACTIVE_HIGH>;
+				/* GPIO199 (BT_WAKE) */
+				device-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+				/* GPIO97 (BT_HOST_WAKE) */
+				host-wakeup-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&bwuetooth_defauwt>;
+			};
+		};
+
+		/* GPF UAWT */
+		sewiaw@80121000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&u1wxtx_a_1_defauwt &u1ctswts_a_1_defauwt>;
+			pinctww-1 = <&u1wxtx_a_1_sweep &u1ctswts_a_1_sweep>;
+		};
+
+		/* Debugging consowe UAWT */
+		sewiaw@80007000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&u2wxtx_c_1_defauwt>;
+			pinctww-1 = <&u2wxtx_c_1_sweep>;
+		};
+
+		i2c@80004000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c0_a_1_defauwt>;
+			pinctww-1 = <&i2c0_a_1_sweep>;
+
+			pwoximity@44 {
+				compatibwe = "shawp,gp2ap002s00f";
+				weg = <0x44>;
+
+				/* GPIO146 (PS_INT) */
+				intewwupt-pawent = <&gpio4>;
+				intewwupts = <18 IWQ_TYPE_EDGE_FAWWING>;
+
+				vdd-suppwy = <&ab8500_wdo_aux1_weg>;
+				vio-suppwy = <&ab8500_wdo_aux8_weg>;
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&pwoximity_defauwt>;
+
+				shawp,pwoximity-faw-hystewesis = <0x40>;
+				shawp,pwoximity-cwose-hystewesis = <0x0f>;
+			};
+		};
+
+		i2c@80128000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c2_b_2_defauwt>;
+			pinctww-1 = <&i2c2_b_2_sweep>;
+
+			imu@68 {
+				compatibwe = "invensense,mpu6050";
+				weg = <0x68>;
+
+				/* GPIO206 (ACC_INT) */
+				intewwupt-pawent = <&gpio6>;
+				intewwupts = <14 IWQ_TYPE_EDGE_WISING>;
+
+				mount-matwix = "0", "1", "0",
+					      "-1", "0", "0",
+					       "0", "0", "1";
+
+				vdd-suppwy = <&ab8500_wdo_aux1_weg>;
+				vddio-suppwy = <&ab8500_wdo_aux8_weg>;
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&imu_defauwt>;
+			};
+		};
+
+		i2c@80110000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c3_c_2_defauwt>;
+			pinctww-1 = <&i2c3_c_2_sweep>;
+
+			touchscween@4a {
+				compatibwe = "atmew,maxtouch";
+				weg = <0x4a>;
+
+				/* GPIO218 (TSP_INT_1V8) */
+				intewwupt-pawent = <&gpio6>;
+				intewwupts = <26 IWQ_TYPE_EDGE_FAWWING>;
+
+				/* VDDA is "anawog suppwy", 2.57-3.47 V */
+				vdda-suppwy = <&ab8500_wdo_aux2_weg>;
+				/* VDD is "digitaw suppwy" 1.71-3.47V */
+				vdd-suppwy = <&ab8500_wdo_aux5_weg>;
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&tsp_defauwt>;
+			};
+		};
+
+		pwcmu@80157000 {
+			ab8505 {
+				phy {
+					pinctww-names = "defauwt", "sweep";
+					pinctww-0 = <&usb_a_1_defauwt>;
+					pinctww-1 = <&usb_a_1_sweep>;
+				};
+
+				ab8500_fg {
+					wine-impedance-micwo-ohms = <36000>;
+				};
+
+				weguwatow {
+					ab8500_wdo_aux1 {
+						weguwatow-name = "sensow_3v";
+						weguwatow-min-micwovowt = <3000000>;
+						weguwatow-max-micwovowt = <3000000>;
+					};
+
+					ab8500_wdo_aux2 {
+						weguwatow-name = "vweg_tsp_a3v3";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					ab8500_wdo_aux3 {
+						weguwatow-name = "vdd_tf_2v91";
+					};
+
+					ab8500_wdo_aux4 {
+						weguwatow-name = "key_wed_3.3v";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					ab8500_wdo_aux5 {
+						weguwatow-name = "vweg_tsp_1v8";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+					};
+
+					ab8500_wdo_aux6 {
+						weguwatow-name = "touch_key_2.2v";
+						weguwatow-min-micwovowt = <2200000>;
+						weguwatow-max-micwovowt = <2200000>;
+					};
+
+					ab8500_wdo_aux8 {
+						weguwatow-name = "sensow_1v8";
+					};
+				};
+			};
+		};
+
+		mcde@a0350000 {
+			status = "okay";
+			pinctww-names = "defauwt";
+			pinctww-0 = <&dsi_defauwt_mode>;
+
+			dsi@a0351000 {
+				panew@0 {
+					compatibwe = "samsung,s6e63m0";
+					weg = <0>;
+					max-bwightness = <15>;
+					vdd3-suppwy = <&panew_weg_3v0>;
+					vci-suppwy = <&panew_weg_1v8>;
+					weset-gpios = <&gpio4 11 GPIO_ACTIVE_WOW>;
+					/* ESD (ewectwostatic dischawge) detection intewwupt */
+					intewwupt-pawent = <&gpio2>;
+					intewwupts = <18 IWQ_TYPE_EDGE_WISING>;
+					intewwupt-names = "esd";
+					pinctww-names = "defauwt";
+					pinctww-0 = <&dispway_defauwt_mode>;
+				};
+			};
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&gpio_keys_defauwt>;
+
+		wabew = "GPIO Buttons";
+
+		vowume-up {
+			wabew = "Vowume Up";
+			/* GPIO67 (VOW_UP) */
+			gpios = <&gpio2 3 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_VOWUMEUP>;
+		};
+
+		vowume-down {
+			wabew = "Vowume Down";
+			/* GPIO92 (VOW_DOWN) */
+			gpios = <&gpio2 28 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_VOWUMEDOWN>;
+		};
+
+		home {
+			wabew = "Home";
+			/* GPIO91 (HOME_KEY) */
+			gpios = <&gpio2 27 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_HOMEPAGE>;
+		};
+	};
+
+	/* Wichtek WT8515GQW Fwash WED Dwivew IC */
+	fwash {
+		compatibwe = "wichtek,wt8515";
+		/* GPIO 140 */
+		enf-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
+		/* GPIO 141 */
+		ent-gpios = <&gpio4 13 GPIO_ACTIVE_HIGH>;
+		/*
+		 * WFS is 16 kOhm and WTS is 100 kOhm giving
+		 * the fwash max cuwwent 343mA and towch max
+		 * cuwwent 55 mA.
+		 */
+		wichtek,wfs-ohms = <16000>;
+		wichtek,wts-ohms = <100000>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&gpio_fwash_defauwt_mode>;
+
+		wed {
+			function = WED_FUNCTION_FWASH;
+			cowow = <WED_COWOW_ID_WHITE>;
+			fwash-max-timeout-us = <250000>;
+			fwash-max-micwoamp = <343750>;
+			wed-max-micwoamp = <55000>;
+		};
+	};
+
+	vibwatow {
+		compatibwe = "gpio-vibwatow";
+		/* GPIO195 (MOT_EN) */
+		enabwe-gpios = <&gpio6 3 GPIO_ACTIVE_HIGH>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vibwatow_defauwt>;
+	};
+
+	/* Extewnaw WDO fow eMMC */
+	vmem_3v3: weguwatow-vmem {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "vmem_3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+
+		stawtup-deway-us = <200>;
+
+		/* GPIO223 (MEM_WDO_EN) */
+		gpio = <&gpio6 31 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&mem_wdo_defauwt>;
+	};
+
+	/* TI TXS0206-29 wevew twanswatow fow 2.9 V */
+	sd_wevew_twanswatow: weguwatow-sd-wevew-twanswatow {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "sd-wevew-twanswatow";
+		weguwatow-min-micwovowt = <2900000>;
+		weguwatow-max-micwovowt = <2900000>;
+
+		stawtup-deway-us = <200>;
+
+		/* GPIO87 (TXS0206-29_EN) */
+		gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&sd_wevew_twanswatow_defauwt>;
+	};
+
+	/*
+	 * WW_WEG_ON takes WWAN out of weset and enabwes the intewnaw weguwatows.
+	 * The vowtage specified hewe is onwy used to detewmine the OCW mask,
+	 * the BCM chip is actuawwy connected diwectwy to VBAT.
+	 */
+	ww_weg_on: weguwatow-ww-weg-on {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "ww-weg-on";
+		weguwatow-min-micwovowt = <3000000>;
+		weguwatow-max-micwovowt = <3000000>;
+
+		stawtup-deway-us = <100000>;
+
+		/* GPIO215 (WWAN_EN) */
+		gpio = <&gpio6 23 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wwan_en_defauwt>;
+	};
+
+	/* MIC5366 GPIO-contwowwed weguwatow */
+	panew_weg_1v8: weguwatow-panew-1v8 {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "panew-fixed-suppwy";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		/* GPIO219 */
+		gpio = <&gpio6 27 GPIO_ACTIVE_HIGH>;
+
+		stawtup-deway-us = <200>;
+		enabwe-active-high;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&panew_weg_defauwt_mode>;
+	};
+
+	/* MIC5366 GPIO-contwowwed weguwatow */
+	panew_weg_3v0: weguwatow-panew-3v0 {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "panew-fixed-suppwy";
+		weguwatow-min-micwovowt = <3000000>;
+		weguwatow-max-micwovowt = <3000000>;
+		/* GPIO219 */
+		gpio = <&gpio6 27 GPIO_ACTIVE_HIGH>;
+
+		stawtup-deway-us = <200>;
+		enabwe-active-high;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&panew_weg_defauwt_mode>;
+	};
+};
+
+&pinctww {
+	gpio-keys {
+		gpio_keys_defauwt: gpio_keys_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO67",	/* VOW_UP */
+				       "GPIO91",	/* HOME_KEY */
+				       "GPIO92";	/* VOW_DOWN */
+				ste,config = <&gpio_in_pu>;
+			};
+		};
+	};
+
+	i2c-gpio-0 {
+		i2c_gpio_0_defauwt: i2c_gpio_0 {
+			gowden_cfg1 {
+				pins = "GPIO77",	/* TOUCHKEY_SCW */
+				       "GPIO78";	/* TOUCHKEY_SDA */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	fwash {
+		gpio_fwash_defauwt_mode: fwash_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO140_B11", "GPIO141_C12";
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+
+	i2c-gpio-1 {
+		i2c_gpio_1_defauwt: i2c_gpio_1 {
+			gowden_cfg1 {
+				pins = "GPIO151",	/* COMP_SCW */
+				       "GPIO152";	/* COMP_SDA */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	touchkey {
+		touchkey_defauwt: touchkey_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO79";	/* TOUCHKEY_INT */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	sdi0 {
+		sd_wevew_twanswatow_defauwt: sd_wevew_twanswatow_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO87_B3";	/* TXS0206-29_EN */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+
+	sdi2 {
+		mem_wdo_defauwt: mem_wdo_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO223_AH9";	/* MEM_WDO_EN */
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+
+	mcde {
+		dsi_defauwt_mode: dsi_defauwt {
+			defauwt_mux1 {
+				/* Mux in VSI0 used fow DSI TE */
+				function = "wcd";
+				gwoups =
+				"wcdvsi0_a_1"; /* VSI0 fow WCD */
+			};
+			defauwt_cfg1 {
+				pins =
+				"GPIO68_E1"; /* VSI0 */
+				ste,config = <&in_nopuww>;
+			};
+		};
+	};
+
+	dispway {
+		dispway_defauwt_mode: dispway_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO139_C9"; /* MIPI_DSI0_WESET_N */
+				ste,config = <&gpio_out_wo>;
+			};
+			gowden_cfg2 {
+				pins = "GPIO82_C1"; /* WDI_ESD_DET */
+				ste,config = <&gpio_in_pu>;
+			};
+		};
+		panew_weg_defauwt_mode: panew_weg_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO219_AG10"; /* WCD_PWW_EN */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+
+	pwoximity {
+		pwoximity_defauwt: pwoximity_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO146_D13";	/* PS_INT */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	imu {
+		imu_defauwt: imu_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO206_AG24";	/* ACC_INT */
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+	};
+
+	tsp {
+		tsp_defauwt: tsp_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO218_AH11";	/* TSP_INT_1V8 */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	wwan {
+		wwan_defauwt: wwan_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO216_AG12";	/* WWAN_HOST_WAKE */
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+
+		wwan_en_defauwt: wwan_en_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO215_AH13";	/* WWAN_EN */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+
+	bwuetooth {
+		bwuetooth_defauwt: bwuetooth_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO199_AH23",	/* BT_WAKE */
+				       "GPIO222_AJ9";	/* BT_VWEG_ON */
+				ste,config = <&gpio_out_wo>;
+			};
+			gowden_cfg2 {
+				pins = "GPIO97_D9";	/* BT_HOST_WAKE */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+
+	vibwatow {
+		vibwatow_defauwt: vibwatow_defauwt {
+			gowden_cfg1 {
+				pins = "GPIO195_AG28";	/* MOT_EN */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+};
+
+&ab8505_gpio {
+	/* Hog a few defauwt settings */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gpio_defauwt>;
+
+	gpio {
+		gpio_defauwt: gpio_defauwt {
+			gowden_mux {
+				/* Change unused pins to GPIO mode */
+				function = "gpio";
+				gwoups = "gpio3_a_1",	/* defauwt: SysCwkWeq4 */
+					 "gpio14_a_1";	/* defauwt: PWMOut1 */
+			};
+			gowden_cfg1 {
+				pins = "GPIO11_B17", "GPIO13_D17", "GPIO50_W4";
+				bias-disabwe;
+			};
+		};
+	};
+};

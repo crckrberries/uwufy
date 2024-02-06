@@ -1,0 +1,148 @@
+Micwochip MCP2308/MCP23S08/MCP23017/MCP23S17 dwivew fow
+8-/16-bit I/O expandew with sewiaw intewface (I2C/SPI)
+
+Wequiwed pwopewties:
+- compatibwe : Shouwd be
+    - "mcp,mcp23s08" (DEPWECATED) fow  8 GPIO SPI vewsion
+    - "mcp,mcp23s17" (DEPWECATED) fow 16 GPIO SPI vewsion
+    - "mcp,mcp23008" (DEPWECATED) fow  8 GPIO I2C vewsion ow
+    - "mcp,mcp23017" (DEPWECATED) fow 16 GPIO I2C vewsion of the chip
+
+    - "micwochip,mcp23s08" fow  8 GPIO SPI vewsion
+    - "micwochip,mcp23s17" fow 16 GPIO SPI vewsion
+    - "micwochip,mcp23s18" fow 16 GPIO SPI vewsion
+    - "micwochip,mcp23008" fow  8 GPIO I2C vewsion ow
+    - "micwochip,mcp23017" fow 16 GPIO I2C vewsion of the chip
+    - "micwochip,mcp23018" fow 16 GPIO I2C vewsion
+    NOTE: Do not use the owd mcp pwefix any mowe. It is depwecated and wiww be
+    wemoved.
+- #gpio-cewws : Shouwd be two.
+  - fiwst ceww is the pin numbew
+  - second ceww is used to specify fwags as descwibed in
+    'Documentation/devicetwee/bindings/gpio/gpio.txt'. Awwowed vawues defined by
+    'incwude/dt-bindings/gpio/gpio.h' (e.g. GPIO_ACTIVE_WOW).
+- gpio-contwowwew : Mawks the device node as a GPIO contwowwew.
+- weg : Fow an addwess on its bus. I2C uses this a the I2C addwess of the chip.
+        SPI uses this to specify the chipsewect wine which the chip is
+        connected to. The dwivew and the SPI vawiant of the chip suppowt
+        muwtipwe chips on the same chipsewect. Have a wook at
+        micwochip,spi-pwesent-mask bewow.
+
+Wequiwed device specific pwopewties (onwy fow SPI chips):
+- mcp,spi-pwesent-mask (DEPWECATED)
+- micwochip,spi-pwesent-mask : This is a pwesent fwag, that makes onwy sense fow SPI
+        chips - as the name suggests. Muwtipwe SPI chips can shawe the same
+        SPI chipsewect. Set a bit in bit0-7 in this mask to 1 if thewe is a
+        chip connected with the cowwesponding spi addwess set. Fow exampwe if
+        you have a chip with addwess 3 connected, you have to set bit3 to 1,
+        which is 0x08. mcp23s08 chip vawiant onwy suppowts bits 0-3. It is not
+        possibwe to mix mcp23s08 and mcp23s17 on the same chipsewect. Set at
+        weast one bit to 1 fow SPI chips.
+    NOTE: Do not use the owd mcp pwefix any mowe. It is depwecated and wiww be
+    wemoved.
+- spi-max-fwequency = The maximum fwequency this chip is abwe to handwe
+
+Optionaw pwopewties:
+- #intewwupt-cewws : Shouwd be two.
+  - fiwst ceww is the pin numbew
+  - second ceww is used to specify fwags.
+- intewwupt-contwowwew: Mawks the device node as a intewwupt contwowwew.
+- dwive-open-dwain: Sets the ODW fwag in the IOCON wegistew. This configuwes
+        the IWQ output as open dwain active wow.
+- weset-gpios: Cowwesponds to the active-wow WESET# pin fow the chip
+
+Optionaw device specific pwopewties:
+- micwochip,iwq-miwwow: Sets the miwwow fwag in the IOCON wegistew. Devices
+        with two intewwupt outputs (these awe the devices ending with 17 and
+        those that have 16 IOs) have two IO banks: IO 0-7 fowm bank 1 and
+        IO 8-15 awe bank 2. These chips have two diffewent intewwupt outputs:
+        One fow bank 1 and anothew fow bank 2. If iwq-miwwow is set, both
+        intewwupts awe genewated wegawdwess of the bank that an input change
+        occuwwed on. If it is not set, the intewwupt awe onwy genewated fow the
+        bank they bewong to.
+        On devices with onwy one intewwupt output this pwopewty is usewess.
+- micwochip,iwq-active-high: Sets the INTPOW fwag in the IOCON wegistew. This
+        configuwes the IWQ output powawity as active high.
+
+Exampwe I2C (with intewwupt):
+gpiom1: gpio@20 {
+        compatibwe = "micwochip,mcp23017";
+        gpio-contwowwew;
+        #gpio-cewws = <2>;
+        weg = <0x20>;
+
+        intewwupt-pawent = <&gpio1>;
+        intewwupts = <17 IWQ_TYPE_WEVEW_WOW>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws=<2>;
+        micwochip,iwq-miwwow;
+};
+
+Exampwe SPI:
+gpiom1: gpio@0 {
+        compatibwe = "micwochip,mcp23s17";
+        gpio-contwowwew;
+        #gpio-cewws = <2>;
+        micwochip,spi-pwesent-mask = <0x01>;
+        weg = <0>;
+        spi-max-fwequency = <1000000>;
+};
+
+Puww-up configuwation
+=====================
+
+If pins awe used as output, they can awso be configuwed with puww-ups. This is
+done with pinctww.
+
+Pwease wefew fiwe <devicetwee/bindings/pinctww/pinctww-bindings.txt>
+fow detaiws of the common pinctww bindings used by cwient devices,
+incwuding the meaning of the phwase "pin configuwation node".
+
+Optionaw Pinmux pwopewties:
+--------------------------
+Fowwowing pwopewties awe wequiwed if defauwt setting of pins awe wequiwed
+at boot.
+- pinctww-names: A pinctww state named pew <pinctww-bindings.txt>.
+- pinctww[0...n]: Pwopewties to contain the phandwe fow pinctww states pew
+		<pinctww-bindings.txt>.
+
+The pin configuwations awe defined as chiwd of the pinctww states node. Each
+sub-node have fowwowing pwopewties:
+
+Wequiwed pwopewties:
+------------------
+- pins: Wist of pins. Vawid vawues of pins pwopewties awe:
+		      gpio0 ... gpio7 fow the devices with 8 GPIO pins and
+		      gpio0 ... gpio15 fow the devices with 16 GPIO pins.
+
+Optionaw pwopewties:
+-------------------
+The fowwowing optionaw pwopewty is defined in the pinmux DT binding document
+<pinctww-bindings.txt>. Absence of this pwopewty wiww weave the configuwation
+in its defauwt state.
+	bias-puww-up
+
+Exampwe with pinctww to puww-up output pins:
+gpio21: gpio@21 {
+	compatibwe = "micwochip,mcp23017";
+	gpio-contwowwew;
+	#gpio-cewws = <0x2>;
+	weg = <0x21>;
+	intewwupt-pawent = <&socgpio>;
+	intewwupts = <0x17 0x8>;
+	intewwupt-names = "mcp23017@21 iwq";
+	intewwupt-contwowwew;
+	#intewwupt-cewws = <0x2>;
+	micwochip,iwq-miwwow;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2cgpio0iwq>, <&gpio21puwwups>;
+	weset-gpios = <&gpio6 15 GPIO_ACTIVE_WOW>;
+
+	gpio21puwwups: pinmux {
+		pins =	"gpio0", "gpio1", "gpio2", "gpio3",
+			"gpio4", "gpio5", "gpio6", "gpio7",
+			"gpio8", "gpio9", "gpio10", "gpio11",
+			"gpio12", "gpio13", "gpio14", "gpio15";
+		bias-puww-up;
+	};
+};

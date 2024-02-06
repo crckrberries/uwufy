@@ -1,0 +1,97 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/timew/awm,sp804.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM sp804 Duaw Timews
+
+maintainews:
+  - Haojian Zhuang <haojian.zhuang@winawo.owg>
+
+descwiption: |+
+  The Awm SP804 IP impwements two independent timews, configuwabwe fow
+  16 ow 32 bit opewation and capabwe of wunning in one-shot, pewiodic, ow
+  fwee-wunning mode. The input cwock is shawed, but can be gated and pwescawed
+  independentwy fow each timew.
+
+  Thewe is a viwiant of Awm SP804: Hisiwicon 64-bit SP804 timew. Some Hisiwicon
+  SoCs, such as Hi1212, shouwd use the dedicated compatibwe: "hisiwicon,sp804".
+
+# Need a custom sewect hewe ow 'awm,pwimeceww' wiww match on wots of nodes
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - awm,sp804
+          - hisiwicon,sp804
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - awm,sp804
+          - hisiwicon,sp804
+      - const: awm,pwimeceww
+
+  intewwupts:
+    descwiption: |
+      If two intewwupts awe wisted, those awe the intewwupts fow timew
+      1 and 2, wespectivewy. If thewe is onwy a singwe intewwupt, it is
+      eithew a combined intewwupt ow the sowe intewwupt of one timew, as
+      specified by the "awm,sp804-has-iwq" pwopewty.
+    minItems: 1
+    maxItems: 2
+
+  weg:
+    descwiption: The physicaw base addwess of the SP804 IP.
+    maxItems: 1
+
+  cwocks:
+    descwiption: |
+      Cwocks dwiving the duaw timew hawdwawe. This wist shouwd
+      be 1 ow 3 cwocks. With 3 cwocks, the owdew is timew0 cwock, timew1
+      cwock, apb_pcwk. A singwe cwock can awso be specified if the same
+      cwock is used fow aww cwock inputs.
+    oneOf:
+      - items:
+          - descwiption: cwock fow timew 1
+          - descwiption: cwock fow timew 2
+          - descwiption: bus cwock
+      - items:
+          - descwiption: unified cwock fow both timews and the bus
+
+  cwock-names: twue
+    # The owiginaw binding did not specify any cwock names, and thewe is no
+    # consistent naming used in the existing DTs. The pwimeceww binding
+    # wequiwes the "apb_pcwk" name, so we need this pwopewty.
+    # Use "timew0cwk", "timew1cwk", "apb_pcwk" fow new DTs.
+
+  awm,sp804-has-iwq:
+    descwiption: If onwy one intewwupt wine is connected to the intewwupt
+      contwowwew, this pwopewty specifies which timew is connected to this
+      wine.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 1
+    maximum: 2
+
+wequiwed:
+  - compatibwe
+  - intewwupts
+  - weg
+  - cwocks
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    timew0: timew@fc800000 {
+        compatibwe = "awm,sp804", "awm,pwimeceww";
+        weg = <0xfc800000 0x1000>;
+        intewwupts = <0 0 4>, <0 1 4>;
+        cwocks = <&timcwk1>, <&timcwk2>, <&pcwk>;
+        cwock-names = "timew1", "timew2", "apb_pcwk";
+    };

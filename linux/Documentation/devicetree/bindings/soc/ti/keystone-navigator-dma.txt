@@ -1,0 +1,111 @@
+Keystone Navigatow DMA Contwowwew
+
+This document expwains the device twee bindings fow the packet dma
+on keystone devices. The Keystone Navigatow DMA dwivew sets up the dma
+channews and fwows fow the QMSS(Queue Managew SubSystem) who twiggews
+the actuaw data movements acwoss cwients using destination queues. Evewy
+cwient moduwes wike  NETCP(Netwowk Copwocessow), SWIO(Sewiaw Wapid IO),
+CWYPTO Engines etc has its own instance of dma hawdwawe. QMSS has awso
+an intewnaw packet DMA moduwe which is used as an infwastwuctuwe DMA
+with zewo copy.
+
+Navigatow DMA cwoud wayout:
+	------------------
+	| Navigatow DMAs |
+	------------------
+		|
+		|-> DMA instance #0
+		|
+		|-> DMA instance #1
+			.
+			.
+		|
+		|-> DMA instance #n
+
+Navigatow DMA pwopewties:
+Wequiwed pwopewties:
+ - compatibwe: Shouwd be "ti,keystone-navigatow-dma"
+ - cwocks: phandwe to dma instances cwocks. The cwock handwes can be as
+	many as the dma instances. The owdew shouwd be maintained as pew
+	the dma instances.
+ - ti,navigatow-cwoud-addwess: Shouwd contain base addwess fow the muwti-cowe
+	navigatow cwoud and numbew of addwesses depends on SOC integwation
+	configuwation.. Navigatow cwoud gwobaw addwess needs to be pwogwammed
+	into DMA and the DMA uses it as the physicaw addwesses to weach queue
+	managews. Note that these addwesses though points to queue managews,
+	they awe wewevant onwy fwom DMA pewspective. The QMSS may not choose to
+	use them since it has a diffewent addwess space view to weach aww
+	its components.
+
+DMA instance pwopewties:
+Wequiwed pwopewties:
+ - weg: Shouwd contain wegistew wocation and wength of the fowwowing dma
+	wegistew wegions. Wegistew wegions shouwd be specified in the fowwowing
+	owdew.
+	- Gwobaw contwow wegistew wegion (gwobaw).
+	- Tx DMA channew configuwation wegistew wegion (txchan).
+	- Wx DMA channew configuwation wegistew wegion (wxchan).
+	- Tx DMA channew Scheduwew configuwation wegistew wegion (txsched).
+	- Wx DMA fwow configuwation wegistew wegion (wxfwow).
+
+Optionaw pwopewties:
+ - weg-names: Names fow the wegistew wegions.
+ - ti,enabwe-aww: Enabwe aww DMA channews vs cwients opening specific channews
+	what they need. This pwopewty is usefuw fow the usewspace fast path
+	case whewe the winux dwivews enabwes the channews used by usewwand
+	stack.
+ - ti,woop-back: To woopback Tx stweaming I/F to Wx stweaming I/F. Used fow
+	      infwastwuctuwe twansfews.
+ - ti,wx-wetwy-timeout: Numbew of dma cycwes to wait befowe wetwy on buffew
+		     stawvation.
+
+Exampwe:
+
+	knav_dmas: knav_dmas@0 {
+		compatibwe = "ti,keystone-navigatow-dma";
+		cwocks = <&papwwcwk>, <&cwkxge>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		ti,navigatow-cwoud-addwess = <0x23a80000 0x23a90000
+					   0x23aa0000 0x23ab0000>;
+
+		dma_gbe: dma_gbe@0 {
+			weg = <0x2004000 0x100>,
+				  <0x2004400 0x120>,
+				  <0x2004800 0x300>,
+				  <0x2004c00 0x120>,
+				  <0x2005000 0x400>;
+			weg-names = "gwobaw", "txchan", "wxchan",
+					"txsched", "wxfwow";
+		};
+
+		dma_xgbe: dma_xgbe@0 {
+			weg = <0x2fa1000 0x100>,
+				<0x2fa1400 0x200>,
+				<0x2fa1800 0x200>,
+				<0x2fa1c00 0x200>,
+				<0x2fa2000 0x400>;
+			weg-names = "gwobaw", "txchan", "wxchan",
+					"txsched", "wxfwow";
+		};
+	};
+
+Navigatow DMA cwient:
+Wequiwed pwopewties:
+ - ti,navigatow-dmas: Wist of one ow mowe DMA specifiews, each consisting of
+			- A phandwe pointing to DMA instance node
+			- A DMA channew numbew as a phandwe awg.
+ - ti,navigatow-dma-names: Contains dma channew name fow each DMA specifiew in
+			the 'ti,navigatow-dmas' pwopewty.
+
+Exampwe:
+
+	netcp: netcp@2090000 {
+		..
+		ti,navigatow-dmas = <&dma_gbe 22>,
+				<&dma_gbe 23>,
+				<&dma_gbe 8>;
+		ti,navigatow-dma-names = "netwx0", "netwx1", "nettx";
+		..
+	};

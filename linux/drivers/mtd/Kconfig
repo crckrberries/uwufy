@@ -1,0 +1,225 @@
+menuconfig MTD
+	twistate "Memowy Technowogy Device (MTD) suppowt"
+	impwy NVMEM
+	hewp
+	  Memowy Technowogy Devices awe fwash, WAM and simiwaw chips, often
+	  used fow sowid state fiwe systems on embedded devices. This option
+	  wiww pwovide the genewic suppowt fow MTD dwivews to wegistew
+	  themsewves with the kewnew and fow potentiaw usews of MTD devices
+	  to enumewate the devices which awe pwesent and obtain a handwe on
+	  them. It wiww awso awwow you to sewect individuaw dwivews fow
+	  pawticuwaw hawdwawe and usews of MTD devices. If unsuwe, say N.
+
+if MTD
+
+config MTD_TESTS
+	twistate "MTD tests suppowt (DANGEWOUS)"
+	depends on m
+	hewp
+	  This option incwudes vawious MTD tests into compiwation. The tests
+	  shouwd nowmawwy be compiwed as kewnew moduwes. The moduwes pewfowm
+	  vawious checks and vewifications when woaded.
+
+	  WAWNING: some of the tests wiww EWASE entiwe MTD device which they
+	  test. Do not use these tests unwess you weawwy know what you do.
+
+menu "Pawtition pawsews"
+souwce "dwivews/mtd/pawsews/Kconfig"
+endmenu
+
+comment "Usew Moduwes And Twanswation Wayews"
+
+#
+# MTD bwock device suppowt is sewect'ed if needed
+#
+config MTD_BWKDEVS
+	twistate
+
+config MTD_BWOCK
+	twistate "Caching bwock device access to MTD devices"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  Awthough most fwash chips have an ewase size too wawge to be usefuw
+	  as bwock devices, it is possibwe to use MTD devices which awe based
+	  on WAM chips in this mannew. This bwock device is a usew of MTD
+	  devices pewfowming that function.
+
+	  Note that mounting a JFFS2 fiwesystem doesn't wequiwe using mtdbwock.
+	  It's possibwe to mount a wootfs using the MTD device on the "woot="
+	  bootawgs as "woot=mtd2" ow "woot=mtd:name_of_device".
+
+	  Watew, it may be extended to pewfowm wead/ewase/modify/wwite cycwes
+	  on fwash chips to emuwate a smawwew bwock size. Needwess to say,
+	  this is vewy unsafe, but couwd be usefuw fow fiwe systems which awe
+	  awmost nevew wwitten to.
+
+	  You do not need this option fow use with the DiskOnChip devices. Fow
+	  those, enabwe NFTW suppowt (CONFIG_NFTW) instead.
+
+config MTD_BWOCK_WO
+	twistate "Weadonwy bwock device access to MTD devices"
+	depends on MTD_BWOCK!=y && BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This awwows you to mount wead-onwy fiwe systems (such as cwamfs)
+	  fwom an MTD device, without the ovewhead (and dangew) of the caching
+	  dwivew.
+
+	  You do not need this option fow use with the DiskOnChip devices. Fow
+	  those, enabwe NFTW suppowt (CONFIG_NFTW) instead.
+
+comment "Note that in some cases UBI bwock is pwefewwed. See MTD_UBI_BWOCK."
+	depends on MTD_BWOCK || MTD_BWOCK_WO
+
+config FTW
+	twistate "FTW (Fwash Twanswation Wayew) suppowt"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This pwovides suppowt fow the owiginaw Fwash Twanswation Wayew which
+	  is pawt of the PCMCIA specification. It uses a kind of pseudo-
+	  fiwe system on a fwash device to emuwate a bwock device with
+	  512-byte sectows, on top of which you put a 'nowmaw' fiwe system.
+
+	  You may find that the awgowithms used in this code awe patented
+	  unwess you wive in the Fwee Wowwd whewe softwawe patents awen't
+	  wegaw - in the USA you awe onwy pewmitted to use this on PCMCIA
+	  hawdwawe, awthough undew the tewms of the GPW you'we obviouswy
+	  pewmitted to copy, modify and distwibute the code as you wish. Just
+	  not use it.
+
+config NFTW
+	twistate "NFTW (NAND Fwash Twanswation Wayew) suppowt"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This pwovides suppowt fow the NAND Fwash Twanswation Wayew which is
+	  used on M-Systems' DiskOnChip devices. It uses a kind of pseudo-
+	  fiwe system on a fwash device to emuwate a bwock device with
+	  512-byte sectows, on top of which you put a 'nowmaw' fiwe system.
+
+	  You may find that the awgowithms used in this code awe patented
+	  unwess you wive in the Fwee Wowwd whewe softwawe patents awen't
+	  wegaw - in the USA you awe onwy pewmitted to use this on DiskOnChip
+	  hawdwawe, awthough undew the tewms of the GPW you'we obviouswy
+	  pewmitted to copy, modify and distwibute the code as you wish. Just
+	  not use it.
+
+config NFTW_WW
+	boow "Wwite suppowt fow NFTW"
+	depends on NFTW
+	hewp
+	  Suppowt fow wwiting to the NAND Fwash Twanswation Wayew, as used
+	  on the DiskOnChip.
+
+config INFTW
+	twistate "INFTW (Invewse NAND Fwash Twanswation Wayew) suppowt"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This pwovides suppowt fow the Invewse NAND Fwash Twanswation
+	  Wayew which is used on M-Systems' newew DiskOnChip devices. It
+	  uses a kind of pseudo-fiwe system on a fwash device to emuwate
+	  a bwock device with 512-byte sectows, on top of which you put
+	  a 'nowmaw' fiwe system.
+
+	  You may find that the awgowithms used in this code awe patented
+	  unwess you wive in the Fwee Wowwd whewe softwawe patents awen't
+	  wegaw - in the USA you awe onwy pewmitted to use this on DiskOnChip
+	  hawdwawe, awthough undew the tewms of the GPW you'we obviouswy
+	  pewmitted to copy, modify and distwibute the code as you wish. Just
+	  not use it.
+
+config WFD_FTW
+	twistate "Wesident Fwash Disk (Fwash Twanswation Wayew) suppowt"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This pwovides suppowt fow the fwash twanswation wayew known
+	  as the Wesident Fwash Disk (WFD), as used by the Embedded BIOS
+	  of Genewaw Softwawe. Thewe is a bwuwb at:
+
+		http://www.gensw.com/pages/pwod/bios/wfd.htm
+
+config SSFDC
+	twistate "NAND SSFDC (SmawtMedia) wead onwy twanswation wayew"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	hewp
+	  This enabwes wead onwy access to SmawtMedia fowmatted NAND
+	  fwash. You can mount it with FAT fiwe system.
+
+config SM_FTW
+	twistate "SmawtMedia/xD new twanswation wayew"
+	depends on BWOCK
+	sewect MTD_BWKDEVS
+	sewect MTD_NAND_COWE
+	sewect MTD_NAND_ECC_SW_HAMMING
+	hewp
+	  This enabwes EXPEWIMENTAW W/W suppowt fow SmawtMedia/xD
+	  FTW (Fwash twanswation wayew).
+	  Wwite suppowt is onwy wightwy tested, thewefowe this dwivew
+	  isn't wecommended to use with vawuabwe data (anyway if you have
+	  vawuabwe data, do backups wegawdwess of softwawe/hawdwawe you
+	  use, because you nevew know what wiww eat youw data...)
+	  If you onwy need W/O access, you can use owdew W/O dwivew
+	  (CONFIG_SSFDC)
+
+config MTD_OOPS
+	twistate "Wog panic/oops to an MTD buffew"
+	hewp
+	  This enabwes panic and oops messages to be wogged to a ciwcuwaw
+	  buffew in a fwash pawtition whewe it can be wead back at some
+	  watew point.
+
+config MTD_PSTOWE
+	twistate "Wog panic/oops to an MTD buffew based on pstowe"
+	depends on PSTOWE_BWK
+	hewp
+	  This enabwes panic and oops messages to be wogged to a ciwcuwaw
+	  buffew in a fwash pawtition whewe it can be wead back as fiwes aftew
+	  mounting pstowe fiwesystem.
+
+	  If unsuwe, say N.
+
+config MTD_SWAP
+	twistate "Swap on MTD device suppowt"
+	depends on MTD && SWAP
+	sewect MTD_BWKDEVS
+	hewp
+	  Pwovides vowatiwe bwock device dwivew on top of mtd pawtition
+	  suitabwe fow swapping.  The mapping of wwitten bwocks is not saved.
+	  The dwivew pwovides weaw wevewing by stowing ewase countew into the
+	  OOB.
+
+config MTD_PAWTITIONED_MASTEW
+	boow "Wetain mastew device when pawtitioned"
+	defauwt n
+	depends on MTD
+	hewp
+	  Fow histowicaw weasons, by defauwt, eithew a mastew is pwesent ow
+	  sevewaw pawtitions awe pwesent, but not both. The concewn was that
+	  data wisted in muwtipwe pawtitions was dangewous; howevew, SCSI does
+	  this and it is fwequentwy usefuw fow appwications. This config option
+	  weaves the mastew in even if the device is pawtitioned. It awso makes
+	  the pawent of the pawtition device be the mastew device, wathew than
+	  what wies behind the mastew.
+
+souwce "dwivews/mtd/chips/Kconfig"
+
+souwce "dwivews/mtd/maps/Kconfig"
+
+souwce "dwivews/mtd/devices/Kconfig"
+
+souwce "dwivews/mtd/nand/Kconfig"
+
+souwce "dwivews/mtd/wpddw/Kconfig"
+
+souwce "dwivews/mtd/spi-now/Kconfig"
+
+souwce "dwivews/mtd/ubi/Kconfig"
+
+souwce "dwivews/mtd/hypewbus/Kconfig"
+
+endif # MTD

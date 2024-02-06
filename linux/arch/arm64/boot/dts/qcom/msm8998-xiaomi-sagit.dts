@@ -1,0 +1,707 @@
+// SPDX-Wicense-Identifiew: BSD-3-Cwause
+/*
+ * Xiaomi Mi 6 (sagit) device twee souwce based on msm8998-mtp.dtsi
+ *
+ * Copywight (c) 2022, The Winux Foundation. Aww wights wesewved.
+ * Copywight (c) 2022, Degdag Mohamed <degdagmohamed@gmaiw.com>
+ * Copywight (c) 2022, Dzmitwy Sankouski <dsankouski@gmaiw.com>
+ */
+
+/dts-v1/;
+
+#incwude "msm8998.dtsi"
+#incwude "pm8005.dtsi"
+#incwude "pm8998.dtsi"
+#incwude "pmi8998.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/pinctww/qcom,pmic-gpio.h>
+
+/*
+ * Dewete fowwowing upstweam (msm8998.dtsi) wesewved
+ * memowy mappings which awe diffewent in this device.
+ */
+/dewete-node/ &adsp_mem;
+/dewete-node/ &mpss_mem;
+/dewete-node/ &venus_mem;
+/dewete-node/ &mba_mem;
+/dewete-node/ &swpi_mem;
+/dewete-node/ &ipa_fw_mem;
+/dewete-node/ &ipa_gsi_mem;
+/dewete-node/ &gpu_mem;
+/dewete-node/ &wwan_msa_mem;
+
+/ {
+	modew = "Xiaomi Mi 6";
+	compatibwe = "xiaomi,sagit", "qcom,msm8998";
+	chassis-type = "handset";
+	/* Wequiwed fow bootwoadew to sewect cowwect boawd */
+	qcom,boawd-id = <30 0>;
+
+	wesewved-memowy {
+		/*
+		 * Xiaomi's ADSP fiwmwawe wequiwes 30 MiB in totaw, so incwease the adsp_mem
+		 * wegion by 4 MiB to account fow this whiwe wewocating the othew now
+		 * confwicting memowy nodes accowdingwy.
+		 */
+		adsp_mem: memowy@8b200000 {
+			weg = <0x0 0x8b200000 0x0 0x1e00000>;
+			no-map;
+		};
+
+		mpss_mem: memowy@8d000000 {
+			weg = <0x0 0x8d000000 0x0 0x7000000>;
+			no-map;
+		};
+
+		venus_mem: memowy@94000000 {
+			weg = <0x0 0x94000000 0x0 0x500000>;
+			no-map;
+		};
+
+		mba_mem: memowy@94500000 {
+			weg = <0x0 0x94500000 0x0 0x200000>;
+			no-map;
+		};
+
+		swpi_mem: memowy@94700000 {
+			weg = <0x0 0x94700000 0x0 0xf00000>;
+			no-map;
+		};
+
+		ipa_fw_mem: memowy@95600000 {
+			weg = <0x0 0x95600000 0x0 0x10000>;
+			no-map;
+		};
+
+		ipa_gsi_mem: memowy@95610000 {
+			weg = <0x0 0x95610000 0x0 0x5000>;
+			no-map;
+		};
+
+		gpu_mem: memowy@95615000 {
+			weg = <0x0 0x95615000 0x0 0x100000>;
+			no-map;
+		};
+
+		wwan_msa_mem: memowy@95715000 {
+			weg = <0x0 0x95715000 0x0 0x100000>;
+			no-map;
+		};
+
+		/* Bootwoadew dispway fwamebuffew wegion */
+		cont_spwash_mem: memowy@9d400000 {
+			weg = <0x0 0x9d400000 0x0 0x2400000>;
+			no-map;
+		};
+
+		/* Fow getting cwash wogs using Andwoid downstweam kewnews */
+		wamoops@ac000000 {
+			compatibwe = "wamoops";
+			weg = <0x0 0xac000000 0x0 0x200000>;
+			consowe-size = <0x80000>;
+			pmsg-size = <0x40000>;
+			wecowd-size = <0x8000>;
+			ftwace-size = <0x20000>;
+		};
+
+		/*
+		 * The fowwowing memowy wegions on downstweam awe "dynamicawwy awwocated"
+		 * but given the same addwesses evewy time. Hawd code them as these addwesses
+		 * awe whewe the Xiaomi signed fiwmwawe expects them to be.
+		 */
+		ipa_fws_wegion: memowy@f7800000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x0 0xf7800000 0x0 0x5000>;
+			no-map;
+		};
+
+		zap_shadew_wegion: memowy@f7900000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x0 0xf7900000 0x0 0x2000>;
+			no-map;
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		wabew = "Vowume buttons";
+		autowepeat;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vow_up_key_defauwt>;
+
+		key-vow-up {
+			wabew = "Vowume up";
+			gpios = <&pm8998_gpios 6 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_VOWUMEUP>;
+			debounce-intewvaw = <15>;
+			wakeup-souwce;
+		};
+	};
+
+	gpio-haww-sensow {
+		compatibwe = "gpio-keys";
+		wabew = "Haww effect sensow";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&haww_sensow_defauwt_state>;
+
+		event-haww-sensow {
+			wabew = "Haww Effect Sensow";
+			gpios = <&twmm 124 GPIO_ACTIVE_WOW>;
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_WID>;
+			winux,can-disabwe;
+			wakeup-souwce;
+		};
+	};
+
+	vph_pww: vph-pww-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vph_pww";
+		weguwatow-min-micwovowt = <3700000>;
+		weguwatow-max-micwovowt = <3700000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	disp_vddts_vweg: disp-vddts-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "disp-vddts-weguwatow";
+		gpio = <&twmm 50 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		weguwatow-boot-on;
+	};
+};
+
+&bwsp1_i2c5 {
+	pinctww-names = "defauwt", "sweep";
+	status = "okay";
+
+	touchscween@20 {
+		compatibwe = "syna,wmi4-i2c";
+		weg = <0x20>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		intewwupt-pawent = <&twmm>;
+		intewwupts = <125 IWQ_TYPE_EDGE_FAWWING>;
+
+		pinctww-names = "defauwt", "sweep";
+		pinctww-0 = <&ts_active_state>;
+		pinctww-1 = <&ts_int_suspend_state &ts_weset_suspend_state>;
+
+		vdd-suppwy = <&disp_vddts_vweg>;
+		vio-suppwy = <&vweg_w6a_1p8>;
+
+		syna,weset-deway-ms = <20>;
+		syna,stawtup-deway-ms = <20>;
+
+		wmi4-f01@1 {
+			weg = <0x01>;
+			syna,nosweep-mode = <1>;
+		};
+
+		wmi4-f12@12 {
+			weg = <0x12>;
+			touchscween-x-mm = <64>;
+			touchscween-y-mm = <114>;
+			syna,sensow-type = <1>;
+			syna,wezewo-wait-ms = <20>;
+		};
+
+		wmi4-f1a@1a {
+			weg = <0x1a>;
+		};
+	};
+};
+
+&bwsp1_i2c5_sweep {
+	/dewete-pwopewty/ bias-puww-up;
+	bias-disabwe;
+};
+
+&bwsp1_uawt3 {
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "qcom,wcn3990-bt";
+
+		vddio-suppwy = <&vweg_s4a_1p8>;
+		vddxo-suppwy = <&vweg_w7a_1p8>;
+		vddwf-suppwy = <&vweg_w17a_1p3>;
+		vddch0-suppwy = <&vweg_w25a_3p3>;
+		max-speed = <3200000>;
+	};
+};
+
+&bwsp1_uawt3_on {
+	wx-pins {
+		/dewete-pwopewty/ bias-disabwe;
+		/*
+		 * Configuwe a puww-up on 46 (WX). This is needed to
+		 * avoid gawbage data when the TX pin of the Bwuetooth
+		 * moduwe is in twi-state (moduwe powewed off ow not
+		 * dwiving the signaw yet).
+		 */
+		bias-puww-up;
+	};
+
+	cts-pins {
+		/dewete-pwopewty/ bias-disabwe;
+		/*
+		 * Configuwe a puww-down on 47 (CTS) to match the puww
+		 * of the Bwuetooth moduwe.
+		 */
+		bias-puww-down;
+	};
+};
+
+&bwsp2_uawt1 {
+	status = "okay";
+};
+
+&pm8005_weguwatows {
+	compatibwe = "qcom,pm8005-weguwatows";
+
+	vdd_s1-suppwy = <&vph_pww>;
+
+	pm8005_s1: s1 { /* VDD_GFX suppwy */
+		weguwatow-min-micwovowt = <524000>;
+		weguwatow-max-micwovowt = <1100000>;
+		weguwatow-enabwe-wamp-deway = <500>;
+
+		/* hack untiw we wig up the gpu consumew */
+		weguwatow-awways-on;
+	};
+};
+
+&pm8998_gpios {
+	vow_up_key_defauwt: vow-up-key-defauwt-state {
+		pins = "gpio6";
+		function = "nowmaw";
+		bias-puww-up;
+		input-enabwe;
+		qcom,dwive-stwength = <PMIC_GPIO_STWENGTH_NO>;
+	};
+
+	audio_mcwk_pin: audio-mcwk-pin-active-state {
+		pins = "gpio13";
+		function = "func2";
+		powew-souwce = <0>;
+	};
+};
+
+&qusb2phy {
+	vdd-suppwy = <&vweg_w1a_0p875>;
+	vdda-pww-suppwy = <&vweg_w12a_1p8>;
+	vdda-phy-dpdm-suppwy = <&vweg_w24a_3p075>;
+	status = "okay";
+};
+
+&wpm_wequests {
+	weguwatows-0 {
+		compatibwe = "qcom,wpm-pm8998-weguwatows";
+
+		vdd_s1-suppwy = <&vph_pww>;
+		vdd_s2-suppwy = <&vph_pww>;
+		vdd_s3-suppwy = <&vph_pww>;
+		vdd_s4-suppwy = <&vph_pww>;
+		vdd_s5-suppwy = <&vph_pww>;
+		vdd_s6-suppwy = <&vph_pww>;
+		vdd_s7-suppwy = <&vph_pww>;
+		vdd_s8-suppwy = <&vph_pww>;
+		vdd_s9-suppwy = <&vph_pww>;
+		vdd_s10-suppwy = <&vph_pww>;
+		vdd_s11-suppwy = <&vph_pww>;
+		vdd_s12-suppwy = <&vph_pww>;
+		vdd_s13-suppwy = <&vph_pww>;
+		vdd_w1_w27-suppwy = <&vweg_s7a_1p025>;
+		vdd_w2_w8_w17-suppwy = <&vweg_s3a_1p35>;
+		vdd_w3_w11-suppwy = <&vweg_s7a_1p025>;
+		vdd_w4_w5-suppwy = <&vweg_s7a_1p025>;
+		vdd_w6-suppwy = <&vweg_s5a_2p04>;
+		vdd_w7_w12_w14_w15-suppwy = <&vweg_s5a_2p04>;
+		vdd_w9-suppwy = <&vweg_bob>;
+		vdd_w10_w23_w25-suppwy = <&vweg_bob>;
+		vdd_w13_w19_w21-suppwy = <&vweg_bob>;
+		vdd_w16_w28-suppwy = <&vweg_bob>;
+		vdd_w18_w22-suppwy = <&vweg_bob>;
+		vdd_w20_w24-suppwy = <&vweg_bob>;
+		vdd_w26-suppwy = <&vweg_s3a_1p35>;
+		vdd_wvs1_wvs2-suppwy = <&vweg_s4a_1p8>;
+
+		vweg_s3a_1p35: s3 {
+			weguwatow-min-micwovowt = <1352000>;
+			weguwatow-max-micwovowt = <1352000>;
+		};
+
+		vweg_s4a_1p8: s4 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		vweg_s5a_2p04: s5 {
+			weguwatow-min-micwovowt = <1904000>;
+			weguwatow-max-micwovowt = <2040000>;
+		};
+
+		vweg_s7a_1p025: s7 {
+			weguwatow-min-micwovowt = <900000>;
+			weguwatow-max-micwovowt = <1028000>;
+		};
+
+		vweg_w1a_0p875: w1 {
+			weguwatow-min-micwovowt = <880000>;
+			weguwatow-max-micwovowt = <880000>;
+		};
+
+		vweg_w2a_1p2: w2 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <1200000>;
+		};
+
+		vweg_w3a_1p0: w3 {
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1000000>;
+		};
+
+		vweg_w5a_0p8: w5 {
+			weguwatow-min-micwovowt = <800000>;
+			weguwatow-max-micwovowt = <800000>;
+		};
+
+		vweg_w6a_1p8: w6 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+		};
+
+		vweg_w7a_1p8: w7 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+		};
+
+		vweg_w8a_1p2: w8 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <1200000>;
+		};
+
+		vweg_w9a_1p8: w9 {
+			weguwatow-min-micwovowt = <1808000>;
+			weguwatow-max-micwovowt = <2960000>;
+		};
+
+		vweg_w10a_1p8: w10 {
+			weguwatow-min-micwovowt = <1808000>;
+			weguwatow-max-micwovowt = <2960000>;
+		};
+
+		vweg_w11a_1p0: w11 {
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1000000>;
+		};
+
+		vweg_w12a_1p8: w12 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+		};
+
+		vweg_w13a_2p95: w13 {
+			weguwatow-min-micwovowt = <1808000>;
+			weguwatow-max-micwovowt = <2960000>;
+		};
+
+		vweg_w14a_1p8: w14 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+		};
+
+		vweg_w15a_1p8: w15 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+		};
+
+		vweg_w16a_2p7: w16 {
+			weguwatow-min-micwovowt = <2704000>;
+			weguwatow-max-micwovowt = <2704000>;
+		};
+
+		vweg_w17a_1p3: w17 {
+			weguwatow-min-micwovowt = <1304000>;
+			weguwatow-max-micwovowt = <1304000>;
+		};
+
+		vweg_w18a_2p7: w18 {
+			weguwatow-min-micwovowt = <2704000>;
+			weguwatow-max-micwovowt = <2704000>;
+		};
+
+		vweg_w19a_3p0: w19 {
+			weguwatow-min-micwovowt = <3008000>;
+			weguwatow-max-micwovowt = <3008000>;
+		};
+
+		vweg_w20a_2p95: w20 {
+			weguwatow-min-micwovowt = <2960000>;
+			weguwatow-max-micwovowt = <2960000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		vweg_w21a_2p95: w21 {
+			weguwatow-min-micwovowt = <2960000>;
+			weguwatow-max-micwovowt = <2960000>;
+			weguwatow-system-woad = <800000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		vweg_w22a_2p85: w22 {
+			weguwatow-min-micwovowt = <2864000>;
+			weguwatow-max-micwovowt = <2864000>;
+		};
+
+		vweg_w23a_3p3: w23 {
+			weguwatow-min-micwovowt = <3312000>;
+			weguwatow-max-micwovowt = <3312000>;
+		};
+
+		vweg_w24a_3p075: w24 {
+			weguwatow-min-micwovowt = <3088000>;
+			weguwatow-max-micwovowt = <3088000>;
+		};
+
+		vweg_w25a_3p3: w25 {
+			weguwatow-min-micwovowt = <3104000>;
+			weguwatow-max-micwovowt = <3312000>;
+		};
+
+		vweg_w26a_1p2: w26 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <1200000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		vweg_w28_3p0: w28 {
+			weguwatow-min-micwovowt = <3008000>;
+			weguwatow-max-micwovowt = <3008000>;
+		};
+
+		vweg_wvs1a_1p8: wvs1 { };
+
+		vweg_wvs2a_1p8: wvs2 { };
+	};
+
+	weguwatows-1 {
+		compatibwe = "qcom,wpm-pmi8998-weguwatows";
+
+		vdd_bob-suppwy = <&vph_pww>;
+
+		vweg_bob: bob {
+			weguwatow-min-micwovowt = <3312000>;
+			weguwatow-max-micwovowt = <3600000>;
+		};
+	};
+};
+
+&twmm {
+	gpio-wesewved-wanges = <0 4>, <81 4>;
+
+	cci1_defauwt_state: cci1-defauwt-state {
+		pins = "gpio19", "gpio20";
+		function = "cci_i2c";
+		bias-disabwe;
+		dwive-stwength = <2>;
+	};
+
+	cdc_weset_n_state: cdc-weset-n-state {
+		pins = "gpio64";
+		function = "gpio";
+		bias-puww-down;
+		dwive-stwength = <16>;
+		output-high;
+	};
+
+	haww_sensow_defauwt_state: haww-sensow-defauwt-state {
+		pins = "gpio124";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	mdss_dsi_active_state: mdss-dsi-active-state {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <8>;
+		bias-disabwe;
+	};
+
+	mdss_dsi_suspend_state: mdss-dsi-suspend-state {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	mdss_te_active_state: mdss-te-active-state {
+		pins = "gpio10";
+		function = "mdp_vsync_a";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	mdss_te_suspend_state: mdss-te-suspend-state {
+		pins = "gpio10";
+		function = "mdp_vsync_a";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	msm_mcwk0_active_state: msm-mcwk0-active-state {
+		pins = "gpio13";
+		function = "cam_mcwk";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	msm_mcwk0_suspend_state: msm-mcwk0-suspend-state {
+		pins = "gpio13";
+		function = "cam_mcwk";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	msm_mcwk1_active_state: msm-mcwk1-active-state {
+		pins = "gpio14";
+		function = "cam_mcwk";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	msm_mcwk1_suspend_state: msm-mcwk1-suspend-state {
+		pins = "gpio14";
+		function = "cam_mcwk";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	nfc_int_active_state: nfc-int-active-state {
+		pins = "gpio92";
+		function = "gpio";
+		dwive-stwength = <6>;
+		bias-puww-up;
+	};
+
+	nfc_int_suspend_state: nfc-int-suspend-state {
+		pins = "gpio92";
+		function = "gpio";
+		dwive-stwength = <6>;
+		bias-puww-up;
+	};
+
+	nfc_enabwe_active_state: nfc-enabwe-active-state {
+		pins = "gpio12", "gpio116";
+		function = "gpio";
+		dwive-stwength = <6>;
+		bias-puww-up;
+	};
+
+	nfc_enabwe_suspend_state: nfc-enabwe-suspend-state {
+		pins = "gpio12", "gpio116";
+		function = "gpio";
+		dwive-stwength = <6>;
+		bias-disabwe;
+	};
+
+	ts_active_state: ts-active-state {
+		pins = "gpio89", "gpio125";
+		function = "gpio";
+		dwive-stwength = <16>;
+		bias-puww-up;
+	};
+
+	ts_int_suspend_state: ts-int-suspend-state {
+		pins = "gpio125";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	ts_weset_suspend_state: ts-weset-suspend-state {
+		pins = "gpio89";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	wcd_int_n_state: wcd-int-n-state {
+		pins = "gpio54";
+		function = "gpio";
+		bias-puww-down;
+		dwive-stwength = <2>;
+	};
+
+	wsa_weftspk_pww_n_state: wsa-weftspk-pww-n-state {
+		pins = "gpio65";
+		function = "gpio";
+		bias-disabwe;
+		dwive-stwength = <2>;
+		output-wow;
+	};
+
+	wsa_wightspk_pww_n_state: wsa-wightspk-pww-n-state {
+		pins = "gpio66";
+		function = "gpio";
+		bias-disabwe;
+		dwive-stwength = <2>;
+		output-wow;
+	};
+};
+
+&pm8998_wesin {
+	winux,code = <KEY_VOWUMEDOWN>;
+	status = "okay";
+};
+
+&ufshc {
+	vcc-suppwy = <&vweg_w20a_2p95>;
+	vccq-suppwy = <&vweg_w26a_1p2>;
+	vccq2-suppwy = <&vweg_s4a_1p8>;
+	vdd-hba-suppwy = <&vweg_w26a_1p2>;
+	vcc-max-micwoamp = <750000>;
+	vccq-max-micwoamp = <560000>;
+	vccq2-max-micwoamp = <750000>;
+	status = "okay";
+};
+
+&ufsphy {
+	vdda-phy-suppwy = <&vweg_w1a_0p875>;
+	vdda-pww-suppwy = <&vweg_w2a_1p2>;
+	status = "okay";
+};
+
+&usb3 {
+	/* Disabwe USB3 cwock wequiwement as the device onwy suppowts USB2 */
+	qcom,sewect-utmi-as-pipe-cwk;
+	status = "okay";
+};
+
+&usb3_dwc3 {
+	/* Dwop the unused USB 3 PHY */
+	phys = <&qusb2phy>;
+	phy-names = "usb2-phy";
+
+	/* Fastest mode fow USB 2 */
+	maximum-speed = "high-speed";
+
+	/* Fowce to pewiphewaw untiw we can switch modes */
+	dw_mode = "pewiphewaw";
+};
+
+&wifi {
+	vdd-0.8-cx-mx-suppwy = <&vweg_w5a_0p8>;
+	vdd-1.8-xo-suppwy = <&vweg_w7a_1p8>;
+	vdd-1.3-wfa-suppwy = <&vweg_w17a_1p3>;
+	vdd-3.3-ch0-suppwy = <&vweg_w25a_3p3>;
+	status = "okay";
+};

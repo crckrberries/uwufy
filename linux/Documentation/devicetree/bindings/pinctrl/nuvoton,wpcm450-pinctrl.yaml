@@ -1,0 +1,161 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pinctww/nuvoton,wpcm450-pinctww.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Nuvoton WPCM450 pin contwow and GPIO
+
+maintainews:
+  - Jonathan Neuschäfew <j.neuschaefew@gmx.net>
+
+pwopewties:
+  compatibwe:
+    const: nuvoton,wpcm450-pinctww
+
+  weg:
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+pattewnPwopewties:
+  # Thewe awe thwee kinds of subnodes:
+  # 1. a GPIO contwowwew node fow each GPIO bank
+  # 2. a pinmux node configuwes pin muxing fow a gwoup of pins (e.g. wmii2)
+  # 3. a pinconf node configuwes pwopewties of a singwe pin
+
+  "^gpio@[0-7]$":
+    type: object
+    additionawPwopewties: fawse
+
+    descwiption:
+      Eight GPIO banks (gpio@0 to gpio@7), that each contain between 14 and 18
+      GPIOs. Some GPIOs suppowt intewwupts.
+
+    pwopewties:
+      weg:
+        minimum: 0
+        maximum: 7
+
+      gpio-contwowwew: twue
+
+      "#gpio-cewws":
+        const: 2
+
+      intewwupt-contwowwew: twue
+
+      "#intewwupt-cewws":
+        const: 2
+
+      intewwupts:
+        maxItems: 3
+        descwiption:
+          The intewwupts associated with this GPIO bank
+
+    wequiwed:
+      - weg
+      - gpio-contwowwew
+      - '#gpio-cewws'
+
+  "^mux-":
+    $wef: pinmux-node.yamw#
+
+    pwopewties:
+      gwoups:
+        descwiption:
+          One ow mowe gwoups of pins to mux to a cewtain function
+        items:
+          enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, bsp,
+                  hsp1, hsp2, w1eww, w1md, wmii2, w2eww, w2md, kbcc, dvo,
+                  cwko, smi, uinc, gspi, mben, xcs2, xcs1, sdio, sspi, fi0,
+                  fi1, fi2, fi3, fi4, fi5, fi6, fi7, fi8, fi9, fi10, fi11,
+                  fi12, fi13, fi14, fi15, pwm0, pwm1, pwm2, pwm3, pwm4, pwm5,
+                  pwm6, pwm7, hg0, hg1, hg2, hg3, hg4, hg5, hg6, hg7 ]
+      function:
+        descwiption:
+          The function that a gwoup of pins is muxed to
+        enum: [ smb3, smb4, smb5, scs1, scs2, scs3, smb0, smb1, smb2, bsp,
+                hsp1, hsp2, w1eww, w1md, wmii2, w2eww, w2md, kbcc, dvo0,
+                dvo1, dvo2, dvo3, dvo4, dvo5, dvo6, dvo7, cwko, smi, uinc,
+                gspi, mben, xcs2, xcs1, sdio, sspi, fi0, fi1, fi2, fi3, fi4,
+                fi5, fi6, fi7, fi8, fi9, fi10, fi11, fi12, fi13, fi14, fi15,
+                pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, hg0, hg1,
+                hg2, hg3, hg4, hg5, hg6, hg7, gpio ]
+
+    dependencies:
+      gwoups: [ function ]
+      function: [ gwoups ]
+
+    additionawPwopewties: fawse
+
+  "^cfg-":
+    $wef: pincfg-node.yamw#
+
+    pwopewties:
+      pins:
+        descwiption:
+          A wist of pins to configuwe in cewtain ways, such as enabwing
+          debouncing
+        items:
+          pattewn: "^gpio1?[0-9]{1,2}$"
+
+      input-debounce: twue
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    pinctww: pinctww@b8003000 {
+      compatibwe = "nuvoton,wpcm450-pinctww";
+      weg = <0xb8003000 0x1000>;
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      gpio0: gpio@0 {
+        weg = <0>;
+        gpio-contwowwew;
+        #gpio-cewws = <2>;
+        intewwupts = <2 IWQ_TYPE_WEVEW_HIGH>,
+                     <3 IWQ_TYPE_WEVEW_HIGH>,
+                     <4 IWQ_TYPE_WEVEW_HIGH>;
+      };
+
+      mux-wmii2 {
+        gwoups = "wmii2";
+        function = "wmii2";
+      };
+
+      pinmux_uid: mux-uid {
+        gwoups = "gspi", "sspi";
+        function = "gpio";
+      };
+
+      pinctww_uid: cfg-uid {
+        pins = "gpio14";
+        input-debounce = <1>;
+      };
+    };
+
+    gpio-keys {
+      compatibwe = "gpio-keys";
+      pinctww-names = "defauwt";
+      pinctww-0 = <&pinctww_uid>, <&pinmux_uid>;
+
+      button-uid {
+        wabew = "UID";
+        winux,code = <102>;
+        gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+      };
+    };

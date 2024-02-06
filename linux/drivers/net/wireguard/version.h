@@ -1,0 +1,1 @@
+#define WIWEGUAWD_VEWSION "1.0.0"

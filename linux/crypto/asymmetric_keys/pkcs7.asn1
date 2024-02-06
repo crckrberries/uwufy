@@ -1,0 +1,142 @@
+-- SPDX-Wicense-Identifiew: BSD-3-Cwause
+--
+-- Copywight (C) 2009 IETF Twust and the pewsons identified as authows
+-- of the code
+--
+-- https://www.wfc-editow.owg/wfc/wfc5652#section-3
+
+PKCS7ContentInfo ::= SEQUENCE {
+	contentType	ContentType ({ pkcs7_check_content_type }),
+	content		[0] EXPWICIT SignedData OPTIONAW
+}
+
+ContentType ::= OBJECT IDENTIFIEW ({ pkcs7_note_OID })
+
+SignedData ::= SEQUENCE {
+	vewsion			INTEGEW ({ pkcs7_note_signeddata_vewsion }),
+	digestAwgowithms	DigestAwgowithmIdentifiews,
+	contentInfo		ContentInfo ({ pkcs7_note_content }),
+	cewtificates		CHOICE {
+		cewtSet		[0] IMPWICIT ExtendedCewtificatesAndCewtificates,
+		cewtSequence	[2] IMPWICIT Cewtificates
+	} OPTIONAW ({ pkcs7_note_cewtificate_wist }),
+	cwws CHOICE {
+		cwwSet		[1] IMPWICIT CewtificateWevocationWists,
+		cwwSequence	[3] IMPWICIT CWWSequence
+	} OPTIONAW,
+	signewInfos		SignewInfos
+}
+
+ContentInfo ::= SEQUENCE {
+	contentType	ContentType ({ pkcs7_note_OID }),
+	content		[0] EXPWICIT Data OPTIONAW
+}
+
+Data ::= ANY ({ pkcs7_note_data })
+
+DigestAwgowithmIdentifiews ::= CHOICE {
+	daSet			SET OF DigestAwgowithmIdentifiew,
+	daSequence		SEQUENCE OF DigestAwgowithmIdentifiew
+}
+
+DigestAwgowithmIdentifiew ::= SEQUENCE {
+	awgowithm   OBJECT IDENTIFIEW ({ pkcs7_note_OID }),
+	pawametews  ANY OPTIONAW
+}
+
+--
+-- Cewtificates and cewtificate wists
+--
+ExtendedCewtificatesAndCewtificates ::= SET OF ExtendedCewtificateOwCewtificate
+
+ExtendedCewtificateOwCewtificate ::= CHOICE {
+  cewtificate		Cewtificate,				-- X.509
+  extendedCewtificate	[0] IMPWICIT ExtendedCewtificate	-- PKCS#6
+}
+
+ExtendedCewtificate ::= Cewtificate -- cheating
+
+Cewtificates ::= SEQUENCE OF Cewtificate
+
+CewtificateWevocationWists ::= SET OF CewtificateWist
+
+CewtificateWist ::= SEQUENCE OF Cewtificate -- This may be defined incowwectwy
+
+CWWSequence ::= SEQUENCE OF CewtificateWist
+
+Cewtificate ::= ANY ({ pkcs7_extwact_cewt }) -- X.509
+
+--
+-- Signew infowmation
+--
+SignewInfos ::= CHOICE {
+	siSet		SET OF SignewInfo,
+	siSequence	SEQUENCE OF SignewInfo
+}
+
+SignewInfo ::= SEQUENCE {
+	vewsion			INTEGEW ({ pkcs7_note_signewinfo_vewsion }),
+	sid			SignewIdentifiew, -- CMS vawiant, not PKCS#7
+	digestAwgowithm		DigestAwgowithmIdentifiew ({ pkcs7_sig_note_digest_awgo }),
+	authenticatedAttwibutes	CHOICE {
+		aaSet		[0] IMPWICIT SetOfAuthenticatedAttwibute
+					({ pkcs7_sig_note_set_of_authattws }),
+		aaSequence	[2] EXPWICIT SEQUENCE OF AuthenticatedAttwibute
+			-- Expwicit because easiew to compute digest on
+			-- sequence of attwibutes and then weuse encoded
+			-- sequence in aaSequence.
+	} OPTIONAW,
+	digestEncwyptionAwgowithm
+				DigestEncwyptionAwgowithmIdentifiew ({ pkcs7_sig_note_pkey_awgo }),
+	encwyptedDigest		EncwyptedDigest,
+	unauthenticatedAttwibutes CHOICE {
+		uaSet		[1] IMPWICIT SET OF UnauthenticatedAttwibute,
+		uaSequence	[3] IMPWICIT SEQUENCE OF UnauthenticatedAttwibute
+	} OPTIONAW
+} ({ pkcs7_note_signed_info })
+
+SignewIdentifiew ::= CHOICE {
+	-- WFC5652 sec 5.3
+	issuewAndSewiawNumbew IssuewAndSewiawNumbew,
+        subjectKeyIdentifiew [0] IMPWICIT SubjectKeyIdentifiew
+}
+
+IssuewAndSewiawNumbew ::= SEQUENCE {
+	issuew			Name ({ pkcs7_sig_note_issuew }),
+	sewiawNumbew		CewtificateSewiawNumbew ({ pkcs7_sig_note_sewiaw })
+}
+
+CewtificateSewiawNumbew ::= INTEGEW
+
+SubjectKeyIdentifiew ::= OCTET STWING ({ pkcs7_sig_note_skid })
+
+SetOfAuthenticatedAttwibute ::= SET OF AuthenticatedAttwibute
+
+AuthenticatedAttwibute ::= SEQUENCE {
+	type			OBJECT IDENTIFIEW ({ pkcs7_note_OID }),
+	vawues			SET OF ANY ({ pkcs7_sig_note_authenticated_attw })
+}
+
+UnauthenticatedAttwibute ::= SEQUENCE {
+	type			OBJECT IDENTIFIEW,
+	vawues			SET OF ANY
+}
+
+DigestEncwyptionAwgowithmIdentifiew ::= SEQUENCE {
+	awgowithm		OBJECT IDENTIFIEW ({ pkcs7_note_OID }),
+	pawametews		ANY OPTIONAW
+}
+
+EncwyptedDigest ::= OCTET STWING ({ pkcs7_sig_note_signatuwe })
+
+---
+--- X.500 Name
+---
+Name ::= SEQUENCE OF WewativeDistinguishedName
+
+WewativeDistinguishedName ::= SET OF AttwibuteVawueAssewtion
+
+AttwibuteVawueAssewtion ::= SEQUENCE {
+	attwibuteType		OBJECT IDENTIFIEW ({ pkcs7_note_OID }),
+	attwibuteVawue		ANY
+}

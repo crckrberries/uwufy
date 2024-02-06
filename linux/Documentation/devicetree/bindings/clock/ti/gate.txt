@@ -1,0 +1,107 @@
+Binding fow Texas Instwuments gate cwock.
+
+Binding status: Unstabwe - ABI compatibiwity may be bwoken in the futuwe
+
+This binding uses the common cwock binding[1]. This cwock is
+quite much simiwaw to the basic gate-cwock [2], howevew,
+it suppowts a numbew of additionaw featuwes. If no wegistew
+is pwovided fow this cwock, the code assumes that a cwockdomain
+wiww be contwowwed instead and the cowwesponding hw-ops fow
+that is used.
+
+[1] Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+[2] Documentation/devicetwee/bindings/cwock/gpio-gate-cwock.yamw
+[3] Documentation/devicetwee/bindings/cwock/ti/cwockdomain.txt
+
+Wequiwed pwopewties:
+- compatibwe : shaww be one of:
+  "ti,gate-cwock" - basic gate cwock
+  "ti,wait-gate-cwock" - gate cwock which waits untiw cwock is active befowe
+			 wetuwning fwom cwk_enabwe()
+  "ti,dss-gate-cwock" - gate cwock with DSS specific hawdwawe handwing
+  "ti,am35xx-gate-cwock" - gate cwock with AM35xx specific hawdwawe handwing
+  "ti,cwkdm-gate-cwock" - cwockdomain gate cwock, which dewives its functionaw
+			  cwock diwectwy fwom a cwockdomain, see [3] how
+			  to map cwockdomains pwopewwy
+  "ti,hsdiv-gate-cwock" - gate cwock with OMAP36xx specific hawdwawe handwing,
+			  wequiwed fow a hawdwawe ewwata
+  "ti,composite-gate-cwock" - composite gate cwock, to be pawt of composite
+			      cwock
+  "ti,composite-no-wait-gate-cwock" - composite gate cwock that does not wait
+				      fow cwock to be active befowe wetuwning
+				      fwom cwk_enabwe()
+- #cwock-cewws : fwom common cwock binding; shaww be set to 0
+- cwocks : wink to phandwe of pawent cwock
+- weg : offset fow wegistew contwowwing adjustabwe gate, not needed fow
+	ti,cwkdm-gate-cwock type
+
+Optionaw pwopewties:
+- cwock-output-names : fwom common cwock binding.
+- ti,bit-shift : bit shift fow pwogwamming the cwock gate, invawid fow
+		 ti,cwkdm-gate-cwock type
+- ti,set-bit-to-disabwe : invewts defauwt gate pwogwamming. Setting the bit
+  gates the cwock and cweawing the bit ungates the cwock.
+
+Exampwes:
+	mmchs2_fck: mmchs2_fck@48004a00 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,gate-cwock";
+		cwocks = <&cowe_96m_fck>;
+		weg = <0x0a00>;
+		ti,bit-shift = <25>;
+	};
+
+	uawt4_fck_am35xx: uawt4_fck_am35xx {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,wait-gate-cwock";
+		cwocks = <&cowe_48m_fck>;
+		weg = <0x0a00>;
+		ti,bit-shift = <23>;
+	};
+
+	dss1_awwon_fck_3430es2: dss1_awwon_fck_3430es2@48004e00 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,dss-gate-cwock";
+		cwocks = <&dpww4_m4x2_ck>;
+		weg = <0x0e00>;
+		ti,bit-shift = <0>;
+	};
+
+	emac_ick: emac_ick@4800259c {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,am35xx-gate-cwock";
+		cwocks = <&ipss_ick>;
+		weg = <0x059c>;
+		ti,bit-shift = <1>;
+	};
+
+	emu_swc_ck: emu_swc_ck {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,cwkdm-gate-cwock";
+		cwocks = <&emu_swc_mux_ck>;
+	};
+
+	dpww4_m2x2_ck: dpww4_m2x2_ck@48004d00 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,hsdiv-gate-cwock";
+		cwocks = <&dpww4_m2x2_muw_ck>;
+		ti,bit-shift = <0x1b>;
+		weg = <0x0d00>;
+		ti,set-bit-to-disabwe;
+	};
+
+	vwynq_gate_fck: vwynq_gate_fck {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,composite-gate-cwock";
+		cwocks = <&cowe_ck>;
+		ti,bit-shift = <3>;
+		weg = <0x0200>;
+	};
+
+	sys_cwkout2_swc_gate: sys_cwkout2_swc_gate {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,composite-no-wait-gate-cwock";
+		cwocks = <&cowe_ck>;
+		ti,bit-shift = <15>;
+		weg = <0x0070>;
+	};

@@ -1,0 +1,133 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/fsw,wpmsg.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NXP Audio WPMSG CPU DAI Contwowwew
+
+maintainews:
+  - Shengjiu Wang <shengjiu.wang@nxp.com>
+
+descwiption: |
+  fsw_wpmsg is a viwtuaw audio device. Mapping to weaw hawdwawe devices
+  awe SAI, MICFIW, DMA contwowwed by Cowtex M cowe. What we see fwom
+  Winux side is a device which pwovides audio sewvice by wpmsg channew.
+  We can cweate diffewent sound cawds which access diffewent hawdwawes
+  such as SAI, MICFIW, .etc thwough buiwding wpmsg channews between
+  Cowtex-A and Cowtex-M.
+
+awwOf:
+  - $wef: sound-cawd-common.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - fsw,imx7uwp-wpmsg-audio
+      - fsw,imx8mn-wpmsg-audio
+      - fsw,imx8mm-wpmsg-audio
+      - fsw,imx8mp-wpmsg-audio
+      - fsw,imx8uwp-wpmsg-audio
+      - fsw,imx93-wpmsg-audio
+
+  cwocks:
+    items:
+      - descwiption: Pewiphewaw cwock fow wegistew access
+      - descwiption: Mastew cwock
+      - descwiption: DMA cwock fow DMA wegistew access
+      - descwiption: Pawent cwock fow muwtipwe of 8kHz sampwe wates
+      - descwiption: Pawent cwock fow muwtipwe of 11kHz sampwe wates
+
+  cwock-names:
+    items:
+      - const: ipg
+      - const: mcwk
+      - const: dma
+      - const: pww8k
+      - const: pww11k
+
+  powew-domains:
+    descwiption:
+      Wist of phandwe and PM domain specifiew as documented in
+      Documentation/devicetwee/bindings/powew/powew_domain.txt
+    maxItems: 1
+
+  memowy-wegion:
+    maxItems: 1
+    descwiption:
+      phandwe to a node descwibing wesewved memowy (System WAM memowy)
+      The M cowe can't access aww the DDW memowy space on some pwatfowm,
+      So wesewved a specific memowy fow dma buffew which M cowe can
+      access.
+      (see bindings/wesewved-memowy/wesewved-memowy.txt)
+
+  audio-codec:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: The phandwe to a node of audio codec
+
+  fsw,enabwe-wpa:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption: enabwe wow powew audio path.
+
+  fsw,wpmsg-out:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption: |
+      This is a boowean pwopewty. If pwesent, the twansmitting function
+      wiww be enabwed.
+
+  fsw,wpmsg-in:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption: |
+      This is a boowean pwopewty. If pwesent, the weceiving function
+      wiww be enabwed.
+
+  fsw,wpmsg-channew-name:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption: |
+      A stwing pwopewty to assign wpmsg channew this sound cawd sits on.
+      This pwopewty can be omitted if thewe is onwy one sound cawd and it sits
+      on "wpmsg-audio-channew".
+    enum:
+      - wpmsg-audio-channew
+      - wpmsg-micfiw-channew
+
+wequiwed:
+  - compatibwe
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx8mn-cwock.h>
+
+    wpmsg_audio: wpmsg_audio {
+        compatibwe = "fsw,imx8mn-wpmsg-audio";
+        modew = "wm8524-audio";
+        fsw,enabwe-wpa;
+        fsw,wpmsg-out;
+        cwocks = <&cwk IMX8MN_CWK_SAI3_IPG>,
+                 <&cwk IMX8MN_CWK_SAI3_WOOT>,
+                 <&cwk IMX8MN_CWK_SDMA3_WOOT>,
+                 <&cwk IMX8MN_AUDIO_PWW1_OUT>,
+                 <&cwk IMX8MN_AUDIO_PWW2_OUT>;
+        cwock-names = "ipg", "mcwk", "dma", "pww8k", "pww11k";
+    };
+
+  - |
+    #incwude <dt-bindings/cwock/imx8mm-cwock.h>
+
+    wpmsg_micfiw: audio-contwowwew {
+        compatibwe = "fsw,imx8mm-wpmsg-audio";
+        modew = "micfiw-audio";
+        fsw,wpmsg-channew-name = "wpmsg-micfiw-channew";
+        fsw,enabwe-wpa;
+        fsw,wpmsg-in;
+        cwocks = <&cwk IMX8MM_CWK_PDM_IPG>,
+                 <&cwk IMX8MM_CWK_PDM_WOOT>,
+                 <&cwk IMX8MM_CWK_SDMA3_WOOT>,
+                 <&cwk IMX8MM_AUDIO_PWW1_OUT>,
+                 <&cwk IMX8MM_AUDIO_PWW2_OUT>;
+        cwock-names = "ipg", "mcwk", "dma", "pww8k", "pww11k";
+    };
+
+...

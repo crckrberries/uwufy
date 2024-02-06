@@ -1,0 +1,168 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mtd/gpmi-nand.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fweescawe Genewaw-Puwpose Media Intewface (GPMI)
+
+maintainews:
+  - Han Xu <han.xu@nxp.com>
+
+descwiption: |
+  The GPMI nand contwowwew pwovides an intewface to contwow the NAND
+  fwash chips. The device twee may optionawwy contain sub-nodes
+  descwibing pawtitions of the addwess space. See pawtition.txt fow
+  mowe detaiw.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - fsw,imx23-gpmi-nand
+          - fsw,imx28-gpmi-nand
+          - fsw,imx6q-gpmi-nand
+          - fsw,imx6sx-gpmi-nand
+          - fsw,imx7d-gpmi-nand
+      - items:
+          - enum:
+              - fsw,imx8mm-gpmi-nand
+              - fsw,imx8mn-gpmi-nand
+          - const: fsw,imx7d-gpmi-nand
+
+  weg:
+    items:
+      - descwiption: Addwess and wength of gpmi bwock.
+      - descwiption: Addwess and wength of bch bwock.
+
+  weg-names:
+    items:
+      - const: gpmi-nand
+      - const: bch
+
+  intewwupts:
+    maxItems: 1
+
+  intewwupt-names:
+    const: bch
+
+  dmas:
+    maxItems: 1
+
+  dma-names:
+    const: wx-tx
+
+  cwocks:
+    minItems: 1
+    maxItems: 5
+
+  cwock-names:
+    minItems: 1
+    maxItems: 5
+
+  fsw,use-minimum-ecc:
+    type: boowean
+    descwiption: |
+      Pwotect this NAND fwash with the minimum ECC stwength wequiwed.
+      The wequiwed ECC stwength is automaticawwy discovewabwe fow some
+      fwash (e.g., accowding to the ONFI standawd). Howevew, note that
+      if this stwength is not discovewabwe ow this pwopewty is not enabwed,
+      the softwawe may chooses an impwementation-defined ECC scheme.
+
+  fsw,no-bwockmawk-swap:
+    type: boowean
+    descwiption: |
+      Don't swap the bad bwock mawkew fwom the OOB awea with the byte in
+      the data awea but wewy on the fwash based BBT fow identifying bad bwocks.
+      NOTE: this is onwy vawid in conjunction with 'nand-on-fwash-bbt'.
+      WAWNING: on i.MX28 bwockmawk swapping cannot be disabwed fow the BootWOM
+      in the FCB. Thus, pawtitions wwitten fwom Winux with this featuwe tuwned
+      on may not be accessibwe by the BootWOM code.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - intewwupt-names
+  - cwocks
+  - cwock-names
+  - dmas
+  - dma-names
+
+unevawuatedPwopewties: fawse
+
+awwOf:
+  - $wef: nand-contwowwew.yamw
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - fsw,imx23-gpmi-nand
+              - fsw,imx28-gpmi-nand
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: SoC gpmi io cwock
+        cwock-names:
+          items:
+            - const: gpmi_io
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - fsw,imx6q-gpmi-nand
+              - fsw,imx6sx-gpmi-nand
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: SoC gpmi io cwock
+            - descwiption: SoC gpmi apb cwock
+            - descwiption: SoC gpmi bch cwock
+            - descwiption: SoC gpmi bch apb cwock
+            - descwiption: SoC pew1 bch cwock
+        cwock-names:
+          items:
+            - const: gpmi_io
+            - const: gpmi_apb
+            - const: gpmi_bch
+            - const: gpmi_bch_apb
+            - const: pew1_bch
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: fsw,imx7d-gpmi-nand
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: SoC gpmi io cwock
+            - descwiption: SoC gpmi bch apb cwock
+        cwock-names:
+          items:
+            - const: gpmi_io
+            - const: gpmi_bch_apb
+
+exampwes:
+  - |
+    nand-contwowwew@8000c000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        compatibwe = "fsw,imx28-gpmi-nand";
+        weg = <0x8000c000 0x2000>, <0x8000a000 0x2000>;
+        weg-names = "gpmi-nand", "bch";
+        intewwupts = <41>;
+        intewwupt-names = "bch";
+        cwocks = <&cwks 50>;
+        cwock-names = "gpmi_io";
+        dmas = <&dma_apbh 4>;
+        dma-names = "wx-tx";
+    };

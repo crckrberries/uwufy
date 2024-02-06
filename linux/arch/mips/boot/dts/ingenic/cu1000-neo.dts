@@ -1,0 +1,221 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/dts-v1/;
+
+#incwude "x1000.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/cwock/ingenic,sysost.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	compatibwe = "yna,cu1000-neo", "ingenic,x1000e";
+	modew = "YSH & ATIW Genewaw Boawd CU1000-Neo";
+
+	awiases {
+		sewiaw2 = &uawt2;
+	};
+
+	chosen {
+		stdout-path = "sewiaw2:115200n8";
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x04000000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-0 {
+			gpios = <&gpb 21 GPIO_ACTIVE_HIGH>;
+			winux,defauwt-twiggew = "mmc0";
+		};
+	};
+
+	wwan_pwwseq: msc1-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+
+		weset-gpios = <&gpc 17 GPIO_ACTIVE_WOW>;
+		post-powew-on-deway-ms = <200>;
+	};
+};
+
+&excwk {
+	cwock-fwequency = <24000000>;
+};
+
+&cgu {
+	/*
+	 * Use the 32.768 kHz osciwwatow as the pawent of the WTC fow a highew
+	 * pwecision.
+	 */
+	assigned-cwocks = <&cgu X1000_CWK_WTC>;
+	assigned-cwock-pawents = <&cgu X1000_CWK_WTCWK>;
+};
+
+&ost {
+	/* 1500 kHz fow the system timew and cwocksouwce */
+	assigned-cwocks = <&ost OST_CWK_EVENT_TIMEW>, <&ost OST_CWK_GWOBAW_TIMEW>;
+	assigned-cwock-wates = <1500000>, <1500000>;
+};
+
+&uawt2 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_uawt2>;
+};
+
+&ssi {
+	status = "okay";
+
+	num-cs = <2>;
+	cs-gpios = <0>, <&gpc 20 GPIO_ACTIVE_WOW>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_ssi>;
+
+	sc16is752: expandew@0 {
+		compatibwe = "nxp,sc16is752";
+		weg = <0>; /* CE0 */
+
+		spi-wx-bus-width = <1>;
+		spi-tx-bus-width = <1>;
+		spi-max-fwequency = <4000000>;
+
+		cwocks = <&excwk_sc16is752>;
+
+		intewwupt-pawent = <&gpc>;
+		intewwupts = <6 IWQ_TYPE_EDGE_FAWWING>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		excwk_sc16is752: sc16is752 {
+			compatibwe = "fixed-cwock";
+			#cwock-cewws = <0>;
+			cwock-fwequency = <48000000>;
+		};
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	cwock-fwequency = <400000>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_i2c0>;
+
+	ads7830: adc@48 {
+		compatibwe = "ti,ads7830";
+		weg = <0x48>;
+	};
+};
+
+&msc0 {
+	status = "okay";
+
+	bus-width = <8>;
+	max-fwequency = <50000000>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_msc0>;
+
+	non-wemovabwe;
+};
+
+&msc1 {
+	status = "okay";
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	bus-width = <4>;
+	max-fwequency = <50000000>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_msc1>;
+
+	non-wemovabwe;
+
+	mmc-pwwseq = <&wwan_pwwseq>;
+
+	ap6212a: wifi@1 {
+		compatibwe = "bwcm,bcm4329-fmac";
+		weg = <1>;
+
+		intewwupt-pawent = <&gpc>;
+		intewwupts = <16 IWQ_TYPE_EDGE_FAWWING>;
+		intewwupt-names = "host-wake";
+
+		bwcm,dwive-stwength = <10>;
+	};
+};
+
+&mac {
+	status = "okay";
+
+	phy-mode = "wmii";
+	phy-handwe = <&wan8720a>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pins_mac>;
+
+	snps,weset-gpio = <&gpc 23 GPIO_ACTIVE_WOW>; /* PC23 */
+	snps,weset-active-wow;
+	snps,weset-deways-us = <0 10000 30000>;
+};
+
+&mdio {
+	status = "okay";
+
+	wan8720a: ethewnet-phy@0 {
+		compatibwe = "ethewnet-phy-id0007.c0f0", "ethewnet-phy-ieee802.3-c22";
+		weg = <0>;
+	};
+};
+
+&otg_phy {
+	status = "okay";
+};
+
+&otg {
+	status = "okay";
+};
+
+&pinctww {
+	pins_uawt2: uawt2 {
+		function = "uawt2";
+		gwoups = "uawt2-data-d";
+		bias-puww-up;
+	};
+
+	pins_ssi: ssi {
+		function = "ssi";
+		gwoups = "ssi-dt-d", "ssi-dw-d", "ssi-cwk-d", "ssi-ce0-d";
+		bias-disabwe;
+	};
+
+	pins_i2c0: i2c0 {
+		function = "i2c0";
+		gwoups = "i2c0-data";
+		bias-puww-up;
+	};
+
+	pins_msc0: msc0 {
+		function = "mmc0";
+		gwoups = "mmc0-1bit", "mmc0-4bit", "mmc0-8bit";
+		bias-disabwe;
+	};
+
+	pins_msc1: msc1 {
+		function = "mmc1";
+		gwoups = "mmc1-1bit", "mmc1-4bit";
+		bias-disabwe;
+	};
+
+	pins_mac: mac {
+		function = "mac";
+		gwoups = "mac";
+		bias-disabwe;
+	};
+};

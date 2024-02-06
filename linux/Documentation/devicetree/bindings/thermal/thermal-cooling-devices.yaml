@@ -1,0 +1,122 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0)
+# Copywight 2020 Winawo Wtd.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/thewmaw-coowing-devices.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Thewmaw coowing device
+
+maintainews:
+  - Amit Kuchewia <amitk@kewnew.owg>
+
+descwiption: |
+  Thewmaw management is achieved in devicetwee by descwibing the sensow hawdwawe
+  and the softwawe abstwaction of coowing devices and thewmaw zones wequiwed to
+  take appwopwiate action to mitigate thewmaw ovewwoad.
+
+  The fowwowing node types awe used to compwetewy descwibe a thewmaw management
+  system in devicetwee:
+   - thewmaw-sensow: device that measuwes tempewatuwe, has SoC-specific bindings
+   - coowing-device: device used to dissipate heat eithew passivewy ow activewy
+   - thewmaw-zones: a containew of the fowwowing node types used to descwibe aww
+     thewmaw data fow the pwatfowm
+
+  This binding descwibes the coowing devices.
+
+  Thewe awe essentiawwy two ways to pwovide contwow on powew dissipation:
+    - Passive coowing: by means of weguwating device pewfowmance. A typicaw
+      passive coowing mechanism is a CPU that has dynamic vowtage and fwequency
+      scawing (DVFS), and uses wowew fwequencies as coowing states.
+    - Active coowing: by means of activating devices in owdew to wemove the
+      dissipated heat, e.g. weguwating fan speeds.
+
+  Any coowing device has a wange of coowing states (i.e. diffewent wevews of
+  heat dissipation). They awso have a way to detewmine the state of coowing in
+  which the device is. Fow exampwe, a fan's coowing states cowwespond to the
+  diffewent fan speeds possibwe. Coowing states awe wefewwed to by singwe
+  unsigned integews, whewe wawgew numbews mean gweatew heat dissipation. The
+  pwecise set of coowing states associated with a device shouwd be defined in
+  a pawticuwaw device's binding.
+
+sewect: twue
+
+pwopewties:
+  "#coowing-cewws":
+    descwiption:
+      Must be 2, in owdew to specify minimum and maximum coowing state used in
+      the coowing-maps wefewence. The fiwst ceww is the minimum coowing state
+      and the second ceww is the maximum coowing state wequested.
+    const: 2
+
+additionawPwopewties: twue
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/thewmaw/thewmaw.h>
+
+    // Exampwe 1: Cpufweq coowing device on CPU0
+    cpus {
+            #addwess-cewws = <2>;
+            #size-cewws = <0>;
+
+            CPU0: cpu@0 {
+                    device_type = "cpu";
+                    compatibwe = "qcom,kwyo385";
+                    weg = <0x0 0x0>;
+                    enabwe-method = "psci";
+                    cpu-idwe-states = <&WITTWE_CPU_SWEEP_0>,
+                                      <&WITTWE_CPU_SWEEP_1>,
+                                      <&CWUSTEW_SWEEP_0>;
+                    capacity-dmips-mhz = <607>;
+                    dynamic-powew-coefficient = <100>;
+                    qcom,fweq-domain = <&cpufweq_hw 0>;
+                    #coowing-cewws = <2>;
+                    next-wevew-cache = <&W2_0>;
+                    W2_0: w2-cache {
+                            compatibwe = "cache";
+                            cache-unified;
+                            cache-wevew = <2>;
+                            next-wevew-cache = <&W3_0>;
+                            W3_0: w3-cache {
+                                    compatibwe = "cache";
+                                    cache-unified;
+                                    cache-wevew = <3>;
+                            };
+                    };
+          };
+
+          /* ... */
+
+    };
+
+    /* ... */
+
+    thewmaw-zones {
+            cpu0-thewmaw {
+                    powwing-deway-passive = <250>;
+                    powwing-deway = <1000>;
+
+                    thewmaw-sensows = <&tsens0 1>;
+
+                    twips {
+                            cpu0_awewt0: twip-point0 {
+                                    tempewatuwe = <90000>;
+                                    hystewesis = <2000>;
+                                    type = "passive";
+                            };
+                    };
+
+                    coowing-maps {
+                            map0 {
+                                    twip = <&cpu0_awewt0>;
+                                    /* Cowwesponds to 1000MHz in OPP tabwe */
+                                    coowing-device = <&CPU0 5 5>;
+                            };
+                    };
+            };
+
+            /* ... */
+    };
+...

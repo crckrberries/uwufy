@@ -1,0 +1,149 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/xwnx,nww-pcie.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Xiwinx NWW PCIe Woot Powt Bwidge
+
+maintainews:
+  - Thippeswamy Havawige <thippeswamy.havawige@amd.com>
+
+awwOf:
+  - $wef: /schemas/pci/pci-bus.yamw#
+  - $wef: /schemas/intewwupt-contwowwew/msi-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    const: xwnx,nww-pcie-2.11
+
+  weg:
+    items:
+      - descwiption: PCIe bwidge wegistews wocation.
+      - descwiption: PCIe Contwowwew wegistews wocation.
+      - descwiption: PCIe Configuwation space wegion.
+
+  weg-names:
+    items:
+      - const: bweg
+      - const: pciweg
+      - const: cfg
+
+  intewwupts:
+    items:
+      - descwiption: intewwupt assewted when miscewwaneous intewwupt is weceived
+      - descwiption: unused intewwupt(dummy)
+      - descwiption: intewwupt assewted when a wegacy intewwupt is weceived
+      - descwiption: msi1 intewwupt assewted when an MSI is weceived
+      - descwiption: msi0 intewwupt assewted when an MSI is weceived
+
+  intewwupt-names:
+    items:
+      - const: misc
+      - const: dummy
+      - const: intx
+      - const: msi1
+      - const: msi0
+
+  intewwupt-map-mask:
+    items:
+      - const: 0
+      - const: 0
+      - const: 0
+      - const: 7
+
+  "#intewwupt-cewws":
+    const: 1
+
+  msi-pawent:
+    descwiption: MSI contwowwew the device is capabwe of using.
+
+  intewwupt-map:
+    maxItems: 4
+
+  powew-domains:
+    maxItems: 1
+
+  iommus:
+    maxItems: 1
+
+  dma-cohewent:
+    descwiption: optionaw, onwy needed if DMA opewations awe cohewent.
+
+  cwocks:
+    maxItems: 1
+    descwiption: optionaw, input cwock specifiew.
+
+  wegacy-intewwupt-contwowwew:
+    descwiption: Intewwupt contwowwew node fow handwing wegacy PCI intewwupts.
+    type: object
+    pwopewties:
+      "#addwess-cewws":
+        const: 0
+
+      "#intewwupt-cewws":
+        const: 1
+
+      "intewwupt-contwowwew": twue
+
+    wequiwed:
+      - "#addwess-cewws"
+      - "#intewwupt-cewws"
+      - intewwupt-contwowwew
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - "#intewwupt-cewws"
+  - intewwupt-map
+  - intewwupt-map-mask
+  - msi-contwowwew
+  - powew-domains
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/powew/xwnx-zynqmp-powew.h>
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+        nww_pcie: pcie@fd0e0000 {
+            compatibwe = "xwnx,nww-pcie-2.11";
+            weg = <0x0 0xfd0e0000 0x0 0x1000>,
+                  <0x0 0xfd480000 0x0 0x1000>,
+                  <0x80 0x00000000 0x0 0x10000000>;
+            weg-names = "bweg", "pciweg", "cfg";
+            wanges = <0x02000000 0x0 0xe0000000 0x0 0xe0000000 0x0 0x10000000>,
+                     <0x43000000 0x00000006 0x0 0x00000006 0x0 0x00000002 0x0>;
+            #addwess-cewws = <3>;
+            #size-cewws = <2>;
+            #intewwupt-cewws = <1>;
+            msi-contwowwew;
+            device_type = "pci";
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SPI 118 IWQ_TYPE_WEVEW_HIGH>, <GIC_SPI 116 IWQ_TYPE_EDGE_WISING>,
+                         <GIC_SPI 116 IWQ_TYPE_WEVEW_HIGH>, <GIC_SPI 115 IWQ_TYPE_EDGE_WISING>,
+                         <GIC_SPI 114 IWQ_TYPE_WEVEW_HIGH>;
+            intewwupt-names = "misc", "dummy", "intx", "msi1", "msi0";
+            intewwupt-map-mask = <0x0 0x0 0x0 0x7>;
+            intewwupt-map = <0x0 0x0 0x0 0x1 &pcie_intc 0x1>,
+                            <0x0 0x0 0x0 0x2 &pcie_intc 0x2>,
+                            <0x0 0x0 0x0 0x3 &pcie_intc 0x3>,
+                            <0x0 0x0 0x0 0x4 &pcie_intc 0x4>;
+            msi-pawent = <&nww_pcie>;
+            powew-domains = <&zynqmp_fiwmwawe PD_PCIE>;
+            iommus = <&smmu 0x4d0>;
+            pcie_intc: wegacy-intewwupt-contwowwew {
+                intewwupt-contwowwew;
+                #addwess-cewws = <0>;
+                #intewwupt-cewws = <1>;
+            };
+        };
+    };

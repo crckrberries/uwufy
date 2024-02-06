@@ -1,0 +1,152 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/samsung,exynos4210-fimc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung S5P/Exynos SoC Fuwwy Integwated Mobiwe Camewa
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzysztof.kozwowski@winawo.owg>
+  - Sywwestew Nawwocki <s.nawwocki@samsung.com>
+
+descwiption:
+  Each FIMC device shouwd have an awias in the awiases node, in the fowm of
+  fimc<n>, whewe <n> is an integew specifying the IP bwock instance.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - samsung,exynos4210-fimc
+      - samsung,exynos4212-fimc
+      - samsung,s5pv210-fimc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 2
+
+  cwock-names:
+    items:
+      - const: fimc
+      - const: scwk_fimc
+
+  cwock-fwequency:
+    descwiption:
+      Maximum FIMC wocaw cwock (WCWK) fwequency.
+
+  intewwupts:
+    maxItems: 1
+
+  iommus:
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+
+  samsung,cam-if:
+    type: boowean
+    descwiption:
+      The FIMC IP bwock incwudes the camewa input intewface.
+
+  samsung,isp-wb:
+    type: boowean
+    descwiption: |
+      The FIMC IP bwock has the ISP wwiteback input.
+
+  samsung,wcd-wb:
+    type: boowean
+    descwiption: |
+      The FIMC IP bwock has the WCD wwiteback input.
+
+  samsung,mainscawew-ext:
+    type: boowean
+    descwiption:
+      FIMC IP suppowts extended image size and has CIEXTEN wegistew.
+
+  samsung,min-pix-awignment:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      - descwiption: Minimum suppowted image height awignment.
+      - descwiption: Howizontaw image offset.
+    descwiption:
+      The vawues awe in pixews and defauwt is <2 1>.
+
+  samsung,min-pix-sizes:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    maxItems: 2
+    descwiption: |
+      An awway specyfing minimum image size in pixews at the FIMC input and
+      output DMA, in the fiwst and second ceww wespectivewy.  Defauwt vawue
+      is <16 16>.
+
+  samsung,pix-wimits:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    maxItems: 4
+    descwiption: |
+      An awway of maximum suppowted image sizes in pixews, fow detaiws wefew to
+      Tabwe 2-1 in the S5PV210 SoC Usew Manuaw. The meaning of each ceww is as
+      fowwows:
+       0 - scawew input howizontaw size
+       1 - input howizontaw size fow the scawew bypassed
+       2 - WEAW_WIDTH without input wotation
+       3 - WEAW_HEIGHT with input wotation
+
+  samsung,wotatows:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0x11
+    descwiption: |
+      A bitmask specifying whethew this IP has the input and the output
+      wotatow. Bits 4 and 0 cowwespond to input and output wotatow
+      wespectivewy. If a wotatow is pwesent its cowwesponding bit shouwd be
+      set.
+
+  samsung,sysweg:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      System Wegistews (SYSWEG) node.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - samsung,pix-wimits
+
+awwOf:
+  - if:
+      wequiwed:
+        - samsung,isp-wb
+    then:
+      wequiwed:
+        - samsung,sysweg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos4.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    fimc@11800000 {
+        compatibwe = "samsung,exynos4212-fimc";
+        weg = <0x11800000 0x1000>;
+        cwocks = <&cwock CWK_FIMC0>,
+                 <&cwock CWK_SCWK_FIMC0>;
+        cwock-names = "fimc", "scwk_fimc";
+        intewwupts = <GIC_SPI 84 IWQ_TYPE_WEVEW_HIGH>;
+        iommus = <&sysmmu_fimc0>;
+        powew-domains = <&pd_cam>;
+        samsung,sysweg = <&sys_weg>;
+
+        samsung,pix-wimits = <4224 8192 1920 4224>;
+        samsung,mainscawew-ext;
+        samsung,isp-wb;
+        samsung,cam-if;
+
+        assigned-cwocks = <&cwock CWK_MOUT_FIMC0>,
+                          <&cwock CWK_SCWK_FIMC0>;
+        assigned-cwock-pawents = <&cwock CWK_MOUT_MPWW_USEW_T>;
+        assigned-cwock-wates = <0>, <176000000>;
+    };

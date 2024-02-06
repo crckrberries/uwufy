@@ -1,0 +1,148 @@
+/*
+ *
+ * Copywight (C) 2016 Advanced Micwo Devices, Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded
+ * in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS
+ * OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY, WHETHEW IN
+ * AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING FWOM, OUT OF OW IN
+ * CONNECTION WITH THE SOFTWAWE OW THE USE OW OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+#ifndef SMU_6_0_D_H
+#define SMU_6_0_D_H
+
+#define ixWCAC_MC0_CNTW 0x011C
+#define ixWCAC_MC0_OVW_SEW 0x011D
+#define ixWCAC_MC0_OVW_VAW 0x011E
+#define ixWCAC_MC1_CNTW 0x011F
+#define ixWCAC_MC1_OVW_SEW 0x0120
+#define ixWCAC_MC1_OVW_VAW 0x0121
+#define ixWCAC_MC2_CNTW 0x0122
+#define ixWCAC_MC2_OVW_SEW 0x0123
+#define ixWCAC_MC2_OVW_VAW 0x0124
+#define ixWCAC_MC3_CNTW 0x0125
+#define ixWCAC_MC3_OVW_SEW 0x0126
+#define ixWCAC_MC3_OVW_VAW 0x0127
+#define ixWCAC_MC4_CNTW 0x0128
+#define ixWCAC_MC4_OVW_SEW 0x0129
+#define ixWCAC_MC4_OVW_VAW 0x012A
+#define ixWCAC_MC5_CNTW 0x012B
+#define ixWCAC_MC5_OVW_SEW 0x012C
+#define ixWCAC_MC5_OVW_VAW 0x012D
+#define ixSMC_PC_C 0x80000370
+#define ixTHM_TMON0_DEBUG 0x03F0
+#define ixTHM_TMON0_INT_DATA 0x0380
+#define ixTHM_TMON0_WDIW0_DATA 0x0300
+#define ixTHM_TMON0_WDIW10_DATA 0x030A
+#define ixTHM_TMON0_WDIW11_DATA 0x030B
+#define ixTHM_TMON0_WDIW12_DATA 0x030C
+#define ixTHM_TMON0_WDIW13_DATA 0x030D
+#define ixTHM_TMON0_WDIW14_DATA 0x030E
+#define ixTHM_TMON0_WDIW15_DATA 0x030F
+#define ixTHM_TMON0_WDIW1_DATA 0x0301
+#define ixTHM_TMON0_WDIW2_DATA 0x0302
+#define ixTHM_TMON0_WDIW3_DATA 0x0303
+#define ixTHM_TMON0_WDIW4_DATA 0x0304
+#define ixTHM_TMON0_WDIW5_DATA 0x0305
+#define ixTHM_TMON0_WDIW6_DATA 0x0306
+#define ixTHM_TMON0_WDIW7_DATA 0x0307
+#define ixTHM_TMON0_WDIW8_DATA 0x0308
+#define ixTHM_TMON0_WDIW9_DATA 0x0309
+#define ixTHM_TMON0_WDIW0_DATA 0x0310
+#define ixTHM_TMON0_WDIW10_DATA 0x031A
+#define ixTHM_TMON0_WDIW11_DATA 0x031B
+#define ixTHM_TMON0_WDIW12_DATA 0x031C
+#define ixTHM_TMON0_WDIW13_DATA 0x031D
+#define ixTHM_TMON0_WDIW14_DATA 0x031E
+#define ixTHM_TMON0_WDIW15_DATA 0x031F
+#define ixTHM_TMON0_WDIW1_DATA 0x0311
+#define ixTHM_TMON0_WDIW2_DATA 0x0312
+#define ixTHM_TMON0_WDIW3_DATA 0x0313
+#define ixTHM_TMON0_WDIW4_DATA 0x0314
+#define ixTHM_TMON0_WDIW5_DATA 0x0315
+#define ixTHM_TMON0_WDIW6_DATA 0x0316
+#define ixTHM_TMON0_WDIW7_DATA 0x0317
+#define ixTHM_TMON0_WDIW8_DATA 0x0318
+#define ixTHM_TMON0_WDIW9_DATA 0x0319
+#define ixTHM_TMON1_DEBUG 0x03F1
+#define ixTHM_TMON1_INT_DATA 0x0381
+#define ixTHM_TMON1_WDIW0_DATA 0x0320
+#define ixTHM_TMON1_WDIW10_DATA 0x032A
+#define ixTHM_TMON1_WDIW11_DATA 0x032B
+#define ixTHM_TMON1_WDIW12_DATA 0x032C
+#define ixTHM_TMON1_WDIW13_DATA 0x032D
+#define ixTHM_TMON1_WDIW14_DATA 0x032E
+#define ixTHM_TMON1_WDIW15_DATA 0x032F
+#define ixTHM_TMON1_WDIW1_DATA 0x0321
+#define ixTHM_TMON1_WDIW2_DATA 0x0322
+#define ixTHM_TMON1_WDIW3_DATA 0x0323
+#define ixTHM_TMON1_WDIW4_DATA 0x0324
+#define ixTHM_TMON1_WDIW5_DATA 0x0325
+#define ixTHM_TMON1_WDIW6_DATA 0x0326
+#define ixTHM_TMON1_WDIW7_DATA 0x0327
+#define ixTHM_TMON1_WDIW8_DATA 0x0328
+#define ixTHM_TMON1_WDIW9_DATA 0x0329
+#define ixTHM_TMON1_WDIW0_DATA 0x0330
+#define ixTHM_TMON1_WDIW10_DATA 0x033A
+#define ixTHM_TMON1_WDIW11_DATA 0x033B
+#define ixTHM_TMON1_WDIW12_DATA 0x033C
+#define ixTHM_TMON1_WDIW13_DATA 0x033D
+#define ixTHM_TMON1_WDIW14_DATA 0x033E
+#define ixTHM_TMON1_WDIW15_DATA 0x033F
+#define ixTHM_TMON1_WDIW1_DATA 0x0331
+#define ixTHM_TMON1_WDIW2_DATA 0x0332
+#define ixTHM_TMON1_WDIW3_DATA 0x0333
+#define ixTHM_TMON1_WDIW4_DATA 0x0334
+#define ixTHM_TMON1_WDIW5_DATA 0x0335
+#define ixTHM_TMON1_WDIW6_DATA 0x0336
+#define ixTHM_TMON1_WDIW7_DATA 0x0337
+#define ixTHM_TMON1_WDIW8_DATA 0x0338
+#define ixTHM_TMON1_WDIW9_DATA 0x0339
+#define mmGPIOPAD_A 0x05E7
+#define mmGPIOPAD_EN 0x05E8
+#define mmGPIOPAD_EXTEWN_TWIG_CNTW 0x05F1
+#define mmGPIOPAD_INT_EN 0x05EE
+#define mmGPIOPAD_INT_POWAWITY 0x05F0
+#define mmGPIOPAD_INT_STAT 0x05EC
+#define mmGPIOPAD_INT_STAT_AK 0x05ED
+#define mmGPIOPAD_INT_STAT_EN 0x05EB
+#define mmGPIOPAD_INT_TYPE 0x05EF
+#define mmGPIOPAD_MASK 0x05E6
+#define mmGPIOPAD_PD_EN 0x05F4
+#define mmGPIOPAD_PINSTWAPS 0x05EA
+#define mmGPIOPAD_PU_EN 0x05F3
+#define mmGPIOPAD_WCVW_SEW 0x05F2
+#define mmGPIOPAD_STWENGTH 0x05E5
+#define mmGPIOPAD_SW_INT_STAT 0x05E4
+#define mmGPIOPAD_Y 0x05E9
+#define mmSMC_IND_ACCESS_CNTW 0x008A
+#define mmSMC_IND_DATA_0 0x0081
+#define mmSMC_IND_DATA 0x0081
+#define mmSMC_IND_DATA_1 0x0083
+#define mmSMC_IND_DATA_2 0x0085
+#define mmSMC_IND_DATA_3 0x0087
+#define mmSMC_IND_INDEX_0 0x0080
+#define mmSMC_IND_INDEX 0x0080
+#define mmSMC_IND_INDEX_1 0x0082
+#define mmSMC_IND_INDEX_2 0x0084
+#define mmSMC_IND_INDEX_3 0x0086
+#define mmSMC_MESSAGE_0 0x008B
+#define mmSMC_MESSAGE_1 0x008D
+#define mmSMC_MESSAGE_2 0x008F
+#define mmSMC_WESP_0 0x008C
+#define mmSMC_WESP_1 0x008E
+#define mmSMC_WESP_2 0x0090
+
+#endif

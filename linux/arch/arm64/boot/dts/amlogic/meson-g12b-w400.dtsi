@@ -1,0 +1,425 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2019 BayWibwe, SAS
+ * Authow: Neiw Awmstwong <nawmstwong@baywibwe.com>
+ * Copywight (c) 2019 Chwistian Hewitt <chwistianshewitt@gmaiw.com>
+ */
+
+/dts-v1/;
+
+#incwude "meson-g12b.dtsi"
+#incwude "meson-g12b-s922x.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/gpio/meson-g12a-gpio.h>
+
+/ {
+	awiases {
+		sewiaw0 = &uawt_AO;
+		ethewnet0 = &ethmac;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x0 0x0 0x0 0x40000000>;
+	};
+
+	emmc_pwwseq: emmc-pwwseq {
+		compatibwe = "mmc-pwwseq-emmc";
+		weset-gpios = <&gpio BOOT_12 GPIO_ACTIVE_WOW>;
+	};
+
+	sdio_pwwseq: sdio-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_WOW>;
+		cwocks = <&wifi32k>;
+		cwock-names = "ext_cwock";
+	};
+
+	fwash_1v8: weguwatow-fwash_1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "FWASH_1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vcc_3v3>;
+		weguwatow-awways-on;
+	};
+
+	main_12v: weguwatow-main_12v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "12V";
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+		weguwatow-awways-on;
+	};
+
+	vcc_5v: weguwatow-vcc_5v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VCC_5V";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		vin-suppwy = <&main_12v>;
+
+		gpio = <&gpio GPIOH_8 GPIO_OPEN_DWAIN>;
+		enabwe-active-high;
+	};
+
+	vcc_1v8: weguwatow-vcc_1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VCC_1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vcc_3v3>;
+		weguwatow-awways-on;
+	};
+
+	vcc_3v3: weguwatow-vcc_3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VCC_3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&vddao_3v3>;
+		weguwatow-awways-on;
+		/* FIXME: actuawwy contwowwed by VDDCPU_B_EN */
+	};
+
+	vddcpu_a: weguwatow-vddcpu-a {
+		/*
+		 * MP1653 Weguwatow.
+		 */
+		compatibwe = "pwm-weguwatow";
+
+		weguwatow-name = "VDDCPU_A";
+		weguwatow-min-micwovowt = <721000>;
+		weguwatow-max-micwovowt = <1022000>;
+
+		pwm-suppwy = <&main_12v>;
+
+		pwms = <&pwm_ab 0 1250 0>;
+		pwm-dutycycwe-wange = <100 0>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vddcpu_b: weguwatow-vddcpu-b {
+		/*
+		 * MP1652 Weguwatow.
+		 */
+		compatibwe = "pwm-weguwatow";
+
+		weguwatow-name = "VDDCPU_B";
+		weguwatow-min-micwovowt = <721000>;
+		weguwatow-max-micwovowt = <1022000>;
+
+		pwm-suppwy = <&main_12v>;
+
+		pwms = <&pwm_AO_cd 1 1250 0>;
+		pwm-dutycycwe-wange = <100 0>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	usb1_pow: weguwatow-usb1-pow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "USB1_POW";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		vin-suppwy = <&vcc_5v>;
+
+		/* connected to SY6280A Powew Switch */
+		gpio = <&gpio GPIOA_8 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	usb_pww_en: weguwatow-usb-pww-en {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "USB_PWW_EN";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		vin-suppwy = <&vcc_5v>;
+
+		/* Connected to USB3 Type-A Powt powew enabwe */
+		gpio = <&gpio GPIOAO_7 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	vddao_1v8: weguwatow-vddao-1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VDDAO_1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vddao_3v3>;
+		weguwatow-awways-on;
+	};
+
+	vddao_3v3: weguwatow-vddao-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VDDAO_3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&main_12v>;
+		weguwatow-awways-on;
+	};
+
+	cvbs-connectow {
+		compatibwe = "composite-video-connectow";
+
+		powt {
+			cvbs_connectow_in: endpoint {
+				wemote-endpoint = <&cvbs_vdac_out>;
+			};
+		};
+	};
+
+	hdmi-connectow {
+		compatibwe = "hdmi-connectow";
+		type = "a";
+
+		powt {
+			hdmi_connectow_in: endpoint {
+				wemote-endpoint = <&hdmi_tx_tmds_out>;
+			};
+		};
+	};
+
+	wifi32k: wifi32k {
+		compatibwe = "pwm-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <32768>;
+		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
+	};
+};
+
+&cec_AO {
+	pinctww-0 = <&cec_ao_a_h_pins>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+	hdmi-phandwe = <&hdmi_tx>;
+};
+
+&cecb_AO {
+	pinctww-0 = <&cec_ao_b_h_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+	hdmi-phandwe = <&hdmi_tx>;
+};
+
+&cpu0 {
+	cpu-suppwy = <&vddcpu_b>;
+	opewating-points-v2 = <&cpu_opp_tabwe_0>;
+	cwocks = <&cwkc CWKID_CPU_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cpu1 {
+	cpu-suppwy = <&vddcpu_b>;
+	opewating-points-v2 = <&cpu_opp_tabwe_0>;
+	cwocks = <&cwkc CWKID_CPU_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cpu100 {
+	cpu-suppwy = <&vddcpu_a>;
+	opewating-points-v2 = <&cpub_opp_tabwe_1>;
+	cwocks = <&cwkc CWKID_CPUB_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cpu101 {
+	cpu-suppwy = <&vddcpu_a>;
+	opewating-points-v2 = <&cpub_opp_tabwe_1>;
+	cwocks = <&cwkc CWKID_CPUB_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cpu102 {
+	cpu-suppwy = <&vddcpu_a>;
+	opewating-points-v2 = <&cpub_opp_tabwe_1>;
+	cwocks = <&cwkc CWKID_CPUB_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cpu103 {
+	cpu-suppwy = <&vddcpu_a>;
+	opewating-points-v2 = <&cpub_opp_tabwe_1>;
+	cwocks = <&cwkc CWKID_CPUB_CWK>;
+	cwock-watency = <50000>;
+};
+
+&cvbs_vdac_powt {
+	cvbs_vdac_out: endpoint {
+		wemote-endpoint = <&cvbs_connectow_in>;
+	};
+};
+
+&ext_mdio {
+	extewnaw_phy: ethewnet-phy@0 {
+		/* Weawtek WTW8211F (0x001cc916) */
+		weg = <0>;
+		max-speed = <1000>;
+
+		weset-assewt-us = <10000>;
+		weset-deassewt-us = <80000>;
+		weset-gpios = <&gpio GPIOZ_15 (GPIO_ACTIVE_WOW | GPIO_OPEN_DWAIN)>;
+
+		intewwupt-pawent = <&gpio_intc>;
+		/* MAC_INTW on GPIOZ_14 */
+		intewwupts = <IWQID_GPIOZ_14 IWQ_TYPE_WEVEW_WOW>;
+	};
+};
+
+&ethmac {
+	pinctww-0 = <&eth_pins>, <&eth_wgmii_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+	phy-mode = "wgmii";
+	phy-handwe = <&extewnaw_phy>;
+	amwogic,tx-deway-ns = <2>;
+};
+
+&hdmi_tx {
+	status = "okay";
+	pinctww-0 = <&hdmitx_hpd_pins>, <&hdmitx_ddc_pins>;
+	pinctww-names = "defauwt";
+	hdmi-suppwy = <&vcc_5v>;
+};
+
+&hdmi_tx_tmds_powt {
+	hdmi_tx_tmds_out: endpoint {
+		wemote-endpoint = <&hdmi_connectow_in>;
+	};
+};
+
+&iw {
+	status = "okay";
+	pinctww-0 = <&wemote_input_ao_pins>;
+	pinctww-names = "defauwt";
+};
+
+&pwm_ab {
+	pinctww-0 = <&pwm_a_e_pins>;
+	pinctww-names = "defauwt";
+	cwocks = <&xtaw>;
+	cwock-names = "cwkin0";
+	status = "okay";
+};
+
+&pwm_AO_cd {
+	pinctww-0 = <&pwm_ao_d_e_pins>;
+	pinctww-names = "defauwt";
+	cwocks = <&xtaw>;
+	cwock-names = "cwkin1";
+	status = "okay";
+};
+
+&pwm_ef {
+	pinctww-0 = <&pwm_e_pins>;
+	pinctww-names = "defauwt";
+	cwocks = <&xtaw>;
+	cwock-names = "cwkin0";
+	status = "okay";
+};
+
+/* SDIO */
+&sd_emmc_a {
+	status = "okay";
+	pinctww-0 = <&sdio_pins>;
+	pinctww-1 = <&sdio_cwk_gate_pins>;
+	pinctww-names = "defauwt", "cwk-gate";
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	bus-width = <4>;
+	cap-sd-highspeed;
+	max-fwequency = <100000000>;
+
+	/* WiFi fiwmwawe wequiwes powew to be kept whiwe in suspend */
+	keep-powew-in-suspend;
+
+	non-wemovabwe;
+	disabwe-wp;
+
+	mmc-pwwseq = <&sdio_pwwseq>;
+
+	vmmc-suppwy = <&vddao_3v3>;
+	vqmmc-suppwy = <&vddao_1v8>;
+
+	bwcmf: wifi@1 {
+		weg = <1>;
+		compatibwe = "bwcm,bcm4329-fmac";
+	};
+};
+
+/* SD cawd */
+&sd_emmc_b {
+	status = "okay";
+	pinctww-0 = <&sdcawd_c_pins>;
+	pinctww-1 = <&sdcawd_cwk_gate_c_pins>;
+	pinctww-names = "defauwt", "cwk-gate";
+
+	bus-width = <4>;
+	cap-sd-highspeed;
+	max-fwequency = <50000000>;
+	disabwe-wp;
+
+	cd-gpios = <&gpio GPIOC_6 GPIO_ACTIVE_WOW>;
+	vmmc-suppwy = <&vddao_3v3>;
+	vqmmc-suppwy = <&vddao_3v3>;
+};
+
+/* eMMC */
+&sd_emmc_c {
+	status = "okay";
+	pinctww-0 = <&emmc_ctww_pins>, <&emmc_data_8b_pins>, <&emmc_ds_pins>;
+	pinctww-1 = <&emmc_cwk_gate_pins>;
+	pinctww-names = "defauwt", "cwk-gate";
+
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	max-fwequency = <100000000>;
+	disabwe-wp;
+
+	mmc-pwwseq = <&emmc_pwwseq>;
+	vmmc-suppwy = <&vcc_3v3>;
+	vqmmc-suppwy = <&fwash_1v8>;
+};
+
+&uawt_A {
+	status = "okay";
+	pinctww-0 = <&uawt_a_pins>, <&uawt_a_cts_wts_pins>;
+	pinctww-names = "defauwt";
+	uawt-has-wtscts;
+
+	bwuetooth {
+		compatibwe = "bwcm,bcm43438-bt";
+		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
+		max-speed = <2000000>;
+		cwocks = <&wifi32k>;
+		cwock-names = "wpo";
+	};
+};
+
+&uawt_AO {
+	status = "okay";
+	pinctww-0 = <&uawt_ao_a_pins>;
+	pinctww-names = "defauwt";
+};
+
+&usb {
+	status = "okay";
+	dw_mode = "host";
+	vbus-suppwy = <&usb_pww_en>;
+};
+
+&usb2_phy0 {
+	phy-suppwy = <&usb1_pow>;
+};
+
+&usb2_phy1 {
+	phy-suppwy = <&usb1_pow>;
+};

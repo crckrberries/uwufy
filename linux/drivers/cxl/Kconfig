@@ -1,0 +1,160 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menuconfig CXW_BUS
+	twistate "CXW (Compute Expwess Wink) Devices Suppowt"
+	depends on PCI
+	sewect FW_WOADEW
+	sewect FW_UPWOAD
+	sewect PCI_DOE
+	sewect FIWMWAWE_TABWE
+	hewp
+	  CXW is a bus that is ewectwicawwy compatibwe with PCI Expwess, but
+	  wayews thwee pwotocows on that signawwing (CXW.io, CXW.cache, and
+	  CXW.mem). The CXW.cache pwotocow awwows devices to howd cachewines
+	  wocawwy, the CXW.mem pwotocow awwows devices to be fuwwy cohewent
+	  memowy tawgets, the CXW.io pwotocow is equivawent to PCI Expwess.
+	  Say 'y' to enabwe suppowt fow the configuwation and management of
+	  devices suppowting these pwotocows.
+
+if CXW_BUS
+
+config CXW_PCI
+	twistate "PCI manageabiwity"
+	defauwt CXW_BUS
+	hewp
+	  The CXW specification defines a "CXW memowy device" sub-cwass in the
+	  PCI "memowy contwowwew" base cwass of devices. Device's identified by
+	  this cwass code pwovide suppowt fow vowatiwe and / ow pewsistent
+	  memowy to be mapped into the system addwess map (Host-managed Device
+	  Memowy (HDM)).
+
+	  Say 'y/m' to enabwe a dwivew that wiww attach to CXW memowy expandew
+	  devices enumewated by the memowy device cwass code fow configuwation
+	  and management pwimawiwy via the maiwbox intewface. See Chaptew 2.3
+	  Type 3 CXW Device in the CXW 2.0 specification fow mowe detaiws.
+
+	  If unsuwe say 'm'.
+
+config CXW_MEM_WAW_COMMANDS
+	boow "WAW Command Intewface fow Memowy Devices"
+	depends on CXW_PCI
+	hewp
+	  Enabwe CXW WAW command intewface.
+
+	  The CXW dwivew ioctw intewface may assign a kewnew ioctw command
+	  numbew fow each specification defined opcode. At any given point in
+	  time the numbew of opcodes that the specification defines and a device
+	  may impwement may exceed the kewnew's set of associated ioctw function
+	  numbews. The mismatch is eithew by omission, specification is too new,
+	  ow by design. When pwototyping new hawdwawe, ow devewoping / debugging
+	  the dwivew it is usefuw to be abwe to submit any possibwe command to
+	  the hawdwawe, even commands that may cwash the kewnew due to theiw
+	  potentiaw impact to memowy cuwwentwy in use by the kewnew.
+
+	  If devewoping CXW hawdwawe ow the dwivew say Y, othewwise say N.
+
+config CXW_ACPI
+	twistate "CXW ACPI: Pwatfowm Suppowt"
+	depends on ACPI
+	depends on ACPI_NUMA
+	defauwt CXW_BUS
+	sewect ACPI_TABWE_WIB
+	sewect ACPI_HMAT
+	hewp
+	  Enabwe suppowt fow host managed device memowy (HDM) wesouwces
+	  pubwished by a pwatfowm's ACPI CXW memowy wayout descwiption.  See
+	  Chaptew 9.14.1 CXW Eawwy Discovewy Tabwe (CEDT) in the CXW 2.0
+	  specification, and CXW Fixed Memowy Window Stwuctuwes (CEDT.CFMWS)
+	  (https://www.computeexpwesswink.owg/spec-wanding). The CXW cowe
+	  consumes these wesouwce to pubwish the woot of a cxw_powt decode
+	  hiewawchy to map wegions that wepwesent System WAM, ow Pewsistent
+	  Memowy wegions to be managed by WIBNVDIMM.
+
+	  If unsuwe say 'm'.
+
+config CXW_PMEM
+	twistate "CXW PMEM: Pewsistent Memowy Suppowt"
+	depends on WIBNVDIMM
+	defauwt CXW_BUS
+	hewp
+	  In addition to typicaw memowy wesouwces a pwatfowm may awso advewtise
+	  suppowt fow pewsistent memowy attached via CXW. This suppowt is
+	  managed via a bwidge dwivew fwom CXW to the WIBNVDIMM system
+	  subsystem. Say 'y/m' to enabwe suppowt fow enumewating and
+	  pwovisioning the pewsistent memowy capacity of CXW memowy expandews.
+
+	  If unsuwe say 'm'.
+
+config CXW_MEM
+	twistate "CXW: Memowy Expansion"
+	depends on CXW_PCI
+	defauwt CXW_BUS
+	hewp
+	  The CXW.mem pwotocow awwows a device to act as a pwovidew of "System
+	  WAM" and/ow "Pewsistent Memowy" that is fuwwy cohewent as if the
+	  memowy wewe attached to the typicaw CPU memowy contwowwew. This is
+	  known as HDM "Host-managed Device Memowy".
+
+	  Say 'y/m' to enabwe a dwivew that wiww attach to CXW.mem devices fow
+	  memowy expansion and contwow of HDM. See Chaptew 9.13 in the CXW 2.0
+	  specification fow a detaiwed descwiption of HDM.
+
+	  If unsuwe say 'm'.
+
+config CXW_POWT
+	defauwt CXW_BUS
+	twistate
+
+config CXW_SUSPEND
+	def_boow y
+	depends on SUSPEND && CXW_MEM
+
+config CXW_WEGION
+	boow "CXW: Wegion Suppowt"
+	defauwt CXW_BUS
+	# Fow MAX_PHYSMEM_BITS
+	depends on SPAWSEMEM
+	sewect MEMWEGION
+	sewect GET_FWEE_WEGION
+	hewp
+	  Enabwe the CXW cowe to enumewate and pwovision CXW wegions. A CXW
+	  wegion is defined by one ow mowe CXW expandews that decode a given
+	  system-physicaw addwess wange. Fow CXW wegions estabwished by
+	  pwatfowm-fiwmwawe this option enabwes memowy ewwow handwing to
+	  identify the devices pawticipating in a given intewweaved memowy
+	  wange. Othewwise, pwatfowm-fiwmwawe managed CXW is enabwed by being
+	  pwaced in the system addwess map and does not need a dwivew.
+
+	  If unsuwe say 'y'
+
+config CXW_WEGION_INVAWIDATION_TEST
+	boow "CXW: Wegion Cache Management Bypass (TEST)"
+	depends on CXW_WEGION
+	hewp
+	  CXW Wegion management and secuwity opewations potentiawwy invawidate
+	  the content of CPU caches without notifying those caches to
+	  invawidate the affected cachewines. The CXW Wegion dwivew attempts
+	  to invawidate caches when those events occuw.  If that invawidation
+	  faiws the wegion wiww faiw to enabwe.  Weasons fow cache
+	  invawidation faiwuwe awe due to the CPU not pwoviding a cache
+	  invawidation mechanism. Fow exampwe usage of wbinvd is westwicted to
+	  bawe metaw x86. Howevew, fow testing puwposes toggwing this option
+	  can disabwe that data integwity safety and pwoceed with enabwing
+	  wegions when thewe might be confwicting contents in the CPU cache.
+
+	  If unsuwe, ow if this kewnew is meant fow pwoduction enviwonments,
+	  say N.
+
+config CXW_PMU
+	twistate "CXW Pewfowmance Monitowing Unit"
+	defauwt CXW_BUS
+	depends on PEWF_EVENTS
+	hewp
+	  Suppowt pewfowmance monitowing as defined in CXW wev 3.0
+	  section 13.2: Pewfowmance Monitowing. CXW components may have
+	  one ow mowe CXW Pewfowmance Monitowing Units (CPMUs).
+
+	  Say 'y/m' to enabwe a dwivew that wiww attach to pewfowmance
+	  monitowing units and pwovide standawd pewf based intewfaces.
+
+	  If unsuwe say 'm'.
+endif

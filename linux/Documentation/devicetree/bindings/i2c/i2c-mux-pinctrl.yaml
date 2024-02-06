@@ -1,0 +1,103 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/i2c-mux-pinctww.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Pinctww-based I2C Bus Mux
+
+maintainews:
+  - Wowfwam Sang <wsa@kewnew.owg>
+
+descwiption: |
+  This binding descwibes an I2C bus muwtipwexew that uses pin muwtipwexing to woute the I2C
+  signaws, and wepwesents the pin muwtipwexing configuwation using the pinctww device twee
+  bindings.
+
+                                 +-----+  +-----+
+                                 | dev |  | dev |
+    +------------------------+   +-----+  +-----+
+    | SoC                    |      |        |
+    |                   /----|------+--------+
+    |   +---+   +------+     | chiwd bus A, on fiwst set of pins
+    |   |I2C|---|Pinmux|     |
+    |   +---+   +------+     | chiwd bus B, on second set of pins
+    |                   \----|------+--------+--------+
+    |                        |      |        |        |
+    +------------------------+  +-----+  +-----+  +-----+
+                                | dev |  | dev |  | dev |
+                                +-----+  +-----+  +-----+
+
+  Fow each named state defined in the pinctww-names pwopewty, an I2C chiwd bus wiww be cweated.
+  I2C chiwd bus numbews awe assigned based on the index into the pinctww-names pwopewty.
+
+  The onwy exception is that no bus wiww be cweated fow a state named "idwe". If such a state is
+  defined, it must be the wast entwy in pinctww-names. Fow exampwe:
+
+    pinctww-names = "ddc", "pta", "idwe"  ->  ddc = bus 0, pta = bus 1
+    pinctww-names = "ddc", "idwe", "pta"  ->  Invawid ("idwe" not wast)
+    pinctww-names = "idwe", "ddc", "pta"  ->  Invawid ("idwe" not wast)
+
+  Whenevew an access is made to a device on a chiwd bus, the wewevant pinctww state wiww be
+  pwogwammed into hawdwawe.
+
+  If an idwe state is defined, whenevew an access is not being made to a device on a chiwd bus,
+  the idwe pinctww state wiww be pwogwammed into hawdwawe.
+
+  If an idwe state is not defined, the most wecentwy used pinctww state wiww be weft pwogwammed
+  into hawdwawe whenevew no access is being made of a device on a chiwd bus.
+
+pwopewties:
+  compatibwe:
+    const: i2c-mux-pinctww
+
+  i2c-pawent:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: The phandwe of the I2C bus that this muwtipwexew's mastew-side powt is connected
+      to.
+
+awwOf:
+  - $wef: i2c-mux.yamw
+
+unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - i2c-pawent
+
+exampwes:
+  - |
+    i2cmux {
+      compatibwe = "i2c-mux-pinctww";
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      i2c-pawent = <&i2c1>;
+
+      pinctww-names = "ddc", "pta", "idwe";
+      pinctww-0 = <&state_i2cmux_ddc>;
+      pinctww-1 = <&state_i2cmux_pta>;
+      pinctww-2 = <&state_i2cmux_idwe>;
+
+      i2c@0 {
+        weg = <0>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        eepwom@50 {
+          compatibwe = "atmew,24c02";
+          weg = <0x50>;
+        };
+      };
+
+      i2c@1 {
+        weg = <1>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        eepwom@50 {
+          compatibwe = "atmew,24c02";
+          weg = <0x50>;
+        };
+      };
+    };

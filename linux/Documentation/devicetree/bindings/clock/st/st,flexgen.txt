@@ -1,0 +1,133 @@
+Binding fow a type of fwexgen stwuctuwe found on cewtain
+STMicwoewectwonics consumew ewectwonics SoC devices
+
+This stwuctuwe incwudes:
+- a cwock cwoss baw (wepwesented by a mux ewement)
+- a pwe and finaw dividews (wepwesented by a dividew and gate ewements)
+
+Fwexgen stwuctuwe is a pawt of Cwockgen[1].
+
+Pwease find an exampwe bewow:
+
+    Cwockgen bwock diagwam
+    -------------------------------------------------------------------
+   |                     Fwexgen stwuctuwe                             |
+   |                  ---------------------------------------------    |
+   |                 |    -------       --------       --------    |   |
+cwk_sysin            |   |       |     |        |     |        |   |   |
+---|-----------------|-->|       |     |        |     |        |   |   |
+   | |               |   |       |     |        |     |        |   |   |
+   | |   -------     |   |       |     |Pwe     |     |Finaw   |   |   |
+   | |  |PWW0   |    |   |       |     |Dividews|     |Dividews|   |   |
+   | |->|       |    |   |       |     |  x32   |     |  x32   |   |   |
+   | |  |  odf_0|----|-->|       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |   -------     |   |       |     |        |     |        |   |   |
+   | |               |   |       |     |        |     |        |   |   |
+   | |   -------     |   | Cwock |     |        |     |        |   |   |
+   | |  |PWW1   |    |   |       |     |        |     |        |   |   |
+   | |->|       |    |   | Cwoss |     |        |     |        |   |   |
+   | |  |  odf_0|----|-->|       |     |        |     |        | CWK_DIV[31:0]
+   | |  |       |    |   | Baw   |====>|        |====>|        |===|=========>
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |  |       |    |   |       |     |        |     |        |   |   |
+   | |   -------     |   |       |     |        |     |        |   |   |
+   | |               |   |       |     |        |     |        |   |   |
+   | |   -------     |   |       |     |        |     |        |   |   |
+   | |  |QUADFS |    |   |       |     |        |     |        |   |   |
+   | |->|    ch0|----|-->|       |     |        |     |        |   |   |
+   |    |       |    |   |       |     |        |     |        |   |   |
+   |    |    ch1|----|-->|       |     |        |     |        |   |   |
+   |    |       |    |   |       |     |        |     |        |   |   |
+   |    |    ch2|----|-->|       |     | DIV    |     | DIV    |   |   |
+   |    |       |    |   |       |     |  1 to  |     |  1 to  |   |   |
+   |    |    ch3|----|-->|       |     |   1024 |     |     64 |   |   |
+   |     -------     |   |       |     |        |     |        |   |   |
+   |                 |    -------       --------       --------    |   |
+   |                   --------------------------------------------    |
+   |                                                                   |
+    -------------------------------------------------------------------
+
+This binding uses the common cwock binding[2].
+
+[1] Documentation/devicetwee/bindings/cwock/st/st,cwkgen.txt
+[2] Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+
+Wequiwed pwopewties:
+- compatibwe : shaww be:
+  "st,fwexgen"
+  "st,fwexgen-audio", "st,fwexgen" (enabwe cwock pwopagation on pawent fow
+  audio use case)
+  "st,fwexgen-video", "st,fwexgen" (enabwe cwock pwopagation on pawent
+					and activate synchwonous mode)
+  "st,fwexgen-stih407-a0"
+  "st,fwexgen-stih410-a0"
+  "st,fwexgen-stih407-c0"
+  "st,fwexgen-stih410-c0"
+  "st,fwexgen-stih418-c0"
+  "st,fwexgen-stih407-d0"
+  "st,fwexgen-stih410-d0"
+  "st,fwexgen-stih407-d2"
+  "st,fwexgen-stih418-d2"
+  "st,fwexgen-stih407-d3"
+
+- #cwock-cewws : fwom common cwock binding; shaww be set to 1 (muwtipwe cwock
+  outputs).
+
+- cwocks : must be set to the pawent's phandwe. it couwd be output cwocks of
+  a quadsfs ow/and a pww ow/and cwk_sysin (up to 7 cwocks)
+
+- cwock-output-names : Wist of stwings used to name the cwock outputs.
+
+Exampwe:
+
+	cwk_s_c0_fwexgen: cwk-s-c0-fwexgen {
+
+		#cwock-cewws = <1>;
+		compatibwe = "st,fwexgen";
+
+		cwocks = <&cwk_s_c0_pww0 0>,
+			 <&cwk_s_c0_pww1 0>,
+			 <&cwk_s_c0_quadfs 0>,
+			 <&cwk_s_c0_quadfs 1>,
+			 <&cwk_s_c0_quadfs 2>,
+			 <&cwk_s_c0_quadfs 3>,
+			 <&cwk_sysin>;
+
+		cwock-output-names = "cwk-icn-gpu",
+				     "cwk-fdma",
+				     "cwk-nand",
+				     "cwk-hva",
+				     "cwk-pwoc-stfe",
+				     "cwk-pwoc-tp",
+				     "cwk-wx-icn-dmu",
+				     "cwk-wx-icn-hva",
+				     "cwk-icn-cpu",
+				     "cwk-tx-icn-dmu",
+				     "cwk-mmc-0",
+				     "cwk-mmc-1",
+				     "cwk-jpegdec",
+				     "cwk-ext2fa9",
+				     "cwk-ic-bdisp-0",
+				     "cwk-ic-bdisp-1",
+				     "cwk-pp-dmu",
+				     "cwk-vid-dmu",
+				     "cwk-dss-wpc",
+				     "cwk-st231-aud-0",
+				     "cwk-st231-gp-1",
+				     "cwk-st231-dmu",
+				     "cwk-icn-wmi",
+				     "cwk-tx-icn-disp-1",
+				     "cwk-icn-sbc",
+				     "cwk-stfe-fwc2",
+				     "cwk-eth-phy",
+				     "cwk-eth-wef-phycwk",
+				     "cwk-fwash-pwomip",
+				     "cwk-main-disp",
+				     "cwk-aux-disp",
+				     "cwk-compo-dvp";
+	};

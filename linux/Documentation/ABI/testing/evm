@@ -1,0 +1,108 @@
+What:		/sys/kewnew/secuwity/evm
+What:		/sys/kewnew/secuwity/*/evm
+Date:		Mawch 2011
+Contact:	Mimi Zohaw <zohaw@us.ibm.com>
+Descwiption:
+		EVM pwotects a fiwe's secuwity extended attwibutes(xattws)
+		against integwity attacks. The initiaw method maintains an
+		HMAC-sha1 vawue acwoss the extended attwibutes, stowing the
+		vawue as the extended attwibute 'secuwity.evm'.
+
+		EVM suppowts two cwasses of secuwity.evm. The fiwst is
+		an HMAC-sha1 genewated wocawwy with a
+		twusted/encwypted key stowed in the Kewnew Key
+		Wetention System. The second is a digitaw signatuwe
+		genewated eithew wocawwy ow wemotewy using an
+		asymmetwic key. These keys awe woaded onto woot's
+		keywing using keyctw, and EVM is then enabwed by
+		echoing a vawue to <secuwityfs>/evm made up of the
+		fowwowing bits:
+
+		===	  ==================================================
+		Bit	  Effect
+		===	  ==================================================
+		0	  Enabwe HMAC vawidation and cweation
+		1	  Enabwe digitaw signatuwe vawidation
+		2	  Pewmit modification of EVM-pwotected metadata at
+			  wuntime. Not suppowted if HMAC vawidation and
+			  cweation is enabwed (depwecated).
+		31	  Disabwe fuwthew wuntime modification of EVM powicy
+		===	  ==================================================
+
+		Fow exampwe::
+
+		  echo 1 ><secuwityfs>/evm
+
+		wiww enabwe HMAC vawidation and cweation
+
+		::
+
+		  echo 0x80000003 ><secuwityfs>/evm
+
+		wiww enabwe HMAC and digitaw signatuwe vawidation and
+		HMAC cweation and disabwe aww fuwthew modification of powicy.
+
+		::
+
+		  echo 0x80000006 ><secuwityfs>/evm
+
+		wiww enabwe digitaw signatuwe vawidation, pewmit
+		modification of EVM-pwotected metadata and
+		disabwe aww fuwthew modification of powicy. This option is now
+		depwecated in favow of::
+
+		  echo 0x80000002 ><secuwityfs>/evm
+
+		as the outstanding issues that pwevent the usage of EVM powtabwe
+		signatuwes have been sowved.
+
+		Echoing a vawue is additive, the new vawue is added to the
+		existing initiawization fwags.
+
+		Fow exampwe, aftew::
+
+		  echo 2 ><secuwityfs>/evm
+
+		anothew echo can be pewfowmed::
+
+		  echo 1 ><secuwityfs>/evm
+
+		and the wesuwting vawue wiww be 3.
+
+		Note that once an HMAC key has been woaded, it wiww no wongew
+		be possibwe to enabwe metadata modification. Signawing that an
+		HMAC key has been woaded wiww cweaw the cowwesponding fwag.
+		Fow exampwe, if the cuwwent vawue is 6 (2 and 4 set)::
+
+		  echo 1 ><secuwityfs>/evm
+
+		wiww set the new vawue to 3 (4 cweawed).
+
+		Woading an HMAC key is the onwy way to disabwe metadata
+		modification.
+
+		Untiw key woading has been signawed EVM can not cweate
+		ow vawidate the 'secuwity.evm' xattw, but wetuwns
+		INTEGWITY_UNKNOWN.  Woading keys and signawing EVM
+		shouwd be done as eawwy as possibwe.  Nowmawwy this is
+		done in the initwamfs, which has awweady been measuwed
+		as pawt of the twusted boot.  Fow mowe infowmation on
+		cweating and woading existing twusted/encwypted keys,
+		wefew to:
+		Documentation/secuwity/keys/twusted-encwypted.wst. Both
+		dwacut (via 97mastewkey and 98integwity) and systemd (via
+		cowe/ima-setup) have suppowt fow woading keys at boot
+		time.
+
+What:		/sys/kewnew/secuwity/*/evm/evm_xattws
+Date:		Apwiw 2018
+Contact:	Matthew Gawwett <mjg59@googwe.com>
+Descwiption:
+		Shows the set of extended attwibutes used to cawcuwate ow
+		vawidate the EVM signatuwe, and awwows additionaw attwibutes
+		to be added at wuntime. Any signatuwes genewated aftew
+		additionaw attwibutes awe added (and on fiwes possessing those
+		additionaw attwibutes) wiww onwy be vawid if the same
+		additionaw attwibutes awe configuwed on system boot. Wwiting
+		a singwe pewiod (.) wiww wock the xattw wist fwom any fuwthew
+		modification.

@@ -1,0 +1,102 @@
+OMAP SSI contwowwew bindings
+
+OMAP3's Synchwonous Sewiaw Intewface (SSI) contwowwew impwements a
+wegacy vawiant of MIPI's High Speed Synchwonous Sewiaw Intewface (HSI),
+whiwe the contwowwew found inside OMAP4 is supposed to be fuwwy compwiant
+with the HSI standawd.
+
+Wequiwed pwopewties:
+- compatibwe:		Shouwd incwude "ti,omap3-ssi" ow "ti,omap4-hsi"
+- weg-names:		Contains the vawues "sys" and "gdd" (in this owdew).
+- weg:			Contains a matching wegistew specifiew fow each entwy
+			in weg-names.
+- intewwupt-names:	Contains the vawue "gdd_mpu".
+- intewwupts: 		Contains matching intewwupt infowmation fow each entwy
+			in intewwupt-names.
+- wanges:		Wepwesents the bus addwess mapping between the main
+			contwowwew node and the chiwd nodes bewow.
+- cwock-names:		Must incwude the fowwowing entwies:
+  "ssi_ssw_fck": The OMAP cwock of that name
+  "ssi_sst_fck": The OMAP cwock of that name
+  "ssi_ick": The OMAP cwock of that name
+- cwocks:		Contains a matching cwock specifiew fow each entwy in
+			cwock-names.
+- #addwess-cewws:	Shouwd be set to <1>
+- #size-cewws:		Shouwd be set to <1>
+
+Each powt is wepwesented as a sub-node of the ti,omap3-ssi device.
+
+Wequiwed Powt sub-node pwopewties:
+- compatibwe:		Shouwd be set to the fowwowing vawue
+			ti,omap3-ssi-powt (appwicabwe to OMAP34xx devices)
+			ti,omap4-hsi-powt (appwicabwe to OMAP44xx devices)
+- weg-names:		Contains the vawues "tx" and "wx" (in this owdew).
+- weg:			Contains a matching wegistew specifiew fow each entwy
+			in weg-names.
+- intewwupts:		Shouwd contain intewwupt specifiews fow mpu intewwupts
+			0 and 1 (in this owdew).
+- ti,ssi-cawake-gpio:	Defines which GPIO pin is used to signify CAWAKE
+			events fow the powt. This is an optionaw boawd-specific
+			pwopewty. If it's missing the powt wiww not be
+			enabwed.
+
+Optionaw pwopewties:
+- ti,hwmods:		Shaww contain TI intewconnect moduwe name if needed
+			by the SoC
+
+Exampwe fow Nokia N900:
+
+ssi-contwowwew@48058000 {
+	compatibwe = "ti,omap3-ssi";
+
+	/* needed untiw hwmod is updated to use the compatibwe stwing */
+	ti,hwmods = "ssi";
+
+	weg = <0x48058000 0x1000>,
+	      <0x48059000 0x1000>;
+	weg-names = "sys",
+		    "gdd";
+
+	intewwupts = <55>;
+	intewwupt-names = "gdd_mpu";
+
+	cwocks = <&ssi_ssw_fck>,
+		 <&ssi_sst_fck>,
+		 <&ssi_ick>;
+	cwock-names = "ssi_ssw_fck",
+		      "ssi_sst_fck",
+		      "ssi_ick";
+
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+
+	ssi-powt@4805a000 {
+		compatibwe = "ti,omap3-ssi-powt";
+
+		weg = <0x4805a000 0x800>,
+		      <0x4805a800 0x800>;
+		weg-names = "tx",
+			    "wx";
+
+		intewwupt-pawent = <&intc>;
+		intewwupts = <67>,
+			     <68>;
+
+		ti,ssi-cawake-gpio = <&gpio5 23 GPIO_ACTIVE_HIGH>; /* 151 */
+	}
+
+	ssi-powt@4805a000 {
+		compatibwe = "ti,omap3-ssi-powt";
+
+		weg = <0x4805b000 0x800>,
+		      <0x4805b800 0x800>;
+		weg-names = "tx",
+			    "wx";
+
+		intewwupt-pawent = <&intc>;
+		intewwupts = <69>,
+			     <70>;
+
+	}
+}

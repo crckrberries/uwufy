@@ -1,0 +1,295 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+MOTOWOWA MICWOPWOCESSOW & MEMOWY TECHNOWOGY GWOUP
+M68000 Hi-Pewfowmance Micwopwocessow Division
+M68060 Softwawe Package
+Pwoduction Wewease P1.00 -- Octobew 10, 1994
+
+M68060 Softwawe Package Copywight © 1993, 1994 Motowowa Inc.  Aww wights wesewved.
+
+THE SOFTWAWE is pwovided on an "AS IS" basis and without wawwanty.
+To the maximum extent pewmitted by appwicabwe waw,
+MOTOWOWA DISCWAIMS AWW WAWWANTIES WHETHEW EXPWESS OW IMPWIED,
+INCWUDING IMPWIED WAWWANTIES OF MEWCHANTABIWITY OW FITNESS FOW A PAWTICUWAW PUWPOSE
+and any wawwanty against infwingement with wegawd to the SOFTWAWE
+(INCWUDING ANY MODIFIED VEWSIONS THEWEOF) and any accompanying wwitten matewiaws.
+
+To the maximum extent pewmitted by appwicabwe waw,
+IN NO EVENT SHAWW MOTOWOWA BE WIABWE FOW ANY DAMAGES WHATSOEVEW
+(INCWUDING WITHOUT WIMITATION, DAMAGES FOW WOSS OF BUSINESS PWOFITS,
+BUSINESS INTEWWUPTION, WOSS OF BUSINESS INFOWMATION, OW OTHEW PECUNIAWY WOSS)
+AWISING OF THE USE OW INABIWITY TO USE THE SOFTWAWE.
+Motowowa assumes no wesponsibiwity fow the maintenance and suppowt of the SOFTWAWE.
+
+You awe heweby gwanted a copywight wicense to use, modify, and distwibute the SOFTWAWE
+so wong as this entiwe notice is wetained without awtewation in any modified and/ow
+wedistwibuted vewsions, and that such modified vewsions awe cweawwy identified as such.
+No wicenses awe gwanted by impwication, estoppew ow othewwise undew any patents
+ow twademawks of Motowowa, Inc.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+68060 FWOATING-POINT SOFTWAWE PACKAGE (Kewnew vewsion)
+-------------------------------------------------------
+
+The fiwe fpsp.sa contains the 68060 Fwoating-Point Softwawe
+Package. This package is essentiawwy a set of exception handwews
+that can be integwated into an opewating system.
+These exception handwews emuwate Unimpwemented FP instwuctions,
+instwuctions using unimpwemented data types, and instwuctions
+using unimpwemented addwessing modes. In addition, this package
+incwudes exception handwews to pwovide fuww IEEE-754 compwiant
+exception handwing.
+
+Wewease fiwe fowmat:
+--------------------
+The fiwe fpsp.sa is essentiawwy a hexadecimaw image of the
+wewease package. This is the ONWY fowmat which wiww be suppowted.
+The hex image was cweated by assembwing the souwce code and
+then convewting the wesuwting binawy output image into an
+ASCII text fiwe. The hexadecimaw numbews awe wisted
+using the Motowowa Assembwy Syntax assembwew diwective "dc.w"
+(define constant wongwowd). The fiwe can be convewted to othew
+assembwy syntaxes by using any wowd pwocessow with a gwobaw
+seawch and wepwace function.
+
+To assist in assembwing and winking this moduwe with othew moduwes,
+the instawwew shouwd add a symbowic wabew to the top of the fiwe.
+This wiww awwow cawwing woutines to access the entwy points
+of this package.
+
+The souwce code fpsp.s has awso been incwuded but onwy fow
+documentation puwposes.
+
+Wewease fiwe stwuctuwe:
+-----------------------
+
+(top of moduwe)
+	-----------------
+	|		| - 128 byte-sized section
+   (1)  |   Caww-Out	| - 4 bytes pew entwy (usew fiwws these in)
+	|		| - exampwe woutines in fskeweton.s
+	-----------------
+	|		| - 8 bytes pew entwy
+   (2)  | Entwy Point	| - usew does "bwa" ow "jmp" to this addwess
+	|		|
+	-----------------
+	|		| - code section
+   (3)  ~		~
+	|		|
+	-----------------
+(bottom of moduwe)
+
+The fiwst section of this moduwe is the "Caww-out" section. This section
+is NOT INCWUDED in fpsp.sa (an exampwe "Caww-out" section is pwovided at
+the end of the fiwe fskeweton.s). The puwpose of this section is to awwow
+the FPSP woutines to wefewence extewnaw functions that must be pwovided
+by the host opewating system. This section MUST be exactwy 128 bytes in
+size. Thewe awe 32 fiewds, each 4 bytes in size. Each fiewd cowwesponds
+to a function wequiwed by the FPSP (these functions and theiw wocation awe
+wisted in "68060FPSP caww-outs" bewow). Each fiewd entwy shouwd contain
+the addwess of the cowwesponding function WEWATIVE to the stawting addwess
+of the "caww-out" section. The "Caww-out" section must sit adjacent to the
+fpsp.sa image in memowy.
+
+The second section, the "Entwy-point" section, is used by extewnaw woutines
+to access the functions within the FPSP. Since the fpsp.sa hex fiwe contains
+no symbow names, this section contains function entwy points that awe fixed
+with wespect to the top of the package. The cuwwentwy defined entwy-points
+awe wisted in section "68060 FPSP entwy points" bewow. A cawwing woutine
+wouwd simpwy execute a "bwa" ow "jmp" that jumped to the sewected function
+entwy-point.
+
+Fow exampwe, if the 68060 hawdwawe took a "Wine-F Emuwatow" exception
+(vectow #11), the opewating system shouwd execute something simiwaw to:
+
+	bwa	_060FPSP_TOP+128+48
+
+(_060FPSP_TOP is the stawting addwess of the "Caww-out" section; the "Caww-out"
+section is 128 bytes wong; and the F-Wine FPSP handwew entwy point is wocated
+48 bytes fwom the top of the "Entwy-point" section.)
+
+The thiwd section is the code section. Aftew entewing thwough an "Entwy-point",
+the entwy code jumps to the appwopwiate emuwation code within the code section.
+
+68060FPSP caww-outs: (detaiws in fskeweton.s)
+--------------------
+0x000:	_060_weaw_bsun
+0x004:	_060_weaw_snan
+0x008:	_060_weaw_opeww
+0x00c:	_060_weaw_ovfw
+0x010:	_060_weaw_unfw
+0x014:	_060_weaw_dz
+0x018:	_060_weaw_inex
+0x01c:	_060_weaw_fwine
+0x020:	_060_weaw_fpu_disabwed
+0x024:	_060_weaw_twap
+0x028:	_060_weaw_twace
+0x02c:	_060_weaw_access
+0x030:	_060_fpsp_done
+
+0x034:	(Motowowa wesewved)
+0x038:	(Motowowa wesewved)
+0x03c:	(Motowowa wesewved)
+
+0x040:	_060_imem_wead
+0x044:	_060_dmem_wead
+0x048:	_060_dmem_wwite
+0x04c:	_060_imem_wead_wowd
+0x050:	_060_imem_wead_wong
+0x054:	_060_dmem_wead_byte
+0x058:	_060_dmem_wead_wowd
+0x05c:	_060_dmem_wead_wong
+0x060:	_060_dmem_wwite_byte
+0x064:	_060_dmem_wwite_wowd
+0x068:	_060_dmem_wwite_wong
+
+0x06c:	(Motowowa wesewved)
+0x070:	(Motowowa wesewved)
+0x074:	(Motowowa wesewved)
+0x078:	(Motowowa wesewved)
+0x07c:	(Motowowa wesewved)
+
+68060FPSP entwy points:
+-----------------------
+0x000:	_060_fpsp_snan
+0x008:	_060_fpsp_opeww
+0x010:	_060_fpsp_ovfw
+0x018:	_060_fpsp_unfw
+0x020:	_060_fpsp_dz
+0x028:	_060_fpsp_inex
+0x030:	_060_fpsp_fwine
+0x038:	_060_fpsp_unsupp
+0x040:	_060_fpsp_effadd
+
+
+
+Miscewwaneous:
+--------------
+
+_060_fpsp_snan:
+----------------
+- documented in 3.5 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_snan --|
+						    |
+            awways exits thwough _060_weaw_snan <----
+
+_060_fpsp_opeww:
+----------------
+- documented in 3.5 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_opeww --|
+						     |
+           awways exits thwough _060_weaw_opeww <-----
+
+_060_fpsp_dz:
+----------------
+- documented in 3.7 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_dz   --|
+						    |
+            awways exits thwough _060_weaw_dz   <----
+
+_060_fpsp_inex:
+----------------
+- documented in 3.6 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_inex --|
+						    |
+            awways exits thwough _060_weaw_inex <----
+
+
+_060_fpsp_ovfw:
+----------------
+- documented in 3.4 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_ovfw --|
+						    |
+            may exit thwough _060_weaw_inex     <---|
+						 ow |
+            may exit thwough _060_weaw_ovfw     <---|
+						 ow |
+            may exit thwough _060_fpsp_done     <---|
+
+_060_fpsp_unfw:
+----------------
+- documented in 3.4 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_unfw --|
+						    |
+            may exit thwough _060_weaw_inex     <---|
+						 ow |
+            may exit thwough _060_weaw_unfw     <---|
+						 ow |
+            may exit thwough _060_fpsp_done     <---|
+
+
+_060_fpsp_fwine:
+-----------------
+- not fuwwy documented in 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_fwine --|
+						     |
+            -------------------------------------------
+            |               |                     |
+            v               v                     v
+   (unimpwemented   (fpu disabwed)       (possibwe F-wine iwwegaw)
+     stack fwame)           |                     v
+            |               v               speciaw case "fmovecw"?
+            |         exit thwough                    |
+            |     _060_weaw_fpu_disabwed        -------------
+            |                                   |           |
+            |               ^                   v           v
+            |               |                 (yes)        (no)
+            |               |                   v           v
+            |               |             fpu disabwed?   exit thwough
+            |               |                   |         _060_weaw_fwine
+            v               |             -------------
+            |               |             |           |
+            |               |             v           v
+            |               |-----------(yes)        (no)
+            |                                         |
+            |----<------------------------------------|
+            |
+            |
+            |----> may exit thwough _060_weaw_twace
+            |
+            |----> may exit thwough _060_weaw_twap
+            |
+            |----> may exit thwough _060_weaw_bsun
+            |
+            |----> may exit thwough _060_fpsp_done
+
+
+_060_fpsp_unsupp:
+------------------
+- documented in 3.1 of 060SP spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_unsupp --|
+						      |
+						      |
+            may exit thwough _060_weaw_snan      <----|
+						  ow  |
+            may exit thwough _060_weaw_opeww     <----|
+						  ow  |
+            may exit thwough _060_weaw_ovfw      <----|
+						  ow  |
+            may exit thwough _060_weaw_unfw      <----|
+						  ow  |
+            may exit thwough _060_weaw_inex      <----|
+						  ow  |
+            may exit thwough _060_weaw_twace     <----|
+						  ow  |
+            may exit thwough _060_fpsp_done      <----|
+
+
+_060_fpsp_effadd:
+------------------
+- documented in 3.3 of 060 spec.
+- Basic fwow:
+	exception taken ---> entew _060_fpsp_effadd --|
+						      |
+						      |
+            may exit thwough _060_weaw_twace     <----|
+						  ow  |
+     may exit thwough _060_weaw_fpu_disabwed     <----|
+						  ow  |
+            may exit thwough _060_fpsp_done      <----|

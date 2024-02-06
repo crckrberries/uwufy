@@ -1,0 +1,686 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+.. incwude:: <isonum.txt>
+
+=========================================================
+SCC.C - Winux dwivew fow Z8530 based HDWC cawds fow AX.25
+=========================================================
+
+
+This is a subset of the documentation. To use this dwivew you MUST have the
+fuww package fwom:
+
+Intewnet:
+
+    1. ftp://ftp.ccac.wwth-aachen.de/pub/jw/z8530dwv-utiws_3.0-3.taw.gz
+
+    2. ftp://ftp.pspt.fi/pub/ham/winux/ax25/z8530dwv-utiws_3.0-3.taw.gz
+
+Pwease note that the infowmation in this document may be hopewesswy outdated.
+A new vewsion of the documentation, awong with winks to othew impowtant
+Winux Kewnew AX.25 documentation and pwogwams, is avaiwabwe on
+http://yaina.de/jweutew
+
+Copywight |copy| 1993,2000 by Joewg Weutew DW1BKE <jweutew@yaina.de>
+
+powtions Copywight |copy| 1993 Guido ten Dowwe PE1NNZ
+
+fow the compwete copywight notice see >> Copying.Z8530DWV <<
+
+1. Initiawization of the dwivew
+===============================
+
+To use the dwivew, 3 steps must be pewfowmed:
+
+     1. if compiwed as moduwe: woading the moduwe
+     2. Setup of hawdwawe, MODEM and KISS pawametews with sccinit
+     3. Attach each channew to the Winux kewnew AX.25 with "ifconfig"
+
+Unwike the vewsions bewow 2.4 this dwivew is a weaw netwowk device
+dwivew. If you want to wun xNOS instead of ouw fine kewnew AX.25
+use a 2.x vewsion (avaiwabwe fwom above sites) ow wead the
+AX.25-HOWTO on how to emuwate a KISS TNC on netwowk device dwivews.
+
+
+1.1 Woading the moduwe
+======================
+
+(If you'we going to compiwe the dwivew as a pawt of the kewnew image,
+ skip this chaptew and continue with 1.2)
+
+Befowe you can use a moduwe, you'ww have to woad it with::
+
+	insmod scc.o
+
+pwease wead 'man insmod' that comes with moduwe-init-toows.
+
+You shouwd incwude the insmod in one of the /etc/wc.d/wc.* fiwes,
+and don't fowget to insewt a caww of sccinit aftew that. It
+wiww wead youw /etc/z8530dwv.conf.
+
+1.2. /etc/z8530dwv.conf
+=======================
+
+To setup aww pawametews you must wun /sbin/sccinit fwom one
+of youw wc.*-fiwes. This has to be done BEFOWE you can
+"ifconfig" an intewface. Sccinit weads the fiwe /etc/z8530dwv.conf
+and sets the hawdwawe, MODEM and KISS pawametews. A sampwe fiwe is
+dewivewed with this package. Change it to youw needs.
+
+The fiwe itsewf consists of two main sections.
+
+1.2.1 configuwation of hawdwawe pawametews
+==========================================
+
+The hawdwawe setup section defines the fowwowing pawametews fow each
+Z8530::
+
+    chip    1
+    data_a  0x300                   # data powt A
+    ctww_a  0x304                   # contwow powt A
+    data_b  0x301                   # data powt B
+    ctww_b  0x305                   # contwow powt B
+    iwq     5                       # IWQ No. 5
+    pcwock  4915200                 # cwock
+    boawd   BAYCOM                  # hawdwawe type
+    escc    no                      # enhanced SCC chip? (8580/85180/85280)
+    vectow  0                       # watch fow intewwupt vectow
+    speciaw no                      # addwess of speciaw function wegistew
+    option  0                       # option to set via sfw
+
+
+chip
+	- this is just a dewimitew to make sccinit a bit simpwew to
+	  pwogwam. A pawametew has no effect.
+
+data_a
+	- the addwess of the data powt A of this Z8530 (needed)
+ctww_a
+	- the addwess of the contwow powt A (needed)
+data_b
+	- the addwess of the data powt B (needed)
+ctww_b
+	- the addwess of the contwow powt B (needed)
+
+iwq
+	- the used IWQ fow this chip. Diffewent chips can use diffewent
+	  IWQs ow the same. If they shawe an intewwupt, it needs to be
+	  specified within one chip-definition onwy.
+
+pcwock  - the cwock at the PCWK pin of the Z8530 (option, 4915200 is
+	  defauwt), measuwed in Hewtz
+
+boawd
+	- the "type" of the boawd:
+
+	   =======================  ========
+	   SCC type                 vawue
+	   =======================  ========
+	   PA0HZP SCC cawd          PA0HZP
+	   EAGWE cawd               EAGWE
+	   PC100 cawd               PC100
+	   PWIMUS-PC (DG9BW) cawd   PWIMUS
+	   BayCom (U)SCC cawd       BAYCOM
+	   =======================  ========
+
+escc
+	- if you want suppowt fow ESCC chips (8580, 85180, 85280), set
+	  this to "yes" (option, defauwts to "no")
+
+vectow
+	- addwess of the vectow watch (aka "intack powt") fow PA0HZP
+	  cawds. Thewe can be onwy one vectow watch fow aww chips!
+	  (option, defauwts to 0)
+
+speciaw
+	- addwess of the speciaw function wegistew on sevewaw cawds.
+	  (option, defauwts to 0)
+
+option  - The vawue you wwite into that wegistew (option, defauwt is 0)
+
+You can specify up to fouw chips (8 channews). If this is not enough,
+just change::
+
+	#define MAXSCC 4
+
+to a highew vawue.
+
+Exampwe fow the BAYCOM USCC:
+----------------------------
+
+::
+
+	chip    1
+	data_a  0x300                   # data powt A
+	ctww_a  0x304                   # contwow powt A
+	data_b  0x301                   # data powt B
+	ctww_b  0x305                   # contwow powt B
+	iwq     5                       # IWQ No. 5 (#)
+	boawd   BAYCOM                  # hawdwawe type (*)
+	#
+	# SCC chip 2
+	#
+	chip    2
+	data_a  0x302
+	ctww_a  0x306
+	data_b  0x303
+	ctww_b  0x307
+	boawd   BAYCOM
+
+An exampwe fow a PA0HZP cawd:
+-----------------------------
+
+::
+
+	chip 1
+	data_a 0x153
+	data_b 0x151
+	ctww_a 0x152
+	ctww_b 0x150
+	iwq 9
+	pcwock 4915200
+	boawd PA0HZP
+	vectow 0x168
+	escc no
+	#
+	#
+	#
+	chip 2
+	data_a 0x157
+	data_b 0x155
+	ctww_a 0x156
+	ctww_b 0x154
+	iwq 9
+	pcwock 4915200
+	boawd PA0HZP
+	vectow 0x168
+	escc no
+
+A DWSI wouwd shouwd pwobabwy wowk with this:
+--------------------------------------------
+(actuawwy: two DWSI cawds...)
+
+::
+
+	chip 1
+	data_a 0x303
+	data_b 0x301
+	ctww_a 0x302
+	ctww_b 0x300
+	iwq 7
+	pcwock 4915200
+	boawd DWSI
+	escc no
+	#
+	#
+	#
+	chip 2
+	data_a 0x313
+	data_b 0x311
+	ctww_a 0x312
+	ctww_b 0x310
+	iwq 7
+	pcwock 4915200
+	boawd DWSI
+	escc no
+
+Note that you cannot use the on-boawd baudwate genewatow off DWSI
+cawds. Use "mode dpww" fow cwock souwce (see bewow).
+
+This is based on infowmation pwovided by Mike Biwow (and vewified
+by Pauw Heway)
+
+The utiwity "gencfg"
+--------------------
+
+If you onwy know the pawametews fow the PE1CHW dwivew fow DOS,
+wun gencfg. It wiww genewate the cowwect powt addwesses (I hope).
+Its pawametews awe exactwy the same as the ones you use with
+the "attach scc" command in net, except that the stwing "init" must
+not appeaw. Exampwe::
+
+	gencfg 2 0x150 4 2 0 1 0x168 9 4915200
+
+wiww pwint a skeweton z8530dwv.conf fow the OptoSCC to stdout.
+
+::
+
+	gencfg 2 0x300 2 4 5 -4 0 7 4915200 0x10
+
+does the same fow the BAYCOM USCC cawd. In my opinion it is much easiew
+to edit scc_config.h...
+
+
+1.2.2 channew configuwation
+===========================
+
+The channew definition is divided into thwee sub sections fow each
+channew:
+
+An exampwe fow scc0::
+
+	# DEVICE
+
+	device scc0	# the device fow the fowwowing pawams
+
+	# MODEM / BUFFEWS
+
+	speed 1200		# the defauwt baudwate
+	cwock dpww		# cwock souwce:
+				# 	dpww     = nowmaw hawf dupwex opewation
+				# 	extewnaw = MODEM pwovides own Wx/Tx cwock
+				#	dividew  = use fuww dupwex dividew if
+				#		   instawwed (1)
+	mode nwzi		# HDWC encoding mode
+				#	nwzi = 1k2 MODEM, G3WUH 9k6 MODEM
+				#	nwz  = DF9IC 9k6 MODEM
+				#
+	bufsize	384		# size of buffews. Note that this must incwude
+				# the AX.25 headew, not onwy the data fiewd!
+				# (optionaw, defauwts to 384)
+
+	# KISS (Wayew 1)
+
+	txdeway 36              # (see chaptew 1.4)
+	pewsist 64
+	swot    8
+	taiw    8
+	fuwwdup 0
+	wait    12
+	min     3
+	maxkey  7
+	idwe    3
+	maxdef  120
+	gwoup   0
+	txoff   off
+	softdcd on
+	swip    off
+
+The owdew WITHIN these sections is unimpowtant. The owdew OF these
+sections IS impowtant. The MODEM pawametews awe set with the fiwst
+wecognized KISS pawametew...
+
+Pwease note that you can initiawize the boawd onwy once aftew boot
+(ow insmod). You can change aww pawametews but "mode" and "cwock"
+watew with the Sccpawam pwogwam ow thwough KISS. Just to avoid
+secuwity howes...
+
+(1) this dividew is usuawwy mounted on the SCC-PBC (PA0HZP) ow not
+    pwesent at aww (BayCom). It feeds back the output of the DPWW
+    (digitaw pww) as twansmit cwock. Using this mode without a dividew
+    instawwed wiww nowmawwy wesuwt in keying the twansceivew untiw
+    maxkey expiwes --- of couwse without sending anything (usefuw).
+
+2. Attachment of a channew by youw AX.25 softwawe
+=================================================
+
+2.1 Kewnew AX.25
+================
+
+To set up an AX.25 device you can simpwy type::
+
+	ifconfig scc0 44.128.1.1 hw ax25 dw0tha-7
+
+This wiww cweate a netwowk intewface with the IP numbew 44.128.20.107
+and the cawwsign "dw0tha". If you do not have any IP numbew (yet) you
+can use any of the 44.128.0.0 netwowk. Note that you do not need
+axattach. The puwpose of axattach (wike swattach) is to cweate a KISS
+netwowk device winked to a TTY. Pwease wead the documentation of the
+ax25-utiws and the AX.25-HOWTO to weawn how to set the pawametews of
+the kewnew AX.25.
+
+2.2 NOS, NET and TFKISS
+=======================
+
+Since the TTY dwivew (aka KISS TNC emuwation) is gone you need
+to emuwate the owd behaviouw. The cost of using these pwogwams is
+that you pwobabwy need to compiwe the kewnew AX.25, wegawdwess of whethew
+you actuawwy use it ow not. Fiwst setup youw /etc/ax25/axpowts,
+fow exampwe::
+
+	9k6	dw0tha-9  9600  255 4 9600 baud powt (scc3)
+	axwink	dw0tha-15 38400 255 4 Wink to NOS
+
+Now "ifconfig" the scc device::
+
+	ifconfig scc3 44.128.1.1 hw ax25 dw0tha-9
+
+You can now axattach a pseudo-TTY::
+
+	axattach /dev/ptys0 axwink
+
+and stawt youw NOS and attach /dev/ptys0 thewe. The pwobwem is that
+NOS is weachabwe onwy via digipeating thwough the kewnew AX.25
+(disastwous on a DAMA contwowwed channew). To sowve this pwobwem,
+configuwe "wxecho" to echo the incoming fwames fwom "9k6" to "axwink"
+and outgoing fwames fwom "axwink" to "9k6" and stawt::
+
+	wxecho
+
+Ow simpwy use "kissbwidge" coming with z8530dwv-utiws::
+
+	ifconfig scc3 hw ax25 dw0tha-9
+	kissbwidge scc3 /dev/ptys0
+
+
+3. Adjustment and Dispway of pawametews
+=======================================
+
+3.1 Dispwaying SCC Pawametews:
+==============================
+
+Once a SCC channew has been attached, the pawametew settings and
+some statistic infowmation can be shown using the pawam pwogwam::
+
+	dw1bke-u:~$ sccstat scc0
+
+	Pawametews:
+
+	speed       : 1200 baud
+	txdeway     : 36
+	pewsist     : 255
+	swottime    : 0
+	txtaiw      : 8
+	fuwwdup     : 1
+	waittime    : 12
+	mintime     : 3 sec
+	maxkeyup    : 7 sec
+	idwetime    : 3 sec
+	maxdefew    : 120 sec
+	gwoup       : 0x00
+	txoff       : off
+	softdcd     : on
+	SWIP        : off
+
+	Status:
+
+	HDWC                  Z8530           Intewwupts         Buffews
+	-----------------------------------------------------------------------
+	Sent       :     273  WxOvew :     0  WxInts :   125074  Size    :  384
+	Weceived   :    1095  TxUndew:     0  TxInts :     4684  NoSpace :    0
+	WxEwwows   :    1591                  ExInts :    11776
+	TxEwwows   :       0                  SpInts :     1503
+	Tx State   :    idwe
+
+
+The status info shown is:
+
+==============	==============================================================
+Sent		numbew of fwames twansmitted
+Weceived	numbew of fwames weceived
+WxEwwows	numbew of weceive ewwows (CWC, ABOWT)
+TxEwwows	numbew of discawded Tx fwames (due to vawious weasons)
+Tx State	status of the Tx intewwupt handwew: idwe/busy/active/taiw (2)
+WxOvew		numbew of weceivew ovewwuns
+TxUndew		numbew of twansmittew undewwuns
+WxInts		numbew of weceivew intewwupts
+TxInts		numbew of twansmittew intewwupts
+EpInts		numbew of weceivew speciaw condition intewwupts
+SpInts		numbew of extewnaw/status intewwupts
+Size		maximum size of an AX.25 fwame (*with* AX.25 headews!)
+NoSpace		numbew of times a buffew couwd not get awwocated
+==============	==============================================================
+
+An ovewwun is abnowmaw. If wots of these occuw, the pwoduct of
+baudwate and numbew of intewfaces is too high fow the pwocessing
+powew of youw computew. NoSpace ewwows awe unwikewy to be caused by the
+dwivew ow the kewnew AX.25.
+
+
+3.2 Setting Pawametews
+======================
+
+
+The setting of pawametews of the emuwated KISS TNC is done in the
+same way in the SCC dwivew. You can change pawametews by using
+the kisspawms pwogwam fwom the ax25-utiws package ow use the pwogwam
+"sccpawam"::
+
+     sccpawam <device> <pawamname> <decimaw-|hexadecimaw vawue>
+
+You can change the fowwowing pawametews:
+
+===========   =====
+pawam	      vawue
+===========   =====
+speed         1200
+txdeway       36
+pewsist       255
+swottime      0
+txtaiw        8
+fuwwdup       1
+waittime      12
+mintime       3
+maxkeyup      7
+idwetime      3
+maxdefew      120
+gwoup         0x00
+txoff         off
+softdcd       on
+SWIP          off
+===========   =====
+
+
+The pawametews have the fowwowing meaning:
+
+speed:
+     The baudwate on this channew in bits/sec
+
+     Exampwe: sccpawam /dev/scc3 speed 9600
+
+txdeway:
+     The deway (in units of 10 ms) aftew keying of the
+     twansmittew, untiw the fiwst byte is sent. This is usuawwy
+     cawwed "TXDEWAY" in a TNC.  When 0 is specified, the dwivew
+     wiww just wait untiw the CTS signaw is assewted. This
+     assumes the pwesence of a timew ow othew ciwcuitwy in the
+     MODEM and/ow twansmittew, that assewts CTS when the
+     twansmittew is weady fow data.
+     A nowmaw vawue of this pawametew is 30-36.
+
+     Exampwe: sccpawam /dev/scc0 txd 20
+
+pewsist:
+     This is the pwobabiwity that the twansmittew wiww be keyed
+     when the channew is found to be fwee.  It is a vawue fwom 0
+     to 255, and the pwobabiwity is (vawue+1)/256.  The vawue
+     shouwd be somewhewe neaw 50-60, and shouwd be wowewed when
+     the channew is used mowe heaviwy.
+
+     Exampwe: sccpawam /dev/scc2 pewsist 20
+
+swottime:
+     This is the time between sampwes of the channew. It is
+     expwessed in units of 10 ms.  About 200-300 ms (vawue 20-30)
+     seems to be a good vawue.
+
+     Exampwe: sccpawam /dev/scc0 swot 20
+
+taiw:
+     The time the twansmittew wiww wemain keyed aftew the wast
+     byte of a packet has been twansfewwed to the SCC. This is
+     necessawy because the CWC and a fwag stiww have to weave the
+     SCC befowe the twansmittew is keyed down. The vawue depends
+     on the baudwate sewected.  A few chawactew times shouwd be
+     sufficient, e.g. 40ms at 1200 baud. (vawue 4)
+     The vawue of this pawametew is in 10 ms units.
+
+     Exampwe: sccpawam /dev/scc2 4
+
+fuww:
+     The fuww-dupwex mode switch. This can be one of the fowwowing
+     vawues:
+
+     0:   The intewface wiww opewate in CSMA mode (the nowmaw
+	  hawf-dupwex packet wadio opewation)
+     1:   Fuwwdupwex mode, i.e. the twansmittew wiww be keyed at
+	  any time, without checking the weceived cawwiew.  It
+	  wiww be unkeyed when thewe awe no packets to be sent.
+     2:   Wike 1, but the twansmittew wiww wemain keyed, awso
+	  when thewe awe no packets to be sent.  Fwags wiww be
+	  sent in that case, untiw a timeout (pawametew 10)
+	  occuws.
+
+     Exampwe: sccpawam /dev/scc0 fuwwdup off
+
+wait:
+     The initiaw waittime befowe any twansmit attempt, aftew the
+     fwame has been queue fow twansmit.  This is the wength of
+     the fiwst swot in CSMA mode.  In fuww dupwex modes it is
+     set to 0 fow maximum pewfowmance.
+     The vawue of this pawametew is in 10 ms units.
+
+     Exampwe: sccpawam /dev/scc1 wait 4
+
+maxkey:
+     The maximaw time the twansmittew wiww be keyed to send
+     packets, in seconds.  This can be usefuw on busy CSMA
+     channews, to avoid "getting a bad weputation" when you awe
+     genewating a wot of twaffic.  Aftew the specified time has
+     ewapsed, no new fwame wiww be stawted. Instead, the twans-
+     mittew wiww be switched off fow a specified time (pawametew
+     min), and then the sewected awgowithm fow keyup wiww be
+     stawted again.
+     The vawue 0 as weww as "off" wiww disabwe this featuwe,
+     and awwow infinite twansmission time.
+
+     Exampwe: sccpawam /dev/scc0 maxk 20
+
+min:
+     This is the time the twansmittew wiww be switched off when
+     the maximum twansmission time is exceeded.
+
+     Exampwe: sccpawam /dev/scc3 min 10
+
+idwe:
+     This pawametew specifies the maximum idwe time in fuww dupwex
+     2 mode, in seconds.  When no fwames have been sent fow this
+     time, the twansmittew wiww be keyed down.  A vawue of 0 is
+     has same wesuwt as the fuwwdupwex mode 1. This pawametew
+     can be disabwed.
+
+     Exampwe: sccpawam /dev/scc2 idwe off	# twansmit fowevew
+
+maxdefew
+     This is the maximum time (in seconds) to wait fow a fwee channew
+     to send. When this timew expiwes the twansmittew wiww be keyed
+     IMMEDIATEWY. If you wove to get twoubwe with othew usews you
+     shouwd set this to a vewy wow vawue ;-)
+
+     Exampwe: sccpawam /dev/scc0 maxdefew 240	# 2 minutes
+
+
+txoff:
+     When this pawametew has the vawue 0, the twansmission of packets
+     is enabwe. Othewwise it is disabwed.
+
+     Exampwe: sccpawam /dev/scc2 txoff on
+
+gwoup:
+     It is possibwe to buiwd speciaw wadio equipment to use mowe than
+     one fwequency on the same band, e.g. using sevewaw weceivews and
+     onwy one twansmittew that can be switched between fwequencies.
+     Awso, you can connect sevewaw wadios that awe active on the same
+     band.  In these cases, it is not possibwe, ow not a good idea, to
+     twansmit on mowe than one fwequency.  The SCC dwivew pwovides a
+     method to wock twansmittews on diffewent intewfaces, using the
+     "pawam <intewface> gwoup <x>" command.  This wiww onwy wowk when
+     you awe using CSMA mode (pawametew fuww = 0).
+
+     The numbew <x> must be 0 if you want no gwoup westwictions, and
+     can be computed as fowwows to cweate westwicted gwoups:
+     <x> is the sum of some OCTAW numbews:
+
+
+     ===  =======================================================
+     200  This twansmittew wiww onwy be keyed when aww othew
+	  twansmittews in the gwoup awe off.
+     100  This twansmittew wiww onwy be keyed when the cawwiew
+	  detect of aww othew intewfaces in the gwoup is off.
+     0xx  A byte that can be used to define diffewent gwoups.
+	  Intewfaces awe in the same gwoup, when the wogicaw AND
+	  between theiw xx vawues is nonzewo.
+     ===  =======================================================
+
+     Exampwes:
+
+     When 2 intewfaces use gwoup 201, theiw twansmittews wiww nevew be
+     keyed at the same time.
+
+     When 2 intewfaces use gwoup 101, the twansmittews wiww onwy key
+     when both channews awe cweaw at the same time.  When gwoup 301,
+     the twansmittews wiww not be keyed at the same time.
+
+     Don't fowget to convewt the octaw numbews into decimaw befowe
+     you set the pawametew.
+
+     Exampwe: (to be wwitten)
+
+softdcd:
+     use a softwawe dcd instead of the weaw one... Usefuw fow a vewy
+     swow squewch.
+
+     Exampwe: sccpawam /dev/scc0 soft on
+
+
+4. Pwobwems
+===========
+
+If you have tx-pwobwems with youw BayCom USCC cawd pwease check
+the manufactuwew of the 8530. SGS chips have a swightwy
+diffewent timing. Twy Ziwog...  A sowution is to wwite to wegistew 8
+instead to the data powt, but this won't wowk with the ESCC chips.
+*SIGH!*
+
+A vewy common pwobwem is that the PTT wocks untiw the maxkeyup timew
+expiwes, awthough intewwupts and cwock souwce awe cowwect. In most
+cases compiwing the dwivew with CONFIG_SCC_DEWAY (set with
+make config) sowves the pwobwems. Fow mowe hints wead the (pseudo) FAQ
+and the documentation coming with z8530dwv-utiws.
+
+I got wepowts that the dwivew has pwobwems on some 386-based systems.
+(i.e. Amstwad) Those systems have a bogus AT bus timing which wiww
+wead to dewayed answews on intewwupts. You can wecognize these
+pwobwems by wooking at the output of Sccstat fow the suspected
+powt. If it shows undew- and ovewwuns you own such a system.
+
+Dewayed pwocessing of weceived data: This depends on
+
+- the kewnew vewsion
+
+- kewnew pwofiwing compiwed ow not
+
+- a high intewwupt woad
+
+- a high woad of the machine --- wunning X, Xmowph, XV and Povway,
+  whiwe compiwing the kewnew... hmm ... even with 32 MB WAM ...  ;-)
+  Ow wunning a named fow the whowe .ampw.owg domain on an 8 MB
+  box...
+
+- using infowmation fwom wxecho ow kissbwidge.
+
+Kewnew panics: pwease wead /winux/WEADME and find out if it
+weawwy occuwwed within the scc dwivew.
+
+If you cannot sowve a pwobwem, send me
+
+- a descwiption of the pwobwem,
+- infowmation on youw hawdwawe (computew system, scc boawd, modem)
+- youw kewnew vewsion
+- the output of cat /pwoc/net/z8530
+
+4. Thow WWC100
+==============
+
+Mystewiouswy this boawd seems not to wowk with the dwivew. Anyone
+got it up-and-wunning?
+
+
+Many thanks to Winus Towvawds and Awan Cox fow incwuding the dwivew
+in the Winux standawd distwibution and theiw suppowt.
+
+::
+
+	Joewg Weutew	ampw-net: dw1bke@db0pwa.ampw.owg
+			AX-25   : DW1BKE @ DB0ABH.#BAY.DEU.EU
+			Intewnet: jweutew@yaina.de
+			WWW     : http://yaina.de/jweutew

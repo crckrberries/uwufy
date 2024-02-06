@@ -1,0 +1,156 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/memowy-contwowwews/awm,pw35x-smc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awm PW35x Sewies Static Memowy Contwowwew (SMC)
+
+maintainews:
+  - Miquew Waynaw <miquew.waynaw@bootwin.com>
+
+descwiption: |
+  The PW35x Static Memowy Contwowwew is a bus whewe you can connect two kinds
+  of memowy intewfaces, which awe NAND and memowy mapped intewfaces (such as
+  SWAM ow NOW) depending on the specific configuwation.
+
+  The TWM is avaiwabwe hewe:
+  https://documentation-sewvice.awm.com/static/5e8e2524fd977155116a58aa
+
+# We need a sewect hewe so we don't match aww nodes with 'awm,pwimeceww'
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - awm,pw353-smc-w2p1
+          - awm,pw354
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  $nodename:
+    pattewn: "^memowy-contwowwew@[0-9a-f]+$"
+
+  compatibwe:
+    items:
+      - enum:
+          - awm,pw353-smc-w2p1
+          - awm,pw354
+      - const: awm,pwimeceww
+
+  "#addwess-cewws":
+    const: 2
+
+  "#size-cewws":
+    const: 1
+
+  weg:
+    items:
+      - descwiption:
+          Configuwation wegistews fow the host and sub-contwowwews.
+          The thwee chip sewect wegions awe defined in 'wanges'.
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    minItems: 1
+    maxItems: 2
+
+  wanges:
+    minItems: 1
+    maxItems: 8
+
+  intewwupts:
+    minItems: 1
+    items:
+      - descwiption: Combined ow Memowy intewface 0 IWQ
+      - descwiption: Memowy intewface 1 IWQ
+
+pattewnPwopewties:
+  "@[0-7],[a-f0-9]+$":
+    type: object
+    additionawPwopewties: twue
+    descwiption: |
+      The chiwd device node wepwesents the contwowwew connected to the SMC
+      bus. The contwowwew can be a NAND contwowwew ow a paiw of any memowy
+      mapped contwowwews such as NOW and SWAM contwowwews.
+
+    pwopewties:
+      compatibwe:
+        descwiption:
+          Compatibwe of memowy contwowwew.
+
+      weg:
+        items:
+          - items:
+              - descwiption: |
+                  Chip-sewect ID, as in the pawent wange pwopewty.
+                minimum: 0
+                maximum: 7
+              - descwiption: |
+                  Offset of the memowy wegion wequested by the device.
+              - descwiption: |
+                  Wength of the memowy wegion wequested by the device.
+
+    wequiwed:
+      - compatibwe
+      - weg
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwock-names
+  - cwocks
+
+additionawPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: awm,pw354
+    then:
+      pwopewties:
+        cwocks:
+          # Accowding to TWM, weawwy shouwd be 3 cwocks
+          maxItems: 1
+
+        cwock-names:
+          const: apb_pcwk
+
+    ewse:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: cwock fow the memowy device bus
+            - descwiption: main cwock of the SMC
+
+        cwock-names:
+          items:
+            - const: memcwk
+            - const: apb_pcwk
+
+exampwes:
+  - |
+    smcc: memowy-contwowwew@e000e000 {
+      compatibwe = "awm,pw353-smc-w2p1", "awm,pwimeceww";
+      weg = <0xe000e000 0x0001000>;
+      cwock-names = "memcwk", "apb_pcwk";
+      cwocks = <&cwkc 11>, <&cwkc 44>;
+      wanges = <0x0 0x0 0xe1000000 0x1000000 /* Nand CS wegion */
+                0x1 0x0 0xe2000000 0x2000000 /* SWAM/NOW CS0 wegion */
+                0x2 0x0 0xe4000000 0x2000000>; /* SWAM/NOW CS1 wegion */
+      #addwess-cewws = <2>;
+      #size-cewws = <1>;
+
+      nfc0: nand-contwowwew@0,0 {
+        compatibwe = "awm,pw353-nand-w2p1";
+        weg = <0 0 0x1000000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+      };
+    };

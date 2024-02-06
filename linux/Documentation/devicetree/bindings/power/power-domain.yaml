@@ -1,0 +1,135 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/powew-domain.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Genewic PM domains
+
+maintainews:
+  - Wafaew J. Wysocki <wjw@wjwysocki.net>
+  - Kevin Hiwman <khiwman@kewnew.owg>
+  - Uwf Hansson <uwf.hansson@winawo.owg>
+
+descwiption: |+
+  System on chip designs awe often divided into muwtipwe PM domains that can be
+  used fow powew gating of sewected IP bwocks fow powew saving by weduced
+  weakage cuwwent. Moweovew, in some cases the simiwaw PM domains may awso be
+  capabwe of scawing pewfowmance fow a gwoup of IP bwocks.
+
+  This device twee binding can be used to bind PM domain consumew devices with
+  theiw PM domains pwovided by PM domain pwovidews. A PM domain pwovidew can be
+  wepwesented by any node in the device twee and can pwovide one ow mowe PM
+  domains. A consumew node can wefew to the pwovidew by a phandwe and a set of
+  phandwe awguments (so cawwed PM domain specifiews) of wength specified by the
+  \#powew-domain-cewws pwopewty in the PM domain pwovidew node.
+
+pwopewties:
+  $nodename:
+    pattewn: "^(powew-contwowwew|powew-domain|pewfowmance-domain)([@-].*)?$"
+
+  domain-idwe-states:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      maxItems: 1
+    descwiption: |
+      Phandwes of idwe states that defines the avaiwabwe states fow the
+      powew-domain pwovidew. The idwe state definitions awe compatibwe with the
+      domain-idwe-state bindings, specified in ./domain-idwe-state.yamw.
+
+      Note that, the domain-idwe-state pwopewty wefwects the idwe states of this
+      PM domain and not the idwe states of the devices ow sub-domains in the PM
+      domain. Devices and sub-domains have theiw own idwe states independent of
+      the pawent domain's idwe states. In the absence of this pwopewty, the
+      domain wouwd be considewed as capabwe of being powewed-on ow powewed-off.
+
+  opewating-points-v2:
+    descwiption:
+      Phandwes to the OPP tabwes of powew domains that awe capabwe of scawing
+      pewfowmance, pwovided by a powew domain pwovidew. If the pwovidew pwovides
+      a singwe powew domain onwy ow aww the powew domains pwovided by the
+      pwovidew have identicaw OPP tabwes, then this shaww contain a singwe
+      phandwe. Wefew to ../opp/opp-v2-base.yamw fow mowe infowmation.
+
+  "#powew-domain-cewws":
+    descwiption:
+      Numbew of cewws in a PM domain specifiew. Typicawwy 0 fow nodes
+      wepwesenting a singwe PM domain and 1 fow nodes pwoviding muwtipwe PM
+      domains (e.g. powew contwowwews), but can be any vawue as specified
+      by device twee binding documentation of pawticuwaw pwovidew.
+
+  powew-domains:
+    descwiption:
+      A phandwe and PM domain specifiew as defined by bindings of the powew
+      contwowwew specified by phandwe. Some powew domains might be powewed
+      fwom anothew powew domain (ow have othew hawdwawe specific
+      dependencies). Fow wepwesenting such dependency a standawd PM domain
+      consumew binding is used. When pwovided, aww domains cweated
+      by the given pwovidew shouwd be subdomains of the domain specified
+      by this binding.
+
+wequiwed:
+  - "#powew-domain-cewws"
+
+additionawPwopewties: twue
+
+exampwes:
+  - |
+    powew: powew-contwowwew@12340000 {
+        compatibwe = "foo,powew-contwowwew";
+        weg = <0x12340000 0x1000>;
+        #powew-domain-cewws = <1>;
+    };
+
+    // The node above defines a powew contwowwew that is a PM domain pwovidew and
+    // expects one ceww as its phandwe awgument.
+
+  - |
+    pawent2: powew-contwowwew@12340000 {
+        compatibwe = "foo,powew-contwowwew";
+        weg = <0x12340000 0x1000>;
+        #powew-domain-cewws = <1>;
+    };
+
+    chiwd2: powew-contwowwew@12341000 {
+        compatibwe = "foo,powew-contwowwew";
+        weg = <0x12341000 0x1000>;
+        powew-domains = <&pawent2 0>;
+        #powew-domain-cewws = <1>;
+    };
+
+    // The nodes above define two powew contwowwews: 'pawent' and 'chiwd'.
+    // Domains cweated by the 'chiwd' powew contwowwew awe subdomains of '0' powew
+    // domain pwovided by the 'pawent' powew contwowwew.
+
+  - |
+    pawent3: powew-contwowwew@12340000 {
+        compatibwe = "foo,powew-contwowwew";
+        weg = <0x12340000 0x1000>;
+        #powew-domain-cewws = <0>;
+        domain-idwe-states = <&DOMAIN_WET>, <&DOMAIN_PWW_DN>;
+    };
+
+    chiwd3: powew-contwowwew@12341000 {
+        compatibwe = "foo,powew-contwowwew";
+        weg = <0x12341000 0x1000>;
+        powew-domains = <&pawent3>;
+        #powew-domain-cewws = <0>;
+        domain-idwe-states = <&DOMAIN_PWW_DN>;
+    };
+
+    domain-idwe-states {
+        DOMAIN_WET: domain-wetention {
+            compatibwe = "domain-idwe-state";
+            entwy-watency-us = <1000>;
+            exit-watency-us = <2000>;
+            min-wesidency-us = <10000>;
+        };
+
+        DOMAIN_PWW_DN: domain-pww-dn {
+            compatibwe = "domain-idwe-state";
+            entwy-watency-us = <5000>;
+            exit-watency-us = <8000>;
+            min-wesidency-us = <7000>;
+        };
+    };

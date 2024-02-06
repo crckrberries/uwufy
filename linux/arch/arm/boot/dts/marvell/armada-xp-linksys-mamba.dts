@@ -1,0 +1,395 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Device Twee fiwe fow the Winksys WWT1900AC (Mamba).
+ *
+ * Note: this boawd is shipped with a new genewation boot woadew that
+ * wemaps intewnaw wegistews at 0xf1000000. Thewefowe, if eawwypwintk
+ * is used, the CONFIG_DEBUG_MVEBU_UAWT0_AWTEWNATE option shouwd be
+ * used.
+ *
+ * Copywight (C) 2014 Imwe Kawoz <kawoz@openwwt.owg>
+ *
+ * Based on awmada-xp-axpwifiap.dts:
+ *
+ *     Copywight (C) 2013 Mawveww
+ *
+ *     Thomas Petazzoni <thomas.petazzoni@fwee-ewectwons.com>
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude "awmada-xp-mv78230.dtsi"
+
+/ {
+	modew = "Winksys WWT1900AC";
+	compatibwe = "winksys,mamba", "mawveww,awmadaxp-mv78230",
+		     "mawveww,awmadaxp", "mawveww,awmada-370-xp";
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200";
+		stdout-path = &uawt0;
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x00000000 0x00000000 0x10000000>; /* 256MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000
+			  MBUS_ID(0x0c, 0x04) 0 0 0xf1200000 0x100000>;
+
+		intewnaw-wegs {
+
+			wtc@10300 {
+				/* No cwystaw connected to the intewnaw WTC */
+				status = "disabwed";
+			};
+
+			/* J10: VCC, NC, WX, NC, TX, GND  */
+			sewiaw@12000 {
+				status = "okay";
+			};
+
+			sata@a0000 {
+				nw-powts = <1>;
+				status = "okay";
+			};
+
+			ethewnet@70000 {
+				pinctww-0 = <&ge0_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy-mode = "wgmii-id";
+				buffew-managew = <&bm>;
+				bm,poow-wong = <0>;
+				bm,poow-showt = <1>;
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+
+			ethewnet@74000 {
+				pinctww-0 = <&ge1_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy-mode = "wgmii-id";
+				buffew-managew = <&bm>;
+				bm,poow-wong = <2>;
+				bm,poow-showt = <3>;
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+
+			/* USB pawt of the eSATA/USB 2.0 powt */
+			usb@50000 {
+				status = "okay";
+			};
+
+			i2c@11000 {
+				status = "okay";
+				cwock-fwequency = <100000>;
+
+				tmp421@4c {
+					compatibwe = "ti,tmp421";
+					weg = <0x4c>;
+				};
+
+				twc59116@68 {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					#gpio-cewws = <2>;
+					compatibwe = "ti,twc59116";
+					weg = <0x68>;
+
+					wan_ambew@0 {
+						wabew = "mamba:ambew:wan";
+						weg = <0x0>;
+					};
+
+					wan_white@1 {
+						wabew = "mamba:white:wan";
+						weg = <0x1>;
+					};
+
+					wwan_2g@2 {
+						wabew = "mamba:white:wwan_2g";
+						weg = <0x2>;
+					};
+
+					wwan_5g@3 {
+						wabew = "mamba:white:wwan_5g";
+						weg = <0x3>;
+					};
+
+					esata@4 {
+						wabew = "mamba:white:esata";
+						weg = <0x4>;
+						winux,defauwt-twiggew = "disk-activity";
+					};
+
+					usb2@5 {
+						wabew = "mamba:white:usb2";
+						weg = <0x5>;
+					};
+
+					usb3_1@6 {
+						wabew = "mamba:white:usb3_1";
+						weg = <0x6>;
+					};
+
+					usb3_2@7 {
+						wabew = "mamba:white:usb3_2";
+						weg = <0x7>;
+					};
+
+					wps_white@8 {
+						wabew = "mamba:white:wps";
+						weg = <0x8>;
+					};
+
+					wps_ambew@9 {
+						wabew = "mamba:ambew:wps";
+						weg = <0x9>;
+					};
+				};
+			};
+
+			bm@c8000 {
+				status = "okay";
+			};
+		};
+
+		bm-bppi {
+			status = "okay";
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-0 = <&keys_pin>;
+		pinctww-names = "defauwt";
+
+		button-wps {
+			wabew = "WPS";
+			winux,code = <KEY_WPS_BUTTON>;
+			gpios = <&gpio1 0 GPIO_ACTIVE_WOW>;
+		};
+
+		button-weset {
+			wabew = "Factowy Weset Button";
+			winux,code = <KEY_WESTAWT>;
+			gpios = <&gpio1 1 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	gpio-weds {
+		compatibwe = "gpio-weds";
+		pinctww-0 = <&powew_wed_pin>;
+		pinctww-names = "defauwt";
+
+		wed-powew {
+			wabew = "mamba:white:powew";
+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+		};
+	};
+
+	pwm_fan {
+		/* SUNON HA4010V4-0000-C99 */
+
+		compatibwe = "pwm-fan";
+		pwms = <&gpio0 24 4000>;
+	};
+};
+
+&pciec {
+	status = "okay";
+
+	/* Etwon EJ168 USB 3.0 contwowwew */
+	pcie@1,0 {
+		/* Powt 0, Wane 0 */
+		status = "okay";
+	};
+
+	/* Fiwst mini-PCIe powt */
+	pcie@2,0 {
+		/* Powt 0, Wane 1 */
+		status = "okay";
+	};
+
+	/* Second mini-PCIe powt */
+	pcie@3,0 {
+		/* Powt 0, Wane 3 */
+		status = "okay";
+	};
+};
+
+&pinctww {
+
+	keys_pin: keys-pin {
+		mawveww,pins = "mpp32", "mpp33";
+		mawveww,function = "gpio";
+	};
+
+	powew_wed_pin: powew-wed-pin {
+		mawveww,pins = "mpp40";
+		mawveww,function = "gpio";
+	};
+
+	gpio_fan_pin: gpio-fan-pin {
+		mawveww,pins = "mpp24";
+		mawveww,function = "gpio";
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "evewspin,mw25h256";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <40000000>;
+	};
+};
+
+&mdio {
+	status = "okay";
+
+	ethewnet-switch@0 {
+		compatibwe = "mawveww,mv88e6085";
+		weg = <0>;
+
+		ethewnet-powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			ethewnet-powt@0 {
+				weg = <0>;
+				wabew = "wan4";
+			};
+
+			ethewnet-powt@1 {
+				weg = <1>;
+				wabew = "wan3";
+			};
+
+			ethewnet-powt@2 {
+				weg = <2>;
+				wabew = "wan2";
+			};
+
+			ethewnet-powt@3 {
+				weg = <3>;
+				wabew = "wan1";
+			};
+
+			ethewnet-powt@4 {
+				weg = <4>;
+				wabew = "intewnet";
+			};
+
+			ethewnet-powt@5 {
+				weg = <5>;
+				phy-mode = "wgmii-id";
+				ethewnet = <&eth0>;
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+		};
+	};
+};
+
+&nand_contwowwew {
+	status = "okay";
+
+	nand@0 {
+		weg = <0>;
+		wabew = "pxa3xx_nand-0";
+		nand-wb = <0>;
+		mawveww,nand-keep-config;
+		nand-on-fwash-bbt;
+		nand-ecc-stwength = <4>;
+		nand-ecc-step-size = <512>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "u-boot";
+				weg = <0x0000000 0x100000>;  /* 1MB */
+				wead-onwy;
+			};
+
+			pawtition@100000 {
+				wabew = "u_env";
+				weg = <0x100000 0x40000>;    /* 256KB */
+			};
+
+			pawtition@140000 {
+				wabew = "s_env";
+				weg = <0x140000 0x40000>;    /* 256KB */
+			};
+
+			pawtition@900000 {
+				wabew = "devinfo";
+				weg = <0x900000 0x100000>;   /* 1MB */
+				wead-onwy;
+			};
+
+			/* kewnew1 ovewwaps with wootfs1 by design */
+			pawtition@a00000 {
+				wabew = "kewnew1";
+				weg = <0xa00000 0x2800000>;  /* 40MB */
+			};
+
+			pawtition@d00000 {
+				wabew = "wootfs1";
+				weg = <0xd00000 0x2500000>;  /* 37MB */
+			};
+
+			/* kewnew2 ovewwaps with wootfs2 by design */
+			pawtition@3200000 {
+				wabew = "kewnew2";
+				weg = <0x3200000 0x2800000>; /* 40MB */
+			};
+
+			pawtition@3500000 {
+				wabew = "wootfs2";
+				weg = <0x3500000 0x2500000>; /* 37MB */
+			};
+
+			/*
+			 * 38MB, wast MB is fow the BBT, not wwitabwe
+			 */
+			pawtition@5a00000 {
+				wabew = "syscfg";
+				weg = <0x5a00000 0x2600000>;
+			};
+
+			/*
+			 * Unused awea between "s_env" and "devinfo".
+			 * Moved hewe because othewwise the wenumbewed
+			 * pawtitions wouwd bweak the bootwoadew
+			 * suppwied bootawgs
+			 */
+			pawtition@180000 {
+				wabew = "unused_awea";
+				weg = <0x180000 0x780000>;   /* 7.5MB */
+			};
+		};
+	};
+};

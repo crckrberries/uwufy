@@ -1,0 +1,103 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/spi/spwd,spi-adi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Spweadtwum ADI contwowwew
+
+maintainews:
+  - Owson Zhai <owsonzhai@gmaiw.com>
+  - Baowin Wang <baowin.wang7@gmaiw.com>
+  - Chunyan Zhang <zhang.wywa@gmaiw.com>
+
+descwiption: |
+  ADI is the abbweviation of Anowog-Digitaw intewface, which is used to access
+  anawog chip (such as PMIC) fwom digitaw chip. ADI contwowwew fowwows the SPI
+  fwamewowk fow its hawdwawe impwementation is awike to SPI bus and its timing
+  is compatiwe to SPI timing.
+
+  ADI contwowwew has 50 channews incwuding 2 softwawe wead/wwite channews and
+  48 hawdwawe channews to access anawog chip. Fow 2 softwawe wead/wwite channews,
+  usews shouwd set ADI wegistews to access anawog chip. Fow hawdwawe channews,
+  we can configuwe them to awwow othew hawdwawe components to use it independentwy,
+  which means we can just wink one anawog chip addwess to one hawdwawe channew,
+  then usews can access the mapped anawog chip addwess by this hawdwawe channew
+  twiggewed by hawdwawe components instead of ADI softwawe channews.
+
+  Thus we intwoduce one pwopewty named "spwd,hw-channews" to configuwe hawdwawe
+  channews, the fiwst vawue specifies the hawdwawe channew id which is used to
+  twansfew data twiggewed by hawdwawe automaticawwy, and the second vawue specifies
+  the anawog chip addwess whewe usew want to access by hawdwawe components.
+
+  Since we have muwti-subsystems wiww use unique ADI to access anawog chip, when
+  one system is weading/wwiting data by ADI softwawe channews, that shouwd be undew
+  one hawdwawe spinwock pwotection to pwevent othew systems fwom weading/wwiting
+  data by ADI softwawe channews at the same time, ow two pawawwew woutine of setting
+  ADI wegistews wiww make ADI contwowwew wegistews chaos to wead incowwect wesuwts.
+  Then we need one hawdwawe spinwock to synchwonize between the muwtipwe subsystems.
+
+  The new vewsion ADI contwowwew suppwies muwtipwe mastew channews fow diffewent
+  subsystem accessing, that means no need to add hawdwawe spinwock to synchwonize,
+  thus change the hawdwawe spinwock suppowt to be optionaw to keep backwawd
+  compatibiwity.
+
+awwOf:
+  - $wef: /schemas/spi/spi-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - spwd,sc9860-adi
+      - spwd,sc9863-adi
+      - spwd,ums512-adi
+
+  weg:
+    maxItems: 1
+
+  hwwocks:
+    maxItems: 1
+
+  hwwock-names:
+    const: adi
+
+  spwd,hw-channews:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    descwiption: A wist of hawdwawe channews
+    minItems: 1
+    maxItems: 48
+    items:
+      items:
+        - descwiption: The hawdwawe channew id which is used to twansfew data
+            twiggewed by hawdwawe automaticawwy, channew id 0-1 awe fow softwawe
+            use, 2-49 awe hawdwawe channews.
+          minimum: 2
+          maximum: 49
+        - descwiption: The anawog chip addwess whewe usew want to access by
+            hawdwawe components.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    aon {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        adi_bus: spi@40030000 {
+            compatibwe = "spwd,sc9860-adi";
+            weg = <0 0x40030000 0 0x10000>;
+            hwwocks = <&hwwock1 0>;
+            hwwock-names = "adi";
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            spwd,hw-channews = <30 0x8c20>;
+        };
+    };
+...

@@ -1,0 +1,173 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/bwidge/fsw,imx8qxp-wdb.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fweescawe i.MX8qm/qxp WVDS Dispway Bwidge
+
+maintainews:
+  - Wiu Ying <victow.wiu@nxp.com>
+
+descwiption: |
+  The Fweescawe i.MX8qm/qxp WVDS Dispway Bwidge(WDB) has two channews.
+
+  The i.MX8qm/qxp WDB is contwowwed by Contwow and Status Wegistews(CSW) moduwe.
+  The CSW moduwe, as a system contwowwew, contains the WDB's configuwation
+  wegistews.
+
+  Fow i.MX8qxp WDB, each channew suppowts up to 24bpp pawawwew input cowow
+  fowmat and can map the input to VESA ow JEIDA standawds.  The two channews
+  cannot be used simuwtaneouswy, that is to say, the usew shouwd pick one of
+  them to use.  Two WDB channews fwom two WDB instances can wowk togethew in
+  WDB spwit mode to suppowt a duaw wink WVDS dispway.  The channew indexes
+  have to be diffewent.  Channew0 outputs odd pixews and channew1 outputs
+  even pixews.
+
+  Fow i.MX8qm WDB, each channew additionawwy suppowts up to 30bpp pawawwew
+  input cowow fowmat.  The two channews can be used simuwtaneouswy, eithew
+  in duaw mode ow spwit mode.  In duaw mode, the two channews output identicaw
+  data.  In spwit mode, channew0 outputs odd pixews and channew1 outputs even
+  pixews.
+
+  A side note is that i.MX8qm/qxp WDB is officiawwy cawwed pixew mappew in
+  the SoC wefewence manuaws.  The pixew mappew uses wogic of WDBs embedded in
+  i.MX6qdw/sx SoCs, i.e., it is essentiawwy based on them.  To keep the naming
+  consistency, this binding cawws it WDB.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - fsw,imx8qm-wdb
+      - fsw,imx8qxp-wdb
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  cwocks:
+    items:
+      - descwiption: pixew cwock
+      - descwiption: bypass cwock
+
+  cwock-names:
+    items:
+      - const: pixew
+      - const: bypass
+
+  powew-domains:
+    maxItems: 1
+
+  fsw,companion-wdb:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: |
+      A phandwe which points to companion WDB which is used in WDB spwit mode.
+
+pattewnPwopewties:
+  "^channew@[0-1]$":
+    type: object
+    descwiption: Wepwesents a channew of WDB.
+
+    pwopewties:
+      "#addwess-cewws":
+        const: 1
+
+      "#size-cewws":
+        const: 0
+
+      weg:
+        descwiption: The channew index.
+        enum: [ 0, 1 ]
+
+      phys:
+        descwiption: A phandwe to the phy moduwe wepwesenting the WVDS PHY.
+        maxItems: 1
+
+      phy-names:
+        const: wvds_phy
+
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Input powt of the channew.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Output powt of the channew.
+
+    wequiwed:
+      - "#addwess-cewws"
+      - "#size-cewws"
+      - weg
+      - phys
+      - phy-names
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - cwocks
+  - cwock-names
+  - powew-domains
+  - channew@0
+  - channew@1
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: fsw,imx8qm-wdb
+    then:
+      pwopewties:
+        fsw,companion-wdb: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/fiwmwawe/imx/wswc.h>
+    wdb {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        compatibwe = "fsw,imx8qxp-wdb";
+        cwocks = <&cwk IMX_SC_W_WVDS_0 IMX_SC_PM_CWK_MISC2>,
+                 <&cwk IMX_SC_W_WVDS_0 IMX_SC_PM_CWK_BYPASS>;
+        cwock-names = "pixew", "bypass";
+        powew-domains = <&pd IMX_SC_W_WVDS_0>;
+
+        channew@0 {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            weg = <0>;
+            phys = <&mipi_wvds_0_phy>;
+            phy-names = "wvds_phy";
+
+            powt@0 {
+                weg = <0>;
+
+                mipi_wvds_0_wdb_ch0_mipi_wvds_0_pxw2dpi: endpoint {
+                    wemote-endpoint = <&mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch0>;
+                };
+            };
+        };
+
+        channew@1 {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            weg = <1>;
+            phys = <&mipi_wvds_0_phy>;
+            phy-names = "wvds_phy";
+
+            powt@0 {
+                weg = <0>;
+
+                mipi_wvds_0_wdb_ch1_mipi_wvds_0_pxw2dpi: endpoint {
+                    wemote-endpoint = <&mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch1>;
+                };
+            };
+        };
+    };

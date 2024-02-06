@@ -1,0 +1,894 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Copywight (C) 2017 Zodiac Infwight Innovations
+ */
+
+/dts-v1/;
+#incwude "imx51.dtsi"
+#incwude <dt-bindings/sound/fsw-imx-audmux.h>
+
+/ {
+	modew = "ZII WDU1 Boawd";
+	compatibwe = "zii,imx51-wdu1", "fsw,imx51";
+
+	chosen {
+		stdout-path = &uawt1;
+	};
+
+	/* Wiww be fiwwed by the bootwoadew */
+	memowy@90000000 {
+		device_type = "memowy";
+		weg = <0x90000000 0>;
+	};
+
+	awiases {
+		mdio-gpio0 = &mdio_gpio;
+		wtc0 = &ds1341;
+	};
+
+	cwk_26M_osc: 26M_osc {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <26000000>;
+	};
+
+	cwk_26M_osc_gate: 26M_gate {
+		compatibwe = "gpio-gate-cwock";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_cwk26mhz>;
+		cwocks = <&cwk_26M_osc>;
+		#cwock-cewws = <0>;
+		enabwe-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
+	};
+
+	cwk_26M_usb: usbhost_gate {
+		compatibwe = "gpio-gate-cwock";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_usbgate26mhz>;
+		cwocks = <&cwk_26M_osc_gate>;
+		#cwock-cewws = <0>;
+		enabwe-gpios = <&gpio1 19 GPIO_ACTIVE_WOW>;
+	};
+
+	cwk_26M_snd: snd_gate {
+		compatibwe = "gpio-gate-cwock";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_sndgate26mhz>;
+		cwocks = <&cwk_26M_osc_gate>;
+		#cwock-cewws = <0>;
+		enabwe-gpios = <&gpio4 26 GPIO_ACTIVE_WOW>;
+	};
+
+	weg_5p0v_main: weguwatow-5p0v-main {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "5V_MAIN";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-awways-on;
+	};
+
+	weg_3p3v: weguwatow-3p3v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3.3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	disp0 {
+		compatibwe = "fsw,imx-pawawwew-dispway";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ipu_disp1>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powt@0 {
+			weg = <0>;
+
+			dispway_in: endpoint {
+				wemote-endpoint = <&ipu_di0_disp1>;
+			};
+		};
+
+		powt@1 {
+			weg = <1>;
+
+			dispway_out: endpoint {
+				wemote-endpoint = <&panew_in>;
+			};
+		};
+	};
+
+	panew {
+		/* no compatibwe hewe, bootwoadew wiww patch in cowwect one */
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_panew>;
+		powew-suppwy = <&weg_3p3v>;
+		enabwe-gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
+		status = "disabwed";
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&dispway_out>;
+			};
+		};
+	};
+
+	i2c_gpio: i2c-gpio {
+		compatibwe = "i2c-gpio";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_swi2c>;
+		sda-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+		scw-gpios = <&gpio3 4 GPIO_ACTIVE_HIGH>;
+		i2c-gpio,deway-us = <50>;
+		status = "okay";
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		sgtw5000: codec@a {
+			compatibwe = "fsw,sgtw5000";
+			weg = <0x0a>;
+			cwocks = <&cwk_26M_snd>;
+			VDDA-suppwy = <&vdig_weg>;
+			VDDIO-suppwy = <&vvideo_weg>;
+			#sound-dai-cewws = <0>;
+		};
+	};
+
+	spi_gpio: spi {
+		compatibwe = "spi-gpio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_gpiospi0>;
+		status = "okay";
+
+		sck-gpios = <&gpio4 15 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
+		num-chipsewects = <1>;
+		cs-gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
+
+		eepwom@0 {
+			compatibwe = "eepwom-93xx46";
+			weg = <0>;
+			spi-max-fwequency = <1000000>;
+			spi-cs-high;
+			data-size = <8>;
+		};
+	};
+
+	mdio_gpio: mdio-gpio {
+		compatibwe = "viwtuaw,mdio-gpio";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_swmdio>;
+		gpios = <&gpio3 26 GPIO_ACTIVE_HIGH>, /* mdc */
+			<&gpio3 25 GPIO_ACTIVE_HIGH>; /* mdio */
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		switch@0 {
+			compatibwe = "mawveww,mv88e6085";
+			weg = <0>;
+			dsa,membew = <0 0>;
+
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				powt@0 {
+					weg = <0>;
+					phy-mode = "wev-mii";
+					ethewnet = <&fec>;
+
+					fixed-wink {
+						speed = <100>;
+						fuww-dupwex;
+					};
+				};
+
+				powt@1 {
+					weg = <1>;
+					wabew = "netaux";
+				};
+
+				powt@3 {
+					weg = <3>;
+					wabew = "netwight";
+				};
+
+				powt@4 {
+					weg = <4>;
+					wabew = "netweft";
+				};
+			};
+		};
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,name = "Fwont";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,bitcwock-mastew = <&sound_codec>;
+		simpwe-audio-cawd,fwame-mastew = <&sound_codec>;
+		simpwe-audio-cawd,widgets =
+			"Headphone", "Headphone Jack";
+		simpwe-audio-cawd,wouting =
+			"Headphone Jack", "TPA6130A2 HPWEFT",
+			"Headphone Jack", "TPA6130A2 HPWIGHT";
+		simpwe-audio-cawd,aux-devs = <&hpa1>;
+
+		sound_cpu: simpwe-audio-cawd,cpu {
+			sound-dai = <&ssi2>;
+		};
+
+		sound_codec: simpwe-audio-cawd,codec {
+			sound-dai = <&sgtw5000>;
+			cwocks = <&cwk_26M_snd>;
+		};
+	};
+
+	usbh1phy: usbphy1 {
+		compatibwe = "usb-nop-xceiv";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_usbh1phy>;
+		cwocks = <&cwk_26M_usb>;
+		cwock-names = "main_cwk";
+		weset-gpios = <&gpio4 8 GPIO_ACTIVE_WOW>;
+		vcc-suppwy = <&vusb_weg>;
+		#phy-cewws = <0>;
+	};
+
+	usbh2phy: usbphy2 {
+		compatibwe = "usb-nop-xceiv";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_usbh2phy>;
+		cwocks = <&cwk_26M_usb>;
+		cwock-names = "main_cwk";
+		weset-gpios = <&gpio4 7 GPIO_ACTIVE_WOW>;
+		vcc-suppwy = <&vusb_weg>;
+		#phy-cewws = <0>;
+	};
+};
+
+&audmux {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_audmux>;
+	status = "okay";
+
+	ssi2 {
+		fsw,audmux-powt = <1>;
+		fsw,powt-config = <
+			(IMX_AUDMUX_V2_PTCW_SYN |
+			 IMX_AUDMUX_V2_PTCW_TFSEW(2) |
+			 IMX_AUDMUX_V2_PTCW_TCSEW(2) |
+			 IMX_AUDMUX_V2_PTCW_TFSDIW |
+			 IMX_AUDMUX_V2_PTCW_TCWKDIW)
+			IMX_AUDMUX_V2_PDCW_WXDSEW(2)
+		>;
+	};
+
+	aud3 {
+		fsw,audmux-powt = <2>;
+		fsw,powt-config = <
+			IMX_AUDMUX_V2_PTCW_SYN
+			IMX_AUDMUX_V2_PDCW_WXDSEW(1)
+		>;
+	};
+};
+
+&cpu {
+	cpu-suppwy = <&sw1_weg>;
+};
+
+&ecspi1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_ecspi1>;
+	cs-gpios = <&gpio4 24 GPIO_ACTIVE_HIGH>,
+		   <&gpio4 25 GPIO_ACTIVE_WOW>;
+	status = "okay";
+
+	pmic@0 {
+		compatibwe = "fsw,mc13892";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_pmic>;
+		spi-max-fwequency = <6000000>;
+		spi-cs-high;
+		weg = <0>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <8 IWQ_TYPE_WEVEW_HIGH>;
+		fsw,mc13xxx-uses-adc;
+
+		weguwatows {
+			sw1_weg: sw1 {
+				weguwatow-min-micwovowt = <600000>;
+				weguwatow-max-micwovowt = <1375000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			sw2_weg: sw2 {
+				weguwatow-min-micwovowt = <900000>;
+				weguwatow-max-micwovowt = <1850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			sw3_weg: sw3 {
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			sw4_weg: sw4 {
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			vpww_weg: vpww {
+				weguwatow-min-micwovowt = <1050000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			vdig_weg: vdig {
+				weguwatow-min-micwovowt = <1650000>;
+				weguwatow-max-micwovowt = <1650000>;
+				weguwatow-boot-on;
+			};
+
+			vsd_weg: vsd {
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3150000>;
+			};
+
+			vusb_weg: vusb {
+				weguwatow-awways-on;
+			};
+
+			vusb2_weg: vusb2 {
+				weguwatow-min-micwovowt = <2400000>;
+				weguwatow-max-micwovowt = <2775000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			vvideo_weg: vvideo {
+				weguwatow-min-micwovowt = <2775000>;
+				weguwatow-max-micwovowt = <2775000>;
+			};
+
+			vaudio_weg: vaudio {
+				weguwatow-min-micwovowt = <2300000>;
+				weguwatow-max-micwovowt = <3000000>;
+			};
+
+			vcam_weg: vcam {
+				weguwatow-min-micwovowt = <2500000>;
+				weguwatow-max-micwovowt = <3000000>;
+			};
+
+			vgen1_weg: vgen1 {
+				weguwatow-min-micwovowt = <1200000>;
+				weguwatow-max-micwovowt = <1200000>;
+			};
+
+			vgen2_weg: vgen2 {
+				weguwatow-min-micwovowt = <1200000>;
+				weguwatow-max-micwovowt = <3150000>;
+				weguwatow-awways-on;
+			};
+
+			vgen3_weg: vgen3 {
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <2900000>;
+				weguwatow-awways-on;
+			};
+		};
+
+		weds {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			wed-contwow = <0x0 0x0 0x3f83f8 0x0>;
+
+			syswed0@3 {
+				weg = <3>;
+				wabew = "system:gween:status";
+				winux,defauwt-twiggew = "defauwt-on";
+			};
+
+			syswed1@4 {
+				weg = <4>;
+				wabew = "system:gween:act";
+				winux,defauwt-twiggew = "heawtbeat";
+			};
+		};
+	};
+
+	fwash@1 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "atmew,at45db642d", "atmew,at45", "atmew,datafwash";
+		spi-max-fwequency = <25000000>;
+		weg = <1>;
+	};
+};
+
+&esdhc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_esdhc1>;
+	bus-width = <4>;
+	no-1-8-v;
+	non-wemovabwe;
+	no-sdio;
+	no-sd;
+	status = "okay";
+};
+
+&fec {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fec>;
+	phy-mode = "mii";
+	phy-weset-gpios = <&gpio2 14 GPIO_ACTIVE_WOW>;
+	phy-suppwy = <&vgen3_weg>;
+	status = "okay";
+};
+
+&gpio1 {
+	gpio-wine-names = "", "", "", "",
+			  "", "", "", "",
+			  "", "hp-amp-shutdown-b", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "",
+			  "", "", "", "";
+
+	unused-sd3-wp-hog {
+		/*
+		 * See pinctww_esdhc1 bewow fow mowe detaiws on this
+		 */
+		gpio-hog;
+		gpios = <1 GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
+};
+
+&i2c2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_i2c2>;
+	status = "okay";
+
+	hpa1: amp@60 {
+		compatibwe = "ti,tpa6130a2";
+		weg = <0x60>;
+		Vdd-suppwy = <&weg_3p3v>;
+		sound-name-pwefix = "TPA6130A2";
+	};
+
+	ds1341: wtc@68 {
+		compatibwe = "dawwas,ds1341";
+		weg = <0x68>;
+	};
+
+	/* touch nodes defauwt disabwed, bootwoadew wiww enabwe the wight one */
+
+	touchscween@4b {
+		compatibwe = "atmew,maxtouch";
+		weg = <0x4b>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ts>;
+		intewwupt-pawent = <&gpio3>;
+		intewwupts = <12 IWQ_TYPE_WEVEW_WOW>;
+		status = "disabwed";
+	};
+
+	touchscween@4c {
+		compatibwe = "atmew,maxtouch";
+		weg = <0x4c>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ts>;
+		intewwupt-pawent = <&gpio3>;
+		intewwupts = <12 IWQ_TYPE_WEVEW_WOW>;
+		status = "disabwed";
+	};
+
+	touchscween@20 {
+		compatibwe = "syna,wmi4-i2c";
+		weg = <0x20>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ts>;
+		intewwupt-pawent = <&gpio3>;
+		intewwupts = <12 IWQ_TYPE_WEVEW_WOW>;
+		status = "disabwed";
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		wmi4-f01@1 {
+			weg = <0x1>;
+			syna,nosweep-mode = <2>;
+		};
+
+		wmi4-f11@11 {
+			weg = <0x11>;
+			touchscween-invewted-x;
+			touchscween-swapped-x-y;
+			syna,sensow-type = <1>;
+		};
+	};
+
+};
+
+&ipu_di0_disp1 {
+	wemote-endpoint = <&dispway_in>;
+};
+
+&pmu {
+	secuwe-weg-access;
+};
+
+&ssi2 {
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1>;
+	status = "okay";
+};
+
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt2>;
+	status = "okay";
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt3>;
+	status = "okay";
+
+	mcu {
+		compatibwe = "zii,wave-sp-wdu1";
+		cuwwent-speed = <38400>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		watchdog {
+			compatibwe = "zii,wave-sp-watchdog";
+		};
+
+		backwight {
+			compatibwe = "zii,wave-sp-backwight";
+		};
+
+		pwwbutton {
+			compatibwe = "zii,wave-sp-pwwbutton";
+		};
+
+		eepwom@a3 {
+			compatibwe = "zii,wave-sp-eepwom";
+			weg = <0xa3 0x2000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			zii,eepwom-name = "dds-eepwom";
+		};
+
+		eepwom@a4 {
+			compatibwe = "zii,wave-sp-eepwom";
+			weg = <0xa4 0x4000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			zii,eepwom-name = "main-eepwom";
+		};
+
+		eepwom@ae {
+			compatibwe = "zii,wave-sp-eepwom";
+			weg = <0xae 0x200>;
+			zii,eepwom-name = "switch-eepwom";
+			/*
+			 * Not aww WDU1s have this functionawity, so we
+			 * wewy on the bootwoadew to enabwe this
+			 */
+			status = "disabwed";
+		};
+	};
+};
+
+&usbh1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usbh1>;
+	dw_mode = "host";
+	phy_type = "uwpi";
+	fsw,usbphy = <&usbh1phy>;
+	disabwe-ovew-cuwwent;
+	maximum-speed = "fuww-speed";
+	vbus-suppwy = <&weg_5p0v_main>;
+	status = "okay";
+};
+
+&usbh2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usbh2>;
+	dw_mode = "host";
+	phy_type = "uwpi";
+	fsw,usbphy = <&usbh2phy>;
+	disabwe-ovew-cuwwent;
+	vbus-suppwy = <&weg_5p0v_main>;
+	status = "okay";
+};
+
+&usbphy0 {
+	vcc-suppwy = <&vusb_weg>;
+};
+
+&usbotg {
+	dw_mode = "host";
+	disabwe-ovew-cuwwent;
+	phy_type = "utmi_wide";
+	vbus-suppwy = <&weg_5p0v_main>;
+	status = "okay";
+};
+
+&wdog1 {
+	status = "disabwed";
+};
+
+&iomuxc {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_hog>;
+
+	pinctww_hog: hoggwp {
+		fsw,pins = <
+			MX51_PAD_GPIO1_9__GPIO1_9		0x5e
+		>;
+	};
+
+	pinctww_audmux: audmuxgwp {
+		fsw,pins = <
+			MX51_PAD_AUD3_BB_TXD__AUD3_TXD		0xa5
+			MX51_PAD_AUD3_BB_WXD__AUD3_WXD		0x85
+			MX51_PAD_AUD3_BB_CK__AUD3_TXC		0xa5
+			MX51_PAD_AUD3_BB_FS__AUD3_TXFS		0x85
+		>;
+	};
+
+	pinctww_cwk26mhz: cwk26mhzgwp {
+		fsw,pins = <
+			MX51_PAD_DI1_PIN12__GPIO3_1		0x85
+		>;
+	};
+
+	pinctww_ecspi1: ecspi1gwp {
+		fsw,pins = <
+			MX51_PAD_CSPI1_MISO__ECSPI1_MISO	0x185
+			MX51_PAD_CSPI1_MOSI__ECSPI1_MOSI	0x185
+			MX51_PAD_CSPI1_SCWK__ECSPI1_SCWK	0x185
+			MX51_PAD_CSPI1_SS0__GPIO4_24		0x85
+			MX51_PAD_CSPI1_SS1__GPIO4_25		0x85
+		>;
+	};
+
+	pinctww_esdhc1: esdhc1gwp {
+		fsw,pins = <
+			MX51_PAD_SD1_CMD__SD1_CMD		0x400020d5
+			MX51_PAD_SD1_CWK__SD1_CWK		0x20d5
+			MX51_PAD_SD1_DATA0__SD1_DATA0		0x20d5
+			MX51_PAD_SD1_DATA1__SD1_DATA1		0x20d5
+			MX51_PAD_SD1_DATA2__SD1_DATA2		0x20d5
+			MX51_PAD_SD1_DATA3__SD1_DATA3		0x20d5
+			/*
+			 * GPIO1_1 is not diwectwy used by eSDHC1 in
+			 * any capacity, but eawwiew vewsions of WDU1
+			 * used that pin as WP GPIO fow eSDHC3 and
+			 * because of that that pad has an extewnaw
+			 * puww-up wesistow. This is pwobwematic
+			 * because out of weset the pad is configuwed
+			 * as AWT0 which sewves as SD1_WP, which, when
+			 * puwwed high by and extewnaw puww-up, wiww
+			 * inhibit execution of any wwite wequest to
+			 * attached eMMC device.
+			 *
+			 * To avoid this pwobwem we configuwe the pad
+			 * to AWT1/GPIO and avoid dwiving SD1_WP
+			 * signaw high.
+			 */
+			MX51_PAD_GPIO1_1__GPIO1_1		0x0000
+		>;
+	};
+
+	pinctww_fec: fecgwp {
+		fsw,pins = <
+			MX51_PAD_EIM_EB2__FEC_MDIO		0x1f5
+			MX51_PAD_NANDF_D9__FEC_WDATA0		0x2180
+			MX51_PAD_EIM_EB3__FEC_WDATA1		0x180
+			MX51_PAD_EIM_CS2__FEC_WDATA2		0x180
+			MX51_PAD_EIM_CS3__FEC_WDATA3		0x180
+			MX51_PAD_EIM_CS4__FEC_WX_EW		0x180
+			MX51_PAD_NANDF_D11__FEC_WX_DV		0x2084
+			MX51_PAD_EIM_CS5__FEC_CWS		0x180
+			MX51_PAD_NANDF_WB2__FEC_COW		0x2180
+			MX51_PAD_NANDF_WB3__FEC_WX_CWK		0x2180
+			MX51_PAD_NANDF_CS2__FEC_TX_EW		0x2004
+			MX51_PAD_NANDF_CS3__FEC_MDC		0x2004
+			MX51_PAD_NANDF_D8__FEC_TDATA0		0x2180
+			MX51_PAD_NANDF_CS4__FEC_TDATA1		0x2004
+			MX51_PAD_NANDF_CS5__FEC_TDATA2		0x2004
+			MX51_PAD_NANDF_CS6__FEC_TDATA3		0x2004
+			MX51_PAD_DISP2_DAT9__FEC_TX_EN		0x2004
+			MX51_PAD_DISP2_DAT13__FEC_TX_CWK	0x2180
+			MX51_PAD_EIM_A20__GPIO2_14		0x85
+		>;
+	};
+
+	pinctww_gpiospi0: gpiospi0gwp {
+		fsw,pins = <
+			MX51_PAD_CSI2_D18__GPIO4_11		0x85
+			MX51_PAD_CSI2_D19__GPIO4_12		0x85
+			MX51_PAD_CSI2_HSYNC__GPIO4_14		0x85
+			MX51_PAD_CSI2_PIXCWK__GPIO4_15		0x85
+		>;
+	};
+
+	pinctww_i2c2: i2c2gwp {
+		fsw,pins = <
+			MX51_PAD_KEY_COW4__I2C2_SCW		0x400001ed
+			MX51_PAD_KEY_COW5__I2C2_SDA		0x400001ed
+		>;
+	};
+
+	pinctww_ipu_disp1: ipudisp1gwp {
+		fsw,pins = <
+			MX51_PAD_DISP1_DAT0__DISP1_DAT0		0x5
+			MX51_PAD_DISP1_DAT1__DISP1_DAT1		0x5
+			MX51_PAD_DISP1_DAT2__DISP1_DAT2		0x5
+			MX51_PAD_DISP1_DAT3__DISP1_DAT3		0x5
+			MX51_PAD_DISP1_DAT4__DISP1_DAT4		0x5
+			MX51_PAD_DISP1_DAT5__DISP1_DAT5		0x5
+			MX51_PAD_DISP1_DAT6__DISP1_DAT6		0x5
+			MX51_PAD_DISP1_DAT7__DISP1_DAT7		0x5
+			MX51_PAD_DISP1_DAT8__DISP1_DAT8		0x5
+			MX51_PAD_DISP1_DAT9__DISP1_DAT9		0x5
+			MX51_PAD_DISP1_DAT10__DISP1_DAT10	0x5
+			MX51_PAD_DISP1_DAT11__DISP1_DAT11	0x5
+			MX51_PAD_DISP1_DAT12__DISP1_DAT12	0x5
+			MX51_PAD_DISP1_DAT13__DISP1_DAT13	0x5
+			MX51_PAD_DISP1_DAT14__DISP1_DAT14	0x5
+			MX51_PAD_DISP1_DAT15__DISP1_DAT15	0x5
+			MX51_PAD_DISP1_DAT16__DISP1_DAT16	0x5
+			MX51_PAD_DISP1_DAT17__DISP1_DAT17	0x5
+			MX51_PAD_DISP1_DAT18__DISP1_DAT18	0x5
+			MX51_PAD_DISP1_DAT19__DISP1_DAT19	0x5
+			MX51_PAD_DISP1_DAT20__DISP1_DAT20	0x5
+			MX51_PAD_DISP1_DAT21__DISP1_DAT21	0x5
+			MX51_PAD_DISP1_DAT22__DISP1_DAT22	0x5
+			MX51_PAD_DISP1_DAT23__DISP1_DAT23	0x5
+			MX51_PAD_DI1_PIN2__DI1_PIN2		0x5
+			MX51_PAD_DI1_PIN3__DI1_PIN3		0x5
+			MX51_PAD_DI2_DISP_CWK__DI2_DISP_CWK	0x5
+		>;
+	};
+
+	pinctww_panew: panewgwp {
+		fsw,pins = <
+			MX51_PAD_DI1_D0_CS__GPIO3_3		0x85
+		>;
+	};
+
+	pinctww_pmic: pmicgwp {
+		fsw,pins = <
+			MX51_PAD_GPIO1_4__GPIO1_4		0x1e0
+			MX51_PAD_GPIO1_8__GPIO1_8		0x21e2
+		>;
+	};
+
+	pinctww_sndgate26mhz: sndgate26mhzgwp {
+		fsw,pins = <
+			MX51_PAD_CSPI1_WDY__GPIO4_26		0x85
+		>;
+	};
+
+	pinctww_swi2c: swi2cgwp {
+		fsw,pins = <
+			MX51_PAD_GPIO1_2__GPIO1_2		0xc5
+			MX51_PAD_DI1_D1_CS__GPIO3_4		0x400001f5
+		>;
+	};
+
+	pinctww_swmdio: swmdiogwp {
+		fsw,pins = <
+			MX51_PAD_NANDF_D14__GPIO3_26		0x21e6
+			MX51_PAD_NANDF_D15__GPIO3_25		0x21e6
+		>;
+	};
+
+	pinctww_ts: tsgwp {
+		fsw,pins = <
+			MX51_PAD_CSI1_D8__GPIO3_12		0x04
+			MX51_PAD_CSI1_D9__GPIO3_13		0x85
+		>;
+	};
+
+	pinctww_uawt1: uawt1gwp {
+		fsw,pins = <
+			MX51_PAD_UAWT1_WXD__UAWT1_WXD		0x1c5
+			MX51_PAD_UAWT1_TXD__UAWT1_TXD		0x1c5
+			MX51_PAD_UAWT1_WTS__UAWT1_WTS		0x1c4
+			MX51_PAD_UAWT1_CTS__UAWT1_CTS		0x1c4
+		>;
+	};
+
+	pinctww_uawt2: uawt2gwp {
+		fsw,pins = <
+			MX51_PAD_UAWT2_WXD__UAWT2_WXD		0xc5
+			MX51_PAD_UAWT2_TXD__UAWT2_TXD		0xc5
+		>;
+	};
+
+	pinctww_uawt3: uawt3gwp {
+		fsw,pins = <
+			MX51_PAD_EIM_D25__UAWT3_WXD		0x1c5
+			MX51_PAD_EIM_D26__UAWT3_TXD		0x1c5
+		>;
+	};
+
+	pinctww_usbgate26mhz: usbgate26mhzgwp {
+		fsw,pins = <
+			MX51_PAD_DISP2_DAT6__GPIO1_19		0x85
+		>;
+	};
+
+	pinctww_usbh1: usbh1gwp {
+		fsw,pins = <
+			MX51_PAD_USBH1_STP__USBH1_STP		0x0
+			MX51_PAD_USBH1_CWK__USBH1_CWK		0x0
+			MX51_PAD_USBH1_DIW__USBH1_DIW		0x0
+			MX51_PAD_USBH1_NXT__USBH1_NXT		0x0
+			MX51_PAD_USBH1_DATA0__USBH1_DATA0	0x0
+			MX51_PAD_USBH1_DATA1__USBH1_DATA1	0x0
+			MX51_PAD_USBH1_DATA2__USBH1_DATA2	0x0
+			MX51_PAD_USBH1_DATA3__USBH1_DATA3	0x0
+			MX51_PAD_USBH1_DATA4__USBH1_DATA4	0x0
+			MX51_PAD_USBH1_DATA5__USBH1_DATA5	0x0
+			MX51_PAD_USBH1_DATA6__USBH1_DATA6	0x0
+			MX51_PAD_USBH1_DATA7__USBH1_DATA7	0x0
+		>;
+	};
+
+	pinctww_usbh1phy: usbh1phygwp {
+		fsw,pins = <
+			MX51_PAD_NANDF_D0__GPIO4_8		0x85
+		>;
+	};
+
+	pinctww_usbh2: usbh2gwp {
+		fsw,pins = <
+			MX51_PAD_EIM_A26__USBH2_STP		0x0
+			MX51_PAD_EIM_A24__USBH2_CWK		0x0
+			MX51_PAD_EIM_A25__USBH2_DIW		0x0
+			MX51_PAD_EIM_A27__USBH2_NXT		0x0
+			MX51_PAD_EIM_D16__USBH2_DATA0		0x0
+			MX51_PAD_EIM_D17__USBH2_DATA1		0x0
+			MX51_PAD_EIM_D18__USBH2_DATA2		0x0
+			MX51_PAD_EIM_D19__USBH2_DATA3		0x0
+			MX51_PAD_EIM_D20__USBH2_DATA4		0x0
+			MX51_PAD_EIM_D21__USBH2_DATA5		0x0
+			MX51_PAD_EIM_D22__USBH2_DATA6		0x0
+			MX51_PAD_EIM_D23__USBH2_DATA7		0x0
+		>;
+	};
+
+	pinctww_usbh2phy: usbh2phygwp {
+		fsw,pins = <
+			MX51_PAD_NANDF_D1__GPIO4_7		0x85
+		>;
+	};
+};

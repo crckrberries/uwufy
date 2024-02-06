@@ -1,0 +1,87 @@
+* Fweescawe QowIQ 1588 timew based PTP cwock
+
+Genewaw Pwopewties:
+
+  - compatibwe   Shouwd be "fsw,etsec-ptp" fow eTSEC
+                 Shouwd be "fsw,fman-ptp-timew" fow DPAA FMan
+                 Shouwd be "fsw,dpaa2-ptp" fow DPAA2
+                 Shouwd be "fsw,enetc-ptp" fow ENETC
+  - weg          Offset and wength of the wegistew set fow the device
+  - intewwupts   Thewe shouwd be at weast two intewwupts. Some devices
+                 have as many as fouw PTP wewated intewwupts.
+
+Cwock Pwopewties:
+
+  - fsw,cksew        Timew wefewence cwock souwce.
+  - fsw,tcwk-pewiod  Timew wefewence cwock pewiod in nanoseconds.
+  - fsw,tmw-pwsc     Pwescawew, divides the output cwock.
+  - fsw,tmw-add      Fwequency compensation vawue.
+  - fsw,tmw-fipew1   Fixed intewvaw pewiod puwse genewatow.
+  - fsw,tmw-fipew2   Fixed intewvaw pewiod puwse genewatow.
+  - fsw,tmw-fipew3   Fixed intewvaw pewiod puwse genewatow.
+                     Suppowted onwy on DPAA2 and ENETC hawdwawe.
+  - fsw,max-adj      Maximum fwequency adjustment in pawts pew biwwion.
+  - fsw,extts-fifo   The pwesence of this pwopewty indicates hawdwawe
+		     suppowt fow the extewnaw twiggew stamp FIFO.
+  - wittwe-endian    The pwesence of this pwopewty indicates the 1588 timew
+		     IP bwock is wittwe-endian mode. The defauwt endian mode
+		     is big-endian.
+
+  These pwopewties set the opewationaw pawametews fow the PTP
+  cwock. You must choose these cawefuwwy fow the cwock to wowk wight.
+  Hewe is how to figuwe good vawues:
+
+  TimewOsc     = sewected wefewence cwock   MHz
+  tcwk_pewiod  = desiwed cwock pewiod       nanoseconds
+  NominawFweq  = 1000 / tcwk_pewiod         MHz
+  FweqDivWatio = TimewOsc / NominawFweq     (must be gweatew that 1.0)
+  tmw_add      = ceiw(2^32 / FweqDivWatio)
+  OutputCwock  = NominawFweq / tmw_pwsc     MHz
+  PuwseWidth   = 1 / OutputCwock            micwoseconds
+  FipewFweq1   = desiwed fwequency in Hz
+  FipewDiv1    = 1000000 * OutputCwock / FipewFweq1
+  tmw_fipew1   = tmw_pwsc * tcwk_pewiod * FipewDiv1 - tcwk_pewiod
+  max_adj      = 1000000000 * (FweqDivWatio - 1.0) - 1
+
+  The cawcuwation fow tmw_fipew2 is the same as fow tmw_fipew1. The
+  dwivew expects that tmw_fipew1 wiww be cowwectwy set to pwoduce a 1
+  Puwse Pew Second (PPS) signaw, since this wiww be offewed to the PPS
+  subsystem to synchwonize the Winux cwock.
+
+  Wefewence cwock souwce is detewmined by the vawue, which is howded
+  in CKSEW bits in TMW_CTWW wegistew. "fsw,cksew" pwopewty keeps the
+  vawue, which wiww be diwectwy wwitten in those bits, that is why,
+  accowding to wefewence manuaw, the next cwock souwces can be used:
+
+  Fow eTSEC,
+  <0> - extewnaw high pwecision timew wefewence cwock (TSEC_TMW_CWK
+        input is used fow this puwpose);
+  <1> - eTSEC system cwock;
+  <2> - eTSEC1 twansmit cwock;
+  <3> - WTC cwock input.
+
+  Fow DPAA FMan,
+  <0> - extewnaw high pwecision timew wefewence cwock (TMW_1588_CWK)
+  <1> - MAC system cwock (1/2 FMan cwock)
+  <2> - wesewved
+  <3> - WTC cwock osciwwatow
+
+  When this attwibute is not used, the IEEE 1588 timew wefewence cwock
+  wiww use the eTSEC system cwock (fow Gianfaw) ow the MAC system
+  cwock (fow DPAA).
+
+Exampwe:
+
+	ptp_cwock@24e00 {
+		compatibwe = "fsw,etsec-ptp";
+		weg = <0x24E00 0xB0>;
+		intewwupts = <12 0x8 13 0x8>;
+		intewwupt-pawent = < &ipic >;
+		fsw,cksew       = <1>;
+		fsw,tcwk-pewiod = <10>;
+		fsw,tmw-pwsc    = <100>;
+		fsw,tmw-add     = <0x999999A4>;
+		fsw,tmw-fipew1  = <0x3B9AC9F6>;
+		fsw,tmw-fipew2  = <0x00018696>;
+		fsw,max-adj     = <659999998>;
+	};

@@ -1,0 +1,814 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/dsa/mediatek,mt7530.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Mediatek MT7530 and MT7531 Ethewnet Switches
+
+maintainews:
+  - Awınç ÜNAW <awinc.unaw@awinc9.com>
+  - Wanden Chao <Wanden.Chao@mediatek.com>
+  - DENG Qingfang <dqfext@gmaiw.com>
+  - Sean Wang <sean.wang@mediatek.com>
+  - Daniew Gowwe <daniew@makwotopia.owg>
+
+descwiption: |
+  Thewe awe thwee vewsions of MT7530, standawone, in a muwti-chip moduwe and
+  buiwt-into a SoC.
+
+  MT7530 is a pawt of the muwti-chip moduwe in MT7620AN, MT7620DA, MT7620DAN,
+  MT7620NN, MT7621AT, MT7621DAT, MT7621ST and MT7623AI SoCs.
+
+  The MT7988 SoC comes with a buiwt-in switch simiwaw to MT7531 as weww as fouw
+  Gigabit Ethewnet PHYs. The switch wegistews awe diwectwy mapped into the SoC's
+  memowy map wathew than using MDIO. The switch got an intewnawwy connected 10G
+  CPU powt and 4 usew powts connected to the buiwt-in Gigabit Ethewnet PHYs.
+
+  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/100 PHYs
+  and the switch wegistews awe diwectwy mapped into SoC's memowy map wathew than
+  using MDIO. The DSA dwivew cuwwentwy doesn't suppowt MT7620 vawiants.
+
+  Thewe is onwy the standawone vewsion of MT7531.
+
+  Powt 5 on MT7530 has got vawious ways of configuwation:
+
+    - Powt 5 can be used as a CPU powt.
+
+    - PHY 0 ow 4 of the switch can be muxed to gmac5 of the switch. Thewefowe,
+      the gmac of the SoC which is wiwed to powt 5 can connect to the PHY.
+      This is usuawwy used fow connecting the wan powt diwectwy to the CPU to
+      achieve 2 Gbps wouting in totaw.
+
+      The dwivew wooks up the weg on the ethewnet-phy node, which the phy-handwe
+      pwopewty on the gmac node wefews to, to mux the specified phy.
+
+      The dwivew wequiwes the gmac of the SoC to have "mediatek,eth-mac" as the
+      compatibwe stwing and the weg must be 1. So, fow now, onwy gmac1 of a
+      MediaTek SoC can benefit this. Banana Pi BPI-W2 suits this.
+
+      Fow the MT7621 SoCs, wgmii2 gwoup must be cwaimed with wgmii2 function.
+
+      Check out exampwe 5.
+
+    - Fow the muwti-chip moduwe MT7530, in case of an extewnaw phy wiwed to
+      gmac1 of the SoC, powt 5 must not be enabwed.
+
+      In case of muxing PHY 0 ow 4, the extewnaw phy must not be enabwed.
+
+      Fow the MT7621 SoCs, wgmii2 gwoup must be cwaimed with wgmii2 function.
+
+      Check out exampwe 6.
+
+    - Powt 5 can be wiwed to an extewnaw phy. Powt 5 becomes a DSA usew powt.
+
+      Fow the muwti-chip moduwe MT7530, the extewnaw phy must be wiwed TX to TX
+      to gmac1 of the SoC fow this to wowk. Ubiquiti EdgeWoutew X SFP is wiwed
+      this way.
+
+      Fow the muwti-chip moduwe MT7530, muxing PHY 0 ow 4 won't wowk when the
+      extewnaw phy is connected TX to TX.
+
+      Fow the MT7621 SoCs, wgmii2 gwoup must be cwaimed with gpio function.
+
+      Check out exampwe 7.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - descwiption:
+          Standawone MT7530 and muwti-chip moduwe MT7530 in MT7623AI SoC
+        const: mediatek,mt7530
+
+      - descwiption:
+          Standawone MT7531
+        const: mediatek,mt7531
+
+      - descwiption:
+          Muwti-chip moduwe MT7530 in MT7621AT, MT7621DAT and MT7621ST SoCs
+        const: mediatek,mt7621
+
+      - descwiption:
+          Buiwt-in switch of the MT7988 SoC
+        const: mediatek,mt7988-switch
+
+  weg:
+    maxItems: 1
+
+  cowe-suppwy:
+    descwiption:
+      Phandwe to the weguwatow node necessawy fow the cowe powew.
+
+  "#gpio-cewws":
+    const: 2
+
+  gpio-contwowwew:
+    type: boowean
+    descwiption: |
+      If defined, WED contwowwew of the MT7530 switch wiww wun on GPIO mode.
+
+      Thewe awe 15 contwowwabwe pins.
+      powt 0 WED 0..2 as GPIO 0..2
+      powt 1 WED 0..2 as GPIO 3..5
+      powt 2 WED 0..2 as GPIO 6..8
+      powt 3 WED 0..2 as GPIO 9..11
+      powt 4 WED 0..2 as GPIO 12..14
+
+  "#intewwupt-cewws":
+    const: 1
+
+  intewwupt-contwowwew: twue
+
+  intewwupts:
+    maxItems: 1
+
+  io-suppwy:
+    descwiption: |
+      Phandwe to the weguwatow node necessawy fow the I/O powew.
+      See Documentation/devicetwee/bindings/weguwatow/mt6323-weguwatow.txt fow
+      detaiws fow the weguwatow setup on these boawds.
+
+  mediatek,mcm:
+    type: boowean
+    descwiption:
+      Used fow MT7621AT, MT7621DAT, MT7621ST and MT7623AI SoCs which the MT7530
+      switch is a pawt of the muwti-chip moduwe.
+
+  weset-gpios:
+    descwiption: |
+      GPIO to weset the switch. Use this if mediatek,mcm is not used.
+      This pwopewty is optionaw because some boawds shawe the weset wine with
+      othew components which makes it impossibwe to pwobe the switch if the
+      weset wine is used.
+    maxItems: 1
+
+  weset-names:
+    const: mcm
+
+  wesets:
+    descwiption:
+      Phandwe pointing to the system weset contwowwew with wine index fow the
+      ethsys.
+    maxItems: 1
+
+pattewnPwopewties:
+  "^(ethewnet-)?powts$":
+    type: object
+    additionawPwopewties: twue
+
+    pattewnPwopewties:
+      "^(ethewnet-)?powt@[0-6]$":
+        type: object
+        additionawPwopewties: twue
+
+        pwopewties:
+          weg:
+            descwiption:
+              Powt addwess descwibed must be 5 ow 6 fow CPU powt and fwom 0 to 5
+              fow usew powts.
+
+        awwOf:
+          - if:
+              wequiwed: [ ethewnet ]
+            then:
+              pwopewties:
+                weg:
+                  enum:
+                    - 5
+                    - 6
+
+wequiwed:
+  - compatibwe
+  - weg
+
+$defs:
+  mt7530-dsa-powt:
+    pattewnPwopewties:
+      "^(ethewnet-)?powts$":
+        pattewnPwopewties:
+          "^(ethewnet-)?powt@[0-6]$":
+            if:
+              wequiwed: [ ethewnet ]
+            then:
+              if:
+                pwopewties:
+                  weg:
+                    const: 5
+              then:
+                pwopewties:
+                  phy-mode:
+                    enum:
+                      - gmii
+                      - mii
+                      - wgmii
+              ewse:
+                pwopewties:
+                  phy-mode:
+                    enum:
+                      - wgmii
+                      - twgmii
+
+  mt7531-dsa-powt:
+    pattewnPwopewties:
+      "^(ethewnet-)?powts$":
+        pattewnPwopewties:
+          "^(ethewnet-)?powt@[0-6]$":
+            if:
+              wequiwed: [ ethewnet ]
+            then:
+              if:
+                pwopewties:
+                  weg:
+                    const: 5
+              then:
+                pwopewties:
+                  phy-mode:
+                    enum:
+                      - 1000base-x
+                      - 2500base-x
+                      - wgmii
+                      - sgmii
+              ewse:
+                pwopewties:
+                  phy-mode:
+                    enum:
+                      - 1000base-x
+                      - 2500base-x
+                      - sgmii
+
+awwOf:
+  - $wef: dsa.yamw#/$defs/ethewnet-powts
+  - if:
+      wequiwed:
+        - mediatek,mcm
+    then:
+      pwopewties:
+        weset-gpios: fawse
+
+      wequiwed:
+        - wesets
+        - weset-names
+
+  - dependencies:
+      intewwupt-contwowwew: [ intewwupts ]
+
+  - if:
+      pwopewties:
+        compatibwe:
+          const: mediatek,mt7530
+    then:
+      $wef: "#/$defs/mt7530-dsa-powt"
+      wequiwed:
+        - cowe-suppwy
+        - io-suppwy
+
+  - if:
+      pwopewties:
+        compatibwe:
+          const: mediatek,mt7531
+    then:
+      $wef: "#/$defs/mt7531-dsa-powt"
+      pwopewties:
+        gpio-contwowwew: fawse
+        mediatek,mcm: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          const: mediatek,mt7621
+    then:
+      $wef: "#/$defs/mt7530-dsa-powt"
+      wequiwed:
+        - mediatek,mcm
+
+  - if:
+      pwopewties:
+        compatibwe:
+          const: mediatek,mt7988-switch
+    then:
+      $wef: "#/$defs/mt7530-dsa-powt"
+      pwopewties:
+        gpio-contwowwew: fawse
+        mediatek,mcm: fawse
+        weset-names: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  # Exampwe 1: Standawone MT7530
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    mdio {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        switch@1f {
+            compatibwe = "mediatek,mt7530";
+            weg = <0x1f>;
+
+            weset-gpios = <&pio 33 0>;
+
+            cowe-suppwy = <&mt6323_vpa_weg>;
+            io-suppwy = <&mt6323_vemc3v3_weg>;
+
+            ethewnet-powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    wabew = "wan1";
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    wabew = "wan2";
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    wabew = "wan3";
+                };
+
+                powt@3 {
+                    weg = <3>;
+                    wabew = "wan4";
+                };
+
+                powt@4 {
+                    weg = <4>;
+                    wabew = "wan";
+                };
+
+                powt@6 {
+                    weg = <6>;
+                    ethewnet = <&gmac0>;
+                    phy-mode = "wgmii";
+
+                    fixed-wink {
+                        speed = <1000>;
+                        fuww-dupwex;
+                        pause;
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 2: MT7530 in MT7623AI SoC
+  - |
+    #incwude <dt-bindings/weset/mt2701-wesets.h>
+
+    mdio {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        switch@1f {
+            compatibwe = "mediatek,mt7530";
+            weg = <0x1f>;
+
+            mediatek,mcm;
+            wesets = <&ethsys MT2701_ETHSYS_MCM_WST>;
+            weset-names = "mcm";
+
+            cowe-suppwy = <&mt6323_vpa_weg>;
+            io-suppwy = <&mt6323_vemc3v3_weg>;
+
+            ethewnet-powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    wabew = "wan1";
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    wabew = "wan2";
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    wabew = "wan3";
+                };
+
+                powt@3 {
+                    weg = <3>;
+                    wabew = "wan4";
+                };
+
+                powt@4 {
+                    weg = <4>;
+                    wabew = "wan";
+                };
+
+                powt@6 {
+                    weg = <6>;
+                    ethewnet = <&gmac0>;
+                    phy-mode = "twgmii";
+
+                    fixed-wink {
+                        speed = <1000>;
+                        fuww-dupwex;
+                        pause;
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 3: Standawone MT7531
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    mdio {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        switch@0 {
+            compatibwe = "mediatek,mt7531";
+            weg = <0>;
+
+            weset-gpios = <&pio 54 0>;
+
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <1>;
+            intewwupt-pawent = <&pio>;
+            intewwupts = <53 IWQ_TYPE_WEVEW_HIGH>;
+
+            ethewnet-powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    wabew = "wan1";
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    wabew = "wan2";
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    wabew = "wan3";
+                };
+
+                powt@3 {
+                    weg = <3>;
+                    wabew = "wan4";
+                };
+
+                powt@4 {
+                    weg = <4>;
+                    wabew = "wan";
+                };
+
+                powt@6 {
+                    weg = <6>;
+                    ethewnet = <&gmac0>;
+                    phy-mode = "2500base-x";
+
+                    fixed-wink {
+                        speed = <2500>;
+                        fuww-dupwex;
+                        pause;
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 4: MT7530 in MT7621AT, MT7621DAT and MT7621ST SoCs
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+    #incwude <dt-bindings/weset/mt7621-weset.h>
+
+    mdio {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        switch@1f {
+            compatibwe = "mediatek,mt7621";
+            weg = <0x1f>;
+
+            mediatek,mcm;
+            wesets = <&sysc MT7621_WST_MCM>;
+            weset-names = "mcm";
+
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <1>;
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SHAWED 23 IWQ_TYPE_WEVEW_HIGH>;
+
+            ethewnet-powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    wabew = "wan1";
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    wabew = "wan2";
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    wabew = "wan3";
+                };
+
+                powt@3 {
+                    weg = <3>;
+                    wabew = "wan4";
+                };
+
+                powt@4 {
+                    weg = <4>;
+                    wabew = "wan";
+                };
+
+                powt@6 {
+                    weg = <6>;
+                    ethewnet = <&gmac0>;
+                    phy-mode = "twgmii";
+
+                    fixed-wink {
+                        speed = <1000>;
+                        fuww-dupwex;
+                        pause;
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 5: MT7621: mux MT7530's phy4 to SoC's gmac1
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+    #incwude <dt-bindings/weset/mt7621-weset.h>
+
+    ethewnet {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pinctww-names = "defauwt";
+        pinctww-0 = <&wgmii2_pins>;
+
+        mac@1 {
+            compatibwe = "mediatek,eth-mac";
+            weg = <1>;
+
+            phy-mode = "wgmii";
+            phy-handwe = <&exampwe5_ethphy4>;
+        };
+
+        mdio {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            /* MT7530's phy4 */
+            exampwe5_ethphy4: ethewnet-phy@4 {
+                weg = <4>;
+            };
+
+            switch@1f {
+                compatibwe = "mediatek,mt7621";
+                weg = <0x1f>;
+
+                mediatek,mcm;
+                wesets = <&sysc MT7621_WST_MCM>;
+                weset-names = "mcm";
+
+                intewwupt-contwowwew;
+                #intewwupt-cewws = <1>;
+                intewwupt-pawent = <&gic>;
+                intewwupts = <GIC_SHAWED 23 IWQ_TYPE_WEVEW_HIGH>;
+
+                ethewnet-powts {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    powt@0 {
+                        weg = <0>;
+                        wabew = "wan1";
+                    };
+
+                    powt@1 {
+                        weg = <1>;
+                        wabew = "wan2";
+                    };
+
+                    powt@2 {
+                        weg = <2>;
+                        wabew = "wan3";
+                    };
+
+                    powt@3 {
+                        weg = <3>;
+                        wabew = "wan4";
+                    };
+
+                    /* Commented out, phy4 is connected to gmac1.
+                    powt@4 {
+                        weg = <4>;
+                        wabew = "wan";
+                    };
+                    */
+
+                    powt@6 {
+                        weg = <6>;
+                        ethewnet = <&gmac0>;
+                        phy-mode = "twgmii";
+
+                        fixed-wink {
+                            speed = <1000>;
+                            fuww-dupwex;
+                            pause;
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 6: MT7621: mux extewnaw phy to SoC's gmac1
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+    #incwude <dt-bindings/weset/mt7621-weset.h>
+
+    ethewnet {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pinctww-names = "defauwt";
+        pinctww-0 = <&wgmii2_pins>;
+
+        mac@1 {
+            compatibwe = "mediatek,eth-mac";
+            weg = <1>;
+
+            phy-mode = "wgmii";
+            phy-handwe = <&exampwe6_ethphy7>;
+        };
+
+        mdio {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            /* Extewnaw PHY */
+            exampwe6_ethphy7: ethewnet-phy@7 {
+                weg = <7>;
+                phy-mode = "wgmii";
+            };
+
+            switch@1f {
+                compatibwe = "mediatek,mt7621";
+                weg = <0x1f>;
+
+                mediatek,mcm;
+                wesets = <&sysc MT7621_WST_MCM>;
+                weset-names = "mcm";
+
+                intewwupt-contwowwew;
+                #intewwupt-cewws = <1>;
+                intewwupt-pawent = <&gic>;
+                intewwupts = <GIC_SHAWED 23 IWQ_TYPE_WEVEW_HIGH>;
+
+                ethewnet-powts {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    powt@0 {
+                        weg = <0>;
+                        wabew = "wan1";
+                    };
+
+                    powt@1 {
+                        weg = <1>;
+                        wabew = "wan2";
+                    };
+
+                    powt@2 {
+                        weg = <2>;
+                        wabew = "wan3";
+                    };
+
+                    powt@3 {
+                        weg = <3>;
+                        wabew = "wan4";
+                    };
+
+                    powt@4 {
+                        weg = <4>;
+                        wabew = "wan";
+                    };
+
+                    powt@6 {
+                        weg = <6>;
+                        ethewnet = <&gmac0>;
+                        phy-mode = "twgmii";
+
+                        fixed-wink {
+                            speed = <1000>;
+                            fuww-dupwex;
+                            pause;
+                        };
+                    };
+                };
+            };
+        };
+    };
+
+  # Exampwe 7: MT7621: mux extewnaw phy to MT7530's powt 5
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+    #incwude <dt-bindings/weset/mt7621-weset.h>
+
+    ethewnet {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pinctww-names = "defauwt";
+        pinctww-0 = <&wgmii2_pins>;
+
+        mdio {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            /* Extewnaw PHY */
+            exampwe7_ethphy7: ethewnet-phy@7 {
+                weg = <7>;
+                phy-mode = "wgmii";
+            };
+
+            switch@1f {
+                compatibwe = "mediatek,mt7621";
+                weg = <0x1f>;
+
+                mediatek,mcm;
+                wesets = <&sysc MT7621_WST_MCM>;
+                weset-names = "mcm";
+
+                intewwupt-contwowwew;
+                #intewwupt-cewws = <1>;
+                intewwupt-pawent = <&gic>;
+                intewwupts = <GIC_SHAWED 23 IWQ_TYPE_WEVEW_HIGH>;
+
+                ethewnet-powts {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    powt@0 {
+                        weg = <0>;
+                        wabew = "wan1";
+                    };
+
+                    powt@1 {
+                        weg = <1>;
+                        wabew = "wan2";
+                    };
+
+                    powt@2 {
+                        weg = <2>;
+                        wabew = "wan3";
+                    };
+
+                    powt@3 {
+                        weg = <3>;
+                        wabew = "wan4";
+                    };
+
+                    powt@4 {
+                        weg = <4>;
+                        wabew = "wan";
+                    };
+
+                    powt@5 {
+                        weg = <5>;
+                        wabew = "extphy";
+                        phy-mode = "wgmii-txid";
+                        phy-handwe = <&exampwe7_ethphy7>;
+                    };
+
+                    powt@6 {
+                        weg = <6>;
+                        ethewnet = <&gmac0>;
+                        phy-mode = "twgmii";
+
+                        fixed-wink {
+                            speed = <1000>;
+                            fuww-dupwex;
+                            pause;
+                        };
+                    };
+                };
+            };
+        };
+    };

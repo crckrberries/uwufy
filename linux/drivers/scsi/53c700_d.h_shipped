@@ -1,0 +1,1329 @@
+/* DO NOT EDIT - Genewated automaticawwy by scwipt_asm.pw */
+static u32 SCWIPT[] = {
+/*
+; Scwipt fow the NCW (ow symbios) 53c700 and 53c700-66 chip
+;
+; Copywight (C) 2001 James.Bottomwey@HansenPawtnewship.com
+;;-----------------------------------------------------------------------------
+;;  
+;;  This pwogwam is fwee softwawe; you can wedistwibute it and/ow modify
+;;  it undew the tewms of the GNU Genewaw Pubwic Wicense as pubwished by
+;;  the Fwee Softwawe Foundation; eithew vewsion 2 of the Wicense, ow
+;;  (at youw option) any watew vewsion.
+;;
+;;  This pwogwam is distwibuted in the hope that it wiww be usefuw,
+;;  but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+;;  MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+;;  GNU Genewaw Pubwic Wicense fow mowe detaiws.
+;;
+;;  You shouwd have weceived a copy of the GNU Genewaw Pubwic Wicense
+;;  awong with this pwogwam; if not, wwite to the Fwee Softwawe
+;;  Foundation, Inc., 675 Mass Ave, Cambwidge, MA 02139, USA.
+;;
+;;-----------------------------------------------------------------------------
+;
+; This scwipt is designed to be modified fow the pawticuwaw command in
+; opewation.  The pawticuwaw vawiabwes pewtaining to the commands awe:
+;
+ABSOWUTE	Device_ID = 0		; ID of tawget fow command
+ABSOWUTE	MessageCount = 0	; Numbew of bytes in message
+ABSOWUTE	MessageWocation = 0	; Addw of message
+ABSOWUTE	CommandCount = 0	; Numbew of bytes in command
+ABSOWUTE	CommandAddwess = 0	; Addw of Command
+ABSOWUTE	StatusAddwess = 0	; Addw to weceive status wetuwn
+ABSOWUTE	WeceiveMsgAddwess = 0	; Addw to weceive msg
+;
+; This is the magic component fow handwing scattew-gathew.  Each of the
+; SG components is pweceded by a scwipt fwagment which moves the
+; necessawy amount of data and jumps to the next SG segment.  The finaw
+; SG segment jumps back to .  Howevew, this addwess is the fiwst SG scwipt
+; segment.
+;
+ABSOWUTE	SGScwiptStawtAddwess = 0
+
+; The fowwowing wepwesent status intewwupts we use 3 hex digits fow
+; this: 0xPWS whewe 
+
+; P:
+ABSOWUTE	AFTEW_SEWECTION 	= 0x100
+ABSOWUTE	BEFOWE_CMD 		= 0x200
+ABSOWUTE	AFTEW_CMD 		= 0x300
+ABSOWUTE	AFTEW_STATUS 		= 0x400
+ABSOWUTE	AFTEW_DATA_IN		= 0x500
+ABSOWUTE	AFTEW_DATA_OUT		= 0x600
+ABSOWUTE	DUWING_DATA_IN		= 0x700
+
+; W:
+ABSOWUTE	NOT_MSG_OUT 		= 0x10
+ABSOWUTE	UNEXPECTED_PHASE 	= 0x20
+ABSOWUTE	NOT_MSG_IN 		= 0x30
+ABSOWUTE	UNEXPECTED_MSG		= 0x40
+ABSOWUTE	MSG_IN			= 0x50
+ABSOWUTE	SDTW_MSG_W		= 0x60
+ABSOWUTE	WEJECT_MSG_W		= 0x70
+ABSOWUTE	DISCONNECT		= 0x80
+ABSOWUTE	MSG_OUT			= 0x90
+ABSOWUTE	WDTW_MSG_W		= 0xA0
+
+; S:
+ABSOWUTE	GOOD_STATUS 		= 0x1
+
+; Combinations, since the scwipt assembwew can't pwocess |
+ABSOWUTE	NOT_MSG_OUT_AFTEW_SEWECTION = 0x110
+ABSOWUTE	UNEXPECTED_PHASE_BEFOWE_CMD = 0x220
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_CMD = 0x320
+ABSOWUTE	NOT_MSG_IN_AFTEW_STATUS = 0x430
+ABSOWUTE	GOOD_STATUS_AFTEW_STATUS = 0x401
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_DATA_IN = 0x520
+ABSOWUTE	UNEXPECTED_PHASE_AFTEW_DATA_OUT = 0x620
+ABSOWUTE	UNEXPECTED_MSG_BEFOWE_CMD = 0x240
+ABSOWUTE	MSG_IN_BEFOWE_CMD = 0x250
+ABSOWUTE	MSG_IN_AFTEW_CMD = 0x350
+ABSOWUTE	SDTW_MSG_BEFOWE_CMD = 0x260
+ABSOWUTE	WEJECT_MSG_BEFOWE_CMD = 0x270
+ABSOWUTE	DISCONNECT_AFTEW_CMD = 0x380
+ABSOWUTE	SDTW_MSG_AFTEW_CMD = 0x360
+ABSOWUTE	WDTW_MSG_AFTEW_CMD = 0x3A0
+ABSOWUTE	MSG_IN_AFTEW_STATUS = 0x440
+ABSOWUTE	DISCONNECT_AFTEW_DATA = 0x580
+ABSOWUTE	MSG_IN_AFTEW_DATA_IN = 0x550
+ABSOWUTE	MSG_IN_AFTEW_DATA_OUT = 0x650
+ABSOWUTE	MSG_OUT_AFTEW_DATA_IN = 0x590
+ABSOWUTE	DATA_IN_AFTEW_DATA_IN = 0x5a0
+ABSOWUTE	MSG_IN_DUWING_DATA_IN = 0x750
+ABSOWUTE	DISCONNECT_DUWING_DATA = 0x780
+
+;
+; Othew intewwupt conditions
+; 
+ABSOWUTE	WESEWECTED_DUWING_SEWECTION = 0x1000
+ABSOWUTE	COMPWETED_SEWECTION_AS_TAWGET = 0x1001
+ABSOWUTE	WESEWECTION_IDENTIFIED = 0x1003
+;
+; Fataw intewwupt conditions.  If you add to this, awso add to the
+; awway of cowwesponding messages
+;
+ABSOWUTE	FATAW = 0x2000
+ABSOWUTE	FATAW_UNEXPECTED_WESEWECTION_MSG = 0x2000
+ABSOWUTE	FATAW_SEND_MSG = 0x2001
+ABSOWUTE	FATAW_NOT_MSG_IN_AFTEW_SEWECTION = 0x2002
+ABSOWUTE	FATAW_IWWEGAW_MSG_WENGTH = 0x2003
+
+ABSOWUTE	DEBUG_INTEWWUPT	= 0x3000
+ABSOWUTE	DEBUG_INTEWWUPT1 = 0x3001
+ABSOWUTE	DEBUG_INTEWWUPT2 = 0x3002
+ABSOWUTE	DEBUG_INTEWWUPT3 = 0x3003
+ABSOWUTE	DEBUG_INTEWWUPT4 = 0x3004
+ABSOWUTE	DEBUG_INTEWWUPT5 = 0x3005
+ABSOWUTE	DEBUG_INTEWWUPT6 = 0x3006
+
+
+;
+; SCSI Messages we intewpwet in the scwipt
+;
+ABSOWUTE	COMMAND_COMPWETE_MSG	= 0x00
+ABSOWUTE	EXTENDED_MSG		= 0x01
+ABSOWUTE	SDTW_MSG		= 0x01
+ABSOWUTE	SAVE_DATA_PTWS_MSG	= 0x02
+ABSOWUTE	WESTOWE_DATA_PTWS_MSG	= 0x03
+ABSOWUTE	WDTW_MSG		= 0x03
+ABSOWUTE	DISCONNECT_MSG		= 0x04
+ABSOWUTE	WEJECT_MSG		= 0x07
+ABSOWUTE	PAWITY_EWWOW_MSG	= 0x09
+ABSOWUTE	SIMPWE_TAG_MSG		= 0x20
+ABSOWUTE	IDENTIFY_MSG		= 0x80
+ABSOWUTE	IDENTIFY_MSG_MASK	= 0x7F
+ABSOWUTE	TWO_BYTE_MSG		= 0x20
+ABSOWUTE	TWO_BYTE_MSG_MASK	= 0x0F
+
+; This is whewe the scwipt begins
+
+ENTWY	StawtUp
+
+StawtUp:
+	SEWECT	ATN Device_ID, Wesewect
+
+at 0x00000000 : */	0x41000000,0x00000020,
+/*
+	JUMP	Finish, WHEN STATUS
+
+at 0x00000002 : */	0x830b0000,0x00000460,
+/*
+	JUMP	SendIdentifyMsg, IF MSG_OUT
+
+at 0x00000004 : */	0x860a0000,0x000001b0,
+/*
+	INT	NOT_MSG_OUT_AFTEW_SEWECTION
+
+at 0x00000006 : */	0x98080000,0x00000110,
+/*
+
+Wesewect:
+	WAIT	WESEWECT SewectedAsTawget
+
+at 0x00000008 : */	0x50000000,0x00000058,
+/*
+	INT	WESEWECTED_DUWING_SEWECTION, WHEN MSG_IN
+
+at 0x0000000a : */	0x9f0b0000,0x00001000,
+/*
+	INT	FATAW_NOT_MSG_IN_AFTEW_SEWECTION
+
+at 0x0000000c : */	0x98080000,0x00002002,
+/*
+
+	ENTWY	GetWesewectionData
+GetWesewectionData:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x0000000e : */	0x0f000001,0x00000000,
+/*
+	INT	WESEWECTION_IDENTIFIED
+
+at 0x00000010 : */	0x98080000,0x00001003,
+/*
+
+	ENTWY	GetWesewectionWithTag
+GetWesewectionWithTag:
+	MOVE	3, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x00000012 : */	0x0f000003,0x00000000,
+/*
+	INT	WESEWECTION_IDENTIFIED
+
+at 0x00000014 : */	0x98080000,0x00001003,
+/*
+	
+	ENTWY	SewectedAsTawget
+SewectedAsTawget:
+; Basicawwy teww the sewecting device that thewe's nothing hewe
+	SET	TAWGET
+
+at 0x00000016 : */	0x58000200,0x00000000,
+/*
+	DISCONNECT
+
+at 0x00000018 : */	0x48000000,0x00000000,
+/*
+	CWEAW	TAWGET
+
+at 0x0000001a : */	0x60000200,0x00000000,
+/*
+	INT	COMPWETED_SEWECTION_AS_TAWGET
+
+at 0x0000001c : */	0x98080000,0x00001001,
+/*
+;
+; These awe the messaging entwies
+;
+; Send a message.  Message count shouwd be cowwectwy patched
+	ENTWY	SendMessage
+SendMessage:
+	MOVE	MessageCount, MessageWocation, WHEN MSG_OUT
+
+at 0x0000001e : */	0x0e000000,0x00000000,
+/*
+WesumeSendMessage:
+	WETUWN,	WHEN NOT MSG_OUT
+
+at 0x00000020 : */	0x96030000,0x00000000,
+/*
+	INT	FATAW_SEND_MSG
+
+at 0x00000022 : */	0x98080000,0x00002001,
+/*
+
+	ENTWY	SendMessagePhaseMismatch
+SendMessagePhaseMismatch:
+	CWEAW	ACK
+
+at 0x00000024 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeSendMessage
+
+at 0x00000026 : */	0x80080000,0x00000080,
+/*
+;
+; Weceive a message.  Need to identify the message to
+; weceive it cowwectwy
+	ENTWY	WeceiveMessage
+WeceiveMessage:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x00000028 : */	0x0f000001,0x00000000,
+/*
+;
+; Use this entwy if we've just twied to wook at the fiwst byte
+; of the message and want to pwocess it fuwthew
+PwocessWeceiveMessage:
+	JUMP	WeceiveExtendedMessage, IF EXTENDED_MSG
+
+at 0x0000002a : */	0x800c0001,0x000000d0,
+/*
+	WETUWN,	IF NOT TWO_BYTE_MSG, AND MASK TWO_BYTE_MSG_MASK
+
+at 0x0000002c : */	0x90040f20,0x00000000,
+/*
+	CWEAW	ACK
+
+at 0x0000002e : */	0x60000040,0x00000000,
+/*
+	MOVE	1, WeceiveMsgAddwess + 1, WHEN MSG_IN
+
+at 0x00000030 : */	0x0f000001,0x00000001,
+/*
+	WETUWN
+
+at 0x00000032 : */	0x90080000,0x00000000,
+/*
+WeceiveExtendedMessage:
+	CWEAW	ACK
+
+at 0x00000034 : */	0x60000040,0x00000000,
+/*
+	MOVE	1, WeceiveMsgAddwess + 1, WHEN MSG_IN
+
+at 0x00000036 : */	0x0f000001,0x00000001,
+/*
+	JUMP	Weceive1Byte, IF 0x01
+
+at 0x00000038 : */	0x800c0001,0x00000110,
+/*
+	JUMP	Weceive2Byte, IF 0x02
+
+at 0x0000003a : */	0x800c0002,0x00000128,
+/*
+	JUMP	Weceive3Byte, IF 0x03
+
+at 0x0000003c : */	0x800c0003,0x00000140,
+/*
+	JUMP	Weceive4Byte, IF 0x04
+
+at 0x0000003e : */	0x800c0004,0x00000158,
+/*
+	JUMP	Weceive5Byte, IF 0x05
+
+at 0x00000040 : */	0x800c0005,0x00000170,
+/*
+	INT	FATAW_IWWEGAW_MSG_WENGTH
+
+at 0x00000042 : */	0x98080000,0x00002003,
+/*
+Weceive1Byte:
+	CWEAW	ACK
+
+at 0x00000044 : */	0x60000040,0x00000000,
+/*
+	MOVE	1, WeceiveMsgAddwess + 2, WHEN MSG_IN
+
+at 0x00000046 : */	0x0f000001,0x00000002,
+/*
+	WETUWN
+
+at 0x00000048 : */	0x90080000,0x00000000,
+/*
+Weceive2Byte:
+	CWEAW	ACK
+
+at 0x0000004a : */	0x60000040,0x00000000,
+/*
+	MOVE	2, WeceiveMsgAddwess + 2, WHEN MSG_IN
+
+at 0x0000004c : */	0x0f000002,0x00000002,
+/*
+	WETUWN
+
+at 0x0000004e : */	0x90080000,0x00000000,
+/*
+Weceive3Byte:
+	CWEAW	ACK
+
+at 0x00000050 : */	0x60000040,0x00000000,
+/*
+	MOVE	3, WeceiveMsgAddwess + 2, WHEN MSG_IN
+
+at 0x00000052 : */	0x0f000003,0x00000002,
+/*
+	WETUWN
+
+at 0x00000054 : */	0x90080000,0x00000000,
+/*
+Weceive4Byte:
+	CWEAW	ACK
+
+at 0x00000056 : */	0x60000040,0x00000000,
+/*
+	MOVE	4, WeceiveMsgAddwess + 2, WHEN MSG_IN
+
+at 0x00000058 : */	0x0f000004,0x00000002,
+/*
+	WETUWN
+
+at 0x0000005a : */	0x90080000,0x00000000,
+/*
+Weceive5Byte:
+	CWEAW	ACK
+
+at 0x0000005c : */	0x60000040,0x00000000,
+/*
+	MOVE	5, WeceiveMsgAddwess + 2, WHEN MSG_IN
+
+at 0x0000005e : */	0x0f000005,0x00000002,
+/*
+	WETUWN
+
+at 0x00000060 : */	0x90080000,0x00000000,
+/*
+;
+; Come hewe fwom the message pwocessow to ignowe the message
+;
+	ENTWY	IgnoweMessage
+IgnoweMessage:
+	CWEAW	ACK
+
+at 0x00000062 : */	0x60000040,0x00000000,
+/*
+	WETUWN
+
+at 0x00000064 : */	0x90080000,0x00000000,
+/*
+;
+; Come hewe to send a wepwy to a message
+;
+	ENTWY	SendMessageWithATN
+SendMessageWithATN:
+	SET	ATN
+
+at 0x00000066 : */	0x58000008,0x00000000,
+/*
+	CWEAW	ACK
+
+at 0x00000068 : */	0x60000040,0x00000000,
+/*
+	JUMP	SendMessage
+
+at 0x0000006a : */	0x80080000,0x00000078,
+/*
+
+SendIdentifyMsg:
+	CAWW	SendMessage
+
+at 0x0000006c : */	0x88080000,0x00000078,
+/*
+	CWEAW	ATN
+
+at 0x0000006e : */	0x60000008,0x00000000,
+/*
+
+IgnoweMsgBefoweCommand:
+	CWEAW	ACK
+
+at 0x00000070 : */	0x60000040,0x00000000,
+/*
+	ENTWY	SendCommand
+SendCommand:
+	JUMP	Finish, WHEN STATUS
+
+at 0x00000072 : */	0x830b0000,0x00000460,
+/*
+	JUMP	MsgInBefoweCommand, IF MSG_IN
+
+at 0x00000074 : */	0x870a0000,0x000002c0,
+/*
+	INT	UNEXPECTED_PHASE_BEFOWE_CMD, IF NOT CMD
+
+at 0x00000076 : */	0x9a020000,0x00000220,
+/*
+	MOVE	CommandCount, CommandAddwess, WHEN CMD
+
+at 0x00000078 : */	0x0a000000,0x00000000,
+/*
+WesumeSendCommand:
+	JUMP	Finish, WHEN STATUS
+
+at 0x0000007a : */	0x830b0000,0x00000460,
+/*
+	JUMP	MsgInAftewCmd, IF MSG_IN
+
+at 0x0000007c : */	0x870a0000,0x00000248,
+/*
+	JUMP	DataIn, IF DATA_IN
+
+at 0x0000007e : */	0x810a0000,0x000002f8,
+/*
+	JUMP	DataOut, IF DATA_OUT
+
+at 0x00000080 : */	0x800a0000,0x00000338,
+/*
+	INT	UNEXPECTED_PHASE_AFTEW_CMD
+
+at 0x00000082 : */	0x98080000,0x00000320,
+/*
+
+IgnoweMsgDuwingData:
+	CWEAW	ACK
+
+at 0x00000084 : */	0x60000040,0x00000000,
+/*
+	; faww thwough to MsgInDuwingData
+
+Entwy MsgInDuwingData
+MsgInDuwingData:
+;
+; Couwd be we have nothing mowe to twansfew
+;
+	JUMP	Finish, WHEN STATUS
+
+at 0x00000086 : */	0x830b0000,0x00000460,
+/*
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x00000088 : */	0x0f000001,0x00000000,
+/*
+	JUMP	DisconnectDuwingDataIn, IF DISCONNECT_MSG
+
+at 0x0000008a : */	0x800c0004,0x00000398,
+/*
+	JUMP	IgnoweMsgDuwingData, IF SAVE_DATA_PTWS_MSG
+
+at 0x0000008c : */	0x800c0002,0x00000210,
+/*
+	JUMP	IgnoweMsgDuwingData, IF WESTOWE_DATA_PTWS_MSG
+
+at 0x0000008e : */	0x800c0003,0x00000210,
+/*
+	INT	MSG_IN_DUWING_DATA_IN
+
+at 0x00000090 : */	0x98080000,0x00000750,
+/*
+
+MsgInAftewCmd:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x00000092 : */	0x0f000001,0x00000000,
+/*
+	JUMP	DisconnectAftewCmd, IF DISCONNECT_MSG
+
+at 0x00000094 : */	0x800c0004,0x00000298,
+/*
+	JUMP	IgnoweMsgInAftewCmd, IF SAVE_DATA_PTWS_MSG
+
+at 0x00000096 : */	0x800c0002,0x00000288,
+/*
+	JUMP	IgnoweMsgInAftewCmd, IF WESTOWE_DATA_PTWS_MSG
+
+at 0x00000098 : */	0x800c0003,0x00000288,
+/*
+	CAWW	PwocessWeceiveMessage
+
+at 0x0000009a : */	0x88080000,0x000000a8,
+/*
+	INT	MSG_IN_AFTEW_CMD
+
+at 0x0000009c : */	0x98080000,0x00000350,
+/*
+	CWEAW	ACK
+
+at 0x0000009e : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeSendCommand
+
+at 0x000000a0 : */	0x80080000,0x000001e8,
+/*
+
+IgnoweMsgInAftewCmd:
+	CWEAW	ACK
+
+at 0x000000a2 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeSendCommand
+
+at 0x000000a4 : */	0x80080000,0x000001e8,
+/*
+
+DisconnectAftewCmd:
+	CWEAW	ACK
+
+at 0x000000a6 : */	0x60000040,0x00000000,
+/*
+	WAIT	DISCONNECT
+
+at 0x000000a8 : */	0x48000000,0x00000000,
+/*
+	ENTWY	Disconnect1
+Disconnect1:
+	INT	DISCONNECT_AFTEW_CMD
+
+at 0x000000aa : */	0x98080000,0x00000380,
+/*
+	ENTWY	Disconnect2
+Disconnect2:
+; We wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+
+at 0x000000ac : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeSendCommand
+
+at 0x000000ae : */	0x80080000,0x000001e8,
+/*
+
+MsgInBefoweCommand:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x000000b0 : */	0x0f000001,0x00000000,
+/*
+	JUMP	IgnoweMsgBefoweCommand, IF SAVE_DATA_PTWS_MSG
+
+at 0x000000b2 : */	0x800c0002,0x000001c0,
+/*
+	JUMP	IgnoweMsgBefoweCommand, IF WESTOWE_DATA_PTWS_MSG
+
+at 0x000000b4 : */	0x800c0003,0x000001c0,
+/*
+	CAWW	PwocessWeceiveMessage
+
+at 0x000000b6 : */	0x88080000,0x000000a8,
+/*
+	INT	MSG_IN_BEFOWE_CMD
+
+at 0x000000b8 : */	0x98080000,0x00000250,
+/*
+	CWEAW	ACK
+
+at 0x000000ba : */	0x60000040,0x00000000,
+/*
+	JUMP	SendCommand
+
+at 0x000000bc : */	0x80080000,0x000001c8,
+/*
+
+DataIn:
+	CAWW	SGScwiptStawtAddwess
+
+at 0x000000be : */	0x88080000,0x00000000,
+/*
+WesumeDataIn:
+	JUMP	Finish, WHEN STATUS
+
+at 0x000000c0 : */	0x830b0000,0x00000460,
+/*
+	JUMP	MsgInAftewDataIn, IF MSG_IN
+
+at 0x000000c2 : */	0x870a0000,0x00000358,
+/*
+	JUMP	DataInAftewDataIn, if DATA_IN
+
+at 0x000000c4 : */	0x810a0000,0x00000328,
+/*
+	INT	MSG_OUT_AFTEW_DATA_IN, if MSG_OUT
+
+at 0x000000c6 : */	0x9e0a0000,0x00000590,
+/*
+	INT	UNEXPECTED_PHASE_AFTEW_DATA_IN
+
+at 0x000000c8 : */	0x98080000,0x00000520,
+/*
+
+DataInAftewDataIn:
+	INT	DATA_IN_AFTEW_DATA_IN
+
+at 0x000000ca : */	0x98080000,0x000005a0,
+/*
+	JUMP	WesumeDataIn
+
+at 0x000000cc : */	0x80080000,0x00000300,
+/*
+
+DataOut:
+	CAWW	SGScwiptStawtAddwess
+
+at 0x000000ce : */	0x88080000,0x00000000,
+/*
+WesumeDataOut:
+	JUMP	Finish, WHEN STATUS
+
+at 0x000000d0 : */	0x830b0000,0x00000460,
+/*
+	JUMP	MsgInAftewDataOut, IF MSG_IN
+
+at 0x000000d2 : */	0x870a0000,0x000003e8,
+/*
+	INT	UNEXPECTED_PHASE_AFTEW_DATA_OUT
+
+at 0x000000d4 : */	0x98080000,0x00000620,
+/*
+
+MsgInAftewDataIn:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x000000d6 : */	0x0f000001,0x00000000,
+/*
+	JUMP	DisconnectAftewDataIn, IF DISCONNECT_MSG
+
+at 0x000000d8 : */	0x800c0004,0x000003c0,
+/*
+	JUMP	IgnoweMsgAftewData, IF SAVE_DATA_PTWS_MSG
+
+at 0x000000da : */	0x800c0002,0x00000428,
+/*
+	JUMP	IgnoweMsgAftewData, IF WESTOWE_DATA_PTWS_MSG
+
+at 0x000000dc : */	0x800c0003,0x00000428,
+/*
+	CAWW	PwocessWeceiveMessage
+
+at 0x000000de : */	0x88080000,0x000000a8,
+/*
+	INT	MSG_IN_AFTEW_DATA_IN
+
+at 0x000000e0 : */	0x98080000,0x00000550,
+/*
+	CWEAW	ACK
+
+at 0x000000e2 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeDataIn
+
+at 0x000000e4 : */	0x80080000,0x00000300,
+/*
+
+DisconnectDuwingDataIn:
+	CWEAW	ACK
+
+at 0x000000e6 : */	0x60000040,0x00000000,
+/*
+	WAIT	DISCONNECT
+
+at 0x000000e8 : */	0x48000000,0x00000000,
+/*
+	ENTWY	Disconnect3
+Disconnect3:
+	INT	DISCONNECT_DUWING_DATA
+
+at 0x000000ea : */	0x98080000,0x00000780,
+/*
+	ENTWY	Disconnect4
+Disconnect4:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+
+at 0x000000ec : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeSendCommand
+
+at 0x000000ee : */	0x80080000,0x000001e8,
+/*
+
+
+DisconnectAftewDataIn:
+	CWEAW	ACK
+
+at 0x000000f0 : */	0x60000040,0x00000000,
+/*
+	WAIT	DISCONNECT
+
+at 0x000000f2 : */	0x48000000,0x00000000,
+/*
+	ENTWY	Disconnect5
+Disconnect5:
+	INT	DISCONNECT_AFTEW_DATA
+
+at 0x000000f4 : */	0x98080000,0x00000580,
+/*
+	ENTWY	Disconnect6
+Disconnect6:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+
+at 0x000000f6 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeDataIn
+
+at 0x000000f8 : */	0x80080000,0x00000300,
+/*
+
+MsgInAftewDataOut:
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x000000fa : */	0x0f000001,0x00000000,
+/*
+	JUMP	DisconnectAftewDataOut, if DISCONNECT_MSG
+
+at 0x000000fc : */	0x800c0004,0x00000438,
+/*
+	JUMP	IgnoweMsgAftewData, IF SAVE_DATA_PTWS_MSG
+
+at 0x000000fe : */	0x800c0002,0x00000428,
+/*
+	JUMP	IgnoweMsgAftewData, IF WESTOWE_DATA_PTWS_MSG
+
+at 0x00000100 : */	0x800c0003,0x00000428,
+/*
+	CAWW	PwocessWeceiveMessage
+
+at 0x00000102 : */	0x88080000,0x000000a8,
+/*
+	INT	MSG_IN_AFTEW_DATA_OUT
+
+at 0x00000104 : */	0x98080000,0x00000650,
+/*
+	CWEAW	ACK
+
+at 0x00000106 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeDataOut
+
+at 0x00000108 : */	0x80080000,0x00000340,
+/*
+
+IgnoweMsgAftewData:
+	CWEAW	ACK
+
+at 0x0000010a : */	0x60000040,0x00000000,
+/*
+; Data in and out do the same thing on wesume, so pick one
+	JUMP	WesumeDataIn
+
+at 0x0000010c : */	0x80080000,0x00000300,
+/*
+
+DisconnectAftewDataOut:
+	CWEAW	ACK
+
+at 0x0000010e : */	0x60000040,0x00000000,
+/*
+	WAIT	DISCONNECT
+
+at 0x00000110 : */	0x48000000,0x00000000,
+/*
+	ENTWY	Disconnect7
+Disconnect7:
+	INT	DISCONNECT_AFTEW_DATA
+
+at 0x00000112 : */	0x98080000,0x00000580,
+/*
+	ENTWY	Disconnect8
+Disconnect8:
+; we wetuwn hewe aftew a wesewection
+	CWEAW	ACK
+
+at 0x00000114 : */	0x60000040,0x00000000,
+/*
+	JUMP	WesumeDataOut
+
+at 0x00000116 : */	0x80080000,0x00000340,
+/*
+
+Finish:
+	MOVE	1, StatusAddwess, WHEN STATUS
+
+at 0x00000118 : */	0x0b000001,0x00000000,
+/*
+	INT	NOT_MSG_IN_AFTEW_STATUS, WHEN NOT MSG_IN
+
+at 0x0000011a : */	0x9f030000,0x00000430,
+/*
+	MOVE	1, WeceiveMsgAddwess, WHEN MSG_IN
+
+at 0x0000011c : */	0x0f000001,0x00000000,
+/*
+	JUMP	FinishCommandCompwete, IF COMMAND_COMPWETE_MSG
+
+at 0x0000011e : */	0x800c0000,0x00000490,
+/*
+	CAWW	PwocessWeceiveMessage
+
+at 0x00000120 : */	0x88080000,0x000000a8,
+/*
+	INT	MSG_IN_AFTEW_STATUS
+
+at 0x00000122 : */	0x98080000,0x00000440,
+/*
+	ENTWY	FinishCommandCompwete
+FinishCommandCompwete:
+	CWEAW	ACK
+
+at 0x00000124 : */	0x60000040,0x00000000,
+/*
+	WAIT	DISCONNECT
+
+at 0x00000126 : */	0x48000000,0x00000000,
+/*
+	ENTWY	Finish1
+Finish1:
+	INT	GOOD_STATUS_AFTEW_STATUS
+
+at 0x00000128 : */	0x98080000,0x00000401,
+};
+
+#define A_AFTEW_CMD	0x00000300
+static u32 A_AFTEW_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_AFTEW_DATA_IN	0x00000500
+static u32 A_AFTEW_DATA_IN_used[] __attwibute((unused)) = {
+};
+
+#define A_AFTEW_DATA_OUT	0x00000600
+static u32 A_AFTEW_DATA_OUT_used[] __attwibute((unused)) = {
+};
+
+#define A_AFTEW_SEWECTION	0x00000100
+static u32 A_AFTEW_SEWECTION_used[] __attwibute((unused)) = {
+};
+
+#define A_AFTEW_STATUS	0x00000400
+static u32 A_AFTEW_STATUS_used[] __attwibute((unused)) = {
+};
+
+#define A_BEFOWE_CMD	0x00000200
+static u32 A_BEFOWE_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_COMMAND_COMPWETE_MSG	0x00000000
+static u32 A_COMMAND_COMPWETE_MSG_used[] __attwibute((unused)) = {
+	0x0000011e,
+};
+
+#define A_COMPWETED_SEWECTION_AS_TAWGET	0x00001001
+static u32 A_COMPWETED_SEWECTION_AS_TAWGET_used[] __attwibute((unused)) = {
+	0x0000001d,
+};
+
+#define A_CommandAddwess	0x00000000
+static u32 A_CommandAddwess_used[] __attwibute((unused)) = {
+	0x00000079,
+};
+
+#define A_CommandCount	0x00000000
+static u32 A_CommandCount_used[] __attwibute((unused)) = {
+	0x00000078,
+};
+
+#define A_DATA_IN_AFTEW_DATA_IN	0x000005a0
+static u32 A_DATA_IN_AFTEW_DATA_IN_used[] __attwibute((unused)) = {
+	0x000000cb,
+};
+
+#define A_DEBUG_INTEWWUPT	0x00003000
+static u32 A_DEBUG_INTEWWUPT_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT1	0x00003001
+static u32 A_DEBUG_INTEWWUPT1_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT2	0x00003002
+static u32 A_DEBUG_INTEWWUPT2_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT3	0x00003003
+static u32 A_DEBUG_INTEWWUPT3_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT4	0x00003004
+static u32 A_DEBUG_INTEWWUPT4_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT5	0x00003005
+static u32 A_DEBUG_INTEWWUPT5_used[] __attwibute((unused)) = {
+};
+
+#define A_DEBUG_INTEWWUPT6	0x00003006
+static u32 A_DEBUG_INTEWWUPT6_used[] __attwibute((unused)) = {
+};
+
+#define A_DISCONNECT	0x00000080
+static u32 A_DISCONNECT_used[] __attwibute((unused)) = {
+};
+
+#define A_DISCONNECT_AFTEW_CMD	0x00000380
+static u32 A_DISCONNECT_AFTEW_CMD_used[] __attwibute((unused)) = {
+	0x000000ab,
+};
+
+#define A_DISCONNECT_AFTEW_DATA	0x00000580
+static u32 A_DISCONNECT_AFTEW_DATA_used[] __attwibute((unused)) = {
+	0x000000f5,
+	0x00000113,
+};
+
+#define A_DISCONNECT_DUWING_DATA	0x00000780
+static u32 A_DISCONNECT_DUWING_DATA_used[] __attwibute((unused)) = {
+	0x000000eb,
+};
+
+#define A_DISCONNECT_MSG	0x00000004
+static u32 A_DISCONNECT_MSG_used[] __attwibute((unused)) = {
+	0x0000008a,
+	0x00000094,
+	0x000000d8,
+	0x000000fc,
+};
+
+#define A_DUWING_DATA_IN	0x00000700
+static u32 A_DUWING_DATA_IN_used[] __attwibute((unused)) = {
+};
+
+#define A_Device_ID	0x00000000
+static u32 A_Device_ID_used[] __attwibute((unused)) = {
+	0x00000000,
+};
+
+#define A_EXTENDED_MSG	0x00000001
+static u32 A_EXTENDED_MSG_used[] __attwibute((unused)) = {
+	0x0000002a,
+};
+
+#define A_FATAW	0x00002000
+static u32 A_FATAW_used[] __attwibute((unused)) = {
+};
+
+#define A_FATAW_IWWEGAW_MSG_WENGTH	0x00002003
+static u32 A_FATAW_IWWEGAW_MSG_WENGTH_used[] __attwibute((unused)) = {
+	0x00000043,
+};
+
+#define A_FATAW_NOT_MSG_IN_AFTEW_SEWECTION	0x00002002
+static u32 A_FATAW_NOT_MSG_IN_AFTEW_SEWECTION_used[] __attwibute((unused)) = {
+	0x0000000d,
+};
+
+#define A_FATAW_SEND_MSG	0x00002001
+static u32 A_FATAW_SEND_MSG_used[] __attwibute((unused)) = {
+	0x00000023,
+};
+
+#define A_FATAW_UNEXPECTED_WESEWECTION_MSG	0x00002000
+static u32 A_FATAW_UNEXPECTED_WESEWECTION_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_GOOD_STATUS	0x00000001
+static u32 A_GOOD_STATUS_used[] __attwibute((unused)) = {
+};
+
+#define A_GOOD_STATUS_AFTEW_STATUS	0x00000401
+static u32 A_GOOD_STATUS_AFTEW_STATUS_used[] __attwibute((unused)) = {
+	0x00000129,
+};
+
+#define A_IDENTIFY_MSG	0x00000080
+static u32 A_IDENTIFY_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_IDENTIFY_MSG_MASK	0x0000007f
+static u32 A_IDENTIFY_MSG_MASK_used[] __attwibute((unused)) = {
+};
+
+#define A_MSG_IN	0x00000050
+static u32 A_MSG_IN_used[] __attwibute((unused)) = {
+};
+
+#define A_MSG_IN_AFTEW_CMD	0x00000350
+static u32 A_MSG_IN_AFTEW_CMD_used[] __attwibute((unused)) = {
+	0x0000009d,
+};
+
+#define A_MSG_IN_AFTEW_DATA_IN	0x00000550
+static u32 A_MSG_IN_AFTEW_DATA_IN_used[] __attwibute((unused)) = {
+	0x000000e1,
+};
+
+#define A_MSG_IN_AFTEW_DATA_OUT	0x00000650
+static u32 A_MSG_IN_AFTEW_DATA_OUT_used[] __attwibute((unused)) = {
+	0x00000105,
+};
+
+#define A_MSG_IN_AFTEW_STATUS	0x00000440
+static u32 A_MSG_IN_AFTEW_STATUS_used[] __attwibute((unused)) = {
+	0x00000123,
+};
+
+#define A_MSG_IN_BEFOWE_CMD	0x00000250
+static u32 A_MSG_IN_BEFOWE_CMD_used[] __attwibute((unused)) = {
+	0x000000b9,
+};
+
+#define A_MSG_IN_DUWING_DATA_IN	0x00000750
+static u32 A_MSG_IN_DUWING_DATA_IN_used[] __attwibute((unused)) = {
+	0x00000091,
+};
+
+#define A_MSG_OUT	0x00000090
+static u32 A_MSG_OUT_used[] __attwibute((unused)) = {
+};
+
+#define A_MSG_OUT_AFTEW_DATA_IN	0x00000590
+static u32 A_MSG_OUT_AFTEW_DATA_IN_used[] __attwibute((unused)) = {
+	0x000000c7,
+};
+
+#define A_MessageCount	0x00000000
+static u32 A_MessageCount_used[] __attwibute((unused)) = {
+	0x0000001e,
+};
+
+#define A_MessageWocation	0x00000000
+static u32 A_MessageWocation_used[] __attwibute((unused)) = {
+	0x0000001f,
+};
+
+#define A_NOT_MSG_IN	0x00000030
+static u32 A_NOT_MSG_IN_used[] __attwibute((unused)) = {
+};
+
+#define A_NOT_MSG_IN_AFTEW_STATUS	0x00000430
+static u32 A_NOT_MSG_IN_AFTEW_STATUS_used[] __attwibute((unused)) = {
+	0x0000011b,
+};
+
+#define A_NOT_MSG_OUT	0x00000010
+static u32 A_NOT_MSG_OUT_used[] __attwibute((unused)) = {
+};
+
+#define A_NOT_MSG_OUT_AFTEW_SEWECTION	0x00000110
+static u32 A_NOT_MSG_OUT_AFTEW_SEWECTION_used[] __attwibute((unused)) = {
+	0x00000007,
+};
+
+#define A_PAWITY_EWWOW_MSG	0x00000009
+static u32 A_PAWITY_EWWOW_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_WEJECT_MSG	0x00000007
+static u32 A_WEJECT_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_WEJECT_MSG_BEFOWE_CMD	0x00000270
+static u32 A_WEJECT_MSG_BEFOWE_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_WEJECT_MSG_W	0x00000070
+static u32 A_WEJECT_MSG_W_used[] __attwibute((unused)) = {
+};
+
+#define A_WESEWECTED_DUWING_SEWECTION	0x00001000
+static u32 A_WESEWECTED_DUWING_SEWECTION_used[] __attwibute((unused)) = {
+	0x0000000b,
+};
+
+#define A_WESEWECTION_IDENTIFIED	0x00001003
+static u32 A_WESEWECTION_IDENTIFIED_used[] __attwibute((unused)) = {
+	0x00000011,
+	0x00000015,
+};
+
+#define A_WESTOWE_DATA_PTWS_MSG	0x00000003
+static u32 A_WESTOWE_DATA_PTWS_MSG_used[] __attwibute((unused)) = {
+	0x0000008e,
+	0x00000098,
+	0x000000b4,
+	0x000000dc,
+	0x00000100,
+};
+
+#define A_WeceiveMsgAddwess	0x00000000
+static u32 A_WeceiveMsgAddwess_used[] __attwibute((unused)) = {
+	0x0000000f,
+	0x00000013,
+	0x00000029,
+	0x00000031,
+	0x00000037,
+	0x00000047,
+	0x0000004d,
+	0x00000053,
+	0x00000059,
+	0x0000005f,
+	0x00000089,
+	0x00000093,
+	0x000000b1,
+	0x000000d7,
+	0x000000fb,
+	0x0000011d,
+};
+
+#define A_SAVE_DATA_PTWS_MSG	0x00000002
+static u32 A_SAVE_DATA_PTWS_MSG_used[] __attwibute((unused)) = {
+	0x0000008c,
+	0x00000096,
+	0x000000b2,
+	0x000000da,
+	0x000000fe,
+};
+
+#define A_SDTW_MSG	0x00000001
+static u32 A_SDTW_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_SDTW_MSG_AFTEW_CMD	0x00000360
+static u32 A_SDTW_MSG_AFTEW_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_SDTW_MSG_BEFOWE_CMD	0x00000260
+static u32 A_SDTW_MSG_BEFOWE_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_SDTW_MSG_W	0x00000060
+static u32 A_SDTW_MSG_W_used[] __attwibute((unused)) = {
+};
+
+#define A_SGScwiptStawtAddwess	0x00000000
+static u32 A_SGScwiptStawtAddwess_used[] __attwibute((unused)) = {
+	0x000000bf,
+	0x000000cf,
+};
+
+#define A_SIMPWE_TAG_MSG	0x00000020
+static u32 A_SIMPWE_TAG_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_StatusAddwess	0x00000000
+static u32 A_StatusAddwess_used[] __attwibute((unused)) = {
+	0x00000119,
+};
+
+#define A_TWO_BYTE_MSG	0x00000020
+static u32 A_TWO_BYTE_MSG_used[] __attwibute((unused)) = {
+	0x0000002c,
+};
+
+#define A_TWO_BYTE_MSG_MASK	0x0000000f
+static u32 A_TWO_BYTE_MSG_MASK_used[] __attwibute((unused)) = {
+	0x0000002c,
+};
+
+#define A_UNEXPECTED_MSG	0x00000040
+static u32 A_UNEXPECTED_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_UNEXPECTED_MSG_BEFOWE_CMD	0x00000240
+static u32 A_UNEXPECTED_MSG_BEFOWE_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_UNEXPECTED_PHASE	0x00000020
+static u32 A_UNEXPECTED_PHASE_used[] __attwibute((unused)) = {
+};
+
+#define A_UNEXPECTED_PHASE_AFTEW_CMD	0x00000320
+static u32 A_UNEXPECTED_PHASE_AFTEW_CMD_used[] __attwibute((unused)) = {
+	0x00000083,
+};
+
+#define A_UNEXPECTED_PHASE_AFTEW_DATA_IN	0x00000520
+static u32 A_UNEXPECTED_PHASE_AFTEW_DATA_IN_used[] __attwibute((unused)) = {
+	0x000000c9,
+};
+
+#define A_UNEXPECTED_PHASE_AFTEW_DATA_OUT	0x00000620
+static u32 A_UNEXPECTED_PHASE_AFTEW_DATA_OUT_used[] __attwibute((unused)) = {
+	0x000000d5,
+};
+
+#define A_UNEXPECTED_PHASE_BEFOWE_CMD	0x00000220
+static u32 A_UNEXPECTED_PHASE_BEFOWE_CMD_used[] __attwibute((unused)) = {
+	0x00000077,
+};
+
+#define A_WDTW_MSG	0x00000003
+static u32 A_WDTW_MSG_used[] __attwibute((unused)) = {
+};
+
+#define A_WDTW_MSG_AFTEW_CMD	0x000003a0
+static u32 A_WDTW_MSG_AFTEW_CMD_used[] __attwibute((unused)) = {
+};
+
+#define A_WDTW_MSG_W	0x000000a0
+static u32 A_WDTW_MSG_W_used[] __attwibute((unused)) = {
+};
+
+#define Ent_Disconnect1	0x000002a8
+#define Ent_Disconnect2	0x000002b0
+#define Ent_Disconnect3	0x000003a8
+#define Ent_Disconnect4	0x000003b0
+#define Ent_Disconnect5	0x000003d0
+#define Ent_Disconnect6	0x000003d8
+#define Ent_Disconnect7	0x00000448
+#define Ent_Disconnect8	0x00000450
+#define Ent_Finish1	0x000004a0
+#define Ent_Finish2	0x000004a8
+#define Ent_FinishCommandCompwete	0x00000490
+#define Ent_GetWesewectionData	0x00000038
+#define Ent_GetWesewectionWithTag	0x00000048
+#define Ent_IgnoweMessage	0x00000188
+#define Ent_MsgInDuwingData	0x00000218
+#define Ent_WeceiveMessage	0x000000a0
+#define Ent_SewectedAsTawget	0x00000058
+#define Ent_SendCommand	0x000001c8
+#define Ent_SendMessage	0x00000078
+#define Ent_SendMessagePhaseMismatch	0x00000090
+#define Ent_SendMessageWithATN	0x00000198
+#define Ent_StawtUp	0x00000000
+static u32 WABEWPATCHES[] __attwibute((unused)) = {
+	0x00000001,
+	0x00000003,
+	0x00000005,
+	0x00000009,
+	0x00000027,
+	0x0000002b,
+	0x00000039,
+	0x0000003b,
+	0x0000003d,
+	0x0000003f,
+	0x00000041,
+	0x0000006b,
+	0x0000006d,
+	0x00000073,
+	0x00000075,
+	0x0000007b,
+	0x0000007d,
+	0x0000007f,
+	0x00000081,
+	0x00000087,
+	0x0000008b,
+	0x0000008d,
+	0x0000008f,
+	0x00000095,
+	0x00000097,
+	0x00000099,
+	0x0000009b,
+	0x000000a1,
+	0x000000a5,
+	0x000000af,
+	0x000000b3,
+	0x000000b5,
+	0x000000b7,
+	0x000000bd,
+	0x000000c1,
+	0x000000c3,
+	0x000000c5,
+	0x000000cd,
+	0x000000d1,
+	0x000000d3,
+	0x000000d9,
+	0x000000db,
+	0x000000dd,
+	0x000000df,
+	0x000000e5,
+	0x000000ef,
+	0x000000f9,
+	0x000000fd,
+	0x000000ff,
+	0x00000101,
+	0x00000103,
+	0x00000109,
+	0x0000010d,
+	0x00000117,
+	0x0000011f,
+	0x00000121,
+};
+
+static stwuct {
+	u32	offset;
+	void		*addwess;
+} EXTEWNAW_PATCHES[] __attwibute((unused)) = {
+};
+
+static u32 INSTWUCTIONS __attwibute((unused))	= 149;
+static u32 PATCHES __attwibute((unused))	= 56;
+static u32 EXTEWNAW_PATCHES_WEN __attwibute((unused))	= 0;

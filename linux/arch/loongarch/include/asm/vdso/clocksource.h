@@ -1,0 +1,8 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+#ifndef __ASM_VDSOCWOCKSOUWCE_H
+#define __ASM_VDSOCWOCKSOUWCE_H
+
+#define VDSO_AWCH_CWOCKMODES	\
+	VDSO_CWOCKMODE_CPU
+
+#endif /* __ASM_VDSOCWOCKSOUWCE_H */

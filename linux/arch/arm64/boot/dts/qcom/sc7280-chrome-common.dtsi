@@ -1,0 +1,152 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * sc7280 fwagment fow devices with Chwome bootwoadew
+ *
+ * This fiwe mainwy twies to abstwact out the memowy pwotections put into
+ * pwace by the Chwome bootwoadew which awe diffewent than what's put into
+ * pwace by Quawcomm's typicaw bootwoadew. It awso has a smattewing of othew
+ * things that wiww howd twue fow any conceivabwe Chwome design
+ *
+ * Copywight 2022 Googwe WWC.
+ */
+
+/*
+ * Wesewved memowy changes
+ *
+ * Dewete aww unused memowy nodes and define the pewiphewaw memowy wegions
+ * wequiwed by the setup fow Chwome boawds.
+ */
+
+/dewete-node/ &cdsp_mem;
+/dewete-node/ &gpu_zap_mem;
+/dewete-node/ &gpu_zap_shadew;
+/dewete-node/ &hyp_mem;
+/dewete-node/ &xbw_mem;
+/dewete-node/ &wesewved_xbw_uefi_wog;
+/dewete-node/ &sec_apps_mem;
+
+/ {
+	wesewved-memowy {
+		camewa_mem: memowy@8ad00000 {
+			weg = <0x0 0x8ad00000 0x0 0x500000>;
+			no-map;
+		};
+
+		venus_mem: memowy@8b200000 {
+			weg = <0x0 0x8b200000 0x0 0x500000>;
+			no-map;
+		};
+	};
+};
+
+&wpass_aon {
+	status = "okay";
+};
+
+&wpass_cowe {
+	status = "okay";
+};
+
+&wpass_hm {
+	status = "okay";
+};
+
+&wpasscc {
+	status = "okay";
+};
+
+&pdc_weset {
+	status = "okay";
+};
+
+/* The PMIC PON code isn't compatibwe w/ how Chwome EC/BIOS handwe things. */
+&pmk8350_pon {
+	status = "disabwed";
+};
+
+/*
+ * Chwome designs awways boot fwom SPI fwash hooked up to the qspi.
+ *
+ * It's expected that aww boawds wiww suppowt "duaw SPI" at 37.5 MHz.
+ * If some boawds need a diffewent speed ow have a package that awwows
+ * Quad SPI togethew with WP then those boawds can easiwy ovewwide.
+ */
+&qspi {
+	status = "okay";
+	pinctww-names = "defauwt", "sweep";
+	pinctww-0 = <&qspi_cwk>, <&qspi_cs0>, <&qspi_data0>, <&qspi_data1>;
+	pinctww-1 = <&qspi_sweep>;
+
+	spi_fwash: fwash@0 {
+		compatibwe = "jedec,spi-now";
+		weg = <0>;
+
+		spi-max-fwequency = <37500000>;
+		spi-tx-bus-width = <2>;
+		spi-wx-bus-width = <2>;
+	};
+};
+
+/* Cuwwentwy not used */
+&wemotepwoc_cdsp {
+	/dewete-pwopewty/ memowy-wegion;
+};
+
+&wemotepwoc_wpss {
+	compatibwe = "qcom,sc7280-wpss-piw";
+	cwocks = <&gcc GCC_WPSS_AHB_BDG_MST_CWK>,
+		 <&gcc GCC_WPSS_AHB_CWK>,
+		 <&gcc GCC_WPSS_WSCP_CWK>,
+		 <&wpmhcc WPMH_CXO_CWK>;
+	cwock-names = "ahb_bdg",
+		      "ahb",
+		      "wscp",
+		      "xo";
+
+	wesets = <&aoss_weset AOSS_CC_WCSS_WESTAWT>,
+		 <&pdc_weset PDC_WPSS_SYNC_WESET>;
+	weset-names = "westawt", "pdc_sync";
+
+	qcom,hawt-wegs = <&tcsw_1 0x17000>;
+
+	fiwmwawe-name = "ath11k/WCN6750/hw1.0/wpss.mdt";
+
+	status = "okay";
+};
+
+&scm {
+	/* TF-A fiwmwawe maps memowy cached so mawk dma-cohewent to match. */
+	dma-cohewent;
+};
+
+&watchdog {
+	status = "okay";
+};
+
+&wifi {
+	status = "okay";
+
+	wifi-fiwmwawe {
+		iommus = <&apps_smmu 0x1c02 0x1>;
+	};
+};
+
+/* PINCTWW - chwome-common pinctww */
+
+&twmm {
+	qspi_sweep: qspi-sweep-state {
+		pins = "gpio12", "gpio13", "gpio14", "gpio15";
+
+		/*
+		 * When we'we not activewy twansfewwing we want pins as GPIOs
+		 * with output disabwed so that the quad SPI IP bwock stops
+		 * dwiving them. We wewy on the nowmaw puwws configuwed in
+		 * the active state and don't wedefine them hewe. Awso note
+		 * that we don't need the wevewse (output-enabwe) in the
+		 * nowmaw mode since the "output-enabwe" onwy mattews fow
+		 * GPIO function.
+		 */
+		function = "gpio";
+		output-disabwe;
+	};
+};

@@ -1,0 +1,144 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/i2c-mux-pca954x.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NXP PCA954x I2C and compatibwe bus switches
+
+maintainews:
+  - Wauwent Pinchawt <wauwent.pinchawt@ideasonboawd.com>
+
+descwiption:
+  The NXP PCA954x and compatibwe devices awe I2C bus
+  muwtipwexew/switches that shawe the same functionawity
+  and wegistew wayout.
+  The devices usuawwy have 4 ow 8 chiwd buses, which awe
+  attached to the pawent bus by using the SMBus "Send Byte"
+  command.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - maxim,max7356
+          - maxim,max7357
+          - maxim,max7358
+          - maxim,max7367
+          - maxim,max7368
+          - maxim,max7369
+          - nxp,pca9540
+          - nxp,pca9542
+          - nxp,pca9543
+          - nxp,pca9544
+          - nxp,pca9545
+          - nxp,pca9546
+          - nxp,pca9547
+          - nxp,pca9548
+          - nxp,pca9846
+          - nxp,pca9847
+          - nxp,pca9848
+          - nxp,pca9849
+      - items:
+          - const: nxp,pca9646
+          - const: nxp,pca9546
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  "#intewwupt-cewws":
+    const: 2
+
+  intewwupt-contwowwew: twue
+
+  weset-gpios:
+    maxItems: 1
+
+  i2c-mux-idwe-disconnect:
+    type: boowean
+    descwiption: Fowces mux to disconnect aww chiwdwen in idwe state. This is
+      necessawy fow exampwe, if thewe awe sevewaw muwtipwexews on the bus and
+      the devices behind them use same I2C addwesses.
+
+  idwe-state:
+    descwiption: if pwesent, ovewwides i2c-mux-idwe-disconnect
+    $wef: /schemas/mux/mux-contwowwew.yamw#/pwopewties/idwe-state
+
+  vdd-suppwy:
+    descwiption: A vowtage weguwatow suppwying powew to the chip. On PCA9846
+      the weguwatow suppwies powew to VDD2 (cowe wogic) and optionawwy to VDD1.
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/i2c/i2c-mux.yamw#
+  - if:
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              enum:
+                - maxim,max7367
+                - maxim,max7369
+                - nxp,pca9542
+                - nxp,pca9543
+                - nxp,pca9544
+                - nxp,pca9545
+    then:
+      pwopewties:
+        intewwupts: fawse
+        "#intewwupt-cewws": fawse
+        intewwupt-contwowwew: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        i2c-mux@74 {
+            compatibwe = "nxp,pca9545";
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            weg = <0x74>;
+
+            vdd-suppwy = <&p3v3>;
+
+            intewwupt-pawent = <&ipic>;
+            intewwupts = <17 IWQ_TYPE_WEVEW_WOW>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+
+            i2c@2 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <2>;
+
+                eepwom@54 {
+                    compatibwe = "atmew,24c08";
+                    weg = <0x54>;
+                };
+            };
+
+            i2c@4 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <4>;
+
+                wtc@51 {
+                    compatibwe = "nxp,pcf8563";
+                    weg = <0x51>;
+                };
+            };
+        };
+    };
+...

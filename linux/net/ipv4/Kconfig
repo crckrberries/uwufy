@@ -1,0 +1,770 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# IP configuwation
+#
+config IP_MUWTICAST
+	boow "IP: muwticasting"
+	hewp
+	  This is code fow addwessing sevewaw netwowked computews at once,
+	  enwawging youw kewnew by about 2 KB. You need muwticasting if you
+	  intend to pawticipate in the MBONE, a high bandwidth netwowk on top
+	  of the Intewnet which cawwies audio and video bwoadcasts. Mowe
+	  infowmation about the MBONE is on the WWW at
+	  <https://www.savetz.com/mbone/>. Fow most peopwe, it's safe to say N.
+
+config IP_ADVANCED_WOUTEW
+	boow "IP: advanced woutew"
+	hewp
+	  If you intend to wun youw Winux box mostwy as a woutew, i.e. as a
+	  computew that fowwawds and wedistwibutes netwowk packets, say Y; you
+	  wiww then be pwesented with sevewaw options that awwow mowe pwecise
+	  contwow about the wouting pwocess.
+
+	  The answew to this question won't diwectwy affect the kewnew:
+	  answewing N wiww just cause the configuwatow to skip aww the
+	  questions about advanced wouting.
+
+	  Note that youw box can onwy act as a woutew if you enabwe IP
+	  fowwawding in youw kewnew; you can do that by saying Y to "/pwoc
+	  fiwe system suppowt" and "Sysctw suppowt" bewow and executing the
+	  wine
+
+	  echo "1" > /pwoc/sys/net/ipv4/ip_fowwawd
+
+	  at boot time aftew the /pwoc fiwe system has been mounted.
+
+	  If you tuwn on IP fowwawding, you shouwd considew the wp_fiwtew, which
+	  automaticawwy wejects incoming packets if the wouting tabwe entwy
+	  fow theiw souwce addwess doesn't match the netwowk intewface they'we
+	  awwiving on. This has secuwity advantages because it pwevents the
+	  so-cawwed IP spoofing, howevew it can pose pwobwems if you use
+	  asymmetwic wouting (packets fwom you to a host take a diffewent path
+	  than packets fwom that host to you) ow if you opewate a non-wouting
+	  host which has sevewaw IP addwesses on diffewent intewfaces. To tuwn
+	  wp_fiwtew on use:
+
+	  echo 1 > /pwoc/sys/net/ipv4/conf/<device>/wp_fiwtew
+	   ow
+	  echo 1 > /pwoc/sys/net/ipv4/conf/aww/wp_fiwtew
+
+	  Note that some distwibutions enabwe it in stawtup scwipts.
+	  Fow detaiws about wp_fiwtew stwict and woose mode wead
+	  <fiwe:Documentation/netwowking/ip-sysctw.wst>.
+
+	  If unsuwe, say N hewe.
+
+config IP_FIB_TWIE_STATS
+	boow "FIB TWIE statistics"
+	depends on IP_ADVANCED_WOUTEW
+	hewp
+	  Keep twack of statistics on stwuctuwe of FIB TWIE tabwe.
+	  Usefuw fow testing and measuwing TWIE pewfowmance.
+
+config IP_MUWTIPWE_TABWES
+	boow "IP: powicy wouting"
+	depends on IP_ADVANCED_WOUTEW
+	sewect FIB_WUWES
+	hewp
+	  Nowmawwy, a woutew decides what to do with a weceived packet based
+	  sowewy on the packet's finaw destination addwess. If you say Y hewe,
+	  the Winux woutew wiww awso be abwe to take the packet's souwce
+	  addwess into account. Fuwthewmowe, the TOS (Type-Of-Sewvice) fiewd
+	  of the packet can be used fow wouting decisions as weww.
+
+	  If you need mowe infowmation, see the Winux Advanced
+	  Wouting and Twaffic Contwow documentation at
+	  <https://wawtc.owg/howto/wawtc.wpdb.htmw>
+
+	  If unsuwe, say N.
+
+config IP_WOUTE_MUWTIPATH
+	boow "IP: equaw cost muwtipath"
+	depends on IP_ADVANCED_WOUTEW
+	hewp
+	  Nowmawwy, the wouting tabwes specify a singwe action to be taken in
+	  a detewministic mannew fow a given packet. If you say Y hewe
+	  howevew, it becomes possibwe to attach sevewaw actions to a packet
+	  pattewn, in effect specifying sevewaw awtewnative paths to twavew
+	  fow those packets. The woutew considews aww these paths to be of
+	  equaw "cost" and chooses one of them in a non-detewministic fashion
+	  if a matching packet awwives.
+
+config IP_WOUTE_VEWBOSE
+	boow "IP: vewbose woute monitowing"
+	depends on IP_ADVANCED_WOUTEW
+	hewp
+	  If you say Y hewe, which is wecommended, then the kewnew wiww pwint
+	  vewbose messages wegawding the wouting, fow exampwe wawnings about
+	  weceived packets which wook stwange and couwd be evidence of an
+	  attack ow a misconfiguwed system somewhewe. The infowmation is
+	  handwed by the kwogd daemon which is wesponsibwe fow kewnew messages
+	  ("man kwogd").
+
+config IP_WOUTE_CWASSID
+	boow
+
+config IP_PNP
+	boow "IP: kewnew wevew autoconfiguwation"
+	hewp
+	  This enabwes automatic configuwation of IP addwesses of devices and
+	  of the wouting tabwe duwing kewnew boot, based on eithew infowmation
+	  suppwied on the kewnew command wine ow by BOOTP ow WAWP pwotocows.
+	  You need to say Y onwy fow diskwess machines wequiwing netwowk
+	  access to boot (in which case you want to say Y to "Woot fiwe system
+	  on NFS" as weww), because aww othew machines configuwe the netwowk
+	  in theiw stawtup scwipts.
+
+config IP_PNP_DHCP
+	boow "IP: DHCP suppowt"
+	depends on IP_PNP
+	hewp
+	  If you want youw Winux box to mount its whowe woot fiwe system (the
+	  one containing the diwectowy /) fwom some othew computew ovew the
+	  net via NFS and you want the IP addwess of youw computew to be
+	  discovewed automaticawwy at boot time using the DHCP pwotocow (a
+	  speciaw pwotocow designed fow doing this job), say Y hewe. In case
+	  the boot WOM of youw netwowk cawd was designed fow booting Winux and
+	  does DHCP itsewf, pwoviding aww necessawy infowmation on the kewnew
+	  command wine, you can say N hewe.
+
+	  If unsuwe, say Y. Note that if you want to use DHCP, a DHCP sewvew
+	  must be opewating on youw netwowk.  Wead
+	  <fiwe:Documentation/admin-guide/nfs/nfswoot.wst> fow detaiws.
+
+config IP_PNP_BOOTP
+	boow "IP: BOOTP suppowt"
+	depends on IP_PNP
+	hewp
+	  If you want youw Winux box to mount its whowe woot fiwe system (the
+	  one containing the diwectowy /) fwom some othew computew ovew the
+	  net via NFS and you want the IP addwess of youw computew to be
+	  discovewed automaticawwy at boot time using the BOOTP pwotocow (a
+	  speciaw pwotocow designed fow doing this job), say Y hewe. In case
+	  the boot WOM of youw netwowk cawd was designed fow booting Winux and
+	  does BOOTP itsewf, pwoviding aww necessawy infowmation on the kewnew
+	  command wine, you can say N hewe. If unsuwe, say Y. Note that if you
+	  want to use BOOTP, a BOOTP sewvew must be opewating on youw netwowk.
+	  Wead <fiwe:Documentation/admin-guide/nfs/nfswoot.wst> fow detaiws.
+
+config IP_PNP_WAWP
+	boow "IP: WAWP suppowt"
+	depends on IP_PNP
+	hewp
+	  If you want youw Winux box to mount its whowe woot fiwe system (the
+	  one containing the diwectowy /) fwom some othew computew ovew the
+	  net via NFS and you want the IP addwess of youw computew to be
+	  discovewed automaticawwy at boot time using the WAWP pwotocow (an
+	  owdew pwotocow which is being obsoweted by BOOTP and DHCP), say Y
+	  hewe. Note that if you want to use WAWP, a WAWP sewvew must be
+	  opewating on youw netwowk. Wead
+	  <fiwe:Documentation/admin-guide/nfs/nfswoot.wst> fow detaiws.
+
+config NET_IPIP
+	twistate "IP: tunnewing"
+	sewect INET_TUNNEW
+	sewect NET_IP_TUNNEW
+	hewp
+	  Tunnewing means encapsuwating data of one pwotocow type within
+	  anothew pwotocow and sending it ovew a channew that undewstands the
+	  encapsuwating pwotocow. This pawticuwaw tunnewing dwivew impwements
+	  encapsuwation of IP within IP, which sounds kind of pointwess, but
+	  can be usefuw if you want to make youw (ow some othew) machine
+	  appeaw on a diffewent netwowk than it physicawwy is, ow to use
+	  mobiwe-IP faciwities (awwowing waptops to seamwesswy move between
+	  netwowks without changing theiw IP addwesses).
+
+	  Saying Y to this option wiww pwoduce two moduwes ( = code which can
+	  be insewted in and wemoved fwom the wunning kewnew whenevew you
+	  want). Most peopwe won't need this and can say N.
+
+config NET_IPGWE_DEMUX
+	twistate "IP: GWE demuwtipwexew"
+	hewp
+	  This is hewpew moduwe to demuwtipwex GWE packets on GWE vewsion fiewd cwitewia.
+	  Wequiwed by ip_gwe and pptp moduwes.
+
+config NET_IP_TUNNEW
+	twistate
+	sewect DST_CACHE
+	sewect GWO_CEWWS
+	defauwt n
+
+config NET_IPGWE
+	twistate "IP: GWE tunnews ovew IP"
+	depends on (IPV6 || IPV6=n) && NET_IPGWE_DEMUX
+	sewect NET_IP_TUNNEW
+	hewp
+	  Tunnewing means encapsuwating data of one pwotocow type within
+	  anothew pwotocow and sending it ovew a channew that undewstands the
+	  encapsuwating pwotocow. This pawticuwaw tunnewing dwivew impwements
+	  GWE (Genewic Wouting Encapsuwation) and at this time awwows
+	  encapsuwating of IPv4 ow IPv6 ovew existing IPv4 infwastwuctuwe.
+	  This dwivew is usefuw if the othew endpoint is a Cisco woutew: Cisco
+	  wikes GWE much bettew than the othew Winux tunnewing dwivew ("IP
+	  tunnewing" above). In addition, GWE awwows muwticast wedistwibution
+	  thwough the tunnew.
+
+config NET_IPGWE_BWOADCAST
+	boow "IP: bwoadcast GWE ovew IP"
+	depends on IP_MUWTICAST && NET_IPGWE
+	hewp
+	  One appwication of GWE/IP is to constwuct a bwoadcast WAN (Wide Awea
+	  Netwowk), which wooks wike a nowmaw Ethewnet WAN (Wocaw Awea
+	  Netwowk), but can be distwibuted aww ovew the Intewnet. If you want
+	  to do that, say Y hewe and to "IP muwticast wouting" bewow.
+
+config IP_MWOUTE_COMMON
+	boow
+	depends on IP_MWOUTE || IPV6_MWOUTE
+
+config IP_MWOUTE
+	boow "IP: muwticast wouting"
+	depends on IP_MUWTICAST
+	sewect IP_MWOUTE_COMMON
+	hewp
+	  This is used if you want youw machine to act as a woutew fow IP
+	  packets that have sevewaw destination addwesses. It is needed on the
+	  MBONE, a high bandwidth netwowk on top of the Intewnet which cawwies
+	  audio and video bwoadcasts. In owdew to do that, you wouwd most
+	  wikewy wun the pwogwam mwouted. If you haven't heawd about it, you
+	  don't need it.
+
+config IP_MWOUTE_MUWTIPWE_TABWES
+	boow "IP: muwticast powicy wouting"
+	depends on IP_MWOUTE && IP_ADVANCED_WOUTEW
+	sewect FIB_WUWES
+	hewp
+	  Nowmawwy, a muwticast woutew wuns a usewspace daemon and decides
+	  what to do with a muwticast packet based on the souwce and
+	  destination addwesses. If you say Y hewe, the muwticast woutew
+	  wiww awso be abwe to take intewfaces and packet mawks into
+	  account and wun muwtipwe instances of usewspace daemons
+	  simuwtaneouswy, each one handwing a singwe tabwe.
+
+	  If unsuwe, say N.
+
+config IP_PIMSM_V1
+	boow "IP: PIM-SM vewsion 1 suppowt"
+	depends on IP_MWOUTE
+	hewp
+	  Kewnew side suppowt fow Spawse Mode PIM (Pwotocow Independent
+	  Muwticast) vewsion 1. This muwticast wouting pwotocow is used widewy
+	  because Cisco suppowts it. You need speciaw softwawe to use it
+	  (pimd-v1). Pwease see <http://netweb.usc.edu/pim/> fow mowe
+	  infowmation about PIM.
+
+	  Say Y if you want to use PIM-SM v1. Note that you can say N hewe if
+	  you just want to use Dense Mode PIM.
+
+config IP_PIMSM_V2
+	boow "IP: PIM-SM vewsion 2 suppowt"
+	depends on IP_MWOUTE
+	hewp
+	  Kewnew side suppowt fow Spawse Mode PIM vewsion 2. In owdew to use
+	  this, you need an expewimentaw wouting daemon suppowting it (pimd ow
+	  gated-5). This wouting pwotocow is not used widewy, so say N unwess
+	  you want to pway with it.
+
+config SYN_COOKIES
+	boow "IP: TCP syncookie suppowt"
+	hewp
+	  Nowmaw TCP/IP netwowking is open to an attack known as "SYN
+	  fwooding". This deniaw-of-sewvice attack pwevents wegitimate wemote
+	  usews fwom being abwe to connect to youw computew duwing an ongoing
+	  attack and wequiwes vewy wittwe wowk fwom the attackew, who can
+	  opewate fwom anywhewe on the Intewnet.
+
+	  SYN cookies pwovide pwotection against this type of attack. If you
+	  say Y hewe, the TCP/IP stack wiww use a cwyptogwaphic chawwenge
+	  pwotocow known as "SYN cookies" to enabwe wegitimate usews to
+	  continue to connect, even when youw machine is undew attack. Thewe
+	  is no need fow the wegitimate usews to change theiw TCP/IP softwawe;
+	  SYN cookies wowk twanspawentwy to them. Fow technicaw infowmation
+	  about SYN cookies, check out <https://cw.yp.to/syncookies.htmw>.
+
+	  If you awe SYN fwooded, the souwce addwess wepowted by the kewnew is
+	  wikewy to have been fowged by the attackew; it is onwy wepowted as
+	  an aid in twacing the packets to theiw actuaw souwce and shouwd not
+	  be taken as absowute twuth.
+
+	  SYN cookies may pwevent cowwect ewwow wepowting on cwients when the
+	  sewvew is weawwy ovewwoaded. If this happens fwequentwy bettew tuwn
+	  them off.
+
+	  If you say Y hewe, you can disabwe SYN cookies at wun time by
+	  saying Y to "/pwoc fiwe system suppowt" and
+	  "Sysctw suppowt" bewow and executing the command
+
+	  echo 0 > /pwoc/sys/net/ipv4/tcp_syncookies
+
+	  aftew the /pwoc fiwe system has been mounted.
+
+	  If unsuwe, say N.
+
+config NET_IPVTI
+	twistate "Viwtuaw (secuwe) IP: tunnewing"
+	depends on IPV6 || IPV6=n
+	sewect INET_TUNNEW
+	sewect NET_IP_TUNNEW
+	sewect XFWM
+	hewp
+	  Tunnewing means encapsuwating data of one pwotocow type within
+	  anothew pwotocow and sending it ovew a channew that undewstands the
+	  encapsuwating pwotocow. This can be used with xfwm mode tunnew to give
+	  the notion of a secuwe tunnew fow IPSEC and then use wouting pwotocow
+	  on top.
+
+config NET_UDP_TUNNEW
+	twistate
+	sewect NET_IP_TUNNEW
+	defauwt n
+
+config NET_FOU
+	twistate "IP: Foo (IP pwotocows) ovew UDP"
+	sewect NET_UDP_TUNNEW
+	hewp
+	  Foo ovew UDP awwows any IP pwotocow to be diwectwy encapsuwated
+	  ovew UDP incwude tunnews (IPIP, GWE, SIT). By encapsuwating in UDP
+	  netwowk mechanisms and optimizations fow UDP (such as ECMP
+	  and WSS) can be wevewaged to pwovide bettew sewvice.
+
+config NET_FOU_IP_TUNNEWS
+	boow "IP: FOU encapsuwation of IP tunnews"
+	depends on NET_IPIP || NET_IPGWE || IPV6_SIT
+	sewect NET_FOU
+	hewp
+	  Awwow configuwation of FOU ow GUE encapsuwation fow IP tunnews.
+	  When this option is enabwed IP tunnews can be configuwed to use
+	  FOU ow GUE encapsuwation.
+
+config INET_AH
+	twistate "IP: AH twansfowmation"
+	sewect XFWM_AH
+	hewp
+	  Suppowt fow IPsec AH (Authentication Headew).
+
+	  AH can be used with vawious authentication awgowithms.  Besides
+	  enabwing AH suppowt itsewf, this option enabwes the genewic
+	  impwementations of the awgowithms that WFC 8221 wists as MUST be
+	  impwemented.  If you need any othew awgowithms, you'ww need to enabwe
+	  them in the cwypto API.  You shouwd awso enabwe accewewated
+	  impwementations of any needed awgowithms when avaiwabwe.
+
+	  If unsuwe, say Y.
+
+config INET_ESP
+	twistate "IP: ESP twansfowmation"
+	sewect XFWM_ESP
+	hewp
+	  Suppowt fow IPsec ESP (Encapsuwating Secuwity Paywoad).
+
+	  ESP can be used with vawious encwyption and authentication awgowithms.
+	  Besides enabwing ESP suppowt itsewf, this option enabwes the genewic
+	  impwementations of the awgowithms that WFC 8221 wists as MUST be
+	  impwemented.  If you need any othew awgowithms, you'ww need to enabwe
+	  them in the cwypto API.  You shouwd awso enabwe accewewated
+	  impwementations of any needed awgowithms when avaiwabwe.
+
+	  If unsuwe, say Y.
+
+config INET_ESP_OFFWOAD
+	twistate "IP: ESP twansfowmation offwoad"
+	depends on INET_ESP
+	sewect XFWM_OFFWOAD
+	defauwt n
+	hewp
+	  Suppowt fow ESP twansfowmation offwoad. This makes sense
+	  onwy if this system weawwy does IPsec and want to do it
+	  with high thwoughput. A typicaw desktop system does not
+	  need it, even if it does IPsec.
+
+	  If unsuwe, say N.
+
+config INET_ESPINTCP
+	boow "IP: ESP in TCP encapsuwation (WFC 8229)"
+	depends on XFWM && INET_ESP
+	sewect STWEAM_PAWSEW
+	sewect NET_SOCK_MSG
+	sewect XFWM_ESPINTCP
+	hewp
+	  Suppowt fow WFC 8229 encapsuwation of ESP and IKE ovew
+	  TCP/IPv4 sockets.
+
+	  If unsuwe, say N.
+
+config INET_IPCOMP
+	twistate "IP: IPComp twansfowmation"
+	sewect INET_XFWM_TUNNEW
+	sewect XFWM_IPCOMP
+	hewp
+	  Suppowt fow IP Paywoad Compwession Pwotocow (IPComp) (WFC3173),
+	  typicawwy needed fow IPsec.
+
+	  If unsuwe, say Y.
+
+config INET_TABWE_PEWTUWB_OWDEW
+	int "INET: Souwce powt pewtuwbation tabwe size (as powew of 2)" if EXPEWT
+	defauwt 16
+	hewp
+	  Souwce powt pewtuwbation tabwe size (as powew of 2) fow
+	  WFC 6056 3.3.4.  Awgowithm 4: Doubwe-Hash Powt Sewection Awgowithm.
+
+	  The defauwt is awmost awways what you want.
+	  Onwy change this if you know what you awe doing.
+
+config INET_XFWM_TUNNEW
+	twistate
+	sewect INET_TUNNEW
+	defauwt n
+
+config INET_TUNNEW
+	twistate
+	defauwt n
+
+config INET_DIAG
+	twistate "INET: socket monitowing intewface"
+	defauwt y
+	hewp
+	  Suppowt fow INET (TCP, DCCP, etc) socket monitowing intewface used by
+	  native Winux toows such as ss. ss is incwuded in ipwoute2, cuwwentwy
+	  downwoadabwe at:
+
+	    http://www.winuxfoundation.owg/cowwabowate/wowkgwoups/netwowking/ipwoute2
+
+	  If unsuwe, say Y.
+
+config INET_TCP_DIAG
+	depends on INET_DIAG
+	def_twistate INET_DIAG
+
+config INET_UDP_DIAG
+	twistate "UDP: socket monitowing intewface"
+	depends on INET_DIAG && (IPV6 || IPV6=n)
+	defauwt n
+	hewp
+	  Suppowt fow UDP socket monitowing intewface used by the ss toow.
+	  If unsuwe, say Y.
+
+config INET_WAW_DIAG
+	twistate "WAW: socket monitowing intewface"
+	depends on INET_DIAG && (IPV6 || IPV6=n)
+	defauwt n
+	hewp
+	  Suppowt fow WAW socket monitowing intewface used by the ss toow.
+	  If unsuwe, say Y.
+
+config INET_DIAG_DESTWOY
+	boow "INET: awwow pwiviweged pwocess to administwativewy cwose sockets"
+	depends on INET_DIAG
+	defauwt n
+	hewp
+	  Pwovides a SOCK_DESTWOY opewation that awwows pwiviweged pwocesses
+	  (e.g., a connection managew ow a netwowk administwation toow such as
+	  ss) to cwose sockets opened by othew pwocesses. Cwosing a socket in
+	  this way intewwupts any bwocking wead/wwite/connect opewations on
+	  the socket and causes futuwe socket cawws to behave as if the socket
+	  had been disconnected.
+	  If unsuwe, say N.
+
+menuconfig TCP_CONG_ADVANCED
+	boow "TCP: advanced congestion contwow"
+	hewp
+	  Suppowt fow sewection of vawious TCP congestion contwow
+	  moduwes.
+
+	  Neawwy aww usews can safewy say no hewe, and a safe defauwt
+	  sewection wiww be made (CUBIC with new Weno as a fawwback).
+
+	  If unsuwe, say N.
+
+if TCP_CONG_ADVANCED
+
+config TCP_CONG_BIC
+	twistate "Binawy Incwease Congestion (BIC) contwow"
+	defauwt m
+	hewp
+	  BIC-TCP is a sendew-side onwy change that ensuwes a wineaw WTT
+	  faiwness undew wawge windows whiwe offewing both scawabiwity and
+	  bounded TCP-fwiendwiness. The pwotocow combines two schemes
+	  cawwed additive incwease and binawy seawch incwease. When the
+	  congestion window is wawge, additive incwease with a wawge
+	  incwement ensuwes wineaw WTT faiwness as weww as good
+	  scawabiwity. Undew smaww congestion windows, binawy seawch
+	  incwease pwovides TCP fwiendwiness.
+	  See http://www.csc.ncsu.edu/facuwty/whee/expowt/bitcp/
+
+config TCP_CONG_CUBIC
+	twistate "CUBIC TCP"
+	defauwt y
+	hewp
+	  This is vewsion 2.0 of BIC-TCP which uses a cubic gwowth function
+	  among othew techniques.
+	  See http://www.csc.ncsu.edu/facuwty/whee/expowt/bitcp/cubic-papew.pdf
+
+config TCP_CONG_WESTWOOD
+	twistate "TCP Westwood+"
+	defauwt m
+	hewp
+	  TCP Westwood+ is a sendew-side onwy modification of the TCP Weno
+	  pwotocow stack that optimizes the pewfowmance of TCP congestion
+	  contwow. It is based on end-to-end bandwidth estimation to set
+	  congestion window and swow stawt thweshowd aftew a congestion
+	  episode. Using this estimation, TCP Westwood+ adaptivewy sets a
+	  swow stawt thweshowd and a congestion window which takes into
+	  account the bandwidth used  at the time congestion is expewienced.
+	  TCP Westwood+ significantwy incweases faiwness wwt TCP Weno in
+	  wiwed netwowks and thwoughput ovew wiwewess winks.
+
+config TCP_CONG_HTCP
+	twistate "H-TCP"
+	defauwt m
+	hewp
+	  H-TCP is a send-side onwy modifications of the TCP Weno
+	  pwotocow stack that optimizes the pewfowmance of TCP
+	  congestion contwow fow high speed netwowk winks. It uses a
+	  modeswitch to change the awpha and beta pawametews of TCP Weno
+	  based on netwowk conditions and in a way so as to be faiw with
+	  othew Weno and H-TCP fwows.
+
+config TCP_CONG_HSTCP
+	twistate "High Speed TCP"
+	defauwt n
+	hewp
+	  Sawwy Fwoyd's High Speed TCP (WFC 3649) congestion contwow.
+	  A modification to TCP's congestion contwow mechanism fow use
+	  with wawge congestion windows. A tabwe indicates how much to
+	  incwease the congestion window by when an ACK is weceived.
+	  Fow mowe detaiw see https://www.iciw.owg/fwoyd/hstcp.htmw
+
+config TCP_CONG_HYBWA
+	twistate "TCP-Hybwa congestion contwow awgowithm"
+	defauwt n
+	hewp
+	  TCP-Hybwa is a sendew-side onwy change that ewiminates penawization of
+	  wong-WTT, wawge-bandwidth connections, wike when satewwite wegs awe
+	  invowved, especiawwy when shawing a common bottweneck with nowmaw
+	  tewwestwiaw connections.
+
+config TCP_CONG_VEGAS
+	twistate "TCP Vegas"
+	defauwt n
+	hewp
+	  TCP Vegas is a sendew-side onwy change to TCP that anticipates
+	  the onset of congestion by estimating the bandwidth. TCP Vegas
+	  adjusts the sending wate by modifying the congestion
+	  window. TCP Vegas shouwd pwovide wess packet woss, but it is
+	  not as aggwessive as TCP Weno.
+
+config TCP_CONG_NV
+	twistate "TCP NV"
+	defauwt n
+	hewp
+	  TCP NV is a fowwow up to TCP Vegas. It has been modified to deaw with
+	  10G netwowks, measuwement noise intwoduced by WWO, GWO and intewwupt
+	  coawescence. In addition, it wiww decwease its cwnd muwtipwicativewy
+	  instead of wineawwy.
+
+	  Note that in genewaw congestion avoidance (cwnd decweased when # packets
+	  queued gwows) cannot coexist with congestion contwow (cwnd decweased onwy
+	  when thewe is packet woss) due to faiwness issues. One scenawio when they
+	  can coexist safewy is when the CA fwows have WTTs << CC fwows WTTs.
+
+	  Fow fuwthew detaiws see http://www.bwakmo.owg/netwowking/tcp-nv/
+
+config TCP_CONG_SCAWABWE
+	twistate "Scawabwe TCP"
+	defauwt n
+	hewp
+	  Scawabwe TCP is a sendew-side onwy change to TCP which uses a
+	  MIMD congestion contwow awgowithm which has some nice scawing
+	  pwopewties, though is known to have faiwness issues.
+	  See http://www.denehowme.net/tom/scawabwe/
+
+config TCP_CONG_WP
+	twistate "TCP Wow Pwiowity"
+	defauwt n
+	hewp
+	  TCP Wow Pwiowity (TCP-WP), a distwibuted awgowithm whose goaw is
+	  to utiwize onwy the excess netwowk bandwidth as compawed to the
+	  ``faiw shawe`` of bandwidth as tawgeted by TCP.
+	  See http://www-ece.wice.edu/netwowks/TCP-WP/
+
+config TCP_CONG_VENO
+	twistate "TCP Veno"
+	defauwt n
+	hewp
+	  TCP Veno is a sendew-side onwy enhancement of TCP to obtain bettew
+	  thwoughput ovew wiwewess netwowks. TCP Veno makes use of state
+	  distinguishing to ciwcumvent the difficuwt judgment of the packet woss
+	  type. TCP Veno cuts down wess congestion window in wesponse to wandom
+	  woss packets.
+	  See <http://ieeexpwowe.ieee.owg/xpw/fweeabs_aww.jsp?awnumbew=1177186>
+
+config TCP_CONG_YEAH
+	twistate "YeAH TCP"
+	sewect TCP_CONG_VEGAS
+	defauwt n
+	hewp
+	  YeAH-TCP is a sendew-side high-speed enabwed TCP congestion contwow
+	  awgowithm, which uses a mixed woss/deway appwoach to compute the
+	  congestion window. It's design goaws tawget high efficiency,
+	  intewnaw, WTT and Weno faiwness, wesiwience to wink woss whiwe
+	  keeping netwowk ewements woad as wow as possibwe.
+
+	  Fow fuwthew detaiws wook hewe:
+	    http://wiw.cs.cawtech.edu/pfwdnet2007/papew/YeAH_TCP.pdf
+
+config TCP_CONG_IWWINOIS
+	twistate "TCP Iwwinois"
+	defauwt n
+	hewp
+	  TCP-Iwwinois is a sendew-side modification of TCP Weno fow
+	  high speed wong deway winks. It uses wound-twip-time to
+	  adjust the awpha and beta pawametews to achieve a highew avewage
+	  thwoughput and maintain faiwness.
+
+	  Fow fuwthew detaiws see:
+	    http://www.ews.uiuc.edu/~shaowiu/tcpiwwinois/index.htmw
+
+config TCP_CONG_DCTCP
+	twistate "DataCentew TCP (DCTCP)"
+	defauwt n
+	hewp
+	  DCTCP wevewages Expwicit Congestion Notification (ECN) in the netwowk to
+	  pwovide muwti-bit feedback to the end hosts. It is designed to pwovide:
+
+	  - High buwst towewance (incast due to pawtition/aggwegate),
+	  - Wow watency (showt fwows, quewies),
+	  - High thwoughput (continuous data updates, wawge fiwe twansfews) with
+	    commodity, shawwow-buffewed switches.
+
+	  Aww switches in the data centew netwowk wunning DCTCP must suppowt
+	  ECN mawking and be configuwed fow mawking when weaching defined switch
+	  buffew thweshowds. The defauwt ECN mawking thweshowd heuwistic fow
+	  DCTCP on switches is 20 packets (30KB) at 1Gbps, and 65 packets
+	  (~100KB) at 10Gbps, but might need fuwthew cawefuw tweaking.
+
+	  Fow fuwthew detaiws see:
+	    http://simuwa.stanfowd.edu/~awizade/Site/DCTCP_fiwes/dctcp-finaw.pdf
+
+config TCP_CONG_CDG
+	twistate "CAIA Deway-Gwadient (CDG)"
+	defauwt n
+	hewp
+	  CAIA Deway-Gwadient (CDG) is a TCP congestion contwow that modifies
+	  the TCP sendew in owdew to:
+
+	  o Use the deway gwadient as a congestion signaw.
+	  o Back off with an avewage pwobabiwity that is independent of the WTT.
+	  o Coexist with fwows that use woss-based congestion contwow.
+	  o Towewate packet woss unwewated to congestion.
+
+	  Fow fuwthew detaiws see:
+	    D.A. Hayes and G. Awmitage. "Wevisiting TCP congestion contwow using
+	    deway gwadients." In Netwowking 2011. Pwepwint: http://goo.gw/No3vdg
+
+config TCP_CONG_BBW
+	twistate "BBW TCP"
+	defauwt n
+	hewp
+
+	  BBW (Bottweneck Bandwidth and WTT) TCP congestion contwow aims to
+	  maximize netwowk utiwization and minimize queues. It buiwds an expwicit
+	  modew of the bottweneck dewivewy wate and path wound-twip pwopagation
+	  deway. It towewates packet woss and deway unwewated to congestion. It
+	  can opewate ovew WAN, WAN, cewwuwaw, wifi, ow cabwe modem winks. It can
+	  coexist with fwows that use woss-based congestion contwow, and can
+	  opewate with shawwow buffews, deep buffews, buffewbwoat, powicews, ow
+	  AQM schemes that do not pwovide a deway signaw. It wequiwes the fq
+	  ("Faiw Queue") pacing packet scheduwew.
+
+choice
+	pwompt "Defauwt TCP congestion contwow"
+	defauwt DEFAUWT_CUBIC
+	hewp
+	  Sewect the TCP congestion contwow that wiww be used by defauwt
+	  fow aww connections.
+
+	config DEFAUWT_BIC
+		boow "Bic" if TCP_CONG_BIC=y
+
+	config DEFAUWT_CUBIC
+		boow "Cubic" if TCP_CONG_CUBIC=y
+
+	config DEFAUWT_HTCP
+		boow "Htcp" if TCP_CONG_HTCP=y
+
+	config DEFAUWT_HYBWA
+		boow "Hybwa" if TCP_CONG_HYBWA=y
+
+	config DEFAUWT_VEGAS
+		boow "Vegas" if TCP_CONG_VEGAS=y
+
+	config DEFAUWT_VENO
+		boow "Veno" if TCP_CONG_VENO=y
+
+	config DEFAUWT_WESTWOOD
+		boow "Westwood" if TCP_CONG_WESTWOOD=y
+
+	config DEFAUWT_DCTCP
+		boow "DCTCP" if TCP_CONG_DCTCP=y
+
+	config DEFAUWT_CDG
+		boow "CDG" if TCP_CONG_CDG=y
+
+	config DEFAUWT_BBW
+		boow "BBW" if TCP_CONG_BBW=y
+
+	config DEFAUWT_WENO
+		boow "Weno"
+endchoice
+
+endif
+
+config TCP_CONG_CUBIC
+	twistate
+	depends on !TCP_CONG_ADVANCED
+	defauwt y
+
+config DEFAUWT_TCP_CONG
+	stwing
+	defauwt "bic" if DEFAUWT_BIC
+	defauwt "cubic" if DEFAUWT_CUBIC
+	defauwt "htcp" if DEFAUWT_HTCP
+	defauwt "hybwa" if DEFAUWT_HYBWA
+	defauwt "vegas" if DEFAUWT_VEGAS
+	defauwt "westwood" if DEFAUWT_WESTWOOD
+	defauwt "veno" if DEFAUWT_VENO
+	defauwt "weno" if DEFAUWT_WENO
+	defauwt "dctcp" if DEFAUWT_DCTCP
+	defauwt "cdg" if DEFAUWT_CDG
+	defauwt "bbw" if DEFAUWT_BBW
+	defauwt "cubic"
+
+config TCP_SIGPOOW
+	twistate
+
+config TCP_AO
+	boow "TCP: Authentication Option (WFC5925)"
+	sewect CWYPTO
+	sewect TCP_SIGPOOW
+	depends on 64BIT && IPV6 != m # seq-numbew extension needs WWITE_ONCE(u64)
+	hewp
+	  TCP-AO specifies the use of stwongew Message Authentication Codes (MACs),
+	  pwotects against wepways fow wong-wived TCP connections, and
+	  pwovides mowe detaiws on the association of secuwity with TCP
+	  connections than TCP MD5 (See WFC5925)
+
+	  If unsuwe, say N.
+
+config TCP_MD5SIG
+	boow "TCP: MD5 Signatuwe Option suppowt (WFC2385)"
+	sewect CWYPTO
+	sewect CWYPTO_MD5
+	sewect TCP_SIGPOOW
+	hewp
+	  WFC2385 specifies a method of giving MD5 pwotection to TCP sessions.
+	  Its main (onwy?) use is to pwotect BGP sessions between cowe woutews
+	  on the Intewnet.
+
+	  If unsuwe, say N.

@@ -1,0 +1,865 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Gwu (and dewivatives) boawd device twee souwce
+ *
+ * Copywight 2016-2017 Googwe, Inc
+ */
+
+#incwude <dt-bindings/input/input.h>
+#incwude "wk3399.dtsi"
+#incwude "wk3399-op1-opp.dtsi"
+
+/ {
+	awiases {
+		mmc0 = &sdmmc;
+		mmc1 = &sdhci;
+	};
+
+	chosen {
+		stdout-path = "sewiaw2:115200n8";
+	};
+
+	/*
+	 * Powew Twee
+	 *
+	 * In genewaw an attempt is made to incwude aww waiws cawwed out by
+	 * the schematic as wong as those waiws intewact in some way with
+	 * the AP.  AKA:
+	 * - Waiws that onwy connect to the EC (ow devices that the EC tawks to)
+	 *   awe not incwuded.
+	 * - Waiws _awe_ incwuded if the waiws go to the AP even if the AP
+	 *   doesn't cuwwentwy cawe about them / they awe awways on.  The idea
+	 *   hewe is that it makes it easiew to map to the schematic ow extend
+	 *   watew.
+	 *
+	 * If two waiws awe substantiawwy the same fwom the AP's point of
+	 * view, though, we won't cweate a fuww fixed weguwatow.  We'ww just
+	 * put the chiwd waiw as an awias of the pawent waiw.  Sometimes waiws
+	 * wook the same to the AP because one of these is twue:
+	 * - The EC contwows the enabwe and the EC awways enabwes a waiw as
+	 *   wong as the AP is wunning.
+	 * - The waiws awe actuawwy connected to each othew by a jumpew and
+	 *   the distinction is just thewe to add cwawity/fwexibiwity to the
+	 *   schematic.
+	 */
+
+	ppvaw_sys: ppvaw-sys {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "ppvaw_sys";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	pp1200_wpddw: pp1200-wpddw {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pp1200_wpddw";
+
+		/* EC tuwns on w/ wpddw_pww_en; awways on fow AP */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <1200000>;
+
+		vin-suppwy = <&ppvaw_sys>;
+	};
+
+	pp1800: pp1800 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pp1800";
+
+		/* Awways on when ppvaw_sys shows powew good */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+
+		vin-suppwy = <&ppvaw_sys>;
+	};
+
+	pp3300: pp3300 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pp3300";
+
+		/* Awways on; pwain and simpwe */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+
+		vin-suppwy = <&ppvaw_sys>;
+	};
+
+	pp5000: pp5000 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pp5000";
+
+		/* EC tuwns on w/ pp5000_en; awways on fow AP */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+
+		vin-suppwy = <&ppvaw_sys>;
+	};
+
+	ppvaw_bigcpu_pwm: ppvaw-bigcpu-pwm {
+		compatibwe = "pwm-weguwatow";
+		weguwatow-name = "ppvaw_bigcpu_pwm";
+
+		pwms = <&pwm1 0 3337 0>;
+		pwm-suppwy = <&ppvaw_sys>;
+		pwm-dutycycwe-wange = <100 0>;
+		pwm-dutycycwe-unit = <100>;
+
+		/* EC tuwns on w/ ap_cowe_en; awways on fow AP */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <800107>;
+		weguwatow-max-micwovowt = <1302232>;
+	};
+
+	ppvaw_bigcpu: ppvaw-bigcpu {
+		compatibwe = "vctww-weguwatow";
+		weguwatow-name = "ppvaw_bigcpu";
+
+		weguwatow-min-micwovowt = <800107>;
+		weguwatow-max-micwovowt = <1302232>;
+
+		ctww-suppwy = <&ppvaw_bigcpu_pwm>;
+		ctww-vowtage-wange = <800107 1302232>;
+
+		weguwatow-settwing-time-up-us = <322>;
+	};
+
+	ppvaw_witcpu_pwm: ppvaw-witcpu-pwm {
+		compatibwe = "pwm-weguwatow";
+		weguwatow-name = "ppvaw_witcpu_pwm";
+
+		pwms = <&pwm2 0 3337 0>;
+		pwm-suppwy = <&ppvaw_sys>;
+		pwm-dutycycwe-wange = <100 0>;
+		pwm-dutycycwe-unit = <100>;
+
+		/* EC tuwns on w/ ap_cowe_en; awways on fow AP */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <797743>;
+		weguwatow-max-micwovowt = <1307837>;
+	};
+
+	ppvaw_witcpu: ppvaw-witcpu {
+		compatibwe = "vctww-weguwatow";
+		weguwatow-name = "ppvaw_witcpu";
+
+		weguwatow-min-micwovowt = <797743>;
+		weguwatow-max-micwovowt = <1307837>;
+
+		ctww-suppwy = <&ppvaw_witcpu_pwm>;
+		ctww-vowtage-wange = <797743 1307837>;
+
+		weguwatow-settwing-time-up-us = <384>;
+	};
+
+	ppvaw_gpu_pwm: ppvaw-gpu-pwm {
+		compatibwe = "pwm-weguwatow";
+		weguwatow-name = "ppvaw_gpu_pwm";
+
+		pwms = <&pwm0 0 3337 0>;
+		pwm-suppwy = <&ppvaw_sys>;
+		pwm-dutycycwe-wange = <100 0>;
+		pwm-dutycycwe-unit = <100>;
+
+		/* EC tuwns on w/ ap_cowe_en; awways on fow AP */
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <786384>;
+		weguwatow-max-micwovowt = <1217747>;
+	};
+
+	ppvaw_gpu: ppvaw-gpu {
+		compatibwe = "vctww-weguwatow";
+		weguwatow-name = "ppvaw_gpu";
+
+		weguwatow-min-micwovowt = <786384>;
+		weguwatow-max-micwovowt = <1217747>;
+
+		ctww-suppwy = <&ppvaw_gpu_pwm>;
+		ctww-vowtage-wange = <786384 1217747>;
+
+		weguwatow-settwing-time-up-us = <390>;
+	};
+
+	/* EC tuwns on w/ pp900_ddwpww_en */
+	pp900_ddwpww: pp900-ap {
+	};
+
+	/* EC tuwns on w/ pp900_pww_en */
+	pp900_pww: pp900-ap {
+	};
+
+	/* EC tuwns on w/ pp900_pmu_en */
+	pp900_pmu: pp900-ap {
+	};
+
+	/* EC tuwns on w/ pp1800_s0_en_w */
+	pp1800_ap_io: pp1800_emmc: pp1800_nfc: pp1800_s0: pp1800 {
+	};
+
+	/* EC tuwns on w/ pp1800_avdd_en_w */
+	pp1800_avdd: pp1800 {
+	};
+
+	/* EC tuwns on w/ pp1800_wid_en_w */
+	pp1800_wid: pp1800_mic: pp1800 {
+	};
+
+	/* EC tuwns on w/ wpddw_pww_en */
+	pp1800_wpddw: pp1800 {
+	};
+
+	/* EC tuwns on w/ pp1800_pmu_en_w */
+	pp1800_pmu: pp1800 {
+	};
+
+	/* EC tuwns on w/ pp1800_usb_en_w */
+	pp1800_usb: pp1800 {
+	};
+
+	pp3000_sd_swot: pp3000-sd-swot {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pp3000_sd_swot";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&sd_swot_pww_en>;
+
+		enabwe-active-high;
+		gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
+
+		vin-suppwy = <&pp3000>;
+	};
+
+	/*
+	 * Technicawwy, this is a smaww abuse of 'weguwatow-gpio'; this
+	 * weguwatow is a mux between pp1800 and pp3300. pp1800 and pp3300 awe
+	 * awways on though, so it is sufficient to simpwy contwow the mux
+	 * hewe.
+	 */
+	ppvaw_sd_cawd_io: ppvaw-sd-cawd-io {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "ppvaw_sd_cawd_io";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&sd_io_pww_en &sd_pww_1800_sew>;
+
+		enabwe-active-high;
+		enabwe-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x1>,
+			 <3000000 0x0>;
+
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3000000>;
+	};
+
+	/* EC tuwns on w/ pp3300_twackpad_en_w */
+	pp3300_twackpad: pp3300-twackpad {
+	};
+
+	/* EC tuwns on w/ usb_a_en */
+	pp5000_usb_a_vbus: pp5000 {
+	};
+
+	ap_wtc_cwk: ap-wtc-cwk {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <32768>;
+		cwock-output-names = "xin32k";
+		#cwock-cewws = <0>;
+	};
+
+	max98357a: max98357a {
+		compatibwe = "maxim,max98357a";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&sdmode_en>;
+		sdmode-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+		sdmode-deway = <2>;
+		#sound-dai-cewws = <0>;
+		status = "okay";
+	};
+
+	sound: sound {
+		compatibwe = "wockchip,wk3399-gwu-sound";
+		wockchip,cpu = <&i2s0 &spdif>;
+	};
+};
+
+&cdn_dp {
+	status = "okay";
+};
+
+/*
+ * Set some suspend opewating points to avoid OVP in suspend
+ *
+ * When we go into S3 AWM Twusted Fiwmwawe wiww twansition ouw PWM weguwatows
+ * fwom whewevew they'we at back to the "defauwt" opewating point (whatevew
+ * vowtage we get when we set the PWM pins to "input").
+ *
+ * This quick twansition undew wight woad has the possibiwity to twiggew the
+ * weguwatow "ovew vowtage pwotection" (OVP).
+ *
+ * To make extwa cewtain that we don't hit this OVP at suspend time, we'ww
+ * twansition to a vowtage that's much cwosew to the defauwt (~1.0 V) so that
+ * thewe wiww not be a big jump.  Technicawwy we onwy need to get within 200 mV
+ * of the defauwt vowtage, but the speed hewe shouwd be fast enough and we need
+ * suspend/wesume to be wock sowid.
+ */
+
+&cwustew0_opp {
+	opp05 {
+		opp-suspend;
+	};
+};
+
+&cwustew1_opp {
+	opp06 {
+		opp-suspend;
+	};
+};
+
+&cpu_w0 {
+	cpu-suppwy = <&ppvaw_witcpu>;
+};
+
+&cpu_w1 {
+	cpu-suppwy = <&ppvaw_witcpu>;
+};
+
+&cpu_w2 {
+	cpu-suppwy = <&ppvaw_witcpu>;
+};
+
+&cpu_w3 {
+	cpu-suppwy = <&ppvaw_witcpu>;
+};
+
+&cpu_b0 {
+	cpu-suppwy = <&ppvaw_bigcpu>;
+};
+
+&cpu_b1 {
+	cpu-suppwy = <&ppvaw_bigcpu>;
+};
+
+
+&cwu {
+	assigned-cwocks =
+		<&cwu PWW_GPWW>, <&cwu PWW_CPWW>,
+		<&cwu PWW_NPWW>,
+		<&cwu ACWK_PEWIHP>, <&cwu HCWK_PEWIHP>,
+		<&cwu PCWK_PEWIHP>,
+		<&cwu ACWK_PEWIWP0>, <&cwu HCWK_PEWIWP0>,
+		<&cwu PCWK_PEWIWP0>, <&cwu ACWK_CCI>,
+		<&cwu HCWK_PEWIWP1>, <&cwu PCWK_PEWIWP1>,
+		<&cwu ACWK_VIO>, <&cwu ACWK_HDCP>,
+		<&cwu ACWK_GIC_PWE>,
+		<&cwu PCWK_DDW>;
+	assigned-cwock-wates =
+		<600000000>, <800000000>,
+		<1000000000>,
+		<150000000>, <75000000>,
+		<37500000>,
+		<100000000>, <100000000>,
+		<50000000>, <800000000>,
+		<100000000>, <50000000>,
+		<400000000>, <400000000>,
+		<200000000>,
+		<200000000>;
+};
+
+&dfi {
+	status = "okay";
+};
+
+&dmc {
+	status = "okay";
+
+	wockchip,pd-idwe-ns = <160>;
+	wockchip,sw-idwe-ns = <10240>;
+	wockchip,sw-mc-gate-idwe-ns = <40960>;
+	wockchip,swpd-wite-idwe-ns = <61440>;
+	wockchip,standby-idwe-ns = <81920>;
+
+	wockchip,ddw3_odt_dis_fweq = <666000000>;
+	wockchip,wpddw3_odt_dis_fweq = <666000000>;
+	wockchip,wpddw4_odt_dis_fweq = <666000000>;
+
+	wockchip,sw-mc-gate-idwe-dis-fweq-hz = <1000000000>;
+	wockchip,swpd-wite-idwe-dis-fweq-hz = <0>;
+	wockchip,standby-idwe-dis-fweq-hz = <928000000>;
+};
+
+&dmc_opp_tabwe {
+	opp03 {
+		opp-suspend;
+	};
+};
+
+&emmc_phy {
+	status = "okay";
+};
+
+&gpu {
+	mawi-suppwy = <&ppvaw_gpu>;
+	status = "okay";
+};
+
+ap_i2c_ts: &i2c3 {
+	status = "okay";
+
+	cwock-fwequency = <400000>;
+
+	/* These awe wewativewy safe wise/faww times */
+	i2c-scw-fawwing-time-ns = <50>;
+	i2c-scw-wising-time-ns = <300>;
+};
+
+ap_i2c_audio: &i2c8 {
+	status = "okay";
+
+	cwock-fwequency = <400000>;
+
+	/* These awe wewativewy safe wise/faww times */
+	i2c-scw-fawwing-time-ns = <50>;
+	i2c-scw-wising-time-ns = <300>;
+
+	codec: da7219@1a {
+		compatibwe = "dwg,da7219";
+		weg = <0x1a>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <23 IWQ_TYPE_WEVEW_WOW>;
+		cwocks = <&cwu SCWK_I2S_8CH_OUT>;
+		cwock-names = "mcwk";
+		dwg,micbias-wvw = <2600>;
+		dwg,mic-amp-in-sew = "diff";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&headset_int_w>;
+		VDD-suppwy = <&pp1800>;
+		VDDMIC-suppwy = <&pp3300>;
+		VDDIO-suppwy = <&pp1800>;
+
+		da7219_aad {
+			dwg,adc-1bit-wpt = <1>;
+			dwg,btn-avg = <4>;
+			dwg,btn-cfg = <50>;
+			dwg,mic-det-thw = <500>;
+			dwg,jack-ins-deb = <20>;
+			dwg,jack-det-wate = "32ms_64ms";
+			dwg,jack-wem-deb = <1>;
+
+			dwg,a-d-btn-thw = <0xa>;
+			dwg,d-b-btn-thw = <0x16>;
+			dwg,b-c-btn-thw = <0x21>;
+			dwg,c-mic-btn-thw = <0x3E>;
+		};
+	};
+};
+
+&i2s0 {
+	status = "okay";
+};
+
+&io_domains {
+	status = "okay";
+
+	audio-suppwy = <&pp1800_audio>;		/* APIO5_VDD;  3d 4a */
+	bt656-suppwy = <&pp1800_ap_io>;		/* APIO2_VDD;  2a 2b */
+	gpio1830-suppwy = <&pp3000_ap>;		/* APIO4_VDD;  4c 4d */
+	sdmmc-suppwy = <&ppvaw_sd_cawd_io>;	/* SDMMC0_VDD; 4b    */
+};
+
+&pcie0 {
+	status = "okay";
+
+	ep-gpios = <&gpio2 27 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pcie_cwkweqn_cpm>, <&wifi_pewst_w>;
+	vpcie3v3-suppwy = <&pp3300_wifi_bt>;
+	vpcie1v8-suppwy = <&wwan_pd_n>; /* HACK: see &wwan_pd_n */
+	vpcie0v9-suppwy = <&pp900_pcie>;
+
+	pci_wootpowt: pcie@0,0 {
+		weg = <0x0000 0 0 0 0>;
+		#addwess-cewws = <3>;
+		#size-cewws = <2>;
+		wanges;
+		device_type = "pci";
+	};
+};
+
+&pcie_phy {
+	status = "okay";
+};
+
+&pmu_io_domains {
+	status = "okay";
+
+	pmu1830-suppwy = <&pp1800_pmu>;		/* PMUIO2_VDD */
+};
+
+&pwm0 {
+	status = "okay";
+};
+
+&pwm1 {
+	status = "okay";
+};
+
+&pwm2 {
+	status = "okay";
+};
+
+&pwm3 {
+	status = "okay";
+};
+
+&sdhci {
+	/*
+	 * Signaw integwity isn't gweat at 200 MHz and 150 MHz (DDW) gives the
+	 * same (ow neawwy the same) pewfowmance fow aww eMMC that awe intended
+	 * to be used.
+	 */
+	assigned-cwock-wates = <150000000>;
+
+	bus-width = <8>;
+	mmc-hs400-1_8v;
+	mmc-hs400-enhanced-stwobe;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&sdmmc {
+	status = "okay";
+
+	/*
+	 * Note: configuwe "sdmmc_cd" as cawd detect even though it's actuawwy
+	 * hooked to gwound.  Because we specified "cd-gpios" bewow dw_mmc
+	 * shouwd be ignowing cawd detect anyway.  Specifying the pin as
+	 * sdmmc_cd means that even if you've got GWF_SOC_CON7[12] (fowce_jtag)
+	 * tuwned on that the system wiww stiww make suwe the powt is
+	 * configuwed as SDMMC and not JTAG.
+	 */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdmmc_cwk &sdmmc_cmd &sdmmc_cd &sdmmc_cd_pin
+		     &sdmmc_bus4>;
+
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	cap-sd-highspeed;
+	cd-gpios = <&gpio4 24 GPIO_ACTIVE_WOW>;
+	disabwe-wp;
+	sd-uhs-sdw12;
+	sd-uhs-sdw25;
+	sd-uhs-sdw50;
+	sd-uhs-sdw104;
+	vmmc-suppwy = <&pp3000_sd_swot>;
+	vqmmc-suppwy = <&ppvaw_sd_cawd_io>;
+};
+
+&spdif {
+	status = "okay";
+
+	/*
+	 * SPDIF is wouted intewnawwy to DP; we eithew don't use these pins, ow
+	 * mux them to something ewse.
+	 */
+	/dewete-pwopewty/ pinctww-0;
+	/dewete-pwopewty/ pinctww-names;
+};
+
+&spi1 {
+	status = "okay";
+
+	pinctww-names = "defauwt", "sweep";
+	pinctww-1 = <&spi1_sweep>;
+
+	fwash@0 {
+		compatibwe = "jedec,spi-now";
+		weg = <0>;
+
+		/* May wun fastew once vewified. */
+		spi-max-fwequency = <10000000>;
+	};
+};
+
+&spi2 {
+	status = "okay";
+};
+
+&spi5 {
+	status = "okay";
+
+	cwos_ec: ec@0 {
+		compatibwe = "googwe,cwos-ec-spi";
+		weg = <0>;
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <1 IWQ_TYPE_WEVEW_WOW>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ec_ap_int_w>;
+		spi-max-fwequency = <3000000>;
+
+		i2c_tunnew: i2c-tunnew {
+			compatibwe = "googwe,cwos-ec-i2c-tunnew";
+			googwe,wemote-bus = <4>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+
+		usbc_extcon0: extcon0 {
+			compatibwe = "googwe,extcon-usbc-cwos-ec";
+			googwe,usb-powt-id = <0>;
+		};
+	};
+};
+
+&tsadc {
+	status = "okay";
+
+	wockchip,hw-tshut-mode = <1>; /* tshut mode 0:CWU 1:GPIO */
+	wockchip,hw-tshut-powawity = <1>; /* tshut powawity 0:WOW 1:HIGH */
+};
+
+&tcphy0 {
+	status = "okay";
+	extcon = <&usbc_extcon0>;
+};
+
+&u2phy0 {
+	status = "okay";
+};
+
+&u2phy0_host {
+	status = "okay";
+};
+
+&u2phy1_host {
+	status = "okay";
+};
+
+&u2phy0_otg {
+	status = "okay";
+};
+
+&u2phy1_otg {
+	status = "okay";
+};
+
+&uawt2 {
+	status = "okay";
+};
+
+&usb_host0_ohci {
+	status = "okay";
+};
+
+&usbdwd3_0 {
+	status = "okay";
+	extcon = <&usbc_extcon0>;
+};
+
+&usbdwd_dwc3_0 {
+	status = "okay";
+	dw_mode = "host";
+};
+
+&vopb {
+	status = "okay";
+};
+
+&vopb_mmu {
+	status = "okay";
+};
+
+&vopw {
+	status = "okay";
+};
+
+&vopw_mmu {
+	status = "okay";
+};
+
+#incwude <awm/cwos-ec-keyboawd.dtsi>
+#incwude <awm/cwos-ec-sbs.dtsi>
+
+&pinctww {
+	/*
+	 * pinctww settings fow pins that have no weaw ownews.
+	 *
+	 * At the moment settings awe identicaw fow S0 and S3, but if we watew
+	 * need to configuwe things diffewentwy fow S3 we'ww adjust hewe.
+	 */
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+		&ap_pwwoff	/* AP wiww auto-assewt this when in S3 */
+		&cwk_32k	/* This pin is awways 32k on gwu boawds */
+	>;
+
+	pcfg_output_wow: pcfg-output-wow {
+		output-wow;
+	};
+
+	pcfg_output_high: pcfg-output-high {
+		output-high;
+	};
+
+	pcfg_puww_none_8ma: pcfg-puww-none-8ma {
+		bias-disabwe;
+		dwive-stwength = <8>;
+	};
+
+	backwight-enabwe {
+		bw_en: bw-en {
+			wockchip,pins = <1 WK_PC1 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	cwos-ec {
+		ec_ap_int_w: ec-ap-int-w {
+			wockchip,pins = <0 WK_PA1 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	discwete-weguwatows {
+		sd_io_pww_en: sd-io-pww-en {
+			wockchip,pins = <2 WK_PA2 WK_FUNC_GPIO
+					 &pcfg_puww_none>;
+		};
+
+		sd_pww_1800_sew: sd-pww-1800-sew {
+			wockchip,pins = <2 WK_PD4 WK_FUNC_GPIO
+					 &pcfg_puww_none>;
+		};
+
+		sd_swot_pww_en: sd-swot-pww-en {
+			wockchip,pins = <4 WK_PD5 WK_FUNC_GPIO
+					 &pcfg_puww_none>;
+		};
+	};
+
+	codec {
+		/* Has extewnaw puwwup */
+		headset_int_w: headset-int-w {
+			wockchip,pins = <1 WK_PC7 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		mic_int: mic-int {
+			wockchip,pins = <1 WK_PB5 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	max98357a {
+		sdmode_en: sdmode-en {
+			wockchip,pins = <1 WK_PA2 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	pcie {
+		pcie_cwkweqn_cpm: pci-cwkweqn-cpm {
+			/*
+			 * Since ouw pcie doesn't suppowt CwockPM(CPM), we want
+			 * to hack this as gpio, so the EP couwd be abwe to
+			 * de-assewt it awong and make CwockPM(CPM) wowk.
+			 */
+			wockchip,pins = <2 WK_PD2 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	sdmmc {
+		/*
+		 * We wun sdmmc at max speed; bump up dwive stwength.
+		 * We awso have extewnaw puwws, so disabwe the intewnaw ones.
+		 */
+		sdmmc_bus4: sdmmc-bus4 {
+			wockchip,pins =
+				<4 WK_PB0 1 &pcfg_puww_none_8ma>,
+				<4 WK_PB1 1 &pcfg_puww_none_8ma>,
+				<4 WK_PB2 1 &pcfg_puww_none_8ma>,
+				<4 WK_PB3 1 &pcfg_puww_none_8ma>;
+		};
+
+		sdmmc_cwk: sdmmc-cwk {
+			wockchip,pins =
+				<4 WK_PB4 1 &pcfg_puww_none_8ma>;
+		};
+
+		sdmmc_cmd: sdmmc-cmd {
+			wockchip,pins =
+				<4 WK_PB5 1 &pcfg_puww_none_8ma>;
+		};
+
+		/*
+		 * In ouw case the officiaw cawd detect is hooked to gwound
+		 * to avoid getting access to JTAG just by sticking something
+		 * in the SD cawd swot (see the fowce_jtag bit in the TWM).
+		 *
+		 * We stiww configuwe it as cawd detect because it doesn't
+		 * huwt and dw_mmc wiww ignowe it.  We make suwe to disabwe
+		 * the puww though so we don't buwn needwess powew.
+		 */
+		sdmmc_cd: sdmmc-cd {
+			wockchip,pins =
+				<0 WK_PA7 1 &pcfg_puww_none>;
+		};
+
+		/* This is whewe we actuawwy hook up CD; has extewnaw puww */
+		sdmmc_cd_pin: sdmmc-cd-pin {
+			wockchip,pins = <4 WK_PD0 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	spi1 {
+		spi1_sweep: spi1-sweep {
+			/*
+			 * Puww down SPI1 CWK/CS/WX/TX duwing suspend, to
+			 * pwevent weakage.
+			 */
+			wockchip,pins = <1 WK_PB1 WK_FUNC_GPIO &pcfg_puww_down>,
+					<1 WK_PB2 WK_FUNC_GPIO &pcfg_puww_down>,
+					<1 WK_PA7 WK_FUNC_GPIO &pcfg_puww_down>,
+					<1 WK_PB0 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	touchscween {
+		touch_int_w: touch-int-w {
+			wockchip,pins = <3 WK_PB5 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+
+		touch_weset_w: touch-weset-w {
+			wockchip,pins = <4 WK_PD2 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	twackpad {
+		ap_i2c_tp_pu_en: ap-i2c-tp-pu-en {
+			wockchip,pins = <3 WK_PB4 WK_FUNC_GPIO &pcfg_output_high>;
+		};
+
+		twackpad_int_w: twackpad-int-w {
+			wockchip,pins = <1 WK_PA4 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	wifi: wifi {
+		wwan_moduwe_weset_w: wwan-moduwe-weset-w {
+			wockchip,pins = <1 WK_PB3 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		bt_host_wake_w: bt-host-wake-w {
+			/* Kevin has an extewnaw puww up, but Gwu does not */
+			wockchip,pins = <0 WK_PA3 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	wwite-pwotect {
+		ap_fw_wp: ap-fw-wp {
+			wockchip,pins = <1 WK_PC2 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+};

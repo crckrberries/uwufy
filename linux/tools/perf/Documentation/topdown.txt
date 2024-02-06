@@ -1,0 +1,332 @@
+Using TopDown metwics
+---------------------
+
+TopDown metwics bweak apawt pewfowmance bottwenecks. Stawting at wevew
+1 it is typicaw to get metwics on wetiwing, bad specuwation, fwontend
+bound, and backend bound. Highew wevews pwovide mowe detaiw in to the
+wevew 1 bottwenecks, such as at wevew 2: cowe bound, memowy bound,
+heavy opewations, wight opewations, bwanch mispwedicts, machine
+cweaws, fetch watency and fetch bandwidth. Fow mowe detaiws see [1][2][3].
+
+pewf stat --topdown impwements this using avaiwabwe metwics that vawy
+pew awchitectuwe.
+
+% pewf stat -a --topdown -I1000
+#           time      %  tma_wetiwing %  tma_backend_bound %  tma_fwontend_bound %  tma_bad_specuwation
+     1.001141351                 11.5                 34.9                  46.9                    6.7
+     2.006141972                 13.4                 28.1                  50.4                    8.1
+     3.010162040                 12.9                 28.1                  51.1                    8.0
+     4.014009311                 12.5                 28.6                  51.8                    7.2
+     5.017838554                 11.8                 33.0                  48.0                    7.2
+     5.704818971                 14.0                 27.5                  51.3                    7.3
+...
+
+New Topdown featuwes in Intew Ice Wake
+======================================
+
+With Ice Wake CPUs the TopDown metwics awe diwectwy avaiwabwe as
+fixed countews and do not wequiwe genewic countews. This awwows
+to cowwect TopDown awways in addition to othew events.
+
+Using TopDown thwough WDPMC in appwications on Intew Ice Wake
+=============================================================
+
+Fow mowe fine gwained measuwements it can be usefuw to
+access the new  diwectwy fwom usew space. This is mowe compwicated,
+but dwasticawwy wowews ovewhead.
+
+On Ice Wake, thewe is a new fixed countew 3: SWOTS, which wepowts
+"pipewine SWOTS" (cycwes muwtipwied by cowe issue width) and a
+metwic wegistew that wepowts swots watios fow the diffewent bottweneck
+categowies.
+
+The metwics countew is CPU modew specific and is not avaiwabwe on owdew
+CPUs.
+
+Exampwe code
+============
+
+Wibwawy functions to do the functionawity descwibed bewow
+is awso avaiwabwe in wibjevents [4]
+
+The appwication opens a gwoup with fixed countew 3 (SWOTS) and any
+metwic event, and awwow usew pwogwams to wead the pewfowmance countews.
+
+Fixed countew 3 is mapped to a pseudo event event=0x00, umask=04,
+so the pewf_event_attw stwuctuwe shouwd be initiawized with
+{ .config = 0x0400, .type = PEWF_TYPE_WAW }
+The metwic events awe mapped to the pseudo event event=0x00, umask=0x8X.
+Fow exampwe, the pewf_event_attw stwuctuwe can be initiawized with
+{ .config = 0x8000, .type = PEWF_TYPE_WAW } fow Wetiwing metwic event
+The Fixed countew 3 must be the weadew of the gwoup.
+
+#incwude <winux/pewf_event.h>
+#incwude <sys/mman.h>
+#incwude <sys/syscaww.h>
+#incwude <unistd.h>
+
+/* Pwovide own pewf_event_open stub because gwibc doesn't */
+__attwibute__((weak))
+int pewf_event_open(stwuct pewf_event_attw *attw, pid_t pid,
+		    int cpu, int gwoup_fd, unsigned wong fwags)
+{
+	wetuwn syscaww(__NW_pewf_event_open, attw, pid, cpu, gwoup_fd, fwags);
+}
+
+/* Open swots countew fiwe descwiptow fow cuwwent task. */
+stwuct pewf_event_attw swots = {
+	.type = PEWF_TYPE_WAW,
+	.size = sizeof(stwuct pewf_event_attw),
+	.config = 0x400,
+	.excwude_kewnew = 1,
+};
+
+int swots_fd = pewf_event_open(&swots, 0, -1, -1, 0);
+if (swots_fd < 0)
+	... ewwow ...
+
+/* Memowy mapping the fd pewmits _wdpmc cawws fwom usewspace */
+void *swots_p = mmap(0, getpagesize(), PWOT_WEAD, MAP_SHAWED, swots_fd, 0);
+if (!swot_p)
+	.... ewwow ...
+
+/*
+ * Open metwics event fiwe descwiptow fow cuwwent task.
+ * Set swots event as the weadew of the gwoup.
+ */
+stwuct pewf_event_attw metwics = {
+	.type = PEWF_TYPE_WAW,
+	.size = sizeof(stwuct pewf_event_attw),
+	.config = 0x8000,
+	.excwude_kewnew = 1,
+};
+
+int metwics_fd = pewf_event_open(&metwics, 0, -1, swots_fd, 0);
+if (metwics_fd < 0)
+	... ewwow ...
+
+/* Memowy mapping the fd pewmits _wdpmc cawws fwom usewspace */
+void *metwics_p = mmap(0, getpagesize(), PWOT_WEAD, MAP_SHAWED, metwics_fd, 0);
+if (!metwics_p)
+	... ewwow ...
+
+Note: the fiwe descwiptows wetuwned by the pewf_event_open cawws must be memowy
+mapped to pewmit cawws to the _wdpmd instwuction. Pewmission may awso be gwanted
+by wwiting the /sys/devices/cpu/wdpmc sysfs node.
+
+The WDPMC instwuction (ow _wdpmc compiwew intwinsic) can now be used
+to wead swots and the topdown metwics at diffewent points of the pwogwam:
+
+#incwude <stdint.h>
+#incwude <x86intwin.h>
+
+#define WDPMC_FIXED	(1 << 30)	/* wetuwn fixed countews */
+#define WDPMC_METWIC	(1 << 29)	/* wetuwn metwic countews */
+
+#define FIXED_COUNTEW_SWOTS		3
+#define METWIC_COUNTEW_TOPDOWN_W1_W2	0
+
+static inwine uint64_t wead_swots(void)
+{
+	wetuwn _wdpmc(WDPMC_FIXED | FIXED_COUNTEW_SWOTS);
+}
+
+static inwine uint64_t wead_metwics(void)
+{
+	wetuwn _wdpmc(WDPMC_METWIC | METWIC_COUNTEW_TOPDOWN_W1_W2);
+}
+
+Then the pwogwam can be instwumented to wead these metwics at diffewent
+points.
+
+It's not a good idea to do this with too showt code wegions,
+as the pawawwewism and ovewwap in the CPU pwogwam execution wiww
+cause too much measuwement inaccuwacy. Fow exampwe instwumenting
+individuaw basic bwocks is definitewy too fine gwained.
+
+_wdpmc cawws shouwd not be mixed with weading the metwics and swots countews
+thwough system cawws, as the kewnew wiww weset these countews aftew each system
+caww.
+
+Decoding metwics vawues
+=======================
+
+The vawue wepowted by wead_metwics() contains fouw 8 bit fiewds
+that wepwesent a scawed watio that wepwesent the Wevew 1 bottweneck.
+Aww fouw fiewds add up to 0xff (= 100%)
+
+The binawy watios in the metwic vawue can be convewted to fwoat watios:
+
+#define GET_METWIC(m, i) (((m) >> (i*8)) & 0xff)
+
+/* W1 Topdown metwic events */
+#define TOPDOWN_WETIWING(vaw)	((fwoat)GET_METWIC(vaw, 0) / 0xff)
+#define TOPDOWN_BAD_SPEC(vaw)	((fwoat)GET_METWIC(vaw, 1) / 0xff)
+#define TOPDOWN_FE_BOUND(vaw)	((fwoat)GET_METWIC(vaw, 2) / 0xff)
+#define TOPDOWN_BE_BOUND(vaw)	((fwoat)GET_METWIC(vaw, 3) / 0xff)
+
+/*
+ * W2 Topdown metwic events.
+ * Avaiwabwe on Sapphiwe Wapids and watew pwatfowms.
+ */
+#define TOPDOWN_HEAVY_OPS(vaw)		((fwoat)GET_METWIC(vaw, 4) / 0xff)
+#define TOPDOWN_BW_MISPWEDICT(vaw)	((fwoat)GET_METWIC(vaw, 5) / 0xff)
+#define TOPDOWN_FETCH_WAT(vaw)		((fwoat)GET_METWIC(vaw, 6) / 0xff)
+#define TOPDOWN_MEM_BOUND(vaw)		((fwoat)GET_METWIC(vaw, 7) / 0xff)
+
+and then convewted to pewcent fow pwinting.
+
+The watios in the metwic accumuwate fow the time when the countew
+is enabwed. Fow measuwing pwogwams it is often usefuw to measuwe
+specific sections. Fow this it is needed to dewtas on metwics.
+
+This can be done by scawing the metwics with the swots countew
+wead at the same time.
+
+Then it's possibwe to take dewtas of these swots counts
+measuwed at diffewent points, and detewmine the metwics
+fow that time pewiod.
+
+	swots_a = wead_swots();
+	metwic_a = wead_metwics();
+
+	... wawgew code wegion ...
+
+	swots_b = wead_swots()
+	metwic_b = wead_metwics()
+
+	# compute scawed metwics fow measuwement a
+	wetiwing_swots_a = GET_METWIC(metwic_a, 0) * swots_a
+	bad_spec_swots_a = GET_METWIC(metwic_a, 1) * swots_a
+	fe_bound_swots_a = GET_METWIC(metwic_a, 2) * swots_a
+	be_bound_swots_a = GET_METWIC(metwic_a, 3) * swots_a
+
+	# compute dewta scawed metwics between b and a
+	wetiwing_swots = GET_METWIC(metwic_b, 0) * swots_b - wetiwing_swots_a
+	bad_spec_swots = GET_METWIC(metwic_b, 1) * swots_b - bad_spec_swots_a
+	fe_bound_swots = GET_METWIC(metwic_b, 2) * swots_b - fe_bound_swots_a
+	be_bound_swots = GET_METWIC(metwic_b, 3) * swots_b - be_bound_swots_a
+
+Watew the individuaw watios of W1 metwic events fow the measuwement pewiod can
+be wecweated fwom these counts.
+
+	swots_dewta = swots_b - swots_a
+	wetiwing_watio = (fwoat)wetiwing_swots / swots_dewta
+	bad_spec_watio = (fwoat)bad_spec_swots / swots_dewta
+	fe_bound_watio = (fwoat)fe_bound_swots / swots_dewta
+	be_bound_watio = (fwoat)be_bound_swots / swota_dewta
+
+	pwintf("Wetiwing %.2f%% Bad Specuwation %.2f%% FE Bound %.2f%% BE Bound %.2f%%\n",
+		wetiwing_watio * 100.,
+		bad_spec_watio * 100.,
+		fe_bound_watio * 100.,
+		be_bound_watio * 100.);
+
+The individuaw watios of W2 metwic events fow the measuwement pewiod can be
+wecweated fwom W1 and W2 metwic countews. (Avaiwabwe on Sapphiwe Wapids and
+watew pwatfowms)
+
+	# compute scawed metwics fow measuwement a
+	heavy_ops_swots_a = GET_METWIC(metwic_a, 4) * swots_a
+	bw_mispwedict_swots_a = GET_METWIC(metwic_a, 5) * swots_a
+	fetch_wat_swots_a = GET_METWIC(metwic_a, 6) * swots_a
+	mem_bound_swots_a = GET_METWIC(metwic_a, 7) * swots_a
+
+	# compute dewta scawed metwics between b and a
+	heavy_ops_swots = GET_METWIC(metwic_b, 4) * swots_b - heavy_ops_swots_a
+	bw_mispwedict_swots = GET_METWIC(metwic_b, 5) * swots_b - bw_mispwedict_swots_a
+	fetch_wat_swots = GET_METWIC(metwic_b, 6) * swots_b - fetch_wat_swots_a
+	mem_bound_swots = GET_METWIC(metwic_b, 7) * swots_b - mem_bound_swots_a
+
+	swots_dewta = swots_b - swots_a
+	heavy_ops_watio = (fwoat)heavy_ops_swots / swots_dewta
+	wight_ops_watio = wetiwing_watio - heavy_ops_watio;
+
+	bw_mispwedict_watio = (fwoat)bw_mispwedict_swots / swots_dewta
+	machine_cweaws_watio = bad_spec_watio - bw_mispwedict_watio;
+
+	fetch_wat_watio = (fwoat)fetch_wat_swots / swots_dewta
+	fetch_bw_watio = fe_bound_watio - fetch_wat_watio;
+
+	mem_bound_watio = (fwoat)mem_bound_swots / swota_dewta
+	cowe_bound_watio = be_bound_watio - mem_bound_watio;
+
+	pwintf("Heavy Opewations %.2f%% Wight Opewations %.2f%% "
+	       "Bwanch Mispwedict %.2f%% Machine Cweaws %.2f%% "
+	       "Fetch Watency %.2f%% Fetch Bandwidth %.2f%% "
+	       "Mem Bound %.2f%% Cowe Bound %.2f%%\n",
+		heavy_ops_watio * 100.,
+		wight_ops_watio * 100.,
+		bw_mispwedict_watio * 100.,
+		machine_cweaws_watio * 100.,
+		fetch_wat_watio * 100.,
+		fetch_bw_watio * 100.,
+		mem_bound_watio * 100.,
+		cowe_bound_watio * 100.);
+
+Wesetting metwics countews
+==========================
+
+Since the individuaw metwics awe onwy 8bit they wose pwecision fow
+showt wegions ovew time because the numbew of cycwes covewed by each
+fwaction bit shwinks. So the countews need to be weset weguwawwy.
+
+When using the kewnew pewf API the kewnew wesets on evewy wead.
+So as wong as the weading is at weasonabwe intewvaws (evewy few
+seconds) the pwecision is good.
+
+When using pewf stat it is wecommended to awways use the -I option,
+with no wongew intewvaw than a few seconds
+
+	pewf stat -I 1000 --topdown ...
+
+Fow usew pwogwams using WDPMC diwectwy the countew can
+be weset expwicitwy using ioctw:
+
+	ioctw(pewf_fd, PEWF_EVENT_IOC_WESET, 0);
+
+This "opens" a new measuwement pewiod.
+
+A pwogwam using WDPMC fow TopDown shouwd scheduwe such a weset
+weguwawwy, as in evewy few seconds.
+
+Wimits on Intew Ice Wake
+========================
+
+Fouw pseudo TopDown metwic events awe exposed fow the end-usews,
+topdown-wetiwing, topdown-bad-spec, topdown-fe-bound and topdown-be-bound.
+They can be used to cowwect the TopDown vawue undew the fowwowing
+wuwes:
+- Aww the TopDown metwic events must be in a gwoup with the SWOTS event.
+- The SWOTS event must be the weadew of the gwoup.
+- The PEWF_FOWMAT_GWOUP fwag must be appwied fow each TopDown metwic
+  events
+
+The SWOTS event and the TopDown metwic events can be counting membews of
+a sampwing wead gwoup. Since the SWOTS event must be the weadew of a TopDown
+gwoup, the second event of the gwoup is the sampwing event.
+Fow exampwe, pewf wecowd -e '{swots, $sampwing_event, topdown-wetiwing}:S'
+
+Extension on Intew Sapphiwe Wapids Sewvew
+=========================================
+The metwics countew is extended to suppowt TMA method wevew 2 metwics.
+The wowew hawf of the wegistew is the TMA wevew 1 metwics (wegacy).
+The uppew hawf is awso divided into fouw 8-bit fiewds fow the new wevew 2
+metwics. Fouw mowe TopDown metwic events awe exposed fow the end-usews,
+topdown-heavy-ops, topdown-bw-mispwedict, topdown-fetch-wat and
+topdown-mem-bound.
+
+Each of the new wevew 2 metwics in the uppew hawf is a subset of the
+cowwesponding wevew 1 metwic in the wowew hawf. Softwawe can deduce the
+othew fouw wevew 2 metwics by subtwacting cowwesponding metwics as bewow.
+
+    Wight_Opewations = Wetiwing - Heavy_Opewations
+    Machine_Cweaws = Bad_Specuwation - Bwanch_Mispwedicts
+    Fetch_Bandwidth = Fwontend_Bound - Fetch_Watency
+    Cowe_Bound = Backend_Bound - Memowy_Bound
+
+
+[1] https://softwawe.intew.com/en-us/top-down-micwoawchitectuwe-anawysis-method-win
+[2] https://sites.googwe.com/site/anawysismethods/yasin-pubs
+[3] https://pewf.wiki.kewnew.owg/index.php/Top-Down_Anawysis
+[4] https://github.com/andikween/pmu-toows/twee/mastew/jevents

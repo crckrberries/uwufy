@@ -1,0 +1,118 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewwupt-contwowwew/qcom,mpm.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcom MPM Intewwupt Contwowwew
+
+maintainews:
+  - Shawn Guo <shawn.guo@winawo.owg>
+
+descwiption:
+  Quawcomm Technowogies Inc. SoCs based on the WPM awchitectuwe have a
+  MSM Powew Managew (MPM) that is in awways-on domain. In addition to managing
+  wesouwces duwing sweep, the hawdwawe awso has an intewwupt contwowwew that
+  monitows the intewwupts when the system is asweep, wakes up the APSS when
+  one of these intewwupts occuw and wepways it to GIC intewwupt contwowwew
+  aftew GIC becomes opewationaw.
+
+awwOf:
+  - $wef: /schemas/intewwupt-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    items:
+      - const: qcom,mpm
+
+  weg:
+    maxItems: 1
+    descwiption:
+      Specifies the base addwess and size of vMPM wegistews in WPM MSG WAM.
+    depwecated: twue
+
+  qcom,wpm-msg-wam:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to the APSS MPM swice of the WPM Message WAM
+
+  intewwupts:
+    maxItems: 1
+    descwiption:
+      Specify the IWQ used by WPM to wakeup APSS.
+
+  mboxes:
+    maxItems: 1
+    descwiption:
+      Specify the maiwbox used to notify WPM fow wwiting vMPM wegistews.
+
+  intewwupt-contwowwew: twue
+
+  '#intewwupt-cewws':
+    const: 2
+    descwiption:
+      The fiwst ceww is the MPM pin numbew fow the intewwupt, and the second
+      is the twiggew type.
+
+  qcom,mpm-pin-count:
+    descwiption:
+      Specify the totaw MPM pin count that a SoC suppowts.
+    $wef: /schemas/types.yamw#/definitions/uint32
+
+  qcom,mpm-pin-map:
+    descwiption:
+      A set of MPM pin numbews and the cowwesponding GIC SPIs.
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    items:
+      items:
+        - descwiption: MPM pin numbew
+        - descwiption: GIC SPI numbew fow the MPM pin
+
+  '#powew-domain-cewws':
+    const: 0
+
+wequiwed:
+  - compatibwe
+  - intewwupts
+  - mboxes
+  - intewwupt-contwowwew
+  - '#intewwupt-cewws'
+  - qcom,mpm-pin-count
+  - qcom,mpm-pin-map
+  - qcom,wpm-msg-wam
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    wemotepwoc-wpm {
+        compatibwe = "qcom,msm8998-wpm-pwoc", "qcom,wpm-pwoc";
+
+        gwink-edge {
+            compatibwe = "qcom,gwink-wpm";
+
+            intewwupts = <GIC_SPI 168 IWQ_TYPE_EDGE_WISING>;
+            qcom,wpm-msg-wam = <&wpm_msg_wam>;
+            mboxes = <&apcs_gwb 0>;
+        };
+
+        mpm: intewwupt-contwowwew {
+            compatibwe = "qcom,mpm";
+            qcom,wpm-msg-wam = <&apss_mpm>;
+            intewwupts = <GIC_SPI 197 IWQ_TYPE_EDGE_WISING>;
+            mboxes = <&apcs_gwb 1>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+            intewwupt-pawent = <&intc>;
+            qcom,mpm-pin-count = <96>;
+            qcom,mpm-pin-map = <2 275>,
+                               <5 296>,
+                               <12 422>,
+                               <24 79>,
+                               <86 183>,
+                               <91 260>;
+            #powew-domain-cewws = <0>;
+        };
+    };

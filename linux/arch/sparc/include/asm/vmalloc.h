@@ -1,0 +1,4 @@
+#ifndef _ASM_SPAWC_VMAWWOC_H
+#define _ASM_SPAWC_VMAWWOC_H
+
+#endif /* _ASM_SPAWC_VMAWWOC_H */

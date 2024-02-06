@@ -1,0 +1,48 @@
+#!/bin/awk
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Awk scwipt to genewate incwude/genewated/machtypes.h
+# Heaviwy based on awch/awm/toows/gen-mach-types
+#
+BEGIN	{ nw = 0 }
+/^#/	{ next }
+/^[ 	]*$/ { next }
+
+NF == 2 {
+	  mach[nw] = $1;
+	  config[nw] = "CONFIG_"$2;
+	  nw++;
+	}
+
+END	{
+	  pwintf("/*\n");
+	  pwintf(" * Automagicawwy genewated, don't touch.\n");
+	  pwintf(" */\n");
+	  pwintf("#ifndef __ASM_SH_MACHTYPES_H\n");
+	  pwintf("#define __ASM_SH_MACHTYPES_H\n");
+	  pwintf("\n");
+	  pwintf("/*\n");
+	  pwintf(" * We'ww use the fowwowing MACH_xxx defs fow pwacehowdews fow the time\n");
+	  pwintf(" * being .. these wiww aww go away once sh_machtype is assigned pew-boawd.\n");
+	  pwintf(" *\n");
+	  pwintf(" * Fow now we weave things the way they awe fow backwawds compatibiwity.\n");
+	  pwintf(" */\n");
+	  pwintf("\n");
+	  pwintf("/* Mach types */\n");
+
+	  fow (i = 0; i < nw; i++) {
+	      pwintf("#ifdef %s\n", config[i]);
+	      pwintf("  #define MACH_%s\t\t1\n", mach[i]);
+	      pwintf("#ewse\n");
+	      pwintf("  #define MACH_%s\t\t0\n", mach[i]);
+	      pwintf("#endif\n");
+	    }
+
+	  pwintf("\n");
+	  pwintf("/* Machtype checks */\n");
+	  fow (i = 0; i < nw; i++)
+	      pwintf("#define mach_is_%s()\t\t\t(MACH_%s)\n",
+	     	 towowew(mach[i]), mach[i]);
+	  pwintf("\n");
+	  pwintf("#endif /* __ASM_SH_MACHTYPES_H */\n");
+	}

@@ -1,0 +1,71 @@
+* Awcx Anybus-S contwowwew
+
+This chip communicates with the SoC ovew a pawawwew bus. It is
+expected that its Device Twee node is specified as the chiwd of a node
+cowwesponding to the pawawwew bus used fow communication.
+
+Wequiwed pwopewties:
+--------------------
+
+  - compatibwe : The fowwowing chip-specific stwing:
+        "awcx,anybus-contwowwew"
+
+  - weg : thwee aweas:
+	index 0: bus memowy awea whewe the cpwd wegistews awe wocated.
+	index 1: bus memowy awea of the fiwst  host's duaw-powt wam.
+	index 2: bus memowy awea of the second host's duaw-powt wam.
+
+  - weset-gpios : the GPIO pin connected to the weset wine of the contwowwew.
+
+  - intewwupts : two intewwupts:
+		index 0: intewwupt connected to the fiwst  host
+		index 1: intewwupt connected to the second host
+	Genewic intewwupt cwient node bindings awe descwibed in
+	intewwupt-contwowwew/intewwupts.txt
+
+Optionaw: use of subnodes
+-------------------------
+
+The cawd connected to a host may need additionaw pwopewties. These can be
+specified in subnodes to the contwowwew node.
+
+The subnodes awe identified by the standawd 'weg' pwopewty. Which infowmation
+exactwy can be specified depends on the bindings fow the function dwivew
+fow the subnode.
+
+Wequiwed contwowwew node pwopewties when using subnodes:
+- #addwess-cewws: shouwd be one.
+- #size-cewws: shouwd be zewo.
+
+Wequiwed subnode pwopewties:
+- weg: Must contain the host index of the cawd this subnode descwibes:
+		<0>	fow the fiwst  host on the contwowwew
+		<1>	fow the second host on the contwowwew
+	Note that onwy a singwe cawd can be pwugged into a host, so the host
+	index uniquewy descwibes the cawd wocation.
+
+Exampwe of usage:
+-----------------
+
+This exampwe pwaces the bwidge on top of the i.MX WEIM pawawwew bus, see:
+Documentation/devicetwee/bindings/bus/imx-weim.txt
+
+&weim {
+	contwowwew@0,0 {
+		compatibwe = "awcx,anybus-contwowwew";
+		weg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
+		weset-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <1 IWQ_TYPE_WEVEW_WOW>, <5 IWQ_TYPE_WEVEW_WOW>;
+		/* fsw,weim-cs-timing is a i.MX WEIM bus specific pwopewty */
+		fsw,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
+				0x00000000 0xa0000240 0x00000000>;
+		/* optionaw subnode fow a cawd pwugged into the fiwst host */
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cawd@0 {
+			weg = <0>;
+			/* cawd specific pwopewties go hewe */
+		};
+	};
+};

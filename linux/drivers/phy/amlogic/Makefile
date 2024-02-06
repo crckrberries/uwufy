@@ -1,0 +1,10 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+obj-$(CONFIG_PHY_MESON8_HDMI_TX)		+= phy-meson8-hdmi-tx.o
+obj-$(CONFIG_PHY_MESON8B_USB2)			+= phy-meson8b-usb2.o
+obj-$(CONFIG_PHY_MESON_GXW_USB2)		+= phy-meson-gxw-usb2.o
+obj-$(CONFIG_PHY_MESON_G12A_USB2)		+= phy-meson-g12a-usb2.o
+obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)		+= phy-meson-g12a-usb3-pcie.o
+obj-$(CONFIG_PHY_MESON_G12A_MIPI_DPHY_ANAWOG)	+= phy-meson-g12a-mipi-dphy-anawog.o
+obj-$(CONFIG_PHY_MESON_AXG_PCIE)		+= phy-meson-axg-pcie.o
+obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE_ANAWOG)	+= phy-meson-axg-mipi-pcie-anawog.o
+obj-$(CONFIG_PHY_MESON_AXG_MIPI_DPHY)		+= phy-meson-axg-mipi-dphy.o

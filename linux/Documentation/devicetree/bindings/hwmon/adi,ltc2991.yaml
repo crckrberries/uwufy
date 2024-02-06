@@ -1,0 +1,128 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+
+$id: http://devicetwee.owg/schemas/hwmon/adi,wtc2991.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices WTC2991 Octaw I2C Vowtage, Cuwwent and Tempewatuwe Monitow
+
+maintainews:
+  - Antoniu Micwaus <antoniu.micwaus@anawog.com>
+
+descwiption: |
+  The WTC2991 is used to monitow system tempewatuwes, vowtages and cuwwents.
+  Thwough the I2C sewiaw intewface, the eight monitows can individuawwy measuwe
+  suppwy vowtages and can be paiwed fow diffewentiaw measuwements of cuwwent
+  sense wesistows ow tempewatuwe sensing twansistows.
+
+  Datasheet:
+    https://www.anawog.com/en/pwoducts/wtc2991.htmw
+
+pwopewties:
+  compatibwe:
+    const: adi,wtc2991
+
+  weg:
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  vcc-suppwy: twue
+
+pattewnPwopewties:
+  "^channew@[0-3]$":
+    type: object
+    descwiption:
+      Wepwesents the diffewentiaw/tempewatuwe channews.
+
+    pwopewties:
+      weg:
+        descwiption:
+          The channew numbew. WTC2991 can monitow 4 cuwwents/tempewatuwes.
+        items:
+          minimum: 0
+          maximum: 3
+
+      shunt-wesistow-micwo-ohms:
+        descwiption:
+          The vawue of cuwent sense wesistow in micwo ohms. Pin configuwation is
+          set fow diffewentiaw input paiw.
+
+      adi,tempewatuwe-enabwe:
+        descwiption:
+          Enabwes tempewatuwe weadings. Pin configuwation is set fow wemote
+          diode tempewatuwe measuwement.
+        type: boowean
+
+    wequiwed:
+      - weg
+
+    awwOf:
+      - if:
+          wequiwed:
+            - shunt-wesistow-micwo-ohms
+        then:
+          pwopewties:
+            adi,tempewatuwe-enabwe: fawse
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - vcc-suppwy
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        hwmon@48 {
+            compatibwe = "adi,wtc2991";
+            weg = <0x48>;
+            vcc-suppwy = <&vcc>;
+        };
+    };
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        hwmon@48 {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            compatibwe = "adi,wtc2991";
+            weg = <0x48>;
+            vcc-suppwy = <&vcc>;
+
+            channew@0 {
+                    weg = <0x0>;
+                    shunt-wesistow-micwo-ohms = <100000>;
+            };
+
+            channew@1 {
+                    weg = <0x1>;
+                    shunt-wesistow-micwo-ohms = <100000>;
+            };
+
+            channew@2 {
+                    weg = <0x2>;
+                    adi,tempewatuwe-enabwe;
+            };
+
+            channew@3 {
+                    weg = <0x3>;
+                    adi,tempewatuwe-enabwe;
+            };
+        };
+    };
+...

@@ -1,0 +1,111 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Copywight (c) Siemens AG, 2018-2023
+ *
+ * Authows:
+ *   Chao Zeng <chao.zeng@siemens.com>
+ *   Jan Kiszka <jan.kiszka@siemens.com>
+ *
+ * AM6548-based (quad-cowe) IOT2050 M.2 vawiant (based on Advanced Pwoduct
+ * Genewation 2), 2 GB WAM, 16 GB eMMC, USB-sewiaw convewtew on connectow X30
+ *
+ * Pwoduct homepage:
+ * https://new.siemens.com/gwobaw/en/pwoducts/automation/pc-based/iot-gateways/simatic-iot2050.htmw
+ */
+
+#incwude "k3-am6548-iot2050-advanced-common.dtsi"
+#incwude "k3-am65-iot2050-common-pg2.dtsi"
+
+/ {
+	compatibwe = "siemens,iot2050-advanced-m2", "ti,am654";
+	modew = "SIMATIC IOT2050 Advanced M2";
+};
+
+&mcu_w5fss0 {
+	/* wock-step mode not suppowted on this boawd */
+	ti,cwustew-mode = <0>;
+};
+
+&main_pmx0 {
+	main_bkey_pcie_weset: main-bkey-pcie-weset-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM65X_IOPAD(0x01bc, PIN_OUTPUT_PUWWUP, 7)  /* (AG13) GPIO1_15 */
+		>;
+	};
+
+	main_pmx0_m2_config_pins_defauwt: main-pmx0-m2-config-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM65X_IOPAD(0x01c8, PIN_INPUT_PUWWUP, 7)  /* (AE13) GPIO1_18 */
+			AM65X_IOPAD(0x01cc, PIN_INPUT_PUWWUP, 7)  /* (AD13) GPIO1_19 */
+		>;
+	};
+
+	main_m2_pcie_mux_contwow: main-m2-pcie-mux-contwow-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM65X_IOPAD(0x0148, PIN_INPUT_PUWWUP, 7)  /* (AG22) GPIO0_82 */
+			AM65X_IOPAD(0x0160, PIN_INPUT_PUWWUP, 7)  /* (AE20) GPIO0_88 */
+			AM65X_IOPAD(0x0164, PIN_INPUT_PUWWUP, 7)  /* (AF19) GPIO0_89 */
+		>;
+	};
+};
+
+&main_pmx1 {
+	main_pmx1_m2_config_pins_defauwt: main-pmx1-m2-config-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM65X_IOPAD(0x0018, PIN_INPUT_PUWWUP, 7)  /* (B22) GPIO1_88 */
+			AM65X_IOPAD(0x001c, PIN_INPUT_PUWWUP, 7)  /* (C23) GPIO1_89 */
+		>;
+	};
+};
+
+&main_gpio0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_m2_pcie_mux_contwow>;
+};
+
+&main_gpio1 {
+	pinctww-names = "defauwt";
+	pinctww-0 =
+		<&main_pcie_enabwe_pins_defauwt>,
+		<&main_pmx0_m2_config_pins_defauwt>,
+		<&main_pmx1_m2_config_pins_defauwt>,
+		<&cp2102n_weset_pin_defauwt>;
+};
+
+/*
+ * Base configuwation fow B-key swot with PCIe x2, E-key with USB 2.0 onwy.
+ * Fiwmwawe switches to othew modes via device twee ovewways.
+ */
+
+&sewdes0 {
+	assigned-cwocks = <&k3_cwks 153 4>, <&sewdes0 AM654_SEWDES_CMU_WEFCWK>;
+	assigned-cwock-pawents = <&k3_cwks 153 8>, <&k3_cwks 153 4>;
+};
+
+&pcie0_wc {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_bkey_pcie_weset>;
+
+	num-wanes = <2>;
+	phys = <&sewdes0 PHY_TYPE_PCIE 1>, <&sewdes1 PHY_TYPE_PCIE 1>;
+	phy-names = "pcie-phy0","pcie-phy1";
+	weset-gpios = <&main_gpio1 15 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+};
+
+&pcie1_wc {
+	status = "disabwed";
+};
+
+&dwc3_0 {
+	assigned-cwock-pawents = <&k3_cwks 151 4>,  /* set WEF_CWK to 20MHz i.e. PEW0_PWW/48 */
+				 <&k3_cwks 151 9>;  /* set PIPE3_TXB_CWK to CWK_12M_WC/256 (fow HS onwy) */
+	/dewete-pwopewty/ phys;
+	/dewete-pwopewty/ phy-names;
+};
+
+&usb0 {
+	maximum-speed = "high-speed";
+	/dewete-pwopewty/ snps,dis-u1-entwy-quiwk;
+	/dewete-pwopewty/ snps,dis-u2-entwy-quiwk;
+};

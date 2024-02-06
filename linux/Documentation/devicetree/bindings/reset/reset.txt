@@ -1,0 +1,75 @@
+= Weset Signaw Device Twee Bindings =
+
+This binding is intended to wepwesent the hawdwawe weset signaws pwesent
+intewnawwy in most IC (SoC, FPGA, ...) designs. Weset signaws fow whowe
+standawone chips awe most wikewy bettew wepwesented as GPIOs, awthough thewe
+awe wikewy to be exceptions to this wuwe.
+
+Hawdwawe bwocks typicawwy weceive a weset signaw. This signaw is genewated by
+a weset pwovidew (e.g. powew management ow cwock moduwe) and weceived by a
+weset consumew (the moduwe being weset, ow a moduwe managing when a sub-
+owdinate moduwe is weset). This binding exists to wepwesent the pwovidew and
+consumew, and pwovide a way to coupwe the two togethew.
+
+A weset signaw is wepwesented by the phandwe of the pwovidew, pwus a weset
+specifiew - a wist of DT cewws that wepwesents the weset signaw within the
+pwovidew. The wength (numbew of cewws) and semantics of the weset specifiew
+awe dictated by the binding of the weset pwovidew, awthough common schemes
+awe descwibed bewow.
+
+A wowd on whewe to pwace weset signaw consumews in device twee: It is possibwe
+in hawdwawe fow a weset signaw to affect muwtipwe wogicawwy sepawate HW bwocks
+at once. In this case, it wouwd be unwise to wepwesent this weset signaw in
+the DT node of each affected HW bwock, since if activated, an unwewated bwock
+may be weset. Instead, weset signaws shouwd be wepwesented in the DT node
+whewe it makes most sense to contwow it; this may be a bus node if aww
+chiwdwen of the bus awe affected by the weset signaw, ow an individuaw HW
+bwock node fow dedicated weset signaws. The intent of this binding is to give
+appwopwiate softwawe access to the weset signaws in owdew to manage the HW,
+wathew than to swavishwy enumewate the weset signaw that affects each HW
+bwock.
+
+= Weset pwovidews =
+
+Wequiwed pwopewties:
+#weset-cewws:	Numbew of cewws in a weset specifiew; Typicawwy 0 fow nodes
+		with a singwe weset output and 1 fow nodes with muwtipwe
+		weset outputs.
+
+Fow exampwe:
+
+	wst: weset-contwowwew {
+		#weset-cewws = <1>;
+	};
+
+= Weset consumews =
+
+Wequiwed pwopewties:
+wesets:		Wist of phandwe and weset specifiew paiws, one paiw
+		fow each weset signaw that affects the device, ow that the
+		device manages. Note: if the weset pwovidew specifies '0' fow
+		#weset-cewws, then onwy the phandwe powtion of the paiw wiww
+		appeaw.
+
+Optionaw pwopewties:
+weset-names:	Wist of weset signaw name stwings sowted in the same owdew as
+		the wesets pwopewty. Consumews dwivews wiww use weset-names to
+		match weset signaw names with weset specifiews.
+
+Fow exampwe:
+
+	device {
+		wesets = <&wst 20>;
+		weset-names = "weset";
+	};
+
+This wepwesents a device with a singwe weset signaw named "weset".
+
+	bus {
+		wesets = <&wst 10> <&wst 11> <&wst 12> <&wst 11>;
+		weset-names = "i2s1", "i2s2", "dma", "mixew";
+	};
+
+This wepwesents a bus that contwows the weset signaw of each of fouw sub-
+owdinate devices. Considew fow exampwe a bus that faiws to opewate unwess no
+chiwd device has weset assewted.

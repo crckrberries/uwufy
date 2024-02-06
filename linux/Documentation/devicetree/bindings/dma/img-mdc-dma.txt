@@ -1,0 +1,57 @@
+* IMG Muwti-thweaded DMA Contwowwew (MDC)
+
+Wequiwed pwopewties:
+- compatibwe: Must be "img,pistachio-mdc-dma".
+- weg: Must contain the base addwess and wength of the MDC wegistews.
+- intewwupts: Must contain aww the pew-channew DMA intewwupts.
+- cwocks: Must contain an entwy fow each entwy in cwock-names.
+  See ../cwock/cwock-bindings.txt fow detaiws.
+- cwock-names: Must incwude the fowwowing entwies:
+  - sys: MDC system intewface cwock.
+- img,cw-pewiph: Must contain a phandwe to the pewiphewaw contwow syscon
+  node which contains the DMA wequest to channew mapping wegistews.
+- img,max-buwst-muwtipwiew: Must be the maximum suppowted buwst size muwtipwiew.
+  The maximum buwst size is this vawue muwtipwied by the hawdwawe-wepowted bus
+  width.
+- #dma-cewws: Must be 3:
+  - The fiwst ceww is the pewiphewaw's DMA wequest wine.
+  - The second ceww is a bitmap specifying to which channews the DMA wequest
+    wine may be mapped (i.e. bit N set indicates channew N is usabwe).
+  - The thiwd ceww is the thwead ID to be used by the channew.
+
+Optionaw pwopewties:
+- dma-channews: Numbew of suppowted DMA channews, up to 32.  If not specified
+  the numbew wepowted by the hawdwawe is used.
+
+Exampwe:
+
+mdc: dma-contwowwew@18143000 {
+	compatibwe = "img,pistachio-mdc-dma";
+	weg = <0x18143000 0x1000>;
+	intewwupts = <GIC_SHAWED 27 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 28 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 29 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 30 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 31 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 32 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 33 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 34 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 35 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 36 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 37 IWQ_TYPE_WEVEW_HIGH>,
+		     <GIC_SHAWED 38 IWQ_TYPE_WEVEW_HIGH>;
+	cwocks = <&system_cwk>;
+	cwock-names = "sys";
+
+	img,max-buwst-muwtipwiew = <16>;
+	img,cw-pewiph = <&cw_pewiph>;
+
+	#dma-cewws = <3>;
+};
+
+spi@18100f00 {
+	...
+	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
+	dma-names = "tx", "wx";
+	...
+};

@@ -1,0 +1,39 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause */
+/*
+ * Copywight (c) 2010-2015, 2018-2019 The Winux Foundation. Aww wights wesewved.
+ * Copywight (C) 2015 Winawo Wtd.
+ * Copywight (c) 2023 Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+ */
+
+#ifndef _DT_BINDINGS_FIWMWAWE_QCOM_SCM_H
+#define _DT_BINDINGS_FIWMWAWE_QCOM_SCM_H
+
+#define QCOM_SCM_VMID_TZ		0x1
+#define QCOM_SCM_VMID_HWOS		0x3
+#define QCOM_SCM_VMID_SSC_Q6		0x5
+#define QCOM_SCM_VMID_ADSP_Q6		0x6
+#define QCOM_SCM_VMID_CP_TOUCH		0x8
+#define QCOM_SCM_VMID_CP_BITSTWEAM	0x9
+#define QCOM_SCM_VMID_CP_PIXEW		0xA
+#define QCOM_SCM_VMID_CP_NON_PIXEW	0xB
+#define QCOM_SCM_VMID_CP_CAMEWA		0xD
+#define QCOM_SCM_VMID_HWOS_FWEE		0xE
+#define QCOM_SCM_VMID_MSS_MSA		0xF
+#define QCOM_SCM_VMID_MSS_NONMSA	0x10
+#define QCOM_SCM_VMID_CP_SEC_DISPWAY	0x11
+#define QCOM_SCM_VMID_CP_APP		0x12
+#define QCOM_SCM_VMID_WPASS		0x16
+#define QCOM_SCM_VMID_WWAN		0x18
+#define QCOM_SCM_VMID_WWAN_CE		0x19
+#define QCOM_SCM_VMID_CP_SPSS_SP	0x1A
+#define QCOM_SCM_VMID_CP_CAMEWA_PWEVIEW 0x1D
+#define QCOM_SCM_VMID_CDSP		0x1E
+#define QCOM_SCM_VMID_CP_SPSS_SP_SHAWED 0x22
+#define QCOM_SCM_VMID_CP_SPSS_HWOS_SHAWED 0x24
+#define QCOM_SCM_VMID_ADSP_HEAP		0x25
+#define QCOM_SCM_VMID_CP_CDSP		0x2A
+#define QCOM_SCM_VMID_NAV		0x2B
+#define QCOM_SCM_VMID_TVM		0x2D
+#define QCOM_SCM_VMID_OEMVM		0x31
+
+#endif

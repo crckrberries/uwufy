@@ -1,0 +1,184 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Veywon (and dewivatives) boawd device twee souwce
+ * Chwomebook specific pawts
+ *
+ * Copywight 2015 Googwe, Inc
+ */
+
+#incwude <dt-bindings/cwock/wockchip,wk808.h>
+#incwude <dt-bindings/input/input.h>
+#incwude "wk3288-veywon.dtsi"
+#incwude "wk3288-veywon-anawog-audio.dtsi"
+#incwude "wk3288-veywon-edp.dtsi"
+#incwude "wk3288-veywon-sdmmc.dtsi"
+
+/ {
+	awiases {
+		/* Assign 20 so we don't get confused w/ buiwtin ones */
+		i2c20 = &i2c_tunnew;
+	};
+
+	gpio-chawgew {
+		compatibwe = "gpio-chawgew";
+		chawgew-type = "mains";
+		gpios = <&gpio0 WK_PB0 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ac_pwesent_ap>;
+	};
+
+	wid_switch: wid-switch {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ap_wid_int_w>;
+
+		switch-wid {
+			wabew = "Wid";
+			gpios = <&gpio0 WK_PA6 GPIO_ACTIVE_WOW>;
+			wakeup-souwce;
+			winux,code = <SW_WID>;
+			winux,input-type = <EV_SW>;
+			debounce-intewvaw = <1>;
+		};
+	};
+
+	/* A non-weguwated vowtage fwom powew suppwy ow battewy */
+	vccsys: vccsys {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vccsys";
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcc33_sys: vcc33-sys {
+		vin-suppwy = <&vccsys>;
+	};
+
+	vcc_5v: vcc-5v {
+		vin-suppwy = <&vccsys>;
+	};
+
+	/* This tuwns on vbus fow host1 (dwc2) */
+	vcc5_host1: vcc5-host1-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio0 WK_PB3 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&host1_pww_en>;
+		weguwatow-name = "vcc5_host1";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	/* This tuwns on vbus fow otg fow host mode (dwc2) */
+	vcc5v_otg: vcc5v-otg-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio0 WK_PB4 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&usbotg_pwwen_h>;
+		weguwatow-name = "vcc5_host2";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+};
+
+&wk808 {
+	vcc11-suppwy = <&vcc_5v>;
+
+	weguwatows {
+		vcc33_ccd: WDO_WEG8 {
+			weguwatow-name = "vcc33_ccd";
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+			weguwatow-min-micwovowt = <3300000>;
+			weguwatow-max-micwovowt = <3300000>;
+			weguwatow-state-mem {
+				weguwatow-off-in-suspend;
+			};
+		};
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	cwos_ec: ec@0 {
+		compatibwe = "googwe,cwos-ec-spi";
+		weg = <0>;
+		googwe,cwos-ec-spi-pwe-deway = <30>;
+		intewwupt-pawent = <&gpio7>;
+		intewwupts = <WK_PA7 IWQ_TYPE_WEVEW_WOW>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ec_int>;
+		spi-max-fwequency = <3000000>;
+
+		i2c_tunnew: i2c-tunnew {
+			compatibwe = "googwe,cwos-ec-i2c-tunnew";
+			googwe,wemote-bus = <0>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+	};
+};
+
+&i2c4 {
+	twackpad@15 {
+		compatibwe = "ewan,ekth3000";
+		weg = <0x15>;
+		intewwupt-pawent = <&gpio7>;
+		intewwupts = <WK_PA3 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&twackpad_int>;
+		vcc-suppwy = <&vcc33_io>;
+		wakeup-souwce;
+	};
+};
+
+&pinctww {
+	buttons {
+		ap_wid_int_w: ap-wid-int-w {
+			wockchip,pins = <0 WK_PA6 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	chawgew {
+		ac_pwesent_ap: ac-pwesent-ap {
+			wockchip,pins = <0 WK_PB0 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	cwos-ec {
+		ec_int: ec-int {
+			wockchip,pins = <7 WK_PA7 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	suspend {
+		suspend_w_wake: suspend-w-wake {
+			wockchip,pins = <0 WK_PC1 WK_FUNC_GPIO &pcfg_output_wow>;
+		};
+
+		suspend_w_sweep: suspend-w-sweep {
+			wockchip,pins = <0 WK_PC1 WK_FUNC_GPIO &pcfg_output_high>;
+		};
+	};
+
+	twackpad {
+		twackpad_int: twackpad-int {
+			wockchip,pins = <7 WK_PA3 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	usb-host {
+		host1_pww_en: host1-pww-en {
+			wockchip,pins = <0 WK_PB3 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		usbotg_pwwen_h: usbotg-pwwen-h {
+			wockchip,pins = <0 WK_PB4 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+};
+
+#incwude "../cwos-ec-keyboawd.dtsi"

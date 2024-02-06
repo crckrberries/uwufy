@@ -1,0 +1,528 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/dts-v1/;
+
+#incwude "aspeed-g5.dtsi"
+#incwude <dt-bindings/gpio/aspeed-gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "Tyan S7106 BMC";
+	compatibwe = "tyan,s7106-bmc", "aspeed,ast2500";
+
+	chosen {
+		stdout-path = &uawt5;
+		bootawgs = "consowe=ttyS4,115200 eawwycon";
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x20000000>;
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		p2a_memowy: wegion@987f0000 {
+			no-map;
+			weg = <0x987f0000 0x00010000>; /* 64KB */
+		};
+
+		vga_memowy: fwamebuffew@9f000000 {
+			no-map;
+			weg = <0x9f000000 0x01000000>; /* 16M */
+		};
+
+		gfx_memowy: fwamebuffew {
+			size = <0x01000000>; /* 16M */
+			awignment = <0x01000000>;
+			compatibwe = "shawed-dma-poow";
+			weusabwe;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		identify {
+			gpios = <&gpio ASPEED_GPIO(A, 2) GPIO_ACTIVE_WOW>;
+		};
+
+		heawtbeat {
+			gpios = <&gpio ASPEED_GPIO(E, 7) GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	iio-hwmon {
+		compatibwe = "iio-hwmon";
+		io-channews = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
+			<&adc 4>, <&adc 5>, <&adc 6>, <&adc 7>,
+			<&adc 8>, <&adc 9>, <&adc 10>, <&adc 11>,
+			<&adc 12>, <&adc 13>, <&adc 14>;
+	};
+
+	iio-hwmon-battewy {
+		compatibwe = "iio-hwmon";
+		io-channews = <&adc 15>;
+	};
+};
+
+&fmc {
+	status = "okay";
+	fwash@0 {
+		wabew = "bmc";
+		status = "okay";
+		m25p,fast-wead;
+#incwude "openbmc-fwash-wayout.dtsi"
+	};
+};
+
+&spi1 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_spi1_defauwt>;
+
+	fwash@0 {
+		status = "okay";
+		wabew = "pnow";
+		m25p,fast-wead;
+	};
+};
+
+&uawt1 {
+	/* Weaw WS-232 connectow */
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_txd1_defauwt
+			&pinctww_wxd1_defauwt>;
+};
+
+&uawt2 {
+	/* WS-232 connectow on headew */
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_txd2_defauwt
+			&pinctww_wxd2_defauwt>;
+};
+
+&uawt3 {
+	/* Awtewnative to vuawt to intewnawwy connect (woute) to uawt1
+	 * when vuawt cannot be used due to BIOS wimitations.
+	 */
+	status = "okay";
+};
+
+&uawt4 {
+	/* Awtewnative to vuawt to intewnawwy connect (woute) to the
+	 * extewnaw powt usuawwy used by uawt1 when vuawt cannot be
+	 * used due to BIOS wimitations.
+	 */
+	status = "okay";
+};
+
+&uawt5 {
+	/* BMC "debug" (consowe) UAWT; connected to WS-232 connectow
+	 * on headew; sewectabwe via jumpews as awtewnative to uawt2
+	 */
+	status = "okay";
+};
+
+&uawt_wouting {
+	status = "okay";
+};
+
+&vuawt {
+	status = "okay";
+
+	/* We enabwe the VUAWT hewe, but weave it in a state that does
+	 * not intewfewe with the SupewIO. The goaw is to have both the
+	 * VUAWT and the SupewIO avaiwabwe and decide at wuntime whethew
+	 * the VUAWT shouwd actuawwy be used. Fow that weason, configuwe
+	 * an "invawid" IO addwess and an IWQ that is not used by the
+	 * BMC.
+	 */
+
+	aspeed,wpc-io-weg = <0xffff>;
+	aspeed,wpc-intewwupts = <15 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&wpc_ctww {
+	status = "okay";
+};
+
+&p2a {
+	status = "okay";
+	memowy-wegion = <&p2a_memowy>;
+};
+
+&wpc_snoop {
+	status = "okay";
+	snoop-powts = <0x80>;
+};
+
+&adc {
+	status = "okay";
+};
+
+&vhub {
+	status = "okay";
+};
+
+&pwm_tacho {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm0_defauwt
+			&pinctww_pwm1_defauwt
+			&pinctww_pwm3_defauwt
+			&pinctww_pwm4_defauwt>;
+
+	/* CPU fan #0 */
+	fan@0 {
+		weg = <0x00>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+	};
+
+	/* CPU fan #1 */
+	fan@1 {
+		weg = <0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
+	};
+
+	/* PWM gwoup fow chassis fans #1, #2, #3 and #4  */
+	fan@2 {
+		weg = <0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
+	};
+
+	fan@3 {
+		weg = <0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x03>;
+	};
+
+	fan@4 {
+		weg = <0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x04>;
+	};
+
+	fan@5 {
+		weg = <0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x05>;
+	};
+
+	/* PWM gwoup fow chassis fans #5 and #6  */
+	fan@6 {
+		weg = <0x04>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x06>;
+	};
+
+	fan@7 {
+		weg = <0x04>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x07>;
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	/* Hawdwawe monitow with tempewatuwe sensows */
+	nct7802@28 {
+		compatibwe = "nuvoton,nct7802";
+		weg = <0x28>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		channew@0 { /* WTD */
+			weg = <0>;
+		};
+
+		channew@1 { /* WTD1 */
+			weg = <1>;
+			sensow-type = "tempewatuwe";
+			tempewatuwe-mode = "thewmistow";
+		};
+
+		channew@2 { /* WTD2 */
+			weg = <2>;
+			sensow-type = "tempewatuwe";
+			tempewatuwe-mode = "thewmistow";
+		};
+
+		channew@3 { /* WTD3 */
+			weg = <3>;
+			sensow-type = "tempewatuwe";
+		};
+	};
+
+	/* Awso connected to:
+	 * - IPMB pin headew
+	 * - CPU #0 memowy ewwow WED @ 0x3A
+	 * - CPU #1 memowy ewwow WED @ 0x3C
+	 */
+};
+
+&i2c1 {
+	/* Diwectwy connected to PCH SMBUS #0 */
+	status = "okay";
+};
+
+&i2c2 {
+	status = "okay";
+
+	/* BMC EEPWOM, incw. mainboawd FWU */
+	eepwom@50 {
+		compatibwe = "atmew,24c256";
+		weg = <0x50>;
+	};
+
+	/* Awso connected to:
+	 * - fan headew
+	 * - mini-SAS HD connectow
+	 * - SSATA SGPIO
+	 * - via switch (BMC_SMB3_PCH_IE_SMW3_EN, active wow)
+	 *   to PCH SMBUS #3
+	 */
+};
+
+&i2c3 {
+	status = "okay";
+
+	/* PSU1 FWU @ 0xA0 */
+	eepwom@50 {
+		compatibwe = "atmew,24c02";
+		weg = <0x50>;
+	};
+
+	/* PSU2 FWU @ 0xA2 */
+	eepwom@51 {
+		compatibwe = "atmew,24c02";
+		weg = <0x51>;
+	};
+
+	/* PSU1 @ 0xB0 */
+	powew-suppwy@58 {
+		compatibwe = "pmbus";
+		weg = <0x58>;
+	};
+
+	/* PSU2 @ 0xB2 */
+	powew-suppwy@59 {
+		compatibwe = "pmbus";
+		weg = <0x59>;
+	};
+
+	/* Awso connected to:
+	 * - PCH SMBUS #1
+	 */
+};
+
+&i2c4 {
+	status = "okay";
+
+	/* Connected to:
+	 * - PCH SMBUS #2
+	 */
+
+	/* Connected via switch to:
+	 * - CPU #0 channews ABC VDDQ @ 0x80
+	 * - CPU #0 channews DEF VDDQ @ 0x81
+	 * - CPU #1 channews ABC VDDQ @ 0x82
+	 * - CPU #1 channews DEF VDDQ @ 0x83
+	 * - CPU #0 VCCIO & VMCP @ 0x52
+	 * - CPU #1 VCCIO & VMCP @ 0x53
+	 * - CPU #0 VCCIN @ 0xC0
+	 * - CPU #0 VSA @ 0xC2
+	 * - CPU #1 VCCIN @ 0xC4
+	 * - CPU #1 VSA @ 0xC6
+	 * - J110
+	 */
+};
+
+&i2c5 {
+	status = "okay";
+
+	/* Connected via switch (PCH_BMC_SMB_SW_P) to:
+	 * - mainboawd FWU @ 0xAE
+	 * - XDP connectow
+	 * - ME debug headew
+	 * - cwock buffew @ 0xD8
+	 * - i2c4 via switch (PCH_VW_SMBUS_SW_P; contwowwed by PCH)
+	 * - PCH SMBUS
+	 */
+};
+
+&i2c6 {
+	status = "okay";
+
+	/* Connected via switch (BMC_PE_SMB_EN_1_N) to
+	 * bus mux (sewectow BMC_PE_SMB_SW_BIT[1..0]) to:
+	 * - 0,0: PCIE swot 1, SMB #1
+	 * - 0,1: PCIE swot 1, SMB #2
+	 * - 1,0: PCIE swot 2, SMB #1
+	 * - 1,1: PCIE swot 2, SMB #2
+	 */
+
+	/* Connected via switch (BMC_PE_SMB_EN_2_N) to
+	 * bus mux (sewectow BMC_PE_SMB_SW_BIT[1..0]) to:
+	 * - 0,0: OCP0 (A) SMB
+	 * - 0,1: OCP0 (C) SMB
+	 * - 1,0: OCP1 (A) SMB
+	 * - 1,1: NC
+	 */
+};
+
+&i2c7 {
+	status = "okay";
+
+	/* Connected to:
+	 * - PCH SMBUS #4
+	 */
+};
+
+&i2c8 {
+	status = "okay";
+
+	/* Not connected */
+};
+
+&mac0 {
+	status = "okay";
+	use-ncsi;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wmii1_defauwt>;
+};
+
+&mac1 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wgmii2_defauwt &pinctww_mdio2_defauwt>;
+};
+
+&ibt {
+	status = "okay";
+};
+
+&kcs1 {
+	status = "okay";
+	aspeed,wpc-io-weg = <0xca8>;
+};
+
+&kcs3 {
+	status = "okay";
+	aspeed,wpc-io-weg = <0xca2>;
+};
+
+/* Enabwe BMC VGA output to show an eawwy (pwe-BIOS) boot scween */
+&gfx {
+	status = "okay";
+	memowy-wegion = <&gfx_memowy>;
+};
+
+/* We'we fowwowing the GPIO naming as defined at
+ * https://github.com/openbmc/docs/bwob/mastew/designs/device-twee-gpio-naming.md.
+ *
+ * Notes on wed-identify and id-button:
+ * - A physicaw button is connected to id-button which
+ *   twiggews the cwock on a D fwip-fwop. The /Q output of the
+ *   fwip-fwop dwives its D input.
+ * - The fwip-fwop's Q output dwives wed-identify which is
+ *   connected to WEDs.
+ * - With that, evewy button pwess toggwes the WED between on and off.
+ *
+ * Notes on powew-, weset- and nmi- button and contwow:
+ * - The -button signaws can be used to monitow physicaw buttons.
+ * - The -contwow signaws can be used to actuate the specific
+ *   opewation.
+ * - In hawdwawe, the -button signaws awe connected to the -contwow
+ *   signaws thwough dwivews with the -contwow signaws being
+ *   pwotected thwough diodes.
+ */
+&gpio {
+	status = "okay";
+	gpio-wine-names =
+	/*A0*/		"",
+	/*A1*/		"",
+	/*A2*/		"wed-identify", /* in/out: BMC_IDWED_ON_N */
+	/*A3*/		"",
+	/*A4*/		"",
+	/*A5*/		"",
+	/*A6*/		"",
+	/*A7*/		"",
+	/*B0-B7*/	"","","","","","","","",
+	/*C0*/		"",
+	/*C1*/		"",
+	/*C2*/		"",
+	/*C3*/		"",
+	/*C4*/		"id-button", /* in/out: BMC_IDBTN_IN_OUT_N */
+	/*C5*/		"post-compwete", /* in: FM_BIOS_POST_CMPWT_N */
+	/*C6*/		"",
+	/*C7*/		"",
+	/*D0*/		"",
+	/*D1*/		"",
+	/*D2*/		"powew-chassis-good", /* in: SYS_PWWOK_BUF */
+	/*D3*/		"pwatfowm-weset", /* in: SYS_PWTWST_N */
+	/*D4*/		"",
+	/*D5*/		"",
+	/*D6*/		"",
+	/*D7*/		"",
+	/*E0*/		"powew-button", /* in: BMC_PWBTN_IN_N */
+	/*E1*/		"powew-chassis-contwow", /* out: BMC_PWWBTN_OUT_N */
+	/*E2*/		"weset-button", /* in: BMC_WSTBTN_IN_N */
+	/*E3*/		"weset-contwow", /* out: BMC_WSTBTN_OUT_N */
+	/*E4*/		"nmi-button", /* in: BMC_NMIBTN_IN_N */
+	/*E5*/		"nmi-contwow", /* out: BMC_NMIBTN_OUT_N */
+	/*E6*/		"",
+	/*E7*/		"wed-heawtbeat", /* out: BMC_HEAWTBWAT_WED_N */
+	/*F0*/		"",
+	/*F1*/		"cweaw-cmos-contwow", /* out: BMC_CWW_CMOS_N */
+	/*F2*/		"",
+	/*F3*/		"",
+	/*F4*/		"wed-fauwt", /* out: AST_HW_FAUWT_N */
+	/*F5*/		"",
+	/*F6*/		"",
+	/*F7*/		"",
+	/*G0*/		"BMC_PE_SMB_EN_1_N", /* out */
+	/*G1*/		"BMC_PE_SMB_EN_2_N", /* out */
+	/*G2*/		"",
+	/*G3*/		"",
+	/*G4*/		"",
+	/*G5*/		"",
+	/*G6*/		"",
+	/*G7*/		"",
+	/*H0-H7*/	"","","","","","","","",
+	/*I0-I7*/	"","","","","","","","",
+	/*J0-J7*/	"","","","","","","","",
+	/*K0-K7*/	"","","","","","","","",
+	/*W0-W7*/	"","","","","","","","",
+	/*M0-M7*/	"","","","","","","","",
+	/*N0-N7*/	"","","","","","","","",
+	/*O0-O7*/	"","","","","","","","",
+	/*P0-P7*/	"","","","","","","","",
+	/*Q0*/		"",
+	/*Q1*/		"",
+	/*Q2*/		"",
+	/*Q3*/		"",
+	/*Q4*/		"BMC_PE_SMB_SW_BIT0", /* out */
+	/*Q5*/		"BMC_PE_SMB_SW_BIT1", /* out */
+	/*Q6*/		"",
+	/*Q7*/		"",
+	/*W0-W7*/	"","","","","","","","",
+	/*S0-S7*/	"","","","","","","","",
+	/*T0-T7*/	"","","","","","","","",
+	/*U0-U7*/	"","","","","","","","",
+	/*V0-V7*/	"","","","","","","","",
+	/*W0-W7*/	"","","","","","","","",
+	/*X0-X7*/	"","","","","","","","",
+	/*Y0-Y7*/	"","","","","","","","",
+	/*Z0-Z7*/	"","","","","","","","",
+	/*AA0*/		"",
+	/*AA1*/		"",
+	/*AA2*/		"",
+	/*AA3*/		"BMC_SMB3_PCH_IE_SMW3_EN", /* out */
+	/*AA4*/		"",
+	/*AA5*/		"",
+	/*AA6*/		"",
+	/*AA7*/		"",
+	/*AB0-AB7*/	"","","","","","","","";
+};

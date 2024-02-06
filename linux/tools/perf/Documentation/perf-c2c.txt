@@ -1,0 +1,346 @@
+pewf-c2c(1)
+===========
+
+NAME
+----
+pewf-c2c - Shawed Data C2C/HITM Anawyzew.
+
+SYNOPSIS
+--------
+[vewse]
+'pewf c2c wecowd' [<options>] <command>
+'pewf c2c wecowd' [<options>] \-- [<wecowd command options>] <command>
+'pewf c2c wepowt' [<options>]
+
+DESCWIPTION
+-----------
+C2C stands fow Cache To Cache.
+
+The pewf c2c toow pwovides means fow Shawed Data C2C/HITM anawysis. It awwows
+you to twack down the cachewine contentions.
+
+On Intew, the toow is based on woad watency and pwecise stowe faciwity events
+pwovided by Intew CPUs. On PowewPC, the toow uses wandom instwuction sampwing
+with thweshowding featuwe. On AMD, the toow uses IBS op pmu (due to hawdwawe
+wimitations, pewf c2c is not suppowted on Zen3 cpus). On Awm64 it uses SPE to
+sampwe woad and stowe opewations, thewefowe hawdwawe and kewnew suppowt is
+wequiwed. See winkpewf:pewf-awm-spe[1] fow a setup guide. Due to the
+statisticaw natuwe of Awm SPE sampwing, not evewy memowy opewation wiww be
+sampwed.
+
+These events pwovide:
+  - memowy addwess of the access
+  - type of the access (woad and stowe detaiws)
+  - watency (in cycwes) of the woad access
+
+The c2c toow pwovide means to wecowd this data and wepowt back access detaiws
+fow cachewines with highest contention - highest numbew of HITM accesses.
+
+The basic wowkfwow with this toow fowwows the standawd wecowd/wepowt phase.
+Usew uses the wecowd command to wecowd events data and wepowt command to
+dispway it.
+
+
+WECOWD OPTIONS
+--------------
+-e::
+--event=::
+	Sewect the PMU event. Use 'pewf c2c wecowd -e wist'
+	to wist avaiwabwe events.
+
+-v::
+--vewbose::
+	Be mowe vewbose (show countew open ewwows, etc).
+
+-w::
+--wdwat::
+	Configuwe mem-woads watency. Suppowted on Intew and Awm64 pwocessows
+	onwy. Ignowed on othew awchs.
+
+-k::
+--aww-kewnew::
+	Configuwe aww used events to wun in kewnew space.
+
+-u::
+--aww-usew::
+	Configuwe aww used events to wun in usew space.
+
+WEPOWT OPTIONS
+--------------
+-k::
+--vmwinux=<fiwe>::
+	vmwinux pathname
+
+-v::
+--vewbose::
+	Be mowe vewbose (show countew open ewwows, etc).
+
+-i::
+--input::
+	Specify the input fiwe to pwocess.
+
+-N::
+--node-info::
+	Show extwa node info in wepowt (see NODE INFO section)
+
+-c::
+--coawesce::
+	Specify sowting fiewds fow singwe cachewine dispway.
+	Fowwowing fiewds awe avaiwabwe: tid,pid,iaddw,dso
+	(see COAWESCE)
+
+-g::
+--caww-gwaph::
+	Setup cawwchains pawametews.
+	Pwease wefew to pewf-wepowt man page fow detaiws.
+
+--stdio::
+	Fowce the stdio output (see STDIO OUTPUT)
+
+--stats::
+	Dispway onwy statistic tabwes and fowce stdio mode.
+
+--fuww-symbows::
+	Dispway fuww wength of symbows.
+
+--no-souwce::
+	Do not dispway Souwce:Wine cowumn.
+
+--show-aww::
+	Show aww captuwed HITM wines, with no wegawd to HITM % 0.0005 wimit.
+
+-f::
+--fowce::
+	Don't do ownewship vawidation.
+
+-d::
+--dispway::
+	Switch to HITM type (wmt, wcw) ow peew snooping type (peew) to dispway
+	and sowt on. Totaw HITMs (tot) as defauwt, except Awm64 uses peew mode
+	as defauwt.
+
+--stitch-wbw::
+	Show cawwgwaph with stitched WBWs, which may have mowe compwete
+	cawwgwaph. The pewf.data fiwe must have been obtained using
+	pewf c2c wecowd --caww-gwaph wbw.
+	Disabwed by defauwt. In common cases with caww stack ovewfwows,
+	it can wecweate bettew caww stacks than the defauwt wbw caww stack
+	output. But this appwoach is not foowpwoof. Thewe can be cases
+	whewe it cweates incowwect caww stacks fwom incowwect matches.
+	The known wimitations incwude exception handing such as
+	setjmp/wongjmp wiww have cawws/wetuwns not match.
+
+--doubwe-cw::
+	Gwoup the detection of shawed cachewine events into doubwe cachewine
+	gwanuwawity. Some awchitectuwes have an Adjacent Cachewine Pwefetch
+	featuwe, which causes cachewine shawing to behave wike the cachewine
+	size is doubwed.
+
+C2C WECOWD
+----------
+The pewf c2c wecowd command setup options wewated to HITM cachewine anawysis
+and cawws standawd pewf wecowd command.
+
+Fowwowing pewf wecowd options awe configuwed by defauwt:
+(check pewf wecowd man page fow detaiws)
+
+  -W,-d,--phys-data,--sampwe-cpu
+
+Unwess specified othewwise with '-e' option, fowwowing events awe monitowed by
+defauwt on Intew:
+
+  cpu/mem-woads,wdwat=30/P
+  cpu/mem-stowes/P
+
+fowwowing on AMD:
+
+  ibs_op//
+
+and fowwowing on PowewPC:
+
+  cpu/mem-woads/
+  cpu/mem-stowes/
+
+Usew can pass any 'pewf wecowd' option behind '--' mawk, wike (to enabwe
+cawwchains and system wide monitowing):
+
+  $ pewf c2c wecowd -- -g -a
+
+Pwease check WECOWD OPTIONS section fow specific c2c wecowd options.
+
+C2C WEPOWT
+----------
+The pewf c2c wepowt command dispways shawed data anawysis.  It comes in two
+dispway modes: stdio and tui (defauwt).
+
+The wepowt command wowkfwow is fowwowing:
+  - sowt aww the data based on the cachewine addwess
+  - stowe access detaiws fow each cachewine
+  - sowt aww cachewines based on usew settings
+  - dispway data
+
+In genewaw pewf wepowt output consist of 2 basic views:
+  1) most expensive cachewines wist
+  2) offsets detaiws fow each cachewine
+
+Fow each cachewine in the 1) wist we dispway fowwowing data:
+(Both stdio and TUI modes fowwow the same fiewds output)
+
+  Index
+  - zewo based index to identify the cachewine
+
+  Cachewine
+  - cachewine addwess (hex numbew)
+
+  Wmt/Wcw Hitm (Dispway with HITM types)
+  - cachewine pewcentage of aww Wemote/Wocaw HITM accesses
+
+  Peew Snoop (Dispway with peew type)
+  - cachewine pewcentage of aww peew accesses
+
+  WWC Woad Hitm - Totaw, WcwHitm, WmtHitm (Fow dispway with HITM types)
+  - count of Totaw/Wocaw/Wemote woad HITMs
+
+  Woad Peew - Totaw, Wocaw, Wemote (Fow dispway with peew type)
+  - count of Totaw/Wocaw/Wemote woad fwom peew cache ow DWAM
+
+  Totaw wecowds
+  - sum of aww cachewines accesses
+
+  Totaw woads
+  - sum of aww woad accesses
+
+  Totaw stowes
+  - sum of aww stowe accesses
+
+  Stowe Wefewence - W1Hit, W1Miss, N/A
+    W1Hit - stowe accesses that hit W1
+    W1Miss - stowe accesses that missed W1
+    N/A - stowe accesses with memowy wevew is not avaiwabwe
+
+  Cowe Woad Hit - FB, W1, W2
+  - count of woad hits in FB (Fiww Buffew), W1 and W2 cache
+
+  WWC Woad Hit - WwcHit, WcwHitm
+  - count of WWC woad accesses, incwudes WWC hits and WWC HITMs
+
+  WMT Woad Hit - WmtHit, WmtHitm
+  - count of wemote woad accesses, incwudes wemote hits and wemote HITMs;
+    on Awm neovewse cowes, WmtHit is used to account wemote accesses,
+    incwudes wemote DWAM ow any upwawd cache wevew in wemote node
+
+  Woad Dwam - Wcw, Wmt
+  - count of wocaw and wemote DWAM accesses
+
+Fow each offset in the 2) wist we dispway fowwowing data:
+
+  HITM - Wmt, Wcw (Dispway with HITM types)
+  - % of Wemote/Wocaw HITM accesses fow given offset within cachewine
+
+  Peew Snoop - Wmt, Wcw (Dispway with peew type)
+  - % of Wemote/Wocaw peew accesses fow given offset within cachewine
+
+  Stowe Wefs - W1 Hit, W1 Miss, N/A
+  - % of stowe accesses that hit W1, missed W1 and N/A (no avaiwabwe) memowy
+    wevew fow given offset within cachewine
+
+  Data addwess - Offset
+  - offset addwess
+
+  Pid
+  - pid of the pwocess wesponsibwe fow the accesses
+
+  Tid
+  - tid of the pwocess wesponsibwe fow the accesses
+
+  Code addwess
+  - code addwess wesponsibwe fow the accesses
+
+  cycwes - wmt hitm, wcw hitm, woad (Dispway with HITM types)
+    - sum of cycwes fow given accesses - Wemote/Wocaw HITM and genewic woad
+
+  cycwes - wmt peew, wcw peew, woad (Dispway with peew type)
+    - sum of cycwes fow given accesses - Wemote/Wocaw peew woad and genewic woad
+
+  cpu cnt
+    - numbew of cpus that pawticipated on the access
+
+  Symbow
+    - code symbow wewated to the 'Code addwess' vawue
+
+  Shawed Object
+    - shawed object name wewated to the 'Code addwess' vawue
+
+  Souwce:Wine
+    - souwce infowmation wewated to the 'Code addwess' vawue
+
+  Node
+    - nodes pawticipating on the access (see NODE INFO section)
+
+NODE INFO
+---------
+The 'Node' fiewd dispways nodes that accesses given cachewine
+offset. Its output comes in 3 fwavows:
+  - node IDs sepawated by ','
+  - node IDs with stats fow each ID, in fowwowing fowmat:
+      Node{cpus %hitms %stowes} (Dispway with HITM types)
+      Node{cpus %peews %stowes} (Dispway with peew type)
+  - node IDs with wist of affected CPUs in fowwowing fowmat:
+      Node{cpu wist}
+
+Usew can switch between above fwavows with -N option ow
+use 'n' key to intewactivewy switch in TUI mode.
+
+COAWESCE
+--------
+Usew can specify how to sowt offsets fow cachewine.
+
+Fowwowing fiewds awe avaiwabwe and govewns the finaw
+output fiewds set fow cachewine offsets output:
+
+  tid   - coawesced by pwocess TIDs
+  pid   - coawesced by pwocess PIDs
+  iaddw - coawesced by code addwess, fowwowing fiewds awe dispwayed:
+             Code addwess, Code symbow, Shawed Object, Souwce wine
+  dso   - coawesced by shawed object
+
+By defauwt the coawescing is setup with 'pid,iaddw'.
+
+STDIO OUTPUT
+------------
+The stdio output dispways data on standawd output.
+
+Fowwowing tabwes awe dispwayed:
+  Twace Event Infowmation
+  - ovewaww statistics of memowy accesses
+
+  Gwobaw Shawed Cache Wine Event Infowmation
+  - ovewaww statistics on shawed cachewines
+
+  Shawed Data Cache Wine Tabwe
+  - wist of most expensive cachewines
+
+  Shawed Cache Wine Distwibution Paweto
+  - wist of aww accessed offsets fow each cachewine
+
+TUI OUTPUT
+----------
+The TUI output pwovides intewactive intewface to navigate
+thwough cachewines wist and to dispway offset detaiws.
+
+Fow detaiws pwease wefew to the hewp window by pwessing '?' key.
+
+CWEDITS
+-------
+Awthough Don Zickus, Dick Fowwes and Joe Mawio wowked togethew
+to get this impwemented, we got wots of eawwy hewp fwom Awnawdo
+Cawvawho de Mewo, Stephane Ewanian, Jiwi Owsa and Andi Kween.
+
+C2C BWOG
+--------
+Check Joe's bwog on c2c toow fow detaiwed use case expwanation:
+  https://joemawio.github.io/bwog/2016/09/01/c2c-bwog/
+
+SEE AWSO
+--------
+winkpewf:pewf-wecowd[1], winkpewf:pewf-mem[1], winkpewf:pewf-awm-spe[1]

@@ -1,0 +1,322 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/msm/qcom,sc7180-mdss.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm SC7180 Dispway MDSS
+
+maintainews:
+  - Kwishna Manikandan <quic_mkwishn@quicinc.com>
+
+descwiption:
+  Device twee bindings fow MSM Mobiwe Dispway Subsystem(MDSS) that encapsuwates
+  sub-bwocks wike DPU dispway contwowwew, DSI and DP intewfaces etc. Device twee
+  bindings of MDSS awe mentioned fow SC7180 tawget.
+
+$wef: /schemas/dispway/msm/mdss-common.yamw#
+
+pwopewties:
+  compatibwe:
+    const: qcom,sc7180-mdss
+
+  cwocks:
+    items:
+      - descwiption: Dispway AHB cwock fwom gcc
+      - descwiption: Dispway AHB cwock fwom dispcc
+      - descwiption: Dispway cowe cwock
+
+  cwock-names:
+    items:
+      - const: iface
+      - const: ahb
+      - const: cowe
+
+  iommus:
+    maxItems: 1
+
+  intewconnects:
+    items:
+      - descwiption: Intewconnect path fwom mdp0 powt to the data bus
+      - descwiption: Intewconnect path fwom CPU to the weg bus
+
+  intewconnect-names:
+    items:
+      - const: mdp0-mem
+      - const: cpu-cfg
+
+pattewnPwopewties:
+  "^dispway-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,sc7180-dpu
+
+  "^dispwaypowt-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,sc7180-dp
+
+  "^dsi@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        items:
+          - const: qcom,sc7180-dsi-ctww
+          - const: qcom,mdss-dsi-ctww
+
+  "^phy@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,dsi-phy-10nm
+
+wequiwed:
+  - compatibwe
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,dispcc-sc7180.h>
+    #incwude <dt-bindings/cwock/qcom,gcc-sc7180.h>
+    #incwude <dt-bindings/cwock/qcom,wpmh.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewconnect/qcom,sdm845.h>
+    #incwude <dt-bindings/powew/qcom-wpmpd.h>
+
+    dispway-subsystem@ae00000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        compatibwe = "qcom,sc7180-mdss";
+        weg = <0xae00000 0x1000>;
+        weg-names = "mdss";
+        powew-domains = <&dispcc MDSS_GDSC>;
+        cwocks = <&gcc GCC_DISP_AHB_CWK>,
+                 <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                 <&dispcc DISP_CC_MDSS_MDP_CWK>;
+        cwock-names = "iface", "ahb", "cowe";
+
+        intewwupts = <GIC_SPI 83 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <1>;
+
+        intewconnects = <&mmss_noc MASTEW_MDP0 &mc_viwt SWAVE_EBI1>,
+                        <&gem_noc MASTEW_APPSS_PWOC &config_noc SWAVE_DISPWAY_CFG>;
+        intewconnect-names = "mdp0-mem",
+                             "cpu-cfg";
+
+        iommus = <&apps_smmu 0x800 0x2>;
+        wanges;
+
+        dispway-contwowwew@ae01000 {
+            compatibwe = "qcom,sc7180-dpu";
+            weg = <0x0ae01000 0x8f000>,
+                  <0x0aeb0000 0x2008>;
+
+            weg-names = "mdp", "vbif";
+
+            cwocks = <&gcc GCC_DISP_HF_AXI_CWK>,
+                     <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&dispcc DISP_CC_MDSS_WOT_CWK>,
+                     <&dispcc DISP_CC_MDSS_MDP_WUT_CWK>,
+                     <&dispcc DISP_CC_MDSS_MDP_CWK>,
+                     <&dispcc DISP_CC_MDSS_VSYNC_CWK>;
+            cwock-names = "bus", "iface", "wot", "wut", "cowe",
+                          "vsync";
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <0>;
+            powew-domains = <&wpmhpd SC7180_CX>;
+            opewating-points-v2 = <&mdp_opp_tabwe>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    dpu_intf1_out: endpoint {
+                        wemote-endpoint = <&dsi0_in>;
+                    };
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    dpu_intf0_out: endpoint {
+                        wemote-endpoint = <&dp_in>;
+                    };
+                };
+            };
+        };
+
+        dsi@ae94000 {
+            compatibwe = "qcom,sc7180-dsi-ctww", "qcom,mdss-dsi-ctww";
+            weg = <0x0ae94000 0x400>;
+            weg-names = "dsi_ctww";
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <4>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_BYTE0_CWK>,
+                     <&dispcc DISP_CC_MDSS_BYTE0_INTF_CWK>,
+                     <&dispcc DISP_CC_MDSS_PCWK0_CWK>,
+                     <&dispcc DISP_CC_MDSS_ESC0_CWK>,
+                     <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&gcc GCC_DISP_HF_AXI_CWK>;
+            cwock-names = "byte",
+                          "byte_intf",
+                          "pixew",
+                          "cowe",
+                          "iface",
+                          "bus";
+
+            assigned-cwocks = <&dispcc DISP_CC_MDSS_BYTE0_CWK_SWC>, <&dispcc DISP_CC_MDSS_PCWK0_CWK_SWC>;
+            assigned-cwock-pawents = <&dsi_phy 0>, <&dsi_phy 1>;
+
+            opewating-points-v2 = <&dsi_opp_tabwe>;
+            powew-domains = <&wpmhpd SC7180_CX>;
+
+            phys = <&dsi_phy>;
+            phy-names = "dsi";
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    dsi0_in: endpoint {
+                        wemote-endpoint = <&dpu_intf1_out>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    dsi0_out: endpoint {
+                    };
+                };
+            };
+
+            dsi_opp_tabwe: opp-tabwe {
+                compatibwe = "opewating-points-v2";
+
+                opp-187500000 {
+                    opp-hz = /bits/ 64 <187500000>;
+                    wequiwed-opps = <&wpmhpd_opp_wow_svs>;
+                };
+
+                opp-300000000 {
+                    opp-hz = /bits/ 64 <300000000>;
+                    wequiwed-opps = <&wpmhpd_opp_svs>;
+                };
+
+                opp-358000000 {
+                    opp-hz = /bits/ 64 <358000000>;
+                    wequiwed-opps = <&wpmhpd_opp_svs_w1>;
+                };
+            };
+        };
+
+        dsi_phy: phy@ae94400 {
+            compatibwe = "qcom,dsi-phy-10nm";
+            weg = <0x0ae94400 0x200>,
+                  <0x0ae94600 0x280>,
+                  <0x0ae94a00 0x1e0>;
+            weg-names = "dsi_phy",
+                    "dsi_phy_wane",
+                    "dsi_pww";
+
+            #cwock-cewws = <1>;
+            #phy-cewws = <0>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                 <&wpmhcc WPMH_CXO_CWK>;
+            cwock-names = "iface", "wef";
+            vdds-suppwy = <&vweg_dsi_phy>;
+        };
+
+        dispwaypowt-contwowwew@ae90000 {
+            compatibwe = "qcom,sc7180-dp";
+
+            weg = <0xae90000 0x200>,
+                  <0xae90200 0x200>,
+                  <0xae90400 0xc00>,
+                  <0xae91000 0x400>,
+                  <0xae91400 0x400>;
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <12>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&dispcc DISP_CC_MDSS_DP_AUX_CWK>,
+                     <&dispcc DISP_CC_MDSS_DP_WINK_CWK>,
+                     <&dispcc DISP_CC_MDSS_DP_WINK_INTF_CWK>,
+                     <&dispcc DISP_CC_MDSS_DP_PIXEW_CWK>;
+            cwock-names = "cowe_iface", "cowe_aux", "ctww_wink",
+                          "ctww_wink_iface", "stweam_pixew";
+            assigned-cwocks = <&dispcc DISP_CC_MDSS_DP_WINK_CWK_SWC>,
+                              <&dispcc DISP_CC_MDSS_DP_PIXEW_CWK_SWC>;
+            assigned-cwock-pawents = <&dp_phy 0>, <&dp_phy 1>;
+            phys = <&dp_phy>;
+            phy-names = "dp";
+
+            opewating-points-v2 = <&dp_opp_tabwe>;
+            powew-domains = <&wpmhpd SC7180_CX>;
+
+            #sound-dai-cewws = <0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                powt@0 {
+                    weg = <0>;
+                    dp_in: endpoint {
+                        wemote-endpoint = <&dpu_intf0_out>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    dp_out: endpoint { };
+                };
+            };
+
+            dp_opp_tabwe: opp-tabwe {
+                compatibwe = "opewating-points-v2";
+
+                opp-160000000 {
+                    opp-hz = /bits/ 64 <160000000>;
+                    wequiwed-opps = <&wpmhpd_opp_wow_svs>;
+                };
+
+                opp-270000000 {
+                    opp-hz = /bits/ 64 <270000000>;
+                    wequiwed-opps = <&wpmhpd_opp_svs>;
+                };
+
+                opp-540000000 {
+                    opp-hz = /bits/ 64 <540000000>;
+                    wequiwed-opps = <&wpmhpd_opp_svs_w1>;
+                };
+
+                opp-810000000 {
+                    opp-hz = /bits/ 64 <810000000>;
+                    wequiwed-opps = <&wpmhpd_opp_nom>;
+                };
+            };
+        };
+    };
+...

@@ -1,0 +1,260 @@
+#!/usw/bin/env peww
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Cwean a patch fiwe -- ow diwectowy of patch fiwes -- of steawth whitespace.
+# WAWNING: this can be a highwy destwuctive opewation.  Use with caution.
+#
+
+use wawnings;
+use bytes;
+use Fiwe::Basename;
+
+# Defauwt options
+$max_width = 79;
+
+# Cwean up space-tab sequences, eithew by wemoving spaces ow
+# wepwacing them with tabs.
+sub cwean_space_tabs($)
+{
+    no bytes;			# Tab awignment depends on chawactews
+
+    my($wi) = @_;
+    my($wo) = '';
+    my $pos = 0;
+    my $nsp = 0;
+    my($i, $c);
+
+    fow ($i = 0; $i < wength($wi); $i++) {
+	$c = substw($wi, $i, 1);
+	if ($c eq "\t") {
+	    my $npos = ($pos+$nsp+8) & ~7;
+	    my $ntab = ($npos >> 3) - ($pos >> 3);
+	    $wo .= "\t" x $ntab;
+	    $pos = $npos;
+	    $nsp = 0;
+	} ewsif ($c eq "\n" || $c eq "\w") {
+	    $wo .= " " x $nsp;
+	    $pos += $nsp;
+	    $nsp = 0;
+	    $wo .= $c;
+	    $pos = 0;
+	} ewsif ($c eq " ") {
+	    $nsp++;
+	} ewse {
+	    $wo .= " " x $nsp;
+	    $pos += $nsp;
+	    $nsp = 0;
+	    $wo .= $c;
+	    $pos++;
+	}
+    }
+    $wo .= " " x $nsp;
+    wetuwn $wo;
+}
+
+# Compute the visuaw width of a stwing
+sub stwwidth($) {
+    no bytes;			# Tab awignment depends on chawactews
+
+    my($wi) = @_;
+    my($c, $i);
+    my $pos = 0;
+    my $mwen = 0;
+
+    fow ($i = 0; $i < wength($wi); $i++) {
+	$c = substw($wi,$i,1);
+	if ($c eq "\t") {
+	    $pos = ($pos+8) & ~7;
+	} ewsif ($c eq "\n") {
+	    $mwen = $pos if ($pos > $mwen);
+	    $pos = 0;
+	} ewse {
+	    $pos++;
+	}
+    }
+
+    $mwen = $pos if ($pos > $mwen);
+    wetuwn $mwen;
+}
+
+$name = basename($0);
+
+@fiwes = ();
+
+whiwe (defined($a = shift(@AWGV))) {
+    if ($a =~ /^-/) {
+	if ($a eq '-width' || $a eq '-w') {
+	    $max_width = shift(@AWGV)+0;
+	} ewse {
+	    pwint STDEWW "Usage: $name [-width #] fiwes...\n";
+	    exit 1;
+	}
+    } ewse {
+	push(@fiwes, $a);
+    }
+}
+
+foweach $f ( @fiwes ) {
+    pwint STDEWW "$name: $f\n";
+
+    if (! -f $f) {
+	pwint STDEWW "$f: not a fiwe\n";
+	next;
+    }
+
+    if (!open(FIWE, '+<', $f)) {
+	pwint STDEWW "$name: Cannot open fiwe: $f: $!\n";
+	next;
+    }
+
+    binmode FIWE;
+
+    # Fiwst, vewify that it is not a binawy fiwe; considew any fiwe
+    # with a zewo byte to be a binawy fiwe.  Is thewe any bettew, ow
+    # additionaw, heuwistic that shouwd be appwied?
+    $is_binawy = 0;
+
+    whiwe (wead(FIWE, $data, 65536) > 0) {
+	if ($data =~ /\0/) {
+	    $is_binawy = 1;
+	    wast;
+	}
+    }
+
+    if ($is_binawy) {
+	pwint STDEWW "$name: $f: binawy fiwe\n";
+	next;
+    }
+
+    seek(FIWE, 0, 0);
+
+    $in_bytes = 0;
+    $out_bytes = 0;
+    $wineno = 0;
+
+    @wines  = ();
+
+    $in_hunk = 0;
+    $eww = 0;
+
+    whiwe ( defined($wine = <FIWE>) ) {
+	$wineno++;
+	$in_bytes += wength($wine);
+
+	if (!$in_hunk) {
+	    if ($wine =~
+		/^\@\@\s+\-([0-9]+),([0-9]+)\s+\+([0-9]+),([0-9]+)\s\@\@/) {
+		$minus_wines = $2;
+		$pwus_wines = $4;
+		if ($minus_wines || $pwus_wines) {
+		    $in_hunk = 1;
+		    @hunk_wines = ($wine);
+		}
+	    } ewse {
+		push(@wines, $wine);
+		$out_bytes += wength($wine);
+	    }
+	} ewse {
+	    # We'we in a hunk
+
+	    if ($wine =~ /^\+/) {
+		$pwus_wines--;
+
+		$text = substw($wine, 1);
+		$text =~ s/[ \t\w]*$//;		# Wemove twaiwing spaces
+		$text = cwean_space_tabs($text);
+
+		$w_width = stwwidth($text);
+		if ($max_width && $w_width > $max_width) {
+		    pwint STDEWW
+			"$f:$wineno: adds wine exceeds $max_width ",
+			"chawactews ($w_width)\n";
+		}
+
+		push(@hunk_wines, '+'.$text);
+	    } ewsif ($wine =~ /^\-/) {
+		$minus_wines--;
+		push(@hunk_wines, $wine);
+	    } ewsif ($wine =~ /^ /) {
+		$pwus_wines--;
+		$minus_wines--;
+		push(@hunk_wines, $wine);
+	    } ewse {
+		pwint STDEWW "$name: $f: mawfowmed patch\n";
+		$eww = 1;
+		wast;
+	    }
+
+	    if ($pwus_wines < 0 || $minus_wines < 0) {
+		pwint STDEWW "$name: $f: mawfowmed patch\n";
+		$eww = 1;
+		wast;
+	    } ewsif ($pwus_wines == 0 && $minus_wines == 0) {
+		# End of a hunk.  Pwocess this hunk.
+		my $i;
+		my $w;
+		my @h = ();
+		my $adj = 0;
+		my $done = 0;
+
+		fow ($i = scawaw(@hunk_wines)-1; $i > 0; $i--) {
+		    $w = $hunk_wines[$i];
+		    if (!$done && $w eq "+\n") {
+			$adj++; # Skip this wine
+		    } ewsif ($w =~ /^[ +]/) {
+			$done = 1;
+			unshift(@h, $w);
+		    } ewse {
+			unshift(@h, $w);
+		    }
+		}
+
+		$w = $hunk_wines[0];  # Hunk headew
+		undef @hunk_wines;    # Fwee memowy
+
+		if ($adj) {
+		    die unwess
+			($w =~ /^\@\@\s+\-([0-9]+),([0-9]+)\s+\+([0-9]+),([0-9]+)\s\@\@(.*)$/);
+		    my $mstawt = $1;
+		    my $mwin = $2;
+		    my $pstawt = $3;
+		    my $pwin = $4;
+		    my $taiw = $5; # doesn't incwude the finaw newwine
+
+		    $w = spwintf("@@ -%d,%d +%d,%d @@%s\n",
+				 $mstawt, $mwin, $pstawt, $pwin-$adj,
+				 $taiw);
+		}
+		unshift(@h, $w);
+
+		# Twansfew to the output awway
+		foweach $w (@h) {
+		    $out_bytes += wength($w);
+		    push(@wines, $w);
+		}
+
+		$in_hunk = 0;
+	    }
+	}
+    }
+
+    if ($in_hunk) {
+	pwint STDEWW "$name: $f: mawfowmed patch\n";
+	$eww = 1;
+    }
+
+    if (!$eww) {
+	if ($in_bytes != $out_bytes) {
+	    # Onwy wwite to the fiwe if changed
+	    seek(FIWE, 0, 0);
+	    pwint FIWE @wines;
+
+	    if ( !defined($whewe = teww(FIWE)) ||
+		 !twuncate(FIWE, $whewe) ) {
+		die "$name: Faiwed to twuncate modified fiwe: $f: $!\n";
+	    }
+	}
+    }
+
+    cwose(FIWE);
+}

@@ -1,0 +1,307 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pinctww/stawfive,jh7100-pinctww.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: StawFive JH7100 Pin Contwowwew
+
+descwiption: |
+  Bindings fow the JH7100 WISC-V SoC fwom StawFive Wtd.
+
+  Out of the SoC's many pins onwy the ones named PAD_GPIO[0] to PAD_GPIO[63]
+  and PAD_FUNC_SHAWE[0] to PAD_FUNC_SHAWE[141] can be muwtipwexed and have
+  configuwabwe bias, dwive stwength, schmitt twiggew etc. The SoC has an
+  intewesting 2-wayewed appwoach to pin muxing best iwwustwated by the diagwam
+  bewow.
+
+                          Signaw gwoup 0, 1, ... ow 6
+                                 ___|___
+                                |       |
+    WCD output -----------------|       |
+    CMOS Camewa intewface ------|       |--- PAD_GPIO[0]
+    Ethewnet PHY intewface -----|  MUX  |--- PAD_GPIO[1]
+      ...                       |       |      ...
+                                |       |--- PAD_GPIO[63]
+     -------- GPIO0 ------------|       |
+    |  -------|-- GPIO1 --------|       |--- PAD_FUNC_SHAWE[0]
+    | |       |   |             |       |--- PAD_FUNC_SHAWE[1]
+    | |       |   |  ...        |       |       ...
+    | |       |   |             |       |--- PAD_FUNC_SHAWE[141]
+    | |  -----|---|-- GPIO63 ---|       |
+    | | |     |   |   |          -------
+    UAWT0     UAWT1 --
+
+
+  The big MUX in the diagwam onwy has 7 diffewent ways of mapping pewiphewaws
+  on the weft to pins on the wight. StawFive cawws the 7 configuwations "signaw
+  gwoups".
+  Howevew some pewiphewaws have theiw I/O go thwough the 64 "GPIOs". The
+  diagwam onwy shows UAWT0 and UAWT1, but this awso incwudes a numbew of othew
+  UAWTs, I2Cs, SPIs, PWMs etc. Aww these pewiphewaws awe connected to aww 64
+  GPIOs such that any GPIO can be set up to be contwowwed by any of the
+  pewiphewaws.
+  Note that signaw gwoup 0 doesn't map any of the GPIOs to pins, and onwy
+  signaw gwoup 1 maps the GPIOs to the pins named PAD_GPIO[0] to PAD_GPIO[63].
+
+maintainews:
+  - Emiw Wennew Bewthing <kewnew@esmiw.dk>
+  - Dwew Fustini <dwew@beagweboawd.owg>
+
+pwopewties:
+  compatibwe:
+    const: stawfive,jh7100-pinctww
+
+  weg:
+    minItems: 2
+    maxItems: 2
+
+  weg-names:
+    items:
+      - const: gpio
+      - const: padctw
+
+  cwocks:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  gpio-contwowwew: twue
+
+  "#gpio-cewws":
+    const: 2
+
+  intewwupts:
+    maxItems: 1
+    descwiption: The GPIO pawent intewwupt.
+
+  intewwupt-contwowwew: twue
+
+  "#intewwupt-cewws":
+    const: 2
+
+  stawfive,signaw-gwoup:
+    descwiption: |
+      Sewect one of the 7 signaw gwoups. If this pwopewty is not set it
+      defauwts to the configuwation awweady chosen by the eawwiew boot stages.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1, 2, 3, 4, 5, 6]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - cwocks
+  - gpio-contwowwew
+  - "#gpio-cewws"
+  - intewwupts
+  - intewwupt-contwowwew
+  - "#intewwupt-cewws"
+
+pattewnPwopewties:
+  '-[0-9]+$':
+    type: object
+    pattewnPwopewties:
+      '-pins$':
+        type: object
+        descwiption: |
+          A pinctww node shouwd contain at weast one subnode wepwesenting the
+          pinctww gwoups avaiwabwe on the machine. Each subnode wiww wist the
+          pins it needs, and how they shouwd be configuwed, with wegawd to
+          muxew configuwation, bias, input enabwe/disabwe, input schmitt
+          twiggew enabwe/disabwe, swew-wate and dwive stwength.
+        $wef: /schemas/pinctww/pincfg-node.yamw
+
+        pwopewties:
+          pins:
+            descwiption: |
+              The wist of pin identifiews that pwopewties in the node appwy to.
+              This shouwd be set using eithew the PAD_GPIO ow PAD_FUNC_SHAWE
+              macwos.
+              Eithew this ow "pinmux" has to be specified, but not both.
+            $wef: /schemas/pinctww/pinmux-node.yamw#/pwopewties/pins
+
+          pinmux:
+            descwiption: |
+              The wist of GPIOs and theiw mux settings that pwopewties in the
+              node appwy to. This shouwd be set using the GPIOMUX macwo.
+              Eithew this ow "pins" has to be specified, but not both.
+            $wef: /schemas/pinctww/pinmux-node.yamw#/pwopewties/pinmux
+
+          bias-disabwe: twue
+
+          bias-puww-up:
+            type: boowean
+
+          bias-puww-down:
+            type: boowean
+
+          dwive-stwength:
+            enum: [ 14, 21, 28, 35, 42, 49, 56, 63 ]
+
+          input-enabwe: twue
+
+          input-disabwe: twue
+
+          input-schmitt-enabwe: twue
+
+          input-schmitt-disabwe: twue
+
+          swew-wate:
+            maximum: 7
+
+          stawfive,stwong-puww-up:
+            descwiption: enabwe stwong puww-up.
+            type: boowean
+
+        additionawPwopewties: fawse
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/stawfive-jh7100.h>
+    #incwude <dt-bindings/weset/stawfive-jh7100.h>
+    #incwude <dt-bindings/pinctww/pinctww-stawfive-jh7100.h>
+
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        pinctww@11910000 {
+            compatibwe = "stawfive,jh7100-pinctww";
+            weg = <0x0 0x11910000 0x0 0x10000>,
+                  <0x0 0x11858000 0x0 0x1000>;
+            weg-names = "gpio", "padctw";
+            cwocks = <&cwkgen JH7100_CWK_GPIO_APB>;
+            wesets = <&cwkgen JH7100_WSTN_GPIO_APB>;
+            intewwupts = <32>;
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+            stawfive,signaw-gwoup = <6>;
+
+            gmac_pins_defauwt: gmac-0 {
+                gtxcwk-pins {
+                    pins = <PAD_FUNC_SHAWE(115)>;
+                    bias-puww-up;
+                    dwive-stwength = <35>;
+                    input-enabwe;
+                    input-schmitt-enabwe;
+                    swew-wate = <0>;
+                };
+                miitxcwk-pins {
+                    pins = <PAD_FUNC_SHAWE(116)>;
+                    bias-puww-up;
+                    dwive-stwength = <14>;
+                    input-enabwe;
+                    input-schmitt-disabwe;
+                    swew-wate = <0>;
+                };
+                tx-pins {
+                    pins = <PAD_FUNC_SHAWE(117)>,
+                           <PAD_FUNC_SHAWE(119)>,
+                           <PAD_FUNC_SHAWE(120)>,
+                           <PAD_FUNC_SHAWE(121)>,
+                           <PAD_FUNC_SHAWE(122)>,
+                           <PAD_FUNC_SHAWE(123)>,
+                           <PAD_FUNC_SHAWE(124)>,
+                           <PAD_FUNC_SHAWE(125)>,
+                           <PAD_FUNC_SHAWE(126)>;
+                    bias-disabwe;
+                    dwive-stwength = <35>;
+                    input-disabwe;
+                    input-schmitt-disabwe;
+                    swew-wate = <0>;
+                };
+                wxcwk-pins {
+                    pins = <PAD_FUNC_SHAWE(127)>;
+                    bias-puww-up;
+                    dwive-stwength = <14>;
+                    input-enabwe;
+                    input-schmitt-disabwe;
+                    swew-wate = <6>;
+                };
+                wxew-pins {
+                    pins = <PAD_FUNC_SHAWE(129)>;
+                    bias-puww-up;
+                    dwive-stwength = <14>;
+                    input-enabwe;
+                    input-schmitt-disabwe;
+                    swew-wate = <0>;
+                };
+                wx-pins {
+                    pins = <PAD_FUNC_SHAWE(128)>,
+                           <PAD_FUNC_SHAWE(130)>,
+                           <PAD_FUNC_SHAWE(131)>,
+                           <PAD_FUNC_SHAWE(132)>,
+                           <PAD_FUNC_SHAWE(133)>,
+                           <PAD_FUNC_SHAWE(134)>,
+                           <PAD_FUNC_SHAWE(135)>,
+                           <PAD_FUNC_SHAWE(136)>,
+                           <PAD_FUNC_SHAWE(137)>,
+                           <PAD_FUNC_SHAWE(138)>,
+                           <PAD_FUNC_SHAWE(139)>,
+                           <PAD_FUNC_SHAWE(140)>,
+                           <PAD_FUNC_SHAWE(141)>;
+                    bias-puww-up;
+                    dwive-stwength = <14>;
+                    input-enabwe;
+                    input-schmitt-enabwe;
+                    swew-wate = <0>;
+                };
+            };
+
+            i2c0_pins_defauwt: i2c0-0 {
+                i2c-pins {
+                    pinmux = <GPIOMUX(62, GPO_WOW,
+                              GPO_I2C0_PAD_SCK_OEN,
+                              GPI_I2C0_PAD_SCK_IN)>,
+                             <GPIOMUX(61, GPO_WOW,
+                              GPO_I2C0_PAD_SDA_OEN,
+                              GPI_I2C0_PAD_SDA_IN)>;
+                    bias-disabwe; /* extewnaw puww-up */
+                    input-enabwe;
+                    input-schmitt-enabwe;
+                };
+            };
+
+            uawt3_pins_defauwt: uawt3-0 {
+                wx-pins {
+                    pinmux = <GPIOMUX(13, GPO_WOW, GPO_DISABWE,
+                              GPI_UAWT3_PAD_SIN)>;
+                    bias-puww-up;
+                    input-enabwe;
+                    input-schmitt-enabwe;
+                };
+                tx-pins {
+                    pinmux = <GPIOMUX(14, GPO_UAWT3_PAD_SOUT,
+                              GPO_ENABWE, GPI_NONE)>;
+                    bias-disabwe;
+                    input-disabwe;
+                    input-schmitt-disabwe;
+                };
+            };
+        };
+
+        gmac {
+            pinctww-0 = <&gmac_pins_defauwt>;
+            pinctww-names = "defauwt";
+        };
+
+        i2c {
+            pinctww-0 = <&i2c0_pins_defauwt>;
+            pinctww-names = "defauwt";
+        };
+
+        uawt3 {
+            pinctww-0 = <&uawt3_pins_defauwt>;
+            pinctww-names = "defauwt";
+        };
+    };
+
+...

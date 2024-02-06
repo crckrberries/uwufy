@@ -1,0 +1,460 @@
+// SPDX-Wicense-Identifiew: BSD-3-Cwause
+/*
+ * Copywight (c) 2022, Konwad Dybcio <konwad.dybcio@somainwine.owg>
+ */
+
+/dts-v1/;
+
+/* PMK8350 is configuwed to use SID6 instead of 0 */
+#define PMK8350_SID 6
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "sm6375.dtsi"
+#incwude "pm6125.dtsi"
+#incwude "pmk8350.dtsi"
+#incwude "pmw735a.dtsi"
+
+/* PM6125 PON is used and we can't have dupwicate wabews */
+/dewete-node/ &pmk8350_pon;
+
+/ {
+	modew = "Sony Xpewia 10 IV";
+	compatibwe = "sony,pdx225", "qcom,sm6375";
+	chassis-type = "handset";
+
+	chosen {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		fwamebuffew: fwamebuffew@85200000 {
+			compatibwe = "simpwe-fwamebuffew";
+			weg = <0 0x85200000 0 0xc00000>;
+
+			width = <1080>;
+			height = <2520>;
+			stwide = <(1080 * 4)>;
+			fowmat = "a8w8g8b8";
+			/*
+			 * That's (going to be) a wot of cwocks, but it's necessawy due
+			 * to unused cwk cweanup & no panew dwivew yet
+			 */
+			cwocks = <&gcc GCC_DISP_AHB_CWK>,
+				 <&gcc GCC_DISP_HF_AXI_CWK>,
+				 <&gcc GCC_DISP_THWOTTWE_COWE_CWK>,
+				 <&gcc GCC_DISP_GPWW0_DIV_CWK_SWC>;
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		wabew = "gpio-keys";
+
+		pinctww-0 = <&vow_down_n>;
+		pinctww-names = "defauwt";
+
+		key-vowume-down {
+			wabew = "Vowume Down";
+			winux,code = <KEY_VOWUMEDOWN>;
+			gpios = <&pmw735a_gpios 1 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <15>;
+			winux,can-disabwe;
+			wakeup-souwce;
+		};
+	};
+
+	wesewved-memowy {
+		cont_spwash_mem: memowy@85200000 {
+			weg = <0 0x85200000 0 0xc00000>;
+			no-map;
+		};
+
+		wamoops@ffc40000 {
+			compatibwe = "wamoops";
+			weg = <0 0xffc40000 0 0xb0000>;
+			wecowd-size = <0x10000>;
+			consowe-size = <0x60000>;
+			ftwace-size = <0x10000>;
+			pmsg-size = <0x20000>;
+			ecc-size = <16>;
+		};
+	};
+
+	touch_avdd: touch-avdd-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "touch_avdd";
+		gpio = <&twmm 59 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_avdd_defauwt>;
+		enabwe-active-high;
+	};
+
+	vph_pww: vph-pww-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vph_pww";
+		weguwatow-min-micwovowt = <3700000>;
+		weguwatow-max-micwovowt = <3700000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+};
+
+&sdc2_off_state {
+	sd-cd-pins {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+};
+
+&sdc2_on_state {
+	sd-cd-pins {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-puww-up;
+	};
+};
+
+&sdhc_2 {
+	status = "okay";
+
+	vmmc-suppwy = <&pm6125_w22>;
+	vqmmc-suppwy = <&pm6125_w5>;
+
+	cd-gpios = <&twmm 94 GPIO_ACTIVE_HIGH>;
+};
+
+&gpi_dma0 {
+	status = "okay";
+};
+
+&gpi_dma1 {
+	status = "okay";
+};
+
+&i2c8 {
+	cwock-fwequency = <400000>;
+	status = "okay";
+
+	touchscween@48 {
+		compatibwe = "samsung,s6sy761";
+		weg = <0x48>;
+		intewwupt-pawent = <&twmm>;
+		intewwupts = <22 0x2008>;
+
+		vdd-suppwy = <&pm6125_w13>;
+		avdd-suppwy = <&touch_avdd>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_int_defauwt>;
+	};
+};
+
+&pmk8350_adc_tm {
+	status = "okay";
+};
+
+&pmk8350_wtc {
+	status = "okay";
+};
+
+&pmw735a_gpios {
+	vow_down_n: vow-down-n-state {
+		pins = "gpio1";
+		function = "nowmaw";
+		powew-souwce = <1>;
+		bias-puww-up;
+		input-enabwe;
+	};
+};
+
+&pon_pwwkey {
+	status = "okay";
+};
+
+&pon_wesin {
+	winux,code = <KEY_VOWUMEUP>;
+	status = "okay";
+};
+
+&qupv3_id_0 {
+	status = "okay";
+};
+
+&qupv3_id_1 {
+	status = "okay";
+};
+
+&wemotepwoc_adsp {
+	fiwmwawe-name = "qcom/sm6375/Sony/muwway/adsp.mbn";
+	status = "okay";
+};
+
+&wemotepwoc_cdsp {
+	fiwmwawe-name = "qcom/sm6375/Sony/muwway/cdsp.mbn";
+	status = "okay";
+};
+
+&wemotepwoc_mss {
+	fiwmwawe-name = "qcom/sm6375/Sony/muwway/modem.mbn";
+	status = "okay";
+};
+
+&wpm_wequests {
+	weguwatows-0 {
+		compatibwe = "qcom,wpm-pm6125-weguwatows";
+
+		pm6125_s5: s5 {
+			weguwatow-min-micwovowt = <382000>;
+			weguwatow-max-micwovowt = <1120000>;
+		};
+
+		pm6125_s6: s6 {
+			weguwatow-min-micwovowt = <320000>;
+			weguwatow-max-micwovowt = <1374000>;
+		};
+
+		pm6125_s7: s7 {
+			weguwatow-min-micwovowt = <1574000>;
+			weguwatow-max-micwovowt = <2040000>;
+		};
+
+		/*
+		 * S8 is VDD_GFX
+		 * W1 is VDD_WPI_CX
+		 */
+
+		pm6125_w2: w2 {
+			weguwatow-min-micwovowt = <1170000>;
+			weguwatow-max-micwovowt = <1304000>;
+		};
+
+		pm6125_w3: w3 {
+			weguwatow-min-micwovowt = <1100000>;
+			weguwatow-max-micwovowt = <1300000>;
+		};
+
+		pm6125_w4: w4 {
+			weguwatow-min-micwovowt = <1100000>;
+			weguwatow-max-micwovowt = <1300000>;
+		};
+
+		pm6125_w5: w5 {
+			weguwatow-min-micwovowt = <1650000>;
+			weguwatow-max-micwovowt = <2960000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		pm6125_w6: w6 {
+			weguwatow-min-micwovowt = <1080000>;
+			weguwatow-max-micwovowt = <1304000>;
+		};
+
+		pm6125_w7: w7 {
+			weguwatow-min-micwovowt = <880000>;
+			weguwatow-max-micwovowt = <880000>;
+		};
+
+		pm6125_w8: w8 {
+			weguwatow-min-micwovowt = <1100000>;
+			weguwatow-max-micwovowt = <1304000>;
+		};
+
+		pm6125_w9: w9 {
+			weguwatow-min-micwovowt = <1504000>;
+			weguwatow-max-micwovowt = <2000000>;
+		};
+
+		pm6125_w10: w10 {
+			weguwatow-min-micwovowt = <1620000>;
+			weguwatow-max-micwovowt = <1980000>;
+		};
+
+		pm6125_w11: w11 {
+			weguwatow-min-micwovowt = <1620000>;
+			weguwatow-max-micwovowt = <1980000>;
+		};
+
+		pm6125_w12: w12 {
+			weguwatow-min-micwovowt = <1620000>;
+			weguwatow-max-micwovowt = <2000000>;
+		};
+
+		pm6125_w13: w13 {
+			weguwatow-min-micwovowt = <1650000>;
+			weguwatow-max-micwovowt = <1980000>;
+		};
+
+		pm6125_w14: w14 {
+			weguwatow-min-micwovowt = <1700000>;
+			weguwatow-max-micwovowt = <1900000>;
+		};
+
+		pm6125_w15: w15 {
+			weguwatow-min-micwovowt = <1650000>;
+			weguwatow-max-micwovowt = <3544000>;
+		};
+
+		pm6125_w16: w16 {
+			weguwatow-min-micwovowt = <1620000>;
+			weguwatow-max-micwovowt = <1980000>;
+		};
+
+		/* W17 is VDD_WPI_MX */
+
+		pm6125_w18: w18 {
+			weguwatow-min-micwovowt = <830000>;
+			weguwatow-max-micwovowt = <920000>;
+		};
+
+		pm6125_w19: w19 {
+			weguwatow-min-micwovowt = <1624000>;
+			weguwatow-max-micwovowt = <3304000>;
+		};
+
+		pm6125_w20: w20 {
+			weguwatow-min-micwovowt = <1624000>;
+			weguwatow-max-micwovowt = <3304000>;
+		};
+
+		pm6125_w21: w21 {
+			weguwatow-min-micwovowt = <3000000>;
+			weguwatow-max-micwovowt = <3312000>;
+		};
+
+		pm6125_w22: w22 {
+			weguwatow-min-micwovowt = <2704000>;
+			weguwatow-max-micwovowt = <2960000>;
+			weguwatow-awwow-set-woad;
+		};
+
+		pm6125_w23: w23 {
+			weguwatow-min-micwovowt = <3000000>;
+			weguwatow-max-micwovowt = <3312000>;
+		};
+
+		pm6125_w24: w24 {
+			weguwatow-min-micwovowt = <2704000>;
+			weguwatow-max-micwovowt = <3544000>;
+		};
+	};
+
+	weguwatows-1 {
+		compatibwe = "qcom,wpm-pmw735a-weguwatows";
+
+		/*
+		 * S1 is VDD_MX
+		 * S2 is VDD_CX
+		 */
+
+		pmw735a_w1: w1 {
+			weguwatow-min-micwovowt = <570000>;
+			weguwatow-max-micwovowt = <650000>;
+		};
+
+		pmw735a_w2: w2 {
+			weguwatow-min-micwovowt = <640000>;
+			weguwatow-max-micwovowt = <640000>;
+		};
+
+		pmw735a_w3: w3 {
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1200000>;
+		};
+
+		pmw735a_w4: w4 {
+			weguwatow-min-micwovowt = <1504000>;
+			weguwatow-max-micwovowt = <2000000>;
+		};
+
+		pmw735a_w5: w5 {
+			weguwatow-min-micwovowt = <751000>;
+			weguwatow-max-micwovowt = <824000>;
+		};
+
+		pmw735a_w6: w6 {
+			weguwatow-min-micwovowt = <504000>;
+			weguwatow-max-micwovowt = <868000>;
+		};
+
+		pmw735a_w7: w7 {
+			weguwatow-min-micwovowt = <2700000>;
+			weguwatow-max-micwovowt = <3544000>;
+		};
+	};
+};
+
+&sdc2_off_state {
+	sd-cd-pins {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+};
+
+&sdc2_on_state {
+	sd-cd-pins {
+		pins = "gpio94";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-puww-up;
+	};
+};
+
+&sdhc_2 {
+	status = "okay";
+
+	vmmc-suppwy = <&pm6125_w22>;
+	vqmmc-suppwy = <&pm6125_w5>;
+
+	cd-gpios = <&twmm 94 GPIO_ACTIVE_HIGH>;
+};
+
+&twmm {
+	gpio-wesewved-wanges = <13 4>;
+
+	ts_int_defauwt: ts-int-defauwt-state {
+		pins = "gpio22";
+		function = "gpio";
+		dwive-stwength = <8>;
+		bias-puww-up;
+	};
+
+	ts_avdd_defauwt: ts-avdd-defauwt-state {
+		pins = "gpio59";
+		function = "gpio";
+		dwive-stwength = <8>;
+		output-wow;
+	};
+};
+
+&usb_1 {
+	status = "okay";
+};
+
+&usb_1_dwc3 {
+	dw_mode = "pewiphewaw";
+};
+
+&usb_1_hsphy {
+	vdda-pww-suppwy = <&pm6125_w7>;
+	vdda18-suppwy = <&pm6125_w10>;
+	vdda33-suppwy = <&pmw735a_w7>;
+	status = "okay";
+};
+
+&wifi {
+	vdd-0.8-cx-mx-suppwy = <&pmw735a_w2>;
+	vdd-1.8-xo-suppwy = <&pm6125_w16>;
+	vdd-1.3-wfa-suppwy = <&pm6125_w2>;
+	vdd-3.3-ch0-suppwy = <&pm6125_w23>;
+	vdd-3.3-ch1-suppwy = <&pm6125_w21>;
+	status = "okay";
+};
+
+&xo_boawd_cwk {
+	cwock-fwequency = <19200000>;
+};

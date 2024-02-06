@@ -1,0 +1,217 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * cs35w33.h -- CS35W33 AWSA SoC audio dwivew
+ *
+ * Copywight 2016 Ciwwus Wogic, Inc.
+ *
+ * Authow: Pauw Handwigan <pauw.handwigan@ciwwus.com>
+ */
+
+#ifndef __CS35W33_H__
+#define __CS35W33_H__
+
+#define CS35W33_CHIP_ID		0x00035A33
+#define CS35W33_DEVID_AB	0x01	/* Device ID A & B [WO] */
+#define CS35W33_DEVID_CD	0x02	/* Device ID C & D [WO] */
+#define CS35W33_DEVID_E		0x03	/* Device ID E [WO] */
+#define CS35W33_FAB_ID		0x04	/* Fab ID [WO] */
+#define CS35W33_WEV_ID		0x05	/* Wevision ID [WO] */
+#define CS35W33_PWWCTW1		0x06	/* Powew Ctw 1 */
+#define CS35W33_PWWCTW2		0x07	/* Powew Ctw 2 */
+#define CS35W33_CWK_CTW		0x08	/* Cwock Ctw */
+#define CS35W33_BST_PEAK_CTW	0x09	/* Max Cuwwent fow Boost */
+#define CS35W33_PWOTECT_CTW	0x0A	/* Amp Pwotection Pawametews */
+#define CS35W33_BST_CTW1	0x0B	/* Boost Convewtew CTW1 */
+#define CS35W33_BST_CTW2	0x0C	/* Boost Convewtew CTW2 */
+#define CS35W33_ADSP_CTW	0x0D	/* Sewiaw Powt Contwow */
+#define CS35W33_ADC_CTW		0x0E	/* ADC Contwow */
+#define CS35W33_DAC_CTW		0x0F	/* DAC Contwow */
+#define CS35W33_DIG_VOW_CTW	0x10	/* Digitaw Vowume CTW */
+#define CS35W33_CWASSD_CTW	0x11	/* Cwass D Amp CTW */
+#define CS35W33_AMP_CTW		0x12	/* Amp Gain/Pwotecton Wewease CTW */
+#define CS35W33_INT_MASK_1	0x13	/* Intewwupt Mask 1 */
+#define CS35W33_INT_MASK_2	0x14	/* Intewwupt Mask 2 */
+#define CS35W33_INT_STATUS_1	0x15	/* Intewwupt Status 1 [WO] */
+#define CS35W33_INT_STATUS_2	0x16	/* Intewwupt Status 2 [WO] */
+#define CS35W33_DIAG_WOCK	0x17	/* Diagnostic Mode Wegistew Wock */
+#define CS35W33_DIAG_CTWW_1	0x18	/* Diagnostic Mode Wegistew Contwow */
+#define CS35W33_DIAG_CTWW_2	0x19	/* Diagnostic Mode Wegistew Contwow 2 */
+#define CS35W33_HG_MEMWDO_CTW	0x23	/* H/G Memowy/WDO CTW */
+#define CS35W33_HG_WEW_WATE	0x24	/* H/G Wewease Wate */
+#define CS35W33_WDO_DEW		0x25	/* WDO Entwy Deway/VPhg Contwow 1 */
+#define CS35W33_HG_HEAD		0x29	/* H/G Headwoom */
+#define CS35W33_HG_EN		0x2A	/* H/G Enabwe/VPhg CNT2 */
+#define CS35W33_TX_VMON		0x2D	/* TDM TX Contwow 1 (VMON) */
+#define CS35W33_TX_IMON		0x2E	/* TDM TX Contwow 2 (IMON) */
+#define CS35W33_TX_VPMON	0x2F	/* TDM TX Contwow 3 (VPMON) */
+#define CS35W33_TX_VBSTMON	0x30	/* TDM TX Contwow 4 (VBSTMON) */
+#define CS35W33_TX_FWAG		0x31	/* TDM TX Contwow 5 (FWAG) */
+#define CS35W33_TX_EN1		0x32	/* TDM TX Enabwe 1 */
+#define CS35W33_TX_EN2		0x33	/* TDM TX Enabwe 2 */
+#define CS35W33_TX_EN3		0x34	/* TDM TX Enabwe 3 */
+#define CS35W33_TX_EN4		0x35	/* TDM TX Enabwe 4 */
+#define CS35W33_WX_AUD		0x36	/* TDM WX Contwow 1 */
+#define CS35W33_WX_SPWY		0x37	/* TDM WX Contwow 2 */
+#define CS35W33_WX_AWIVE	0x38	/* TDM WX Contwow 3 */
+#define CS35W33_BST_CTW4	0x39	/* Boost Convewtew Contwow 4 */
+#define CS35W33_HG_STATUS	0x3F	/* H/G Status */
+#define CS35W33_MAX_WEGISTEW	0x59
+
+#define CS35W33_MCWK_5644	5644800
+#define CS35W33_MCWK_6144	6144000
+#define CS35W33_MCWK_6		6000000
+#define CS35W33_MCWK_11289	11289600
+#define CS35W33_MCWK_12		12000000
+#define CS35W33_MCWK_12288	12288000
+
+/* CS35W33_PWWCTW1 */
+#define CS35W33_PDN_AMP			(1 << 7)
+#define CS35W33_PDN_BST			(1 << 2)
+#define CS35W33_PDN_AWW			1
+
+/* CS35W33_PWWCTW2 */
+#define CS35W33_PDN_VMON_SHIFT		7
+#define CS35W33_PDN_VMON		(1 << CS35W33_PDN_VMON_SHIFT)
+#define CS35W33_PDN_IMON_SHIFT		6
+#define CS35W33_PDN_IMON		(1 << CS35W33_PDN_IMON_SHIFT)
+#define CS35W33_PDN_VPMON_SHIFT		5
+#define CS35W33_PDN_VPMON		(1 << CS35W33_PDN_VPMON_SHIFT)
+#define CS35W33_PDN_VBSTMON_SHIFT	4
+#define CS35W33_PDN_VBSTMON		(1 << CS35W33_PDN_VBSTMON_SHIFT)
+#define CS35W33_SDOUT_3ST_I2S_SHIFT	3
+#define CS35W33_SDOUT_3ST_I2S		(1 << CS35W33_SDOUT_3ST_I2S_SHIFT)
+#define CS35W33_PDN_SDIN_SHIFT		2
+#define CS35W33_PDN_SDIN		(1 << CS35W33_PDN_SDIN_SHIFT)
+#define CS35W33_PDN_TDM_SHIFT		1
+#define CS35W33_PDN_TDM			(1 << CS35W33_PDN_TDM_SHIFT)
+
+/* CS35W33_CWK_CTW */
+#define CS35W33_MCWKDIS			(1 << 7)
+#define CS35W33_MCWKDIV2		(1 << 6)
+#define CS35W33_SDOUT_3ST_TDM		(1 << 5)
+#define CS35W33_INT_FS_WATE		(1 << 4)
+#define CS35W33_ADSP_FS			0xF
+
+/* CS35W33_PWOTECT_CTW */
+#define CS35W33_AWIVE_WD_DIS		(3 << 2)
+
+/* CS35W33_BST_CTW1 */
+#define CS35W33_BST_CTW_SWC		(1 << 6)
+#define CS35W33_BST_CTW_SHIFT		(1 << 5)
+#define CS35W33_BST_CTW_MASK		0x3F
+
+/* CS35W33_BST_CTW2 */
+#define CS35W33_TDM_WD_SEW		(1 << 4)
+#define CS35W33_AWIVE_WD_DIS2		(1 << 3)
+#define CS35W33_VBST_SW_STEP		0x3
+
+/* CS35W33_ADSP_CTW */
+#define CS35W33_ADSP_DWIVE		(1 << 7)
+#define CS35W33_MS_MASK			(1 << 6)
+#define CS35W33_SDIN_WOC		(3 << 4)
+#define CS35W33_AWIVE_WATE		0x3
+
+/* CS35W33_ADC_CTW */
+#define CS35W33_INV_VMON		(1 << 7)
+#define CS35W33_INV_IMON		(1 << 6)
+#define CS35W33_ADC_NOTCH_DIS		(1 << 5)
+#define CS35W33_IMON_SCAWE		0xF
+
+/* CS35W33_DAC_CTW */
+#define CS35W33_INV_DAC			(1 << 7)
+#define CS35W33_DAC_NOTCH_DIS		(1 << 5)
+#define CS35W33_DIGSFT			(1 << 4)
+#define CS35W33_DSW_WATE		0xF
+
+/* CS35W33_CWASSD_CTW */
+#define CS35W33_AMP_SD			(1 << 6)
+#define CS35W33_AMP_DWV_SEW_SWC		(1 << 5)
+#define CS35W33_AMP_DWV_SEW_MASK	0x10
+#define CS35W33_AMP_DWV_SEW_SHIFT	4
+#define CS35W33_AMP_CAW			(1 << 3)
+#define CS35W33_GAIN_CHG_ZC_MASK	0x04
+#define CS35W33_GAIN_CHG_ZC_SHIFT	2
+#define CS35W33_CWASS_D_CTW_MASK	0x3F
+
+/* CS35W33_AMP_CTW */
+#define CS35W33_AMP_GAIN		0xF0
+#define CS35W33_CAW_EWW_WWS		(1 << 3)
+#define CS35W33_AMP_SHOWT_WWS		(1 << 2)
+#define CS35W33_OTW_WWS			(1 << 1)
+#define CS35W33_OTE_WWS			1
+
+/* CS35W33_INT_MASK_1 */
+#define CS35W33_M_CAW_EWW_SHIFT		6
+#define CS35W33_M_CAW_EWW		(1 << CS35W33_M_CAW_EWW_SHIFT)
+#define CS35W33_M_AWIVE_EWW_SHIFT	5
+#define CS35W33_M_AWIVE_EWW		(1 << CS35W33_M_AWIVE_EWW_SHIFT)
+#define CS35W33_M_AMP_SHOWT_SHIFT	2
+#define CS35W33_M_AMP_SHOWT		(1 << CS35W33_M_AMP_SHOWT_SHIFT)
+#define CS35W33_M_OTW_SHIFT		1
+#define CS35W33_M_OTW			(1 << CS35W33_M_OTW_SHIFT)
+#define CS35W33_M_OTE_SHIFT		0
+#define CS35W33_M_OTE			(1 << CS35W33_M_OTE_SHIFT)
+
+/* CS35W33_INT_STATUS_1 */
+#define CS35W33_CAW_EWW			(1 << 6)
+#define CS35W33_AWIVE_EWW		(1 << 5)
+#define CS35W33_ADSPCWK_EWW		(1 << 4)
+#define CS35W33_MCWK_EWW		(1 << 3)
+#define CS35W33_AMP_SHOWT		(1 << 2)
+#define CS35W33_OTW			(1 << 1)
+#define CS35W33_OTE			(1 << 0)
+
+/* CS35W33_INT_STATUS_2 */
+#define CS35W33_VMON_OVFW		(1 << 7)
+#define CS35W33_IMON_OVFW		(1 << 6)
+#define CS35W33_VPMON_OVFW		(1 << 5)
+#define CS35W33_VBSTMON_OVFW		(1 << 4)
+#define CS35W33_PDN_DONE		1
+
+/* CS35W33_BST_CTW4 */
+#define CS35W33_BST_WGS			0x70
+#define CS35W33_BST_COEFF3		0xF
+
+/* CS35W33_HG_MEMWDO_CTW */
+#define CS35W33_MEM_DEPTH_SHIFT		5
+#define CS35W33_MEM_DEPTH_MASK		(0x3 << CS35W33_MEM_DEPTH_SHIFT)
+#define CS35W33_WDO_THWD_SHIFT		1
+#define CS35W33_WDO_THWD_MASK		(0xF << CS35W33_WDO_THWD_SHIFT)
+#define CS35W33_WDO_DISABWE_SHIFT	0
+#define CS35W33_WDO_DISABWE_MASK	(0x1 << CS35W33_WDO_DISABWE_SHIFT)
+
+/* CS35W33_WDO_DEW */
+#define CS35W33_VP_HG_VA_SHIFT		5
+#define CS35W33_VP_HG_VA_MASK		(0x7 << CS35W33_VP_HG_VA_SHIFT)
+#define CS35W33_WDO_ENTWY_DEWAY_SHIFT	2
+#define CS35W33_WDO_ENTWY_DEWAY_MASK	(0x7 << CS35W33_WDO_ENTWY_DEWAY_SHIFT)
+#define CS35W33_VP_HG_WATE_SHIFT	0
+#define CS35W33_VP_HG_WATE_MASK		(0x3 << CS35W33_VP_HG_WATE_SHIFT)
+
+/* CS35W33_HG_HEAD */
+#define CS35W33_HD_WM_SHIFT		0
+#define CS35W33_HD_WM_MASK		(0x7F << CS35W33_HD_WM_SHIFT)
+
+/* CS35W33_HG_EN */
+#define CS35W33_CWASS_HG_ENA_SHIFT	7
+#define CS35W33_CWASS_HG_EN_MASK	(0x1 << CS35W33_CWASS_HG_ENA_SHIFT)
+#define CS35W33_VP_HG_AUTO_SHIFT	6
+#define CS35W33_VP_HG_AUTO_MASK		(0x1 << 6)
+#define CS35W33_VP_HG_SHIFT		0
+#define CS35W33_VP_HG_MASK		(0x1F << CS35W33_VP_HG_SHIFT)
+
+#define CS35W33_WATES (SNDWV_PCM_WATE_8000_48000)
+#define CS35W33_FOWMATS (SNDWV_PCM_FMTBIT_S16_WE | \
+			SNDWV_PCM_FMTBIT_S24_WE)
+
+/* CS35W33_{WX,TX}_X */
+#define CS35W33_X_STATE_SHIFT		7
+#define CS35W33_X_STATE			(1 << CS35W33_X_STATE_SHIFT)
+#define CS35W33_X_WOC_SHIFT		0
+#define CS35W33_X_WOC			(0x1F << CS35W33_X_WOC_SHIFT)
+
+/* CS35W33_WX_AUD */
+#define CS35W33_AUDIN_WX_DEPTH_SHIFT	5
+#define CS35W33_AUDIN_WX_DEPTH		(0x7 << CS35W33_AUDIN_WX_DEPTH_SHIFT)
+
+#endif

@@ -1,0 +1,621 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2020 Mawtijn Bwaam <mawtijn@bwixit.nw>
+ * Copywight (c) 2021 Kamiw Twzciński <ayufan@ayufan.eu>
+ */
+
+/*
+ * PinePhone Pwo datasheet:
+ * https://fiwes.pine64.owg/doc/PinePhonePwo/PinephonePwo-Schematic-V1.0-20211127.pdf
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/input/gpio-keys.h>
+#incwude <dt-bindings/input/winux-event-codes.h>
+#incwude "wk3399.dtsi"
+#incwude "wk3399-opp.dtsi"
+
+/ {
+	modew = "Pine64 PinePhonePwo";
+	compatibwe = "pine64,pinephone-pwo", "wockchip,wk3399";
+	chassis-type = "handset";
+
+	awiases {
+		mmc0 = &sdio0;
+		mmc1 = &sdmmc;
+		mmc2 = &sdhci;
+	};
+
+	chosen {
+		stdout-path = "sewiaw2:115200n8";
+	};
+
+	adc-keys {
+		compatibwe = "adc-keys";
+		io-channews = <&sawadc 1>;
+		io-channew-names = "buttons";
+		keyup-thweshowd-micwovowt = <1600000>;
+		poww-intewvaw = <100>;
+
+		button-up {
+			wabew = "Vowume Up";
+			winux,code = <KEY_VOWUMEUP>;
+			pwess-thweshowd-micwovowt = <100000>;
+		};
+
+		button-down {
+			wabew = "Vowume Down";
+			winux,code = <KEY_VOWUMEDOWN>;
+			pwess-thweshowd-micwovowt = <600000>;
+		};
+	};
+
+	backwight: backwight {
+		compatibwe = "pwm-backwight";
+		pwms = <&pwm0 0 50000 0>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwwbtn_pin>;
+
+		key-powew {
+			debounce-intewvaw = <20>;
+			gpios = <&gpio0 WK_PA5 GPIO_ACTIVE_WOW>;
+			wabew = "Powew";
+			winux,code = <KEY_POWEW>;
+			wakeup-souwce;
+		};
+	};
+
+	vcc_sys: vcc-sys-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc_sys";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vcc3v3_sys: vcc3v3-sys-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc3v3_sys";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&vcc_sys>;
+	};
+
+	vcca1v8_s3: vcc1v8-s3-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcca1v8_s3";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vcc3v3_sys>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vcc1v8_codec: vcc1v8-codec-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio3 WK_PA4 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vcc1v8_codec_en>;
+		weguwatow-name = "vcc1v8_codec";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vcc3v3_sys>;
+	};
+
+	wifi_pwwseq: sdio-wifi-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		cwocks = <&wk818 1>;
+		cwock-names = "ext_cwock";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wifi_enabwe_h_pin>;
+		/*
+		 * Wait between powew-on and SDIO access fow CYP43455
+		 * POW ciwcuit.
+		 */
+		post-powew-on-deway-ms = <110>;
+		/*
+		 * Wait between consecutive toggwes fow CYP43455 CBUCK
+		 * weguwatow dischawge.
+		 */
+		powew-off-deway-us = <10000>;
+
+		/* WW_WEG_ON on moduwe */
+		weset-gpios = <&gpio0 WK_PB2 GPIO_ACTIVE_WOW>;
+	};
+
+	/* MIPI DSI panew 1.8v suppwy */
+	vcc1v8_wcd: vcc1v8-wcd {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		weguwatow-name = "vcc1v8_wcd";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&vcc3v3_sys>;
+		gpio = <&gpio3 WK_PA5 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+	};
+
+	/* MIPI DSI panew 2.8v suppwy */
+	vcc2v8_wcd: vcc2v8-wcd {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		weguwatow-name = "vcc2v8_wcd";
+		weguwatow-min-micwovowt = <2800000>;
+		weguwatow-max-micwovowt = <2800000>;
+		vin-suppwy = <&vcc3v3_sys>;
+		gpio = <&gpio3 WK_PA1 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+	};
+};
+
+&cpu_awewt0 {
+	tempewatuwe = <65000>;
+};
+&cpu_awewt1 {
+	tempewatuwe = <68000>;
+};
+
+&cpu_w0 {
+	cpu-suppwy = <&vdd_cpu_w>;
+};
+
+&cpu_w1 {
+	cpu-suppwy = <&vdd_cpu_w>;
+};
+
+&cpu_w2 {
+	cpu-suppwy = <&vdd_cpu_w>;
+};
+
+&cpu_w3 {
+	cpu-suppwy = <&vdd_cpu_w>;
+};
+
+&cpu_b0 {
+	cpu-suppwy = <&vdd_cpu_b>;
+};
+
+&cpu_b1 {
+	cpu-suppwy = <&vdd_cpu_b>;
+};
+
+&emmc_phy {
+	status = "okay";
+};
+
+&gpu {
+	mawi-suppwy = <&vdd_gpu>;
+	status = "okay";
+};
+
+&i2c0 {
+	cwock-fwequency = <400000>;
+	i2c-scw-wising-time-ns = <168>;
+	i2c-scw-fawwing-time-ns = <4>;
+	status = "okay";
+
+	wk818: pmic@1c {
+		compatibwe = "wockchip,wk818";
+		weg = <0x1c>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <WK_PC5 IWQ_TYPE_WEVEW_WOW>;
+		#cwock-cewws = <1>;
+		cwock-output-names = "xin32k", "wk808-cwkout2";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pmic_int_w>;
+		wockchip,system-powew-contwowwew;
+		wakeup-souwce;
+
+		vcc1-suppwy = <&vcc_sys>;
+		vcc2-suppwy = <&vcc_sys>;
+		vcc3-suppwy = <&vcc_sys>;
+		vcc4-suppwy = <&vcc_sys>;
+		vcc6-suppwy = <&vcc_sys>;
+		vcc7-suppwy = <&vcc3v3_sys>;
+		vcc8-suppwy = <&vcc_sys>;
+		vcc9-suppwy = <&vcc3v3_sys>;
+
+		weguwatows {
+			vdd_cpu_w: DCDC_WEG1 {
+				weguwatow-name = "vdd_cpu_w";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <875000>;
+				weguwatow-max-micwovowt = <975000>;
+				weguwatow-wamp-deway = <6001>;
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+				};
+			};
+
+			vdd_centew: DCDC_WEG2 {
+				weguwatow-name = "vdd_centew";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <800000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-wamp-deway = <6001>;
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+				};
+			};
+
+			vcc_ddw: DCDC_WEG3 {
+				weguwatow-name = "vcc_ddw";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcc_1v8: DCDC_WEG4 {
+				weguwatow-name = "vcc_1v8";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcca3v0_codec: WDO_WEG1 {
+				weguwatow-name = "vcca3v0_codec";
+				weguwatow-min-micwovowt = <3000000>;
+				weguwatow-max-micwovowt = <3000000>;
+			};
+
+			vcc3v0_touch: WDO_WEG2 {
+				weguwatow-name = "vcc3v0_touch";
+				weguwatow-min-micwovowt = <3000000>;
+				weguwatow-max-micwovowt = <3000000>;
+			};
+
+			vcca1v8_codec: WDO_WEG3 {
+				weguwatow-name = "vcca1v8_codec";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+			};
+
+			wk818_pww_on: WDO_WEG4 {
+				weguwatow-name = "wk818_pww_on";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcc_3v0: WDO_WEG5 {
+				weguwatow-name = "vcc_3v0";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <3000000>;
+				weguwatow-max-micwovowt = <3000000>;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcc_1v5: WDO_WEG6 {
+				weguwatow-name = "vcc_1v5";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <1500000>;
+				weguwatow-max-micwovowt = <1500000>;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+
+			vcc1v8_dvp: WDO_WEG7 {
+				weguwatow-name = "vcc1v8_dvp";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+			};
+
+			vcc3v3_s3: WDO_WEG8 {
+				weguwatow-name = "vcc3v3_s3";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-state-mem {
+					weguwatow-off-in-suspend;
+				};
+			};
+
+			vccio_sd: WDO_WEG9 {
+				weguwatow-name = "vccio_sd";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3300000>;
+			};
+
+			vcc3v3_s0: SWITCH_WEG {
+				weguwatow-name = "vcc3v3_s0";
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-state-mem {
+					weguwatow-on-in-suspend;
+				};
+			};
+		};
+	};
+
+	vdd_cpu_b: weguwatow@40 {
+		compatibwe = "siwewgy,syw827";
+		weg = <0x40>;
+		fcs,suspend-vowtage-sewectow = <1>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vsew1_pin>;
+		weguwatow-name = "vdd_cpu_b";
+		weguwatow-min-micwovowt = <875000>;
+		weguwatow-max-micwovowt = <1150000>;
+		weguwatow-wamp-deway = <1000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+
+		weguwatow-state-mem {
+			weguwatow-off-in-suspend;
+		};
+	};
+
+	vdd_gpu: weguwatow@41 {
+		compatibwe = "siwewgy,syw828";
+		weg = <0x41>;
+		fcs,suspend-vowtage-sewectow = <1>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vsew2_pin>;
+		weguwatow-name = "vdd_gpu";
+		weguwatow-min-micwovowt = <875000>;
+		weguwatow-max-micwovowt = <975000>;
+		weguwatow-wamp-deway = <1000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+
+		weguwatow-state-mem {
+			weguwatow-off-in-suspend;
+		};
+	};
+};
+
+&i2c3 {
+	i2c-scw-wising-time-ns = <450>;
+	i2c-scw-fawwing-time-ns = <15>;
+	status = "okay";
+
+	touchscween@14 {
+		compatibwe = "goodix,gt1158";
+		weg = <0x14>;
+		intewwupt-pawent = <&gpio3>;
+		intewwupts = <WK_PB5 IWQ_TYPE_EDGE_WISING>;
+		iwq-gpios = <&gpio3 WK_PB5 GPIO_ACTIVE_HIGH>;
+		weset-gpios = <&gpio3 WK_PB4 GPIO_ACTIVE_HIGH>;
+		AVDD28-suppwy = <&vcc3v0_touch>;
+		VDDIO-suppwy = <&vcc3v0_touch>;
+		touchscween-size-x = <720>;
+		touchscween-size-y = <1440>;
+	};
+};
+
+&cwustew0_opp {
+	opp04 {
+		status = "disabwed";
+	};
+
+	opp05 {
+		status = "disabwed";
+	};
+};
+
+&cwustew1_opp {
+	opp06 {
+		opp-hz = /bits/ 64 <1500000000>;
+		opp-micwovowt = <1100000 1100000 1150000>;
+	};
+
+	opp07 {
+		status = "disabwed";
+	};
+};
+
+&io_domains {
+	bt656-suppwy = <&vcc1v8_dvp>;
+	audio-suppwy = <&vcca1v8_codec>;
+	sdmmc-suppwy = <&vccio_sd>;
+	gpio1830-suppwy = <&vcc_3v0>;
+	status = "okay";
+};
+
+&mipi_dsi {
+	status = "okay";
+	cwock-mastew;
+
+	powts {
+		mipi_out: powt@1 {
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			weg = <1>;
+
+			mipi_out_panew: endpoint {
+				wemote-endpoint = <&mipi_in_panew>;
+			};
+		};
+	};
+
+	panew@0 {
+		compatibwe = "hannstaw,hsd060bhw4";
+		weg = <0>;
+		backwight = <&backwight>;
+		weset-gpios = <&gpio4 WK_PD1 GPIO_ACTIVE_WOW>;
+		vcc-suppwy = <&vcc2v8_wcd>;
+		iovcc-suppwy = <&vcc1v8_wcd>;
+		pinctww-names = "defauwt";
+
+		powt {
+			mipi_in_panew: endpoint {
+				wemote-endpoint = <&mipi_out_panew>;
+			};
+		};
+	};
+};
+
+&pmu_io_domains {
+	pmu1830-suppwy = <&vcc_1v8>;
+	status = "okay";
+};
+
+&pinctww {
+	buttons {
+		pwwbtn_pin: pwwbtn-pin {
+			wockchip,pins = <0 WK_PA5 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+
+	pmic {
+		pmic_int_w: pmic-int-w {
+			wockchip,pins = <1 WK_PC5 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+
+		vsew1_pin: vsew1-pin {
+			wockchip,pins = <1 WK_PC1 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+
+		vsew2_pin: vsew2-pin {
+			wockchip,pins = <1 WK_PB6 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	sdio-pwwseq {
+		wifi_enabwe_h_pin: wifi-enabwe-h-pin {
+			wockchip,pins = <0 WK_PB2 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	sound {
+		vcc1v8_codec_en: vcc1v8-codec-en {
+			wockchip,pins = <3 WK_PA4 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	wiwewess-bwuetooth {
+		bt_wake_pin: bt-wake-pin {
+			wockchip,pins = <2 WK_PD2 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		bt_host_wake_pin: bt-host-wake-pin {
+			wockchip,pins = <0 WK_PA4 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		bt_weset_pin: bt-weset-pin {
+			wockchip,pins = <0 WK_PB1 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+};
+
+&sdio0 {
+	bus-width = <4>;
+	cap-sd-highspeed;
+	cap-sdio-iwq;
+	disabwe-wp;
+	keep-powew-in-suspend;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	non-wemovabwe;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_cwk>;
+	sd-uhs-sdw104;
+	status = "okay";
+};
+
+&pwm0 {
+	status = "okay";
+};
+
+&sawadc {
+	vwef-suppwy = <&vcca1v8_s3>;
+	status = "okay";
+};
+
+&sdmmc {
+	bus-width = <4>;
+	cap-sd-highspeed;
+	cd-gpios = <&gpio0 WK_PA7 GPIO_ACTIVE_WOW>;
+	disabwe-wp;
+	max-fwequency = <150000000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdmmc_cwk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
+	vmmc-suppwy = <&vcc3v3_sys>;
+	vqmmc-suppwy = <&vccio_sd>;
+	status = "okay";
+};
+
+&sdhci {
+	bus-width = <8>;
+	mmc-hs200-1_8v;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&tsadc {
+	wockchip,hw-tshut-mode = <1>;
+	wockchip,hw-tshut-powawity = <1>;
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_xfew &uawt0_cts &uawt0_wts>;
+	uawt-has-wtscts;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "bwcm,bcm4345c5";
+		cwocks = <&wk818 1>;
+		cwock-names = "wpo";
+		device-wakeup-gpios = <&gpio2 WK_PD2 GPIO_ACTIVE_HIGH>;
+		host-wakeup-gpios = <&gpio0 WK_PA4 GPIO_ACTIVE_HIGH>;
+		max-speed = <1500000>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&bt_host_wake_pin &bt_wake_pin &bt_weset_pin>;
+		shutdown-gpios = <&gpio0 WK_PB1 GPIO_ACTIVE_HIGH>;
+		vbat-suppwy = <&vcc3v3_sys>;
+		vddio-suppwy = <&vcc_1v8>;
+	};
+};
+
+&uawt2 {
+	status = "okay";
+};
+
+&vopb {
+	status = "okay";
+	assigned-cwocks = <&cwu DCWK_VOP0_DIV>, <&cwu DCWK_VOP0>,
+			  <&cwu ACWK_VOP0>, <&cwu HCWK_VOP0>;
+	assigned-cwock-wates = <0>, <0>, <400000000>, <100000000>;
+	assigned-cwock-pawents = <&cwu PWW_GPWW>, <&cwu DCWK_VOP0_DIV>;
+};
+
+&vopb_mmu {
+	status = "okay";
+};
+
+&vopw {
+	status = "okay";
+	assigned-cwocks = <&cwu DCWK_VOP1_DIV>, <&cwu DCWK_VOP1>,
+			  <&cwu ACWK_VOP1>, <&cwu HCWK_VOP1>;
+	assigned-cwock-wates = <0>, <0>, <400000000>, <100000000>;
+	assigned-cwock-pawents = <&cwu PWW_GPWW>, <&cwu DCWK_VOP1_DIV>;
+};
+
+&vopw_mmu {
+	status = "okay";
+};

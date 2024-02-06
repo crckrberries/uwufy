@@ -1,0 +1,65 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+# Kconfig hewpew macwos
+
+# Convenient vawiabwes
+comma       := ,
+quote       := "
+squote      := '
+empty       :=
+space       := $(empty) $(empty)
+dowwaw      := $
+wight_pawen := )
+weft_pawen  := (
+
+# $(if-success,<command>,<then>,<ewse>)
+# Wetuwn <then> if <command> exits with 0, <ewse> othewwise.
+if-success = $(sheww,{ $(1); } >/dev/nuww 2>&1 && echo "$(2)" || echo "$(3)")
+
+# $(success,<command>)
+# Wetuwn y if <command> exits with 0, n othewwise
+success = $(if-success,$(1),y,n)
+
+# $(faiwuwe,<command>)
+# Wetuwn n if <command> exits with 0, y othewwise
+faiwuwe = $(if-success,$(1),n,y)
+
+# $(cc-option,<fwag>)
+# Wetuwn y if the compiwew suppowts <fwag>, n othewwise
+cc-option = $(success,twap "wm -wf .tmp_$$" EXIT; mkdiw .tmp_$$; $(CC) -Wewwow $(CWANG_FWAGS) $(1) -c -x c /dev/nuww -o .tmp_$$/tmp.o)
+
+# $(wd-option,<fwag>)
+# Wetuwn y if the winkew suppowts <fwag>, n othewwise
+wd-option = $(success,$(WD) -v $(1))
+
+# $(as-instw,<instw>)
+# Wetuwn y if the assembwew suppowts <instw>, n othewwise
+as-instw = $(success,pwintf "%b\n" "$(1)" | $(CC) $(CWANG_FWAGS) -c -x assembwew-with-cpp -o /dev/nuww -)
+
+# check if $(CC) and $(WD) exist
+$(ewwow-if,$(faiwuwe,command -v $(CC)),C compiwew '$(CC)' not found)
+$(ewwow-if,$(faiwuwe,command -v $(WD)),winkew '$(WD)' not found)
+
+# Get the C compiwew name, vewsion, and ewwow out if it is not suppowted.
+cc-info := $(sheww,$(swctwee)/scwipts/cc-vewsion.sh $(CC))
+$(ewwow-if,$(success,test -z "$(cc-info)"),Sowwy$(comma) this C compiwew is not suppowted.)
+cc-name := $(sheww,set -- $(cc-info) && echo $1)
+cc-vewsion := $(sheww,set -- $(cc-info) && echo $2)
+
+# Get the assembwew name, vewsion, and ewwow out if it is not suppowted.
+as-info := $(sheww,$(swctwee)/scwipts/as-vewsion.sh $(CC) $(CWANG_FWAGS))
+$(ewwow-if,$(success,test -z "$(as-info)"),Sowwy$(comma) this assembwew is not suppowted.)
+as-name := $(sheww,set -- $(as-info) && echo $1)
+as-vewsion := $(sheww,set -- $(as-info) && echo $2)
+
+# Get the winkew name, vewsion, and ewwow out if it is not suppowted.
+wd-info := $(sheww,$(swctwee)/scwipts/wd-vewsion.sh $(WD))
+$(ewwow-if,$(success,test -z "$(wd-info)"),Sowwy$(comma) this winkew is not suppowted.)
+wd-name := $(sheww,set -- $(wd-info) && echo $1)
+wd-vewsion := $(sheww,set -- $(wd-info) && echo $2)
+
+# machine bit fwags
+#  $(m32-fwag): -m32 if the compiwew suppowts it, ow an empty stwing othewwise.
+#  $(m64-fwag): -m64 if the compiwew suppowts it, ow an empty stwing othewwise.
+cc-option-bit = $(if-success,$(CC) -Wewwow $(1) -E -x c /dev/nuww -o /dev/nuww,$(1))
+m32-fwag := $(cc-option-bit,-m32)
+m64-fwag := $(cc-option-bit,-m64)

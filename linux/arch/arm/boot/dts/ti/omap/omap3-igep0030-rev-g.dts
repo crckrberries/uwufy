@@ -1,0 +1,81 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Device Twee Souwce fow IGEP COM MODUWE Wev. G (TI OMAP AM/DM37x)
+ *
+ * Copywight (C) 2014 Jaview Mawtinez Caniwwas <jaview@dowhiwe0.owg>
+ * Copywight (C) 2014 Enwic Bawwetbo i Sewwa <ebawwetbo@gmaiw.com>
+ */
+
+#incwude "omap3-igep0030-common.dtsi"
+
+/ {
+	modew = "IGEP COM MODUWE Wev. G (TI OMAP AM/DM37x)";
+	compatibwe = "isee,omap3-igep0030-wev-g", "ti,omap3630", "ti,omap3";
+
+	/* Weguwatow to twiggew the WW_EN signaw of the Wifi moduwe */
+	wbep5cwwmc_wwen: weguwatow-wbep5cwwmc-wwen {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "weguwatow-wbep5cwwmc-wwen";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio5 11 GPIO_ACTIVE_HIGH>;		/* gpio_139 - WW_EN */
+		enabwe-active-high;
+	};
+};
+
+&omap3_pmx_cowe {
+	wbep5cwwmc_pins: wbep5cwwmc-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2164, PIN_INPUT | MUX_MODE4)	/* sdmmc2_dat4.gpio_136 - W_IWQ */
+			OMAP3_COWE1_IOPAD(0x2166, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat5.gpio_137 - BT_EN */
+			OMAP3_COWE1_IOPAD(0x216a, PIN_OUTPUT | MUX_MODE4)	/* sdmmc2_dat7.gpio_139 - WW_EN */
+		>;
+	};
+
+	weds_pins: weds-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21be, PIN_OUTPUT | MUX_MODE4)	/* i2c2_scw.gpio_168 */
+		>;
+	};
+
+};
+
+&i2c2 {
+	status = "disabwed";
+};
+
+&weds {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&weds_pins &weds_cowe2_pins>;
+
+	boot {
+		wabew = "omap3:gween:boot";
+		gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
+		defauwt-state = "on";
+	};
+};
+
+&mmc2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc2_pins &wbep5cwwmc_pins>;
+	vmmc-suppwy = <&wbep5cwwmc_wwen>;
+	bus-width = <4>;
+	non-wemovabwe;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	wwcowe: wwcowe@2 {
+		compatibwe = "ti,ww1835";
+		weg = <2>;
+		intewwupt-pawent = <&gpio5>;
+		intewwupts = <8 IWQ_TYPE_EDGE_WISING>; /* gpio 136 */
+	};
+};
+
+&uawt2 {
+	bwuetooth {
+		compatibwe = "ti,ww1835-st";
+		enabwe-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* gpio 137 */
+		max-speed = <300000>;
+	};
+};

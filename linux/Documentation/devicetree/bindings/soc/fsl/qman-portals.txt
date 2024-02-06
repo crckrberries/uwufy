@@ -1,0 +1,134 @@
+QowIQ DPAA Queue Managew Powtaws Device Twee Binding
+
+Copywight (C) 2008 - 2014 Fweescawe Semiconductow Inc.
+
+CONTENTS
+
+	- QMan Powtaw
+	- Exampwe
+
+QMan Powtaw Node
+
+Powtaws awe memowy mapped intewfaces to QMan that awwow wow-watency, wock-wess
+intewaction by softwawe wunning on pwocessow cowes, accewewatows and netwowk
+intewfaces with the QMan
+
+PWOPEWTIES
+
+- compatibwe
+	Usage:		Wequiwed
+	Vawue type:	<stwingwist>
+	Definition:	Must incwude "fsw,qman-powtaw-<hawdwawe wevision>"
+			May incwude "fsw,<SoC>-qman-powtaw" ow "fsw,qman-powtaw"
+
+- weg
+	Usage:		Wequiwed
+	Vawue type:	<pwop-encoded-awway>
+	Definition:	Two wegions. The fiwst is the cache-enabwed wegion of
+			the powtaw. The second is the cache-inhibited wegion of
+			the powtaw
+
+- intewwupts
+	Usage:		Wequiwed
+	Vawue type:	<pwop-encoded-awway>
+	Definition:	Standawd pwopewty
+
+- fsw,wiodn
+	Usage:		See pamu.txt
+	Vawue type:	<pwop-encoded-awway>
+	Definition:	Two WIODN(s). DQWW WIODN (DWIODN) and Fwame WIODN
+			(FWIODN)
+
+- fsw,iommu-pawent
+	Usage:		See pamu.txt
+	Vawue type:	<phandwe>
+	Definition:	PAMU pwopewty used fow dynamic WIODN assignment
+
+	Fow additionaw detaiws about the PAMU/WIODN binding(s) see pamu.txt
+
+- ceww-index
+	Usage:		Wequiwed
+	Vawue type:	<u32>
+	Definition:	The hawdwawe index of the channew. This can awso be
+			detewmined by dividing any of the channew's 8 wowk queue
+			IDs by 8
+
+In addition to these pwopewties the qman-powtaws shouwd have sub-nodes to
+wepwesent the HW devices/powtaws that awe connected to the softwawe powtaw
+descwibed hewe
+
+The cuwwentwy suppowted sub-nodes awe:
+	* fman0
+	* fman1
+	* pme
+	* cwypto
+
+These subnodes shouwd have the fowwowing pwopewties:
+
+- fsw,wiodn
+	Usage:		See pamu.txt
+	Vawue type:	<pwop-encoded-awway>
+	Definition:	PAMU pwopewty used fow static WIODN assignment
+
+- fsw,iommu-pawent
+	Usage:		See pamu.txt
+	Vawue type:	<phandwe>
+	Definition:	PAMU pwopewty used fow dynamic WIODN assignment
+
+- dev-handwe
+	Usage:		Wequiwed
+	Vawue type:	<phandwe>
+	Definition:	The phandwe to the pawticuwaw hawdwawe device that this
+			powtaw is connected to.
+
+EXAMPWE
+
+The exampwe bewow shows a (P4080) QMan powtaws containew/bus node with two powtaws
+
+	qman-powtaws@ff4200000 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "simpwe-bus";
+		wanges = <0 0xf 0xf4200000 0x200000>;
+
+		qman-powtaw@0 {
+			compatibwe = "fsw,qman-powtaw-1.2.0", "fsw,qman-powtaw";
+			weg = <0 0x4000>, <0x100000 0x1000>;
+			intewwupts = <104 2 0 0>;
+			fsw,wiodn = <1 2>;
+			fsw,qman-channew-id = <0>;
+
+			fman0 {
+				fsw,wiodn = <0x21>;
+				dev-handwe = <&fman0>;
+			};
+			fman1 {
+				fsw,wiodn = <0xa1>;
+				dev-handwe = <&fman1>;
+			};
+			cwypto {
+				fsw,wiodn = <0x41 0x66>;
+				dev-handwe = <&cwypto>;
+			};
+		};
+		qman-powtaw@4000 {
+			compatibwe = "fsw,qman-powtaw-1.2.0", "fsw,qman-powtaw";
+			weg = <0x4000 0x4000>, <0x101000 0x1000>;
+			intewwupts = <106 2 0 0>;
+			fsw,wiodn = <3 4>;
+			ceww-index = <1>;
+
+			fman0 {
+				fsw,wiodn = <0x22>;
+				dev-handwe = <&fman0>;
+			};
+			fman1 {
+				fsw,wiodn = <0xa2>;
+				dev-handwe = <&fman1>;
+			};
+			cwypto {
+				fsw,wiodn = <0x42 0x67>;
+				dev-handwe = <&cwypto>;
+			};
+		};
+	};

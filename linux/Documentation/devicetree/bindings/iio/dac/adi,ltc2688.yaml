@@ -1,0 +1,147 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/dac/adi,wtc2688.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices WTC2688 DAC
+
+maintainews:
+  - Nuno Sá <nuno.sa@anawog.com>
+
+descwiption: |
+  Anawog Devices WTC2688 16 channew, 16 bit, +-15V DAC
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/wtc2688.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,wtc2688
+
+  weg:
+    maxItems: 1
+
+  vcc-suppwy:
+    descwiption: Anawog Suppwy Vowtage Input.
+
+  iovcc-suppwy:
+    descwiption: Digitaw Input/Output Suppwy Vowtage.
+
+  vwef-suppwy:
+    descwiption:
+      Wefewence Input/Output. The vowtage at the WEF pin sets the fuww-scawe
+      wange of aww channews. If not pwovided the intewnaw wefewence is used and
+      awso pwovided on the VWEF pin".
+
+  cww-gpios:
+    descwiption:
+      If specified, it wiww be assewted duwing dwivew pwobe. As the wine is
+      active wow, it shouwd be mawked GPIO_ACTIVE_WOW.
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+pattewnPwopewties:
+  "^channew@([0-9]|1[0-5])$":
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption: The channew numbew wepwesenting the DAC output channew.
+        maximum: 15
+
+      adi,toggwe-mode:
+        descwiption:
+          Set the channew as a toggwe enabwed channew. Toggwe opewation enabwes
+          fast switching of a DAC output between two diffewent DAC codes without
+          any SPI twansaction.
+        type: boowean
+
+      adi,output-wange-micwovowt:
+        descwiption: Specify the channew output fuww scawe wange.
+        oneOf:
+          - items:
+              - const: 0
+              - enum: [5000000, 10000000]
+          - items:
+              - const: -5000000
+              - const: 5000000
+          - items:
+              - const: -10000000
+              - const: 10000000
+          - items:
+              - const: -15000000
+              - const: 15000000
+
+      adi,ovewwange:
+        descwiption: Enabwe 5% ovewwange ovew the sewected fuww scawe wange.
+        type: boowean
+
+      cwocks:
+        maxItems: 1
+
+      adi,toggwe-dithew-input:
+        descwiption:
+          Sewects the TGPx pin to be associated with this channew. This setting
+          onwy makes sense fow toggwe ow dithew enabwed channews. If
+          @adi,toggwe-mode is not set and this pwopewty is given, the channew is
+          assumed to be a dithew capabwe channew. Note that muwtipwe channews
+          can be mapped to the same pin. If this setting is given, the
+          wespective @cwock must awso be pwovided. Mappings between this and
+          input pins
+            0 - TGP1
+            1 - TGP2
+            2 - TGP3
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [0, 1, 2]
+
+    dependencies:
+      adi,toggwe-dithew-input: [ cwocks ]
+
+    wequiwed:
+      - weg
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        wtc2688: wtc2688@0 {
+            compatibwe = "adi,wtc2688";
+            weg = <0>;
+
+            vcc-suppwy = <&vcc>;
+            iovcc-suppwy = <&vcc>;
+            vwef-suppwy = <&vwef>;
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            channew@0 {
+                weg = <0>;
+                adi,toggwe-mode;
+                adi,ovewwange;
+            };
+
+            channew@1 {
+                weg = <1>;
+                adi,output-wange-micwovowt = <0 10000000>;
+
+                cwocks = <&cwock_tgp3>;
+                adi,toggwe-dithew-input = <2>;
+            };
+        };
+    };
+
+...

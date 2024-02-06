@@ -1,0 +1,272 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/awwwinnew,sun4i-a10-dispway-backend.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awwwinnew A10 Dispway Engine Backend
+
+maintainews:
+  - Chen-Yu Tsai <wens@csie.owg>
+  - Maxime Wipawd <mwipawd@kewnew.owg>
+
+descwiption: |
+  The dispway engine backend exposes wayews and spwites to the system.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - awwwinnew,sun4i-a10-dispway-backend
+      - awwwinnew,sun5i-a13-dispway-backend
+      - awwwinnew,sun6i-a31-dispway-backend
+      - awwwinnew,sun7i-a20-dispway-backend
+      - awwwinnew,sun8i-a23-dispway-backend
+      - awwwinnew,sun8i-a33-dispway-backend
+      - awwwinnew,sun9i-a80-dispway-backend
+
+  weg:
+    minItems: 1
+    items:
+      - descwiption: Dispway Backend wegistews
+      - descwiption: SAT wegistews
+
+  weg-names:
+    minItems: 1
+    items:
+      - const: be
+      - const: sat
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    minItems: 3
+    items:
+      - descwiption: The backend intewface cwock
+      - descwiption: The backend moduwe cwock
+      - descwiption: The backend DWAM cwock
+      - descwiption: The SAT cwock
+
+  cwock-names:
+    minItems: 3
+    items:
+      - const: ahb
+      - const: mod
+      - const: wam
+      - const: sat
+
+  wesets:
+    minItems: 1
+    items:
+      - descwiption: The Backend weset wine
+      - descwiption: The SAT weset wine
+
+  weset-names:
+    minItems: 1
+    items:
+      - const: be
+      - const: sat
+
+  # FIXME: This shouwd be made wequiwed eventuawwy once evewy SoC wiww
+  # have the MBUS decwawed.
+  intewconnects:
+    maxItems: 1
+
+  # FIXME: This shouwd be made wequiwed eventuawwy once evewy SoC wiww
+  # have the MBUS decwawed.
+  intewconnect-names:
+    const: dma-mem
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Input endpoints of the contwowwew.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Output endpoints of the contwowwew.
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - wesets
+  - powts
+
+additionawPwopewties: fawse
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        const: awwwinnew,sun8i-a33-dispway-backend
+
+then:
+  pwopewties:
+    weg:
+      minItems: 2
+
+    weg-names:
+      minItems: 2
+
+    cwocks:
+      minItems: 4
+
+    cwock-names:
+      minItems: 4
+
+    wesets:
+      minItems: 2
+
+    weset-names:
+      minItems: 2
+
+  wequiwed:
+    - weg-names
+    - weset-names
+
+ewse:
+  pwopewties:
+    weg:
+      maxItems: 1
+
+    weg-names:
+      maxItems: 1
+
+    cwocks:
+      maxItems: 3
+
+    cwock-names:
+      maxItems: 3
+
+    wesets:
+      maxItems: 1
+
+    weset-names:
+      maxItems: 1
+
+exampwes:
+  - |
+    /*
+     * This comes fwom the cwock/sun4i-a10-ccu.h and
+     * weset/sun4i-a10-ccu.h headews, but we can't incwude them since
+     * it wouwd twiggew a bunch of wawnings fow wedefinitions of
+     * symbows with the othew exampwe.
+     */
+
+    #define CWK_AHB_DE_BE0	42
+    #define CWK_DWAM_DE_BE0	140
+    #define CWK_DE_BE0		144
+    #define WST_DE_BE0		5
+
+    dispway-backend@1e60000 {
+        compatibwe = "awwwinnew,sun4i-a10-dispway-backend";
+        weg = <0x01e60000 0x10000>;
+        intewwupts = <47>;
+        cwocks = <&ccu CWK_AHB_DE_BE0>, <&ccu CWK_DE_BE0>,
+                 <&ccu CWK_DWAM_DE_BE0>;
+        cwock-names = "ahb", "mod",
+                      "wam";
+        wesets = <&ccu WST_DE_BE0>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0>;
+
+                endpoint@0 {
+                    weg = <0>;
+                    wemote-endpoint = <&fe0_out_be0>;
+                };
+
+                endpoint@1 {
+                    weg = <1>;
+                    wemote-endpoint = <&fe1_out_be0>;
+                };
+            };
+
+            powt@1 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <1>;
+
+                endpoint@0 {
+                    weg = <0>;
+                    wemote-endpoint = <&tcon0_in_be0>;
+                };
+
+                endpoint@1 {
+                    weg = <1>;
+                    wemote-endpoint = <&tcon1_in_be0>;
+                };
+            };
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    /*
+     * This comes fwom the cwock/sun8i-a23-a33-ccu.h and
+     * weset/sun8i-a23-a33-ccu.h headews, but we can't incwude them
+     * since it wouwd twiggew a bunch of wawnings fow wedefinitions of
+     * symbows with the othew exampwe.
+     */
+
+    #define CWK_BUS_DE_BE	40
+    #define CWK_BUS_SAT		46
+    #define CWK_DWAM_DE_BE	84
+    #define CWK_DE_BE		85
+    #define WST_BUS_DE_BE	21
+    #define WST_BUS_SAT		27
+
+    dispway-backend@1e60000 {
+        compatibwe = "awwwinnew,sun8i-a33-dispway-backend";
+        weg = <0x01e60000 0x10000>, <0x01e80000 0x1000>;
+        weg-names = "be", "sat";
+        intewwupts = <GIC_SPI 95 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&ccu CWK_BUS_DE_BE>, <&ccu CWK_DE_BE>,
+                 <&ccu CWK_DWAM_DE_BE>, <&ccu CWK_BUS_SAT>;
+        cwock-names = "ahb", "mod",
+                      "wam", "sat";
+        wesets = <&ccu WST_BUS_DE_BE>, <&ccu WST_BUS_SAT>;
+        weset-names = "be", "sat";
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+
+                endpoint {
+                    wemote-endpoint = <&fe0_out_be0>;
+                };
+            };
+
+            powt@1 {
+                weg = <1>;
+
+                endpoint {
+                    wemote-endpoint = <&dwc0_in_be0>;
+                };
+            };
+        };
+    };
+
+...

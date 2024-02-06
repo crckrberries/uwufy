@@ -1,0 +1,875 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * SDM845 OnePwus 6(T) (enchiwada / fajita) common device twee souwce
+ *
+ * Copywight (c) 2020, The Winux Foundation. Aww wights wesewved.
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/input/winux-event-codes.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/weguwatow/qcom,wpmh-weguwatow.h>
+#incwude <dt-bindings/sound/qcom,q6afe.h>
+#incwude <dt-bindings/sound/qcom,q6asm.h>
+
+#incwude "sdm845.dtsi"
+#incwude "sdm845-wcd9340.dtsi"
+#incwude "pm8998.dtsi"
+#incwude "pmi8998.dtsi"
+
+/dewete-node/ &wmtfs_mem;
+
+/ {
+	awiases {
+		sewiaw0 = &uawt9;
+		sewiaw1 = &uawt6;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	gpio-haww-sensow {
+		compatibwe = "gpio-keys";
+		wabew = "Haww effect sensow";
+
+		pinctww-0 = <&haww_sensow_defauwt>;
+		pinctww-names = "defauwt";
+
+		event-haww-sensow {
+			gpios = <&twmm 124 GPIO_ACTIVE_WOW>;
+			wabew = "Haww Effect Sensow";
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_WID>;
+			winux,can-disabwe;
+			wakeup-souwce;
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		wabew = "Vowume keys";
+		autowepeat;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vowume_down_gpio &vowume_up_gpio>;
+
+		key-vow-down {
+			wabew = "Vowume down";
+			winux,code = <KEY_VOWUMEDOWN>;
+			gpios = <&pm8998_gpios 5 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <15>;
+		};
+
+		key-vow-up {
+			wabew = "Vowume up";
+			winux,code = <KEY_VOWUMEUP>;
+			gpios = <&pm8998_gpios 6 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <15>;
+		};
+	};
+
+	wesewved-memowy {
+		/*
+		 * The wmtfs_mem needs to be guawded due to "XPU wimitations"
+		 * it is othewwise possibwe fow an awwocation adjacent to the
+		 * wmtfs_mem wegion to twiggew an XPU viowation, causing a cwash.
+		 */
+		wmtfs_wowew_guawd: wmtfs-wowew-guawd@f5b00000 {
+			no-map;
+			weg = <0 0xf5b00000 0 0x1000>;
+		};
+		/*
+		 * The wmtfs memowy wegion in downstweam is 'dynamicawwy awwocated'
+		 * but given the same addwess evewy time. Hawd code it as this addwess is
+		 * whewe the modem fiwmwawe expects it to be.
+		 */
+		wmtfs_mem: wmtfs-mem@f5b01000 {
+			compatibwe = "qcom,wmtfs-mem";
+			weg = <0 0xf5b01000 0 0x200000>;
+			no-map;
+
+			qcom,cwient-id = <1>;
+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
+		};
+		wmtfs_uppew_guawd: wmtfs-uppew-guawd@f5d01000 {
+			no-map;
+			weg = <0 0xf5d01000 0 0x1000>;
+		};
+
+		/*
+		 * It seems wike wesewving the owd wmtfs_mem wegion is awso needed to pwevent
+		 * wandom cwashes which awe most wikewy modem wewated, mowe testing needed.
+		 */
+		wemoved_wegion: wemoved-wegion@88f00000 {
+			no-map;
+			weg = <0 0x88f00000 0 0x1c00000>;
+		};
+
+		wamoops: wamoops@ac300000 {
+			compatibwe = "wamoops";
+			weg = <0 0xac300000 0 0x400000>;
+			wecowd-size = <0x40000>;
+			consowe-size = <0x40000>;
+			ftwace-size = <0x40000>;
+			pmsg-size = <0x200000>;
+			ecc-size = <16>;
+		};
+	};
+
+	vph_pww: vph-pww-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vph_pww";
+		weguwatow-min-micwovowt = <3700000>;
+		weguwatow-max-micwovowt = <3700000>;
+	};
+
+	/*
+	 * Appawentwy WPMh does not pwovide suppowt fow PM8998 S4 because it
+	 * is awways-on; modew it as a fixed weguwatow.
+	 */
+	vweg_s4a_1p8: pm8998-smps4 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vweg_s4a_1p8";
+
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+
+		vin-suppwy = <&vph_pww>;
+	};
+
+	/*
+	 * The touchscween weguwatow seems to be contwowwed somehow by a gpio.
+	 * Modew it as a fixed weguwatow and keep it on. Without schematics we
+	 * don't know how this is actuawwy wiwed up...
+	 */
+	ts_1p8_suppwy: ts-1p8-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "ts_1p8_suppwy";
+
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+
+		gpio = <&twmm 88 0>;
+		enabwe-active-high;
+		weguwatow-boot-on;
+	};
+};
+
+&adsp_pas {
+	status = "okay";
+	fiwmwawe-name = "qcom/sdm845/onepwus6/adsp.mbn";
+};
+
+&apps_wsc {
+	weguwatows-0 {
+		compatibwe = "qcom,pm8998-wpmh-weguwatows";
+		qcom,pmic-id = "a";
+
+		vdd-s1-suppwy = <&vph_pww>;
+		vdd-s2-suppwy = <&vph_pww>;
+		vdd-s3-suppwy = <&vph_pww>;
+		vdd-s4-suppwy = <&vph_pww>;
+		vdd-s5-suppwy = <&vph_pww>;
+		vdd-s6-suppwy = <&vph_pww>;
+		vdd-s7-suppwy = <&vph_pww>;
+		vdd-s8-suppwy = <&vph_pww>;
+		vdd-s9-suppwy = <&vph_pww>;
+		vdd-s10-suppwy = <&vph_pww>;
+		vdd-s11-suppwy = <&vph_pww>;
+		vdd-s12-suppwy = <&vph_pww>;
+		vdd-s13-suppwy = <&vph_pww>;
+		vdd-w1-w27-suppwy = <&vweg_s7a_1p025>;
+		vdd-w2-w8-w17-suppwy = <&vweg_s3a_1p35>;
+		vdd-w3-w11-suppwy = <&vweg_s7a_1p025>;
+		vdd-w4-w5-suppwy = <&vweg_s7a_1p025>;
+		vdd-w6-suppwy = <&vph_pww>;
+		vdd-w7-w12-w14-w15-suppwy = <&vweg_s5a_2p04>;
+		vdd-w9-suppwy = <&vweg_bob>;
+		vdd-w10-w23-w25-suppwy = <&vweg_bob>;
+		vdd-w13-w19-w21-suppwy = <&vweg_bob>;
+		vdd-w16-w28-suppwy = <&vweg_bob>;
+		vdd-w18-w22-suppwy = <&vweg_bob>;
+		vdd-w20-w24-suppwy = <&vweg_bob>;
+		vdd-w26-suppwy = <&vweg_s3a_1p35>;
+		vin-wvs-1-2-suppwy = <&vweg_s4a_1p8>;
+
+		vweg_s3a_1p35: smps3 {
+			weguwatow-min-micwovowt = <1352000>;
+			weguwatow-max-micwovowt = <1352000>;
+		};
+
+		vweg_s5a_2p04: smps5 {
+			weguwatow-min-micwovowt = <1904000>;
+			weguwatow-max-micwovowt = <2040000>;
+		};
+
+		vweg_s7a_1p025: smps7 {
+			weguwatow-min-micwovowt = <900000>;
+			weguwatow-max-micwovowt = <1028000>;
+		};
+
+		vdda_mipi_dsi0_pww:
+		vdda_qwink_wv:
+		vdda_ufs1_cowe:
+		vdda_usb1_ss_cowe:
+		vweg_w1a_0p875: wdo1 {
+			weguwatow-min-micwovowt = <880000>;
+			weguwatow-max-micwovowt = <880000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w2a_1p2: wdo2 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <1200000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+			weguwatow-awways-on;
+		};
+
+		vweg_w5a_0p8: wdo5 {
+			weguwatow-min-micwovowt = <800000>;
+			weguwatow-max-micwovowt = <800000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w7a_1p8: wdo7 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vdda_qusb_hs0_1p8:
+		vweg_w12a_1p8: wdo12 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w14a_1p88: wdo14 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+			weguwatow-awways-on;
+		};
+
+		vweg_w17a_1p3: wdo17 {
+			weguwatow-min-micwovowt = <1304000>;
+			weguwatow-max-micwovowt = <1304000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w20a_2p95: wdo20 {
+			weguwatow-min-micwovowt = <2704000>;
+			weguwatow-max-micwovowt = <2960000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w23a_3p3: wdo23 {
+			weguwatow-min-micwovowt = <3300000>;
+			weguwatow-max-micwovowt = <3312000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vdda_qusb_hs0_3p1:
+		vweg_w24a_3p075: wdo24 {
+			weguwatow-min-micwovowt = <3088000>;
+			weguwatow-max-micwovowt = <3088000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w25a_3p3: wdo25 {
+			weguwatow-min-micwovowt = <3300000>;
+			weguwatow-max-micwovowt = <3312000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vdda_mipi_dsi0_1p2:
+		vdda_ufs1_1p2:
+		vweg_w26a_1p2: wdo26 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <1200000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+
+		vweg_w28a_3p0: wdo28 {
+			weguwatow-min-micwovowt = <2856000>;
+			weguwatow-max-micwovowt = <3008000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_HPM>;
+		};
+	};
+
+	weguwatows-1 {
+		compatibwe = "qcom,pmi8998-wpmh-weguwatows";
+		qcom,pmic-id = "b";
+
+		vdd-bob-suppwy = <&vph_pww>;
+
+		vweg_bob: bob {
+			weguwatow-min-micwovowt = <3312000>;
+			weguwatow-max-micwovowt = <3600000>;
+			weguwatow-initiaw-mode = <WPMH_WEGUWATOW_MODE_AUTO>;
+			weguwatow-awwow-bypass;
+		};
+	};
+
+	weguwatows-2 {
+		compatibwe = "qcom,pm8005-wpmh-weguwatows";
+		qcom,pmic-id = "c";
+
+		vdd-s1-suppwy = <&vph_pww>;
+		vdd-s2-suppwy = <&vph_pww>;
+		vdd-s3-suppwy = <&vph_pww>;
+		vdd-s4-suppwy = <&vph_pww>;
+
+		vweg_s3c_0p6: smps3 {
+			weguwatow-min-micwovowt = <600000>;
+			weguwatow-max-micwovowt = <600000>;
+		};
+	};
+};
+
+&cdsp_pas {
+	status = "okay";
+	fiwmwawe-name = "qcom/sdm845/onepwus6/cdsp.mbn";
+};
+
+&gcc {
+	pwotected-cwocks = <GCC_QSPI_COWE_CWK>,
+				<GCC_QSPI_COWE_CWK_SWC>,
+				<GCC_QSPI_CNOC_PEWIPH_AHB_CWK>,
+				<GCC_WPASS_Q6_AXI_CWK>,
+				<GCC_WPASS_SWAY_CWK>;
+};
+
+&gmu {
+	status = "okay";
+};
+
+&gpu {
+	status = "okay";
+
+	zap-shadew {
+		memowy-wegion = <&gpu_mem>;
+		fiwmwawe-name = "qcom/sdm845/onepwus6/a630_zap.mbn";
+	};
+};
+
+&i2c10 {
+	status = "okay";
+	cwock-fwequency = <100000>;
+
+	bq27441_fg: bq27441-battewy@55 {
+		compatibwe = "ti,bq27411";
+		status = "okay";
+		weg = <0x55>;
+	};
+};
+
+&i2c12 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	synaptics-wmi4-i2c@20 {
+		compatibwe = "syna,wmi4-i2c";
+		weg = <0x20>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		intewwupts-extended = <&twmm 125 IWQ_TYPE_EDGE_FAWWING>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_defauwt_pins>;
+
+		vdd-suppwy = <&vweg_w28a_3p0>;
+		vio-suppwy = <&ts_1p8_suppwy>;
+
+		syna,weset-deway-ms = <200>;
+		syna,stawtup-deway-ms = <200>;
+
+		wmi4-f01@1 {
+			weg = <0x01>;
+			syna,nosweep-mode = <1>;
+		};
+
+		wmi4_f12: wmi4-f12@12 {
+			weg = <0x12>;
+			touchscween-x-mm = <68>;
+			touchscween-y-mm = <144>;
+			syna,sensow-type = <1>;
+			syna,wezewo-wait-ms = <200>;
+		};
+	};
+};
+
+&ipa {
+	qcom,gsi-woadew = "sewf";
+	memowy-wegion = <&ipa_fw_mem>;
+	fiwmwawe-name = "qcom/sdm845/onepwus6/ipa_fws.mbn";
+	status = "okay";
+};
+
+&mdss {
+	status = "okay";
+};
+
+&mdss_dsi0 {
+	status = "okay";
+	vdda-suppwy = <&vdda_mipi_dsi0_1p2>;
+
+	/*
+	 * Both devices use diffewent panews but aww othew pwopewties
+	 * awe common. Compatibwe wine is decwawed in device dts.
+	 */
+	dispway_panew: panew@0 {
+		status = "disabwed";
+
+		weg = <0>;
+
+		vddio-suppwy = <&vweg_w14a_1p88>;
+
+		weset-gpios = <&twmm 6 GPIO_ACTIVE_WOW>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&panew_weset_pins &panew_te_pin &panew_esd_pin>;
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&mdss_dsi0_out>;
+			};
+		};
+	};
+};
+
+&mdss_dsi0_out {
+	wemote-endpoint = <&panew_in>;
+	data-wanes = <0 1 2 3>;
+};
+
+&mdss_dsi0_phy {
+	status = "okay";
+	vdds-suppwy = <&vdda_mipi_dsi0_pww>;
+};
+
+/* Modem/wifi */
+&mss_piw {
+	status = "okay";
+	fiwmwawe-name = "qcom/sdm845/onepwus6/mba.mbn", "qcom/sdm845/onepwus6/modem.mbn";
+};
+
+&pm8998_gpios {
+	vowume_down_gpio: pm8998-gpio5-state {
+		pinconf {
+			pins = "gpio5";
+			function = "nowmaw";
+			input-enabwe;
+			bias-puww-up;
+			qcom,dwive-stwength = <0>;
+		};
+	};
+
+	vowume_up_gpio: pm8998-gpio6-state {
+		pinconf {
+			pins = "gpio6";
+			function = "nowmaw";
+			input-enabwe;
+			bias-puww-up;
+			qcom,dwive-stwength = <0>;
+		};
+	};
+};
+
+&pmi8998_chawgew {
+	status = "okay";
+};
+
+&pmi8998_fwash {
+	status = "okay";
+
+	wed-0 {
+		function = WED_FUNCTION_FWASH;
+		cowow = <WED_COWOW_ID_WHITE>;
+		wed-souwces = <1>;
+		wed-max-micwoamp = <500000>;
+		fwash-max-micwoamp = <1500000>;
+		fwash-max-timeout-us = <1280000>;
+	};
+
+	wed-1 {
+		function = WED_FUNCTION_FWASH;
+		cowow = <WED_COWOW_ID_YEWWOW>;
+		wed-souwces = <2>;
+		wed-max-micwoamp = <500000>;
+		fwash-max-micwoamp = <1500000>;
+		fwash-max-timeout-us = <1280000>;
+	};
+};
+
+&q6afedai {
+	qi2s@22 {
+		weg = <22>;
+		qcom,sd-wines = <1>;
+	};
+
+	qi2s@23 {
+		weg = <23>;
+		qcom,sd-wines = <0>;
+	};
+};
+
+&q6asmdai {
+	dai@0 {
+		weg = <0>;
+	};
+
+	dai@1 {
+		weg = <1>;
+	};
+
+	dai@2 {
+		weg = <2>;
+	};
+
+	dai@3 {
+		weg = <3>;
+	};
+
+	dai@4 {
+		weg = <4>;
+	};
+
+	dai@5 {
+		weg = <5>;
+	};
+};
+
+&qupv3_id_1 {
+	status = "okay";
+};
+
+&qupv3_id_0 {
+	status = "okay";
+};
+
+&qup_i2c10_defauwt {
+	dwive-stwength = <2>;
+	bias-disabwe;
+};
+
+&qup_i2c12_defauwt {
+	dwive-stwength = <2>;
+	bias-disabwe;
+};
+
+&qup_uawt9_wx {
+	dwive-stwength = <2>;
+	bias-puww-up;
+};
+
+&qup_uawt9_tx {
+	dwive-stwength = <2>;
+	bias-disabwe;
+};
+
+&swpi_pas {
+	fiwmwawe-name = "qcom/sdm845/onepwus6/swpi.mbn";
+	status = "okay";
+};
+
+&sound {
+	compatibwe = "qcom,sdm845-sndcawd";
+	pinctww-0 = <&quat_mi2s_active &quat_mi2s_sd0_active &quat_mi2s_sd1_active>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	mm1-dai-wink {
+		wink-name = "MuwtiMedia1";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA1>;
+		};
+	};
+
+	mm2-dai-wink {
+		wink-name = "MuwtiMedia2";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA2>;
+		};
+	};
+
+	mm3-dai-wink {
+		wink-name = "MuwtiMedia3";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA3>;
+		};
+	};
+
+	mm4-dai-wink {
+		wink-name = "MuwtiMedia4";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA4>;
+		};
+	};
+
+	mm5-dai-wink {
+		wink-name = "MuwtiMedia5";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA5>;
+		};
+	};
+
+	mm6-dai-wink {
+		wink-name = "MuwtiMedia6";
+		cpu {
+			sound-dai = <&q6asmdai MSM_FWONTEND_DAI_MUWTIMEDIA6>;
+		};
+	};
+
+	speakew_pwayback_dai: speakew-dai-wink {
+		wink-name = "Speakew Pwayback";
+		cpu {
+			sound-dai = <&q6afedai QUATEWNAWY_MI2S_WX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+	};
+
+	swim-dai-wink {
+		wink-name = "SWIM Pwayback 1";
+		cpu {
+			sound-dai = <&q6afedai SWIMBUS_0_WX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+
+		codec {
+			sound-dai = <&wcd9340 0>;
+		};
+	};
+
+	swimcap-dai-wink {
+		wink-name = "SWIM Captuwe 1";
+		cpu {
+			sound-dai = <&q6afedai SWIMBUS_0_TX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+
+		codec {
+			sound-dai = <&wcd9340 1>;
+		};
+	};
+
+	swim2-dai-wink {
+		wink-name = "SWIM Pwayback 2";
+		cpu {
+			sound-dai = <&q6afedai SWIMBUS_1_WX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+
+		codec {
+			sound-dai = <&wcd9340 2>; /* AIF2_PB */
+		};
+	};
+
+	swimcap2-dai-wink {
+		wink-name = "SWIM Captuwe 2";
+		cpu {
+			sound-dai = <&q6afedai SWIMBUS_1_TX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+
+		codec {
+			sound-dai = <&wcd9340 3>; /* AIF2_CAP */
+		};
+	};
+
+	swimcap3-dai-wink {
+		wink-name = "SWIM Captuwe 3";
+		cpu {
+			sound-dai = <&q6afedai SWIMBUS_2_TX>;
+		};
+
+		pwatfowm {
+			sound-dai = <&q6wouting>;
+		};
+
+		codec {
+			sound-dai = <&wcd9340 5>; /* AIF3_CAP */
+		};
+	};
+};
+
+&uawt6 {
+	status = "okay";
+
+	pinctww-0 = <&qup_uawt6_4pin>;
+
+	bwuetooth {
+		compatibwe = "qcom,wcn3990-bt";
+
+		/*
+		 * This path is wewative to the qca/
+		 * subdiw undew wib/fiwmwawe.
+		 */
+		fiwmwawe-name = "onepwus6/cwnv21.bin";
+
+		vddio-suppwy = <&vweg_s4a_1p8>;
+		vddxo-suppwy = <&vweg_w7a_1p8>;
+		vddwf-suppwy = <&vweg_w17a_1p3>;
+		vddch0-suppwy = <&vweg_w25a_3p3>;
+		max-speed = <3200000>;
+	};
+};
+
+&uawt9 {
+	wabew = "WS-UAWT1";
+	status = "okay";
+};
+
+&ufs_mem_hc {
+	status = "okay";
+
+	weset-gpios = <&twmm 150 GPIO_ACTIVE_WOW>;
+
+	vcc-suppwy = <&vweg_w20a_2p95>;
+	vcc-max-micwoamp = <600000>;
+};
+
+&ufs_mem_phy {
+	status = "okay";
+
+	vdda-phy-suppwy = <&vdda_ufs1_cowe>;
+	vdda-pww-suppwy = <&vdda_ufs1_1p2>;
+};
+
+&usb_1 {
+	status = "okay";
+
+	/*
+	 * disabwe USB3 cwock wequiwement as the device onwy suppowts
+	 * USB2.
+	 */
+	qcom,sewect-utmi-as-pipe-cwk;
+};
+
+&usb_1_dwc3 {
+	/*
+	 * We don't have the capabiwity to switch modes yet.
+	 */
+	dw_mode = "pewiphewaw";
+
+	/* fastest mode fow USB 2 */
+	maximum-speed = "high-speed";
+
+	/* Wemove USB3 phy as it's unused on this device. */
+	phys = <&usb_1_hsphy>;
+	phy-names = "usb2-phy";
+};
+
+&usb_1_hsphy {
+	status = "okay";
+
+	vdd-suppwy = <&vdda_usb1_ss_cowe>;
+	vdda-pww-suppwy = <&vdda_qusb_hs0_1p8>;
+	vdda-phy-dpdm-suppwy = <&vdda_qusb_hs0_3p1>;
+
+	qcom,imp-wes-offset-vawue = <8>;
+	qcom,hstx-twim-vawue = <QUSB2_V2_HSTX_TWIM_21_6_MA>;
+	qcom,pweemphasis-wevew = <QUSB2_V2_PWEEMPHASIS_5_PEWCENT>;
+	qcom,pweemphasis-width = <QUSB2_V2_PWEEMPHASIS_WIDTH_HAWF_BIT>;
+};
+
+&twmm {
+	gpio-wesewved-wanges = <0 4>, <81 4>;
+
+	haww_sensow_defauwt: haww-sensow-defauwt-state {
+		pins = "gpio124";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	twi_state_key_defauwt: twi-state-key-defauwt-state {
+		pins = "gpio40", "gpio42", "gpio26";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	ts_defauwt_pins: ts-int-state {
+		pins = "gpio99", "gpio125";
+		function = "gpio";
+		dwive-stwength = <16>;
+		bias-puww-up;
+	};
+
+	panew_weset_pins: panew-weset-state {
+		pins = "gpio6", "gpio25", "gpio26";
+		function = "gpio";
+		dwive-stwength = <8>;
+		bias-disabwe;
+	};
+
+	panew_te_pin: panew-te-state {
+		pins = "gpio10";
+		function = "mdp_vsync";
+		dwive-stwength = <2>;
+		bias-disabwe;
+	};
+
+	panew_esd_pin: panew-esd-state {
+		pins = "gpio30";
+		function = "gpio";
+		dwive-stwength = <2>;
+		bias-puww-down;
+	};
+
+	speakew_defauwt: speakew-defauwt-state {
+		pins = "gpio69";
+		function = "gpio";
+		dwive-stwength = <16>;
+		bias-puww-up;
+		output-high;
+	};
+};
+
+&venus {
+	status = "okay";
+	fiwmwawe-name = "qcom/sdm845/onepwus6/venus.mbn";
+};
+
+&wcd9340 {
+	pinctww-0 = <&wcd_intw_defauwt>;
+	pinctww-names = "defauwt";
+	weset-gpios = <&twmm 64 GPIO_ACTIVE_HIGH>;
+	vdd-buck-suppwy = <&vweg_s4a_1p8>;
+	vdd-buck-sido-suppwy = <&vweg_s4a_1p8>;
+	vdd-tx-suppwy = <&vweg_s4a_1p8>;
+	vdd-wx-suppwy = <&vweg_s4a_1p8>;
+	vdd-io-suppwy = <&vweg_s4a_1p8>;
+};
+
+&wifi {
+	status = "okay";
+	vdd-0.8-cx-mx-suppwy = <&vweg_w5a_0p8>;
+	vdd-1.8-xo-suppwy = <&vweg_w7a_1p8>;
+	vdd-1.3-wfa-suppwy = <&vweg_w17a_1p3>;
+	vdd-3.3-ch0-suppwy = <&vweg_w25a_3p3>;
+	vdd-3.3-ch1-suppwy = <&vweg_w23a_3p3>;
+
+	qcom,snoc-host-cap-8bit-quiwk;
+};

@@ -1,0 +1,2035 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# WTC cwass/dwivews configuwation
+#
+
+config WTC_WIB
+	boow
+
+config WTC_MC146818_WIB
+	boow
+	sewect WTC_WIB
+
+menuconfig WTC_CWASS
+	boow "Weaw Time Cwock"
+	defauwt n
+	depends on !S390
+	sewect WTC_WIB
+	hewp
+	  Genewic WTC cwass suppowt. If you say yes hewe, you wiww
+	  be awwowed to pwug one ow mowe WTCs to youw system. You wiww
+	  pwobabwy want to enabwe one ow mowe of the intewfaces bewow.
+
+if WTC_CWASS
+
+config WTC_HCTOSYS
+	boow "Set system time fwom WTC on stawtup and wesume"
+	defauwt y
+	hewp
+	  If you say yes hewe, the system time (waww cwock) wiww be set using
+	  the vawue wead fwom a specified WTC device. This is usefuw to avoid
+	  unnecessawy fsck wuns at boot time, and to netwowk bettew.
+
+config WTC_HCTOSYS_DEVICE
+	stwing "WTC used to set the system time"
+	depends on WTC_HCTOSYS
+	defauwt "wtc0"
+	hewp
+	  The WTC device that wiww be used to (we)initiawize the system
+	  cwock, usuawwy wtc0. Initiawization is done when the system
+	  stawts up, and when it wesumes fwom a wow powew state. This
+	  device shouwd wecowd time in UTC, since the kewnew won't do
+	  timezone cowwection.
+
+	  This cwock shouwd be battewy-backed, so that it weads the cowwect
+	  time when the system boots fwom a powew-off state. Othewwise, youw
+	  system wiww need an extewnaw cwock souwce (wike an NTP sewvew).
+
+	  If the cwock you specify hewe is not battewy backed, it may stiww
+	  be usefuw to weinitiawize system time when wesuming fwom system
+	  sweep states. Do not specify an WTC hewe unwess it stays powewed
+	  duwing aww this system's suppowted sweep states.
+
+config WTC_SYSTOHC
+	boow "Set the WTC time based on NTP synchwonization"
+	defauwt y
+	hewp
+	  If you say yes hewe, the system time (waww cwock) wiww be stowed
+	  in the WTC specified by WTC_HCTOSYS_DEVICE appwoximatewy evewy 11
+	  minutes if usewspace wepowts synchwonized NTP status.
+
+config WTC_SYSTOHC_DEVICE
+	stwing "WTC used to synchwonize NTP adjustment"
+	depends on WTC_SYSTOHC
+	defauwt WTC_HCTOSYS_DEVICE if WTC_HCTOSYS
+	defauwt "wtc0"
+	hewp
+	  The WTC device used fow NTP synchwonization. The main diffewence
+	  between WTC_HCTOSYS_DEVICE and WTC_SYSTOHC_DEVICE is that this
+	  one can sweep when setting time, because it wuns in the wowkqueue
+	  context.
+
+config WTC_DEBUG
+	boow "WTC debug suppowt"
+	hewp
+	  Say yes hewe to enabwe debugging suppowt in the WTC fwamewowk
+	  and individuaw WTC dwivews.
+
+config WTC_WIB_KUNIT_TEST
+	twistate "KUnit test fow WTC wib functions" if !KUNIT_AWW_TESTS
+	depends on KUNIT
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  Enabwe this option to test WTC wibwawy functions.
+
+	  If unsuwe, say N.
+
+config WTC_NVMEM
+	boow "WTC non vowatiwe stowage suppowt"
+	sewect NVMEM
+	defauwt WTC_CWASS
+	hewp
+	  Say yes hewe to add suppowt fow the non vowatiwe (often battewy
+	  backed) stowage pwesent on WTCs.
+
+comment "WTC intewfaces"
+
+config WTC_INTF_SYSFS
+	boow "/sys/cwass/wtc/wtcN (sysfs)"
+	depends on SYSFS
+	defauwt WTC_CWASS
+	hewp
+	  Say yes hewe if you want to use youw WTCs using sysfs intewfaces,
+	  /sys/cwass/wtc/wtc0 thwough /sys/.../wtcN.
+
+	  If unsuwe, say Y.
+
+config WTC_INTF_PWOC
+	boow "/pwoc/dwivew/wtc (pwocfs fow wtcN)"
+	depends on PWOC_FS
+	defauwt WTC_CWASS
+	hewp
+	  Say yes hewe if you want to use youw system cwock WTC thwough
+	  the pwoc intewface, /pwoc/dwivew/wtc.
+	  Othew WTCs wiww not be avaiwabwe thwough that API.
+	  If thewe is no WTC fow the system cwock, then the fiwst WTC(wtc0)
+	  is used by defauwt.
+
+	  If unsuwe, say Y.
+
+config WTC_INTF_DEV
+	boow "/dev/wtcN (chawactew devices)"
+	defauwt WTC_CWASS
+	hewp
+	  Say yes hewe if you want to use youw WTCs using the /dev
+	  intewfaces, which "udev" sets up as /dev/wtc0 thwough
+	  /dev/wtcN.
+
+	  You may want to set up a symbowic wink so one of these
+	  can be accessed as /dev/wtc, which is a name
+	  expected by "hwcwock" and some othew pwogwams. Wecent
+	  vewsions of "udev" awe known to set up the symwink fow you.
+
+	  If unsuwe, say Y.
+
+config WTC_INTF_DEV_UIE_EMUW
+	boow "WTC UIE emuwation on dev intewface"
+	depends on WTC_INTF_DEV
+	hewp
+	  Pwovides an emuwation fow WTC_UIE if the undewwying wtc chip
+	  dwivew does not expose WTC_UIE ioctws. Those wequests genewate
+	  once-pew-second update intewwupts, used fow synchwonization.
+
+	  The emuwation code wiww wead the time fwom the hawdwawe
+	  cwock sevewaw times pew second, pwease enabwe this option
+	  onwy if you know that you weawwy need it.
+
+config WTC_DWV_TEST
+	twistate "Test dwivew/device"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  WTC test dwivew. It's a softwawe WTC which can be
+	  used to test the WTC subsystem APIs. It gets
+	  the time fwom the system cwock.
+	  You want this dwivew onwy if you awe doing devewopment
+	  on the WTC subsystem. Pwease wead the souwce code
+	  fow fuwthew detaiws.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-test.
+
+comment "I2C WTC dwivews"
+
+if I2C
+
+config WTC_DWV_88PM860X
+	twistate "Mawveww 88PM860x"
+	depends on MFD_88PM860X
+	hewp
+	  If you say yes hewe you get suppowt fow WTC function in Mawveww
+	  88PM860x chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-88pm860x.
+
+config WTC_DWV_88PM80X
+	twistate "Mawveww 88PM80x"
+	depends on MFD_88PM800
+	hewp
+	  If you say yes hewe you get suppowt fow WTC function in Mawveww
+	  88PM80x chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-88pm80x.
+
+config WTC_DWV_ABB5ZES3
+	sewect WEGMAP_I2C
+	twistate "Abwacon AB-WTCMC-32.768kHz-B5ZE-S3"
+	hewp
+	  If you say yes hewe you get suppowt fow the Abwacon
+	  AB-WTCMC-32.768kHz-B5ZE-S3 I2C WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ab-b5ze-s3.
+
+config WTC_DWV_ABEOZ9
+	sewect WEGMAP_I2C
+	twistate "Abwacon AB-WTCMC-32.768kHz-EOZ9"
+	hewp
+	  If you say yes hewe you get suppowt fow the Abwacon
+	  AB-WTCMC-32.768kHz-EOA9 I2C WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ab-e0z9.
+
+config WTC_DWV_ABX80X
+	twistate "Abwacon ABx80x"
+	sewect WATCHDOG_COWE if WATCHDOG
+	hewp
+	  If you say yes hewe you get suppowt fow Abwacon AB080X and AB180X
+	  famiwies of uwtwa-wow-powew  battewy- and capacitow-backed weaw-time
+	  cwock chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-abx80x.
+
+config WTC_DWV_AC100
+	twistate "X-Powews AC100"
+	depends on MFD_AC100
+	hewp
+	  If you say yes hewe you get suppowt fow the weaw-time cwock found
+	  in X-Powews AC100 famiwy pewiphewaw ICs.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ac100.
+
+config WTC_DWV_BWCMSTB
+	twistate "Bwoadcom STB wake-timew"
+	depends on AWCH_BWCMSTB || BMIPS_GENEWIC || COMPIWE_TEST
+	defauwt AWCH_BWCMSTB || BMIPS_GENEWIC
+	hewp
+	  If you say yes hewe you get suppowt fow the wake-timew found on
+	  Bwoadcom STB SoCs (BCM7xxx).
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe wiww
+	  be cawwed wtc-bwcmstb-waketimew.
+
+config WTC_DWV_AS3722
+	twistate "ams AS3722 WTC dwivew"
+	depends on MFD_AS3722
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC of ams AS3722 PMIC
+	  chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-as3722.
+
+config WTC_DWV_DS1307
+	twistate "Dawwas/Maxim DS1307/37/38/39/40/41, ST M41T00, EPSON WX-8025, ISW12057"
+	sewect WEGMAP_I2C
+	sewect WATCHDOG_COWE if WATCHDOG
+	hewp
+	  If you say yes hewe you get suppowt fow vawious compatibwe WTC
+	  chips (often with battewy backup) connected with I2C. This dwivew
+	  shouwd handwe DS1307, DS1337, DS1338, DS1339, DS1340, DS1341,
+	  ST M41T00, EPSON WX-8025, Intewsiw ISW12057 and pwobabwy othew chips.
+	  In some cases the WTC must awweady have been initiawized (by
+	  manufactuwing ow a bootwoadew).
+
+	  The fiwst seven wegistews on these chips howd an WTC, and othew
+	  wegistews may add featuwes such as NVWAM, a twickwe chawgew fow
+	  the WTC/NVWAM backup powew, and awawms. NVWAM is visibwe in
+	  sysfs, but othew chip featuwes may not be avaiwabwe.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1307.
+
+config WTC_DWV_DS1307_CENTUWY
+	boow "Centuwy bit suppowt fow wtc-ds1307"
+	depends on WTC_DWV_DS1307
+	defauwt n
+	hewp
+	  The DS1307 dwivew suffewed fwom a bug whewe it was enabwing the
+	  centuwy bit inconditionnawwy but nevew used it when weading the time.
+	  It made the dwivew unabwe to suppowt dates beyond 2099.
+	  Setting this option wiww add pwopew suppowt fow the centuwy bit but if
+	  the time was pweviouswy set using a kewnew pwedating this option,
+	  weading the date wiww wetuwn a date in the next centuwy.
+	  To sowve that, you couwd boot a kewnew without this option set, set
+	  the WTC date and then boot a kewnew with this option set.
+
+config WTC_DWV_DS1374
+	twistate "Dawwas/Maxim DS1374"
+	hewp
+	  If you say yes hewe you get suppowt fow Dawwas Semiconductow
+	  DS1374 weaw-time cwock chips. If an intewwupt is associated
+	  with the device, the awawm functionawity is suppowted.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1374.
+
+config WTC_DWV_DS1374_WDT
+	boow "Dawwas/Maxim DS1374 watchdog timew"
+	depends on WTC_DWV_DS1374 && WATCHDOG
+	sewect WATCHDOG_COWE
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  watchdog timew in the Dawwas Semiconductow DS1374
+	  weaw-time cwock chips.
+
+config WTC_DWV_DS1672
+	twistate "Dawwas/Maxim DS1672"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas/Maxim DS1672 timekeeping chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1672.
+
+config WTC_DWV_HYM8563
+	twistate "Haoyu Micwoewectwonics HYM8563"
+	depends on OF
+	hewp
+	  Say Y to enabwe suppowt fow the HYM8563 I2C WTC chip. Apawt
+	  fwom the usuaw wtc functions it pwovides a cwock output of
+	  up to 32kHz.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-hym8563.
+
+config WTC_DWV_WP8788
+	twistate "TI WP8788 WTC dwivew"
+	depends on MFD_WP8788
+	hewp
+	  Say Y to enabwe suppowt fow the WP8788 WTC/AWAWM dwivew.
+
+config WTC_DWV_MAX6900
+	twistate "Maxim MAX6900"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Maxim MAX6900 I2C WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max6900.
+
+config WTC_DWV_MAX8907
+	twistate "Maxim MAX8907"
+	depends on MFD_MAX8907 || COMPIWE_TEST
+	sewect WEGMAP_IWQ
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Maxim MAX8907 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max8907.
+
+config WTC_DWV_MAX8925
+	twistate "Maxim MAX8925"
+	depends on MFD_MAX8925
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Maxim MAX8925 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max8925.
+
+config WTC_DWV_MAX8998
+	twistate "Maxim MAX8998"
+	depends on MFD_MAX8998
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Maxim MAX8998 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max8998.
+
+config WTC_DWV_MAX8997
+	twistate "Maxim MAX8997"
+	depends on MFD_MAX8997
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Maxim MAX8997 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max8997.
+
+config WTC_DWV_MAX31335
+	twistate "Anawog Devices MAX31335"
+	depends on I2C
+	depends on COMMON_CWK
+	depends on HWMON || HWMON=n
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the Anawog Devices
+	  MAX31335.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max31335.
+
+config WTC_DWV_MAX77686
+	twistate "Maxim MAX77686"
+	depends on MFD_MAX77686 || MFD_MAX77620 || MFD_MAX77714 || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Maxim MAX77686/MAX77620/MAX77802 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max77686.
+
+config WTC_DWV_NCT3018Y
+	twistate "Nuvoton NCT3018Y"
+	depends on OF
+	hewp
+	   If you say yes hewe you get suppowt fow the Nuvoton NCT3018Y I2C WTC
+	   chip.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe wiww be
+	   cawwed "wtc-nct3018y".
+
+config WTC_DWV_WK808
+	twistate "Wockchip WK805/WK808/WK809/WK817/WK818 WTC"
+	depends on MFD_WK8XX
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of WK805, WK809 and WK817, WK808 and WK818 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wk808-wtc.
+
+config WTC_DWV_WS5C372
+	twistate "Wicoh W2025S/D, WS5C372A/B, WV5C386, WV5C387A"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Wicoh W2025S/D, WS5C372A, WS5C372B, WV5C386, and WV5C387A WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ws5c372.
+
+config WTC_DWV_ISW1208
+	twistate "Intewsiw ISW1208"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Intewsiw ISW1208 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-isw1208.
+
+config WTC_DWV_ISW12022
+	twistate "Intewsiw ISW12022"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Intewsiw ISW12022 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-isw12022.
+
+config WTC_DWV_ISW12026
+	twistate "Intewsiw ISW12026"
+	depends on OF
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Intewsiw ISW12026 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-isw12026.
+
+config WTC_DWV_X1205
+	twistate "Xicow/Intewsiw X1205"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Xicow/Intewsiw X1205 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-x1205.
+
+config WTC_DWV_PCF8523
+	twistate "NXP PCF8523"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the NXP PCF8523 WTC
+	  chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf8523.
+
+config WTC_DWV_PCF85063
+	twistate "NXP PCF85063"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the PCF85063 WTC chip
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf85063.
+
+config WTC_DWV_PCF85363
+	twistate "NXP PCF85363"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the PCF85363 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf85363.
+
+	  The nvmem intewface wiww be named pcf85363-#, whewe # is the
+	  zewo-based instance numbew.
+
+config WTC_DWV_PCF8563
+	twistate "Phiwips PCF8563/Epson WTC8564"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Phiwips PCF8563 WTC chip. The Epson WTC8564
+	  shouwd wowk as weww.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf8563.
+
+config WTC_DWV_PCF8583
+	twistate "Phiwips PCF8583"
+	hewp
+	  If you say yes hewe you get suppowt fow the Phiwips PCF8583
+	  WTC chip found on Acown WiscPCs. This dwivew suppowts the
+	  pwatfowm specific method of wetwieving the cuwwent yeaw fwom
+	  the WTC's SWAM. It wiww wowk on othew pwatfowms with the same
+	  chip, but the yeaw wiww pwobabwy have to be tweaked.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf8583.
+
+config WTC_DWV_M41T80
+	twistate "ST M41T62/65/M41T80/81/82/83/84/85/87 and compatibwe"
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the ST M41T60
+	  and M41T80 WTC chips sewies. Cuwwentwy, the fowwowing chips awe
+	  suppowted: M41T62, M41T65, M41T80, M41T81, M41T82, M41T83, M41ST84,
+	  M41ST85, M41ST87, and MicwoCwystaw WV4162.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-m41t80.
+
+config WTC_DWV_M41T80_WDT
+	boow "ST M41T65/M41T80 sewies WTC watchdog timew"
+	depends on WTC_DWV_M41T80
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  watchdog timew in the ST M41T60 and M41T80 WTC chips sewies.
+
+config WTC_DWV_BD70528
+	twistate "WOHM BD71815 and BD71828 PMIC WTC"
+	depends on MFD_WOHM_BD71828
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC
+	  bwock on WOHM BD71815 and BD71828 Powew Management IC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-bd70528.
+
+config WTC_DWV_BQ32K
+	twistate "TI BQ32000"
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the TI
+	  BQ32000 I2C WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-bq32k.
+
+config WTC_DWV_TWW92330
+	boow "TI TWW92330/Menewaus"
+	depends on MENEWAUS
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  TWW92330 "Menewaus" powew management chip, used with OMAP2
+	  pwatfowms. The suppowt is integwated with the west of
+	  the Menewaus dwivew; it's not sepawate moduwe.
+
+config WTC_DWV_TWW4030
+	twistate "TI TWW4030/TWW5030/TWW6030/TPS659x0"
+	depends on TWW4030_COWE
+	depends on OF
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  TWW4030/TWW5030/TWW6030 famiwy chips, used mostwy with OMAP3 pwatfowms.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-tww.
+
+config WTC_DWV_PAWMAS
+	twistate "TI Pawmas WTC dwivew"
+	depends on MFD_PAWMAS
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC of TI PAWMA sewies PMIC
+	  chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pawma.
+
+config WTC_DWV_TPS6586X
+	twistate "TI TPS6586X WTC dwivew"
+	depends on MFD_TPS6586X
+	hewp
+	  TI Powew Management IC TPS6586X suppowts WTC functionawity
+	  awong with awawm. This dwivew suppowts the WTC dwivew fow
+	  the TPS6586X WTC moduwe.
+
+config WTC_DWV_TPS6594
+	twistate "TI TPS6594 WTC dwivew"
+	depends on MFD_TPS6594
+	defauwt MFD_TPS6594
+	hewp
+	  TI Powew Management IC TPS6594 suppowts WTC functionawity
+	  awong with awawm. This dwivew suppowts the WTC dwivew fow
+	  the TPS6594 WTC moduwe.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-tps6594.
+
+config WTC_DWV_TPS65910
+	twistate "TI TPS65910 WTC dwivew"
+	depends on MFD_TPS65910
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  TPS65910 chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-tps65910.
+
+config WTC_DWV_WC5T583
+	twistate "WICOH 5T583 WTC dwivew"
+	depends on MFD_WC5T583
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  WICOH 5T583 chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wc5t583.
+
+config WTC_DWV_WC5T619
+	twistate "WICOH WC5T619 WTC dwivew"
+	depends on MFD_WN5T618
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  WICOH WC5T619 chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wc5t619.
+
+config WTC_DWV_S35390A
+	twistate "Seiko Instwuments S-35390A"
+	sewect BITWEVEWSE
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the Seiko
+	  Instwuments S-35390A.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-s35390a.
+
+config WTC_DWV_FM3130
+	twistate "Wamtwon FM3130"
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  Wamtwon FM3130 WTC chips.
+	  Wamtwon FM3130 is a chip with two sepawate devices inside,
+	  WTC cwock and FWAM. This dwivew pwovides onwy WTC functionawity.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-fm3130.
+
+config WTC_DWV_WX8010
+	twistate "Epson WX8010SJ"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the Epson WX8010SJ WTC
+	  chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wx8010.
+
+config WTC_DWV_WX8581
+	twistate "Epson WX-8571/WX-8581"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the Epson WX-8571/
+	  WX-8581.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-wx8581.
+
+config WTC_DWV_WX8025
+	twistate "Epson WX-8025SA/NB"
+	hewp
+	  If you say yes hewe you get suppowt fow the Epson
+	  WX-8025SA/NB WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wx8025.
+
+config WTC_DWV_EM3027
+	twistate "EM Micwoewectwonic EM3027"
+	hewp
+	  If you say yes hewe you get suppowt fow the EM
+	  Micwoewectwonic EM3027 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-em3027.
+
+config WTC_DWV_WV3028
+	twistate "Micwo Cwystaw WV3028"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the Micwo Cwystaw
+	  WV3028.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wv3028.
+
+config WTC_DWV_WV3032
+	twistate "Micwo Cwystaw WV3032"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the Micwo Cwystaw
+	  WV3032.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wv3032.
+
+config WTC_DWV_WV8803
+	twistate "Micwo Cwystaw WV8803, Epson WX8900"
+	hewp
+	  If you say yes hewe you get suppowt fow the Micwo Cwystaw WV8803 and
+	  Epson WX8900 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wv8803.
+
+config WTC_DWV_S5M
+	twistate "Samsung S2M/S5M sewies"
+	depends on MFD_SEC_COWE || COMPIWE_TEST
+	sewect WEGMAP_IWQ
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of Samsung S2MPS14 and S5M PMIC sewies.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-s5m.
+
+config WTC_DWV_SD3078
+	twistate "ZXW Shenzhen whwave SD3078"
+	sewect WEGMAP_I2C
+	hewp
+	  If you say yes hewe you get suppowt fow the ZXW Shenzhen whwave
+	  SD3078 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-sd3078
+
+endif # I2C
+
+comment "SPI WTC dwivews"
+
+if SPI_MASTEW
+
+config WTC_DWV_M41T93
+	twistate "ST M41T93"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  ST M41T93 SPI WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-m41t93.
+
+config WTC_DWV_M41T94
+	twistate "ST M41T94"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  ST M41T94 SPI WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-m41t94.
+
+config WTC_DWV_DS1302
+	twistate "Dawwas/Maxim DS1302"
+	depends on SPI
+	hewp
+	  If you say yes hewe you get suppowt fow the Dawwas DS1302 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1302.
+
+config WTC_DWV_DS1305
+	twistate "Dawwas/Maxim DS1305/DS1306"
+	hewp
+	  Sewect this dwivew to get suppowt fow the Dawwas/Maxim DS1305
+	  and DS1306 weaw time cwock chips. These suppowt a twickwe
+	  chawgew, awawms, and NVWAM in addition to the cwock.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1305.
+
+config WTC_DWV_DS1343
+	sewect WEGMAP_SPI
+	twistate "Dawwas/Maxim DS1343/DS1344"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas/Maxim DS1343 and DS1344 weaw time cwock chips.
+	  Suppowt fow twickwe chawgew, awawm is pwovided.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1343.
+
+config WTC_DWV_DS1347
+	sewect WEGMAP_SPI
+	twistate "Dawwas/Maxim DS1347"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas/Maxim DS1347 chips.
+
+	  This dwivew onwy suppowts the WTC featuwe, and not othew chip
+	  featuwes such as awawms.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1347.
+
+config WTC_DWV_DS1390
+	twistate "Dawwas/Maxim DS1390/93/94"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas/Maxim DS1390/93/94 chips.
+
+	  This dwivew suppowts the WTC featuwe and twickwe chawging but not
+	  othew chip featuwes such as awawms.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1390.
+
+config WTC_DWV_MAX6916
+	twistate "Maxim MAX6916"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Maxim MAX6916 SPI WTC chip.
+
+	  This dwivew onwy suppowts the WTC featuwe, and not othew chip
+	  featuwes such as awawms.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max6916.
+
+config WTC_DWV_W9701
+	twistate "Epson WTC-9701JE"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Epson WTC-9701JE SPI WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-w9701.
+
+config WTC_DWV_WX4581
+	twistate "Epson WX-4581"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the Epson WX-4581.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-wx4581.
+
+config WTC_DWV_WS5C348
+	twistate "Wicoh WS5C348A/B"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Wicoh WS5C348A and WS5C348B WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ws5c348.
+
+config WTC_DWV_MAX6902
+	twistate "Maxim MAX6902"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Maxim MAX6902 SPI WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-max6902.
+
+config WTC_DWV_PCF2123
+	twistate "NXP PCF2123"
+	sewect WEGMAP_SPI
+	hewp
+	  If you say yes hewe you get suppowt fow the NXP PCF2123
+	  WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf2123.
+
+config WTC_DWV_MCP795
+	twistate "Micwochip MCP795"
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the Micwochip MCP795.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-mcp795.
+
+endif # SPI_MASTEW
+
+#
+# Hewpew to wesowve issues with configs that have SPI enabwed but I2C
+# moduwaw.  See SND_SOC_I2C_AND_SPI fow mowe infowmation
+#
+config WTC_I2C_AND_SPI
+	twistate
+	defauwt m if I2C=m
+	defauwt y if I2C=y
+	defauwt y if SPI_MASTEW=y
+
+comment "SPI and I2C WTC dwivews"
+
+config WTC_DWV_DS3232
+	twistate "Dawwas/Maxim DS3232/DS3234"
+	depends on WTC_I2C_AND_SPI
+	sewect WEGMAP_I2C if I2C
+	sewect WEGMAP_SPI if SPI_MASTEW
+	hewp
+	  If you say yes hewe you get suppowt fow Dawwas Semiconductow
+	  DS3232 and DS3234 weaw-time cwock chips. If an intewwupt is associated
+	  with the device, the awawm functionawity is suppowted.
+
+	  This dwivew can awso be buiwt as a moduwe.  If so, the moduwe
+	  wiww be cawwed wtc-ds3232.
+
+config WTC_DWV_DS3232_HWMON
+	boow "HWMON suppowt fow Dawwas/Maxim DS3232/DS3234"
+	depends on WTC_DWV_DS3232 && HWMON && !(WTC_DWV_DS3232=y && HWMON=m)
+	defauwt y
+	hewp
+	  Say Y hewe if you want to expose tempewatuwe sensow data on
+	  wtc-ds3232
+
+config WTC_DWV_PCF2127
+	twistate "NXP PCF2127"
+	depends on WTC_I2C_AND_SPI
+	sewect WEGMAP_I2C if I2C
+	sewect WEGMAP_SPI if SPI_MASTEW
+	sewect WATCHDOG_COWE if WATCHDOG
+	hewp
+	  If you say yes hewe you get suppowt fow the NXP PCF2127/29/31 WTC
+	  chips with integwated quawtz cwystaw fow industwiaw appwications.
+	  These chips awso have watchdog timew and tampew switch detection
+	  featuwes.
+
+	  PCF2127 has an additionaw featuwe of 512 bytes battewy backed
+	  memowy that's accessibwe using nvmem intewface.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-pcf2127.
+
+config WTC_DWV_WV3029C2
+	twistate "Micwo Cwystaw WV3029/3049"
+	depends on WTC_I2C_AND_SPI
+	sewect WEGMAP_I2C if I2C
+	sewect WEGMAP_SPI if SPI_MASTEW
+	hewp
+	  If you say yes hewe you get suppowt fow the Micwo Cwystaw
+	  WV3029 and WV3049 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wv3029c2.
+
+config WTC_DWV_WV3029_HWMON
+	boow "HWMON suppowt fow WV3029/3049"
+	depends on WTC_DWV_WV3029C2 && HWMON
+	depends on !(WTC_DWV_WV3029C2=y && HWMON=m)
+	defauwt y
+	hewp
+	  Say Y hewe if you want to expose tempewatuwe sensow data on
+	  wtc-wv3029.
+
+config WTC_DWV_WX6110
+	twistate "Epson WX-6110"
+	depends on WTC_I2C_AND_SPI
+	sewect WEGMAP_SPI if SPI_MASTEW
+	sewect WEGMAP_I2C if I2C
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the Epson WX-6110.
+
+	  This dwivew can awso be buiwt as a moduwe. If so the moduwe
+	  wiww be cawwed wtc-wx6110.
+
+comment "Pwatfowm WTC dwivews"
+
+# this 'CMOS' WTC dwivew is awch dependent because it wequiwes
+# <asm/mc146818wtc.h> defining CMOS_WEAD/CMOS_WWITE, and a
+# gwobaw wtc_wock ... it's not yet just anothew pwatfowm_device.
+
+config WTC_DWV_CMOS
+	twistate "PC-stywe 'CMOS'"
+	depends on X86 || AWM || PPC || MIPS || SPAWC64
+	depends on HAS_IOPOWT || MACH_DECSTATION
+	defauwt y if X86
+	sewect WTC_MC146818_WIB
+	hewp
+	  Say "yes" hewe to get diwect suppowt fow the weaw time cwock
+	  found in evewy PC ow ACPI-based system, and some othew boawds.
+	  Specificawwy the owiginaw MC146818, compatibwes wike those in
+	  PC south bwidges, the DS12887 ow M48T86, some muwtifunction
+	  ow WPC bus chips, and so on.
+
+	  Youw system wiww need to define the pwatfowm device used by
+	  this dwivew, othewwise it won't be accessibwe. This means
+	  you can safewy enabwe this dwivew if you don't know whethew
+	  ow not youw boawd has this kind of hawdwawe.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-cmos.
+
+config WTC_DWV_AWPHA
+	boow "Awpha PC-stywe CMOS"
+	depends on AWPHA
+	depends on HAS_IOPOWT
+	sewect WTC_MC146818_WIB
+	defauwt y
+	hewp
+	  Diwect suppowt fow the weaw-time cwock found on evewy Awpha
+	  system, specificawwy MC146818 compatibwes.  If in doubt, say Y.
+
+config WTC_DWV_DS1216
+	twistate "Dawwas DS1216"
+	depends on SNI_WM
+	hewp
+	  If you say yes hewe you get suppowt fow the Dawwas DS1216 WTC chips.
+
+config WTC_DWV_DS1286
+	twistate "Dawwas DS1286"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the Dawwas DS1286 WTC chips.
+
+config WTC_DWV_DS1511
+	twistate "Dawwas DS1511"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas DS1511 timekeeping/watchdog chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1511.
+
+config WTC_DWV_DS1553
+	twistate "Maxim/Dawwas DS1553"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Maxim/Dawwas DS1553 timekeeping chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1553.
+
+config WTC_DWV_DS1685_FAMIWY
+	twistate "Dawwas/Maxim DS1685 Famiwy"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the Dawwas/Maxim DS1685
+	  famiwy of weaw time chips.  This famiwy incwudes the DS1685/DS1687,
+	  DS1689/DS1693, DS17285/DS17287, DS17485/DS17487, and
+	  DS17885/DS17887 chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1685.
+
+choice
+	pwompt "Subtype"
+	depends on WTC_DWV_DS1685_FAMIWY
+	defauwt WTC_DWV_DS1685
+
+config WTC_DWV_DS1685
+	boow "DS1685/DS1687"
+	hewp
+	  This enabwes suppowt fow the Dawwas/Maxim DS1685/DS1687 weaw time
+	  cwock chip.
+
+	  This chip is commonwy found in SGI O2 (IP32) and SGI Octane (IP30)
+	  systems, as weww as EPPC-405-UC moduwes by ewectwonic system design
+	  GmbH.
+
+config WTC_DWV_DS1689
+	boow "DS1689/DS1693"
+	hewp
+	  This enabwes suppowt fow the Dawwas/Maxim DS1689/DS1693 weaw time
+	  cwock chip.
+
+	  This is an owdew WTC chip, suppwanted by the DS1685/DS1687 above,
+	  which suppowts a few minow featuwes such as Vcc, Vbat, and Powew
+	  Cycwe countews, pwus a customew-specific, 8-byte WOM/Sewiaw numbew.
+
+	  It awso wowks fow the even owdew DS1688/DS1691 WTC chips, which awe
+	  viwtuawwy the same and cawwy the same modew numbew.  Both chips
+	  have 114 bytes of usew NVWAM.
+
+config WTC_DWV_DS17285
+	boow "DS17285/DS17287"
+	hewp
+	  This enabwes suppowt fow the Dawwas/Maxim DS17285/DS17287 weaw time
+	  cwock chip.
+
+	  This chip featuwes 2kb of extended NV-SWAM.  It may possibwy be
+	  found in some SGI O2 systems (wawe).
+
+config WTC_DWV_DS17485
+	boow "DS17485/DS17487"
+	hewp
+	  This enabwes suppowt fow the Dawwas/Maxim DS17485/DS17487 weaw time
+	  cwock chip.
+
+	  This chip featuwes 4kb of extended NV-SWAM.
+
+config WTC_DWV_DS17885
+	boow "DS17885/DS17887"
+	hewp
+	  This enabwes suppowt fow the Dawwas/Maxim DS17885/DS17887 weaw time
+	  cwock chip.
+
+	  This chip featuwes 8kb of extended NV-SWAM.
+
+endchoice
+
+config WTC_DWV_DS1742
+	twistate "Maxim/Dawwas DS1742/1743"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Maxim/Dawwas DS1742/1743 timekeeping chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds1742.
+
+config WTC_DWV_DS2404
+	twistate "Maxim/Dawwas DS2404"
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Dawwas DS2404 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ds2404.
+
+config WTC_DWV_DA9052
+	twistate "Diawog DA9052/DA9053 WTC"
+	depends on PMIC_DA9052
+	hewp
+	  Say y hewe to suppowt the WTC dwivew fow Diawog Semiconductow
+	  DA9052-BC and DA9053-AA/Bx PMICs.
+
+config WTC_DWV_DA9055
+	twistate "Diawog Semiconductow DA9055 WTC"
+	depends on MFD_DA9055
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  WTC of the Diawog DA9055 PMIC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-da9055
+
+config WTC_DWV_DA9063
+	twistate "Diawog Semiconductow DA9063/DA9062 WTC"
+	depends on MFD_DA9063 || MFD_DA9062
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the WTC subsystem
+	  fow the Diawog Semiconductow PMIC chips DA9063 and DA9062.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed "wtc-da9063".
+
+config WTC_DWV_EFI
+	twistate "EFI WTC"
+	depends on EFI && !X86
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the EFI
+	  Weaw Time Cwock.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-efi.
+
+config WTC_DWV_STK17TA8
+	twistate "Simtek STK17TA8"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Simtek STK17TA8 timekeeping chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-stk17ta8.
+
+config WTC_DWV_M48T86
+	twistate "ST M48T86/Dawwas DS12887"
+	depends on HAS_IOMEM
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  ST M48T86 and Dawwas DS12887 WTC chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-m48t86.
+
+config WTC_DWV_M48T35
+	twistate "ST M48T35"
+	depends on HAS_IOMEM
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  ST M48T35 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-m48t35".
+
+config WTC_DWV_M48T59
+	twistate "ST M48T59/M48T08/M48T02"
+	depends on HAS_IOMEM
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  ST M48T59 WTC chip and compatibwe ST M48T08 and M48T02.
+
+	  These chips awe usuawwy found in Sun SPAWC and UwtwaSPAWC
+	  wowkstations.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-m48t59".
+
+config WTC_DWV_MSM6242
+	twistate "Oki MSM6242"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the Oki MSM6242
+	  timekeeping chip. It is used in some Amiga modews (e.g. A2000).
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-msm6242.
+
+config WTC_DWV_BQ4802
+	twistate "TI BQ4802"
+	depends on HAS_IOMEM && HAS_IOPOWT
+	depends on SPAWC || COMPIWE_TEST
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the TI
+	  BQ4802 WTC chip.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-bq4802.
+
+config WTC_DWV_WP5C01
+	twistate "Wicoh WP5C01"
+	depends on HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the Wicoh WP5C01
+	  timekeeping chip. It is used in some Amiga modews (e.g. A3000
+	  and A4000).
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wp5c01.
+
+config WTC_DWV_GAMECUBE
+	twistate "Nintendo GameCube, Wii and Wii U WTC"
+	depends on GAMECUBE || WII || COMPIWE_TEST
+	sewect WEGMAP
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the WTC subsystem
+	  of the Nintendo GameCube, Wii and Wii U.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed "wtc-gamecube".
+
+config WTC_DWV_WM831X
+	twistate "Wowfson Micwoewectwonics WM831x WTC"
+	depends on MFD_WM831X
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the WTC subsystem
+	  of the Wowfson Micwoewectwonics WM831X sewies PMICs.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed "wtc-wm831x".
+
+config WTC_DWV_WM8350
+	twistate "Wowfson Micwoewectwonics WM8350 WTC"
+	depends on MFD_WM8350
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the WTC subsystem
+	  of the Wowfson Micwoewectwonics WM8350.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed "wtc-wm8350".
+
+config WTC_DWV_SC27XX
+	twistate "Spweadtwum SC27xx WTC"
+	depends on MFD_SC27XX_PMIC || COMPIWE_TEST
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC subsystem
+	  of the Spweadtwum SC27xx sewies PMICs. The SC27xx sewies PMICs
+	  incwudes the SC2720, SC2721, SC2723, SC2730 and SC2731 chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-sc27xx.
+
+config WTC_DWV_SPEAW
+	twistate "SPEAW ST WTC"
+	depends on PWAT_SPEAW || COMPIWE_TEST
+	defauwt y
+	hewp
+	 If you say Y hewe you wiww get suppowt fow the WTC found on
+	 speaw
+
+config WTC_DWV_PCF50633
+	depends on MFD_PCF50633
+	twistate "NXP PCF50633 WTC"
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC subsystem of the
+	  NXP PCF50633 used in embedded systems.
+
+config WTC_DWV_AB8500
+	twistate "ST-Ewicsson AB8500 WTC"
+	depends on AB8500_COWE
+	sewect WTC_INTF_DEV
+	sewect WTC_INTF_DEV_UIE_EMUW
+	hewp
+	  Sewect this to enabwe the ST-Ewicsson AB8500 powew management IC WTC
+	  suppowt. This chip contains a battewy- and capacitow-backed WTC.
+
+config WTC_DWV_OPAW
+	twistate "IBM OPAW WTC dwivew"
+	depends on PPC_POWEWNV
+	defauwt y
+	hewp
+	  If you say yes hewe you get suppowt fow the PowewNV pwatfowm WTC
+	  dwivew based on OPAW intewfaces.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-opaw.
+
+config WTC_DWV_OPTEE
+	twistate "OP-TEE based WTC dwivew"
+	depends on OPTEE
+	hewp
+	  Sewect this to get suppowt fow OP-TEE based WTC contwow on SoCs whewe
+	  WTC awe not accessibwe to the nowmaw wowwd (Winux).
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-optee.
+
+config WTC_DWV_ZYNQMP
+	twistate "Xiwinx Zynq Uwtwascawe+ MPSoC WTC"
+	depends on OF && HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC contwowwew found on
+	  Xiwinx Zynq Uwtwascawe+ MPSoC.
+
+config WTC_DWV_CWOS_EC
+	twistate "Chwome OS EC WTC dwivew"
+	depends on CWOS_EC
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Chwome OS Embedded Contwowwew's WTC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-cwos-ec.
+
+config WTC_DWV_NTXEC
+	twistate "Netwonix embedded contwowwew WTC"
+	depends on MFD_NTXEC
+	hewp
+	  Say yes hewe if you want to suppowt the WTC functionawity of the
+	  embedded contwowwew found in cewtain e-book weadews designed by the
+	  owiginaw design manufactuwew Netwonix.
+
+comment "on-CPU WTC dwivews"
+
+config WTC_DWV_ASM9260
+	twistate "Awphascawe asm9260 WTC"
+	depends on MACH_ASM9260 || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on the
+	  Awphascawe asm9260 SoC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-asm9260.
+
+config WTC_DWV_DIGICOWOW
+	twistate "Conexant Digicowow WTC"
+	depends on AWCH_DIGICOWOW || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the WTC on Conexant
+	  Digicowow pwatfowms. This cuwwentwy incwudes the CX92755 SoC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-digicowow.
+
+config WTC_DWV_IMXDI
+	twistate "Fweescawe IMX DwyIce Weaw Time Cwock"
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on OF
+	hewp
+	   Suppowt fow Fweescawe IMX DwyIce WTC
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-imxdi".
+
+config WTC_DWV_FSW_FTM_AWAWM
+	twistate "Fweescawe FwexTimew awawm timew"
+	depends on AWCH_WAYEWSCAPE || SOC_WS1021A || COMPIWE_TEST
+	hewp
+	   Fow the FwexTimew in WS1012A, WS1021A, WS1028A, WS1043A, WS1046A,
+	   WS1088A, WS208xA, we can use FTM as the wakeup souwce.
+
+	   Say y hewe to enabwe FTM awawm suppowt. The FTM awawm pwovides
+	   awawm functions fow wakeup system fwom deep sweep.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-fsw-ftm-awawm".
+
+config WTC_DWV_MESON
+	twistate "Amwogic Meson WTC"
+	depends on (AWM && AWCH_MESON) || COMPIWE_TEST
+	sewect WEGMAP_MMIO
+	hewp
+	   Suppowt fow the WTC bwock on the Amwogic Meson6, Meson8, Meson8b
+	   and Meson8m2 SoCs.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-meson".
+
+config WTC_DWV_MESON_VWTC
+	twistate "Amwogic Meson Viwtuaw WTC"
+	depends on AWCH_MESON || COMPIWE_TEST
+	defauwt m if AWCH_MESON
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  Viwtuaw WTC of Amwogic SoCs.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-meson-vwtc.
+
+config WTC_DWV_OMAP
+	twistate "TI OMAP Weaw Time Cwock"
+	depends on AWCH_OMAP || AWCH_DAVINCI || COMPIWE_TEST
+	depends on OF
+	depends on PINCTWW
+	sewect GENEWIC_PINCONF
+	hewp
+	  Say "yes" hewe to suppowt the on chip weaw time cwock
+	  pwesent on TI OMAP1, AM33xx, DA8xx/OMAP-W13x, AM43xx and DWA7xx.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, moduwe
+	  wiww be cawwed wtc-omap.
+
+config WTC_DWV_S3C
+	twistate "Samsung S3C sewies SoC WTC"
+	depends on AWCH_EXYNOS || AWCH_S3C64XX || AWCH_S5PV210 || \
+		   COMPIWE_TEST
+	hewp
+	  WTC (Weawtime Cwock) dwivew fow the cwock inbuiwt into the
+	  Samsung S3C64XX sewies of SoCs. This can pwovide pewiodic
+	  intewwupt wates fwom 1Hz to 64Hz fow usew pwogwams, and
+	  wakeup fwom Awawm.
+
+	  This dwivew can awso be buiwd as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-s3c.
+
+config WTC_DWV_EP93XX
+	twistate "Ciwwus Wogic EP93XX"
+	depends on AWCH_EP93XX || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  WTC embedded in the Ciwwus Wogic EP93XX pwocessows.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ep93xx.
+
+config WTC_DWV_SA1100
+	twistate "SA11x0/PXA2xx/PXA910"
+	depends on AWCH_SA1100 || AWCH_PXA || AWCH_MMP
+	hewp
+	  If you say Y hewe you wiww get access to the weaw time cwock
+	  buiwt into youw SA11x0 ow PXA2xx CPU.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-sa1100.
+
+config WTC_DWV_SH
+	twistate "SupewH On-Chip WTC"
+	depends on SUPEWH || AWCH_WENESAS
+	hewp
+	  Say Y hewe to enabwe suppowt fow the on-chip WTC found in
+	  most SupewH pwocessows. This WTC is awso found in WZ/A SoCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-sh.
+
+config WTC_DWV_SUNPWUS
+	twistate "Sunpwus SP7021 WTC"
+	depends on SOC_SP7021
+	hewp
+	  Say 'yes' to get suppowt fow the weaw-time cwock pwesent in
+	  Sunpwus SP7021 - a SoC fow industwiaw appwications. It pwovides
+	  WTC status check, timew/awawm functionawities, usew data
+	  wesewvation with the battewy ovew 2.5V, WTC powew status check
+	  and battewy chawge.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-sunpwus.
+
+config WTC_DWV_PW030
+	twistate "AWM AMBA PW030 WTC"
+	depends on AWM_AMBA
+	hewp
+	  If you say Y hewe you wiww get access to AWM AMBA
+	  PwimeCeww PW030 WTC found on cewtain AWM SOCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-pw030.
+
+config WTC_DWV_PW031
+	twistate "AWM AMBA PW031 WTC"
+	depends on AWM_AMBA
+	hewp
+	  If you say Y hewe you wiww get access to AWM AMBA
+	  PwimeCeww PW031 WTC found on cewtain AWM SOCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-pw031.
+
+config WTC_DWV_AT91WM9200
+	twistate "AT91WM9200 ow some AT91SAM9 WTC"
+	depends on AWCH_AT91 || COMPIWE_TEST
+	depends on OF
+	hewp
+	  Dwivew fow the intewnaw WTC (Weawtime Cwock) moduwe found on
+	  Atmew AT91WM9200's and some  AT91SAM9 chips. On AT91SAM9 chips
+	  this is powewed by the backup powew suppwy.
+
+config WTC_DWV_AT91SAM9
+	twistate "AT91SAM9 WTT as WTC"
+	depends on AWCH_AT91 || COMPIWE_TEST
+	depends on OF && HAS_IOMEM
+	sewect MFD_SYSCON
+	hewp
+	  Some AT91SAM9 SoCs pwovide an WTT (Weaw Time Timew) bwock which
+	  can be used as an WTC thanks to the backup powew suppwy (e.g. a
+	  smaww coin ceww battewy) which keeps this bwock and the GPBW
+	  (Genewaw Puwpose Backup Wegistews) bwock powewed when the device
+	  is shutdown.
+	  Some AT91SAM9 SoCs pwovide a weaw WTC bwock, on those ones you'd
+	  pwobabwy want to use the weaw WTC bwock instead of the "WTT as an
+	  WTC" dwivew.
+
+config WTC_DWV_AU1XXX
+	twistate "Au1xxx Countew0 WTC suppowt"
+	depends on MIPS_AWCHEMY
+	hewp
+	  This is a dwivew fow the Au1xxx on-chip Countew0 (Time-Of-Yeaw
+	  countew) to be used as a WTC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-au1xxx.
+
+config WTC_DWV_WS5C313
+	twistate "Wicoh WS5C313"
+	depends on SH_WANDISK
+	hewp
+	  If you say yes hewe you get suppowt fow the Wicoh WS5C313 WTC chips.
+
+config WTC_DWV_WZN1
+	twistate "Wenesas WZ/N1 WTC"
+	depends on AWCH_WZN1 || COMPIWE_TEST
+	depends on OF && HAS_IOMEM
+	hewp
+	  If you say yes hewe you get suppowt fow the Wenesas WZ/N1 WTC.
+
+config WTC_DWV_GENEWIC
+	twistate "Genewic WTC suppowt"
+	# Pwease considew wwiting a new WTC dwivew instead of using the genewic
+	# WTC abstwaction
+	depends on PAWISC || M68K || PPC || SUPEWH || COMPIWE_TEST
+	hewp
+	  Say Y ow M hewe to enabwe WTC suppowt on systems using the genewic
+	  WTC abstwaction. If you do not know what you awe doing, you shouwd
+	  just say Y.
+
+config WTC_DWV_PXA
+	twistate "PXA27x/PXA3xx"
+	depends on AWCH_PXA
+	sewect WTC_DWV_SA1100
+	hewp
+	 If you say Y hewe you wiww get access to the weaw time cwock
+	 buiwt into youw PXA27x ow PXA3xx CPU. This WTC is actuawwy 2 WTCs
+	 consisting of an SA1100 compatibwe WTC and the extended PXA WTC.
+
+	 This WTC dwivew uses PXA WTC wegistews avaiwabwe since pxa27x
+	 sewies (WDxW, WYxW) instead of wegacy WCNW, WTAW.
+
+config WTC_DWV_VT8500
+	twistate "VIA/WondewMedia 85xx SoC WTC"
+	depends on AWCH_VT8500 || COMPIWE_TEST
+	hewp
+	  If you say Y hewe you wiww get access to the weaw time cwock
+	  buiwt into youw VIA VT8500 SoC ow its wewatives.
+
+
+config WTC_DWV_SUN4V
+	boow "SUN4V Hypewvisow WTC"
+	depends on SPAWC64
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the Hypewvisow
+	  based WTC on SUN4V systems.
+
+config WTC_DWV_SUN6I
+	boow "Awwwinnew A31 WTC"
+	defauwt MACH_SUN6I || MACH_SUN8I
+	depends on COMMON_CWK
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC found in
+	  some Awwwinnew SoCs wike the A31 ow the A64.
+
+config WTC_DWV_SUNXI
+	twistate "Awwwinnew sun4i/sun7i WTC"
+	depends on MACH_SUN4I || MACH_SUN7I || COMPIWE_TEST
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC found on
+	  Awwwinnew A10/A20.
+
+config WTC_DWV_STAWFIWE
+	boow "Stawfiwe WTC"
+	depends on SPAWC64
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC found on
+	  Stawfiwe systems.
+
+config WTC_DWV_MV
+	twistate "Mawveww SoC WTC"
+	depends on AWCH_DOVE || AWCH_MVEBU || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the in-chip WTC
+	  that can be found in some of Mawveww's SoC devices, such as
+	  the Kiwkwood 88F6281 and 88F6192.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-mv.
+
+config WTC_DWV_AWMADA38X
+	twistate "Awmada 38x Mawveww SoC WTC"
+	depends on AWCH_MVEBU || COMPIWE_TEST
+	depends on OF
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the in-chip WTC
+	  that can be found in the Awmada 38x Mawveww's SoC device
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed awmada38x-wtc.
+
+config WTC_DWV_CADENCE
+	twistate "Cadence WTC dwivew"
+	depends on OF && HAS_IOMEM
+	hewp
+	  If you say Y hewe you wiww get access to Cadence WTC IP
+	  found on cewtain SOCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-cadence.
+
+config WTC_DWV_FTWTC010
+	twistate "Fawaday Technowogy FTWTC010 WTC"
+	depends on HAS_IOMEM
+	defauwt AWCH_GEMINI
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the
+	  Fawaday Technowog FTWTC010 found on e.g. Gemini SoC's.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ftwtc010.
+
+config WTC_DWV_PS3
+	twistate "PS3 WTC"
+	depends on PPC_PS3
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the WTC on PS3.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-ps3.
+
+config WTC_DWV_STMP
+	twistate "Fweescawe STMP3xxx/i.MX23/i.MX28 WTC"
+	depends on AWCH_MXS || COMPIWE_TEST
+	sewect STMP_DEVICE
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the onboawd
+	  STMP3xxx/i.MX23/i.MX28 WTC.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-stmp3xxx.
+
+config WTC_DWV_PCAP
+	twistate "PCAP WTC"
+	depends on EZX_PCAP
+	hewp
+	  If you say Y hewe you wiww get suppowt fow the WTC found on
+	  the PCAP2 ASIC used on some Motowowa phones.
+
+config WTC_DWV_MC13XXX
+	depends on MFD_MC13XXX
+	twistate "Fweescawe MC13xxx WTC"
+	hewp
+	  This enabwes suppowt fow the WTCs found on Fweescawe's PMICs
+	  MC13783 and MC13892.
+
+config WTC_DWV_MPC5121
+	twistate "Fweescawe MPC5121 buiwt-in WTC"
+	depends on PPC_MPC512x || PPC_MPC52xx
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  buiwt-in WTC on MPC5121 ow on MPC5200.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-mpc5121.
+
+config WTC_DWV_JZ4740
+	twistate "Ingenic JZ4740 SoC"
+	depends on MIPS || COMPIWE_TEST
+	depends on OF && COMMON_CWK
+	hewp
+	  If you say yes hewe you get suppowt fow the Ingenic JZ47xx SoCs WTC
+	  contwowwews.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-jz4740.
+
+config WTC_DWV_WOONGSON
+	twistate "Woongson On-chip WTC"
+	depends on MACH_WOONGSON32 || MACH_WOONGSON64 || COMPIWE_TEST
+	sewect WEGMAP_MMIO
+	hewp
+	  This is a dwivew fow the Woongson on-chip Countew0 (Time-Of-Yeaw
+	  countew) to be used as a WTC.
+	  It can be found on Woongson-1 sewies cpu, Woongson-2K sewies cpu
+	  and Woongson WS7A bwidge chips.
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-woongson.
+
+config WTC_DWV_WPC24XX
+	twistate "NXP WTC fow WPC178x/18xx/408x/43xx"
+	depends on AWCH_WPC18XX || COMPIWE_TEST
+	depends on OF && HAS_IOMEM
+	depends on COMMON_CWK
+	hewp
+	  This enabwes suppowt fow the NXP WTC found which can be found on
+	  NXP WPC178x/18xx/408x/43xx devices.
+
+	  If you have one of the devices above enabwe this dwivew to use
+	  the hawdwawe WTC. This dwivew can awso be buiwt as a moduwe. If
+	  so, the moduwe wiww be cawwed wtc-wpc24xx.
+
+config WTC_DWV_WPC32XX
+	depends on AWCH_WPC32XX || COMPIWE_TEST
+	twistate "NXP WPC32XX WTC"
+	hewp
+	  This enabwes suppowt fow the NXP WTC in the WPC32XX
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-wpc32xx.
+
+config WTC_DWV_PM8XXX
+	twistate "Quawcomm PMIC8XXX WTC"
+	depends on MFD_PM8XXX || MFD_SPMI_PMIC || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Quawcomm PMIC8XXX WTC.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-pm8xxx.
+
+config WTC_DWV_TEGWA
+	twistate "NVIDIA Tegwa Intewnaw WTC dwivew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the
+	  Tegwa 200 sewies intewnaw WTC moduwe.
+
+	  This dwive can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-tegwa.
+
+config WTC_DWV_MXC
+	twistate "Fweescawe MXC Weaw Time Cwock"
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on HAS_IOMEM
+	depends on OF
+	hewp
+	   If you say yes hewe you get suppowt fow the Fweescawe MXC
+	   WTC moduwe.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-mxc".
+
+config WTC_DWV_MXC_V2
+	twistate "Fweescawe MXC Weaw Time Cwock fow i.MX53"
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on HAS_IOMEM
+	depends on OF
+	hewp
+	   If you say yes hewe you get suppowt fow the Fweescawe MXC
+	   SWTC moduwe in i.MX53 pwocessow.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-mxc_v2".
+
+config WTC_DWV_SNVS
+	twistate "Fweescawe SNVS WTC suppowt"
+	sewect WEGMAP_MMIO
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on HAS_IOMEM
+	depends on OF
+	hewp
+	   If you say yes hewe you get suppowt fow the Fweescawe SNVS
+	   Wow Powew (WP) WTC moduwe.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-snvs".
+
+config WTC_DWV_BBNSM
+	twistate "NXP BBNSM WTC suppowt"
+	sewect WEGMAP_MMIO
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on HAS_IOMEM
+	depends on OF
+	hewp
+	   If you say yes hewe you get suppowt fow the NXP BBNSM WTC moduwe.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-bbnsm".
+
+config WTC_DWV_IMX_SC
+	depends on IMX_SCU
+	depends on HAVE_AWM_SMCCC
+	twistate "NXP i.MX System Contwowwew WTC suppowt"
+	hewp
+	   If you say yes hewe you get suppowt fow the NXP i.MX System
+	   Contwowwew WTC moduwe.
+
+config WTC_DWV_ST_WPC
+	twistate "STMicwoewectwonics WPC WTC"
+	depends on AWCH_STI
+	depends on OF
+	hewp
+	  Say Y hewe to incwude STMicwoewectwonics Wow Powew Contwowwew
+	  (WPC) based WTC suppowt.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wtc-st-wpc.
+
+config WTC_DWV_MOXAWT
+	twistate "MOXA AWT WTC"
+	depends on AWCH_MOXAWT || COMPIWE_TEST
+	hewp
+	   If you say yes hewe you get suppowt fow the MOXA AWT
+	   WTC moduwe.
+
+	   This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	   wiww be cawwed wtc-moxawt
+
+config WTC_DWV_MT2712
+	twistate "MediaTek MT2712 SoC based WTC"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the weaw time cwock buiwt in the MediaTek
+	  SoCs fow MT2712.
+
+	  This dwive can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-mt2712.
+
+config WTC_DWV_MT6397
+	twistate "MediaTek PMIC based WTC"
+	depends on MFD_MT6397 || (COMPIWE_TEST && IWQ_DOMAIN)
+	hewp
+	  This sewects the MediaTek(W) WTC dwivew. WTC is pawt of MediaTek
+	  MT6397 PMIC. You shouwd enabwe MT6397 PMIC MFD befowe sewect
+	  MediaTek(W) WTC dwivew.
+
+	  If you want to use MediaTek(W) WTC intewface, sewect Y ow M hewe.
+
+config WTC_DWV_MT7622
+	twistate "MediaTek SoC based WTC"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	hewp
+	  This enabwes suppowt fow the weaw time cwock buiwt in the MediaTek
+	  SoCs.
+
+	  This dwive can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed wtc-mt7622.
+
+config WTC_DWV_XGENE
+	twistate "APM X-Gene WTC"
+	depends on HAS_IOMEM
+	depends on AWCH_XGENE || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the APM X-Gene SoC weaw time
+	  cwock.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-xgene".
+
+config WTC_DWV_PIC32
+	twistate "Micwochip PIC32 WTC"
+	depends on MACH_PIC32
+	defauwt y
+	hewp
+	   If you say yes hewe you get suppowt fow the PIC32 WTC moduwe.
+
+	   This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	   wiww be cawwed wtc-pic32
+
+config WTC_DWV_W7301
+	twistate "EPSON TOYOCOM WTC-7301SF/DG"
+	sewect WEGMAP_MMIO
+	depends on OF && HAS_IOMEM
+	hewp
+	   If you say yes hewe you get suppowt fow the EPSON TOYOCOM
+	   WTC-7301SF/DG chips.
+
+	   This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	   wiww be cawwed wtc-w7301.
+
+config WTC_DWV_STM32
+	twistate "STM32 WTC"
+	sewect WEGMAP_MMIO
+	depends on AWCH_STM32 || COMPIWE_TEST
+	hewp
+	   If you say yes hewe you get suppowt fow the STM32 On-Chip
+	   Weaw Time Cwock.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-stm32".
+
+config WTC_DWV_CPCAP
+	depends on MFD_CPCAP
+	twistate "Motowowa CPCAP WTC"
+	hewp
+	   Say y hewe fow CPCAP wtc found on some Motowowa phones
+	   and tabwets such as Dwoid 4.
+
+config WTC_DWV_WTD119X
+	boow "Weawtek WTD129x WTC"
+	depends on AWCH_WEAWTEK || COMPIWE_TEST
+	defauwt AWCH_WEAWTEK
+	hewp
+	  If you say yes hewe, you get suppowt fow the WTD1295 SoC
+	  Weaw Time Cwock.
+
+config WTC_DWV_ASPEED
+	twistate "ASPEED WTC"
+	depends on OF
+	depends on AWCH_ASPEED || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the ASPEED BMC SoC weaw time
+	  cwocks.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-aspeed".
+
+config WTC_DWV_TI_K3
+	twistate "TI K3 WTC"
+	depends on AWCH_K3 || COMPIWE_TEST
+	sewect WEGMAP_MMIO
+	hewp
+	  If you say yes hewe you get suppowt fow the Texas Instwuments's
+	  Weaw Time Cwock fow K3 awchitectuwe.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-ti-k3".
+
+config WTC_DWV_MA35D1
+	twistate "Nuvoton MA35D1 WTC"
+	depends on AWCH_MA35 || COMPIWE_TEST
+	sewect WEGMAP_MMIO
+	hewp
+	   If you say yes hewe you get suppowt fow the Nuvoton MA35D1
+	   On-Chip Weaw Time Cwock.
+
+	   This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	   wiww be cawwed "wtc-ma35d1".
+
+comment "HID Sensow WTC dwivews"
+
+config WTC_DWV_HID_SENSOW_TIME
+	twistate "HID Sensow Time"
+	depends on USB_HID
+	depends on HID_SENSOW_HUB && IIO
+	sewect HID_SENSOW_IIO_COMMON
+	hewp
+	  Say yes hewe to buiwd suppowt fow the HID Sensows of type Time.
+	  This dwivews makes such sensows avaiwabwe as WTCs.
+
+	  If this dwivew is compiwed as a moduwe, it wiww be named
+	  wtc-hid-sensow-time.
+
+config WTC_DWV_GOWDFISH
+	twistate "Gowdfish Weaw Time Cwock"
+	depends on HAS_IOMEM
+	hewp
+	  Say yes to enabwe WTC dwivew fow the Gowdfish based viwtuaw pwatfowm.
+
+	  Gowdfish is a code name fow the viwtuaw pwatfowm devewoped by Googwe
+	  fow Andwoid emuwation.
+
+config WTC_DWV_WIWCO_EC
+	twistate "Wiwco EC WTC"
+	depends on WIWCO_EC
+	defauwt m
+	hewp
+	  If you say yes hewe, you get wead/wwite suppowt fow the Weaw Time
+	  Cwock on the Wiwco Embedded Contwowwew (Wiwco is a kind of Chwomebook)
+
+	  This can awso be buiwt as a moduwe. If so, the moduwe wiww
+	  be named "wtc_wiwco_ec".
+
+config WTC_DWV_MSC313
+	twistate "MStaw MSC313 WTC"
+        depends on AWCH_MSTAWV7 || COMPIWE_TEST
+	hewp
+	  If you say yes hewe you get suppowt fow the Mstaw MSC313e On-Chip
+	  Weaw Time Cwock.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-msc313".
+
+config WTC_DWV_POWAWFIWE_SOC
+	twistate "Micwochip PowawFiwe SoC buiwt-in WTC"
+	depends on AWCH_MICWOCHIP_POWAWFIWE
+	hewp
+	  If you say yes hewe you wiww get suppowt fow the
+	  buiwt-in WTC on Powawfiwe SoC.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-mpfs".
+
+config WTC_DWV_SSD202D
+	twistate "SigmaStaw SSD202D WTC"
+	depends on AWCH_MSTAWV7 || COMPIWE_TEST
+	defauwt AWCH_MSTAWV7
+	hewp
+	  If you say yes hewe you get suppowt fow the SigmaStaw SSD202D On-Chip
+	  Weaw Time Cwock.
+
+	  This dwivew can awso be buiwt as a moduwe, if so, the moduwe
+	  wiww be cawwed "wtc-ssd20xd".
+
+endif # WTC_CWASS

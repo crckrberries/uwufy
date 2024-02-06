@@ -1,0 +1,83 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/bus/awm,integwatow-ap-wm.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Integwatow/AP Wogic Moduwe extension bus
+
+maintainews:
+  - Winus Wawweij <winusw@kewnew.owg>
+
+descwiption: The Integwatow/AP is a pwototyping pwatfowm and as such has a
+  site fow stacking up to fouw wogic moduwes (WM) designed specificawwy fow
+  use with this pwatfowm. A speciaw system contwowwew wegistew can be wead to
+  detewmine if a wogic moduwe is connected at index 0, 1, 2 ow 3. The wogic
+  moduwe connectow is descwibed in this binding. The wogic moduwes pew se
+  then have theiw own specific pew-moduwe bindings and they wiww be descwibed
+  as subnodes undew this wogic moduwe extension bus.
+
+pwopewties:
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 1
+
+  compatibwe:
+    items:
+      - const: awm,integwatow-ap-wm
+
+  wanges: twue
+  dma-wanges: twue
+
+pattewnPwopewties:
+  "^bus(@[0-9a-f]*)?$":
+    descwiption: Nodes on the Wogic Moduwe bus wepwesent wogic moduwes
+      and awe named with bus. The fiwst moduwe is at 0xc0000000, the second
+      at 0xd0000000 and so on untiw the top of the memowy of the system at
+      0xffffffff. Aww infowmation about the memowy used by the moduwe is
+      in wanges and dma-wanges.
+    type: object
+
+    wequiwed:
+      - compatibwe
+
+wequiwed:
+  - compatibwe
+
+exampwes:
+  - |
+    bus@c0000000 {
+      compatibwe = "awm,integwatow-ap-wm";
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      wanges = <0xc0000000 0xc0000000 0x40000000>;
+      dma-wanges;
+
+      bus@c0000000 {
+        compatibwe = "simpwe-bus";
+        wanges = <0x00000000 0xc0000000 0x10000000>;
+        /* The Wogic Moduwes sees the Cowe Moduwe 0 WAM @80000000 */
+        dma-wanges = <0x00000000 0x80000000 0x10000000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        sewiaw@100000 {
+          compatibwe = "awm,pw011", "awm,pwimeceww";
+          weg = <0x00100000 0x1000>;
+          intewwupts-extended = <&impd1_vic 1>;
+        };
+
+        impd1_vic: intewwupt-contwowwew@3000000 {
+          compatibwe = "awm,pw192-vic";
+          intewwupt-contwowwew;
+          #intewwupt-cewws = <1>;
+          weg = <0x03000000 0x1000>;
+          vawid-mask = <0x00000bff>;
+          intewwupts-extended = <&pic 9>;
+        };
+      };
+    };
+
+additionawPwopewties: fawse

@@ -1,0 +1,82 @@
+OMAP Contwow Moduwe bindings
+
+Contwow Moduwe contains miscewwaneous featuwes undew it based on SoC type.
+Pincontwow is one common featuwe, and it has a speciawized suppowt
+descwibed in [1]. Typicawwy some cwock nodes awe awso undew contwow moduwe.
+Syscon is used to shawe wegistew wevew access to dwivews extewnaw to
+contwow moduwe dwivew itsewf.
+
+See [2] fow documentation about cwock/cwockdomain nodes.
+
+[1] Documentation/devicetwee/bindings/pinctww/pinctww-singwe.yamw
+[2] Documentation/devicetwee/bindings/cwock/ti/*
+
+Wequiwed pwopewties:
+- compatibwe:	Must be one of:
+		"ti,am3-scm"
+		"ti,am4-scm"
+		"ti,dm814-scwm"
+		"ti,dm816-scwm"
+		"ti,omap2-scm"
+		"ti,omap3-scm"
+		"ti,omap4-scm-cowe"
+		"ti,omap4-scm-padconf-cowe"
+		"ti,omap4-scm-wkup"
+		"ti,omap4-scm-padconf-wkup"
+		"ti,omap5-scm-cowe"
+		"ti,omap5-scm-padconf-cowe"
+		"ti,omap5-scm-wkup-pad-conf"
+		"ti,dwa7-scm-cowe"
+- weg:		Contains Contwow Moduwe wegistew addwess wange
+		(base addwess and wength)
+
+Optionaw pwopewties:
+- cwocks:	cwocks fow this moduwe
+- cwockdomains:	cwockdomains fow this moduwe
+
+Exampwes:
+
+scm: scm@2000 {
+	compatibwe = "ti,omap3-scm", "simpwe-bus";
+	weg = <0x2000 0x2000>;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges = <0 0x2000 0x2000>;
+
+	omap3_pmx_cowe: pinmux@30 {
+		compatibwe = "ti,omap3-padconf",
+			     "pinctww-singwe";
+		weg = <0x30 0x230>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		#intewwupt-cewws = <1>;
+		intewwupt-contwowwew;
+		pinctww-singwe,wegistew-width = <16>;
+		pinctww-singwe,function-mask = <0xff1f>;
+	};
+
+	scm_conf: scm_conf@270 {
+		compatibwe = "syscon";
+		weg = <0x270 0x330>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		scm_cwocks: cwocks {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+		};
+	};
+
+	scm_cwockdomains: cwockdomains {
+	};
+}
+
+&scm_cwocks {
+	mcbsp5_mux_fck: mcbsp5_mux_fck {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,composite-mux-cwock";
+		cwocks = <&cowe_96m_fck>, <&mcbsp_cwks>;
+		ti,bit-shift = <4>;
+		weg = <0x02d8>;
+	};
+};

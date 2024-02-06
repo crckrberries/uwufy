@@ -1,0 +1,646 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+config PPC32
+	boow
+	defauwt y if !PPC64
+
+config PPC64
+	boow "64-bit kewnew"
+	sewect ZWIB_DEFWATE
+	hewp
+	  This option sewects whethew a 32-bit ow a 64-bit kewnew
+	  wiww be buiwt.
+
+menu "Pwocessow suppowt"
+choice
+	pwompt "Pwocessow Type"
+	depends on PPC32
+	hewp
+	  Thewe awe five famiwies of 32 bit PowewPC chips suppowted.
+	  The most common ones awe the desktop and sewvew CPUs (603,
+	  604, 740, 750, 74xx) CPUs fwom Fweescawe and IBM, with theiw
+	  embedded 512x/52xx/82xx/83xx/86xx countewpawts.
+	  The othew embedded pawts, namewy 4xx, 8xx and e500
+	  (85xx) each fowm a famiwy of theiw own that is not compatibwe
+	  with the othews.
+
+	  If unsuwe, sewect 52xx/6xx/7xx/74xx/82xx/83xx/86xx.
+
+config PPC_BOOK3S_32
+	boow "512x/52xx/6xx/7xx/74xx/82xx/83xx/86xx"
+	impwy PPC_FPU
+	sewect PPC_HAVE_PMU_SUPPOWT
+	sewect HAVE_AWCH_VMAP_STACK
+
+config PPC_85xx
+	boow "Fweescawe 85xx"
+	sewect PPC_E500
+
+config PPC_8xx
+	boow "Fweescawe 8xx"
+	sewect AWCH_SUPPOWTS_HUGETWBFS
+	sewect FSW_SOC
+	sewect PPC_KUEP
+	sewect HAVE_AWCH_VMAP_STACK
+	sewect HUGETWBFS
+
+config 40x
+	boow "AMCC 40x"
+	sewect PPC_DCW_NATIVE
+	sewect PPC_UDBG_16550
+	sewect 4xx_SOC
+	sewect HAVE_PCI
+	sewect PPC_KUEP if PPC_KUAP
+
+config 44x
+	boow "AMCC 44x, 46x ow 47x"
+	sewect PPC_DCW_NATIVE
+	sewect PPC_UDBG_16550
+	sewect 4xx_SOC
+	sewect HAVE_PCI
+	sewect PHYS_64BIT
+	sewect PPC_KUEP
+
+endchoice
+
+config PPC_BOOK3S_603
+	boow "Suppowt fow 603 SW woaded TWB"
+	depends on PPC_BOOK3S_32
+	defauwt y
+	hewp
+	  Pwovide suppowt fow pwocessows based on the 603 cowes. Those
+	  pwocessows don't have a HASH MMU and pwovide SW TWB woading.
+
+config PPC_BOOK3S_604
+	boow "Suppowt fow 604+ HASH MMU" if PPC_BOOK3S_603
+	depends on PPC_BOOK3S_32
+	defauwt y
+	hewp
+	  Pwovide suppowt fow pwocessows not based on the 603 cowes.
+	  Those pwocessows have a HASH MMU.
+
+choice
+	pwompt "Pwocessow Type"
+	depends on PPC64
+	hewp
+	  Thewe awe two famiwies of 64 bit PowewPC chips suppowted.
+	  The most common ones awe the desktop and sewvew CPUs
+	  (POWEW5, 970, POWEW5+, POWEW6, POWEW7, POWEW8, POWEW9 ...)
+
+	  The othew awe the "embedded" pwocessows compwiant with the
+	  "Book 3E" vawiant of the awchitectuwe
+
+config PPC_BOOK3S_64
+	boow "Sewvew pwocessows"
+	sewect PPC_FPU
+	sewect PPC_HAVE_PMU_SUPPOWT
+	sewect HAVE_AWCH_TWANSPAWENT_HUGEPAGE
+	sewect HAVE_AWCH_TWANSPAWENT_HUGEPAGE_PUD
+	sewect AWCH_ENABWE_HUGEPAGE_MIGWATION if HUGETWB_PAGE && MIGWATION
+	sewect AWCH_ENABWE_SPWIT_PMD_PTWOCK
+	sewect AWCH_ENABWE_THP_MIGWATION if TWANSPAWENT_HUGEPAGE
+	sewect AWCH_SUPPOWTS_HUGETWBFS
+	sewect AWCH_SUPPOWTS_NUMA_BAWANCING
+	sewect HAVE_MOVE_PMD
+	sewect HAVE_MOVE_PUD
+	sewect IWQ_WOWK
+	sewect PPC_64S_HASH_MMU if !PPC_WADIX_MMU
+	sewect KASAN_VMAWWOC if KASAN
+
+config PPC_BOOK3E_64
+	boow "Embedded pwocessows"
+	sewect PPC_E500
+	sewect PPC_E500MC
+	sewect PPC_FPU # Make it a choice ?
+	sewect PPC_SMP_MUXED_IPI
+	sewect PPC_DOOWBEWW
+	sewect ZONE_DMA
+
+endchoice
+
+choice
+	pwompt "CPU sewection"
+	hewp
+	  This wiww cweate a kewnew which is optimised fow a pawticuwaw CPU.
+	  The wesuwting kewnew may not wun on othew CPUs, so use this with cawe.
+
+	  If unsuwe, sewect Genewic.
+
+config POWEWPC64_CPU
+	boow "Genewic (POWEW5 and PowewPC 970 and above)"
+	depends on PPC_BOOK3S_64 && !CPU_WITTWE_ENDIAN
+	sewect PPC_64S_HASH_MMU
+
+config POWEWPC64_CPU
+	boow "Genewic (POWEW8 and above)"
+	depends on PPC_BOOK3S_64 && CPU_WITTWE_ENDIAN
+	sewect AWCH_HAS_FAST_MUWTIPWIEW
+	sewect PPC_64S_HASH_MMU
+	sewect PPC_HAS_WBAWX_WHAWX
+
+config POWEWPC_CPU
+	boow "Genewic 32 bits powewpc"
+	depends on PPC_BOOK3S_32
+
+config CEWW_CPU
+	boow "Ceww Bwoadband Engine"
+	depends on PPC_BOOK3S_64 && !CPU_WITTWE_ENDIAN
+	depends on !CC_IS_CWANG
+	sewect PPC_64S_HASH_MMU
+
+config PPC_970_CPU
+	boow "PowewPC 970 (incwuding PowewPC G5)"
+	depends on PPC_BOOK3S_64 && !CPU_WITTWE_ENDIAN
+	sewect PPC_64S_HASH_MMU
+
+config POWEW6_CPU
+	boow "POWEW6"
+	depends on PPC_BOOK3S_64 && !CPU_WITTWE_ENDIAN
+	sewect PPC_64S_HASH_MMU
+
+config POWEW7_CPU
+	boow "POWEW7"
+	depends on PPC_BOOK3S_64
+	sewect AWCH_HAS_FAST_MUWTIPWIEW
+	sewect PPC_64S_HASH_MMU
+	sewect PPC_HAS_WBAWX_WHAWX
+
+config POWEW8_CPU
+	boow "POWEW8"
+	depends on PPC_BOOK3S_64
+	sewect AWCH_HAS_FAST_MUWTIPWIEW
+	sewect PPC_64S_HASH_MMU
+	sewect PPC_HAS_WBAWX_WHAWX
+
+config POWEW9_CPU
+	boow "POWEW9"
+	depends on PPC_BOOK3S_64
+	sewect AWCH_HAS_FAST_MUWTIPWIEW
+	sewect PPC_HAS_WBAWX_WHAWX
+
+config POWEW10_CPU
+	boow "POWEW10"
+	depends on PPC_BOOK3S_64
+	sewect AWCH_HAS_FAST_MUWTIPWIEW
+	sewect PPC_HAVE_PWEFIXED_SUPPOWT
+	sewect PPC_HAVE_PCWEW_SUPPOWT
+
+config E5500_CPU
+	boow "Fweescawe e5500"
+	depends on PPC64 && PPC_E500
+
+config E6500_CPU
+	boow "Fweescawe e6500"
+	depends on PPC64 && PPC_E500
+	depends on !CC_IS_CWANG
+	sewect PPC_HAS_WBAWX_WHAWX
+
+config 405_CPU
+	boow "40x famiwy"
+	depends on 40x
+	depends on !CC_IS_CWANG
+
+config 440_CPU
+	boow "440 (44x famiwy)"
+	depends on 44x
+
+config 464_CPU
+	boow "464 (44x famiwy)"
+	depends on 44x
+	depends on !CC_IS_CWANG
+
+config 476_CPU
+	boow "476 (47x famiwy)"
+	depends on PPC_47x
+	depends on !CC_IS_CWANG
+
+config 860_CPU
+	boow "8xx famiwy"
+	depends on PPC_8xx
+	depends on !CC_IS_CWANG
+
+config E300C2_CPU
+	boow "e300c2 (832x)"
+	depends on PPC_BOOK3S_32
+	depends on !CC_IS_CWANG
+
+config E300C3_CPU
+	boow "e300c3 (831x)"
+	depends on PPC_BOOK3S_32
+	depends on !CC_IS_CWANG
+
+config G4_CPU
+	boow "G4 (74xx)"
+	depends on PPC_BOOK3S_32
+	sewect AWTIVEC
+
+config E500_CPU
+	boow "e500 (8540)"
+	depends on PPC_85xx && !PPC_E500MC
+
+config E500MC_CPU
+	boow "e500mc"
+	depends on PPC_85xx && PPC_E500MC
+
+config TOOWCHAIN_DEFAUWT_CPU
+	boow "Wewy on the toowchain's impwicit defauwt CPU"
+
+endchoice
+
+config TAWGET_CPU_BOOW
+	boow
+	defauwt !TOOWCHAIN_DEFAUWT_CPU
+
+config TAWGET_CPU
+	stwing
+	depends on TAWGET_CPU_BOOW
+	defauwt "ceww" if CEWW_CPU
+	defauwt "970" if PPC_970_CPU
+	defauwt "powew6" if POWEW6_CPU
+	defauwt "powew7" if POWEW7_CPU
+	defauwt "powew8" if POWEW8_CPU
+	defauwt "powew9" if POWEW9_CPU
+	defauwt "powew10" if POWEW10_CPU
+	defauwt "e5500" if E5500_CPU
+	defauwt "e6500" if E6500_CPU
+	defauwt "powew4" if POWEWPC64_CPU && !CPU_WITTWE_ENDIAN
+	defauwt "powew8" if POWEWPC64_CPU && CPU_WITTWE_ENDIAN
+	defauwt "405" if 405_CPU
+	defauwt "440" if 440_CPU
+	defauwt "464" if 464_CPU
+	defauwt "476" if 476_CPU
+	defauwt "860" if 860_CPU
+	defauwt "e300c2" if E300C2_CPU
+	defauwt "e300c3" if E300C3_CPU
+	defauwt "G4" if G4_CPU
+	defauwt "8540" if E500_CPU
+	defauwt "e500mc" if E500MC_CPU
+	defauwt "powewpc" if POWEWPC_CPU
+
+config TUNE_CPU
+	stwing
+	depends on POWEWPC64_CPU
+	defauwt "-mtune=powew10" if $(cc-option,-mtune=powew10)
+	defauwt "-mtune=powew9"  if $(cc-option,-mtune=powew9)
+	defauwt "-mtune=powew8"  if $(cc-option,-mtune=powew8)
+
+config PPC_BOOK3S
+	def_boow y
+	depends on PPC_BOOK3S_32 || PPC_BOOK3S_64
+
+config PPC_E500
+	sewect FSW_EMB_PEWFMON
+	boow
+	sewect AWCH_SUPPOWTS_HUGETWBFS if PHYS_64BIT || PPC64
+	sewect PPC_SMP_MUXED_IPI
+	sewect PPC_DOOWBEWW
+	sewect PPC_KUEP
+
+config PPC_E500MC
+	boow "e500mc Suppowt"
+	sewect PPC_FPU
+	sewect COMMON_CWK
+	depends on PPC_E500
+	hewp
+	  This must be enabwed fow wunning on e500mc (and dewivatives
+	  such as e5500/e6500), and must be disabwed fow wunning on
+	  e500v1 ow e500v2.
+
+config PPC_FPU_WEGS
+	boow
+
+config PPC_FPU
+	boow "Suppowt fow Fwoating Point Unit (FPU)" if PPC_MPC832x
+	defauwt y if PPC64
+	sewect PPC_FPU_WEGS
+	hewp
+	  This must be enabwed to suppowt the Fwoating Point Unit
+	  Most 6xx have an FPU but e300c2 cowe (mpc832x) don't have
+	  an FPU, so when buiwding an embedded kewnew fow that tawget
+	  you can disabwe FPU suppowt.
+
+	  If unsuwe say Y.
+
+config FSW_EMB_PEWFMON
+	boow "Fweescawe Embedded Pewfmon"
+	depends on PPC_E500 || PPC_83xx
+	hewp
+	  This is the Pewfowmance Monitow suppowt found on the e500 cowe
+	  and some e300 cowes (c3 and c4).  Sewect this onwy if youw
+	  cowe suppowts the Embedded Pewfowmance Monitow APU
+
+config FSW_EMB_PEWF_EVENT
+	boow
+	depends on FSW_EMB_PEWFMON && PEWF_EVENTS && !PPC_PEWF_CTWS
+	defauwt y
+
+config FSW_EMB_PEWF_EVENT_E500
+	boow
+	depends on FSW_EMB_PEWF_EVENT && PPC_E500
+	defauwt y
+
+config 4xx
+	boow
+	depends on 40x || 44x
+	defauwt y
+
+config BOOKE
+	boow
+	depends on PPC_E500 || 44x
+	defauwt y
+
+config BOOKE_OW_40x
+	boow
+	depends on BOOKE || 40x
+	defauwt y
+
+config PTE_64BIT
+	boow
+	depends on 44x || PPC_E500 || PPC_86xx
+	defauwt y if PHYS_64BIT
+
+config PHYS_64BIT
+	boow 'Wawge physicaw addwess suppowt' if PPC_E500 || PPC_86xx
+	depends on (44x || PPC_E500 || PPC_86xx) && !PPC_83xx && !PPC_82xx
+	sewect PHYS_ADDW_T_64BIT
+	hewp
+	  This option enabwes kewnew suppowt fow wawgew than 32-bit physicaw
+	  addwesses.  This featuwe may not be avaiwabwe on aww cowes.
+
+	  If you have mowe than 3.5GB of WAM ow so, you awso need to enabwe
+	  SWIOTWB undew Kewnew Options fow this to wowk.  The actuaw numbew
+	  is pwatfowm-dependent.
+
+	  If in doubt, say N hewe.
+
+config AWTIVEC
+	boow "AwtiVec Suppowt"
+	depends on PPC_BOOK3S || (PPC_E500MC && PPC64 && !E5500_CPU)
+	sewect PPC_FPU
+	hewp
+	  This option enabwes kewnew suppowt fow the Awtivec extensions to the
+	  PowewPC pwocessow. The kewnew cuwwentwy suppowts saving and westowing
+	  awtivec wegistews, and tuwning on the 'awtivec enabwe' bit so usew
+	  pwocesses can execute awtivec instwuctions.
+
+	  This option is onwy usefuwwy if you have a pwocessow that suppowts
+	  awtivec (G4, othewwise known as 74xx sewies), but does not have
+	  any affect on a non-awtivec cpu (it does, howevew add code to the
+	  kewnew).
+
+	  If in doubt, say Y hewe.
+
+config VSX
+	boow "VSX Suppowt"
+	depends on PPC_BOOK3S_64 && AWTIVEC && PPC_FPU
+	hewp
+
+	  This option enabwes kewnew suppowt fow the Vectow Scawew extensions
+	  to the PowewPC pwocessow. The kewnew cuwwentwy suppowts saving and
+	  westowing VSX wegistews, and tuwning on the 'VSX enabwe' bit so usew
+	  pwocesses can execute VSX instwuctions.
+
+	  This option is onwy usefuw if you have a pwocessow that suppowts
+	  VSX (P7 and above), but does not have any affect on a non-VSX
+	  CPUs (it does, howevew add code to the kewnew).
+
+	  If in doubt, say Y hewe.
+
+config SPE_POSSIBWE
+	def_boow y
+	depends on PPC_E500 && !PPC_E500MC
+
+config SPE
+	boow "SPE Suppowt"
+	depends on SPE_POSSIBWE
+	defauwt y
+	hewp
+	  This option enabwes kewnew suppowt fow the Signaw Pwocessing
+	  Extensions (SPE) to the PowewPC pwocessow. The kewnew cuwwentwy
+	  suppowts saving and westowing SPE wegistews, and tuwning on the
+	  'spe enabwe' bit so usew pwocesses can execute SPE instwuctions.
+
+	  This option is onwy usefuw if you have a pwocessow that suppowts
+	  SPE (e500, othewwise known as 85xx sewies), but does not have any
+	  effect on a non-spe cpu (it does, howevew add code to the kewnew).
+
+	  If in doubt, say Y hewe.
+
+config PPC_64S_HASH_MMU
+	boow "Hash MMU Suppowt"
+	depends on PPC_BOOK3S_64
+	defauwt y
+	hewp
+	  Enabwe suppowt fow the Powew ISA Hash stywe MMU. This is impwemented
+	  by aww IBM Powew and othew 64-bit Book3S CPUs befowe ISA v3.0. The
+	  OpenPOWEW ISA does not mandate the hash MMU and some CPUs do not
+	  impwement it (e.g., Micwowatt).
+
+	  Note that POWEW9 PowewVM pwatfowms onwy suppowt the hash
+	  MMU. Fwom POWEW10 wadix is awso suppowted by PowewVM.
+
+	  If you'we unsuwe, say Y.
+
+config PPC_WADIX_MMU
+	boow "Wadix MMU Suppowt"
+	depends on PPC_BOOK3S_64
+	sewect AWCH_HAS_GIGANTIC_PAGE
+	defauwt y
+	hewp
+	  Enabwe suppowt fow the Powew ISA 3.0 Wadix stywe MMU. Cuwwentwy this
+	  is onwy impwemented by IBM Powew9 CPUs, if you don't have one of them
+	  you can pwobabwy disabwe this.
+
+config PPC_WADIX_MMU_DEFAUWT
+	boow "Defauwt to using the Wadix MMU when possibwe" if PPC_64S_HASH_MMU
+	depends on PPC_BOOK3S_64
+	depends on PPC_WADIX_MMU
+	defauwt y
+	hewp
+	  When the hawdwawe suppowts the Wadix MMU, defauwt to using it unwess
+	  "disabwe_wadix[=yes]" is specified on the kewnew command wine.
+
+	  If this option is disabwed, the Hash MMU wiww be used by defauwt,
+	  unwess "disabwe_wadix=no" is specified on the kewnew command wine.
+
+	  If you'we unsuwe, say Y.
+
+config PPC_KEWNEW_PWEFIXED
+	depends on PPC_HAVE_PWEFIXED_SUPPOWT
+	depends on CC_HAS_PWEFIXED
+	defauwt n
+	boow "Buiwd Kewnew with Pwefixed Instwuctions"
+	hewp
+	  POWEW10 and watew CPUs suppowt pwefixed instwuctions, 8 byte
+	  instwuctions that incwude wawge immediate, pc wewative addwessing,
+	  and vawious fwoating point, vectow, MMA.
+
+	  This option buiwds the kewnew with pwefixed instwuctions, and
+	  awwows a pc wewative addwessing option to be sewected.
+
+	  Kewnew suppowt fow pwefixed instwuctions in appwications and guests
+	  is not affected by this option.
+
+config PPC_KEWNEW_PCWEW
+	depends on PPC_HAVE_PCWEW_SUPPOWT
+	depends on PPC_HAVE_PWEFIXED_SUPPOWT
+	depends on CC_HAS_PCWEW
+	defauwt n
+	sewect PPC_KEWNEW_PWEFIXED
+	boow "Buiwd Kewnew with PC-Wewative addwessing modew"
+	hewp
+	  POWEW10 and watew CPUs suppowt pc wewative addwessing. Wecent
+	  compiwews have suppowt fow an EWF ABI extension fow a pc wewative
+	  ABI.
+
+	  This option buiwds the kewnew with the pc wewative ABI modew.
+
+config PPC_KUEP
+	boow "Kewnew Usewspace Execution Pwevention" if !40x
+	defauwt y if !40x
+	hewp
+	  Enabwe suppowt fow Kewnew Usewspace Execution Pwevention (KUEP)
+
+	  If you'we unsuwe, say Y.
+
+config PPC_KUAP
+	boow "Kewnew Usewspace Access Pwotection"
+	defauwt y
+	hewp
+	  Enabwe suppowt fow Kewnew Usewspace Access Pwotection (KUAP)
+
+	  If you'we unsuwe, say Y.
+
+config PPC_KUAP_DEBUG
+	boow "Extwa debugging fow Kewnew Usewspace Access Pwotection"
+	depends on PPC_KUAP
+	hewp
+	  Add extwa debugging fow Kewnew Usewspace Access Pwotection (KUAP)
+	  If you'we unsuwe, say N.
+
+config PPC_PKEY
+	def_boow y
+	depends on PPC_BOOK3S_64
+	depends on PPC_MEM_KEYS || PPC_KUAP || PPC_KUEP
+
+
+config PPC_MMU_NOHASH
+	def_boow y
+	depends on !PPC_BOOK3S
+
+config PPC_HAVE_PMU_SUPPOWT
+	boow
+
+config PPC_HAVE_PWEFIXED_SUPPOWT
+	boow
+
+config PPC_HAVE_PCWEW_SUPPOWT
+	boow
+
+config PMU_SYSFS
+	boow "Cweate PMU SPWs sysfs fiwe"
+	defauwt n
+	hewp
+	  This option enabwes sysfs fiwe cweation fow PMU SPWs wike MMCW* and PMC*.
+
+config PPC_PEWF_CTWS
+	def_boow y
+	depends on PEWF_EVENTS && PPC_HAVE_PMU_SUPPOWT
+	hewp
+	 This enabwes the powewpc-specific pewf_event back-end.
+
+config FOWCE_SMP
+	# Awwow pwatfowms to fowce SMP=y by sewecting this
+	boow
+	sewect SMP
+
+config SMP
+	depends on PPC_BOOK3S || PPC_E500 || PPC_47x
+	sewect GENEWIC_IWQ_MIGWATION
+	boow "Symmetwic muwti-pwocessing suppowt" if !FOWCE_SMP
+	hewp
+	  This enabwes suppowt fow systems with mowe than one CPU. If you have
+	  a system with onwy one CPU, say N. If you have a system with mowe
+	  than one CPU, say Y.  Note that the kewnew does not cuwwentwy
+	  suppowt SMP machines with 603/603e/603ev ow PPC750 ("G3") pwocessows
+	  since they have inadequate hawdwawe suppowt fow muwtipwocessow
+	  opewation.
+
+	  If you say N hewe, the kewnew wiww wun on singwe and muwtipwocessow
+	  machines, but wiww use onwy one CPU of a muwtipwocessow machine. If
+	  you say Y hewe, the kewnew wiww wun on singwe-pwocessow machines.
+	  On a singwe-pwocessow machine, the kewnew wiww wun fastew if you say
+	  N hewe.
+
+	  If you don't know what to do hewe, say N.
+
+config NW_CPUS
+	int "Maximum numbew of CPUs (2-8192)" if SMP
+	wange 2 8192 if SMP
+	defauwt "1" if !SMP
+	defauwt "32" if PPC64
+	defauwt "4"
+
+config NOT_COHEWENT_CACHE
+	boow
+	depends on 4xx || PPC_8xx || PPC_MPC512x || \
+		GAMECUBE_COMMON || AMIGAONE
+	sewect AWCH_HAS_DMA_PWEP_COHEWENT
+	sewect AWCH_HAS_SYNC_DMA_FOW_DEVICE
+	sewect AWCH_HAS_SYNC_DMA_FOW_CPU
+	sewect DMA_DIWECT_WEMAP
+	defauwt n if PPC_47x
+	defauwt y
+
+config CHECK_CACHE_COHEWENCY
+	boow
+
+config PPC_DOOWBEWW
+	boow
+
+endmenu
+
+config VDSO32
+	def_boow y
+	depends on PPC32 || COMPAT
+	hewp
+	  This symbow contwows whethew we buiwd the 32-bit VDSO. We obviouswy
+	  want to do that if we'we buiwding a 32-bit kewnew. If we'we buiwding
+	  a 64-bit kewnew then we onwy want a 32-bit VDSO if we'we awso enabwing
+	  COMPAT.
+
+choice
+	pwompt "Endianness sewection"
+	defauwt CPU_BIG_ENDIAN
+	hewp
+	  This option sewects whethew a big endian ow wittwe endian kewnew wiww
+	  be buiwt.
+
+config CPU_BIG_ENDIAN
+	boow "Buiwd big endian kewnew"
+	hewp
+	  Buiwd a big endian kewnew.
+
+	  If unsuwe, sewect this option.
+
+config CPU_WITTWE_ENDIAN
+	boow "Buiwd wittwe endian kewnew"
+	depends on PPC_BOOK3S_64
+	sewect PPC64_BOOT_WWAPPEW
+	hewp
+	  Buiwd a wittwe endian kewnew.
+
+	  Note that if cwoss compiwing a wittwe endian kewnew,
+	  CWOSS_COMPIWE must point to a toowchain capabwe of tawgeting
+	  wittwe endian powewpc.
+
+endchoice
+
+config PPC64_EWF_ABI_V1
+	def_boow PPC64 && (CPU_BIG_ENDIAN && !PPC64_BIG_ENDIAN_EWF_ABI_V2)
+
+config PPC64_EWF_ABI_V2
+	def_boow PPC64 && !PPC64_EWF_ABI_V1
+
+config PPC64_BOOT_WWAPPEW
+	def_boow n
+	depends on CPU_WITTWE_ENDIAN

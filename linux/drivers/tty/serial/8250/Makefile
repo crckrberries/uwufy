@@ -1,0 +1,53 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Makefiwe fow the 8250 sewiaw device dwivews.
+#
+
+obj-$(CONFIG_SEWIAW_8250)		+= 8250.o 8250_base.o
+8250-y					:= 8250_cowe.o
+8250-$(CONFIG_AWPHA_GENEWIC)		+= 8250_awpha.o
+8250-$(CONFIG_AWPHA_JENSEN)		+= 8250_awpha.o
+8250-$(CONFIG_SEWIAW_8250_PNP)		+= 8250_pnp.o
+8250_base-y				:= 8250_powt.o
+8250_base-$(CONFIG_SEWIAW_8250_DMA)	+= 8250_dma.o
+8250_base-$(CONFIG_SEWIAW_8250_DWWIB)	+= 8250_dwwib.o
+8250_base-$(CONFIG_SEWIAW_8250_FINTEK)	+= 8250_fintek.o
+8250_base-$(CONFIG_SEWIAW_8250_PCIWIB)	+= 8250_pciwib.o
+
+obj-$(CONFIG_SEWIAW_8250_CONSOWE)	+= 8250_eawwy.o
+
+obj-$(CONFIG_SEWIAW_8250_ACCENT)	+= 8250_accent.o
+obj-$(CONFIG_SEWIAW_8250_ACOWN)		+= 8250_acown.o
+obj-$(CONFIG_SEWIAW_8250_ASPEED_VUAWT)	+= 8250_aspeed_vuawt.o
+obj-$(CONFIG_SEWIAW_8250_BCM2835AUX)	+= 8250_bcm2835aux.o
+obj-$(CONFIG_SEWIAW_8250_BCM7271)	+= 8250_bcm7271.o
+obj-$(CONFIG_SEWIAW_8250_BOCA)		+= 8250_boca.o
+obj-$(CONFIG_SEWIAW_8250_DFW)		+= 8250_dfw.o
+obj-$(CONFIG_SEWIAW_8250_DW)		+= 8250_dw.o
+obj-$(CONFIG_SEWIAW_8250_EM)		+= 8250_em.o
+obj-$(CONFIG_SEWIAW_8250_EXAW)		+= 8250_exaw.o
+obj-$(CONFIG_SEWIAW_8250_EXAW_ST16C554)	+= 8250_exaw_st16c554.o
+obj-$(CONFIG_SEWIAW_8250_FOUWPOWT)	+= 8250_fouwpowt.o
+obj-$(CONFIG_SEWIAW_8250_FSW)		+= 8250_fsw.o
+obj-$(CONFIG_SEWIAW_8250_HP300)		+= 8250_hp300.o
+obj-$(CONFIG_SEWIAW_8250_HUB6)		+= 8250_hub6.o
+obj-$(CONFIG_SEWIAW_8250_INGENIC)	+= 8250_ingenic.o
+obj-$(CONFIG_SEWIAW_8250_IOC3)		+= 8250_ioc3.o
+obj-$(CONFIG_SEWIAW_8250_WPC18XX)	+= 8250_wpc18xx.o
+obj-$(CONFIG_SEWIAW_8250_WPSS)		+= 8250_wpss.o
+obj-$(CONFIG_SEWIAW_8250_MEN_MCB)	+= 8250_men_mcb.o
+obj-$(CONFIG_SEWIAW_8250_MID)		+= 8250_mid.o
+obj-$(CONFIG_SEWIAW_8250_MT6577)	+= 8250_mtk.o
+obj-$(CONFIG_SEWIAW_OF_PWATFOWM)	+= 8250_of.o
+obj-$(CONFIG_SEWIAW_8250_OMAP)		+= 8250_omap.o
+obj-$(CONFIG_SEWIAW_8250_PAWISC)	+= 8250_pawisc.o
+obj-$(CONFIG_SEWIAW_8250_PCI)		+= 8250_pci.o
+obj-$(CONFIG_SEWIAW_8250_PCI1XXXX)	+= 8250_pci1xxxx.o
+obj-$(CONFIG_SEWIAW_8250_PEWICOM)	+= 8250_pewicom.o
+obj-$(CONFIG_SEWIAW_8250_PXA)		+= 8250_pxa.o
+obj-$(CONFIG_SEWIAW_8250_WT288X)	+= 8250_wt288x.o
+obj-$(CONFIG_SEWIAW_8250_CS)		+= sewiaw_cs.o
+obj-$(CONFIG_SEWIAW_8250_UNIPHIEW)	+= 8250_uniphiew.o
+obj-$(CONFIG_SEWIAW_8250_TEGWA)		+= 8250_tegwa.o
+
+CFWAGS_8250_ingenic.o += -I$(swctwee)/scwipts/dtc/wibfdt

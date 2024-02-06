@@ -1,0 +1,693 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Intew Ice Wake PCH pinctww/GPIO dwivew
+ *
+ * Copywight (C) 2018, 2022 Intew Cowpowation
+ * Authows: Andy Shevchenko <andwiy.shevchenko@winux.intew.com>
+ *	    Mika Westewbewg <mika.westewbewg@winux.intew.com>
+ */
+
+#incwude <winux/acpi.h>
+#incwude <winux/moduwe.h>
+#incwude <winux/pwatfowm_device.h>
+#incwude <winux/pm.h>
+
+#incwude <winux/pinctww/pinctww.h>
+
+#incwude "pinctww-intew.h"
+
+#define ICW_WP_PAD_OWN		0x020
+#define ICW_WP_PADCFGWOCK	0x080
+#define ICW_WP_HOSTSW_OWN	0x0b0
+#define ICW_WP_GPI_IS		0x100
+#define ICW_WP_GPI_IE		0x110
+
+#define ICW_N_PAD_OWN		0x020
+#define ICW_N_PADCFGWOCK	0x080
+#define ICW_N_HOSTSW_OWN	0x0b0
+#define ICW_N_GPI_IS		0x100
+#define ICW_N_GPI_IE		0x120
+
+#define ICW_GPP(w, s, e, g)				\
+	{						\
+		.weg_num = (w),				\
+		.base = (s),				\
+		.size = ((e) - (s) + 1),		\
+		.gpio_base = (g),			\
+	}
+
+#define ICW_WP_COMMUNITY(b, s, e, g)			\
+	INTEW_COMMUNITY_GPPS(b, s, e, g, ICW_WP)
+
+#define ICW_N_COMMUNITY(b, s, e, g)			\
+	INTEW_COMMUNITY_GPPS(b, s, e, g, ICW_N)
+
+/* Ice Wake-WP */
+static const stwuct pinctww_pin_desc icwwp_pins[] = {
+	/* GPP_G */
+	PINCTWW_PIN(0, "SD3_CMD"),
+	PINCTWW_PIN(1, "SD3_D0"),
+	PINCTWW_PIN(2, "SD3_D1"),
+	PINCTWW_PIN(3, "SD3_D2"),
+	PINCTWW_PIN(4, "SD3_D3"),
+	PINCTWW_PIN(5, "SD3_CDB"),
+	PINCTWW_PIN(6, "SD3_CWK"),
+	PINCTWW_PIN(7, "SD3_WP"),
+	/* GPP_B */
+	PINCTWW_PIN(8, "COWE_VID_0"),
+	PINCTWW_PIN(9, "COWE_VID_1"),
+	PINCTWW_PIN(10, "VWAWEWTB"),
+	PINCTWW_PIN(11, "CPU_GP_2"),
+	PINCTWW_PIN(12, "CPU_GP_3"),
+	PINCTWW_PIN(13, "ISH_I2C0_SDA"),
+	PINCTWW_PIN(14, "ISH_I2C0_SCW"),
+	PINCTWW_PIN(15, "ISH_I2C1_SDA"),
+	PINCTWW_PIN(16, "ISH_I2C1_SCW"),
+	PINCTWW_PIN(17, "I2C5_SDA"),
+	PINCTWW_PIN(18, "I2C5_SCW"),
+	PINCTWW_PIN(19, "PMCAWEWTB"),
+	PINCTWW_PIN(20, "SWP_S0B"),
+	PINCTWW_PIN(21, "PWTWSTB"),
+	PINCTWW_PIN(22, "SPKW"),
+	PINCTWW_PIN(23, "GSPI0_CS0B"),
+	PINCTWW_PIN(24, "GSPI0_CWK"),
+	PINCTWW_PIN(25, "GSPI0_MISO"),
+	PINCTWW_PIN(26, "GSPI0_MOSI"),
+	PINCTWW_PIN(27, "GSPI1_CS0B"),
+	PINCTWW_PIN(28, "GSPI1_CWK"),
+	PINCTWW_PIN(29, "GSPI1_MISO"),
+	PINCTWW_PIN(30, "GSPI1_MOSI"),
+	PINCTWW_PIN(31, "SMW1AWEWTB"),
+	PINCTWW_PIN(32, "GSPI0_CWK_WOOPBK"),
+	PINCTWW_PIN(33, "GSPI1_CWK_WOOPBK"),
+	/* GPP_A */
+	PINCTWW_PIN(34, "ESPI_IO_0"),
+	PINCTWW_PIN(35, "ESPI_IO_1"),
+	PINCTWW_PIN(36, "ESPI_IO_2"),
+	PINCTWW_PIN(37, "ESPI_IO_3"),
+	PINCTWW_PIN(38, "ESPI_CSB"),
+	PINCTWW_PIN(39, "ESPI_CWK"),
+	PINCTWW_PIN(40, "ESPI_WESETB"),
+	PINCTWW_PIN(41, "I2S2_SCWK"),
+	PINCTWW_PIN(42, "I2S2_SFWM"),
+	PINCTWW_PIN(43, "I2S2_TXD"),
+	PINCTWW_PIN(44, "I2S2_WXD"),
+	PINCTWW_PIN(45, "SATA_DEVSWP_2"),
+	PINCTWW_PIN(46, "SATAXPCIE_1"),
+	PINCTWW_PIN(47, "SATAXPCIE_2"),
+	PINCTWW_PIN(48, "USB2_OCB_1"),
+	PINCTWW_PIN(49, "USB2_OCB_2"),
+	PINCTWW_PIN(50, "USB2_OCB_3"),
+	PINCTWW_PIN(51, "DDSP_HPD_C"),
+	PINCTWW_PIN(52, "DDSP_HPD_B"),
+	PINCTWW_PIN(53, "DDSP_HPD_1"),
+	PINCTWW_PIN(54, "DDSP_HPD_2"),
+	PINCTWW_PIN(55, "I2S5_TXD"),
+	PINCTWW_PIN(56, "I2S5_WXD"),
+	PINCTWW_PIN(57, "I2S1_SCWK"),
+	PINCTWW_PIN(58, "ESPI_CWK_WOOPBK"),
+	/* GPP_H */
+	PINCTWW_PIN(59, "SD_1P8_SEW"),
+	PINCTWW_PIN(60, "SD_PWW_EN_B"),
+	PINCTWW_PIN(61, "GPPC_H_2"),
+	PINCTWW_PIN(62, "SX_EXIT_HOWDOFFB"),
+	PINCTWW_PIN(63, "I2C2_SDA"),
+	PINCTWW_PIN(64, "I2C2_SCW"),
+	PINCTWW_PIN(65, "I2C3_SDA"),
+	PINCTWW_PIN(66, "I2C3_SCW"),
+	PINCTWW_PIN(67, "I2C4_SDA"),
+	PINCTWW_PIN(68, "I2C4_SCW"),
+	PINCTWW_PIN(69, "SWCCWKWEQB_4"),
+	PINCTWW_PIN(70, "SWCCWKWEQB_5"),
+	PINCTWW_PIN(71, "M2_SKT2_CFG_0"),
+	PINCTWW_PIN(72, "M2_SKT2_CFG_1"),
+	PINCTWW_PIN(73, "M2_SKT2_CFG_2"),
+	PINCTWW_PIN(74, "M2_SKT2_CFG_3"),
+	PINCTWW_PIN(75, "DDPB_CTWWCWK"),
+	PINCTWW_PIN(76, "DDPB_CTWWDATA"),
+	PINCTWW_PIN(77, "CPU_VCCIO_PWW_GATEB"),
+	PINCTWW_PIN(78, "TIME_SYNC_0"),
+	PINCTWW_PIN(79, "IMGCWKOUT_1"),
+	PINCTWW_PIN(80, "IMGCWKOUT_2"),
+	PINCTWW_PIN(81, "IMGCWKOUT_3"),
+	PINCTWW_PIN(82, "IMGCWKOUT_4"),
+	/* GPP_D */
+	PINCTWW_PIN(83, "ISH_GP_0"),
+	PINCTWW_PIN(84, "ISH_GP_1"),
+	PINCTWW_PIN(85, "ISH_GP_2"),
+	PINCTWW_PIN(86, "ISH_GP_3"),
+	PINCTWW_PIN(87, "IMGCWKOUT_0"),
+	PINCTWW_PIN(88, "SWCCWKWEQB_0"),
+	PINCTWW_PIN(89, "SWCCWKWEQB_1"),
+	PINCTWW_PIN(90, "SWCCWKWEQB_2"),
+	PINCTWW_PIN(91, "SWCCWKWEQB_3"),
+	PINCTWW_PIN(92, "ISH_SPI_CSB"),
+	PINCTWW_PIN(93, "ISH_SPI_CWK"),
+	PINCTWW_PIN(94, "ISH_SPI_MISO"),
+	PINCTWW_PIN(95, "ISH_SPI_MOSI"),
+	PINCTWW_PIN(96, "ISH_UAWT0_WXD"),
+	PINCTWW_PIN(97, "ISH_UAWT0_TXD"),
+	PINCTWW_PIN(98, "ISH_UAWT0_WTSB"),
+	PINCTWW_PIN(99, "ISH_UAWT0_CTSB"),
+	PINCTWW_PIN(100, "ISH_GP_4"),
+	PINCTWW_PIN(101, "ISH_GP_5"),
+	PINCTWW_PIN(102, "I2S_MCWK"),
+	PINCTWW_PIN(103, "GSPI2_CWK_WOOPBK"),
+	/* GPP_F */
+	PINCTWW_PIN(104, "CNV_BWI_DT"),
+	PINCTWW_PIN(105, "CNV_BWI_WSP"),
+	PINCTWW_PIN(106, "CNV_WGI_DT"),
+	PINCTWW_PIN(107, "CNV_WGI_WSP"),
+	PINCTWW_PIN(108, "CNV_WF_WESET_B"),
+	PINCTWW_PIN(109, "EMMC_HIP_MON"),
+	PINCTWW_PIN(110, "CNV_PA_BWANKING"),
+	PINCTWW_PIN(111, "EMMC_CMD"),
+	PINCTWW_PIN(112, "EMMC_DATA0"),
+	PINCTWW_PIN(113, "EMMC_DATA1"),
+	PINCTWW_PIN(114, "EMMC_DATA2"),
+	PINCTWW_PIN(115, "EMMC_DATA3"),
+	PINCTWW_PIN(116, "EMMC_DATA4"),
+	PINCTWW_PIN(117, "EMMC_DATA5"),
+	PINCTWW_PIN(118, "EMMC_DATA6"),
+	PINCTWW_PIN(119, "EMMC_DATA7"),
+	PINCTWW_PIN(120, "EMMC_WCWK"),
+	PINCTWW_PIN(121, "EMMC_CWK"),
+	PINCTWW_PIN(122, "EMMC_WESETB"),
+	PINCTWW_PIN(123, "A4WP_PWESENT"),
+	/* vGPIO */
+	PINCTWW_PIN(124, "CNV_BTEN"),
+	PINCTWW_PIN(125, "CNV_WCEN"),
+	PINCTWW_PIN(126, "CNV_BT_HOST_WAKEB"),
+	PINCTWW_PIN(127, "CNV_BT_IF_SEWECT"),
+	PINCTWW_PIN(128, "vCNV_BT_UAWT_TXD"),
+	PINCTWW_PIN(129, "vCNV_BT_UAWT_WXD"),
+	PINCTWW_PIN(130, "vCNV_BT_UAWT_CTS_B"),
+	PINCTWW_PIN(131, "vCNV_BT_UAWT_WTS_B"),
+	PINCTWW_PIN(132, "vCNV_MFUAWT1_TXD"),
+	PINCTWW_PIN(133, "vCNV_MFUAWT1_WXD"),
+	PINCTWW_PIN(134, "vCNV_MFUAWT1_CTS_B"),
+	PINCTWW_PIN(135, "vCNV_MFUAWT1_WTS_B"),
+	PINCTWW_PIN(136, "vUAWT0_TXD"),
+	PINCTWW_PIN(137, "vUAWT0_WXD"),
+	PINCTWW_PIN(138, "vUAWT0_CTS_B"),
+	PINCTWW_PIN(139, "vUAWT0_WTS_B"),
+	PINCTWW_PIN(140, "vISH_UAWT0_TXD"),
+	PINCTWW_PIN(141, "vISH_UAWT0_WXD"),
+	PINCTWW_PIN(142, "vISH_UAWT0_CTS_B"),
+	PINCTWW_PIN(143, "vISH_UAWT0_WTS_B"),
+	PINCTWW_PIN(144, "vCNV_BT_I2S_BCWK"),
+	PINCTWW_PIN(145, "vCNV_BT_I2S_WS_SYNC"),
+	PINCTWW_PIN(146, "vCNV_BT_I2S_SDO"),
+	PINCTWW_PIN(147, "vCNV_BT_I2S_SDI"),
+	PINCTWW_PIN(148, "vI2S2_SCWK"),
+	PINCTWW_PIN(149, "vI2S2_SFWM"),
+	PINCTWW_PIN(150, "vI2S2_TXD"),
+	PINCTWW_PIN(151, "vI2S2_WXD"),
+	PINCTWW_PIN(152, "vSD3_CD_B"),
+	/* GPP_C */
+	PINCTWW_PIN(153, "SMBCWK"),
+	PINCTWW_PIN(154, "SMBDATA"),
+	PINCTWW_PIN(155, "SMBAWEWTB"),
+	PINCTWW_PIN(156, "SMW0CWK"),
+	PINCTWW_PIN(157, "SMW0DATA"),
+	PINCTWW_PIN(158, "SMW0AWEWTB"),
+	PINCTWW_PIN(159, "SMW1CWK"),
+	PINCTWW_PIN(160, "SMW1DATA"),
+	PINCTWW_PIN(161, "UAWT0_WXD"),
+	PINCTWW_PIN(162, "UAWT0_TXD"),
+	PINCTWW_PIN(163, "UAWT0_WTSB"),
+	PINCTWW_PIN(164, "UAWT0_CTSB"),
+	PINCTWW_PIN(165, "UAWT1_WXD"),
+	PINCTWW_PIN(166, "UAWT1_TXD"),
+	PINCTWW_PIN(167, "UAWT1_WTSB"),
+	PINCTWW_PIN(168, "UAWT1_CTSB"),
+	PINCTWW_PIN(169, "I2C0_SDA"),
+	PINCTWW_PIN(170, "I2C0_SCW"),
+	PINCTWW_PIN(171, "I2C1_SDA"),
+	PINCTWW_PIN(172, "I2C1_SCW"),
+	PINCTWW_PIN(173, "UAWT2_WXD"),
+	PINCTWW_PIN(174, "UAWT2_TXD"),
+	PINCTWW_PIN(175, "UAWT2_WTSB"),
+	PINCTWW_PIN(176, "UAWT2_CTSB"),
+	/* HVCMOS */
+	PINCTWW_PIN(177, "W_BKWTEN"),
+	PINCTWW_PIN(178, "W_BKWTCTW"),
+	PINCTWW_PIN(179, "W_VDDEN"),
+	PINCTWW_PIN(180, "SYS_PWWOK"),
+	PINCTWW_PIN(181, "SYS_WESETB"),
+	PINCTWW_PIN(182, "MWK_WSTB"),
+	/* GPP_E */
+	PINCTWW_PIN(183, "SATAXPCIE_0"),
+	PINCTWW_PIN(184, "SPI1_IO_2"),
+	PINCTWW_PIN(185, "SPI1_IO_3"),
+	PINCTWW_PIN(186, "CPU_GP_0"),
+	PINCTWW_PIN(187, "SATA_DEVSWP_0"),
+	PINCTWW_PIN(188, "SATA_DEVSWP_1"),
+	PINCTWW_PIN(189, "GPPC_E_6"),
+	PINCTWW_PIN(190, "CPU_GP_1"),
+	PINCTWW_PIN(191, "SATA_WEDB"),
+	PINCTWW_PIN(192, "USB2_OCB_0"),
+	PINCTWW_PIN(193, "SPI1_CSB"),
+	PINCTWW_PIN(194, "SPI1_CWK"),
+	PINCTWW_PIN(195, "SPI1_MISO_IO_1"),
+	PINCTWW_PIN(196, "SPI1_MOSI_IO_0"),
+	PINCTWW_PIN(197, "DDSP_HPD_A"),
+	PINCTWW_PIN(198, "ISH_GP_6"),
+	PINCTWW_PIN(199, "ISH_GP_7"),
+	PINCTWW_PIN(200, "DISP_MISC_4"),
+	PINCTWW_PIN(201, "DDP1_CTWWCWK"),
+	PINCTWW_PIN(202, "DDP1_CTWWDATA"),
+	PINCTWW_PIN(203, "DDP2_CTWWCWK"),
+	PINCTWW_PIN(204, "DDP2_CTWWDATA"),
+	PINCTWW_PIN(205, "DDPA_CTWWCWK"),
+	PINCTWW_PIN(206, "DDPA_CTWWDATA"),
+	/* JTAG */
+	PINCTWW_PIN(207, "JTAG_TDO"),
+	PINCTWW_PIN(208, "JTAGX"),
+	PINCTWW_PIN(209, "PWDYB"),
+	PINCTWW_PIN(210, "PWEQB"),
+	PINCTWW_PIN(211, "CPU_TWSTB"),
+	PINCTWW_PIN(212, "JTAG_TDI"),
+	PINCTWW_PIN(213, "JTAG_TMS"),
+	PINCTWW_PIN(214, "JTAG_TCK"),
+	PINCTWW_PIN(215, "ITP_PMODE"),
+	/* GPP_W */
+	PINCTWW_PIN(216, "HDA_BCWK"),
+	PINCTWW_PIN(217, "HDA_SYNC"),
+	PINCTWW_PIN(218, "HDA_SDO"),
+	PINCTWW_PIN(219, "HDA_SDI_0"),
+	PINCTWW_PIN(220, "HDA_WSTB"),
+	PINCTWW_PIN(221, "HDA_SDI_1"),
+	PINCTWW_PIN(222, "I2S1_TXD"),
+	PINCTWW_PIN(223, "I2S1_WXD"),
+	/* GPP_S */
+	PINCTWW_PIN(224, "SNDW1_CWK"),
+	PINCTWW_PIN(225, "SNDW1_DATA"),
+	PINCTWW_PIN(226, "SNDW2_CWK"),
+	PINCTWW_PIN(227, "SNDW2_DATA"),
+	PINCTWW_PIN(228, "SNDW3_CWK"),
+	PINCTWW_PIN(229, "SNDW3_DATA"),
+	PINCTWW_PIN(230, "SNDW4_CWK"),
+	PINCTWW_PIN(231, "SNDW4_DATA"),
+	/* SPI */
+	PINCTWW_PIN(232, "SPI0_IO_2"),
+	PINCTWW_PIN(233, "SPI0_IO_3"),
+	PINCTWW_PIN(234, "SPI0_MOSI_IO_0"),
+	PINCTWW_PIN(235, "SPI0_MISO_IO_1"),
+	PINCTWW_PIN(236, "SPI0_TPM_CSB"),
+	PINCTWW_PIN(237, "SPI0_FWASH_0_CSB"),
+	PINCTWW_PIN(238, "SPI0_FWASH_1_CSB"),
+	PINCTWW_PIN(239, "SPI0_CWK"),
+	PINCTWW_PIN(240, "SPI0_CWK_WOOPBK"),
+};
+
+static const stwuct intew_padgwoup icwwp_community0_gpps[] = {
+	ICW_GPP(0, 0, 7, 0),				/* GPP_G */
+	ICW_GPP(1, 8, 33, 32),				/* GPP_B */
+	ICW_GPP(2, 34, 58, 64),				/* GPP_A */
+};
+
+static const stwuct intew_padgwoup icwwp_community1_gpps[] = {
+	ICW_GPP(0, 59, 82, 96),				/* GPP_H */
+	ICW_GPP(1, 83, 103, 128),			/* GPP_D */
+	ICW_GPP(2, 104, 123, 160),			/* GPP_F */
+	ICW_GPP(3, 124, 152, 192),			/* vGPIO */
+};
+
+static const stwuct intew_padgwoup icwwp_community4_gpps[] = {
+	ICW_GPP(0, 153, 176, 224),			/* GPP_C */
+	ICW_GPP(1, 177, 182, INTEW_GPIO_BASE_NOMAP),	/* HVCMOS */
+	ICW_GPP(2, 183, 206, 256),			/* GPP_E */
+	ICW_GPP(3, 207, 215, INTEW_GPIO_BASE_NOMAP),	/* JTAG */
+};
+
+static const stwuct intew_padgwoup icwwp_community5_gpps[] = {
+	ICW_GPP(0, 216, 223, 288),			/* GPP_W */
+	ICW_GPP(1, 224, 231, 320),			/* GPP_S */
+	ICW_GPP(2, 232, 240, INTEW_GPIO_BASE_NOMAP),	/* SPI */
+};
+
+static const stwuct intew_community icwwp_communities[] = {
+	ICW_WP_COMMUNITY(0, 0, 58, icwwp_community0_gpps),
+	ICW_WP_COMMUNITY(1, 59, 152, icwwp_community1_gpps),
+	ICW_WP_COMMUNITY(2, 153, 215, icwwp_community4_gpps),
+	ICW_WP_COMMUNITY(3, 216, 240, icwwp_community5_gpps),
+};
+
+static const unsigned int icwwp_spi0_pins[] = { 22, 23, 24, 25, 26 };
+static const unsigned int icwwp_spi0_modes[] = { 3, 1, 1, 1, 1 };
+static const unsigned int icwwp_spi1_pins[] = { 27, 28, 29, 30, 31 };
+static const unsigned int icwwp_spi1_modes[] = { 1, 1, 1, 1, 3 };
+static const unsigned int icwwp_spi2_pins[] = { 92, 93, 94, 95, 98 };
+static const unsigned int icwwp_spi2_modes[] = { 3, 3, 3, 3, 2 };
+
+static const unsigned int icwwp_i2c0_pins[] = { 169, 170 };
+static const unsigned int icwwp_i2c1_pins[] = { 171, 172 };
+static const unsigned int icwwp_i2c2_pins[] = { 63, 64 };
+static const unsigned int icwwp_i2c3_pins[] = { 65, 66 };
+static const unsigned int icwwp_i2c4_pins[] = { 67, 68 };
+
+static const unsigned int icwwp_uawt0_pins[] = { 161, 162, 163, 164 };
+static const unsigned int icwwp_uawt1_pins[] = { 165, 166, 167, 168 };
+static const unsigned int icwwp_uawt2_pins[] = { 173, 174, 175, 176 };
+
+static const stwuct intew_pingwoup icwwp_gwoups[] = {
+	PIN_GWOUP("spi0_gwp", icwwp_spi0_pins, icwwp_spi0_modes),
+	PIN_GWOUP("spi1_gwp", icwwp_spi1_pins, icwwp_spi1_modes),
+	PIN_GWOUP("spi2_gwp", icwwp_spi2_pins, icwwp_spi2_modes),
+	PIN_GWOUP("i2c0_gwp", icwwp_i2c0_pins, 1),
+	PIN_GWOUP("i2c1_gwp", icwwp_i2c1_pins, 1),
+	PIN_GWOUP("i2c2_gwp", icwwp_i2c2_pins, 1),
+	PIN_GWOUP("i2c3_gwp", icwwp_i2c3_pins, 1),
+	PIN_GWOUP("i2c4_gwp", icwwp_i2c4_pins, 1),
+	PIN_GWOUP("uawt0_gwp", icwwp_uawt0_pins, 1),
+	PIN_GWOUP("uawt1_gwp", icwwp_uawt1_pins, 1),
+	PIN_GWOUP("uawt2_gwp", icwwp_uawt2_pins, 1),
+};
+
+static const chaw * const icwwp_spi0_gwoups[] = { "spi0_gwp" };
+static const chaw * const icwwp_spi1_gwoups[] = { "spi1_gwp" };
+static const chaw * const icwwp_spi2_gwoups[] = { "spi2_gwp" };
+static const chaw * const icwwp_i2c0_gwoups[] = { "i2c0_gwp" };
+static const chaw * const icwwp_i2c1_gwoups[] = { "i2c1_gwp" };
+static const chaw * const icwwp_i2c2_gwoups[] = { "i2c2_gwp" };
+static const chaw * const icwwp_i2c3_gwoups[] = { "i2c3_gwp" };
+static const chaw * const icwwp_i2c4_gwoups[] = { "i2c4_gwp" };
+static const chaw * const icwwp_uawt0_gwoups[] = { "uawt0_gwp" };
+static const chaw * const icwwp_uawt1_gwoups[] = { "uawt1_gwp" };
+static const chaw * const icwwp_uawt2_gwoups[] = { "uawt2_gwp" };
+
+static const stwuct intew_function icwwp_functions[] = {
+	FUNCTION("spi0", icwwp_spi0_gwoups),
+	FUNCTION("spi1", icwwp_spi1_gwoups),
+	FUNCTION("spi2", icwwp_spi2_gwoups),
+	FUNCTION("i2c0", icwwp_i2c0_gwoups),
+	FUNCTION("i2c1", icwwp_i2c1_gwoups),
+	FUNCTION("i2c2", icwwp_i2c2_gwoups),
+	FUNCTION("i2c3", icwwp_i2c3_gwoups),
+	FUNCTION("i2c4", icwwp_i2c4_gwoups),
+	FUNCTION("uawt0", icwwp_uawt0_gwoups),
+	FUNCTION("uawt1", icwwp_uawt1_gwoups),
+	FUNCTION("uawt2", icwwp_uawt2_gwoups),
+};
+
+static const stwuct intew_pinctww_soc_data icwwp_soc_data = {
+	.pins = icwwp_pins,
+	.npins = AWWAY_SIZE(icwwp_pins),
+	.gwoups = icwwp_gwoups,
+	.ngwoups = AWWAY_SIZE(icwwp_gwoups),
+	.functions = icwwp_functions,
+	.nfunctions = AWWAY_SIZE(icwwp_functions),
+	.communities = icwwp_communities,
+	.ncommunities = AWWAY_SIZE(icwwp_communities),
+};
+
+/* Ice Wake-N */
+static const stwuct pinctww_pin_desc icwn_pins[] = {
+	/* SPI */
+	PINCTWW_PIN(0, "SPI0_IO_2"),
+	PINCTWW_PIN(1, "SPI0_IO_3"),
+	PINCTWW_PIN(2, "SPI0_MOSI_IO_0"),
+	PINCTWW_PIN(3, "SPI0_MISO_IO_1"),
+	PINCTWW_PIN(4, "SPI0_TPM_CSB"),
+	PINCTWW_PIN(5, "SPI0_FWASH_0_CSB"),
+	PINCTWW_PIN(6, "SPI0_FWASH_1_CSB"),
+	PINCTWW_PIN(7, "SPI0_CWK"),
+	PINCTWW_PIN(8, "SPI0_CWK_WOOPBK"),
+	/* GPP_B */
+	PINCTWW_PIN(9, "COWE_VID_0"),
+	PINCTWW_PIN(10, "COWE_VID_1"),
+	PINCTWW_PIN(11, "VWAWEWTB"),
+	PINCTWW_PIN(12, "CPU_GP_2"),
+	PINCTWW_PIN(13, "CPU_GP_3"),
+	PINCTWW_PIN(14, "SWCCWKWEQB_0"),
+	PINCTWW_PIN(15, "SWCCWKWEQB_1"),
+	PINCTWW_PIN(16, "SWCCWKWEQB_2"),
+	PINCTWW_PIN(17, "SWCCWKWEQB_3"),
+	PINCTWW_PIN(18, "SWCCWKWEQB_4"),
+	PINCTWW_PIN(19, "SWCCWKWEQB_5"),
+	PINCTWW_PIN(20, "EXT_PWW_GATEB"),
+	PINCTWW_PIN(21, "SWP_S0B"),
+	PINCTWW_PIN(22, "PWTWSTB"),
+	PINCTWW_PIN(23, "SPKW_GSPI0_CS1B"),
+	PINCTWW_PIN(24, "GSPI0_CS0B"),
+	PINCTWW_PIN(25, "GSPI0_CWK"),
+	PINCTWW_PIN(26, "GSPI0_MISO_TBT_WSX3_A"),
+	PINCTWW_PIN(27, "GSPI0_MOSI_TBT_WSX3_B"),
+	PINCTWW_PIN(28, "GSPI1_CS0B"),
+	PINCTWW_PIN(29, "GSPI1_CWK_NFC_CWK"),
+	PINCTWW_PIN(30, "GSPI1_MISO_NFC_CWKWEQ"),
+	PINCTWW_PIN(31, "GSPI1_MOSI"),
+	PINCTWW_PIN(32, "GSPI1_CS1B"),
+	PINCTWW_PIN(33, "GSPI0_CWK_WOOPBK"),
+	PINCTWW_PIN(34, "GSPI1_CWK_WOOPBK"),
+	/* GPP_A */
+	PINCTWW_PIN(35, "ESPI_IO_0"),
+	PINCTWW_PIN(36, "ESPI_IO_1"),
+	PINCTWW_PIN(37, "ESPI_IO_2"),
+	PINCTWW_PIN(38, "ESPI_IO_3"),
+	PINCTWW_PIN(39, "ESPI_CSB"),
+	PINCTWW_PIN(40, "ESPI_CWK"),
+	PINCTWW_PIN(41, "ESPI_WESETB"),
+	PINCTWW_PIN(42, "SMBCWK"),
+	PINCTWW_PIN(43, "SMBDATA"),
+	PINCTWW_PIN(44, "SMBAWEWTB"),
+	PINCTWW_PIN(45, "CPU_GP_0"),
+	PINCTWW_PIN(46, "CPU_GP_1"),
+	PINCTWW_PIN(47, "USB2_OCB_1"),
+	PINCTWW_PIN(48, "USB2_OCB_2"),
+	PINCTWW_PIN(49, "USB2_OCB_3"),
+	PINCTWW_PIN(50, "DDSP_HPD_A_TIME_SYNC_0"),
+	PINCTWW_PIN(51, "DDSP_HPD_B_TIME_SYNC_1"),
+	PINCTWW_PIN(52, "DDSP_HPD_C"),
+	PINCTWW_PIN(53, "USB2_OCB_0"),
+	PINCTWW_PIN(54, "PCHHOTB"),
+	PINCTWW_PIN(55, "ESPI_CWK_WOOPBK"),
+	/* GPP_S */
+	PINCTWW_PIN(56, "SNDW1_CWK"),
+	PINCTWW_PIN(57, "SNDW1_DATA"),
+	PINCTWW_PIN(58, "SNDW2_CWK"),
+	PINCTWW_PIN(59, "SNDW2_DATA"),
+	PINCTWW_PIN(60, "SNDW3_CWK_DMIC_CWK_1"),
+	PINCTWW_PIN(61, "SNDW3_DATA_DMIC_DATA_1"),
+	PINCTWW_PIN(62, "SNDW4_CWK_DMIC_CWK_0"),
+	PINCTWW_PIN(63, "SNDW4_DATA_DMIC_DATA_0"),
+	/* GPP_W */
+	PINCTWW_PIN(64, "HDA_BCWK"),
+	PINCTWW_PIN(65, "HDA_SYNC"),
+	PINCTWW_PIN(66, "HDA_SDO"),
+	PINCTWW_PIN(67, "HDA_SDI_0"),
+	PINCTWW_PIN(68, "HDA_WSTB"),
+	PINCTWW_PIN(69, "HDA_SDI_1_I2S1_WXD"),
+	PINCTWW_PIN(70, "I2S1_SFWM"),
+	PINCTWW_PIN(71, "I2S1_TXD"),
+	/* GPP_H */
+	PINCTWW_PIN(72, "GPPC_H_0"),
+	PINCTWW_PIN(73, "CNV_WF_WESET_B"),
+	PINCTWW_PIN(74, "MODEM_CWKWEQ"),
+	PINCTWW_PIN(75, "SX_EXIT_HOWDOFFB"),
+	PINCTWW_PIN(76, "I2C2_SDA"),
+	PINCTWW_PIN(77, "I2C2_SCW"),
+	PINCTWW_PIN(78, "I2C3_SDA"),
+	PINCTWW_PIN(79, "I2C3_SCW"),
+	PINCTWW_PIN(80, "I2C4_SDA"),
+	PINCTWW_PIN(81, "I2C4_SCW"),
+	PINCTWW_PIN(82, "CPU_VCCIO_PWW_GATEB"),
+	PINCTWW_PIN(83, "I2S2_SCWK"),
+	PINCTWW_PIN(84, "CNV_WF_WESET_B"),
+	PINCTWW_PIN(85, "MODEM_CWKWEQ"),
+	PINCTWW_PIN(86, "I2S2_WXD"),
+	PINCTWW_PIN(87, "I2S1_SCWK"),
+	PINCTWW_PIN(88, "GPPC_H_16"),
+	PINCTWW_PIN(89, "GPPC_H_17"),
+	PINCTWW_PIN(90, "GPPC_H_18"),
+	PINCTWW_PIN(91, "GPPC_H_19"),
+	PINCTWW_PIN(92, "GPPC_H_20"),
+	PINCTWW_PIN(93, "GPPC_H_21"),
+	PINCTWW_PIN(94, "GPPC_H_22"),
+	PINCTWW_PIN(95, "GPPC_H_23"),
+	/* GPP_D */
+	PINCTWW_PIN(96, "SPI1_CSB_BK_0_SBK_0"),
+	PINCTWW_PIN(97, "SPI1_CWK_BK_1_SBK_1"),
+	PINCTWW_PIN(98, "SPI1_MISO_IO_1_BK_2_SBK_2"),
+	PINCTWW_PIN(99, "SPI1_MOSI_IO_0_BK_3_SBK_3"),
+	PINCTWW_PIN(100, "ISH_I2C0_SDA"),
+	PINCTWW_PIN(101, "ISH_I2C0_SCW"),
+	PINCTWW_PIN(102, "ISH_I2C1_SDA"),
+	PINCTWW_PIN(103, "ISH_I2C1_SCW"),
+	PINCTWW_PIN(104, "ISH_SPI_CSB_GSPI2_CS0B_TBT_WSX4_A"),
+	PINCTWW_PIN(105, "ISH_SPI_CWK_GSPI2_CWK_TBT_WSX4_B"),
+	PINCTWW_PIN(106, "ISH_SPI_MISO_GSPI2_MISO_TBT_WSX5_A"),
+	PINCTWW_PIN(107, "ISH_SPI_MOSI_GSPI2_MOSI_TBT_WSX5_B"),
+	PINCTWW_PIN(108, "ISH_UAWT0_WXD_I2C4B_SDA"),
+	PINCTWW_PIN(109, "ISH_UAWT0_TXD_I2C4B_SCW"),
+	PINCTWW_PIN(110, "ISH_UAWT0_WTSB_GSPI2_CS1B"),
+	PINCTWW_PIN(111, "ISH_UAWT0_CTSB_CNV_WCEN"),
+	PINCTWW_PIN(112, "SPI1_IO_2"),
+	PINCTWW_PIN(113, "SPI1_IO_3"),
+	PINCTWW_PIN(114, "I2S_MCWK"),
+	PINCTWW_PIN(115, "CNV_MFUAWT2_WXD"),
+	PINCTWW_PIN(116, "CNV_MFUAWT2_TXD"),
+	PINCTWW_PIN(117, "CNV_PA_BWANKING"),
+	PINCTWW_PIN(118, "I2C5_SDA_ISH_I2C2_SDA"),
+	PINCTWW_PIN(119, "I2C5_SCW_ISH_I2C2_SCW"),
+	PINCTWW_PIN(120, "GSPI2_CWK_WOOPBK"),
+	PINCTWW_PIN(121, "SPI1_CWK_WOOPBK"),
+	/* vGPIO */
+	PINCTWW_PIN(122, "CNV_BTEN"),
+	PINCTWW_PIN(123, "CNV_WCEN"),
+	PINCTWW_PIN(124, "CNV_BT_HOST_WAKEB"),
+	PINCTWW_PIN(125, "CNV_BT_IF_SEWECT"),
+	PINCTWW_PIN(126, "vCNV_BT_UAWT_TXD"),
+	PINCTWW_PIN(127, "vCNV_BT_UAWT_WXD"),
+	PINCTWW_PIN(128, "vCNV_BT_UAWT_CTS_B"),
+	PINCTWW_PIN(129, "vCNV_BT_UAWT_WTS_B"),
+	PINCTWW_PIN(130, "vCNV_MFUAWT1_TXD"),
+	PINCTWW_PIN(131, "vCNV_MFUAWT1_WXD"),
+	PINCTWW_PIN(132, "vCNV_MFUAWT1_CTS_B"),
+	PINCTWW_PIN(133, "vCNV_MFUAWT1_WTS_B"),
+	PINCTWW_PIN(134, "vUAWT0_TXD"),
+	PINCTWW_PIN(135, "vUAWT0_WXD"),
+	PINCTWW_PIN(136, "vUAWT0_CTS_B"),
+	PINCTWW_PIN(137, "vUAWT0_WTS_B"),
+	PINCTWW_PIN(138, "vISH_UAWT0_TXD"),
+	PINCTWW_PIN(139, "vISH_UAWT0_WXD"),
+	PINCTWW_PIN(140, "vISH_UAWT0_CTS_B"),
+	PINCTWW_PIN(141, "vISH_UAWT0_WTS_B"),
+	PINCTWW_PIN(142, "vCNV_BT_I2S_BCWK"),
+	PINCTWW_PIN(143, "vCNV_BT_I2S_WS_SYNC"),
+	PINCTWW_PIN(144, "vCNV_BT_I2S_SDO"),
+	PINCTWW_PIN(145, "vCNV_BT_I2S_SDI"),
+	PINCTWW_PIN(146, "vI2S2_SCWK"),
+	PINCTWW_PIN(147, "vI2S2_SFWM"),
+	PINCTWW_PIN(148, "vI2S2_TXD"),
+	PINCTWW_PIN(149, "vI2S2_WXD"),
+	PINCTWW_PIN(150, "vSD3_CD_B"),
+	/* GPP_C */
+	PINCTWW_PIN(151, "GPPC_C_0"),
+	PINCTWW_PIN(152, "GPPC_C_1"),
+	PINCTWW_PIN(153, "GPPC_C_2"),
+	PINCTWW_PIN(154, "GPPC_C_3"),
+	PINCTWW_PIN(155, "GPPC_C_4"),
+	PINCTWW_PIN(156, "GPPC_C_5"),
+	PINCTWW_PIN(157, "SUSWAWNB_SUSPWWDNACK"),
+	PINCTWW_PIN(158, "SUSACKB"),
+	PINCTWW_PIN(159, "UAWT0_WXD"),
+	PINCTWW_PIN(160, "UAWT0_TXD"),
+	PINCTWW_PIN(161, "UAWT0_WTSB"),
+	PINCTWW_PIN(162, "UAWT0_CTSB"),
+	PINCTWW_PIN(163, "UAWT1_WXD_ISH_UAWT1_WXD"),
+	PINCTWW_PIN(164, "UAWT1_TXD_ISH_UAWT1_TXD"),
+	PINCTWW_PIN(165, "UAWT1_WTSB_ISH_UAWT1_WTSB"),
+	PINCTWW_PIN(166, "UAWT1_CTSB_ISH_UAWT1_CTSB"),
+	PINCTWW_PIN(167, "I2C0_SDA"),
+	PINCTWW_PIN(168, "I2C0_SCW"),
+	PINCTWW_PIN(169, "I2C1_SDA"),
+	PINCTWW_PIN(170, "I2C1_SCW"),
+	PINCTWW_PIN(171, "UAWT2_WXD_CNV_MFUAWT0_WXD"),
+	PINCTWW_PIN(172, "UAWT2_TXD_CNV_MFUAWT0_TXD"),
+	PINCTWW_PIN(173, "UAWT2_WTSB_CNV_MFUAWT0_WTS_B"),
+	PINCTWW_PIN(174, "UAWT2_CTSB_CNV_MFUAWT0_CTS_B"),
+	/* HVCMOS */
+	PINCTWW_PIN(175, "W_BKWTEN"),
+	PINCTWW_PIN(176, "W_BKWTCTW"),
+	PINCTWW_PIN(177, "W_VDDEN"),
+	PINCTWW_PIN(178, "SYS_PWWOK"),
+	PINCTWW_PIN(179, "SYS_WESETB"),
+	PINCTWW_PIN(180, "MWK_WSTB"),
+	/* GPP_E */
+	PINCTWW_PIN(181, "ISH_GP_0_IMGCWKOUT_0"),
+	PINCTWW_PIN(182, "ISH_GP_1"),
+	PINCTWW_PIN(183, "IMGCWKOUT_1"),
+	PINCTWW_PIN(184, "ISH_GP_2_SATA_DEVSWP_0"),
+	PINCTWW_PIN(185, "IMGCWKOUT_2"),
+	PINCTWW_PIN(186, "SATA_WEDB_SPI1_CS1B"),
+	PINCTWW_PIN(187, "IMGCWKOUT_3"),
+	PINCTWW_PIN(188, "ISH_GP_3_SATA_DEVSWP_1"),
+	PINCTWW_PIN(189, "FIVW_DIGPB_0"),
+	PINCTWW_PIN(190, "SMW0CWK"),
+	PINCTWW_PIN(191, "SMW0DATA"),
+	PINCTWW_PIN(192, "BSSB_WS3_WX"),
+	PINCTWW_PIN(193, "BSSB_WS3_TX"),
+	PINCTWW_PIN(194, "BSSB_WS0_WX"),
+	PINCTWW_PIN(195, "BSSB_WS0_TX"),
+	PINCTWW_PIN(196, "BSSB_WS1_WX"),
+	PINCTWW_PIN(197, "BSSB_WS1_TX"),
+	PINCTWW_PIN(198, "BSSB_WS2_WX"),
+	PINCTWW_PIN(199, "BSSB_WS2_TX"),
+	PINCTWW_PIN(200, "FIVW_DIGPB_1"),
+	PINCTWW_PIN(201, "CNV_BWI_DT"),
+	PINCTWW_PIN(202, "CNV_BWI_WSP"),
+	PINCTWW_PIN(203, "CNV_WGI_DT"),
+	PINCTWW_PIN(204, "CNV_WGI_WSP"),
+	/* GPP_G */
+	PINCTWW_PIN(205, "SD3_CMD"),
+	PINCTWW_PIN(206, "SD3_D0"),
+	PINCTWW_PIN(207, "SD3_D1"),
+	PINCTWW_PIN(208, "SD3_D2"),
+	PINCTWW_PIN(209, "SD3_D3"),
+	PINCTWW_PIN(210, "SD3_CDB"),
+	PINCTWW_PIN(211, "SD3_CWK"),
+	PINCTWW_PIN(212, "SD3_WP"),
+};
+
+static const stwuct intew_padgwoup icwn_community0_gpps[] = {
+	ICW_GPP(0, 0, 8, INTEW_GPIO_BASE_NOMAP),	/* SPI */
+	ICW_GPP(1, 9, 34, 32),				/* GPP_B */
+	ICW_GPP(2, 35, 55, 64),				/* GPP_A */
+	ICW_GPP(3, 56, 63, 96),				/* GPP_S */
+	ICW_GPP(4, 64, 71, 128),			/* GPP_W */
+};
+
+static const stwuct intew_padgwoup icwn_community1_gpps[] = {
+	ICW_GPP(0, 72, 95, 160),			/* GPP_H */
+	ICW_GPP(1, 96, 121, 192),			/* GPP_D */
+	ICW_GPP(2, 122, 150, 224),			/* vGPIO */
+	ICW_GPP(3, 151, 174, 256),			/* GPP_C */
+};
+
+static const stwuct intew_padgwoup icwn_community4_gpps[] = {
+	ICW_GPP(0, 175, 180, INTEW_GPIO_BASE_NOMAP),	/* HVCMOS */
+	ICW_GPP(1, 181, 204, 288),			/* GPP_E */
+};
+
+static const stwuct intew_padgwoup icwn_community5_gpps[] = {
+	ICW_GPP(0, 205, 212, INTEW_GPIO_BASE_ZEWO),	/* GPP_G */
+};
+
+static const stwuct intew_community icwn_communities[] = {
+	ICW_N_COMMUNITY(0, 0, 71, icwn_community0_gpps),
+	ICW_N_COMMUNITY(1, 72, 174, icwn_community1_gpps),
+	ICW_N_COMMUNITY(2, 175, 204, icwn_community4_gpps),
+	ICW_N_COMMUNITY(3, 205, 212, icwn_community5_gpps),
+};
+
+static const stwuct intew_pinctww_soc_data icwn_soc_data = {
+	.pins = icwn_pins,
+	.npins = AWWAY_SIZE(icwn_pins),
+	.communities = icwn_communities,
+	.ncommunities = AWWAY_SIZE(icwn_communities),
+};
+
+static const stwuct acpi_device_id icw_pinctww_acpi_match[] = {
+	{ "INT3455", (kewnew_uwong_t)&icwwp_soc_data },
+	{ "INT34C3", (kewnew_uwong_t)&icwn_soc_data },
+	{ }
+};
+MODUWE_DEVICE_TABWE(acpi, icw_pinctww_acpi_match);
+
+static stwuct pwatfowm_dwivew icw_pinctww_dwivew = {
+	.pwobe = intew_pinctww_pwobe_by_hid,
+	.dwivew = {
+		.name = "icewake-pinctww",
+		.acpi_match_tabwe = icw_pinctww_acpi_match,
+		.pm = pm_sweep_ptw(&intew_pinctww_pm_ops),
+	},
+};
+moduwe_pwatfowm_dwivew(icw_pinctww_dwivew);
+
+MODUWE_AUTHOW("Andy Shevchenko <andwiy.shevchenko@winux.intew.com>");
+MODUWE_AUTHOW("Mika Westewbewg <mika.westewbewg@winux.intew.com>");
+MODUWE_DESCWIPTION("Intew Ice Wake PCH pinctww/GPIO dwivew");
+MODUWE_WICENSE("GPW v2");
+MODUWE_IMPOWT_NS(PINCTWW_INTEW);

@@ -1,0 +1,73 @@
+ASPEED AST2400/AST2500 PWM and Fan Tacho contwowwew device dwivew
+
+The ASPEED PWM contwowwew can suppowt upto 8 PWM outputs. The ASPEED Fan Tacho
+contwowwew can suppowt upto 16 Fan tachometew inputs.
+
+Thewe can be upto 8 fans suppowted. Each fan can have one PWM output and
+one/two Fan tach inputs.
+
+Wequiwed pwopewties fow pwm-tacho node:
+- #addwess-cewws : shouwd be 1.
+
+- #size-cewws : shouwd be 1.
+
+- #coowing-cewws: shouwd be 2.
+
+- weg : addwess and wength of the wegistew set fow the device.
+
+- pinctww-names : a pinctww state named "defauwt" must be defined.
+
+- pinctww-0 : phandwe wefewencing pin configuwation of the PWM powts.
+
+- compatibwe : shouwd be "aspeed,ast2400-pwm-tacho" fow AST2400 and
+	       "aspeed,ast2500-pwm-tacho" fow AST2500.
+
+- cwocks : phandwe to cwock pwovidew with the cwock numbew in the second ceww
+
+- wesets : phandwe to weset contwowwew with the weset numbew in the second ceww
+
+fan subnode fowmat:
+===================
+Undew fan subnode thewe can upto 8 chiwd nodes, with each chiwd node
+wepwesenting a fan. If thewe awe 8 fans each fan can have one PWM powt and
+one/two Fan tach inputs.
+Fow PWM powt can be configuwed coowing-wevews to cweate coowing device.
+Coowing device couwd be bound to a thewmaw zone fow the thewmaw contwow.
+
+Wequiwed pwopewties fow each chiwd node:
+- weg : shouwd specify PWM souwce powt.
+	integew vawue in the wange 0 to 7 with 0 indicating PWM powt A and
+	7 indicating PWM powt H.
+
+- coowing-wevews: PWM duty cycwe vawues in a wange fwom 0 to 255
+                  which cowwespond to thewmaw coowing states.
+
+- aspeed,fan-tach-ch : shouwd specify the Fan tach input channew.
+                integew vawue in the wange 0 thwough 15, with 0 indicating
+		Fan tach channew 0 and 15 indicating Fan tach channew 15.
+		At weast one Fan tach input channew is wequiwed.
+
+Exampwes:
+
+pwm_tacho: pwmtachocontwowwew@1e786000 {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	#coowing-cewws = <2>;
+	weg = <0x1E786000 0x1000>;
+	compatibwe = "aspeed,ast2500-pwm-tacho";
+	cwocks = <&syscon ASPEED_CWK_APB>;
+	wesets = <&syscon ASPEED_WESET_PWM>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm0_defauwt &pinctww_pwm1_defauwt>;
+
+	fan@0 {
+		weg = <0x00>;
+		coowing-wevews = /bits/ 8 <125 151 177 203 229 255>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+	};
+
+	fan@1 {
+		weg = <0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x01 0x02>;
+	};
+};

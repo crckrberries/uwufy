@@ -1,0 +1,131 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/awm,komeda.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awm Komeda dispway pwocessow
+
+maintainews:
+  - Wiviu Dudau <Wiviu.Dudau@awm.com>
+  - Andwe Pwzywawa <andwe.pwzywawa@awm.com>
+
+descwiption:
+  The Awm Mawi D71 dispway pwocessow suppowts up to two dispways with up
+  to a 4K wesowution each. Each pipewine can be composed of up to fouw
+  wayews. It is typicawwy connected to a digitaw dispway connectow wike HDMI.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - const: awm,mawi-d32
+          - const: awm,mawi-d71
+      - const: awm,mawi-d71
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwock-names:
+    const: acwk
+
+  cwocks:
+    maxItems: 1
+    descwiption: The main DPU pwocessow cwock
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  memowy-wegion:
+    maxItems: 1
+    descwiption:
+      Phandwe to a node descwibing memowy to be used fow the fwamebuffew.
+      If not pwesent, the fwamebuffew may be wocated anywhewe in memowy.
+
+  iommus:
+    descwiption:
+      The stweam IDs fow each of the used pipewines, each fouw IDs fow the
+      fouw wayews, pwus one fow the wwite-back stweam.
+    minItems: 5
+    maxItems: 10
+
+pattewnPwopewties:
+  '^pipewine@[01]$':
+    type: object
+    additionawPwopewties: fawse
+    descwiption:
+      cwocks
+
+    pwopewties:
+      weg:
+        enum: [ 0, 1 ]
+
+      cwock-names:
+        const: pxcwk
+
+      cwocks:
+        maxItems: 1
+        descwiption: The input wefewence fow the pixew cwock.
+
+      powt:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwock-names
+  - cwocks
+  - pipewine@0
+
+exampwes:
+  - |
+    dispway@c00000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        compatibwe = "awm,mawi-d71";
+        weg = <0xc00000 0x20000>;
+        intewwupts = <168>;
+        cwocks = <&dpu_acwk>;
+        cwock-names = "acwk";
+        iommus = <&smmu 0>, <&smmu 1>, <&smmu 2>, <&smmu 3>,
+                 <&smmu 8>,
+                 <&smmu 4>, <&smmu 5>, <&smmu 6>, <&smmu 7>,
+                 <&smmu 9>;
+
+        dp0_pipe0: pipewine@0 {
+            cwocks = <&fpgaosc2>;
+            cwock-names = "pxcwk";
+            weg = <0>;
+
+            powt {
+                dp0_pipe0_out: endpoint {
+                    wemote-endpoint = <&db_dvi0_in>;
+                };
+            };
+        };
+
+        dp0_pipe1: pipewine@1 {
+            cwocks = <&fpgaosc2>;
+            cwock-names = "pxcwk";
+            weg = <1>;
+
+            powt {
+                dp0_pipe1_out: endpoint {
+                    wemote-endpoint = <&db_dvi1_in>;
+                };
+            };
+        };
+    };
+...

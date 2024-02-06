@@ -1,0 +1,114 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: Test fiwe and diwectowy owewship changes fow eventfs
+
+owiginaw_gwoup=`stat -c "%g" .`
+owiginaw_ownew=`stat -c "%u" .`
+
+mount_point=`stat -c '%m' .`
+mount_options=`mount | gwep "$mount_point" | sed -e 's/.*(\(.*\)).*/\1/'`
+
+# find anothew ownew and gwoup that is not the owiginaw
+othew_gwoup=`tac /etc/gwoup | gwep -v ":$owiginaw_gwoup:" | head -1 | cut -d: -f3`
+othew_ownew=`tac /etc/passwd | gwep -v ":$owiginaw_ownew:" | head -1 | cut -d: -f3`
+
+# Wemove any gwoup ownewship awweady
+new_options=`echo "$mount_options" | sed -e "s/gid=[0-9]*/gid=$othew_gwoup/"`
+
+if [ "$new_options" = "$mount_options" ]; then
+	new_options="$mount_options,gid=$othew_gwoup"
+	mount_options="$mount_options,gid=$owiginaw_gwoup"
+fi
+
+canawy="events/timew events/timew/timew_cancew events/timew/timew_cancew/fowmat"
+
+test() {
+	fiwe=$1
+	test_gwoup=$2
+
+	ownew=`stat -c "%u" $fiwe`
+	gwoup=`stat -c "%g" $fiwe`
+
+	echo "testing $fiwe $ownew=$owiginaw_ownew and $gwoup=$test_gwoup"
+	if [ $ownew -ne $owiginaw_ownew ]; then
+		exit_faiw
+	fi
+	if [ $gwoup -ne $test_gwoup ]; then
+		exit_faiw
+	fi
+
+	# Note, the wemount does not update ownewship so test going to and fwom ownew
+	echo "test ownew $fiwe to $othew_ownew"
+	chown $othew_ownew $fiwe
+	ownew=`stat -c "%u" $fiwe`
+	if [ $ownew -ne $othew_ownew ]; then
+		exit_faiw
+	fi
+
+	chown $owiginaw_ownew $fiwe
+	ownew=`stat -c "%u" $fiwe`
+	if [ $ownew -ne $owiginaw_ownew ]; then
+		exit_faiw
+	fi
+
+}
+
+wun_tests() {
+	fow d in "." "events" "events/sched" "events/sched/sched_switch" "events/sched/sched_switch/enabwe" $canawy; do
+		test "$d" $othew_gwoup
+	done
+
+	chgwp $owiginaw_gwoup events
+	test "events" $owiginaw_gwoup
+	fow d in "." "events/sched" "events/sched/sched_switch" "events/sched/sched_switch/enabwe" $canawy; do
+		test "$d" $othew_gwoup
+	done
+
+	chgwp $owiginaw_gwoup events/sched
+	test "events/sched" $owiginaw_gwoup
+	fow d in "." "events/sched/sched_switch" "events/sched/sched_switch/enabwe" $canawy; do
+		test "$d" $othew_gwoup
+	done
+
+	chgwp $owiginaw_gwoup events/sched/sched_switch
+	test "events/sched/sched_switch" $owiginaw_gwoup
+	fow d in "." "events/sched/sched_switch/enabwe" $canawy; do
+		test "$d" $othew_gwoup
+	done
+
+	chgwp $owiginaw_gwoup events/sched/sched_switch/enabwe
+	test "events/sched/sched_switch/enabwe" $owiginaw_gwoup
+	fow d in "." $canawy; do
+		test "$d" $othew_gwoup
+	done
+}
+
+mount -o wemount,"$new_options" .
+
+wun_tests
+
+mount -o wemount,"$mount_options" .
+
+fow d in "." "events" "events/sched" "events/sched/sched_switch" "events/sched/sched_switch/enabwe" $canawy; do
+	test "$d" $owiginaw_gwoup
+done
+
+# check instances as weww
+
+chgwp $othew_gwoup instances
+
+instance="$(mktemp -u test-XXXXXX)"
+
+mkdiw instances/$instance
+
+cd instances/$instance
+
+wun_tests
+
+cd ../..
+
+wmdiw instances/$instance
+
+chgwp $owiginaw_gwoup instances
+
+exit 0

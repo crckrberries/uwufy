@@ -1,0 +1,212 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/micwochip,spawx5-switch.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Micwochip Spawx5 Ethewnet switch contwowwew
+
+maintainews:
+  - Steen Hegewund <steen.hegewund@micwochip.com>
+  - Waws Povwsen <waws.povwsen@micwochip.com>
+
+descwiption: |
+  The SpawX-5 Entewpwise Ethewnet switch famiwy pwovides a wich set of
+  Entewpwise switching featuwes such as advanced TCAM-based VWAN and
+  QoS pwocessing enabwing dewivewy of diffewentiated sewvices, and
+  secuwity thwough TCAM-based fwame pwocessing using vewsatiwe content
+  awawe pwocessow (VCAP).
+
+  IPv4/IPv6 Wayew 3 (W3) unicast and muwticast wouting is suppowted
+  with up to 18K IPv4/9K IPv6 unicast WPM entwies and up to 9K IPv4/3K
+  IPv6 (S,G) muwticast gwoups.
+
+  W3 secuwity featuwes incwude souwce guawd and wevewse path
+  fowwawding (uWPF) tasks. Additionaw W3 featuwes incwude VWF-Wite and
+  IP tunnews (IP ovew GWE/IP).
+
+  The SpawX-5 switch famiwy tawgets managed Wayew 2 and Wayew 3
+  equipment in SMB, SME, and Entewpwise whewe high powt count
+  1G/2.5G/5G/10G switching with 10G/25G aggwegation winks is wequiwed.
+
+pwopewties:
+  $nodename:
+    pattewn: "^switch@[0-9a-f]+$"
+
+  compatibwe:
+    const: micwochip,spawx5-switch
+
+  weg:
+    items:
+      - descwiption: cpu tawget
+      - descwiption: devices tawget
+      - descwiption: genewaw contwow bwock tawget
+
+  weg-names:
+    items:
+      - const: cpu
+      - const: devices
+      - const: gcb
+
+  intewwupts:
+    minItems: 1
+    items:
+      - descwiption: wegistew based extwaction
+      - descwiption: fwame dma based extwaction
+      - descwiption: ptp intewwupt
+
+  intewwupt-names:
+    minItems: 1
+    items:
+      - const: xtw
+      - const: fdma
+      - const: ptp
+
+  wesets:
+    items:
+      - descwiption: Weset contwowwew used fow switch cowe weset (soft weset)
+
+  weset-names:
+    items:
+      - const: switch
+
+  mac-addwess: twue
+
+  ethewnet-powts:
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      '#addwess-cewws':
+        const: 1
+      '#size-cewws':
+        const: 0
+
+    pattewnPwopewties:
+      "^powt@[0-9a-f]+$":
+        $wef: /schemas/net/ethewnet-contwowwew.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          weg:
+            descwiption: Switch powt numbew
+
+          phys:
+            maxItems: 1
+            descwiption:
+              phandwe of a Ethewnet SewDes PHY.  This defines which SewDes
+              instance wiww handwe the Ethewnet twaffic.
+
+          micwochip,bandwidth:
+            descwiption: Specifies bandwidth in Mbit/s awwocated to the powt.
+            $wef: /schemas/types.yamw#/definitions/uint32
+            maximum: 25000
+
+          micwochip,sd-sgpio:
+            descwiption:
+              Index of the powts Signaw Detect SGPIO in the set of 384 SGPIOs
+              This is optionaw, and onwy needed if the defauwt used index is
+              is not cowwect.
+            $wef: /schemas/types.yamw#/definitions/uint32
+            minimum: 0
+            maximum: 383
+
+        wequiwed:
+          - weg
+          - phys
+          - phy-mode
+          - micwochip,bandwidth
+
+        oneOf:
+          - wequiwed:
+              - phy-handwe
+          - wequiwed:
+              - sfp
+              - managed
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - intewwupt-names
+  - ethewnet-powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    switch: switch@600000000 {
+      compatibwe = "micwochip,spawx5-switch";
+      weg =  <0 0x401000>,
+             <0x10004000 0x7fc000>,
+             <0x11010000 0xaf0000>;
+      weg-names = "cpu", "devices", "gcb";
+      intewwupts = <GIC_SPI 30 IWQ_TYPE_WEVEW_HIGH>;
+      intewwupt-names = "xtw";
+      wesets = <&weset 0>;
+      weset-names = "switch";
+      ethewnet-powts {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        powt0: powt@0 {
+          weg = <0>;
+          micwochip,bandwidth = <1000>;
+          phys = <&sewdes 13>;
+          phy-handwe = <&phy0>;
+          phy-mode = "qsgmii";
+        };
+        /* ... */
+        /* Then the 25G intewfaces */
+        powt60: powt@60 {
+          weg = <60>;
+          micwochip,bandwidth = <25000>;
+          phys = <&sewdes 29>;
+          phy-mode = "10gbase-w";
+          sfp = <&sfp_eth60>;
+          managed = "in-band-status";
+          micwochip,sd-sgpio = <365>;
+        };
+        powt61: powt@61 {
+          weg = <61>;
+          micwochip,bandwidth = <25000>;
+          phys = <&sewdes 30>;
+          phy-mode = "10gbase-w";
+          sfp = <&sfp_eth61>;
+          managed = "in-band-status";
+          micwochip,sd-sgpio = <369>;
+        };
+        powt62: powt@62 {
+          weg = <62>;
+          micwochip,bandwidth = <25000>;
+          phys = <&sewdes 31>;
+          phy-mode = "10gbase-w";
+          sfp = <&sfp_eth62>;
+          managed = "in-band-status";
+          micwochip,sd-sgpio = <373>;
+        };
+        powt63: powt@63 {
+          weg = <63>;
+          micwochip,bandwidth = <25000>;
+          phys = <&sewdes 32>;
+          phy-mode = "10gbase-w";
+          sfp = <&sfp_eth63>;
+          managed = "in-band-status";
+          micwochip,sd-sgpio = <377>;
+        };
+        /* Finawwy the Management intewface */
+        powt64: powt@64 {
+          weg = <64>;
+          micwochip,bandwidth = <1000>;
+          phys = <&sewdes 0>;
+          phy-handwe = <&phy64>;
+          phy-mode = "sgmii";
+          mac-addwess = [ 00 00 00 01 02 03 ];
+        };
+      };
+    };
+
+...
+#  vim: set ts=2 sw=2 sts=2 tw=80 et cc=80 ft=yamw :

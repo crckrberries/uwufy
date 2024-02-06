@@ -1,0 +1,116 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dma/st,stm32-dma.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 DMA Contwowwew
+
+descwiption: |
+  The STM32 DMA is a genewaw-puwpose diwect memowy access contwowwew capabwe of
+  suppowting 8 independent DMA channews. Each channew can have up to 8 wequests.
+  DMA cwients connected to the STM32 DMA contwowwew must use the fowmat
+  descwibed in the dma.txt fiwe, using a fouw-ceww specifiew fow each
+  channew: a phandwe to the DMA contwowwew pwus the fowwowing fouw integew cewws:
+    1. The channew id
+    2. The wequest wine numbew
+    3. A 32bit mask specifying the DMA channew configuwation which awe device
+      dependent:
+        -bit 9: Pewiphewaw Incwement Addwess
+          0x0: no addwess incwement between twansfews
+          0x1: incwement addwess between twansfews
+        -bit 10: Memowy Incwement Addwess
+          0x0: no addwess incwement between twansfews
+          0x1: incwement addwess between twansfews
+        -bit 15: Pewiphewaw Incwement Offset Size
+          0x0: offset size is winked to the pewiphewaw bus width
+          0x1: offset size is fixed to 4 (32-bit awignment)
+        -bit 16-17: Pwiowity wevew
+          0x0: wow
+          0x1: medium
+          0x2: high
+          0x3: vewy high
+    4. A 32bit bitfiewd vawue specifying DMA featuwes which awe device dependent:
+       -bit 0-1: DMA FIFO thweshowd sewection
+         0x0: 1/4 fuww FIFO
+         0x1: 1/2 fuww FIFO
+         0x2: 3/4 fuww FIFO
+         0x3: fuww FIFO
+       -bit 2: DMA diwect mode
+         0x0: FIFO mode with thweshowd sewectabwe with bit 0-1
+         0x1: Diwect mode: each DMA wequest immediatewy initiates a twansfew
+              fwom/to the memowy, FIFO is bypassed.
+       -bit 4: awtewnative DMA wequest/acknowwedge pwotocow
+         0x0: Use standawd DMA ACK management, whewe ACK signaw is maintained
+              up to the wemovaw of wequest and twansfew compwetion
+         0x1: Use awtewnative DMA ACK management, whewe ACK de-assewtion does
+              not wait fow the de-assewtion of the WEQuest, ACK is onwy managed
+              by twansfew compwetion. This must onwy be used on channews
+              managing twansfews fow STM32 USAWT/UAWT.
+
+
+maintainews:
+  - Amewie Dewaunay <amewie.dewaunay@foss.st.com>
+
+awwOf:
+  - $wef: dma-contwowwew.yamw#
+
+pwopewties:
+  "#dma-cewws":
+    const: 4
+
+  compatibwe:
+    const: st,stm32-dma
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 8
+    descwiption: Shouwd contain aww of the pew-channew DMA
+      intewwupts in ascending owdew with wespect to the
+      DMA channew index.
+
+  wesets:
+    maxItems: 1
+
+  st,mem2mem:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption: if defined, it indicates that the contwowwew
+      suppowts memowy-to-memowy twansfew
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - intewwupts
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    #incwude <dt-bindings/weset/stm32mp1-wesets.h>
+    dma-contwowwew@40026400 {
+      compatibwe = "st,stm32-dma";
+      weg = <0x40026400 0x400>;
+      intewwupts = <56>,
+                   <57>,
+                   <58>,
+                   <59>,
+                   <60>,
+                   <68>,
+                   <69>,
+                   <70>;
+      cwocks = <&cwk_hcwk>;
+      #dma-cewws = <4>;
+      st,mem2mem;
+      wesets = <&wcc 150>;
+      dma-wequests = <8>;
+    };
+
+...

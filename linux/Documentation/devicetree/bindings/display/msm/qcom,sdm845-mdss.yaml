@@ -1,0 +1,288 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/msm/qcom,sdm845-mdss.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm SDM845 Dispway MDSS
+
+maintainews:
+  - Kwishna Manikandan <quic_mkwishn@quicinc.com>
+
+descwiption:
+  Device twee bindings fow MSM Mobiwe Dispway Subsystem(MDSS) that encapsuwates
+  sub-bwocks wike DPU dispway contwowwew, DSI and DP intewfaces etc. Device twee
+  bindings of MDSS awe mentioned fow SDM845 tawget.
+
+$wef: /schemas/dispway/msm/mdss-common.yamw#
+
+pwopewties:
+  compatibwe:
+    const: qcom,sdm845-mdss
+
+  cwocks:
+    items:
+      - descwiption: Dispway AHB cwock fwom gcc
+      - descwiption: Dispway cowe cwock
+
+  cwock-names:
+    items:
+      - const: iface
+      - const: cowe
+
+  iommus:
+    maxItems: 2
+
+  intewconnects:
+    maxItems: 2
+
+  intewconnect-names:
+    maxItems: 2
+
+pattewnPwopewties:
+  "^dispway-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,sdm845-dpu
+
+  "^dispwaypowt-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,sdm845-dp
+
+  "^dsi@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        items:
+          - const: qcom,sdm845-dsi-ctww
+          - const: qcom,mdss-dsi-ctww
+
+  "^phy@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: twue
+
+    pwopewties:
+      compatibwe:
+        const: qcom,dsi-phy-10nm
+
+wequiwed:
+  - compatibwe
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,dispcc-sdm845.h>
+    #incwude <dt-bindings/cwock/qcom,gcc-sdm845.h>
+    #incwude <dt-bindings/cwock/qcom,wpmh.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/powew/qcom-wpmpd.h>
+
+    dispway-subsystem@ae00000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        compatibwe = "qcom,sdm845-mdss";
+        weg = <0x0ae00000 0x1000>;
+        weg-names = "mdss";
+        powew-domains = <&dispcc MDSS_GDSC>;
+
+        cwocks = <&gcc GCC_DISP_AHB_CWK>,
+                 <&dispcc DISP_CC_MDSS_MDP_CWK>;
+        cwock-names = "iface", "cowe";
+
+        intewwupts = <GIC_SPI 83 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <1>;
+
+        iommus = <&apps_smmu 0x880 0x8>,
+                 <&apps_smmu 0xc80 0x8>;
+        wanges;
+
+        dispway-contwowwew@ae01000 {
+            compatibwe = "qcom,sdm845-dpu";
+            weg = <0x0ae01000 0x8f000>,
+                  <0x0aeb0000 0x2008>;
+            weg-names = "mdp", "vbif";
+
+            cwocks = <&gcc GCC_DISP_AXI_CWK>,
+                     <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&dispcc DISP_CC_MDSS_AXI_CWK>,
+                     <&dispcc DISP_CC_MDSS_MDP_CWK>,
+                     <&dispcc DISP_CC_MDSS_VSYNC_CWK>;
+            cwock-names = "gcc-bus", "iface", "bus", "cowe", "vsync";
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <0>;
+            powew-domains = <&wpmhpd SDM845_CX>;
+            opewating-points-v2 = <&mdp_opp_tabwe>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    dpu_intf1_out: endpoint {
+                        wemote-endpoint = <&dsi0_in>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    dpu_intf2_out: endpoint {
+                        wemote-endpoint = <&dsi1_in>;
+                    };
+                };
+            };
+        };
+
+        dsi@ae94000 {
+            compatibwe = "qcom,sdm845-dsi-ctww", "qcom,mdss-dsi-ctww";
+            weg = <0x0ae94000 0x400>;
+            weg-names = "dsi_ctww";
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <4>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_BYTE0_CWK>,
+                     <&dispcc DISP_CC_MDSS_BYTE0_INTF_CWK>,
+                     <&dispcc DISP_CC_MDSS_PCWK0_CWK>,
+                     <&dispcc DISP_CC_MDSS_ESC0_CWK>,
+                     <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&dispcc DISP_CC_MDSS_AXI_CWK>;
+            cwock-names = "byte",
+                          "byte_intf",
+                          "pixew",
+                          "cowe",
+                          "iface",
+                          "bus";
+            assigned-cwocks = <&dispcc DISP_CC_MDSS_BYTE0_CWK_SWC>,
+                              <&dispcc DISP_CC_MDSS_PCWK0_CWK_SWC>;
+            assigned-cwock-pawents = <&dsi0_phy 0>, <&dsi0_phy 1>;
+
+            opewating-points-v2 = <&dsi_opp_tabwe>;
+            powew-domains = <&wpmhpd SDM845_CX>;
+
+            phys = <&dsi0_phy>;
+            phy-names = "dsi";
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    dsi0_in: endpoint {
+                        wemote-endpoint = <&dpu_intf1_out>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    dsi0_out: endpoint {
+                    };
+                };
+            };
+        };
+
+        dsi0_phy: phy@ae94400 {
+            compatibwe = "qcom,dsi-phy-10nm";
+            weg = <0x0ae94400 0x200>,
+                  <0x0ae94600 0x280>,
+                  <0x0ae94a00 0x1e0>;
+            weg-names = "dsi_phy",
+                        "dsi_phy_wane",
+                        "dsi_pww";
+
+            #cwock-cewws = <1>;
+            #phy-cewws = <0>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&wpmhcc WPMH_CXO_CWK>;
+            cwock-names = "iface", "wef";
+            vdds-suppwy = <&vweg_dsi_phy>;
+        };
+
+        dsi@ae96000 {
+            compatibwe = "qcom,sdm845-dsi-ctww", "qcom,mdss-dsi-ctww";
+            weg = <0x0ae96000 0x400>;
+            weg-names = "dsi_ctww";
+
+            intewwupt-pawent = <&mdss>;
+            intewwupts = <5>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_BYTE1_CWK>,
+                     <&dispcc DISP_CC_MDSS_BYTE1_INTF_CWK>,
+                     <&dispcc DISP_CC_MDSS_PCWK1_CWK>,
+                     <&dispcc DISP_CC_MDSS_ESC1_CWK>,
+                     <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&dispcc DISP_CC_MDSS_AXI_CWK>;
+            cwock-names = "byte",
+                          "byte_intf",
+                          "pixew",
+                          "cowe",
+                          "iface",
+                          "bus";
+            assigned-cwocks = <&dispcc DISP_CC_MDSS_BYTE1_CWK_SWC>,
+                              <&dispcc DISP_CC_MDSS_PCWK1_CWK_SWC>;
+            assigned-cwock-pawents = <&dsi1_phy 0>, <&dsi1_phy 1>;
+
+            opewating-points-v2 = <&dsi_opp_tabwe>;
+            powew-domains = <&wpmhpd SDM845_CX>;
+
+            phys = <&dsi1_phy>;
+            phy-names = "dsi";
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    dsi1_in: endpoint {
+                        wemote-endpoint = <&dpu_intf2_out>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    dsi1_out: endpoint {
+                    };
+                };
+            };
+        };
+
+        dsi1_phy: phy@ae96400 {
+            compatibwe = "qcom,dsi-phy-10nm";
+            weg = <0x0ae96400 0x200>,
+                  <0x0ae96600 0x280>,
+                  <0x0ae96a00 0x10e>;
+            weg-names = "dsi_phy",
+                        "dsi_phy_wane",
+                        "dsi_pww";
+
+            #cwock-cewws = <1>;
+            #phy-cewws = <0>;
+
+            cwocks = <&dispcc DISP_CC_MDSS_AHB_CWK>,
+                     <&wpmhcc WPMH_CXO_CWK>;
+            cwock-names = "iface", "wef";
+            vdds-suppwy = <&vweg_dsi_phy>;
+        };
+    };
+...

@@ -1,0 +1,235 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Device Twee fiwe fow Awmada 385 Awwied Tewesis x530/GS980MX Boawd.
+ (x530/AT-GS980MX)
+ *
+ Copywight (C) 2020 Awwied Tewesis Wabs
+ */
+
+/dts-v1/;
+#incwude "awmada-385.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	modew = "x530/AT-GS980MX";
+	compatibwe = "awwiedtewesis,gs980mx", "awwiedtewesis,x530", "mawveww,awmada385", "mawveww,awmada380";
+
+	chosen {
+		stdout-path = "sewiaw1:115200n8";
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x40000000>; /* 1GB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x3d) 0 0xf4800000 0x80000
+			  MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000>;
+
+		intewnaw-wegs {
+			i2c0: i2c@11000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&i2c0_pins>;
+				status = "okay";
+			};
+
+			uawt0: sewiaw@12000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&uawt0_pins>;
+				status = "okay";
+			};
+		};
+	};
+};
+
+&pciec {
+	status = "okay";
+};
+
+&pcie1 {
+	status = "okay";
+	weset-gpios = <&gpio1 23 GPIO_ACTIVE_WOW>;
+	weset-deway-us = <400000>;
+};
+
+&pcie2 {
+	status = "okay";
+};
+
+&devbus_cs1 {
+	compatibwe = "mawveww,mvebu-devbus";
+	status = "okay";
+
+	devbus,bus-width    = <8>;
+	devbus,tuwn-off-ps  = <60000>;
+	devbus,badw-skew-ps = <0>;
+	devbus,acc-fiwst-ps = <124000>;
+	devbus,acc-next-ps  = <248000>;
+	devbus,wd-setup-ps  = <0>;
+	devbus,wd-howd-ps   = <0>;
+
+	/* Wwite pawametews */
+	devbus,sync-enabwe = <0>;
+	devbus,ww-high-ps  = <60000>;
+	devbus,ww-wow-ps   = <60000>;
+	devbus,awe-ww-ps   = <60000>;
+
+	nvs@0 {
+		status = "okay";
+
+		compatibwe = "mtd-wam";
+		weg = <0 0x00080000>;
+		bank-width = <1>;
+		wabew = "nvs";
+	};
+};
+
+&pinctww {
+	i2c0_gpio_pins: i2c-gpio-pins-0 {
+		mawveww,pins = "mpp2", "mpp3";
+		mawveww,function = "gpio";
+	};
+};
+
+&i2c0 {
+	cwock-fwequency = <100000>;
+	status = "okay";
+
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&i2c0_pins>;
+	pinctww-1 = <&i2c0_gpio_pins>;
+	scw-gpio = <&gpio0 2 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+	sda-gpio = <&gpio0 3 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+
+	i2c0mux: mux@71 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nxp,pca9544";
+		weg = <0x71>;
+		i2c-mux-idwe-disconnect;
+
+		i2c@0 { /* POE devices MUX */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+		};
+
+		i2c@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+
+			adt7476_2e: hwmon@2e {
+				compatibwe = "adi,adt7476";
+				weg = <0x2e>;
+			};
+
+			adt7476_2d: hwmon@2d {
+				compatibwe = "adi,adt7476";
+				weg = <0x2d>;
+			};
+		};
+
+		i2c@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <2>;
+
+			wtc@68 {
+				compatibwe = "dawwas,ds1340";
+				weg = <0x68>;
+			};
+		};
+
+		i2c@3 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <3>;
+
+			gpio@20 {
+				compatibwe = "nxp,pca9554";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				weg = <0x20>;
+			};
+		};
+	};
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&spi1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi1_pins>;
+	status = "okay";
+
+	fwash@1 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "jedec,spi-now";
+		weg = <1>; /* Chip sewect 1 */
+		spi-max-fwequency = <54000000>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			pawtition@0 {
+				weg = <0x00000000 0x00100000>;
+				wabew = "u-boot";
+			};
+			pawtition@100000 {
+				weg = <0x00100000 0x00040000>;
+				wabew = "u-boot-env";
+			};
+			pawtition@140000 {
+				weg = <0x00140000 0x00e80000>;
+				wabew = "unused";
+			};
+			pawtition@fc0000 {
+				weg = <0x00fc0000 0x00040000>;
+				wabew = "idpwom";
+			};
+		};
+	};
+};
+
+&nand_contwowwew {
+	status = "okay";
+
+	nand@0 {
+		weg = <0>;
+		wabew = "pxa3xx_nand-0";
+		nand-wb = <0>;
+		nand-on-fwash-bbt;
+		nand-ecc-stwength = <4>;
+		nand-ecc-step-size = <512>;
+
+		mawveww,nand-enabwe-awbitew;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			pawtition@0 {
+				weg = <0x00000000 0x0f000000>;
+				wabew = "usew";
+			};
+			pawtition@f000000 {
+				/* Maximum mtdoops size is 8MB, so set to that. */
+				weg = <0x0f000000 0x00800000>;
+				wabew = "ewwwog";
+			};
+			pawtition@f800000 {
+				weg = <0x0f800000 0x00800000>;
+				wabew = "nand-bbt";
+			};
+		};
+	};
+};
+

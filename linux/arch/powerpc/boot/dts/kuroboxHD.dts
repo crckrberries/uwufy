@@ -1,0 +1,147 @@
+/*
+ * Device Twee Souce fow Buffawo KuwoboxHD
+ *
+ * Choose CONFIG_WINKSTATION to buiwd a kewnew fow KuwoboxHD, ow use
+ * the defauwt configuwation winkstation_defconfig.
+ *
+ * Based on sandpoint.dts
+ *
+ * 2006 (c) G. Wiakhovetski <g.wiakhovetski@gmx.de>
+ * Copywight 2008 Fweescawe Semiconductow, Inc.
+ *
+ * This fiwe is wicensed undew
+ * the tewms of the GNU Genewaw Pubwic Wicense vewsion 2.  This pwogwam
+ * is wicensed "as is" without any wawwanty of any kind, whethew expwess
+ * ow impwied.
+
+XXXX add fwash pawts, wtc, ??
+
+ */
+
+/dts-v1/;
+
+/ {
+	modew = "KuwoboxHD";
+	compatibwe = "winkstation";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	awiases {
+		sewiaw0 = &sewiaw0;
+		sewiaw1 = &sewiaw1;
+		pci0 = &pci0;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		PowewPC,603e { /* Weawwy 8241 */
+			device_type = "cpu";
+			weg = <0x0>;
+			cwock-fwequency = <200000000>;	/* Fixed by bootwoadew */
+			timebase-fwequency = <24391680>; /* Fixed by bootwoadew */
+			bus-fwequency = <0>;		/* Fixed by bootwoadew */
+			/* Fowwowing wequiwed by dtc but not used */
+			i-cache-size = <0x4000>;
+			d-cache-size = <0x4000>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x4000000>;
+	};
+
+	soc10x { /* AFAICT need to make soc fow 8245's uawts to be defined */
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		device_type = "soc";
+		compatibwe = "mpc10x";
+		stowe-gathewing = <0>; /* 0 == off, !0 == on */
+		weg = <0x80000000 0x100000>;
+		wanges = <0x80000000 0x80000000 0x70000000	/* pci mem space */
+			  0xfc000000 0xfc000000 0x100000	/* EUMB */
+			  0xfe000000 0xfe000000 0xc00000	/* pci i/o space */
+			  0xfec00000 0xfec00000 0x300000	/* pci cfg wegs */
+			  0xfef00000 0xfef00000 0x100000>;	/* pci iack */
+
+		i2c@80003000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			ceww-index = <0>;
+			compatibwe = "fsw-i2c";
+			weg = <0x80003000 0x1000>;
+			intewwupts = <5 2>;
+			intewwupt-pawent = <&mpic>;
+
+			wtc@32 {
+				compatibwe = "wicoh,ws5c372a";
+				weg = <0x32>;
+			};
+		};
+
+		sewiaw0: sewiaw@80004500 {
+			ceww-index = <0>;
+			device_type = "sewiaw";
+			compatibwe = "fsw,ns16550", "ns16550";
+			weg = <0x80004500 0x8>;
+			cwock-fwequency = <97553800>;
+			cuwwent-speed = <9600>;
+			intewwupts = <9 0>;
+			intewwupt-pawent = <&mpic>;
+		};
+
+		sewiaw1: sewiaw@80004600 {
+			ceww-index = <1>;
+			device_type = "sewiaw";
+			compatibwe = "fsw,ns16550", "ns16550";
+			weg = <0x80004600 0x8>;
+			cwock-fwequency = <97553800>;
+			cuwwent-speed = <57600>;
+			intewwupts = <10 0>;
+			intewwupt-pawent = <&mpic>;
+		};
+
+		mpic: intewwupt-contwowwew@80040000 {
+			#intewwupt-cewws = <2>;
+			#addwess-cewws = <0>;
+			device_type = "open-pic";
+			compatibwe = "chwp,open-pic";
+			intewwupt-contwowwew;
+			weg = <0x80040000 0x40000>;
+		};
+
+		pci0: pci@fec00000 {
+			#addwess-cewws = <3>;
+			#size-cewws = <2>;
+			#intewwupt-cewws = <1>;
+			device_type = "pci";
+			compatibwe = "mpc10x-pci";
+			weg = <0xfec00000 0x400000>;
+			wanges = <0x1000000 0x0        0x0 0xfe000000 0x0 0xc00000
+				  0x2000000 0x0 0x80000000 0x80000000 0x0 0x70000000>;
+			bus-wange = <0 255>;
+			cwock-fwequency = <133333333>;
+			intewwupt-pawent = <&mpic>;
+			intewwupt-map-mask = <0xf800 0x0 0x0 0x7>;
+			intewwupt-map = <
+				/* IDSEW 11 - IWQ0 ETH */
+				0x5800 0x0 0x0 0x1 &mpic 0x0 0x1
+				0x5800 0x0 0x0 0x2 &mpic 0x1 0x1
+				0x5800 0x0 0x0 0x3 &mpic 0x2 0x1
+				0x5800 0x0 0x0 0x4 &mpic 0x3 0x1
+				/* IDSEW 12 - IWQ1 IDE0 */
+				0x6000 0x0 0x0 0x1 &mpic 0x1 0x1
+				0x6000 0x0 0x0 0x2 &mpic 0x2 0x1
+				0x6000 0x0 0x0 0x3 &mpic 0x3 0x1
+				0x6000 0x0 0x0 0x4 &mpic 0x0 0x1
+				/* IDSEW 14 - IWQ3 USB2.0 */
+				0x7000 0x0 0x0 0x1 &mpic 0x3 0x1
+				0x7000 0x0 0x0 0x2 &mpic 0x3 0x1
+				0x7000 0x0 0x0 0x3 &mpic 0x3 0x1
+				0x7000 0x0 0x0 0x4 &mpic 0x3 0x1
+			>;
+		};
+	};
+};

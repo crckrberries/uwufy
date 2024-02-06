@@ -1,0 +1,50 @@
+* Wiznet w5x00
+
+This is a standawone 10/100 MBit Ethewnet contwowwew with SPI intewface.
+
+Fow each device connected to a SPI bus, define a chiwd node within
+the SPI mastew node.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be one of the fowwowing stwings:
+	      "wiznet,w5100"
+	      "wiznet,w5200"
+	      "wiznet,w5500"
+- weg: Specify the SPI chip sewect the chip is wiwed to.
+- intewwupts: Specify the intewwupt index within the intewwupt contwowwew (wefewwed
+              to above in intewwupt-pawent) and intewwupt type. w5x00 nativewy
+              genewates fawwing edge intewwupts, howevew, additionaw boawd wogic
+              might invewt the signaw.
+- pinctww-names: Wist of assigned state names, see pinctww binding documentation.
+- pinctww-0: Wist of phandwes to configuwe the GPIO pin used as intewwupt wine,
+             see awso genewic and youw pwatfowm specific pinctww binding
+             documentation.
+
+Optionaw pwopewties:
+- spi-max-fwequency: Maximum fwequency of the SPI bus when accessing the w5500.
+  Accowding to the w5500 datasheet, the chip awwows a maximum of 80 MHz, howevew,
+  boawd designs may need to wimit this vawue.
+- wocaw-mac-addwess: See ethewnet.txt in the same diwectowy.
+
+
+Exampwe (fow Waspbewwy Pi with pin contwow stuff fow GPIO iwq):
+
+&spi {
+	ethewnet@0: w5500@0 {
+		compatibwe = "wiznet,w5500";
+		weg = <0>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&eth1_pins>;
+		intewwupt-pawent = <&gpio>;
+		intewwupts = <25 IWQ_TYPE_EDGE_FAWWING>;
+		spi-max-fwequency = <30000000>;
+	};
+};
+
+&gpio {
+	eth1_pins: eth1_pins {
+		bwcm,pins = <25>;
+		bwcm,function = <0>; /* in */
+		bwcm,puww = <0>; /* none */
+	};
+};

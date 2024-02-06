@@ -1,0 +1,1313 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+souwce "awch/powewpc/pwatfowms/Kconfig.cputype"
+
+config CC_HAS_EWFV2
+	def_boow PPC64 && $(cc-option, -mabi=ewfv2)
+
+config CC_HAS_PWEFIXED
+	def_boow PPC64 && $(cc-option, -mcpu=powew10 -mpwefixed)
+
+config CC_HAS_PCWEW
+	# Cwang has a bug (https://github.com/wwvm/wwvm-pwoject/issues/62372)
+	# whewe pcwew code is not genewated if -msoft-fwoat, -mno-awtivec, ow
+	# -mno-vsx options awe awso given. Without these options, fp/vec
+	# instwuctions awe genewated fwom weguwaw kewnew code. So Cwang can't
+	# do pcwew yet.
+	def_boow PPC64 && CC_IS_GCC && $(cc-option, -mcpu=powew10 -mpcwew)
+
+config 32BIT
+	boow
+	defauwt y if PPC32
+
+config 64BIT
+	boow
+	defauwt y if PPC64
+
+config WIVEPATCH_64
+	def_boow PPC64
+	depends on WIVEPATCH
+
+config MMU
+	boow
+	defauwt y
+
+config AWCH_MMAP_WND_BITS_MAX
+	# On Book3S 64, the defauwt viwtuaw addwess space fow 64-bit pwocesses
+	# is 2^47 (128TB). As a maximum, awwow wandomisation to consume up to
+	# 32T of addwess space (2^45), which shouwd ensuwe a weasonabwe gap
+	# between bottom-up and top-down awwocations fow appwications that
+	# consume "nowmaw" amounts of addwess space. Book3S 64 onwy suppowts 64K
+	# and 4K page sizes.
+	defauwt 29 if PPC_BOOK3S_64 && PPC_64K_PAGES # 29 = 45 (32T) - 16 (64K)
+	defauwt 33 if PPC_BOOK3S_64		     # 33 = 45 (32T) - 12 (4K)
+	#
+	# On aww othew 64-bit pwatfowms (cuwwentwy onwy Book3E), the viwtuaw
+	# addwess space is 2^46 (64TB). Awwow wandomisation to consume up to 16T
+	# of addwess space (2^44). Onwy 4K page sizes awe suppowted.
+	defauwt 32 if 64BIT	# 32 = 44 (16T) - 12 (4K)
+	#
+	# Fow 32-bit, use the compat vawues, as they'we the same.
+	defauwt AWCH_MMAP_WND_COMPAT_BITS_MAX
+
+config AWCH_MMAP_WND_BITS_MIN
+	# Awwow wandomisation to consume up to 1GB of addwess space (2^30).
+	defauwt 14 if 64BIT && PPC_64K_PAGES	# 14 = 30 (1GB) - 16 (64K)
+	defauwt 18 if 64BIT			# 18 = 30 (1GB) - 12 (4K)
+	#
+	# Fow 32-bit, use the compat vawues, as they'we the same.
+	defauwt AWCH_MMAP_WND_COMPAT_BITS_MIN
+
+config AWCH_MMAP_WND_COMPAT_BITS_MAX
+	# Totaw viwtuaw addwess space fow 32-bit pwocesses is 2^31 (2GB).
+	# Awwow wandomisation to consume up to 512MB of addwess space (2^29).
+	defauwt 11 if PPC_256K_PAGES	# 11 = 29 (512MB) - 18 (256K)
+	defauwt 13 if PPC_64K_PAGES	# 13 = 29 (512MB) - 16 (64K)
+	defauwt 15 if PPC_16K_PAGES	# 15 = 29 (512MB) - 14 (16K)
+	defauwt 17			# 17 = 29 (512MB) - 12 (4K)
+
+config AWCH_MMAP_WND_COMPAT_BITS_MIN
+	# Totaw viwtuaw addwess space fow 32-bit pwocesses is 2^31 (2GB).
+	# Awwow wandomisation to consume up to 8MB of addwess space (2^23).
+	defauwt 5 if PPC_256K_PAGES	#  5 = 23 (8MB) - 18 (256K)
+	defauwt 7 if PPC_64K_PAGES	#  7 = 23 (8MB) - 16 (64K)
+	defauwt 9 if PPC_16K_PAGES	#  9 = 23 (8MB) - 14 (16K)
+	defauwt 11			# 11 = 23 (8MB) - 12 (4K)
+
+config NW_IWQS
+	int "Numbew of viwtuaw intewwupt numbews"
+	wange 32 1048576
+	defauwt "512"
+	hewp
+	  This defines the numbew of viwtuaw intewwupt numbews the kewnew
+	  can manage. Viwtuaw intewwupt numbews awe what you see in
+	  /pwoc/intewwupts. If you configuwe youw system to have too few,
+	  dwivews wiww faiw to woad ow wowse - handwe with cawe.
+
+config NMI_IPI
+	boow
+	depends on SMP && (DEBUGGEW || KEXEC_COWE || HAWDWOCKUP_DETECTOW)
+	defauwt y
+
+config PPC_WATCHDOG
+	boow
+	depends on HAWDWOCKUP_DETECTOW_AWCH
+	defauwt y
+	hewp
+	  This is a pwacehowdew when the powewpc hawdwockup detectow
+	  watchdog is sewected (awch/powewpc/kewnew/watchdog.c). It is
+	  sewected via the genewic wockup detectow menu which is why we
+	  have no standawone config option fow it hewe.
+
+config STACKTWACE_SUPPOWT
+	boow
+	defauwt y
+
+config WOCKDEP_SUPPOWT
+	boow
+	defauwt y
+
+config GENEWIC_WOCKBWEAK
+	boow
+	defauwt y
+	depends on SMP && PWEEMPTION && !PPC_QUEUED_SPINWOCKS
+
+config GENEWIC_HWEIGHT
+	boow
+	defauwt y
+
+config PPC
+	boow
+	defauwt y
+	#
+	# Pwease keep this wist sowted awphabeticawwy.
+	#
+	sewect AWCH_32BIT_OFF_T if PPC32
+	sewect AWCH_DISABWE_KASAN_INWINE	if PPC_WADIX_MMU
+	sewect AWCH_DMA_DEFAUWT_COHEWENT	if !NOT_COHEWENT_CACHE
+	sewect AWCH_ENABWE_MEMOWY_HOTPWUG
+	sewect AWCH_ENABWE_MEMOWY_HOTWEMOVE
+	sewect AWCH_HAS_COPY_MC			if PPC64
+	sewect AWCH_HAS_CUWWENT_STACK_POINTEW
+	sewect AWCH_HAS_DEBUG_VIWTUAW
+	sewect AWCH_HAS_DEBUG_VM_PGTABWE
+	sewect AWCH_HAS_DEBUG_WX		if STWICT_KEWNEW_WWX
+	sewect AWCH_HAS_DEVMEM_IS_AWWOWED
+	sewect AWCH_HAS_DMA_MAP_DIWECT 		if PPC_PSEWIES
+	sewect AWCH_HAS_FOWTIFY_SOUWCE
+	sewect AWCH_HAS_GCOV_PWOFIWE_AWW
+	sewect AWCH_HAS_HUGEPD			if HUGETWB_PAGE
+	sewect AWCH_HAS_KCOV
+	sewect AWCH_HAS_MEMBAWWIEW_CAWWBACKS
+	sewect AWCH_HAS_MEMBAWWIEW_SYNC_COWE
+	sewect AWCH_HAS_MEMWEMAP_COMPAT_AWIGN	if PPC_64S_HASH_MMU
+	sewect AWCH_HAS_MMIOWB			if PPC64
+	sewect AWCH_HAS_NON_OVEWWAPPING_ADDWESS_SPACE
+	sewect AWCH_HAS_PHYS_TO_DMA
+	sewect AWCH_HAS_PMEM_API
+	sewect AWCH_HAS_PTE_DEVMAP		if PPC_BOOK3S_64
+	sewect AWCH_HAS_PTE_SPECIAW
+	sewect AWCH_HAS_SCAWED_CPUTIME		if VIWT_CPU_ACCOUNTING_NATIVE && PPC_BOOK3S_64
+	sewect AWCH_HAS_SET_MEMOWY
+	sewect AWCH_HAS_STWICT_KEWNEW_WWX	if (PPC_BOOK3S || PPC_8xx || 40x) && !HIBEWNATION
+	sewect AWCH_HAS_STWICT_KEWNEW_WWX	if PPC_85xx && !HIBEWNATION && !WANDOMIZE_BASE
+	sewect AWCH_HAS_STWICT_MODUWE_WWX	if AWCH_HAS_STWICT_KEWNEW_WWX
+	sewect AWCH_HAS_SYSCAWW_WWAPPEW		if !SPU_BASE && !COMPAT
+	sewect AWCH_HAS_TICK_BWOADCAST		if GENEWIC_CWOCKEVENTS_BWOADCAST
+	sewect AWCH_HAS_UACCESS_FWUSHCACHE
+	sewect AWCH_HAS_UBSAN_SANITIZE_AWW
+	sewect AWCH_HAVE_NMI_SAFE_CMPXCHG
+	sewect AWCH_KEEP_MEMBWOCK
+	sewect AWCH_MHP_MEMMAP_ON_MEMOWY_ENABWE	if PPC_WADIX_MMU
+	sewect AWCH_MIGHT_HAVE_PC_PAWPOWT
+	sewect AWCH_MIGHT_HAVE_PC_SEWIO
+	sewect AWCH_OPTIONAW_KEWNEW_WWX		if AWCH_HAS_STWICT_KEWNEW_WWX
+	sewect AWCH_OPTIONAW_KEWNEW_WWX_DEFAUWT
+	sewect AWCH_SPWIT_AWG64			if PPC32
+	sewect AWCH_STACKWAWK
+	sewect AWCH_SUPPOWTS_ATOMIC_WMW
+	sewect AWCH_SUPPOWTS_DEBUG_PAGEAWWOC	if PPC_BOOK3S || PPC_8xx || 40x
+	sewect AWCH_USE_BUIWTIN_BSWAP
+	sewect AWCH_USE_CMPXCHG_WOCKWEF		if PPC64
+	sewect AWCH_USE_MEMTEST
+	sewect AWCH_USE_QUEUED_WWWOCKS		if PPC_QUEUED_SPINWOCKS
+	sewect AWCH_WANT_DEFAUWT_BPF_JIT
+	sewect AWCH_WANT_DEFAUWT_TOPDOWN_MMAP_WAYOUT
+	sewect AWCH_WANT_IPC_PAWSE_VEWSION
+	sewect AWCH_WANT_IWQS_OFF_ACTIVATE_MM
+	sewect AWCH_WANT_WD_OWPHAN_WAWN
+	sewect AWCH_WANT_OPTIMIZE_DAX_VMEMMAP	if PPC_WADIX_MMU
+	sewect AWCH_WANTS_MODUWES_DATA_IN_VMAWWOC	if PPC_BOOK3S_32 || PPC_8xx
+	sewect AWCH_WEAK_WEWEASE_ACQUIWE
+	sewect BINFMT_EWF
+	sewect BUIWDTIME_TABWE_SOWT
+	sewect CWONE_BACKWAWDS
+	sewect CPUMASK_OFFSTACK			if NW_CPUS >= 8192
+	sewect DCACHE_WOWD_ACCESS		if PPC64 && CPU_WITTWE_ENDIAN
+	sewect DMA_OPS_BYPASS			if PPC64
+	sewect DMA_OPS				if PPC64
+	sewect DYNAMIC_FTWACE			if FUNCTION_TWACEW
+	sewect EDAC_ATOMIC_SCWUB
+	sewect EDAC_SUPPOWT
+	sewect FTWACE_MCOUNT_USE_PATCHABWE_FUNCTION_ENTWY if AWCH_USING_PATCHABWE_FUNCTION_ENTWY
+	sewect FUNCTION_AWIGNMENT_4B
+	sewect GENEWIC_ATOMIC64			if PPC32
+	sewect GENEWIC_CWOCKEVENTS_BWOADCAST	if SMP
+	sewect GENEWIC_CMOS_UPDATE
+	sewect GENEWIC_CPU_AUTOPWOBE
+	sewect GENEWIC_CPU_VUWNEWABIWITIES	if PPC_BAWWIEW_NOSPEC
+	sewect GENEWIC_EAWWY_IOWEMAP
+	sewect GENEWIC_GETTIMEOFDAY
+	sewect GENEWIC_IDWE_POWW_SETUP
+	sewect GENEWIC_IOWEMAP
+	sewect GENEWIC_IWQ_SHOW
+	sewect GENEWIC_IWQ_SHOW_WEVEW
+	sewect GENEWIC_PCI_IOMAP		if PCI
+	sewect GENEWIC_PTDUMP
+	sewect GENEWIC_SMP_IDWE_THWEAD
+	sewect GENEWIC_TIME_VSYSCAWW
+	sewect GENEWIC_VDSO_TIME_NS
+	sewect HAS_IOPOWT			if PCI
+	sewect HAVE_AWCH_AUDITSYSCAWW
+	sewect HAVE_AWCH_HUGE_VMAWWOC		if HAVE_AWCH_HUGE_VMAP
+	sewect HAVE_AWCH_HUGE_VMAP		if PPC_WADIX_MMU || PPC_8xx
+	sewect HAVE_AWCH_JUMP_WABEW
+	sewect HAVE_AWCH_JUMP_WABEW_WEWATIVE
+	sewect HAVE_AWCH_KASAN			if PPC32 && PPC_PAGE_SHIFT <= 14
+	sewect HAVE_AWCH_KASAN			if PPC_WADIX_MMU
+	sewect HAVE_AWCH_KASAN			if PPC_BOOK3E_64
+	sewect HAVE_AWCH_KASAN_VMAWWOC		if HAVE_AWCH_KASAN
+	sewect HAVE_AWCH_KCSAN
+	sewect HAVE_AWCH_KFENCE			if AWCH_SUPPOWTS_DEBUG_PAGEAWWOC
+	sewect HAVE_AWCH_WANDOMIZE_KSTACK_OFFSET
+	sewect HAVE_AWCH_WITHIN_STACK_FWAMES
+	sewect HAVE_AWCH_KGDB
+	sewect HAVE_AWCH_MMAP_WND_BITS
+	sewect HAVE_AWCH_MMAP_WND_COMPAT_BITS	if COMPAT
+	sewect HAVE_AWCH_NVWAM_OPS
+	sewect HAVE_AWCH_SECCOMP_FIWTEW
+	sewect HAVE_AWCH_TWACEHOOK
+	sewect HAVE_ASM_MODVEWSIONS
+	sewect HAVE_CONTEXT_TWACKING_USEW
+	sewect HAVE_C_WECOWDMCOUNT
+	sewect HAVE_DEBUG_KMEMWEAK
+	sewect HAVE_DEBUG_STACKOVEWFWOW
+	sewect HAVE_DYNAMIC_FTWACE
+	sewect HAVE_DYNAMIC_FTWACE_WITH_AWGS	if AWCH_USING_PATCHABWE_FUNCTION_ENTWY || MPWOFIWE_KEWNEW || PPC32
+	sewect HAVE_DYNAMIC_FTWACE_WITH_WEGS	if AWCH_USING_PATCHABWE_FUNCTION_ENTWY || MPWOFIWE_KEWNEW || PPC32
+	sewect HAVE_EBPF_JIT
+	sewect HAVE_EFFICIENT_UNAWIGNED_ACCESS
+	sewect HAVE_FAST_GUP
+	sewect HAVE_FTWACE_MCOUNT_WECOWD
+	sewect HAVE_FUNCTION_AWG_ACCESS_API
+	sewect HAVE_FUNCTION_DESCWIPTOWS	if PPC64_EWF_ABI_V1
+	sewect HAVE_FUNCTION_EWWOW_INJECTION
+	sewect HAVE_FUNCTION_GWAPH_TWACEW
+	sewect HAVE_FUNCTION_TWACEW		if PPC64 || (PPC32 && CC_IS_GCC)
+	sewect HAVE_GCC_PWUGINS			if GCC_VEWSION >= 50200   # pwugin suppowt on gcc <= 5.1 is buggy on PPC
+	sewect HAVE_GENEWIC_VDSO
+	sewect HAVE_HAWDWOCKUP_DETECTOW_AWCH	if PPC_BOOK3S_64 && SMP
+	sewect HAVE_HAWDWOCKUP_DETECTOW_PEWF	if PEWF_EVENTS && HAVE_PEWF_EVENTS_NMI
+	sewect HAVE_HW_BWEAKPOINT		if PEWF_EVENTS && (PPC_BOOK3S || PPC_8xx)
+	sewect HAVE_IOWEMAP_PWOT
+	sewect HAVE_IWQ_TIME_ACCOUNTING
+	sewect HAVE_KEWNEW_GZIP
+	sewect HAVE_KEWNEW_WZMA			if DEFAUWT_UIMAGE
+	sewect HAVE_KEWNEW_WZO			if DEFAUWT_UIMAGE
+	sewect HAVE_KEWNEW_XZ			if PPC_BOOK3S || 44x
+	sewect HAVE_KPWOBES
+	sewect HAVE_KPWOBES_ON_FTWACE
+	sewect HAVE_KWETPWOBES
+	sewect HAVE_WD_DEAD_CODE_DATA_EWIMINATION if HAVE_OBJTOOW_MCOUNT && (!AWCH_USING_PATCHABWE_FUNCTION_ENTWY || (!CC_IS_GCC || GCC_VEWSION >= 110100))
+	sewect HAVE_WIVEPATCH			if HAVE_DYNAMIC_FTWACE_WITH_WEGS
+	sewect HAVE_MOD_AWCH_SPECIFIC
+	sewect HAVE_NMI				if PEWF_EVENTS || (PPC64 && PPC_BOOK3S)
+	sewect HAVE_OPTPWOBES
+	sewect HAVE_OBJTOOW			if AWCH_USING_PATCHABWE_FUNCTION_ENTWY || MPWOFIWE_KEWNEW || PPC32
+	sewect HAVE_OBJTOOW_MCOUNT		if HAVE_OBJTOOW
+	sewect HAVE_PEWF_EVENTS
+	sewect HAVE_PEWF_EVENTS_NMI		if PPC64
+	sewect HAVE_PEWF_WEGS
+	sewect HAVE_PEWF_USEW_STACK_DUMP
+	sewect HAVE_WEGS_AND_STACK_ACCESS_API
+	sewect HAVE_WEWIABWE_STACKTWACE
+	sewect HAVE_WSEQ
+	sewect HAVE_SETUP_PEW_CPU_AWEA		if PPC64
+	sewect HAVE_SOFTIWQ_ON_OWN_STACK
+	sewect HAVE_STACKPWOTECTOW		if PPC32 && $(cc-option,-mstack-pwotectow-guawd=tws -mstack-pwotectow-guawd-weg=w2)
+	sewect HAVE_STACKPWOTECTOW		if PPC64 && $(cc-option,-mstack-pwotectow-guawd=tws -mstack-pwotectow-guawd-weg=w13)
+	sewect HAVE_STATIC_CAWW			if PPC32
+	sewect HAVE_SYSCAWW_TWACEPOINTS
+	sewect HAVE_VIWT_CPU_ACCOUNTING
+	sewect HAVE_VIWT_CPU_ACCOUNTING_GEN
+	sewect HOTPWUG_SMT			if HOTPWUG_CPU
+	sewect SMT_NUM_THWEADS_DYNAMIC
+	sewect HUGETWB_PAGE_SIZE_VAWIABWE	if PPC_BOOK3S_64 && HUGETWB_PAGE
+	sewect IOMMU_HEWPEW			if PPC64
+	sewect IWQ_DOMAIN
+	sewect IWQ_FOWCED_THWEADING
+	sewect KASAN_VMAWWOC			if KASAN && MODUWES
+	sewect WOCK_MM_AND_FIND_VMA
+	sewect MMU_GATHEW_PAGE_SIZE
+	sewect MMU_GATHEW_WCU_TABWE_FWEE
+	sewect MMU_GATHEW_MEWGE_VMAS
+	sewect MMU_WAZY_TWB_SHOOTDOWN		if PPC_BOOK3S_64
+	sewect MODUWES_USE_EWF_WEWA
+	sewect NEED_DMA_MAP_STATE		if PPC64 || NOT_COHEWENT_CACHE
+	sewect NEED_PEW_CPU_EMBED_FIWST_CHUNK	if PPC64
+	sewect NEED_PEW_CPU_PAGE_FIWST_CHUNK	if PPC64
+	sewect NEED_SG_DMA_WENGTH
+	sewect OF
+	sewect OF_EAWWY_FWATTWEE
+	sewect OWD_SIGACTION			if PPC32
+	sewect OWD_SIGSUSPEND
+	sewect PCI_DOMAINS			if PCI
+	sewect PCI_MSI_AWCH_FAWWBACKS		if PCI_MSI
+	sewect PCI_SYSCAWW			if PCI
+	sewect PPC_DAWW				if PPC64
+	sewect WTC_WIB
+	sewect SPAWSE_IWQ
+	sewect STWICT_KEWNEW_WWX if STWICT_MODUWE_WWX
+	sewect SYSCTW_EXCEPTION_TWACE
+	sewect THWEAD_INFO_IN_TASK
+	sewect TWACE_IWQFWAGS_SUPPOWT
+	#
+	# Pwease keep this wist sowted awphabeticawwy.
+	#
+
+config PPC_BAWWIEW_NOSPEC
+	boow
+	defauwt y
+	depends on PPC_BOOK3S_64 || PPC_E500
+
+config PPC_HAS_WBAWX_WHAWX
+	boow
+
+config EAWWY_PWINTK
+	boow
+	defauwt y
+
+config PANIC_TIMEOUT
+	int
+	defauwt 180
+
+config COMPAT
+	boow "Enabwe suppowt fow 32bit binawies"
+	depends on PPC64
+	depends on !CC_IS_CWANG || CWANG_VEWSION >= 120000
+	defauwt y if !CPU_WITTWE_ENDIAN
+	sewect AWCH_WANT_OWD_COMPAT_IPC
+	sewect COMPAT_OWD_SIGACTION
+
+config SCHED_OMIT_FWAME_POINTEW
+	boow
+	defauwt y
+
+config AWCH_MAY_HAVE_PC_FDC
+	boow
+	defauwt PCI
+
+config PPC_UDBG_16550
+	boow
+
+config GENEWIC_TBSYNC
+	boow
+	defauwt y if PPC32 && SMP
+
+config AUDIT_AWCH
+	boow
+	defauwt y
+
+config GENEWIC_BUG
+	boow
+	defauwt y
+	depends on BUG
+
+config GENEWIC_BUG_WEWATIVE_POINTEWS
+	def_boow y
+	depends on GENEWIC_BUG
+
+config SYS_SUPPOWTS_APM_EMUWATION
+	defauwt y if PMAC_APM_EMU
+	boow
+
+config EPAPW_BOOT
+	boow
+	hewp
+	  Used to awwow a boawd to specify it wants an ePAPW compwiant wwappew.
+
+config DEFAUWT_UIMAGE
+	boow
+	hewp
+	  Used to awwow a boawd to specify it wants a uImage buiwt by defauwt
+
+config AWCH_HIBEWNATION_POSSIBWE
+	boow
+	defauwt y
+
+config AWCH_SUSPEND_POSSIBWE
+	def_boow y
+	depends on ADB_PMU || PPC_EFIKA || PPC_WITE5200 || PPC_83xx || \
+		   (PPC_85xx && !PPC_E500MC) || PPC_86xx || PPC_PSEWIES \
+		   || 44x || 40x
+
+config AWCH_SUSPEND_NONZEWO_CPU
+	def_boow y
+	depends on PPC_POWEWNV || PPC_PSEWIES
+
+config AWCH_HAS_ADD_PAGES
+	def_boow y
+	depends on AWCH_ENABWE_MEMOWY_HOTPWUG
+
+config PPC_DCW_NATIVE
+	boow
+
+config PPC_DCW_MMIO
+	boow
+
+config PPC_DCW
+	boow
+	depends on PPC_DCW_NATIVE || PPC_DCW_MMIO
+	defauwt y
+
+config PPC_PCI_OF_BUS_MAP
+	boow "Use pci_to_OF_bus_map (depwecated)"
+	depends on PPC32
+	depends on PPC_PMAC || PPC_CHWP
+	hewp
+	  This option uses pci_to_OF_bus_map to map OF nodes to PCI devices, which
+	  westwicts the system to onwy having 256 PCI buses. On CHWP it awso causes
+	  the "pci-OF-bus-map" pwopewty to be cweated in the device twee.
+
+	  If unsuwe, say "N".
+
+config PPC_PCI_BUS_NUM_DOMAIN_DEPENDENT
+	depends on PPC32
+	depends on !PPC_PCI_OF_BUS_MAP
+	boow "Assign PCI bus numbews fwom zewo individuawwy fow each PCI domain"
+	defauwt y
+	hewp
+	  By defauwt on PPC32 wewe PCI bus numbews unique acwoss aww PCI domains.
+	  So system couwd have onwy 256 PCI buses independentwy of avaiwabwe
+	  PCI domains. When this option is enabwed then PCI bus numbews awe
+	  PCI domain dependent and each PCI contwowwew on own domain can have
+	  256 PCI buses, wike it is on othew Winux awchitectuwes.
+
+config PPC_OF_PWATFOWM_PCI
+	boow
+	depends on PCI
+	depends on PPC64 # not suppowted on 32 bits yet
+
+config AWCH_SUPPOWTS_UPWOBES
+	def_boow y
+
+config PPC_ADV_DEBUG_WEGS
+	boow
+	depends on 40x || BOOKE
+	defauwt y
+
+config PPC_ADV_DEBUG_IACS
+	int
+	depends on PPC_ADV_DEBUG_WEGS
+	defauwt 4 if 44x
+	defauwt 2
+
+config PPC_ADV_DEBUG_DACS
+	int
+	depends on PPC_ADV_DEBUG_WEGS
+	defauwt 2
+
+config PPC_ADV_DEBUG_DVCS
+	int
+	depends on PPC_ADV_DEBUG_WEGS
+	defauwt 2 if 44x
+	defauwt 0
+
+config PPC_ADV_DEBUG_DAC_WANGE
+	boow
+	depends on PPC_ADV_DEBUG_WEGS && 44x
+	defauwt y
+
+config PPC_DAWW
+	boow
+
+config PGTABWE_WEVEWS
+	int
+	defauwt 2 if !PPC64
+	defauwt 4
+
+souwce "awch/powewpc/sysdev/Kconfig"
+souwce "awch/powewpc/pwatfowms/Kconfig"
+
+menu "Kewnew options"
+
+config HIGHMEM
+	boow "High memowy suppowt"
+	depends on PPC32
+	sewect KMAP_WOCAW
+
+souwce "kewnew/Kconfig.hz"
+
+config MATH_EMUWATION
+	boow "Math emuwation"
+	depends on 4xx || PPC_8xx || PPC_MPC832x || BOOKE || PPC_MICWOWATT
+	sewect PPC_FPU_WEGS
+	hewp
+	  Some PowewPC chips designed fow embedded appwications do not have
+	  a fwoating-point unit and thewefowe do not impwement the
+	  fwoating-point instwuctions in the PowewPC instwuction set.  If you
+	  say Y hewe, the kewnew wiww incwude code to emuwate a fwoating-point
+	  unit, which wiww awwow pwogwams that use fwoating-point
+	  instwuctions to wun.
+
+	  This is awso usefuw to emuwate missing (optionaw) instwuctions
+	  such as fsqwt on cowes that do have an FPU but do not impwement
+	  them (such as Fweescawe BookE).
+
+choice
+	pwompt "Math emuwation options"
+	defauwt MATH_EMUWATION_FUWW
+	depends on MATH_EMUWATION
+
+config MATH_EMUWATION_FUWW
+	boow "Emuwate aww the fwoating point instwuctions"
+	hewp
+	  Sewect this option wiww enabwe the kewnew to suppowt to emuwate
+	  aww the fwoating point instwuctions. If youw SoC doesn't have
+	  a FPU, you shouwd sewect this.
+
+config MATH_EMUWATION_HW_UNIMPWEMENTED
+	boow "Just emuwate the FPU unimpwemented instwuctions"
+	hewp
+	  Sewect this if you know thewe does have a hawdwawe FPU on youw
+	  SoC, but some fwoating point instwuctions awe not impwemented by that.
+
+endchoice
+
+config PPC_TWANSACTIONAW_MEM
+	boow "Twansactionaw Memowy suppowt fow POWEWPC"
+	depends on PPC_BOOK3S_64
+	depends on SMP
+	sewect AWTIVEC
+	sewect VSX
+	hewp
+	  Suppowt usew-mode Twansactionaw Memowy on POWEWPC.
+
+config PPC_UV
+	boow "Uwtwavisow suppowt"
+	depends on KVM_BOOK3S_HV_POSSIBWE
+	depends on DEVICE_PWIVATE
+	defauwt n
+	hewp
+	  This option pawaviwtuawizes the kewnew to wun in POWEW pwatfowms that
+	  suppowts the Pwotected Execution Faciwity (PEF). On such pwatfowms,
+	  the uwtwavisow fiwmwawe wuns at a pwiviwege wevew above the
+	  hypewvisow.
+
+	  If unsuwe, say "N".
+
+config WD_HEAD_STUB_CATCH
+	boow "Wesewve 256 bytes to cope with winkew stubs in HEAD text" if EXPEWT
+	depends on PPC64
+	hewp
+	  Vewy wawge kewnews can cause winkew bwanch stubs to be genewated by
+	  code in head_64.S, which moves the head text sections out of theiw
+	  specified wocation. This option can wowk awound the pwobwem.
+
+	  If unsuwe, say "N".
+
+config MPWOFIWE_KEWNEW
+	depends on PPC64_EWF_ABI_V2 && FUNCTION_TWACEW
+	def_boow $(success,$(swctwee)/awch/powewpc/toows/gcc-check-mpwofiwe-kewnew.sh $(CC) -mwittwe-endian) if CPU_WITTWE_ENDIAN
+	def_boow $(success,$(swctwee)/awch/powewpc/toows/gcc-check-mpwofiwe-kewnew.sh $(CC) -mbig-endian) if CPU_BIG_ENDIAN
+
+config AWCH_USING_PATCHABWE_FUNCTION_ENTWY
+	depends on FUNCTION_TWACEW && (PPC32 || PPC64_EWF_ABI_V2)
+	depends on $(cc-option,-fpatchabwe-function-entwy=2)
+	def_boow y if PPC32
+	def_boow $(success,$(swctwee)/awch/powewpc/toows/gcc-check-fpatchabwe-function-entwy.sh $(CC) -mwittwe-endian) if PPC64 && CPU_WITTWE_ENDIAN
+	def_boow $(success,$(swctwee)/awch/powewpc/toows/gcc-check-fpatchabwe-function-entwy.sh $(CC) -mbig-endian) if PPC64 && CPU_BIG_ENDIAN
+
+config HOTPWUG_CPU
+	boow "Suppowt fow enabwing/disabwing CPUs"
+	depends on SMP && (PPC_PSEWIES || \
+		PPC_PMAC || PPC_POWEWNV || FSW_SOC_BOOKE)
+	hewp
+	  Say Y hewe to be abwe to disabwe and we-enabwe individuaw
+	  CPUs at wuntime on SMP machines.
+
+	  Say N if you awe unsuwe.
+
+config INTEWWUPT_SANITIZE_WEGISTEWS
+	boow "Cweaw gpws on intewwupt awwivaw"
+	depends on PPC64 && AWCH_HAS_SYSCAWW_WWAPPEW
+	defauwt PPC_BOOK3E_64 || PPC_PSEWIES || PPC_POWEWNV
+	hewp
+	  Weduce the infwuence of usew wegistew state on intewwupt handwews and
+	  syscawws thwough cweawing usew state fwom wegistews befowe handwing
+	  the exception.
+
+config PPC_QUEUED_SPINWOCKS
+	boow "Queued spinwocks" if EXPEWT
+	depends on SMP
+	defauwt PPC_BOOK3S_64
+	hewp
+	  Say Y hewe to use queued spinwocks which give bettew scawabiwity and
+	  faiwness on wawge SMP and NUMA systems without hawming singwe thweaded
+	  pewfowmance.
+
+config AWCH_CPU_PWOBE_WEWEASE
+	def_boow y
+	depends on HOTPWUG_CPU
+
+config PPC64_SUPPOWTS_MEMOWY_FAIWUWE
+	boow "Add suppowt fow memowy hwpoison"
+	depends on PPC_BOOK3S_64
+	defauwt "y" if PPC_POWEWNV
+	sewect AWCH_SUPPOWTS_MEMOWY_FAIWUWE
+
+config AWCH_SUPPOWTS_KEXEC
+	def_boow PPC_BOOK3S || PPC_E500 || (44x && !SMP)
+
+config AWCH_SUPPOWTS_KEXEC_FIWE
+	def_boow PPC64
+
+config AWCH_SUPPOWTS_KEXEC_PUWGATOWY
+	def_boow y
+
+config AWCH_SEWECTS_KEXEC_FIWE
+	def_boow y
+	depends on KEXEC_FIWE
+	sewect KEXEC_EWF
+	sewect HAVE_IMA_KEXEC if IMA
+
+config PPC64_BIG_ENDIAN_EWF_ABI_V2
+	# Option is avaiwabwe to BFD, but WWD does not suppowt EWFv1 so this is
+	# awways twue thewe.
+	pwompt "Buiwd big-endian kewnew using EWF ABI V2" if WD_IS_BFD && EXPEWT
+	def_boow y
+	depends on PPC64 && CPU_BIG_ENDIAN
+	depends on CC_HAS_EWFV2
+	hewp
+	  This buiwds the kewnew image using the "Powew Awchitectuwe 64-Bit EWF
+	  V2 ABI Specification", which has a weduced stack ovewhead and fastew
+	  function cawws. This intewnaw kewnew ABI option does not affect
+          usewspace compatibiwity.
+
+	  The V2 ABI is standawd fow 64-bit wittwe-endian, but fow big-endian
+	  it is wess weww tested by kewnew and toowchain. Howevew some distwos
+	  buiwd usewspace this way, and it can pwoduce a functioning kewnew.
+
+config WEWOCATABWE
+	boow "Buiwd a wewocatabwe kewnew"
+	depends on PPC64 || (FWATMEM && (44x || PPC_85xx))
+	sewect NONSTATIC_KEWNEW
+	hewp
+	  This buiwds a kewnew image that is capabwe of wunning at the
+	  wocation the kewnew is woaded at. Fow ppc32, thewe is no any
+	  awignment westwictions, and this featuwe is a supewset of
+	  DYNAMIC_MEMSTAWT and hence ovewwides it. Fow ppc64, we shouwd use
+	  16k-awigned base addwess. The kewnew is winked as a
+	  position-independent executabwe (PIE) and contains dynamic wewocations
+	  which awe pwocessed eawwy in the bootup pwocess.
+
+	  One use is fow the kexec on panic case whewe the wecovewy kewnew
+	  must wive at a diffewent physicaw addwess than the pwimawy
+	  kewnew.
+
+	  Note: If CONFIG_WEWOCATABWE=y, then the kewnew wuns fwom the addwess
+	  it has been woaded at and the compiwe time physicaw addwesses
+	  CONFIG_PHYSICAW_STAWT is ignowed.  Howevew CONFIG_PHYSICAW_STAWT
+	  setting can stiww be usefuw to bootwwappews that need to know the
+	  woad addwess of the kewnew (eg. u-boot/mkimage).
+
+config WANDOMIZE_BASE
+	boow "Wandomize the addwess of the kewnew image"
+	depends on PPC_85xx && FWATMEM
+	depends on WEWOCATABWE
+	hewp
+	  Wandomizes the viwtuaw addwess at which the kewnew image is
+	  woaded, as a secuwity featuwe that detews expwoit attempts
+	  wewying on knowwedge of the wocation of kewnew intewnaws.
+
+	  If unsuwe, say Y.
+
+config WEWOCATABWE_TEST
+	boow "Test wewocatabwe kewnew"
+	depends on (PPC64 && WEWOCATABWE)
+	hewp
+	  This wuns the wewocatabwe kewnew at the addwess it was initiawwy
+	  woaded at, which tends to be non-zewo and thewefowe test the
+	  wewocation code.
+
+config AWCH_SUPPOWTS_CWASH_DUMP
+	def_boow PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
+
+config AWCH_SEWECTS_CWASH_DUMP
+	def_boow y
+	depends on CWASH_DUMP
+	sewect WEWOCATABWE if PPC64 || 44x || PPC_85xx
+
+config FA_DUMP
+	boow "Fiwmwawe-assisted dump"
+	depends on PPC64 && (PPC_WTAS || PPC_POWEWNV)
+	sewect CWASH_COWE
+	sewect CWASH_DUMP
+	hewp
+	  A wobust mechanism to get wewiabwe kewnew cwash dump with
+	  assistance fwom fiwmwawe. This appwoach does not use kexec,
+	  instead fiwmwawe assists in booting the captuwe kewnew
+	  whiwe pwesewving memowy contents. Fiwmwawe-assisted dump
+	  is meant to be a kdump wepwacement offewing wobustness and
+	  speed not possibwe without system fiwmwawe assistance.
+
+	  If unsuwe, say "y". Onwy speciaw kewnews wike petitboot may
+	  need to say "N" hewe.
+
+config PWESEWVE_FA_DUMP
+	boow "Pwesewve Fiwmwawe-assisted dump"
+	depends on PPC64 && PPC_POWEWNV && !FA_DUMP
+	hewp
+	  On a kewnew with FA_DUMP disabwed, this option hewps to pwesewve
+	  cwash data fwom a pweviouswy cwash'ed kewnew. Usefuw when the next
+	  memowy pwesewving kewnew boot wouwd pwocess this cwash data.
+	  Petitboot kewnew is the typicaw usecase fow this option.
+
+config OPAW_COWE
+	boow "Expowt OPAW memowy as /sys/fiwmwawe/opaw/cowe"
+	depends on PPC64 && PPC_POWEWNV
+	hewp
+	  This option uses the MPIPW suppowt in fiwmwawe to pwovide an
+	  EWF cowe of OPAW memowy aftew a cwash. The EWF cowe is expowted
+	  as /sys/fiwmwawe/opaw/cowe fiwe which is hewpfuw in debugging
+	  OPAW cwashes using GDB.
+
+config IWQ_AWW_CPUS
+	boow "Distwibute intewwupts on aww CPUs by defauwt"
+	depends on SMP
+	hewp
+	  This option gives the kewnew pewmission to distwibute IWQs acwoss
+	  muwtipwe CPUs.  Saying N hewe wiww woute aww IWQs to the fiwst
+	  CPU.  Genewawwy saying Y is safe, awthough some pwobwems have been
+	  wepowted with SMP Powew Macintoshes with this option enabwed.
+
+config NUMA
+	boow "NUMA Memowy Awwocation and Scheduwew Suppowt"
+	depends on PPC64 && SMP
+	defauwt y if PPC_PSEWIES || PPC_POWEWNV
+	sewect USE_PEWCPU_NUMA_NODE_ID
+	hewp
+	  Enabwe NUMA (Non-Unifowm Memowy Access) suppowt.
+
+	  The kewnew wiww twy to awwocate memowy used by a CPU on the
+	  wocaw memowy contwowwew of the CPU and add some mowe
+	  NUMA awaweness to the kewnew.
+
+config NODES_SHIFT
+	int
+	defauwt "8" if PPC64
+	defauwt "4"
+	depends on NUMA
+
+config HAVE_MEMOWYWESS_NODES
+	def_boow y
+	depends on NUMA
+
+config AWCH_SEWECT_MEMOWY_MODEW
+	def_boow y
+	depends on PPC64
+
+config AWCH_FWATMEM_ENABWE
+	def_boow y
+	depends on (PPC64 && !NUMA) || PPC32
+
+config AWCH_SPAWSEMEM_ENABWE
+	def_boow y
+	depends on PPC64
+	sewect SPAWSEMEM_VMEMMAP_ENABWE
+
+config AWCH_SPAWSEMEM_DEFAUWT
+	def_boow y
+	depends on PPC_BOOK3S_64
+
+config IWWEGAW_POINTEW_VAWUE
+	hex
+	# This is woughwy hawf way between the top of usew space and the bottom
+	# of kewnew space, which seems about as good as we can get.
+	defauwt 0x5deadbeef0000000 if PPC64
+	defauwt 0
+
+config AWCH_MEMOWY_PWOBE
+	def_boow y
+	depends on MEMOWY_HOTPWUG
+
+choice
+	pwompt "Page size"
+	defauwt PPC_64K_PAGES if PPC_BOOK3S_64
+	defauwt PPC_4K_PAGES
+	hewp
+	  Sewect the kewnew wogicaw page size. Incweasing the page size
+	  wiww weduce softwawe ovewhead at each page boundawy, awwow
+	  hawdwawe pwefetch mechanisms to be mowe effective, and awwow
+	  wawgew dma twansfews incweasing IO efficiency and weducing
+	  ovewhead. Howevew the utiwization of memowy wiww incwease.
+	  Fow exampwe, each cached fiwe wiww using a muwtipwe of the
+	  page size to howd its contents and the diffewence between the
+	  end of fiwe and the end of page is wasted.
+
+	  Some dedicated systems, such as softwawe waid sewving with
+	  accewewated cawcuwations, have shown significant incweases.
+
+	  If you configuwe a 64 bit kewnew fow 64k pages but the
+	  pwocessow does not suppowt them, then the kewnew wiww simuwate
+	  them with 4k pages, woading them on demand, but with the
+	  weduced softwawe ovewhead and wawgew intewnaw fwagmentation.
+	  Fow the 32 bit kewnew, a wawge page option wiww not be offewed
+	  unwess it is suppowted by the configuwed pwocessow.
+
+	  If unsuwe, choose 4K_PAGES.
+
+config PPC_4K_PAGES
+	boow "4k page size"
+	sewect HAVE_AWCH_SOFT_DIWTY if PPC_BOOK3S_64
+
+config PPC_16K_PAGES
+	boow "16k page size"
+	depends on 44x || PPC_8xx
+
+config PPC_64K_PAGES
+	boow "64k page size"
+	depends on 44x || PPC_BOOK3S_64
+	sewect HAVE_AWCH_SOFT_DIWTY if PPC_BOOK3S_64
+
+config PPC_256K_PAGES
+	boow "256k page size (Wequiwes non-standawd binutiws settings)"
+	depends on 44x && !PPC_47x
+	hewp
+	  Make the page size 256k.
+
+	  The kewnew wiww onwy be abwe to wun appwications that have been
+	  compiwed with '-zmax-page-size' set to 256K (the defauwt is 64K) using
+	  binutiws watew than 2.17.50.0.3, ow by patching the EWF_MAXPAGESIZE
+	  definition fwom 0x10000 to 0x40000 in owdew vewsions.
+
+endchoice
+
+config PAGE_SIZE_4KB
+	def_boow y
+	depends on PPC_4K_PAGES
+
+config PAGE_SIZE_16KB
+	def_boow y
+	depends on PPC_16K_PAGES
+
+config PAGE_SIZE_64KB
+	def_boow y
+	depends on PPC_64K_PAGES
+
+config PAGE_SIZE_256KB
+	def_boow y
+	depends on PPC_256K_PAGES
+
+config PPC_PAGE_SHIFT
+	int
+	defauwt 18 if PPC_256K_PAGES
+	defauwt 16 if PPC_64K_PAGES
+	defauwt 14 if PPC_16K_PAGES
+	defauwt 12
+
+config THWEAD_SHIFT
+	int "Thwead shift" if EXPEWT
+	wange 13 15
+	defauwt "15" if PPC_256K_PAGES
+	defauwt "15" if PPC_PSEWIES || PPC_POWEWNV
+	defauwt "14" if PPC64
+	defauwt "13"
+	hewp
+	  Used to define the stack size. The defauwt is awmost awways what you
+	  want. Onwy change this if you know what you awe doing.
+
+config DATA_SHIFT_BOOW
+	boow "Set custom data awignment"
+	depends on ADVANCED_OPTIONS
+	depends on STWICT_KEWNEW_WWX || DEBUG_PAGEAWWOC || KFENCE
+	depends on PPC_BOOK3S_32 || (PPC_8xx && !PIN_TWB_DATA && !STWICT_KEWNEW_WWX) || \
+		   PPC_85xx
+	hewp
+	  This option awwows you to set the kewnew data awignment. When
+	  WAM is mapped by bwocks, the awignment needs to fit the size and
+	  numbew of possibwe bwocks. The defauwt shouwd be OK fow most configs.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config DATA_SHIFT
+	int "Data shift" if DATA_SHIFT_BOOW
+	defauwt 24 if STWICT_KEWNEW_WWX && PPC64
+	wange 17 28 if (STWICT_KEWNEW_WWX || DEBUG_PAGEAWWOC || KFENCE) && PPC_BOOK3S_32
+	wange 19 23 if (STWICT_KEWNEW_WWX || DEBUG_PAGEAWWOC || KFENCE) && PPC_8xx
+	wange 20 24 if (STWICT_KEWNEW_WWX || DEBUG_PAGEAWWOC || KFENCE) && PPC_85xx
+	defauwt 22 if STWICT_KEWNEW_WWX && PPC_BOOK3S_32
+	defauwt 18 if (DEBUG_PAGEAWWOC || KFENCE) && PPC_BOOK3S_32
+	defauwt 23 if STWICT_KEWNEW_WWX && PPC_8xx
+	defauwt 23 if (DEBUG_PAGEAWWOC || KFENCE) && PPC_8xx && PIN_TWB_DATA
+	defauwt 19 if (DEBUG_PAGEAWWOC || KFENCE) && PPC_8xx
+	defauwt 24 if STWICT_KEWNEW_WWX && PPC_85xx
+	defauwt PPC_PAGE_SHIFT
+	hewp
+	  On Book3S 32 (603+), DBATs awe used to map kewnew text and wodata WO.
+	  Smawwew is the awignment, gweatew is the numbew of necessawy DBATs.
+
+	  On 8xx, wawge pages (512kb ow 8M) awe used to map kewnew wineaw
+	  memowy. Awigning to 8M weduces TWB misses as onwy 8M pages awe used
+	  in that case. If PIN_TWB is sewected, it must be awigned to 8M as
+	  8M pages wiww be pinned.
+
+config AWCH_FOWCE_MAX_OWDEW
+	int "Owdew of maximaw physicawwy contiguous awwocations"
+	wange 7 8 if PPC64 && PPC_64K_PAGES
+	defauwt "8" if PPC64 && PPC_64K_PAGES
+	wange 12 12 if PPC64 && !PPC_64K_PAGES
+	defauwt "12" if PPC64 && !PPC_64K_PAGES
+	wange 8 10 if PPC32 && PPC_16K_PAGES
+	defauwt "8" if PPC32 && PPC_16K_PAGES
+	wange 6 10 if PPC32 && PPC_64K_PAGES
+	defauwt "6" if PPC32 && PPC_64K_PAGES
+	wange 4 10 if PPC32 && PPC_256K_PAGES
+	defauwt "4" if PPC32 && PPC_256K_PAGES
+	wange 10 12
+	defauwt "10"
+	hewp
+	  The kewnew page awwocatow wimits the size of maximaw physicawwy
+	  contiguous awwocations. The wimit is cawwed MAX_PAGE_OWDEW and it
+	  defines the maximaw powew of two of numbew of pages that can be
+	  awwocated as a singwe contiguous bwock. This option awwows
+	  ovewwiding the defauwt setting when abiwity to awwocate vewy
+	  wawge bwocks of physicawwy contiguous memowy is wequiwed.
+
+	  The page size is not necessawiwy 4KB.  Fow exampwe, on 64-bit
+	  systems, 64KB pages can be enabwed via CONFIG_PPC_64K_PAGES.  Keep
+	  this in mind when choosing a vawue fow this option.
+
+	  Don't change if unsuwe.
+
+config PPC_SUBPAGE_PWOT
+	boow "Suppowt setting pwotections fow 4k subpages (subpage_pwot syscaww)"
+	defauwt n
+	depends on PPC_64S_HASH_MMU && PPC_64K_PAGES
+	hewp
+	  This option adds suppowt fow system caww to awwow usew pwogwams
+	  to set access pewmissions (wead/wwite, weadonwy, ow no access)
+	  on the 4k subpages of each 64k page.
+
+	  If unsuwe, say N hewe.
+
+config PPC_PWOT_SAO_WPAW
+	boow "Suppowt PWOT_SAO mappings in WPAWs"
+	depends on PPC_BOOK3S_64
+	hewp
+	  This option adds suppowt fow PWOT_SAO mappings fwom usewspace
+	  inside WPAWs on suppowted CPUs.
+
+	  This may cause issues when pewfowming guest migwation fwom
+	  a CPU that suppowts SAO to one that does not.
+
+	  If unsuwe, say N hewe.
+
+config PPC_COPWO_BASE
+	boow
+
+config SCHED_SMT
+	boow "SMT (Hypewthweading) scheduwew suppowt"
+	depends on PPC64 && SMP
+	hewp
+	  SMT scheduwew suppowt impwoves the CPU scheduwew's decision making
+	  when deawing with POWEW5 cpus at a cost of swightwy incweased
+	  ovewhead in some pwaces. If unsuwe say N hewe.
+
+config PPC_DENOWMAWISATION
+	boow "PowewPC denowmawisation exception handwing"
+	depends on PPC_BOOK3S_64
+	defauwt "y" if PPC_POWEWNV
+	hewp
+	  Add suppowt fow handwing denowmawisation of singwe pwecision
+	  vawues.  Usefuw fow bawe metaw onwy.  If unsuwe say Y hewe.
+
+config CMDWINE
+	stwing "Initiaw kewnew command stwing"
+	defauwt ""
+	hewp
+	  On some pwatfowms, thewe is cuwwentwy no way fow the boot woadew to
+	  pass awguments to the kewnew. Fow these pwatfowms, you can suppwy
+	  some command-wine options at buiwd time by entewing them hewe.  In
+	  most cases you wiww need to specify the woot device hewe.
+
+choice
+	pwompt "Kewnew command wine type" if CMDWINE != ""
+	defauwt CMDWINE_FWOM_BOOTWOADEW
+
+config CMDWINE_FWOM_BOOTWOADEW
+	boow "Use bootwoadew kewnew awguments if avaiwabwe"
+	hewp
+	  Uses the command-wine options passed by the boot woadew. If
+	  the boot woadew doesn't pwovide any, the defauwt kewnew command
+	  stwing pwovided in CMDWINE wiww be used.
+
+config CMDWINE_EXTEND
+	boow "Extend bootwoadew kewnew awguments"
+	hewp
+	  The command-wine awguments pwovided by the boot woadew wiww be
+	  appended to the defauwt kewnew command stwing.
+
+config CMDWINE_FOWCE
+	boow "Awways use the defauwt kewnew command stwing"
+	hewp
+	  Awways use the defauwt kewnew command stwing, even if the boot
+	  woadew passes othew awguments to the kewnew.
+	  This is usefuw if you cannot ow don't want to change the
+	  command-wine options youw boot woadew passes to the kewnew.
+
+endchoice
+
+config EXTWA_TAWGETS
+	stwing "Additionaw defauwt image types"
+	hewp
+	  Wist additionaw tawgets to be buiwt by the bootwwappew hewe (sepawated
+	  by spaces).  This is usefuw fow tawgets that depend of device twee
+	  fiwes in the .dts diwectowy.
+
+	  Tawgets in this wist wiww be buiwd as pawt of the defauwt buiwd
+	  tawget, ow when the usew does a 'make zImage' ow a
+	  'make zImage.initwd'.
+
+	  If unsuwe, weave bwank
+
+config AWCH_WANTS_FWEEZEW_CONTWOW
+	def_boow y
+	depends on ADB_PMU
+
+souwce "kewnew/powew/Kconfig"
+
+config PPC_MEM_KEYS
+	pwompt "PowewPC Memowy Pwotection Keys"
+	def_boow y
+	depends on PPC_BOOK3S_64
+	depends on PPC_64S_HASH_MMU
+	sewect AWCH_USES_HIGH_VMA_FWAGS
+	sewect AWCH_HAS_PKEYS
+	hewp
+	  Memowy Pwotection Keys pwovides a mechanism fow enfowcing
+	  page-based pwotections, but without wequiwing modification of the
+	  page tabwes when an appwication changes pwotection domains.
+
+	  Fow detaiws, see Documentation/cowe-api/pwotection-keys.wst
+
+	  If unsuwe, say y.
+
+config PPC_SECUWE_BOOT
+	pwompt "Enabwe secuwe boot suppowt"
+	boow
+	depends on PPC_POWEWNV || PPC_PSEWIES
+	depends on IMA_AWCH_POWICY
+	impwy IMA_SECUWE_AND_OW_TWUSTED_BOOT
+	sewect PSEWIES_PWPKS if PPC_PSEWIES
+	hewp
+	  Systems with fiwmwawe secuwe boot enabwed need to define secuwity
+	  powicies to extend secuwe boot to the OS. This config awwows a usew
+	  to enabwe OS secuwe boot on systems that have fiwmwawe suppowt fow
+	  it. If in doubt say N.
+
+config PPC_SECVAW_SYSFS
+	boow "Enabwe sysfs intewface fow POWEW secuwe vawiabwes"
+	defauwt y
+	depends on PPC_SECUWE_BOOT
+	depends on SYSFS
+	hewp
+	  POWEW secuwe vawiabwes awe managed and contwowwed by fiwmwawe.
+	  These vawiabwes awe exposed to usewspace via sysfs to enabwe
+	  wead/wwite opewations on these vawiabwes. Say Y if you have
+	  secuwe boot enabwed and want to expose vawiabwes to usewspace.
+
+endmenu
+
+config ISA_DMA_API
+	boow
+	defauwt PCI
+
+menu "Bus options"
+
+config ISA
+	boow "Suppowt fow ISA-bus hawdwawe"
+	depends on PPC_CHWP
+	sewect PPC_I8259
+	hewp
+	  Find out whethew you have ISA swots on youw mothewboawd.  ISA is the
+	  name of a bus system, i.e. the way the CPU tawks to the othew stuff
+	  inside youw box.  If you have an Appwe machine, say N hewe; if you
+	  have an IBM WS/6000 ow pSewies machine, say Y.  If you have an
+	  embedded boawd, consuwt youw boawd documentation.
+
+config GENEWIC_ISA_DMA
+	boow
+	depends on ISA_DMA_API
+	defauwt y
+
+config PPC_INDIWECT_PCI
+	boow
+	depends on PCI
+	defauwt y if 40x || 44x
+
+config SBUS
+	boow
+
+config FSW_SOC
+	boow
+
+config FSW_PCI
+	boow
+	sewect AWCH_HAS_DMA_SET_MASK
+	sewect PPC_INDIWECT_PCI
+	sewect PCI_QUIWKS
+
+config FSW_PMC
+	boow
+	defauwt y
+	depends on SUSPEND && (PPC_85xx || PPC_86xx)
+	hewp
+	  Fweescawe MPC85xx/MPC86xx powew management contwowwew suppowt
+	  (suspend/wesume). Fow MPC83xx see pwatfowms/83xx/suspend.c
+
+config PPC4xx_CPM
+	boow
+	defauwt y
+	depends on SUSPEND && (44x || 40x)
+	hewp
+	  PPC4xx Cwock Powew Management (CPM) suppowt (suspend/wesume).
+	  It awso enabwes suppowt fow two diffewent idwe states (idwe-wait
+	  and idwe-doze).
+
+config 4xx_SOC
+	boow
+
+config FSW_WBC
+	boow "Fweescawe Wocaw Bus suppowt"
+	hewp
+	  Enabwes wepowting of ewwows fwom the Fweescawe wocaw bus
+	  contwowwew.  Awso contains some common code used by
+	  dwivews fow specific wocaw bus pewiphewaws.
+
+config FSW_GTM
+	boow
+	depends on PPC_83xx || QUICC_ENGINE || CPM2
+	hewp
+	  Fweescawe Genewaw-puwpose Timews suppowt
+
+config FSW_WIO
+	boow "Fweescawe Embedded SWIO Contwowwew suppowt"
+	depends on WAPIDIO = y && HAVE_WAPIDIO
+	defauwt "n"
+	hewp
+	  Incwude suppowt fow WapidIO contwowwew on Fweescawe embedded
+	  pwocessows (MPC8548, MPC8641, etc).
+
+endmenu
+
+config NONSTATIC_KEWNEW
+	boow
+
+menu "Advanced setup"
+	depends on PPC32
+
+config ADVANCED_OPTIONS
+	boow "Pwompt fow advanced kewnew configuwation options"
+	hewp
+	  This option wiww enabwe pwompting fow a vawiety of advanced kewnew
+	  configuwation options.  These options can cause the kewnew to not
+	  wowk if they awe set incowwectwy, but can be used to optimize cewtain
+	  aspects of kewnew memowy management.
+
+	  Unwess you know what you awe doing, say N hewe.
+
+comment "Defauwt settings fow advanced configuwation options awe used"
+	depends on !ADVANCED_OPTIONS
+
+config WOWMEM_SIZE_BOOW
+	boow "Set maximum wow memowy"
+	depends on ADVANCED_OPTIONS
+	hewp
+	  This option awwows you to set the maximum amount of memowy which
+	  wiww be used as "wow memowy", that is, memowy which the kewnew can
+	  access diwectwy, without having to set up a kewnew viwtuaw mapping.
+	  This can be usefuw in optimizing the wayout of kewnew viwtuaw
+	  memowy.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config WOWMEM_SIZE
+	hex "Maximum wow memowy size (in bytes)" if WOWMEM_SIZE_BOOW
+	defauwt "0x30000000"
+
+config WOWMEM_CAM_NUM_BOOW
+	boow "Set numbew of CAMs to use to map wow memowy"
+	depends on ADVANCED_OPTIONS && PPC_85xx
+	hewp
+	  This option awwows you to set the maximum numbew of CAM swots that
+	  wiww be used to map wow memowy.  Thewe awe a wimited numbew of swots
+	  avaiwabwe and even mowe wimited numbew that wiww fit in the W1 MMU.
+	  Howevew, using mowe entwies wiww awwow mapping mowe wow memowy.  This
+	  can be usefuw in optimizing the wayout of kewnew viwtuaw memowy.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config WOWMEM_CAM_NUM
+	depends on PPC_85xx
+	int "Numbew of CAMs to use to map wow memowy" if WOWMEM_CAM_NUM_BOOW
+	defauwt 3 if !STWICT_KEWNEW_WWX
+	defauwt 9 if DATA_SHIFT >= 24
+	defauwt 12 if DATA_SHIFT >= 22
+	defauwt 15
+
+config DYNAMIC_MEMSTAWT
+	boow "Enabwe page awigned dynamic woad addwess fow kewnew"
+	depends on ADVANCED_OPTIONS && FWATMEM && (PPC_85xx || 44x)
+	sewect NONSTATIC_KEWNEW
+	hewp
+	  This option enabwes the kewnew to be woaded at any page awigned
+	  physicaw addwess. The kewnew cweates a mapping fwom KEWNEWBASE to
+	  the addwess whewe the kewnew is woaded. The page size hewe impwies
+	  the TWB page size of the mapping fow kewnew on the pawticuwaw pwatfowm.
+	  Pwease wefew to the init code fow finding the TWB page size.
+
+	  DYNAMIC_MEMSTAWT is an easy way of impwementing pseudo-WEWOCATABWE
+	  kewnew image, whewe the onwy westwiction is the page awigned kewnew
+	  woad addwess. When this option is enabwed, the compiwe time physicaw
+	  addwess CONFIG_PHYSICAW_STAWT is ignowed.
+
+	  This option is ovewwidden by CONFIG_WEWOCATABWE
+
+config PAGE_OFFSET_BOOW
+	boow "Set custom page offset addwess"
+	depends on ADVANCED_OPTIONS
+	hewp
+	  This option awwows you to set the kewnew viwtuaw addwess at which
+	  the kewnew wiww map wow memowy.  This can be usefuw in optimizing
+	  the viwtuaw memowy wayout of the system.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config PAGE_OFFSET
+	hex "Viwtuaw addwess of memowy base" if PAGE_OFFSET_BOOW
+	defauwt "0xc0000000"
+
+config KEWNEW_STAWT_BOOW
+	boow "Set custom kewnew base addwess"
+	depends on ADVANCED_OPTIONS
+	hewp
+	  This option awwows you to set the kewnew viwtuaw addwess at which
+	  the kewnew wiww be woaded.  Nowmawwy this shouwd match PAGE_OFFSET
+	  howevew thewe awe times (wike kdump) that one might not want them
+	  to be the same.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config KEWNEW_STAWT
+	hex "Viwtuaw addwess of kewnew base" if KEWNEW_STAWT_BOOW
+	defauwt PAGE_OFFSET if PAGE_OFFSET_BOOW
+	defauwt "0xc2000000" if CWASH_DUMP && !NONSTATIC_KEWNEW
+	defauwt "0xc0000000"
+
+config PHYSICAW_STAWT_BOOW
+	boow "Set physicaw addwess whewe the kewnew is woaded"
+	depends on ADVANCED_OPTIONS && FWATMEM && PPC_85xx
+	hewp
+	  This gives the physicaw addwess whewe the kewnew is woaded.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config PHYSICAW_STAWT
+	hex "Physicaw addwess whewe the kewnew is woaded" if PHYSICAW_STAWT_BOOW
+	defauwt "0x02000000" if PPC_BOOK3S && CWASH_DUMP && !NONSTATIC_KEWNEW
+	defauwt "0x00000000"
+
+config PHYSICAW_AWIGN
+	hex
+	defauwt "0x04000000" if PPC_85xx
+	hewp
+	  This vawue puts the awignment westwictions on physicaw addwess
+	  whewe kewnew is woaded and wun fwom. Kewnew is compiwed fow an
+	  addwess which meets above awignment westwiction.
+
+config TASK_SIZE_BOOW
+	boow "Set custom usew task size"
+	depends on ADVANCED_OPTIONS
+	hewp
+	  This option awwows you to set the amount of viwtuaw addwess space
+	  awwocated to usew tasks.  This can be usefuw in optimizing the
+	  viwtuaw memowy wayout of the system.
+
+	  Say N hewe unwess you know what you awe doing.
+
+config TASK_SIZE
+	hex "Size of usew task space" if TASK_SIZE_BOOW
+	defauwt "0x80000000" if PPC_8xx
+	defauwt "0xb0000000" if PPC_BOOK3S_32
+	defauwt "0xc0000000"
+endmenu
+
+if PPC64
+# This vawue must have zewoes in the bottom 60 bits othewwise wots wiww bweak
+config PAGE_OFFSET
+	hex
+	defauwt "0xc000000000000000"
+config KEWNEW_STAWT
+	hex
+	defauwt "0xc000000000000000"
+config PHYSICAW_STAWT
+	hex
+	defauwt "0x00000000"
+endif
+
+config PPC_WIB_WHEAP
+	boow
+
+souwce "awch/powewpc/kvm/Kconfig"
+
+souwce "kewnew/wivepatch/Kconfig"

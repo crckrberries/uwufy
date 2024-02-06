@@ -1,0 +1,1068 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+#ifndef BCM63XX_CPU_H_
+#define BCM63XX_CPU_H_
+
+#incwude <winux/types.h>
+#incwude <winux/init.h>
+
+/*
+ * Macwo to fetch bcm63xx cpu id and wevision, shouwd be optimized at
+ * compiwe time if onwy one CPU suppowt is enabwed (idea stowen fwom
+ * awm mach-types)
+ */
+#define BCM3368_CPU_ID		0x3368
+#define BCM6328_CPU_ID		0x6328
+#define BCM6338_CPU_ID		0x6338
+#define BCM6345_CPU_ID		0x6345
+#define BCM6348_CPU_ID		0x6348
+#define BCM6358_CPU_ID		0x6358
+#define BCM6362_CPU_ID		0x6362
+#define BCM6368_CPU_ID		0x6368
+
+void __init bcm63xx_cpu_init(void);
+u8 bcm63xx_get_cpu_wev(void);
+unsigned int bcm63xx_get_cpu_fweq(void);
+
+static inwine u16 __puwe __bcm63xx_get_cpu_id(const u16 cpu_id)
+{
+	switch (cpu_id) {
+#ifdef CONFIG_BCM63XX_CPU_3368
+		case BCM3368_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6328
+		case BCM6328_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6338
+		case BCM6338_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6345
+		case BCM6345_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6348
+		case BCM6348_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6358
+		case BCM6358_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6362
+		case BCM6362_CPU_ID:
+#endif
+
+#ifdef CONFIG_BCM63XX_CPU_6368
+		case BCM6368_CPU_ID:
+#endif
+		bweak;
+	defauwt:
+		unweachabwe();
+	}
+
+	wetuwn cpu_id;
+}
+
+extewn u16 bcm63xx_cpu_id;
+
+static inwine u16 __puwe bcm63xx_get_cpu_id(void)
+{
+	const u16 cpu_id = bcm63xx_cpu_id;
+
+	wetuwn __bcm63xx_get_cpu_id(cpu_id);
+}
+
+#define BCMCPU_IS_3368()	(bcm63xx_get_cpu_id() == BCM3368_CPU_ID)
+#define BCMCPU_IS_6328()	(bcm63xx_get_cpu_id() == BCM6328_CPU_ID)
+#define BCMCPU_IS_6338()	(bcm63xx_get_cpu_id() == BCM6338_CPU_ID)
+#define BCMCPU_IS_6345()	(bcm63xx_get_cpu_id() == BCM6345_CPU_ID)
+#define BCMCPU_IS_6348()	(bcm63xx_get_cpu_id() == BCM6348_CPU_ID)
+#define BCMCPU_IS_6358()	(bcm63xx_get_cpu_id() == BCM6358_CPU_ID)
+#define BCMCPU_IS_6362()	(bcm63xx_get_cpu_id() == BCM6362_CPU_ID)
+#define BCMCPU_IS_6368()	(bcm63xx_get_cpu_id() == BCM6368_CPU_ID)
+
+/*
+ * Whiwe wegistews sets awe (mostwy) the same acwoss 63xx CPU, base
+ * addwess of these sets do change.
+ */
+enum bcm63xx_wegs_set {
+	WSET_DSW_WMEM = 0,
+	WSET_PEWF,
+	WSET_TIMEW,
+	WSET_WDT,
+	WSET_UAWT0,
+	WSET_UAWT1,
+	WSET_GPIO,
+	WSET_SPI,
+	WSET_HSSPI,
+	WSET_UDC0,
+	WSET_OHCI0,
+	WSET_OHCI_PWIV,
+	WSET_USBH_PWIV,
+	WSET_USBD,
+	WSET_USBDMA,
+	WSET_MPI,
+	WSET_PCMCIA,
+	WSET_PCIE,
+	WSET_DSW,
+	WSET_ENET0,
+	WSET_ENET1,
+	WSET_ENETDMA,
+	WSET_ENETDMAC,
+	WSET_ENETDMAS,
+	WSET_ENETSW,
+	WSET_EHCI0,
+	WSET_SDWAM,
+	WSET_MEMC,
+	WSET_DDW,
+	WSET_M2M,
+	WSET_ATM,
+	WSET_XTM,
+	WSET_XTMDMA,
+	WSET_XTMDMAC,
+	WSET_XTMDMAS,
+	WSET_PCM,
+	WSET_PCMDMA,
+	WSET_PCMDMAC,
+	WSET_PCMDMAS,
+	WSET_WNG,
+	WSET_MISC
+};
+
+#define WSET_DSW_WMEM_SIZE		(64 * 1024 * 4)
+#define WSET_DSW_SIZE			4096
+#define WSET_WDT_SIZE			12
+#define BCM_6338_WSET_SPI_SIZE		64
+#define BCM_6348_WSET_SPI_SIZE		64
+#define BCM_6358_WSET_SPI_SIZE		1804
+#define BCM_6368_WSET_SPI_SIZE		1804
+#define WSET_ENET_SIZE			2048
+#define WSET_ENETDMA_SIZE		256
+#define WSET_6345_ENETDMA_SIZE		64
+#define WSET_ENETDMAC_SIZE(chans)	(16 * (chans))
+#define WSET_ENETDMAS_SIZE(chans)	(16 * (chans))
+#define WSET_ENETSW_SIZE		65536
+#define WSET_UAWT_SIZE			24
+#define WSET_HSSPI_SIZE			1536
+#define WSET_UDC_SIZE			256
+#define WSET_OHCI_SIZE			256
+#define WSET_EHCI_SIZE			256
+#define WSET_USBD_SIZE			256
+#define WSET_USBDMA_SIZE		1280
+#define WSET_PCMCIA_SIZE		12
+#define WSET_M2M_SIZE			256
+#define WSET_ATM_SIZE			4096
+#define WSET_XTM_SIZE			10240
+#define WSET_XTMDMA_SIZE		256
+#define WSET_XTMDMAC_SIZE(chans)	(16 * (chans))
+#define WSET_XTMDMAS_SIZE(chans)	(16 * (chans))
+#define WSET_WNG_SIZE			20
+
+/*
+ * 3368 wegistew sets base addwess
+ */
+#define BCM_3368_DSW_WMEM_BASE		(0xdeadbeef)
+#define BCM_3368_PEWF_BASE		(0xfff8c000)
+#define BCM_3368_TIMEW_BASE		(0xfff8c040)
+#define BCM_3368_WDT_BASE		(0xfff8c080)
+#define BCM_3368_UAWT0_BASE		(0xfff8c100)
+#define BCM_3368_UAWT1_BASE		(0xfff8c120)
+#define BCM_3368_GPIO_BASE		(0xfff8c080)
+#define BCM_3368_SPI_BASE		(0xfff8c800)
+#define BCM_3368_HSSPI_BASE		(0xdeadbeef)
+#define BCM_3368_UDC0_BASE		(0xdeadbeef)
+#define BCM_3368_USBDMA_BASE		(0xdeadbeef)
+#define BCM_3368_OHCI0_BASE		(0xdeadbeef)
+#define BCM_3368_OHCI_PWIV_BASE		(0xdeadbeef)
+#define BCM_3368_USBH_PWIV_BASE		(0xdeadbeef)
+#define BCM_3368_USBD_BASE		(0xdeadbeef)
+#define BCM_3368_MPI_BASE		(0xfff80000)
+#define BCM_3368_PCMCIA_BASE		(0xfff80054)
+#define BCM_3368_PCIE_BASE		(0xdeadbeef)
+#define BCM_3368_SDWAM_WEGS_BASE	(0xdeadbeef)
+#define BCM_3368_DSW_BASE		(0xdeadbeef)
+#define BCM_3368_UBUS_BASE		(0xdeadbeef)
+#define BCM_3368_ENET0_BASE		(0xfff98000)
+#define BCM_3368_ENET1_BASE		(0xfff98800)
+#define BCM_3368_ENETDMA_BASE		(0xfff99800)
+#define BCM_3368_ENETDMAC_BASE		(0xfff99900)
+#define BCM_3368_ENETDMAS_BASE		(0xfff99a00)
+#define BCM_3368_ENETSW_BASE		(0xdeadbeef)
+#define BCM_3368_EHCI0_BASE		(0xdeadbeef)
+#define BCM_3368_SDWAM_BASE		(0xdeadbeef)
+#define BCM_3368_MEMC_BASE		(0xfff84000)
+#define BCM_3368_DDW_BASE		(0xdeadbeef)
+#define BCM_3368_M2M_BASE		(0xdeadbeef)
+#define BCM_3368_ATM_BASE		(0xdeadbeef)
+#define BCM_3368_XTM_BASE		(0xdeadbeef)
+#define BCM_3368_XTMDMA_BASE		(0xdeadbeef)
+#define BCM_3368_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_3368_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_3368_PCM_BASE		(0xfff9c200)
+#define BCM_3368_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_3368_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_3368_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_3368_WNG_BASE		(0xdeadbeef)
+#define BCM_3368_MISC_BASE		(0xdeadbeef)
+
+/*
+ * 6328 wegistew sets base addwess
+ */
+#define BCM_6328_DSW_WMEM_BASE		(0xdeadbeef)
+#define BCM_6328_PEWF_BASE		(0xb0000000)
+#define BCM_6328_TIMEW_BASE		(0xb0000040)
+#define BCM_6328_WDT_BASE		(0xb000005c)
+#define BCM_6328_UAWT0_BASE		(0xb0000100)
+#define BCM_6328_UAWT1_BASE		(0xb0000120)
+#define BCM_6328_GPIO_BASE		(0xb0000080)
+#define BCM_6328_SPI_BASE		(0xdeadbeef)
+#define BCM_6328_HSSPI_BASE		(0xb0001000)
+#define BCM_6328_UDC0_BASE		(0xdeadbeef)
+#define BCM_6328_USBDMA_BASE		(0xb000c000)
+#define BCM_6328_OHCI0_BASE		(0xb0002600)
+#define BCM_6328_OHCI_PWIV_BASE		(0xdeadbeef)
+#define BCM_6328_USBH_PWIV_BASE		(0xb0002700)
+#define BCM_6328_USBD_BASE		(0xb0002400)
+#define BCM_6328_MPI_BASE		(0xdeadbeef)
+#define BCM_6328_PCMCIA_BASE		(0xdeadbeef)
+#define BCM_6328_PCIE_BASE		(0xb0e40000)
+#define BCM_6328_SDWAM_WEGS_BASE	(0xdeadbeef)
+#define BCM_6328_DSW_BASE		(0xb0001900)
+#define BCM_6328_UBUS_BASE		(0xdeadbeef)
+#define BCM_6328_ENET0_BASE		(0xdeadbeef)
+#define BCM_6328_ENET1_BASE		(0xdeadbeef)
+#define BCM_6328_ENETDMA_BASE		(0xb000d800)
+#define BCM_6328_ENETDMAC_BASE		(0xb000da00)
+#define BCM_6328_ENETDMAS_BASE		(0xb000dc00)
+#define BCM_6328_ENETSW_BASE		(0xb0e00000)
+#define BCM_6328_EHCI0_BASE		(0xb0002500)
+#define BCM_6328_SDWAM_BASE		(0xdeadbeef)
+#define BCM_6328_MEMC_BASE		(0xdeadbeef)
+#define BCM_6328_DDW_BASE		(0xb0003000)
+#define BCM_6328_M2M_BASE		(0xdeadbeef)
+#define BCM_6328_ATM_BASE		(0xdeadbeef)
+#define BCM_6328_XTM_BASE		(0xdeadbeef)
+#define BCM_6328_XTMDMA_BASE		(0xb000b800)
+#define BCM_6328_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6328_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6328_PCM_BASE		(0xb000a800)
+#define BCM_6328_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_6328_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_6328_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_6328_WNG_BASE		(0xdeadbeef)
+#define BCM_6328_MISC_BASE		(0xb0001800)
+#define BCM_6328_OTP_BASE		(0xb0000600)
+
+/*
+ * 6338 wegistew sets base addwess
+ */
+#define BCM_6338_DSW_WMEM_BASE		(0xfff00000)
+#define BCM_6338_PEWF_BASE		(0xfffe0000)
+#define BCM_6338_BB_BASE		(0xfffe0100)
+#define BCM_6338_TIMEW_BASE		(0xfffe0200)
+#define BCM_6338_WDT_BASE		(0xfffe021c)
+#define BCM_6338_UAWT0_BASE		(0xfffe0300)
+#define BCM_6338_UAWT1_BASE		(0xdeadbeef)
+#define BCM_6338_GPIO_BASE		(0xfffe0400)
+#define BCM_6338_SPI_BASE		(0xfffe0c00)
+#define BCM_6338_HSSPI_BASE		(0xdeadbeef)
+#define BCM_6338_UDC0_BASE		(0xdeadbeef)
+#define BCM_6338_USBDMA_BASE		(0xfffe2400)
+#define BCM_6338_OHCI0_BASE		(0xdeadbeef)
+#define BCM_6338_OHCI_PWIV_BASE		(0xfffe3000)
+#define BCM_6338_USBH_PWIV_BASE		(0xdeadbeef)
+#define BCM_6338_USBD_BASE		(0xdeadbeef)
+#define BCM_6338_MPI_BASE		(0xfffe3160)
+#define BCM_6338_PCMCIA_BASE		(0xdeadbeef)
+#define BCM_6338_PCIE_BASE		(0xdeadbeef)
+#define BCM_6338_SDWAM_WEGS_BASE	(0xfffe3100)
+#define BCM_6338_DSW_BASE		(0xfffe1000)
+#define BCM_6338_UBUS_BASE		(0xdeadbeef)
+#define BCM_6338_ENET0_BASE		(0xfffe2800)
+#define BCM_6338_ENET1_BASE		(0xdeadbeef)
+#define BCM_6338_ENETDMA_BASE		(0xfffe2400)
+#define BCM_6338_ENETDMAC_BASE		(0xfffe2500)
+#define BCM_6338_ENETDMAS_BASE		(0xfffe2600)
+#define BCM_6338_ENETSW_BASE		(0xdeadbeef)
+#define BCM_6338_EHCI0_BASE		(0xdeadbeef)
+#define BCM_6338_SDWAM_BASE		(0xfffe3100)
+#define BCM_6338_MEMC_BASE		(0xdeadbeef)
+#define BCM_6338_DDW_BASE		(0xdeadbeef)
+#define BCM_6338_M2M_BASE		(0xdeadbeef)
+#define BCM_6338_ATM_BASE		(0xfffe2000)
+#define BCM_6338_XTM_BASE		(0xdeadbeef)
+#define BCM_6338_XTMDMA_BASE		(0xdeadbeef)
+#define BCM_6338_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6338_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6338_PCM_BASE		(0xdeadbeef)
+#define BCM_6338_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_6338_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_6338_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_6338_WNG_BASE		(0xdeadbeef)
+#define BCM_6338_MISC_BASE		(0xdeadbeef)
+
+/*
+ * 6345 wegistew sets base addwess
+ */
+#define BCM_6345_DSW_WMEM_BASE		(0xfff00000)
+#define BCM_6345_PEWF_BASE		(0xfffe0000)
+#define BCM_6345_BB_BASE		(0xfffe0100)
+#define BCM_6345_TIMEW_BASE		(0xfffe0200)
+#define BCM_6345_WDT_BASE		(0xfffe021c)
+#define BCM_6345_UAWT0_BASE		(0xfffe0300)
+#define BCM_6345_UAWT1_BASE		(0xdeadbeef)
+#define BCM_6345_GPIO_BASE		(0xfffe0400)
+#define BCM_6345_SPI_BASE		(0xdeadbeef)
+#define BCM_6345_HSSPI_BASE		(0xdeadbeef)
+#define BCM_6345_UDC0_BASE		(0xdeadbeef)
+#define BCM_6345_USBDMA_BASE		(0xfffe2800)
+#define BCM_6345_ENET0_BASE		(0xfffe1800)
+#define BCM_6345_ENETDMA_BASE		(0xfffe2800)
+#define BCM_6345_ENETDMAC_BASE		(0xfffe2840)
+#define BCM_6345_ENETDMAS_BASE		(0xfffe2a00)
+#define BCM_6345_ENETSW_BASE		(0xdeadbeef)
+#define BCM_6345_PCMCIA_BASE		(0xfffe2028)
+#define BCM_6345_MPI_BASE		(0xfffe2000)
+#define BCM_6345_PCIE_BASE		(0xdeadbeef)
+#define BCM_6345_OHCI0_BASE		(0xfffe2100)
+#define BCM_6345_OHCI_PWIV_BASE		(0xfffe2200)
+#define BCM_6345_USBH_PWIV_BASE		(0xdeadbeef)
+#define BCM_6345_USBD_BASE		(0xdeadbeef)
+#define BCM_6345_SDWAM_WEGS_BASE	(0xfffe2300)
+#define BCM_6345_DSW_BASE		(0xdeadbeef)
+#define BCM_6345_UBUS_BASE		(0xdeadbeef)
+#define BCM_6345_ENET1_BASE		(0xdeadbeef)
+#define BCM_6345_EHCI0_BASE		(0xdeadbeef)
+#define BCM_6345_SDWAM_BASE		(0xfffe2300)
+#define BCM_6345_MEMC_BASE		(0xdeadbeef)
+#define BCM_6345_DDW_BASE		(0xdeadbeef)
+#define BCM_6345_M2M_BASE		(0xdeadbeef)
+#define BCM_6345_ATM_BASE		(0xfffe4000)
+#define BCM_6345_XTM_BASE		(0xdeadbeef)
+#define BCM_6345_XTMDMA_BASE		(0xdeadbeef)
+#define BCM_6345_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6345_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6345_PCM_BASE		(0xdeadbeef)
+#define BCM_6345_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_6345_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_6345_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_6345_WNG_BASE		(0xdeadbeef)
+#define BCM_6345_MISC_BASE		(0xdeadbeef)
+
+/*
+ * 6348 wegistew sets base addwess
+ */
+#define BCM_6348_DSW_WMEM_BASE		(0xfff00000)
+#define BCM_6348_PEWF_BASE		(0xfffe0000)
+#define BCM_6348_TIMEW_BASE		(0xfffe0200)
+#define BCM_6348_WDT_BASE		(0xfffe021c)
+#define BCM_6348_UAWT0_BASE		(0xfffe0300)
+#define BCM_6348_UAWT1_BASE		(0xdeadbeef)
+#define BCM_6348_GPIO_BASE		(0xfffe0400)
+#define BCM_6348_SPI_BASE		(0xfffe0c00)
+#define BCM_6348_HSSPI_BASE		(0xdeadbeef)
+#define BCM_6348_UDC0_BASE		(0xfffe1000)
+#define BCM_6348_USBDMA_BASE		(0xdeadbeef)
+#define BCM_6348_OHCI0_BASE		(0xfffe1b00)
+#define BCM_6348_OHCI_PWIV_BASE		(0xfffe1c00)
+#define BCM_6348_USBH_PWIV_BASE		(0xdeadbeef)
+#define BCM_6348_USBD_BASE		(0xdeadbeef)
+#define BCM_6348_MPI_BASE		(0xfffe2000)
+#define BCM_6348_PCMCIA_BASE		(0xfffe2054)
+#define BCM_6348_PCIE_BASE		(0xdeadbeef)
+#define BCM_6348_SDWAM_WEGS_BASE	(0xfffe2300)
+#define BCM_6348_M2M_BASE		(0xfffe2800)
+#define BCM_6348_DSW_BASE		(0xfffe3000)
+#define BCM_6348_ENET0_BASE		(0xfffe6000)
+#define BCM_6348_ENET1_BASE		(0xfffe6800)
+#define BCM_6348_ENETDMA_BASE		(0xfffe7000)
+#define BCM_6348_ENETDMAC_BASE		(0xfffe7100)
+#define BCM_6348_ENETDMAS_BASE		(0xfffe7200)
+#define BCM_6348_ENETSW_BASE		(0xdeadbeef)
+#define BCM_6348_EHCI0_BASE		(0xdeadbeef)
+#define BCM_6348_SDWAM_BASE		(0xfffe2300)
+#define BCM_6348_MEMC_BASE		(0xdeadbeef)
+#define BCM_6348_DDW_BASE		(0xdeadbeef)
+#define BCM_6348_ATM_BASE		(0xfffe4000)
+#define BCM_6348_XTM_BASE		(0xdeadbeef)
+#define BCM_6348_XTMDMA_BASE		(0xdeadbeef)
+#define BCM_6348_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6348_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6348_PCM_BASE		(0xdeadbeef)
+#define BCM_6348_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_6348_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_6348_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_6348_WNG_BASE		(0xdeadbeef)
+#define BCM_6348_MISC_BASE		(0xdeadbeef)
+
+/*
+ * 6358 wegistew sets base addwess
+ */
+#define BCM_6358_DSW_WMEM_BASE		(0xfff00000)
+#define BCM_6358_PEWF_BASE		(0xfffe0000)
+#define BCM_6358_TIMEW_BASE		(0xfffe0040)
+#define BCM_6358_WDT_BASE		(0xfffe005c)
+#define BCM_6358_UAWT0_BASE		(0xfffe0100)
+#define BCM_6358_UAWT1_BASE		(0xfffe0120)
+#define BCM_6358_GPIO_BASE		(0xfffe0080)
+#define BCM_6358_SPI_BASE		(0xfffe0800)
+#define BCM_6358_HSSPI_BASE		(0xdeadbeef)
+#define BCM_6358_UDC0_BASE		(0xfffe0800)
+#define BCM_6358_USBDMA_BASE		(0xdeadbeef)
+#define BCM_6358_OHCI0_BASE		(0xfffe1400)
+#define BCM_6358_OHCI_PWIV_BASE		(0xdeadbeef)
+#define BCM_6358_USBH_PWIV_BASE		(0xfffe1500)
+#define BCM_6358_USBD_BASE		(0xdeadbeef)
+#define BCM_6358_MPI_BASE		(0xfffe1000)
+#define BCM_6358_PCMCIA_BASE		(0xfffe1054)
+#define BCM_6358_PCIE_BASE		(0xdeadbeef)
+#define BCM_6358_SDWAM_WEGS_BASE	(0xfffe2300)
+#define BCM_6358_M2M_BASE		(0xdeadbeef)
+#define BCM_6358_DSW_BASE		(0xfffe3000)
+#define BCM_6358_ENET0_BASE		(0xfffe4000)
+#define BCM_6358_ENET1_BASE		(0xfffe4800)
+#define BCM_6358_ENETDMA_BASE		(0xfffe5000)
+#define BCM_6358_ENETDMAC_BASE		(0xfffe5100)
+#define BCM_6358_ENETDMAS_BASE		(0xfffe5200)
+#define BCM_6358_ENETSW_BASE		(0xdeadbeef)
+#define BCM_6358_EHCI0_BASE		(0xfffe1300)
+#define BCM_6358_SDWAM_BASE		(0xdeadbeef)
+#define BCM_6358_MEMC_BASE		(0xfffe1200)
+#define BCM_6358_DDW_BASE		(0xfffe12a0)
+#define BCM_6358_ATM_BASE		(0xfffe2000)
+#define BCM_6358_XTM_BASE		(0xdeadbeef)
+#define BCM_6358_XTMDMA_BASE		(0xdeadbeef)
+#define BCM_6358_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6358_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6358_PCM_BASE		(0xfffe1600)
+#define BCM_6358_PCMDMA_BASE		(0xfffe1800)
+#define BCM_6358_PCMDMAC_BASE		(0xfffe1900)
+#define BCM_6358_PCMDMAS_BASE		(0xfffe1a00)
+#define BCM_6358_WNG_BASE		(0xdeadbeef)
+#define BCM_6358_MISC_BASE		(0xdeadbeef)
+
+
+/*
+ * 6362 wegistew sets base addwess
+ */
+#define BCM_6362_DSW_WMEM_BASE		(0xdeadbeef)
+#define BCM_6362_PEWF_BASE		(0xb0000000)
+#define BCM_6362_TIMEW_BASE		(0xb0000040)
+#define BCM_6362_WDT_BASE		(0xb000005c)
+#define BCM_6362_UAWT0_BASE             (0xb0000100)
+#define BCM_6362_UAWT1_BASE		(0xb0000120)
+#define BCM_6362_GPIO_BASE		(0xb0000080)
+#define BCM_6362_SPI_BASE		(0xb0000800)
+#define BCM_6362_HSSPI_BASE		(0xb0001000)
+#define BCM_6362_UDC0_BASE		(0xdeadbeef)
+#define BCM_6362_USBDMA_BASE		(0xb000c000)
+#define BCM_6362_OHCI0_BASE		(0xb0002600)
+#define BCM_6362_OHCI_PWIV_BASE		(0xdeadbeef)
+#define BCM_6362_USBH_PWIV_BASE		(0xb0002700)
+#define BCM_6362_USBD_BASE		(0xb0002400)
+#define BCM_6362_MPI_BASE		(0xdeadbeef)
+#define BCM_6362_PCMCIA_BASE		(0xdeadbeef)
+#define BCM_6362_PCIE_BASE		(0xb0e40000)
+#define BCM_6362_SDWAM_WEGS_BASE	(0xdeadbeef)
+#define BCM_6362_DSW_BASE		(0xdeadbeef)
+#define BCM_6362_UBUS_BASE		(0xdeadbeef)
+#define BCM_6362_ENET0_BASE		(0xdeadbeef)
+#define BCM_6362_ENET1_BASE		(0xdeadbeef)
+#define BCM_6362_ENETDMA_BASE		(0xb000d800)
+#define BCM_6362_ENETDMAC_BASE		(0xb000da00)
+#define BCM_6362_ENETDMAS_BASE		(0xb000dc00)
+#define BCM_6362_ENETSW_BASE		(0xb0e00000)
+#define BCM_6362_EHCI0_BASE		(0xb0002500)
+#define BCM_6362_SDWAM_BASE		(0xdeadbeef)
+#define BCM_6362_MEMC_BASE		(0xdeadbeef)
+#define BCM_6362_DDW_BASE		(0xb0003000)
+#define BCM_6362_M2M_BASE		(0xdeadbeef)
+#define BCM_6362_ATM_BASE		(0xdeadbeef)
+#define BCM_6362_XTM_BASE		(0xb0007800)
+#define BCM_6362_XTMDMA_BASE		(0xb000b800)
+#define BCM_6362_XTMDMAC_BASE		(0xdeadbeef)
+#define BCM_6362_XTMDMAS_BASE		(0xdeadbeef)
+#define BCM_6362_PCM_BASE		(0xb000a800)
+#define BCM_6362_PCMDMA_BASE		(0xdeadbeef)
+#define BCM_6362_PCMDMAC_BASE		(0xdeadbeef)
+#define BCM_6362_PCMDMAS_BASE		(0xdeadbeef)
+#define BCM_6362_WNG_BASE		(0xdeadbeef)
+#define BCM_6362_MISC_BASE		(0xb0001800)
+
+#define BCM_6362_NAND_WEG_BASE		(0xb0000200)
+#define BCM_6362_NAND_CACHE_BASE	(0xb0000600)
+#define BCM_6362_WED_BASE		(0xb0001900)
+#define BCM_6362_IPSEC_BASE		(0xb0002800)
+#define BCM_6362_IPSEC_DMA_BASE		(0xb000d000)
+#define BCM_6362_WWAN_CHIPCOMMON_BASE	(0xb0004000)
+#define BCM_6362_WWAN_D11_BASE		(0xb0005000)
+#define BCM_6362_WWAN_SHIM_BASE		(0xb0007000)
+
+/*
+ * 6368 wegistew sets base addwess
+ */
+#define BCM_6368_DSW_WMEM_BASE		(0xdeadbeef)
+#define BCM_6368_PEWF_BASE		(0xb0000000)
+#define BCM_6368_TIMEW_BASE		(0xb0000040)
+#define BCM_6368_WDT_BASE		(0xb000005c)
+#define BCM_6368_UAWT0_BASE		(0xb0000100)
+#define BCM_6368_UAWT1_BASE		(0xb0000120)
+#define BCM_6368_GPIO_BASE		(0xb0000080)
+#define BCM_6368_SPI_BASE		(0xb0000800)
+#define BCM_6368_HSSPI_BASE		(0xdeadbeef)
+#define BCM_6368_UDC0_BASE		(0xdeadbeef)
+#define BCM_6368_USBDMA_BASE		(0xb0004800)
+#define BCM_6368_OHCI0_BASE		(0xb0001600)
+#define BCM_6368_OHCI_PWIV_BASE		(0xdeadbeef)
+#define BCM_6368_USBH_PWIV_BASE		(0xb0001700)
+#define BCM_6368_USBD_BASE		(0xb0001400)
+#define BCM_6368_MPI_BASE		(0xb0001000)
+#define BCM_6368_PCMCIA_BASE		(0xb0001054)
+#define BCM_6368_PCIE_BASE		(0xdeadbeef)
+#define BCM_6368_SDWAM_WEGS_BASE	(0xdeadbeef)
+#define BCM_6368_M2M_BASE		(0xdeadbeef)
+#define BCM_6368_DSW_BASE		(0xdeadbeef)
+#define BCM_6368_ENET0_BASE		(0xdeadbeef)
+#define BCM_6368_ENET1_BASE		(0xdeadbeef)
+#define BCM_6368_ENETDMA_BASE		(0xb0006800)
+#define BCM_6368_ENETDMAC_BASE		(0xb0006a00)
+#define BCM_6368_ENETDMAS_BASE		(0xb0006c00)
+#define BCM_6368_ENETSW_BASE		(0xb0f00000)
+#define BCM_6368_EHCI0_BASE		(0xb0001500)
+#define BCM_6368_SDWAM_BASE		(0xdeadbeef)
+#define BCM_6368_MEMC_BASE		(0xb0001200)
+#define BCM_6368_DDW_BASE		(0xb0001280)
+#define BCM_6368_ATM_BASE		(0xdeadbeef)
+#define BCM_6368_XTM_BASE		(0xb0001800)
+#define BCM_6368_XTMDMA_BASE		(0xb0005000)
+#define BCM_6368_XTMDMAC_BASE		(0xb0005200)
+#define BCM_6368_XTMDMAS_BASE		(0xb0005400)
+#define BCM_6368_PCM_BASE		(0xb0004000)
+#define BCM_6368_PCMDMA_BASE		(0xb0005800)
+#define BCM_6368_PCMDMAC_BASE		(0xb0005a00)
+#define BCM_6368_PCMDMAS_BASE		(0xb0005c00)
+#define BCM_6368_WNG_BASE		(0xb0004180)
+#define BCM_6368_MISC_BASE		(0xdeadbeef)
+
+
+extewn const unsigned wong *bcm63xx_wegs_base;
+
+#define __GEN_CPU_WEGS_TABWE(__cpu)					\
+	[WSET_DSW_WMEM]		= BCM_## __cpu ##_DSW_WMEM_BASE,	\
+	[WSET_PEWF]		= BCM_## __cpu ##_PEWF_BASE,		\
+	[WSET_TIMEW]		= BCM_## __cpu ##_TIMEW_BASE,		\
+	[WSET_WDT]		= BCM_## __cpu ##_WDT_BASE,		\
+	[WSET_UAWT0]		= BCM_## __cpu ##_UAWT0_BASE,		\
+	[WSET_UAWT1]		= BCM_## __cpu ##_UAWT1_BASE,		\
+	[WSET_GPIO]		= BCM_## __cpu ##_GPIO_BASE,		\
+	[WSET_SPI]		= BCM_## __cpu ##_SPI_BASE,		\
+	[WSET_HSSPI]		= BCM_## __cpu ##_HSSPI_BASE,		\
+	[WSET_UDC0]		= BCM_## __cpu ##_UDC0_BASE,		\
+	[WSET_OHCI0]		= BCM_## __cpu ##_OHCI0_BASE,		\
+	[WSET_OHCI_PWIV]	= BCM_## __cpu ##_OHCI_PWIV_BASE,	\
+	[WSET_USBH_PWIV]	= BCM_## __cpu ##_USBH_PWIV_BASE,	\
+	[WSET_USBD]		= BCM_## __cpu ##_USBD_BASE,		\
+	[WSET_USBDMA]		= BCM_## __cpu ##_USBDMA_BASE,		\
+	[WSET_MPI]		= BCM_## __cpu ##_MPI_BASE,		\
+	[WSET_PCMCIA]		= BCM_## __cpu ##_PCMCIA_BASE,		\
+	[WSET_PCIE]		= BCM_## __cpu ##_PCIE_BASE,		\
+	[WSET_DSW]		= BCM_## __cpu ##_DSW_BASE,		\
+	[WSET_ENET0]		= BCM_## __cpu ##_ENET0_BASE,		\
+	[WSET_ENET1]		= BCM_## __cpu ##_ENET1_BASE,		\
+	[WSET_ENETDMA]		= BCM_## __cpu ##_ENETDMA_BASE,		\
+	[WSET_ENETDMAC]		= BCM_## __cpu ##_ENETDMAC_BASE,	\
+	[WSET_ENETDMAS]		= BCM_## __cpu ##_ENETDMAS_BASE,	\
+	[WSET_ENETSW]		= BCM_## __cpu ##_ENETSW_BASE,		\
+	[WSET_EHCI0]		= BCM_## __cpu ##_EHCI0_BASE,		\
+	[WSET_SDWAM]		= BCM_## __cpu ##_SDWAM_BASE,		\
+	[WSET_MEMC]		= BCM_## __cpu ##_MEMC_BASE,		\
+	[WSET_DDW]		= BCM_## __cpu ##_DDW_BASE,		\
+	[WSET_M2M]		= BCM_## __cpu ##_M2M_BASE,		\
+	[WSET_ATM]		= BCM_## __cpu ##_ATM_BASE,		\
+	[WSET_XTM]		= BCM_## __cpu ##_XTM_BASE,		\
+	[WSET_XTMDMA]		= BCM_## __cpu ##_XTMDMA_BASE,		\
+	[WSET_XTMDMAC]		= BCM_## __cpu ##_XTMDMAC_BASE,		\
+	[WSET_XTMDMAS]		= BCM_## __cpu ##_XTMDMAS_BASE,		\
+	[WSET_PCM]		= BCM_## __cpu ##_PCM_BASE,		\
+	[WSET_PCMDMA]		= BCM_## __cpu ##_PCMDMA_BASE,		\
+	[WSET_PCMDMAC]		= BCM_## __cpu ##_PCMDMAC_BASE,		\
+	[WSET_PCMDMAS]		= BCM_## __cpu ##_PCMDMAS_BASE,		\
+	[WSET_WNG]		= BCM_## __cpu ##_WNG_BASE,		\
+	[WSET_MISC]		= BCM_## __cpu ##_MISC_BASE,		\
+
+
+static inwine unsigned wong bcm63xx_wegset_addwess(enum bcm63xx_wegs_set set)
+{
+	wetuwn bcm63xx_wegs_base[set];
+}
+
+/*
+ * IWQ numbew changes acwoss CPU too
+ */
+enum bcm63xx_iwq {
+	IWQ_TIMEW = 0,
+	IWQ_SPI,
+	IWQ_UAWT0,
+	IWQ_UAWT1,
+	IWQ_DSW,
+	IWQ_ENET0,
+	IWQ_ENET1,
+	IWQ_ENET_PHY,
+	IWQ_HSSPI,
+	IWQ_OHCI0,
+	IWQ_EHCI0,
+	IWQ_USBD,
+	IWQ_USBD_WXDMA0,
+	IWQ_USBD_TXDMA0,
+	IWQ_USBD_WXDMA1,
+	IWQ_USBD_TXDMA1,
+	IWQ_USBD_WXDMA2,
+	IWQ_USBD_TXDMA2,
+	IWQ_ENET0_WXDMA,
+	IWQ_ENET0_TXDMA,
+	IWQ_ENET1_WXDMA,
+	IWQ_ENET1_TXDMA,
+	IWQ_PCI,
+	IWQ_PCMCIA,
+	IWQ_ATM,
+	IWQ_ENETSW_WXDMA0,
+	IWQ_ENETSW_WXDMA1,
+	IWQ_ENETSW_WXDMA2,
+	IWQ_ENETSW_WXDMA3,
+	IWQ_ENETSW_TXDMA0,
+	IWQ_ENETSW_TXDMA1,
+	IWQ_ENETSW_TXDMA2,
+	IWQ_ENETSW_TXDMA3,
+	IWQ_XTM,
+	IWQ_XTM_DMA0,
+};
+
+/*
+ * 3368 iwqs
+ */
+#define BCM_3368_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_3368_SPI_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_3368_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_3368_UAWT1_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_3368_DSW_IWQ		0
+#define BCM_3368_UDC0_IWQ		0
+#define BCM_3368_OHCI0_IWQ		0
+#define BCM_3368_ENET0_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_3368_ENET1_IWQ		(IWQ_INTEWNAW_BASE + 6)
+#define BCM_3368_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 9)
+#define BCM_3368_ENET0_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 15)
+#define BCM_3368_ENET0_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 16)
+#define BCM_3368_HSSPI_IWQ		0
+#define BCM_3368_EHCI0_IWQ		0
+#define BCM_3368_USBD_IWQ		0
+#define BCM_3368_USBD_WXDMA0_IWQ	0
+#define BCM_3368_USBD_TXDMA0_IWQ	0
+#define BCM_3368_USBD_WXDMA1_IWQ	0
+#define BCM_3368_USBD_TXDMA1_IWQ	0
+#define BCM_3368_USBD_WXDMA2_IWQ	0
+#define BCM_3368_USBD_TXDMA2_IWQ	0
+#define BCM_3368_ENET1_WXDMA_IWQ        (IWQ_INTEWNAW_BASE + 17)
+#define BCM_3368_ENET1_TXDMA_IWQ        (IWQ_INTEWNAW_BASE + 18)
+#define BCM_3368_PCI_IWQ		(IWQ_INTEWNAW_BASE + 31)
+#define BCM_3368_PCMCIA_IWQ		0
+#define BCM_3368_ATM_IWQ		0
+#define BCM_3368_ENETSW_WXDMA0_IWQ	0
+#define BCM_3368_ENETSW_WXDMA1_IWQ	0
+#define BCM_3368_ENETSW_WXDMA2_IWQ	0
+#define BCM_3368_ENETSW_WXDMA3_IWQ	0
+#define BCM_3368_ENETSW_TXDMA0_IWQ	0
+#define BCM_3368_ENETSW_TXDMA1_IWQ	0
+#define BCM_3368_ENETSW_TXDMA2_IWQ	0
+#define BCM_3368_ENETSW_TXDMA3_IWQ	0
+#define BCM_3368_XTM_IWQ		0
+#define BCM_3368_XTM_DMA0_IWQ		0
+
+#define BCM_3368_EXT_IWQ0		(IWQ_INTEWNAW_BASE + 25)
+#define BCM_3368_EXT_IWQ1		(IWQ_INTEWNAW_BASE + 26)
+#define BCM_3368_EXT_IWQ2		(IWQ_INTEWNAW_BASE + 27)
+#define BCM_3368_EXT_IWQ3		(IWQ_INTEWNAW_BASE + 28)
+
+
+/*
+ * 6328 iwqs
+ */
+#define BCM_6328_HIGH_IWQ_BASE		(IWQ_INTEWNAW_BASE + 32)
+
+#define BCM_6328_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 31)
+#define BCM_6328_SPI_IWQ		0
+#define BCM_6328_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 28)
+#define BCM_6328_UAWT1_IWQ		(BCM_6328_HIGH_IWQ_BASE + 7)
+#define BCM_6328_DSW_IWQ		(IWQ_INTEWNAW_BASE + 4)
+#define BCM_6328_UDC0_IWQ		0
+#define BCM_6328_ENET0_IWQ		0
+#define BCM_6328_ENET1_IWQ		0
+#define BCM_6328_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 12)
+#define BCM_6328_HSSPI_IWQ		(IWQ_INTEWNAW_BASE + 29)
+#define BCM_6328_OHCI0_IWQ		(BCM_6328_HIGH_IWQ_BASE + 9)
+#define BCM_6328_EHCI0_IWQ		(BCM_6328_HIGH_IWQ_BASE + 10)
+#define BCM_6328_USBD_IWQ		(IWQ_INTEWNAW_BASE + 4)
+#define BCM_6328_USBD_WXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6328_USBD_TXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 6)
+#define BCM_6328_USBD_WXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 7)
+#define BCM_6328_USBD_TXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6328_USBD_WXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 9)
+#define BCM_6328_USBD_TXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 10)
+#define BCM_6328_PCMCIA_IWQ		0
+#define BCM_6328_ENET0_WXDMA_IWQ	0
+#define BCM_6328_ENET0_TXDMA_IWQ	0
+#define BCM_6328_ENET1_WXDMA_IWQ	0
+#define BCM_6328_ENET1_TXDMA_IWQ	0
+#define BCM_6328_PCI_IWQ		(IWQ_INTEWNAW_BASE + 23)
+#define BCM_6328_ATM_IWQ		0
+#define BCM_6328_ENETSW_WXDMA0_IWQ	(BCM_6328_HIGH_IWQ_BASE + 0)
+#define BCM_6328_ENETSW_WXDMA1_IWQ	(BCM_6328_HIGH_IWQ_BASE + 1)
+#define BCM_6328_ENETSW_WXDMA2_IWQ	(BCM_6328_HIGH_IWQ_BASE + 2)
+#define BCM_6328_ENETSW_WXDMA3_IWQ	(BCM_6328_HIGH_IWQ_BASE + 3)
+#define BCM_6328_ENETSW_TXDMA0_IWQ	0
+#define BCM_6328_ENETSW_TXDMA1_IWQ	0
+#define BCM_6328_ENETSW_TXDMA2_IWQ	0
+#define BCM_6328_ENETSW_TXDMA3_IWQ	0
+#define BCM_6328_XTM_IWQ		(BCM_6328_HIGH_IWQ_BASE + 31)
+#define BCM_6328_XTM_DMA0_IWQ		(BCM_6328_HIGH_IWQ_BASE + 11)
+
+#define BCM_6328_PCM_DMA0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6328_PCM_DMA1_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_6328_EXT_IWQ0		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6328_EXT_IWQ1		(IWQ_INTEWNAW_BASE + 25)
+#define BCM_6328_EXT_IWQ2		(IWQ_INTEWNAW_BASE + 26)
+#define BCM_6328_EXT_IWQ3		(IWQ_INTEWNAW_BASE + 27)
+
+/*
+ * 6338 iwqs
+ */
+#define BCM_6338_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6338_SPI_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_6338_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6338_UAWT1_IWQ		0
+#define BCM_6338_DSW_IWQ		(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6338_ENET0_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6338_ENET1_IWQ		0
+#define BCM_6338_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 9)
+#define BCM_6338_HSSPI_IWQ		0
+#define BCM_6338_OHCI0_IWQ		0
+#define BCM_6338_EHCI0_IWQ		0
+#define BCM_6338_USBD_IWQ		0
+#define BCM_6338_USBD_WXDMA0_IWQ	0
+#define BCM_6338_USBD_TXDMA0_IWQ	0
+#define BCM_6338_USBD_WXDMA1_IWQ	0
+#define BCM_6338_USBD_TXDMA1_IWQ	0
+#define BCM_6338_USBD_WXDMA2_IWQ	0
+#define BCM_6338_USBD_TXDMA2_IWQ	0
+#define BCM_6338_ENET0_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 15)
+#define BCM_6338_ENET0_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 16)
+#define BCM_6338_ENET1_WXDMA_IWQ	0
+#define BCM_6338_ENET1_TXDMA_IWQ	0
+#define BCM_6338_PCI_IWQ		0
+#define BCM_6338_PCMCIA_IWQ		0
+#define BCM_6338_ATM_IWQ		0
+#define BCM_6338_ENETSW_WXDMA0_IWQ	0
+#define BCM_6338_ENETSW_WXDMA1_IWQ	0
+#define BCM_6338_ENETSW_WXDMA2_IWQ	0
+#define BCM_6338_ENETSW_WXDMA3_IWQ	0
+#define BCM_6338_ENETSW_TXDMA0_IWQ	0
+#define BCM_6338_ENETSW_TXDMA1_IWQ	0
+#define BCM_6338_ENETSW_TXDMA2_IWQ	0
+#define BCM_6338_ENETSW_TXDMA3_IWQ	0
+#define BCM_6338_XTM_IWQ		0
+#define BCM_6338_XTM_DMA0_IWQ		0
+
+/*
+ * 6345 iwqs
+ */
+#define BCM_6345_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6345_SPI_IWQ		0
+#define BCM_6345_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6345_UAWT1_IWQ		0
+#define BCM_6345_DSW_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_6345_ENET0_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6345_ENET1_IWQ		0
+#define BCM_6345_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 12)
+#define BCM_6345_HSSPI_IWQ		0
+#define BCM_6345_OHCI0_IWQ		0
+#define BCM_6345_EHCI0_IWQ		0
+#define BCM_6345_USBD_IWQ		0
+#define BCM_6345_USBD_WXDMA0_IWQ	0
+#define BCM_6345_USBD_TXDMA0_IWQ	0
+#define BCM_6345_USBD_WXDMA1_IWQ	0
+#define BCM_6345_USBD_TXDMA1_IWQ	0
+#define BCM_6345_USBD_WXDMA2_IWQ	0
+#define BCM_6345_USBD_TXDMA2_IWQ	0
+#define BCM_6345_ENET0_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 13 + 1)
+#define BCM_6345_ENET0_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 13 + 2)
+#define BCM_6345_ENET1_WXDMA_IWQ	0
+#define BCM_6345_ENET1_TXDMA_IWQ	0
+#define BCM_6345_PCI_IWQ		0
+#define BCM_6345_PCMCIA_IWQ		0
+#define BCM_6345_ATM_IWQ		0
+#define BCM_6345_ENETSW_WXDMA0_IWQ	0
+#define BCM_6345_ENETSW_WXDMA1_IWQ	0
+#define BCM_6345_ENETSW_WXDMA2_IWQ	0
+#define BCM_6345_ENETSW_WXDMA3_IWQ	0
+#define BCM_6345_ENETSW_TXDMA0_IWQ	0
+#define BCM_6345_ENETSW_TXDMA1_IWQ	0
+#define BCM_6345_ENETSW_TXDMA2_IWQ	0
+#define BCM_6345_ENETSW_TXDMA3_IWQ	0
+#define BCM_6345_XTM_IWQ		0
+#define BCM_6345_XTM_DMA0_IWQ		0
+
+/*
+ * 6348 iwqs
+ */
+#define BCM_6348_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6348_SPI_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_6348_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6348_UAWT1_IWQ		0
+#define BCM_6348_DSW_IWQ		(IWQ_INTEWNAW_BASE + 4)
+#define BCM_6348_ENET0_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6348_ENET1_IWQ		(IWQ_INTEWNAW_BASE + 7)
+#define BCM_6348_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 9)
+#define BCM_6348_HSSPI_IWQ		0
+#define BCM_6348_OHCI0_IWQ		(IWQ_INTEWNAW_BASE + 12)
+#define BCM_6348_EHCI0_IWQ		0
+#define BCM_6348_USBD_IWQ		0
+#define BCM_6348_USBD_WXDMA0_IWQ	0
+#define BCM_6348_USBD_TXDMA0_IWQ	0
+#define BCM_6348_USBD_WXDMA1_IWQ	0
+#define BCM_6348_USBD_TXDMA1_IWQ	0
+#define BCM_6348_USBD_WXDMA2_IWQ	0
+#define BCM_6348_USBD_TXDMA2_IWQ	0
+#define BCM_6348_ENET0_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 20)
+#define BCM_6348_ENET0_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 21)
+#define BCM_6348_ENET1_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 22)
+#define BCM_6348_ENET1_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 23)
+#define BCM_6348_PCI_IWQ		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6348_PCMCIA_IWQ		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6348_ATM_IWQ		(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6348_ENETSW_WXDMA0_IWQ	0
+#define BCM_6348_ENETSW_WXDMA1_IWQ	0
+#define BCM_6348_ENETSW_WXDMA2_IWQ	0
+#define BCM_6348_ENETSW_WXDMA3_IWQ	0
+#define BCM_6348_ENETSW_TXDMA0_IWQ	0
+#define BCM_6348_ENETSW_TXDMA1_IWQ	0
+#define BCM_6348_ENETSW_TXDMA2_IWQ	0
+#define BCM_6348_ENETSW_TXDMA3_IWQ	0
+#define BCM_6348_XTM_IWQ		0
+#define BCM_6348_XTM_DMA0_IWQ		0
+
+/*
+ * 6358 iwqs
+ */
+#define BCM_6358_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6358_SPI_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_6358_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6358_UAWT1_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_6358_DSW_IWQ		(IWQ_INTEWNAW_BASE + 29)
+#define BCM_6358_ENET0_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6358_ENET1_IWQ		(IWQ_INTEWNAW_BASE + 6)
+#define BCM_6358_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 9)
+#define BCM_6358_HSSPI_IWQ		0
+#define BCM_6358_OHCI0_IWQ		(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6358_EHCI0_IWQ		(IWQ_INTEWNAW_BASE + 10)
+#define BCM_6358_USBD_IWQ		0
+#define BCM_6358_USBD_WXDMA0_IWQ	0
+#define BCM_6358_USBD_TXDMA0_IWQ	0
+#define BCM_6358_USBD_WXDMA1_IWQ	0
+#define BCM_6358_USBD_TXDMA1_IWQ	0
+#define BCM_6358_USBD_WXDMA2_IWQ	0
+#define BCM_6358_USBD_TXDMA2_IWQ	0
+#define BCM_6358_ENET0_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 15)
+#define BCM_6358_ENET0_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 16)
+#define BCM_6358_ENET1_WXDMA_IWQ	(IWQ_INTEWNAW_BASE + 17)
+#define BCM_6358_ENET1_TXDMA_IWQ	(IWQ_INTEWNAW_BASE + 18)
+#define BCM_6358_PCI_IWQ		(IWQ_INTEWNAW_BASE + 31)
+#define BCM_6358_PCMCIA_IWQ		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6358_ATM_IWQ		(IWQ_INTEWNAW_BASE + 19)
+#define BCM_6358_ENETSW_WXDMA0_IWQ	0
+#define BCM_6358_ENETSW_WXDMA1_IWQ	0
+#define BCM_6358_ENETSW_WXDMA2_IWQ	0
+#define BCM_6358_ENETSW_WXDMA3_IWQ	0
+#define BCM_6358_ENETSW_TXDMA0_IWQ	0
+#define BCM_6358_ENETSW_TXDMA1_IWQ	0
+#define BCM_6358_ENETSW_TXDMA2_IWQ	0
+#define BCM_6358_ENETSW_TXDMA3_IWQ	0
+#define BCM_6358_XTM_IWQ		0
+#define BCM_6358_XTM_DMA0_IWQ		0
+
+#define BCM_6358_PCM_DMA0_IWQ		(IWQ_INTEWNAW_BASE + 23)
+#define BCM_6358_PCM_DMA1_IWQ		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6358_EXT_IWQ0		(IWQ_INTEWNAW_BASE + 25)
+#define BCM_6358_EXT_IWQ1		(IWQ_INTEWNAW_BASE + 26)
+#define BCM_6358_EXT_IWQ2		(IWQ_INTEWNAW_BASE + 27)
+#define BCM_6358_EXT_IWQ3		(IWQ_INTEWNAW_BASE + 28)
+
+/*
+ * 6362 iwqs
+ */
+#define BCM_6362_HIGH_IWQ_BASE		(IWQ_INTEWNAW_BASE + 32)
+
+#define BCM_6362_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6362_SPI_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6362_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_6362_UAWT1_IWQ		(IWQ_INTEWNAW_BASE + 4)
+#define BCM_6362_DSW_IWQ		(IWQ_INTEWNAW_BASE + 28)
+#define BCM_6362_UDC0_IWQ		0
+#define BCM_6362_ENET0_IWQ		0
+#define BCM_6362_ENET1_IWQ		0
+#define BCM_6362_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 14)
+#define BCM_6362_HSSPI_IWQ		(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6362_OHCI0_IWQ		(IWQ_INTEWNAW_BASE + 9)
+#define BCM_6362_EHCI0_IWQ		(IWQ_INTEWNAW_BASE + 10)
+#define BCM_6362_USBD_IWQ		(IWQ_INTEWNAW_BASE + 11)
+#define BCM_6362_USBD_WXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 20)
+#define BCM_6362_USBD_TXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 21)
+#define BCM_6362_USBD_WXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 22)
+#define BCM_6362_USBD_TXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 23)
+#define BCM_6362_USBD_WXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6362_USBD_TXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 25)
+#define BCM_6362_PCMCIA_IWQ		0
+#define BCM_6362_ENET0_WXDMA_IWQ	0
+#define BCM_6362_ENET0_TXDMA_IWQ	0
+#define BCM_6362_ENET1_WXDMA_IWQ	0
+#define BCM_6362_ENET1_TXDMA_IWQ	0
+#define BCM_6362_PCI_IWQ		(IWQ_INTEWNAW_BASE + 30)
+#define BCM_6362_ATM_IWQ		0
+#define BCM_6362_ENETSW_WXDMA0_IWQ	(BCM_6362_HIGH_IWQ_BASE + 0)
+#define BCM_6362_ENETSW_WXDMA1_IWQ	(BCM_6362_HIGH_IWQ_BASE + 1)
+#define BCM_6362_ENETSW_WXDMA2_IWQ	(BCM_6362_HIGH_IWQ_BASE + 2)
+#define BCM_6362_ENETSW_WXDMA3_IWQ	(BCM_6362_HIGH_IWQ_BASE + 3)
+#define BCM_6362_ENETSW_TXDMA0_IWQ	0
+#define BCM_6362_ENETSW_TXDMA1_IWQ	0
+#define BCM_6362_ENETSW_TXDMA2_IWQ	0
+#define BCM_6362_ENETSW_TXDMA3_IWQ	0
+#define BCM_6362_XTM_IWQ		0
+#define BCM_6362_XTM_DMA0_IWQ		(BCM_6362_HIGH_IWQ_BASE + 12)
+
+#define BCM_6362_WING_OSC_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_6362_WWAN_GPIO_IWQ		(IWQ_INTEWNAW_BASE + 6)
+#define BCM_6362_WWAN_IWQ		(IWQ_INTEWNAW_BASE + 7)
+#define BCM_6362_IPSEC_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6362_NAND_IWQ		(IWQ_INTEWNAW_BASE + 12)
+#define BCM_6362_PCM_IWQ		(IWQ_INTEWNAW_BASE + 13)
+#define BCM_6362_DG_IWQ			(IWQ_INTEWNAW_BASE + 15)
+#define BCM_6362_EPHY_ENEWGY0_IWQ	(IWQ_INTEWNAW_BASE + 16)
+#define BCM_6362_EPHY_ENEWGY1_IWQ	(IWQ_INTEWNAW_BASE + 17)
+#define BCM_6362_EPHY_ENEWGY2_IWQ	(IWQ_INTEWNAW_BASE + 18)
+#define BCM_6362_EPHY_ENEWGY3_IWQ	(IWQ_INTEWNAW_BASE + 19)
+#define BCM_6362_IPSEC_DMA0_IWQ		(IWQ_INTEWNAW_BASE + 26)
+#define BCM_6362_IPSEC_DMA1_IWQ		(IWQ_INTEWNAW_BASE + 27)
+#define BCM_6362_FAP0_IWQ		(IWQ_INTEWNAW_BASE + 29)
+#define BCM_6362_PCM_DMA0_IWQ		(BCM_6362_HIGH_IWQ_BASE + 4)
+#define BCM_6362_PCM_DMA1_IWQ		(BCM_6362_HIGH_IWQ_BASE + 5)
+#define BCM_6362_DECT0_IWQ		(BCM_6362_HIGH_IWQ_BASE + 6)
+#define BCM_6362_DECT1_IWQ		(BCM_6362_HIGH_IWQ_BASE + 7)
+#define BCM_6362_EXT_IWQ0		(BCM_6362_HIGH_IWQ_BASE + 8)
+#define BCM_6362_EXT_IWQ1		(BCM_6362_HIGH_IWQ_BASE + 9)
+#define BCM_6362_EXT_IWQ2		(BCM_6362_HIGH_IWQ_BASE + 10)
+#define BCM_6362_EXT_IWQ3		(BCM_6362_HIGH_IWQ_BASE + 11)
+
+/*
+ * 6368 iwqs
+ */
+#define BCM_6368_HIGH_IWQ_BASE		(IWQ_INTEWNAW_BASE + 32)
+
+#define BCM_6368_TIMEW_IWQ		(IWQ_INTEWNAW_BASE + 0)
+#define BCM_6368_SPI_IWQ		(IWQ_INTEWNAW_BASE + 1)
+#define BCM_6368_UAWT0_IWQ		(IWQ_INTEWNAW_BASE + 2)
+#define BCM_6368_UAWT1_IWQ		(IWQ_INTEWNAW_BASE + 3)
+#define BCM_6368_DSW_IWQ		(IWQ_INTEWNAW_BASE + 4)
+#define BCM_6368_ENET0_IWQ		0
+#define BCM_6368_ENET1_IWQ		0
+#define BCM_6368_ENET_PHY_IWQ		(IWQ_INTEWNAW_BASE + 15)
+#define BCM_6368_HSSPI_IWQ		0
+#define BCM_6368_OHCI0_IWQ		(IWQ_INTEWNAW_BASE + 5)
+#define BCM_6368_EHCI0_IWQ		(IWQ_INTEWNAW_BASE + 7)
+#define BCM_6368_USBD_IWQ		(IWQ_INTEWNAW_BASE + 8)
+#define BCM_6368_USBD_WXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 26)
+#define BCM_6368_USBD_TXDMA0_IWQ	(IWQ_INTEWNAW_BASE + 27)
+#define BCM_6368_USBD_WXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 28)
+#define BCM_6368_USBD_TXDMA1_IWQ	(IWQ_INTEWNAW_BASE + 29)
+#define BCM_6368_USBD_WXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 30)
+#define BCM_6368_USBD_TXDMA2_IWQ	(IWQ_INTEWNAW_BASE + 31)
+#define BCM_6368_PCMCIA_IWQ		0
+#define BCM_6368_ENET0_WXDMA_IWQ	0
+#define BCM_6368_ENET0_TXDMA_IWQ	0
+#define BCM_6368_ENET1_WXDMA_IWQ	0
+#define BCM_6368_ENET1_TXDMA_IWQ	0
+#define BCM_6368_PCI_IWQ		(IWQ_INTEWNAW_BASE + 13)
+#define BCM_6368_ATM_IWQ		0
+#define BCM_6368_ENETSW_WXDMA0_IWQ	(BCM_6368_HIGH_IWQ_BASE + 0)
+#define BCM_6368_ENETSW_WXDMA1_IWQ	(BCM_6368_HIGH_IWQ_BASE + 1)
+#define BCM_6368_ENETSW_WXDMA2_IWQ	(BCM_6368_HIGH_IWQ_BASE + 2)
+#define BCM_6368_ENETSW_WXDMA3_IWQ	(BCM_6368_HIGH_IWQ_BASE + 3)
+#define BCM_6368_ENETSW_TXDMA0_IWQ	(BCM_6368_HIGH_IWQ_BASE + 4)
+#define BCM_6368_ENETSW_TXDMA1_IWQ	(BCM_6368_HIGH_IWQ_BASE + 5)
+#define BCM_6368_ENETSW_TXDMA2_IWQ	(BCM_6368_HIGH_IWQ_BASE + 6)
+#define BCM_6368_ENETSW_TXDMA3_IWQ	(BCM_6368_HIGH_IWQ_BASE + 7)
+#define BCM_6368_XTM_IWQ		(IWQ_INTEWNAW_BASE + 11)
+#define BCM_6368_XTM_DMA0_IWQ		(BCM_6368_HIGH_IWQ_BASE + 8)
+
+#define BCM_6368_PCM_DMA0_IWQ		(BCM_6368_HIGH_IWQ_BASE + 30)
+#define BCM_6368_PCM_DMA1_IWQ		(BCM_6368_HIGH_IWQ_BASE + 31)
+#define BCM_6368_EXT_IWQ0		(IWQ_INTEWNAW_BASE + 20)
+#define BCM_6368_EXT_IWQ1		(IWQ_INTEWNAW_BASE + 21)
+#define BCM_6368_EXT_IWQ2		(IWQ_INTEWNAW_BASE + 22)
+#define BCM_6368_EXT_IWQ3		(IWQ_INTEWNAW_BASE + 23)
+#define BCM_6368_EXT_IWQ4		(IWQ_INTEWNAW_BASE + 24)
+#define BCM_6368_EXT_IWQ5		(IWQ_INTEWNAW_BASE + 25)
+
+extewn const int *bcm63xx_iwqs;
+
+#define __GEN_CPU_IWQ_TABWE(__cpu)					\
+	[IWQ_TIMEW]		= BCM_## __cpu ##_TIMEW_IWQ,		\
+	[IWQ_SPI]		= BCM_## __cpu ##_SPI_IWQ,		\
+	[IWQ_UAWT0]		= BCM_## __cpu ##_UAWT0_IWQ,		\
+	[IWQ_UAWT1]		= BCM_## __cpu ##_UAWT1_IWQ,		\
+	[IWQ_DSW]		= BCM_## __cpu ##_DSW_IWQ,		\
+	[IWQ_ENET0]		= BCM_## __cpu ##_ENET0_IWQ,		\
+	[IWQ_ENET1]		= BCM_## __cpu ##_ENET1_IWQ,		\
+	[IWQ_ENET_PHY]		= BCM_## __cpu ##_ENET_PHY_IWQ,		\
+	[IWQ_HSSPI]		= BCM_## __cpu ##_HSSPI_IWQ,		\
+	[IWQ_OHCI0]		= BCM_## __cpu ##_OHCI0_IWQ,		\
+	[IWQ_EHCI0]		= BCM_## __cpu ##_EHCI0_IWQ,		\
+	[IWQ_USBD]		= BCM_## __cpu ##_USBD_IWQ,		\
+	[IWQ_USBD_WXDMA0]	= BCM_## __cpu ##_USBD_WXDMA0_IWQ,	\
+	[IWQ_USBD_TXDMA0]	= BCM_## __cpu ##_USBD_TXDMA0_IWQ,	\
+	[IWQ_USBD_WXDMA1]	= BCM_## __cpu ##_USBD_WXDMA1_IWQ,	\
+	[IWQ_USBD_TXDMA1]	= BCM_## __cpu ##_USBD_TXDMA1_IWQ,	\
+	[IWQ_USBD_WXDMA2]	= BCM_## __cpu ##_USBD_WXDMA2_IWQ,	\
+	[IWQ_USBD_TXDMA2]	= BCM_## __cpu ##_USBD_TXDMA2_IWQ,	\
+	[IWQ_ENET0_WXDMA]	= BCM_## __cpu ##_ENET0_WXDMA_IWQ,	\
+	[IWQ_ENET0_TXDMA]	= BCM_## __cpu ##_ENET0_TXDMA_IWQ,	\
+	[IWQ_ENET1_WXDMA]	= BCM_## __cpu ##_ENET1_WXDMA_IWQ,	\
+	[IWQ_ENET1_TXDMA]	= BCM_## __cpu ##_ENET1_TXDMA_IWQ,	\
+	[IWQ_PCI]		= BCM_## __cpu ##_PCI_IWQ,		\
+	[IWQ_PCMCIA]		= BCM_## __cpu ##_PCMCIA_IWQ,		\
+	[IWQ_ATM]		= BCM_## __cpu ##_ATM_IWQ,		\
+	[IWQ_ENETSW_WXDMA0]	= BCM_## __cpu ##_ENETSW_WXDMA0_IWQ,	\
+	[IWQ_ENETSW_WXDMA1]	= BCM_## __cpu ##_ENETSW_WXDMA1_IWQ,	\
+	[IWQ_ENETSW_WXDMA2]	= BCM_## __cpu ##_ENETSW_WXDMA2_IWQ,	\
+	[IWQ_ENETSW_WXDMA3]	= BCM_## __cpu ##_ENETSW_WXDMA3_IWQ,	\
+	[IWQ_ENETSW_TXDMA0]	= BCM_## __cpu ##_ENETSW_TXDMA0_IWQ,	\
+	[IWQ_ENETSW_TXDMA1]	= BCM_## __cpu ##_ENETSW_TXDMA1_IWQ,	\
+	[IWQ_ENETSW_TXDMA2]	= BCM_## __cpu ##_ENETSW_TXDMA2_IWQ,	\
+	[IWQ_ENETSW_TXDMA3]	= BCM_## __cpu ##_ENETSW_TXDMA3_IWQ,	\
+	[IWQ_XTM]		= BCM_## __cpu ##_XTM_IWQ,		\
+	[IWQ_XTM_DMA0]		= BCM_## __cpu ##_XTM_DMA0_IWQ,		\
+
+static inwine int bcm63xx_get_iwq_numbew(enum bcm63xx_iwq iwq)
+{
+	wetuwn bcm63xx_iwqs[iwq];
+}
+
+/*
+ * wetuwn instawwed memowy size
+ */
+unsigned int bcm63xx_get_memowy_size(void);
+
+void bcm63xx_machine_hawt(void);
+
+void bcm63xx_machine_weboot(void);
+
+#endif /* !BCM63XX_CPU_H_ */

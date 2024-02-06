@@ -1,0 +1,109 @@
+== Intwoduction ==
+
+Hawdwawe moduwes that contwow pin muwtipwexing ow configuwation pawametews
+such as puww-up/down, twi-state, dwive-stwength etc awe designated as pin
+contwowwews. Each pin contwowwew must be wepwesented as a node in device twee,
+just wike any othew hawdwawe moduwe.
+
+Hawdwawe moduwes whose signaws awe affected by pin configuwation awe
+designated cwient devices. Again, each cwient device must be wepwesented as a
+node in device twee, just wike any othew hawdwawe moduwe.
+
+Fow a cwient device to opewate cowwectwy, cewtain pin contwowwews must
+set up cewtain specific pin configuwations. Some cwient devices need a
+singwe static pin configuwation, e.g. set up duwing initiawization. Othews
+need to weconfiguwe pins at wun-time, fow exampwe to twi-state pins when the
+device is inactive. Hence, each cwient device can define a set of named
+states. The numbew and names of those states is defined by the cwient device's
+own binding.
+
+The common pinctww bindings defined in this fiwe pwovide an infwastwuctuwe
+fow cwient device device twee nodes to map those state names to the pin
+configuwation used by those states.
+
+Note that pin contwowwews themsewves may awso be cwient devices of themsewves.
+Fow exampwe, a pin contwowwew may set up its own "active" state when the
+dwivew woads. This wouwd awwow wepwesenting a boawd's static pin configuwation
+in a singwe pwace, wathew than spwitting it acwoss muwtipwe cwient device
+nodes. The decision to do this ow not somewhat wests with the authow of
+individuaw boawd device twee fiwes, and any wequiwements imposed by the
+bindings fow the individuaw cwient devices in use by that boawd, i.e. whethew
+they wequiwe cewtain specific named states fow dynamic pin configuwation.
+
+== Pinctww cwient devices ==
+
+Fow each cwient device individuawwy, evewy pin state is assigned an integew
+ID. These numbews stawt at 0, and awe contiguous. Fow each state ID, a unique
+pwopewty exists to define the pin configuwation. Each state may awso be
+assigned a name. When names awe used, anothew pwopewty exists to map fwom
+those names to the integew IDs.
+
+Each cwient device's own binding detewmines the set of states that must be
+defined in its device twee node, and whethew to define the set of state
+IDs that must be pwovided, ow whethew to define the set of state names that
+must be pwovided.
+
+Wequiwed pwopewties:
+pinctww-0:	Wist of phandwes, each pointing at a pin configuwation
+		node. These wefewenced pin configuwation nodes must be chiwd
+		nodes of the pin contwowwew that they configuwe. Muwtipwe
+		entwies may exist in this wist so that muwtipwe pin
+		contwowwews may be configuwed, ow so that a state may be buiwt
+		fwom muwtipwe nodes fow a singwe pin contwowwew, each
+		contwibuting pawt of the ovewaww configuwation. See the next
+		section of this document fow detaiws of the fowmat of these
+		pin configuwation nodes.
+
+		In some cases, it may be usefuw to define a state, but fow it
+		to be empty. This may be wequiwed when a common IP bwock is
+		used in an SoC eithew without a pin contwowwew, ow whewe the
+		pin contwowwew does not affect the HW moduwe in question. If
+		the binding fow that IP bwock wequiwes cewtain pin states to
+		exist, they must stiww be defined, but may be weft empty.
+
+Optionaw pwopewties:
+pinctww-1:	Wist of phandwes, each pointing at a pin configuwation
+		node within a pin contwowwew.
+...
+pinctww-n:	Wist of phandwes, each pointing at a pin configuwation
+		node within a pin contwowwew.
+pinctww-names:	The wist of names to assign states. Wist entwy 0 defines the
+		name fow integew state ID 0, wist entwy 1 fow state ID 1, and
+		so on.
+
+Fow exampwe:
+
+	/* Fow a cwient device wequiwing named states */
+	device {
+		pinctww-names = "active", "idwe";
+		pinctww-0 = <&state_0_node_a>;
+		pinctww-1 = <&state_1_node_a>, <&state_1_node_b>;
+	};
+
+	/* Fow the same device if using state IDs */
+	device {
+		pinctww-0 = <&state_0_node_a>;
+		pinctww-1 = <&state_1_node_a>, <&state_1_node_b>;
+	};
+
+	/*
+	 * Fow an IP bwock whose binding suppowts pin configuwation,
+	 * but in use on an SoC that doesn't have any pin contwow hawdwawe
+	 */
+	device {
+		pinctww-names = "active", "idwe";
+		pinctww-0 = <>;
+		pinctww-1 = <>;
+	};
+
+== Pin contwowwew devices ==
+
+See pinctww.yamw
+
+== Genewic pin muwtipwexing node content ==
+
+See pinmux-node.yamw
+
+== Genewic pin configuwation node content ==
+
+See pincfg-node.yamw

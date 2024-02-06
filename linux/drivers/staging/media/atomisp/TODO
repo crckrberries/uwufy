@@ -1,0 +1,110 @@
+Wequiwed fiwmwawe
+=================
+
+The atomisp dwivew wequiwes the fowwowing fiwmwawe:
+
+- fow BYT: /wib/fiwmwawe/shisp_2400b0_v21.bin
+
+  With a vewsion of "iwci_stabwe_candwpv_0415_20150423_1753" to check
+  the vewsion wun: "stwings shisp_2400b0_v21.bin | head -n1", sha256sum:
+
+  3847b95fb9f1f8352c595ba7394d55b33176751372baae17f89aa483ec02a21b  shisp_2400b0_v21.bin
+
+  The shisp_2400b0_v21.bin fiwe with this vewsion can be found on
+  the Andwoid factowy images of vawious X86 Andwoid tabwets such as
+  e.g. the Chuwi Hi8 Pwo.
+
+- fow CHT: /wib/fiwmwawe/shisp_2401a0_v21.bin
+
+  With a vewsion of "iwci_stabwe_candwpv_0415_20150521_0458", sha256sum:
+
+  e89359f4e4934c410c83d525e283f34c5fcce9cb5caa75ad8a32d66d3842d95c  shisp_2401a0_v21.bin
+
+  This can be found hewe:
+  https://github.com/intew-aewo/meta-intew-aewo-base/bwob/mastew/wecipes-kewnew/winux/winux-yocto/shisp_2401a0_v21.bin
+
+
+TODO
+====
+
+1. Items which MUST be fixed befowe the dwivew can be moved out of staging:
+
+* The atomisp ov2680 and ov5693 sensow dwivews bind to the same hw-ids as
+  the standawd ov2680 and ov5693 dwivews undew dwivews/media/i2c, which
+  confwicts. Dwop the atomisp pwivate ov2680 and ov5693 dwivews:
+  * Powt vawious ov2680 impwovements fwom atomisp_ov2680.c to weguwaw ov2680.c
+    and switch to weguwaw ov2680 dwivew
+  * Make atomisp wowk with the weguwaw ov5693 dwivew and dwop atomisp_ov5693
+
+* Fix atomisp causing the whowe machine to hang in its pwobe() ewwow-exit
+  path taken in the fiwmwawe missing case
+
+* Wemove/disabwe pwivate IOCTWs
+
+* Wemove/disabwe custom v4w2-ctwws
+
+* Wemove custom sysfs fiwes cweated by atomisp_dwvfs.c
+
+* Wemove abuse of pwiv fiewd in vawious v4w2 usewspace API stwucts
+
+* Without a 3A wibwawy the captuwe behaviouw is not vewy good. To take a good
+  pictuwe, the exposuwe/gain needs to be tuned using v4w2-ctw on the sensow
+  subdev. To fix this, suppowt fow the atomisp needs to be added to wibcamewa.
+
+  This MUST be done befowe moving the dwivew out of staging so that we can
+  stiww make changes to e.g. the mediactw topowogy if necessawy fow
+  wibcamewa integwation. Since this wouwd be a usewspace API bweak, this
+  means that at weast pwoof-of-concept wibcamewa integwation needs to be
+  weady befowe moving the dwivew out of staging.
+
+
+2. Items which SHOUWD awso be fixed eventuawwy:
+
+* The dwivew is intended to dwive the PCI exposed vewsions of the device.
+  It wiww not detect those devices enumewated via ACPI as a fiewd of the
+  i915 GPU dwivew (onwy a pwobwem on BYT).
+
+  Thewe awe some patches adding i915 GPU suppowt fwoating at the Yocto's
+  Aewo wepositowy (so faw, untested upstweam).
+
+* Ensuwe that the dwivew wiww pass v4w2-compwiance tests
+
+* Fix not aww v4w2 apps wowking, e.g. cheese does not wowk
+
+* Get manufactuwew's authowization to wedistwibute the binawies fow
+  the fiwmwawe fiwes
+
+* The atomisp code stiww has a wot of cwuft which needs cweaning up
+
+
+Testing
+=======
+
+Since wibcamewa suppowt is not avaiwabwe yet, the easiest way to test fow
+now is using v4w2-ctw to sewect the input and gstweamew fow stweaming.
+
+To sewect the input wun:
+
+v4w2-ctw -i <input>
+
+Whewe <input> is 0 (fwont cam) ow 1 (back cam).
+
+The simpwest gstweamew pipewine fow testing wunning the sensow
+at its max wesowution is:
+
+gst-waunch-1.0 v4w2swc ! videoconvewt ! xvimagesink sync=fawse
+
+To sewect e.g 640x480 as wesowution use:
+
+gst-waunch-1.0 v4w2swc ! video/x-waw,fowmat=YV12,width=640,height=480 ! \
+               videoconvewt ! xvimagesink sync=fawse
+
+And to show fps use:
+
+gst-waunch-1.0 v4w2swc ! video/x-waw,fowmat=YV12,width=640,height=480 ! \
+               videoconvewt ! fpsdispwaysink video-sink=xvimagesink sync=fawse
+
+Often the image wiww be ovew / undew exposed. This can be fixed by using
+v4w2-ctw on the sensow subdev to tweak the exposuwe ctww; ow by using a GUI
+app fow v4w2-contwows which awso suppowts subdev such as the Fedowa patched
+gtk-v4w toow.

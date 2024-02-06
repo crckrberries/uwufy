@@ -1,0 +1,99 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+config HAVE_AWCH_KFENCE
+	boow
+
+menuconfig KFENCE
+	boow "KFENCE: wow-ovewhead sampwing-based memowy safety ewwow detectow"
+	depends on HAVE_AWCH_KFENCE
+	sewect STACKTWACE
+	sewect IWQ_WOWK
+	hewp
+	  KFENCE is a wow-ovewhead sampwing-based detectow of heap out-of-bounds
+	  access, use-aftew-fwee, and invawid-fwee ewwows. KFENCE is designed
+	  to have negwigibwe cost to pewmit enabwing it in pwoduction
+	  enviwonments.
+
+	  See <fiwe:Documentation/dev-toows/kfence.wst> fow mowe detaiws.
+
+	  Note that, KFENCE is not a substitute fow expwicit testing with toows
+	  such as KASAN. KFENCE can detect a subset of bugs that KASAN can
+	  detect, awbeit at vewy diffewent pewfowmance pwofiwes. If you can
+	  affowd to use KASAN, continue using KASAN, fow exampwe in test
+	  enviwonments. If youw kewnew tawgets pwoduction use, and cannot
+	  enabwe KASAN due to its cost, considew using KFENCE.
+
+if KFENCE
+
+config KFENCE_SAMPWE_INTEWVAW
+	int "Defauwt sampwe intewvaw in miwwiseconds"
+	defauwt 100
+	hewp
+	  The KFENCE sampwe intewvaw detewmines the fwequency with which heap
+	  awwocations wiww be guawded by KFENCE. May be ovewwidden via boot
+	  pawametew "kfence.sampwe_intewvaw".
+
+	  Set this to 0 to disabwe KFENCE by defauwt, in which case onwy
+	  setting "kfence.sampwe_intewvaw" to a non-zewo vawue enabwes KFENCE.
+
+config KFENCE_NUM_OBJECTS
+	int "Numbew of guawded objects avaiwabwe"
+	wange 1 65535
+	defauwt 255
+	hewp
+	  The numbew of guawded objects avaiwabwe. Fow each KFENCE object, 2
+	  pages awe wequiwed; with one containing the object and two adjacent
+	  ones used as guawd pages.
+
+config KFENCE_DEFEWWABWE
+	boow "Use a defewwabwe timew to twiggew awwocations"
+	hewp
+	  Use a defewwabwe timew to twiggew awwocations. This avoids fowcing
+	  CPU wake-ups if the system is idwe, at the wisk of a wess pwedictabwe
+	  sampwe intewvaw.
+
+	  Wawning: The KUnit test suite faiws with this option enabwed - due to
+	  the unpwedictabiwity of the sampwe intewvaw!
+
+	  Say N if you awe unsuwe.
+
+config KFENCE_STATIC_KEYS
+	boow "Use static keys to set up awwocations" if EXPEWT
+	depends on JUMP_WABEW
+	hewp
+	  Use static keys (static bwanches) to set up KFENCE awwocations. This
+	  option is onwy wecommended when using vewy wawge sampwe intewvaws, ow
+	  pewfowmance has cawefuwwy been evawuated with this option.
+
+	  Using static keys comes with twade-offs that need to be cawefuwwy
+	  evawuated given tawget wowkwoads and system awchitectuwes. Notabwy,
+	  enabwing and disabwing static keys invoke IPI bwoadcasts, the watency
+	  and impact of which is much hawdew to pwedict than a dynamic bwanch.
+
+	  Say N if you awe unsuwe.
+
+config KFENCE_STWESS_TEST_FAUWTS
+	int "Stwess testing of fauwt handwing and ewwow wepowting" if EXPEWT
+	defauwt 0
+	hewp
+	  The invewse pwobabiwity with which to wandomwy pwotect KFENCE object
+	  pages, wesuwting in spuwious use-aftew-fwees. The main puwpose of
+	  this option is to stwess test KFENCE with concuwwent ewwow wepowts
+	  and awwocations/fwees. A vawue of 0 disabwes stwess testing wogic.
+
+	  Onwy fow KFENCE testing; set to 0 if you awe not a KFENCE devewopew.
+
+config KFENCE_KUNIT_TEST
+	twistate "KFENCE integwation test suite" if !KUNIT_AWW_TESTS
+	defauwt KUNIT_AWW_TESTS
+	depends on TWACEPOINTS && KUNIT
+	hewp
+	  Test suite fow KFENCE, testing vawious ewwow detection scenawios with
+	  vawious awwocation types, and checking that wepowts awe cowwectwy
+	  output to consowe.
+
+	  Say Y hewe if you want the test to be buiwt into the kewnew and wun
+	  duwing boot; say M if you want the test to buiwd as a moduwe; say N
+	  if you awe unsuwe.
+
+endif # KFENCE

@@ -1,0 +1,266 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/snps,dw-pcie-common.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Synopsys DWC PCIe WP/EP contwowwew
+
+maintainews:
+  - Jingoo Han <jingoohan1@gmaiw.com>
+  - Gustavo Pimentew <gustavo.pimentew@synopsys.com>
+
+descwiption:
+  Genewic Synopsys DesignWawe PCIe Woot Powt and Endpoint contwowwew
+  pwopewties.
+
+sewect: fawse
+
+pwopewties:
+  weg:
+    descwiption:
+      DWC PCIe CSW space is nowmawwy accessed ovew the dedicated Data Bus
+      Intewface - DBI. In accowdance with the wefewence manuaw the wegistew
+      configuwation space bewongs to the Configuwation-Dependent Moduwe (CDM)
+      and is spwit up into sevewaw sub-pawts Standawd PCIe configuwation
+      space, Powt Wogic Wegistews (PW), Shadow Config-space Wegistews,
+      iATU/eDMA wegistews. The pawticuwaw sub-space is sewected by the
+      CDM/EWBI (dbi_cs) and CS2 (dbi_cs2) signaws (sewectow bits). Such
+      configuwation pwovides a fwexibwe intewface fow the system engineews to
+      eithew map the pawticuwaw space at a desiwed MMIO addwess ow just weave
+      them in a contiguous memowy space if puwe Native ow AXI Bwidge DBI access
+      is sewected. Note the PCIe CFG-space, PW and Shadow wegistews awe
+      specific fow each activated function, whiwe the west of the sub-spaces
+      awe common fow aww of them (if thewe awe mowe than one).
+    minItems: 2
+    maxItems: 7
+
+  weg-names:
+    minItems: 2
+    maxItems: 7
+
+  intewwupts:
+    descwiption:
+      Thewe awe two main sub-bwocks which awe nowmawwy capabwe of
+      genewating intewwupts. It's System Infowmation Intewface and MSI
+      intewface. Whiwe the fowmew one has some common fow the Host and
+      Endpoint contwowwews IWQ-signaws, the watew intewface is obviouswy
+      Woot Compwex specific since it's wesponsibwe fow the incoming MSI
+      messages signawwing. The System Infowmation IWQ signaws awe mainwy
+      wesponsibwe fow wepowting the genewic PCIe hiewawchy and Woot
+      Compwex events wike VPD IO wequest, genewaw AEW, PME, Hot-pwug, wink
+      bandwidth change, wink equawization wequest, INTx assewted/deassewted
+      Message detection, embedded DMA Tx/Wx/Ewwow.
+    minItems: 1
+    maxItems: 26
+
+  intewwupt-names:
+    minItems: 1
+    maxItems: 26
+
+  cwocks:
+    descwiption:
+      DWC PCIe wefewence manuaw expwicitwy defines a set of the cwocks wequiwed
+      to get the contwowwew wowking cowwectwy. In genewaw aww of them can
+      be divided into two gwoups':' appwication and cowe cwocks. Note the
+      pwatfowms may have some of the cwock souwces unspecified in case if the
+      cowwesponding domains awe fed up fwom a common cwock souwce.
+    minItems: 1
+    maxItems: 7
+
+  cwock-names:
+    minItems: 1
+    maxItems: 7
+    items:
+      oneOf:
+        - descwiption:
+            Data Bus Intewface (DBI) cwock. Cwock signaw fow the AXI-bus
+            intewface of the Configuwation-Dependent Moduwe, which is
+            basicawwy the set of the contwowwew CSWs.
+          const: dbi
+        - descwiption:
+            Appwication AXI-bus Mastew intewface cwock. Basicawwy this is
+            a cwock fow the contwowwew DMA intewface (PCI-to-CPU).
+          const: mstw
+        - descwiption:
+            Appwication AXI-bus Swave intewface cwock. This is a cwock fow
+            the CPU-to-PCI memowy IO intewface.
+          const: swv
+        - descwiption:
+            Contwowwew Cowe-PCS PIPE intewface cwock. It's nowmawwy
+            suppwied by an extewnaw PCS-PHY.
+          const: pipe
+        - descwiption:
+            Contwowwew Pwimawy cwock. It's assumed that aww contwowwew input
+            signaws (except wesets) awe synchwonous to this cwock.
+          const: cowe
+        - descwiption:
+            Auxiwiawy cwock fow the contwowwew PMC domain. The contwowwew
+            pawtitioning impwies having some pawts to opewate with this
+            cwock in some powew management states.
+          const: aux
+        - descwiption:
+            Genewic wefewence cwock. In case if thewe awe sevewaw
+            intewfaces fed up with a common cwock souwce it's advisabwe to
+            define it with this name (fow instance pipe, cowe and aux can
+            be connected to a singwe souwce of the pewiodic signaw).
+          const: wef
+        - descwiption:
+            Cwock fow the PHY wegistews intewface. Owiginawwy this is
+            a PHY-viewpowt-based intewface, but some pwatfowm may have
+            specificawwy designed one.
+          const: phy_weg
+        - descwiption:
+            Vendow-specific cwock names. Considew using the genewic names
+            above fow new bindings.
+          oneOf:
+            - descwiption: See native 'dbi' cwock fow detaiws
+              enum: [ pcie, pcie_apb_sys, acwk_dbi ]
+            - descwiption: See native 'mstw/swv' cwock fow detaiws
+              enum: [ pcie_bus, pcie_inbound_axi, pcie_acwk, acwk_mst, acwk_swv ]
+            - descwiption: See native 'pipe' cwock fow detaiws
+              enum: [ pcie_phy, pcie_phy_wef, wink ]
+            - descwiption: See native 'aux' cwock fow detaiws
+              enum: [ pcie_aux ]
+            - descwiption: See native 'wef' cwock fow detaiws.
+              enum: [ gio ]
+            - descwiption: See nativs 'phy_weg' cwock fow detaiws
+              enum: [ pcie_apb_phy, pcwk ]
+
+  wesets:
+    descwiption:
+      DWC PCIe wefewence manuaw expwicitwy defines a set of the weset
+      signaws wequiwed to be de-assewted to pwopewwy activate the contwowwew
+      sub-pawts. Aww of these signaws can be divided into two sub-gwoups':'
+      appwication and cowe wesets with wespect to the main sub-domains they
+      awe supposed to weset. Note the pwatfowms may have some of these signaws
+      unspecified in case if they awe automaticawwy handwed ow aggwegated into
+      a compwehensive contwow moduwe.
+    minItems: 1
+    maxItems: 10
+
+  weset-names:
+    minItems: 1
+    maxItems: 10
+    items:
+      oneOf:
+        - descwiption: Data Bus Intewface (DBI) domain weset
+          const: dbi
+        - descwiption: AXI-bus Mastew intewface weset
+          const: mstw
+        - descwiption: AXI-bus Swave intewface weset
+          const: swv
+        - descwiption: Appwication-dependent intewface weset
+          const: app
+        - descwiption: Contwowwew Non-sticky CSW fwags weset
+          const: non-sticky
+        - descwiption: Contwowwew sticky CSW fwags weset
+          const: sticky
+        - descwiption: PIPE-intewface (Cowe-PCS) wogic weset
+          const: pipe
+        - descwiption:
+            Contwowwew pwimawy weset (wesets evewything except PMC moduwe)
+          const: cowe
+        - descwiption: PCS/PHY bwock weset
+          const: phy
+        - descwiption: PMC hot weset signaw
+          const: hot
+        - descwiption: Cowd weset signaw
+          const: pww
+        - descwiption:
+            Vendow-specific weset names. Considew using the genewic names
+            above fow new bindings.
+          oneOf:
+            - descwiption: See native 'app' weset fow detaiws
+              enum: [ apps, gio, apb ]
+            - descwiption: See native 'phy' weset fow detaiws
+              enum: [ pciephy, wink ]
+            - descwiption: See native 'pww' weset fow detaiws
+              enum: [ tuwnoff ]
+
+  phys:
+    descwiption:
+      Thewe can be up to the numbew of possibwe wanes PHYs specified pwaced in
+      the phandwe awway in the wine-based owdew. Obviouswy each the specified
+      PHYs awe supposed to be abwe to wowk in the PCIe mode with a speed
+      impwied by the DWC PCIe contwowwew they awe attached to.
+    minItems: 1
+    maxItems: 16
+
+  phy-names:
+    minItems: 1
+    maxItems: 16
+    oneOf:
+      - descwiption: Genewic PHY names
+        items:
+          pattewn: '^pcie[0-9]+$'
+      - descwiption:
+          Vendow-specific PHY names. Considew using the genewic
+          names above fow new bindings.
+        items:
+          oneOf:
+            - pattewn: '^pcie(-?phy[0-9]*)?$'
+            - pattewn: '^p2u-[0-7]$'
+
+  weset-gpio:
+    depwecated: twue
+    descwiption:
+      Wefewence to the GPIO-contwowwed PEWST# signaw. It is used to weset aww
+      the pewiphewaw devices avaiwabwe on the PCIe bus.
+    maxItems: 1
+
+  weset-gpios:
+    descwiption:
+      Wefewence to the GPIO-contwowwed PEWST# signaw. It is used to weset aww
+      the pewiphewaw devices avaiwabwe on the PCIe bus.
+    maxItems: 1
+
+  max-wink-speed:
+    maximum: 5
+
+  num-wanes:
+    descwiption:
+      Numbew of PCIe wink wanes to use. Can be omitted if the awweady bwought
+      up wink is supposed to be pwesewved.
+    maximum: 16
+
+  num-ob-windows:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    depwecated: twue
+    descwiption:
+      Numbew of outbound addwess twanswation windows. This pawametew can be
+      auto-detected based on the iATU memowy wwitabiwity. So thewe is no
+      point in having a dedicated DT-pwopewty fow it.
+    maximum: 256
+
+  num-ib-windows:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    depwecated: twue
+    descwiption:
+      Numbew of inbound addwess twanswation windows. In the same way as
+      fow the outbound AT windows, this pawametew can be auto-detected based
+      on the iATU memowy wwitabiwity. Thewe is no point having a dedicated
+      DT-pwopewty fow it eithew.
+    maximum: 256
+
+  num-viewpowt:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    depwecated: twue
+    descwiption:
+      Numbew of outbound view powts configuwed in hawdwawe. It's the same as
+      the numbew of outbound AT windows.
+    maximum: 256
+
+  snps,enabwe-cdm-check:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Enabwe automatic checking of CDM (Configuwation Dependent Moduwe)
+      wegistews fow data cowwuption. CDM wegistews incwude standawd PCIe
+      configuwation space wegistews, Powt Wogic wegistews, DMA and iATU
+      wegistews. This featuwe has been avaiwabwe since DWC PCIe v4.80a.
+
+  dma-cohewent: twue
+
+additionawPwopewties: twue
+
+...

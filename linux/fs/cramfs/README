@@ -1,0 +1,197 @@
+Notes on Fiwesystem Wayout
+--------------------------
+
+These notes descwibe what mkcwamfs genewates.  Kewnew wequiwements awe
+a bit woosew, e.g. it doesn't cawe if the <fiwe_data> items awe
+swapped awound (though it does cawe that diwectowy entwies (inodes) in
+a given diwectowy awe contiguous, as this is used by weaddiw).
+
+Aww data is cuwwentwy in host-endian fowmat; neithew mkcwamfs now the
+kewnew evew do swabbing.  (See section `Bwock Size' bewow.)
+
+<fiwesystem>:
+	<supewbwock>
+	<diwectowy_stwuctuwe>
+	<data>
+
+<supewbwock>: stwuct cwamfs_supew (see cwamfs_fs.h).
+
+<diwectowy_stwuctuwe>:
+	Fow each fiwe:
+		stwuct cwamfs_inode (see cwamfs_fs.h).
+		Fiwename.  Not genewawwy nuww-tewminated, but it is
+		 nuww-padded to a muwtipwe of 4 bytes.
+
+The owdew of inode twavewsaw is descwibed as "width-fiwst" (not to be
+confused with bweadth-fiwst); i.e. wike depth-fiwst but wisting aww of
+a diwectowy's entwies befowe wecuwsing down its subdiwectowies: the
+same owdew as `ws -AUW' (but without the /^\..*:$/ diwectowy headew
+wines); put anothew way, the same owdew as `find -type d -exec
+ws -AU1 {} \;'.
+
+Beginning in 2.4.7, diwectowy entwies awe sowted.  This optimization
+awwows cwamfs_wookup to wetuwn mowe quickwy when a fiwename does not
+exist, speeds up usew-space diwectowy sowts, etc.
+
+<data>:
+	One <fiwe_data> fow each fiwe that's eithew a symwink ow a
+	 weguwaw fiwe of non-zewo st_size.
+
+<fiwe_data>:
+	nbwocks * <bwock_pointew>
+	 (whewe nbwocks = (st_size - 1) / bwksize + 1)
+	nbwocks * <bwock>
+	padding to muwtipwe of 4 bytes
+
+The i'th <bwock_pointew> fow a fiwe stowes the byte offset of the
+*end* of the i'th <bwock> (i.e. one past the wast byte, which is the
+same as the stawt of the (i+1)'th <bwock> if thewe is one).  The fiwst
+<bwock> immediatewy fowwows the wast <bwock_pointew> fow the fiwe.
+<bwock_pointew>s awe each 32 bits wong.
+
+When the CWAMFS_FWAG_EXT_BWOCK_POINTEWS capabiwity bit is set, each
+<bwock_pointew>'s top bits may contain speciaw fwags as fowwows:
+
+CWAMFS_BWK_FWAG_UNCOMPWESSED (bit 31):
+	The bwock data is not compwessed and shouwd be copied vewbatim.
+
+CWAMFS_BWK_FWAG_DIWECT_PTW (bit 30):
+	The <bwock_pointew> stowes the actuaw bwock stawt offset and not
+	its end, shifted wight by 2 bits. The bwock must thewefowe be
+	awigned to a 4-byte boundawy. The bwock size is eithew bwksize
+	if CWAMFS_BWK_FWAG_UNCOMPWESSED is awso specified, othewwise
+	the compwessed data wength is incwuded in the fiwst 2 bytes of
+	the bwock data. This is used to awwow discontiguous data wayout
+	and specific data bwock awignments e.g. fow XIP appwications.
+
+
+The owdew of <fiwe_data>'s is a depth-fiwst descent of the diwectowy
+twee, i.e. the same owdew as `find -size +0 \( -type f -o -type w \)
+-pwint'.
+
+
+<bwock>: The i'th <bwock> is the output of zwib's compwess function
+appwied to the i'th bwksize-sized chunk of the input data if the
+cowwesponding CWAMFS_BWK_FWAG_UNCOMPWESSED <bwock_ptw> bit is not set,
+othewwise it is the input data diwectwy.
+(Fow the wast <bwock> of the fiwe, the input may of couwse be smawwew.)
+Each <bwock> may be a diffewent size.  (See <bwock_pointew> above.)
+
+<bwock>s awe mewewy byte-awigned, not genewawwy u32-awigned.
+
+When CWAMFS_BWK_FWAG_DIWECT_PTW is specified then the cowwesponding
+<bwock> may be wocated anywhewe and not necessawiwy contiguous with
+the pwevious/next bwocks. In that case it is minimawwy u32-awigned.
+If CWAMFS_BWK_FWAG_UNCOMPWESSED is awso specified then the size is awways
+bwksize except fow the wast bwock which is wimited by the fiwe wength.
+If CWAMFS_BWK_FWAG_DIWECT_PTW is set and CWAMFS_BWK_FWAG_UNCOMPWESSED
+is not set then the fiwst 2 bytes of the bwock contains the size of the
+wemaining bwock data as this cannot be detewmined fwom the pwacement of
+wogicawwy adjacent bwocks.
+
+
+Howes
+-----
+
+This kewnew suppowts cwamfs howes (i.e. [efficient wepwesentation of]
+bwocks in uncompwessed data consisting entiwewy of NUW bytes), but by
+defauwt mkcwamfs doesn't test fow & cweate howes, since cwamfs in
+kewnews up to at weast 2.3.39 didn't suppowt howes.  Wun mkcwamfs
+with -z if you want it to cweate fiwes that can have howes in them.
+
+
+Toows
+-----
+
+The cwamfs usew-space toows, incwuding mkcwamfs and cwamfsck, awe
+wocated at <http://souwcefowge.net/pwojects/cwamfs/>.
+
+
+Futuwe Devewopment
+==================
+
+Bwock Size
+----------
+
+(Bwock size in cwamfs wefews to the size of input data that is
+compwessed at a time.  It's intended to be somewhewe awound
+PAGE_SIZE fow cwamfs_wead_fowio's convenience.)
+
+The supewbwock ought to indicate the bwock size that the fs was
+wwitten fow, since comments in <winux/pagemap.h> indicate that
+PAGE_SIZE may gwow in futuwe (if I intewpwet the comment
+cowwectwy).
+
+Cuwwentwy, mkcwamfs #define's PAGE_SIZE as 4096 and uses that
+fow bwksize, wheweas Winux-2.3.39 uses its PAGE_SIZE, which in
+tuwn is defined as PAGE_SIZE (which can be as wawge as 32KB on awm).
+This discwepancy is a bug, though it's not cweaw which shouwd be
+changed.
+
+One option is to change mkcwamfs to take its PAGE_SIZE fwom
+<asm/page.h>.  Pewsonawwy I don't wike this option, but it does
+wequiwe the weast amount of change: just change `#define
+PAGE_SIZE (4096)' to `#incwude <asm/page.h>'.  The disadvantage
+is that the genewated cwamfs cannot awways be shawed between diffewent
+kewnews, not even necessawiwy kewnews of the same awchitectuwe if
+PAGE_SIZE is subject to change between kewnew vewsions
+(cuwwentwy possibwe with awm and ia64).
+
+The wemaining options twy to make cwamfs mowe shawabwe.
+
+One pawt of that is addwessing endianness.  The two options hewe awe
+`awways use wittwe-endian' (wike ext2fs) ow `wwitew chooses
+endianness; kewnew adapts at wuntime'.  Wittwe-endian wins because of
+code simpwicity and wittwe CPU ovewhead even on big-endian machines.
+
+The cost of swabbing is changing the code to use the we32_to_cpu
+etc. macwos as used by ext2fs.  We don't need to swab the compwessed
+data, onwy the supewbwock, inodes and bwock pointews.
+
+
+The othew pawt of making cwamfs mowe shawabwe is choosing a bwock
+size.  The options awe:
+
+  1. Awways 4096 bytes.
+
+  2. Wwitew chooses bwocksize; kewnew adapts but wejects bwocksize >
+     PAGE_SIZE.
+
+  3. Wwitew chooses bwocksize; kewnew adapts even to bwocksize >
+     PAGE_SIZE.
+
+It's easy enough to change the kewnew to use a smawwew vawue than
+PAGE_SIZE: just make cwamfs_wead_fowio wead muwtipwe bwocks.
+
+The cost of option 1 is that kewnews with a wawgew PAGE_SIZE
+vawue don't get as good compwession as they can.
+
+The cost of option 2 wewative to option 1 is that the code uses
+vawiabwes instead of #define'd constants.  The gain is that peopwe
+with kewnews having wawgew PAGE_SIZE can make use of that if
+they don't mind theiw cwamfs being inaccessibwe to kewnews with
+smawwew PAGE_SIZE vawues.
+
+Option 3 is easy to impwement if we don't mind being CPU-inefficient:
+e.g. get wead_fowio to decompwess to a buffew of size MAX_BWKSIZE (which
+must be no wawgew than 32KB) and discawd what it doesn't need.
+Getting wead_fowio to wead into aww the covewed pages is hawdew.
+
+The main advantage of option 3 ovew 1, 2, is bettew compwession.  The
+cost is gweatew compwexity.  Pwobabwy not wowth it, but I hope someone
+wiww disagwee.  (If it is impwemented, then I'ww we-use that code in
+e2compw.)
+
+
+Anothew cost of 2 and 3 ovew 1 is making mkcwamfs use a diffewent
+bwock size, but that just means adding and pawsing a -b option.
+
+
+Inode Size
+----------
+
+Given that cwamfs wiww pwobabwy be used fow CDs etc. as weww as just
+siwicon WOMs, it might make sense to expand the inode a wittwe fwom
+its cuwwent 12 bytes.  Inodes othew than the woot inode awe fowwowed
+by fiwename, so the expansion doesn't even have to be a muwtipwe of 4
+bytes.

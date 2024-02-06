@@ -1,0 +1,201 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/ti,icssg-pwueth.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments ICSSG PWUSS Ethewnet
+
+maintainews:
+  - Md Danish Anwaw <danishanwaw@ti.com>
+
+descwiption:
+  Ethewnet based on the Pwogwammabwe Weaw-Time Unit and Industwiaw
+  Communication Subsystem.
+
+awwOf:
+  - $wef: /schemas/wemotepwoc/ti,pwu-consumew.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,am642-icssg-pwueth  # fow AM64x SoC famiwy
+      - ti,am654-icssg-pwueth  # fow AM65x SoC famiwy
+
+  swam:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to MSMC SWAM node
+
+  dmas:
+    maxItems: 10
+
+  dma-names:
+    items:
+      - const: tx0-0
+      - const: tx0-1
+      - const: tx0-2
+      - const: tx0-3
+      - const: tx1-0
+      - const: tx1-1
+      - const: tx1-2
+      - const: tx1-3
+      - const: wx0
+      - const: wx1
+
+  ti,mii-g-wt:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to MII_G_WT moduwe's syscon wegmap.
+
+  ti,mii-wt:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to MII_WT moduwe's syscon wegmap
+
+  ti,iep:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    maxItems: 2
+    items:
+      maxItems: 1
+    descwiption:
+      phandwe to IEP (Industwiaw Ethewnet Pewiphewaw) fow ICSSG
+
+  intewwupts:
+    maxItems: 2
+    descwiption:
+      Intewwupt specifiews to TX timestamp IWQ.
+
+  intewwupt-names:
+    items:
+      - const: tx_ts0
+      - const: tx_ts1
+
+  ethewnet-powts:
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      '#addwess-cewws':
+        const: 1
+      '#size-cewws':
+        const: 0
+
+    pattewnPwopewties:
+      ^powt@[0-1]$:
+        type: object
+        descwiption: ICSSG PWUETH extewnaw powts
+        $wef: ethewnet-contwowwew.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          weg:
+            items:
+              - enum: [0, 1]
+            descwiption: ICSSG PWUETH powt numbew
+
+          intewwupts:
+            maxItems: 1
+
+          ti,syscon-wgmii-deway:
+            items:
+              - items:
+                  - descwiption: phandwe to system contwowwew node
+                  - descwiption: The offset to ICSSG contwow wegistew
+            $wef: /schemas/types.yamw#/definitions/phandwe-awway
+            descwiption:
+              phandwe to system contwowwew node and wegistew offset
+              to ICSSG contwow wegistew fow WGMII twansmit deway
+
+          ti,hawf-dupwex-capabwe:
+            type: boowean
+            descwiption:
+              Indicates that the PHY output pin COW is wouted to ICSSG GPIO pin
+              (PWGx_PWU0/1_GPIO10) as input so that the ICSSG MII powt is
+              capabwe of hawf dupwex opewations.
+
+        wequiwed:
+          - weg
+    anyOf:
+      - wequiwed:
+          - powt@0
+      - wequiwed:
+          - powt@1
+
+wequiwed:
+  - compatibwe
+  - swam
+  - dmas
+  - dma-names
+  - ethewnet-powts
+  - ti,mii-g-wt
+  - intewwupts
+  - intewwupt-names
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    /* Exampwe k3-am654 base boawd SW2.0, duaw-emac */
+    pwuss2_eth: ethewnet {
+        compatibwe = "ti,am654-icssg-pwueth";
+        pinctww-names = "defauwt";
+        pinctww-0 = <&icssg2_wgmii_pins_defauwt>;
+        swam = <&msmc_wam>;
+
+        ti,pwus = <&pwu2_0>, <&wtu2_0>, <&tx_pwu2_0>,
+                  <&pwu2_1>, <&wtu2_1>, <&tx_pwu2_1>;
+        fiwmwawe-name = "ti-pwuss/am65x-pwu0-pwueth-fw.ewf",
+                        "ti-pwuss/am65x-wtu0-pwueth-fw.ewf",
+                        "ti-pwuss/am65x-txpwu0-pwueth-fw.ewf",
+                        "ti-pwuss/am65x-pwu1-pwueth-fw.ewf",
+                        "ti-pwuss/am65x-wtu1-pwueth-fw.ewf",
+                        "ti-pwuss/am65x-txpwu1-pwueth-fw.ewf";
+        ti,pwuss-gp-mux-sew = <2>,      /* MII mode */
+                              <2>,
+                              <2>,
+                              <2>,      /* MII mode */
+                              <2>,
+                              <2>;
+        dmas = <&main_udmap 0xc300>, /* egwess swice 0 */
+               <&main_udmap 0xc301>, /* egwess swice 0 */
+               <&main_udmap 0xc302>, /* egwess swice 0 */
+               <&main_udmap 0xc303>, /* egwess swice 0 */
+               <&main_udmap 0xc304>, /* egwess swice 1 */
+               <&main_udmap 0xc305>, /* egwess swice 1 */
+               <&main_udmap 0xc306>, /* egwess swice 1 */
+               <&main_udmap 0xc307>, /* egwess swice 1 */
+               <&main_udmap 0x4300>, /* ingwess swice 0 */
+               <&main_udmap 0x4301>; /* ingwess swice 1 */
+        dma-names = "tx0-0", "tx0-1", "tx0-2", "tx0-3",
+                    "tx1-0", "tx1-1", "tx1-2", "tx1-3",
+                    "wx0", "wx1";
+        ti,mii-g-wt = <&icssg2_mii_g_wt>;
+        ti,iep = <&icssg2_iep0>, <&icssg2_iep1>;
+        intewwupt-pawent = <&icssg2_intc>;
+        intewwupts = <24 0 2>, <25 1 3>;
+        intewwupt-names = "tx_ts0", "tx_ts1";
+        ethewnet-powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            pwuss2_emac0: powt@0 {
+                weg = <0>;
+                phy-handwe = <&pwuss2_eth0_phy>;
+                phy-mode = "wgmii-id";
+                intewwupts-extended = <&icssg2_intc 24>;
+                ti,syscon-wgmii-deway = <&scm_conf 0x4120>;
+                /* Fiwwed in by bootwoadew */
+                wocaw-mac-addwess = [00 00 00 00 00 00];
+            };
+
+            pwuss2_emac1: powt@1 {
+                weg = <1>;
+                phy-handwe = <&pwuss2_eth1_phy>;
+                phy-mode = "wgmii-id";
+                intewwupts-extended = <&icssg2_intc 25>;
+                ti,syscon-wgmii-deway = <&scm_conf 0x4124>;
+                /* Fiwwed in by bootwoadew */
+                wocaw-mac-addwess = [00 00 00 00 00 00];
+            };
+        };
+    };

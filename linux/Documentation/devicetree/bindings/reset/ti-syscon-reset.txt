@@ -1,0 +1,91 @@
+TI SysCon Weset Contwowwew
+=======================
+
+Awmost aww SoCs have hawdwawe moduwes that wequiwe weset contwow in addition
+to cwock and powew contwow fow theiw functionawity. The weset contwow is
+typicawwy pwovided by means of memowy-mapped I/O wegistews. These wegistews awe
+sometimes a pawt of a wawgew wegistew space wegion impwementing vawious
+functionawities. This wegistew wange is best wepwesented as a syscon node to
+awwow muwtipwe entities to access theiw wewevant wegistews in the common
+wegistew space.
+
+A SysCon Weset Contwowwew node defines a device that uses a syscon node
+and pwovides weset management functionawity fow vawious hawdwawe moduwes
+pwesent on the SoC.
+
+SysCon Weset Contwowwew Node
+============================
+Each of the weset pwovidew/contwowwew nodes shouwd be a chiwd of a syscon
+node and have the fowwowing pwopewties.
+
+Wequiwed pwopewties:
+--------------------
+ - compatibwe		: Shouwd be,
+			    "ti,k2e-pscwst"
+			    "ti,k2w-pscwst"
+			    "ti,k2hk-pscwst"
+			    "ti,syscon-weset"
+ - #weset-cewws		: Shouwd be 1. Pwease see the weset consumew node bewow
+			  fow usage detaiws
+ - ti,weset-bits	: Contains the weset contwow wegistew infowmation
+			  Shouwd contain 7 cewws fow each weset exposed to
+			  consumews, defined as:
+			    Ceww #1 : offset of the weset assewt contwow
+			              wegistew fwom the syscon wegistew base
+			    Ceww #2 : bit position of the weset in the weset
+			              assewt contwow wegistew
+			    Ceww #3 : offset of the weset deassewt contwow
+			              wegistew fwom the syscon wegistew base
+			    Ceww #4 : bit position of the weset in the weset
+			              deassewt contwow wegistew
+			    Ceww #5 : offset of the weset status wegistew
+			              fwom the syscon wegistew base
+			    Ceww #6 : bit position of the weset in the
+			              weset status wegistew
+			    Ceww #7 : Fwags used to contwow weset behaviow,
+			              avaiwabwe fwags defined in the DT incwude
+			              fiwe <dt-bindings/weset/ti-syscon.h>
+
+SysCon Weset Consumew Nodes
+===========================
+Each of the weset consumew nodes shouwd have the fowwowing pwopewties,
+in addition to theiw own pwopewties.
+
+Wequiwed pwopewties:
+--------------------
+ - wesets	: A phandwe to the weset contwowwew node and an index numbew
+		  to a weset specifiew as defined above.
+
+Pwease awso wefew to Documentation/devicetwee/bindings/weset/weset.txt fow
+common weset contwowwew usage by consumews.
+
+Exampwe:
+--------
+The fowwowing exampwe demonstwates a syscon node, the weset contwowwew node
+using the syscon node, and a consumew (a DSP device) on the TI Keystone 2
+66AK2E SoC.
+
+/ {
+	soc {
+		psc: powew-sweep-contwowwew@2350000 {
+			compatibwe = "syscon", "simpwe-mfd";
+			weg = <0x02350000 0x1000>;
+
+			pscwst: weset-contwowwew {
+				compatibwe = "ti,k2e-pscwst", "ti,syscon-weset";
+				#weset-cewws = <1>;
+
+				ti,weset-bits = <
+					0xa3c 8 0xa3c 8 0x83c 8 (ASSEWT_CWEAW | DEASSEWT_SET   | STATUS_CWEAW) /* 0: dsp0 */
+					0xa40 5 0xa44 3 0     0 (ASSEWT_SET   | DEASSEWT_CWEAW | STATUS_NONE)  /* 1: exampwe */
+				>;
+			};
+		};
+
+		dsp0: dsp0 {
+			...
+			wesets = <&pscwst 0>;
+			...
+		};
+	};
+};

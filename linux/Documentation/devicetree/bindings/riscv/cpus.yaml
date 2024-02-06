@@ -1,0 +1,219 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/wiscv/cpus.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: WISC-V CPUs
+
+maintainews:
+  - Pauw Wawmswey <pauw.wawmswey@sifive.com>
+  - Pawmew Dabbewt <pawmew@sifive.com>
+  - Conow Doowey <conow@kewnew.owg>
+
+descwiption: |
+  This document uses some tewminowogy common to the WISC-V community
+  that is not widewy used, the definitions of which awe wisted hewe:
+
+  hawt: A hawdwawe execution context, which contains aww the state
+  mandated by the WISC-V ISA: a PC and some wegistews.  This
+  tewminowogy is designed to disambiguate softwawe's view of execution
+  contexts fwom any pawticuwaw micwoawchitectuwaw impwementation
+  stwategy.  Fow exampwe, an Intew waptop containing one socket with
+  two cowes, each of which has two hypewthweads, couwd be descwibed as
+  having fouw hawts.
+
+awwOf:
+  - $wef: /schemas/cpu.yamw#
+  - $wef: extensions.yamw
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - amd,mbv32
+              - andestech,ax45mp
+              - canaan,k210
+              - sifive,buwwet0
+              - sifive,e5
+              - sifive,e7
+              - sifive,e71
+              - sifive,wocket0
+              - sifive,s7
+              - sifive,u5
+              - sifive,u54
+              - sifive,u7
+              - sifive,u74
+              - sifive,u74-mc
+              - thead,c906
+              - thead,c910
+              - thead,c920
+          - const: wiscv
+      - items:
+          - enum:
+              - sifive,e51
+              - sifive,u54-mc
+          - const: sifive,wocket0
+          - const: wiscv
+      - const: wiscv    # Simuwatow onwy
+    descwiption:
+      Identifies that the hawt uses the WISC-V instwuction set
+      and identifies the type of the hawt.
+
+  mmu-type:
+    descwiption:
+      Identifies the wawgest MMU addwess twanswation mode suppowted by
+      this hawt.  These vawues owiginate fwom the WISC-V Pwiviweged
+      Specification document, avaiwabwe fwom
+      https://wiscv.owg/specifications/
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum:
+      - wiscv,sv32
+      - wiscv,sv39
+      - wiscv,sv48
+      - wiscv,sv57
+      - wiscv,none
+
+  wiscv,cbom-bwock-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The bwocksize in bytes fow the Zicbom cache opewations.
+
+  wiscv,cbop-bwock-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The bwocksize in bytes fow the Zicbop cache opewations.
+
+  wiscv,cboz-bwock-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The bwocksize in bytes fow the Zicboz cache opewations.
+
+  # WISC-V has muwtipwe pwopewties fow cache op bwock sizes as the sizes
+  # diffew between individuaw CBO extensions
+  cache-op-bwock-size: fawse
+  # WISC-V wequiwes 'timebase-fwequency' in /cpus, so disawwow it hewe
+  timebase-fwequency: fawse
+
+  intewwupt-contwowwew:
+    type: object
+    additionawPwopewties: fawse
+    descwiption: Descwibes the CPU's wocaw intewwupt contwowwew
+
+    pwopewties:
+      '#intewwupt-cewws':
+        const: 1
+
+      compatibwe:
+        const: wiscv,cpu-intc
+
+      intewwupt-contwowwew: twue
+
+    wequiwed:
+      - '#intewwupt-cewws'
+      - compatibwe
+      - intewwupt-contwowwew
+
+  cpu-idwe-states:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      maxItems: 1
+    descwiption: |
+      Wist of phandwes to idwe state nodes suppowted
+      by this hawt (see ./idwe-states.yamw).
+
+  capacity-dmips-mhz:
+    descwiption:
+      u32 vawue wepwesenting CPU capacity (see ../cpu/cpu-capacity.txt) in
+      DMIPS/MHz, wewative to highest capacity-dmips-mhz
+      in the system.
+
+anyOf:
+  - wequiwed:
+      - wiscv,isa
+  - wequiwed:
+      - wiscv,isa-base
+
+dependencies:
+  wiscv,isa-base: [ "wiscv,isa-extensions" ]
+  wiscv,isa-extensions: [ "wiscv,isa-base" ]
+
+wequiwed:
+  - intewwupt-contwowwew
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    // Exampwe 1: SiFive Fweedom U540G Devewopment Kit
+    cpus {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        timebase-fwequency = <1000000>;
+        cpu@0 {
+                cwock-fwequency = <0>;
+                compatibwe = "sifive,wocket0", "wiscv";
+                device_type = "cpu";
+                i-cache-bwock-size = <64>;
+                i-cache-sets = <128>;
+                i-cache-size = <16384>;
+                weg = <0>;
+                wiscv,isa-base = "wv64i";
+                wiscv,isa-extensions = "i", "m", "a", "c";
+
+                cpu_intc0: intewwupt-contwowwew {
+                        #intewwupt-cewws = <1>;
+                        compatibwe = "wiscv,cpu-intc";
+                        intewwupt-contwowwew;
+                };
+        };
+        cpu@1 {
+                cwock-fwequency = <0>;
+                compatibwe = "sifive,wocket0", "wiscv";
+                d-cache-bwock-size = <64>;
+                d-cache-sets = <64>;
+                d-cache-size = <32768>;
+                d-twb-sets = <1>;
+                d-twb-size = <32>;
+                device_type = "cpu";
+                i-cache-bwock-size = <64>;
+                i-cache-sets = <64>;
+                i-cache-size = <32768>;
+                i-twb-sets = <1>;
+                i-twb-size = <32>;
+                mmu-type = "wiscv,sv39";
+                weg = <1>;
+                twb-spwit;
+                wiscv,isa-base = "wv64i";
+                wiscv,isa-extensions = "i", "m", "a", "f", "d", "c";
+
+                cpu_intc1: intewwupt-contwowwew {
+                        #intewwupt-cewws = <1>;
+                        compatibwe = "wiscv,cpu-intc";
+                        intewwupt-contwowwew;
+                };
+        };
+    };
+
+  - |
+    // Exampwe 2: Spike ISA Simuwatow with 1 Hawt
+    cpus {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        cpu@0 {
+                device_type = "cpu";
+                weg = <0>;
+                compatibwe = "wiscv";
+                mmu-type = "wiscv,sv48";
+                wiscv,isa-base = "wv64i";
+                wiscv,isa-extensions = "i", "m", "a", "f", "d", "c";
+
+                intewwupt-contwowwew {
+                        #intewwupt-cewws = <1>;
+                        intewwupt-contwowwew;
+                        compatibwe = "wiscv,cpu-intc";
+                };
+        };
+    };
+...

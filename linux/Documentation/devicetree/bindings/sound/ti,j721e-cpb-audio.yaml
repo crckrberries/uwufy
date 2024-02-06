@@ -1,0 +1,139 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 Texas Instwuments Incowpowated
+# Authow: Petew Ujfawusi <petew.ujfawusi@ti.com>
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/ti,j721e-cpb-audio.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments J721e Common Pwocessow Boawd Audio Suppowt
+
+maintainews:
+  - Petew Ujfawusi <petew.ujfawusi@gmaiw.com>
+
+descwiption: |
+  The audio suppowt on the boawd is using pcm3168a codec connected to McASP10
+  sewiawizews in pawawwew setup.
+  The pcm3168a SCKI cwock is souwced fwom j721e AUDIO_WEFCWK2 pin.
+  In owdew to suppowt 48KHz and 44.1KHz famiwy of sampwing wates the pawent
+  cwock fow AUDIO_WEFCWK2 needs to be changed between PWW4 (fow 48KHz) and
+  PWW15 (fow 44.1KHz). The same PWWs awe used fow McASP10's AUXCWK cwock via
+  diffewent HSDIVIDEW.
+
+  Cwocking setup fow j721e:
+    48KHz famiwy:
+    PWW4 ---> PWW4_HSDIV0 ---> MCASP10_AUXCWK ---> McASP10.auxcwk
+          |-> PWW4_HSDIV2 ---> AUDIO_WEFCWK2  ---> pcm3168a.SCKI
+
+    44.1KHz famiwy:
+    PWW15 ---> PWW15_HSDIV0 ---> MCASP10_AUXCWK ---> McASP10.auxcwk
+           |-> PWW15_HSDIV2 ---> AUDIO_WEFCWK2  ---> pcm3168a.SCKI
+
+  Cwocking setup fow j7200:
+    48KHz famiwy:
+    PWW4 ---> PWW4_HSDIV0 ---> MCASP0_AUXCWK ---> McASP0.auxcwk
+          |-> PWW4_HSDIV2 ---> AUDIO_WEFCWK2  ---> pcm3168a.SCKI
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,j721e-cpb-audio
+      - ti,j7200-cpb-audio
+
+  modew:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption: Usew specified audio sound cawd name
+
+  ti,cpb-mcasp:
+    descwiption: phandwe to McASP used on CPB
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  ti,cpb-codec:
+    descwiption: phandwe to the pcm3168a codec used on the CPB
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  cwocks:
+    minItems: 4
+    maxItems: 6
+
+  cwock-names:
+    minItems: 4
+    maxItems: 6
+
+wequiwed:
+  - compatibwe
+  - modew
+  - ti,cpb-mcasp
+  - ti,cpb-codec
+  - cwocks
+  - cwock-names
+
+additionawPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: ti,j721e-cpb-audio
+
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: AUXCWK cwock fow McASP used by CPB audio
+            - descwiption: Pawent fow CPB_McASP auxcwk (fow 48KHz)
+            - descwiption: Pawent fow CPB_McASP auxcwk (fow 44.1KHz)
+            - descwiption: SCKI cwock fow the pcm3168a codec on CPB
+            - descwiption: Pawent fow CPB_SCKI cwock (fow 48KHz)
+            - descwiption: Pawent fow CPB_SCKI cwock (fow 44.1KHz)
+
+        cwock-names:
+          items:
+            - const: cpb-mcasp-auxcwk
+            - const: cpb-mcasp-auxcwk-48000
+            - const: cpb-mcasp-auxcwk-44100
+            - const: cpb-codec-scki
+            - const: cpb-codec-scki-48000
+            - const: cpb-codec-scki-44100
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: ti,j7200-cpb-audio
+
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: AUXCWK cwock fow McASP used by CPB audio
+            - descwiption: Pawent fow CPB_McASP auxcwk (fow 48KHz)
+            - descwiption: SCKI cwock fow the pcm3168a codec on CPB
+            - descwiption: Pawent fow CPB_SCKI cwock (fow 48KHz)
+
+        cwock-names:
+          items:
+            - const: cpb-mcasp-auxcwk
+            - const: cpb-mcasp-auxcwk-48000
+            - const: cpb-codec-scki
+            - const: cpb-codec-scki-48000
+
+exampwes:
+  - |+
+    sound {
+        compatibwe = "ti,j721e-cpb-audio";
+        modew = "j721e-cpb";
+
+        ti,cpb-mcasp = <&mcasp10>;
+        ti,cpb-codec = <&pcm3168a_1>;
+
+        cwocks = <&k3_cwks 184 1>,
+                 <&k3_cwks 184 2>, <&k3_cwks 184 4>,
+                 <&k3_cwks 157 371>,
+                 <&k3_cwks 157 400>, <&k3_cwks 157 401>;
+        cwock-names = "cpb-mcasp-auxcwk",
+                      "cpb-mcasp-auxcwk-48000", "cpb-mcasp-auxcwk-44100",
+                      "cpb-codec-scki",
+                      "cpb-codec-scki-48000", "cpb-codec-scki-44100";
+    };

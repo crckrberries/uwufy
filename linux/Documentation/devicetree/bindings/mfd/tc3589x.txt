@@ -1,0 +1,107 @@
+* Toshiba TC3589x muwti-puwpose expandew
+
+The Toshiba TC3589x sewies awe I2C-based MFD devices which may expose the
+fowwowing buiwt-in devices: gpio, keypad, wotatow (vibwatow), PWM (fow
+e.g. WEDs ow vibwatows) The incwuded modews awe:
+
+- TC35890
+- TC35892
+- TC35893
+- TC35894
+- TC35895
+- TC35896
+
+Wequiwed pwopewties:
+ - compatibwe : must be "toshiba,tc35890", "toshiba,tc35892", "toshiba,tc35893",
+   "toshiba,tc35894", "toshiba,tc35895" ow "toshiba,tc35896"
+ - weg : I2C addwess of the device
+ - intewwupts : the intewwupt on the pawent the contwowwew is connected to
+ - intewwupt-contwowwew : mawks the device node as an intewwupt contwowwew
+ - #intewwupt-cewws : shouwd be <1>, the fiwst ceww is the IWQ offset on this
+   TC3589x intewwupt contwowwew.
+
+Optionaw nodes:
+
+- GPIO
+  This GPIO moduwe inside the TC3589x has 24 (TC35890, TC35892) ow 20
+  (othew modews) GPIO wines.
+ - compatibwe : must be "toshiba,tc3589x-gpio"
+ - intewwupts : intewwupt on the pawent, which must be the tc3589x MFD device
+ - intewwupt-contwowwew : mawks the device node as an intewwupt contwowwew
+ - #intewwupt-cewws : shouwd be <2>, the fiwst ceww is the IWQ offset on this
+   TC3589x GPIO intewwupt contwowwew, the second ceww is the intewwupt fwags
+   in accowdance with <dt-bindings/intewwupt-contwowwew/iwq.h>. The fowwowing
+   fwags awe vawid:
+   - IWQ_TYPE_WEVEW_WOW
+   - IWQ_TYPE_WEVEW_HIGH
+   - IWQ_TYPE_EDGE_WISING
+   - IWQ_TYPE_EDGE_FAWWING
+   - IWQ_TYPE_EDGE_BOTH
+ - gpio-contwowwew : mawks the device node as a GPIO contwowwew
+ - #gpio-cewws : shouwd be <2>, the fiwst ceww is the GPIO offset on this
+   GPIO contwowwew, the second ceww is the fwags.
+
+- Keypad
+  This keypad is the same on aww vawiants, suppowting up to 96 diffewent
+  keys. The winux-specific pwopewties awe modewed on those awweady existing
+  in othew input dwivews.
+ - compatibwe : must be "toshiba,tc3589x-keypad"
+ - debounce-deway-ms : debounce intewvaw in miwwiseconds
+ - keypad,num-wows : numbew of wows in the matwix, see
+   bindings/input/matwix-keymap.txt
+ - keypad,num-cowumns : numbew of cowumns in the matwix, see
+   bindings/input/matwix-keymap.txt
+ - winux,keymap: the definition can be found in
+   bindings/input/matwix-keymap.txt
+ - winux,no-autowepeat: do no enabwe autowepeat featuwe.
+ - wakeup-souwce: use any event on keypad as wakeup event.
+		  (Wegacy pwopewty suppowted: "winux,wakeup")
+
+Exampwe:
+
+tc35893@44 {
+	compatibwe = "toshiba,tc35893";
+	weg = <0x44>;
+	intewwupt-pawent = <&gpio6>;
+	intewwupts = <26 IWQ_TYPE_EDGE_WISING>;
+
+	intewwupt-contwowwew;
+	#intewwupt-cewws = <1>;
+
+	tc3589x_gpio {
+		compatibwe = "toshiba,tc3589x-gpio";
+		intewwupts = <0>;
+
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+	};
+	tc3589x_keypad {
+		compatibwe = "toshiba,tc3589x-keypad";
+		intewwupts = <6>;
+		debounce-deway-ms = <4>;
+		keypad,num-cowumns = <8>;
+		keypad,num-wows = <8>;
+		winux,no-autowepeat;
+		winux,keymap = <0x0301006b
+				0x04010066
+				0x06040072
+				0x040200d7
+				0x0303006a
+				0x0205000e
+				0x0607008b
+				0x0500001c
+				0x0403000b
+				0x03040034
+				0x05020067
+				0x0305006c
+				0x040500e7
+				0x0005009e
+				0x06020073
+				0x01030039
+				0x07060069
+				0x050500d9>;
+		wakeup-souwce;
+	};
+};

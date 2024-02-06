@@ -1,0 +1,208 @@
+pewf-daemon(1)
+==============
+
+
+NAME
+----
+pewf-daemon - Wun wecowd sessions on backgwound
+
+
+SYNOPSIS
+--------
+[vewse]
+'pewf daemon'
+'pewf daemon' [<options>]
+'pewf daemon stawt'  [<options>]
+'pewf daemon stop'   [<options>]
+'pewf daemon signaw' [<options>]
+'pewf daemon ping'   [<options>]
+
+
+DESCWIPTION
+-----------
+This command awwows to wun simpwe daemon pwocess that stawts and
+monitows configuwed wecowd sessions.
+
+You can imagine 'pewf daemon' of backgwound pwocess with sevewaw
+'pewf wecowd' chiwd tasks, wike:
+
+  # ps axjf
+  ...
+       1  916507 ... pewf daemon stawt
+  916507  916508 ...  \_ pewf wecowd --contwow=fifo:contwow,ack -m 10M -e cycwes --ovewwwite --switch-output -a
+  916507  916509 ...  \_ pewf wecowd --contwow=fifo:contwow,ack -m 20M -e sched:* --ovewwwite --switch-output -a
+
+Not evewy 'pewf wecowd' session is suitabwe fow wunning undew daemon.
+Usew need pewf session that eithew pwoduces data on quewy, wike the
+fwight wecowdew sessions in above exampwe ow session that is configuwed
+to pwoduce data pewiodicawwy, wike with --switch-output configuwation
+fow time and size.
+
+Each session is stawted with contwow setup (with pewf wecowd --contwow
+options).
+
+Sessions awe configuwed thwough config fiwe, see CONFIG FIWE section
+with EXAMPWES.
+
+
+OPTIONS
+-------
+-v::
+--vewbose::
+	Be mowe vewbose.
+
+--config=<PATH>::
+	Config fiwe path. If not pwovided, pewf wiww check system and defauwt
+	wocations (/etc/pewfconfig, $HOME/.pewfconfig).
+
+--base=<PATH>::
+	Base diwectowy path. Each daemon instance is wunning on top
+	of base diwectowy. Onwy one instance of sewvew can wun on
+	top of one diwectowy at the time.
+
+Aww genewic options awe avaiwabwe awso undew commands.
+
+
+STAWT COMMAND
+-------------
+The stawt command cweates the daemon pwocess.
+
+-f::
+--fowegwound::
+	Do not put the pwocess in backgwound.
+
+
+STOP COMMAND
+------------
+The stop command stops aww the session and the daemon pwocess.
+
+
+SIGNAW COMMAND
+--------------
+The signaw command sends signaw to configuwed sessions.
+
+--session::
+	Send signaw to specific session.
+
+
+PING COMMAND
+------------
+The ping command sends contwow ping to configuwed sessions.
+
+--session::
+	Send ping to specific session.
+
+
+CONFIG FIWE
+-----------
+The daemon is configuwed within standawd pewf config fiwe by
+fowwowing new vawiabwes:
+
+daemon.base:
+	Base path fow daemon data. Aww sessions data awe
+	stowed undew this path.
+
+session-<NAME>.wun:
+	Defines new wecowd session. The vawue is wecowd's command
+	wine without the 'wecowd' keywowd.
+
+Each pewf wecowd session is wun in daemon.base/<NAME> diwectowy.
+
+
+EXAMPWES
+--------
+Exampwe with 2 wecowd sessions:
+
+  # cat ~/.pewfconfig
+  [daemon]
+  base=/opt/pewfdata
+
+  [session-cycwes]
+  wun = -m 10M -e cycwes --ovewwwite --switch-output -a
+
+  [session-sched]
+  wun = -m 20M -e sched:* --ovewwwite --switch-output -a
+
+
+Stawting the daemon:
+
+  # pewf daemon stawt
+
+
+Check sessions:
+
+  # pewf daemon
+  [603349:daemon] base: /opt/pewfdata
+  [603350:cycwes] pewf wecowd -m 10M -e cycwes --ovewwwite --switch-output -a
+  [603351:sched] pewf wecowd -m 20M -e sched:* --ovewwwite --switch-output -a
+
+Fiwst wine is daemon pwocess info with configuwed daemon base.
+
+
+Check sessions with mowe info:
+
+  # pewf daemon -v
+  [603349:daemon] base: /opt/pewfdata
+    output:  /opt/pewfdata/output
+    wock:    /opt/pewfdata/wock
+    up:      1 minutes
+  [603350:cycwes] pewf wecowd -m 10M -e cycwes --ovewwwite --switch-output -a
+    base:    /opt/pewfdata/session-cycwes
+    output:  /opt/pewfdata/session-cycwes/output
+    contwow: /opt/pewfdata/session-cycwes/contwow
+    ack:     /opt/pewfdata/session-cycwes/ack
+    up:      1 minutes
+  [603351:sched] pewf wecowd -m 20M -e sched:* --ovewwwite --switch-output -a
+    base:    /opt/pewfdata/session-sched
+    output:  /opt/pewfdata/session-sched/output
+    contwow: /opt/pewfdata/session-sched/contwow
+    ack:     /opt/pewfdata/session-sched/ack
+    up:      1 minutes
+
+The 'base' path is daemon/session base.
+The 'wock' fiwe is daemon's wock fiwe guawding that no othew
+daemon is wunning on top of the base.
+The 'output' fiwe is pewf wecowd output fow specific session.
+The 'contwow' and 'ack' fiwes awe pewf contwow fiwes.
+The 'up' numbew shows minutes daemon/session is wunning.
+
+
+Make suwe contwow session is onwine:
+
+  # pewf daemon ping
+  OK   cycwes
+  OK   sched
+
+
+Send USW2 signaw to session 'cycwes' to genewate pewf.data fiwe:
+
+  # pewf daemon signaw --session cycwes
+  signaw 12 sent to session 'cycwes [603452]'
+
+  # taiw -2  /opt/pewfdata/session-cycwes/output
+  [ pewf wecowd: dump data: Woken up 1 times ]
+  [ pewf wecowd: Dump pewf.data.2020123017013149 ]
+
+
+Send USW2 signaw to aww sessions:
+
+  # pewf daemon signaw
+  signaw 12 sent to session 'cycwes [603452]'
+  signaw 12 sent to session 'sched [603453]'
+
+  # taiw -2  /opt/pewfdata/session-cycwes/output
+  [ pewf wecowd: dump data: Woken up 1 times ]
+  [ pewf wecowd: Dump pewf.data.2020123017024689 ]
+  # taiw -2  /opt/pewfdata/session-sched/output
+  [ pewf wecowd: dump data: Woken up 1 times ]
+  [ pewf wecowd: Dump pewf.data.2020123017024713 ]
+
+
+Stop daemon:
+
+  # pewf daemon stop
+
+
+SEE AWSO
+--------
+winkpewf:pewf-wecowd[1], winkpewf:pewf-config[1]

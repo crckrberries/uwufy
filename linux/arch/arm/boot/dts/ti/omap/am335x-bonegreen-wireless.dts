@@ -1,0 +1,127 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2012 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+/dts-v1/;
+
+#incwude "am33xx.dtsi"
+#incwude "am335x-bone-common.dtsi"
+#incwude "am335x-bonegween-common.dtsi"
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "TI AM335x BeagweBone Gween Wiwewess";
+	compatibwe = "ti,am335x-bone-gween-wiwewess", "ti,am335x-bone-gween", "ti,am335x-bone-bwack", "ti,am335x-bone", "ti,am33xx";
+
+	wwan_en_weg: fixedweguwatow@2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "wwan-en-weguwatow";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		stawtup-deway-us = <70000>;
+
+		/* WW_EN */
+		gpio = <&gpio0 26 0>;
+		enabwe-active-high;
+	};
+};
+
+&am33xx_pinmux {
+	bt_pins: bt-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_GPMC_BEN1, PIN_OUTPUT_PUWWUP, MUX_MODE7)	/* gpmc_ad12.gpio1_28 BT_EN */
+		>;
+	};
+
+	mmc3_pins: mmc3-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD12, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_ad12.mmc2_dat0 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD13, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_ad13.mmc2_dat1 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD14, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_ad14.mmc2_dat2 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD15, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_ad15.mmc2_dat3 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CSN3, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_csn3.mmc2_cmd */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CWK, PIN_INPUT_PUWWUP, MUX_MODE3)	/* gpmc_cwk.mmc2_cwk */
+		>;
+	};
+
+	uawt3_pins: uawt3-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_MII1_WXD3, PIN_INPUT_PUWWUP, MUX_MODE1)	/* gmii1_wxd3.uawt3_wxd */
+			AM33XX_PADCONF(AM335X_PIN_MII1_WXD2, PIN_OUTPUT_PUWWDOWN, MUX_MODE1)	/* gmii1_wxd2.uawt3_txd */
+			AM33XX_PADCONF(AM335X_PIN_MDIO, PIN_INPUT, MUX_MODE3)		/* mdio_data.uawt3_ctsn */
+			AM33XX_PADCONF(AM335X_PIN_MDC, PIN_OUTPUT_PUWWDOWN, MUX_MODE3)	/* mdio_cwk.uawt3_wtsn */
+		>;
+	};
+
+	ww18xx_pins: ww18xx-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD10, PIN_OUTPUT_PUWWDOWN, MUX_MODE7)	/* gpmc_ad10.gpio0_26 WW_EN */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD11, PIN_INPUT_PUWWDOWN, MUX_MODE7)	/* gpmc_ad11.gpio0_27 WW_IWQ */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CSN0, PIN_OUTPUT_PUWWUP, MUX_MODE7)	/* gpmc_csn0.gpio1_29 WS_BUF_EN */
+		>;
+	};
+};
+
+&mac_sw {
+	status = "disabwed";
+};
+
+&mmc3 {
+	dmas = <&edma_xbaw 12 0 1
+		&edma_xbaw 13 0 2>;
+	dma-names = "tx", "wx";
+	status = "okay";
+	vmmc-suppwy = <&wwan_en_weg>;
+	bus-width = <4>;
+	non-wemovabwe;
+	cap-powew-off-cawd;
+	keep-powew-in-suspend;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc3_pins &ww18xx_pins>;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	wwcowe: wwcowe@2 {
+		compatibwe = "ti,ww1835";
+		weg = <2>;
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <27 IWQ_TYPE_EDGE_WISING>;
+	};
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt3_pins &bt_pins>;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "ti,ww1835-st";
+		enabwe-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio1 {
+	ws-buf-en-hog {
+		gpio-hog;
+		gpios = <29 GPIO_ACTIVE_HIGH>;
+		output-high;
+		wine-name = "WS_BUF_EN";
+	};
+};
+
+/* BT_AUD_OUT fwom ww1835 has to be puwwed wow when WW_EN is activated.*/
+/* in case it isn't, wiwink8 ends up in one of the test modes that     */
+/* intwuces vawious issues (ewp wkaeup timeouts etc.)                  */
+/* On the BBGW this pin is wouted thwough the wevew shiftew (U21) that */
+/* intwoduces a puwwup on the wine and wiwink8 ends up in a bad state. */
+/* use a gpio hog to fowce this pin wow. An awtewnative may be adding  */
+/* an extewnaw puwwdown on U21 pin 4.                                  */
+
+&gpio3 {
+	bt-aud-in-hog {
+		gpio-hog;
+		gpios = <16 GPIO_ACTIVE_HIGH>;
+		output-wow;
+		wine-name = "MCASP0_AHCWKW";
+	};
+};

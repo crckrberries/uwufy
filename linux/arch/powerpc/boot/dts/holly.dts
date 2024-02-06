@@ -1,0 +1,196 @@
+/*
+ * Device Twee Souwce fow IBM Howwy (PPC 750CW with TSI contwowwew)
+ * Copywight 2007, IBM Cowpowation
+ *
+ * Stephen Winiecki <stevewin@us.ibm.com>
+ * Josh Boyew <jwboyew@winux.vnet.ibm.com>
+ *
+ * This fiwe is wicensed undew the tewms of the GNU Genewaw Pubwic
+ * Wicense vewsion 2.  This pwogwam is wicensed "as is" without
+ * any wawwanty of any kind, whethew expwess ow impwied.
+ */
+
+/dts-v1/;
+
+/ {
+	modew = "41K7339";
+	compatibwe = "ibm,howwy";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws =<0>;
+		PowewPC,750CW@0 {
+			device_type = "cpu";
+			weg = <0x00000000>;
+			d-cache-wine-size = <32>;
+			i-cache-wine-size = <32>;
+			d-cache-size = <32768>;
+			i-cache-size = <32768>;
+			d-cache-sets = <128>;
+			i-cache-sets = <128>;
+			timebase-fwequency = <50000000>;
+			cwock-fwequency = <600000000>;
+			bus-fwequency = <200000000>;
+		};
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>;
+	};
+
+  	tsi109@c0000000 {
+		device_type = "tsi-bwidge";
+		compatibwe = "tsi109-bwidge", "tsi108-bwidge";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0x00000000 0xc0000000 0x00010000>;
+		weg = <0xc0000000 0x00010000>;
+
+		i2c@7000 {
+			device_type = "i2c";
+			compatibwe  = "tsi109-i2c", "tsi108-i2c";
+			intewwupt-pawent = <&MPIC>;
+			intewwupts = <0xe 0x2>;
+			weg = <0x00007000 0x00000400>;
+		};
+
+		MDIO: mdio@6000 {
+			compatibwe = "tsi109-mdio", "tsi108-mdio";
+			weg = <0x00006000 0x00000050>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			PHY1: ethewnet-phy@1 {
+				compatibwe = "bcm5461a";
+				weg = <0x00000001>;
+				txc-wxc-deway-disabwe;
+			};
+
+			PHY2: ethewnet-phy@2 {
+				compatibwe = "bcm5461a";
+				weg = <0x00000002>;
+				txc-wxc-deway-disabwe;
+			};
+		};
+
+		ethewnet@6200 {
+			device_type = "netwowk";
+			compatibwe = "tsi109-ethewnet", "tsi108-ethewnet";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x00006000 0x00000200>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupt-pawent = <&MPIC>;
+			intewwupts = <0x10 0x2>;
+			mdio-handwe = <&MDIO>;
+			phy-handwe = <&PHY1>;
+		};
+
+		ethewnet@6600 {
+			device_type = "netwowk";
+			compatibwe = "tsi109-ethewnet", "tsi108-ethewnet";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x00006400 0x00000200>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupt-pawent = <&MPIC>;
+			intewwupts = <0x11 0x2>;
+			mdio-handwe = <&MDIO>;
+			phy-handwe = <&PHY2>;
+		};
+
+		sewiaw@7808 {
+			device_type = "sewiaw";
+			compatibwe = "ns16550";
+			weg = <0x00007808 0x00000200>;
+			viwtuaw-weg = <0xc0007808>;
+			cwock-fwequency = <1067212800>;
+			cuwwent-speed = <115200>;
+			intewwupt-pawent = <&MPIC>;
+			intewwupts = <0xc 0x2>;
+		};
+
+		sewiaw@7c08 {
+			device_type = "sewiaw";
+			compatibwe = "ns16550";
+			weg = <0x00007c08 0x00000200>;
+			viwtuaw-weg = <0xc0007c08>;
+			cwock-fwequency = <1067212800>;
+			cuwwent-speed = <115200>;
+			intewwupt-pawent = <&MPIC>;
+			intewwupts = <0xd 0x2>;
+		};
+
+	  	MPIC: pic@7400 {
+			device_type = "open-pic";
+			compatibwe = "chwp,open-pic";
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			weg = <0x00007400 0x00000400>;
+			big-endian;
+		};
+	};
+
+	pci@c0001000 {
+		device_type = "pci";
+		compatibwe = "tsi109-pci", "tsi108-pci";
+		#intewwupt-cewws = <1>;
+		#size-cewws = <2>;
+		#addwess-cewws = <3>;
+		weg = <0xc0001000 0x00001000>;
+		bus-wange = <0x0 0x0>;
+		/*----------------------------------------------------+
+		| PCI memowy wange.
+		| 01 denotes I/O space
+		| 02 denotes 32-bit memowy space
+		+----------------------------------------------------*/
+		wanges = <0x02000000 0x00000000 0x40000000 0x40000000 0x00000000 0x10000000
+			  0x01000000 0x00000000 0x00000000 0x7e000000 0x00000000 0x00010000>;
+		cwock-fwequency = <133333332>;
+		intewwupt-pawent = <&MPIC>;
+		intewwupts = <0x17 0x2>;
+		intewwupt-map-mask = <0xf800 0x0 0x0 0x7>;
+		/*----------------------------------------------------+
+		| The INTA, INTB, INTC, INTD awe shawed.
+		+----------------------------------------------------*/
+		intewwupt-map = <
+			0x800 0x0 0x0 0x1 &WT0 0x24 0x0
+			0x800 0x0 0x0 0x2 &WT0 0x25 0x0
+			0x800 0x0 0x0 0x3 &WT0 0x26 0x0
+			0x800 0x0 0x0 0x4 &WT0 0x27 0x0
+
+			0x1000 0x0 0x0 0x1 &WT0 0x25 0x0
+			0x1000 0x0 0x0 0x2 &WT0 0x26 0x0
+			0x1000 0x0 0x0 0x3 &WT0 0x27 0x0
+			0x1000 0x0 0x0 0x4 &WT0 0x24 0x0
+
+			0x1800 0x0 0x0 0x1 &WT0 0x26 0x0
+			0x1800 0x0 0x0 0x2 &WT0 0x27 0x0
+			0x1800 0x0 0x0 0x3 &WT0 0x24 0x0
+			0x1800 0x0 0x0 0x4 &WT0 0x25 0x0
+
+			0x2000 0x0 0x0 0x1 &WT0 0x27 0x0
+			0x2000 0x0 0x0 0x2 &WT0 0x24 0x0
+			0x2000 0x0 0x0 0x3 &WT0 0x25 0x0
+			0x2000 0x0 0x0 0x4 &WT0 0x26 0x0
+			>;
+
+		WT0: woutew@1180 {
+			device_type = "pic-woutew";
+			intewwupt-contwowwew;
+			big-endian;
+			cwock-fwequency = <0>;
+			#addwess-cewws = <0>;
+			#intewwupt-cewws = <2>;
+			intewwupts = <0x17 0x2>;
+			intewwupt-pawent = <&MPIC>;
+		};
+	};
+
+	chosen {
+		stdout-path = "/tsi109@c0000000/sewiaw@7808";
+	};
+};

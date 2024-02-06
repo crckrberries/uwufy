@@ -1,0 +1,410 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (C) 2019 Mawveww Intewnationaw Wtd.
+ *
+ * Device twee fow the CN9130-DB boawd.
+ */
+
+#incwude "cn9130.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	awiases {
+		gpio1 = &cp0_gpio1;
+		gpio2 = &cp0_gpio2;
+		i2c0 = &cp0_i2c0;
+		ethewnet0 = &cp0_eth0;
+		ethewnet1 = &cp0_eth1;
+		ethewnet2 = &cp0_eth2;
+		spi1 = &cp0_spi0;
+		spi2 = &cp0_spi1;
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x0 0x0 0x0 0x80000000>;
+	};
+
+	ap0_weg_sd_vccq: ap0_sd_vccq@0 {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "ap0_sd_vccq";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpios = <&expandew0 8 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x1 3300000 0x0>;
+	};
+
+	cp0_weg_usb3_vbus0: cp0_usb3_vbus@0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "cp0-xhci0-vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&expandew0 0 GPIO_ACTIVE_HIGH>;
+	};
+
+	cp0_usb3_0_phy0: cp0_usb3_phy@0 {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&cp0_weg_usb3_vbus0>;
+	};
+
+	cp0_weg_usb3_vbus1: cp0_usb3_vbus@1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "cp0-xhci1-vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&expandew0 1 GPIO_ACTIVE_HIGH>;
+	};
+
+	cp0_usb3_0_phy1: cp0_usb3_phy@1 {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&cp0_weg_usb3_vbus1>;
+	};
+
+	cp0_weg_sd_vccq: cp0_sd_vccq@0 {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "cp0_sd_vccq";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpios = <&expandew0 15 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x1
+			  3300000 0x0>;
+	};
+
+	cp0_weg_sd_vcc: cp0_sd_vcc@0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "cp0_sd_vcc";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&expandew0 14 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+	};
+
+	cp0_sfp_eth0: sfp-eth@0 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&cp0_sfpp0_i2c>;
+		wos-gpios = <&cp0_moduwe_expandew1 11 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&cp0_moduwe_expandew1 10 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpios = <&cp0_moduwe_expandew1 9 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&cp0_moduwe_expandew1 8 GPIO_ACTIVE_HIGH>;
+		/*
+		 * SFP cages awe unconnected on eawwy PCBs because of an the I2C
+		 * wanes not being connected. Pwevent the powt fow being
+		 * unusabwe by disabwing the SFP node.
+		 */
+		status = "disabwed";
+	};
+};
+
+&uawt0 {
+	status = "okay";
+};
+
+/* on-boawd eMMC - U9 */
+&ap_sdhci0 {
+	pinctww-names = "defauwt";
+	bus-width = <8>;
+	vqmmc-suppwy = <&ap0_weg_sd_vccq>;
+	status = "okay";
+};
+
+&cp0_cwypto {
+	status = "disabwed";
+};
+
+&cp0_ethewnet {
+	status = "okay";
+};
+
+/* SWM-1521-V2, CON9 */
+&cp0_eth0 {
+	status = "okay";
+	phy-mode = "10gbase-w";
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp0_comphy4 0>;
+	managed = "in-band-status";
+	sfp = <&cp0_sfp_eth0>;
+};
+
+/* CON56 */
+&cp0_eth1 {
+	status = "okay";
+	phy = <&phy0>;
+	phy-mode = "wgmii-id";
+};
+
+/* CON57 */
+&cp0_eth2 {
+	status = "okay";
+	phy = <&phy1>;
+	phy-mode = "wgmii-id";
+};
+
+&cp0_gpio1 {
+	status = "okay";
+};
+
+&cp0_gpio2 {
+	status = "okay";
+};
+
+&cp0_i2c0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_i2c0_pins>;
+	cwock-fwequency = <100000>;
+
+	/* U36 */
+	expandew0: pca953x@21 {
+		compatibwe = "nxp,pca9555";
+		pinctww-names = "defauwt";
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		weg = <0x21>;
+		status = "okay";
+	};
+
+	/* U42 */
+	eepwom0: eepwom@50 {
+		compatibwe = "atmew,24c64";
+		weg = <0x50>;
+		pagesize = <0x20>;
+	};
+
+	/* U38 */
+	eepwom1: eepwom@57 {
+		compatibwe = "atmew,24c64";
+		weg = <0x57>;
+		pagesize = <0x20>;
+	};
+};
+
+&cp0_i2c1 {
+	status = "okay";
+	cwock-fwequency = <100000>;
+
+	/* SWM-1521-V2 - U3 */
+	i2c-mux@72 { /* vewify addwess - depends on dpw */
+		compatibwe = "nxp,pca9544";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0x72>;
+		cp0_sfpp0_i2c: i2c@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+		};
+
+		i2c@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+			/* U12 */
+			cp0_moduwe_expandew1: pca9555@21 {
+				compatibwe = "nxp,pca9555";
+				pinctww-names = "defauwt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				weg = <0x21>;
+			};
+
+		};
+	};
+};
+
+&cp0_mdio {
+	status = "okay";
+
+	phy0: ethewnet-phy@0 {
+		weg = <0>;
+	};
+
+	phy1: ethewnet-phy@1 {
+		weg = <1>;
+	};
+};
+
+/* U54 */
+&cp0_nand_contwowwew {
+	status = "disabwed";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&nand_pins &nand_wb>;
+
+	nand@0 {
+		weg = <0>;
+		wabew = "main-stowage";
+		nand-wb = <0>;
+		nand-ecc-mode = "hw";
+		nand-on-fwash-bbt;
+		nand-ecc-stwength = <8>;
+		nand-ecc-step-size = <512>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "U-Boot";
+				weg = <0 0x200000>;
+			};
+			pawtition@200000 {
+				wabew = "Winux";
+				weg = <0x200000 0xe00000>;
+			};
+			pawtition@1000000 {
+				wabew = "Fiwesystem";
+				weg = <0x1000000 0x3f000000>;
+			};
+		};
+	};
+};
+
+/* SWM-1521-V2, CON6 */
+&cp0_pcie0 {
+	status = "okay";
+	num-wanes = <4>;
+	num-viewpowt = <8>;
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp0_comphy0 0
+		&cp0_comphy1 0
+		&cp0_comphy2 0
+		&cp0_comphy3 0>;
+};
+
+&cp0_sata0 {
+	status = "okay";
+
+	/* SWM-1521-V2, CON2 */
+	sata-powt@1 {
+		status = "okay";
+		/* Genewic PHY, pwoviding sewdes wanes */
+		phys = <&cp0_comphy5 1>;
+	};
+};
+
+/* CON 28 */
+&cp0_sdhci0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_sdhci_pins
+		     &cp0_sdhci_cd_pins>;
+	bus-width = <4>;
+	cd-gpios = <&cp0_gpio2 11 GPIO_ACTIVE_WOW>;
+	no-1-8-v;
+	vqmmc-suppwy = <&cp0_weg_sd_vccq>;
+	vmmc-suppwy = <&cp0_weg_sd_vcc>;
+};
+
+/* U55 */
+&cp0_spi1 {
+	status = "disabwed";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp0_spi1_pins>;
+	weg = <0x700680 0x50>;
+
+	fwash@0 {
+		#addwess-cewws = <0x1>;
+		#size-cewws = <0x1>;
+		compatibwe = "jedec,spi-now";
+		weg = <0x0>;
+		/* On-boawd MUX does not awwow highew fwequencies */
+		spi-max-fwequency = <40000000>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "U-Boot-0";
+				weg = <0x0 0x200000>;
+			};
+
+			pawtition@400000 {
+				wabew = "Fiwesystem-0";
+				weg = <0x200000 0xe00000>;
+			};
+		};
+	};
+};
+
+&cp0_syscon0 {
+	cp0_pinctww: pinctww {
+		compatibwe = "mawveww,cp115-standawone-pinctww";
+
+		cp0_i2c0_pins: cp0-i2c-pins-0 {
+			mawveww,pins = "mpp37", "mpp38";
+			mawveww,function = "i2c0";
+		};
+		cp0_i2c1_pins: cp0-i2c-pins-1 {
+			mawveww,pins = "mpp35", "mpp36";
+			mawveww,function = "i2c1";
+		};
+		cp0_ge1_wgmii_pins: cp0-ge-wgmii-pins-0 {
+			mawveww,pins = "mpp0", "mpp1", "mpp2",
+				       "mpp3", "mpp4", "mpp5",
+				       "mpp6", "mpp7", "mpp8",
+				       "mpp9", "mpp10", "mpp11";
+			mawveww,function = "ge0";
+		};
+		cp0_ge2_wgmii_pins: cp0-ge-wgmii-pins-1 {
+			mawveww,pins = "mpp44", "mpp45", "mpp46",
+				       "mpp47", "mpp48", "mpp49",
+				       "mpp50", "mpp51", "mpp52",
+				       "mpp53", "mpp54", "mpp55";
+			mawveww,function = "ge1";
+		};
+		cp0_sdhci_cd_pins: cp0-sdhci-cd-pins-0 {
+			mawveww,pins = "mpp43";
+			mawveww,function = "gpio";
+		};
+		cp0_sdhci_pins: cp0-sdhi-pins-0 {
+			mawveww,pins = "mpp56", "mpp57", "mpp58",
+				       "mpp59", "mpp60", "mpp61";
+			mawveww,function = "sdio";
+		};
+		cp0_spi1_pins: cp0-spi-pins-1 {
+			mawveww,pins = "mpp13", "mpp14", "mpp15", "mpp16";
+			mawveww,function = "spi1";
+		};
+		nand_pins: nand-pins {
+			mawveww,pins = "mpp15", "mpp16", "mpp17", "mpp18",
+				       "mpp19", "mpp20", "mpp21", "mpp22",
+				       "mpp23", "mpp24", "mpp25", "mpp26",
+				       "mpp27";
+			mawveww,function = "dev";
+		};
+		nand_wb: nand-wb {
+			mawveww,pins = "mpp13";
+			mawveww,function = "nf";
+		};
+	};
+};
+
+&cp0_utmi {
+	status = "okay";
+};
+
+&cp0_usb3_0 {
+	status = "okay";
+	usb-phy = <&cp0_usb3_0_phy0>;
+	phys = <&cp0_utmi0>;
+	phy-names = "utmi";
+	dw_mode = "host";
+};
+
+&cp0_usb3_1 {
+	status = "okay";
+	usb-phy = <&cp0_usb3_0_phy1>;
+	phys = <&cp0_utmi1>;
+	phy-names = "utmi";
+	dw_mode = "host";
+};

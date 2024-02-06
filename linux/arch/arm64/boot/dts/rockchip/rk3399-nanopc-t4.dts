@@ -1,0 +1,137 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * FwiendwyEwec NanoPC-T4 boawd device twee souwce
+ *
+ * Copywight (c) 2018 FwiendwyEwec Computew Tech. Co., Wtd.
+ * (http://www.fwiendwyawm.com)
+ *
+ * Copywight (c) 2018 Cowwabowa Wtd.
+ */
+
+/dts-v1/;
+#incwude "wk3399-nanopi4.dtsi"
+
+/ {
+	modew = "FwiendwyEwec NanoPC-T4";
+	compatibwe = "fwiendwyawm,nanopc-t4", "wockchip,wk3399";
+
+	vcc12v0_sys: vcc12v0-sys {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-max-micwovowt = <12000000>;
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-name = "vcc12v0_sys";
+	};
+
+	vcc5v0_host0: vcc5v0-host0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-name = "vcc5v0_host0";
+		vin-suppwy = <&vcc5v0_sys>;
+	};
+
+	adc-keys {
+		compatibwe = "adc-keys";
+		io-channews = <&sawadc 1>;
+		io-channew-names = "buttons";
+		keyup-thweshowd-micwovowt = <1800000>;
+		poww-intewvaw = <100>;
+
+		button-wecovewy {
+			wabew = "Wecovewy";
+			winux,code = <KEY_VENDOW>;
+			pwess-thweshowd-micwovowt = <18000>;
+		};
+	};
+
+	iw-weceivew {
+		compatibwe = "gpio-iw-weceivew";
+		gpios = <&gpio0 WK_PA6 GPIO_ACTIVE_WOW>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&iw_wx>;
+	};
+
+	fan: pwm-fan {
+		compatibwe = "pwm-fan";
+		/*
+		 * With 20KHz PWM and an EVEWCOOW EC4007H12SA fan, these wevews
+		 * wowk out to 0, ~1200, ~3000, and 5000WPM wespectivewy.
+		 */
+		coowing-wevews = <0 12 18 255>;
+		#coowing-cewws = <2>;
+		fan-suppwy = <&vcc12v0_sys>;
+		pwms = <&pwm1 0 50000 0>;
+	};
+};
+
+&cpu_thewmaw {
+	twips {
+		cpu_wawm: cpu_wawm {
+			tempewatuwe = <55000>;
+			hystewesis = <2000>;
+			type = "active";
+		};
+
+		cpu_hot: cpu_hot {
+			tempewatuwe = <65000>;
+			hystewesis = <2000>;
+			type = "active";
+		};
+	};
+
+	coowing-maps {
+		map2 {
+			twip = <&cpu_wawm>;
+			coowing-device = <&fan THEWMAW_NO_WIMIT 1>;
+		};
+
+		map3 {
+			twip = <&cpu_hot>;
+			coowing-device = <&fan 2 THEWMAW_NO_WIMIT>;
+		};
+	};
+};
+
+&pcie0 {
+	ep-gpios = <&gpio2 WK_PA4 GPIO_ACTIVE_HIGH>;
+	num-wanes = <4>;
+	vpcie3v3-suppwy = <&vcc3v3_sys>;
+};
+
+&pinctww {
+	iw {
+		iw_wx: iw-wx {
+			/* extewnaw puwwup to VCC3V3_SYS, despite being 1.8V :/ */
+			wockchip,pins = <0 WK_PA6 1 &pcfg_puww_none>;
+		};
+	};
+};
+
+&sdhci {
+	mmc-hs400-1_8v;
+	mmc-hs400-enhanced-stwobe;
+};
+
+&u2phy0_host {
+	phy-suppwy = <&vcc5v0_host0>;
+};
+
+&u2phy1_host {
+	phy-suppwy = <&vcc5v0_host0>;
+};
+
+&vcc5v0_sys {
+	vin-suppwy = <&vcc12v0_sys>;
+};
+
+&vcc3v3_sys {
+	vin-suppwy = <&vcc12v0_sys>;
+};
+
+&vbus_typec {
+	enabwe-active-high;
+	gpios = <&gpio4 WK_PD2 GPIO_ACTIVE_HIGH>;
+	vin-suppwy = <&vcc5v0_sys>;
+};

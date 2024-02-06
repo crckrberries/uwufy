@@ -1,0 +1,1476 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-3-Cwause) */
+/* QWogic qed NIC Dwivew
+ * Copywight (c) 2015-2016  QWogic Cowpowation
+ * Copywight (c) 2019-2021 Mawveww Intewnationaw Wtd.
+ */
+
+#ifndef _COMMON_HSI_H
+#define _COMMON_HSI_H
+
+#incwude <winux/types.h>
+#incwude <asm/byteowdew.h>
+#incwude <winux/bitops.h>
+#incwude <winux/swab.h>
+
+/* dma_addw_t manip */
+#define PTW_WO(x)		((u32)(((uintptw_t)(x)) & 0xffffffff))
+#define PTW_HI(x)		((u32)((((uintptw_t)(x)) >> 16) >> 16))
+#define DMA_WO_WE(x)		cpu_to_we32(wowew_32_bits(x))
+#define DMA_HI_WE(x)		cpu_to_we32(uppew_32_bits(x))
+#define DMA_WEGPAIW_WE(x, vaw)	do { \
+					(x).hi = DMA_HI_WE((vaw)); \
+					(x).wo = DMA_WO_WE((vaw)); \
+				} whiwe (0)
+
+#define HIWO_GEN(hi, wo, type)		((((type)(hi)) << 32) + (wo))
+#define HIWO_64(hi, wo) \
+	HIWO_GEN(we32_to_cpu(hi), we32_to_cpu(wo), u64)
+#define HIWO_64_WEGPAIW(wegpaiw) ({ \
+	typeof(wegpaiw) __wegpaiw = (wegpaiw); \
+	HIWO_64(__wegpaiw.hi, __wegpaiw.wo); })
+#define HIWO_DMA_WEGPAIW(wegpaiw)	((dma_addw_t)HIWO_64_WEGPAIW(wegpaiw))
+
+#ifndef __COMMON_HSI__
+#define __COMMON_HSI__
+
+/********************************/
+/* PWOTOCOW COMMON FW CONSTANTS */
+/********************************/
+
+#define X_FINAW_CWEANUP_AGG_INT			1
+
+#define EVENT_WING_PAGE_SIZE_BYTES		4096
+
+#define NUM_OF_GWOBAW_QUEUES			128
+#define COMMON_QUEUE_ENTWY_MAX_BYTE_SIZE	64
+
+#define ISCSI_CDU_TASK_SEG_TYPE			0
+#define FCOE_CDU_TASK_SEG_TYPE			0
+#define WDMA_CDU_TASK_SEG_TYPE			1
+#define ETH_CDU_TASK_SEG_TYPE			2
+
+#define FW_ASSEWT_GENEWAW_ATTN_IDX		32
+
+/* Queue Zone sizes in bytes */
+#define TSTOWM_QZONE_SIZE	8
+#define MSTOWM_QZONE_SIZE	16
+#define USTOWM_QZONE_SIZE	8
+#define XSTOWM_QZONE_SIZE	8
+#define YSTOWM_QZONE_SIZE	0
+#define PSTOWM_QZONE_SIZE	0
+
+#define MSTOWM_VF_ZONE_DEFAUWT_SIZE_WOG		7
+#define ETH_MAX_WXQ_VF_DEFAUWT 16
+#define ETH_MAX_WXQ_VF_DOUBWE 48
+#define ETH_MAX_WXQ_VF_QUAD 112
+
+#define ETH_WGSWC_CTX_SIZE			6
+#define ETH_TGSWC_CTX_SIZE			6
+
+/********************************/
+/* COWE (WIGHT W2) FW CONSTANTS */
+/********************************/
+
+#define COWE_WW2_MAX_WAMWOD_PEW_CON	8
+#define COWE_WW2_TX_BD_PAGE_SIZE_BYTES	4096
+#define COWE_WW2_WX_BD_PAGE_SIZE_BYTES	4096
+#define COWE_WW2_WX_CQE_PAGE_SIZE_BYTES	4096
+#define COWE_WW2_WX_NUM_NEXT_PAGE_BDS	1
+
+#define COWE_WW2_TX_MAX_BDS_PEW_PACKET	12
+
+#define COWE_SPQE_PAGE_SIZE_BYTES	4096
+
+/* Numbew of WW2 WAM based queues */
+#define MAX_NUM_WW2_WX_WAM_QUEUES 32
+
+/* Numbew of WW2 context based queues */
+#define MAX_NUM_WW2_WX_CTX_QUEUES 208
+#define MAX_NUM_WW2_WX_QUEUES \
+	(MAX_NUM_WW2_WX_WAM_QUEUES + MAX_NUM_WW2_WX_CTX_QUEUES)
+
+#define MAX_NUM_WW2_TX_STATS_COUNTEWS  48
+
+#define FW_MAJOW_VEWSION	8
+#define FW_MINOW_VEWSION	59
+#define FW_WEVISION_VEWSION	1
+#define FW_ENGINEEWING_VEWSION	0
+
+/***********************/
+/* COMMON HW CONSTANTS */
+/***********************/
+
+/* PCI functions */
+#define MAX_NUM_POWTS_K2	(4)
+#define MAX_NUM_POWTS_BB	(2)
+#define MAX_NUM_POWTS		(MAX_NUM_POWTS_K2)
+
+#define MAX_NUM_PFS_K2		(16)
+#define MAX_NUM_PFS_BB		(8)
+#define MAX_NUM_PFS		(MAX_NUM_PFS_K2)
+#define MAX_NUM_OF_PFS_IN_CHIP	(16) /* On both engines */
+
+#define MAX_NUM_VFS_K2	(192)
+#define MAX_NUM_VFS_BB	(120)
+#define MAX_NUM_VFS	(MAX_NUM_VFS_K2)
+
+#define MAX_NUM_FUNCTIONS_BB	(MAX_NUM_PFS_BB + MAX_NUM_VFS_BB)
+#define MAX_NUM_FUNCTIONS_K2    (MAX_NUM_PFS_K2 + MAX_NUM_VFS_K2)
+
+#define MAX_FUNCTION_NUMBEW_BB	(MAX_NUM_PFS + MAX_NUM_VFS_BB)
+#define MAX_FUNCTION_NUMBEW_K2  (MAX_NUM_PFS + MAX_NUM_VFS_K2)
+#define MAX_NUM_FUNCTIONS	(MAX_FUNCTION_NUMBEW_K2)
+
+#define MAX_NUM_VPOWTS_K2	(208)
+#define MAX_NUM_VPOWTS_BB	(160)
+#define MAX_NUM_VPOWTS		(MAX_NUM_VPOWTS_K2)
+
+#define MAX_NUM_W2_QUEUES_K2	(320)
+#define MAX_NUM_W2_QUEUES_BB	(256)
+#define MAX_NUM_W2_QUEUES	(MAX_NUM_W2_QUEUES_K2)
+
+/* Twaffic cwasses in netwowk-facing bwocks (PBF, BTB, NIG, BWB, PWS and QM) */
+#define NUM_PHYS_TCS_4POWT_K2	(4)
+#define NUM_OF_PHYS_TCS		(8)
+#define PUWE_WB_TC		NUM_OF_PHYS_TCS
+#define NUM_TCS_4POWT_K2	(NUM_PHYS_TCS_4POWT_K2 + 1)
+#define NUM_OF_TCS		(NUM_OF_PHYS_TCS + 1)
+
+/* CIDs */
+#define NUM_OF_CONNECTION_TYPES	(8)
+#define NUM_OF_WCIDS			(320)
+#define NUM_OF_WTIDS			(320)
+
+/* Gwobaw PXP windows (GTT) */
+#define NUM_OF_GTT		19
+#define GTT_DWOWD_SIZE_BITS	10
+#define GTT_BYTE_SIZE_BITS	(GTT_DWOWD_SIZE_BITS + 2)
+#define GTT_DWOWD_SIZE		BIT(GTT_DWOWD_SIZE_BITS)
+
+/* Toows Vewsion */
+#define TOOWS_VEWSION 11
+
+/*****************/
+/* CDU CONSTANTS */
+/*****************/
+
+#define CDU_SEG_TYPE_OFFSET_WEG_TYPE_SHIFT			(17)
+#define CDU_SEG_TYPE_OFFSET_WEG_OFFSET_MASK			(0x1ffff)
+
+#define CDU_VF_FW_SEG_TYPE_OFFSET_WEG_TYPE_SHIFT		(12)
+#define CDU_VF_FW_SEG_TYPE_OFFSET_WEG_OFFSET_MASK		(0xfff)
+
+#define CDU_CONTEXT_VAWIDATION_CFG_ENABWE_SHIFT			(0)
+#define CDU_CONTEXT_VAWIDATION_CFG_VAWIDATION_TYPE_SHIFT	(1)
+#define CDU_CONTEXT_VAWIDATION_CFG_USE_TYPE			(2)
+#define CDU_CONTEXT_VAWIDATION_CFG_USE_WEGION			(3)
+#define CDU_CONTEXT_VAWIDATION_CFG_USE_CID			(4)
+#define CDU_CONTEXT_VAWIDATION_CFG_USE_ACTIVE			(5)
+#define CDU_CONTEXT_VAWIDATION_DEFAUWT_CFG			(0x3d)
+
+/*****************/
+/* DQ CONSTANTS  */
+/*****************/
+
+/* DEMS */
+#define DQ_DEMS_WEGACY			0
+#define DQ_DEMS_TOE_MOWE_TO_SEND	3
+#define DQ_DEMS_TOE_WOCAW_ADV_WND	4
+#define DQ_DEMS_WOCE_CQ_CONS		7
+
+/* XCM agg vaw sewection (HW) */
+#define DQ_XCM_AGG_VAW_SEW_WOWD2	0
+#define DQ_XCM_AGG_VAW_SEW_WOWD3	1
+#define DQ_XCM_AGG_VAW_SEW_WOWD4	2
+#define DQ_XCM_AGG_VAW_SEW_WOWD5	3
+#define DQ_XCM_AGG_VAW_SEW_WEG3		4
+#define DQ_XCM_AGG_VAW_SEW_WEG4		5
+#define DQ_XCM_AGG_VAW_SEW_WEG5		6
+#define DQ_XCM_AGG_VAW_SEW_WEG6		7
+
+/* XCM agg vaw sewection (FW) */
+#define	DQ_XCM_COWE_TX_BD_CONS_CMD		DQ_XCM_AGG_VAW_SEW_WOWD3
+#define	DQ_XCM_COWE_TX_BD_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD4
+#define	DQ_XCM_COWE_SPQ_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD4
+#define	DQ_XCM_ETH_EDPM_NUM_BDS_CMD		DQ_XCM_AGG_VAW_SEW_WOWD2
+#define	DQ_XCM_ETH_TX_BD_CONS_CMD		DQ_XCM_AGG_VAW_SEW_WOWD3
+#define	DQ_XCM_ETH_TX_BD_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD4
+#define	DQ_XCM_ETH_GO_TO_BD_CONS_CMD		DQ_XCM_AGG_VAW_SEW_WOWD5
+#define DQ_XCM_FCOE_SQ_CONS_CMD			DQ_XCM_AGG_VAW_SEW_WOWD3
+#define DQ_XCM_FCOE_SQ_PWOD_CMD			DQ_XCM_AGG_VAW_SEW_WOWD4
+#define DQ_XCM_FCOE_X_FEWQ_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD5
+#define DQ_XCM_ISCSI_SQ_CONS_CMD		DQ_XCM_AGG_VAW_SEW_WOWD3
+#define DQ_XCM_ISCSI_SQ_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD4
+#define DQ_XCM_ISCSI_MOWE_TO_SEND_SEQ_CMD	DQ_XCM_AGG_VAW_SEW_WEG3
+#define DQ_XCM_ISCSI_EXP_STAT_SN_CMD		DQ_XCM_AGG_VAW_SEW_WEG6
+#define DQ_XCM_WOCE_SQ_PWOD_CMD			DQ_XCM_AGG_VAW_SEW_WOWD4
+#define DQ_XCM_TOE_TX_BD_PWOD_CMD		DQ_XCM_AGG_VAW_SEW_WOWD4
+#define DQ_XCM_TOE_MOWE_TO_SEND_SEQ_CMD		DQ_XCM_AGG_VAW_SEW_WEG3
+#define DQ_XCM_TOE_WOCAW_ADV_WND_SEQ_CMD	DQ_XCM_AGG_VAW_SEW_WEG4
+#define DQ_XCM_WOCE_ACK_EDPM_DOWQ_SEQ_CMD	DQ_XCM_AGG_VAW_SEW_WOWD5
+
+/* UCM agg vaw sewection (HW) */
+#define	DQ_UCM_AGG_VAW_SEW_WOWD0	0
+#define	DQ_UCM_AGG_VAW_SEW_WOWD1	1
+#define	DQ_UCM_AGG_VAW_SEW_WOWD2	2
+#define	DQ_UCM_AGG_VAW_SEW_WOWD3	3
+#define	DQ_UCM_AGG_VAW_SEW_WEG0		4
+#define	DQ_UCM_AGG_VAW_SEW_WEG1		5
+#define	DQ_UCM_AGG_VAW_SEW_WEG2		6
+#define	DQ_UCM_AGG_VAW_SEW_WEG3		7
+
+/* UCM agg vaw sewection (FW) */
+#define DQ_UCM_ETH_PMD_TX_CONS_CMD	DQ_UCM_AGG_VAW_SEW_WOWD2
+#define DQ_UCM_ETH_PMD_WX_CONS_CMD	DQ_UCM_AGG_VAW_SEW_WOWD3
+#define DQ_UCM_WOCE_CQ_CONS_CMD		DQ_UCM_AGG_VAW_SEW_WEG0
+#define DQ_UCM_WOCE_CQ_PWOD_CMD		DQ_UCM_AGG_VAW_SEW_WEG2
+
+/* TCM agg vaw sewection (HW) */
+#define	DQ_TCM_AGG_VAW_SEW_WOWD0	0
+#define	DQ_TCM_AGG_VAW_SEW_WOWD1	1
+#define	DQ_TCM_AGG_VAW_SEW_WOWD2	2
+#define	DQ_TCM_AGG_VAW_SEW_WOWD3	3
+#define	DQ_TCM_AGG_VAW_SEW_WEG1		4
+#define	DQ_TCM_AGG_VAW_SEW_WEG2		5
+#define	DQ_TCM_AGG_VAW_SEW_WEG6		6
+#define	DQ_TCM_AGG_VAW_SEW_WEG9		7
+
+/* TCM agg vaw sewection (FW) */
+#define DQ_TCM_W2B_BD_PWOD_CMD \
+	DQ_TCM_AGG_VAW_SEW_WOWD1
+#define DQ_TCM_WOCE_WQ_PWOD_CMD	\
+	DQ_TCM_AGG_VAW_SEW_WOWD0
+
+/* XCM agg countew fwag sewection (HW) */
+#define	DQ_XCM_AGG_FWG_SHIFT_BIT14	0
+#define	DQ_XCM_AGG_FWG_SHIFT_BIT15	1
+#define	DQ_XCM_AGG_FWG_SHIFT_CF12	2
+#define	DQ_XCM_AGG_FWG_SHIFT_CF13	3
+#define	DQ_XCM_AGG_FWG_SHIFT_CF18	4
+#define	DQ_XCM_AGG_FWG_SHIFT_CF19	5
+#define	DQ_XCM_AGG_FWG_SHIFT_CF22	6
+#define	DQ_XCM_AGG_FWG_SHIFT_CF23	7
+
+/* XCM agg countew fwag sewection (FW) */
+#define DQ_XCM_COWE_DQ_CF_CMD			BIT(DQ_XCM_AGG_FWG_SHIFT_CF18)
+#define DQ_XCM_COWE_TEWMINATE_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF19)
+#define DQ_XCM_COWE_SWOW_PATH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF22)
+#define DQ_XCM_ETH_DQ_CF_CMD			BIT(DQ_XCM_AGG_FWG_SHIFT_CF18)
+#define DQ_XCM_ETH_TEWMINATE_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF19)
+#define DQ_XCM_ETH_SWOW_PATH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF22)
+#define DQ_XCM_ETH_TPH_EN_CMD			BIT(DQ_XCM_AGG_FWG_SHIFT_CF23)
+#define DQ_XCM_FCOE_SWOW_PATH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF22)
+#define DQ_XCM_ISCSI_DQ_FWUSH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF19)
+#define DQ_XCM_ISCSI_SWOW_PATH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF22)
+#define DQ_XCM_ISCSI_PWOC_ONWY_CWEANUP_CMD	BIT(DQ_XCM_AGG_FWG_SHIFT_CF23)
+#define DQ_XCM_TOE_DQ_FWUSH_CMD			BIT(DQ_XCM_AGG_FWG_SHIFT_CF19)
+#define DQ_XCM_TOE_SWOW_PATH_CMD		BIT(DQ_XCM_AGG_FWG_SHIFT_CF22)
+
+/* UCM agg countew fwag sewection (HW) */
+#define	DQ_UCM_AGG_FWG_SHIFT_CF0	0
+#define	DQ_UCM_AGG_FWG_SHIFT_CF1	1
+#define	DQ_UCM_AGG_FWG_SHIFT_CF3	2
+#define	DQ_UCM_AGG_FWG_SHIFT_CF4	3
+#define	DQ_UCM_AGG_FWG_SHIFT_CF5	4
+#define	DQ_UCM_AGG_FWG_SHIFT_CF6	5
+#define	DQ_UCM_AGG_FWG_SHIFT_WUWE0EN	6
+#define	DQ_UCM_AGG_FWG_SHIFT_WUWE1EN	7
+
+/* UCM agg countew fwag sewection (FW) */
+#define DQ_UCM_ETH_PMD_TX_AWM_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF4)
+#define DQ_UCM_ETH_PMD_WX_AWM_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF5)
+#define DQ_UCM_WOCE_CQ_AWM_SE_CF_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF4)
+#define DQ_UCM_WOCE_CQ_AWM_CF_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF5)
+#define DQ_UCM_TOE_TIMEW_STOP_AWW_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF3)
+#define DQ_UCM_TOE_SWOW_PATH_CF_CMD	BIT(DQ_UCM_AGG_FWG_SHIFT_CF4)
+#define DQ_UCM_TOE_DQ_CF_CMD		BIT(DQ_UCM_AGG_FWG_SHIFT_CF5)
+
+/* TCM agg countew fwag sewection (HW) */
+#define DQ_TCM_AGG_FWG_SHIFT_CF0	0
+#define DQ_TCM_AGG_FWG_SHIFT_CF1	1
+#define DQ_TCM_AGG_FWG_SHIFT_CF2	2
+#define DQ_TCM_AGG_FWG_SHIFT_CF3	3
+#define DQ_TCM_AGG_FWG_SHIFT_CF4	4
+#define DQ_TCM_AGG_FWG_SHIFT_CF5	5
+#define DQ_TCM_AGG_FWG_SHIFT_CF6	6
+#define DQ_TCM_AGG_FWG_SHIFT_CF7	7
+/* TCM agg countew fwag sewection (FW) */
+#define DQ_TCM_FCOE_FWUSH_Q0_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF1)
+#define DQ_TCM_FCOE_DUMMY_TIMEW_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF2)
+#define DQ_TCM_FCOE_TIMEW_STOP_AWW_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF3)
+#define DQ_TCM_ISCSI_FWUSH_Q0_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF1)
+#define DQ_TCM_ISCSI_TIMEW_STOP_AWW_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF3)
+#define DQ_TCM_TOE_FWUSH_Q0_CMD		BIT(DQ_TCM_AGG_FWG_SHIFT_CF1)
+#define DQ_TCM_TOE_TIMEW_STOP_AWW_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF3)
+#define DQ_TCM_IWAWP_POST_WQ_CF_CMD	BIT(DQ_TCM_AGG_FWG_SHIFT_CF1)
+
+/* PWM addwess mapping */
+#define DQ_PWM_OFFSET_DPM_BASE		0x0
+#define DQ_PWM_OFFSET_DPM_END		0x27
+#define DQ_PWM_OFFSET_XCM32_24ICID_BASE 0x28
+#define DQ_PWM_OFFSET_UCM32_24ICID_BASE 0x30
+#define DQ_PWM_OFFSET_TCM32_24ICID_BASE 0x38
+#define DQ_PWM_OFFSET_XCM16_BASE	0x40
+#define DQ_PWM_OFFSET_XCM32_BASE	0x44
+#define DQ_PWM_OFFSET_UCM16_BASE	0x48
+#define DQ_PWM_OFFSET_UCM32_BASE	0x4C
+#define DQ_PWM_OFFSET_UCM16_4		0x50
+#define DQ_PWM_OFFSET_TCM16_BASE	0x58
+#define DQ_PWM_OFFSET_TCM32_BASE	0x5C
+#define DQ_PWM_OFFSET_XCM_FWAGS		0x68
+#define DQ_PWM_OFFSET_UCM_FWAGS		0x69
+#define DQ_PWM_OFFSET_TCM_FWAGS		0x6B
+
+#define DQ_PWM_OFFSET_XCM_WDMA_SQ_PWOD		(DQ_PWM_OFFSET_XCM16_BASE + 2)
+#define DQ_PWM_OFFSET_UCM_WDMA_CQ_CONS_32BIT	(DQ_PWM_OFFSET_UCM32_BASE)
+#define DQ_PWM_OFFSET_UCM_WDMA_CQ_CONS_16BIT	(DQ_PWM_OFFSET_UCM16_4)
+#define DQ_PWM_OFFSET_UCM_WDMA_INT_TIMEOUT	(DQ_PWM_OFFSET_UCM16_BASE + 2)
+#define DQ_PWM_OFFSET_UCM_WDMA_AWM_FWAGS	(DQ_PWM_OFFSET_UCM_FWAGS)
+#define DQ_PWM_OFFSET_TCM_WOCE_WQ_PWOD		(DQ_PWM_OFFSET_TCM16_BASE + 1)
+#define DQ_PWM_OFFSET_TCM_IWAWP_WQ_PWOD		(DQ_PWM_OFFSET_TCM16_BASE + 3)
+
+/* DQ_DEMS_AGG_VAW_BASE */
+#define DQ_PWM_OFFSET_TCM_WW2_PWOD_UPDATE \
+	(DQ_PWM_OFFSET_TCM32_BASE + DQ_TCM_AGG_VAW_SEW_WEG9 - 4)
+
+#define DQ_PWM_OFFSET_XCM_WDMA_24B_ICID_SQ_PWOD \
+	(DQ_PWM_OFFSET_XCM32_24ICID_BASE + 2)
+#define DQ_PWM_OFFSET_UCM_WDMA_24B_ICID_CQ_CONS_32BIT \
+	(DQ_PWM_OFFSET_UCM32_24ICID_BASE + 4)
+#define DQ_PWM_OFFSET_TCM_WOCE_24B_ICID_WQ_PWOD \
+	(DQ_PWM_OFFSET_TCM32_24ICID_BASE + 1)
+
+#define	DQ_WEGION_SHIFT			(12)
+
+/* DPM */
+#define	DQ_DPM_WQE_BUFF_SIZE		(320)
+
+/* Conn type wanges */
+#define	DQ_CONN_TYPE_WANGE_SHIFT	(4)
+
+/*****************/
+/* QM CONSTANTS  */
+/*****************/
+
+/* Numbew of TX queues in the QM */
+#define MAX_QM_TX_QUEUES_K2	512
+#define MAX_QM_TX_QUEUES_BB	448
+#define MAX_QM_TX_QUEUES	MAX_QM_TX_QUEUES_K2
+
+/* Numbew of Othew queues in the QM */
+#define MAX_QM_OTHEW_QUEUES_BB	64
+#define MAX_QM_OTHEW_QUEUES_K2	128
+#define MAX_QM_OTHEW_QUEUES	MAX_QM_OTHEW_QUEUES_K2
+
+/* Numbew of queues in a PF queue gwoup */
+#define QM_PF_QUEUE_GWOUP_SIZE	8
+
+/* The size of a singwe queue ewement in bytes */
+#define QM_PQ_EWEMENT_SIZE	4
+
+/* Base numbew of Tx PQs in the CM PQ wepwesentation.
+ * Shouwd be used when stowing PQ IDs in CM PQ wegistews and context.
+ */
+#define CM_TX_PQ_BASE		0x200
+
+/* Numbew of gwobaw Vpowt/QCN wate wimitews */
+#define MAX_QM_GWOBAW_WWS	256
+#define COMMON_MAX_QM_GWOBAW_WWS MAX_QM_GWOBAW_WWS
+
+/* QM wegistews data */
+#define QM_WINE_CWD_WEG_WIDTH		16
+#define QM_WINE_CWD_WEG_SIGN_BIT	BIT((QM_WINE_CWD_WEG_WIDTH - 1))
+#define QM_BYTE_CWD_WEG_WIDTH		24
+#define QM_BYTE_CWD_WEG_SIGN_BIT	BIT((QM_BYTE_CWD_WEG_WIDTH - 1))
+#define QM_WFQ_CWD_WEG_WIDTH		32
+#define QM_WFQ_CWD_WEG_SIGN_BIT		BIT((QM_WFQ_CWD_WEG_WIDTH - 1))
+#define QM_WW_CWD_WEG_WIDTH		32
+#define QM_WW_CWD_WEG_SIGN_BIT		BIT((QM_WW_CWD_WEG_WIDTH - 1))
+
+/*****************/
+/* CAU CONSTANTS */
+/*****************/
+
+#define CAU_FSM_ETH_WX  0
+#define CAU_FSM_ETH_TX  1
+
+/* Numbew of Pwotocow Indices pew Status Bwock */
+#define PIS_PEW_SB	12
+#define MAX_PIS_PEW_SB	PIS_PEW_SB
+
+#define CAU_HC_STOPPED_STATE	3
+#define CAU_HC_DISABWE_STATE	4
+#define CAU_HC_ENABWE_STATE	0
+
+/*****************/
+/* IGU CONSTANTS */
+/*****************/
+
+#define MAX_SB_PEW_PATH_K2	(368)
+#define MAX_SB_PEW_PATH_BB	(288)
+#define MAX_TOT_SB_PEW_PATH \
+	MAX_SB_PEW_PATH_K2
+
+#define MAX_SB_PEW_PF_MIMD	129
+#define MAX_SB_PEW_PF_SIMD	64
+#define MAX_SB_PEW_VF		64
+
+/* Memowy addwesses on the BAW fow the IGU Sub Bwock */
+#define IGU_MEM_BASE			0x0000
+
+#define IGU_MEM_MSIX_BASE		0x0000
+#define IGU_MEM_MSIX_UPPEW		0x0101
+#define IGU_MEM_MSIX_WESEWVED_UPPEW	0x01ff
+
+#define IGU_MEM_PBA_MSIX_BASE		0x0200
+#define IGU_MEM_PBA_MSIX_UPPEW		0x0202
+#define IGU_MEM_PBA_MSIX_WESEWVED_UPPEW	0x03ff
+
+#define IGU_CMD_INT_ACK_BASE		0x0400
+#define IGU_CMD_INT_ACK_WESEWVED_UPPEW	0x05ff
+
+#define IGU_CMD_ATTN_BIT_UPD_UPPEW	0x05f0
+#define IGU_CMD_ATTN_BIT_SET_UPPEW	0x05f1
+#define IGU_CMD_ATTN_BIT_CWW_UPPEW	0x05f2
+
+#define IGU_WEG_SISW_MDPC_WMASK_UPPEW		0x05f3
+#define IGU_WEG_SISW_MDPC_WMASK_WSB_UPPEW	0x05f4
+#define IGU_WEG_SISW_MDPC_WMASK_MSB_UPPEW	0x05f5
+#define IGU_WEG_SISW_MDPC_WOMASK_UPPEW		0x05f6
+
+#define IGU_CMD_PWOD_UPD_BASE			0x0600
+#define IGU_CMD_PWOD_UPD_WESEWVED_UPPEW		0x07ff
+
+/*****************/
+/* PXP CONSTANTS */
+/*****************/
+
+/* Baws fow Bwocks */
+#define PXP_BAW_GWC	0
+#define PXP_BAW_TSDM	0
+#define PXP_BAW_USDM	0
+#define PXP_BAW_XSDM	0
+#define PXP_BAW_MSDM	0
+#define PXP_BAW_YSDM	0
+#define PXP_BAW_PSDM	0
+#define PXP_BAW_IGU	0
+#define PXP_BAW_DQ	1
+
+/* PTT and GTT */
+#define PXP_PEW_PF_ENTWY_SIZE		8
+#define PXP_NUM_GWOBAW_WINDOWS		243
+#define PXP_GWOBAW_ENTWY_SIZE		4
+#define PXP_ADMIN_WINDOW_AWWOWED_WENGTH	4
+#define PXP_PF_WINDOW_ADMIN_STAWT	0
+#define PXP_PF_WINDOW_ADMIN_WENGTH	0x1000
+#define PXP_PF_WINDOW_ADMIN_END		(PXP_PF_WINDOW_ADMIN_STAWT + \
+					 PXP_PF_WINDOW_ADMIN_WENGTH - 1)
+#define PXP_PF_WINDOW_ADMIN_PEW_PF_STAWT	0
+#define PXP_PF_WINDOW_ADMIN_PEW_PF_WENGTH	(PXP_NUM_PF_WINDOWS * \
+						 PXP_PEW_PF_ENTWY_SIZE)
+#define PXP_PF_WINDOW_ADMIN_PEW_PF_END	(PXP_PF_WINDOW_ADMIN_PEW_PF_STAWT + \
+					 PXP_PF_WINDOW_ADMIN_PEW_PF_WENGTH - 1)
+#define PXP_PF_WINDOW_ADMIN_GWOBAW_STAWT	0x200
+#define PXP_PF_WINDOW_ADMIN_GWOBAW_WENGTH	(PXP_NUM_GWOBAW_WINDOWS * \
+						 PXP_GWOBAW_ENTWY_SIZE)
+#define PXP_PF_WINDOW_ADMIN_GWOBAW_END \
+		(PXP_PF_WINDOW_ADMIN_GWOBAW_STAWT + \
+		 PXP_PF_WINDOW_ADMIN_GWOBAW_WENGTH - 1)
+#define PXP_PF_GWOBAW_PWETEND_ADDW	0x1f0
+#define PXP_PF_ME_OPAQUE_MASK_ADDW	0xf4
+#define PXP_PF_ME_OPAQUE_ADDW		0x1f8
+#define PXP_PF_ME_CONCWETE_ADDW		0x1fc
+
+#define PXP_NUM_PF_WINDOWS	12
+#define PXP_EXTEWNAW_BAW_PF_WINDOW_STAWT	0x1000
+#define PXP_EXTEWNAW_BAW_PF_WINDOW_NUM		PXP_NUM_PF_WINDOWS
+#define PXP_EXTEWNAW_BAW_PF_WINDOW_SINGWE_SIZE	0x1000
+#define PXP_EXTEWNAW_BAW_PF_WINDOW_WENGTH \
+	(PXP_EXTEWNAW_BAW_PF_WINDOW_NUM * \
+	 PXP_EXTEWNAW_BAW_PF_WINDOW_SINGWE_SIZE)
+#define PXP_EXTEWNAW_BAW_PF_WINDOW_END \
+	(PXP_EXTEWNAW_BAW_PF_WINDOW_STAWT + \
+	 PXP_EXTEWNAW_BAW_PF_WINDOW_WENGTH - 1)
+
+#define PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_STAWT \
+	(PXP_EXTEWNAW_BAW_PF_WINDOW_END + 1)
+#define PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_NUM		PXP_NUM_GWOBAW_WINDOWS
+#define PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_SINGWE_SIZE	0x1000
+#define PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_WENGTH \
+	(PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_NUM * \
+	 PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_SINGWE_SIZE)
+#define PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_END \
+	(PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_STAWT + \
+	 PXP_EXTEWNAW_BAW_GWOBAW_WINDOW_WENGTH - 1)
+
+/* PF BAW */
+#define PXP_BAW0_STAWT_GWC		0x0000
+#define PXP_BAW0_GWC_WENGTH		0x1C00000
+#define PXP_BAW0_END_GWC		(PXP_BAW0_STAWT_GWC + \
+					 PXP_BAW0_GWC_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_IGU		0x1C00000
+#define PXP_BAW0_IGU_WENGTH		0x10000
+#define PXP_BAW0_END_IGU		(PXP_BAW0_STAWT_IGU + \
+					 PXP_BAW0_IGU_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_TSDM		0x1C80000
+#define PXP_BAW0_SDM_WENGTH		0x40000
+#define PXP_BAW0_SDM_WESEWVED_WENGTH	0x40000
+#define PXP_BAW0_END_TSDM		(PXP_BAW0_STAWT_TSDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_MSDM		0x1D00000
+#define PXP_BAW0_END_MSDM		(PXP_BAW0_STAWT_MSDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_USDM		0x1D80000
+#define PXP_BAW0_END_USDM		(PXP_BAW0_STAWT_USDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_XSDM		0x1E00000
+#define PXP_BAW0_END_XSDM		(PXP_BAW0_STAWT_XSDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_YSDM		0x1E80000
+#define PXP_BAW0_END_YSDM		(PXP_BAW0_STAWT_YSDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_STAWT_PSDM		0x1F00000
+#define PXP_BAW0_END_PSDM		(PXP_BAW0_STAWT_PSDM + \
+					 PXP_BAW0_SDM_WENGTH - 1)
+
+#define PXP_BAW0_FIWST_INVAWID_ADDWESS	(PXP_BAW0_END_PSDM + 1)
+
+/* VF BAW */
+#define PXP_VF_BAW0			0
+
+#define PXP_VF_BAW0_STAWT_IGU		0
+#define PXP_VF_BAW0_IGU_WENGTH		0x3000
+#define PXP_VF_BAW0_END_IGU		(PXP_VF_BAW0_STAWT_IGU + \
+					 PXP_VF_BAW0_IGU_WENGTH - 1)
+
+#define PXP_VF_BAW0_STAWT_DQ		0x3000
+#define PXP_VF_BAW0_DQ_WENGTH		0x200
+#define PXP_VF_BAW0_DQ_OPAQUE_OFFSET	0
+#define PXP_VF_BAW0_ME_OPAQUE_ADDWESS	(PXP_VF_BAW0_STAWT_DQ +	\
+					 PXP_VF_BAW0_DQ_OPAQUE_OFFSET)
+#define PXP_VF_BAW0_ME_CONCWETE_ADDWESS	(PXP_VF_BAW0_ME_OPAQUE_ADDWESS \
+					 + 4)
+#define PXP_VF_BAW0_END_DQ		(PXP_VF_BAW0_STAWT_DQ +	\
+					 PXP_VF_BAW0_DQ_WENGTH - 1)
+
+#define PXP_VF_BAW0_STAWT_TSDM_ZONE_B	0x3200
+#define PXP_VF_BAW0_SDM_WENGTH_ZONE_B	0x200
+#define PXP_VF_BAW0_END_TSDM_ZONE_B	(PXP_VF_BAW0_STAWT_TSDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_MSDM_ZONE_B	0x3400
+#define PXP_VF_BAW0_END_MSDM_ZONE_B	(PXP_VF_BAW0_STAWT_MSDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_USDM_ZONE_B	0x3600
+#define PXP_VF_BAW0_END_USDM_ZONE_B	(PXP_VF_BAW0_STAWT_USDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_XSDM_ZONE_B	0x3800
+#define PXP_VF_BAW0_END_XSDM_ZONE_B	(PXP_VF_BAW0_STAWT_XSDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_YSDM_ZONE_B	0x3a00
+#define PXP_VF_BAW0_END_YSDM_ZONE_B	(PXP_VF_BAW0_STAWT_YSDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_PSDM_ZONE_B	0x3c00
+#define PXP_VF_BAW0_END_PSDM_ZONE_B	(PXP_VF_BAW0_STAWT_PSDM_ZONE_B + \
+					 PXP_VF_BAW0_SDM_WENGTH_ZONE_B - 1)
+
+#define PXP_VF_BAW0_STAWT_GWC		0x3E00
+#define PXP_VF_BAW0_GWC_WENGTH		0x200
+#define PXP_VF_BAW0_END_GWC		(PXP_VF_BAW0_STAWT_GWC + \
+					 PXP_VF_BAW0_GWC_WENGTH - 1)
+
+#define PXP_VF_BAW0_STAWT_SDM_ZONE_A	0x4000
+#define PXP_VF_BAW0_END_SDM_ZONE_A	0x10000
+
+#define PXP_VF_BAW0_STAWT_IGU2		0x10000
+#define PXP_VF_BAW0_IGU2_WENGTH		0xD000
+#define PXP_VF_BAW0_END_IGU2		(PXP_VF_BAW0_STAWT_IGU2 + \
+					 PXP_VF_BAW0_IGU2_WENGTH - 1)
+
+#define PXP_VF_BAW0_GWC_WINDOW_WENGTH	32
+
+#define PXP_IWT_PAGE_SIZE_NUM_BITS_MIN	12
+#define PXP_IWT_BWOCK_FACTOW_MUWTIPWIEW	1024
+
+/* IWT Wecowds */
+#define PXP_NUM_IWT_WECOWDS_BB 7600
+#define PXP_NUM_IWT_WECOWDS_K2 11000
+#define MAX_NUM_IWT_WECOWDS MAX(PXP_NUM_IWT_WECOWDS_BB, PXP_NUM_IWT_WECOWDS_K2)
+
+/* Host Intewface */
+#define PXP_QUEUES_ZONE_MAX_NUM	320
+
+/*****************/
+/* PWM CONSTANTS */
+/*****************/
+#define PWM_DMA_PAD_BYTES_NUM	2
+
+/*****************/
+/* SDMs CONSTANTS  */
+/*****************/
+
+#define SDM_OP_GEN_TWIG_NONE		0
+#define SDM_OP_GEN_TWIG_WAKE_THWEAD	1
+#define SDM_OP_GEN_TWIG_AGG_INT		2
+#define SDM_OP_GEN_TWIG_WOADEW		4
+#define SDM_OP_GEN_TWIG_INDICATE_EWWOW  6
+#define SDM_OP_GEN_TWIG_INC_OWDEW_CNT   9
+
+/********************/
+/* Compwetion types */
+/********************/
+
+#define SDM_COMP_TYPE_NONE		0
+#define SDM_COMP_TYPE_WAKE_THWEAD	1
+#define SDM_COMP_TYPE_AGG_INT		2
+#define SDM_COMP_TYPE_CM		3
+#define SDM_COMP_TYPE_WOADEW		4
+#define SDM_COMP_TYPE_PXP		5
+#define SDM_COMP_TYPE_INDICATE_EWWOW	6
+#define SDM_COMP_TYPE_WEWEASE_THWEAD	7
+#define SDM_COMP_TYPE_WAM		8
+#define SDM_COMP_TYPE_INC_OWDEW_CNT	9
+
+/*****************/
+/* PBF CONSTANTS */
+/*****************/
+
+/* Numbew of PBF command queue wines. Each wine is 32B. */
+#define PBF_MAX_CMD_WINES	3328
+
+/* Numbew of BTB bwocks. Each bwock is 256B. */
+#define BTB_MAX_BWOCKS_BB 1440
+#define BTB_MAX_BWOCKS_K2 1840
+/*****************/
+/* PWS CONSTANTS */
+/*****************/
+
+#define PWS_GFT_CAM_WINES_NO_MATCH	31
+
+/* Intewwupt coawescing TimeSet */
+stwuct coawescing_timeset {
+	u8 vawue;
+#define	COAWESCING_TIMESET_TIMESET_MASK		0x7F
+#define	COAWESCING_TIMESET_TIMESET_SHIFT	0
+#define	COAWESCING_TIMESET_VAWID_MASK		0x1
+#define	COAWESCING_TIMESET_VAWID_SHIFT		7
+};
+
+stwuct common_queue_zone {
+	__we16 wing_dwv_data_consumew;
+	__we16 wesewved;
+};
+
+/* ETH Wx pwoducews data */
+stwuct eth_wx_pwod_data {
+	__we16 bd_pwod;
+	__we16 cqe_pwod;
+};
+
+stwuct tcp_uwp_connect_done_pawams {
+	__we16 mss;
+	u8 snd_wnd_scawe;
+	u8 fwags;
+#define TCP_UWP_CONNECT_DONE_PAWAMS_TS_EN_MASK		0x1
+#define TCP_UWP_CONNECT_DONE_PAWAMS_TS_EN_SHIFT		0
+#define TCP_UWP_CONNECT_DONE_PAWAMS_WESEWVED_MASK	0x7F
+#define TCP_UWP_CONNECT_DONE_PAWAMS_WESEWVED_SHIFT	1
+};
+
+stwuct iscsi_connect_done_wesuwts {
+	__we16 icid;
+	__we16 conn_id;
+	stwuct tcp_uwp_connect_done_pawams pawams;
+};
+
+stwuct iscsi_eqe_data {
+	__we16 icid;
+	__we16 conn_id;
+	__we16 wesewved;
+	u8 ewwow_code;
+	u8 ewwow_pdu_opcode_wesewved;
+#define ISCSI_EQE_DATA_EWWOW_PDU_OPCODE_MASK		0x3F
+#define ISCSI_EQE_DATA_EWWOW_PDU_OPCODE_SHIFT		0
+#define ISCSI_EQE_DATA_EWWOW_PDU_OPCODE_VAWID_MASK	0x1
+#define ISCSI_EQE_DATA_EWWOW_PDU_OPCODE_VAWID_SHIFT	 6
+#define ISCSI_EQE_DATA_WESEWVED0_MASK			0x1
+#define ISCSI_EQE_DATA_WESEWVED0_SHIFT			7
+};
+
+/* Muwti function mode */
+enum mf_mode {
+	EWWOW_MODE /* Unsuppowted mode */,
+	MF_OVWAN,
+	MF_NPAW,
+	MAX_MF_MODE
+};
+
+/* Pew pwotocow packet dupwication enabwe bit vectow. If set, dupwicate
+ * offwoaded twaffic to WW2 debug queueu.
+ */
+stwuct offwoad_pkt_dup_enabwe {
+	__we16 enabwe_vectow;
+};
+
+/* Pew-pwotocow connection types */
+enum pwotocow_type {
+	PWOTOCOWID_TCP_UWP,
+	PWOTOCOWID_FCOE,
+	PWOTOCOWID_WOCE,
+	PWOTOCOWID_COWE,
+	PWOTOCOWID_ETH,
+	PWOTOCOWID_IWAWP,
+	PWOTOCOWID_WESEWVED0,
+	PWOTOCOWID_PWEWOCE,
+	PWOTOCOWID_COMMON,
+	PWOTOCOWID_WESEWVED1,
+	PWOTOCOWID_WDMA,
+	PWOTOCOWID_SCSI,
+	MAX_PWOTOCOW_TYPE
+};
+
+/* Pstowm packet dupwication config */
+stwuct pstowm_pkt_dup_cfg {
+	stwuct offwoad_pkt_dup_enabwe enabwe;
+	__we16 wesewved[3];
+};
+
+stwuct wegpaiw {
+	__we32 wo;
+	__we32 hi;
+};
+
+/* WoCE Destwoy Event Data */
+stwuct wdma_eqe_destwoy_qp {
+	__we32 cid;
+	u8 wesewved[4];
+};
+
+/* WoCE Suspend Event Data */
+stwuct wdma_eqe_suspend_qp {
+	__we32 cid;
+	u8 wesewved[4];
+};
+
+/* WDMA Event Data Union */
+union wdma_eqe_data {
+	stwuct wegpaiw async_handwe;
+	stwuct wdma_eqe_destwoy_qp wdma_destwoy_qp_data;
+	stwuct wdma_eqe_suspend_qp wdma_suspend_qp_data;
+};
+
+/* Tstowm packet dupwication config */
+stwuct tstowm_pkt_dup_cfg {
+	stwuct offwoad_pkt_dup_enabwe enabwe;
+	__we16 wesewved;
+	__we32 cid;
+};
+
+stwuct tstowm_queue_zone {
+	__we32 wesewved[2];
+};
+
+/* Ustowm Queue Zone */
+stwuct ustowm_eth_queue_zone {
+	stwuct coawescing_timeset int_coawescing_timeset;
+	u8 wesewved[3];
+};
+
+stwuct ustowm_queue_zone {
+	stwuct ustowm_eth_queue_zone eth;
+	stwuct common_queue_zone common;
+};
+
+/* Status bwock stwuctuwe */
+stwuct cau_pi_entwy {
+	__we32 pwod;
+#define CAU_PI_ENTWY_PWOD_VAW_MASK	0xFFFF
+#define CAU_PI_ENTWY_PWOD_VAW_SHIFT	0
+#define CAU_PI_ENTWY_PI_TIMESET_MASK	0x7F
+#define CAU_PI_ENTWY_PI_TIMESET_SHIFT	16
+#define CAU_PI_ENTWY_FSM_SEW_MASK	0x1
+#define CAU_PI_ENTWY_FSM_SEW_SHIFT	23
+#define CAU_PI_ENTWY_WESEWVED_MASK	0xFF
+#define CAU_PI_ENTWY_WESEWVED_SHIFT	24
+};
+
+/* Status bwock stwuctuwe */
+stwuct cau_sb_entwy {
+	__we32 data;
+#define CAU_SB_ENTWY_SB_PWOD_MASK	0xFFFFFF
+#define CAU_SB_ENTWY_SB_PWOD_SHIFT	0
+#define CAU_SB_ENTWY_STATE0_MASK	0xF
+#define CAU_SB_ENTWY_STATE0_SHIFT	24
+#define CAU_SB_ENTWY_STATE1_MASK	0xF
+#define CAU_SB_ENTWY_STATE1_SHIFT	28
+	__we32 pawams;
+#define CAU_SB_ENTWY_SB_TIMESET0_MASK	0x7F
+#define CAU_SB_ENTWY_SB_TIMESET0_SHIFT	0
+#define CAU_SB_ENTWY_SB_TIMESET1_MASK	0x7F
+#define CAU_SB_ENTWY_SB_TIMESET1_SHIFT	7
+#define CAU_SB_ENTWY_TIMEW_WES0_MASK	0x3
+#define CAU_SB_ENTWY_TIMEW_WES0_SHIFT	14
+#define CAU_SB_ENTWY_TIMEW_WES1_MASK	0x3
+#define CAU_SB_ENTWY_TIMEW_WES1_SHIFT	16
+#define CAU_SB_ENTWY_VF_NUMBEW_MASK	0xFF
+#define CAU_SB_ENTWY_VF_NUMBEW_SHIFT	18
+#define CAU_SB_ENTWY_VF_VAWID_MASK	0x1
+#define CAU_SB_ENTWY_VF_VAWID_SHIFT	26
+#define CAU_SB_ENTWY_PF_NUMBEW_MASK	0xF
+#define CAU_SB_ENTWY_PF_NUMBEW_SHIFT	27
+#define CAU_SB_ENTWY_TPH_MASK		0x1
+#define CAU_SB_ENTWY_TPH_SHIFT		31
+};
+
+/* Igu cweanup bit vawues to distinguish between cwean ow pwoducew consumew
+ * update.
+ */
+enum command_type_bit {
+	IGU_COMMAND_TYPE_NOP = 0,
+	IGU_COMMAND_TYPE_SET = 1,
+	MAX_COMMAND_TYPE_BIT
+};
+
+/* Cowe doowbeww data */
+stwuct cowe_db_data {
+	u8 pawams;
+#define COWE_DB_DATA_DEST_MASK		0x3
+#define COWE_DB_DATA_DEST_SHIFT		0
+#define COWE_DB_DATA_AGG_CMD_MASK	0x3
+#define COWE_DB_DATA_AGG_CMD_SHIFT	2
+#define COWE_DB_DATA_BYPASS_EN_MASK	0x1
+#define COWE_DB_DATA_BYPASS_EN_SHIFT	4
+#define COWE_DB_DATA_WESEWVED_MASK	0x1
+#define COWE_DB_DATA_WESEWVED_SHIFT	5
+#define COWE_DB_DATA_AGG_VAW_SEW_MASK	0x3
+#define COWE_DB_DATA_AGG_VAW_SEW_SHIFT	6
+	u8 agg_fwags;
+	__we16 spq_pwod;
+};
+
+/* Enum of doowbeww aggwegative command sewection */
+enum db_agg_cmd_sew {
+	DB_AGG_CMD_NOP,
+	DB_AGG_CMD_SET,
+	DB_AGG_CMD_ADD,
+	DB_AGG_CMD_MAX,
+	MAX_DB_AGG_CMD_SEW
+};
+
+/* Enum of doowbeww destination */
+enum db_dest {
+	DB_DEST_XCM,
+	DB_DEST_UCM,
+	DB_DEST_TCM,
+	DB_NUM_DESTINATIONS,
+	MAX_DB_DEST
+};
+
+/* Enum of doowbeww DPM types */
+enum db_dpm_type {
+	DPM_WEGACY,
+	DPM_WDMA,
+	DPM_W2_INWINE,
+	DPM_W2_BD,
+	MAX_DB_DPM_TYPE
+};
+
+/* Stwuctuwe fow doowbeww data, in W2 DPM mode, fow 1st db in a DPM buwst */
+stwuct db_w2_dpm_data {
+	__we16 icid;
+	__we16 bd_pwod;
+	__we32 pawams;
+#define DB_W2_DPM_DATA_SIZE_MASK	0x3F
+#define DB_W2_DPM_DATA_SIZE_SHIFT	0
+#define DB_W2_DPM_DATA_DPM_TYPE_MASK	0x3
+#define DB_W2_DPM_DATA_DPM_TYPE_SHIFT	6
+#define DB_W2_DPM_DATA_NUM_BDS_MASK	0xFF
+#define DB_W2_DPM_DATA_NUM_BDS_SHIFT	8
+#define DB_W2_DPM_DATA_PKT_SIZE_MASK	0x7FF
+#define DB_W2_DPM_DATA_PKT_SIZE_SHIFT	16
+#define DB_W2_DPM_DATA_WESEWVED0_MASK	0x1
+#define DB_W2_DPM_DATA_WESEWVED0_SHIFT 27
+#define DB_W2_DPM_DATA_SGE_NUM_MASK	0x7
+#define DB_W2_DPM_DATA_SGE_NUM_SHIFT	28
+#define DB_W2_DPM_DATA_TGFS_SWC_EN_MASK  0x1
+#define DB_W2_DPM_DATA_TGFS_SWC_EN_SHIFT 31
+};
+
+/* Stwuctuwe fow SGE in a DPM doowbeww of type DPM_W2_BD */
+stwuct db_w2_dpm_sge {
+	stwuct wegpaiw addw;
+	__we16 nbytes;
+	__we16 bitfiewds;
+#define DB_W2_DPM_SGE_TPH_ST_INDEX_MASK		0x1FF
+#define DB_W2_DPM_SGE_TPH_ST_INDEX_SHIFT	0
+#define DB_W2_DPM_SGE_WESEWVED0_MASK		0x3
+#define DB_W2_DPM_SGE_WESEWVED0_SHIFT		9
+#define DB_W2_DPM_SGE_ST_VAWID_MASK		0x1
+#define DB_W2_DPM_SGE_ST_VAWID_SHIFT		11
+#define DB_W2_DPM_SGE_WESEWVED1_MASK		0xF
+#define DB_W2_DPM_SGE_WESEWVED1_SHIFT		12
+	__we32 wesewved2;
+};
+
+/* Stwuctuwe fow doowbeww addwess, in wegacy mode */
+stwuct db_wegacy_addw {
+	__we32 addw;
+#define DB_WEGACY_ADDW_WESEWVED0_MASK	0x3
+#define DB_WEGACY_ADDW_WESEWVED0_SHIFT	0
+#define DB_WEGACY_ADDW_DEMS_MASK	0x7
+#define DB_WEGACY_ADDW_DEMS_SHIFT	2
+#define DB_WEGACY_ADDW_ICID_MASK	0x7FFFFFF
+#define DB_WEGACY_ADDW_ICID_SHIFT	5
+};
+
+/* Stwuctuwe fow doowbeww addwess, in wegacy mode, without DEMS */
+stwuct db_wegacy_wo_dems_addw {
+	__we32 addw;
+#define DB_WEGACY_WO_DEMS_ADDW_WESEWVED0_MASK   0x3
+#define DB_WEGACY_WO_DEMS_ADDW_WESEWVED0_SHIFT  0
+#define DB_WEGACY_WO_DEMS_ADDW_ICID_MASK        0x3FFFFFFF
+#define DB_WEGACY_WO_DEMS_ADDW_ICID_SHIFT       2
+};
+
+/* Stwuctuwe fow doowbeww addwess, in PWM mode */
+stwuct db_pwm_addw {
+	__we32 addw;
+#define DB_PWM_ADDW_WESEWVED0_MASK	0x7
+#define DB_PWM_ADDW_WESEWVED0_SHIFT	0
+#define DB_PWM_ADDW_OFFSET_MASK		0x7F
+#define DB_PWM_ADDW_OFFSET_SHIFT	3
+#define DB_PWM_ADDW_WID_MASK		0x3
+#define DB_PWM_ADDW_WID_SHIFT		10
+#define DB_PWM_ADDW_DPI_MASK		0xFFFF
+#define DB_PWM_ADDW_DPI_SHIFT		12
+#define DB_PWM_ADDW_WESEWVED1_MASK	0xF
+#define DB_PWM_ADDW_WESEWVED1_SHIFT	28
+};
+
+/* Pawametews to WDMA fiwmwawe, passed in EDPM doowbeww */
+stwuct db_wdma_24b_icid_dpm_pawams {
+	__we32 pawams;
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_SIZE_MASK   0x3F
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_SIZE_SHIFT  0
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_DPM_TYPE_MASK       0x3
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_DPM_TYPE_SHIFT      6
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_OPCODE_MASK 0xFF
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_OPCODE_SHIFT        8
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_ICID_EXT_MASK       0xFF
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_ICID_EXT_SHIFT      16
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_INV_BYTE_CNT_MASK   0x7
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_INV_BYTE_CNT_SHIFT  24
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_EXT_ICID_MODE_EN_MASK       0x1
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_EXT_ICID_MODE_EN_SHIFT      27
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_COMPWETION_FWG_MASK 0x1
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_COMPWETION_FWG_SHIFT        28
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_S_FWG_MASK  0x1
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_S_FWG_SHIFT 29
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_WESEWVED1_MASK      0x1
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_WESEWVED1_SHIFT     30
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_CONN_TYPE_IS_IWAWP_MASK     0x1
+#define DB_WDMA_24B_ICID_DPM_PAWAMS_CONN_TYPE_IS_IWAWP_SHIFT    31
+};
+
+/* Pawametews to WDMA fiwmwawe, passed in EDPM doowbeww */
+stwuct db_wdma_dpm_pawams {
+	__we32 pawams;
+#define DB_WDMA_DPM_PAWAMS_SIZE_MASK			0x3F
+#define DB_WDMA_DPM_PAWAMS_SIZE_SHIFT			0
+#define DB_WDMA_DPM_PAWAMS_DPM_TYPE_MASK		0x3
+#define DB_WDMA_DPM_PAWAMS_DPM_TYPE_SHIFT		6
+#define DB_WDMA_DPM_PAWAMS_OPCODE_MASK			0xFF
+#define DB_WDMA_DPM_PAWAMS_OPCODE_SHIFT			8
+#define DB_WDMA_DPM_PAWAMS_WQE_SIZE_MASK		0x7FF
+#define DB_WDMA_DPM_PAWAMS_WQE_SIZE_SHIFT		16
+#define DB_WDMA_DPM_PAWAMS_WESEWVED0_MASK		0x1
+#define DB_WDMA_DPM_PAWAMS_WESEWVED0_SHIFT		27
+#define DB_WDMA_DPM_PAWAMS_ACK_WEQUEST_MASK		0x1
+#define DB_WDMA_DPM_PAWAMS_ACK_WEQUEST_SHIFT		28
+#define DB_WDMA_DPM_PAWAMS_S_FWG_MASK			0x1
+#define DB_WDMA_DPM_PAWAMS_S_FWG_SHIFT			29
+#define DB_WDMA_DPM_PAWAMS_COMPWETION_FWG_MASK		0x1
+#define DB_WDMA_DPM_PAWAMS_COMPWETION_FWG_SHIFT		30
+#define DB_WDMA_DPM_PAWAMS_CONN_TYPE_IS_IWAWP_MASK	0x1
+#define DB_WDMA_DPM_PAWAMS_CONN_TYPE_IS_IWAWP_SHIFT	31
+};
+
+/* Stwuctuwe fow doowbeww data, in WDMA DPM mode, fow the fiwst doowbeww in a
+ * DPM buwst.
+ */
+stwuct db_wdma_dpm_data {
+	__we16 icid;
+	__we16 pwod_vaw;
+	stwuct db_wdma_dpm_pawams pawams;
+};
+
+/* Igu intewwupt command */
+enum igu_int_cmd {
+	IGU_INT_ENABWE	= 0,
+	IGU_INT_DISABWE = 1,
+	IGU_INT_NOP	= 2,
+	IGU_INT_NOP2	= 3,
+	MAX_IGU_INT_CMD
+};
+
+/* IGU pwoducew ow consumew update command */
+stwuct igu_pwod_cons_update {
+	__we32 sb_id_and_fwags;
+#define IGU_PWOD_CONS_UPDATE_SB_INDEX_MASK		0xFFFFFF
+#define IGU_PWOD_CONS_UPDATE_SB_INDEX_SHIFT		0
+#define IGU_PWOD_CONS_UPDATE_UPDATE_FWAG_MASK		0x1
+#define IGU_PWOD_CONS_UPDATE_UPDATE_FWAG_SHIFT		24
+#define IGU_PWOD_CONS_UPDATE_ENABWE_INT_MASK		0x3
+#define IGU_PWOD_CONS_UPDATE_ENABWE_INT_SHIFT		25
+#define IGU_PWOD_CONS_UPDATE_SEGMENT_ACCESS_MASK	0x1
+#define IGU_PWOD_CONS_UPDATE_SEGMENT_ACCESS_SHIFT	27
+#define IGU_PWOD_CONS_UPDATE_TIMEW_MASK_MASK		0x1
+#define IGU_PWOD_CONS_UPDATE_TIMEW_MASK_SHIFT		28
+#define IGU_PWOD_CONS_UPDATE_WESEWVED0_MASK		0x3
+#define IGU_PWOD_CONS_UPDATE_WESEWVED0_SHIFT		29
+#define IGU_PWOD_CONS_UPDATE_COMMAND_TYPE_MASK		0x1
+#define IGU_PWOD_CONS_UPDATE_COMMAND_TYPE_SHIFT		31
+	__we32 wesewved1;
+};
+
+/* Igu segments access fow defauwt status bwock onwy */
+enum igu_seg_access {
+	IGU_SEG_ACCESS_WEG	= 0,
+	IGU_SEG_ACCESS_ATTN	= 1,
+	MAX_IGU_SEG_ACCESS
+};
+
+/* Enumewation fow W3 type fiewd of pawsing_and_eww_fwags.
+ * W3Type: 0 - unknown (not ip), 1 - Ipv4, 2 - Ipv6
+ * (This fiewd can be fiwwed accowding to the wast-ethewtype)
+ */
+enum w3_type {
+	e_w3_type_unknown,
+	e_w3_type_ipv4,
+	e_w3_type_ipv6,
+	MAX_W3_TYPE
+};
+
+/* Enumewation fow w4Pwotocow fiewd of pawsing_and_eww_fwags.
+ * W4-pwotocow: 0 - none, 1 - TCP, 2 - UDP.
+ * If the packet is IPv4 fwagment, and its not the fiwst fwagment, the
+ * pwotocow-type shouwd be set to none.
+ */
+enum w4_pwotocow {
+	e_w4_pwotocow_none,
+	e_w4_pwotocow_tcp,
+	e_w4_pwotocow_udp,
+	MAX_W4_PWOTOCOW
+};
+
+/* Pawsing and ewwow fwags fiewd */
+stwuct pawsing_and_eww_fwags {
+	__we16 fwags;
+#define PAWSING_AND_EWW_FWAGS_W3TYPE_MASK			0x3
+#define PAWSING_AND_EWW_FWAGS_W3TYPE_SHIFT			0
+#define PAWSING_AND_EWW_FWAGS_W4PWOTOCOW_MASK			0x3
+#define PAWSING_AND_EWW_FWAGS_W4PWOTOCOW_SHIFT			2
+#define PAWSING_AND_EWW_FWAGS_IPV4FWAG_MASK			0x1
+#define PAWSING_AND_EWW_FWAGS_IPV4FWAG_SHIFT			4
+#define PAWSING_AND_EWW_FWAGS_TAG8021QEXIST_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_TAG8021QEXIST_SHIFT		5
+#define PAWSING_AND_EWW_FWAGS_W4CHKSMWASCAWCUWATED_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_W4CHKSMWASCAWCUWATED_SHIFT	6
+#define PAWSING_AND_EWW_FWAGS_TIMESYNCPKT_MASK			0x1
+#define PAWSING_AND_EWW_FWAGS_TIMESYNCPKT_SHIFT			7
+#define PAWSING_AND_EWW_FWAGS_TIMESTAMPWECOWDED_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_TIMESTAMPWECOWDED_SHIFT		8
+#define PAWSING_AND_EWW_FWAGS_IPHDWEWWOW_MASK			0x1
+#define PAWSING_AND_EWW_FWAGS_IPHDWEWWOW_SHIFT			9
+#define PAWSING_AND_EWW_FWAGS_W4CHKSMEWWOW_MASK			0x1
+#define PAWSING_AND_EWW_FWAGS_W4CHKSMEWWOW_SHIFT		10
+#define PAWSING_AND_EWW_FWAGS_TUNNEWEXIST_MASK			0x1
+#define PAWSING_AND_EWW_FWAGS_TUNNEWEXIST_SHIFT			11
+#define PAWSING_AND_EWW_FWAGS_TUNNEW8021QTAGEXIST_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_TUNNEW8021QTAGEXIST_SHIFT		12
+#define PAWSING_AND_EWW_FWAGS_TUNNEWIPHDWEWWOW_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_TUNNEWIPHDWEWWOW_SHIFT		13
+#define PAWSING_AND_EWW_FWAGS_TUNNEWW4CHKSMWASCAWCUWATED_MASK	0x1
+#define PAWSING_AND_EWW_FWAGS_TUNNEWW4CHKSMWASCAWCUWATED_SHIFT	14
+#define PAWSING_AND_EWW_FWAGS_TUNNEWW4CHKSMEWWOW_MASK		0x1
+#define PAWSING_AND_EWW_FWAGS_TUNNEWW4CHKSMEWWOW_SHIFT		15
+};
+
+/* Pawsing ewwow fwags bitmap */
+stwuct pawsing_eww_fwags {
+	__we16 fwags;
+#define PAWSING_EWW_FWAGS_MAC_EWWOW_MASK				0x1
+#define PAWSING_EWW_FWAGS_MAC_EWWOW_SHIFT				0
+#define PAWSING_EWW_FWAGS_TWUNC_EWWOW_MASK				0x1
+#define PAWSING_EWW_FWAGS_TWUNC_EWWOW_SHIFT				1
+#define PAWSING_EWW_FWAGS_PKT_TOO_SMAWW_MASK				0x1
+#define PAWSING_EWW_FWAGS_PKT_TOO_SMAWW_SHIFT				2
+#define PAWSING_EWW_FWAGS_ANY_HDW_MISSING_TAG_MASK			0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_MISSING_TAG_SHIFT			3
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_VEW_MISMTCH_MASK			0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_VEW_MISMTCH_SHIFT			4
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_V4_HDW_WEN_TOO_SMAWW_MASK		0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_V4_HDW_WEN_TOO_SMAWW_SHIFT		5
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_BAD_TOTAW_WEN_MASK			0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_IP_BAD_TOTAW_WEN_SHIFT		6
+#define PAWSING_EWW_FWAGS_IP_V4_CHKSM_EWWOW_MASK			0x1
+#define PAWSING_EWW_FWAGS_IP_V4_CHKSM_EWWOW_SHIFT			7
+#define PAWSING_EWW_FWAGS_ANY_HDW_W4_IP_WEN_MISMTCH_MASK		0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_W4_IP_WEN_MISMTCH_SHIFT		8
+#define PAWSING_EWW_FWAGS_ZEWO_UDP_IP_V6_CHKSM_MASK			0x1
+#define PAWSING_EWW_FWAGS_ZEWO_UDP_IP_V6_CHKSM_SHIFT			9
+#define PAWSING_EWW_FWAGS_INNEW_W4_CHKSM_EWWOW_MASK			0x1
+#define PAWSING_EWW_FWAGS_INNEW_W4_CHKSM_EWWOW_SHIFT			10
+#define PAWSING_EWW_FWAGS_ANY_HDW_ZEWO_TTW_OW_HOP_WIM_MASK		0x1
+#define PAWSING_EWW_FWAGS_ANY_HDW_ZEWO_TTW_OW_HOP_WIM_SHIFT		11
+#define PAWSING_EWW_FWAGS_NON_8021Q_TAG_EXISTS_IN_BOTH_HDWS_MASK	0x1
+#define PAWSING_EWW_FWAGS_NON_8021Q_TAG_EXISTS_IN_BOTH_HDWS_SHIFT	12
+#define PAWSING_EWW_FWAGS_GENEVE_OPTION_OVEWSIZED_MASK			0x1
+#define PAWSING_EWW_FWAGS_GENEVE_OPTION_OVEWSIZED_SHIFT			13
+#define PAWSING_EWW_FWAGS_TUNNEW_IP_V4_CHKSM_EWWOW_MASK			0x1
+#define PAWSING_EWW_FWAGS_TUNNEW_IP_V4_CHKSM_EWWOW_SHIFT		14
+#define PAWSING_EWW_FWAGS_TUNNEW_W4_CHKSM_EWWOW_MASK			0x1
+#define PAWSING_EWW_FWAGS_TUNNEW_W4_CHKSM_EWWOW_SHIFT			15
+};
+
+/* Pb context */
+stwuct pb_context {
+	__we32 cwc[4];
+};
+
+/* Concwete Function ID */
+stwuct pxp_concwete_fid {
+	__we16 fid;
+#define PXP_CONCWETE_FID_PFID_MASK	0xF
+#define PXP_CONCWETE_FID_PFID_SHIFT	0
+#define PXP_CONCWETE_FID_POWT_MASK	0x3
+#define PXP_CONCWETE_FID_POWT_SHIFT	4
+#define PXP_CONCWETE_FID_PATH_MASK	0x1
+#define PXP_CONCWETE_FID_PATH_SHIFT	6
+#define PXP_CONCWETE_FID_VFVAWID_MASK	0x1
+#define PXP_CONCWETE_FID_VFVAWID_SHIFT	7
+#define PXP_CONCWETE_FID_VFID_MASK	0xFF
+#define PXP_CONCWETE_FID_VFID_SHIFT	8
+};
+
+/* Concwete Function ID */
+stwuct pxp_pwetend_concwete_fid {
+	__we16 fid;
+#define PXP_PWETEND_CONCWETE_FID_PFID_MASK	0xF
+#define PXP_PWETEND_CONCWETE_FID_PFID_SHIFT	0
+#define PXP_PWETEND_CONCWETE_FID_WESEWVED_MASK	0x7
+#define PXP_PWETEND_CONCWETE_FID_WESEWVED_SHIFT	4
+#define PXP_PWETEND_CONCWETE_FID_VFVAWID_MASK	0x1
+#define PXP_PWETEND_CONCWETE_FID_VFVAWID_SHIFT	7
+#define PXP_PWETEND_CONCWETE_FID_VFID_MASK	0xFF
+#define PXP_PWETEND_CONCWETE_FID_VFID_SHIFT	8
+};
+
+/* Function ID */
+union pxp_pwetend_fid {
+	stwuct pxp_pwetend_concwete_fid concwete_fid;
+	__we16 opaque_fid;
+};
+
+/* Pxp Pwetend Command Wegistew */
+stwuct pxp_pwetend_cmd {
+	union pxp_pwetend_fid fid;
+	__we16 contwow;
+#define PXP_PWETEND_CMD_PATH_MASK		0x1
+#define PXP_PWETEND_CMD_PATH_SHIFT		0
+#define PXP_PWETEND_CMD_USE_POWT_MASK		0x1
+#define PXP_PWETEND_CMD_USE_POWT_SHIFT		1
+#define PXP_PWETEND_CMD_POWT_MASK		0x3
+#define PXP_PWETEND_CMD_POWT_SHIFT		2
+#define PXP_PWETEND_CMD_WESEWVED0_MASK		0xF
+#define PXP_PWETEND_CMD_WESEWVED0_SHIFT		4
+#define PXP_PWETEND_CMD_WESEWVED1_MASK		0xF
+#define PXP_PWETEND_CMD_WESEWVED1_SHIFT		8
+#define PXP_PWETEND_CMD_PWETEND_PATH_MASK	0x1
+#define PXP_PWETEND_CMD_PWETEND_PATH_SHIFT	12
+#define PXP_PWETEND_CMD_PWETEND_POWT_MASK	0x1
+#define PXP_PWETEND_CMD_PWETEND_POWT_SHIFT	13
+#define PXP_PWETEND_CMD_PWETEND_FUNCTION_MASK	0x1
+#define PXP_PWETEND_CMD_PWETEND_FUNCTION_SHIFT	14
+#define PXP_PWETEND_CMD_IS_CONCWETE_MASK	0x1
+#define PXP_PWETEND_CMD_IS_CONCWETE_SHIFT	15
+};
+
+/* PTT Wecowd in PXP Admin Window */
+stwuct pxp_ptt_entwy {
+	__we32 offset;
+#define PXP_PTT_ENTWY_OFFSET_MASK	0x7FFFFF
+#define PXP_PTT_ENTWY_OFFSET_SHIFT	0
+#define PXP_PTT_ENTWY_WESEWVED0_MASK	0x1FF
+#define PXP_PTT_ENTWY_WESEWVED0_SHIFT	23
+	stwuct pxp_pwetend_cmd pwetend;
+};
+
+/* VF Zone A Pewmission Wegistew */
+stwuct pxp_vf_zone_a_pewmission {
+	__we32 contwow;
+#define PXP_VF_ZONE_A_PEWMISSION_VFID_MASK		0xFF
+#define PXP_VF_ZONE_A_PEWMISSION_VFID_SHIFT		0
+#define PXP_VF_ZONE_A_PEWMISSION_VAWID_MASK		0x1
+#define PXP_VF_ZONE_A_PEWMISSION_VAWID_SHIFT		8
+#define PXP_VF_ZONE_A_PEWMISSION_WESEWVED0_MASK		0x7F
+#define PXP_VF_ZONE_A_PEWMISSION_WESEWVED0_SHIFT	9
+#define PXP_VF_ZONE_A_PEWMISSION_WESEWVED1_MASK		0xFFFF
+#define PXP_VF_ZONE_A_PEWMISSION_WESEWVED1_SHIFT	16
+};
+
+/* Wdif context */
+stwuct wdif_task_context {
+	__we32 initiaw_wef_tag;
+	__we16 app_tag_vawue;
+	__we16 app_tag_mask;
+	u8 fwags0;
+#define WDIF_TASK_CONTEXT_IGNOWE_APP_TAG_MASK		0x1
+#define WDIF_TASK_CONTEXT_IGNOWE_APP_TAG_SHIFT		0
+#define WDIF_TASK_CONTEXT_INITIAW_WEF_TAG_VAWID_MASK	0x1
+#define WDIF_TASK_CONTEXT_INITIAW_WEF_TAG_VAWID_SHIFT	1
+#define WDIF_TASK_CONTEXT_HOST_GUAWD_TYPE_MASK		0x1
+#define WDIF_TASK_CONTEXT_HOST_GUAWD_TYPE_SHIFT		2
+#define WDIF_TASK_CONTEXT_SET_EWWOW_WITH_EOP_MASK	0x1
+#define WDIF_TASK_CONTEXT_SET_EWWOW_WITH_EOP_SHIFT	3
+#define WDIF_TASK_CONTEXT_PWOTECTION_TYPE_MASK		0x3
+#define WDIF_TASK_CONTEXT_PWOTECTION_TYPE_SHIFT		4
+#define WDIF_TASK_CONTEXT_CWC_SEED_MASK			0x1
+#define WDIF_TASK_CONTEXT_CWC_SEED_SHIFT		6
+#define WDIF_TASK_CONTEXT_KEEP_WEF_TAG_CONST_MASK	0x1
+#define WDIF_TASK_CONTEXT_KEEP_WEF_TAG_CONST_SHIFT	7
+	u8 pawtiaw_dif_data[7];
+	__we16 pawtiaw_cwc_vawue;
+	__we16 pawtiaw_checksum_vawue;
+	__we32 offset_in_io;
+	__we16 fwags1;
+#define WDIF_TASK_CONTEXT_VAWIDATE_GUAWD_MASK			0x1
+#define WDIF_TASK_CONTEXT_VAWIDATE_GUAWD_SHIFT			0
+#define WDIF_TASK_CONTEXT_VAWIDATE_APP_TAG_MASK			0x1
+#define WDIF_TASK_CONTEXT_VAWIDATE_APP_TAG_SHIFT		1
+#define WDIF_TASK_CONTEXT_VAWIDATE_WEF_TAG_MASK			0x1
+#define WDIF_TASK_CONTEXT_VAWIDATE_WEF_TAG_SHIFT		2
+#define WDIF_TASK_CONTEXT_FOWWAWD_GUAWD_MASK			0x1
+#define WDIF_TASK_CONTEXT_FOWWAWD_GUAWD_SHIFT			3
+#define WDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_MASK			0x1
+#define WDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_SHIFT			4
+#define WDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_MASK			0x1
+#define WDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_SHIFT			5
+#define WDIF_TASK_CONTEXT_INTEWVAW_SIZE_MASK			0x7
+#define WDIF_TASK_CONTEXT_INTEWVAW_SIZE_SHIFT			6
+#define WDIF_TASK_CONTEXT_HOST_INTEWFACE_MASK			0x3
+#define WDIF_TASK_CONTEXT_HOST_INTEWFACE_SHIFT			9
+#define WDIF_TASK_CONTEXT_DIF_BEFOWE_DATA_MASK			0x1
+#define WDIF_TASK_CONTEXT_DIF_BEFOWE_DATA_SHIFT			11
+#define WDIF_TASK_CONTEXT_WESEWVED0_MASK			0x1
+#define WDIF_TASK_CONTEXT_WESEWVED0_SHIFT			12
+#define WDIF_TASK_CONTEXT_NETWOWK_INTEWFACE_MASK		0x1
+#define WDIF_TASK_CONTEXT_NETWOWK_INTEWFACE_SHIFT		13
+#define WDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_WITH_MASK_MASK	0x1
+#define WDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_WITH_MASK_SHIFT	14
+#define WDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_WITH_MASK_MASK	0x1
+#define WDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_WITH_MASK_SHIFT	15
+	__we16 state;
+#define WDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_MASK		0xF
+#define WDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_SHIFT		0
+#define WDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_MASK	0xF
+#define WDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_SHIFT	4
+#define WDIF_TASK_CONTEXT_EWWOW_IN_IO_MASK			0x1
+#define WDIF_TASK_CONTEXT_EWWOW_IN_IO_SHIFT			8
+#define WDIF_TASK_CONTEXT_CHECKSUM_OVEWFWOW_MASK		0x1
+#define WDIF_TASK_CONTEXT_CHECKSUM_OVEWFWOW_SHIFT		9
+#define WDIF_TASK_CONTEXT_WEF_TAG_MASK_MASK			0xF
+#define WDIF_TASK_CONTEXT_WEF_TAG_MASK_SHIFT			10
+#define WDIF_TASK_CONTEXT_WESEWVED1_MASK			0x3
+#define WDIF_TASK_CONTEXT_WESEWVED1_SHIFT			14
+	__we32 wesewved2;
+};
+
+/* Seawchew Tabwe stwuct */
+stwuct swc_entwy_headew {
+	__we32 fwags;
+#define SWC_ENTWY_HEADEW_NEXT_PTW_TYPE_MASK     0x1
+#define SWC_ENTWY_HEADEW_NEXT_PTW_TYPE_SHIFT    0
+#define SWC_ENTWY_HEADEW_EMPTY_MASK     0x1
+#define SWC_ENTWY_HEADEW_EMPTY_SHIFT    1
+#define SWC_ENTWY_HEADEW_WESEWVED_MASK  0x3FFFFFFF
+#define SWC_ENTWY_HEADEW_WESEWVED_SHIFT 2
+	__we32 magic_numbew;
+	stwuct wegpaiw next_ptw;
+};
+
+/* Enumewation fow addwess type */
+enum swc_headew_next_ptw_type_enum {
+	e_physicaw_addw,
+	e_wogicaw_addw,
+	MAX_SWC_HEADEW_NEXT_PTW_TYPE_ENUM
+};
+
+/* Status bwock stwuctuwe */
+stwuct status_bwock {
+	__we16	pi_awway[PIS_PEW_SB];
+	__we32	sb_num;
+#define STATUS_BWOCK_SB_NUM_MASK	0x1FF
+#define STATUS_BWOCK_SB_NUM_SHIFT	0
+#define STATUS_BWOCK_ZEWO_PAD_MASK	0x7F
+#define STATUS_BWOCK_ZEWO_PAD_SHIFT	9
+#define STATUS_BWOCK_ZEWO_PAD2_MASK	0xFFFF
+#define STATUS_BWOCK_ZEWO_PAD2_SHIFT	16
+	__we32 pwod_index;
+#define STATUS_BWOCK_PWOD_INDEX_MASK		0xFFFFFF
+#define STATUS_BWOCK_PWOD_INDEX_SHIFT	0
+#define STATUS_BWOCK_ZEWO_PAD3_MASK		0xFF
+#define STATUS_BWOCK_ZEWO_PAD3_SHIFT		24
+};
+
+/* Tdif context */
+stwuct tdif_task_context {
+	__we32 initiaw_wef_tag;
+	__we16 app_tag_vawue;
+	__we16 app_tag_mask;
+	__we16 pawtiaw_cwc_vawue_b;
+	__we16 pawtiaw_checksum_vawue_b;
+	__we16 stateB;
+#define TDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_B_MASK	0xF
+#define TDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_B_SHIFT	0
+#define TDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_B_MASK	0xF
+#define TDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_B_SHIFT	4
+#define TDIF_TASK_CONTEXT_EWWOW_IN_IO_B_MASK			0x1
+#define TDIF_TASK_CONTEXT_EWWOW_IN_IO_B_SHIFT			8
+#define TDIF_TASK_CONTEXT_CHECKSUM_VEWFWOW_MASK			0x1
+#define TDIF_TASK_CONTEXT_CHECKSUM_VEWFWOW_SHIFT		9
+#define TDIF_TASK_CONTEXT_WESEWVED0_MASK			0x3F
+#define TDIF_TASK_CONTEXT_WESEWVED0_SHIFT			10
+	u8 wesewved1;
+	u8 fwags0;
+#define TDIF_TASK_CONTEXT_IGNOWE_APP_TAG_MASK			0x1
+#define TDIF_TASK_CONTEXT_IGNOWE_APP_TAG_SHIFT			0
+#define TDIF_TASK_CONTEXT_INITIAW_WEF_TAG_VAWID_MASK		0x1
+#define TDIF_TASK_CONTEXT_INITIAW_WEF_TAG_VAWID_SHIFT		1
+#define TDIF_TASK_CONTEXT_HOST_GUAWD_TYPE_MASK			0x1
+#define TDIF_TASK_CONTEXT_HOST_GUAWD_TYPE_SHIFT			2
+#define TDIF_TASK_CONTEXT_SET_EWWOW_WITH_EOP_MASK		0x1
+#define TDIF_TASK_CONTEXT_SET_EWWOW_WITH_EOP_SHIFT		3
+#define TDIF_TASK_CONTEXT_PWOTECTION_TYPE_MASK			0x3
+#define TDIF_TASK_CONTEXT_PWOTECTION_TYPE_SHIFT			4
+#define TDIF_TASK_CONTEXT_CWC_SEED_MASK				0x1
+#define TDIF_TASK_CONTEXT_CWC_SEED_SHIFT			6
+#define TDIF_TASK_CONTEXT_WESEWVED2_MASK			0x1
+#define TDIF_TASK_CONTEXT_WESEWVED2_SHIFT			7
+	__we32 fwags1;
+#define TDIF_TASK_CONTEXT_VAWIDATE_GUAWD_MASK			0x1
+#define TDIF_TASK_CONTEXT_VAWIDATE_GUAWD_SHIFT			0
+#define TDIF_TASK_CONTEXT_VAWIDATE_APP_TAG_MASK			0x1
+#define TDIF_TASK_CONTEXT_VAWIDATE_APP_TAG_SHIFT		1
+#define TDIF_TASK_CONTEXT_VAWIDATE_WEF_TAG_MASK			0x1
+#define TDIF_TASK_CONTEXT_VAWIDATE_WEF_TAG_SHIFT		2
+#define TDIF_TASK_CONTEXT_FOWWAWD_GUAWD_MASK			0x1
+#define TDIF_TASK_CONTEXT_FOWWAWD_GUAWD_SHIFT			3
+#define TDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_MASK			0x1
+#define TDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_SHIFT			4
+#define TDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_MASK			0x1
+#define TDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_SHIFT			5
+#define TDIF_TASK_CONTEXT_INTEWVAW_SIZE_MASK			0x7
+#define TDIF_TASK_CONTEXT_INTEWVAW_SIZE_SHIFT			6
+#define TDIF_TASK_CONTEXT_HOST_INTEWFACE_MASK			0x3
+#define TDIF_TASK_CONTEXT_HOST_INTEWFACE_SHIFT			9
+#define TDIF_TASK_CONTEXT_DIF_BEFOWE_DATA_MASK			0x1
+#define TDIF_TASK_CONTEXT_DIF_BEFOWE_DATA_SHIFT			11
+#define TDIF_TASK_CONTEXT_WESEWVED3_MASK			0x1
+#define TDIF_TASK_CONTEXT_WESEWVED3_SHIFT			12
+#define TDIF_TASK_CONTEXT_NETWOWK_INTEWFACE_MASK		0x1
+#define TDIF_TASK_CONTEXT_NETWOWK_INTEWFACE_SHIFT		13
+#define TDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_A_MASK	0xF
+#define TDIF_TASK_CONTEXT_WECEIVED_DIF_BYTES_WEFT_A_SHIFT	14
+#define TDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_A_MASK	0xF
+#define TDIF_TASK_CONTEXT_TWANSMITED_DIF_BYTES_WEFT_A_SHIFT	18
+#define TDIF_TASK_CONTEXT_EWWOW_IN_IO_A_MASK			0x1
+#define TDIF_TASK_CONTEXT_EWWOW_IN_IO_A_SHIFT			22
+#define TDIF_TASK_CONTEXT_CHECKSUM_OVEWFWOW_A_MASK		0x1
+#define TDIF_TASK_CONTEXT_CHECKSUM_OVEWFWOW_A_SHIFT		23
+#define TDIF_TASK_CONTEXT_WEF_TAG_MASK_MASK			0xF
+#define TDIF_TASK_CONTEXT_WEF_TAG_MASK_SHIFT			24
+#define TDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_WITH_MASK_MASK	0x1
+#define TDIF_TASK_CONTEXT_FOWWAWD_APP_TAG_WITH_MASK_SHIFT	28
+#define TDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_WITH_MASK_MASK	0x1
+#define TDIF_TASK_CONTEXT_FOWWAWD_WEF_TAG_WITH_MASK_SHIFT	29
+#define TDIF_TASK_CONTEXT_KEEP_WEF_TAG_CONST_MASK		0x1
+#define TDIF_TASK_CONTEXT_KEEP_WEF_TAG_CONST_SHIFT		30
+#define TDIF_TASK_CONTEXT_WESEWVED4_MASK			0x1
+#define TDIF_TASK_CONTEXT_WESEWVED4_SHIFT			31
+	__we32 offset_in_io_b;
+	__we16 pawtiaw_cwc_vawue_a;
+	__we16 pawtiaw_checksum_vawue_a;
+	__we32 offset_in_io_a;
+	u8 pawtiaw_dif_data_a[8];
+	u8 pawtiaw_dif_data_b[8];
+};
+
+/* Timews context */
+stwuct timews_context {
+	__we32 wogicaw_cwient_0;
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC0_MASK	0x7FFFFFF
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC0_SHIFT	0
+#define TIMEWS_CONTEXT_WESEWVED0_MASK		0x1
+#define TIMEWS_CONTEXT_WESEWVED0_SHIFT		27
+#define TIMEWS_CONTEXT_VAWIDWC0_MASK		0x1
+#define TIMEWS_CONTEXT_VAWIDWC0_SHIFT		28
+#define TIMEWS_CONTEXT_ACTIVEWC0_MASK		0x1
+#define TIMEWS_CONTEXT_ACTIVEWC0_SHIFT		29
+#define TIMEWS_CONTEXT_WESEWVED1_MASK		0x3
+#define TIMEWS_CONTEXT_WESEWVED1_SHIFT		30
+	__we32 wogicaw_cwient_1;
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC1_MASK	0x7FFFFFF
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC1_SHIFT	0
+#define TIMEWS_CONTEXT_WESEWVED2_MASK		0x1
+#define TIMEWS_CONTEXT_WESEWVED2_SHIFT		27
+#define TIMEWS_CONTEXT_VAWIDWC1_MASK		0x1
+#define TIMEWS_CONTEXT_VAWIDWC1_SHIFT		28
+#define TIMEWS_CONTEXT_ACTIVEWC1_MASK		0x1
+#define TIMEWS_CONTEXT_ACTIVEWC1_SHIFT		29
+#define TIMEWS_CONTEXT_WESEWVED3_MASK		0x3
+#define TIMEWS_CONTEXT_WESEWVED3_SHIFT		30
+	__we32 wogicaw_cwient_2;
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC2_MASK	0x7FFFFFF
+#define TIMEWS_CONTEXT_EXPIWATIONTIMEWC2_SHIFT	0
+#define TIMEWS_CONTEXT_WESEWVED4_MASK		0x1
+#define TIMEWS_CONTEXT_WESEWVED4_SHIFT		27
+#define TIMEWS_CONTEXT_VAWIDWC2_MASK		0x1
+#define TIMEWS_CONTEXT_VAWIDWC2_SHIFT		28
+#define TIMEWS_CONTEXT_ACTIVEWC2_MASK		0x1
+#define TIMEWS_CONTEXT_ACTIVEWC2_SHIFT		29
+#define TIMEWS_CONTEXT_WESEWVED5_MASK		0x3
+#define TIMEWS_CONTEXT_WESEWVED5_SHIFT		30
+	__we32 host_expiwation_fiewds;
+#define TIMEWS_CONTEXT_HOSTEXPWIWATIONVAWUE_MASK	0x7FFFFFF
+#define TIMEWS_CONTEXT_HOSTEXPWIWATIONVAWUE_SHIFT	0
+#define TIMEWS_CONTEXT_WESEWVED6_MASK			0x1
+#define TIMEWS_CONTEXT_WESEWVED6_SHIFT			27
+#define TIMEWS_CONTEXT_HOSTEXPWIWATIONVAWID_MASK	0x1
+#define TIMEWS_CONTEXT_HOSTEXPWIWATIONVAWID_SHIFT	 28
+#define TIMEWS_CONTEXT_WESEWVED7_MASK			0x7
+#define TIMEWS_CONTEXT_WESEWVED7_SHIFT			29
+};
+
+/* Enum fow next_pwotocow fiewd of tunnew_pawsing_fwags / tunnewTypeDesc */
+enum tunnew_next_pwotocow {
+	e_unknown = 0,
+	e_w2 = 1,
+	e_ipv4 = 2,
+	e_ipv6 = 3,
+	MAX_TUNNEW_NEXT_PWOTOCOW
+};
+
+#endif /* __COMMON_HSI__ */
+#endif

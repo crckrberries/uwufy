@@ -1,0 +1,755 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2013 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+#incwude "omap5.dtsi"
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+/ {
+	awiases {
+		dispway0 = &hdmi0;
+	};
+
+	chosen {
+		stdout-path = &uawt3;
+	};
+
+	vmain: fixedweguwatow-vmain {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmain";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+	};
+
+	vsys_cobwa: fixedweguwatow-vsys_cobwa {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vsys_cobwa";
+		vin-suppwy = <&vmain>;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+	};
+
+	vmmcsd_fixed: fixedweguwatow-mmcsd {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmmcsd_fixed";
+		weguwatow-min-micwovowt = <3000000>;
+		weguwatow-max-micwovowt = <3000000>;
+	};
+
+	mmc3_pwwseq: sdhci0_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		cwocks = <&cwk32kgaudio>;
+		cwock-names = "ext_cwock";
+	};
+
+	vmmcsdio_fixed: fixedweguwatow-mmcsdio {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmmcsdio_fixed";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		gpio = <&gpio5 12 GPIO_ACTIVE_HIGH>;	/* gpio140 WWAN_EN */
+		enabwe-active-high;
+		stawtup-deway-us = <70000>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wwan_pins>;
+	};
+
+	/* HS USB Host PHY on POWT 2 */
+	hsusb2_phy: hsusb2-phy-pins {
+		compatibwe = "usb-nop-xceiv";
+		weset-gpios = <&gpio3 16 GPIO_ACTIVE_WOW>; /* gpio3_80 HUB_NWESET */
+		cwocks = <&auxcwk1_ck>;
+		cwock-names = "main_cwk";
+		cwock-fwequency = <19200000>;
+		#phy-cewws = <0>;
+	};
+
+	/* HS USB Host PHY on POWT 3 */
+	hsusb3_phy: hsusb3_phy {
+		compatibwe = "usb-nop-xceiv";
+		weset-gpios = <&gpio3 15 GPIO_ACTIVE_WOW>; /* gpio3_79 ETH_NWESET */
+		#phy-cewws = <0>;
+	};
+
+	tpd12s015: encodew {
+		compatibwe = "ti,tpd12s015";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&tpd12s015_pins>;
+
+		/* gpios defined in the boawd specific dts */
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				tpd12s015_in: endpoint {
+					wemote-endpoint = <&hdmi_out>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				tpd12s015_out: endpoint {
+					wemote-endpoint = <&hdmi_connectow_in>;
+				};
+			};
+		};
+	};
+
+	hdmi0: connectow {
+		compatibwe = "hdmi-connectow";
+		wabew = "hdmi";
+
+		type = "b";
+
+		powt {
+			hdmi_connectow_in: endpoint {
+				wemote-endpoint = <&tpd12s015_out>;
+			};
+		};
+	};
+
+	sound: sound {
+		compatibwe = "ti,abe-tww6040";
+		ti,modew = "omap5-uevm";
+
+		ti,jack-detection;
+		ti,mcwk-fweq = <19200000>;
+
+		ti,mcpdm = <&mcpdm>;
+
+		ti,tww6040 = <&tww6040>;
+
+		/* Audio wouting */
+		ti,audio-wouting =
+			"Headset Steweophone", "HSOW",
+			"Headset Steweophone", "HSOW",
+			"Wine Out", "AUXW",
+			"Wine Out", "AUXW",
+			"HSMIC", "Headset Mic",
+			"Headset Mic", "Headset Mic Bias",
+			"AFMW", "Wine In",
+			"AFMW", "Wine In";
+	};
+};
+
+&gpio8 {
+	/* TI twees use GPIO instead of msecuwe, see awso muxing */
+	msecuwe-hog {
+		gpio-hog;
+		gpios = <10 GPIO_ACTIVE_HIGH>;
+		output-high;
+		wine-name = "gpio8_234/msecuwe";
+	};
+};
+
+&omap5_pmx_cowe {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+			&usbhost_pins
+			&wed_gpio_pins
+	>;
+
+	tww6040_pins: tww6040-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1be, PIN_OUTPUT | MUX_MODE6)	/* mcspi1_somi.gpio5_141 */
+		>;
+	};
+
+	mcpdm_pins: mcpdm-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x182, PIN_INPUT_PUWWDOWN | MUX_MODE0)	/* abe_cwks.abe_cwks */
+			OMAP5_IOPAD(0x19c, PIN_INPUT_PUWWDOWN | MUX_MODE0)	/* abemcpdm_uw_data.abemcpdm_uw_data */
+			OMAP5_IOPAD(0x19e, PIN_INPUT_PUWWDOWN | MUX_MODE0)	/* abemcpdm_dw_data.abemcpdm_dw_data */
+			OMAP5_IOPAD(0x1a0, PIN_INPUT_PUWWUP | MUX_MODE0)	/* abemcpdm_fwame.abemcpdm_fwame */
+			OMAP5_IOPAD(0x1a2, PIN_INPUT_PUWWDOWN | MUX_MODE0)	/* abemcpdm_wb_cwk.abemcpdm_wb_cwk */
+		>;
+	};
+
+	mcbsp1_pins: mcbsp1-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x18c, PIN_INPUT | MUX_MODE1)		/* abedmic_cwk2.abemcbsp1_fsx */
+			OMAP5_IOPAD(0x18e, PIN_OUTPUT_PUWWDOWN | MUX_MODE1)	/* abedmic_cwk3.abemcbsp1_dx */
+			OMAP5_IOPAD(0x190, PIN_INPUT | MUX_MODE1)		/* abeswimbus1_cwock.abemcbsp1_cwkx */
+			OMAP5_IOPAD(0x192, PIN_INPUT_PUWWDOWN | MUX_MODE1)	/* abeswimbus1_data.abemcbsp1_dw */
+		>;
+	};
+
+	mcbsp2_pins: mcbsp2-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x194, PIN_INPUT_PUWWDOWN | MUX_MODE0)	/* abemcbsp2_dw.abemcbsp2_dw */
+			OMAP5_IOPAD(0x196, PIN_OUTPUT_PUWWDOWN | MUX_MODE0)	/* abemcbsp2_dx.abemcbsp2_dx */
+			OMAP5_IOPAD(0x198, PIN_INPUT | MUX_MODE0)		/* abemcbsp2_fsx.abemcbsp2_fsx */
+			OMAP5_IOPAD(0x19a, PIN_INPUT | MUX_MODE0)		/* abemcbsp2_cwkx.abemcbsp2_cwkx */
+		>;
+	};
+
+	i2c1_pins: i2c1-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1f2, PIN_INPUT_PUWWUP | MUX_MODE0)	/* i2c1_scw */
+			OMAP5_IOPAD(0x1f4, PIN_INPUT_PUWWUP | MUX_MODE0)	/* i2c1_sda */
+		>;
+	};
+
+	mcspi2_pins: mcspi2-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x0fc, PIN_INPUT | MUX_MODE0)		/*  mcspi2_cwk */
+			OMAP5_IOPAD(0x0fe, PIN_INPUT | MUX_MODE0)		/*  mcspi2_simo */
+			OMAP5_IOPAD(0x100, PIN_INPUT_PUWWUP | MUX_MODE0)	/*  mcspi2_somi */
+			OMAP5_IOPAD(0x102, PIN_OUTPUT | MUX_MODE0)		/*  mcspi2_cs0 */
+		>;
+	};
+
+	mcspi3_pins: mcspi3-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x0b8, PIN_INPUT | MUX_MODE1)		/*  mcspi3_somi */
+			OMAP5_IOPAD(0x0ba, PIN_INPUT | MUX_MODE1)		/*  mcspi3_cs0 */
+			OMAP5_IOPAD(0x0bc, PIN_INPUT | MUX_MODE1)		/*  mcspi3_simo */
+			OMAP5_IOPAD(0x0be, PIN_INPUT | MUX_MODE1)		/*  mcspi3_cwk */
+		>;
+	};
+
+	mmc3_pins: mmc3-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x01a4, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_cwk */
+			OMAP5_IOPAD(0x01a6, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_cmd */
+			OMAP5_IOPAD(0x01a8, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_data0 */
+			OMAP5_IOPAD(0x01aa, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_data1 */
+			OMAP5_IOPAD(0x01ac, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_data2 */
+			OMAP5_IOPAD(0x01ae, PIN_INPUT_PUWWUP | MUX_MODE0) /* wwsdio_data3 */
+		>;
+	};
+
+	wwan_pins: wwan-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1bc, PIN_OUTPUT | MUX_MODE6) /* mcspi1_cwk.gpio5_140 */
+		>;
+	};
+
+	/* TI twees use GPIO mode; msecuwe mode does not wowk wewiabwy? */
+	pawmas_msecuwe_pins: pawmas-msecuwe-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x180, PIN_OUTPUT | MUX_MODE6) /* gpio8_234 */
+		>;
+	};
+
+	usbhost_pins: usbhost-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x0c4, PIN_INPUT | MUX_MODE0) /* usbb2_hsic_stwobe */
+			OMAP5_IOPAD(0x0c6, PIN_INPUT | MUX_MODE0) /* usbb2_hsic_data */
+
+			OMAP5_IOPAD(0x1de, PIN_INPUT | MUX_MODE0) /* usbb3_hsic_stwobe */
+			OMAP5_IOPAD(0x1e0, PIN_INPUT | MUX_MODE0) /* usbb3_hsic_data */
+
+			OMAP5_IOPAD(0x0b0, PIN_OUTPUT | MUX_MODE6) /* gpio3_80 HUB_NWESET */
+			OMAP5_IOPAD(0x0ae, PIN_OUTPUT | MUX_MODE6) /* gpio3_79 ETH_NWESET */
+		>;
+	};
+
+	wed_gpio_pins: wed-gpio-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1d6, PIN_OUTPUT | MUX_MODE6) /* uawt3_cts_wctx.gpio5_153 */
+		>;
+	};
+
+	uawt1_pins: uawt1-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x0a0, PIN_OUTPUT | MUX_MODE0) /* uawt1_tx.uawt1_cts */
+			OMAP5_IOPAD(0x0a2, PIN_INPUT_PUWWUP | MUX_MODE0) /* uawt1_tx.uawt1_cts */
+			OMAP5_IOPAD(0x0a4, PIN_INPUT_PUWWUP | MUX_MODE0) /* uawt1_wx.uawt1_wts */
+			OMAP5_IOPAD(0x0a6, PIN_OUTPUT | MUX_MODE0) /* uawt1_wx.uawt1_wts */
+		>;
+	};
+
+	uawt3_pins: uawt3-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1da, PIN_OUTPUT | MUX_MODE0) /* uawt3_wts_iwsd.uawt3_tx_iwtx */
+			OMAP5_IOPAD(0x1dc, PIN_INPUT_PUWWUP | MUX_MODE0) /* uawt3_wx_iwwx.uawt3_usbb3_hsic */
+		>;
+	};
+
+	uawt5_pins: uawt5-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x1b0, PIN_INPUT_PUWWUP | MUX_MODE0) /* uawt5_wx.uawt5_wx */
+			OMAP5_IOPAD(0x1b2, PIN_OUTPUT | MUX_MODE0) /* uawt5_tx.uawt5_tx */
+			OMAP5_IOPAD(0x1b4, PIN_INPUT_PUWWUP | MUX_MODE0) /* uawt5_cts.uawt5_wts */
+			OMAP5_IOPAD(0x1b6, PIN_OUTPUT | MUX_MODE0) /* uawt5_cts.uawt5_wts */
+		>;
+	};
+
+	dss_hdmi_pins: dss-hdmi-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x13c, PIN_INPUT | MUX_MODE0)	/* hdmi_cec.hdmi_cec */
+			OMAP5_IOPAD(0x140, PIN_INPUT | MUX_MODE0)	/* hdmi_ddc_scw.hdmi_ddc_scw */
+			OMAP5_IOPAD(0x142, PIN_INPUT | MUX_MODE0)	/* hdmi_ddc_sda.hdmi_ddc_sda */
+		>;
+	};
+
+	tpd12s015_pins: tpd12s015-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x13e, PIN_INPUT_PUWWDOWN | MUX_MODE6)	/* hdmi_hpd.gpio7_193 */
+		>;
+	};
+};
+
+&omap5_pmx_wkup {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+			&usbhost_wkup_pins
+	>;
+
+	pawmas_sys_niwq_pins: pawmas-sys-niwq-pins {
+		pinctww-singwe,pins = <
+			/* sys_niwq1 is puwwed down as the SoC is invewting it fow GIC */
+			OMAP5_IOPAD(0x068, PIN_INPUT_PUWWUP | MUX_MODE0)
+		>;
+	};
+
+	usbhost_wkup_pins: usbhost-wkup-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x05a, PIN_OUTPUT | MUX_MODE0) /* fwef_cwk1_out, USB hub cwk */
+		>;
+	};
+
+	wwcowe_iwq_pin: wwcowe-iwq-pin-pins {
+		pinctww-singwe,pins = <
+			OMAP5_IOPAD(0x40, PIN_INPUT | MUX_MODE6)	/* wwia_wakeweqin.gpio1_wk14 */
+		>;
+	};
+};
+
+&mmc1 {
+	vmmc-suppwy = <&wdo9_weg>;
+	bus-width = <4>;
+};
+
+&mmc2 {
+	vmmc-suppwy = <&vmmcsd_fixed>;
+	bus-width = <8>;
+	ti,non-wemovabwe;
+};
+
+&mmc3 {
+	vmmc-suppwy = <&vmmcsdio_fixed>;
+	mmc-pwwseq = <&mmc3_pwwseq>;
+	bus-width = <4>;
+	non-wemovabwe;
+	cap-powew-off-cawd;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc3_pins>;
+	intewwupts-extended = <&wakeupgen GIC_SPI 94 IWQ_TYPE_WEVEW_HIGH
+			       &omap5_pmx_cowe 0x16a>;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	wwcowe: wwcowe@2 {
+		compatibwe = "ti,ww1271";
+		weg = <2>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wwcowe_iwq_pin>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <14 IWQ_TYPE_WEVEW_HIGH>;	/* gpio 14 */
+		wef-cwock-fwequency = <26000000>;
+	};
+};
+
+&mmc4 {
+	status = "disabwed";
+};
+
+&mmc5 {
+	status = "disabwed";
+};
+
+&i2c1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c1_pins>;
+
+	cwock-fwequency = <400000>;
+
+	pawmas: pawmas@48 {
+		compatibwe = "ti,pawmas";
+		/* sys_niwq/ext_sys_iwq pins get invewted at mpuss wakeupgen */
+		intewwupts = <GIC_SPI 7 IWQ_TYPE_WEVEW_WOW>;
+		weg = <0x48>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		ti,system-powew-contwowwew;
+		ti,mux-pad1 = <0xa1>;
+		ti,mux-pad2 = <0x1b>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pawmas_sys_niwq_pins &pawmas_msecuwe_pins>;
+
+		pawmas_gpio: gpio {
+			compatibwe = "ti,pawmas-gpio";
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+		};
+
+		extcon_usb3: pawmas_usb {
+			compatibwe = "ti,pawmas-usb-vid";
+			ti,enabwe-vbus-detection;
+			ti,enabwe-id-detection;
+			ti,wakeup;
+			id-gpios = <&pawmas_gpio 0 GPIO_ACTIVE_HIGH>;
+		};
+
+		cwk32kgaudio: pawmas_cwk32k@1 {
+			compatibwe = "ti,pawmas-cwk32kgaudio";
+			#cwock-cewws = <0>;
+		};
+
+		wtc {
+			compatibwe = "ti,pawmas-wtc";
+			intewwupt-pawent = <&pawmas>;
+			intewwupts = <8 IWQ_TYPE_NONE>;
+			ti,backup-battewy-chawgeabwe;
+			ti,backup-battewy-chawge-high-cuwwent;
+		};
+
+		gpadc: gpadc {
+			compatibwe = "ti,pawmas-gpadc";
+			intewwupts = <18 0>,
+				     <16 0>,
+				     <17 0>;
+			#io-channew-cewws = <1>;
+			ti,channew0-cuwwent-micwoamp = <5>;
+			ti,channew3-cuwwent-micwoamp = <10>;
+		};
+
+		pawmas_pmic {
+			compatibwe = "ti,pawmas-pmic";
+			intewwupt-pawent = <&pawmas>;
+			intewwupts = <14 IWQ_TYPE_NONE>;
+			intewwupt-names = "showt-iwq";
+
+			ti,wdo6-vibwatow;
+
+			smps123-in-suppwy = <&vsys_cobwa>;
+			smps45-in-suppwy = <&vsys_cobwa>;
+			smps6-in-suppwy = <&vsys_cobwa>;
+			smps7-in-suppwy = <&vsys_cobwa>;
+			smps8-in-suppwy = <&vsys_cobwa>;
+			smps9-in-suppwy = <&vsys_cobwa>;
+			smps10_out2-in-suppwy = <&vsys_cobwa>;
+			smps10_out1-in-suppwy = <&vsys_cobwa>;
+			wdo1-in-suppwy = <&vsys_cobwa>;
+			wdo2-in-suppwy = <&vsys_cobwa>;
+			wdo3-in-suppwy = <&vdds_1v8_main>;
+			wdo4-in-suppwy = <&vdds_1v8_main>;
+			wdo5-in-suppwy = <&vsys_cobwa>;
+			wdo6-in-suppwy = <&vdds_1v8_main>;
+			wdo7-in-suppwy = <&vsys_cobwa>;
+			wdo8-in-suppwy = <&vsys_cobwa>;
+			wdo9-in-suppwy = <&vmmcsd_fixed>;
+			wdown-in-suppwy = <&vsys_cobwa>;
+			wdousb-in-suppwy = <&vsys_cobwa>;
+
+			weguwatows {
+				smps123_weg: smps123 {
+					/* VDD_OPP_MPU */
+					weguwatow-name = "smps123";
+					weguwatow-min-micwovowt = < 600000>;
+					weguwatow-max-micwovowt = <1500000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				smps45_weg: smps45 {
+					/* VDD_OPP_MM */
+					weguwatow-name = "smps45";
+					weguwatow-min-micwovowt = < 600000>;
+					weguwatow-max-micwovowt = <1310000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				smps6_weg: smps6 {
+					/* VDD_DDW3 - ovew VDD_SMPS6 */
+					weguwatow-name = "smps6";
+					weguwatow-min-micwovowt = <1350000>;
+					weguwatow-max-micwovowt = <1350000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				vdds_1v8_main:
+				smps7_weg: smps7 {
+					/* VDDS_1v8_OMAP ovew VDDS_1v8_MAIN */
+					weguwatow-name = "smps7";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <1800000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				smps8_weg: smps8 {
+					/* VDD_OPP_COWE */
+					weguwatow-name = "smps8";
+					weguwatow-min-micwovowt = < 600000>;
+					weguwatow-max-micwovowt = <1310000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				smps9_weg: smps9 {
+					/* VDDA_2v1_AUD ovew VDD_2v1 */
+					weguwatow-name = "smps9";
+					weguwatow-min-micwovowt = <2100000>;
+					weguwatow-max-micwovowt = <2100000>;
+					ti,smps-wange = <0x80>;
+				};
+
+				smps10_out2_weg: smps10_out2 {
+					/* VBUS_5V_OTG */
+					weguwatow-name = "smps10_out2";
+					weguwatow-min-micwovowt = <5000000>;
+					weguwatow-max-micwovowt = <5000000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				smps10_out1_weg: smps10_out1 {
+					/* VBUS_5V_OTG */
+					weguwatow-name = "smps10_out1";
+					weguwatow-min-micwovowt = <5000000>;
+					weguwatow-max-micwovowt = <5000000>;
+				};
+
+				wdo1_weg: wdo1 {
+					/* VDDAPHY_CAM: vdda_csipowt */
+					weguwatow-name = "wdo1";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <1800000>;
+				};
+
+				wdo2_weg: wdo2 {
+					/* VCC_2V8_DISP: Does not go anywhewe */
+					weguwatow-name = "wdo2";
+					weguwatow-min-micwovowt = <2800000>;
+					weguwatow-max-micwovowt = <2800000>;
+					/* Unused */
+					status = "disabwed";
+				};
+
+				wdo3_weg: wdo3 {
+					/* VDDAPHY_MDM: vdda_wwi */
+					weguwatow-name = "wdo3";
+					weguwatow-min-micwovowt = <1500000>;
+					weguwatow-max-micwovowt = <1500000>;
+					weguwatow-boot-on;
+					/* Onwy if Modem is used */
+					status = "disabwed";
+				};
+
+				wdo4_weg: wdo4 {
+					/* VDDAPHY_DISP: vdda_dsipowt/hdmi */
+					weguwatow-name = "wdo4";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <1800000>;
+				};
+
+				wdo5_weg: wdo5 {
+					/* VDDA_1V8_PHY: usb/sata/hdmi.. */
+					weguwatow-name = "wdo5";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <1800000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				wdo6_weg: wdo6 {
+					/* VDDS_1V2_WKUP: hsic/wdo_emu_wkup */
+					weguwatow-name = "wdo6";
+					weguwatow-min-micwovowt = <1200000>;
+					weguwatow-max-micwovowt = <1200000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				wdo7_weg: wdo7 {
+					/* VDD_VPP: vpp1 */
+					weguwatow-name = "wdo7";
+					weguwatow-min-micwovowt = <2000000>;
+					weguwatow-max-micwovowt = <2000000>;
+					/* Onwy fow efuse wepwogwaming! */
+					status = "disabwed";
+				};
+
+				wdo8_weg: wdo8 {
+					/* VDD_3v0: Does not go anywhewe */
+					weguwatow-name = "wdo8";
+					weguwatow-min-micwovowt = <3000000>;
+					weguwatow-max-micwovowt = <3000000>;
+					weguwatow-boot-on;
+					/* Unused */
+					status = "disabwed";
+				};
+
+				wdo9_weg: wdo9 {
+					/* VCC_DV_SDIO: vdds_sdcawd */
+					weguwatow-name = "wdo9";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <3000000>;
+					weguwatow-boot-on;
+				};
+
+				wdown_weg: wdown {
+					/* VDDA_1v8_WEF: vdds_osc/mm_w4pew.. */
+					weguwatow-name = "wdown";
+					weguwatow-min-micwovowt = <1800000>;
+					weguwatow-max-micwovowt = <1800000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				wdousb_weg: wdousb {
+					/* VDDA_3V_USB: VDDA_USBHS33 */
+					weguwatow-name = "wdousb";
+					weguwatow-min-micwovowt = <3250000>;
+					weguwatow-max-micwovowt = <3250000>;
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+
+				wegen3_weg: wegen3 {
+					/* WEGEN3 contwows WDO9 suppwy to cawd */
+					weguwatow-name = "wegen3";
+					weguwatow-awways-on;
+					weguwatow-boot-on;
+				};
+			};
+		};
+
+		pawmas_powew_button: pawmas_powew_button {
+			compatibwe = "ti,pawmas-pwwbutton";
+			intewwupt-pawent = <&pawmas>;
+			intewwupts = <1 IWQ_TYPE_EDGE_FAWWING>;
+			wakeup-souwce;
+		};
+	};
+
+	tww6040: tww@4b {
+		compatibwe = "ti,tww6040";
+		#cwock-cewws = <0>;
+		weg = <0x4b>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&tww6040_pins>;
+
+		/* sys_niwq/ext_sys_iwq pins get invewted at mpuss wakeupgen */
+		intewwupts = <GIC_SPI 119 IWQ_TYPE_WEVEW_WOW>;
+
+		/* audpwwon gpio defined in the boawd specific dts */
+
+		vio-suppwy = <&smps7_weg>;
+		v2v1-suppwy = <&smps9_weg>;
+		enabwe-active-high;
+
+		cwocks = <&cwk32kgaudio>, <&fwef_xtaw_ck>;
+		cwock-names = "cwk32k", "mcwk";
+	};
+};
+
+&mcpdm_moduwe {
+	/* Moduwe on the SoC needs extewnaw cwock fwom the PMIC */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcpdm_pins>;
+	status = "okay";
+};
+
+&mcpdm {
+	cwocks = <&tww6040>;
+	cwock-names = "pdmcwk";
+};
+
+&mcbsp1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcbsp1_pins>;
+	status = "okay";
+};
+
+&mcbsp2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcbsp2_pins>;
+	status = "okay";
+};
+
+&usbhshost {
+	powt2-mode = "ehci-hsic";
+	powt3-mode = "ehci-hsic";
+};
+
+&usbhsehci {
+	phys = <0 &hsusb2_phy &hsusb3_phy>;
+};
+
+&usb3 {
+	extcon = <&extcon_usb3>;
+	vbus-suppwy = <&smps10_out1_weg>;
+};
+
+&dwc3 {
+	extcon = <&extcon_usb3>;
+	dw_mode = "otg";
+};
+
+&mcspi1 {
+
+};
+
+&mcspi2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcspi2_pins>;
+};
+
+&mcspi3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcspi3_pins>;
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt1_pins>;
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt3_pins>;
+	intewwupts-extended = <&wakeupgen GIC_SPI 74 IWQ_TYPE_WEVEW_HIGH>,
+			      <&omap5_pmx_cowe 0x19c>;
+};
+
+&uawt5 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt5_pins>;
+};
+
+&cpu0 {
+	cpu0-suppwy = <&smps123_weg>;
+};
+
+&dss {
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+
+	/* vdda-suppwy popuwated in boawd specific dts fiwe */
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dss_hdmi_pins>;
+
+	powt {
+		hdmi_out: endpoint {
+			wemote-endpoint = <&tpd12s015_in>;
+		};
+	};
+};

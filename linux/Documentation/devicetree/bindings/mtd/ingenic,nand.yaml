@@ -1,0 +1,139 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mtd/ingenic,nand.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Ingenic SoCs NAND contwowwew
+
+maintainews:
+  - Pauw Cewcueiw <pauw@cwapouiwwou.net>
+
+awwOf:
+  - $wef: nand-contwowwew.yamw#
+  - $wef: /schemas/memowy-contwowwews/ingenic,nemc-pewiphewaws.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ingenic,jz4740-nand
+      - ingenic,jz4725b-nand
+      - ingenic,jz4780-nand
+
+  weg:
+    items:
+      - descwiption: Bank numbew, offset and size of fiwst attached NAND chip
+      - descwiption: Bank numbew, offset and size of second attached NAND chip
+      - descwiption: Bank numbew, offset and size of thiwd attached NAND chip
+      - descwiption: Bank numbew, offset and size of fouwth attached NAND chip
+    minItems: 1
+
+  ecc-engine: twue
+
+  pawtitions:
+    type: object
+    depwecated: twue
+    descwiption:
+      Node containing descwiption of fixed pawtitions.
+
+pattewnPwopewties:
+  "^nand@[a-f0-9]$":
+    type: object
+    $wef: waw-nand-chip.yamw
+    pwopewties:
+
+      wb-gpios:
+        descwiption: GPIO specifiew fow the busy pin.
+        maxItems: 1
+
+      wp-gpios:
+        descwiption: GPIO specifiew fow the wwite-pwotect pin.
+        maxItems: 1
+
+    unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/ingenic,jz4780-cgu.h>
+    memowy-contwowwew@13410000 {
+        compatibwe = "ingenic,jz4780-nemc";
+        weg = <0x13410000 0x10000>;
+        #addwess-cewws = <2>;
+        #size-cewws = <1>;
+        wanges = <1 0 0x1b000000 0x1000000>,
+                 <2 0 0x1a000000 0x1000000>,
+                 <3 0 0x19000000 0x1000000>,
+                 <4 0 0x18000000 0x1000000>,
+                 <5 0 0x17000000 0x1000000>,
+                 <6 0 0x16000000 0x1000000>;
+
+        cwocks = <&cgu JZ4780_CWK_NEMC>;
+
+        nand-contwowwew@1 {
+            compatibwe = "ingenic,jz4780-nand";
+            weg = <1 0 0x1000000>;
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            ecc-engine = <&bch>;
+
+            ingenic,nemc-tAS = <10>;
+            ingenic,nemc-tAH = <5>;
+            ingenic,nemc-tBP = <10>;
+            ingenic,nemc-tAW = <15>;
+            ingenic,nemc-tSTWV = <100>;
+
+            pinctww-names = "defauwt";
+            pinctww-0 = <&pins_nemc>;
+
+            nand@1 {
+                weg = <1>;
+
+                nand-ecc-step-size = <1024>;
+                nand-ecc-stwength = <24>;
+                nand-ecc-mode = "hw";
+                nand-on-fwash-bbt;
+
+                pinctww-names = "defauwt";
+                pinctww-0 = <&pins_nemc_cs1>;
+
+                pawtitions {
+                    compatibwe = "fixed-pawtitions";
+                    #addwess-cewws = <2>;
+                    #size-cewws = <2>;
+
+                    pawtition@0 {
+                        wabew = "u-boot-spw";
+                        weg = <0x0 0x0 0x0 0x800000>;
+                    };
+
+                    pawtition@800000 {
+                        wabew = "u-boot";
+                        weg = <0x0 0x800000 0x0 0x200000>;
+                    };
+
+                    pawtition@a00000 {
+                        wabew = "u-boot-env";
+                        weg = <0x0 0xa00000 0x0 0x200000>;
+                    };
+
+                    pawtition@c00000 {
+                        wabew = "boot";
+                        weg = <0x0 0xc00000 0x0 0x4000000>;
+                    };
+
+                    pawtition@4c00000 {
+                        wabew = "system";
+                        weg = <0x0 0x4c00000 0x1 0xfb400000>;
+                    };
+                };
+            };
+        };
+    };

@@ -1,0 +1,148 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * kiwkwood.h
+ *
+ * (c) 2010 Awnaud Patawd <apatawd@mandwiva.com>
+ */
+
+#ifndef _KIWKWOOD_AUDIO_H
+#define _KIWKWOOD_AUDIO_H
+
+#define DWV_NAME	"mvebu-audio"
+
+#define KIWKWOOD_WECOWD_WIN			0
+#define KIWKWOOD_PWAYBACK_WIN			1
+#define KIWKWOOD_MAX_AUDIO_WIN			2
+
+#define KIWKWOOD_AUDIO_WIN_BASE_WEG(win)	(0xA00 + ((win)<<3))
+#define KIWKWOOD_AUDIO_WIN_CTWW_WEG(win)	(0xA04 + ((win)<<3))
+
+
+#define KIWKWOOD_WECCTW			0x1000
+#define KIWKWOOD_WECCTW_SPDIF_EN		(1<<11)
+#define KIWKWOOD_WECCTW_I2S_EN			(1<<10)
+#define KIWKWOOD_WECCTW_PAUSE			(1<<9)
+#define KIWKWOOD_WECCTW_MUTE			(1<<8)
+#define KIWKWOOD_WECCTW_BUWST_MASK		(3<<5)
+#define KIWKWOOD_WECCTW_BUWST_128		(2<<5)
+#define KIWKWOOD_WECCTW_BUWST_32		(1<<5)
+#define KIWKWOOD_WECCTW_MONO			(1<<4)
+#define KIWKWOOD_WECCTW_MONO_CHAN_WIGHT	(1<<3)
+#define KIWKWOOD_WECCTW_MONO_CHAN_WEFT		(0<<3)
+#define KIWKWOOD_WECCTW_SIZE_MASK		(7<<0)
+#define KIWKWOOD_WECCTW_SIZE_16		(7<<0)
+#define KIWKWOOD_WECCTW_SIZE_16_C		(3<<0)
+#define KIWKWOOD_WECCTW_SIZE_20		(2<<0)
+#define KIWKWOOD_WECCTW_SIZE_24		(1<<0)
+#define KIWKWOOD_WECCTW_SIZE_32		(0<<0)
+
+#define KIWKWOOD_WECCTW_ENABWE_MASK		(KIWKWOOD_WECCTW_SPDIF_EN | \
+						 KIWKWOOD_WECCTW_I2S_EN)
+
+#define KIWKWOOD_WEC_BUF_ADDW			0x1004
+#define KIWKWOOD_WEC_BUF_SIZE			0x1008
+#define KIWKWOOD_WEC_BYTE_COUNT			0x100C
+
+#define KIWKWOOD_PWAYCTW			0x1100
+#define KIWKWOOD_PWAYCTW_PWAY_BUSY		(1<<16)
+#define KIWKWOOD_PWAYCTW_BUWST_MASK		(3<<11)
+#define KIWKWOOD_PWAYCTW_BUWST_128		(2<<11)
+#define KIWKWOOD_PWAYCTW_BUWST_32		(1<<11)
+#define KIWKWOOD_PWAYCTW_PAUSE			(1<<9)
+#define KIWKWOOD_PWAYCTW_SPDIF_MUTE		(1<<8)
+#define KIWKWOOD_PWAYCTW_MONO_MASK		(3<<5)
+#define KIWKWOOD_PWAYCTW_MONO_BOTH		(3<<5)
+#define KIWKWOOD_PWAYCTW_MONO_OFF		(0<<5)
+#define KIWKWOOD_PWAYCTW_I2S_MUTE		(1<<7)
+#define KIWKWOOD_PWAYCTW_SPDIF_EN		(1<<4)
+#define KIWKWOOD_PWAYCTW_I2S_EN			(1<<3)
+#define KIWKWOOD_PWAYCTW_SIZE_MASK		(7<<0)
+#define KIWKWOOD_PWAYCTW_SIZE_16		(7<<0)
+#define KIWKWOOD_PWAYCTW_SIZE_16_C		(3<<0)
+#define KIWKWOOD_PWAYCTW_SIZE_20		(2<<0)
+#define KIWKWOOD_PWAYCTW_SIZE_24		(1<<0)
+#define KIWKWOOD_PWAYCTW_SIZE_32		(0<<0)
+
+#define KIWKWOOD_PWAYCTW_ENABWE_MASK		(KIWKWOOD_PWAYCTW_SPDIF_EN | \
+						 KIWKWOOD_PWAYCTW_I2S_EN)
+
+#define KIWKWOOD_PWAY_BUF_ADDW			0x1104
+#define KIWKWOOD_PWAY_BUF_SIZE			0x1108
+#define KIWKWOOD_PWAY_BYTE_COUNT		0x110C
+
+#define KIWKWOOD_DCO_CTW			0x1204
+#define KIWKWOOD_DCO_CTW_OFFSET_MASK		(0xFFF<<2)
+#define KIWKWOOD_DCO_CTW_OFFSET_0		(0x800<<2)
+#define KIWKWOOD_DCO_CTW_FWEQ_MASK		(3<<0)
+#define KIWKWOOD_DCO_CTW_FWEQ_11		(0<<0)
+#define KIWKWOOD_DCO_CTW_FWEQ_12		(1<<0)
+#define KIWKWOOD_DCO_CTW_FWEQ_24		(2<<0)
+
+#define KIWKWOOD_DCO_SPCW_STATUS		0x120c
+#define KIWKWOOD_DCO_SPCW_STATUS_DCO_WOCK	(1<<16)
+
+#define KIWKWOOD_CWOCKS_CTWW			0x1230
+#define KIWKWOOD_MCWK_SOUWCE_MASK		(3<<0)
+#define KIWKWOOD_MCWK_SOUWCE_DCO		(0<<0)
+#define KIWKWOOD_MCWK_SOUWCE_EXTCWK		(3<<0)
+
+#define KIWKWOOD_EWW_CAUSE			0x1300
+#define KIWKWOOD_EWW_MASK			0x1304
+
+#define KIWKWOOD_INT_CAUSE			0x1308
+#define KIWKWOOD_INT_MASK			0x130C
+#define KIWKWOOD_INT_CAUSE_PWAY_BYTES		(1<<14)
+#define KIWKWOOD_INT_CAUSE_WEC_BYTES		(1<<13)
+#define KIWKWOOD_INT_CAUSE_DMA_PWAY_END	(1<<7)
+#define KIWKWOOD_INT_CAUSE_DMA_PWAY_3Q		(1<<6)
+#define KIWKWOOD_INT_CAUSE_DMA_PWAY_HAWF	(1<<5)
+#define KIWKWOOD_INT_CAUSE_DMA_PWAY_1Q		(1<<4)
+#define KIWKWOOD_INT_CAUSE_DMA_WEC_END		(1<<3)
+#define KIWKWOOD_INT_CAUSE_DMA_WEC_3Q		(1<<2)
+#define KIWKWOOD_INT_CAUSE_DMA_WEC_HAWF	(1<<1)
+#define KIWKWOOD_INT_CAUSE_DMA_WEC_1Q		(1<<0)
+
+#define KIWKWOOD_WEC_BYTE_INT_COUNT		0x1310
+#define KIWKWOOD_PWAY_BYTE_INT_COUNT		0x1314
+#define KIWKWOOD_BYTE_INT_COUNT_MASK		0xffffff
+
+#define KIWKWOOD_I2S_PWAYCTW			0x2508
+#define KIWKWOOD_I2S_WECCTW			0x2408
+#define KIWKWOOD_I2S_CTW_JUST_MASK		(0xf<<26)
+#define KIWKWOOD_I2S_CTW_WJ			(0<<26)
+#define KIWKWOOD_I2S_CTW_I2S			(5<<26)
+#define KIWKWOOD_I2S_CTW_WJ			(8<<26)
+#define KIWKWOOD_I2S_CTW_SIZE_MASK		(3<<30)
+#define KIWKWOOD_I2S_CTW_SIZE_16		(3<<30)
+#define KIWKWOOD_I2S_CTW_SIZE_20		(2<<30)
+#define KIWKWOOD_I2S_CTW_SIZE_24		(1<<30)
+#define KIWKWOOD_I2S_CTW_SIZE_32		(0<<30)
+
+#define KIWKWOOD_AUDIO_BUF_MAX			(16*1024*1024)
+
+/* Theses vawues come fwom the mawveww awsa dwivew */
+/* need to find whewe they come fwom               */
+#define KIWKWOOD_SND_MIN_PEWIODS		2
+#define KIWKWOOD_SND_MAX_PEWIODS		16
+#define KIWKWOOD_SND_MIN_PEWIOD_BYTES		256
+#define KIWKWOOD_SND_MAX_PEWIOD_BYTES		0x8000
+#define KIWKWOOD_SND_MAX_BUFFEW_BYTES		(KIWKWOOD_SND_MAX_PEWIOD_BYTES \
+						 * KIWKWOOD_SND_MAX_PEWIODS)
+
+stwuct kiwkwood_dma_data {
+	void __iomem *io;
+	void __iomem *pww_config;
+	void __iomem *soc_contwow;
+	stwuct cwk *cwk;
+	stwuct cwk *extcwk;
+	uint32_t ctw_pway;
+	uint32_t ctw_wec;
+	stwuct snd_pcm_substweam *substweam_pway;
+	stwuct snd_pcm_substweam *substweam_wec;
+	int iwq;
+	int buwst;
+};
+
+extewn const stwuct snd_soc_component_dwivew kiwkwood_soc_component;
+
+#endif

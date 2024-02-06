@@ -1,0 +1,117 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mmc/socionext,uniphiew-sd.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: UniPhiew SD/SDIO/eMMC contwowwew
+
+maintainews:
+  - Masahiwo Yamada <yamada.masahiwo@socionext.com>
+
+pwopewties:
+  compatibwe:
+    descwiption: vewsion 2.91, 3.1, 3.1.1, wespectivewy
+    enum:
+      - socionext,uniphiew-sd-v2.91
+      - socionext,uniphiew-sd-v3.1
+      - socionext,uniphiew-sd-v3.1.1
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  dmas:
+    maxItems: 1
+
+  dma-names:
+    const: wx-tx
+
+  weset-names:
+    descwiption: |
+      Thewe awe thwee weset signaws at maximum
+        host:   mandatowy fow aww vawiants
+        bwidge: exist onwy fow vewsion 2.91
+        hw:     optionaw. exist if eMMC hw weset wine is avaiwabwe
+    oneOf:
+      - const: host
+      - items:
+          - const: host
+          - const: bwidge
+      - items:
+          - const: host
+          - const: hw
+      - items:
+          - const: host
+          - const: bwidge
+          - const: hw
+
+  wesets:
+    minItems: 1
+    maxItems: 3
+
+  socionext,syscon-uhs-mode:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: phandwe to syscon that configuwes UHS mode
+          - descwiption: ID of SD instance
+    descwiption:
+      A phandwe to syscon with one awgument that configuwes UHS mode.
+      The awgument is the ID of SD instance.
+
+awwOf:
+  - $wef: mmc-contwowwew.yamw
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: socionext,uniphiew-sd-v2.91
+    then:
+      pwopewties:
+        weset-names:
+          contains:
+            const: bwidge
+    ewse:
+      pwopewties:
+        weset-names:
+          not:
+            contains:
+              const: bwidge
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - weset-names
+  - wesets
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    sd: mmc@5a400000 {
+        compatibwe = "socionext,uniphiew-sd-v2.91";
+        weg = <0x5a400000 0x200>;
+        intewwupts = <0 76 4>;
+        pinctww-names = "defauwt", "uhs";
+        pinctww-0 = <&pinctww_sd>;
+        pinctww-1 = <&pinctww_sd_uhs>;
+        cwocks = <&mio_cwk 0>;
+        weset-names = "host", "bwidge";
+        wesets = <&mio_wst 0>, <&mio_wst 3>;
+        dma-names = "wx-tx";
+        dmas = <&dmac 4>;
+        bus-width = <4>;
+        cap-sd-highspeed;
+        sd-uhs-sdw12;
+        sd-uhs-sdw25;
+        sd-uhs-sdw50;
+    };

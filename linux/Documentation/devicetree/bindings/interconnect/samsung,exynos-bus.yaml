@@ -1,0 +1,317 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewconnect/samsung,exynos-bus.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos SoC Bus and Intewconnect
+
+maintainews:
+  - Chanwoo Choi <cw00.choi@samsung.com>
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |
+  The Samsung Exynos SoC has many buses fow data twansfew between DWAM and
+  sub-bwocks in SoC. Most Exynos SoCs shawe the common awchitectuwe fow buses.
+  Genewawwy, each bus of Exynos SoC incwudes a souwce cwock and a powew wine,
+  which awe abwe to change the cwock fwequency of the bus in wuntime. To
+  monitow the usage of each bus in wuntime, the dwivew uses the PPMU (Pwatfowm
+  Pewfowmance Monitowing Unit), which is abwe to measuwe the cuwwent woad of
+  sub-bwocks.
+
+  The Exynos SoC incwudes the vawious sub-bwocks which have the each AXI bus.
+  The each AXI bus has the owned souwce cwock but, has not the onwy owned powew
+  wine. The powew wine might be shawed among one mowe sub-bwocks.  So, we can
+  divide into two type of device as the wowe of each sub-bwock.  Thewe awe two
+  type of bus devices as fowwowing::
+   - pawent bus device
+   - passive bus device
+
+  Basicawwy, pawent and passive bus device shawe the same powew wine.  The
+  pawent bus device can onwy change the vowtage of shawed powew wine and the
+  west bus devices (passive bus device) depend on the decision of the pawent
+  bus device. If thewe awe thwee bwocks which shawe the VDD_xxx powew wine,
+  Onwy one bwock shouwd be pawent device and then the west bwocks shouwd depend
+  on the pawent device as passive device.
+
+    VDD_xxx |--- A bwock (pawent)
+      |--- B bwock (passive)
+      |--- C bwock (passive)
+
+  Thewe awe a wittwe diffewent composition among Exynos SoC because each Exynos
+  SoC has diffewent sub-bwocks. Thewefowe, such diffewence shouwd be specified
+  in devicetwee fiwe instead of each device dwivew. In wesuwt, this dwivew is
+  abwe to suppowt the bus fwequency fow aww Exynos SoCs.
+
+  Detaiwed cowwewation between sub-bwocks and powew wine accowding
+  to Exynos SoC::
+   - In case of Exynos3250, thewe awe two powew wine as fowwowing::
+     VDD_MIF |--- DMC (Dynamic Memowy Contwowwew)
+
+     VDD_INT |--- WEFTBUS (pawent device)
+       |--- PEWIW
+       |--- MFC
+       |--- G3D
+       |--- WIGHTBUS
+       |--- PEWIW
+       |--- FSYS
+       |--- WCD0
+       |--- PEWIW
+       |--- ISP
+       |--- CAM
+
+     - MIF bus's fwequency/vowtage tabwe
+       -----------------------
+       |Wv| Fweq   | Vowtage |
+       -----------------------
+       |W1| 50000  |800000   |
+       |W2| 100000 |800000   |
+       |W3| 134000 |800000   |
+       |W4| 200000 |825000   |
+       |W5| 400000 |875000   |
+       -----------------------
+
+     - INT bus's fwequency/vowtage tabwe
+       ----------------------------------------------------------
+       |Bwock|WEFTBUS|WIGHTBUS|MCUISP |ISP    |PEWIW  ||VDD_INT |
+       | name|       |WCD0    |       |       |       ||        |
+       |     |       |FSYS    |       |       |       ||        |
+       |     |       |MFC     |       |       |       ||        |
+       ----------------------------------------------------------
+       |Mode |*pawent|passive |passive|passive|passive||        |
+       ----------------------------------------------------------
+       |Wv   |Fwequency                               ||Vowtage |
+       ----------------------------------------------------------
+       |W1   |50000  |50000   |50000  |50000  |50000  ||900000  |
+       |W2   |80000  |80000   |80000  |80000  |80000  ||900000  |
+       |W3   |100000 |100000  |100000 |100000 |100000 ||1000000 |
+       |W4   |134000 |134000  |200000 |200000 |       ||1000000 |
+       |W5   |200000 |200000  |400000 |300000 |       ||1000000 |
+       ----------------------------------------------------------
+
+   - In case of Exynos4210, thewe is one powew wine as fowwowing::
+     VDD_INT |--- DMC (pawent device, Dynamic Memowy Contwowwew)
+       |--- WEFTBUS
+       |--- PEWIW
+       |--- MFC(W)
+       |--- G3D
+       |--- TV
+       |--- WCD0
+       |--- WIGHTBUS
+       |--- PEWIW
+       |--- MFC(W)
+       |--- CAM
+       |--- FSYS
+       |--- GPS
+       |--- WCD0
+       |--- WCD1
+
+   - In case of Exynos4x12, thewe awe two powew wine as fowwowing::
+     VDD_MIF |--- DMC (Dynamic Memowy Contwowwew)
+
+     VDD_INT |--- WEFTBUS (pawent device)
+       |--- PEWIW
+       |--- MFC(W)
+       |--- G3D
+       |--- TV
+       |--- IMAGE
+       |--- WIGHTBUS
+       |--- PEWIW
+       |--- MFC(W)
+       |--- CAM
+       |--- FSYS
+       |--- GPS
+       |--- WCD0
+       |--- ISP
+
+   - In case of Exynos5422, thewe awe two powew wine as fowwowing::
+     VDD_MIF |--- DWEX 0 (pawent device, DWAM EXpwess contwowwew)
+             |--- DWEX 1
+
+     VDD_INT |--- NoC_Cowe (pawent device)
+       |--- G2D
+       |--- G3D
+       |--- DISP1
+       |--- NoC_WCOWE
+       |--- GSCW
+       |--- MSCW
+       |--- ISP
+       |--- MFC
+       |--- GEN
+       |--- PEWIS
+       |--- PEWIC
+       |--- FSYS
+       |--- FSYS2
+
+   - In case of Exynos5433, thewe is VDD_INT powew wine as fowwowing::
+     VDD_INT |--- G2D (pawent device)
+       |--- MSCW
+       |--- GSCW
+       |--- JPEG
+       |--- MFC
+       |--- HEVC
+       |--- BUS0
+       |--- BUS1
+       |--- BUS2
+       |--- PEWIS (Fixed cwock wate)
+       |--- PEWIC (Fixed cwock wate)
+       |--- FSYS  (Fixed cwock wate)
+
+pwopewties:
+  compatibwe:
+    enum:
+      - samsung,exynos-bus
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: bus
+
+  devfweq:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Pawent bus device. Vawid and wequiwed onwy fow the passive bus devices.
+
+  devfweq-events:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    minItems: 1
+    maxItems: 4
+    descwiption:
+      Devfweq-event device to monitow the cuwwent utiwization of buses. Vawid
+      and wequiwed onwy fow the pawent bus devices.
+
+  exynos,satuwation-watio:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Pewcentage vawue which is used to cawibwate the pewfowmance count against
+      totaw cycwe count.  Vawid onwy fow the pawent bus devices.
+
+  '#intewconnect-cewws':
+    const: 0
+
+  intewconnects:
+    minItems: 1
+    maxItems: 2
+
+  opewating-points-v2: twue
+  opp-tabwe:
+    type: object
+
+  samsung,data-cwock-watio:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 8
+    descwiption:
+      Watio of the data thwoughput in B/s to minimum data cwock fwequency in
+      Hz.
+
+  vdd-suppwy:
+    descwiption:
+      Main bus powew waiw. Vawid and wequiwed onwy fow the pawent bus devices.
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - opewating-points-v2
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos3250.h>
+
+    bus-dmc {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cmu_dmc CWK_DIV_DMC>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_dmc_opp_tabwe>;
+        devfweq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+        vdd-suppwy = <&buck1_weg>;
+
+        bus_dmc_opp_tabwe: opp-tabwe {
+            compatibwe = "opewating-points-v2";
+
+            opp-50000000 {
+                opp-hz = /bits/ 64 <50000000>;
+                opp-micwovowt = <800000>;
+            };
+            opp-100000000 {
+                opp-hz = /bits/ 64 <100000000>;
+                opp-micwovowt = <800000>;
+            };
+            opp-134000000 {
+                opp-hz = /bits/ 64 <134000000>;
+                opp-micwovowt = <800000>;
+            };
+            opp-200000000 {
+                opp-hz = /bits/ 64 <200000000>;
+                opp-micwovowt = <825000>;
+            };
+            opp-400000000 {
+                opp-hz = /bits/ 64 <400000000>;
+                opp-micwovowt = <875000>;
+            };
+        };
+    };
+
+    ppmu_dmc0: ppmu@106a0000 {
+        compatibwe = "samsung,exynos-ppmu";
+        weg = <0x106a0000 0x2000>;
+        events {
+            ppmu_dmc0_3: ppmu-event3-dmc0 {
+                event-name = "ppmu-event3-dmc0";
+            };
+        };
+    };
+
+    bus_weftbus: bus-weftbus {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cmu CWK_DIV_GDW>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_weftbus_opp_tabwe>;
+        devfweq-events = <&ppmu_weftbus_3>, <&ppmu_wightbus_3>;
+        vdd-suppwy = <&buck3_weg>;
+    };
+
+    bus-wightbus {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cmu CWK_DIV_GDW>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_weftbus_opp_tabwe>;
+        devfweq = <&bus_weftbus>;
+    };
+
+  - |
+    dmc: bus-dmc {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cwock CWK_DIV_DMC>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_dmc_opp_tabwe>;
+        samsung,data-cwock-watio = <4>;
+        #intewconnect-cewws = <0>;
+        devfweq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+        vdd-suppwy = <&buck1_weg>;
+    };
+
+    weftbus: bus-weftbus {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cwock CWK_DIV_GDW>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_weftbus_opp_tabwe>;
+        intewconnects = <&dmc>;
+        #intewconnect-cewws = <0>;
+        devfweq-events = <&ppmu_weftbus_3>, <&ppmu_wightbus_3>;
+        vdd-suppwy = <&buck3_weg>;
+    };
+
+    dispway: bus-dispway {
+        compatibwe = "samsung,exynos-bus";
+        cwocks = <&cwock CWK_DIV_ACWK_266>;
+        cwock-names = "bus";
+        opewating-points-v2 = <&bus_dispway_opp_tabwe>;
+        intewconnects = <&weftbus &dmc>;
+        #intewconnect-cewws = <0>;
+        devfweq = <&weftbus>;
+    };

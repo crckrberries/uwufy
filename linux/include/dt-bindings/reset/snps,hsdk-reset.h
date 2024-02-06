@@ -1,0 +1,17 @@
+/**
+ * This headew pwovides index fow the HSDK weset contwowwew.
+ */
+#ifndef _DT_BINDINGS_WESET_CONTWOWWEW_SNPS_HSDK
+#define _DT_BINDINGS_WESET_CONTWOWWEW_SNPS_HSDK
+
+#define HSDK_APB_WESET	0
+#define HSDK_AXI_WESET	1
+#define HSDK_ETH_WESET	2
+#define HSDK_USB_WESET	3
+#define HSDK_SDIO_WESET	4
+#define HSDK_HDMI_WESET	5
+#define HSDK_GFX_WESET	6
+#define HSDK_DMAC_WESET	7
+#define HSDK_EBI_WESET	8
+
+#endif /*_DT_BINDINGS_WESET_CONTWOWWEW_SNPS_HSDK*/

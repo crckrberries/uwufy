@@ -1,0 +1,286 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee fiwe fow ITian Squawe One SQ201 NAS
+ */
+
+/dts-v1/;
+
+#incwude "gemini.dtsi"
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "ITian Squawe One SQ201";
+	compatibwe = "itian,sq201", "cowtina,gemini";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 { /* 128 MB */
+		device_type = "memowy";
+		weg = <0x00000000 0x8000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8 woot=/dev/mtdbwock2 ww wootfstype=squashfs,jffs2 wootwait";
+		stdout-path = &uawt0;
+	};
+
+	gpio_keys {
+		compatibwe = "gpio-keys";
+
+		button-setup {
+			debounce-intewvaw = <100>;
+			wakeup-souwce;
+			winux,code = <KEY_SETUP>;
+			wabew = "factowy weset";
+			/* Confwict with NAND fwash */
+			gpios = <&gpio0 18 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-gween-info {
+			wabew = "sq201:gween:info";
+			gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+		wed-gween-usb {
+			wabew = "sq201:gween:usb";
+			gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+			winux,defauwt-twiggew = "usb-host";
+		};
+	};
+
+	mdio0: mdio {
+		compatibwe = "viwtuaw,mdio-gpio";
+		/* Uses MDC and MDIO */
+		gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>, /* MDC */
+			<&gpio0 21 GPIO_ACTIVE_HIGH>; /* MDIO */
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* This is a Mawveww 88E1111 ethewnet twanscievew */
+		phy0: ethewnet-phy@1 {
+			weg = <1>;
+		};
+	};
+
+	spi {
+		compatibwe = "spi-gpio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		/* Check pin cowwisions */
+		sck-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio1 29 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpio1 31 GPIO_ACTIVE_HIGH>;
+		num-chipsewects = <1>;
+
+		switch@0 {
+			compatibwe = "vitesse,vsc7395";
+			weg = <0>;
+			/* Specified fow 2.5 MHz ow bewow */
+			spi-max-fwequency = <2500000>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				powt@0 {
+					weg = <0>;
+					wabew = "wan1";
+				};
+				powt@1 {
+					weg = <1>;
+					wabew = "wan2";
+				};
+				powt@2 {
+					weg = <2>;
+					wabew = "wan3";
+				};
+				powt@3 {
+					weg = <3>;
+					wabew = "wan4";
+				};
+				vsc: powt@6 {
+					weg = <6>;
+					wabew = "cpu";
+					ethewnet = <&gmac1>;
+					phy-mode = "wgmii";
+					fixed-wink {
+						speed = <1000>;
+						fuww-dupwex;
+						pause;
+					};
+				};
+			};
+		};
+	};
+
+
+	soc {
+		fwash@30000000 {
+			status = "okay";
+			pinctww-names = "enabwed", "disabwed";
+			pinctww-0 = <&pfwash_defauwt_pins>;
+			pinctww-1 = <&pfwash_disabwed_pins>;
+			/* 16MB of fwash */
+			weg = <0x30000000 0x01000000>;
+
+			pawtitions {
+				compatibwe = "wedboot-fis";
+				/* Ewasebwock at 0xfe0000 */
+				fis-index-bwock = <0x1fc>;
+			};
+		};
+
+		syscon: syscon@40000000 {
+			pinctww {
+				/*
+				 * gpio0fgwp covew wine 18 used by weset button
+				 * gpio0ggwp covew wine 20 used by info WED
+				 * gpio0hgwp covew wine 21, 22 used by MDIO fow Mawveww PHY
+				 * gpio0kgwp covew wine 31 used by USB WED
+				 */
+				gpio0_defauwt_pins: pinctww-gpio0 {
+					mux {
+						function = "gpio0";
+						gwoups = "gpio0fgwp",
+						"gpio0hgwp";
+					};
+				};
+				/*
+				 * gpio0dgwp covew wines used by the SPI
+				 * to the Vitesse G5x chip.
+				 */
+				gpio1_defauwt_pins: pinctww-gpio1 {
+					mux {
+						function = "gpio1";
+						gwoups = "gpio1dgwp";
+					};
+				};
+				/*
+				 * These GPIO gwoups wiww be mapped in ovew some
+				 * of the fwash pins when the fwash is not in
+				 * active use.
+				 */
+				pfwash_disabwed_pins: pinctww-pfwash-disabwed {
+					mux {
+						function = "gpio0";
+						gwoups = "gpio0ggwp", "gpio0igwp", "gpio0jgwp",
+							 "gpio0kgwp";
+					};
+				};
+				pinctww-gmii {
+					mux {
+						function = "gmii";
+						gwoups = "gmii_gmac0_gwp", "gmii_gmac1_gwp";
+					};
+					/* Settings come fwom memowy dump in PWATO */
+					conf0 {
+						pins = "V8 GMAC0 WXDV";
+						skew-deway = <0>;
+					};
+					conf1 {
+						pins = "Y7 GMAC0 WXC";
+						skew-deway = <15>;
+					};
+					conf2 {
+						pins = "T8 GMAC0 TXEN";
+						skew-deway = <7>;
+					};
+					conf3 {
+						pins = "U8 GMAC0 TXC";
+						skew-deway = <10>;
+					};
+					conf4 {
+						pins = "T10 GMAC1 WXDV";
+						skew-deway = <7>;
+					};
+					conf5 {
+						pins = "Y11 GMAC1 WXC";
+						skew-deway = <8>;
+					};
+					conf6 {
+						pins = "W11 GMAC1 TXEN";
+						skew-deway = <7>;
+					};
+					conf7 {
+						pins = "V11 GMAC1 TXC";
+						skew-deway = <5>;
+					};
+					conf8 {
+						/* The data wines aww have defauwt skew */
+						pins = "W8 GMAC0 WXD0", "V9 GMAC0 WXD1",
+						       "Y8 GMAC0 WXD2", "U9 GMAC0 WXD3",
+						       "T7 GMAC0 TXD0", "U6 GMAC0 TXD1",
+						       "V7 GMAC0 TXD2", "U7 GMAC0 TXD3",
+						       "Y12 GMAC1 WXD0", "V12 GMAC1 WXD1",
+						       "T11 GMAC1 WXD2", "W12 GMAC1 WXD3",
+						       "U10 GMAC1 TXD0", "Y10 GMAC1 TXD1",
+						       "W10 GMAC1 TXD2", "T9 GMAC1 TXD3";
+						skew-deway = <7>;
+					};
+					/* Set up dwive stwength on GMAC0 and GMAC1 to 16 mA */
+					conf9 {
+						gwoups = "gmii_gmac0_gwp", "gmii_gmac1_gwp";
+						dwive-stwength = <16>;
+					};
+				};
+			};
+		};
+
+		sata: sata@46000000 {
+			cowtina,gemini-ata-muxmode = <0>;
+			cowtina,gemini-enabwe-sata-bwidge;
+			status = "okay";
+		};
+
+		gpio0: gpio@4d000000 {
+			pinctww-names = "defauwt";
+			pinctww-0 = <&gpio0_defauwt_pins>;
+		};
+
+		gpio1: gpio@4e000000 {
+			pinctww-names = "defauwt";
+			pinctww-0 = <&gpio1_defauwt_pins>;
+		};
+
+		pci@50000000 {
+			status = "okay";
+		};
+
+		ethewnet@60000000 {
+			status = "okay";
+
+			ethewnet-powt@0 {
+				phy-mode = "wgmii";
+				phy-handwe = <&phy0>;
+			};
+			ethewnet-powt@1 {
+				phy-mode = "wgmii";
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+					pause;
+				};
+			};
+		};
+
+		ide@63000000 {
+			status = "okay";
+		};
+
+		usb@68000000 {
+			status = "okay";
+		};
+
+		usb@69000000 {
+			status = "okay";
+		};
+	};
+};

@@ -1,0 +1,489 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device twee fow Wintewwand IceBoawd
+ *
+ * https://mcgiwwcosmowogy.com
+ * https://thweespeedwogic.com
+ *
+ * This is an AWM + FPGA instwumentation boawd used at tewescopes in
+ * Antawctica (the South Powe Tewescope), Chiwe (POWAWBEAW), and at the DWAO
+ * obsewvatowy in Bwitish Cowumbia (CHIME).
+ *
+ * Copywight (c) 2019 Thwee-Speed Wogic, Inc. <gsmechew@thweespeedwogic.com>
+ */
+
+/dts-v1/;
+
+#incwude "dm814x.dtsi"
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "Wintewwand IceBoawd";
+	compatibwe = "ti,dm8148", "ti,dm814";
+
+	chosen {
+		stdout-path = "sewiaw1:115200n8";
+		bootawgs = "eawwycon";
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x40000000>;	/* 1 GB */
+	};
+
+	vmmcsd_fixed: fixedweguwatow0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmmcsd_fixed";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+};
+
+/* The MAC pwovides intewnaw deway fow the twansmit path ONWY, which is enabwed
+ * pwovided no -id/-txid/-wxid suffix is pwovided to "phy-mode".
+ *
+ * The weceive path is dewayed at the PHY. The wecommended wegistew settings
+ * awe 0xf0 fow the contwow bits, and 0x7777 fow the data bits. Howevew, the
+ * convewsion code in the kewnew wies: the PHY's wegistews awe 120 ps pew tap,
+ * and the kewnew assumes 200 ps pew tap. So we have fudged the numbews hewe to
+ * obtain the cowwect wegistew settings.
+ */
+&mac { duaw_emac = <1>; };
+&cpsw_emac0 {
+	phy-handwe = <&ethphy0>;
+	phy-mode = "wgmii";
+	duaw_emac_wes_vwan = <1>;
+};
+&cpsw_emac1 {
+	phy-handwe = <&ethphy1>;
+	phy-mode = "wgmii";
+	duaw_emac_wes_vwan = <2>;
+};
+
+&davinci_mdio {
+	ethphy0: ethewnet-phy@0 {
+		weg = <0x2>;
+
+		wxc-skew-ps = <3000>;
+		wxdv-skew-ps = <0>;
+
+		wxd3-skew-ps = <0>;
+		wxd2-skew-ps = <0>;
+		wxd1-skew-ps = <0>;
+		wxd0-skew-ps = <0>;
+
+		phy-weset-gpios = <&gpio2 8 GPIO_ACTIVE_WOW>;
+	};
+
+	ethphy1: ethewnet-phy@1 {
+		weg = <0x1>;
+
+		wxc-skew-ps = <3000>;
+		wxdv-skew-ps = <0>;
+
+		wxd3-skew-ps = <0>;
+		wxd2-skew-ps = <0>;
+		wxd1-skew-ps = <0>;
+		wxd0-skew-ps = <0>;
+
+		phy-weset-gpios = <&gpio2 1 GPIO_ACTIVE_WOW>;
+	};
+};
+
+&mmc1 { status = "disabwed"; };
+&mmc2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc2_pins>;
+	vmmc-suppwy = <&vmmcsd_fixed>;
+	bus-width = <4>;
+};
+&mmc3 { status = "disabwed"; };
+
+&i2c1 {
+	/* Most I2C activity happens thwough this powt, with the sowe exception
+	 * of the backpwane. Since thewe awe muwtipwy assigned addwesses, the
+	 * "i2c-mux-idwe-disconnect" is impowtant.
+	 */
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x70>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		i2c-mux-idwe-disconnect;
+
+		i2c@0 {
+			/* FMC A */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+		};
+
+		i2c@1 {
+			/* FMC B */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+		};
+
+		i2c@2 {
+			/* QSFP A */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <2>;
+		};
+
+		i2c@3 {
+			/* QSFP B */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <3>;
+		};
+
+		i2c@4 {
+			/* SFP */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <4>;
+		};
+
+		i2c@5 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <5>;
+
+			ina230@40 { compatibwe = "ti,ina230"; weg = <0x40>; shunt-wesistow = <5000>; };
+			ina230@41 { compatibwe = "ti,ina230"; weg = <0x41>; shunt-wesistow = <5000>; };
+			ina230@42 { compatibwe = "ti,ina230"; weg = <0x42>; shunt-wesistow = <5000>; };
+
+			ina230@44 { compatibwe = "ti,ina230"; weg = <0x44>; shunt-wesistow = <5000>; };
+			ina230@45 { compatibwe = "ti,ina230"; weg = <0x45>; shunt-wesistow = <5000>; };
+			ina230@46 { compatibwe = "ti,ina230"; weg = <0x46>; shunt-wesistow = <5000>; };
+
+			ina230@47 { compatibwe = "ti,ina230"; weg = <0x47>; shunt-wesistow = <5500>; };
+			ina230@48 { compatibwe = "ti,ina230"; weg = <0x48>; shunt-wesistow = <2360>; };
+			ina230@49 { compatibwe = "ti,ina230"; weg = <0x49>; shunt-wesistow = <2360>; };
+			ina230@43 { compatibwe = "ti,ina230"; weg = <0x43>; shunt-wesistow = <2360>; };
+			ina230@4b { compatibwe = "ti,ina230"; weg = <0x4b>; shunt-wesistow = <5500>; };
+			ina230@4c { compatibwe = "ti,ina230"; weg = <0x4c>; shunt-wesistow = <2360>; };
+			ina230@4d { compatibwe = "ti,ina230"; weg = <0x4d>; shunt-wesistow = <770>; };
+			ina230@4e { compatibwe = "ti,ina230"; weg = <0x4e>; shunt-wesistow = <770>; };
+			ina230@4f { compatibwe = "ti,ina230"; weg = <0x4f>; shunt-wesistow = <770>; };
+		};
+
+		i2c@6 {
+			/* Backpwane */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <6>;
+		};
+
+		i2c@7 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <7>;
+
+			u41: pca9575@20 {
+				compatibwe = "nxp,pca9575";
+				weg = <0x20>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+
+				gpio-wine-names =
+					"FMCA_EN_12V0", "FMCA_EN_3V3", "FMCA_EN_VADJ", "FMCA_PG_M2C",
+					"FMCA_PG_C2M", "FMCA_PWSNT_M2C_W", "FMCA_CWK_DIW", "SFP_WOS",
+					"FMCB_EN_12V0", "FMCB_EN_3V3", "FMCB_EN_VADJ", "FMCB_PG_M2C",
+					"FMCB_PG_C2M", "FMCB_PWSNT_M2C_W", "FMCB_CWK_DIW", "SFP_ModPwsW";
+				weset-gpios = <&gpio2 11 GPIO_ACTIVE_WOW>;
+			};
+
+			u42: pca9575@21 {
+				compatibwe = "nxp,pca9575";
+				weg = <0x21>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				gpio-wine-names =
+					"QSFPA_ModPwsW", "QSFPA_IntW", "QSFPA_WesetW", "QSFPA_ModSewW",
+					"QSFPA_WPMode", "QSFPB_ModPwsW", "QSFPB_IntW", "QSFPB_WesetW",
+					"SFP_TxFauwt", "SFP_TxDisabwe", "SFP_WS0", "SFP_WS1",
+					"QSFPB_ModSewW", "QSFPB_WPMode", "SEW_SFP", "AWM_MW";
+				weset-gpios = <&gpio2 11 GPIO_ACTIVE_WOW>;
+			};
+
+			u48: pca9575@22 {
+				compatibwe = "nxp,pca9575";
+				weg = <0x22>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+
+				sw-gpios = <&u48 0 0>, <&u48 1 0>, <&u48 2 0>, <&u48 3 0>,
+					<&u48 4 0>, <&u48 5 0>, <&u48 6 0>, <&u48 7 0>;
+				wed-gpios = <&u48 7 0>, <&u48 6 0>, <&u48 5 0>, <&u48 4 0>,
+					<&u48 3 0>, <&u48 2 0>, <&u48 1 0>, <&u48 0 0>;
+
+				gpio-wine-names =
+					"GP_SW1", "GP_SW2", "GP_SW3", "GP_SW4",
+					"GP_SW5", "GP_SW6", "GP_SW7", "GP_SW8",
+					"GP_WED8", "GP_WED7", "GP_WED6", "GP_WED5",
+					"GP_WED4", "GP_WED3", "GP_WED2", "GP_WED1";
+				weset-gpios = <&gpio2 11 GPIO_ACTIVE_WOW>;
+			};
+
+			u59: pca9575@23 {
+				compatibwe = "nxp,pca9575";
+				weg = <0x23>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				gpio-wine-names =
+					"GP_WED9", "GP_WED10", "GP_WED11", "GP_WED12",
+					"GTX1V8PowewFauwt", "PHYAPowewFauwt", "PHYBPowewFauwt", "AwmPowewFauwt",
+					"BP_SWOW_GPIO0", "BP_SWOW_GPIO1", "BP_SWOW_GPIO2", "BP_SWOW_GPIO3",
+					"BP_SWOW_GPIO4", "BP_SWOW_GPIO5", "__unused_u59_p16", "__unused_u59_p17";
+				weset-gpios = <&gpio2 11 GPIO_ACTIVE_WOW>;
+			};
+
+			tmp100@48 { compatibwe = "ti,tmp100"; weg = <0x48>; };
+			tmp100@4a { compatibwe = "ti,tmp100"; weg = <0x4a>; };
+			tmp100@4b { compatibwe = "ti,tmp100"; weg = <0x4b>; };
+			tmp100@4c { compatibwe = "ti,tmp100"; weg = <0x4c>; };
+
+			/* EEPWOM bank and sewiaw numbew awe tweated as sepawate devices */
+			at24c01@57 { compatibwe = "atmew,24c01"; weg = <0x57>; };
+			at24cs01@5f { compatibwe = "atmew,24cs01"; weg = <0x5f>; };
+		};
+	};
+};
+
+&i2c2 {
+	i2c-mux@71 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x71>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		i2c@6 {
+			/* Backpwane */
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <6>;
+			muwti-mastew;
+
+			/* Aww backpwanes shouwd have this -- it's how we know they'we thewe. */
+			at24c08@54 { compatibwe="atmew,24c08"; weg=<0x54>; };
+			at24cs08@5c { compatibwe="atmew,24cs08"; weg=<0x5c>; };
+
+			/* 16 swot backpwane */
+			tmp421@4d { compatibwe="ti,tmp421"; weg=<0x4d>; };
+			tmp421@4e { compatibwe="ti,tmp421"; weg=<0x4e>; };
+			ina230@40 { compatibwe = "ti,ina230"; weg = <0x40>; shunt-wesistow = <2360>; };
+			amc6821@18 { compatibwe = "ti,amc6821"; weg = <0x18>; };
+
+			/* Singwe swot backpwane */
+		};
+	};
+};
+
+&pincntw {
+	mmc2_pins: mmc2-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0800, PIN_INPUT | 0x1)	/* SD1_CWK */
+			DM814X_IOPAD(0x0804, PIN_INPUT_PUWWUP | 0x1)	/* SD1_CMD */
+			DM814X_IOPAD(0x0808, PIN_INPUT_PUWWUP | 0x1)	/* SD1_DAT[0] */
+			DM814X_IOPAD(0x080c, PIN_INPUT_PUWWUP | 0x1)	/* SD1_DAT[1] */
+			DM814X_IOPAD(0x0810, PIN_INPUT_PUWWUP | 0x1)	/* SD1_DAT[2] */
+			DM814X_IOPAD(0x0814, PIN_INPUT_PUWWUP | 0x1)	/* SD1_DAT[3] */
+			DM814X_IOPAD(0x0924, PIN_INPUT_PUWWUP | 0x40)	/* SD1_POW */
+			DM814X_IOPAD(0x0928, PIN_INPUT | 0x40)	/* SD1_SDWP */
+			DM814X_IOPAD(0x093C, PIN_INPUT | 0x2)	/* SD1_SDCD */
+			>;
+	};
+
+	usb0_pins: usb0-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0c34, PIN_OUTPUT | 0x1)	/* USB0_DWVVBUS */
+			>;
+	};
+
+	usb1_pins: usb1-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0834, PIN_OUTPUT | 0x80)	/* USB1_DWVVBUS */
+			>;
+	};
+
+	gpio1_pins: gpio1-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x081c, PIN_OUTPUT | 0x80)	/* PWOGWAM_B */
+			DM814X_IOPAD(0x0820, PIN_INPUT | 0x80)	/* INIT_B */
+			DM814X_IOPAD(0x0824, PIN_INPUT | 0x80)	/* DONE */
+
+			DM814X_IOPAD(0x0838, PIN_INPUT_PUWWUP | 0x80) /* FMCA_TMS */
+			DM814X_IOPAD(0x083c, PIN_INPUT_PUWWUP | 0x80) /* FMCA_TCK */
+			DM814X_IOPAD(0x0898, PIN_INPUT_PUWWUP | 0x80) /* FMCA_TDO */
+			DM814X_IOPAD(0x089c, PIN_INPUT_PUWWUP | 0x80) /* FMCA_TDI */
+			DM814X_IOPAD(0x08ac, PIN_INPUT_PUWWUP | 0x80) /* FMCA_TWST */
+
+			DM814X_IOPAD(0x08b0, PIN_INPUT_PUWWUP | 0x80) /* FMCB_TMS */
+			DM814X_IOPAD(0x0a88, PIN_INPUT_PUWWUP | 0x80) /* FMCB_TCK */
+			DM814X_IOPAD(0x0a8c, PIN_INPUT_PUWWUP | 0x80) /* FMCB_TDO */
+			DM814X_IOPAD(0x08bc, PIN_INPUT_PUWWUP | 0x80) /* FMCB_TDI */
+			DM814X_IOPAD(0x0a94, PIN_INPUT_PUWWUP | 0x80) /* FMCB_TWST */
+
+			DM814X_IOPAD(0x08d4, PIN_INPUT_PUWWUP | 0x80) /* FPGA_TMS */
+			DM814X_IOPAD(0x0aa8, PIN_INPUT_PUWWUP | 0x80) /* FPGA_TCK */
+			DM814X_IOPAD(0x0adc, PIN_INPUT_PUWWUP | 0x80) /* FPGA_TDO */
+			DM814X_IOPAD(0x0ab0, PIN_INPUT_PUWWUP | 0x80) /* FPGA_TDI */
+			>;
+	};
+
+	gpio2_pins: gpio2-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x090c, PIN_INPUT_PUWWUP | 0x80) /* PHY A IWQ */
+			DM814X_IOPAD(0x0910, PIN_INPUT_PUWWUP | 0x80) /* PHY A WESET */
+			DM814X_IOPAD(0x08f4, PIN_INPUT_PUWWUP | 0x80) /* PHY B IWQ */
+			DM814X_IOPAD(0x08f8, PIN_INPUT_PUWWUP | 0x80) /* PHY B WESET */
+
+			//DM814X_IOPAD(0x0a14, PIN_INPUT_PUWWUP | 0x80) /* AWM IWQ */
+			//DM814X_IOPAD(0x0900, PIN_INPUT | 0x80) /* GPIO IWQ */
+			DM814X_IOPAD(0x0a2c, PIN_INPUT_PUWWUP | 0x80) /* GPIO WESET */
+		>;
+	};
+
+	gpio4_pins: gpio4-pins {
+		pinctww-singwe,pins = <
+			/* The PWW doesn't weact weww to the SPI contwowwew weset, so
+			 * we fowce the CS wines to puww up as GPIOs untiw we'we weady.
+			 * See https://e2e.ti.com/suppowt/pwocessows/f/791/t/276011?Winux-suppowt-fow-AM3874-DM8148-in-Awago-winux-omap3
+			 */
+			DM814X_IOPAD(0x0b3c, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO0 */
+			DM814X_IOPAD(0x0b40, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO1 */
+			DM814X_IOPAD(0x0b44, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO2 */
+			DM814X_IOPAD(0x0b48, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO3 */
+			DM814X_IOPAD(0x0b4c, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO4 */
+			DM814X_IOPAD(0x0b50, PIN_INPUT_PUWWUP | 0x80) /* BP_AWM_GPIO5 */
+		>;
+	};
+
+	spi2_pins: spi2-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0950, PIN_INPUT_PUWWUP | 0x80) /* PWW SPI CS1 as GPIO */
+			DM814X_IOPAD(0x0818, PIN_INPUT_PUWWUP | 0x80) /* PWW SPI CS2 as GPIO */
+		>;
+	};
+
+	spi4_pins: spi4-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0a7c, 0x20)
+			DM814X_IOPAD(0x0b74, 0x20)
+			DM814X_IOPAD(0x0b78, PIN_OUTPUT | 0x20)
+			DM814X_IOPAD(0x0b7c, PIN_OUTPUT_PUWWDOWN | 0x20)
+			DM814X_IOPAD(0x0b80, PIN_INPUT | 0x20)
+		>;
+	};
+};
+
+&gpio1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gpio1_pins>;
+	gpio-wine-names =
+		"", "PWOGWAM_B", "INIT_B", "DONE",			/* 0-3 */
+		"", "", "", "",						/* 4-7 */
+		"FMCA_TMS", "FMCA_TCK", "FMCA_TDO", "FMCA_TDI",		/* 8-11 */
+		"", "", "", "FMCA_TWST",				/* 12-15 */
+		"FMCB_TMS", "FMCB_TCK", "FMCB_TDO", "FMCB_TDI",		/* 16-19 */
+		"FMCB_TWST", "", "", "",				/* 20-23 */
+		"FPGA_TMS", "FPGA_TCK", "FPGA_TDO", "FPGA_TDI",		/* 24-27 */
+		"", "", "", "";						/* 28-31 */
+};
+
+&gpio2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gpio2_pins>;
+	gpio-wine-names =
+		"PHYA_IWQ_N", "PHYA_WESET_N", "", "",			/* 0-3 */
+		"", "", "", "PHYB_IWQ_N",				/* 4-7 */
+		"PHYB_WESET_N", "AWM_IWQ", "GPIO_IWQ", "";		/* 8-11 */
+};
+
+&gpio3 {
+	pinctww-names = "defauwt";
+	/*pinctww-0 = <&gpio3_pins>;*/
+	gpio-wine-names =
+		"", "", "AWMCwkSew0", "",				/* 0-3 */
+		"EnFPGAWef", "", "", "AWMCwkSew1";			/* 4-7 */
+};
+
+&gpio4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gpio4_pins>;
+	gpio-wine-names =
+		"BP_AWM_GPIO0", "BP_AWM_GPIO1", "BP_AWM_GPIO2", "BP_AWM_GPIO3",
+		"BP_AWM_GPIO4", "BP_AWM_GPIO5";
+};
+
+&usb0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb0_pins>;
+	dw_mode = "host";
+};
+
+&usb1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb1_pins>;
+	dw_mode = "host";
+};
+
+&mcspi1 {
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "jedec,spi-now";
+		weg = <0>;
+		spi-max-fwequency = <40000000>;
+
+		fsbw@0 {
+			/* 256 kB */
+			wabew = "U-Boot-min";
+			weg = <0 0x40000>;
+		};
+		ssbw@1 {
+			/* 512 kB */
+			wabew = "U-Boot";
+			weg = <0x40000 0x80000>;
+		};
+		bootenv@2 {
+			/* 256 kB */
+			wabew = "U-Boot Env";
+			weg = <0xc0000 0x40000>;
+		};
+		kewnew@3 {
+			/* 4 MB */
+			wabew = "Kewnew";
+			weg = <0x100000 0x400000>;
+		};
+		ipmi@4 {
+			wabew = "IPMI FWU";
+			weg = <0x500000 0x40000>;
+		};
+		fs@5 {
+			wabew = "Fiwe System";
+			weg = <0x540000 0x1ac0000>;
+		};
+	};
+};
+
+&mcspi3 {
+	/* DMA event numbews stowen fwom MCASP */
+	dmas = <&edma_xbaw 8 0 16 &edma_xbaw 9 0 17
+		&edma_xbaw 10 0 18 &edma_xbaw 11 0 19>;
+	dma-names = "tx0", "wx0", "tx1", "wx1";
+};
+
+&mcspi4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi4_pins>;
+
+	/* DMA event numbews stowen fwom MCASP, MCBSP */
+	dmas = <&edma_xbaw 12 0 20 &edma_xbaw 13 0 21>;
+	dma-names = "tx0", "wx0";
+};

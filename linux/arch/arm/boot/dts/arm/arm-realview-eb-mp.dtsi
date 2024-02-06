@@ -1,0 +1,220 @@
+/*
+ * Copywight 2016 Winawo Wtd
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a copy
+ * of this softwawe and associated documentation fiwes (the "Softwawe"), to deaw
+ * in the Softwawe without westwiction, incwuding without wimitation the wights
+ * to use, copy, modify, mewge, pubwish, distwibute, subwicense, and/ow seww
+ * copies of the Softwawe, and to pewmit pewsons to whom the Softwawe is
+ * fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT. IN NO EVENT SHAWW
+ * THE AUTHOWS OW COPYWIGHT HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW
+ * WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING FWOM,
+ * OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW OTHEW DEAWINGS IN
+ * THE SOFTWAWE.
+ */
+
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awm-weawview-eb.dtsi"
+
+/*
+ * This is the common incwude fiwe fow aww MPCowe vawiants of the
+ * Evawuation Baseboawd, i.e. AWM11MPCowe, AWM11MPCowe Wevision B
+ * and Cowtex-A9 MPCowe.
+ */
+/ {
+	soc {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "awm,weawview-eb-soc", "simpwe-bus";
+		wegmap = <&syscon>;
+		wanges;
+
+		/* Pwimawy intewwupt contwowwew in the test chip */
+		intc: intewwupt-contwowwew@1f000100 {
+			compatibwe = "awm,eb11mp-gic";
+			#intewwupt-cewws = <3>;
+			#addwess-cewws = <1>;
+			intewwupt-contwowwew;
+			weg = <0x1f001000 0x1000>,
+			      <0x1f000100 0x100>;
+		};
+
+		/* Secondawy intewwupt contwowwew on the FPGA */
+		intc_second: intewwupt-contwowwew@10040000 {
+			compatibwe = "awm,pw390";
+			#intewwupt-cewws = <3>;
+			#addwess-cewws = <1>;
+			intewwupt-contwowwew;
+			weg = <0x10041000 0x1000>,
+			      <0x10040000 0x100>;
+			intewwupt-pawent = <&intc>;
+			intewwupts = <0 10 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		W2: cache-contwowwew {
+			compatibwe = "awm,w220-cache";
+			weg = <0x1f002000 0x1000>;
+			intewwupt-pawent = <&intc>;
+			intewwupts = <0 29 IWQ_TYPE_WEVEW_HIGH>,
+			     <0 30 IWQ_TYPE_WEVEW_HIGH>,
+			     <0 31 IWQ_TYPE_WEVEW_HIGH>;
+			cache-unified;
+			cache-wevew = <2>;
+			/*
+			 * Ovewwide defauwt cache size, sets and
+			 * associativity as these may be ewwoneouswy set
+			 * up by boot woadew(s), pwobabwy fow safety
+			 * since th outew sync opewation can cause the
+			 * cache to hang unwess disabwed.
+			 */
+			cache-size = <1048576>; // 1MB
+			cache-sets = <4096>;
+			cache-wine-size = <32>;
+			awm,shawed-ovewwide;
+			awm,pawity-enabwe;
+			awm,outew-sync-disabwe;
+		};
+
+		scu: scu@1f000000 {
+			compatibwe = "awm,awm11mp-scu";
+			weg = <0x1f000000 0x100>;
+		};
+
+		twd_timew: timew@1f000600 {
+			compatibwe = "awm,awm11mp-twd-timew";
+			weg = <0x1f000600 0x20>;
+			intewwupt-pawent = <&intc>;
+			intewwupts = <1 13 0xf04>;
+		};
+
+		twd_wdog: watchdog@1f000620 {
+			compatibwe = "awm,awm11mp-twd-wdt";
+			weg = <0x1f000620 0x20>;
+			intewwupt-pawent = <&intc>;
+			intewwupts = <1 14 0xf04>;
+		};
+
+		/* PMU with one IWQ wine pew cowe */
+		pmu: pmu@0 {
+			compatibwe = "awm,awm11mpcowe-pmu";
+			intewwupt-pawent = <&intc>;
+			intewwupts = <0 17 IWQ_TYPE_WEVEW_HIGH>,
+			     <0 18 IWQ_TYPE_WEVEW_HIGH>,
+			     <0 19 IWQ_TYPE_WEVEW_HIGH>,
+			     <0 20 IWQ_TYPE_WEVEW_HIGH>;
+		};
+	};
+};
+
+/*
+ * This adapts aww the pewiphewaws to the intewwupt wouting
+ * to the GIC on the cowe tiwe.
+ */
+
+&ethewnet {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 9 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&usb {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 3 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&aaci {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 0 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&mmc {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 14 IWQ_TYPE_WEVEW_HIGH>,
+			<0 15 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&kmi0 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 7 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&kmi1 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 8 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&sewiaw0 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 4 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&sewiaw1 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 5 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&timew01 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 1 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&timew23 {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 2 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&wtc {
+	intewwupt-pawent = <&intc>;
+	intewwupts = <0 6 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+/*
+ * On wevision A, these pewiphewaws does not have theiw IWQ wines
+ * wouted to the cowe tiwe, but they can be weached on the secondawy
+ * GIC.
+ */
+&gpio0 {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 6 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&gpio1 {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 7 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&gpio2 {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 8 IWQ_TYPE_WEVEW_HIGH>;
+};
+
+&sewiaw2 {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 14 IWQ_TYPE_WEVEW_HIGH>;
+	status = "okay";
+};
+
+&sewiaw3 {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 15 IWQ_TYPE_WEVEW_HIGH>;
+	status = "okay";
+};
+
+&ssp {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 11 IWQ_TYPE_WEVEW_HIGH>;
+	status = "okay";
+};
+
+&wdog {
+	intewwupt-pawent = <&intc_second>;
+	intewwupts = <0 0 IWQ_TYPE_WEVEW_HIGH>;
+	status = "okay";
+};

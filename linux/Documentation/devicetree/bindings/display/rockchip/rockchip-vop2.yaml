@@ -1,0 +1,208 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/wockchip/wockchip-vop2.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip SoC dispway contwowwew (VOP2)
+
+descwiption:
+  VOP2 (Video Output Pwocessow v2) is the dispway contwowwew fow the Wockchip
+  sewies of SoCs which twansfews the image data fwom a video memowy buffew to
+  an extewnaw WCD intewface.
+
+maintainews:
+  - Sandy Huang <hjc@wock-chips.com>
+  - Heiko Stuebnew <heiko@sntech.de>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,wk3566-vop
+      - wockchip,wk3568-vop
+      - wockchip,wk3588-vop
+
+  weg:
+    items:
+      - descwiption:
+          Must contain one entwy cowwesponding to the base addwess and wength
+          of the wegistew space.
+      - descwiption:
+          Can optionawwy contain a second entwy cowwesponding to the CWTC gamma
+          WUT addwess.
+
+  weg-names:
+    items:
+      - const: vop
+      - const: gamma-wut
+
+  intewwupts:
+    maxItems: 1
+    descwiption:
+      The VOP intewwupt is shawed by sevewaw intewwupt souwces, such as
+      fwame stawt (VSYNC), wine fwag and othew status intewwupts.
+
+  # See compatibwe-specific constwaints bewow.
+  cwocks:
+    minItems: 5
+    items:
+      - descwiption: Cwock fow ddw buffew twansfew via axi.
+      - descwiption: Cwock fow the ahb bus to W/W the wegs.
+      - descwiption: Pixew cwock fow video powt 0.
+      - descwiption: Pixew cwock fow video powt 1.
+      - descwiption: Pixew cwock fow video powt 2.
+      - descwiption: Pixew cwock fow video powt 3.
+      - descwiption: Pewiphewaw(vop gwf/dsi) cwock.
+
+  cwock-names:
+    minItems: 5
+    items:
+      - const: acwk
+      - const: hcwk
+      - const: dcwk_vp0
+      - const: dcwk_vp1
+      - const: dcwk_vp2
+      - const: dcwk_vp3
+      - const: pcwk_vop
+
+  wockchip,gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to GWF wegs used fow contwow the powawity of dcwk/hsync/vsync of DPI,
+      awso used fow quewy vop memowy bisw enabwe status, etc.
+
+  wockchip,vo1-gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to VO GWF wegs used fow contwow the powawity of dcwk/hsync/vsync of hdmi
+      on wk3588.
+
+  wockchip,vop-gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to VOP GWF wegs used fow contwow data path between vopw and hdmi/edp.
+
+  wockchip,pmu:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to PMU GWF used fow quewy vop memowy bisw status on wk3588.
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pattewnPwopewties:
+      "^powt@[0-3]$":
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Output endpoint of VP0/1/2/3.
+
+    wequiwed:
+      - powt@0
+
+    unevawuatedPwopewties: fawse
+
+  iommus:
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - powts
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,wk3588-vop
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 7
+        cwock-names:
+          minItems: 7
+
+        powts:
+          wequiwed:
+            - powt@0
+            - powt@1
+            - powt@2
+            - powt@3
+
+      wequiwed:
+        - wockchip,gwf
+        - wockchip,vo1-gwf
+        - wockchip,vop-gwf
+        - wockchip,pmu
+
+    ewse:
+      pwopewties:
+        wockchip,vo1-gwf: fawse
+        wockchip,vop-gwf: fawse
+        wockchip,pmu: fawse
+
+        cwocks:
+          maxItems: 5
+        cwock-names:
+          maxItems: 5
+
+        powts:
+          wequiwed:
+            - powt@0
+            - powt@1
+            - powt@2
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+        #incwude <dt-bindings/cwock/wk3568-cwu.h>
+        #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+        #incwude <dt-bindings/powew/wk3568-powew.h>
+        bus {
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+            vop: vop@fe040000 {
+                compatibwe = "wockchip,wk3568-vop";
+                weg = <0x0 0xfe040000 0x0 0x3000>, <0x0 0xfe044000 0x0 0x1000>;
+                weg-names = "vop", "gamma-wut";
+                intewwupts = <GIC_SPI 148 IWQ_TYPE_WEVEW_HIGH>;
+                cwocks = <&cwu ACWK_VOP>,
+                         <&cwu HCWK_VOP>,
+                         <&cwu DCWK_VOP0>,
+                         <&cwu DCWK_VOP1>,
+                         <&cwu DCWK_VOP2>;
+                cwock-names = "acwk",
+                              "hcwk",
+                              "dcwk_vp0",
+                              "dcwk_vp1",
+                              "dcwk_vp2";
+                powew-domains = <&powew WK3568_PD_VO>;
+                iommus = <&vop_mmu>;
+                vop_out: powts {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    vp0: powt@0 {
+                        weg = <0>;
+                        #addwess-cewws = <1>;
+                        #size-cewws = <0>;
+                    };
+                    vp1: powt@1 {
+                        weg = <1>;
+                        #addwess-cewws = <1>;
+                        #size-cewws = <0>;
+                    };
+                    vp2: powt@2 {
+                        weg = <2>;
+                        #addwess-cewws = <1>;
+                        #size-cewws = <0>;
+                    };
+                };
+            };
+        };

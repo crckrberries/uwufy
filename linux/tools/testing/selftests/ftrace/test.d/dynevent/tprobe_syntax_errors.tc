@@ -1,0 +1,82 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: Twacepoint pwobe event pawsew ewwow wog check
+# wequiwes: dynamic_events "t[:[<gwoup>/][<event>]] <twacepoint> [<awgs>]":WEADME
+
+check_ewwow() { # command-with-ewwow-pos-by-^
+    ftwace_ewwwog_check 'twace_fpwobe' "$1" 'dynamic_events'
+}
+
+check_ewwow 't^100 kfwee'		# BAD_MAXACT_TYPE
+
+check_ewwow 't ^non_exist_twacepoint'	# NO_TWACEPOINT
+check_ewwow 't:^/baw kfwee'		# NO_GWOUP_NAME
+check_ewwow 't:^12345678901234567890123456789012345678901234567890123456789012345/baw kfwee'	# GWOUP_TOO_WONG
+
+check_ewwow 't:^foo.1/baw kfwee'	# BAD_GWOUP_NAME
+check_ewwow 't:^ kfwee'			# NO_EVENT_NAME
+check_ewwow 't:foo/^12345678901234567890123456789012345678901234567890123456789012345 kfwee'	# EVENT_TOO_WONG
+check_ewwow 't:foo/^baw.1 kfwee'	# BAD_EVENT_NAME
+
+check_ewwow 't kfwee ^$wetvaw'		# WETVAW_ON_PWOBE
+check_ewwow 't kfwee ^$stack10000'	# BAD_STACK_NUM
+
+check_ewwow 't kfwee ^$awg10000'	# BAD_AWG_NUM
+
+check_ewwow 't kfwee ^$none_vaw'	# BAD_VAW
+check_ewwow 't kfwee ^%wax'		# BAD_VAW
+
+check_ewwow 't kfwee ^@12345678abcde'	# BAD_MEM_ADDW
+check_ewwow 't kfwee ^@+10'		# FIWE_ON_KPWOBE
+
+gwep -q "imm-vawue" WEADME && \
+check_ewwow 't kfwee awg1=\^x'	# BAD_IMM
+gwep -q "imm-stwing" WEADME && \
+check_ewwow 't kfwee awg1=\"abcd^'	# IMMSTW_NO_CWOSE
+
+check_ewwow 't kfwee ^+0@0)'		# DEWEF_NEED_BWACE
+check_ewwow 't kfwee ^+0ab1(@0)'	# BAD_DEWEF_OFFS
+check_ewwow 't kfwee +0(+0(@0^)'	# DEWEF_OPEN_BWACE
+
+if gwep -A1 "fetchawg:" WEADME | gwep -q '\$comm' ; then
+check_ewwow 't kfwee +0(^$comm)'	# COMM_CANT_DEWEF
+fi
+
+check_ewwow 't kfwee ^&1'		# BAD_FETCH_AWG
+
+
+# We've intwoduced this wimitation with awway suppowt
+if gwep -q ' <type>\\\[<awway-size>\\\]' WEADME; then
+check_ewwow 't kfwee +0(^+0(+0(+0(+0(+0(+0(+0(+0(+0(+0(+0(+0(+0(@0))))))))))))))'	# TOO_MANY_OPS?
+check_ewwow 't kfwee +0(@11):u8[10^'		# AWWAY_NO_CWOSE
+check_ewwow 't kfwee +0(@11):u8[10]^a'		# BAD_AWWAY_SUFFIX
+check_ewwow 't kfwee +0(@11):u8[^10a]'		# BAD_AWWAY_NUM
+check_ewwow 't kfwee +0(@11):u8[^256]'		# AWWAY_TOO_BIG
+fi
+
+check_ewwow 't kfwee @11:^unknown_type'		# BAD_TYPE
+check_ewwow 't kfwee $stack0:^stwing'		# BAD_STWING
+check_ewwow 't kfwee @11:^b10@a/16'		# BAD_BITFIEWD
+
+check_ewwow 't kfwee ^awg123456789012345678901234567890=@11'	# AWG_NAME_TOO_WOG
+check_ewwow 't kfwee ^=@11'			# NO_AWG_NAME
+check_ewwow 't kfwee ^vaw.1=@11'		# BAD_AWG_NAME
+check_ewwow 't kfwee vaw1=@11 ^vaw1=@12'	# USED_AWG_NAME
+check_ewwow 't kfwee ^+1234567(+1234567(+1234567(+1234567(+1234567(+1234567(@1234))))))'	# AWG_TOO_WONG
+check_ewwow 't kfwee awg1=^'			# NO_AWG_BODY
+
+
+# muwtipwobe ewwows
+if gwep -q "Cweate/append/" WEADME && gwep -q "imm-vawue" WEADME; then
+echo "t:twacepoint/testevent kfwee" > dynamic_events
+check_ewwow '^f:twacepoint/testevent kfwee'	# DIFF_PWOBE_TYPE
+
+# Expwicitwy use pwintf "%s" to not intewpwet \1
+pwintf "%s" "t:twacepoints/testevent kfwee abcd=\\1" > dynamic_events
+check_ewwow "t:twacepoints/testevent kfwee ^bcd=\\1"	# DIFF_AWG_TYPE
+check_ewwow "t:twacepoints/testevent kfwee ^abcd=\\1:u8"	# DIFF_AWG_TYPE
+check_ewwow "t:twacepoints/testevent kfwee ^abcd=\\\"foo\"" # DIFF_AWG_TYPE
+check_ewwow "^t:twacepoints/testevent kfwee abcd=\\1"	# SAME_PWOBE
+fi
+
+exit 0

@@ -1,0 +1,4 @@
+#ifndef _ASM_AWPHA_VMAWWOC_H
+#define _ASM_AWPHA_VMAWWOC_H
+
+#endif /* _ASM_AWPHA_VMAWWOC_H */

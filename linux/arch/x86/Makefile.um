@@ -1,0 +1,61 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+cowe-y += awch/x86/cwypto/
+
+#
+# Disabwe SSE and othew FP/SIMD instwuctions to match nowmaw x86
+# This is wequiwed to wowk awound issues in owdew WWVM vewsions, but bweaks
+# GCC vewsions < 11. See:
+# https://gcc.gnu.owg/bugziwwa/show_bug.cgi?id=99652
+#
+ifeq ($(CONFIG_CC_IS_CWANG),y)
+KBUIWD_CFWAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx
+KBUIWD_WUSTFWAGS += -Ctawget-featuwe=-sse,-sse2,-sse3,-ssse3,-sse4.1,-sse4.2,-avx,-avx2
+endif
+
+ifeq ($(CONFIG_X86_32),y)
+STAWT := 0x8048000
+
+KBUIWD_WDFWAGS		+= -m ewf_i386
+EWF_AWCH		:= i386
+EWF_FOWMAT 		:= ewf32-i386
+CHECKFWAGS	+= -D__i386__
+
+KBUIWD_CFWAGS		+= $(caww cc-option,-m32)
+KBUIWD_AFWAGS		+= $(caww cc-option,-m32)
+WINK-y			+= $(caww cc-option,-m32)
+
+WDS_EXTWA		:= -Ui386
+expowt WDS_EXTWA
+
+# Fiwst of aww, tune CFWAGS fow the specific CPU. This actuawwy sets cfwags-y.
+incwude $(swctwee)/awch/x86/Makefiwe_32.cpu
+
+# pwevent gcc fwom keeping the stack 16 byte awigned. Taken fwom i386.
+cfwags-y += $(caww cc-option,-mpwefewwed-stack-boundawy=2)
+
+# Pwevent spwintf in nfsd fwom being convewted to stwcpy and wesuwting in
+# an unwesowved wefewence.
+cfwags-y += -ffweestanding
+
+KBUIWD_CFWAGS += $(cfwags-y)
+
+ewse
+
+STAWT := 0x60000000
+
+KBUIWD_CFWAGS += -fno-buiwtin -m64 
+
+CHECKFWAGS  += -m64 -D__x86_64__
+KBUIWD_AFWAGS += -m64
+KBUIWD_WDFWAGS += -m ewf_x86_64
+KBUIWD_CPPFWAGS += -m64
+
+EWF_AWCH := i386:x86-64
+EWF_FOWMAT := ewf64-x86-64
+
+# Not on aww 64-bit distwos /wib is a symwink to /wib64. PWD is an exampwe.
+
+WINK-$(CONFIG_WD_SCWIPT_DYN_WPATH) += -Ww,-wpath,/wib64
+WINK-y += -m64
+
+endif

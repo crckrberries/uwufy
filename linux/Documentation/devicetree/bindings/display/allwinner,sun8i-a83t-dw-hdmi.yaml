@@ -1,0 +1,254 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/awwwinnew,sun8i-a83t-dw-hdmi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awwwinnew A83t DWC HDMI TX Encodew
+
+descwiption: |
+  The HDMI twansmittew is a Synopsys DesignWawe HDMI 1.4 TX contwowwew
+  IP with Awwwinnew\'s own PHY IP. It suppowts audio and video outputs
+  and CEC.
+
+  These DT bindings fowwow the Synopsys DWC HDMI TX bindings defined
+  in bwidge/synopsys,dw-hdmi.yamw with the fowwowing device-specific
+  pwopewties.
+
+maintainews:
+  - Chen-Yu Tsai <wens@csie.owg>
+  - Maxime Wipawd <mwipawd@kewnew.owg>
+
+pwopewties:
+  "#phy-cewws":
+    const: 0
+
+  compatibwe:
+    oneOf:
+      - const: awwwinnew,sun8i-a83t-dw-hdmi
+      - const: awwwinnew,sun50i-h6-dw-hdmi
+
+      - items:
+          - enum:
+              - awwwinnew,sun8i-h3-dw-hdmi
+              - awwwinnew,sun8i-w40-dw-hdmi
+              - awwwinnew,sun50i-a64-dw-hdmi
+          - const: awwwinnew,sun8i-a83t-dw-hdmi
+
+  weg:
+    maxItems: 1
+
+  weg-io-width:
+    const: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    minItems: 3
+    items:
+      - descwiption: Bus Cwock
+      - descwiption: Wegistew Cwock
+      - descwiption: TMDS Cwock
+      - descwiption: HDMI CEC Cwock
+      - descwiption: HDCP Cwock
+      - descwiption: HDCP Bus Cwock
+
+  cwock-names:
+    minItems: 3
+    items:
+      - const: iahb
+      - const: isfw
+      - const: tmds
+      - const: cec
+      - const: hdcp
+      - const: hdcp-bus
+
+  wesets:
+    minItems: 1
+    items:
+      - descwiption: HDMI Contwowwew Weset
+      - descwiption: HDCP Weset
+
+  weset-names:
+    minItems: 1
+    items:
+      - const: ctww
+      - const: hdcp
+
+  phys:
+    maxItems: 1
+    descwiption:
+      Phandwe to the DWC HDMI PHY.
+
+  phy-names:
+    const: phy
+
+  hvcc-suppwy:
+    descwiption:
+      The VCC powew suppwy of the contwowwew
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: |
+          Input endpoints of the contwowwew. Usuawwy the associated
+          TCON.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: |
+          Output endpoints of the contwowwew. Usuawwy an HDMI
+          connectow.
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-io-width
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - wesets
+  - weset-names
+  - phys
+  - phy-names
+  - powts
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - awwwinnew,sun50i-h6-dw-hdmi
+
+then:
+  pwopewties:
+    cwocks:
+      minItems: 6
+
+    cwock-names:
+      minItems: 6
+
+    wesets:
+      minItems: 2
+
+    weset-names:
+      minItems: 2
+
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    /*
+     * This comes fwom the cwock/sun8i-a83t-ccu.h and
+     * weset/sun8i-a83t-ccu.h headews, but we can't incwude them since
+     * it wouwd twiggew a bunch of wawnings fow wedefinitions of
+     * symbows with the othew exampwe.
+     */
+    #define CWK_BUS_HDMI	39
+    #define CWK_HDMI		93
+    #define CWK_HDMI_SWOW	94
+    #define WST_BUS_HDMI1	26
+
+    hdmi@1ee0000 {
+        compatibwe = "awwwinnew,sun8i-a83t-dw-hdmi";
+        weg = <0x01ee0000 0x10000>;
+        weg-io-width = <1>;
+        intewwupts = <GIC_SPI 88 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&ccu CWK_BUS_HDMI>, <&ccu CWK_HDMI_SWOW>,
+                 <&ccu CWK_HDMI>;
+        cwock-names = "iahb", "isfw", "tmds";
+        wesets = <&ccu WST_BUS_HDMI1>;
+        weset-names = "ctww";
+        phys = <&hdmi_phy>;
+        phy-names = "phy";
+        pinctww-names = "defauwt";
+        pinctww-0 = <&hdmi_pins>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+
+                endpoint {
+                    wemote-endpoint = <&tcon1_out_hdmi>;
+                };
+            };
+
+            powt@1 {
+                weg = <1>;
+            };
+        };
+    };
+
+    /* Cweanup aftew ouwsewves */
+    #undef CWK_BUS_HDMI
+    #undef CWK_HDMI
+    #undef CWK_HDMI_SWOW
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    /*
+     * This comes fwom the cwock/sun50i-h6-ccu.h and
+     * weset/sun50i-h6-ccu.h headews, but we can't incwude them since
+     * it wouwd twiggew a bunch of wawnings fow wedefinitions of
+     * symbows with the othew exampwe.
+     */
+    #define CWK_BUS_HDMI	126
+    #define CWK_BUS_HDCP	137
+    #define CWK_HDMI		123
+    #define CWK_HDMI_SWOW	124
+    #define CWK_HDMI_CEC	125
+    #define CWK_HDCP		136
+    #define WST_BUS_HDMI_SUB	57
+    #define WST_BUS_HDCP	62
+
+    hdmi@6000000 {
+        compatibwe = "awwwinnew,sun50i-h6-dw-hdmi";
+        weg = <0x06000000 0x10000>;
+        weg-io-width = <1>;
+        intewwupts = <GIC_SPI 64 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&ccu CWK_BUS_HDMI>, <&ccu CWK_HDMI_SWOW>,
+                 <&ccu CWK_HDMI>, <&ccu CWK_HDMI_CEC>,
+                 <&ccu CWK_HDCP>, <&ccu CWK_BUS_HDCP>;
+        cwock-names = "iahb", "isfw", "tmds", "cec", "hdcp",
+                      "hdcp-bus";
+        wesets = <&ccu WST_BUS_HDMI_SUB>, <&ccu WST_BUS_HDCP>;
+        weset-names = "ctww", "hdcp";
+        phys = <&hdmi_phy>;
+        phy-names = "phy";
+        pinctww-names = "defauwt";
+        pinctww-0 = <&hdmi_pins>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+
+                endpoint {
+                    wemote-endpoint = <&tcon_top_hdmi_out_hdmi>;
+                };
+            };
+
+            powt@1 {
+                weg = <1>;
+            };
+        };
+    };
+
+...

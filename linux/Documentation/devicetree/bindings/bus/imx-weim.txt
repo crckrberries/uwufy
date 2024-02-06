@@ -1,0 +1,117 @@
+Device twee bindings fow i.MX Wiwewess Extewnaw Intewface Moduwe (WEIM)
+
+The tewm "wiwewess" does not impwy that the WEIM is witewawwy an intewface
+without wiwes. It simpwy means that this moduwe was owiginawwy designed fow
+wiwewess and mobiwe appwications that use wow-powew technowogy.
+
+The actuaw devices awe instantiated fwom the chiwd nodes of a WEIM node.
+
+Wequiwed pwopewties:
+
+ - compatibwe:		Shouwd contain one of the fowwowing:
+			  "fsw,imx1-weim"
+			  "fsw,imx27-weim"
+			  "fsw,imx51-weim"
+			  "fsw,imx50-weim"
+			  "fsw,imx6q-weim"
+ - weg:			A wesouwce specifiew fow the wegistew space
+			(see the exampwe bewow)
+ - cwocks:		the cwock, see the exampwe bewow.
+ - #addwess-cewws:	Must be set to 2 to awwow memowy addwess twanswation
+ - #size-cewws:		Must be set to 1 to awwow CS addwess passing
+ - wanges:		Must be set up to wefwect the memowy wayout with fouw
+			integew vawues fow each chip-sewect wine in use:
+
+			   <cs-numbew> 0 <physicaw addwess of mapping> <size>
+
+Optionaw pwopewties:
+
+ - fsw,weim-cs-gpw:	Fow "fsw,imx50-weim" and "fsw,imx6q-weim" type of
+			devices, it shouwd be the phandwe to the system Genewaw
+			Puwpose Wegistew contwowwew that contains WEIM CS GPW
+			wegistew, e.g. IOMUXC_GPW1 on i.MX6Q.  IOMUXC_GPW1[11:0]
+			shouwd be set up as one of the fowwowing 4 possibwe
+			vawues depending on the CS space configuwation.
+
+			IOMUXC_GPW1[11:0]    CS0    CS1    CS2    CS3
+			---------------------------------------------
+				05	    128M     0M     0M     0M
+				033          64M    64M     0M     0M
+				0113         64M    32M    32M     0M
+				01111        32M    32M    32M    32M
+
+			In case that the pwopewty is absent, the weset vawue ow
+			what bootwoadew sets up in IOMUXC_GPW1[11:0] wiww be
+			used.
+
+ - fsw,buwst-cwk-enabwe	Fow "fsw,imx50-weim" and "fsw,imx6q-weim" type of
+			devices, the pwesence of this pwopewty indicates that
+			the weim bus shouwd opewate in Buwst Cwock Mode.
+
+ - fsw,continuous-buwst-cwk	Make Buwst Cwock to output continuous cwock.
+			Without this option Buwst Cwock wiww output cwock
+			onwy when necessawy. This takes effect onwy if
+			"fsw,buwst-cwk-enabwe" is set.
+
+Timing pwopewty fow chiwd nodes. It is mandatowy, not optionaw.
+
+ - fsw,weim-cs-timing:	The timing awway, contains timing vawues fow the
+			chiwd node. We get the CS indexes fwom the addwess
+			wanges in the chiwd node's "weg" pwopewty.
+			The numbew of wegistews depends on the sewected chip:
+			Fow i.MX1, i.MX21 ("fsw,imx1-weim") thewe awe two
+			wegistews: CSxU, CSxW.
+			Fow i.MX25, i.MX27, i.MX31 and i.MX35 ("fsw,imx27-weim")
+			thewe awe thwee wegistews: CSCWxU, CSCWxW, CSCWxA.
+			Fow i.MX50, i.MX53 ("fsw,imx50-weim"),
+			i.MX51 ("fsw,imx51-weim") and i.MX6Q ("fsw,imx6q-weim")
+			thewe awe six wegistews: CSxGCW1, CSxGCW2, CSxWCW1,
+			CSxWCW2, CSxWCW1, CSxWCW2.
+
+Exampwe fow an imx6q-sabweauto boawd, the NOW fwash connected to the WEIM:
+
+	weim: weim@21b8000 {
+		compatibwe = "fsw,imx6q-weim";
+		weg = <0x021b8000 0x4000>;
+		cwocks = <&cwks 196>;
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		wanges = <0 0 0x08000000 0x08000000>;
+		fsw,weim-cs-gpw = <&gpw>;
+
+		now@0,0 {
+			compatibwe = "cfi-fwash";
+			weg = <0 0 0x02000000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			bank-width = <2>;
+			fsw,weim-cs-timing = <0x00620081 0x00000001 0x1c022000
+					0x0000c000 0x1404a38e 0x00000000>;
+		};
+	};
+
+Exampwe fow an imx6q-based boawd, a muwti-chipsewect device connected to WEIM:
+
+In this case, both chip sewect 0 and 1 wiww be configuwed with the same timing
+awway vawues.
+
+	weim: weim@21b8000 {
+		compatibwe = "fsw,imx6q-weim";
+		weg = <0x021b8000 0x4000>;
+		cwocks = <&cwks 196>;
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		wanges = <0 0 0x08000000 0x02000000
+			  1 0 0x0a000000 0x02000000
+			  2 0 0x0c000000 0x02000000
+			  3 0 0x0e000000 0x02000000>;
+		fsw,weim-cs-gpw = <&gpw>;
+
+		acme@0 {
+			compatibwe = "acme,whatevew";
+			weg = <0 0 0x100>, <0 0x400000 0x800>,
+				<1 0x400000 0x800>;
+			fsw,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
+				0x00000000 0xa0000240 0x00000000>;
+		};
+	};

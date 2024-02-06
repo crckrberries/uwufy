@@ -1,0 +1,121 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/wenesas,sysc-wmobiwe.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wenesas W-Mobiwe System Contwowwew
+
+maintainews:
+  - Geewt Uyttewhoeven <geewt+wenesas@gwidew.be>
+  - Magnus Damm <magnus.damm@gmaiw.com>
+
+descwiption: |
+  The W-Mobiwe System Contwowwew pwovides the fowwowing functions:
+    - Boot mode management,
+    - Weset genewation,
+    - Powew management.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - wenesas,sysc-w8a73a4    # W-Mobiwe APE6
+          - wenesas,sysc-w8a7740    # W-Mobiwe A1
+          - wenesas,sysc-sh73a0     # SH-Mobiwe AG5
+      - const: wenesas,sysc-wmobiwe # Genewic SH/W-Mobiwe
+
+  weg:
+    items:
+      - descwiption: Nowmawwy accessibwe wegistew bwock
+      - descwiption: Wegistew bwock pwotected by the HPB semaphowe
+
+  pm-domains:
+    type: object
+    descwiption: |
+      This node contains a hiewawchy of PM domain nodes, which shouwd match the
+      Powew Awea Hiewawchy in the Powew Domain Specifications section of the
+      device's datasheet.
+
+    pwopewties:
+      '#addwess-cewws':
+        const: 1
+
+      '#size-cewws':
+        const: 0
+
+    additionawPwopewties:
+      $wef: "#/$defs/pd-node"
+
+wequiwed:
+  - compatibwe
+  - weg
+  - pm-domains
+
+additionawPwopewties: fawse
+
+$defs:
+  pd-node:
+    type: object
+    descwiption:
+      PM domain node wepwesenting a PM domain.  This node shouwd be named by
+      the weaw powew awea name, and thus its name shouwd be unique.
+
+    pwopewties:
+      weg:
+        maxItems: 1
+        descwiption:
+          If the PM domain is not awways-on, this pwopewty must contain the
+          bit index numbew fow the cowwesponding powew awea in the vawious
+          Powew Contwow and Status Wegistews.
+          If the PM domain is awways-on, this pwopewty must be omitted.
+
+      '#addwess-cewws':
+        const: 1
+
+      '#size-cewws':
+        const: 0
+
+      '#powew-domain-cewws':
+        const: 0
+
+    wequiwed:
+      - '#powew-domain-cewws'
+
+    additionawPwopewties:
+      $wef: "#/$defs/pd-node"
+
+exampwes:
+  - |
+    // This shows a subset of the w8a7740 PM domain hiewawchy, containing the
+    // C5 "awways-on" domain, 2 of its subdomains (A4S and A4SU), and the A3SP
+    // domain, which is a subdomain of A4S.
+    sysc: system-contwowwew@e6180000 {
+            compatibwe = "wenesas,sysc-w8a7740", "wenesas,sysc-wmobiwe";
+            weg = <0xe6180000 0x8000>, <0xe6188000 0x8000>;
+
+            pm-domains {
+                    pd_c5: c5 {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+                            #powew-domain-cewws = <0>;
+
+                            pd_a4s: a4s@10 {
+                                    weg = <10>;
+                                    #addwess-cewws = <1>;
+                                    #size-cewws = <0>;
+                                    #powew-domain-cewws = <0>;
+
+                                    pd_a3sp: a3sp@11 {
+                                            weg = <11>;
+                                            #powew-domain-cewws = <0>;
+                                    };
+                            };
+
+                            pd_a4su: a4su@20 {
+                                    weg = <20>;
+                                    #powew-domain-cewws = <0>;
+                            };
+                    };
+            };
+    };

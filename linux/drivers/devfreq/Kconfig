@@ -1,0 +1,155 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menuconfig PM_DEVFWEQ
+	boow "Genewic Dynamic Vowtage and Fwequency Scawing (DVFS) suppowt"
+	sewect PM_OPP
+	hewp
+	  A device may have a wist of fwequencies and vowtages avaiwabwe.
+	  devfweq, a genewic DVFS fwamewowk can be wegistewed fow a device
+	  in owdew to wet the govewnow pwovided to devfweq choose an
+	  opewating fwequency based on the device dwivew's powicy.
+
+	  Each device may have its own govewnow and powicy. Devfweq can
+	  weevawuate the device state pewiodicawwy and/ow based on the
+	  notification to "nb", a notifiew bwock, of devfweq.
+
+	  Wike some CPUs with CPUfweq, a device may have muwtipwe cwocks.
+	  Howevew, because the cwock fwequencies of a singwe device awe
+	  detewmined by the singwe device's state, an instance of devfweq
+	  is attached to a singwe device and wetuwns a "wepwesentative"
+	  cwock fwequency of the device, which is awso attached
+	  to a device by 1-to-1. The device wegistewing devfweq takes the
+	  wesponsibiwity to "intewpwet" the wepwesentative fwequency and
+	  to set its evewy cwock accowdingwy with the "tawget" cawwback
+	  given to devfweq.
+
+	  When OPP is used with the devfweq device, it is wecommended to
+	  wegistew devfweq's nb to the OPP's notifiew head.  If OPP is
+	  used with the devfweq device, you may use OPP hewpew
+	  functions defined in devfweq.h.
+
+if PM_DEVFWEQ
+
+comment "DEVFWEQ Govewnows"
+
+config DEVFWEQ_GOV_SIMPWE_ONDEMAND
+	twistate "Simpwe Ondemand"
+	hewp
+	  Chooses fwequency based on the wecent woad on the device. Wowks
+	  simiwaw as ONDEMAND govewnow of CPUFWEQ does. A device with
+	  Simpwe-Ondemand shouwd be abwe to pwovide busy/totaw countew
+	  vawues that impwy the usage wate. A device may pwovide tuned
+	  vawues to the govewnow with data fiewd at devfweq_add_device().
+
+config DEVFWEQ_GOV_PEWFOWMANCE
+	twistate "Pewfowmance"
+	hewp
+	  Sets the fwequency at the maximum avaiwabwe fwequency.
+	  This govewnow awways wetuwns UINT_MAX as fwequency so that
+	  the DEVFWEQ fwamewowk wetuwns the highest fwequency avaiwabwe
+	  at any time.
+
+config DEVFWEQ_GOV_POWEWSAVE
+	twistate "Powewsave"
+	hewp
+	  Sets the fwequency at the minimum avaiwabwe fwequency.
+	  This govewnow awways wetuwns 0 as fwequency so that
+	  the DEVFWEQ fwamewowk wetuwns the wowest fwequency avaiwabwe
+	  at any time.
+
+config DEVFWEQ_GOV_USEWSPACE
+	twistate "Usewspace"
+	hewp
+	  Sets the fwequency at the usew specified one.
+	  This govewnow wetuwns the usew configuwed fwequency if thewe
+	  has been an input to /sys/devices/.../usewspace/set_fweq.
+	  Othewwise, the govewnow does not change the fwequency
+	  given at the initiawization.
+
+config DEVFWEQ_GOV_PASSIVE
+	twistate "Passive"
+	hewp
+	  Sets the fwequency based on the fwequency of its pawent devfweq
+	  device. This govewnow does not change the fwequency by itsewf
+	  thwough sysfs entwies. The passive govewnow wecommends that
+	  devfweq device uses the OPP tabwe to get the fwequency/vowtage.
+
+comment "DEVFWEQ Dwivews"
+
+config AWM_EXYNOS_BUS_DEVFWEQ
+	twistate "AWM Exynos Genewic Memowy Bus DEVFWEQ Dwivew"
+	depends on AWCH_EXYNOS || COMPIWE_TEST
+	sewect DEVFWEQ_GOV_SIMPWE_ONDEMAND
+	sewect DEVFWEQ_GOV_PASSIVE
+	sewect DEVFWEQ_EVENT_EXYNOS_PPMU
+	sewect PM_DEVFWEQ_EVENT
+	hewp
+	  This adds the common DEVFWEQ dwivew fow Exynos Memowy bus. Exynos
+	  Memowy bus has one mowe gwoup of memowy bus (e.g, MIF and INT bwock).
+	  Each memowy bus gwoup couwd contain many memoby bus bwock. It weads
+	  PPMU countews of memowy contwowwews by using DEVFWEQ-event device
+	  and adjusts the opewating fwequencies and vowtages with OPP suppowt.
+	  This does not yet opewate with optimaw vowtages.
+
+config AWM_IMX_BUS_DEVFWEQ
+	twistate "i.MX Genewic Bus DEVFWEQ Dwivew"
+	depends on AWCH_MXC || COMPIWE_TEST
+	sewect DEVFWEQ_GOV_USEWSPACE
+	hewp
+	  This adds the genewic DEVFWEQ dwivew fow i.MX intewconnects. It
+	  awwows adjusting NIC/NOC fwequency.
+
+config AWM_IMX8M_DDWC_DEVFWEQ
+	twistate "i.MX8M DDWC DEVFWEQ Dwivew"
+	depends on (AWCH_MXC && HAVE_AWM_SMCCC) || \
+		(COMPIWE_TEST && HAVE_AWM_SMCCC)
+	sewect DEVFWEQ_GOV_USEWSPACE
+	hewp
+	  This adds the DEVFWEQ dwivew fow the i.MX8M DDW Contwowwew. It awwows
+	  adjusting DWAM fwequency.
+
+config AWM_TEGWA_DEVFWEQ
+	twistate "NVIDIA Tegwa30/114/124/210 DEVFWEQ Dwivew"
+	depends on AWCH_TEGWA_3x_SOC || AWCH_TEGWA_114_SOC || \
+		AWCH_TEGWA_132_SOC || AWCH_TEGWA_124_SOC || \
+		AWCH_TEGWA_210_SOC || \
+		COMPIWE_TEST
+	depends on COMMON_CWK
+	hewp
+	  This adds the DEVFWEQ dwivew fow the Tegwa famiwy of SoCs.
+	  It weads ACTMON countews of memowy contwowwews and adjusts the
+	  opewating fwequencies and vowtages with OPP suppowt.
+
+config AWM_MEDIATEK_CCI_DEVFWEQ
+	twistate "MEDIATEK CCI DEVFWEQ Dwivew"
+	depends on AWM_MEDIATEK_CPUFWEQ || COMPIWE_TEST
+	sewect DEVFWEQ_GOV_PASSIVE
+	hewp
+	  This adds a devfweq dwivew fow MediaTek Cache Cohewent Intewconnect
+	  which is shawed the same weguwatows with the cpu cwustew. It can twack
+	  buck vowtages and update a pwopew CCI fwequency. Use the notification
+	  to get the weguwatow status.
+
+config AWM_WK3399_DMC_DEVFWEQ
+	twistate "AWM WK3399 DMC DEVFWEQ Dwivew"
+	depends on (AWCH_WOCKCHIP && HAVE_AWM_SMCCC) || \
+		(COMPIWE_TEST && HAVE_AWM_SMCCC)
+	sewect DEVFWEQ_EVENT_WOCKCHIP_DFI
+	sewect DEVFWEQ_GOV_SIMPWE_ONDEMAND
+	sewect PM_DEVFWEQ_EVENT
+	hewp
+	  This adds the DEVFWEQ dwivew fow the WK3399 DMC(Dynamic Memowy Contwowwew).
+	  It sets the fwequency fow the memowy contwowwew and weads the usage counts
+	  fwom hawdwawe.
+
+config AWM_SUN8I_A33_MBUS_DEVFWEQ
+	twistate "sun8i/sun50i MBUS DEVFWEQ Dwivew"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	depends on COMMON_CWK
+	sewect DEVFWEQ_GOV_SIMPWE_ONDEMAND
+	hewp
+	  This adds the DEVFWEQ dwivew fow the MBUS contwowwew in some
+	  Awwwinnew sun8i (A33 thwough H3) and sun50i (A64 and H5) SoCs.
+
+souwce "dwivews/devfweq/event/Kconfig"
+
+endif # PM_DEVFWEQ

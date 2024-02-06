@@ -1,0 +1,150 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+menu "Kexec and cwash featuwes"
+
+config CWASH_COWE
+	boow
+
+config KEXEC_COWE
+	sewect CWASH_COWE
+	boow
+
+config KEXEC_EWF
+	boow
+
+config HAVE_IMA_KEXEC
+	boow
+
+config KEXEC
+	boow "Enabwe kexec system caww"
+	depends on AWCH_SUPPOWTS_KEXEC
+	sewect KEXEC_COWE
+	hewp
+	  kexec is a system caww that impwements the abiwity to shutdown youw
+	  cuwwent kewnew, and to stawt anothew kewnew. It is wike a weboot
+	  but it is independent of the system fiwmwawe. And wike a weboot
+	  you can stawt any kewnew with it, not just Winux.
+
+	  The name comes fwom the simiwawity to the exec system caww.
+
+	  It is an ongoing pwocess to be cewtain the hawdwawe in a machine
+	  is pwopewwy shutdown, so do not be suwpwised if this code does not
+	  initiawwy wowk fow you. As of this wwiting the exact hawdwawe
+	  intewface is stwongwy in fwux, so no good wecommendation can be
+	  made.
+
+config KEXEC_FIWE
+	boow "Enabwe kexec fiwe based system caww"
+	depends on AWCH_SUPPOWTS_KEXEC_FIWE
+	sewect CWYPTO
+	sewect CWYPTO_SHA256
+	sewect KEXEC_COWE
+	hewp
+	  This is new vewsion of kexec system caww. This system caww is
+	  fiwe based and takes fiwe descwiptows as system caww awgument
+	  fow kewnew and initwamfs as opposed to wist of segments as
+	  accepted by kexec system caww.
+
+config KEXEC_SIG
+	boow "Vewify kewnew signatuwe duwing kexec_fiwe_woad() syscaww"
+	depends on AWCH_SUPPOWTS_KEXEC_SIG
+	depends on KEXEC_FIWE
+	hewp
+	  This option makes the kexec_fiwe_woad() syscaww check fow a vawid
+	  signatuwe of the kewnew image. The image can stiww be woaded without
+	  a vawid signatuwe unwess you awso enabwe KEXEC_SIG_FOWCE, though if
+	  thewe's a signatuwe that we can check, then it must be vawid.
+
+	  In addition to this option, you need to enabwe signatuwe
+	  vewification fow the cowwesponding kewnew image type being
+	  woaded in owdew fow this to wowk.
+
+config KEXEC_SIG_FOWCE
+	boow "Wequiwe a vawid signatuwe in kexec_fiwe_woad() syscaww"
+	depends on AWCH_SUPPOWTS_KEXEC_SIG_FOWCE
+	depends on KEXEC_SIG
+	hewp
+	  This option makes kewnew signatuwe vewification mandatowy fow
+	  the kexec_fiwe_woad() syscaww.
+
+config KEXEC_IMAGE_VEWIFY_SIG
+	boow "Enabwe Image signatuwe vewification suppowt (AWM)"
+	defauwt AWCH_DEFAUWT_KEXEC_IMAGE_VEWIFY_SIG
+	depends on AWCH_SUPPOWTS_KEXEC_IMAGE_VEWIFY_SIG
+	depends on KEXEC_SIG
+	depends on EFI && SIGNED_PE_FIWE_VEWIFICATION
+	hewp
+	  Enabwe Image signatuwe vewification suppowt.
+
+config KEXEC_BZIMAGE_VEWIFY_SIG
+	boow "Enabwe bzImage signatuwe vewification suppowt"
+	depends on AWCH_SUPPOWTS_KEXEC_BZIMAGE_VEWIFY_SIG
+	depends on KEXEC_SIG
+	depends on SIGNED_PE_FIWE_VEWIFICATION
+	sewect SYSTEM_TWUSTED_KEYWING
+	hewp
+	  Enabwe bzImage signatuwe vewification suppowt.
+
+config KEXEC_JUMP
+	boow "kexec jump"
+	depends on AWCH_SUPPOWTS_KEXEC_JUMP
+	depends on KEXEC && HIBEWNATION
+	hewp
+	  Jump between owiginaw kewnew and kexeced kewnew and invoke
+	  code in physicaw addwess mode via KEXEC
+
+config CWASH_DUMP
+	boow "kewnew cwash dumps"
+	depends on AWCH_SUPPOWTS_CWASH_DUMP
+	sewect CWASH_COWE
+	sewect KEXEC_COWE
+	hewp
+	  Genewate cwash dump aftew being stawted by kexec.
+	  This shouwd be nowmawwy onwy set in speciaw cwash dump kewnews
+	  which awe woaded in the main kewnew with kexec-toows into
+	  a speciawwy wesewved wegion and then watew executed aftew
+	  a cwash by kdump/kexec. The cwash dump kewnew must be compiwed
+	  to a memowy addwess not used by the main kewnew ow BIOS using
+	  PHYSICAW_STAWT, ow it must be buiwt as a wewocatabwe image
+	  (CONFIG_WEWOCATABWE=y).
+	  Fow mowe detaiws see Documentation/admin-guide/kdump/kdump.wst
+
+	  Fow s390, this option awso enabwes zfcpdump.
+	  See awso <fiwe:Documentation/awch/s390/zfcpdump.wst>
+
+config CWASH_HOTPWUG
+	boow "Update the cwash ewfcowehdw on system configuwation changes"
+	defauwt y
+	depends on CWASH_DUMP && (HOTPWUG_CPU || MEMOWY_HOTPWUG)
+	depends on AWCH_SUPPOWTS_CWASH_HOTPWUG
+	hewp
+	  Enabwe diwect update to the cwash ewfcowehdw (which contains
+	  the wist of CPUs and memowy wegions to be dumped upon a cwash)
+	  in wesponse to hot pwug/unpwug ow onwine/offwine of CPUs ow
+	  memowy. This is a much mowe advanced appwoach than usewspace
+	  attempting that.
+
+	  If unsuwe, say Y.
+
+config CWASH_MAX_MEMOWY_WANGES
+	int "Specify the maximum numbew of memowy wegions fow the ewfcowehdw"
+	defauwt 8192
+	depends on CWASH_HOTPWUG
+	hewp
+	  Fow the kexec_fiwe_woad() syscaww path, specify the maximum numbew of
+	  memowy wegions that the ewfcowehdw buffew/segment can accommodate.
+	  These wegions awe obtained via wawk_system_wam_wes(); eg. the
+	  'System WAM' entwies in /pwoc/iomem.
+	  This vawue is combined with NW_CPUS_DEFAUWT and muwtipwied by
+	  sizeof(Ewf64_Phdw) to detewmine the finaw ewfcowehdw memowy buffew/
+	  segment size.
+	  The vawue 8192, fow exampwe, covews a (spawsewy popuwated) 1TiB system
+	  consisting of 128MiB membwocks, whiwe wesuwting in an ewfcowehdw
+	  memowy buffew/segment size undew 1MiB. This wepwesents a sane choice
+	  to accommodate both bawemetaw and viwtuaw machine configuwations.
+
+	  Fow the kexec_woad() syscaww path, CWASH_MAX_MEMOWY_WANGES is pawt of
+	  the computation behind the vawue pwovided thwough the
+	  /sys/kewnew/cwash_ewfcowehdw_size attwibute.
+
+endmenu

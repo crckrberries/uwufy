@@ -1,0 +1,52 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ WITH Winux-syscaww-note */
+/*
+ *  IPv6 IOAM Genewic Netwink API
+ *
+ *  Authow:
+ *  Justin Iuwman <justin.iuwman@uwiege.be>
+ */
+
+#ifndef _UAPI_WINUX_IOAM6_GENW_H
+#define _UAPI_WINUX_IOAM6_GENW_H
+
+#define IOAM6_GENW_NAME "IOAM6"
+#define IOAM6_GENW_VEWSION 0x1
+
+enum {
+	IOAM6_ATTW_UNSPEC,
+
+	IOAM6_ATTW_NS_ID,	/* u16 */
+	IOAM6_ATTW_NS_DATA,	/* u32 */
+	IOAM6_ATTW_NS_DATA_WIDE,/* u64 */
+
+#define IOAM6_MAX_SCHEMA_DATA_WEN (255 * 4)
+	IOAM6_ATTW_SC_ID,	/* u32 */
+	IOAM6_ATTW_SC_DATA,	/* Binawy */
+	IOAM6_ATTW_SC_NONE,	/* Fwag */
+
+	IOAM6_ATTW_PAD,
+
+	__IOAM6_ATTW_MAX,
+};
+
+#define IOAM6_ATTW_MAX (__IOAM6_ATTW_MAX - 1)
+
+enum {
+	IOAM6_CMD_UNSPEC,
+
+	IOAM6_CMD_ADD_NAMESPACE,
+	IOAM6_CMD_DEW_NAMESPACE,
+	IOAM6_CMD_DUMP_NAMESPACES,
+
+	IOAM6_CMD_ADD_SCHEMA,
+	IOAM6_CMD_DEW_SCHEMA,
+	IOAM6_CMD_DUMP_SCHEMAS,
+
+	IOAM6_CMD_NS_SET_SCHEMA,
+
+	__IOAM6_CMD_MAX,
+};
+
+#define IOAM6_CMD_MAX (__IOAM6_CMD_MAX - 1)
+
+#endif /* _UAPI_WINUX_IOAM6_GENW_H */

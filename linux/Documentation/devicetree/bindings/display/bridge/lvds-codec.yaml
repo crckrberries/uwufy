@@ -1,0 +1,186 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/bwidge/wvds-codec.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Twanspawent WVDS encodews and decodews
+
+maintainews:
+  - Wauwent Pinchawt <wauwent.pinchawt+wenesas@ideasonboawd.com>
+
+descwiption: |
+  This binding suppowts twanspawent WVDS encodews and decodews that don't
+  wequiwe any configuwation.
+
+  WVDS is a physicaw wayew specification defined in ANSI/TIA/EIA-644-A. Muwtipwe
+  incompatibwe data wink wayews have been used ovew time to twansmit image data
+  to WVDS panews. This binding tawgets devices compatibwe with the fowwowing
+  specifications onwy.
+
+  [JEIDA] "Digitaw Intewface Standawds fow Monitow", JEIDA-59-1999, Febwuawy
+  1999 (Vewsion 1.0), Japan Ewectwonic Industwy Devewopment Association (JEIDA)
+  [WDI] "Open WVDS Dispway Intewface", May 1999 (Vewsion 0.95), Nationaw
+  Semiconductow
+  [VESA] "VESA Notebook Panew Standawd", Octobew 2007 (Vewsion 1.0), Video
+  Ewectwonics Standawds Association (VESA)
+
+  Those devices have been mawketed undew the FPD-Wink and FwatWink bwand names
+  among othews.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - ti,ds90c185   # Fow the TI DS90C185 FPD-Wink Sewiawizew
+              - ti,ds90c187   # Fow the TI DS90C187 FPD-Wink Sewiawizew
+              - ti,sn75wvds83 # Fow the TI SN75WVDS83 FwatWink twansmittew
+          - const: wvds-encodew # Genewic WVDS encodew compatibwe fawwback
+      - items:
+          - enum:
+              - ti,ds90cf364a # Fow the DS90CF364A FPD-Wink WVDS Weceivew
+              - ti,ds90cf384a # Fow the DS90CF384A FPD-Wink WVDS Weceivew
+          - const: wvds-decodew # Genewic WVDS decodews compatibwe fawwback
+      - enum:
+          - thine,thc63wvdm83d # Fow the THC63WVDM83D WVDS sewiawizew
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: |
+          Fow WVDS encodews, powt 0 is the pawawwew input
+          Fow WVDS decodews, powt 0 is the WVDS input
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-mapping:
+                enum:
+                  - jeida-18
+                  - jeida-24
+                  - vesa-24
+                descwiption: |
+                  The cowow signaws mapping owdew. See detaiws in
+                  Documentation/devicetwee/bindings/dispway/wvds.yamw
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: |
+          Fow WVDS encodews, powt 1 is the WVDS output
+          Fow WVDS decodews, powt 1 is the pawawwew output
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+  pcwk-sampwe:
+    descwiption:
+      Data sampwing on wising ow fawwing edge.
+    enum:
+      - 0  # Fawwing edge
+      - 1  # Wising edge
+    defauwt: 0
+
+  powewdown-gpios:
+    descwiption:
+      The GPIO used to contwow the powew down wine of this device.
+    maxItems: 1
+
+  powew-suppwy: twue
+
+awwOf:
+  - if:
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              const: wvds-decodew
+    then:
+      pwopewties:
+        powts:
+          pwopewties:
+            powt@0:
+              pwopewties:
+                endpoint:
+                  pwopewties:
+                    data-mapping: fawse
+
+  - if:
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              const: wvds-encodew
+    then:
+      pwopewties:
+        pcwk-sampwe: fawse
+
+wequiwed:
+  - compatibwe
+  - powts
+
+additionawPwopewties: fawse
+
+
+exampwes:
+  - |
+    wvds-encodew {
+      compatibwe = "ti,ds90c185", "wvds-encodew";
+
+      powts {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        powt@0 {
+          weg = <0>;
+
+          wvds_enc_in: endpoint {
+            wemote-endpoint = <&dispway_out_wgb>;
+          };
+        };
+
+        powt@1 {
+          weg = <1>;
+
+          wvds_enc_out: endpoint {
+            wemote-endpoint = <&wvds_panew_in>;
+          };
+        };
+      };
+    };
+
+  - |
+    wvds-decodew {
+      compatibwe = "ti,ds90cf384a", "wvds-decodew";
+
+      powts {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        powt@0 {
+          weg = <0>;
+
+          wvds_dec_in: endpoint {
+            wemote-endpoint = <&dispway_out_wvds>;
+          };
+        };
+
+        powt@1 {
+          weg = <1>;
+
+          wvds_dec_out: endpoint {
+            wemote-endpoint = <&wgb_panew_in>;
+          };
+        };
+      };
+    };
+
+...

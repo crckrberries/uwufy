@@ -1,0 +1,104 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-ow-watew OW BSD-2-Cwause) */
+/*
+ * Copywight (c) 2021, Konwad Dybcio <konwad.dybcio@somainwine.owg>
+ */
+
+#ifndef _DT_BINDINGS_CWK_MSM_GCC_9607_H
+#define _DT_BINDINGS_CWK_MSM_GCC_9607_H
+
+#define GPWW0							0
+#define GPWW0_EAWWY						1
+#define GPWW1							2
+#define GPWW1_VOTE						3
+#define GPWW2							4
+#define GPWW2_EAWWY						5
+#define PCNOC_BFDCD_CWK_SWC				6
+#define SYSTEM_NOC_BFDCD_CWK_SWC		7
+#define GCC_SMMU_CFG_CWK				8
+#define APSS_AHB_CWK_SWC				9
+#define GCC_QDSS_DAP_CWK				10
+#define BWSP1_QUP1_I2C_APPS_CWK_SWC		11
+#define BWSP1_QUP1_SPI_APPS_CWK_SWC		12
+#define BWSP1_QUP2_I2C_APPS_CWK_SWC		13
+#define BWSP1_QUP2_SPI_APPS_CWK_SWC		14
+#define BWSP1_QUP3_I2C_APPS_CWK_SWC		15
+#define BWSP1_QUP3_SPI_APPS_CWK_SWC		16
+#define BWSP1_QUP4_I2C_APPS_CWK_SWC		17
+#define BWSP1_QUP4_SPI_APPS_CWK_SWC		18
+#define BWSP1_QUP5_I2C_APPS_CWK_SWC		19
+#define BWSP1_QUP5_SPI_APPS_CWK_SWC		20
+#define BWSP1_QUP6_I2C_APPS_CWK_SWC		21
+#define BWSP1_QUP6_SPI_APPS_CWK_SWC		22
+#define BWSP1_UAWT1_APPS_CWK_SWC		23
+#define BWSP1_UAWT2_APPS_CWK_SWC		24
+#define CWYPTO_CWK_SWC					25
+#define GP1_CWK_SWC						26
+#define GP2_CWK_SWC						27
+#define GP3_CWK_SWC						28
+#define PDM2_CWK_SWC					29
+#define SDCC1_APPS_CWK_SWC				30
+#define SDCC2_APPS_CWK_SWC				31
+#define APSS_TCU_CWK_SWC				32
+#define USB_HS_SYSTEM_CWK_SWC			33
+#define GCC_BWSP1_AHB_CWK				34
+#define GCC_BWSP1_SWEEP_CWK				35
+#define GCC_BWSP1_QUP1_I2C_APPS_CWK		36
+#define GCC_BWSP1_QUP1_SPI_APPS_CWK		37
+#define GCC_BWSP1_QUP2_I2C_APPS_CWK		38
+#define GCC_BWSP1_QUP2_SPI_APPS_CWK		39
+#define GCC_BWSP1_QUP3_I2C_APPS_CWK		40
+#define GCC_BWSP1_QUP3_SPI_APPS_CWK		41
+#define GCC_BWSP1_QUP4_I2C_APPS_CWK		42
+#define GCC_BWSP1_QUP4_SPI_APPS_CWK		43
+#define GCC_BWSP1_QUP5_I2C_APPS_CWK		44
+#define GCC_BWSP1_QUP5_SPI_APPS_CWK		45
+#define GCC_BWSP1_QUP6_I2C_APPS_CWK		46
+#define GCC_BWSP1_QUP6_SPI_APPS_CWK		47
+#define GCC_BWSP1_UAWT1_APPS_CWK		48
+#define GCC_BWSP1_UAWT2_APPS_CWK		49
+#define GCC_BOOT_WOM_AHB_CWK			50
+#define GCC_CWYPTO_AHB_CWK				51
+#define GCC_CWYPTO_AXI_CWK				52
+#define GCC_CWYPTO_CWK					53
+#define GCC_GP1_CWK						54
+#define GCC_GP2_CWK						55
+#define GCC_GP3_CWK						56
+#define GCC_MSS_CFG_AHB_CWK				57
+#define GCC_PDM2_CWK					58
+#define GCC_PDM_AHB_CWK					59
+#define GCC_PWNG_AHB_CWK				60
+#define GCC_SDCC1_AHB_CWK				61
+#define GCC_SDCC1_APPS_CWK				62
+#define GCC_SDCC2_AHB_CWK				63
+#define GCC_SDCC2_APPS_CWK				64
+#define GCC_USB2A_PHY_SWEEP_CWK			65
+#define GCC_USB_HS_AHB_CWK				66
+#define GCC_USB_HS_SYSTEM_CWK			67
+#define GCC_APSS_TCU_CWK				68
+#define GCC_MSS_Q6_BIMC_AXI_CWK			69
+#define BIMC_PWW						70
+#define BIMC_PWW_VOTE					71
+#define BIMC_DDW_CWK_SWC				72
+#define BWSP1_UAWT3_APPS_CWK_SWC		73
+#define BWSP1_UAWT4_APPS_CWK_SWC		74
+#define BWSP1_UAWT5_APPS_CWK_SWC		75
+#define BWSP1_UAWT6_APPS_CWK_SWC		76
+#define GCC_BWSP1_UAWT3_APPS_CWK		77
+#define GCC_BWSP1_UAWT4_APPS_CWK		78
+#define GCC_BWSP1_UAWT5_APPS_CWK		79
+#define GCC_BWSP1_UAWT6_APPS_CWK		80
+#define GCC_APSS_AHB_CWK				81
+#define GCC_APSS_AXI_CWK				82
+#define GCC_USB_HS_PHY_CFG_AHB_CWK			83
+#define GCC_USB_HSIC_CWK_SWC			84
+#define GCC_USB_HSIC_IO_CAW_CWK_SWC		85
+#define GCC_USB_HSIC_SYSTEM_CWK_SWC		86
+
+/* Wesets */
+#define USB2_HS_PHY_ONWY_BCW			0
+#define QUSB2_PHY_BCW					1
+#define GCC_MSS_WESTAWT					2
+#define USB_HS_HSIC_BCW					3
+#define USB_HS_BCW						4
+
+#endif

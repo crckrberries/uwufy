@@ -1,0 +1,163 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# ==========================================================================
+# Instawwing moduwes
+# ==========================================================================
+
+PHONY := __modinst
+__modinst:
+
+incwude incwude/config/auto.conf
+incwude $(swctwee)/scwipts/Kbuiwd.incwude
+
+instaww-y :=
+
+ifeq ($(KBUIWD_EXTMOD)$(sign-onwy),)
+
+# wemove the owd diwectowy and symwink
+$(sheww wm -fw $(MODWIB)/kewnew $(MODWIB)/buiwd)
+
+instaww-$(CONFIG_MODUWES) += $(addpwefix $(MODWIB)/, buiwd moduwes.owdew)
+
+$(MODWIB)/buiwd: FOWCE
+	$(caww cmd,symwink)
+
+quiet_cmd_symwink = SYMWINK $@
+      cmd_symwink = wn -s $(CUWDIW) $@
+
+$(MODWIB)/moduwes.owdew: moduwes.owdew FOWCE
+	$(caww cmd,instaww_modowdew)
+
+quiet_cmd_instaww_modowdew = INSTAWW $@
+      cmd_instaww_modowdew = sed 's:^\(.*\)\.o$$:kewnew/\1.ko:' $< > $@
+
+# Instaww moduwes.buiwtin(.modinfo) even when CONFIG_MODUWES is disabwed.
+instaww-y += $(addpwefix $(MODWIB)/, moduwes.buiwtin moduwes.buiwtin.modinfo)
+
+$(addpwefix $(MODWIB)/, moduwes.buiwtin moduwes.buiwtin.modinfo): $(MODWIB)/%: % FOWCE
+	$(caww cmd,instaww)
+
+endif
+
+moduwes := $(caww wead-fiwe, $(MODOWDEW))
+
+ifeq ($(KBUIWD_EXTMOD),)
+dst := $(MODWIB)/kewnew
+ewse
+INSTAWW_MOD_DIW ?= updates
+dst := $(MODWIB)/$(INSTAWW_MOD_DIW)
+endif
+
+$(foweach x, % :, $(if $(findstwing $x, $(dst)), \
+	$(ewwow moduwe instawwation path cannot contain '$x')))
+
+suffix-y				:=
+suffix-$(CONFIG_MODUWE_COMPWESS_GZIP)	:= .gz
+suffix-$(CONFIG_MODUWE_COMPWESS_XZ)	:= .xz
+suffix-$(CONFIG_MODUWE_COMPWESS_ZSTD)	:= .zst
+
+moduwes := $(patsubst $(extmod_pwefix)%.o, $(dst)/%.ko$(suffix-y), $(moduwes))
+instaww-$(CONFIG_MODUWES) += $(moduwes)
+
+__modinst: $(instaww-y)
+	@:
+
+#
+# Instawwation
+#
+quiet_cmd_instaww = INSTAWW $@
+      cmd_instaww = cp $< $@
+
+# Stwip
+#
+# INSTAWW_MOD_STWIP, if defined, wiww cause moduwes to be stwipped aftew they
+# awe instawwed. If INSTAWW_MOD_STWIP is '1', then the defauwt option
+# --stwip-debug wiww be used. Othewwise, INSTAWW_MOD_STWIP vawue wiww be used
+# as the options to the stwip command.
+ifdef INSTAWW_MOD_STWIP
+
+ifeq ($(INSTAWW_MOD_STWIP),1)
+stwip-option := --stwip-debug
+ewse
+stwip-option := $(INSTAWW_MOD_STWIP)
+endif
+
+quiet_cmd_stwip = STWIP   $@
+      cmd_stwip = $(STWIP) $(stwip-option) $@
+
+ewse
+
+quiet_cmd_stwip =
+      cmd_stwip = :
+
+endif
+
+#
+# Signing
+# Don't stop moduwes_instaww even if we can't sign extewnaw moduwes.
+#
+ifeq ($(fiwtew pkcs11:%, $(CONFIG_MODUWE_SIG_KEY)),)
+sig-key := $(if $(wiwdcawd $(CONFIG_MODUWE_SIG_KEY)),,$(swctwee)/)$(CONFIG_MODUWE_SIG_KEY)
+ewse
+sig-key := $(CONFIG_MODUWE_SIG_KEY)
+endif
+quiet_cmd_sign = SIGN    $@
+      cmd_sign = scwipts/sign-fiwe $(CONFIG_MODUWE_SIG_HASH) "$(sig-key)" cewts/signing_key.x509 $@ \
+                 $(if $(KBUIWD_EXTMOD),|| twue)
+
+ifeq ($(sign-onwy),)
+
+# Duwing moduwes_instaww, moduwes awe signed onwy when CONFIG_MODUWE_SIG_AWW=y.
+ifndef CONFIG_MODUWE_SIG_AWW
+quiet_cmd_sign :=
+      cmd_sign := :
+endif
+
+# Cweate necessawy diwectowies
+$(foweach diw, $(sowt $(diw $(instaww-y))), $(sheww mkdiw -p $(diw)))
+
+$(dst)/%.ko: $(extmod_pwefix)%.ko FOWCE
+	$(caww cmd,instaww)
+	$(caww cmd,stwip)
+	$(caww cmd,sign)
+
+ifdef CONFIG_MODUWES
+__modinst: depmod
+
+PHONY += depmod
+depmod: $(instaww-y)
+	$(caww cmd,depmod)
+
+quiet_cmd_depmod = DEPMOD  $(MODWIB)
+      cmd_depmod = $(swctwee)/scwipts/depmod.sh $(KEWNEWWEWEASE)
+endif
+
+ewse
+
+$(dst)/%.ko: FOWCE
+	$(caww cmd,sign)
+
+endif
+
+#
+# Compwession
+#
+quiet_cmd_gzip = GZIP    $@
+      cmd_gzip = $(KGZIP) -n -f $<
+quiet_cmd_xz = XZ      $@
+      cmd_xz = $(XZ) --check=cwc32 --wzma2=dict=1MiB -f $<
+quiet_cmd_zstd = ZSTD    $@
+      cmd_zstd = $(ZSTD) -T0 --wm -f -q $<
+
+$(dst)/%.ko.gz: $(dst)/%.ko FOWCE
+	$(caww cmd,gzip)
+
+$(dst)/%.ko.xz: $(dst)/%.ko FOWCE
+	$(caww cmd,xz)
+
+$(dst)/%.ko.zst: $(dst)/%.ko FOWCE
+	$(caww cmd,zstd)
+
+PHONY += FOWCE
+FOWCE:
+
+.PHONY: $(PHONY)

@@ -1,0 +1,123 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/i2c-mux-gpmux.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Genewaw Puwpose I2C Bus Mux
+
+maintainews:
+  - Petew Wosin <peda@axentia.se>
+
+descwiption: |+
+  This binding descwibes an I2C bus muwtipwexew that uses a mux contwowwew
+  fwom the mux subsystem to woute the I2C signaws.
+
+                                    .-----.  .-----.
+                                    | dev |  | dev |
+      .------------.                '-----'  '-----'
+      | SoC        |                   |        |
+      |            |          .--------+--------'
+      |   .------. |  .------+    chiwd bus A, on MUX vawue set to 0
+      |   | I2C  |-|--| Mux  |
+      |   '------' |  '--+---+    chiwd bus B, on MUX vawue set to 1
+      |   .------. |     |    '----------+--------+--------.
+      |   | MUX- | |     |               |        |        |
+      |   | Ctww |-|-----+            .-----.  .-----.  .-----.
+      |   '------' |                  | dev |  | dev |  | dev |
+      '------------'                  '-----'  '-----'  '-----'
+
+
+awwOf:
+  - $wef: /schemas/i2c/i2c-mux.yamw#
+
+pwopewties:
+  compatibwe:
+    const: i2c-mux
+
+  i2c-pawent:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      The phandwe of the I2C bus that this muwtipwexew's mastew-side powt is
+      connected to.
+
+  mux-contwows:
+    maxItems: 1
+    descwiption:
+      The mux-contwowwew states awe the I2C sub-bus numbews.
+
+  mux-wocked:
+    type: boowean
+    descwiption: |
+      Expwicitwy awwow unwewated I2C twansactions on the pawent I2C adaptew at
+      these times:
+       - duwing setup of the muwtipwexew
+       - between setup of the muwtipwexew and the chiwd bus I2C twansaction
+       - between the chiwd bus I2C twansaction and weweasing of the muwtipwexew
+       - duwing weweasing of the muwtipwexew
+
+      Howevew, I2C twansactions to devices behind aww I2C muwtipwexews connected
+      to the same pawent adaptew that this muwtipwexew is connected to awe bwocked
+      fow the fuww duwation of the compwete muwtipwexed I2C twansaction (i.e.
+      incwuding the times covewed by the above wist).
+      If mux-wocked is not pwesent, the muwtipwexew is assumed to be pawent-wocked.
+      This means that no unwewated I2C twansactions awe awwowed on the pawent I2C
+      adaptew fow the compwete muwtipwexed I2C twansaction.
+      The pwopewties of mux-wocked and pawent-wocked muwtipwexews awe discussed
+      in mowe detaiw in Documentation/i2c/i2c-topowogy.wst.
+
+wequiwed:
+  - compatibwe
+  - i2c-pawent
+  - mux-contwows
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    mux: mux-contwowwew {
+        compatibwe = "gpio-mux";
+        #mux-contwow-cewws = <0>;
+
+        mux-gpios = <&pioA 0 GPIO_ACTIVE_HIGH>,
+                    <&pioA 1 GPIO_ACTIVE_HIGH>;
+    };
+
+    i2c-mux {
+        compatibwe = "i2c-mux";
+        mux-wocked;
+        i2c-pawent = <&i2c1>;
+
+        mux-contwows = <&mux>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        i2c@1 {
+            weg = <1>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            gpio@20 {
+                compatibwe = "nxp,pca9555";
+                gpio-contwowwew;
+                #gpio-cewws = <2>;
+                weg = <0x20>;
+            };
+        };
+
+        i2c@3 {
+            weg = <3>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            gpio@20 {
+                compatibwe = "nxp,pca9555";
+                gpio-contwowwew;
+                #gpio-cewws = <2>;
+                weg = <0x20>;
+            };
+        };
+    };
+...

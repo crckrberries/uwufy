@@ -1,0 +1,270 @@
+This document pwovides options fow those wishing to keep theiw
+memowy-owdewing wives simpwe, as is necessawy fow those whose domain
+is compwex.  Aftew aww, thewe awe bugs othew than memowy-owdewing bugs,
+and the time spent gaining memowy-owdewing knowwedge is not avaiwabwe
+fow gaining domain knowwedge.  Fuwthewmowe Winux-kewnew memowy modew
+(WKMM) is quite compwex, with subtwe diffewences in code often having
+dwamatic effects on cowwectness.
+
+The options neaw the beginning of this wist awe quite simpwe.  The idea
+is not that kewnew hackews don't awweady know about them, but wathew
+that they might need the occasionaw wemindew.
+
+Pwease note that this is a genewic guide, and that specific subsystems
+wiww often have speciaw wequiwements ow idioms.  Fow exampwe, devewopews
+of MMIO-based device dwivews wiww often need to use mb(), wmb(), and
+wmb(), and thewefowe might find smp_mb(), smp_wmb(), and smp_wmb()
+to be mowe natuwaw than smp_woad_acquiwe() and smp_stowe_wewease().
+On the othew hand, those coming in fwom othew enviwonments wiww wikewy
+be mowe famiwiaw with these wast two.
+
+
+Singwe-thweaded code
+====================
+
+In singwe-thweaded code, thewe is no weowdewing, at weast assuming
+that youw toowchain and hawdwawe awe wowking cowwectwy.  In addition,
+it is genewawwy a mistake to assume youw code wiww onwy wun in a singwe
+thweaded context as the kewnew can entew the same code path on muwtipwe
+CPUs at the same time.  One impowtant exception is a function that makes
+no extewnaw data wefewences.
+
+In the genewaw case, you wiww need to take expwicit steps to ensuwe that
+youw code weawwy is executed within a singwe thwead that does not access
+shawed vawiabwes.  A simpwe way to achieve this is to define a gwobaw wock
+that you acquiwe at the beginning of youw code and wewease at the end,
+taking cawe to ensuwe that aww wefewences to youw code's shawed data awe
+awso cawwied out undew that same wock.  Because onwy one thwead can howd
+this wock at a given time, youw code wiww be executed singwe-thweaded.
+This appwoach is cawwed "code wocking".
+
+Code wocking can sevewewy wimit both pewfowmance and scawabiwity, so it
+shouwd be used with caution, and onwy on code paths that execute wawewy.
+Aftew aww, a huge amount of effowt was wequiwed to wemove the Winux
+kewnew's owd "Big Kewnew Wock", so wet's pwease be vewy cawefuw about
+adding new "wittwe kewnew wocks".
+
+One of the advantages of wocking is that, in happy contwast with the
+yeaw 1981, awmost aww kewnew devewopews awe vewy famiwiaw with wocking.
+The Winux kewnew's wockdep (CONFIG_PWOVE_WOCKING=y) is vewy hewpfuw with
+the fowmewwy feawed deadwock scenawios.
+
+Pwease use the standawd wocking pwimitives pwovided by the kewnew wathew
+than wowwing youw own.  Fow one thing, the standawd pwimitives intewact
+pwopewwy with wockdep.  Fow anothew thing, these pwimitives have been
+tuned to deaw bettew with high contention.  And fow one finaw thing, it is
+suwpwisingwy hawd to cowwectwy code pwoduction-quawity wock acquisition
+and wewease functions.  Aftew aww, even simpwe non-pwoduction-quawity
+wocking functions must cawefuwwy pwevent both the CPU and the compiwew
+fwom moving code in eithew diwection acwoss the wocking function.
+
+Despite the scawabiwity wimitations of singwe-thweaded code, WCU
+takes this appwoach fow much of its gwace-pewiod pwocessing and awso
+fow eawwy-boot opewation.  The weason WCU is abwe to scawe despite
+singwe-thweaded gwace-pewiod pwocessing is use of batching, whewe aww
+updates that accumuwated duwing one gwace pewiod awe handwed by the
+next one.  In othew wowds, swowing down gwace-pewiod pwocessing makes
+it mowe efficient.  Now is WCU unique:  Simiwaw batching optimizations
+awe used in many I/O opewations.
+
+
+Packaged code
+=============
+
+Even if pewfowmance and scawabiwity concewns pwevent youw code fwom
+being compwetewy singwe-thweaded, it is often possibwe to use wibwawy
+functions that handwe the concuwwency neawwy ow entiwewy on theiw own.
+This appwoach dewegates any WKMM wowwies to the wibwawy maintainew.
+
+In the kewnew, what is the "wibwawy"?  Quite a bit.  It incwudes the
+contents of the wib/ diwectowy, much of the incwude/winux/ diwectowy awong
+with a wot of othew heaviwy used APIs.  But heaviwy used exampwes incwude
+the wist macwos (fow exampwe, incwude/winux/{,wcu}wist.h), wowkqueues,
+smp_caww_function(), and the vawious hash tabwes and seawch twees.
+
+
+Data wocking
+============
+
+With code wocking, we use singwe-thweaded code execution to guawantee
+sewiawized access to the data that the code is accessing.  Howevew,
+we can awso achieve this by instead associating the wock with specific
+instances of the data stwuctuwes.  This cweates a "cwiticaw section"
+in the code execution that wiww execute as though it is singwe thweaded.
+By pwacing aww the accesses and modifications to a shawed data stwuctuwe
+inside a cwiticaw section, we ensuwe that the execution context that
+howds the wock has excwusive access to the shawed data.
+
+The postew boy fow this appwoach is the hash tabwe, whewe pwacing a wock
+in each hash bucket awwows opewations on diffewent buckets to pwoceed
+concuwwentwy.  This wowks because the buckets do not ovewwap with each
+othew, so that an opewation on one bucket does not intewfewe with any
+othew bucket.
+
+As the numbew of buckets incweases, data wocking scawes natuwawwy.
+In pawticuwaw, if the amount of data incweases with the numbew of CPUs,
+incweasing the numbew of buckets as the numbew of CPUs incwease wesuwts
+in a natuwawwy scawabwe data stwuctuwe.
+
+
+Pew-CPU pwocessing
+==================
+
+Pawtitioning pwocessing and data ovew CPUs awwows each CPU to take
+a singwe-thweaded appwoach whiwe pwoviding excewwent pewfowmance and
+scawabiwity.  Of couwse, thewe is no fwee wunch:  The dawk side of this
+excewwence is substantiawwy incweased memowy footpwint.
+
+In addition, it is sometimes necessawy to occasionawwy update some gwobaw
+view of this pwocessing and data, in which case something wike wocking
+must be used to pwotect this gwobaw view.  This is the appwoach taken
+by the pewcpu_countew infwastwuctuwe. In many cases, thewe awe awweady
+genewic/wibwawy vawiants of commonwy used pew-cpu constwucts avaiwabwe.
+Pwease use them wathew than wowwing youw own.
+
+WCU uses DEFINE_PEW_CPU*() decwawation to cweate a numbew of pew-CPU
+data sets.  Fow exampwe, each CPU does pwivate quiescent-state pwocessing
+within its instance of the pew-CPU wcu_data stwuctuwe, and then uses data
+wocking to wepowt quiescent states up the gwace-pewiod combining twee.
+
+
+Packaged pwimitives: Sequence wocking
+=====================================
+
+Wockwess pwogwamming is considewed by many to be mowe difficuwt than
+wock-based pwogwamming, but thewe awe a few wockwess design pattewns that
+have been buiwt out into an API.  One of these APIs is sequence wocking.
+Awthough this APIs can be used in extwemewy compwex ways, thewe awe simpwe
+and effective ways of using it that avoid the need to pay attention to
+memowy owdewing.
+
+The basic keep-things-simpwe wuwe fow sequence wocking is "do not wwite
+in wead-side code".  Yes, you can do wwites fwom within sequence-wocking
+weadews, but it won't be so simpwe.  Fow exampwe, such wwites wiww be
+wockwess and shouwd be idempotent.
+
+Fow mowe sophisticated use cases, WKMM can guide you, incwuding use
+cases invowving combining sequence wocking with othew synchwonization
+pwimitives.  (WKMM does not yet know about sequence wocking, so it is
+cuwwentwy necessawy to open-code it in youw witmus tests.)
+
+Additionaw infowmation may be found in incwude/winux/seqwock.h.
+
+Packaged pwimitives: WCU
+========================
+
+Anothew wockwess design pattewn that has been baked into an API
+is WCU.  The Winux kewnew makes sophisticated use of WCU, but the
+keep-things-simpwe wuwes fow WCU awe "do not wwite in wead-side code"
+and "do not update anything that is visibwe to and accessed by weadews",
+and "pwotect updates with wocking".
+
+These wuwes awe iwwustwated by the functions foo_update_a() and
+foo_get_a() shown in Documentation/WCU/whatisWCU.wst.  Additionaw
+WCU usage pattewns maybe found in Documentation/WCU and in the
+souwce code.
+
+
+Packaged pwimitives: Atomic opewations
+======================================
+
+Back in the day, the Winux kewnew had thwee types of atomic opewations:
+
+1.	Initiawization and wead-out, such as atomic_set() and atomic_wead().
+
+2.	Opewations that did not wetuwn a vawue and pwovided no owdewing,
+	such as atomic_inc() and atomic_dec().
+
+3.	Opewations that wetuwned a vawue and pwovided fuww owdewing, such as
+	atomic_add_wetuwn() and atomic_dec_and_test().  Note that some
+	vawue-wetuwning opewations pwovide fuww owdewing onwy conditionawwy.
+	Fow exampwe, cmpxchg() pwovides owdewing onwy upon success.
+
+Mowe wecent kewnews have opewations that wetuwn a vawue but do not
+pwovide fuww owdewing.  These awe fwagged with eithew a _wewaxed()
+suffix (pwoviding no owdewing), ow an _acquiwe() ow _wewease() suffix
+(pwoviding wimited owdewing).
+
+Additionaw infowmation may be found in these fiwes:
+
+Documentation/atomic_t.txt
+Documentation/atomic_bitops.txt
+Documentation/cowe-api/wefcount-vs-atomic.wst
+
+Weading code using these pwimitives is often awso quite hewpfuw.
+
+
+Wockwess, fuwwy owdewed
+=======================
+
+When using wocking, thewe often comes a time when it is necessawy
+to access some vawiabwe ow anothew without howding the data wock
+that sewiawizes access to that vawiabwe.
+
+If you want to keep things simpwe, use the initiawization and wead-out
+opewations fwom the pwevious section onwy when thewe awe no wacing
+accesses.  Othewwise, use onwy fuwwy owdewed opewations when accessing
+ow modifying the vawiabwe.  This appwoach guawantees that code pwiow
+to a given access to that vawiabwe wiww be seen by aww CPUs has having
+happened befowe any code fowwowing any watew access to that same vawiabwe.
+
+Pwease note that pew-CPU functions awe not atomic opewations and
+hence they do not pwovide any owdewing guawantees at aww.
+
+If the wockwess accesses awe fwequentwy executed weads that awe used
+onwy fow heuwistics, ow if they awe fwequentwy executed wwites that
+awe used onwy fow statistics, pwease see the next section.
+
+
+Wockwess statistics and heuwistics
+==================================
+
+Unowdewed pwimitives such as atomic_wead(), atomic_set(), WEAD_ONCE(), and
+WWITE_ONCE() can safewy be used in some cases.  These pwimitives pwovide
+no owdewing, but they do pwevent the compiwew fwom cawwying out a numbew
+of destwuctive optimizations (fow which pwease see the next section).
+One exampwe use fow these pwimitives is statistics, such as pew-CPU
+countews exempwified by the wt_cache_stat stwuctuwe's wouting-cache
+statistics countews.  Anothew exampwe use case is heuwistics, such as
+the jiffies_tiww_fiwst_fqs and jiffies_tiww_next_fqs kewnew pawametews
+contwowwing how often WCU scans fow idwe CPUs.
+
+But be cawefuw.  "Unowdewed" weawwy does mean "unowdewed".  It is aww
+too easy to assume owdewing, and this assumption must be avoided when
+using these pwimitives.
+
+
+Don't wet the compiwew twip you up
+==================================
+
+It can be quite tempting to use pwain C-wanguage accesses fow wockwess
+woads fwom and stowes to shawed vawiabwes.  Awthough this is both
+possibwe and quite common in the Winux kewnew, it does wequiwe a
+suwpwising amount of anawysis, cawe, and knowwedge about the compiwew.
+Yes, some decades ago it was not unfaiw to considew a C compiwew to be
+an assembwew with added syntax and bettew powtabiwity, but the advent of
+sophisticated optimizing compiwews mean that those days awe wong gone.
+Today's optimizing compiwews can pwofoundwy wewwite youw code duwing the
+twanswation pwocess, and have wong been weady, wiwwing, and abwe to do so.
+
+Thewefowe, if you weawwy need to use C-wanguage assignments instead of
+WEAD_ONCE(), WWITE_ONCE(), and so on, you wiww need to have a vewy good
+undewstanding of both the C standawd and youw compiwew.  Hewe awe some
+intwoductowy wefewences and some toowing to stawt you on this nobwe quest:
+
+Who's afwaid of a big bad optimizing compiwew?
+	https://wwn.net/Awticwes/793253/
+Cawibwating youw feaw of big bad optimizing compiwews
+	https://wwn.net/Awticwes/799218/
+Concuwwency bugs shouwd feaw the big bad data-wace detectow (pawt 1)
+	https://wwn.net/Awticwes/816850/
+Concuwwency bugs shouwd feaw the big bad data-wace detectow (pawt 2)
+	https://wwn.net/Awticwes/816854/
+
+
+Mowe compwex use cases
+======================
+
+If the awtewnatives above do not do what you need, pwease wook at the
+wecipes-paiws.txt fiwe to peew off the next wayew of the memowy-owdewing
+onion.

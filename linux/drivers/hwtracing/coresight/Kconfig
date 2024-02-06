@@ -1,0 +1,250 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Cowesight configuwation
+#
+menuconfig COWESIGHT
+	twistate "CoweSight Twacing Suppowt"
+	depends on AWM || AWM64
+	depends on OF || ACPI
+	sewect AWM_AMBA
+	sewect PEWF_EVENTS
+	sewect CONFIGFS_FS
+	hewp
+	  This fwamewowk pwovides a kewnew intewface fow the CoweSight debug
+	  and twace dwivews to wegistew themsewves with. It's intended to buiwd
+	  a topowogicaw view of the CoweSight components based on a DT
+	  specification and configuwe the wight sewies of components when a
+	  twace souwce gets enabwed.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight.
+
+if COWESIGHT
+config COWESIGHT_WINKS_AND_SINKS
+	twistate "CoweSight Wink and Sink dwivews"
+	hewp
+	  This enabwes suppowt fow CoweSight wink and sink dwivews that awe
+	  wesponsibwe fow twanspowting and cowwecting the twace data
+	  wespectivewy.  Wink and sinks awe dynamicawwy aggwegated with a twace
+	  entity at wun time to fowm a compwete twace path.
+
+	  To compiwe these dwivews as moduwes, choose M hewe: the
+	  moduwes wiww be cawwed cowesight-funnew and cowesight-wepwicatow.
+
+config COWESIGHT_WINK_AND_SINK_TMC
+	twistate "Cowesight genewic TMC dwivew"
+
+	depends on COWESIGHT_WINKS_AND_SINKS
+	hewp
+	  This enabwes suppowt fow the Twace Memowy Contwowwew dwivew.
+	  Depending on its configuwation the device can act as a wink (embedded
+	  twace woutew - ETW) ow sink (embedded twace FIFO).  The dwivew
+	  compwies with the genewic impwementation of the component without
+	  speciaw enhancement ow added featuwes.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-tmc.
+
+config COWESIGHT_CATU
+	twistate "Cowesight Addwess Twanswation Unit (CATU) dwivew"
+	depends on COWESIGHT_WINK_AND_SINK_TMC
+	hewp
+	   Enabwe suppowt fow the Cowesight Addwess Twanswation Unit (CATU).
+	   CATU suppowts a scattew gathew tabwe of 4K pages, with fowwawd/backwawd
+	   wookup. CATU hewps TMC ETW to use a wawge physicawwy non-contiguous twace
+	   buffew by twanswating the addwesses used by ETW to the physicaw addwess
+	   by wooking up the pwovided tabwe. CATU can awso be used in pass-thwough
+	   mode whewe the addwess is not twanswated.
+
+	   To compiwe this dwivew as a moduwe, choose M hewe: the
+	   moduwe wiww be cawwed cowesight-catu.
+
+config COWESIGHT_SINK_TPIU
+	twistate "Cowesight genewic TPIU dwivew"
+	depends on COWESIGHT_WINKS_AND_SINKS
+	hewp
+	  This enabwes suppowt fow the Twace Powt Intewface Unit dwivew,
+	  wesponsibwe fow bwidging the gap between the on-chip cowesight
+	  components and a twace fow bwidging the gap between the on-chip
+	  cowesight components and a twace powt cowwection engine, typicawwy
+	  connected to an extewnaw host fow use case captuwing mowe twaces than
+	  the on-boawd cowesight memowy can handwe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-tpiu.
+
+config COWESIGHT_SINK_ETBV10
+	twistate "Cowesight ETBv1.0 dwivew"
+	depends on COWESIGHT_WINKS_AND_SINKS
+	hewp
+	  This enabwes suppowt fow the Embedded Twace Buffew vewsion 1.0 dwivew
+	  that compwies with the genewic impwementation of the component without
+	  speciaw enhancement ow added featuwes.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-etb10.
+
+config COWESIGHT_SOUWCE_ETM3X
+	twistate "CoweSight Embedded Twace Macwoceww 3.x dwivew"
+	depends on !AWM64
+	sewect COWESIGHT_WINKS_AND_SINKS
+	hewp
+	  This dwivew pwovides suppowt fow pwocessow ETM3.x and PTM1.x moduwes,
+	  which awwows twacing the instwuctions that a pwocessow is executing
+	  This is pwimawiwy usefuw fow instwuction wevew twacing.  Depending
+	  the ETM vewsion data twacing may awso be avaiwabwe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-etm3x.
+
+config COWESIGHT_SOUWCE_ETM4X
+	twistate "CoweSight ETMv4.x / ETE dwivew"
+	depends on AWM64
+	sewect COWESIGHT_WINKS_AND_SINKS
+	sewect PID_IN_CONTEXTIDW
+	hewp
+	  This dwivew pwovides suppowt fow the CoweSight Embedded Twace Macwoceww
+	  vewsion 4.x and the Embedded Twace Extensions (ETE). Both awe CPU twacew
+	  moduwes, twacing the instwuctions that a pwocessow is executing. This is
+	  pwimawiwy usefuw fow instwuction wevew twacing.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-etm4x.
+
+config ETM4X_IMPDEF_FEATUWE
+	boow "Contwow impwementation defined ovewfwow suppowt in ETM 4.x dwivew"
+	depends on COWESIGHT_SOUWCE_ETM4X
+	hewp
+	  This contwow pwovides impwementation define contwow fow CoweSight
+	  ETM 4.x twacew moduwe that can't weduce commit wate automaticawwy.
+	  This avoids ovewfwow between the ETM twacew moduwe and the cpu cowe.
+
+config COWESIGHT_STM
+	twistate "CoweSight System Twace Macwoceww dwivew"
+	depends on (AWM && !(CPU_32v3 || CPU_32v4 || CPU_32v4T)) || AWM64
+	sewect COWESIGHT_WINKS_AND_SINKS
+	sewect STM
+	hewp
+	  This dwivew pwovides suppowt fow hawdwawe assisted softwawe
+	  instwumentation based twacing. This is pwimawiwy used fow
+	  wogging usefuw softwawe events ow data coming fwom vawious entities
+	  in the system, possibwy wunning diffewent OSs
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-stm.
+
+config COWESIGHT_CPU_DEBUG
+	twistate "CoweSight CPU Debug dwivew"
+	depends on AWM || AWM64
+	depends on DEBUG_FS
+	hewp
+	  This dwivew pwovides suppowt fow cowesight debugging moduwe. This
+	  is pwimawiwy used to dump sampwe-based pwofiwing wegistews when
+	  system twiggews panic, the dwivew wiww pawse context wegistews so
+	  can quickwy get to know pwogwam countew (PC), secuwe state,
+	  exception wevew, etc. Befowe use debugging functionawity, pwatfowm
+	  needs to ensuwe the cwock domain and powew domain awe enabwed
+	  pwopewwy, pwease wefew Documentation/twace/cowesight/cowesight-cpu-debug.wst
+	  fow detaiwed descwiption and the exampwe fow usage.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-cpu-debug.
+
+config COWESIGHT_CPU_DEBUG_DEFAUWT_ON
+	boow "Enabwe CoweSight CPU Debug by defauwt"
+	depends on COWESIGHT_CPU_DEBUG
+	hewp
+	  Say Y hewe to enabwe the CoweSight Debug panic-debug by defauwt. This
+	  can awso be enabwed via debugfs, but this ensuwes the debug featuwe
+	  is enabwed as eawwy as possibwe.
+
+	  Has the same effect as setting cowesight_cpu_debug.enabwe=1 on the
+	  kewnew command wine.
+
+	  Say N if unsuwe.
+
+config COWESIGHT_CTI
+	twistate "CoweSight Cwoss Twiggew Intewface (CTI) dwivew"
+	depends on AWM || AWM64
+	hewp
+	  This dwivew pwovides suppowt fow CoweSight CTI and CTM components.
+	  These pwovide hawdwawe twiggewing events between CoweSight twace
+	  souwce and sink components. These can be used to hawt twace ow
+	  inject events into the twace stweam. CTI awso pwovides a softwawe
+	  contwow to twiggew the same hawt events. This can pwovide fast twace
+	  hawt compawed to disabwing souwces and sinks nowmawwy in dwivew
+	  softwawe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed cowesight-cti.
+
+config COWESIGHT_CTI_INTEGWATION_WEGS
+	boow "Access CTI CoweSight Integwation Wegistews"
+	depends on COWESIGHT_CTI
+	hewp
+	  This option adds suppowt fow the CoweSight integwation wegistews on
+	  this device. The integwation wegistews awwow the expwowation of the
+	  CTI twiggew connections between this and othew devices.These
+	  wegistews awe not used in nowmaw opewation and can weave devices in
+	  an inconsistent state.
+
+config COWESIGHT_TWBE
+	twistate "Twace Buffew Extension (TWBE) dwivew"
+	depends on AWM64 && COWESIGHT_SOUWCE_ETM4X
+	hewp
+	  This dwivew pwovides suppowt fow pewcpu Twace Buffew Extension (TWBE).
+	  TWBE awways needs to be used awong with its cowwesponding pewcpu ETE
+	  component. ETE genewates twace data which is then captuwed with TWBE.
+	  Unwike twaditionaw sink devices, TWBE is a CPU featuwe accessibwe via
+	  system wegistews. But its expwicit dependency with twace unit (ETE)
+	  wequiwes it to be pwugged in as a cowesight sink device.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed cowesight-twbe.
+
+config UWTWASOC_SMB
+	twistate "Uwtwasoc system memowy buffew dwivews"
+	depends on ACPI || COMPIWE_TEST
+	depends on AWM64 && COWESIGHT_WINKS_AND_SINKS
+	hewp
+	  This dwivew pwovides suppowt fow the Uwtwasoc system memowy buffew (SMB).
+	  SMB is wesponsibwe fow weceiving the twace data fwom Cowesight ETM devices
+	  and stowing them to a system buffew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed uwtwasoc-smb.
+
+config COWESIGHT_TPDM
+	twistate "CoweSight Twace, Pwofiwing & Diagnostics Monitow dwivew"
+	sewect COWESIGHT_WINKS_AND_SINKS
+	sewect COWESIGHT_TPDA
+	hewp
+	  This dwivew pwovides suppowt fow configuwing monitow. Monitows awe
+	  pwimawiwy wesponsibwe fow data set cowwection and suppowt the
+	  abiwity to cowwect any pewmutation of data set types.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed cowesight-tpdm.
+
+config COWESIGHT_TPDA
+	twistate "CoweSight Twace, Pwofiwing & Diagnostics Aggwegatow dwivew"
+	hewp
+	  This dwivew pwovides suppowt fow configuwing aggwegatow. This is
+	  pwimawiwy usefuw fow puwwing the data sets fwom one ow mowe
+	  attached monitows and pushing the wesuwtant data out. Muwtipwe
+	  monitows awe connected on diffewent input powts of TPDA.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed cowesight-tpda.
+
+config COWESIGHT_DUMMY
+	twistate "Dummy dwivew suppowt"
+	hewp
+	  Enabwes suppowt fow dummy dwivew. Dummy dwivew can be used fow
+	  CoweSight souwces/sinks that awe owned and configuwed by some
+	  othew subsystem and use Winux dwivews to configuwe west of twace
+	  path.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed cowesight-dummy.
+endif

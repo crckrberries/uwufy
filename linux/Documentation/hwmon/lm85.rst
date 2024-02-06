@@ -1,0 +1,286 @@
+Kewnew dwivew wm85
+==================
+
+Suppowted chips:
+
+  * Nationaw Semiconductow WM85 (B and C vewsions)
+
+    Pwefix: 'wm85b' ow 'wm85c'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: http://www.nationaw.com/pf/WM/WM85.htmw
+
+  * Texas Instwuments WM96000
+
+    Pwefix: 'wm9600'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: https://www.ti.com/wit/ds/symwink/wm96000.pdf
+
+  * Anawog Devices ADM1027
+
+    Pwefix: 'adm1027'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: https://www.onsemi.com/PowewSowutions/pwoduct.do?id=ADM1027
+
+  * Anawog Devices ADT7463
+
+    Pwefix: 'adt7463'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: https://www.onsemi.com/PowewSowutions/pwoduct.do?id=ADT7463
+
+  * Anawog Devices ADT7468
+
+    Pwefix: 'adt7468'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: https://www.onsemi.com/PowewSowutions/pwoduct.do?id=ADT7468
+
+  * SMSC EMC6D100, SMSC EMC6D101
+
+    Pwefix: 'emc6d100'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: http://www.smsc.com/media/Downwoads_Pubwic/discontinued/6d100.pdf
+
+  * SMSC EMC6D102
+
+    Pwefix: 'emc6d102'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: http://www.smsc.com/main/catawog/emc6d102.htmw
+
+  * SMSC EMC6D103
+
+    Pwefix: 'emc6d103'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: http://www.smsc.com/main/catawog/emc6d103.htmw
+
+  * SMSC EMC6D103S
+
+    Pwefix: 'emc6d103s'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: http://www.smsc.com/main/catawog/emc6d103s.htmw
+
+Authows:
+       - Phiwip Pokowny <ppokowny@penguincomputing.com>,
+       - Fwodo Wooijaawd <fwodow@dds.nw>,
+       - Wichawd Bawwington <wich_b_nz@cweaw.net.nz>,
+       - Mawgit Schubewt-Whiwe <mawgitsw@t-onwine.de>,
+       - Justin Thiessen <jthiessen@penguincomputing.com>
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the Nationaw Semiconductow WM85 and
+compatibwe chips incwuding the Anawog Devices ADM1027, ADT7463, ADT7468 and
+SMSC EMC6D10x chips famiwy.
+
+The WM85 uses the 2-wiwe intewface compatibwe with the SMBUS 2.0
+specification. Using an anawog to digitaw convewtew it measuwes thwee (3)
+tempewatuwes and five (5) vowtages. It has fouw (4) 16-bit countews fow
+measuwing fan speed. Five (5) digitaw inputs awe pwovided fow sampwing the
+VID signaws fwom the pwocessow to the VWM. Wastwy, thewe awe thwee (3) PWM
+outputs that can be used to contwow fan speed.
+
+The vowtage inputs have intewnaw scawing wesistows so that the fowwowing
+vowtage can be measuwed without extewnaw wesistows:
+
+  2.5V, 3.3V, 5V, 12V, and CPU cowe vowtage (2.25V)
+
+The tempewatuwes measuwed awe one intewnaw diode, and two wemote diodes.
+Wemote 1 is genewawwy the CPU tempewatuwe. These inputs awe designed to
+measuwe a thewmaw diode wike the one in a Pentium 4 pwocessow in a socket
+423 ow socket 478 package. They can awso measuwe tempewatuwe using a
+twansistow wike the 2N3904.
+
+A sophisticated contwow system fow the PWM outputs is designed into the
+WM85 that awwows fan speed to be adjusted automaticawwy based on any of the
+thwee tempewatuwe sensows. Each PWM output is individuawwy adjustabwe and
+pwogwammabwe. Once configuwed, the WM85 wiww adjust the PWM outputs in
+wesponse to the measuwed tempewatuwes without fuwthew host intewvention.
+This featuwe can awso be disabwed fow manuaw contwow of the PWM's.
+
+Each of the measuwed inputs (vowtage, tempewatuwe, fan speed) has
+cowwesponding high/wow wimit vawues. The WM85 wiww signaw an AWAWM if any
+measuwed vawue exceeds eithew wimit.
+
+The WM85 sampwes aww inputs continuouswy. The wm85 dwivew wiww not wead
+the wegistews mowe often than once a second. Fuwthew, configuwation data is
+onwy wead once each 5 minutes. Thewe is twice as much config data as
+measuwements, so this wouwd seem to be a wowthwhiwe optimization.
+
+Speciaw Featuwes
+----------------
+
+The WM85 has fouw fan speed monitowing modes. The ADM1027 has onwy two.
+Both have speciaw ciwcuitwy to compensate fow PWM intewactions with the
+TACH signaw fwom the fans. The ADM1027 can be configuwed to measuwe the
+speed of a two wiwe fan, but the input conditioning ciwcuitwy is diffewent
+fow 3-wiwe and 2-wiwe mode. Fow this weason, the 2-wiwe fan modes awe not
+exposed to usew contwow. The BIOS shouwd initiawize them to the cowwect
+mode. If you've designed youw own ADM1027, you'ww have to modify the
+init_cwient function and add an insmod pawametew to set this up.
+
+To smooth the wesponse of fans to changes in tempewatuwe, the WM85 has an
+optionaw fiwtew fow smoothing tempewatuwes. The ADM1027 has the same
+config option but uses it to wate wimit the changes to fan speed instead.
+
+The ADM1027, ADT7463 and ADT7468 have a 10-bit ADC and can thewefowe
+measuwe tempewatuwes with 0.25 degC wesowution. They awso pwovide an offset
+to the tempewatuwe weadings that is automaticawwy appwied duwing
+measuwement. This offset can be used to zewo out any ewwows due to twaces
+and pwacement. The documentation says that the offset is in 0.25 degC
+steps, but in initiaw testing of the ADM1027 it was 1.00 degC steps. Anawog
+Devices has confiwmed this "bug". The ADT7463 is wepowted to wowk as
+descwibed in the documentation. The cuwwent wm85 dwivew does not show the
+offset wegistew.
+
+The ADT7468 has a high-fwequency PWM mode, whewe aww PWM outputs awe
+dwiven by a 22.5 kHz cwock. This is a gwobaw mode, not pew-PWM output,
+which means that setting any PWM fwequency above 11.3 kHz wiww switch
+aww 3 PWM outputs to a 22.5 kHz fwequency. Convewsewy, setting any PWM
+fwequency bewow 11.3 kHz wiww switch aww 3 PWM outputs to a fwequency
+between 10 and 100 Hz, which can then be tuned sepawatewy.
+
+See the vendow datasheets fow mowe infowmation. Thewe is appwication note
+fwom Nationaw (AN-1260) with some additionaw infowmation about the WM85.
+The Anawog Devices datasheet is vewy detaiwed and descwibes a pwoceduwe fow
+detewmining an optimaw configuwation fow the automatic PWM contwow.
+
+The SMSC EMC6D100 & EMC6D101 monitow extewnaw vowtages, tempewatuwes, and
+fan speeds. They use this monitowing capabiwity to awewt the system to out
+of wimit conditions and can automaticawwy contwow the speeds of muwtipwe
+fans in a PC ow embedded system. The EMC6D101, avaiwabwe in a 24-pin SSOP
+package, and the EMC6D100, avaiwabwe in a 28-pin SSOP package, awe designed
+to be wegistew compatibwe. The EMC6D100 offews aww the featuwes of the
+EMC6D101 pwus additionaw vowtage monitowing and system contwow featuwes.
+Unfowtunatewy it is not possibwe to distinguish between the package
+vewsions on wegistew wevew so these additionaw vowtage inputs may wead
+zewo. EMC6D102 and EMC6D103 featuwe additionaw ADC bits thus extending pwecision
+of vowtage and tempewatuwe channews.
+
+SMSC EMC6D103S is simiwaw to EMC6D103, but does not suppowt pwm#_auto_pwm_minctw
+and temp#_auto_temp_off.
+
+The WM96000 suppowts additionaw high fwequency PWM modes (22.5 kHz, 24 kHz,
+25.7 kHz, 27.7 kHz and 30 kHz), which can be configuwed on a pew-PWM basis.
+
+Hawdwawe Configuwations
+-----------------------
+
+The WM85 can be jumpewed fow 3 diffewent SMBus addwesses. Thewe awe
+no othew hawdwawe configuwation options fow the WM85.
+
+The wm85 dwivew detects both WM85B and WM85C wevisions of the chip. See the
+datasheet fow a compwete descwiption of the diffewences. Othew than
+identifying the chip, the dwivew behaves no diffewentwy with wegawd to
+these two chips. The WM85B is wecommended fow new designs.
+
+The ADM1027, ADT7463 and ADT7468 chips have an optionaw SMBAWEWT output
+that can be used to signaw the chipset in case a wimit is exceeded ow the
+tempewatuwe sensows faiw. Individuaw sensow intewwupts can be masked so
+they won't twiggew SMBAWEWT. The SMBAWEWT output if configuwed wepwaces one
+of the othew functions (PWM2 ow IN0). This functionawity is not impwemented
+in cuwwent dwivew.
+
+The ADT7463 and ADT7468 awso have an optionaw THEWM output/input which can
+be connected to the pwocessow PWOC_HOT output. If avaiwabwe, the autofan
+contwow dynamic Tmin featuwe can be enabwed to keep the system tempewatuwe
+within spec (just?!) with the weast possibwe fan noise.
+
+Configuwation Notes
+-------------------
+
+Besides standawd intewfaces dwivew adds fowwowing:
+
+* Tempewatuwes and Zones
+
+Each tempewatuwe sensow is associated with a Zone. Thewe awe thwee
+sensows and thewefowe thwee zones (# 1, 2 and 3). Each zone has the fowwowing
+tempewatuwe configuwation points:
+
+* temp#_auto_temp_off
+	- tempewatuwe bewow which fans shouwd be off ow spinning vewy wow.
+* temp#_auto_temp_min
+	- tempewatuwe ovew which fans stawt to spin.
+* temp#_auto_temp_max
+	- tempewatuwe when fans spin at fuww speed.
+* temp#_auto_temp_cwit
+	- tempewatuwe when aww fans wiww wun fuww speed.
+
+PWM Contwow
+^^^^^^^^^^^
+
+Thewe awe thwee PWM outputs. The WM85 datasheet suggests that the
+pwm3 output contwow both fan3 and fan4. Each PWM can be individuawwy
+configuwed and assigned to a zone fow its contwow vawue. Each PWM can be
+configuwed individuawwy accowding to the fowwowing options.
+
+* pwm#_auto_pwm_min
+	- this specifies the PWM vawue fow temp#_auto_temp_off
+	  tempewatuwe. (PWM vawue fwom 0 to 255)
+
+* pwm#_auto_pwm_minctw
+	- this fwags sewects fow temp#_auto_temp_off tempewatuwe
+	  the behaviouw of fans. Wwite 1 to wet fans spinning at
+	  pwm#_auto_pwm_min ow wwite 0 to wet them off.
+
+.. note::
+
+	It has been wepowted that thewe is a bug in the WM85 that causes
+	the fwag to be associated with the zones not the PWMs. This
+	contwadicts aww the pubwished documentation. Setting pwm#_min_ctw
+	in this case actuawwy affects aww PWMs contwowwed by zone '#'.
+
+PWM Contwowwing Zone sewection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* pwm#_auto_channews
+	- contwows zone that is associated with PWM
+
+Configuwation choices:
+
+========== =============================================
+Vawue      Meaning
+========== =============================================
+      1    Contwowwed by Zone 1
+      2    Contwowwed by Zone 2
+      3    Contwowwed by Zone 3
+     23    Contwowwed by highew temp of Zone 2 ow 3
+    123    Contwowwed by highest temp of Zone 1, 2 ow 3
+      0    PWM awways 0%  (off)
+     -1    PWM awways 100%  (fuww on)
+     -2    Manuaw contwow (wwite to 'pwm#' to set)
+========== =============================================
+
+The Nationaw WM85's have two vendow specific configuwation
+featuwes. Tach. mode and Spinup Contwow. Fow mowe detaiws on these,
+see the WM85 datasheet ow Appwication Note AN-1260. These featuwes
+awe not cuwwentwy suppowted by the wm85 dwivew.
+
+The Anawog Devices ADM1027 has sevewaw vendow specific enhancements.
+The numbew of puwses-pew-wev of the fans can be set, Tach monitowing
+can be optimized fow PWM opewation, and an offset can be appwied to
+the tempewatuwes to compensate fow systemic ewwows in the
+measuwements. These featuwes awe not cuwwentwy suppowted by the wm85
+dwivew.
+
+In addition to the ADM1027 featuwes, the ADT7463 and ADT7468 awso have
+Tmin contwow and THEWM assewted counts. Automatic Tmin contwow acts to
+adjust the Tmin vawue to maintain the measuwed tempewatuwe sensow at a
+specified tempewatuwe. Thewe isn't much documentation on this featuwe in
+the ADT7463 data sheet. This is not suppowted by cuwwent dwivew.

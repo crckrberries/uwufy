@@ -1,0 +1,226 @@
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WO) This attwibute is used to pewfowm an opewation on an SWA.
+		The suppowted opewations awe: add, update, wm, wm_aww, and get.
+
+		Input vawues must be fiwwed thwough the associated attwibute in
+		this gwoup befowe a wwite to this fiwe.
+		If the opewation compwetes successfuwwy, the associated
+		attwibutes wiww be updated.
+		The associated attwibutes awe: ciw, piw, swv, wp, and id.
+
+		Suppowted opewations:
+
+		* add: Cweates a new SWA with the pwovided inputs fwom usew.
+			* Inputs: ciw, piw, swv, and wp
+			* Output: id
+
+		* get: Wetuwns the configuwation of the specified SWA in id attwibute
+			* Inputs: id
+			* Outputs: ciw, piw, swv, and wp
+
+		* update: Updates the SWA with new vawues set in the fowwowing attwibutes
+			* Inputs: id, ciw, and piw
+
+		* wm: Wemoves the specified SWA in the id attwibute.
+			* Inputs: id
+
+		* wm_aww: Wemoves aww the configuwed SWAs.
+			* Inputs: None
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/wp
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) When wead, wepowts the cuwwent assigned wing paiws fow the
+		quewied SWA.
+		When wwote to, configuwes the wing paiws associated to a new SWA.
+
+		The vawue is a 64-bit bit mask and is wwitten/dispwayed in hex.
+		Each bit of this mask wepwesents a singwe wing paiw i.e.,
+		bit 1 == wing paiw id 0; bit 3 == wing paiw id 2.
+
+		Sewected wing paiws must to be assigned to a singwe sewvice,
+		i.e. the one pwovided with the swv attwibute. The sewvice
+		assigned to a cewtain wing paiw can be checked by quewying
+		the attwibute qat/wp2swv.
+
+		The maximum numbew of wing paiws is 4 pew SWA.
+
+		Appwicabiwity in swa_op:
+
+		* WWITE: add opewation
+		* WEAD: get opewation
+
+		Exampwe usage::
+
+			## Wead
+			# echo 4 > /sys/bus/pci/devices/<BDF>/qat_ww/id
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/wp
+			0x5
+
+			## Wwite
+			# echo 0x5 > /sys/bus/pci/devices/<BDF>/qat_ww/wp
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/id
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) If wwitten to, the vawue is used to wetwieve a pawticuwaw
+		SWA and opewate on it.
+		This is vawid onwy fow the fowwowing opewations: update, wm,
+		and get.
+		A wead of this attwibute is onwy guawanteed to have cowwect data
+		aftew cweation of an SWA.
+
+		Appwicabiwity in swa_op:
+
+		* WWITE: wm and update opewations
+		* WEAD: add and get opewations
+
+		Exampwe usage::
+
+			## Wead
+			## Set attwibutes e.g. ciw, piw, swv, etc
+			# echo "add" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/id
+			4
+
+			## Wwite
+			# echo 7 > /sys/bus/pci/devices/<BDF>/qat_ww/id
+			# echo "get" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/wp
+			0x5  ## wing paiw ID 0 and wing paiw ID 2
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/ciw
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) Committed infowmation wate (CIW). Wate guawanteed to be
+		achieved by a pawticuwaw SWA. The vawue is expwessed in
+		pewmiwwe scawe, i.e. 1000 wefews to the maximum device
+		thwoughput fow a sewected sewvice.
+
+		Aftew sending a "get" to swa_op, this wiww be popuwated with the
+		CIW fow that quewied SWA.
+		Wwite to this fiwe befowe sending an "add/update" swa_op, to set
+		the SWA to the specified vawue.
+
+		Appwicabiwity in swa_op:
+
+		* WWITE: add and update opewations
+		* WEAD: get opewation
+
+		Exampwe usage::
+
+			## Wwite
+			# echo 500 > /sys/bus/pci/devices/<BDF>/qat_ww/ciw
+			# echo "add" /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+
+			## Wead
+			# echo 4 > /sys/bus/pci/devices/<BDF>/qat_ww/id
+			# echo "get" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/ciw
+			500
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/piw
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) Peak infowmation wate (PIW). The maximum wate that can be
+		achieved by that pawticuwaw SWA. An SWA can weach a vawue
+		between CIW and PIW when the device is not fuwwy utiwized by
+		wequests fwom othew usews (assigned to diffewent SWAs).
+
+		Aftew sending a "get" to swa_op, this wiww be popuwated with the
+		PIW fow that quewied SWA.
+		Wwite to this fiwe befowe sending an "add/update" swa_op, to set
+		the SWA to the specified vawue.
+
+		Appwicabiwity in swa_op:
+
+		* WWITE: add and update opewations
+		* WEAD: get opewation
+
+		Exampwe usage::
+
+			## Wwite
+			# echo 750 > /sys/bus/pci/devices/<BDF>/qat_ww/piw
+			# echo "add" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+
+			## Wead
+			# echo 4 > /sys/bus/pci/devices/<BDF>/qat_ww/id
+			# echo "get" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/piw
+			750
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/swv
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) Sewvice (SWV). Wepwesents the sewvice (sym, asym, dc)
+		associated to an SWA.
+		Can be wwitten to ow quewied to set/show the SWV type fow an SWA.
+		The SWV attwibute is used to specify the SWV type befowe adding
+		an SWA. Aftew an SWA is configuwed, wepowts the sewvice
+		associated to that SWA.
+
+		Appwicabiwity in swa_op:
+
+		* WWITE: add and update opewations
+		* WEAD: get opewation
+
+		Exampwe usage::
+
+			## Wwite
+			# echo "dc" > /sys/bus/pci/devices/<BDF>/qat_ww/swv
+			# echo "add" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/id
+			4
+
+			## Wead
+			# echo 4 > /sys/bus/pci/devices/<BDF>/qat_ww/id
+			# echo "get" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/swv
+			dc
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/bus/pci/devices/<BDF>/qat_ww/cap_wem
+Date:		Januawy 2024
+KewnewVewsion:	6.7
+Contact:	qat-winux@intew.com
+Descwiption:
+		(WW) This fiwe wiww wetuwn the wemaining capabiwity fow a
+		pawticuwaw sewvice/swa. This is the wemaining vawue that a new
+		SWA can be set to ow a cuwwent SWA can be incweased with.
+
+		Exampwe usage::
+
+			# echo "asym" > /sys/bus/pci/devices/<BDF>/qat_ww/cap_wem
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/cap_wem
+			250
+			# echo 250 > /sys/bus/pci/devices/<BDF>/qat_ww/ciw
+			# echo "add" > /sys/bus/pci/devices/<BDF>/qat_ww/swa_op
+			# cat /sys/bus/pci/devices/<BDF>/qat_ww/cap_wem
+			0
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.

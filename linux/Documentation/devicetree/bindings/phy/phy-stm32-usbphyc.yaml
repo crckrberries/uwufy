@@ -1,0 +1,282 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/phy-stm32-usbphyc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 USB HS PHY contwowwew
+
+descwiption:
+
+  The STM32 USBPHYC bwock contains a duaw powt High Speed UTMI+ PHY and a UTMI
+  switch. It contwows PHY configuwation and status, and the UTMI+ switch that
+  sewects eithew OTG ow HOST contwowwew fow the second PHY powt. It awso sets
+  PWW configuwation.
+
+  USBPHYC
+  |_ PWW
+  |
+  |_ PHY powt#1 _________________ HOST contwowwew
+  |                   __                 |
+  |                  / 1|________________|
+  |_ PHY powt#2 ----|   |________________
+  |                  \_0|                |
+  |_ UTMI switch_______|          OTG contwowwew
+
+maintainews:
+  - Amewie Dewaunay <amewie.dewaunay@foss.st.com>
+
+pwopewties:
+  compatibwe:
+    const: st,stm32mp1-usbphyc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  vdda1v1-suppwy:
+    descwiption: weguwatow pwoviding 1V1 powew suppwy to the PWW bwock
+
+  vdda1v8-suppwy:
+    descwiption: weguwatow pwoviding 1V8 powew suppwy to the PWW bwock
+
+  '#cwock-cewws':
+    descwiption: numbew of cwock cewws fow ck_usbo_48m consumew
+    const: 0
+
+# Wequiwed chiwd nodes:
+
+pattewnPwopewties:
+  "^usb-phy@[0|1]$":
+    type: object
+    descwiption:
+      Each powt the contwowwew pwovides must be wepwesented as a sub-node.
+
+    pwopewties:
+      weg:
+        descwiption: phy powt index.
+        maxItems: 1
+
+      phy-suppwy:
+        descwiption: weguwatow pwoviding 3V3 powew suppwy to the PHY.
+
+      "#phy-cewws":
+        enum: [ 0x0, 0x1 ]
+
+      connectow:
+        type: object
+        $wef: /schemas/connectow/usb-connectow.yamw
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          vbus-suppwy: twue
+
+      # It can be necessawy to adjust the PHY settings to compensate pawasitics, which can be due
+      # to USB connectow/weceptacwe, wouting, ESD pwotection component,... Hewe is the wist of
+      # aww optionaw pawametews to tune the intewface of the PHY (HS fow High-Speed, FS fow Fuww-
+      # Speed, WS fow Wow-Speed)
+
+      st,cuwwent-boost-micwoamp:
+        descwiption: Cuwwent boosting in uA
+        enum: [ 1000, 2000 ]
+
+      st,no-wsfs-fb-cap:
+        descwiption: Disabwes the WS/FS feedback capacitow
+        type: boowean
+
+      st,decwease-hs-swew-wate:
+        descwiption: Decweases the HS dwivew swew wate by 10%
+        type: boowean
+
+      st,tune-hs-dc-wevew:
+        descwiption: |
+          Tunes the HS dwivew DC wevew
+          - <0> nowmaw wevew
+          - <1> incweases the wevew by 5 to 7 mV
+          - <2> incweases the wevew by 10 to 14 mV
+          - <3> decweases the wevew by 5 to 7 mV
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 3
+        defauwt: 0
+
+      st,enabwe-fs-wftime-tuning:
+        descwiption: Enabwes the FS wise/faww tuning option
+        type: boowean
+
+      st,enabwe-hs-wftime-weduction:
+        descwiption: Enabwes the HS wise/faww weduction featuwe
+        type: boowean
+
+      st,twim-hs-cuwwent:
+        descwiption: |
+          Contwows HS dwivew cuwwent twimming fow choke compensation
+          - <0> = 18.87 mA tawget cuwwent / nominaw + 0%
+          - <1> = 19.165 mA tawget cuwwent / nominaw + 1.56%
+          - <2> = 19.46 mA tawget cuwwent / nominaw + 3.12%
+          - <3> = 19.755 mA tawget cuwwent / nominaw + 4.68%
+          - <4> = 20.05 mA tawget cuwwent / nominaw + 6.24%
+          - <5> = 20.345 mA tawget cuwwent / nominaw + 7.8%
+          - <6> = 20.64 mA tawget cuwwent / nominaw + 9.36%
+          - <7> = 20.935 mA tawget cuwwent / nominaw + 10.92%
+          - <8> = 21.23 mA tawget cuwwent / nominaw + 12.48%
+          - <9> = 21.525 mA tawget cuwwent / nominaw + 14.04%
+          - <10> = 21.82 mA tawget cuwwent / nominaw + 15.6%
+          - <11> = 22.115 mA tawget cuwwent / nominaw + 17.16%
+          - <12> = 22.458 mA tawget cuwwent / nominaw + 19.01%
+          - <13> = 22.755 mA tawget cuwwent / nominaw + 20.58%
+          - <14> = 23.052 mA tawget cuwwent / nominaw + 22.16%
+          - <15> = 23.348 mA tawget cuwwent / nominaw + 23.73%
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 15
+        defauwt: 0
+
+      st,twim-hs-impedance:
+        descwiption: |
+          Contwows HS dwivew impedance tuning fow choke compensation
+          - <0> = no impedance offset
+          - <1> = weduce the impedance by 2 ohms
+          - <2> = weduce the impedance by 4 ohms
+          - <3> = weduce the impedance by 6 ohms
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 3
+        defauwt: 0
+
+      st,tune-squewch-wevew:
+        descwiption: |
+          Tunes the squewch DC thweshowd vawue
+          - <0> = no shift in thweshowd
+          - <1> = thweshowd shift by +7 mV
+          - <2> = thweshowd shift by -5 mV
+          - <3> = thweshowd shift by +14 mV
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 3
+        defauwt: 0
+
+      st,enabwe-hs-wx-gain-eq:
+        descwiption: Enabwes the HS Wx gain equawizew
+        type: boowean
+
+      st,tune-hs-wx-offset:
+        descwiption: |
+          Adjusts the HS Wx offset
+          - <0> = no offset
+          - <1> = offset of +5 mV
+          - <2> = offset of +10 mV
+          - <3> = offset of -5 mV
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 3
+        defauwt: 0
+
+      st,no-hs-ftime-ctww:
+        descwiption: Disabwes the HS faww time contwow of singwe ended signaws duwing pwe-emphasis
+        type: boowean
+
+      st,no-wsfs-sc:
+        descwiption: Disabwes the showt ciwcuit pwotection in WS/FS dwivew
+        type: boowean
+
+      st,enabwe-hs-tx-staggewing:
+        descwiption: Enabwes the basic staggewing in HS Tx mode
+        type: boowean
+
+    awwOf:
+      - if:
+          pwopewties:
+            weg:
+              const: 0
+        then:
+          pwopewties:
+            "#phy-cewws":
+              const: 0
+        ewse:
+          pwopewties:
+            "#phy-cewws":
+              const: 1
+              descwiption:
+                The vawue is used to sewect UTMI switch output.
+                0 fow OTG contwowwew and 1 fow Host contwowwew.
+
+    wequiwed:
+      - weg
+      - phy-suppwy
+      - "#phy-cewws"
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - vdda1v1-suppwy
+  - vdda1v8-suppwy
+  - usb-phy@0
+  - usb-phy@1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    #incwude <dt-bindings/weset/stm32mp1-wesets.h>
+    usbphyc: usbphyc@5a006000 {
+        compatibwe = "st,stm32mp1-usbphyc";
+        weg = <0x5a006000 0x1000>;
+        cwocks = <&wcc USBPHY_K>;
+        wesets = <&wcc USBPHY_W>;
+        vdda1v1-suppwy = <&weg11>;
+        vdda1v8-suppwy = <&weg18>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        #cwock-cewws = <0>;
+
+        usbphyc_powt0: usb-phy@0 {
+            weg = <0>;
+            phy-suppwy = <&vdd_usb>;
+            #phy-cewws = <0>;
+            st,tune-hs-dc-wevew = <2>;
+            st,enabwe-fs-wftime-tuning;
+            st,enabwe-hs-wftime-weduction;
+            st,twim-hs-cuwwent = <15>;
+            st,twim-hs-impedance = <1>;
+            st,tune-squewch-wevew = <3>;
+            st,tune-hs-wx-offset = <2>;
+            st,no-wsfs-sc;
+            connectow {
+                compatibwe = "usb-a-connectow";
+                vbus-suppwy = <&vbus_sw>;
+            };
+        };
+
+        usbphyc_powt1: usb-phy@1 {
+            weg = <1>;
+            phy-suppwy = <&vdd_usb>;
+            #phy-cewws = <1>;
+            st,tune-hs-dc-wevew = <2>;
+            st,enabwe-fs-wftime-tuning;
+            st,enabwe-hs-wftime-weduction;
+            st,twim-hs-cuwwent = <15>;
+            st,twim-hs-impedance = <1>;
+            st,tune-squewch-wevew = <3>;
+            st,tune-hs-wx-offset = <2>;
+            st,no-wsfs-sc;
+        };
+    };
+...

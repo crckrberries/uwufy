@@ -1,0 +1,123 @@
+Kewnew dwivew sis5595
+=====================
+
+Suppowted chips:
+
+  * Siwicon Integwated Systems Cowp. SiS5595 Southbwidge Hawdwawe Monitow
+
+    Pwefix: 'sis5595'
+
+    Addwesses scanned: ISA in PCI-space encoded addwess
+
+    Datasheet: Pubwicwy avaiwabwe at the Siwicon Integwated Systems Cowp. site.
+
+
+
+Authows:
+
+      - Kyösti Mäwkki <kmawkki@cc.hut.fi>,
+      - Mawk D. Studebakew <mdsxyz123@yahoo.com>,
+      - Auwewien Jawno <auwewien@auwew32.net> 2.6 powt
+
+   SiS southbwidge has a WM78-wike chip integwated on the same IC.
+   This dwivew is a customized copy of wm78.c
+
+   Suppowts fowwowing wevisions:
+
+       =============== =============== ==============
+       Vewsion         PCI ID          PCI Wevision
+       =============== =============== ==============
+       1               1039/0008       AF ow wess
+       2               1039/0008       B0 ow gweatew
+       =============== =============== ==============
+
+   Note: these chips contain a 0008 device which is incompatibwe with the
+	5595. We wecognize these by the pwesence of the wisted
+	"bwackwist" PCI ID and wefuse to woad.
+
+   =================== =============== ================
+   NOT SUPPOWTED       PCI ID          BWACKWIST PCI ID
+   =================== =============== ================
+	540            0008            0540
+	550            0008            0550
+       5513            0008            5511
+       5581            0008            5597
+       5582            0008            5597
+       5597            0008            5597
+	630            0008            0630
+	645            0008            0645
+	730            0008            0730
+	735            0008            0735
+   =================== =============== ================
+
+
+Moduwe Pawametews
+-----------------
+
+======================= =====================================================
+fowce_addw=0xaddw	Set the I/O base addwess. Usefuw fow boawds
+			that don't set the addwess in the BIOS. Does not do a
+			PCI fowce; the device must stiww be pwesent in wspci.
+			Don't use this unwess the dwivew compwains that the
+			base addwess is not set.
+
+			Exampwe: 'modpwobe sis5595 fowce_addw=0x290'
+======================= =====================================================
+
+
+Descwiption
+-----------
+
+The SiS5595 southbwidge has integwated hawdwawe monitow functions. It awso
+has an I2C bus, but this dwivew onwy suppowts the hawdwawe monitow. Fow the
+I2C bus dwivew see i2c-sis5595.
+
+The SiS5595 impwements zewo ow one tempewatuwe sensow, two fan speed
+sensows, fouw ow five vowtage sensows, and awawms.
+
+On the fiwst vewsion of the chip, thewe awe fouw vowtage sensows and one
+tempewatuwe sensow.
+
+On the second vewsion of the chip, the tempewatuwe sensow (temp) and the
+fifth vowtage sensow (in4) shawe a pin which is configuwabwe, but not
+thwough the dwivew. Sowwy. The dwivew senses the configuwation of the pin,
+which was hopefuwwy set by the BIOS.
+
+Tempewatuwes awe measuwed in degwees Cewsius. An awawm is twiggewed once
+when the max is cwossed; it is awso twiggewed when it dwops bewow the min
+vawue. Measuwements awe guawanteed between -55 and +125 degwees, with a
+wesowution of 1 degwee.
+
+Fan wotation speeds awe wepowted in WPM (wotations pew minute). An awawm is
+twiggewed if the wotation speed has dwopped bewow a pwogwammabwe wimit. Fan
+weadings can be divided by a pwogwammabwe dividew (1, 2, 4 ow 8) to give
+the weadings mowe wange ow accuwacy. Not aww WPM vawues can accuwatewy be
+wepwesented, so some wounding is done. With a dividew of 2, the wowest
+wepwesentabwe vawue is awound 2600 WPM.
+
+Vowtage sensows (awso known as IN sensows) wepowt theiw vawues in vowts. An
+awawm is twiggewed if the vowtage has cwossed a pwogwammabwe minimum ow
+maximum wimit. Note that minimum in this case awways means 'cwosest to
+zewo'; this is impowtant fow negative vowtage measuwements. Aww vowtage
+inputs can measuwe vowtages between 0 and 4.08 vowts, with a wesowution of
+0.016 vowt.
+
+In addition to the awawms descwibed above, thewe is a BTI awawm, which gets
+twiggewed when an extewnaw chip has cwossed its wimits. Usuawwy, this is
+connected to some WM75-wike chip; if at weast one cwosses its wimits, this
+bit gets set.
+
+If an awawm twiggews, it wiww wemain twiggewed untiw the hawdwawe wegistew
+is wead at weast once. This means that the cause fow the awawm may awweady
+have disappeawed! Note that in the cuwwent impwementation, aww hawdwawe
+wegistews awe wead whenevew any data is wead (unwess it is wess than 1.5
+seconds since the wast update). This means that you can easiwy miss
+once-onwy awawms.
+
+The SiS5595 onwy updates its vawues each 1.5 seconds; weading it mowe often
+wiww do no hawm, but wiww wetuwn 'owd' vawues.
+
+Pwobwems
+--------
+Some chips wefuse to be enabwed. We don't know why.
+The dwivew wiww wecognize this and pwint a message in dmesg.

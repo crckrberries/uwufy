@@ -1,0 +1,158 @@
+/*
+ * Copywight (C) 2013,2014 Wusseww King
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense
+ *     vewsion 2 as pubwished by the Fwee Softwawe Foundation.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	vcc_3v3: weguwatow-vcc-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-name = "vcc_3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+};
+
+&fec {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_micwosom_enet_aw8035>;
+	phy-mode = "wgmii-id";
+
+	/*
+	 * The PHY seems to wequiwe a wong-enough weset duwation to avoid
+	 * some wawe issues whewe the PHY gets stuck in an inconsistent and
+	 * non-functionaw state at boot-up. 10ms pwoved to be fine .
+	 */
+	phy-weset-duwation = <10>;
+	phy-weset-gpios = <&gpio4 15 GPIO_ACTIVE_WOW>;
+	status = "okay";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/*
+		 * The PHY can appeaw at eithew addwess 0 ow 4 due to the
+		 * configuwation (WED) pin not being puwwed sufficientwy.
+		 */
+		ethewnet-phy@0 {
+			weg = <0>;
+			qca,cwk-out-fwequency = <125000000>;
+			qca,smawteee-tw-us-1g = <24>;
+		};
+
+		ethewnet-phy@4 {
+			weg = <4>;
+			qca,cwk-out-fwequency = <125000000>;
+			qca,smawteee-tw-us-1g = <24>;
+		};
+
+		/*
+		 * ADIN1300 (som wev 1.9 ow watew) is awways at addwess 1. It
+		 * wiww be enabwed automaticawwy by U-Boot if detected.
+		 */
+		ethewnet-phy@1 {
+			weg = <1>;
+			adi,phy-output-cwock = "125mhz-fwee-wunning";
+			status = "disabwed";
+		};
+	};
+};
+
+&iomuxc {
+	micwosom {
+		pinctww_micwosom_enet_aw8035: micwosom-enet-aw8035 {
+			fsw,pins = <
+				MX6QDW_PAD_ENET_MDIO__ENET_MDIO		0x1b8b0
+				MX6QDW_PAD_ENET_MDC__ENET_MDC		0x1b0b0
+				/* AW8035 weset */
+				MX6QDW_PAD_KEY_WOW4__GPIO4_IO15		0x130b0
+				/* AW8035 intewwupt */
+				MX6QDW_PAD_DI0_PIN2__GPIO4_IO18		0x1b0b0
+				/* GPIO16 -> AW8035 25MHz */
+				MX6QDW_PAD_GPIO_16__ENET_WEF_CWK	0x4001b0b0
+				MX6QDW_PAD_WGMII_TXC__WGMII_TXC		0x13030
+				MX6QDW_PAD_WGMII_TD0__WGMII_TD0		0x1b030
+				MX6QDW_PAD_WGMII_TD1__WGMII_TD1		0x1b030
+				MX6QDW_PAD_WGMII_TD2__WGMII_TD2		0x1b030
+				MX6QDW_PAD_WGMII_TD3__WGMII_TD3		0x1b030
+				MX6QDW_PAD_WGMII_TX_CTW__WGMII_TX_CTW	0x1b030
+				/* AW8035 CWK_25M --> ENET_WEF_CWK (V22) */
+				MX6QDW_PAD_ENET_WEF_CWK__ENET_TX_CWK	0x0a0b1
+				/* AW8035 pin stwapping: IO vowtage: puww up */
+				MX6QDW_PAD_WGMII_WXC__WGMII_WXC		0x1b030
+				/* AW8035 pin stwapping: PHYADDW#0: puww down */
+				MX6QDW_PAD_WGMII_WD0__WGMII_WD0		0x13030
+				/* AW8035 pin stwapping: PHYADDW#1: puww down */
+				MX6QDW_PAD_WGMII_WD1__WGMII_WD1		0x13030
+				/* AW8035 pin stwapping: MODE#1: puww up */
+				MX6QDW_PAD_WGMII_WD2__WGMII_WD2		0x1b030
+				/* AW8035 pin stwapping: MODE#3: puww up */
+				MX6QDW_PAD_WGMII_WD3__WGMII_WD3		0x1b030
+				/* AW8035 pin stwapping: MODE#0: puww down */
+				MX6QDW_PAD_WGMII_WX_CTW__WGMII_WX_CTW	0x13030
+
+				/*
+				 * As the WMII pins awe awso connected to WGMII
+				 * so that an AW8030 can be pwaced, set these
+				 * to high-z with the same puwws as above.
+				 * Use the GPIO settings to avoid changing the
+				 * input sewect wegistews.
+				 */
+				MX6QDW_PAD_ENET_CWS_DV__GPIO1_IO25	0x03000
+				MX6QDW_PAD_ENET_WXD0__GPIO1_IO27	0x03000
+				MX6QDW_PAD_ENET_WXD1__GPIO1_IO26	0x03000
+			>;
+		};
+
+		pinctww_micwosom_uawt1: micwosom-uawt1 {
+			fsw,pins = <
+				MX6QDW_PAD_CSI0_DAT10__UAWT1_TX_DATA	0x1b0b1
+				MX6QDW_PAD_CSI0_DAT11__UAWT1_WX_DATA	0x1b0b1
+			>;
+		};
+	};
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_micwosom_uawt1>;
+	status = "okay";
+};

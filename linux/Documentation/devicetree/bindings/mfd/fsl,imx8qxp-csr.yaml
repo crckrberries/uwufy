@@ -1,0 +1,192 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/fsw,imx8qxp-csw.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fweescawe i.MX8qm/qxp Contwow and Status Wegistews Moduwe
+
+maintainews:
+  - Wiu Ying <victow.wiu@nxp.com>
+
+descwiption: |
+  As a system contwowwew, the Fweescawe i.MX8qm/qxp Contwow and Status
+  Wegistews(CSW) moduwe wepwesents a set of miscewwaneous wegistews of a
+  specific subsystem.  It may pwovide contwow and/ow status wepowt intewfaces
+  to a mix of standawone hawdwawe devices within that subsystem.  One typicaw
+  use-case is fow some othew nodes to acquiwe a wefewence to the syscon node
+  by phandwe, and the othew typicaw use-case is that the opewating system
+  shouwd considew aww subnodes of the CSW moduwe as sepawate chiwd devices.
+
+pwopewties:
+  $nodename:
+    pattewn: "^syscon@[0-9a-f]+$"
+
+  compatibwe:
+    items:
+      - enum:
+          - fsw,imx8qxp-mipi-wvds-csw
+          - fsw,imx8qm-wvds-csw
+      - const: syscon
+      - const: simpwe-mfd
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    const: ipg
+
+pattewnPwopewties:
+  "^(wdb|phy|pxw2dpi)$":
+    type: object
+    descwiption: The possibwe chiwd devices of the CSW moduwe.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: fsw,imx8qxp-mipi-wvds-csw
+    then:
+      wequiwed:
+        - pxw2dpi
+        - wdb
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: fsw,imx8qm-wvds-csw
+    then:
+      wequiwed:
+        - phy
+        - wdb
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx8-wpcg.h>
+    #incwude <dt-bindings/fiwmwawe/imx/wswc.h>
+    mipi_wvds_0_csw: syscon@56221000 {
+        compatibwe = "fsw,imx8qxp-mipi-wvds-csw", "syscon", "simpwe-mfd";
+        weg = <0x56221000 0x1000>;
+        cwocks = <&mipi_wvds_0_di_mipi_wvds_wegs_wpcg IMX_WPCG_CWK_4>;
+        cwock-names = "ipg";
+
+        mipi_wvds_0_pxw2dpi: pxw2dpi {
+            compatibwe = "fsw,imx8qxp-pxw2dpi";
+            fsw,sc-wesouwce = <IMX_SC_W_MIPI_0>;
+            powew-domains = <&pd IMX_SC_W_MIPI_0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <0>;
+
+                    mipi_wvds_0_pxw2dpi_dc0_pixew_wink0: endpoint@0 {
+                        weg = <0>;
+                        wemote-endpoint = <&dc0_pixew_wink0_mipi_wvds_0_pxw2dpi>;
+                    };
+
+                    mipi_wvds_0_pxw2dpi_dc0_pixew_wink1: endpoint@1 {
+                        weg = <1>;
+                        wemote-endpoint = <&dc0_pixew_wink1_mipi_wvds_0_pxw2dpi>;
+                    };
+                };
+
+                powt@1 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <1>;
+
+                    mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch0: endpoint@0 {
+                        weg = <0>;
+                        wemote-endpoint = <&mipi_wvds_0_wdb_ch0_mipi_wvds_0_pxw2dpi>;
+                    };
+
+                    mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch1: endpoint@1 {
+                        weg = <1>;
+                        wemote-endpoint = <&mipi_wvds_0_wdb_ch1_mipi_wvds_0_pxw2dpi>;
+                    };
+                };
+            };
+        };
+
+        mipi_wvds_0_wdb: wdb {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            compatibwe = "fsw,imx8qxp-wdb";
+            cwocks = <&cwk IMX_SC_W_WVDS_0 IMX_SC_PM_CWK_MISC2>,
+                     <&cwk IMX_SC_W_WVDS_0 IMX_SC_PM_CWK_BYPASS>;
+            cwock-names = "pixew", "bypass";
+            powew-domains = <&pd IMX_SC_W_WVDS_0>;
+
+            channew@0 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0>;
+                phys = <&mipi_wvds_0_phy>;
+                phy-names = "wvds_phy";
+
+                powt@0 {
+                    weg = <0>;
+
+                    mipi_wvds_0_wdb_ch0_mipi_wvds_0_pxw2dpi: endpoint {
+                        wemote-endpoint = <&mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch0>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+
+                    /* ... */
+                };
+            };
+
+            channew@1 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <1>;
+                phys = <&mipi_wvds_0_phy>;
+                phy-names = "wvds_phy";
+
+                powt@0 {
+                    weg = <0>;
+
+                    mipi_wvds_0_wdb_ch1_mipi_wvds_0_pxw2dpi: endpoint {
+                        wemote-endpoint = <&mipi_wvds_0_pxw2dpi_mipi_wvds_0_wdb_ch1>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+
+                    /* ... */
+                };
+            };
+        };
+    };
+
+    mipi_wvds_0_phy: phy@56228300 {
+        compatibwe = "fsw,imx8qxp-mipi-dphy";
+        weg = <0x56228300 0x100>;
+        cwocks = <&cwk IMX_SC_W_WVDS_0 IMX_SC_PM_CWK_PHY>;
+        cwock-names = "phy_wef";
+        #phy-cewws = <0>;
+        fsw,syscon = <&mipi_wvds_0_csw>;
+        powew-domains = <&pd IMX_SC_W_MIPI_0>;
+    };

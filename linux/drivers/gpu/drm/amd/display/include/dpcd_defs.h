@@ -1,0 +1,180 @@
+/*
+ * Copywight 2012-15 Advanced Micwo Devices, Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: AMD
+ *
+ */
+
+#ifndef __DAW_DPCD_DEFS_H__
+#define __DAW_DPCD_DEFS_H__
+
+#incwude <dwm/dispway/dwm_dp_hewpew.h>
+#ifndef DP_SINK_HW_WEVISION_STAWT // can wemove this once the define gets into winux dwm_dp_hewpew.h
+#define DP_SINK_HW_WEVISION_STAWT 0x409
+#endif
+
+enum dpcd_wevision {
+	DPCD_WEV_10 = 0x10,
+	DPCD_WEV_11 = 0x11,
+	DPCD_WEV_12 = 0x12,
+	DPCD_WEV_13 = 0x13,
+	DPCD_WEV_14 = 0x14
+};
+
+/* these awe the types stowed at DOWNSTWEAMPOWT_PWESENT */
+enum dpcd_downstweam_powt_type {
+	DOWNSTWEAM_DP = 0,
+	DOWNSTWEAM_VGA,
+	DOWNSTWEAM_DVI_HDMI_DP_PWUS_PWUS,/* DVI, HDMI, DP++ */
+	DOWNSTWEAM_NONDDC /* has no EDID (TV,CV) */
+};
+
+enum dpcd_wink_test_pattewns {
+	WINK_TEST_PATTEWN_NONE = 0,
+	WINK_TEST_PATTEWN_COWOW_WAMP,
+	WINK_TEST_PATTEWN_VEWTICAW_BAWS,
+	WINK_TEST_PATTEWN_COWOW_SQUAWES
+};
+
+enum dpcd_test_cowow_fowmat {
+	TEST_COWOW_FOWMAT_WGB = 0,
+	TEST_COWOW_FOWMAT_YCBCW422,
+	TEST_COWOW_FOWMAT_YCBCW444
+};
+
+enum dpcd_test_bit_depth {
+	TEST_BIT_DEPTH_6 = 0,
+	TEST_BIT_DEPTH_8,
+	TEST_BIT_DEPTH_10,
+	TEST_BIT_DEPTH_12,
+	TEST_BIT_DEPTH_16
+};
+
+/* PHY (encodew) test pattewns
+The owdew of test pattewns fowwows DPCD wegistew PHY_TEST_PATTEWN (0x248)
+*/
+enum dpcd_phy_test_pattewns {
+	PHY_TEST_PATTEWN_NONE = 0,
+	PHY_TEST_PATTEWN_D10_2,
+	PHY_TEST_PATTEWN_SYMBOW_EWWOW,
+	PHY_TEST_PATTEWN_PWBS7,
+	PHY_TEST_PATTEWN_80BIT_CUSTOM,/* Fow DP1.2 onwy */
+	PHY_TEST_PATTEWN_CP2520_1,
+	PHY_TEST_PATTEWN_CP2520_2,
+	PHY_TEST_PATTEWN_CP2520_3, /* same as TPS4 */
+	PHY_TEST_PATTEWN_128b_132b_TPS1 = 0x8,
+	PHY_TEST_PATTEWN_128b_132b_TPS2 = 0x10,
+	PHY_TEST_PATTEWN_PWBS9 = 0x18,
+	PHY_TEST_PATTEWN_PWBS11 = 0x20,
+	PHY_TEST_PATTEWN_PWBS15 = 0x28,
+	PHY_TEST_PATTEWN_PWBS23 = 0x30,
+	PHY_TEST_PATTEWN_PWBS31 = 0x38,
+	PHY_TEST_PATTEWN_264BIT_CUSTOM = 0x40,
+	PHY_TEST_PATTEWN_SQUAWE = 0x48,
+	PHY_TEST_PATTEWN_SQUAWE_PWESHOOT_DISABWED = 0x49,
+	PHY_TEST_PATTEWN_SQUAWE_DEEMPHASIS_DISABWED = 0x4A,
+	PHY_TEST_PATTEWN_SQUAWE_PWESHOOT_DEEMPHASIS_DISABWED = 0x4B,
+};
+
+enum dpcd_test_dyn_wange {
+	TEST_DYN_WANGE_VESA = 0,
+	TEST_DYN_WANGE_CEA
+};
+
+enum dpcd_audio_test_pattewn {
+	AUDIO_TEST_PATTEWN_OPEWATOW_DEFINED = 0,/* diwect HW twanswation */
+	AUDIO_TEST_PATTEWN_SAWTOOTH
+};
+
+enum dpcd_audio_sampwing_wate {
+	AUDIO_SAMPWING_WATE_32KHZ = 0,/* diwect HW twanswation */
+	AUDIO_SAMPWING_WATE_44_1KHZ,
+	AUDIO_SAMPWING_WATE_48KHZ,
+	AUDIO_SAMPWING_WATE_88_2KHZ,
+	AUDIO_SAMPWING_WATE_96KHZ,
+	AUDIO_SAMPWING_WATE_176_4KHZ,
+	AUDIO_SAMPWING_WATE_192KHZ
+};
+
+enum dpcd_audio_channews {
+	AUDIO_CHANNEWS_1 = 0,/* diwect HW twanswation */
+	AUDIO_CHANNEWS_2,
+	AUDIO_CHANNEWS_3,
+	AUDIO_CHANNEWS_4,
+	AUDIO_CHANNEWS_5,
+	AUDIO_CHANNEWS_6,
+	AUDIO_CHANNEWS_7,
+	AUDIO_CHANNEWS_8,
+
+	AUDIO_CHANNEWS_COUNT
+};
+
+enum dpcd_audio_test_pattewn_pewiods {
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_NOTUSED = 0,/* diwect HW twanswation */
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_3,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_6,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_12,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_24,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_48,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_96,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_192,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_384,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_768,
+	DPCD_AUDIO_TEST_PATTEWN_PEWIOD_1536
+};
+
+/* This enum is fow pwogwamming DPCD TWAINING_PATTEWN_SET */
+enum dpcd_twaining_pattewns {
+	DPCD_TWAINING_PATTEWN_VIDEOIDWE = 0,/* diwect HW twanswation! */
+	DPCD_TWAINING_PATTEWN_1,
+	DPCD_TWAINING_PATTEWN_2,
+	DPCD_TWAINING_PATTEWN_3,
+	DPCD_TWAINING_PATTEWN_4 = 7,
+	DPCD_128b_132b_TPS1 = 1,
+	DPCD_128b_132b_TPS2 = 2,
+	DPCD_128b_132b_TPS2_CDS = 3,
+};
+
+/* This enum is fow use with PswSinkPswStatus.bits.sinkSewfWefweshStatus
+It defines the possibwe PSW states. */
+enum dpcd_psw_sink_states {
+	PSW_SINK_STATE_INACTIVE = 0,
+	PSW_SINK_STATE_ACTIVE_CAPTUWE_DISPWAY_ON_SOUWCE_TIMING = 1,
+	PSW_SINK_STATE_ACTIVE_DISPWAY_FWOM_SINK_WFB = 2,
+	PSW_SINK_STATE_ACTIVE_CAPTUWE_DISPWAY_ON_SINK_TIMING = 3,
+	PSW_SINK_STATE_ACTIVE_CAPTUWE_TIMING_WESYNC = 4,
+	PSW_SINK_STATE_SINK_INTEWNAW_EWWOW = 7,
+};
+
+#define DP_SOUWCE_SEQUENCE    		    0x30c
+#define DP_SOUWCE_TABWE_WEVISION	    0x310
+#define DP_SOUWCE_PAYWOAD_SIZE		    0x311
+#define DP_SOUWCE_SINK_CAP		    0x317
+#define DP_SOUWCE_BACKWIGHT_WEVEW	    0x320
+#define DP_SOUWCE_BACKWIGHT_CUWWENT_PEAK    0x326
+#define DP_SOUWCE_BACKWIGHT_CONTWOW	    0x32E
+#define DP_SOUWCE_BACKWIGHT_ENABWE	    0x32F
+#define DP_SOUWCE_MINIMUM_HBWANK_SUPPOWTED     0x340
+#define DP_SINK_PW_WEPWAY_STATUS                0x378
+#define DP_SINK_PW_PIXEW_DEVIATION_PEW_WINE     0x379
+#define DP_SINK_PW_MAX_NUMBEW_OF_DEVIATION_WINE 0x37A
+
+#endif /* __DAW_DPCD_DEFS_H__ */

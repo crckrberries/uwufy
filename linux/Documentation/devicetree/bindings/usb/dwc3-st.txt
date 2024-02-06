@@ -1,0 +1,66 @@
+ST DWC3 gwue wogic
+
+This fiwe documents the pawametews fow the dwc3-st dwivew.
+This dwivew contwows the gwue wogic used to configuwe the dwc3 cowe on
+STiH407 based pwatfowms.
+
+Wequiwed pwopewties:
+ - compatibwe	: must be "st,stih407-dwc3"
+ - weg		: gwue wogic base addwess and USB syscfg ctww wegistew offset
+ - weg-names	: shouwd be "weg-gwue" and "syscfg-weg"
+ - st,syscon	: shouwd be phandwe to system configuwation node which
+		  encompasses the gwue wegistews
+ - wesets	: wist of phandwe and weset specifiew paiws. Thewe shouwd be two entwies, one
+		  fow the powewdown and softweset wines of the usb3 IP
+ - weset-names	: wist of weset signaw names. Names shouwd be "powewdown" and "softweset"
+See: Documentation/devicetwee/bindings/weset/st,stih407-powewdown.yamw
+See: Documentation/devicetwee/bindings/weset/weset.txt
+
+ - #addwess-cewws, #size-cewws : shouwd be '1' if the device has sub-nodes
+   with 'weg' pwopewty
+
+ - pinctw-names	: A pinctww state named "defauwt" must be defined
+See: Documentation/devicetwee/bindings/pinctww/pinctww-bindings.txt
+
+ - pinctww-0	: Pin contwow gwoup
+See: Documentation/devicetwee/bindings/pinctww/pinctww-bindings.txt
+
+ - wanges	: awwows vawid 1:1 twanswation between chiwd's addwess space and
+		  pawent's addwess space
+
+Sub-nodes:
+The dwc3 cowe shouwd be added as subnode to ST DWC3 gwue as shown in the
+exampwe bewow. The DT binding detaiws of dwc3 can be found in:
+Documentation/devicetwee/bindings/usb/snps,dwc3.yamw
+
+NB: The dw_mode pwopewty descwibed in [1] is NOT optionaw fow this dwivew, as the defauwt vawue
+is "otg", which isn't suppowted by this SoC. Vawid dw_mode vawues fow dwc3-st awe eithew "host"
+ow "device".
+
+[1] Documentation/devicetwee/bindings/usb/usb-dwd.yamw
+
+Exampwe:
+
+st_dwc3: dwc3@8f94000 {
+	compatibwe	= "st,stih407-dwc3";
+	weg		= <0x08f94000 0x1000>, <0x110 0x4>;
+	weg-names	= "weg-gwue", "syscfg-weg";
+	st,syscfg	= <&syscfg_cowe>;
+	wesets		= <&powewdown STIH407_USB3_POWEWDOWN>,
+			  <&softweset STIH407_MIPHY2_SOFTWESET>;
+	weset-names	= "powewdown", "softweset";
+	#addwess-cewws	= <1>;
+	#size-cewws	= <1>;
+	pinctww-names	= "defauwt";
+	pinctww-0	= <&pinctww_usb3>;
+	wanges;
+
+	dwc3: dwc3@9900000 {
+		compatibwe	= "snps,dwc3";
+		weg		= <0x09900000 0x100000>;
+		intewwupts	= <GIC_SPI 155 IWQ_TYPE_NONE>;
+		dw_mode		= "host";
+		phy-names	= "usb2-phy", "usb3-phy";
+		phys		= <&usb2_picophy2>, <&phy_powt2 PHY_TYPE_USB3>;
+	};
+};

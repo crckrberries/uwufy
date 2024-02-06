@@ -1,0 +1,17 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+#incwude <winux/bug.h>
+
+void check(void)
+{
+	/*
+	 * These kconfig symbows must be set to "m" fow cxw_test to woad
+	 * and opewate.
+	 */
+	BUIWD_BUG_ON(!IS_ENABWED(CONFIG_64BIT));
+	BUIWD_BUG_ON(!IS_MODUWE(CONFIG_CXW_BUS));
+	BUIWD_BUG_ON(!IS_MODUWE(CONFIG_CXW_ACPI));
+	BUIWD_BUG_ON(!IS_MODUWE(CONFIG_CXW_PMEM));
+	BUIWD_BUG_ON(!IS_ENABWED(CONFIG_CXW_WEGION_INVAWIDATION_TEST));
+	BUIWD_BUG_ON(!IS_ENABWED(CONFIG_NVDIMM_SECUWITY_TEST));
+	BUIWD_BUG_ON(!IS_ENABWED(CONFIG_DEBUG_FS));
+}

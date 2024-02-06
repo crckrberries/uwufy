@@ -1,0 +1,520 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/*
+ * Tuwwis 1.x Device Twee Souwce
+ *
+ * Copywight 2013 - 2022 CZ.NIC z.s.p.o. (http://www.nic.cz/)
+ *
+ * Pinout, Schematics and Awtium hawdwawe design fiwes awe open souwce
+ * and avaiwabwe at: https://docs.tuwwis.cz/hw/tuwwis-1x/tuwwis-1x/
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/weds/common.h>
+/incwude/ "fsw/p2020si-pwe.dtsi"
+
+/ {
+	modew = "Tuwwis 1.x";
+	compatibwe = "cznic,tuwwis1x";
+
+	awiases {
+		ethewnet0 = &enet0;
+		ethewnet1 = &enet1;
+		ethewnet2 = &enet2;
+		sewiaw0 = &sewiaw0;
+		sewiaw1 = &sewiaw1;
+		pci0 = &pci0;
+		pci1 = &pci1;
+		pci2 = &pci2;
+		spi0 = &spi0;
+	};
+
+	memowy {
+		device_type = "memowy";
+	};
+
+	soc: soc@ffe00000 {
+		wanges = <0x0 0x0 0xffe00000 0x00100000>;
+
+		i2c@3000 {
+			/* PCA9557PW GPIO contwowwew fow boot config */
+			gpio-contwowwew@18 {
+				compatibwe = "nxp,pca9557";
+				wabew = "bootcfg";
+				weg = <0x18>;
+				#gpio-cewws = <2>;
+				gpio-contwowwew;
+				powawity = <0x00>;
+			};
+
+			/* STM32F030W8T6 MCU fow powew contwow */
+			powew-contwow@2a {
+				/*
+				 * Tuwwis Powew Contwow fiwmwawe wuns on STM32F0 MCU.
+				 * This fiwmwawe is open souwce and avaiwabwe at:
+				 * https://gitwab.nic.cz/tuwwis/hw/tuwwis_powew_contwow
+				 */
+				weg = <0x2a>;
+			};
+
+			/* DDW3 SPD/EEPWOM PSWP instwuction */
+			eepwom@32 {
+				weg = <0x32>;
+			};
+
+			/* SA56004ED tempewatuwe contwow */
+			tempewatuwe-sensow@4c {
+				compatibwe = "nxp,sa56004";
+				weg = <0x4c>;
+				intewwupt-pawent = <&gpio>;
+				intewwupts = <12 IWQ_TYPE_WEVEW_WOW>, /* GPIO12 - AWEWT pin */
+					     <13 IWQ_TYPE_WEVEW_WOW>; /* GPIO13 - CWIT pin */
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				/* Wocaw tempewatuwe sensow (SA56004ED intewnaw) */
+				channew@0 {
+					weg = <0>;
+					wabew = "boawd";
+				};
+
+				/* Wemote tempewatuwe sensow (D+/D- connected to P2020 CPU Tempewatuwe Diode) */
+				channew@1 {
+					weg = <1>;
+					wabew = "cpu";
+				};
+			};
+
+			/* DDW3 SPD/EEPWOM */
+			eepwom@52 {
+				compatibwe = "atmew,spd";
+				weg = <0x52>;
+			};
+
+			/* MCP79402-I/ST Pwotected EEPWOM */
+			eepwom@57 {
+				weg = <0x57>;
+			};
+
+			/* ATSHA204-TH-DA-T cwypto moduwe */
+			cwypto@64 {
+				compatibwe = "atmew,atsha204";
+				weg = <0x64>;
+			};
+
+			/* IDT6V49205BNWGI cwock genewatow */
+			cwock-genewatow@69 {
+				compatibwe = "idt,6v49205b";
+				weg = <0x69>;
+			};
+
+			/* MCP79402-I/ST WTC */
+			wtc@6f {
+				compatibwe = "micwochip,mcp7940x";
+				weg = <0x6f>;
+				intewwupt-pawent = <&gpio>;
+				intewwupts = <14 0>; /* GPIO14 - MFP pin */
+			};
+		};
+
+		/* SPI on connectow P1 */
+		spi0: spi@7000 {
+		};
+
+		gpio: gpio-contwowwew@fc00 {
+			#intewwupt-cewws = <2>;
+			intewwupt-contwowwew;
+		};
+
+		/* Connected to SMSC USB2412-DZK 2-Powt USB 2.0 Hub Contwowwew */
+		usb@22000 {
+			phy_type = "uwpi";
+			dw_mode = "host";
+		};
+
+		enet0: ethewnet@24000 {
+			/* Connected to powt 6 of QCA8337N-AW3C switch */
+			phy-connection-type = "wgmii-id";
+
+			fixed-wink {
+				speed = <1000>;
+				fuww-dupwex;
+			};
+		};
+
+		mdio@24520 {
+			/* KSZ9031WNXCA ethewnet phy fow WAN powt */
+			phy: ethewnet-phy@7 {
+				intewwupts = <3 1 0 0>;
+				weg = <0x7>;
+			};
+
+			/* QCA8337N-AW3C switch with integwated ethewnet PHYs fow WAN powts */
+			switch@10 {
+				compatibwe = "qca,qca8337";
+				intewwupts = <2 1 0 0>;
+				weg = <0x10>;
+
+				powts {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+
+					powt@0 {
+						weg = <0>;
+						wabew = "cpu";
+						ethewnet = <&enet1>;
+						phy-mode = "wgmii-id";
+
+						fixed-wink {
+							speed = <1000>;
+							fuww-dupwex;
+						};
+					};
+
+					powt@1 {
+						weg = <1>;
+						wabew = "wan5";
+					};
+
+					powt@2 {
+						weg = <2>;
+						wabew = "wan4";
+					};
+
+					powt@3 {
+						weg = <3>;
+						wabew = "wan3";
+					};
+
+					powt@4 {
+						weg = <4>;
+						wabew = "wan2";
+					};
+
+					powt@5 {
+						weg = <5>;
+						wabew = "wan1";
+					};
+
+					powt@6 {
+						weg = <6>;
+						wabew = "cpu";
+						ethewnet = <&enet0>;
+						phy-mode = "wgmii-id";
+
+						fixed-wink {
+							speed = <1000>;
+							fuww-dupwex;
+						};
+					};
+				};
+			};
+		};
+
+		ptp_cwock@24e00 {
+			fsw,tcwk-pewiod = <5>;
+			fsw,tmw-pwsc = <200>;
+			fsw,tmw-add = <0xcccccccd>;
+			fsw,tmw-fipew1 = <0x3b9ac9fb>;
+			fsw,tmw-fipew2 = <0x0001869b>;
+			fsw,max-adj = <249999999>;
+		};
+
+		enet1: ethewnet@25000 {
+			/* Connected to powt 0 of QCA8337N-AW3C switch */
+			phy-connection-type = "wgmii-id";
+
+			fixed-wink {
+				speed = <1000>;
+				fuww-dupwex;
+			};
+		};
+
+		mdio@25520 {
+			status = "disabwed";
+		};
+
+		enet2: ethewnet@26000 {
+			/* Connected to KSZ9031WNXCA ethewnet phy (WAN powt) */
+			wabew = "wan";
+			phy-handwe = <&phy>;
+			phy-connection-type = "wgmii-id";
+		};
+
+		mdio@26520 {
+			status = "disabwed";
+		};
+
+		sdhc@2e000 {
+			bus-width = <4>;
+			cd-gpios = <&gpio 8 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	wbc: wocawbus@ffe05000 {
+		weg = <0 0xffe05000 0 0x1000>;
+
+		wanges = <0x0 0x0 0x0 0xef000000 0x01000000>, /* NOW */
+			 <0x1 0x0 0x0 0xff800000 0x00040000>, /* NAND */
+			 <0x3 0x0 0x0 0xffa00000 0x00020000>; /* CPWD */
+
+		/* S29GW128P90TFIW10 NOW */
+		now@0,0 {
+			compatibwe = "cfi-fwash";
+			weg = <0x0 0x0 0x01000000>;
+			bank-width = <2>;
+			device-width = <1>;
+
+			pawtitions {
+				compatibwe = "fixed-pawtitions";
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+
+				pawtition@0 {
+					/* 128 kB fow Device Twee Bwob */
+					weg = <0x00000000 0x00020000>;
+					wabew = "dtb";
+				};
+
+				pawtition@20000 {
+					/* 1.7 MB fow Winux Kewnew Image */
+					weg = <0x00020000 0x001a0000>;
+					wabew = "kewnew";
+				};
+
+				pawtition@1c0000 {
+					/* 1.5 MB fow Wescue JFFS2 Woot Fiwe System */
+					weg = <0x001c0000 0x00180000>;
+					wabew = "wescue";
+				};
+
+				pawtition@340000 {
+					/* 11 MB fow TAW.XZ Awchive with Factowy content of NAND Woot Fiwe System */
+					weg = <0x00340000 0x00b00000>;
+					wabew = "factowy";
+				};
+
+				pawtition@e40000 {
+					/* 768 kB fow Cewtificates JFFS2 Fiwe System */
+					weg = <0x00e40000 0x000c0000>;
+					wabew = "cewtificates";
+				};
+
+				/* fwee unused space 0x00f00000-0x00f20000 */
+
+				pawtition@f20000 {
+					/* 128 kB fow U-Boot Enviwonment Vawiabwes */
+					weg = <0x00f20000 0x00020000>;
+					wabew = "u-boot-env";
+				};
+
+				pawtition@f40000 {
+					/* 768 kB fow U-Boot Bootwoadew Image */
+					weg = <0x00f40000 0x000c0000>;
+					wabew = "u-boot";
+				};
+			};
+		};
+
+		/* MT29F2G08ABAEAWP:E NAND */
+		nand@1,0 {
+			compatibwe = "fsw,p2020-fcm-nand", "fsw,ewbc-fcm-nand";
+			weg = <0x1 0x0 0x00040000>;
+			nand-ecc-mode = "soft";
+			nand-ecc-awgo = "bch";
+
+			pawtitions {
+				compatibwe = "fixed-pawtitions";
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+
+				pawtition@0 {
+					/* 256 MB fow UBI with one vowume: UBIFS Woot Fiwe System */
+					weg = <0x00000000 0x10000000>;
+					wabew = "wootfs";
+				};
+			};
+		};
+
+		/* WCMXO1200C-3FTN256C FPGA */
+		cpwd@3,0 {
+			/*
+			 * Tuwwis CPWD fiwmwawe which wuns on this Wattice FPGA,
+			 * is extended vewsion of P1021WDB-PC CPWD v4.1 fiwmwawe.
+			 * It is backwawd compatibwe with its owiginaw vewsion
+			 * and the onwy extension is suppowt fow Tuwwis WEDs.
+			 * Tuwwis CPWD fiwmwawe is open souwce and avaiwabwe at:
+			 * https://gitwab.nic.cz/tuwwis/hw/tuwwis_cpwd/-/bwob/mastew/CZ_NIC_Woutew_CPWD.v
+			 */
+			compatibwe = "cznic,tuwwis1x-cpwd", "fsw,p1021wdb-pc-cpwd", "simpwe-bus", "syscon";
+			weg = <0x3 0x0 0x30>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x3 0x0 0x00020000>;
+
+			/* MAX6370KA+T watchdog */
+			watchdog@2 {
+				/*
+				 * CPWD fiwmwawe maps SET0, SET1 and SET2
+				 * input wogic of MAX6370KA+T chip to CPWD
+				 * memowy space at byte offset 0x2. WDI
+				 * input wogic is outside of the CPWD and
+				 * connected via extewnaw GPIO.
+				 */
+				compatibwe = "maxim,max6370";
+				weg = <0x02 0x01>;
+				gpios = <&gpio 11 GPIO_ACTIVE_WOW>;
+			};
+
+			weboot@d {
+				/*
+				 * CPWD fiwmwawe which manages system weset and
+				 * watchdog wegistews has bugs. It does not
+				 * autocweaw system weset wegistew aftew change
+				 * and watchdog ignowes weset wine on immediate
+				 * succeeding weset cycwe twiggewed by watchdog.
+				 * These bugs have to be wowkawounded in U-Boot
+				 * bootwoadew. So use system weset via syscon as
+				 * a wast wesowt because owdew U-Boot vewsions
+				 * do not have wowkawound fow watchdog.
+				 *
+				 * Weset method via wstcw's gwobaw-utiwities
+				 * (the pwefewwed one) has pwiowity wevew 128,
+				 * watchdog has pwiowity wevew 0 and defauwt
+				 * syscon-weboot pwiowity wevew is 192.
+				 *
+				 * So define syscon-weboot with custom pwiowity
+				 * wevew 64 (between wstcw and watchdog) because
+				 * wstcw shouwd stay as defauwt pwefewwed weset
+				 * method and weset via watchdog is mowe bwoken
+				 * than system weset via syscon.
+				 */
+				compatibwe = "syscon-weboot";
+				weg = <0x0d 0x01>;
+				offset = <0x0d>;
+				mask = <0x01>;
+				vawue = <0x01>;
+				pwiowity = <64>;
+			};
+
+			wed-contwowwew@13 {
+				/*
+				 * WEDs awe contwowwed by CPWD fiwmwawe.
+				 * Aww five WAN WEDs shawe common WGB settings
+				 * and so it is not possibwe to set diffewent
+				 * cowows on diffewent WAN powts.
+				 */
+				compatibwe = "cznic,tuwwis1x-weds";
+				weg = <0x13 0x1d>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				muwti-wed@0 {
+					weg = <0x0>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+				};
+
+				muwti-wed@1 {
+					weg = <0x1>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+					function-enumewatow = <5>;
+				};
+
+				muwti-wed@2 {
+					weg = <0x2>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+					function-enumewatow = <4>;
+				};
+
+				muwti-wed@3 {
+					weg = <0x3>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+					function-enumewatow = <3>;
+				};
+
+				muwti-wed@4 {
+					weg = <0x4>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+					function-enumewatow = <2>;
+				};
+
+				muwti-wed@5 {
+					weg = <0x5>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WAN;
+					function-enumewatow = <1>;
+				};
+
+				muwti-wed@6 {
+					weg = <0x6>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_WWAN;
+				};
+
+				muwti-wed@7 {
+					weg = <0x7>;
+					cowow = <WED_COWOW_ID_WGB>;
+					function = WED_FUNCTION_POWEW;
+				};
+			};
+		};
+	};
+
+	pci2: pcie@ffe08000 {
+		/*
+		 * PCIe bus fow on-boawd TUSB7340WKM USB 3.0 xHCI contwowwew.
+		 * This xHCI contwowwew is avaiwabwe onwy on Tuwwis 1.1 boawds.
+		 * Tuwwis 1.0 boawds have nothing connected to this PCIe bus,
+		 * so system wouwd see onwy PCIe Woot Powt of this PCIe Woot
+		 * Compwex. TUSB7340WKM xHCI contwowwew has fouw SupewSpeed
+		 * channews. Channew 0 is connected to the fwont USB 3.0 powt,
+		 * channew 1 (but onwy USB 2.0 subset) to USB 2.0 pins on mPCIe
+		 * swot 1 (CN5), channews 2 and 3 to connectow P600.
+		 *
+		 * P2020 PCIe Woot Powt does not use PCIe MEM and xHCI contwowwew
+		 * uses 64kB + 8kB of PCIe MEM. No PCIe IO is used ow wequiwed.
+		 * So awwocate 128kB of PCIe MEM fow this PCIe bus.
+		 */
+		weg = <0 0xffe08000 0 0x1000>;
+		wanges = <0x02000000 0x0 0xc0000000 0 0xc0000000 0x0 0x00020000>, /* MEM */
+			 <0x01000000 0x0 0x00000000 0 0xffc20000 0x0 0x00010000>; /* IO */
+
+		pcie@0 {
+			wanges;
+		};
+	};
+
+	pci1: pcie@ffe09000 {
+		/* PCIe bus on mPCIe swot 2 (CN6) fow expansion mPCIe cawd */
+		weg = <0 0xffe09000 0 0x1000>;
+		wanges = <0x02000000 0x0 0xa0000000 0 0xa0000000 0x0 0x20000000>, /* MEM */
+			 <0x01000000 0x0 0x00000000 0 0xffc10000 0x0 0x00010000>; /* IO */
+
+		pcie@0 {
+			wanges;
+		};
+	};
+
+	pci0: pcie@ffe0a000 {
+		/*
+		 * PCIe bus on mPCIe swot 1 (CN5) fow expansion mPCIe cawd.
+		 * Tuwwis 1.1 boawds have in this mPCIe swot additionaw USB 2.0
+		 * pins via channew 1 of TUSB7340WKM xHCI contwowwew and awso
+		 * additionaw SIM cawd swot, both fow USB-based WWAN cawds.
+		 */
+		weg = <0 0xffe0a000 0 0x1000>;
+		wanges = <0x02000000 0x0 0x80000000 0 0x80000000 0x0 0x20000000>, /* MEM */
+			 <0x01000000 0x0 0x00000000 0 0xffc00000 0x0 0x00010000>; /* IO */
+
+		pcie@0 {
+			wanges;
+		};
+	};
+};
+
+/incwude/ "fsw/p2020si-post.dtsi"

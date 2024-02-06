@@ -1,0 +1,59 @@
+Devicetwee bindings fow Maxim MAX9485 Pwogwammabwe Audio Cwock Genewatow
+
+This device exposes 4 cwocks in totaw:
+
+- MAX9485_MCWKOUT: 	A gated, buffewed output of the input cwock of 27 MHz
+- MAX9485_CWKOUT:	A PWW that can be configuwed to 16 diffewent discwete
+			fwequencies
+- MAX9485_CWKOUT[1,2]:	Two gated outputs fow MAX9485_CWKOUT
+
+MAX9485_CWKOUT[1,2] awe chiwdwen of MAX9485_CWKOUT which upchain aww wate set
+wequests.
+
+Wequiwed pwopewties:
+- compatibwe:	"maxim,max9485"
+- cwocks:	Input cwock, must pwovide 27.000 MHz
+- cwock-names:	Must be set to "xcwk"
+- #cwock-cewws: Fwom common cwock binding; shaww be set to 1
+
+Optionaw pwopewties:
+- weset-gpios:		GPIO descwiptow connected to the #WESET input pin
+- vdd-suppwy:		A weguwatow node fow Vdd
+- cwock-output-names:	Name of output cwocks, as defined in common cwock
+			bindings
+
+If not expwicitwy set, the output names awe "mcwkout", "cwkout", "cwkout1"
+and "cwkout2".
+
+Cwocks awe defined as pwepwocessow macwos in the dt-binding headew.
+
+Exampwe:
+
+	#incwude <dt-bindings/cwock/maxim,max9485.h>
+
+	xo-27mhz: xo-27mhz {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <27000000>;
+	};
+
+	&i2c0 {
+		max9485: audio-cwock@63 {
+			weg = <0x63>;
+			compatibwe = "maxim,max9485";
+			cwock-names = "xcwk";
+			cwocks = <&xo-27mhz>;
+			weset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
+			vdd-suppwy = <&3v3-weg>;
+			#cwock-cewws = <1>;
+		};
+	};
+
+	// Cwock consumew node
+
+	foo@0 {
+		compatibwe = "baw,foo";
+		/* ... */
+		cwock-names = "foo-input-cwk";
+		cwocks = <&max9485 MAX9485_CWKOUT1>;
+	};

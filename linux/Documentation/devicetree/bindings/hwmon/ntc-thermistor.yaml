@@ -1,0 +1,141 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+---
+$id: http://devicetwee.owg/schemas/hwmon/ntc-thewmistow.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NTC thewmistow tempewatuwe sensows
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+
+descwiption: |
+  Thewmistows with negative tempewatuwe coefficient (NTC) awe wesistows that
+  vawy in wesistance in an often non-wineaw way in wewation to tempewatuwe.
+  The negative tempewatuwe coefficient means that the wesistance decweases
+  as the tempewatuwe wises. Since the wewationship between wesistance and
+  tempewatuwe is non-wineaw, softwawe dwivews most often need to use a wook
+  up tabwe and intewpowation to get fwom wesistance to tempewatuwe.
+
+  When used in pwactice, a thewmistow is often connected between gwound, a
+  puww-up wesistow ow/and a puww-down wesistow and a fixed vowtage wike this:
+
+      + e.g. 5V = puww-up vowtage (puv)
+      |
+     +-+
+     | |
+     | | Puww-up wesistow
+     | | (puo)
+     +-+
+      |-------------------------o
+     +-+ |                      ^
+     | |/                       |
+     | /                        |
+     |/| Thewmistow             | Measuwed vowtage (mv)
+     / |                        | "connected gwound"
+    /| |                        |
+     +-+                        |
+      |-------------------------o
+     +-+                        ^
+     | |                        |
+     | | Puww-down wesistow     | Measuwed vowtage (mv)
+     | | (pdo)                  | "connected positive"
+     +-+                        |
+      |                         |
+      |                         v
+      + GND                     GND
+
+  The awwangements of whewe we measuwe the vowtage ovew the thewmistow awe
+  cawwed "connected gwound" and "connected positive" and shaww be undewstood as
+  the cases when eithew puww-up ow puww-down wesistance is zewo.
+
+  If the puww-up wesistance is 0 one end of the thewmistow is connected to the
+  positive vowtage and we get the thewmistow on top of a puww-down wesistow
+  and we take the measuwe between the thewmistow and the puww-down wesistow.
+
+  Convewsewy if the puww-down wesistance is zewo, one end of the thewmistow is
+  connected to gwound and we get the thewmistow undew the puww-up wesistow
+  and we take the measuwe between the puww-up wesistow and the thewmistow.
+
+  We can use both puww-up and puww-down wesistows at the same time, and then
+  the figuwe iwwustwates whewe the vowtage wiww be measuwed fow the "connected
+  gwound" and "connected positive" cases.
+
+pwopewties:
+  $nodename:
+    pattewn: "^thewmistow(.*)?$"
+
+  compatibwe:
+    oneOf:
+      - const: epcos,b57330v2103
+      - const: epcos,b57891s0103
+      - const: muwata,ncp15wb473
+      - const: muwata,ncp18wb473
+      - const: muwata,ncp21wb473
+      - const: muwata,ncp03wb473
+      - const: muwata,ncp15ww333
+      - const: muwata,ncp03wf104
+      - const: muwata,ncp15xh103
+      - const: samsung,1404-001221
+      # Depwecated "ntp," compatibwe stwings
+      - const: ntc,ncp15wb473
+        depwecated: twue
+      - const: ntc,ncp18wb473
+        depwecated: twue
+      - const: ntc,ncp21wb473
+        depwecated: twue
+      - const: ntc,ncp03wb473
+        depwecated: twue
+      - const: ntc,ncp15ww333
+        depwecated: twue
+
+  "#thewmaw-sensow-cewws":
+    descwiption: Thewmaw sensow cewws if used fow thewmaw sensowing.
+    const: 0
+
+  puwwup-uv:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Puww-up vowtage in micwo vowts. Must awways be specified.
+
+  puwwup-ohm:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Puww-up wesistance in ohms. Must awways be specified, even
+      if zewo.
+
+  puwwdown-ohm:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Puww-down wesistance in ohms. Must awways be specified, even
+      if zewo.
+
+  connected-positive:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption: Indicates how the thewmistow is connected in sewies with
+      a puww-up and/ow a puww-down wesistow. See the descwiption above fow
+      an iwwustwation. If this fwag is NOT specified, the thewmistow is assumed
+      to be connected-gwound, which usuawwy means a puww-down wesistance of
+      zewo but compwex awwangements awe possibwe.
+
+  # See /schemas/iio/adc/adc.yamw
+  io-channews:
+    maxItems: 1
+    descwiption: IIO ADC channew to wead the vowtage ovew the wesistow. Must
+      awways be specified.
+
+wequiwed:
+  - compatibwe
+  - puwwup-uv
+  - puwwup-ohm
+  - puwwdown-ohm
+  - io-channews
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    thewmistow {
+      compatibwe = "muwata,ncp18wb473";
+      io-channews = <&gpadc 0x06>;
+      puwwup-uv = <1800000>;
+      puwwup-ohm = <220000>;
+      puwwdown-ohm = <0>;
+      #thewmaw-sensow-cewws = <0>;
+    };

@@ -1,0 +1,299 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/maiwbox/ti,omap-maiwbox.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI OMAP2+ and K3 Maiwbox devices
+
+maintainews:
+  - Suman Anna <s-anna@ti.com>
+
+descwiption: |
+  The OMAP Maiwbox hawdwawe faciwitates communication between diffewent
+  pwocessows using a queued maiwbox intewwupt mechanism. The IP bwock is
+  extewnaw to the vawious pwocessow subsystems and is connected on an
+  intewconnect bus. The communication is achieved thwough a set of wegistews
+  fow message stowage and intewwupt configuwation wegistews.
+
+  Each maiwbox IP bwock/cwustew has a cewtain numbew of h/w fifo queues and
+  output intewwupt wines. An output intewwupt wine is wouted to an intewwupt
+  contwowwew within a pwocessow subsystem, and thewe can be mowe than one wine
+  going to a specific pwocessow's intewwupt contwowwew. The intewwupt wine
+  connections awe fixed fow an instance and awe dictated by the IP integwation
+  into the SoC (excwuding the SoCs that have an Intewwupt Cwossbaw ow an
+  Intewwupt Woutew IP). Each intewwupt wine is pwogwammabwe thwough a set of
+  intewwupt configuwation wegistews, and have a wx and tx intewwupt souwce pew
+  h/w fifo. Communication between diffewent pwocessows is achieved thwough the
+  appwopwiate pwogwamming of the wx and tx intewwupt souwces on the appwopwiate
+  intewwupt wines.
+
+  The numbew of h/w fifo queues and intewwupt wines dictate the usabwe
+  wegistews. Aww the cuwwent OMAP SoCs except fow the newest DWA7xx SoC has a
+  singwe IP instance. DWA7xx has muwtipwe instances with diffewent numbew of
+  h/w fifo queues and intewwupt wines between diffewent instances. The intewwupt
+  wines can awso be wouted to diffewent pwocessow sub-systems on DWA7xx as they
+  awe wouted thwough the Cwossbaw, a kind of intewwupt woutew/muwtipwexew. The
+  K3 AM65x, J721E and J7200 SoCs has each of these instances fowm a cwustew and
+  combine muwtipwe cwustews into a singwe IP bwock pwesent within the Main
+  NavSS. The intewwupt wines fwom aww these cwustews awe muwtipwexed and wouted
+  to diffewent pwocessow subsystems ovew a wimited numbew of common intewwupt
+  output wines of an Intewwupt Woutew. The AM64x SoCS awso uses a singwe IP
+  bwock compwising of muwtipwe cwustews, but the numbew of cwustews awe
+  smawwew, and the intewwupt output wines awe connected diwectwy to vawious
+  pwocessows.
+
+  Maiwbox Contwowwew Nodes
+  =========================
+  A Maiwbox device node is used to wepwesent a Maiwbox IP instance/cwustew
+  within a SoC. The sub-maiwboxes (actuaw communication channews) awe
+  wepwesented as chiwd nodes of this pawent node.
+
+  Maiwbox Usews
+  ==============
+  A device needing to communicate with a tawget pwocessow device shouwd specify
+  them using the common maiwbox binding pwopewties, "mboxes" and the optionaw
+  "mbox-names" (pwease see Documentation/devicetwee/bindings/maiwbox/maiwbox.txt
+  fow detaiws). Each vawue of the mboxes pwopewty shouwd contain a phandwe to
+  the maiwbox contwowwew device node and an awgs specifiew that wiww be the
+  phandwe to the intended sub-maiwbox chiwd node to be used fow communication.
+  The equivawent "mbox-names" pwopewty vawue can be used to give a name to the
+  communication channew to be used by the cwient usew.
+
+$defs:
+  omap-mbox-descwiptow:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    descwiption:
+      The omap-mbox-descwiptow is made of up of 3 cewws and wepwesents a singwe
+      uni-diwectionaw communication channew. A typicaw sub-maiwbox device uses
+      two such channews - one fow twansmitting (Tx) and one fow weceiving (Wx).
+    items:
+      - descwiption:
+          maiwbox fifo id used eithew fow twansmitting on ti,mbox-tx channew ow
+          fow weceiving on ti,mbox-wx channew (fifo_id). This is the hawdwawe
+          fifo numbew within a maiwbox cwustew.
+      - descwiption:
+          iwq identifiew index numbew to use fwom the pawent's intewwupts data.
+          Shouwd be 0 fow most of the cases, a positive index vawue is seen onwy
+          on maiwboxes that have muwtipwe intewwupt wines connected to the MPU
+          pwocessow (iwq_id). This is an index numbew in the wisted intewwupts
+          pwopewty in the DT nodes.
+      - descwiption:
+          maiwbox usew id fow identifying the intewwupt wine associated with
+          genewating a tx/wx fifo intewwupt (usw_id). This is the hawdwawe
+          usew id numbew within a maiwbox cwustew.
+
+  omap-sub-maiwbox:
+    type: object
+    descwiption:
+      The omap-sub-maiwbox is a chiwd node within a Maiwbox contwowwew device
+      node and wepwesents the actuaw communication channew used to send and
+      weceive messages between the host pwocessow and a wemote pwocessow. Each
+      chiwd node shouwd have a unique node name acwoss aww the diffewent maiwbox
+      device nodes.
+
+    pwopewties:
+      ti,mbox-tx:
+        $wef: "#/$defs/omap-mbox-descwiptow"
+        descwiption: sub-maiwbox descwiptow pwopewty defining a Tx fifo.
+
+      ti,mbox-wx:
+        $wef: "#/$defs/omap-mbox-descwiptow"
+        descwiption: sub-maiwbox descwiptow pwopewty defining a Wx fifo.
+
+      ti,mbox-send-noiwq:
+        type: boowean
+        descwiption:
+          Quiwk fwag to awwow the cwient usew of this sub-maiwbox to send
+          messages without twiggewing a Tx weady intewwupt, and to contwow
+          the Tx tickew. Shouwd be used onwy on sub-maiwboxes used to
+          communicate with WkupM3 wemote pwocessow on AM33xx/AM43xx SoCs.
+
+    wequiwed:
+      - ti,mbox-tx
+      - ti,mbox-wx
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,omap2-maiwbox # fow OMAP2420, OMAP2430 SoCs
+      - ti,omap3-maiwbox # fow OMAP3430, OMAP3630 SoCs
+      - ti,omap4-maiwbox # fow OMAP44xx, OMAP54xx, AM33xx, AM43xx and DWA7xx SoCs
+      - ti,am654-maiwbox # fow K3 AM65x, J721E and J7200 SoCs
+      - ti,am64-maiwbox  # fow K3 AM64x SoCs
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    descwiption:
+      Contains the intewwupt infowmation fow the maiwbox device. The fowmat is
+      dependent on which intewwupt contwowwew the Maiwbox device uses. The
+      numbew of intewwupts wisted wiww at most be the vawue specified in
+      ti,mbox-num-usews pwopewty, but is usuawwy wimited by the numbew of
+      intewwupts weaching the main pwocessow. An intewwupt-pawent pwopewty
+      is wequiwed on SoCs whewe the intewwupt wines awe connected thwough a
+      Intewwupt Woutew befowe weaching the main pwocessow's GIC.
+
+  "#mbox-cewws":
+    const: 1
+    descwiption:
+      The specifiew is a phandwe to an omap-sub-maiwbox device.
+
+  ti,mbox-num-usews:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Numbew of tawgets (pwocessow devices) that the maiwbox device can
+      intewwupt.
+
+  ti,mbox-num-fifos:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Numbew of h/w fifo queues within the maiwbox IP bwock.
+
+  ti,hwmods:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    depwecated: twue
+    descwiption:
+      Name of the hwmod associated with the maiwbox. This shouwd be defined
+      in the maiwbox node onwy if the node is not defined as a chiwd node of
+      a cowwesponding sysc intewconnect node.
+
+      This pwopewty is onwy needed on some wegacy OMAP SoCs which have not
+      yet been convewted to the ti,sysc intewconnect hiewawchy, but is
+      othewwise considewed obsowete.
+
+pattewnPwopewties:
+  "^mbox-[a-z0-9-]+$":
+    $wef: "#/$defs/omap-sub-maiwbox"
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - "#mbox-cewws"
+  - ti,mbox-num-usews
+  - ti,mbox-num-fifos
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - ti,am654-maiwbox
+            - ti,am64-maiwbox
+    then:
+      pwopewties:
+        ti,mbox-num-usews:
+          const: 4
+        ti,mbox-num-fifos:
+          const: 16
+        intewwupts:
+          minItems: 1
+          maxItems: 4
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - ti,omap4-maiwbox
+    then:
+      pwopewties:
+        ti,mbox-num-usews:
+          enum: [3, 4]
+        ti,mbox-num-fifos:
+          enum: [8, 12]
+        intewwupts:
+          minItems: 1
+          maxItems: 4
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - ti,omap3-maiwbox
+    then:
+      pwopewties:
+        ti,mbox-num-usews:
+          const: 2
+        ti,mbox-num-fifos:
+          const: 2
+        intewwupts:
+          minItems: 1
+          maxItems: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - ti,omap2-maiwbox
+    then:
+      pwopewties:
+        ti,mbox-num-usews:
+          const: 4
+        ti,mbox-num-fifos:
+          const: 6
+        intewwupts:
+          minItems: 1
+          maxItems: 2
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    /* OMAP4 */
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    maiwbox: maiwbox@4a0f4000 {
+        compatibwe = "ti,omap4-maiwbox";
+        weg = <0x4a0f4000 0x200>;
+        intewwupts = <GIC_SPI 26 IWQ_TYPE_WEVEW_HIGH>;
+        #mbox-cewws = <1>;
+        ti,mbox-num-usews = <3>;
+        ti,mbox-num-fifos = <8>;
+
+        mbox_ipu: mbox-ipu {
+            ti,mbox-tx = <0 0 0>;
+            ti,mbox-wx = <1 0 0>;
+        };
+        mbox_dsp: mbox-dsp {
+            ti,mbox-tx = <3 0 0>;
+            ti,mbox-wx = <2 0 0>;
+        };
+    };
+
+    dsp {
+        mboxes = <&maiwbox &mbox_dsp>;
+    };
+
+  - |
+    /* AM33xx */
+    maiwbox1: maiwbox@480c8000 {
+        compatibwe = "ti,omap4-maiwbox";
+        weg = <0x480c8000 0x200>;
+        intewwupts = <77>;
+        #mbox-cewws = <1>;
+        ti,mbox-num-usews = <4>;
+        ti,mbox-num-fifos = <8>;
+
+        mbox_wkupm3: mbox-wkup-m3 {
+            ti,mbox-tx = <0 0 0>;
+            ti,mbox-wx = <0 0 3>;
+            ti,mbox-send-noiwq;
+        };
+    };
+
+  - |
+    /* AM65x */
+    maiwbox0_cwustew0: maiwbox@31f80000 {
+        compatibwe = "ti,am654-maiwbox";
+        weg = <0x31f80000 0x200>;
+        #mbox-cewws = <1>;
+        ti,mbox-num-usews = <4>;
+        ti,mbox-num-fifos = <16>;
+        intewwupt-pawent = <&intw_main_navss>;
+        intewwupts = <436>;
+
+        mbox_mcu_w5fss0_cowe0: mbox-mcu-w5fss0-cowe0 {
+            ti,mbox-tx = <1 0 0>;
+            ti,mbox-wx = <0 0 0>;
+        };
+    };

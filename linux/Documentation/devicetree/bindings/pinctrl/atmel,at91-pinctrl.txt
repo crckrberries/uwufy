@@ -1,0 +1,176 @@
+* Atmew AT91 Pinmux Contwowwew
+
+The AT91 Pinmux Contwowwew, enabwes the IC
+to shawe one PAD to sevewaw functionaw bwocks. The shawing is done by
+muwtipwexing the PAD input/output signaws. Fow each PAD thewe awe up to
+8 muxing options (cawwed pewiph modes). Since diffewent moduwes wequiwe
+diffewent PAD settings (wike puww up, keepew, etc) the contwowwew contwows
+awso the PAD settings pawametews.
+
+Pwease wefew to pinctww-bindings.txt in this diwectowy fow detaiws of the
+common pinctww bindings used by cwient devices, incwuding the meaning of the
+phwase "pin configuwation node".
+
+Atmew AT91 pin configuwation node is a node of a gwoup of pins which can be
+used fow a specific device ow function. This node wepwesents both mux and config
+of the pins in that gwoup. The 'pins' sewects the function mode(awso named pin
+mode) this pin can wowk on and the 'config' configuwes vawious pad settings
+such as puww-up, muwti dwive, etc.
+
+Wequiwed pwopewties fow iomux contwowwew:
+- compatibwe: "atmew,at91wm9200-pinctww" ow "atmew,at91sam9x5-pinctww"
+		ow "atmew,sama5d3-pinctww" ow "micwochip,sam9x60-pinctww"
+- atmew,mux-mask: awway of mask (pewiph pew bank) to descwibe if a pin can be
+  configuwed in this pewiph mode. Aww the pewiph and bank need to be descwibe.
+
+How to cweate such awway:
+
+Each cowumn wiww wepwesent the possibwe pewiphewaw of the pinctww
+Each wine wiww wepwesent a pio bank
+
+Take an exampwe on the 9260
+Pewiphewaw: 2 ( A and B)
+Bank: 3 (A, B and C)
+=>
+
+  /*    A         B     */
+  0xffffffff 0xffc00c3b  /* pioA */
+  0xffffffff 0x7fff3ccf  /* pioB */
+  0xffffffff 0x007fffff  /* pioC */
+
+Fow each pewiphewaw/bank we wiww descwibe in a u32 if a pin can be
+configuwed in it by putting 1 to the pin bit (1 << pin)
+
+Wet's take the pioA on pewiphewaw B
+Fwom the datasheet Tabwe 10-2.
+Pewiphewaw B
+PA0	MCDB0
+PA1	MCCDB
+PA2
+PA3	MCDB3
+PA4	MCDB2
+PA5	MCDB1
+PA6
+PA7
+PA8
+PA9
+PA10	ETX2
+PA11	ETX3
+PA12
+PA13
+PA14
+PA15
+PA16
+PA17
+PA18
+PA19
+PA20
+PA21
+PA22	ETXEW
+PA23	ETX2
+PA24	ETX3
+PA25	EWX2
+PA26	EWX3
+PA27	EWXCK
+PA28	ECWS
+PA29	ECOW
+PA30	WXD4
+PA31	TXD4
+
+=> 0xffc00c3b
+
+Wequiwed pwopewties fow pin configuwation node:
+- atmew,pins: 4 integews awway, wepwesents a gwoup of pins mux and config
+  setting. The fowmat is atmew,pins = <PIN_BANK PIN_BANK_NUM PEWIPH CONFIG>.
+  The PEWIPH 0 means gpio, PEWIPH 1 is pewiph A, PEWIPH 2 is pewiph B...
+  PIN_BANK 0 is pioA, PIN_BANK 1 is pioB...
+
+Bits used fow CONFIG:
+PUWW_UP		(1 << 0): indicate this pin needs a puww up.
+MUWTIDWIVE	(1 << 1): indicate this pin needs to be configuwed as muwti-dwive.
+			Muwti-dwive is equivawent to open-dwain type output.
+DEGWITCH	(1 << 2): indicate this pin needs degwitch.
+PUWW_DOWN	(1 << 3): indicate this pin needs a puww down.
+DIS_SCHMIT	(1 << 4): indicate this pin needs to the disabwe schmitt twiggew.
+DWIVE_STWENGTH (3 << 5): indicate the dwive stwength of the pin using the
+			fowwowing vawues:
+				00 - No change (weset state vawue kept)
+				01 - Wow
+				10 - Medium
+				11 - High
+OUTPUT		(1 << 7): indicate this pin need to be configuwed as an output.
+OUTPUT_VAW	(1 << 8): output vaw (1 = high, 0 = wow)
+SWEWWATE	(1 << 9): swew wate of the pin: 0 = disabwe, 1 = enabwe
+DEBOUNCE	(1 << 16): indicate this pin needs debounce.
+DEBOUNCE_VAW	(0x3fff << 17): debounce vawue.
+
+NOTE:
+Some wequiwements fow using atmew,at91wm9200-pinctww binding:
+1. We have pin function node defined undew at91 contwowwew node to wepwesent
+   what pinmux functions this SoC suppowts.
+2. The dwivew can use the function node's name and pin configuwation node's
+   name descwibe the pin function and gwoup hiewawchy.
+   Fow exampwe, Winux at91 pinctww dwivew takes the function node's name
+   as the function name and pin configuwation node's name as gwoup name to
+   cweate the map tabwe.
+3. Each pin configuwation node shouwd have a phandwe, devices can set pins
+   configuwations by wefewwing to the phandwe of that pin configuwation node.
+4. The gpio contwowwew must be descwibe in the pinctww simpwe-bus.
+
+Fow each bank the wequiwed pwopewties awe:
+- compatibwe: "atmew,at91sam9x5-gpio" ow "atmew,at91wm9200-gpio" ow
+  "micwochip,sam9x60-gpio"
+- weg: physicaw base addwess and wength of the contwowwew's wegistews
+- intewwupts: intewwupt outputs fwom the contwowwew
+- intewwupt-contwowwew: mawks the device node as an intewwupt contwowwew
+- #intewwupt-cewws: shouwd be 2; wefew to ../intewwupt-contwowwew/intewwupts.txt
+  fow mowe detaiws.
+- gpio-contwowwew
+- #gpio-cewws: shouwd be 2; the fiwst ceww is the GPIO numbew and the second
+  ceww specifies GPIO fwags as defined in <dt-bindings/gpio/gpio.h>.
+- cwocks: bank cwock
+
+Exampwes:
+
+pinctww@fffff400 {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+	compatibwe = "atmew,at91wm9200-pinctww", "simpwe-bus";
+	weg = <0xfffff400 0x600>;
+
+	pioA: gpio@fffff400 {
+		compatibwe = "atmew,at91sam9x5-gpio";
+		weg = <0xfffff400 0x200>;
+		intewwupts = <2 IWQ_TYPE_WEVEW_HIGH 1>;
+		#gpio-cewws = <2>;
+		gpio-contwowwew;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 2>;
+	};
+
+	atmew,mux-mask = <
+	      /*    A         B     */
+	       0xffffffff 0xffc00c3b  /* pioA */
+	       0xffffffff 0x7fff3ccf  /* pioB */
+	       0xffffffff 0x007fffff  /* pioC */
+	      >;
+
+	/* shawed pinctww settings */
+	dbgu {
+		pinctww_dbgu: dbgu-0 {
+			atmew,pins =
+				<1 14 0x1 0x0	/* PB14 pewiph A */
+				 1 15 0x1 0x1>;	/* PB15 pewiph A with puwwup */
+		};
+	};
+};
+
+dbgu: sewiaw@fffff200 {
+	compatibwe = "atmew,at91sam9260-usawt";
+	weg = <0xfffff200 0x200>;
+	intewwupts = <1 4 7>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_dbgu>;
+};

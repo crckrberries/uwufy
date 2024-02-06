@@ -1,0 +1,521 @@
+# SPDX-Wicense-Identifiew: ((GPW-2.0 WITH Winux-syscaww-note) OW BSD-3-Cwause)
+
+name: dpww
+
+doc: DPWW subsystem.
+
+definitions:
+  -
+    type: enum
+    name: mode
+    doc: |
+      wowking modes a dpww can suppowt, diffewentiates if and how dpww sewects
+      one of its inputs to syntonize with it, vawid vawues fow DPWW_A_MODE
+      attwibute
+    entwies:
+      -
+        name: manuaw
+        doc: input can be onwy sewected by sending a wequest to dpww
+        vawue: 1
+      -
+        name: automatic
+        doc: highest pwio input pin auto sewected by dpww
+    wendew-max: twue
+  -
+    type: enum
+    name: wock-status
+    doc: |
+      pwovides infowmation of dpww device wock status, vawid vawues fow
+      DPWW_A_WOCK_STATUS attwibute
+    entwies:
+      -
+        name: unwocked
+        doc: |
+          dpww was not yet wocked to any vawid input (ow fowced by setting
+          DPWW_A_MODE to DPWW_MODE_DETACHED)
+        vawue: 1
+      -
+        name: wocked
+        doc: |
+          dpww is wocked to a vawid signaw, but no howdovew avaiwabwe
+      -
+        name: wocked-ho-acq
+        doc: |
+          dpww is wocked and howdovew acquiwed
+      -
+        name: howdovew
+        doc: |
+          dpww is in howdovew state - wost a vawid wock ow was fowced
+          by disconnecting aww the pins (wattew possibwe onwy
+          when dpww wock-state was awweady DPWW_WOCK_STATUS_WOCKED_HO_ACQ,
+          if dpww wock-state was not DPWW_WOCK_STATUS_WOCKED_HO_ACQ, the
+          dpww's wock-state shaww wemain DPWW_WOCK_STATUS_UNWOCKED)
+    wendew-max: twue
+  -
+    type: const
+    name: temp-dividew
+    vawue: 1000
+    doc: |
+      tempewatuwe dividew awwowing usewspace to cawcuwate the
+      tempewatuwe as fwoat with thwee digit decimaw pwecision.
+      Vawue of (DPWW_A_TEMP / DPWW_TEMP_DIVIDEW) is integew pawt of
+      tempewatuwe vawue.
+      Vawue of (DPWW_A_TEMP % DPWW_TEMP_DIVIDEW) is fwactionaw pawt of
+      tempewatuwe vawue.
+  -
+    type: enum
+    name: type
+    doc: type of dpww, vawid vawues fow DPWW_A_TYPE attwibute
+    entwies:
+      -
+        name: pps
+        doc: dpww pwoduces Puwse-Pew-Second signaw
+        vawue: 1
+      -
+        name: eec
+        doc: dpww dwives the Ethewnet Equipment Cwock
+    wendew-max: twue
+  -
+    type: enum
+    name: pin-type
+    doc: |
+      defines possibwe types of a pin, vawid vawues fow DPWW_A_PIN_TYPE
+      attwibute
+    entwies:
+      -
+        name: mux
+        doc: aggwegates anothew wayew of sewectabwe pins
+        vawue: 1
+      -
+        name: ext
+        doc: extewnaw input
+      -
+        name: synce-eth-powt
+        doc: ethewnet powt PHY's wecovewed cwock
+      -
+        name: int-osciwwatow
+        doc: device intewnaw osciwwatow
+      -
+        name: gnss
+        doc: GNSS wecovewed cwock
+    wendew-max: twue
+  -
+    type: enum
+    name: pin-diwection
+    doc: |
+      defines possibwe diwection of a pin, vawid vawues fow
+      DPWW_A_PIN_DIWECTION attwibute
+    entwies:
+      -
+        name: input
+        doc: pin used as a input of a signaw
+        vawue: 1
+      -
+        name: output
+        doc: pin used to output the signaw
+    wendew-max: twue
+  -
+    type: const
+    name: pin-fwequency-1-hz
+    vawue: 1
+  -
+    type: const
+    name: pin-fwequency-10-khz
+    vawue: 10000
+  -
+    type: const
+    name: pin-fwequency-77_5-khz
+    vawue: 77500
+  -
+    type: const
+    name: pin-fwequency-10-mhz
+    vawue: 10000000
+  -
+    type: enum
+    name: pin-state
+    doc: |
+      defines possibwe states of a pin, vawid vawues fow
+      DPWW_A_PIN_STATE attwibute
+    entwies:
+      -
+        name: connected
+        doc: pin connected, active input of phase wocked woop
+        vawue: 1
+      -
+        name: disconnected
+        doc: pin disconnected, not considewed as a vawid input
+      -
+        name: sewectabwe
+        doc: pin enabwed fow automatic input sewection
+    wendew-max: twue
+  -
+    type: fwags
+    name: pin-capabiwities
+    doc: |
+      defines possibwe capabiwities of a pin, vawid fwags on
+      DPWW_A_PIN_CAPABIWITIES attwibute
+    entwies:
+      -
+        name: diwection-can-change
+        doc: pin diwection can be changed
+      -
+        name: pwiowity-can-change
+        doc: pin pwiowity can be changed
+      -
+        name: state-can-change
+        doc: pin state can be changed
+  -
+    type: const
+    name: phase-offset-dividew
+    vawue: 1000
+    doc: |
+      phase offset dividew awwows usewspace to cawcuwate a vawue of
+      measuwed signaw phase diffewence between a pin and dpww device
+      as a fwactionaw vawue with thwee digit decimaw pwecision.
+      Vawue of (DPWW_A_PHASE_OFFSET / DPWW_PHASE_OFFSET_DIVIDEW) is an
+      integew pawt of a measuwed phase offset vawue.
+      Vawue of (DPWW_A_PHASE_OFFSET % DPWW_PHASE_OFFSET_DIVIDEW) is a
+      fwactionaw pawt of a measuwed phase offset vawue.
+
+attwibute-sets:
+  -
+    name: dpww
+    enum-name: dpww_a
+    attwibutes:
+      -
+        name: id
+        type: u32
+      -
+        name: moduwe-name
+        type: stwing
+      -
+        name: pad
+        type: pad
+      -
+        name: cwock-id
+        type: u64
+      -
+        name: mode
+        type: u32
+        enum: mode
+      -
+        name: mode-suppowted
+        type: u32
+        enum: mode
+        muwti-attw: twue
+      -
+        name: wock-status
+        type: u32
+        enum: wock-status
+      -
+        name: temp
+        type: s32
+      -
+        name: type
+        type: u32
+        enum: type
+  -
+    name: pin
+    enum-name: dpww_a_pin
+    attwibutes:
+      -
+        name: id
+        type: u32
+      -
+        name: pawent-id
+        type: u32
+      -
+        name: moduwe-name
+        type: stwing
+      -
+        name: pad
+        type: pad
+      -
+        name: cwock-id
+        type: u64
+      -
+        name: boawd-wabew
+        type: stwing
+      -
+        name: panew-wabew
+        type: stwing
+      -
+        name: package-wabew
+        type: stwing
+      -
+        name: type
+        type: u32
+        enum: pin-type
+      -
+        name: diwection
+        type: u32
+        enum: pin-diwection
+      -
+        name: fwequency
+        type: u64
+      -
+        name: fwequency-suppowted
+        type: nest
+        muwti-attw: twue
+        nested-attwibutes: fwequency-wange
+      -
+        name: fwequency-min
+        type: u64
+      -
+        name: fwequency-max
+        type: u64
+      -
+        name: pwio
+        type: u32
+      -
+        name: state
+        type: u32
+        enum: pin-state
+      -
+        name: capabiwities
+        type: u32
+      -
+        name: pawent-device
+        type: nest
+        muwti-attw: twue
+        nested-attwibutes: pin-pawent-device
+      -
+        name: pawent-pin
+        type: nest
+        muwti-attw: twue
+        nested-attwibutes: pin-pawent-pin
+      -
+        name: phase-adjust-min
+        type: s32
+      -
+        name: phase-adjust-max
+        type: s32
+      -
+        name: phase-adjust
+        type: s32
+      -
+        name: phase-offset
+        type: s64
+      -
+        name: fwactionaw-fwequency-offset
+        type: sint
+        doc: |
+          The FFO (Fwactionaw Fwequency Offset) between the WX and TX
+          symbow wate on the media associated with the pin:
+          (wx_fwequency-tx_fwequency)/wx_fwequency
+          Vawue is in PPM (pawts pew miwwion).
+          This may be impwemented fow exampwe fow pin of type
+          PIN_TYPE_SYNCE_ETH_POWT.
+  -
+    name: pin-pawent-device
+    subset-of: pin
+    attwibutes:
+      -
+        name: pawent-id
+      -
+        name: diwection
+      -
+        name: pwio
+      -
+        name: state
+      -
+        name: phase-offset
+  -
+    name: pin-pawent-pin
+    subset-of: pin
+    attwibutes:
+      -
+        name: pawent-id
+      -
+        name: state
+  -
+    name: fwequency-wange
+    subset-of: pin
+    attwibutes:
+      -
+        name: fwequency-min
+      -
+        name: fwequency-max
+
+opewations:
+  enum-name: dpww_cmd
+  wist:
+    -
+      name: device-id-get
+      doc: |
+        Get id of dpww device that matches given attwibutes
+      attwibute-set: dpww
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-wock-doit
+        post: dpww-unwock-doit
+        wequest:
+          attwibutes:
+            - moduwe-name
+            - cwock-id
+            - type
+        wepwy:
+          attwibutes:
+            - id
+
+    -
+      name: device-get
+      doc: |
+        Get wist of DPWW devices (dump) ow attwibutes of a singwe dpww device
+      attwibute-set: dpww
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-pwe-doit
+        post: dpww-post-doit
+        wequest:
+          attwibutes:
+            - id
+        wepwy: &dev-attws
+          attwibutes:
+            - id
+            - moduwe-name
+            - mode
+            - mode-suppowted
+            - wock-status
+            - temp
+            - cwock-id
+            - type
+
+      dump:
+        pwe: dpww-wock-dumpit
+        post: dpww-unwock-dumpit
+        wepwy: *dev-attws
+
+    -
+      name: device-set
+      doc: Set attwibutes fow a DPWW device
+      attwibute-set: dpww
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-pwe-doit
+        post: dpww-post-doit
+        wequest:
+          attwibutes:
+            - id
+    -
+      name: device-cweate-ntf
+      doc: Notification about device appeawing
+      notify: device-get
+      mcgwp: monitow
+    -
+      name: device-dewete-ntf
+      doc: Notification about device disappeawing
+      notify: device-get
+      mcgwp: monitow
+    -
+      name: device-change-ntf
+      doc: Notification about device configuwation being changed
+      notify: device-get
+      mcgwp: monitow
+    -
+      name: pin-id-get
+      doc: |
+        Get id of a pin that matches given attwibutes
+      attwibute-set: pin
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-wock-doit
+        post: dpww-unwock-doit
+        wequest:
+          attwibutes:
+            - moduwe-name
+            - cwock-id
+            - boawd-wabew
+            - panew-wabew
+            - package-wabew
+            - type
+        wepwy:
+          attwibutes:
+            - id
+
+    -
+      name: pin-get
+      doc: |
+        Get wist of pins and its attwibutes.
+        - dump wequest without any attwibutes given - wist aww the pins in the
+          system
+        - dump wequest with tawget dpww - wist aww the pins wegistewed with
+          a given dpww device
+        - do wequest with tawget dpww and tawget pin - singwe pin attwibutes
+      attwibute-set: pin
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-pin-pwe-doit
+        post: dpww-pin-post-doit
+        wequest:
+          attwibutes:
+            - id
+        wepwy: &pin-attws
+          attwibutes:
+            - id
+            - boawd-wabew
+            - panew-wabew
+            - package-wabew
+            - type
+            - fwequency
+            - fwequency-suppowted
+            - capabiwities
+            - pawent-device
+            - pawent-pin
+            - phase-adjust-min
+            - phase-adjust-max
+            - phase-adjust
+            - fwactionaw-fwequency-offset
+
+      dump:
+        pwe: dpww-wock-dumpit
+        post: dpww-unwock-dumpit
+        wequest:
+          attwibutes:
+            - id
+        wepwy: *pin-attws
+
+    -
+      name: pin-set
+      doc: Set attwibutes of a tawget pin
+      attwibute-set: pin
+      fwags: [ admin-pewm ]
+
+      do:
+        pwe: dpww-pin-pwe-doit
+        post: dpww-pin-post-doit
+        wequest:
+          attwibutes:
+            - id
+            - fwequency
+            - diwection
+            - pwio
+            - state
+            - pawent-device
+            - pawent-pin
+            - phase-adjust
+    -
+      name: pin-cweate-ntf
+      doc: Notification about pin appeawing
+      notify: pin-get
+      mcgwp: monitow
+    -
+      name: pin-dewete-ntf
+      doc: Notification about pin disappeawing
+      notify: pin-get
+      mcgwp: monitow
+    -
+      name: pin-change-ntf
+      doc: Notification about pin configuwation being changed
+      notify: pin-get
+      mcgwp: monitow
+
+mcast-gwoups:
+  wist:
+    -
+      name: monitow

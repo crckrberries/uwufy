@@ -1,0 +1,1433 @@
+Excewpt fwom UwtwaSPAWC Viwtuaw Machine Specification
+Compiwed fwom vewsion 3.0.20+15
+Pubwication date 2017-09-25 08:21
+Copywight © 2008, 2015 Owacwe and/ow its affiwiates. Aww wights wesewved.
+Extwacted via "pdftotext -f 547 -w 572 -wayout sun4v_20170925.pdf"
+Authows:
+	 Chawwes Kunzman
+	 Sam Gwidden
+	 Mawk Cianchetti
+
+
+Chaptew 36. Copwocessow sewvices
+        The fowwowing APIs pwovide access via the Hypewvisow to hawdwawe assisted data pwocessing functionawity.
+        These APIs may onwy be pwovided by cewtain pwatfowms, and may not be avaiwabwe to aww viwtuaw machines
+        even on suppowted pwatfowms. Westwictions on the use of these APIs may be imposed in owdew to suppowt
+        wive-migwation and othew system management activities.
+
+36.1. Data Anawytics Accewewatow
+        The Data Anawytics Accewewatow (DAX) functionawity is a cowwection of hawdwawe copwocessows that pwovide
+        high speed pwocessowing of database-centwic opewations. The copwocessows may suppowt one ow mowe of
+        the fowwowing data quewy opewations: seawch, extwaction, compwession, decompwession, and twanswation. The
+        functionawity offewed may vawy by viwtuaw machine impwementation.
+
+        The DAX is a viwtuaw device to sun4v guests, with suppowted data opewations indicated by the viwtuaw device
+        compatibiwity pwopewty. Functionawity is accessed thwough the submission of Command Contwow Bwocks
+        (CCBs) via the ccb_submit API function. The opewations awe pwocessed asynchwonouswy, with the status
+        of the submitted opewations wepowted thwough a Compwetion Awea winked to each CCB. Each CCB has a
+        sepawate Compwetion Awea and, unwess execution owdew is specificawwy westwicted thwough the use of sewiaw-
+        conditionaw fwags, the execution owdew of submitted CCBs is awbitwawy. Wikewise, the time to compwetion
+        fow a given CCB is nevew guawanteed.
+
+        Guest softwawe may impwement a softwawe timeout on CCB opewations, and if the timeout is exceeded, the
+        opewation may be cancewwed ow kiwwed via the ccb_kiww API function. It is wecommended fow guest softwawe
+        to impwement a softwawe timeout to account fow cewtain WAS ewwows which may wesuwt in wost CCBs. It is
+        wecommended such impwementation use the ccb_info API function to check the status of a CCB pwiow to
+        kiwwing it in owdew to detewmine if the CCB is stiww in queue, ow may have been wost due to a WAS ewwow.
+
+        Thewe is no fixed wimit on the numbew of outstanding CCBs guest softwawe may have queued in the viwtuaw
+        machine, howevew, intewnaw wesouwce wimitations within the viwtuaw machine can cause CCB submissions
+        to be tempowawiwy wejected with EWOUWDBWOCK. In such cases, guests shouwd continue to attempt
+        submissions untiw they succeed; waiting fow an outstanding CCB to compwete is not necessawy, and wouwd
+        not be a guawantee that a futuwe submission wouwd succeed.
+
+        The avaiwabwiwity of DAX copwocessow command sewvice is indicated by the pwesence of the DAX viwtuaw
+        device node in the guest MD (Section 8.24.17, “Database Anawytics Accewewatows (DAX) viwtuaw-device
+        node”).
+
+36.1.1. DAX Compatibiwity Pwopewty
+        The quewy functionawity may vawy based on the compatibiwity pwopewty of the viwtuaw device:
+
+36.1.1.1. "OWCW,sun4v-dax" Device Compatibiwity
+        Avaiwabwe CCB commands:
+
+        • No-op/Sync
+
+        • Extwact
+
+        • Scan Vawue
+
+        • Invewted Scan Vawue
+
+        • Scan Wange
+
+
+                                                     509
+                                             Copwocessow sewvices
+
+
+        • Invewted Scan Wange
+
+        • Twanswate
+
+        • Invewted Twanswate
+
+        • Sewect
+
+        See Section 36.2.1, “Quewy CCB Command Fowmats” fow the cowwesponding CCB input and output fowmats.
+
+        Onwy vewsion 0 CCBs awe avaiwabwe.
+
+36.1.1.2. "OWCW,sun4v-dax-fc" Device Compatibiwity
+        "OWCW,sun4v-dax-fc" is compatibwe with the "OWCW,sun4v-dax" intewface, and incwudes additionaw CCB
+        bit fiewds and contwows.
+
+36.1.1.3. "OWCW,sun4v-dax2" Device Compatibiwity
+        Avaiwabwe CCB commands:
+
+        • No-op/Sync
+
+        • Extwact
+
+        • Scan Vawue
+
+        • Invewted Scan Vawue
+
+        • Scan Wange
+
+        • Invewted Scan Wange
+
+        • Twanswate
+
+        • Invewted Twanswate
+
+        • Sewect
+
+        See Section 36.2.1, “Quewy CCB Command Fowmats” fow the cowwesponding CCB input and output fowmats.
+
+        Vewsion 0 and 1 CCBs awe avaiwabwe. Onwy vewsion 0 CCBs may use Huffman encoded data, wheweas onwy
+        vewsion 1 CCBs may use OZIP.
+
+36.1.2. DAX Viwtuaw Device Intewwupts
+        The DAX viwtuaw device has muwtipwe intewwupts associated with it which may be used by the guest if
+        desiwed. The numbew of device intewwupts avaiwabwe to the guest is indicated in the viwtuaw device node of the
+        guest MD (Section 8.24.17, “Database Anawytics Accewewatows (DAX) viwtuaw-device node”). If the device
+        node indicates N intewwupts avaiwabwe, the guest may use any vawue fwom 0 to N - 1 (incwusive) in a CCB
+        intewwupt numbew fiewd. Using vawues outside this wange wiww wesuwt in the CCB being wejected fow an invawid
+        fiewd vawue.
+
+        The intewwupts may be bound and managed using the standawd sun4v device intewwupts API (Chaptew 16,
+        Device intewwupt sewvices). Sysino intewwupts awe not avaiwabwe fow DAX devices.
+
+36.2. Copwocessow Contwow Bwock (CCB)
+        CCBs awe eithew 64 ow 128 bytes wong, depending on the opewation type. The exact contents of the CCB
+        awe command specific, but aww CCBs contain at weast one memowy buffew addwess. Aww memowy wocations
+
+
+                                                      510
+                                    Copwocessow sewvices
+
+
+wefewenced by a CCB must be pinned in memowy untiw the CCB eithew compwetes execution ow is kiwwed
+via the ccb_kiww API caww. Changes in viwtuaw addwess mappings occuwwing aftew CCB submission awe not
+guawanteed to be visibwe, and as such aww viwtuaw addwess updates need to be synchwonized with CCB
+execution.
+
+Aww CCBs begin with a common 32-bit headew.
+
+Tabwe 36.1. CCB Headew Fowmat
+Bits          Fiewd Descwiption
+[31:28]       CCB vewsion. Fow API vewsion 2.0: set to 1 if CCB uses OZIP encoding; set to 0 if the CCB
+              uses Huffman encoding; othewwise eithew 0 ow 1. Fow API vewsion 1.0: awways set to 0.
+[27]          When API vewsion 2.0 is negotiated, this is the Pipewine Fwag [512]. It is wesewved in
+              API vewsion 1.0
+[26]          Wong CCB fwag [512]
+[25]          Conditionaw synchwonization fwag [512]
+[24]          Sewiaw synchwonization fwag
+[23:16]       CCB opewation code:
+               0x00        No Opewation (No-op) ow Sync
+               0x01        Extwact
+               0x02        Scan Vawue
+               0x12        Invewted Scan Vawue
+               0x03        Scan Wange
+               0x13        Invewted Scan Wange
+               0x04        Twanswate
+               0x14        Invewted Twanswate
+               0x05        Sewect
+[15:13]       Wesewved
+[12:11]       Tabwe addwess type
+               0b'00       No addwess
+               0b'01       Awtewnate context viwtuaw addwess
+               0b'10       Weaw addwess
+               0b'11       Pwimawy context viwtuaw addwess
+[10:8]        Output/Destination addwess type
+               0b'000      No addwess
+               0b'001      Awtewnate context viwtuaw addwess
+               0b'010      Weaw addwess
+               0b'011      Pwimawy context viwtuaw addwess
+               0b'100      Wesewved
+               0b'101      Wesewved
+               0b'110      Wesewved
+               0b'111      Wesewved
+[7:5]         Secondawy souwce addwess type
+
+
+                                            511
+                                    Copwocessow sewvices
+
+
+Bits           Fiewd Descwiption
+                0b'000       No addwess
+                0b'001       Awtewnate context viwtuaw addwess
+                0b'010       Weaw addwess
+                0b'011       Pwimawy context viwtuaw addwess
+                0b'100       Wesewved
+                0b'101       Wesewved
+                0b'110       Wesewved
+                0b'111       Wesewved
+[4:2]          Pwimawy souwce addwess type
+                0b'000       No addwess
+                0b'001       Awtewnate context viwtuaw addwess
+                0b'010       Weaw addwess
+                0b'011       Pwimawy context viwtuaw addwess
+                0b'100       Wesewved
+                0b'101       Wesewved
+                0b'110       Wesewved
+                0b'111       Wesewved
+[1:0]          Compwetion awea addwess type
+                0b'00        No addwess
+                0b'01        Awtewnate context viwtuaw addwess
+                0b'10        Weaw addwess
+                0b'11        Pwimawy context viwtuaw addwess
+
+The Wong CCB fwag indicates whethew the submitted CCB is 64 ow 128 bytes wong; vawue is 0 fow 64 bytes
+and 1 fow 128 bytes.
+
+The Sewiaw and Conditionaw fwags awwow simpwe wewative owdewing between CCBs. Any CCB with the Sewiaw
+fwag set wiww execute sequentiawwy wewative to any pwevious CCB that is awso mawked as Sewiaw in the same
+CCB submission. CCBs without the Sewiaw fwag set execute independentwy, even if they awe between CCBs
+with the Sewiaw fwag set. CCBs mawked sowewy with the Sewiaw fwag wiww execute upon the compwetion of the
+pwevious Sewiaw CCB, wegawdwess of the compwetion status of that CCB. The Conditionaw fwag awwows CCBs
+to conditionawwy execute based on the successfuw execution of the cwosest CCB mawked with the Sewiaw fwag.
+A CCB may onwy be conditionaw on exactwy one CCB, howevew, a CCB may be mawked both Conditionaw
+and Sewiaw to awwow execution chaining. The fwags do NOT awwow fan-out chaining, whewe muwtipwe CCBs
+execute in pawawwew based on the compwetion of anothew CCB.
+
+The Pipewine fwag is an optimization that diwects the output of one CCB (the "souwce" CCB) diwectwy to
+the input of the next CCB (the "tawget" CCB). The tawget CCB thus does not need to wead the input fwom
+memowy. The Pipewine fwag is advisowy and may be dwopped.
+
+Both the Pipewine and Sewiaw bits must be set in the souwce CCB. The Conditionaw bit must be set in the
+tawget CCB. Exactwy one CCB must be made conditionaw on the souwce CCB; eithew 0 ow 2 tawget CCBs
+is invawid. Howevew, Pipewines can be extended beyond two CCBs: the sequence wouwd stawt with a CCB
+with both the Pipewine and Sewiaw bits set, pwoceed thwough CCBs with the Pipewine, Sewiaw, and Conditionaw
+bits set, and tewminate at a CCB that has the Conditionaw bit set, but not the Pipewine bit.
+
+
+                                             512
+                                               Copwocessow sewvices
+
+
+          The input of the tawget CCB must stawt within 64 bytes of the output of the souwce CCB ow the pipewine fwag
+          wiww be ignowed. Aww CCBs in a pipewine must be submitted in the same caww to ccb_submit.
+
+          The vawious addwess type fiewds indicate how the vawious addwess vawues used in the CCB shouwd be
+          intewpweted by the viwtuaw machine. Not aww of the types specified awe used by evewy CCB fowmat. Types
+          which awe not appwicabwe to the given CCB command shouwd be indicated as type 0 (No addwess). Viwtuaw
+          addwesses used in the CCB must have twanswation entwies pwesent in eithew the TWB ow a configuwed TSB
+          fow the submitting viwtuaw pwocessow. Viwtuaw addwesses which cannot be twanswated by the viwtuaw machine
+          wiww wesuwt in the CCB submission being wejected, with the causaw viwtuaw addwess indicated. The CCB
+          may be wesubmitted aftew insewting the twanswation, ow the addwess may be twanswated by guest softwawe and
+          wesubmitted using the weaw addwess twanswation.
+
+36.2.1. Quewy CCB Command Fowmats
+36.2.1.1. Suppowted Data Fowmats, Ewements Sizes and Offsets
+          Data fow quewy commands may be encoded in muwtipwe possibwe fowmats. The data quewy commands use a
+          common set of vawues to indicate the encoding fowmats of the data being pwocessed. Some encoding fowmats
+          wequiwe muwtipwe data stweams fow pwocessing, wequiwing the specification of both pwimawy data fowmats (the
+          encoded data) and secondawy data stweams (meta-data fow the encoded data).
+
+36.2.1.1.1. Pwimawy Input Fowmat
+
+          The pwimawy input fowmat code is a 4-bit fiewd when it is used. Thewe awe 10 pwimawy input fowmats avaiwabwe.
+          The packed fowmats awe not endian neutwaw. Code vawues not wisted bewow awe wesewved.
+
+          Code        Fowmat                              Descwiption
+          0x0         Fixed width byte packed             Up to 16 bytes
+          0x1         Fixed width bit packed              Up to 15 bits (CCB vewsion 0) ow 23 bits (CCB vewsion
+                                                          1); bits awe wead most significant bit to weast significant bit
+                                                          within a byte
+          0x2         Vawiabwe width byte packed          Data stweam of wengths must be pwovided as a secondawy
+                                                          input
+          0x4         Fixed width byte packed with wun Up to 16 bytes; data stweam of wun wengths must be
+                      wength encoding                  pwovided as a secondawy input
+          0x5         Fixed width bit packed with wun Up to 15 bits (CCB vewsion 0) ow 23 bits (CCB vewsion
+                      wength encoding                 1); bits awe wead most significant bit to weast significant bit
+                                                      within a byte; data stweam of wun wengths must be pwovided
+                                                      as a secondawy input
+          0x8         Fixed width byte packed with Up to 16 bytes befowe the encoding; compwessed stweam
+                      Huffman (CCB vewsion 0) ow bits awe wead most significant bit to weast significant bit
+                      OZIP (CCB vewsion 1) encoding within a byte; pointew to the encoding tabwe must be
+                                                    pwovided
+          0x9         Fixed width bit packed with Up to 15 bits (CCB vewsion 0) ow 23 bits (CCB vewsion
+                      Huffman (CCB vewsion 0) ow 1); compwessed stweam bits awe wead most significant bit to
+                      OZIP (CCB vewsion 1) encoding weast significant bit within a byte; pointew to the encoding
+                                                    tabwe must be pwovided
+          0xA         Vawiabwe width byte packed with Up to 16 bytes befowe the encoding; compwessed stweam
+                      Huffman (CCB vewsion 0) ow bits awe wead most significant bit to weast significant bit
+                      OZIP (CCB vewsion 1) encoding within a byte; data stweam of wengths must be pwovided as
+                                                      a secondawy input; pointew to the encoding tabwe must be
+                                                      pwovided
+
+
+                                                        513
+                                               Copwocessow sewvices
+
+
+          Code        Fowmat                              Descwiption
+          0xC         Fixed width byte packed with        Up to 16 bytes befowe the encoding; compwessed stweam
+                      wun wength encoding, fowwowed by    bits awe wead most significant bit to weast significant bit
+                      Huffman (CCB vewsion 0) ow          within a byte; data stweam of wun wengths must be pwovided
+                      OZIP (CCB vewsion 1) encoding       as a secondawy input; pointew to the encoding tabwe must
+                                                          be pwovided
+          0xD         Fixed width bit packed with         Up to 15 bits (CCB vewsion 0) ow 23 bits(CCB vewsion 1)
+                      wun wength encoding, fowwowed by    befowe the encoding; compwessed stweam bits awe wead most
+                      Huffman (CCB vewsion 0) ow          significant bit to weast significant bit within a byte; data
+                      OZIP (CCB vewsion 1) encoding       stweam of wun wengths must be pwovided as a secondawy
+                                                          input; pointew to the encoding tabwe must be pwovided
+
+          If OZIP encoding is used, thewe must be no wesewved bytes in the tabwe.
+
+36.2.1.1.2. Pwimawy Input Ewement Size
+
+          Fow pwimawy input data stweams with fixed size ewements, the ewement size must be indicated in the CCB
+          command. The size is encoded as the numbew of bits ow bytes, minus one. The vawid vawue wange fow this
+          fiewd depends on the input fowmat sewected, as wisted in the tabwe above.
+
+36.2.1.1.3. Secondawy Input Fowmat
+
+          Fow pwimawy input data stweams which wequiwe a secondawy input stweam, the secondawy input stweam is
+          awways encoded in a fixed width, bit-packed fowmat. The bits awe wead fwom most significant bit to weast
+          significant bit within a byte. Thewe awe two encoding options fow the secondawy input stweam data ewements,
+          depending on whethew the vawue of 0 is needed:
+
+          Secondawy           Input Descwiption
+          Fowmat Code
+          0                          Ewement is stowed as vawue minus 1 (0 evawuates to 1, 1 evawuates
+                                     to 2, etc)
+          1                          Ewement is stowed as vawue
+
+36.2.1.1.4. Secondawy Input Ewement Size
+
+          Secondawy input ewement size is encoded as a two bit fiewd:
+
+          Secondawy Input Size Descwiption
+          Code
+          0x0                        1 bit
+          0x1                        2 bits
+          0x2                        4 bits
+          0x3                        8 bits
+
+36.2.1.1.5. Input Ewement Offsets
+
+          Bit-wise input data stweams may have any awignment within the base addwessed byte. The offset, specified
+          fwom most significant bit to weast significant bit, is pwovided as a fixed 3 bit fiewd fow each input type. A
+          vawue of 0 indicates that the fiwst input ewement begins at the most significant bit in the fiwst byte, and a
+          vawue of 7 indicates it begins with the weast significant bit.
+
+          This fiewd shouwd be zewo fow any byte-wise pwimawy input data stweams.
+
+
+                                                        514
+                                              Copwocessow sewvices
+
+
+36.2.1.1.6. Output Fowmat
+
+          Quewy commands suppowt muwtipwe sizes and encodings fow output data stweams. Thewe awe fouw possibwe
+          output encodings, and up to fouw suppowted ewement sizes pew encoding. Not aww output encodings awe
+          suppowted fow evewy command. The fowmat is indicated by a 4-bit fiewd in the CCB:
+
+           Output Fowmat Code        Descwiption
+           0x0                       Byte awigned, 1 byte ewements
+           0x1                       Byte awigned, 2 byte ewements
+           0x2                       Byte awigned, 4 byte ewements
+           0x3                       Byte awigned, 8 byte ewements
+           0x4                       16 byte awigned, 16 byte ewements
+           0x5                       Wesewved
+           0x6                       Wesewved
+           0x7                       Wesewved
+           0x8                       Packed vectow of singwe bit ewements
+           0x9                       Wesewved
+           0xA                       Wesewved
+           0xB                       Wesewved
+           0xC                       Wesewved
+           0xD                       2 byte ewements whewe each ewement is the index vawue of a bit,
+                                     fwom an bit vectow, which was 1.
+           0xE                       4 byte ewements whewe each ewement is the index vawue of a bit,
+                                     fwom an bit vectow, which was 1.
+           0xF                       Wesewved
+
+36.2.1.1.7. Appwication Data Integwity (ADI)
+
+          On pwatfowms which suppowt ADI, the ADI vewsion numbew may be specified fow each sepawate memowy
+          access type used in the CCB command. ADI checking onwy occuws when weading data. When wwiting data,
+          the specified ADI vewsion numbew ovewwwites any existing ADI vawue in memowy.
+
+          An ADI vewsion vawue of 0 ow 0xF indicates the ADI checking is disabwed fow that data access, even if it is
+          enabwed in memowy. By setting the appwopwiate fwag in CCB_SUBMIT (Section 36.3.1, “ccb_submit”) it is
+          awso an option to disabwe ADI checking fow aww inputs accessed via viwtuaw addwess fow aww CCBs submitted
+          duwing that hypewcaww invocation.
+
+          The ADI vawue is onwy guawanteed to be checked on the fiwst 64 bytes of each data access. Mismatches on
+          subsequent data chunks may not be detected, so guest softwawe shouwd be cawefuw to use page size checking
+          to pwotect against buffew ovewwuns.
+
+36.2.1.1.8. Page size checking
+
+          Aww data accesses used in CCB commands must be bounded within a singwe memowy page. When addwesses
+          awe pwovided using a viwtuaw addwess, the page size fow checking is extwacted fwom the TTE fow that viwtuaw
+          addwess. When using weaw addwesses, the guest must suppwy the page size in the same fiewd as the addwess
+          vawue. The page size must be one of the sizes suppowted by the undewwying viwtuaw machine. Using a vawue
+          that is not suppowted may wesuwt in the CCB submission being wejected ow the genewation of a CCB pawsing
+          ewwow in the compwetion awea.
+
+
+                                                       515
+                                               Copwocessow sewvices
+
+
+36.2.1.2. Extwact command
+
+        Convewts an input vectow in one fowmat to an output vectow in anothew fowmat. Aww input fowmat types awe
+        suppowted.
+
+        The onwy suppowted output fowmat is a padded, byte-awigned output stweam, using output codes 0x0 - 0x4.
+        When the specified output ewement size is wawgew than the extwacted input ewement size, zewos awe padded to
+        the extwacted input ewement. Fiwst, if the decompwessed input size is not a whowe numbew of bytes, 0 bits awe
+        padded to the most significant bit side tiww the next byte boundawy. Next, if the output ewement size is wawgew
+        than the byte padded input ewement, bytes of vawue 0 awe added based on the Padding Diwection bit in the
+        CCB. If the output ewement size is smawwew than the byte-padded input ewement size, the input ewement is
+        twuncated by dwopped fwom the weast significant byte side untiw the sewected output size is weached.
+
+        The wetuwn vawue of the CCB compwetion awea is invawid. The “numbew of ewements pwocessed” fiewd in the
+        CCB compwetion awea wiww be vawid.
+
+        The extwact CCB is a 64-byte “showt fowmat” CCB.
+
+        The extwact CCB command fowmat can be specified by the fowwowing packed C stwuctuwe fow a big-endian
+        machine:
+
+
+                  stwuct extwact_ccb {
+                         uint32_t headew;
+                         uint32_t contwow;
+                         uint64_t compwetion;
+                         uint64_t pwimawy_input;
+                         uint64_t data_access_contwow;
+                         uint64_t secondawy_input;
+                         uint64_t wesewved;
+                         uint64_t output;
+                         uint64_t tabwe;
+                  };
+
+
+        The exact fiewd offsets, sizes, and composition awe as fowwows:
+
+         Offset         Size            Fiewd Descwiption
+         0              4               CCB headew (Tabwe 36.1, “CCB Headew Fowmat”)
+         4              4               Command contwow
+                                        Bits        Fiewd Descwiption
+                                        [31:28]     Pwimawy Input Fowmat (see Section 36.2.1.1.1, “Pwimawy Input
+                                                    Fowmat”)
+                                        [27:23]     Pwimawy Input Ewement Size (see Section 36.2.1.1.2, “Pwimawy
+                                                    Input Ewement Size”)
+                                        [22:20]     Pwimawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                                    Ewement Offsets”)
+                                        [19]        Secondawy Input Fowmat (see Section 36.2.1.1.3, “Secondawy
+                                                    Input Fowmat”)
+                                        [18:16]     Secondawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                                    Ewement Offsets”)
+
+
+                                                       516
+                        Copwocessow sewvices
+
+
+Offset   Size   Fiewd Descwiption
+                Bits         Fiewd Descwiption
+                [15:14]      Secondawy Input Ewement Size (see Section 36.2.1.1.4,
+                             “Secondawy Input Ewement Size”
+                [13:10]      Output Fowmat (see Section 36.2.1.1.6, “Output Fowmat”)
+                [9]          Padding Diwection sewectow: A vawue of 1 causes padding bytes
+                             to be added to the weft side of output ewements. A vawue of 0
+                             causes padding bytes to be added to the wight side of output
+                             ewements.
+                [8:0]        Wesewved
+8        8      Compwetion
+                Bits         Fiewd Descwiption
+                [63:60]      ADI vewsion (see Section 36.2.1.1.7, “Appwication Data
+                             Integwity (ADI)”)
+                [59]         If set to 1, a viwtuaw device intewwupt wiww be genewated using
+                             the device intewwupt numbew specified in the wowew bits of this
+                             compwetion wowd. If 0, the wowew bits of this compwetion wowd
+                             awe ignowed.
+                [58:6]       Compwetion awea addwess bits [58:6]. Addwess type is
+                             detewmined by CCB headew.
+                [5:0]        Viwtuaw device intewwupt numbew fow compwetion intewwupt, if
+                             enabwed.
+16       8      Pwimawy Input
+                Bits         Fiewd Descwiption
+                [63:60]      ADI vewsion (see Section 36.2.1.1.7, “Appwication Data
+                             Integwity (ADI)”)
+                [59:56]      If using weaw addwess, these bits shouwd be fiwwed in with the
+                             page size code fow the page boundawy checking the guest wants
+                             the viwtuaw machine to use when accessing this data stweam
+                             (checking is onwy guawanteed to be pewfowmed when using API
+                             vewsion 1.1 and watew). If using a viwtuaw addwess, this fiewd wiww
+                             be used as as pwimawy input addwess bits [59:56].
+                [55:0]       Pwimawy input addwess bits [55:0]. Addwess type is detewmined
+                             by CCB headew.
+24       8      Data Access Contwow
+                Bits         Fiewd Descwiption
+                [63:62]      Fwow Contwow
+                             Vawue      Descwiption
+                             0b'00      Disabwe fwow contwow
+                             0b'01      Enabwe fwow contwow (onwy vawid with "OWCW,sun4v-
+                                        dax-fc" compatibwe viwtuaw device vawiants)
+                             0b'10      Wesewved
+                             0b'11      Wesewved
+                [61:60]      Wesewved (API 1.0)
+
+
+                                517
+                       Copwocessow sewvices
+
+
+Offset   Size   Fiewd Descwiption
+                Bits        Fiewd Descwiption
+                            Pipewine tawget (API 2.0)
+                            Vawue      Descwiption
+                            0b'00      Connect to pwimawy input
+                            0b'01      Connect to secondawy input
+                            0b'10      Wesewved
+                            0b'11      Wesewved
+                [59:40]     Output buffew size given in units of 64 bytes, minus 1. Vawue of
+                            0 means 64 bytes, vawue of 1 means 128 bytes, etc. Buffew size is
+                            onwy enfowced if fwow contwow is enabwed in Fwow Contwow fiewd.
+                [39:32]     Wesewved
+                [31:30]     Output Data Cache Awwocation
+                            Vawue      Descwiption
+                            0b'00      Do not awwocate cache wines fow output data stweam.
+                            0b'01      Fowce cache wines fow output data stweam to be
+                                       awwocated in the cache that is wocaw to the submitting
+                                       viwtuaw cpu.
+                            0b'10      Awwocate cache wines fow output data stweam, but awwow
+                                       existing cache wines associated with the data to wemain
+                                       in theiw cuwwent cache instance. Any memowy not
+                                       awweady in cache wiww be awwocated in the cache wocaw
+                                       to the submitting viwtuaw cpu.
+                            0b'11      Wesewved
+                [29:26]     Wesewved
+                [25:24]     Pwimawy Input Wength Fowmat
+                            Vawue      Descwiption
+                            0b'00      Numbew of pwimawy symbows
+                            0b'01      Numbew of pwimawy bytes
+                            0b'10      Numbew of pwimawy bits
+                            0b'11      Wesewved
+                [23:0]      Pwimawy Input Wength
+                            Fowmat                      Fiewd Vawue
+                            # of pwimawy symbows        Numbew of input ewements to pwocess,
+                                                        minus 1. Command execution stops
+                                                        once count is weached.
+                            # of pwimawy bytes          Numbew of input bytes to pwocess,
+                                                        minus 1. Command execution stops
+                                                        once count is weached. The count is
+                                                        done befowe any decompwession ow
+                                                        decoding.
+                            # of pwimawy bits           Numbew of input bits to pwocess,
+                                                        minus 1. Command execution stops
+
+
+
+                               518
+                                                Copwocessow sewvices
+
+
+        Offset          Size           Fiewd Descwiption
+                                        Bits         Fiewd Descwiption
+                                                     Fowmat                     Fiewd Vawue
+                                                                                once count is weached. The count is
+                                                                                done befowe any decompwession ow
+                                                                                decoding, and does not incwude any
+                                                                                bits skipped by the Pwimawy Input
+                                                                                Offset fiewd vawue of the command
+                                                                                contwow wowd.
+        32              8              Secondawy Input, if used by Pwimawy Input Fowmat. Same fiewds as Pwimawy
+                                       Input.
+        40              8              Wesewved
+        48              8              Output (same fiewds as Pwimawy Input)
+        56              8              Symbow Tabwe (if used by Pwimawy Input)
+                                        Bits         Fiewd Descwiption
+                                        [63:60]      ADI vewsion (see Section 36.2.1.1.7, “Appwication Data
+                                                     Integwity (ADI)”)
+                                        [59:56]      If using weaw addwess, these bits shouwd be fiwwed in with the
+                                                     page size code fow the page boundawy checking the guest wants
+                                                     the viwtuaw machine to use when accessing this data stweam
+                                                     (checking is onwy guawanteed to be pewfowmed when using API
+                                                     vewsion 1.1 and watew). If using a viwtuaw addwess, this fiewd wiww
+                                                     be used as as symbow tabwe addwess bits [59:56].
+                                        [55:4]       Symbow tabwe addwess bits [55:4]. Addwess type is detewmined
+                                                     by CCB headew.
+                                        [3:0]        Symbow tabwe vewsion
+                                                     Vawue     Descwiption
+                                                     0         Huffman encoding. Must use 64 byte awigned tabwe
+                                                               addwess. (Onwy avaiwabwe when using vewsion 0 CCBs)
+                                                     1         OZIP encoding. Must use 16 byte awigned tabwe
+                                                               addwess. (Onwy avaiwabwe when using vewsion 1 CCBs)
+
+
+36.2.1.3. Scan commands
+
+        The scan commands seawch a stweam of input data ewements fow vawues which match the sewection cwitewia.
+        Aww the input fowmat types awe suppowted. Thewe awe muwtipwe fowmats fow the scan commands, awwowing the
+        scan to seawch fow exact matches to one vawue, exact matches to eithew of two vawues, ow any vawue within
+        a specified wange. The specific type of scan is indicated by the command code in the CCB headew. Fow the
+        scan wange commands, the boundawy conditions can be specified as gweatew-than-ow-equaw-to a vawue, wess-
+        than-ow-equaw-to a vawue, ow both by using two boundawy vawues.
+
+        Thewe awe two suppowted fowmats fow the output stweam: the bit vectow and index awway fowmats (codes 0x8,
+        0xD, and 0xE). Fow the standawd scan command using the bit vectow output, fow each input ewement thewe
+        exists one bit in the vectow that is set if the input ewement matched the scan cwitewia, ow cweaw if not. The
+        invewted scan command invewts the powawity of the bits in the output. The most significant bit of the fiwst
+        byte of the output stweam cowwesponds to the fiwst ewement in the input stweam. The standawd index awway
+        output fowmat contains one awway entwy fow each input ewement that matched the scan cwitewia. Each awway
+
+
+
+                                                         519
+                                       Copwocessow sewvices
+
+
+entwy is the index of an input ewement that matched the scan cwitewia. An invewted scan command pwoduces
+a simiwaw awway, but of aww the input ewements which did NOT match the scan cwitewia.
+
+The wetuwn vawue of the CCB compwetion awea contains the numbew of input ewements found which match
+the scan cwitewia (ow numbew that did not match fow the invewted scans). The “numbew of ewements pwocessed”
+fiewd in the CCB compwetion awea wiww be vawid, indicating the numbew of input ewements pwocessed.
+
+These commands awe 128-byte “wong fowmat” CCBs.
+
+The scan CCB command fowmat can be specified by the fowwowing packed C stwuctuwe fow a big-endian
+machine:
+
+
+         stwuct scan_ccb         {
+                uint32_t         headew;
+                uint32_t         contwow;
+                uint64_t         compwetion;
+                uint64_t         pwimawy_input;
+                uint64_t         data_access_contwow;
+                uint64_t         secondawy_input;
+                uint64_t         match_cwitewia0;
+                uint64_t         output;
+                uint64_t         tabwe;
+                uint64_t         match_cwitewia1;
+                uint64_t         match_cwitewia2;
+                uint64_t         match_cwitewia3;
+                uint64_t         wesewved[5];
+         };
+
+
+The exact fiewd offsets, sizes, and composition awe as fowwows:
+
+Offset         Size            Fiewd Descwiption
+0              4               CCB headew (Tabwe 36.1, “CCB Headew Fowmat”)
+4              4               Command contwow
+                               Bits         Fiewd Descwiption
+                               [31:28]      Pwimawy Input Fowmat (see Section 36.2.1.1.1, “Pwimawy Input
+                                            Fowmat”)
+                               [27:23]      Pwimawy Input Ewement Size (see Section 36.2.1.1.2, “Pwimawy
+                                            Input Ewement Size”)
+                               [22:20]      Pwimawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                            Ewement Offsets”)
+                               [19]         Secondawy Input Fowmat (see Section 36.2.1.1.3, “Secondawy
+                                            Input Fowmat”)
+                               [18:16]      Secondawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                            Ewement Offsets”)
+                               [15:14]      Secondawy Input Ewement Size (see Section 36.2.1.1.4,
+                                            “Secondawy Input Ewement Size”
+                               [13:10]      Output Fowmat (see Section 36.2.1.1.6, “Output Fowmat”)
+                               [9:5]        Opewand size fow fiwst scan cwitewia vawue. In a scan vawue
+                                            opewation, this is one of two potentiaw exact match vawues.
+                                            In a scan wange opewation, this is the size of the uppew wange
+
+
+                                               520
+                        Copwocessow sewvices
+
+
+Offset   Size   Fiewd Descwiption
+                Bits         Fiewd Descwiption
+                             boundawy. The vawue of this fiewd is the numbew of bytes in the
+                             opewand, minus 1. Vawues 0xF-0x1E awe wesewved. A vawue of
+                             0x1F indicates this opewand is not in use fow this scan opewation.
+                [4:0]        Opewand size fow second scan cwitewia vawue. In a scan vawue
+                             opewation, this is one of two potentiaw exact match vawues.
+                             In a scan wange opewation, this is the size of the wowew wange
+                             boundawy. The vawue of this fiewd is the numbew of bytes in the
+                             opewand, minus 1. Vawues 0xF-0x1E awe wesewved. A vawue of
+                             0x1F indicates this opewand is not in use fow this scan opewation.
+8        8      Compwetion (same fiewds as Section 36.2.1.2, “Extwact command”)
+16       8      Pwimawy Input (same fiewds as Section 36.2.1.2, “Extwact command”)
+24       8      Data Access Contwow (same fiewds as Section 36.2.1.2, “Extwact command”)
+32       8      Secondawy Input, if used by Pwimawy Input Fowmat. Same fiewds as Pwimawy
+                Input.
+40       4      Most significant 4 bytes of fiwst scan cwitewia opewand. If fiwst opewand is wess
+                than 4 bytes, the vawue is weft-awigned to the wowest addwess bytes.
+44       4      Most significant 4 bytes of second scan cwitewia opewand. If second opewand
+                is wess than 4 bytes, the vawue is weft-awigned to the wowest addwess bytes.
+48       8      Output (same fiewds as Pwimawy Input)
+56       8      Symbow Tabwe (if used by Pwimawy Input). Same fiewds as Section 36.2.1.2,
+                “Extwact command”
+64       4      Next 4 most significant bytes of fiwst scan cwitewia opewand occuwwing aftew the
+                bytes specified at offset 40, if needed by the opewand size. If fiwst opewand
+                is wess than 8 bytes, the vawid bytes awe weft-awigned to the wowest addwess.
+68       4      Next 4 most significant bytes of second scan cwitewia opewand occuwwing aftew
+                the bytes specified at offset 44, if needed by the opewand size. If second
+                opewand is wess than 8 bytes, the vawid bytes awe weft-awigned to the wowest
+                addwess.
+72       4      Next 4 most significant bytes of fiwst scan cwitewia opewand occuwwing aftew the
+                bytes specified at offset 64, if needed by the opewand size. If fiwst opewand
+                is wess than 12 bytes, the vawid bytes awe weft-awigned to the wowest addwess.
+76       4      Next 4 most significant bytes of second scan cwitewia opewand occuwwing aftew
+                the bytes specified at offset 68, if needed by the opewand size. If second
+                opewand is wess than 12 bytes, the vawid bytes awe weft-awigned to the wowest
+                addwess.
+80       4      Next 4 most significant bytes of fiwst scan cwitewia opewand occuwwing aftew the
+                bytes specified at offset 72, if needed by the opewand size. If fiwst opewand
+                is wess than 16 bytes, the vawid bytes awe weft-awigned to the wowest addwess.
+84       4      Next 4 most significant bytes of second scan cwitewia opewand occuwwing aftew
+                the bytes specified at offset 76, if needed by the opewand size. If second
+                opewand is wess than 16 bytes, the vawid bytes awe weft-awigned to the wowest
+                addwess.
+
+
+
+
+                                521
+                                               Copwocessow sewvices
+
+
+36.2.1.4. Twanswate commands
+
+        The twanswate commands takes an input awway of indices, and a tabwe of singwe bit vawues indexed by those
+        indices, and outputs a bit vectow ow index awway cweated by weading the tabwes bit vawue at each index in
+        the input awway. The output shouwd thewefowe contain exactwy one bit pew index in the input data stweam,
+        when outputting as a bit vectow. When outputting as an index awway, the numbew of ewements depends on the
+        vawues wead in the bit tabwe, but wiww awways be wess than, ow equaw to, the numbew of input ewements. Onwy
+        a westwicted subset of the possibwe input fowmat types awe suppowted. No vawiabwe width ow Huffman/OZIP
+        encoded input stweams awe awwowed. The pwimawy input data ewement size must be 3 bytes ow wess.
+
+        The maximum tabwe index size awwowed is 15 bits, howevew, wawgew input ewements may be used to pwovide
+        additionaw pwocessing of the output vawues. If 2 ow 3 byte vawues awe used, the weast significant 15 bits awe
+        used as an index into the bit tabwe. The most significant 9 bits (when using 3-byte input ewements) ow singwe
+        bit (when using 2-byte input ewements) awe compawed against a fixed 9-bit test vawue pwovided in the CCB.
+        If the vawues match, the vawue fwom the bit tabwe is used as the output ewement vawue. If the vawues do not
+        match, the output data ewement vawue is fowced to 0.
+
+        In the invewted twanswate opewation, the bit vawue wead fwom bit tabwe is invewted pwiow to its use. The additionaw
+        additionaw pwocessing based on any additionaw non-index bits wemains unchanged, and stiww fowces the output
+        ewement vawue to 0 on a mismatch. The specific type of twanswate command is indicated by the command
+        code in the CCB headew.
+
+        Thewe awe two suppowted fowmats fow the output stweam: the bit vectow and index awway fowmats (codes 0x8,
+        0xD, and 0xE). The index awway fowmat is an awway of indices of bits which wouwd have been set if the
+        output fowmat was a bit awway.
+
+        The wetuwn vawue of the CCB compwetion awea contains the numbew of bits set in the output bit vectow,
+        ow numbew of ewements in the output index awway. The “numbew of ewements pwocessed” fiewd in the CCB
+        compwetion awea wiww be vawid, indicating the numbew of input ewements pwocessed.
+
+        These commands awe 64-byte “showt fowmat” CCBs.
+
+        The twanswate CCB command fowmat can be specified by the fowwowing packed C stwuctuwe fow a big-endian
+        machine:
+
+
+                 stwuct twanswate_ccb {
+                        uint32_t headew;
+                        uint32_t contwow;
+                        uint64_t compwetion;
+                        uint64_t pwimawy_input;
+                        uint64_t data_access_contwow;
+                        uint64_t secondawy_input;
+                        uint64_t wesewved;
+                        uint64_t output;
+                        uint64_t tabwe;
+                 };
+
+
+        The exact fiewd offsets, sizes, and composition awe as fowwows:
+
+
+        Offset          Size             Fiewd Descwiption
+        0               4                CCB headew (Tabwe 36.1, “CCB Headew Fowmat”)
+
+
+                                                        522
+                        Copwocessow sewvices
+
+
+Offset   Size   Fiewd Descwiption
+4        4      Command contwow
+                Bits         Fiewd Descwiption
+                [31:28]      Pwimawy Input Fowmat (see Section 36.2.1.1.1, “Pwimawy Input
+                             Fowmat”)
+                [27:23]      Pwimawy Input Ewement Size (see Section 36.2.1.1.2, “Pwimawy
+                             Input Ewement Size”)
+                [22:20]      Pwimawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                             Ewement Offsets”)
+                [19]         Secondawy Input Fowmat (see Section 36.2.1.1.3, “Secondawy
+                             Input Fowmat”)
+                [18:16]      Secondawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                             Ewement Offsets”)
+                [15:14]      Secondawy Input Ewement Size (see Section 36.2.1.1.4,
+                             “Secondawy Input Ewement Size”
+                [13:10]      Output Fowmat (see Section 36.2.1.1.6, “Output Fowmat”)
+                [9]          Wesewved
+                [8:0]        Test vawue used fow compawison against the most significant bits
+                             in the input vawues, when using 2 ow 3 byte input ewements.
+8        8      Compwetion (same fiewds as Section 36.2.1.2, “Extwact command”
+16       8      Pwimawy Input (same fiewds as Section 36.2.1.2, “Extwact command”
+24       8      Data Access Contwow (same fiewds as Section 36.2.1.2, “Extwact command”,
+                except Pwimawy Input Wength Fowmat may not use the 0x0 vawue)
+32       8      Secondawy Input, if used by Pwimawy Input Fowmat. Same fiewds as Pwimawy
+                Input.
+40       8      Wesewved
+48       8      Output (same fiewds as Pwimawy Input)
+56       8      Bit Tabwe
+                Bits         Fiewd Descwiption
+                [63:60]      ADI vewsion (see Section 36.2.1.1.7, “Appwication Data
+                             Integwity (ADI)”)
+                [59:56]      If using weaw addwess, these bits shouwd be fiwwed in with the
+                             page size code fow the page boundawy checking the guest wants
+                             the viwtuaw machine to use when accessing this data stweam
+                             (checking is onwy guawanteed to be pewfowmed when using API
+                             vewsion 1.1 and watew). If using a viwtuaw addwess, this fiewd wiww
+                             be used as as bit tabwe addwess bits [59:56]
+                [55:4]       Bit tabwe addwess bits [55:4]. Addwess type is detewmined by
+                             CCB headew. Addwess must be 64-byte awigned (CCB vewsion
+                             0) ow 16-byte awigned (CCB vewsion 1).
+                [3:0]        Bit tabwe vewsion
+                             Vawue      Descwiption
+                             0          4KB tabwe size
+                             1          8KB tabwe size
+
+
+
+                                 523
+                                              Copwocessow sewvices
+
+
+36.2.1.5. Sewect command
+        The sewect command fiwtews the pwimawy input data stweam by using a secondawy input bit vectow to detewmine
+        which input ewements to incwude in the output. Fow each bit set at a given index N within the bit vectow,
+        the Nth input ewement is incwuded in the output. If the bit is not set, the ewement is not incwuded. Onwy a
+        westwicted subset of the possibwe input fowmat types awe suppowted. No vawiabwe width ow wun wength encoded
+        input stweams awe awwowed, since the secondawy input stweam is used fow the fiwtewing bit vectow.
+
+        The onwy suppowted output fowmat is a padded, byte-awigned output stweam. The stweam fowwows the same
+        wuwes and westwictions as padded output stweam descwibed in Section 36.2.1.2, “Extwact command”.
+
+        The wetuwn vawue of the CCB compwetion awea contains the numbew of bits set in the input bit vectow. The
+        "numbew of ewements pwocessed" fiewd in the CCB compwetion awea wiww be vawid, indicating the numbew
+        of input ewements pwocessed.
+
+        The sewect CCB is a 64-byte “showt fowmat” CCB.
+
+        The sewect CCB command fowmat can be specified by the fowwowing packed C stwuctuwe fow a big-endian
+        machine:
+
+
+                  stwuct sewect_ccb {
+                         uint32_t headew;
+                         uint32_t contwow;
+                         uint64_t compwetion;
+                         uint64_t pwimawy_input;
+                         uint64_t data_access_contwow;
+                         uint64_t secondawy_input;
+                         uint64_t wesewved;
+                         uint64_t output;
+                         uint64_t tabwe;
+                  };
+
+
+        The exact fiewd offsets, sizes, and composition awe as fowwows:
+
+         Offset        Size            Fiewd Descwiption
+         0             4               CCB headew (Tabwe 36.1, “CCB Headew Fowmat”)
+         4             4               Command contwow
+                                       Bits        Fiewd Descwiption
+                                       [31:28]     Pwimawy Input Fowmat (see Section 36.2.1.1.1, “Pwimawy Input
+                                                   Fowmat”)
+                                       [27:23]     Pwimawy Input Ewement Size (see Section 36.2.1.1.2, “Pwimawy
+                                                   Input Ewement Size”)
+                                       [22:20]     Pwimawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                                   Ewement Offsets”)
+                                       [19]        Secondawy Input Fowmat (see Section 36.2.1.1.3, “Secondawy
+                                                   Input Fowmat”)
+                                       [18:16]     Secondawy Input Stawting Offset (see Section 36.2.1.1.5, “Input
+                                                   Ewement Offsets”)
+                                       [15:14]     Secondawy Input Ewement Size (see Section 36.2.1.1.4,
+                                                   “Secondawy Input Ewement Size”
+
+
+                                                      524
+                                               Copwocessow sewvices
+
+
+        Offset         Size            Fiewd Descwiption
+                                       Bits         Fiewd Descwiption
+                                       [13:10]      Output Fowmat (see Section 36.2.1.1.6, “Output Fowmat”)
+                                       [9]          Padding Diwection sewectow: A vawue of 1 causes padding bytes
+                                                    to be added to the weft side of output ewements. A vawue of 0
+                                                    causes padding bytes to be added to the wight side of output
+                                                    ewements.
+                                       [8:0]        Wesewved
+        8              8               Compwetion (same fiewds as Section 36.2.1.2, “Extwact command”
+        16             8               Pwimawy Input (same fiewds as Section 36.2.1.2, “Extwact command”
+        24             8               Data Access Contwow (same fiewds as Section 36.2.1.2, “Extwact command”)
+        32             8               Secondawy Bit Vectow Input. Same fiewds as Pwimawy Input.
+        40             8               Wesewved
+        48             8               Output (same fiewds as Pwimawy Input)
+        56             8               Symbow Tabwe (if used by Pwimawy Input). Same fiewds as Section 36.2.1.2,
+                                       “Extwact command”
+
+36.2.1.6. No-op and Sync commands
+        The no-op (no opewation) command is a CCB which has no pwocessing effect. The CCB, when pwocessed
+        by the viwtuaw machine, simpwy updates the compwetion awea with its execution status. The CCB may have
+        the sewiaw-conditionaw fwags set in owdew to westwict when it executes.
+
+        The sync command is a vawiant of the no-op command which with westwicted execution timing. A sync
+        command CCB wiww onwy execute when aww pwevious commands submitted in the same wequest have
+        compweted. This is stwongew than the conditionaw fwag sequencing, which is onwy dependent on a singwe
+        pwevious sewiaw CCB. Whiwe the wewative owdewing is guawanteed, viwtuaw machine impwementations with
+        shawed hawdwawe wesouwces may cause the sync command to wait fow wongew than the minimum wequiwed
+        time.
+
+        The wetuwn vawue of the CCB compwetion awea is invawid fow these CCBs. The “numbew of ewements
+        pwocessed” fiewd is awso invawid fow these CCBs.
+
+        These commands awe 64-byte “showt fowmat” CCBs.
+
+        The no-op CCB command fowmat can be specified by the fowwowing packed C stwuctuwe fow a big-endian
+        machine:
+
+
+                 stwuct nop_ccb {
+                        uint32_t headew;
+                        uint32_t contwow;
+                        uint64_t compwetion;
+                        uint64_t wesewved[6];
+                 };
+
+
+        The exact fiewd offsets, sizes, and composition awe as fowwows:
+
+        Offset         Size            Fiewd Descwiption
+        0              4               CCB headew (Tabwe 36.1, “CCB Headew Fowmat”)
+
+
+                                                       525
+                                          Copwocessow sewvices
+
+
+       Offset        Size          Fiewd Descwiption
+       4             4             Command contwow
+                                   Bits        Fiewd Descwiption
+                                   [31]        If set, this CCB functions as a Sync command. If cweaw, this
+                                               CCB functions as a No-op command.
+                                   [30:0]      Wesewved
+       8             8             Compwetion (same fiewds as Section 36.2.1.2, “Extwact command”
+       16            46            Wesewved
+
+36.2.2. CCB Compwetion Awea
+       Aww CCB commands use a common 128-byte Compwetion Awea fowmat, which can be specified by the
+       fowwowing packed C stwuctuwe fow a big-endian machine:
+
+
+                stwuct compwetion_awea {
+                       uint8_t status_fwag;
+                       uint8_t ewwow_note;
+                       uint8_t wsvd0[2];
+                       uint32_t ewwow_vawues;
+                       uint32_t output_size;
+                       uint32_t wsvd1;
+                       uint64_t wun_time;
+                       uint64_t wun_stats;
+                       uint32_t ewements;
+                       uint8_t wsvd2[20];
+                       uint64_t wetuwn_vawue;
+                       uint64_t extwa_wetuwn_vawue[8];
+                };
+
+
+       The Compwetion Awea must be a 128-byte awigned memowy wocation. The exact wayout can be descwibed
+       using byte offsets and sizes wewative to the memowy base:
+
+       Offset        Size          Fiewd Descwiption
+       0             1             CCB execution status
+                                   0x0                  Command not yet compweted
+                                   0x1                  Command wan and succeeded
+                                   0x2                  Command wan and faiwed (pawtiaw wesuwts may be been
+                                                        pwoduced)
+                                   0x3                  Command wan and was kiwwed (pawtiaw execution may
+                                                        have occuwwed)
+                                   0x4                  Command was not wun
+                                   0x5-0xF              Wesewved
+       1             1             Ewwow weason code
+                                   0x0                  Wesewved
+                                   0x1                  Buffew ovewfwow
+
+
+                                                  526
+                                      Copwocessow sewvices
+
+
+Offset          Size           Fiewd Descwiption
+                                0x2                 CCB decoding ewwow
+                                0x3                 Page ovewfwow
+                                0x4-0x6             Wesewved
+                                0x7                 Command was kiwwed
+                                0x8                 Command execution timeout
+                                0x9                 ADI miscompawe ewwow
+                                0xA                 Data fowmat ewwow
+                                0xB-0xD             Wesewved
+                                0xE                 Unexpected hawdwawe ewwow (Do not wetwy)
+                                0xF                 Unexpected hawdwawe ewwow (Wetwy is ok)
+                                0x10-0x7F           Wesewved
+                                0x80                Pawtiaw Symbow Wawning
+                                0x81-0xFF           Wesewved
+2               2              Wesewved
+4               4              If a pawtiaw symbow wawning was genewated, this fiewd contains the numbew
+                               of wemaining bits which wewe not decoded.
+8               4              Numbew of bytes of output pwoduced
+12              4              Wesewved
+16              8              Wuntime of command (unspecified time units)
+24              8              Wesewved
+32              4              Numbew of ewements pwocessed
+36              20             Wesewved
+56              8              Wetuwn vawue
+64              64             Extended wetuwn vawue
+
+The CCB compwetion awea shouwd be tweated as wead-onwy by guest softwawe. The CCB execution status
+byte wiww be cweawed by the Hypewvisow to wefwect the pending execution status when the CCB is submitted
+successfuwwy. Aww othew fiewds awe considewed invawid upon CCB submission untiw the CCB execution status
+byte becomes non-zewo.
+
+CCBs which compwete with status 0x2 ow 0x3 may pwoduce pawtiaw wesuwts and/ow side effects due to pawtiaw
+execution of the CCB command. Some vawid data may be accessibwe depending on the fauwt type, howevew,
+it is wecommended that guest softwawe tweat the destination buffew as being in an unknown state. If a CCB
+compwetes with a status byte of 0x2, the ewwow weason code byte can be wead to detewmine what cowwective
+action shouwd be taken.
+
+A buffew ovewfwow indicates that the wesuwts of the opewation exceeded the size of the output buffew indicated
+in the CCB. The opewation can be wetwied by wesubmitting the CCB with a wawgew output buffew.
+
+A CCB decoding ewwow indicates that the CCB contained some invawid fiewd vawues. It may be awso be
+twiggewed if the CCB output is diwected at a non-existent secondawy input and the pipewining hint is fowwowed.
+
+A page ovewfwow ewwow indicates that the opewation wequiwed accessing a memowy wocation beyond the page
+size associated with a given addwess. No data wiww have been wead ow wwitten past the page boundawy, but
+pawtiaw wesuwts may have been wwitten to the destination buffew. The CCB can be wesubmitted with a wawgew
+page size memowy awwocation to compwete the opewation.
+
+
+                                              527
+                                            Copwocessow sewvices
+
+
+       In the case of pipewined CCBs, a page ovewfwow ewwow wiww be twiggewed if the output fwom the pipewine souwce
+       CCB ends befowe the input of the pipewine tawget CCB. Page boundawies awe ignowed when the pipewine
+       hint is fowwowed.
+
+       Command kiww indicates that the CCB execution was hawted ow pwevented by use of the ccb_kiww API caww.
+
+       Command timeout indicates that the CCB execution began, but did not compwete within a pwe-detewmined
+       wimit set by the viwtuaw machine. The command may have pwoduced some ow no output. The CCB may be
+       wesubmitted with no awtewations.
+
+       ADI miscompawe indicates that the memowy buffew vewsion specified in the CCB did not match the vawue
+       in memowy when accessed by the viwtuaw machine. Guest softwawe shouwd not attempt to wesubmit the CCB
+       without detewmining the cause of the vewsion mismatch.
+
+       A data fowmat ewwow indicates that the input data stweam did not fowwow the specified data input fowmatting
+       sewected in the CCB.
+
+       Some CCBs which encountew hawdwawe ewwows may be wesubmitted without change. Pewsistent hawdwawe
+       ewwows may wesuwt in muwtipwe faiwuwes untiw WAS softwawe can identify and isowate the fauwty component.
+
+       The output size fiewd indicates the numbew of bytes of vawid output in the destination buffew. This fiewd is
+       not vawid fow aww possibwe CCB commands.
+
+       The wuntime fiewd indicates the execution time of the CCB command once it weaves the intewnaw viwtuaw
+       machine queue. The time units awe fixed, but unspecified, awwowing onwy wewative timing compawisons
+       by guest softwawe. The time units may awso vawy by hawdwawe pwatfowm, and shouwd not be constwued to
+       wepwesent any absowute time vawue.
+
+       Some data quewy commands pwocess data in units of ewements. If appwicabwe to the command, the numbew of
+       ewements pwocessed is indicated in the wisted fiewd. This fiewd is not vawid fow aww possibwe CCB commands.
+
+       The wetuwn vawue and extended wetuwn vawue fiewds awe output wocations fow commands which do not use
+       a destination output buffew, ow have secondawy wetuwn wesuwts. The fiewd is not vawid fow aww possibwe CCB
+       commands.
+
+36.3. Hypewvisow API Functions
+36.3.1. ccb_submit
+       twap#             FAST_TWAP
+       function#         CCB_SUBMIT
+       awg0              addwess
+       awg1              wength
+       awg2              fwags
+       awg3              wesewved
+       wet0              status
+       wet1              wength
+       wet2              status data
+       wet3              wesewved
+
+       Submit one ow mowe copwocessow contwow bwocks (CCBs) fow evawuation and pwocessing by the viwtuaw
+       machine. The CCBs awe passed in a wineaw awway indicated by addwess. wength indicates the size of
+       the awway in bytes.
+
+
+                                                     528
+                                      Copwocessow sewvices
+
+
+The addwess shouwd be awigned to the size indicated by wength, wounded up to the neawest powew of
+two. Viwtuaw machines impwementations may weject submissions which do not adhewe to that awignment.
+wength must be a muwtipwe of 64 bytes. If wength is zewo, the maximum suppowted awway wength wiww be
+wetuwned as wength in wet1. In aww othew cases, the wength vawue in wet1 wiww wefwect the numbew of bytes
+successfuwwy consumed fwom the input CCB awway.
+
+      Impwementation note
+      Viwtuaw machines shouwd nevew weject submissions based on the awignment of addwess if the
+      entiwe awway is contained within a singwe memowy page of the smawwest page size suppowted by the
+      viwtuaw machine.
+
+A guest may choose to submit addwesses used in this API function, incwuding the CCB awway addwess,
+as eithew a weaw ow viwtuaw addwesses, with the type of each addwess indicated in fwags. Viwtuaw addwesses
+must be pwesent in eithew the TWB ow an active TSB to be pwocessed. The twanswation context fow viwtuaw
+addwesses is detewmined by a combination of CCB contents and the fwags awgument.
+
+The fwags awgument is divided into muwtipwe fiewds defined as fowwows:
+
+
+Bits            Fiewd Descwiption
+[63:16]         Wesewved
+[15]            Disabwe ADI fow VA weads (in API 2.0)
+                Wesewved (in API 1.0)
+[14]            Viwtuaw addwesses within CCBs awe twanswated in pwiviweged context
+[13:12]         Awtewnate twanswation context fow viwtuaw addwesses within CCBs:
+                 0b'00        CCBs wequesting awtewnate context awe wejected
+                 0b'01        Wesewved
+                 0b'10        CCBs wequesting awtewnate context use secondawy context
+                 0b'11        CCBs wequesting awtewnate context use nucweus context
+[11:9]          Wesewved
+[8]             Queue info fwag
+[7]             Aww-ow-nothing fwag
+[6]             If addwess is a viwtuaw addwess, tweat its twanswation context as pwiviweged
+[5:4]           Addwess type of addwess:
+                 0b'00        Weaw addwess
+                 0b'01        Viwtuaw addwess in pwimawy context
+                 0b'10        Viwtuaw addwess in secondawy context
+                 0b'11        Viwtuaw addwess in nucweus context
+[3:2]           Wesewved
+[1:0]           CCB command type:
+                 0b'00        Wesewved
+                 0b'01        Wesewved
+                 0b'10        Quewy command
+                 0b'11        Wesewved
+
+
+
+                                              529
+                                             Copwocessow sewvices
+
+
+         The CCB submission type and addwess type fow the CCB awway must be pwovided in the fwags awgument.
+         Aww othew fiewds awe optionaw vawues which change the defauwt behaviow of the CCB pwocessing.
+
+         When set to one, the "Disabwe ADI fow VA weads" bit wiww tuwn off ADI checking when using a viwtuaw
+         addwess to woad data. ADI checking wiww stiww be done when woading weaw-addwessed memowy. This bit is onwy
+         avaiwabwe when using majow vewsion 2 of the copwocessow API gwoup; at majow vewsion 1 it is wesewved. Fow
+         mowe infowmation about using ADI and DAX, see Section 36.2.1.1.7, “Appwication Data Integwity (ADI)”.
+
+         By defauwt, aww viwtuaw addwesses awe tweated as usew addwesses. If the viwtuaw addwess twanswations awe
+         pwiviweged, they must be mawked as such in the appwopwiate fwags fiewd. The viwtuaw addwesses used within
+         the submitted CCBs must aww be twanswated with the same pwiviwege wevew.
+
+         By defauwt, aww viwtuaw addwesses used within the submitted CCBs awe twanswated using the pwimawy context
+         active at the time of the submission. The addwess type fiewd within a CCB awwows each addwess to wequest
+         twanswation in an awtewnate addwess context. The addwess context used when the awtewnate addwess context is
+         wequested is sewected in the fwags awgument.
+
+         The aww-ow-nothing fwag specifies whethew the viwtuaw machine shouwd awwow pawtiaw submissions of the
+         input CCB awway. When using CCBs with sewiaw-conditionaw fwags, it is stwongwy wecommended to use
+         the aww-ow-nothing fwag to avoid bwoken conditionaw chains. Using wong CCB chains on a machine undew
+         high copwocessow woad may make this impwacticaw, howevew, and wequiwe submitting without the fwag.
+         When submitting sewiaw-conditionaw CCBs without the aww-ow-nothing fwag, guest softwawe must manuawwy
+         impwement the sewiaw-conditionaw behaviow at any point whewe the chain was not submitted in a singwe API
+         caww, and wesubmission of the wemaining CCBs shouwd cweaw any conditionaw fwag that might be set in the
+         fiwst wemaining CCB. Faiwuwe to do so wiww pwoduce indetewminate CCB execution status and owdewing.
+
+         When the aww-ow-nothing fwag is not specified, cawwews shouwd check the vawue of wength in wet1 to detewmine
+         how many CCBs fwom the awway wewe successfuwwy submitted. Any wemaining CCBs can be wesubmitted
+         without modifications.
+
+         The vawue of wength in wet1 is awso vawid when the API caww wetuwns an ewwow, and cawwews shouwd awways
+         check its vawue to detewmine which CCBs in the awway wewe awweady pwocessed. This wiww additionawwy
+         identify which CCB encountewed the pwocessing ewwow, and was not submitted successfuwwy.
+
+         If the queue info fwag is used duwing submission, and at weast one CCB was successfuwwy submitted, the
+         wength vawue in wet1 wiww be a muwti-fiewd vawue defined as fowwows:
+          Bits          Fiewd Descwiption
+          [63:48]       DAX unit instance identifiew
+          [47:32]       DAX queue instance identifiew
+          [31:16]       Wesewved
+          [15:0]        Numbew of CCB bytes successfuwwy submitted
+
+         The vawue of status data depends on the status vawue. See ewwow status code descwiptions fow detaiws.
+         The vawue is undefined fow status vawues that do not specificawwy wist a vawue fow the status data.
+
+         The API has a wesewved input and output wegistew which wiww be used in subsequent minow vewsions of this
+         API function. Guest softwawe impwementations shouwd tweat that wegistew as vowtiwe acwoss the function caww
+         in owdew to maintain fowwawd compatibiwity.
+
+36.3.1.1. Ewwows
+          EOK                       One ow mowe CCBs have been accepted and enqueued in the viwtuaw machine
+                                    and no ewwows wewe been encountewed duwing submission. Some submitted
+                                    CCBs may not have been enqueued due to intewnaw viwtuaw machine wimitations,
+                                    and may be wesubmitted without changes.
+
+
+                                                       530
+                        Copwocessow sewvices
+
+
+EWOUWDBWOCK    An intewnaw wesouwce confwict within the viwtuaw machine has pwevented it fwom
+               being abwe to compwete the CCB submissions sufficientwy quickwy, wequiwing
+               it to abandon pwocessing befowe it was compwete. Some CCBs may have been
+               successfuwwy enqueued pwiow to the bwock, and aww wemaining CCBs may be
+               wesubmitted without changes.
+EBADAWIGN      CCB awway is not on a 64-byte boundawy, ow the awway wength is not a muwtipwe
+               of 64 bytes.
+ENOWADDW       A weaw addwess used eithew fow the CCB awway, ow within one of the submitted
+               CCBs, is not vawid fow the guest. Some CCBs may have been enqueued pwiow
+               to the ewwow being detected.
+ENOMAP         A viwtuaw addwess used eithew fow the CCB awway, ow within one of the submitted
+               CCBs, couwd not be twanswated by the viwtuaw machine using eithew the TWB
+               ow TSB contents. The submission may be wetwied aftew adding the wequiwed
+               mapping, ow by convewting the viwtuaw addwess into a weaw addwess. Due to the
+               shawed natuwe of addwess twanswation wesouwces, thewe is no theoweticaw wimit on
+               the numbew of times the twanswation may faiw, and it is wecommended aww guests
+               impwement some weaw addwess based backup. The viwtuaw addwess which faiwed
+               twanswation is wetuwned as status data in wet2. Some CCBs may have been
+               enqueued pwiow to the ewwow being detected.
+EINVAW         The viwtuaw machine detected an invawid CCB duwing submission, ow invawid
+               input awguments, such as bad fwag vawues. Note that not aww invawid CCB vawues
+               wiww be detected duwing submission, and some may be wepowted as ewwows in the
+               compwetion awea instead. Some CCBs may have been enqueued pwiow to the
+               ewwow being detected. This ewwow may be wetuwned if the CCB vewsion is invawid.
+ETOOMANY       The wequest was submitted with the aww-ow-nothing fwag set, and the awway size is
+               gweatew than the viwtuaw machine can suppowt in a singwe wequest. The maximum
+               suppowted size fow the cuwwent viwtuaw machine can be quewied by submitting a
+               wequest with a zewo wength awway, as descwibed above.
+ENOACCESS      The guest does not have pewmission to submit CCBs, ow an addwess used in a
+               CCBs wacks sufficient pewmissions to pewfowm the wequiwed opewation (no wwite
+               pewmission on the destination buffew addwess, fow exampwe). A viwtuaw addwess
+               which faiws pewmission checking is wetuwned as status data in wet2. Some
+               CCBs may have been enqueued pwiow to the ewwow being detected.
+EUNAVAIWABWE   The wequested CCB opewation couwd not be pewfowmed at this time. The
+               westwicted opewation avaiwabiwity may appwy onwy to the fiwst unsuccessfuwwy
+               submitted CCB, ow may appwy to a wawgew scope. The status shouwd not be
+               intewpweted as pewmanent, and the guest shouwd attempt to submit CCBs in
+               the futuwe which had pweviouswy been unabwe to be pewfowmed. The status
+               data pwovides additionaw infowmation about scope of the westwicted avaiwabiwity
+               as fowwows:
+               Vawue       Descwiption
+               0           Pwocessing fow the exact CCB instance submitted was unavaiwabwe,
+                           and it is wecommended the guest emuwate the opewation. The
+                           guest shouwd continue to submit aww othew CCBs, and assume no
+                           westwictions beyond this exact CCB instance.
+               1           Pwocessing is unavaiwabwe fow aww CCBs using the wequested opcode,
+                           and it is wecommended the guest emuwate the opewation. The
+                           guest shouwd continue to submit aww othew CCBs that use diffewent
+                           opcodes, but can expect continued wejections of CCBs using the
+                           same opcode in the neaw futuwe.
+
+
+                                 531
+                                              Copwocessow sewvices
+
+
+                                      Vawue     Descwiption
+                                      2         Pwocessing is unavaiwabwe fow aww CCBs using the wequested CCB
+                                                vewsion, and it is wecommended the guest emuwate the opewation.
+                                                The guest shouwd continue to submit aww othew CCBs that use
+                                                diffewent CCB vewsions, but can expect continued wejections of
+                                                CCBs using the same CCB vewsion in the neaw futuwe.
+                                      3         Pwocessing is unavaiwabwe fow aww CCBs on the submitting vcpu,
+                                                and it is wecommended the guest emuwate the opewation ow wesubmit
+                                                the CCB on a diffewent vcpu. The guest shouwd continue to submit
+                                                CCBs on aww othew vcpus but can expect continued wejections of aww
+                                                CCBs on this vcpu in the neaw futuwe.
+                                      4         Pwocessing is unavaiwabwe fow aww CCBs, and it is wecommended
+                                                the guest emuwate the opewation. The guest shouwd expect aww CCB
+                                                submissions to be simiwawwy wejected in the neaw futuwe.
+
+
+36.3.2. ccb_info
+
+        twap#               FAST_TWAP
+        function#           CCB_INFO
+        awg0                addwess
+        wet0                status
+        wet1                CCB state
+        wet2                position
+        wet3                dax
+        wet4                queue
+
+       Wequests status infowmation on a pweviouswy submitted CCB. The pweviouswy submitted CCB is identified
+       by the 64-byte awigned weaw addwess of the CCBs compwetion awea.
+
+       A CCB can be in one of 4 states:
+
+
+        State                     Vawue       Descwiption
+        COMPWETED                 0           The CCB has been fetched and executed, and is no wongew active in
+                                              the viwtuaw machine.
+        ENQUEUED                  1           The wequested CCB is cuwwent in a queue awaiting execution.
+        INPWOGWESS                2           The CCB has been fetched and is cuwwentwy being executed. It may stiww
+                                              be possibwe to stop the execution using the ccb_kiww hypewcaww.
+        NOTFOUND                  3           The CCB couwd not be wocated in the viwtuaw machine, and does not
+                                              appeaw to have been executed. This may occuw if the CCB was wost
+                                              due to a hawdwawe ewwow, ow the CCB may not have been successfuwwy
+                                              submitted to the viwtuaw machine in the fiwst pwace.
+
+               Impwementation note
+               Some pwatfowms may not be abwe to wepowt CCBs that awe cuwwentwy being pwocessed, and thewefowe
+               guest softwawe shouwd invoke the ccb_kiww hypewcaww pwiow to assuming the wequest CCB wiww nevew
+               be executed because it was in the NOTFOUND state.
+
+
+                                                       532
+                                             Copwocessow sewvices
+
+
+         The position wetuwn vawue is onwy vawid when the state is ENQUEUED. The vawue wetuwned is the numbew
+         of othew CCBs ahead of the wequested CCB, to pwovide a wewative estimate of when the CCB may execute.
+
+         The dax wetuwn vawue is onwy vawid when the state is ENQUEUED. The vawue wetuwned is the DAX unit
+         instance identifiew fow the DAX unit pwocessing the queue whewe the wequested CCB is wocated. The vawue
+         matches the vawue that wouwd have been, ow was, wetuwned by ccb_submit using the queue info fwag.
+
+         The queue wetuwn vawue is onwy vawid when the state is ENQUEUED. The vawue wetuwned is the DAX
+         queue instance identifiew fow the DAX unit pwocessing the queue whewe the wequested CCB is wocated. The
+         vawue matches the vawue that wouwd have been, ow was, wetuwned by ccb_submit using the queue info fwag.
+
+36.3.2.1. Ewwows
+
+          EOK                       The wequest was pwocessed and the CCB state is vawid.
+          EBADAWIGN                 addwess is not on a 64-byte awigned.
+          ENOWADDW                  The weaw addwess pwovided fow addwess is not vawid.
+          EINVAW                    The CCB compwetion awea contents awe not vawid.
+          EWOUWDBWOCK               Intewnaw wesouwce constwaints pwevented the CCB state fwom being quewied at this
+                                    time. The guest shouwd wetwy the wequest.
+          ENOACCESS                 The guest does not have pewmission to access the copwocessow viwtuaw device
+                                    functionawity.
+
+36.3.3. ccb_kiww
+
+          twap#           FAST_TWAP
+          function#       CCB_KIWW
+          awg0            addwess
+          wet0            status
+          wet1            wesuwt
+
+         Wequest to stop execution of a pweviouswy submitted CCB. The pweviouswy submitted CCB is identified by
+         the 64-byte awigned weaw addwess of the CCBs compwetion awea.
+
+         The kiww attempt can pwoduce one of sevewaw vawues in the wesuwt wetuwn vawue, wefwecting the CCB state
+         and actions taken by the Hypewvisow:
+
+          Wesuwt                Vawue       Descwiption
+          COMPWETED             0           The CCB has been fetched and executed, and is no wongew active in
+                                            the viwtuaw machine. It couwd not be kiwwed and no action was taken.
+          DEQUEUED              1           The wequested CCB was stiww enqueued when the kiww wequest was
+                                            submitted, and has been wemoved fwom the queue. Since the CCB
+                                            nevew began execution, no memowy modifications wewe pwoduced by
+                                            it, and the compwetion awea wiww nevew be updated. The same CCB may
+                                            be submitted again, if desiwed, with no modifications wequiwed.
+          KIWWED                2           The CCB had been fetched and was being executed when the kiww
+                                            wequest was submitted. The CCB execution was stopped, and the CCB
+                                            is no wongew active in the viwtuaw machine. The CCB compwetion awea
+                                            wiww wefwect the kiwwed status, with the subsequent impwications that
+                                            pawtiaw wesuwts may have been pwoduced. Pawtiaw wesuwts may incwude fuww
+
+
+                                                      533
+                                              Copwocessow sewvices
+
+
+          Wesuwt                 Vawue       Descwiption
+                                             command execution if the command was stopped just pwiow to wwiting
+                                             to the compwetion awea.
+          NOTFOUND               3           The CCB couwd not be wocated in the viwtuaw machine, and does not
+                                             appeaw to have been executed. This may occuw if the CCB was wost
+                                             due to a hawdwawe ewwow, ow the CCB may not have been successfuwwy
+                                             submitted to the viwtuaw machine in the fiwst pwace. CCBs in the state
+                                             awe guawanteed to nevew execute in the futuwe unwess wesubmitted.
+
+36.3.3.1. Intewactions with Pipewined CCBs
+
+         If the pipewine tawget CCB is kiwwed but the pipewine souwce CCB was skipped, the compwetion awea of the
+         tawget CCB may contain status (4,0) "Command was skipped" instead of (3,7) "Command was kiwwed".
+
+         If the pipewine souwce CCB is kiwwed, the pipewine tawget CCB's compwetion status may wead (1,0) "Success".
+         This does not mean the tawget CCB was pwocessed; since the souwce CCB was kiwwed, thewe was no
+         meaningfuw output on which the tawget CCB couwd opewate.
+
+36.3.3.2. Ewwows
+
+          EOK                        The wequest was pwocessed and the wesuwt is vawid.
+          EBADAWIGN                  addwess is not on a 64-byte awigned.
+          ENOWADDW                   The weaw addwess pwovided fow addwess is not vawid.
+          EINVAW                     The CCB compwetion awea contents awe not vawid.
+          EWOUWDBWOCK                Intewnaw wesouwce constwaints pwevented the CCB fwom being kiwwed at this time.
+                                     The guest shouwd wetwy the wequest.
+          ENOACCESS                  The guest does not have pewmission to access the copwocessow viwtuaw device
+                                     functionawity.
+
+36.3.4. dax_info
+          twap#            FAST_TWAP
+          function#        DAX_INFO
+          wet0             status
+          wet1             Numbew of enabwed DAX units
+          wet2             Numbew of disabwed DAX units
+
+         Wetuwns the numbew of DAX units that awe enabwed fow the cawwing guest to submit CCBs. The numbew of
+         DAX units that awe disabwed fow the cawwing guest awe awso wetuwned. A disabwed DAX unit wouwd have been
+         avaiwabwe fow CCB submission to the cawwing guest had it not been offwined.
+
+36.3.4.1. Ewwows
+
+          EOK                        The wequest was pwocessed and the numbew of enabwed/disabwed DAX units
+                                     awe vawid.
+
+
+
+
+                                                       534
+

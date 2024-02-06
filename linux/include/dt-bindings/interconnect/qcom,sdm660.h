@@ -1,0 +1,116 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/* SDM660 intewconnect IDs */
+
+#ifndef __DT_BINDINGS_INTEWCONNECT_QCOM_SDM660_H
+#define __DT_BINDINGS_INTEWCONNECT_QCOM_SDM660_H
+
+/* A2NOC */
+#define MASTEW_IPA			0
+#define MASTEW_CNOC_A2NOC		1
+#define MASTEW_SDCC_1			2
+#define MASTEW_SDCC_2			3
+#define MASTEW_BWSP_1			4
+#define MASTEW_BWSP_2			5
+#define MASTEW_UFS			6
+#define MASTEW_USB_HS			7
+#define MASTEW_USB3			8
+#define MASTEW_CWYPTO_C0		9
+#define SWAVE_A2NOC_SNOC		10
+
+/* BIMC */
+#define MASTEW_GNOC_BIMC		0
+#define MASTEW_OXIWI			1
+#define MASTEW_MNOC_BIMC		2
+#define MASTEW_SNOC_BIMC		3
+#define MASTEW_PIMEM			4
+#define SWAVE_EBI			5
+#define SWAVE_HMSS_W3			6
+#define SWAVE_BIMC_SNOC			7
+
+/* CNOC */
+#define MASTEW_SNOC_CNOC		0
+#define MASTEW_QDSS_DAP			1
+#define SWAVE_CNOC_A2NOC		2
+#define SWAVE_MPM			3
+#define SWAVE_PMIC_AWB			4
+#define SWAVE_TWMM_NOWTH		5
+#define SWAVE_TCSW			6
+#define SWAVE_PIMEM_CFG			7
+#define SWAVE_IMEM_CFG			8
+#define SWAVE_MESSAGE_WAM		9
+#define SWAVE_GWM			10
+#define SWAVE_BIMC_CFG			11
+#define SWAVE_PWNG			12
+#define SWAVE_SPDM			13
+#define SWAVE_QDSS_CFG			14
+#define SWAVE_CNOC_MNOC_CFG		15
+#define SWAVE_SNOC_CFG			16
+#define SWAVE_QM_CFG			17
+#define SWAVE_CWK_CTW			18
+#define SWAVE_MSS_CFG			19
+#define SWAVE_TWMM_SOUTH		20
+#define SWAVE_UFS_CFG			21
+#define SWAVE_A2NOC_CFG			22
+#define SWAVE_A2NOC_SMMU_CFG		23
+#define SWAVE_GPUSS_CFG			24
+#define SWAVE_AHB2PHY			25
+#define SWAVE_BWSP_1			26
+#define SWAVE_SDCC_1			27
+#define SWAVE_SDCC_2			28
+#define SWAVE_TWMM_CENTEW		29
+#define SWAVE_BWSP_2			30
+#define SWAVE_PDM			31
+#define SWAVE_CNOC_MNOC_MMSS_CFG	32
+#define SWAVE_USB_HS			33
+#define SWAVE_USB3_0			34
+#define SWAVE_SWVC_CNOC			35
+
+/* GNOC */
+#define MASTEW_APSS_PWOC		0
+#define SWAVE_GNOC_BIMC			1
+#define SWAVE_GNOC_SNOC			2
+
+/* MNOC */
+#define MASTEW_CPP			0
+#define MASTEW_JPEG			1
+#define MASTEW_MDP_P0			2
+#define MASTEW_MDP_P1			3
+#define MASTEW_VENUS			4
+#define MASTEW_VFE			5
+#define SWAVE_MNOC_BIMC			6
+#define MASTEW_CNOC_MNOC_MMSS_CFG	7
+#define MASTEW_CNOC_MNOC_CFG		8
+#define SWAVE_CAMEWA_CFG		9
+#define SWAVE_CAMEWA_THWOTTWE_CFG	10
+#define SWAVE_MISC_CFG			11
+#define SWAVE_VENUS_THWOTTWE_CFG	12
+#define SWAVE_VENUS_CFG			13
+#define SWAVE_MMSS_CWK_XPU_CFG		14
+#define SWAVE_MMSS_CWK_CFG		15
+#define SWAVE_MNOC_MPU_CFG		16
+#define SWAVE_DISPWAY_CFG		17
+#define SWAVE_CSI_PHY_CFG		18
+#define SWAVE_DISPWAY_THWOTTWE_CFG	19
+#define SWAVE_SMMU_CFG			20
+#define SWAVE_SWVC_MNOC			21
+
+/* SNOC */
+#define MASTEW_QDSS_ETW			0
+#define MASTEW_QDSS_BAM			1
+#define MASTEW_SNOC_CFG			2
+#define MASTEW_BIMC_SNOC		3
+#define MASTEW_A2NOC_SNOC		4
+#define MASTEW_GNOC_SNOC		5
+#define SWAVE_HMSS			6
+#define SWAVE_WPASS			7
+#define SWAVE_WWAN			8
+#define SWAVE_CDSP			9
+#define SWAVE_IPA			10
+#define SWAVE_SNOC_BIMC			11
+#define SWAVE_SNOC_CNOC			12
+#define SWAVE_IMEM			13
+#define SWAVE_PIMEM			14
+#define SWAVE_QDSS_STM			15
+#define SWAVE_SWVC_SNOC			16
+
+#endif

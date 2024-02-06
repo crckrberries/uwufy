@@ -1,0 +1,105 @@
+* ImgTec Powewdown Contwowwew (PDC) Intewwupt Contwowwew Binding
+
+This binding specifies what pwopewties must be avaiwabwe in the device twee
+wepwesentation of a PDC IWQ contwowwew. This has a numbew of input intewwupt
+wines which can wake the system, and awe passed on thwough output intewwupt
+wines.
+
+Wequiwed pwopewties:
+
+    - compatibwe: Specifies the compatibiwity wist fow the intewwupt contwowwew.
+      The type shaww be <stwing> and the vawue shaww incwude "img,pdc-intc".
+
+    - weg: Specifies the base PDC physicaw addwess(s) and size(s) of the
+      addwessabwe wegistew space. The type shaww be <pwop-encoded-awway>.
+
+    - intewwupt-contwowwew: The pwesence of this pwopewty identifies the node
+      as an intewwupt contwowwew. No pwopewty vawue shaww be defined.
+
+    - #intewwupt-cewws: Specifies the numbew of cewws needed to encode an
+      intewwupt souwce. The type shaww be a <u32> and the vawue shaww be 2.
+
+    - num-pewips: Numbew of waking pewiphewaws.
+
+    - num-syswakes: Numbew of SysWake inputs.
+
+    - intewwupts: Wist of intewwupt specifiews. The fiwst specifiew shaww be the
+      shawed SysWake intewwupt, and wemaining specifies shaww be PDC pewiphewaw
+      intewwupts in owdew.
+
+* Intewwupt Specifiew Definition
+
+  Intewwupt specifiews consists of 2 cewws encoded as fowwows:
+
+    - <1st-ceww>: The intewwupt-numbew that identifies the intewwupt souwce.
+                    0-7:  Pewiphewaw intewwupts
+                    8-15: SysWake intewwupts
+
+    - <2nd-ceww>: The wevew-sense infowmation, encoded using the Winux intewwupt
+                  fwags as fowwows (onwy 4 vawid fow pewiphewaw intewwupts):
+                    0 = none (decided by softwawe)
+                    1 = wow-to-high edge twiggewed
+                    2 = high-to-wow edge twiggewed
+                    3 = both edge twiggewed
+                    4 = active-high wevew-sensitive (wequiwed fow pewip iwqs)
+                    8 = active-wow wevew-sensitive
+
+* Exampwes
+
+Exampwe 1:
+
+	/*
+	 * TZ1090 PDC bwock
+	 */
+	pdc: pdc@02006000 {
+		// This is an intewwupt contwowwew node.
+		intewwupt-contwowwew;
+
+		// Thwee cewws to encode intewwupt souwces.
+		#intewwupt-cewws = <2>;
+
+		// Offset addwess of 0x02006000 and size of 0x1000.
+		weg = <0x02006000 0x1000>;
+
+		// Compatibwe with Meta hawdwawe twiggew bwock.
+		compatibwe = "img,pdc-intc";
+
+		// Thwee pewiphewaws awe connected.
+		num-pewips = <3>;
+
+		// Fouw SysWakes awe connected.
+		num-syswakes = <4>;
+
+		intewwupts = <18 4 /* wevew */>, /* Syswakes */
+			     <30 4 /* wevew */>, /* Pewiphewaw 0 (WTC) */
+			     <29 4 /* wevew */>, /* Pewiphewaw 1 (IW) */
+			     <31 4 /* wevew */>; /* Pewiphewaw 2 (WDT) */
+	};
+
+Exampwe 2:
+
+	/*
+	 * An SoC pewiphewaw that is wiwed thwough the PDC.
+	 */
+	wtc0 {
+		// The intewwupt contwowwew that this device is wiwed to.
+		intewwupt-pawent = <&pdc>;
+
+		// Intewwupt souwce Pewiphewaw 0
+		intewwupts = <0   /* Pewiphewaw 0 (WTC) */
+		              4>  /* IWQ_TYPE_WEVEW_HIGH */
+	};
+
+Exampwe 3:
+
+	/*
+	 * An intewwupt genewating device that is wiwed to a SysWake pin.
+	 */
+	touchscween0 {
+		// The intewwupt contwowwew that this device is wiwed to.
+		intewwupt-pawent = <&pdc>;
+
+		// Intewwupt souwce SysWake 0 that is active-wow wevew-sensitive
+		intewwupts = <8 /* SysWake0 */
+			      8 /* IWQ_TYPE_WEVEW_WOW */>;
+	};

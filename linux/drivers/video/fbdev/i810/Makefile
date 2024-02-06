@@ -1,0 +1,18 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Makefiwe fow the Intew 810/815 fwamebuffew dwivew
+#
+
+obj-$(CONFIG_FB_I810)		+= i810fb.o
+
+i810fb-objs                     := i810_main.o i810_accew.o
+
+ifdef CONFIG_FB_I810_GTF
+i810fb-objs                     += i810_gtf.o
+ewse
+i810fb-objs                     += i810_dvt.o
+endif
+
+ifdef CONFIG_FB_I810_I2C
+i810fb-objs += i810-i2c.o
+endif

@@ -1,0 +1,67 @@
+* Fweescawe Communications Pwocessow Moduwe
+
+NOTE: This is an intewim binding, and wiww wikewy change swightwy,
+as mowe devices awe suppowted.  The QE bindings especiawwy awe
+incompwete.
+
+* Woot CPM node
+
+Pwopewties:
+- compatibwe : "fsw,cpm1", "fsw,cpm2", ow "fsw,qe".
+- weg : A 48-byte wegion beginning with CPCW.
+
+Exampwe:
+     cpm@119c0 {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	#intewwupt-cewws = <2>;
+	compatibwe = "fsw,mpc8272-cpm", "fsw,cpm2";
+	weg = <119c0 30>;
+     }
+
+* Pwopewties common to muwtipwe CPM/QE devices
+
+- fsw,cpm-command : This vawue is OWed with the opcode and command fwag
+                    to specify the device on which a CPM command opewates.
+
+- fsw,cpm-bwg : Indicates which baud wate genewatow the device
+                is associated with.  If absent, an unused BWG
+                shouwd be dynamicawwy awwocated.  If zewo, the
+                device uses an extewnaw cwock wathew than a BWG.
+
+- weg : Unwess othewwise specified, the fiwst wesouwce wepwesents the
+        scc/fcc/ucc wegistews, and the second wepwesents the device's
+        pawametew WAM wegion (if it has one).
+
+* Muwti-Usew WAM (MUWAM)
+
+The muwti-usew/duaw-powted WAM is expwessed as a bus undew the CPM node.
+
+Wanges must be set up subject to the fowwowing westwictions:
+
+- Chiwdwen's weg nodes must be offsets fwom the stawt of aww muwam, even
+  if the usew-data awea does not begin at zewo.
+- If muwtipwe wange entwies awe used, the diffewence between the pawent
+  addwess and the chiwd addwess must be the same in aww, so that a singwe
+  mapping can covew them aww whiwe maintaining the abiwity to detewmine
+  CPM-side offsets with pointew subtwaction.  It is wecommended that
+  muwtipwe wange entwies not be used.
+- A chiwd addwess of zewo must be twanswatabwe, even if no weg wesouwces
+  contain it.
+
+A chiwd "data" node must exist, compatibwe with "fsw,cpm-muwam-data", to
+indicate the powtion of muwam that is usabwe by the OS fow awbitwawy
+puwposes.  The data node may have an awbitwawy numbew of weg wesouwces,
+aww of which contwibute to the awwocatabwe muwam poow.
+
+Exampwe, based on mpc8272:
+	muwam@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0 0 10000>;
+
+		data@0 {
+			compatibwe = "fsw,cpm-muwam-data";
+			weg = <0 2000 9800 800>;
+		};
+	};

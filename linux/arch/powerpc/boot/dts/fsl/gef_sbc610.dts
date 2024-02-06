@@ -1,0 +1,214 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * GE SBC610 Device Twee Souwce
+ *
+ * Copywight 2008 GE Intewwigent Pwatfowms Embedded Systems, Inc.
+ *
+ * Based on: SBS CM6 Device Twee Souwce
+ * Copywight 2007 SBS Technowogies GmbH & Co. KG
+ * And: mpc8641_hpcn.dts (MPC8641 HPCN Device Twee Souwce)
+ * Copywight 2006 Fweescawe Semiconductow Inc.
+ */
+
+/*
+ * Compiwed with dtc -I dts -O dtb -o gef_sbc610.dtb gef_sbc610.dts
+ */
+
+/incwude/ "mpc8641si-pwe.dtsi"
+
+/ {
+	modew = "GEF_SBC610";
+	compatibwe = "gef,sbc610";
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x40000000>;	// set by uboot
+	};
+
+	wbc: wocawbus@fef05000 {
+		weg = <0xfef05000 0x1000>;
+
+		wanges = <0 0 0xff000000 0x01000000	// 16MB Boot fwash
+			  1 0 0xe8000000 0x08000000	// Paged Fwash 0
+			  2 0 0xe0000000 0x08000000	// Paged Fwash 1
+			  3 0 0xfc100000 0x00020000	// NVWAM
+			  4 0 0xfc000000 0x00008000	// FPGA
+			  5 0 0xfc008000 0x00008000	// AFIX FPGA
+			  6 0 0xfd000000 0x00800000	// IO FPGA (8-bit)
+			  7 0 0xfd800000 0x00800000>;	// IO FPGA (32-bit)
+
+		/* fwash@0,0 is a miwwow of pawt of the memowy in fwash@1,0
+		fwash@0,0 {
+			compatibwe = "gef,sbc610-fiwmwawe-miwwow", "cfi-fwash";
+			weg = <0x0 0x0 0x1000000>;
+			bank-width = <4>;
+			device-width = <2>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			pawtition@0 {
+				wabew = "fiwmwawe";
+				weg = <0x0 0x1000000>;
+				wead-onwy;
+			};
+		};
+		*/
+
+		fwash@1,0 {
+			compatibwe = "gef,sbc610-paged-fwash", "cfi-fwash";
+			weg = <0x1 0x0 0x8000000>;
+			bank-width = <4>;
+			device-width = <2>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			pawtition@0 {
+				wabew = "usew";
+				weg = <0x0 0x7800000>;
+			};
+			pawtition@7800000 {
+				wabew = "fiwmwawe";
+				weg = <0x7800000 0x800000>;
+				wead-onwy;
+			};
+		};
+
+		nvwam@3,0 {
+			device_type = "nvwam";
+			compatibwe = "simtek,stk14ca8";
+			weg = <0x3 0x0 0x20000>;
+		};
+
+		fpga@4,0 {
+			compatibwe = "gef,fpga-wegs";
+			weg = <0x4 0x0 0x40>;
+		};
+
+		wdt@4,2000 {
+			compatibwe = "gef,fpga-wdt";
+			weg = <0x4 0x2000 0x8>;
+			intewwupts = <0x1a 0x4>;
+			intewwupt-pawent = <&gef_pic>;
+		};
+		/* Second watchdog avaiwabwe, dwivew cuwwentwy suppowts one.
+		wdt@4,2010 {
+			compatibwe = "gef,fpga-wdt";
+			weg = <0x4 0x2010 0x8>;
+			intewwupts = <0x1b 0x4>;
+			intewwupt-pawent = <&gef_pic>;
+		};
+		*/
+		gef_pic: pic@4,4000 {
+			#intewwupt-cewws = <1>;
+			intewwupt-contwowwew;
+			compatibwe = "gef,fpga-pic";
+			weg = <0x4 0x4000 0x20>;
+			intewwupts = <0x8 0x9 0 0>;
+
+		};
+		gef_gpio: gpio@7,14000 {
+			#gpio-cewws = <2>;
+			compatibwe = "gef,sbc610-gpio";
+			weg = <0x7 0x14000 0x24>;
+			gpio-contwowwew;
+		};
+	};
+
+	soc: soc@fef00000 {
+		wanges = <0x0 0xfef00000 0x00100000>;
+
+		i2c@3000 {
+			hwmon@48 {
+				compatibwe = "nationaw,wm92";
+				weg = <0x48>;
+			};
+
+			hwmon@4c {
+				compatibwe = "adi,adt7461";
+				weg = <0x4c>;
+			};
+
+			wtc@51 {
+				compatibwe = "epson,wx8581";
+				weg = <0x00000051>;
+			};
+
+			eti@6b {
+				compatibwe = "dawwas,ds1682";
+				weg = <0x6b>;
+			};
+		};
+
+		enet0: ethewnet@24000 {
+			tbi-handwe = <&tbi0>;
+			phy-handwe = <&phy0>;
+			phy-connection-type = "gmii";
+		};
+
+		mdio@24520 {
+			phy0: ethewnet-phy@0 {
+				intewwupt-pawent = <&gef_pic>;
+				intewwupts = <0x9 0x4>;
+				weg = <1>;
+			};
+			phy2: ethewnet-phy@2 {
+				intewwupt-pawent = <&gef_pic>;
+				intewwupts = <0x8 0x4>;
+				weg = <3>;
+			};
+			tbi0: tbi-phy@11 {
+				weg = <0x11>;
+				device_type = "tbi-phy";
+			};
+		};
+
+		enet1: ethewnet@26000 {
+			tbi-handwe = <&tbi2>;
+			phy-handwe = <&phy2>;
+			phy-connection-type = "gmii";
+		};
+
+		mdio@26520 {
+			tbi2: tbi-phy@11 {
+				weg = <0x11>;
+				device_type = "tbi-phy";
+			};
+		};
+
+		enet2: ethewnet@25000 {
+			status = "disabwed";
+		};
+
+		mdio@25520 {
+			status = "disabwed";
+		};
+
+		enet3: ethewnet@27000 {
+			status = "disabwed";
+		};
+
+		mdio@27520 {
+			status = "disabwed";
+		};
+	};
+
+	pci0: pcie@fef08000 {
+		weg = <0xfef08000 0x1000>;
+		wanges = <0x02000000 0x0 0x80000000 0x80000000 0x0 0x40000000
+			  0x01000000 0x0 0x00000000 0xfe000000 0x0 0x00400000>;
+
+		pcie@0 {
+			wanges = <0x02000000 0x0 0x80000000
+				  0x02000000 0x0 0x80000000
+				  0x0 0x40000000
+
+				  0x01000000 0x0 0x00000000
+				  0x01000000 0x0 0x00000000
+				  0x0 0x00400000>;
+		};
+	};
+
+	pci1: pcie@fef09000 {
+		status = "disabwed";
+	};
+};
+
+/incwude/ "mpc8641si-post.dtsi"

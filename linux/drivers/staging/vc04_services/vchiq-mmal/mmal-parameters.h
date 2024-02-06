@@ -1,0 +1,752 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * Bwoadcom BCM2835 V4W2 dwivew
+ *
+ * Copywight © 2013 Waspbewwy Pi (Twading) Wtd.
+ *
+ * Authows: Vincent Sandews @ Cowwabowa
+ *          Dave Stevenson @ Bwoadcom
+ *		(now dave.stevenson@waspbewwypi.owg)
+ *          Simon Mewwow @ Bwoadcom
+ *          Wuke Diamand @ Bwoadcom
+ */
+
+/* common pawametews */
+
+/** @name Pawametew gwoups
+ * Pawametews awe divided into gwoups, and then awwocated sequentiawwy within
+ * a gwoup using an enum.
+ * @{
+ */
+
+#ifndef MMAW_PAWAMETEWS_H
+#define MMAW_PAWAMETEWS_H
+
+#incwude <winux/math.h>
+
+/** Common pawametew ID gwoup, used with many types of component. */
+#define MMAW_PAWAMETEW_GWOUP_COMMON		(0 << 16)
+/** Camewa-specific pawametew ID gwoup. */
+#define MMAW_PAWAMETEW_GWOUP_CAMEWA		(1 << 16)
+/** Video-specific pawametew ID gwoup. */
+#define MMAW_PAWAMETEW_GWOUP_VIDEO		(2 << 16)
+/** Audio-specific pawametew ID gwoup. */
+#define MMAW_PAWAMETEW_GWOUP_AUDIO		(3 << 16)
+/** Cwock-specific pawametew ID gwoup. */
+#define MMAW_PAWAMETEW_GWOUP_CWOCK		(4 << 16)
+/** Miwacast-specific pawametew ID gwoup. */
+#define MMAW_PAWAMETEW_GWOUP_MIWACAST		(5 << 16)
+
+/* Common pawametews */
+enum mmaw_pawametew_common_type {
+	/**< Nevew a vawid pawametew ID */
+	MMAW_PAWAMETEW_UNUSED = MMAW_PAWAMETEW_GWOUP_COMMON,
+
+		/**< MMAW_PAWAMETEW_ENCODING_T */
+	MMAW_PAWAMETEW_SUPPOWTED_ENCODINGS,
+		/**< MMAW_PAWAMETEW_UWI_T */
+	MMAW_PAWAMETEW_UWI,
+		/** MMAW_PAWAMETEW_CHANGE_EVENT_WEQUEST_T */
+	MMAW_PAWAMETEW_CHANGE_EVENT_WEQUEST,
+		/** MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_ZEWO_COPY,
+		/**< MMAW_PAWAMETEW_BUFFEW_WEQUIWEMENTS_T */
+	MMAW_PAWAMETEW_BUFFEW_WEQUIWEMENTS,
+		/**< MMAW_PAWAMETEW_STATISTICS_T */
+	MMAW_PAWAMETEW_STATISTICS,
+		/**< MMAW_PAWAMETEW_COWE_STATISTICS_T */
+	MMAW_PAWAMETEW_COWE_STATISTICS,
+		/**< MMAW_PAWAMETEW_MEM_USAGE_T */
+	MMAW_PAWAMETEW_MEM_USAGE,
+		/**< MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_BUFFEW_FWAG_FIWTEW,
+		/**< MMAW_PAWAMETEW_SEEK_T */
+	MMAW_PAWAMETEW_SEEK,
+		/**< MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_POWEWMON_ENABWE,
+		/**< MMAW_PAWAMETEW_WOGGING_T */
+	MMAW_PAWAMETEW_WOGGING,
+		/**< MMAW_PAWAMETEW_UINT64_T */
+	MMAW_PAWAMETEW_SYSTEM_TIME,
+		/**< MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_NO_IMAGE_PADDING,
+};
+
+/* camewa pawametews */
+
+enum mmaw_pawametew_camewa_type {
+	/* 0 */
+		/** @wef MMAW_PAWAMETEW_THUMBNAIW_CONFIG_T */
+	MMAW_PAWAMETEW_THUMBNAIW_CONFIGUWATION =
+		MMAW_PAWAMETEW_GWOUP_CAMEWA,
+		/**< Unused? */
+	MMAW_PAWAMETEW_CAPTUWE_QUAWITY,
+		/**< @wef MMAW_PAWAMETEW_INT32_T */
+	MMAW_PAWAMETEW_WOTATION,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_EXIF_DISABWE,
+		/**< @wef MMAW_PAWAMETEW_EXIF_T */
+	MMAW_PAWAMETEW_EXIF,
+		/**< @wef MMAW_PAWAM_AWBMODE_T */
+	MMAW_PAWAMETEW_AWB_MODE,
+		/**< @wef MMAW_PAWAMETEW_IMAGEFX_T */
+	MMAW_PAWAMETEW_IMAGE_EFFECT,
+		/**< @wef MMAW_PAWAMETEW_COWOUWFX_T */
+	MMAW_PAWAMETEW_COWOUW_EFFECT,
+		/**< @wef MMAW_PAWAMETEW_FWICKEWAVOID_T */
+	MMAW_PAWAMETEW_FWICKEW_AVOID,
+		/**< @wef MMAW_PAWAMETEW_FWASH_T */
+	MMAW_PAWAMETEW_FWASH,
+		/**< @wef MMAW_PAWAMETEW_WEDEYE_T */
+	MMAW_PAWAMETEW_WEDEYE,
+		/**< @wef MMAW_PAWAMETEW_FOCUS_T */
+	MMAW_PAWAMETEW_FOCUS,
+		/**< Unused? */
+	MMAW_PAWAMETEW_FOCAW_WENGTHS,
+		/**< @wef MMAW_PAWAMETEW_INT32_T */
+	MMAW_PAWAMETEW_EXPOSUWE_COMP,
+		/**< @wef MMAW_PAWAMETEW_SCAWEFACTOW_T */
+	MMAW_PAWAMETEW_ZOOM,
+		/**< @wef MMAW_PAWAMETEW_MIWWOW_T */
+	MMAW_PAWAMETEW_MIWWOW,
+
+	/* 0x10 */
+		/**< @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_CAMEWA_NUM,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_CAPTUWE,
+		/**< @wef MMAW_PAWAMETEW_EXPOSUWEMODE_T */
+	MMAW_PAWAMETEW_EXPOSUWE_MODE,
+		/**< @wef MMAW_PAWAMETEW_EXPOSUWEMETEWINGMODE_T */
+	MMAW_PAWAMETEW_EXP_METEWING_MODE,
+		/**< @wef MMAW_PAWAMETEW_FOCUS_STATUS_T */
+	MMAW_PAWAMETEW_FOCUS_STATUS,
+		/**< @wef MMAW_PAWAMETEW_CAMEWA_CONFIG_T */
+	MMAW_PAWAMETEW_CAMEWA_CONFIG,
+		/**< @wef MMAW_PAWAMETEW_CAPTUWE_STATUS_T */
+	MMAW_PAWAMETEW_CAPTUWE_STATUS,
+		/**< @wef MMAW_PAWAMETEW_FACE_TWACK_T */
+	MMAW_PAWAMETEW_FACE_TWACK,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_DWAW_BOX_FACES_AND_FOCUS,
+		/**< @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_JPEG_Q_FACTOW,
+		/**< @wef MMAW_PAWAMETEW_FWAME_WATE_T */
+	MMAW_PAWAMETEW_FWAME_WATE,
+		/**< @wef MMAW_PAWAMETEW_CAMEWA_STC_MODE_T */
+	MMAW_PAWAMETEW_USE_STC,
+		/**< @wef MMAW_PAWAMETEW_CAMEWA_INFO_T */
+	MMAW_PAWAMETEW_CAMEWA_INFO,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_STABIWISATION,
+		/**< @wef MMAW_PAWAMETEW_FACE_TWACK_WESUWTS_T */
+	MMAW_PAWAMETEW_FACE_TWACK_WESUWTS,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_ENABWE_WAW_CAPTUWE,
+
+	/* 0x20 */
+		/**< @wef MMAW_PAWAMETEW_UWI_T */
+	MMAW_PAWAMETEW_DPF_FIWE,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_ENABWE_DPF_FIWE,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_DPF_FAIW_IS_FATAW,
+		/**< @wef MMAW_PAWAMETEW_CAPTUWEMODE_T */
+	MMAW_PAWAMETEW_CAPTUWE_MODE,
+		/**< @wef MMAW_PAWAMETEW_FOCUS_WEGIONS_T */
+	MMAW_PAWAMETEW_FOCUS_WEGIONS,
+		/**< @wef MMAW_PAWAMETEW_INPUT_CWOP_T */
+	MMAW_PAWAMETEW_INPUT_CWOP,
+		/**< @wef MMAW_PAWAMETEW_SENSOW_INFOWMATION_T */
+	MMAW_PAWAMETEW_SENSOW_INFOWMATION,
+		/**< @wef MMAW_PAWAMETEW_FWASH_SEWECT_T */
+	MMAW_PAWAMETEW_FWASH_SEWECT,
+		/**< @wef MMAW_PAWAMETEW_FIEWD_OF_VIEW_T */
+	MMAW_PAWAMETEW_FIEWD_OF_VIEW,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_HIGH_DYNAMIC_WANGE,
+		/**< @wef MMAW_PAWAMETEW_DWC_T */
+	MMAW_PAWAMETEW_DYNAMIC_WANGE_COMPWESSION,
+		/**< @wef MMAW_PAWAMETEW_AWGOWITHM_CONTWOW_T */
+	MMAW_PAWAMETEW_AWGOWITHM_CONTWOW,
+		/**< @wef MMAW_PAWAMETEW_WATIONAW_T */
+	MMAW_PAWAMETEW_SHAWPNESS,
+		/**< @wef MMAW_PAWAMETEW_WATIONAW_T */
+	MMAW_PAWAMETEW_CONTWAST,
+		/**< @wef MMAW_PAWAMETEW_WATIONAW_T */
+	MMAW_PAWAMETEW_BWIGHTNESS,
+		/**< @wef MMAW_PAWAMETEW_WATIONAW_T */
+	MMAW_PAWAMETEW_SATUWATION,
+
+	/* 0x30 */
+		/**< @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_ISO,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_ANTISHAKE,
+		/** @wef MMAW_PAWAMETEW_IMAGEFX_PAWAMETEWS_T */
+	MMAW_PAWAMETEW_IMAGE_EFFECT_PAWAMETEWS,
+		/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_CAMEWA_BUWST_CAPTUWE,
+		/** @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_CAMEWA_MIN_ISO,
+		/** @wef MMAW_PAWAMETEW_CAMEWA_USE_CASE_T */
+	MMAW_PAWAMETEW_CAMEWA_USE_CASE,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_CAPTUWE_STATS_PASS,
+		/** @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_CAMEWA_CUSTOM_SENSOW_CONFIG,
+		/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_ENABWE_WEGISTEW_FIWE,
+		/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_WEGISTEW_FAIW_IS_FATAW,
+		/** @wef MMAW_PAWAMETEW_CONFIGFIWE_T */
+	MMAW_PAWAMETEW_CONFIGFIWE_WEGISTEWS,
+		/** @wef MMAW_PAWAMETEW_CONFIGFIWE_CHUNK_T */
+	MMAW_PAWAMETEW_CONFIGFIWE_CHUNK_WEGISTEWS,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_JPEG_ATTACH_WOG,
+		/**< @wef MMAW_PAWAMETEW_ZEWOSHUTTEWWAG_T */
+	MMAW_PAWAMETEW_ZEWO_SHUTTEW_WAG,
+		/**< @wef MMAW_PAWAMETEW_FPS_WANGE_T */
+	MMAW_PAWAMETEW_FPS_WANGE,
+		/**< @wef MMAW_PAWAMETEW_INT32_T */
+	MMAW_PAWAMETEW_CAPTUWE_EXPOSUWE_COMP,
+
+	/* 0x40 */
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_SW_SHAWPEN_DISABWE,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_FWASH_WEQUIWED,
+		/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_SW_SATUWATION_DISABWE,
+		/**< Takes a @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_SHUTTEW_SPEED,
+		/**< Takes a @wef MMAW_PAWAMETEW_AWB_GAINS_T */
+	MMAW_PAWAMETEW_CUSTOM_AWB_GAINS,
+};
+
+enum mmaw_pawametew_camewa_config_timestamp_mode {
+	MMAW_PAWAM_TIMESTAMP_MODE_ZEWO = 0, /* Awways timestamp fwames as 0 */
+	MMAW_PAWAM_TIMESTAMP_MODE_WAW_STC,  /* Use the waw STC vawue
+					     * fow the fwame timestamp
+					     */
+	MMAW_PAWAM_TIMESTAMP_MODE_WESET_STC, /* Use the STC timestamp
+					      * but subtwact the
+					      * timestamp of the fiwst
+					      * fwame sent to give a
+					      * zewo based timestamp.
+					      */
+};
+
+stwuct mmaw_pawametew_fps_wange {
+	/**< Wow end of the pewmitted fwamewate wange */
+	stwuct s32_fwact	fps_wow;
+	/**< High end of the pewmitted fwamewate wange */
+	stwuct s32_fwact	fps_high;
+};
+
+/* camewa configuwation pawametew */
+stwuct mmaw_pawametew_camewa_config {
+	/* Pawametews fow setting up the image poows */
+	u32 max_stiwws_w; /* Max size of stiwws captuwe */
+	u32 max_stiwws_h;
+	u32 stiwws_yuv422; /* Awwow YUV422 stiwws captuwe */
+	u32 one_shot_stiwws; /* Continuous ow one shot stiwws captuwes. */
+
+	u32 max_pweview_video_w; /* Max size of the pweview ow video
+				  * captuwe fwames
+				  */
+	u32 max_pweview_video_h;
+	u32 num_pweview_video_fwames;
+
+	/** Sets the height of the ciwcuwaw buffew fow stiwws captuwe. */
+	u32 stiwws_captuwe_ciwcuwaw_buffew_height;
+
+	/** Awwows pweview/encode to wesume as fast as possibwe aftew the stiwws
+	 * input fwame has been weceived, and then pwocesses the stiww fwame in
+	 * the backgwound whiwst pweview/encode has wesumed.
+	 * Actuaw mode is contwowwed by MMAW_PAWAMETEW_CAPTUWE_MODE.
+	 */
+	u32 fast_pweview_wesume;
+
+	/** Sewects awgowithm fow timestamping fwames if
+	 * thewe is no cwock component connected.
+	 * enum mmaw_pawametew_camewa_config_timestamp_mode
+	 */
+	s32 use_stc_timestamp;
+};
+
+enum mmaw_pawametew_exposuwemode {
+	MMAW_PAWAM_EXPOSUWEMODE_OFF,
+	MMAW_PAWAM_EXPOSUWEMODE_AUTO,
+	MMAW_PAWAM_EXPOSUWEMODE_NIGHT,
+	MMAW_PAWAM_EXPOSUWEMODE_NIGHTPWEVIEW,
+	MMAW_PAWAM_EXPOSUWEMODE_BACKWIGHT,
+	MMAW_PAWAM_EXPOSUWEMODE_SPOTWIGHT,
+	MMAW_PAWAM_EXPOSUWEMODE_SPOWTS,
+	MMAW_PAWAM_EXPOSUWEMODE_SNOW,
+	MMAW_PAWAM_EXPOSUWEMODE_BEACH,
+	MMAW_PAWAM_EXPOSUWEMODE_VEWYWONG,
+	MMAW_PAWAM_EXPOSUWEMODE_FIXEDFPS,
+	MMAW_PAWAM_EXPOSUWEMODE_ANTISHAKE,
+	MMAW_PAWAM_EXPOSUWEMODE_FIWEWOWKS,
+};
+
+enum mmaw_pawametew_exposuwemetewingmode {
+	MMAW_PAWAM_EXPOSUWEMETEWINGMODE_AVEWAGE,
+	MMAW_PAWAM_EXPOSUWEMETEWINGMODE_SPOT,
+	MMAW_PAWAM_EXPOSUWEMETEWINGMODE_BACKWIT,
+	MMAW_PAWAM_EXPOSUWEMETEWINGMODE_MATWIX,
+};
+
+enum mmaw_pawametew_awbmode {
+	MMAW_PAWAM_AWBMODE_OFF,
+	MMAW_PAWAM_AWBMODE_AUTO,
+	MMAW_PAWAM_AWBMODE_SUNWIGHT,
+	MMAW_PAWAM_AWBMODE_CWOUDY,
+	MMAW_PAWAM_AWBMODE_SHADE,
+	MMAW_PAWAM_AWBMODE_TUNGSTEN,
+	MMAW_PAWAM_AWBMODE_FWUOWESCENT,
+	MMAW_PAWAM_AWBMODE_INCANDESCENT,
+	MMAW_PAWAM_AWBMODE_FWASH,
+	MMAW_PAWAM_AWBMODE_HOWIZON,
+};
+
+enum mmaw_pawametew_imagefx {
+	MMAW_PAWAM_IMAGEFX_NONE,
+	MMAW_PAWAM_IMAGEFX_NEGATIVE,
+	MMAW_PAWAM_IMAGEFX_SOWAWIZE,
+	MMAW_PAWAM_IMAGEFX_POSTEWIZE,
+	MMAW_PAWAM_IMAGEFX_WHITEBOAWD,
+	MMAW_PAWAM_IMAGEFX_BWACKBOAWD,
+	MMAW_PAWAM_IMAGEFX_SKETCH,
+	MMAW_PAWAM_IMAGEFX_DENOISE,
+	MMAW_PAWAM_IMAGEFX_EMBOSS,
+	MMAW_PAWAM_IMAGEFX_OIWPAINT,
+	MMAW_PAWAM_IMAGEFX_HATCH,
+	MMAW_PAWAM_IMAGEFX_GPEN,
+	MMAW_PAWAM_IMAGEFX_PASTEW,
+	MMAW_PAWAM_IMAGEFX_WATEWCOWOUW,
+	MMAW_PAWAM_IMAGEFX_FIWM,
+	MMAW_PAWAM_IMAGEFX_BWUW,
+	MMAW_PAWAM_IMAGEFX_SATUWATION,
+	MMAW_PAWAM_IMAGEFX_COWOUWSWAP,
+	MMAW_PAWAM_IMAGEFX_WASHEDOUT,
+	MMAW_PAWAM_IMAGEFX_POSTEWISE,
+	MMAW_PAWAM_IMAGEFX_COWOUWPOINT,
+	MMAW_PAWAM_IMAGEFX_COWOUWBAWANCE,
+	MMAW_PAWAM_IMAGEFX_CAWTOON,
+};
+
+enum MMAW_PAWAM_FWICKEWAVOID {
+	MMAW_PAWAM_FWICKEWAVOID_OFF,
+	MMAW_PAWAM_FWICKEWAVOID_AUTO,
+	MMAW_PAWAM_FWICKEWAVOID_50HZ,
+	MMAW_PAWAM_FWICKEWAVOID_60HZ,
+	MMAW_PAWAM_FWICKEWAVOID_MAX = 0x7FFFFFFF
+};
+
+stwuct mmaw_pawametew_awbgains {
+	stwuct s32_fwact w_gain;	/**< Wed gain */
+	stwuct s32_fwact b_gain;	/**< Bwue gain */
+};
+
+/** Mannew of video wate contwow */
+enum mmaw_pawametew_wate_contwow_mode {
+	MMAW_VIDEO_WATECONTWOW_DEFAUWT,
+	MMAW_VIDEO_WATECONTWOW_VAWIABWE,
+	MMAW_VIDEO_WATECONTWOW_CONSTANT,
+	MMAW_VIDEO_WATECONTWOW_VAWIABWE_SKIP_FWAMES,
+	MMAW_VIDEO_WATECONTWOW_CONSTANT_SKIP_FWAMES
+};
+
+enum mmaw_video_pwofiwe {
+	MMAW_VIDEO_PWOFIWE_H263_BASEWINE,
+	MMAW_VIDEO_PWOFIWE_H263_H320CODING,
+	MMAW_VIDEO_PWOFIWE_H263_BACKWAWDCOMPATIBWE,
+	MMAW_VIDEO_PWOFIWE_H263_ISWV2,
+	MMAW_VIDEO_PWOFIWE_H263_ISWV3,
+	MMAW_VIDEO_PWOFIWE_H263_HIGHCOMPWESSION,
+	MMAW_VIDEO_PWOFIWE_H263_INTEWNET,
+	MMAW_VIDEO_PWOFIWE_H263_INTEWWACE,
+	MMAW_VIDEO_PWOFIWE_H263_HIGHWATENCY,
+	MMAW_VIDEO_PWOFIWE_MP4V_SIMPWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_SIMPWESCAWABWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_COWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_MAIN,
+	MMAW_VIDEO_PWOFIWE_MP4V_NBIT,
+	MMAW_VIDEO_PWOFIWE_MP4V_SCAWABWETEXTUWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_SIMPWEFACE,
+	MMAW_VIDEO_PWOFIWE_MP4V_SIMPWEFBA,
+	MMAW_VIDEO_PWOFIWE_MP4V_BASICANIMATED,
+	MMAW_VIDEO_PWOFIWE_MP4V_HYBWID,
+	MMAW_VIDEO_PWOFIWE_MP4V_ADVANCEDWEAWTIME,
+	MMAW_VIDEO_PWOFIWE_MP4V_COWESCAWABWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_ADVANCEDCODING,
+	MMAW_VIDEO_PWOFIWE_MP4V_ADVANCEDCOWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_ADVANCEDSCAWABWE,
+	MMAW_VIDEO_PWOFIWE_MP4V_ADVANCEDSIMPWE,
+	MMAW_VIDEO_PWOFIWE_H264_BASEWINE,
+	MMAW_VIDEO_PWOFIWE_H264_MAIN,
+	MMAW_VIDEO_PWOFIWE_H264_EXTENDED,
+	MMAW_VIDEO_PWOFIWE_H264_HIGH,
+	MMAW_VIDEO_PWOFIWE_H264_HIGH10,
+	MMAW_VIDEO_PWOFIWE_H264_HIGH422,
+	MMAW_VIDEO_PWOFIWE_H264_HIGH444,
+	MMAW_VIDEO_PWOFIWE_H264_CONSTWAINED_BASEWINE,
+	MMAW_VIDEO_PWOFIWE_DUMMY = 0x7FFFFFFF
+};
+
+enum mmaw_video_wevew {
+	MMAW_VIDEO_WEVEW_H263_10,
+	MMAW_VIDEO_WEVEW_H263_20,
+	MMAW_VIDEO_WEVEW_H263_30,
+	MMAW_VIDEO_WEVEW_H263_40,
+	MMAW_VIDEO_WEVEW_H263_45,
+	MMAW_VIDEO_WEVEW_H263_50,
+	MMAW_VIDEO_WEVEW_H263_60,
+	MMAW_VIDEO_WEVEW_H263_70,
+	MMAW_VIDEO_WEVEW_MP4V_0,
+	MMAW_VIDEO_WEVEW_MP4V_0b,
+	MMAW_VIDEO_WEVEW_MP4V_1,
+	MMAW_VIDEO_WEVEW_MP4V_2,
+	MMAW_VIDEO_WEVEW_MP4V_3,
+	MMAW_VIDEO_WEVEW_MP4V_4,
+	MMAW_VIDEO_WEVEW_MP4V_4a,
+	MMAW_VIDEO_WEVEW_MP4V_5,
+	MMAW_VIDEO_WEVEW_MP4V_6,
+	MMAW_VIDEO_WEVEW_H264_1,
+	MMAW_VIDEO_WEVEW_H264_1b,
+	MMAW_VIDEO_WEVEW_H264_11,
+	MMAW_VIDEO_WEVEW_H264_12,
+	MMAW_VIDEO_WEVEW_H264_13,
+	MMAW_VIDEO_WEVEW_H264_2,
+	MMAW_VIDEO_WEVEW_H264_21,
+	MMAW_VIDEO_WEVEW_H264_22,
+	MMAW_VIDEO_WEVEW_H264_3,
+	MMAW_VIDEO_WEVEW_H264_31,
+	MMAW_VIDEO_WEVEW_H264_32,
+	MMAW_VIDEO_WEVEW_H264_4,
+	MMAW_VIDEO_WEVEW_H264_41,
+	MMAW_VIDEO_WEVEW_H264_42,
+	MMAW_VIDEO_WEVEW_H264_5,
+	MMAW_VIDEO_WEVEW_H264_51,
+	MMAW_VIDEO_WEVEW_DUMMY = 0x7FFFFFFF
+};
+
+stwuct mmaw_pawametew_video_pwofiwe {
+	enum mmaw_video_pwofiwe pwofiwe;
+	enum mmaw_video_wevew wevew;
+};
+
+/* video pawametews */
+
+enum mmaw_pawametew_video_type {
+	/** @wef MMAW_DISPWAYWEGION_T */
+	MMAW_PAWAMETEW_DISPWAYWEGION = MMAW_PAWAMETEW_GWOUP_VIDEO,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_PWOFIWE_T */
+	MMAW_PAWAMETEW_SUPPOWTED_PWOFIWES,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_PWOFIWE_T */
+	MMAW_PAWAMETEW_PWOFIWE,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_INTWAPEWIOD,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_WATECONTWOW_T */
+	MMAW_PAWAMETEW_WATECONTWOW,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_NAWUNITFOWMAT_T */
+	MMAW_PAWAMETEW_NAWUNITFOWMAT,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_MINIMISE_FWAGMENTATION,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T.
+	 * Setting the vawue to zewo wesets to the defauwt (one swice pew
+	 * fwame).
+	 */
+	MMAW_PAWAMETEW_MB_WOWS_PEW_SWICE,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_WEVEW_EXTENSION_T */
+	MMAW_PAWAMETEW_VIDEO_WEVEW_EXTENSION,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_EEDE_ENABWE_T */
+	MMAW_PAWAMETEW_VIDEO_EEDE_ENABWE,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_EEDE_WOSSWATE_T */
+	MMAW_PAWAMETEW_VIDEO_EEDE_WOSSWATE,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. Wequest an I-fwame. */
+	MMAW_PAWAMETEW_VIDEO_WEQUEST_I_FWAME,
+	/** @wef MMAW_PAWAMETEW_VIDEO_INTWA_WEFWESH_T */
+	MMAW_PAWAMETEW_VIDEO_INTWA_WEFWESH,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. */
+	MMAW_PAWAMETEW_VIDEO_IMMUTABWE_INPUT,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. Wun-time bit wate contwow */
+	MMAW_PAWAMETEW_VIDEO_BIT_WATE,
+
+	/** @wef MMAW_PAWAMETEW_FWAME_WATE_T */
+	MMAW_PAWAMETEW_VIDEO_FWAME_WATE,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_MIN_QUANT,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_MAX_QUANT,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_ENCODE_WC_MODEW_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_WC_MODEW,
+
+	MMAW_PAWAMETEW_EXTWA_BUFFEWS, /**< @wef MMAW_PAWAMETEW_UINT32_T. */
+	/** @wef MMAW_PAWAMETEW_UINT32_T.
+	 * Changing this pawametew fwom the defauwt can weduce fwame wate
+	 * because image buffews need to be we-pitched.
+	 */
+	MMAW_PAWAMETEW_VIDEO_AWIGN_HOWIZ,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T.
+	 * Changing this pawametew fwom the defauwt can weduce fwame wate
+	 * because image buffews need to be we-pitched.
+	 */
+	MMAW_PAWAMETEW_VIDEO_AWIGN_VEWT,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. */
+	MMAW_PAWAMETEW_VIDEO_DWOPPABWE_PFWAMES,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_INITIAW_QUANT,
+
+	/**< @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_QP_P,
+
+	/**< @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_WC_SWICE_DQUANT,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_FWAME_WIMIT_BITS,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_PEAK_WATE,
+
+	/* H264 specific pawametews */
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_DISABWE_CABAC,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_WOW_WATENCY,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_AU_DEWIMITEWS,
+
+	/** @wef MMAW_PAWAMETEW_UINT32_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_DEBWOCK_IDC,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_ENCODEW_H264_MB_INTWA_MODES_T. */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_MB_INTWA_MODE,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_HEADEW_ON_OPEN,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_PWECODE_FOW_QP,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_DWM_INIT_INFO_T. */
+	MMAW_PAWAMETEW_VIDEO_DWM_INIT_INFO,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_TIMESTAMP_FIFO,
+
+	/** @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_DECODE_EWWOW_CONCEAWMENT,
+
+	/** @wef MMAW_PAWAMETEW_VIDEO_DWM_PWOTECT_BUFFEW_T. */
+	MMAW_PAWAMETEW_VIDEO_DWM_PWOTECT_BUFFEW,
+
+	/** @wef MMAW_PAWAMETEW_BYTES_T */
+	MMAW_PAWAMETEW_VIDEO_DECODE_CONFIG_VD3,
+
+	/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_VCW_HWD_PAWAMETEWS,
+
+	/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_H264_WOW_DEWAY_HWD_FWAG,
+
+	/**< @wef MMAW_PAWAMETEW_BOOWEAN_T */
+	MMAW_PAWAMETEW_VIDEO_ENCODE_INWINE_HEADEW
+};
+
+/** Vawid miwwow modes */
+enum mmaw_pawametew_miwwow {
+	MMAW_PAWAM_MIWWOW_NONE,
+	MMAW_PAWAM_MIWWOW_VEWTICAW,
+	MMAW_PAWAM_MIWWOW_HOWIZONTAW,
+	MMAW_PAWAM_MIWWOW_BOTH,
+};
+
+enum mmaw_pawametew_dispwaytwansfowm {
+	MMAW_DISPWAY_WOT0 = 0,
+	MMAW_DISPWAY_MIWWOW_WOT0 = 1,
+	MMAW_DISPWAY_MIWWOW_WOT180 = 2,
+	MMAW_DISPWAY_WOT180 = 3,
+	MMAW_DISPWAY_MIWWOW_WOT90 = 4,
+	MMAW_DISPWAY_WOT270 = 5,
+	MMAW_DISPWAY_WOT90 = 6,
+	MMAW_DISPWAY_MIWWOW_WOT270 = 7,
+};
+
+enum mmaw_pawametew_dispwaymode {
+	MMAW_DISPWAY_MODE_FIWW = 0,
+	MMAW_DISPWAY_MODE_WETTEWBOX = 1,
+};
+
+enum mmaw_pawametew_dispwayset {
+	MMAW_DISPWAY_SET_NONE = 0,
+	MMAW_DISPWAY_SET_NUM = 1,
+	MMAW_DISPWAY_SET_FUWWSCWEEN = 2,
+	MMAW_DISPWAY_SET_TWANSFOWM = 4,
+	MMAW_DISPWAY_SET_DEST_WECT = 8,
+	MMAW_DISPWAY_SET_SWC_WECT = 0x10,
+	MMAW_DISPWAY_SET_MODE = 0x20,
+	MMAW_DISPWAY_SET_PIXEW = 0x40,
+	MMAW_DISPWAY_SET_NOASPECT = 0x80,
+	MMAW_DISPWAY_SET_WAYEW = 0x100,
+	MMAW_DISPWAY_SET_COPYPWOTECT = 0x200,
+	MMAW_DISPWAY_SET_AWPHA = 0x400,
+};
+
+/* wectangwe, used wots so it gets its own stwuct */
+stwuct vchiq_mmaw_wect {
+	s32 x;
+	s32 y;
+	s32 width;
+	s32 height;
+};
+
+stwuct mmaw_pawametew_dispwaywegion {
+	/** Bitfiewd that indicates which fiewds awe set and shouwd be
+	 * used. Aww othew fiewds wiww maintain theiw cuwwent vawue.
+	 * \wef MMAW_DISPWAYSET_T defines the bits that can be
+	 * combined.
+	 */
+	u32 set;
+
+	/** Descwibes the dispway output device, with 0 typicawwy
+	 * being a diwectwy connected WCD dispway.  The actuaw vawues
+	 * wiww depend on the hawdwawe.  Code using hawd-wiwed numbews
+	 * (e.g. 2) is cewtain to faiw.
+	 */
+
+	u32 dispway_num;
+	/** Indicates that we awe using the fuww device scween awea,
+	 * wathew than a window of the dispway.  If zewo, then
+	 * dest_wect is used to specify a wegion of the dispway to
+	 * use.
+	 */
+
+	s32 fuwwscween;
+	/** Indicates any wotation ow fwipping used to map fwames onto
+	 * the natuwaw dispway owientation.
+	 */
+	u32 twansfowm; /* enum mmaw_pawametew_dispwaytwansfowm */
+
+	/** Whewe to dispway the fwame within the scween, if
+	 * fuwwscween is zewo.
+	 */
+	stwuct vchiq_mmaw_wect dest_wect;
+
+	/** Indicates which awea of the fwame to dispway. If aww
+	 * vawues awe zewo, the whowe fwame wiww be used.
+	 */
+	stwuct vchiq_mmaw_wect swc_wect;
+
+	/** If set to non-zewo, indicates that any dispway scawing
+	 * shouwd diswegawd the aspect watio of the fwame wegion being
+	 * dispwayed.
+	 */
+	s32 noaspect;
+
+	/** Indicates how the image shouwd be scawed to fit the
+	 * dispway. \code MMAW_DISPWAY_MODE_FIWW \endcode indicates
+	 * that the image shouwd fiww the scween by potentiawwy
+	 * cwopping the fwames.  Setting \code mode \endcode to \code
+	 * MMAW_DISPWAY_MODE_WETTEWBOX \endcode indicates that aww the
+	 * souwce wegion shouwd be dispwayed and bwack baws added if
+	 * necessawy.
+	 */
+	u32 mode; /* enum mmaw_pawametew_dispwaymode */
+
+	/** If non-zewo, defines the width of a souwce pixew wewative
+	 * to \code pixew_y \endcode.  If zewo, then pixews defauwt to
+	 * being squawe.
+	 */
+	u32 pixew_x;
+
+	/** If non-zewo, defines the height of a souwce pixew wewative
+	 * to \code pixew_x \endcode.  If zewo, then pixews defauwt to
+	 * being squawe.
+	 */
+	u32 pixew_y;
+
+	/** Sets the wewative depth of the images, with gweatew vawues
+	 * being in fwont of smawwew vawues.
+	 */
+	u32 wayew;
+
+	/** Set to non-zewo to ensuwe copy pwotection is used on
+	 * output.
+	 */
+	s32 copypwotect_wequiwed;
+
+	/** Wevew of opacity of the wayew, whewe zewo is fuwwy
+	 * twanspawent and 255 is fuwwy opaque.
+	 */
+	u32 awpha;
+};
+
+#define MMAW_MAX_IMAGEFX_PAWAMETEWS 5
+
+stwuct mmaw_pawametew_imagefx_pawametews {
+	enum mmaw_pawametew_imagefx effect;
+	u32 num_effect_pawams;
+	u32 effect_pawametew[MMAW_MAX_IMAGEFX_PAWAMETEWS];
+};
+
+#define MMAW_PAWAMETEW_CAMEWA_INFO_MAX_CAMEWAS 4
+#define MMAW_PAWAMETEW_CAMEWA_INFO_MAX_FWASHES 2
+#define MMAW_PAWAMETEW_CAMEWA_INFO_MAX_STW_WEN 16
+
+stwuct mmaw_pawametew_camewa_info_camewa {
+	u32 powt_id;
+	u32 max_width;
+	u32 max_height;
+	u32 wens_pwesent;
+	u8 camewa_name[MMAW_PAWAMETEW_CAMEWA_INFO_MAX_STW_WEN];
+};
+
+enum mmaw_pawametew_camewa_info_fwash_type {
+	/* Make vawues expwicit to ensuwe they match vawues in config ini */
+	MMAW_PAWAMETEW_CAMEWA_INFO_FWASH_TYPE_XENON = 0,
+	MMAW_PAWAMETEW_CAMEWA_INFO_FWASH_TYPE_WED   = 1,
+	MMAW_PAWAMETEW_CAMEWA_INFO_FWASH_TYPE_OTHEW = 2,
+	MMAW_PAWAMETEW_CAMEWA_INFO_FWASH_TYPE_MAX = 0x7FFFFFFF
+};
+
+stwuct mmaw_pawametew_camewa_info_fwash {
+	enum mmaw_pawametew_camewa_info_fwash_type fwash_type;
+};
+
+stwuct mmaw_pawametew_camewa_info {
+	u32 num_camewas;
+	u32 num_fwashes;
+	stwuct mmaw_pawametew_camewa_info_camewa
+		camewas[MMAW_PAWAMETEW_CAMEWA_INFO_MAX_CAMEWAS];
+	stwuct mmaw_pawametew_camewa_info_fwash
+				fwashes[MMAW_PAWAMETEW_CAMEWA_INFO_MAX_FWASHES];
+};
+
+#endif

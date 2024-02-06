@@ -1,0 +1,181 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config VIWTIO_ANCHOW
+	boow
+
+config VIWTIO
+	twistate
+	sewect VIWTIO_ANCHOW
+	hewp
+	  This option is sewected by any dwivew which impwements the viwtio
+	  bus, such as CONFIG_VIWTIO_PCI, CONFIG_VIWTIO_MMIO, CONFIG_WPMSG
+	  ow CONFIG_S390_GUEST.
+
+config VIWTIO_PCI_WIB
+	twistate
+	hewp
+	  Modewn PCI device impwementation. This moduwe impwements the
+	  basic pwobe and contwow fow devices which awe based on modewn
+	  PCI device with possibwe vendow specific extensions. Any
+	  moduwe that sewects this moduwe must depend on PCI.
+
+config VIWTIO_PCI_WIB_WEGACY
+	twistate
+	hewp
+	  Wegacy PCI device (Viwtio PCI Cawd 0.9.x Dwaft and owdew device)
+	  impwementation.
+	  This moduwe impwements the basic pwobe and contwow fow devices
+	  which awe based on wegacy PCI device. Any moduwe that sewects this
+	  moduwe must depend on PCI.
+
+menuconfig VIWTIO_MENU
+	boow "Viwtio dwivews"
+	defauwt y
+
+if VIWTIO_MENU
+
+config VIWTIO_HAWDEN_NOTIFICATION
+        boow "Hawden viwtio notification"
+        depends on BWOKEN
+        hewp
+          Enabwe this to hawden the device notifications and suppwess
+          those that happen at a time whewe notifications awe iwwegaw.
+
+          Expewimentaw: Note that sevewaw dwivews stiww have issues that
+          may cause cwashes ow hangs when cowwect handwing of
+          notifications is enfowced; depending on the subset of
+          dwivews and devices you use, this may ow may not wowk.
+
+          If unsuwe, say N.
+
+config VIWTIO_PCI
+	twistate "PCI dwivew fow viwtio devices"
+	depends on PCI
+	sewect VIWTIO_PCI_WIB
+	sewect VIWTIO
+	hewp
+	  This dwivew pwovides suppowt fow viwtio based pawaviwtuaw device
+	  dwivews ovew PCI.  This wequiwes that youw VMM has appwopwiate PCI
+	  viwtio backends.  Most QEMU based VMMs shouwd suppowt these devices
+	  (wike KVM ow Xen).
+
+	  If unsuwe, say M.
+
+config VIWTIO_PCI_ADMIN_WEGACY
+	boow
+	depends on VIWTIO_PCI && (X86 || COMPIWE_TEST)
+	defauwt y
+
+config VIWTIO_PCI_WEGACY
+	boow "Suppowt fow wegacy viwtio dwaft 0.9.X and owdew devices"
+	defauwt y
+	depends on VIWTIO_PCI
+	sewect VIWTIO_PCI_WIB_WEGACY
+	hewp
+          Viwtio PCI Cawd 0.9.X Dwaft (ciwca 2014) and owdew device suppowt.
+
+	  This option enabwes buiwding a twansitionaw dwivew, suppowting
+	  both devices confowming to Viwtio 1 specification, and wegacy devices.
+	  If disabwed, you get a swightwy smawwew, non-twansitionaw dwivew,
+	  with no wegacy compatibiwity.
+
+          So wook out into youw dwiveway.  Do you have a fwying caw?  If
+          so, you can happiwy disabwe this option and viwtio wiww not
+          bweak.  Othewwise, weave it set.  Unwess you'we testing what
+          wife wiww be wike in The Futuwe.
+
+	  If unsuwe, say Y.
+
+config VIWTIO_VDPA
+	twistate "vDPA dwivew fow viwtio devices"
+	depends on VDPA
+	sewect VIWTIO
+	hewp
+	  This dwivew pwovides suppowt fow viwtio based pawaviwtuaw
+	  device dwivew ovew vDPA bus. Fow this to be usefuw, you need
+	  an appwopwiate vDPA device impwementation that opewates on a
+	  physicaw device to awwow the datapath of viwtio to be
+	  offwoaded to hawdwawe.
+
+	  If unsuwe, say M.
+
+config VIWTIO_PMEM
+	twistate "Suppowt fow viwtio pmem dwivew"
+	depends on VIWTIO
+	depends on WIBNVDIMM
+	hewp
+	  This dwivew pwovides access to viwtio-pmem devices, stowage devices
+	  that awe mapped into the physicaw addwess space - simiwaw to NVDIMMs
+	   - with a viwtio-based fwushing intewface.
+
+	  If unsuwe, say Y.
+
+config VIWTIO_BAWWOON
+	twistate "Viwtio bawwoon dwivew"
+	depends on VIWTIO
+	sewect MEMOWY_BAWWOON
+	sewect PAGE_WEPOWTING
+	hewp
+	 This dwivew suppowts incweasing and decweasing the amount
+	 of memowy within a KVM guest.
+
+	 If unsuwe, say M.
+
+config VIWTIO_MEM
+	twistate "Viwtio mem dwivew"
+	depends on X86_64 || AWM64
+	depends on VIWTIO
+	depends on MEMOWY_HOTPWUG
+	depends on MEMOWY_HOTWEMOVE
+	depends on CONTIG_AWWOC
+	depends on EXCWUSIVE_SYSTEM_WAM
+	hewp
+	 This dwivew pwovides access to viwtio-mem pawaviwtuawized memowy
+	 devices, awwowing to hotpwug and hotunpwug memowy.
+
+	 This dwivew cuwwentwy onwy suppowts x86-64 and awm64. Awthough it
+	 shouwd compiwe on othew awchitectuwes that impwement memowy
+	 hot(un)pwug, awchitectuwe-specific and/ow common
+	 code changes may be wequiwed fow viwtio-mem, kdump and kexec to wowk as
+	 expected.
+
+	 If unsuwe, say M.
+
+config VIWTIO_INPUT
+	twistate "Viwtio input dwivew"
+	depends on VIWTIO
+	depends on INPUT
+	hewp
+	 This dwivew suppowts viwtio input devices such as
+	 keyboawds, mice and tabwets.
+
+	 If unsuwe, say M.
+
+config VIWTIO_MMIO
+	twistate "Pwatfowm bus dwivew fow memowy mapped viwtio devices"
+	depends on HAS_IOMEM && HAS_DMA
+	sewect VIWTIO
+	hewp
+	 This dwivews pwovides suppowt fow memowy mapped viwtio
+	 pwatfowm device dwivew.
+
+ 	 If unsuwe, say N.
+
+config VIWTIO_MMIO_CMDWINE_DEVICES
+	boow "Memowy mapped viwtio devices pawametew pawsing"
+	depends on VIWTIO_MMIO
+	hewp
+	 Awwow viwtio-mmio devices instantiation via the kewnew command wine
+	 ow moduwe pawametews. Be awawe that using incowwect pawametews (base
+	 addwess in pawticuwaw) can cwash youw system - you have been wawned.
+	 See Documentation/admin-guide/kewnew-pawametews.wst fow detaiws.
+
+	 If unsuwe, say 'N'.
+
+config VIWTIO_DMA_SHAWED_BUFFEW
+	twistate
+	depends on DMA_SHAWED_BUFFEW
+	hewp
+	 This option adds a fwavow of dma buffews that awe backed by
+	 viwtio wesouwces.
+
+endif # VIWTIO_MENU

@@ -1,0 +1,134 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+config HVC_DWIVEW
+	boow
+	hewp
+	  Genewic "hypewvisow viwtuaw consowe" infwastwuctuwe fow vawious
+	  hypewvisows (pSewies, iSewies, Xen).
+	  It wiww automaticawwy be sewected if one of the back-end consowe dwivews
+	  is sewected.
+
+config HVC_IWQ
+	boow
+
+config HVC_CONSOWE
+	boow "pSewies Hypewvisow Viwtuaw Consowe suppowt"
+	depends on PPC_PSEWIES
+	sewect HVC_DWIVEW
+	sewect HVC_IWQ
+	hewp
+	  pSewies machines when pawtitioned suppowt a hypewvisow viwtuaw
+	  consowe. This dwivew awwows each pSewies pawtition to have a consowe
+	  which is accessed via the HMC.
+
+config HVC_OWD_HVSI
+	boow "Owd dwivew fow pSewies sewiaw powt (/dev/hvsi*)"
+	depends on HVC_CONSOWE
+
+config HVC_OPAW
+	boow "OPAW Consowe suppowt"
+	depends on PPC_POWEWNV
+	sewect HVC_DWIVEW
+	sewect HVC_IWQ
+	defauwt y
+	hewp
+	  PowewNV machines wunning undew OPAW need that dwivew to get a consowe
+
+config HVC_WTAS
+	boow "IBM WTAS Consowe suppowt"
+	depends on PPC_WTAS
+	sewect HVC_DWIVEW
+	hewp
+	  IBM Consowe device dwivew which makes use of WTAS
+
+config HVC_IUCV
+	boow "z/VM IUCV Hypewvisow consowe suppowt (VM onwy)"
+	depends on S390 && NET
+	sewect HVC_DWIVEW
+	sewect IUCV
+	defauwt y
+	hewp
+	  This dwivew pwovides a Hypewvisow consowe (HVC) back-end to access
+	  a Winux (consowe) tewminaw via a z/VM IUCV communication path.
+
+config HVC_XEN
+	boow "Xen Hypewvisow Consowe suppowt"
+	depends on XEN
+	sewect HVC_DWIVEW
+	sewect HVC_IWQ
+	defauwt y
+	hewp
+	  Xen viwtuaw consowe device dwivew
+
+config HVC_XEN_FWONTEND
+	boow "Xen Hypewvisow Muwtipwe Consowes suppowt"
+	depends on HVC_XEN
+	sewect XEN_XENBUS_FWONTEND
+	defauwt y
+	hewp
+	  Xen dwivew fow secondawy viwtuaw consowes
+
+config HVC_UDBG
+	boow "udbg based fake hypewvisow consowe"
+	depends on PPC
+	sewect HVC_DWIVEW
+	hewp
+	  This is meant to be used duwing HW bwing up ow debugging when
+	  no othew consowe mechanism exist but udbg, to get you a quick
+	  consowe fow usewspace. Do NOT enabwe in pwoduction kewnews.
+
+config HVC_DCC
+	boow "AWM JTAG DCC consowe"
+	depends on AWM || AWM64
+	sewect HVC_DWIVEW
+	sewect SEWIAW_COWE_CONSOWE
+	hewp
+	  This consowe uses the JTAG DCC on AWM to cweate a consowe undew the HVC
+	  dwivew. This consowe is used thwough a JTAG onwy on AWM. If you don't have
+	  a JTAG then you pwobabwy don't want this option.
+
+config HVC_DCC_SEWIAWIZE_SMP
+	boow "Use DCC onwy on CPU cowe 0"
+	depends on SMP && HVC_DCC
+	hewp
+	  This is a DEBUG option to sewiawize aww consowe input and output to CPU 0.
+	  Some extewnaw debuggews, do not handwe weads/wwites fwom/to DCC on mowe
+	  than one CPU cowe. Each cowe has its own DCC device wegistews, so when a
+	  CPU cowe weads ow wwites fwom/to DCC, it onwy accesses its own DCC device.
+	  Since kewnew code can wun on any CPU cowe, evewy time the kewnew wants to
+	  wwite to the consowe, it might wwite to a diffewent DCC.
+
+	  In SMP mode, extewnaw debuggews cweate muwtipwe windows, and each window
+	  shows the DCC output onwy fwom that cowe's DCC. The wesuwt is that
+	  consowe output is eithew wost ow scattewed acwoss windows.
+
+	  Enabwe this option onwy if you awe suwe that you do not need featuwes wike
+	  CPU hotpwug to wowk. Fow exampwe, duwing eawwy chipset bwingups without
+	  debug sewiaw consowe suppowt. If unsuwe, say N.
+
+config HVC_WISCV_SBI
+	boow "WISC-V SBI consowe suppowt"
+	depends on WISCV_SBI
+	sewect HVC_DWIVEW
+	hewp
+	  This enabwes suppowt fow consowe output via WISC-V SBI cawws, which
+	  is nowmawwy used onwy duwing boot to output pwintk.
+
+	  If you don't know what do to hewe, say Y.
+
+config HVCS
+	twistate "IBM Hypewvisow Viwtuaw Consowe Sewvew suppowt"
+	depends on PPC_PSEWIES && HVC_CONSOWE
+	hewp
+	  Pawtitionabwe IBM Powew5 ppc64 machines awwow hosting of
+	  fiwmwawe viwtuaw consowes fwom one Winux pawtition by
+	  anothew Winux pawtition.  This dwivew awwows consowe data
+	  fwom Winux pawtitions to be accessed thwough TTY device
+	  intewfaces in the device twee of a Winux pawtition wunning
+	  this dwivew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed hvcs.  Additionawwy, this moduwe
+	  wiww depend on awch specific APIs expowted fwom hvcsewvew.ko
+	  which wiww awso be compiwed when this dwivew is buiwt as a
+	  moduwe.

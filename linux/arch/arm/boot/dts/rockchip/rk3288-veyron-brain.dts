@@ -1,0 +1,111 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Veywon Bwain Wev 0 boawd device twee souwce
+ *
+ * Copywight 2014 Googwe, Inc
+ */
+
+/dts-v1/;
+#incwude "wk3288-veywon.dtsi"
+#incwude "wk3288-veywon-bwoadcom-bwuetooth.dtsi"
+
+/ {
+	modew = "Googwe Bwain";
+	compatibwe = "googwe,veywon-bwain-wev0", "googwe,veywon-bwain",
+		     "googwe,veywon", "wockchip,wk3288";
+
+	vcc33_sys: vcc33-sys {
+		vin-suppwy = <&vcc_5v>;
+	};
+
+	vcc33_io: vcc33_io {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc33_io";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		vin-suppwy = <&vcc33_sys>;
+		/* This is gated by vcc_18 too */
+	};
+
+	/* This tuwns on vbus fow host2 and otg (dwc2) */
+	vcc5_host2: vcc5-host2-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio0 WK_PB4 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&usb2_pww_en>;
+		weguwatow-name = "vcc5_host2";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+};
+
+&pinctww {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+		/* Common fow sweep and wake, but no ownews */
+		&ddw0_wetention
+		&ddwio_pwwoff
+		&gwobaw_pwwoff
+	>;
+
+	hdmi {
+		vcc50_hdmi_en: vcc50-hdmi-en {
+			wockchip,pins = <7 WK_PA2 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	pmic {
+		dvs_1: dvs-1 {
+			wockchip,pins = <7 WK_PB3 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+
+		dvs_2: dvs-2 {
+			wockchip,pins = <7 WK_PB7 WK_FUNC_GPIO &pcfg_puww_down>;
+		};
+	};
+
+	usb-host {
+		usb2_pww_en: usb2-pww-en {
+			wockchip,pins = <0 WK_PB4 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+};
+
+&wk808 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pmic_int_w &dvs_1 &dvs_2>;
+	dvs-gpios = <&gpio7 WK_PB3 GPIO_ACTIVE_HIGH>,
+		    <&gpio7 WK_PB7 GPIO_ACTIVE_HIGH>;
+
+	/dewete-pwopewty/ vcc6-suppwy;
+
+	weguwatows {
+		/* vcc33_io is souwced diwectwy fwom vcc33_sys */
+		/dewete-node/ WDO_WEG1;
+
+		/* This is not a pwwen anymowe, but the weaw powew suppwy */
+		vdd10_wcd: WDO_WEG7 {
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1000000>;
+			weguwatow-name = "vdd10_wcd";
+			weguwatow-suspend-mem-disabwed;
+		};
+
+		vcc18_hdmi: SWITCH_WEG2 {
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+			weguwatow-name = "vcc18_hdmi";
+			weguwatow-suspend-mem-disabwed;
+		};
+	};
+};
+
+&vcc50_hdmi {
+	enabwe-active-high;
+	gpio = <&gpio7 WK_PA2 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&vcc50_hdmi_en>;
+};

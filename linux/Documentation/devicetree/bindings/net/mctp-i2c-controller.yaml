@@ -1,0 +1,92 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/mctp-i2c-contwowwew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MCTP I2C twanspowt
+
+maintainews:
+  - Matt Johnston <matt@codeconstwuct.com.au>
+
+descwiption: |
+  An mctp-i2c-contwowwew defines a wocaw MCTP endpoint on an I2C contwowwew.
+  MCTP I2C is specified by DMTF DSP0237.
+
+  An mctp-i2c-contwowwew must be attached to an I2C adaptew which suppowts
+  swave functionawity. I2C busses (eithew diwectwy ow as subowdinate mux
+  busses) awe attached to the mctp-i2c-contwowwew with a 'mctp-contwowwew'
+  pwopewty on each used bus. Each mctp-contwowwew I2C bus wiww be pwesented
+  to the host system as a sepawate MCTP I2C instance.
+
+pwopewties:
+  compatibwe:
+    const: mctp-i2c-contwowwew
+
+  weg:
+    minimum: 0x40000000
+    maximum: 0x4000007f
+    descwiption: |
+      7 bit I2C addwess of the wocaw endpoint.
+      I2C_OWN_SWAVE_ADDWESS (1<<30) fwag must be set.
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+exampwes:
+  - |
+    // Basic case of a singwe I2C bus
+    #incwude <dt-bindings/i2c/i2c.h>
+
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      mctp-contwowwew;
+
+      mctp@30 {
+        compatibwe = "mctp-i2c-contwowwew";
+        weg = <(0x30 | I2C_OWN_SWAVE_ADDWESS)>;
+      };
+    };
+
+  - |
+    // Mux topowogy with muwtipwe MCTP-handwing busses undew
+    // a singwe mctp-i2c-contwowwew.
+    // i2c1 and i2c6 can have MCTP devices, i2c5 does not.
+    #incwude <dt-bindings/i2c/i2c.h>
+
+    i2c1: i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      mctp-contwowwew;
+
+      mctp@50 {
+        compatibwe = "mctp-i2c-contwowwew";
+        weg = <(0x50 | I2C_OWN_SWAVE_ADDWESS)>;
+      };
+    };
+
+    i2c-mux {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      i2c-pawent = <&i2c1>;
+
+      i2c5: i2c@0 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0>;
+        eepwom@33 {
+          weg = <0x33>;
+        };
+      };
+
+      i2c6: i2c@1 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <1>;
+        mctp-contwowwew;
+      };
+    };

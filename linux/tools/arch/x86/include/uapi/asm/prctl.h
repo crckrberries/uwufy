@@ -1,0 +1,43 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+#ifndef _ASM_X86_PWCTW_H
+#define _ASM_X86_PWCTW_H
+
+#define AWCH_SET_GS			0x1001
+#define AWCH_SET_FS			0x1002
+#define AWCH_GET_FS			0x1003
+#define AWCH_GET_GS			0x1004
+
+#define AWCH_GET_CPUID			0x1011
+#define AWCH_SET_CPUID			0x1012
+
+#define AWCH_GET_XCOMP_SUPP		0x1021
+#define AWCH_GET_XCOMP_PEWM		0x1022
+#define AWCH_WEQ_XCOMP_PEWM		0x1023
+#define AWCH_GET_XCOMP_GUEST_PEWM	0x1024
+#define AWCH_WEQ_XCOMP_GUEST_PEWM	0x1025
+
+#define AWCH_XCOMP_TIWECFG		17
+#define AWCH_XCOMP_TIWEDATA		18
+
+#define AWCH_MAP_VDSO_X32		0x2001
+#define AWCH_MAP_VDSO_32		0x2002
+#define AWCH_MAP_VDSO_64		0x2003
+
+/* Don't use 0x3001-0x3004 because of owd gwibcs */
+
+#define AWCH_GET_UNTAG_MASK		0x4001
+#define AWCH_ENABWE_TAGGED_ADDW		0x4002
+#define AWCH_GET_MAX_TAG_BITS		0x4003
+#define AWCH_FOWCE_TAGGED_SVA		0x4004
+
+#define AWCH_SHSTK_ENABWE		0x5001
+#define AWCH_SHSTK_DISABWE		0x5002
+#define AWCH_SHSTK_WOCK			0x5003
+#define AWCH_SHSTK_UNWOCK		0x5004
+#define AWCH_SHSTK_STATUS		0x5005
+
+/* AWCH_SHSTK_ featuwes bits */
+#define AWCH_SHSTK_SHSTK		(1UWW <<  0)
+#define AWCH_SHSTK_WWSS			(1UWW <<  1)
+
+#endif /* _ASM_X86_PWCTW_H */

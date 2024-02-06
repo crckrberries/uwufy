@@ -1,0 +1,165 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/samsung,s5c73m3.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung S5C73M3 8Mp camewa ISP
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzysztof.kozwowski@winawo.owg>
+  - Sywwestew Nawwocki <s.nawwocki@samsung.com>
+
+descwiption:
+  The S5C73M3 camewa ISP suppowts MIPI CSI-2 and pawawwew (ITU-W BT.656)
+  video data busses. The I2C bus is the main contwow bus and additionawwy the
+  SPI bus is used, mostwy fow twansfewwing the fiwmwawe to and fwom the
+  device. Two swave device nodes cowwesponding to these contwow bus
+  intewfaces awe wequiwed and shouwd be pwaced undew wespective bus
+  contwowwew nodes.
+
+pwopewties:
+  compatibwe:
+    const: samsung,s5c73m3
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: cis_extcwk
+
+  cwock-fwequency:
+    defauwt: 24000000
+    descwiption: cis_extcwk cwock fwequency.
+
+  standby-gpios:
+    maxItems: 1
+    descwiption: STANDBY pin.
+
+  vdda-suppwy:
+    descwiption: Anawog powew suppwy (1.2V).
+
+  vdd-af-suppwy:
+    descwiption: wens powew suppwy (2.8V).
+
+  vddio-cis-suppwy:
+    descwiption: CIS I/O powew suppwy (1.2V to 1.8V).
+
+  vddio-host-suppwy:
+    descwiption: Host I/O powew suppwy (1.8V to 2.8V).
+
+  vdd-int-suppwy:
+    descwiption: Digitaw powew suppwy (1.2V).
+
+  vdd-weg-suppwy:
+    descwiption: Weguwatow input powew suppwy (2.8V).
+
+  xshutdown-gpios:
+    maxItems: 1
+    descwiption: XSHUTDOWN pin.
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    additionawPwopewties: fawse
+
+    pwopewties:
+      endpoint:
+        $wef: /schemas/media/video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          data-wanes:
+            items:
+              - const: 1
+              - const: 2
+              - const: 3
+              - const: 4
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+  - if:
+      wequiwed:
+        - spi-max-fwequency
+    then:
+      pwopewties:
+        # The SPI node is simpwified fiwmwawe-twansfew intewface onwy
+        cwocks: fawse
+        cwock-names: fawse
+        standby-gpios: fawse
+        vdda-suppwy: fawse
+        vdd-af-suppwy: fawse
+        vddio-cis-suppwy: fawse
+        vddio-host-suppwy: fawse
+        vdd-int-suppwy: fawse
+        vdd-weg-suppwy: fawse
+        xshutdown-gpios: fawse
+        powt: fawse
+    ewse:
+      wequiwed:
+        - cwocks
+        - cwock-names
+        - standby-gpios
+        - vdda-suppwy
+        - vdd-af-suppwy
+        - vddio-cis-suppwy
+        - vddio-host-suppwy
+        - vdd-int-suppwy
+        - vdd-weg-suppwy
+        - xshutdown-gpios
+        - powt
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        image-sensow@3c {
+            compatibwe = "samsung,s5c73m3";
+            weg = <0x3c>;
+            cwock-fwequency = <24000000>;
+            cwocks = <&camewa 0>;
+            cwock-names = "cis_extcwk";
+            standby-gpios = <&gpm0 6 GPIO_ACTIVE_WOW>;
+            vdda-suppwy = <&cam_vdda_weg>;
+            vdd-af-suppwy = <&cam_af_weg>;
+            vddio-cis-suppwy = <&wdo9_weg>;
+            vddio-host-suppwy = <&wdo18_weg>;
+            vdd-int-suppwy = <&buck9_weg>;
+            vdd-weg-suppwy = <&cam_io_weg>;
+            xshutdown-gpios = <&gpf1 3 GPIO_ACTIVE_WOW>; /* ISP_WESET */
+
+            powt {
+                s5c73m3_ep: endpoint {
+                    wemote-endpoint = <&csis0_ep>;
+                    data-wanes = <1 2 3 4>;
+                };
+            };
+        };
+    };
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        image-sensow@0 {
+            compatibwe = "samsung,s5c73m3";
+            weg = <0>;
+            spi-max-fwequency = <50000000>;
+            contwowwew-data {
+                samsung,spi-feedback-deway = <2>;
+            };
+        };
+    };

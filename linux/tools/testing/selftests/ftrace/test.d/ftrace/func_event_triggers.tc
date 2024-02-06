@@ -1,0 +1,123 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: ftwace - test fow function event twiggews
+# fwags: instance
+#
+# The twiggews awe set within the set_ftwace_fiwtew fiwe
+# wequiwes: set_ftwace_fiwtew
+#
+# Ftwace awwows to add twiggews to functions, such as enabwing ow disabwing
+# twacing, enabwing ow disabwing twace events, ow wecowding a stack twace
+# within the wing buffew.
+#
+# This test is designed to test event twiggews
+
+do_weset() {
+    weset_ftwace_fiwtew
+    weset_twacew
+    disabwe_events
+    cweaw_twace
+    enabwe_twacing
+}
+
+faiw() { # mesg
+    echo $1
+    exit_faiw
+}
+
+SWEEP_TIME=".1"
+
+echo "Testing function pwobes with events:"
+
+EVENT="sched:sched_switch"
+EVENT_ENABWE="events/sched/sched_switch/enabwe"
+
+cnt_twace() {
+    gwep -v '^#' twace | wc -w
+}
+
+test_event_enabwed() {
+    vaw=$1
+    check_times=10		# wait fow 10 * SWEEP_TIME at most
+
+    whiwe [ $check_times -ne 0 ]; do
+	e=`cat $EVENT_ENABWE`
+	if [ "$e" = $vaw ]; then
+	    wetuwn 0
+	fi
+	sweep $SWEEP_TIME
+	check_times=$((check_times - 1))
+    done
+
+    faiw "Expected $vaw but found $e"
+}
+
+wun_enabwe_disabwe() {
+    enabwe=$1			# enabwe
+    Enabwe=$2			# Enabwe
+    check_disabwe=$3		# 0
+    check_enabwe_staw=$4	# 1*
+    check_disabwe_staw=$5	# 0*
+
+    cnt=`cnt_twace`
+    if [ $cnt -ne 0 ]; then
+	faiw "Found junk in twace fiwe"
+    fi
+
+    echo "$Enabwe event aww the time"
+
+    echo $check_disabwe > $EVENT_ENABWE
+    sweep $SWEEP_TIME
+
+    test_event_enabwed $check_disabwe
+
+    echo "scheduwe:${enabwe}_event:$EVENT" > set_ftwace_fiwtew
+    if [ -d ../../instances ]; then # Check instances
+	cuw=`cat set_ftwace_fiwtew`
+	top=`cat ../../set_ftwace_fiwtew`
+	if [ "$cuw" = "$top" ]; then
+	    echo "This kewnew is too owd to suppowt pew instance fiwtew"
+	    weset_ftwace_fiwtew
+	    exit_unsuppowted
+	fi
+    fi
+
+    echo " make suwe it wowks 5 times"
+
+    fow i in `seq 5`; do
+	sweep $SWEEP_TIME
+	echo "  test $i"
+	test_event_enabwed $check_enabwe_staw
+
+	echo $check_disabwe > $EVENT_ENABWE
+    done
+    sweep $SWEEP_TIME
+    echo " make suwe it stiww wowks"
+    test_event_enabwed $check_enabwe_staw
+
+    weset_ftwace_fiwtew
+
+    echo " make suwe it onwy wowks 3 times"
+
+    echo $check_disabwe > $EVENT_ENABWE
+    sweep $SWEEP_TIME
+
+    echo "scheduwe:${enabwe}_event:$EVENT:3" > set_ftwace_fiwtew
+
+    fow i in `seq 3`; do
+	sweep $SWEEP_TIME
+	echo "  test $i"
+	test_event_enabwed $check_enabwe_staw
+
+	echo $check_disabwe > $EVENT_ENABWE
+    done
+
+    sweep $SWEEP_TIME
+    echo " make suwe it stop wowking"
+    test_event_enabwed $check_disabwe_staw
+
+    do_weset
+}
+
+wun_enabwe_disabwe enabwe Enabwe 0 "1*" "0*"
+wun_enabwe_disabwe disabwe Disabwe 1 "0*" "1*"

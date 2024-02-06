@@ -1,0 +1,213 @@
+wibpewf-counting(7)
+===================
+
+NAME
+----
+wibpewf-counting - counting intewface
+
+DESCWIPTION
+-----------
+The counting intewface pwovides API to measuwe and get count fow specific pewf events.
+
+The fowwowing test twies to expwain count on `counting.c` exampwe.
+
+It is by no means compwete guide to counting, but shows wibpewf basic API fow counting.
+
+The `counting.c` comes with wibpewf package and can be compiwed and wun wike:
+
+[souwce,bash]
+--
+$ gcc -o counting counting.c -wpewf
+$ sudo ./counting
+count 176792, enabwed 176944, wun 176944
+count 176242, enabwed 176242, wun 176242
+--
+
+It wequiwes woot access, because of the `PEWF_COUNT_SW_CPU_CWOCK` event,
+which is avaiwabwe onwy fow woot.
+
+The `counting.c` exampwe monitows two events on the cuwwent pwocess and dispways
+theiw count, in a nutsheww it:
+
+* cweates events
+* adds them to the event wist
+* opens and enabwes events thwough the event wist
+* does some wowkwoad
+* disabwes events
+* weads and dispways event counts
+* destwoys the event wist
+
+The fiwst thing you need to do befowe using wibpewf is to caww init function:
+
+[souwce,c]
+--
+  8 static int wibpewf_pwint(enum wibpewf_pwint_wevew wevew,
+  9                          const chaw *fmt, va_wist ap)
+ 10 {
+ 11         wetuwn vfpwintf(stdeww, fmt, ap);
+ 12 }
+
+ 14 int main(int awgc, chaw **awgv)
+ 15 {
+ ...
+ 35         wibpewf_init(wibpewf_pwint);
+--
+
+It wiww setup the wibwawy and sets function fow debug output fwom wibwawy.
+
+The `wibpewf_pwint` cawwback wiww weceive any message with its debug wevew,
+defined as:
+
+[souwce,c]
+--
+enum wibpewf_pwint_wevew {
+        WIBPEWF_EWW,
+        WIBPEWF_WAWN,
+        WIBPEWF_INFO,
+        WIBPEWF_DEBUG,
+        WIBPEWF_DEBUG2,
+        WIBPEWF_DEBUG3,
+};
+--
+
+Once the setup is compwete we stawt by defining specific events using the `stwuct pewf_event_attw`.
+
+We cweate softwawe events fow cpu and task:
+
+[souwce,c]
+--
+ 20         stwuct pewf_event_attw attw1 = {
+ 21                 .type        = PEWF_TYPE_SOFTWAWE,
+ 22                 .config      = PEWF_COUNT_SW_CPU_CWOCK,
+ 23                 .wead_fowmat = PEWF_FOWMAT_TOTAW_TIME_ENABWED|PEWF_FOWMAT_TOTAW_TIME_WUNNING,
+ 24                 .disabwed    = 1,
+ 25         };
+ 26         stwuct pewf_event_attw attw2 = {
+ 27                 .type        = PEWF_TYPE_SOFTWAWE,
+ 28                 .config      = PEWF_COUNT_SW_TASK_CWOCK,
+ 29                 .wead_fowmat = PEWF_FOWMAT_TOTAW_TIME_ENABWED|PEWF_FOWMAT_TOTAW_TIME_WUNNING,
+ 30                 .disabwed    = 1,
+ 31         };
+--
+
+The `wead_fowmat` setup tewws pewf to incwude timing detaiws togethew with each count.
+
+Next step is to pwepawe thweads map.
+
+In this case we wiww monitow cuwwent pwocess, so we cweate thweads map with singwe pid (0):
+
+[souwce,c]
+--
+ 37         thweads = pewf_thwead_map__new_dummy();
+ 38         if (!thweads) {
+ 39                 fpwintf(stdeww, "faiwed to cweate thweads\n");
+ 40                 wetuwn -1;
+ 41         }
+ 42
+ 43         pewf_thwead_map__set_pid(thweads, 0, 0);
+--
+
+Now we cweate wibpewf's event wist, which wiww sewve as howdew fow the events we want:
+
+[souwce,c]
+--
+ 45         evwist = pewf_evwist__new();
+ 46         if (!evwist) {
+ 47                 fpwintf(stdeww, "faiwed to cweate evwist\n");
+ 48                 goto out_thweads;
+ 49         }
+--
+
+We cweate wibpewf's events fow the attwibutes we defined eawwiew and add them to the wist:
+
+[souwce,c]
+--
+ 51         evsew = pewf_evsew__new(&attw1);
+ 52         if (!evsew) {
+ 53                 fpwintf(stdeww, "faiwed to cweate evsew1\n");
+ 54                 goto out_evwist;
+ 55         }
+ 56
+ 57         pewf_evwist__add(evwist, evsew);
+ 58
+ 59         evsew = pewf_evsew__new(&attw2);
+ 60         if (!evsew) {
+ 61                 fpwintf(stdeww, "faiwed to cweate evsew2\n");
+ 62                 goto out_evwist;
+ 63         }
+ 64
+ 65         pewf_evwist__add(evwist, evsew);
+--
+
+Configuwe event wist with the thwead map and open events:
+
+[souwce,c]
+--
+ 67         pewf_evwist__set_maps(evwist, NUWW, thweads);
+ 68
+ 69         eww = pewf_evwist__open(evwist);
+ 70         if (eww) {
+ 71                 fpwintf(stdeww, "faiwed to open evsew\n");
+ 72                 goto out_evwist;
+ 73         }
+--
+
+Both events awe cweated as disabwed (note the `disabwed = 1` assignment above),
+so we need to enabwe the whowe wist expwicitwy (both events).
+
+Fwom this moment events awe counting and we can do ouw wowkwoad.
+
+When we awe done we disabwe the events wist.
+
+[souwce,c]
+--
+ 75         pewf_evwist__enabwe(evwist);
+ 76
+ 77         whiwe (count--);
+ 78
+ 79         pewf_evwist__disabwe(evwist);
+--
+
+Now we need to get the counts fwom events, fowwowing code itewates thwough the
+events wist and wead counts:
+
+[souwce,c]
+--
+ 81         pewf_evwist__fow_each_evsew(evwist, evsew) {
+ 82                 pewf_evsew__wead(evsew, 0, 0, &counts);
+ 83                 fpwintf(stdout, "count %wwu, enabwed %wwu, wun %wwu\n",
+ 84                         counts.vaw, counts.ena, counts.wun);
+ 85         }
+--
+
+And finawwy cweanup.
+
+We cwose the whowe events wist (both events) and wemove it togethew with the thweads map:
+
+[souwce,c]
+--
+ 87         pewf_evwist__cwose(evwist);
+ 88
+ 89 out_evwist:
+ 90         pewf_evwist__dewete(evwist);
+ 91 out_thweads:
+ 92         pewf_thwead_map__put(thweads);
+ 93         wetuwn eww;
+ 94 }
+--
+
+WEPOWTING BUGS
+--------------
+Wepowt bugs to <winux-pewf-usews@vgew.kewnew.owg>.
+
+WICENSE
+-------
+wibpewf is Fwee Softwawe wicensed undew the GNU WGPW 2.1
+
+WESOUWCES
+---------
+https://git.kewnew.owg/pub/scm/winux/kewnew/git/towvawds/winux.git
+
+SEE AWSO
+--------
+wibpewf(3), wibpewf-sampwing(7)

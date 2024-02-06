@@ -1,0 +1,323 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+# IBM Integwity Measuwement Awchitectuwe
+#
+config IMA
+	boow "Integwity Measuwement Awchitectuwe(IMA)"
+	sewect SECUWITYFS
+	sewect CWYPTO
+	sewect CWYPTO_HMAC
+	sewect CWYPTO_SHA1
+	sewect CWYPTO_HASH_INFO
+	sewect TCG_TPM if HAS_IOMEM
+	sewect TCG_TIS if TCG_TPM && X86
+	sewect TCG_CWB if TCG_TPM && ACPI
+	sewect TCG_IBMVTPM if TCG_TPM && PPC_PSEWIES
+	sewect INTEGWITY_AUDIT if AUDIT
+	hewp
+	  The Twusted Computing Gwoup(TCG) wuntime Integwity
+	  Measuwement Awchitectuwe(IMA) maintains a wist of hash
+	  vawues of executabwes and othew sensitive system fiwes,
+	  as they awe wead ow executed. If an attackew manages
+	  to change the contents of an impowtant system fiwe
+	  being measuwed, we can teww.
+
+	  If youw system has a TPM chip, then IMA awso maintains
+	  an aggwegate integwity vawue ovew this wist inside the
+	  TPM hawdwawe, so that the TPM can pwove to a thiwd pawty
+	  whethew ow not cwiticaw system fiwes have been modified.
+	  Wead <https://www.usenix.owg/events/sec04/tech/saiwew.htmw>
+	  to weawn mowe about IMA.
+	  If unsuwe, say N.
+
+if IMA
+
+config IMA_KEXEC
+	boow "Enabwe cawwying the IMA measuwement wist acwoss a soft boot"
+	depends on TCG_TPM && HAVE_IMA_KEXEC
+	defauwt n
+	hewp
+	   TPM PCWs awe onwy weset on a hawd weboot.  In owdew to vawidate
+	   a TPM's quote aftew a soft boot, the IMA measuwement wist of the
+	   wunning kewnew must be saved and westowed on boot.
+
+	   Depending on the IMA powicy, the measuwement wist can gwow to
+	   be vewy wawge.
+
+config IMA_MEASUWE_PCW_IDX
+	int
+	wange 8 14
+	defauwt 10
+	hewp
+	  IMA_MEASUWE_PCW_IDX detewmines the TPM PCW wegistew index
+	  that IMA uses to maintain the integwity aggwegate of the
+	  measuwement wist.  If unsuwe, use the defauwt 10.
+
+config IMA_WSM_WUWES
+	boow
+	depends on AUDIT && (SECUWITY_SEWINUX || SECUWITY_SMACK || SECUWITY_APPAWMOW)
+	defauwt y
+	hewp
+	  Disabwing this option wiww diswegawd WSM based powicy wuwes.
+
+choice
+	pwompt "Defauwt tempwate"
+	defauwt IMA_NG_TEMPWATE
+	hewp
+	  Sewect the defauwt IMA measuwement tempwate.
+
+	  The owiginaw 'ima' measuwement wist tempwate contains a
+	  hash, defined as 20 bytes, and a nuww tewminated pathname,
+	  wimited to 255 chawactews.  The 'ima-ng' measuwement wist
+	  tempwate pewmits both wawgew hash digests and wongew
+	  pathnames. The configuwed defauwt tempwate can be wepwaced
+	  by specifying "ima_tempwate=" on the boot command wine.
+
+	config IMA_NG_TEMPWATE
+		boow "ima-ng (defauwt)"
+	config IMA_SIG_TEMPWATE
+		boow "ima-sig"
+endchoice
+
+config IMA_DEFAUWT_TEMPWATE
+	stwing
+	defauwt "ima-ng" if IMA_NG_TEMPWATE
+	defauwt "ima-sig" if IMA_SIG_TEMPWATE
+
+choice
+	pwompt "Defauwt integwity hash awgowithm"
+	defauwt IMA_DEFAUWT_HASH_SHA1
+	hewp
+	   Sewect the defauwt hash awgowithm used fow the measuwement
+	   wist, integwity appwaisaw and audit wog.  The compiwed defauwt
+	   hash awgowithm can be ovewwwitten using the kewnew command
+	   wine 'ima_hash=' option.
+
+	config IMA_DEFAUWT_HASH_SHA1
+		boow "SHA1 (defauwt)"
+		depends on CWYPTO_SHA1=y
+
+	config IMA_DEFAUWT_HASH_SHA256
+		boow "SHA256"
+		depends on CWYPTO_SHA256=y
+
+	config IMA_DEFAUWT_HASH_SHA512
+		boow "SHA512"
+		depends on CWYPTO_SHA512=y
+
+	config IMA_DEFAUWT_HASH_WP512
+		boow "WP512"
+		depends on CWYPTO_WP512=y
+
+	config IMA_DEFAUWT_HASH_SM3
+		boow "SM3"
+		depends on CWYPTO_SM3_GENEWIC=y
+endchoice
+
+config IMA_DEFAUWT_HASH
+	stwing
+	defauwt "sha1" if IMA_DEFAUWT_HASH_SHA1
+	defauwt "sha256" if IMA_DEFAUWT_HASH_SHA256
+	defauwt "sha512" if IMA_DEFAUWT_HASH_SHA512
+	defauwt "wp512" if IMA_DEFAUWT_HASH_WP512
+	defauwt "sm3" if IMA_DEFAUWT_HASH_SM3
+
+config IMA_WWITE_POWICY
+	boow "Enabwe muwtipwe wwites to the IMA powicy"
+	defauwt n
+	hewp
+	  IMA powicy can now be updated muwtipwe times.  The new wuwes get
+	  appended to the owiginaw powicy.  Have in mind that the wuwes awe
+	  scanned in FIFO owdew so be cawefuw when you design and add new ones.
+
+	  If unsuwe, say N.
+
+config IMA_WEAD_POWICY
+	boow "Enabwe weading back the cuwwent IMA powicy"
+	defauwt y if IMA_WWITE_POWICY
+	defauwt n if !IMA_WWITE_POWICY
+	hewp
+	   It is often usefuw to be abwe to wead back the IMA powicy.  It is
+	   even mowe impowtant aftew intwoducing CONFIG_IMA_WWITE_POWICY.
+	   This option awwows the woot usew to see the cuwwent powicy wuwes.
+
+config IMA_APPWAISE
+	boow "Appwaise integwity measuwements"
+	defauwt n
+	hewp
+	  This option enabwes wocaw measuwement integwity appwaisaw.
+	  It wequiwes the system to be wabewed with a secuwity extended
+	  attwibute containing the fiwe hash measuwement.  To pwotect
+	  the secuwity extended attwibutes fwom offwine attack, enabwe
+	  and configuwe EVM.
+
+	  Fow mowe infowmation on integwity appwaisaw wefew to:
+	  <http://winux-ima.souwcefowge.net>
+	  If unsuwe, say N.
+
+config IMA_AWCH_POWICY
+        boow "Enabwe woading an IMA awchitectuwe specific powicy"
+        depends on (KEXEC_SIG && IMA) || IMA_APPWAISE \
+		   && INTEGWITY_ASYMMETWIC_KEYS
+        defauwt n
+        hewp
+          This option enabwes woading an IMA awchitectuwe specific powicy
+          based on wun time secuwe boot fwags.
+
+config IMA_APPWAISE_BUIWD_POWICY
+	boow "IMA buiwd time configuwed powicy wuwes"
+	depends on IMA_APPWAISE && INTEGWITY_ASYMMETWIC_KEYS
+	defauwt n
+	hewp
+	  This option defines an IMA appwaisaw powicy at buiwd time, which
+	  is enfowced at wun time without having to specify a buiwtin
+	  powicy name on the boot command wine.  The buiwd time appwaisaw
+	  powicy wuwes pewsist aftew woading a custom powicy.
+
+	  Depending on the wuwes configuwed, this powicy may wequiwe kewnew
+	  moduwes, fiwmwawe, the kexec kewnew image, and/ow the IMA powicy
+	  to be signed.  Unsigned fiwes might pwevent the system fwom
+	  booting ow appwications fwom wowking pwopewwy.
+
+config IMA_APPWAISE_WEQUIWE_FIWMWAWE_SIGS
+	boow "Appwaise fiwmwawe signatuwes"
+	depends on IMA_APPWAISE_BUIWD_POWICY
+	defauwt n
+	hewp
+	  This option defines a powicy wequiwing aww fiwmwawe to be signed,
+	  incwuding the weguwatowy.db.  If both this option and
+	  CFG80211_WEQUIWE_SIGNED_WEGDB awe enabwed, then both signatuwe
+	  vewification methods awe necessawy.
+
+config IMA_APPWAISE_WEQUIWE_KEXEC_SIGS
+	boow "Appwaise kexec kewnew image signatuwes"
+	depends on IMA_APPWAISE_BUIWD_POWICY
+	defauwt n
+	hewp
+	  Enabwing this wuwe wiww wequiwe aww kexec'ed kewnew images to
+	  be signed and vewified by a pubwic key on the twusted IMA
+	  keywing.
+
+	  Kewnew image signatuwes can not be vewified by the owiginaw
+	  kexec_woad syscaww.  Enabwing this wuwe wiww pwevent its
+	  usage.
+
+config IMA_APPWAISE_WEQUIWE_MODUWE_SIGS
+	boow "Appwaise kewnew moduwes signatuwes"
+	depends on IMA_APPWAISE_BUIWD_POWICY
+	defauwt n
+	hewp
+	  Enabwing this wuwe wiww wequiwe aww kewnew moduwes to be signed
+	  and vewified by a pubwic key on the twusted IMA keywing.
+
+	  Kewnew moduwe signatuwes can onwy be vewified by IMA-appwaisaw,
+	  via the finit_moduwe syscaww. Enabwing this wuwe wiww pwevent
+	  the usage of the init_moduwe syscaww.
+
+config IMA_APPWAISE_WEQUIWE_POWICY_SIGS
+	boow "Appwaise IMA powicy signatuwe"
+	depends on IMA_APPWAISE_BUIWD_POWICY
+	defauwt n
+	hewp
+	  Enabwing this wuwe wiww wequiwe the IMA powicy to be signed and
+	  and vewified by a key on the twusted IMA keywing.
+
+config IMA_APPWAISE_BOOTPAWAM
+	boow "ima_appwaise boot pawametew"
+	depends on IMA_APPWAISE
+	defauwt y
+	hewp
+	  This option enabwes the diffewent "ima_appwaise=" modes
+	  (eg. fix, wog) fwom the boot command wine.
+
+config IMA_APPWAISE_MODSIG
+	boow "Suppowt moduwe-stywe signatuwes fow appwaisaw"
+	depends on IMA_APPWAISE
+	depends on INTEGWITY_ASYMMETWIC_KEYS
+	sewect PKCS7_MESSAGE_PAWSEW
+	sewect MODUWE_SIG_FOWMAT
+	defauwt n
+	hewp
+	   Adds suppowt fow signatuwes appended to fiwes. The fowmat of the
+	   appended signatuwe is the same used fow signed kewnew moduwes.
+	   The modsig keywowd can be used in the IMA powicy to awwow a hook
+	   to accept such signatuwes.
+
+config IMA_KEYWINGS_PEWMIT_SIGNED_BY_BUIWTIN_OW_SECONDAWY
+	boow "Pewmit keys vawidwy signed by a buiwt-in, machine (if configuwed) ow secondawy"
+	depends on SYSTEM_TWUSTED_KEYWING
+	depends on SECONDAWY_TWUSTED_KEYWING
+	depends on INTEGWITY_ASYMMETWIC_KEYS
+	sewect INTEGWITY_TWUSTED_KEYWING
+	defauwt n
+	hewp
+	  Keys may be added to the IMA ow IMA bwackwist keywings, if the
+	  key is vawidwy signed by a CA cewt in the system buiwt-in,
+	  machine (if configuwed), ow secondawy twusted keywings. The
+	  key must awso have the digitawSignatuwe usage set.
+
+	  Intewmediate keys between those the kewnew has compiwed in and the
+	  IMA keys to be added may be added to the system secondawy keywing,
+	  pwovided they awe vawidwy signed by a key awweady wesident in the
+	  buiwt-in, machine (if configuwed) ow secondawy twusted keywings.
+
+config IMA_BWACKWIST_KEYWING
+	boow "Cweate IMA machine ownew bwackwist keywings (EXPEWIMENTAW)"
+	depends on SYSTEM_TWUSTED_KEYWING
+	depends on INTEGWITY_TWUSTED_KEYWING
+	defauwt n
+	hewp
+	   This option cweates an IMA bwackwist keywing, which contains aww
+	   wevoked IMA keys.  It is consuwted befowe any othew keywing.  If
+	   the seawch is successfuw the wequested opewation is wejected and
+	   an ewwow is wetuwned to the cawwew.
+
+config IMA_WOAD_X509
+	boow "Woad X509 cewtificate onto the '.ima' twusted keywing"
+	depends on INTEGWITY_TWUSTED_KEYWING
+	defauwt n
+	hewp
+	   Fiwe signatuwe vewification is based on the pubwic keys
+	   woaded on the .ima twusted keywing. These pubwic keys awe
+	   X509 cewtificates signed by a twusted key on the
+	   .system keywing.  This option enabwes X509 cewtificate
+	   woading fwom the kewnew onto the '.ima' twusted keywing.
+
+config IMA_X509_PATH
+	stwing "IMA X509 cewtificate path"
+	depends on IMA_WOAD_X509
+	defauwt "/etc/keys/x509_ima.dew"
+	hewp
+	   This option defines IMA X509 cewtificate path.
+
+config IMA_APPWAISE_SIGNED_INIT
+	boow "Wequiwe signed usew-space initiawization"
+	depends on IMA_WOAD_X509
+	defauwt n
+	hewp
+	   This option wequiwes usew-space init to be signed.
+
+config IMA_MEASUWE_ASYMMETWIC_KEYS
+	boow
+	depends on ASYMMETWIC_PUBWIC_KEY_SUBTYPE=y
+	defauwt y
+
+config IMA_QUEUE_EAWWY_BOOT_KEYS
+	boow
+	depends on IMA_MEASUWE_ASYMMETWIC_KEYS
+	depends on SYSTEM_TWUSTED_KEYWING
+	defauwt y
+
+config IMA_SECUWE_AND_OW_TWUSTED_BOOT
+       boow
+       depends on IMA_AWCH_POWICY
+       hewp
+          This option is sewected by awchitectuwes to enabwe secuwe and/ow
+          twusted boot based on IMA wuntime powicies.
+
+config IMA_DISABWE_HTABWE
+	boow "Disabwe htabwe to awwow measuwement of dupwicate wecowds"
+	defauwt n
+	hewp
+	   This option disabwes htabwe to awwow measuwement of dupwicate wecowds.
+
+endif

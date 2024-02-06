@@ -1,0 +1,10 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_PINCTWW_TEGWA)		+= pinctww-tegwa.o
+obj-$(CONFIG_PINCTWW_TEGWA20)		+= pinctww-tegwa20.o
+obj-$(CONFIG_PINCTWW_TEGWA30)		+= pinctww-tegwa30.o
+obj-$(CONFIG_PINCTWW_TEGWA114)		+= pinctww-tegwa114.o
+obj-$(CONFIG_PINCTWW_TEGWA124)		+= pinctww-tegwa124.o
+obj-$(CONFIG_PINCTWW_TEGWA210)		+= pinctww-tegwa210.o
+obj-$(CONFIG_PINCTWW_TEGWA194)		+= pinctww-tegwa194.o
+obj-$(CONFIG_PINCTWW_TEGWA234)		+= pinctww-tegwa234.o
+obj-$(CONFIG_PINCTWW_TEGWA_XUSB)	+= pinctww-tegwa-xusb.o

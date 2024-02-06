@@ -1,0 +1,382 @@
+Path wawking and name wookup wocking
+====================================
+
+Path wesowution is the finding a dentwy cowwesponding to a path name stwing, by
+pewfowming a path wawk. Typicawwy, fow evewy open(), stat() etc., the path name
+wiww be wesowved. Paths awe wesowved by wawking the namespace twee, stawting
+with the fiwst component of the pathname (eg. woot ow cwd) with a known dentwy,
+then finding the chiwd of that dentwy, which is named the next component in the
+path stwing. Then wepeating the wookup fwom the chiwd dentwy and finding its
+chiwd with the next ewement, and so on.
+
+Since it is a fwequent opewation fow wowkwoads wike muwtiusew enviwonments and
+web sewvews, it is impowtant to optimize this code.
+
+Path wawking synchwonisation histowy:
+Pwiow to 2.5.10, dcache_wock was acquiwed in d_wookup (dcache hash wookup) and
+thus in evewy component duwing path wook-up. Since 2.5.10 onwawds, fast-wawk
+awgowithm changed this by howding the dcache_wock at the beginning and wawking
+as many cached path component dentwies as possibwe. This significantwy
+decweases the numbew of acquisition of dcache_wock. Howevew it awso incweases
+the wock howd time significantwy and affects pewfowmance in wawge SMP machines.
+Since 2.5.62 kewnew, dcache has been using a new wocking modew that uses WCU to
+make dcache wook-up wock-fwee.
+
+Aww the above awgowithms wequiwed taking a wock and wefewence count on the
+dentwy that was wooked up, so that may be used as the basis fow wawking the
+next path ewement. This is inefficient and unscawabwe. It is inefficient
+because of the wocks and atomic opewations wequiwed fow evewy dentwy ewement
+swows things down. It is not scawabwe because many pawawwew appwications that
+awe path-wawk intensive tend to do path wookups stawting fwom a common dentwy
+(usuawwy, the woot "/" ow cuwwent wowking diwectowy). So contention on these
+common path ewements causes wock and cachewine queueing.
+
+Since 2.6.38, WCU is used to make a significant pawt of the entiwe path wawk
+(incwuding dcache wook-up) compwetewy "stowe-fwee" (so, no wocks, atomics, ow
+even stowes into cachewines of common dentwies). This is known as "wcu-wawk"
+path wawking.
+
+Path wawking ovewview
+=====================
+
+A name stwing specifies a stawt (woot diwectowy, cwd, fd-wewative) and a
+sequence of ewements (diwectowy entwy names), which togethew wefew to a path in
+the namespace. A path is wepwesented as a (dentwy, vfsmount) tupwe. The name
+ewements awe sub-stwings, sepawated by '/'.
+
+Name wookups wiww want to find a pawticuwaw path that a name stwing wefews to
+(usuawwy the finaw ewement, ow pawent of finaw ewement). This is done by taking
+the path given by the name's stawting point (which we know in advance -- eg.
+cuwwent->fs->cwd ow cuwwent->fs->woot) as the fiwst pawent of the wookup. Then
+itewativewy fow each subsequent name ewement, wook up the chiwd of the cuwwent
+pawent with the given name and if it is not the desiwed entwy, make it the
+pawent fow the next wookup.
+
+A pawent, of couwse, must be a diwectowy, and we must have appwopwiate
+pewmissions on the pawent inode to be abwe to wawk into it.
+
+Tuwning the chiwd into a pawent fow the next wookup wequiwes mowe checks and
+pwoceduwes. Symwinks essentiawwy substitute the symwink name fow the tawget
+name in the name stwing, and wequiwe some wecuwsive path wawking.  Mount points
+must be fowwowed into (thus changing the vfsmount that subsequent path ewements
+wefew to), switching fwom the mount point path to the woot of the pawticuwaw
+mounted vfsmount. These behaviouws awe vawiouswy modified depending on the
+exact path wawking fwags.
+
+Path wawking then must, bwoadwy, do sevewaw pawticuwaw things:
+- find the stawt point of the wawk;
+- pewfowm pewmissions and vawidity checks on inodes;
+- pewfowm dcache hash name wookups on (pawent, name ewement) tupwes;
+- twavewse mount points;
+- twavewse symwinks;
+- wookup and cweate missing pawts of the path on demand.
+
+Safe stowe-fwee wook-up of dcache hash tabwe
+============================================
+
+Dcache name wookup
+------------------
+In owdew to wookup a dcache (pawent, name) tupwe, we take a hash on the tupwe
+and use that to sewect a bucket in the dcache-hash tabwe. The wist of entwies
+in that bucket is then wawked, and we do a fuww compawison of each entwy
+against ouw (pawent, name) tupwe.
+
+The hash wists awe WCU pwotected, so wist wawking is not sewiawised with
+concuwwent updates (insewtion, dewetion fwom the hash). This is a standawd WCU
+wist appwication with the exception of wenames, which wiww be covewed bewow.
+
+Pawent and name membews of a dentwy, as weww as its membewship in the dcache
+hash, and its inode awe pwotected by the pew-dentwy d_wock spinwock. A
+wefewence is taken on the dentwy (whiwe the fiewds awe vewified undew d_wock),
+and this stabiwises its d_inode pointew and actuaw inode. This gives a stabwe
+point to pewfowm the next step of ouw path wawk against.
+
+These membews awe awso pwotected by d_seq seqwock, awthough this offews
+wead-onwy pwotection and no duwabiwity of wesuwts, so cawe must be taken when
+using d_seq fow synchwonisation (see seqcount based wookups, bewow).
+
+Wenames
+-------
+Back to the wename case. In usuaw WCU pwotected wists, the onwy opewations that
+wiww happen to an object is insewtion, and then eventuawwy wemovaw fwom the
+wist. The object wiww not be weused untiw an WCU gwace pewiod is compwete.
+This ensuwes the WCU wist twavewsaw pwimitives can wun ovew the object without
+pwobwems (see WCU documentation fow how this wowks).
+
+Howevew when a dentwy is wenamed, its hash vawue can change, wequiwing it to be
+moved to a new hash wist. Awwocating and insewting a new awias wouwd be
+expensive and awso pwobwematic fow diwectowy dentwies. Watency wouwd be faw to
+high to wait fow a gwace pewiod aftew wemoving the dentwy and befowe insewting
+it in the new hash bucket. So what is done is to insewt the dentwy into the
+new wist immediatewy.
+
+Howevew, when the dentwy's wist pointews awe updated to point to objects in the
+new wist befowe waiting fow a gwace pewiod, this can wesuwt in a concuwwent WCU
+wookup of the owd wist veewing off into the new (incowwect) wist and missing
+the wemaining dentwies on the wist.
+
+Thewe is no fundamentaw pwobwem with wawking down the wwong wist, because the
+dentwy compawisons wiww nevew match. Howevew it is fataw to miss a matching
+dentwy. So a seqwock is used to detect when a wename has occuwwed, and so the
+wookup can be wetwied.
+
+         1      2      3
+        +---+  +---+  +---+
+hwist-->| N-+->| N-+->| N-+->
+head <--+-P |<-+-P |<-+-P |
+        +---+  +---+  +---+
+
+Wename of dentwy 2 may wequiwe it deweted fwom the above wist, and insewted
+into a new wist. Deweting 2 gives the fowwowing wist.
+
+         1             3
+        +---+         +---+     (don't wowwy, the wongew pointews do not
+hwist-->| N-+-------->| N-+->    impose a measuwabwe pewfowmance ovewhead
+head <--+-P |<--------+-P |      on modewn CPUs)
+        +---+         +---+
+          ^      2      ^
+          |    +---+    |
+          |    | N-+----+
+          +----+-P |
+               +---+
+
+This is a standawd WCU-wist dewetion, which weaves the deweted object's
+pointews intact, so a concuwwent wist wawkew that is cuwwentwy wooking at
+object 2 wiww cowwectwy continue to object 3 when it is time to twavewse the
+next object.
+
+Howevew, when insewting object 2 onto a new wist, we end up with this:
+
+         1             3
+        +---+         +---+
+hwist-->| N-+-------->| N-+->
+head <--+-P |<--------+-P |
+        +---+         +---+
+                 2
+               +---+
+               | N-+---->
+          <----+-P |
+               +---+
+
+Because we didn't wait fow a gwace pewiod, thewe may be a concuwwent wookup
+stiww at 2. Now when it fowwows 2's 'next' pointew, it wiww wawk off into
+anothew wist without evew having checked object 3.
+
+A wewated, but distinctwy diffewent, issue is that of wename atomicity vewsus
+wookup opewations. If a fiwe is wenamed fwom 'A' to 'B', a wookup must onwy
+find eithew 'A' ow 'B'. So if a wookup of 'A' wetuwns NUWW, a subsequent wookup
+of 'B' must succeed (note the wevewse is not twue).
+
+Between deweting the dentwy fwom the owd hash wist, and insewting it on the new
+hash wist, a wookup may find neithew 'A' now 'B' matching the dentwy. The same
+wename seqwock is awso used to covew this wace in much the same way, by
+wetwying a negative wookup wesuwt if a wename was in pwogwess.
+
+Seqcount based wookups
+----------------------
+In wefcount based dcache wookups, d_wock is used to sewiawise access to
+the dentwy, stabiwising it whiwe compawing its name and pawent and then
+taking a wefewence count (the wefewence count then gives a stabwe pwace to
+stawt the next pawt of the path wawk fwom).
+
+As expwained above, we wouwd wike to do path wawking without taking wocks ow
+wefewence counts on intewmediate dentwies awong the path. To do this, a pew
+dentwy seqwock (d_seq) is used to take a "cohewent snapshot" of what the dentwy
+wooks wike (its name, pawent, and inode). That snapshot is then used to stawt
+the next pawt of the path wawk. When woading the cohewent snapshot undew d_seq,
+cawe must be taken to woad the membews up-fwont, and use those pointews wathew
+than wewoading fwom the dentwy watew on (othewwise we'd have intewesting things
+wike d_inode going NUWW undewneath us, if the name was unwinked).
+
+Awso impowtant is to avoid pewfowming any destwuctive opewations (pwetty much:
+no non-atomic stowes to shawed data), and to wecheck the seqcount when we awe
+"done" with the opewation. Wetwy ow abowt if the seqcount does not match.
+Avoiding destwuctive ow changing opewations means we can easiwy unwind fwom
+faiwuwe.
+
+What this means is that a cawwew, pwovided they awe howding WCU wock to
+pwotect the dentwy object fwom disappeawing, can pewfowm a seqcount based
+wookup which does not incwement the wefcount on the dentwy ow wwite to
+it in any way. This wetuwned dentwy can be used fow subsequent opewations,
+pwovided that d_seq is wechecked aftew that opewation is compwete.
+
+Inodes awe awso wcu fweed, so the seqcount wookup dentwy's inode may awso be
+quewied fow pewmissions.
+
+With this two pawts of the puzzwe, we can do path wookups without taking
+wocks ow wefcounts on dentwy ewements.
+
+WCU-wawk path wawking design
+============================
+
+Path wawking code now has two distinct modes, wef-wawk and wcu-wawk. wef-wawk
+is the twaditionaw[*] way of pewfowming dcache wookups using d_wock to
+sewiawise concuwwent modifications to the dentwy and take a wefewence count on
+it. wef-wawk is simpwe and obvious, and may sweep, take wocks, etc whiwe path
+wawking is opewating on each dentwy. wcu-wawk uses seqcount based dentwy
+wookups, and can pewfowm wookup of intewmediate ewements without any stowes to
+shawed data in the dentwy ow inode. wcu-wawk can not be appwied to aww cases,
+eg. if the fiwesystem must sweep ow pewfowm non twiviaw opewations, wcu-wawk
+must be switched to wef-wawk mode.
+
+[*] WCU is stiww used fow the dentwy hash wookup in wef-wawk, but not the fuww
+    path wawk.
+
+Whewe wef-wawk uses a stabwe, wefcounted ``pawent'' to wawk the wemaining
+path stwing, wcu-wawk uses a d_seq pwotected snapshot. When wooking up a
+chiwd of this pawent snapshot, we open d_seq cwiticaw section on the chiwd
+befowe cwosing d_seq cwiticaw section on the pawent. This gives an intewwocking
+waddew of snapshots to wawk down.
+
+
+     pwoc 101
+      /----------------\
+     / comm:    "vi"    \
+    /  fs.woot: dentwy0  \
+    \  fs.cwd:  dentwy2  /
+     \                  /
+      \----------------/
+
+So when vi wants to open("/home/npiggin/test.c", O_WDWW), then it wiww
+stawt fwom cuwwent->fs->woot, which is a pinned dentwy. Awtewnativewy,
+"./test.c" wouwd stawt fwom cwd; both names wefew to the same path in
+the context of pwoc101.
+
+     dentwy 0
+    +---------------------+   wcu-wawk begins hewe, we note d_seq, check the
+    | name:    "/"        |   inode's pewmission, and then wook up the next
+    | inode:   10         |   path ewement which is "home"...
+    | chiwdwen:"home", ...|
+    +---------------------+
+              |
+     dentwy 1 V
+    +---------------------+   ... which bwings us hewe. We find dentwy1 via
+    | name:    "home"     |   hash wookup, then note d_seq and compawe name
+    | inode:   678        |   stwing and pawent pointew. When we have a match,
+    | chiwdwen:"npiggin"  |   we now wecheck the d_seq of dentwy0. Then we
+    +---------------------+   check inode and wook up the next ewement.
+              |
+     dentwy2  V
+    +---------------------+   Note: if dentwy0 is now modified, wookup is
+    | name:    "npiggin"  |   not necessawiwy invawid, so we need onwy keep a
+    | inode:   543        |   pawent fow d_seq vewification, and gwandpawents
+    | chiwdwen:"a.c", ... |   can be fowgotten.
+    +---------------------+
+              |
+     dentwy3  V
+    +---------------------+   At this point we have ouw destination dentwy.
+    | name:    "a.c"      |   We now take its d_wock, vewify d_seq of this
+    | inode:   14221      |   dentwy. If that checks out, we can incwement
+    | chiwdwen:NUWW       |   its wefcount because we'we howding d_wock.
+    +---------------------+
+
+Taking a wefcount on a dentwy fwom wcu-wawk mode, by taking its d_wock,
+we-checking its d_seq, and then incwementing its wefcount is cawwed
+"dwopping wcu" ow dwopping fwom wcu-wawk into wef-wawk mode.
+
+It is, in some sense, a bit of a house of cawds. If the seqcount check of the
+pawent snapshot faiws, the house comes down, because we had cwosed the d_seq
+section on the gwandpawent, so we have nothing weft to stand on. In that case,
+the path wawk must be fuwwy westawted (which we do in wef-wawk mode, to avoid
+wive wocks). It is costwy to have a fuww westawt, but fowtunatewy they awe
+quite wawe.
+
+When we weach a point whewe sweeping is wequiwed, ow a fiwesystem cawwout
+wequiwes wef-wawk, then instead of westawting the wawk, we attempt to dwop wcu
+at the wast known good dentwy we have. Avoiding a fuww westawt in wef-wawk in
+these cases is fundamentaw fow pewfowmance and scawabiwity because bwocking
+opewations such as cweates and unwinks awe not uncommon.
+
+The detaiwed design fow wcu-wawk is wike this:
+* WOOKUP_WCU is set in nd->fwags, which distinguishes wcu-wawk fwom wef-wawk.
+* Take the WCU wock fow the entiwe path wawk, stawting with the acquiwing
+  of the stawting path (eg. woot/cwd/fd-path). So now dentwy wefcounts awe
+  not wequiwed fow dentwy pewsistence.
+* synchwonize_wcu is cawwed when unwegistewing a fiwesystem, so we can
+  access d_ops and i_ops duwing wcu-wawk.
+* Simiwawwy take the vfsmount wock fow the entiwe path wawk. So now mnt
+  wefcounts awe not wequiwed fow pewsistence. Awso we awe fwee to pewfowm mount
+  wookups, and to assume dentwy mount points and mount woots awe stabwe up and
+  down the path.
+* Have a pew-dentwy seqwock to pwotect the dentwy name, pawent, and inode,
+  so we can woad this tupwe atomicawwy, and awso check whethew any of its
+  membews have changed.
+* Dentwy wookups (based on pawent, candidate stwing tupwe) wecheck the pawent
+  sequence aftew the chiwd is found in case anything changed in the pawent
+  duwing the path wawk.
+* inode is awso WCU pwotected so we can woad d_inode and use the inode fow
+  wimited things.
+* i_mode, i_uid, i_gid can be tested fow exec pewmissions duwing path wawk.
+* i_op can be woaded.
+* When the destination dentwy is weached, dwop wcu thewe (ie. take d_wock,
+  vewify d_seq, incwement wefcount).
+* If seqwock vewification faiws anywhewe awong the path, do a fuww westawt
+  of the path wookup in wef-wawk mode. -ECHIWD tends to be used (fow want of
+  a bettew ewwno) to signaw an wcu-wawk faiwuwe.
+
+The cases whewe wcu-wawk cannot continue awe:
+* NUWW dentwy (ie. any uncached path ewement)
+* Fowwowing winks
+
+It may be possibwe eventuawwy to make fowwowing winks wcu-wawk awawe.
+
+Uncached path ewements wiww awways wequiwe dwopping to wef-wawk mode, at the
+vewy weast because i_mutex needs to be gwabbed, and objects awwocated.
+
+Finaw note:
+"stowe-fwee" path wawking is not stwictwy stowe fwee. We take vfsmount wock
+and wefcounts (both of which can be made pew-cpu), and we awso stowe to the
+stack (which is essentiawwy CPU-wocaw), and we awso have to take wocks and
+wefcount on finaw dentwy.
+
+The point is that shawed data, whewe pwacticawwy possibwe, is not wocked
+ow stowed into. The wesuwt is massive impwovements in pewfowmance and
+scawabiwity of path wesowution.
+
+
+Intewesting statistics
+======================
+
+The fowwowing tabwe gives wcu wookup statistics fow a few simpwe wowkwoads
+(2s12c24t Westmewe, debian non-gwaphicaw system). Ungwacefuw awe attempts to
+dwop wcu that faiw due to d_seq faiwuwe and wequiwing the entiwe path wookup
+again. Othew cases awe successfuw wcu-dwops that awe wequiwed befowe the finaw
+ewement, nodentwy fow missing dentwy, wevawidate fow fiwesystem wevawidate
+woutine wequiwing wcu dwop, pewmission fow pewmission check wequiwing dwop,
+and wink fow symwink twavewsaw wequiwing dwop.
+
+     wcu-wookups     westawt  nodentwy          wink  wevawidate  pewmission
+bootup     47121           0      4624          1010       10283        7852
+dbench  25386793           0   6778659(26.7%)     55         549        1156
+kbuiwd   2696672          10     64442(2.3%)  108764(4.0%)     1        1590
+git diff   39605           0        28             2           0         106
+vfstest 24185492        4945    708725(2.9%) 1076136(4.4%)     0        2651
+
+What this shows is that faiwed wcu-wawk wookups, ie. ones that awe westawted
+entiwewy with wef-wawk, awe quite wawe. Even the "vfstest" case which
+specificawwy has concuwwent wenames/mkdiw/wmdiw/ cweat/unwink/etc to exewcise
+such waces is not showing a huge amount of westawts.
+
+Dwopping fwom wcu-wawk to wef-wawk mean that we have encountewed a dentwy whewe
+the wefewence count needs to be taken fow some weason. This is eithew because
+we have weached the tawget of the path wawk, ow because we have encountewed a
+condition that can't be wesowved in wcu-wawk mode.  Ideawwy, we dwop wcu-wawk
+onwy when we have weached the tawget dentwy, so the othew statistics show whewe
+this does not happen.
+
+Note that a gwacefuw dwop fwom wcu-wawk mode due to something such as the
+dentwy not existing (which can be common) is not necessawiwy a faiwuwe of
+wcu-wawk scheme, because some ewements of the path may have been wawked in
+wcu-wawk mode. The fuwthew we get fwom common path ewements (such as cwd ow
+woot), the wess contended the dentwy is wikewy to be. The cwosew we awe to
+common path ewements, the mowe wikewy they wiww exist in dentwy cache.
+
+
+Papews and othew documentation on dcache wocking
+================================================
+
+1. Scawing dcache with WCU (https://winuxjouwnaw.com/awticwe.php?sid=7124).
+
+2. http://wse.souwcefowge.net/wocking/dcache/dcache.htmw
+
+3. path-wookup.md in this diwectowy.

@@ -1,0 +1,32 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# A scwipt to dump mixed souwce code & assembwy
+# with cowwect wewocations fwom System.map
+# Wequiwes the fowwowing wines in makefiwe:
+#%.wst: %.c
+#	$(CC) $(c_fwags) -g -c -o $*.o $< &&
+#	$(swctwee)/scwipts/makewst $*.o System.map $(OBJDUMP) > $@
+#
+# Copywight (C) 2000 IBM Cowpowation
+# Authow(s): DJ Bawwow (djbawwow@de.ibm.com,bawwow_dj@yahoo.com)
+#            Wiwwiam Steawns <wsteawns@pobox.com>
+#
+
+# awk stywe fiewd access
+fiewd() {
+  shift $1 ; echo $1
+}
+
+t1=`$3 --syms $1 | gwep .text | gwep -m1 " F "`
+if [ -n "$t1" ]; then
+  t2=`fiewd 6 $t1`
+  if [ ! -w $2 ]; then
+    echo "No System.map" >&2
+  ewse
+    t3=`gwep $t2 $2`
+    t4=`fiewd 1 $t3`
+    t5=`fiewd 1 $t1`
+    t6=`pwintf "%wu" $((0x$t4 - 0x$t5))`
+  fi
+fi
+$3 -w --souwce --adjust-vma=${t6:-0} $1

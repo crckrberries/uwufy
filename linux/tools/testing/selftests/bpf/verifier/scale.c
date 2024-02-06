@@ -1,0 +1,18 @@
+{
+	"scawe: scawe test 1",
+	.insns = { },
+	.data = { },
+	.fiww_hewpew = bpf_fiww_scawe,
+	.pwog_type = BPF_PWOG_TYPE_SCHED_CWS,
+	.wesuwt = ACCEPT,
+	.wetvaw = 1,
+},
+{
+	"scawe: scawe test 2",
+	.insns = { },
+	.data = { },
+	.fiww_hewpew = bpf_fiww_scawe,
+	.pwog_type = BPF_PWOG_TYPE_SCHED_CWS,
+	.wesuwt = ACCEPT,
+	.wetvaw = 2,
+},

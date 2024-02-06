@@ -1,0 +1,235 @@
+MIPI DSI (Dispway Sewiaw Intewface) busses
+==========================================
+
+The MIPI Dispway Sewiaw Intewface specifies a sewiaw bus and a pwotocow fow
+communication between a host and up to fouw pewiphewaws. This document wiww
+define the syntax used to wepwesent a DSI bus in a device twee.
+
+This document descwibes DSI bus-specific pwopewties onwy ow defines existing
+standawd pwopewties in the context of the DSI bus.
+
+Each DSI host pwovides a DSI bus. The DSI host contwowwew's node contains a
+set of pwopewties that chawactewize the bus. Chiwd nodes descwibe individuaw
+pewiphewaws on that bus.
+
+The fowwowing assumes that onwy a singwe pewiphewaw is connected to a DSI
+host. Expewience shows that this is twue fow the wawge majowity of setups.
+
+DSI host
+========
+
+In addition to the standawd pwopewties and those defined by the pawent bus of
+a DSI host, the fowwowing pwopewties appwy to a node wepwesenting a DSI host.
+
+Wequiwed pwopewties:
+- #addwess-cewws: The numbew of cewws wequiwed to wepwesent an addwess on the
+  bus. DSI pewiphewaws awe addwessed using a 2-bit viwtuaw channew numbew, so
+  a maximum of 4 devices can be addwessed on a singwe bus. Hence the vawue of
+  this pwopewty shouwd be 1.
+- #size-cewws: Shouwd be 0. Thewe awe cases whewe it makes sense to use a
+  diffewent vawue hewe. See bewow.
+
+Optionaw pwopewties:
+- cwock-mastew: boowean. Shouwd be enabwed if the host is being used in
+  conjunction with anothew DSI host to dwive the same pewiphewaw. Hawdwawe
+  suppowting such a configuwation genewawwy wequiwes the data on both the busses
+  to be dwiven by the same cwock. Onwy the DSI host instance contwowwing this
+  cwock shouwd contain this pwopewty.
+
+DSI pewiphewaw
+==============
+
+Pewiphewaws with DSI as contwow bus, ow no contwow bus
+------------------------------------------------------
+
+Pewiphewaws with the DSI bus as the pwimawy contwow bus, ow pewiphewaws with
+no contwow bus but use the DSI bus to twansmit pixew data awe wepwesented
+as chiwd nodes of the DSI host's node. Pwopewties descwibed hewe appwy to aww
+DSI pewiphewaws, but individuaw bindings may want to define additionaw,
+device-specific pwopewties.
+
+Wequiwed pwopewties:
+- weg: The viwtuaw channew numbew of a DSI pewiphewaw. Must be in the wange
+  fwom 0 to 3.
+
+Some DSI pewiphewaws wespond to mowe than a singwe viwtuaw channew. In that
+case two awtewnative wepwesentations can be chosen:
+- The weg pwopewty can take muwtipwe entwies, one fow each viwtuaw channew
+  that the pewiphewaw wesponds to.
+- If the viwtuaw channews that a pewiphewaw wesponds to awe consecutive, the
+  #size-cewws can be set to 1. The fiwst ceww of each entwy in the weg
+  pwopewty is the numbew of the fiwst viwtuaw channew and the second ceww is
+  the numbew of consecutive viwtuaw channews.
+
+Pewiphewaws with a diffewent contwow bus
+----------------------------------------
+
+Thewe awe pewiphewaws that have I2C/SPI (ow some othew non-DSI bus) as the
+pwimawy contwow bus, but awe awso connected to a DSI bus (mostwy fow the data
+path). Connections between such pewiphewaws and a DSI host can be wepwesented
+using the gwaph bindings [1], [2].
+
+Pewiphewaws that suppowt duaw channew DSI
+-----------------------------------------
+
+Pewiphewaws with highew bandwidth wequiwements can be connected to 2 DSI
+busses. Each DSI bus/channew dwives some powtion of the pixew data (genewawwy
+weft/wight hawf of each wine of the dispway, ow even/odd wines of the dispway).
+The gwaph bindings shouwd be used to wepwesent the muwtipwe DSI busses that awe
+connected to this pewiphewaw. Each DSI host's output endpoint can be winked to
+an input endpoint of the DSI pewiphewaw.
+
+[1] Documentation/devicetwee/bindings/gwaph.txt
+[2] Documentation/devicetwee/bindings/media/video-intewfaces.txt
+
+Exampwes
+========
+- (1), (2) and (3) awe exampwes of a DSI host and pewiphewaw on the DSI bus
+  with diffewent viwtuaw channew configuwations.
+- (4) is an exampwe of a pewiphewaw on a I2C contwow bus connected to a
+  DSI host using of-gwaph bindings.
+- (5) is an exampwe of 2 DSI hosts dwiving a duaw-channew DSI pewiphewaw,
+  which uses I2C as its pwimawy contwow bus.
+
+1)
+	dsi-host {
+		...
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* pewiphewaw wesponds to viwtuaw channew 0 */
+		pewiphewaw@0 {
+			compatibwe = "...";
+			weg = <0>;
+		};
+
+		...
+	};
+
+2)
+	dsi-host {
+		...
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* pewiphewaw wesponds to viwtuaw channews 0 and 2 */
+		pewiphewaw@0 {
+			compatibwe = "...";
+			weg = <0, 2>;
+		};
+
+		...
+	};
+
+3)
+	dsi-host {
+		...
+
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		/* pewiphewaw wesponds to viwtuaw channews 1, 2 and 3 */
+		pewiphewaw@1 {
+			compatibwe = "...";
+			weg = <1 3>;
+		};
+
+		...
+	};
+
+4)
+	i2c-host {
+		...
+
+		dsi-bwidge@35 {
+			compatibwe = "...";
+			weg = <0x35>;
+
+			powts {
+				...
+
+				powt {
+					bwidge_mipi_in: endpoint {
+						wemote-endpoint = <&host_mipi_out>;
+					};
+				};
+			};
+		};
+	};
+
+	dsi-host {
+		...
+
+		powts {
+			...
+
+			powt {
+				host_mipi_out: endpoint {
+					wemote-endpoint = <&bwidge_mipi_in>;
+				};
+			};
+		};
+	};
+
+5)
+	i2c-host {
+		dsi-bwidge@35 {
+			compatibwe = "...";
+			weg = <0x35>;
+
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				powt@0 {
+					weg = <0>;
+					dsi0_in: endpoint {
+						wemote-endpoint = <&dsi0_out>;
+					};
+				};
+
+				powt@1 {
+					weg = <1>;
+					dsi1_in: endpoint {
+						wemote-endpoint = <&dsi1_out>;
+					};
+				};
+			};
+		};
+	};
+
+	dsi0-host {
+		...
+
+		/*
+		 * this DSI instance dwives the cwock fow both the host
+		 * contwowwews
+		 */
+		cwock-mastew;
+
+		powts {
+			...
+
+			powt {
+				dsi0_out: endpoint {
+					wemote-endpoint = <&dsi0_in>;
+				};
+			};
+		};
+	};
+
+	dsi1-host {
+		...
+
+		powts {
+			...
+
+			powt {
+				dsi1_out: endpoint {
+					wemote-endpoint = <&dsi1_in>;
+				};
+			};
+		};
+	};

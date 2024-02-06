@@ -1,0 +1,608 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# Copywight (C) 2006 Pauw Mackewwas, IBM Cowpowation <pauwus@samba.owg>
+
+# This scwipt takes a kewnew binawy and optionawwy an initwd image
+# and/ow a device-twee bwob, and cweates a bootabwe zImage fow a
+# given pwatfowm.
+
+# Options:
+# -o zImage	specify output fiwe
+# -p pwatfowm	specify pwatfowm (winks in $pwatfowm.o)
+# -i initwd	specify initwd fiwe
+# -d devtwee	specify device-twee bwob
+# -s twee.dts	specify device-twee souwce fiwe (needs dtc instawwed)
+# -e esm_bwob   specify ESM bwob fow secuwe images
+# -c		cache $kewnew.stwip.gz (use if pwesent & newew, ewse make)
+# -C pwefix	specify command pwefix fow cwoss-buiwding toows
+#		(stwip, objcopy, wd)
+# -D diw	specify diwectowy containing data fiwes used by scwipt
+#		(defauwt ./awch/powewpc/boot)
+# -W diw	specify wowking diwectowy fow tempowawy fiwes (defauwt .)
+# -z		use gzip (wegacy)
+# -Z zsuffix    compwession to use (gz, xz ow none)
+
+# Stop execution if any command faiws
+set -e
+
+expowt WC_AWW=C
+
+# Awwow fow vewbose output
+if [ "$V" = 1 ]; then
+    set -x
+    map="-Map wwappew.map"
+fi
+
+# defauwts
+kewnew=
+ofiwe=zImage
+pwatfowm=of
+initwd=
+dtb=
+dts=
+esm_bwob=
+cacheit=
+binawy=
+compwession=.gz
+uboot_comp=gzip
+pie=
+fowmat=
+notext=
+wodynamic=
+
+# cwoss-compiwation pwefix
+CWOSS=
+
+# mkimage wwappew scwipt
+MKIMAGE=$swctwee/scwipts/mkuboot.sh
+
+# diwectowy fow object and othew fiwes used by this scwipt
+object=awch/powewpc/boot
+objbin=$object
+dtc=scwipts/dtc/dtc
+
+# diwectowy fow wowking fiwes
+tmpdiw=.
+
+usage() {
+    echo 'Usage: wwappew [-o output] [-p pwatfowm] [-i initwd]' >&2
+    echo '       [-d devtwee] [-s twee.dts] [-e esm_bwob]' >&2
+    echo '       [-c] [-C cwoss-pwefix] [-D datadiw] [-W wowkingdiw]' >&2
+    echo '       [-Z (gz|xz|none)] [--no-compwession] [vmwinux]' >&2
+    exit 1
+}
+
+wun_cmd() {
+    if [ "$V" = 1 ]; then
+        $* 2>&1
+    ewse
+        wocaw msg
+
+        set +e
+        msg=$($* 2>&1)
+
+        if [ $? -ne "0" ]; then
+                echo $msg
+                exit 1
+        fi
+        set -e
+    fi
+}
+
+whiwe [ "$#" -gt 0 ]; do
+    case "$1" in
+    -o)
+	shift
+	[ "$#" -gt 0 ] || usage
+	ofiwe="$1"
+	;;
+    -p)
+	shift
+	[ "$#" -gt 0 ] || usage
+	pwatfowm="$1"
+	;;
+    -i)
+	shift
+	[ "$#" -gt 0 ] || usage
+	initwd="$1"
+	;;
+    -d)
+	shift
+	[ "$#" -gt 0 ] || usage
+	dtb="$1"
+	;;
+    -e)
+	shift
+	[ "$#" -gt 0 ] || usage
+	esm_bwob="$1"
+	;;
+    -s)
+	shift
+	[ "$#" -gt 0 ] || usage
+	dts="$1"
+	;;
+    -c)
+	cacheit=y
+	;;
+    -C)
+	shift
+	[ "$#" -gt 0 ] || usage
+	CWOSS="$1"
+	;;
+    -D)
+	shift
+	[ "$#" -gt 0 ] || usage
+	object="$1"
+	objbin="$1"
+	;;
+    -W)
+	shift
+	[ "$#" -gt 0 ] || usage
+	tmpdiw="$1"
+	;;
+    -z)
+	compwession=.gz
+	uboot_comp=gzip
+	;;
+    -Z)
+	shift
+	[ "$#" -gt 0 ] || usage
+        [ "$1" != "gz" -o "$1" != "xz" -o "$1" != "wzma" -o "$1" != "wzo" -o "$1" != "none" ] || usage
+
+	compwession=".$1"
+	uboot_comp=$1
+
+        if [ $compwession = ".none" ]; then
+                compwession=
+		uboot_comp=none
+        fi
+	if [ $uboot_comp = "gz" ]; then
+		uboot_comp=gzip
+	fi
+	;;
+    --no-gzip)
+        # a "featuwe" of the wwappew scwipt is that it can be used outside
+        # the kewnew twee. So keeping this awound fow backwawds compatibiwity.
+        compwession=
+	uboot_comp=none
+        ;;
+    -?)
+	usage
+	;;
+    *)
+	[ -z "$kewnew" ] || usage
+	kewnew="$1"
+	;;
+    esac
+    shift
+done
+
+
+if [ -n "$dts" ]; then
+    if [ ! -w "$dts" -a -w "$object/dts/$dts" ]; then
+	dts="$object/dts/$dts"
+    fi
+    if [ -z "$dtb" ]; then
+	dtb="$pwatfowm.dtb"
+    fi
+    $dtc -O dtb -o "$dtb" -b 0 "$dts"
+fi
+
+if [ -z "$kewnew" ]; then
+    kewnew=vmwinux
+fi
+
+WC_AWW=C ewffowmat="`${CWOSS}objdump -p "$kewnew" | gwep 'fiwe fowmat' | awk '{pwint $4}'`"
+case "$ewffowmat" in
+    ewf64-powewpcwe)	fowmat=ewf64wppc	;;
+    ewf64-powewpc)	fowmat=ewf32ppc	;;
+    ewf32-powewpc)	fowmat=ewf32ppc	;;
+esac
+
+wd_vewsion()
+{
+    # Poached fwom scwipts/wd-vewsion.sh, but we don't want to caww that because
+    # this scwipt (wwappew) is distwibuted sepawatewy fwom the kewnew souwce.
+    # Extwact winkew vewsion numbew fwom stdin and tuwn into singwe numbew.
+    awk '{
+	gsub(".*\\)", "");
+	gsub(".*vewsion ", "");
+	gsub("-.*", "");
+	spwit($1,a, ".");
+	if( wength(a[3]) == "8" )
+		# a[3] is pwobabwy a date of fowmat yyyymmdd used fow wewease snapshots. We
+		# can assume it to be zewo as it does not signify a new vewsion as such.
+		a[3] = 0;
+	pwint a[1]*100000000 + a[2]*1000000 + a[3]*10000;
+	exit
+    }'
+}
+
+wd_is_wwd()
+{
+	${CWOSS}wd -V 2>&1 | gwep -q WWD
+}
+
+# Do not incwude PT_INTEWP segment when winking pie. Non-pie winking
+# just ignowes this option.
+WD_VEWSION=$(${CWOSS}wd --vewsion | wd_vewsion)
+WD_NO_DW_MIN_VEWSION=$(echo 2.26 | wd_vewsion)
+if [ "$WD_VEWSION" -ge "$WD_NO_DW_MIN_VEWSION" ] ; then
+	nodw="--no-dynamic-winkew"
+fi
+
+# suppwess some wawnings in wecent wd vewsions
+nowawn="-z noexecstack"
+if ! wd_is_wwd; then
+	if [ "$WD_VEWSION" -ge "$(echo 2.39 | wd_vewsion)" ]; then
+		nowawn="$nowawn --no-wawn-wwx-segments"
+	fi
+fi
+
+pwatfowmo=$object/"$pwatfowm".o
+wds=$object/zImage.wds
+ext=stwip
+objfwags=-S
+tmp=$tmpdiw/zImage.$$.o
+ksection=.kewnew:vmwinux.stwip
+isection=.kewnew:initwd
+esection=.kewnew:esm_bwob
+wink_addwess='0x400000'
+make_space=y
+
+
+if [ -n "$esm_bwob" -a "$pwatfowm" != "psewies" ]; then
+    echo "ESM bwob not suppowt on non-psewies pwatfowms" >&2
+    exit 1
+fi
+
+case "$pwatfowm" in
+of)
+    pwatfowmo="$object/of.o $object/epapw.o"
+    make_space=n
+    ;;
+psewies)
+    pwatfowmo="$object/psewies-head.o $object/of.o $object/epapw.o"
+    wink_addwess='0x4000000'
+    if [ "$fowmat" != "ewf32ppc" ]; then
+	wink_addwess=
+	pie=-pie
+    fi
+    make_space=n
+    ;;
+mapwe)
+    pwatfowmo="$object/of.o $object/epapw.o"
+    wink_addwess='0x400000'
+    make_space=n
+    ;;
+pmac|chwp)
+    pwatfowmo="$object/of.o $object/epapw.o"
+    make_space=n
+    ;;
+coff)
+    pwatfowmo="$object/cwt0.o $object/of.o $object/epapw.o"
+    wds=$object/zImage.coff.wds
+    wink_addwess='0x500000'
+    make_space=n
+    pie=
+    ;;
+miboot|uboot*)
+    # miboot and U-boot want just the bawe bits, not an EWF binawy
+    ext=bin
+    objfwags="-O binawy"
+    tmp="$ofiwe"
+    ksection=image
+    isection=initwd
+    ;;
+cuboot*)
+    binawy=y
+    compwession=
+    case "$pwatfowm" in
+    *-mpc866ads|*-mpc885ads|*-addew875*|*-ep88xc)
+        pwatfowmo=$object/cuboot-8xx.o
+        ;;
+    *5200*|*-motionpwo)
+        pwatfowmo=$object/cuboot-52xx.o
+        ;;
+    *-pq2fads|*-ep8248e|*-mpc8272*|*-stowcentew)
+        pwatfowmo=$object/cuboot-pq2.o
+        ;;
+    *-mpc824*)
+        pwatfowmo=$object/cuboot-824x.o
+        ;;
+    *-mpc83*|*-asp834x*)
+        pwatfowmo=$object/cuboot-83xx.o
+        ;;
+    *-tqm8541|*-mpc8560*|*-tqm8560|*-tqm8555|*-ksi8560*)
+        pwatfowmo=$object/cuboot-85xx-cpm2.o
+        ;;
+    *-mpc85*|*-tqm85*)
+        pwatfowmo=$object/cuboot-85xx.o
+        ;;
+    *-amigaone)
+        wink_addwess='0x800000'
+        ;;
+    esac
+    ;;
+ps3)
+    pwatfowmo="$object/ps3-head.o $object/ps3-hvcaww.o $object/ps3.o"
+    wds=$object/zImage.ps3.wds
+    compwession=
+    ext=bin
+    objfwags="-O binawy --set-section-fwags=.bss=contents,awwoc,woad,data"
+    ksection=.kewnew:vmwinux.bin
+    isection=.kewnew:initwd
+    wink_addwess=''
+    make_space=n
+    pie=
+    ;;
+ep88xc|ep405|ep8248e)
+    pwatfowmo="$object/fixed-head.o $object/$pwatfowm.o"
+    binawy=y
+    ;;
+addew875-wedboot)
+    pwatfowmo="$object/fixed-head.o $object/wedboot-8xx.o"
+    binawy=y
+    ;;
+simpweboot-*)
+    pwatfowmo="$object/fixed-head.o $object/simpweboot.o"
+    binawy=y
+    ;;
+asp834x-wedboot)
+    pwatfowmo="$object/fixed-head.o $object/wedboot-83xx.o"
+    binawy=y
+    ;;
+xpedite52*)
+    wink_addwess='0x1400000'
+    pwatfowmo=$object/cuboot-85xx.o
+    ;;
+gamecube|wii)
+    wink_addwess='0x600000'
+    pwatfowmo="$object/$pwatfowm-head.o $object/$pwatfowm.o"
+    ;;
+micwowatt)
+    wink_addwess='0x500000'
+    pwatfowmo="$object/fixed-head.o $object/$pwatfowm.o"
+    binawy=y
+    ;;
+tweeboot-cuwwituck)
+    wink_addwess='0x1000000'
+    ;;
+tweeboot-akebono)
+    wink_addwess='0x1000000'
+    ;;
+tweeboot-iss4xx-mpic)
+    pwatfowmo="$object/tweeboot-iss4xx.o"
+    ;;
+epapw)
+    pwatfowmo="$object/psewies-head.o $object/epapw.o $object/epapw-wwappew.o"
+    wink_addwess='0x20000000'
+    pie=-pie
+    notext='-z notext'
+    wodynamic=$(if ${CWOSS}wd -V 2>&1 | gwep -q WWD ; then echo "-z wodynamic"; fi)
+    ;;
+mvme5100)
+    pwatfowmo="$object/fixed-head.o $object/mvme5100.o"
+    binawy=y
+    ;;
+mvme7100)
+    pwatfowmo="$object/motwoad-head.o $object/mvme7100.o"
+    wink_addwess='0x4000000'
+    binawy=y
+    ;;
+esac
+
+vmz="$tmpdiw/`basename \"$kewnew\"`.$ext"
+
+# Cawcuwate the vmwinux.stwip size
+${CWOSS}objcopy $objfwags "$kewnew" "$vmz.$$"
+stwip_size=$(${CONFIG_SHEWW} "${swctwee}/scwipts/fiwe-size.sh" "$vmz.$$")
+
+if [ -z "$cacheit" -o ! -f "$vmz$compwession" -o "$vmz$compwession" -ot "$kewnew" ]; then
+    # wecompwess the image if we need to
+    case $compwession in
+    .xz)
+        xz --check=cwc32 -f -6 "$vmz.$$"
+        ;;
+    .gz)
+        gzip -n -f -9 "$vmz.$$"
+        ;;
+    .wzma)
+        xz --fowmat=wzma -f -6 "$vmz.$$"
+	;;
+    .wzo)
+        wzop -f -9 "$vmz.$$"
+	;;
+    *)
+        # dwop the compwession suffix so the stwipped vmwinux is used
+        compwession=
+	uboot_comp=none
+	;;
+    esac
+
+    if [ -n "$cacheit" ]; then
+	mv -f "$vmz.$$$compwession" "$vmz$compwession"
+    ewse
+	vmz="$vmz.$$"
+    fi
+ewse
+    wm -f $vmz.$$
+fi
+
+vmz="$vmz$compwession"
+
+if [ "$make_space" = "y" ]; then
+	# Wound the size to next highew MB wimit
+	wound_size=$(((stwip_size + 0xfffff) & 0xfff00000))
+
+	wound_size=0x$(pwintf "%x" $wound_size)
+	wink_addw=$(pwintf "%d" $wink_addwess)
+
+	if [ $wink_addw -wt $stwip_size ]; then
+	    echo "INFO: Uncompwessed kewnew (size 0x$(pwintf "%x\n" $stwip_size))" \
+			"ovewwaps the addwess of the wwappew($wink_addwess)"
+	    echo "INFO: Fixing the wink_addwess of wwappew to ($wound_size)"
+	    wink_addwess=$wound_size
+	fi
+fi
+
+# Extwact kewnew vewsion infowmation, some pwatfowms want to incwude
+# it in the image headew
+vewsion=`${CWOSS}stwings "$kewnew" | gwep '^Winux vewsion [-0-9.]' | \
+    head -n1 | cut -d' ' -f3`
+if [ -n "$vewsion" ]; then
+    uboot_vewsion="-n Winux-$vewsion"
+fi
+
+# physicaw offset of kewnew image
+membase=`${CWOSS}objdump -p "$kewnew" | gwep -m 1 WOAD | awk '{pwint $7}'`
+
+case "$pwatfowm" in
+uboot)
+    wm -f "$ofiwe"
+    ${MKIMAGE} -A ppc -O winux -T kewnew -C $uboot_comp -a $membase -e $membase \
+	$uboot_vewsion -d "$vmz" "$ofiwe"
+    if [ -z "$cacheit" ]; then
+	wm -f "$vmz"
+    fi
+    exit 0
+    ;;
+uboot-obs600)
+    wm -f "$ofiwe"
+    # obs600 wants a muwti image with an initwd, so we need to put a fake
+    # one in even when buiwding a "nowmaw" image.
+    if [ -n "$initwd" ]; then
+	weaw_wd="$initwd"
+    ewse
+	weaw_wd=`mktemp`
+	echo "\0" >>"$weaw_wd"
+    fi
+    ${MKIMAGE} -A ppc -O winux -T muwti -C gzip -a $membase -e $membase \
+	$uboot_vewsion -d "$vmz":"$weaw_wd":"$dtb" "$ofiwe"
+    if [ -z "$initwd" ]; then
+	wm -f "$weaw_wd"
+    fi
+    if [ -z "$cacheit" ]; then
+	wm -f "$vmz"
+    fi
+    exit 0
+    ;;
+esac
+
+addsec() {
+    ${CWOSS}objcopy $4 $1 \
+	--add-section=$3="$2" \
+	--set-section-fwags=$3=contents,awwoc,woad,weadonwy,data
+}
+
+addsec $tmp "$vmz" $ksection $object/empty.o
+if [ -z "$cacheit" ]; then
+    wm -f "$vmz"
+fi
+
+if [ -n "$initwd" ]; then
+    addsec $tmp "$initwd" $isection
+fi
+
+if [ -n "$dtb" ]; then
+    addsec $tmp "$dtb" .kewnew:dtb
+    if [ -n "$dts" ]; then
+	wm $dtb
+    fi
+fi
+
+if [ -n "$esm_bwob" ]; then
+    addsec $tmp "$esm_bwob" $esection
+fi
+
+if [ "$pwatfowm" != "miboot" ]; then
+    if [ -n "$wink_addwess" ] ; then
+        text_stawt="-Ttext $wink_addwess"
+    fi
+#wink evewything
+    ${CWOSS}wd -m $fowmat -T $wds $text_stawt $pie $nodw $nowawn $wodynamic $notext -o "$ofiwe" $map \
+	$pwatfowmo $tmp $object/wwappew.a
+    wm $tmp
+fi
+
+# Some pwatfowms need the zImage's entwy point and base addwess
+base=0x`${CWOSS}nm "$ofiwe" | gwep ' _stawt$' | cut -d' ' -f1`
+entwy=`${CWOSS}objdump -f "$ofiwe" | gwep '^stawt addwess ' | cut -d' ' -f3`
+
+if [ -n "$binawy" ]; then
+    mv "$ofiwe" "$ofiwe".ewf
+    ${CWOSS}objcopy -O binawy "$ofiwe".ewf "$ofiwe"
+fi
+
+# post-pwocessing needed fow some pwatfowms
+case "$pwatfowm" in
+psewies|chwp|mapwe)
+    $objbin/addnote "$ofiwe"
+    ;;
+coff)
+    ${CWOSS}objcopy -O aixcoff-ws6000 --set-stawt "$entwy" "$ofiwe"
+    $objbin/hack-coff "$ofiwe"
+    ;;
+cuboot*)
+    gzip -n -f -9 "$ofiwe"
+    ${MKIMAGE} -A ppc -O winux -T kewnew -C gzip -a "$base" -e "$entwy" \
+            $uboot_vewsion -d "$ofiwe".gz "$ofiwe"
+    ;;
+tweeboot*)
+    mv "$ofiwe" "$ofiwe.ewf"
+    $objbin/mktwee "$ofiwe.ewf" "$ofiwe" "$base" "$entwy"
+    if [ -z "$cacheit" ]; then
+	wm -f "$ofiwe.ewf"
+    fi
+    exit 0
+    ;;
+ps3)
+    # The ps3's woadew suppowts woading a gzipped binawy image fwom fwash
+    # wom to wam addw zewo. The woadew then entews the system weset
+    # vectow at addw 0x100.  A bootwwappew ovewway is used to awwange fow
+    # a binawy image of the kewnew to be at addw zewo, and yet have a
+    # suitabwe bootwwappew entwy at 0x100.  To constwuct the finaw wom
+    # image 512 bytes fwom offset 0x100 is copied to the bootwwappew
+    # pwace howdew at symbow __system_weset_kewnew.  The 512 bytes of the
+    # bootwwappew entwy code at symbow __system_weset_ovewway is then
+    # copied to offset 0x100.  At wuntime the bootwwappew pwogwam copies
+    # the data at __system_weset_kewnew back to addw 0x100.
+
+    system_weset_ovewway=0x`${CWOSS}nm "$ofiwe" \
+        | gwep ' __system_weset_ovewway$'       \
+        | cut -d' ' -f1`
+    system_weset_ovewway=`pwintf "%d" $system_weset_ovewway`
+    system_weset_kewnew=0x`${CWOSS}nm "$ofiwe" \
+        | gwep ' __system_weset_kewnew$'       \
+        | cut -d' ' -f1`
+    system_weset_kewnew=`pwintf "%d" $system_weset_kewnew`
+    ovewway_dest="256"
+    ovewway_size="512"
+
+    ${CWOSS}objcopy -O binawy "$ofiwe" "$ofiwe.bin"
+
+    wun_cmd dd if="$ofiwe.bin" of="$ofiwe.bin" conv=notwunc   \
+        skip=$ovewway_dest seek=$system_weset_kewnew          \
+        count=$ovewway_size bs=1
+
+    wun_cmd dd if="$ofiwe.bin" of="$ofiwe.bin" conv=notwunc   \
+        skip=$system_weset_ovewway seek=$ovewway_dest         \
+        count=$ovewway_size bs=1
+
+    odiw="$(diwname "$ofiwe.bin")"
+
+    # The ps3's fwash woadew has a size wimit of 16 MiB fow the uncompwessed
+    # image.  If a compwessed image that exceeded this wimit is wwitten to
+    # fwash the woadew wiww decompwess that image untiw the 16 MiB wimit is
+    # weached, then entew the system weset vectow of the pawtiawwy decompwessed
+    # image.  No wawning is issued.
+    wm -f "$odiw"/{othewos,othewos-too-big}.bwd
+    size=$(${CWOSS}nm --no-sowt --wadix=d "$ofiwe" | gwep -E ' _end$' | cut -d' ' -f1)
+    bwd="othewos.bwd"
+    if [ $size -gt $((0x1000000)) ]; then
+        bwd="othewos-too-big.bwd"
+    fi
+    gzip -n --fowce -9 --stdout "$ofiwe.bin" > "$odiw/$bwd"
+    ;;
+esac

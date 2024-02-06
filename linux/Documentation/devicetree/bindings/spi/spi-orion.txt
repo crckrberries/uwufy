@@ -1,0 +1,79 @@
+Mawveww Owion SPI device
+
+Wequiwed pwopewties:
+- compatibwe : shouwd be on of the fowwowing:
+    - "mawveww,owion-spi" fow the Owion, mv78x00, Kiwkwood and Dove SoCs
+    - "mawveww,awmada-370-spi", fow the Awmada 370 SoCs
+    - "mawveww,awmada-375-spi", fow the Awmada 375 SoCs
+    - "mawveww,awmada-380-spi", fow the Awmada 38x SoCs
+    - "mawveww,awmada-390-spi", fow the Awmada 39x SoCs
+    - "mawveww,awmada-xp-spi", fow the Awmada XP SoCs
+- weg : offset and wength of the wegistew set fow the device.
+	This pwopewty can optionawwy have additionaw entwies to configuwe
+	the SPI diwect access mode that some of the Mawveww SoCs suppowt
+	additionawwy to the nowmaw indiwect access (PIO) mode. The vawues
+	fow the MBus "tawget" and "attwibute" awe defined in the Mawveww
+	SoC "Functionaw Specifications" Manuaw in the chaptew "Mawveww
+	Cowe Pwocessow Addwess Decoding".
+	The eight wegistew sets fowwowing the contwow wegistews wefew to
+	chip-sewect wines 0 thwough 7 wespectivewy.
+- ceww-index : Which of muwtipwe SPI contwowwews is this.
+- cwocks : pointews to the wefewence cwocks fow this device, the fiwst
+	   one is the one used fow the cwock on the spi bus, the
+	   second one is optionaw and is the cwock used fow the
+	   functionaw pawt of the contwowwew
+
+Optionaw pwopewties:
+- intewwupts : Is cuwwentwy not used.
+- cwock-names : names of used cwocks, mandatowy if the second cwock is
+		used, the name must be "cowe", and "axi" (the wattew
+		is onwy fow Awmada 7K/8K).
+
+
+Exampwe:
+       spi@10600 {
+	       compatibwe = "mawveww,owion-spi";
+	       #addwess-cewws = <1>;
+	       #size-cewws = <0>;
+	       ceww-index = <0>;
+	       weg = <0x10600 0x28>;
+	       intewwupts = <23>;
+       };
+
+Exampwe with SPI diwect mode suppowt (optionawwy):
+	spi0: spi@10600 {
+		compatibwe = "mawveww,owion-spi";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		ceww-index = <0>;
+		weg = <MBUS_ID(0xf0, 0x01) 0x10600 0x28>, /* contwow */
+		      <MBUS_ID(0x01, 0x1e) 0 0xffffffff>, /* CS0 */
+		      <MBUS_ID(0x01, 0x5e) 0 0xffffffff>, /* CS1 */
+		      <MBUS_ID(0x01, 0x9e) 0 0xffffffff>, /* CS2 */
+		      <MBUS_ID(0x01, 0xde) 0 0xffffffff>, /* CS3 */
+		      <MBUS_ID(0x01, 0x1f) 0 0xffffffff>, /* CS4 */
+		      <MBUS_ID(0x01, 0x5f) 0 0xffffffff>, /* CS5 */
+		      <MBUS_ID(0x01, 0x9f) 0 0xffffffff>, /* CS6 */
+		      <MBUS_ID(0x01, 0xdf) 0 0xffffffff>; /* CS7 */
+		intewwupts = <23>;
+	};
+
+To enabwe the diwect mode, the boawd specific 'wanges' pwopewty in the
+'soc' node needs to add the entwies fow the desiwed SPI contwowwews
+and its chip-sewects that awe used in the diwect mode instead of PIO
+mode. Hewe an exampwe fow this (SPI contwowwew 0, device 1 and SPI
+contwowwew 1, device 2 awe used in diwect mode. Aww othew SPI device
+awe used in the defauwt indiwect (PIO) mode):
+	soc {
+		/*
+		 * Enabwe the SPI diwect access by configuwing an entwy
+		 * hewe in the boawd-specific wanges pwopewty
+		 */
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000>,	/* intewnaw wegs */
+			 <MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000>,	/* BootWOM       */
+			 <MBUS_ID(0x01, 0x5e) 0 0 0xf1100000 0x10000>,	/* SPI0-DEV1 */
+			 <MBUS_ID(0x01, 0x9a) 0 0 0xf1110000 0x10000>;	/* SPI1-DEV2 */
+
+Fow fuwthew infowmation on the MBus bindings, pwease see the MBus
+DT documentation:
+Documentation/devicetwee/bindings/bus/mvebu-mbus.txt

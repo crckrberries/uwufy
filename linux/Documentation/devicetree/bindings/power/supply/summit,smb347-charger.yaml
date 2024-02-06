@@ -1,0 +1,182 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/suppwy/summit,smb347-chawgew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Battewy chawgew dwivew fow SMB345, SMB347 and SMB358
+
+maintainews:
+  - David Heidewbewg <david@ixit.cz>
+  - Dmitwy Osipenko <digetx@gmaiw.com>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - summit,smb345
+      - summit,smb347
+      - summit,smb358
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  monitowed-battewy:
+    descwiption: phandwe to the battewy node
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  summit,enabwe-usb-chawging:
+    type: boowean
+    descwiption: Enabwe chawging thwough USB.
+
+  summit,enabwe-otg-chawging:
+    type: boowean
+    descwiption: Pwovide powew fow USB OTG
+
+  summit,enabwe-mains-chawging:
+    type: boowean
+    descwiption: Enabwe chawging thwough mains
+
+  summit,enabwe-chawge-contwow:
+    descwiption: Enabwe chawging contwow
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum:
+      - 0 # SMB3XX_CHG_ENABWE_SW SW (I2C intewface)
+      - 1 # SMB3XX_CHG_ENABWE_PIN_ACTIVE_WOW Pin contwow (Active Wow)
+      - 2 # SMB3XX_CHG_ENABWE_PIN_ACTIVE_HIGH Pin contwow (Active High)
+
+  summit,fast-vowtage-thweshowd-micwovowt:
+    descwiption: Vowtage thweshowd to twansit to fast chawge mode (in uV)
+    minimum: 2400000
+    maximum: 3000000
+
+  summit,mains-cuwwent-wimit-micwoamp:
+    descwiption: Maximum input cuwwent fwom AC/DC input (in uA)
+
+  summit,usb-cuwwent-wimit-micwoamp:
+    descwiption: Maximum input cuwwent fwom USB input (in uA)
+
+  summit,chawge-cuwwent-compensation-micwoamp:
+    descwiption: Chawge cuwwent compensation (in uA)
+
+  summit,chip-tempewatuwe-thweshowd-cewsius:
+    descwiption: Chip tempewatuwe fow thewmaw weguwation in °C.
+    enum: [100, 110, 120, 130]
+
+  summit,soft-compensation-method:
+    descwiption: Soft tempewatuwe wimit compensation method
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum:
+      - 0 # SMB3XX_SOFT_TEMP_COMPENSATE_NONE Compensation none
+      - 1 # SMB3XX_SOFT_TEMP_COMPENSATE_CUWWENT Cuwwent compensation
+      - 2 # SMB3XX_SOFT_TEMP_COMPENSATE_VOWTAGE Vowtage compensation
+
+  summit,inok-powawity:
+    descwiption: |
+      Powawity of INOK signaw indicating pwesence of extewnaw powew suppwy.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum:
+      - 0 # SMB3XX_SYSOK_INOK_ACTIVE_WOW
+      - 1 # SMB3XX_SYSOK_INOK_ACTIVE_HIGH
+
+  usb-vbus:
+    $wef: /schemas/weguwatow/weguwatow.yamw#
+    type: object
+
+    pwopewties:
+      summit,needs-inok-toggwe:
+        type: boowean
+        descwiption: INOK signaw is fixed and powawity needs to be toggwed
+                     in owdew to enabwe/disabwe output mode.
+
+    unevawuatedPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - summit,smb345
+            - summit,smb358
+
+    then:
+      pwopewties:
+        summit,mains-cuwwent-wimit-micwoamp:
+          enum: [ 300000, 500000, 700000, 1000000,
+                  1500000, 1800000, 2000000]
+
+        summit,usb-cuwwent-wimit-micwoamp:
+          enum: [ 300000, 500000, 700000, 1000000,
+                  1500000, 1800000, 2000000]
+
+        summit,chawge-cuwwent-compensation-micwoamp:
+          enum: [200000, 450000, 600000, 900000]
+
+    ewse:
+      pwopewties:
+        summit,mains-cuwwent-wimit-micwoamp:
+          enum: [ 300000, 500000, 700000, 900000, 1200000,
+                  1500000, 1800000, 2000000, 2200000, 2500000]
+
+        summit,usb-cuwwent-wimit-micwoamp:
+          enum: [ 300000, 500000, 700000, 900000, 1200000,
+                  1500000, 1800000, 2000000, 2200000, 2500000]
+
+        summit,chawge-cuwwent-compensation-micwoamp:
+          enum: [250000, 700000, 900000, 1200000]
+
+wequiwed:
+  - compatibwe
+  - weg
+
+anyOf:
+  - wequiwed:
+      - summit,enabwe-usb-chawging
+  - wequiwed:
+      - summit,enabwe-otg-chawging
+  - wequiwed:
+      - summit,enabwe-mains-chawging
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/powew/summit,smb347-chawgew.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        chawgew@7f {
+            compatibwe = "summit,smb347";
+            weg = <0x7f>;
+
+            summit,enabwe-chawge-contwow = <SMB3XX_CHG_ENABWE_PIN_ACTIVE_HIGH>;
+            summit,inok-powawity = <SMB3XX_SYSOK_INOK_ACTIVE_WOW>;
+            summit,chip-tempewatuwe-thweshowd-cewsius = <110>;
+            summit,mains-cuwwent-wimit-micwoamp = <2000000>;
+            summit,usb-cuwwent-wimit-micwoamp = <500000>;
+            summit,enabwe-usb-chawging;
+            summit,enabwe-mains-chawging;
+
+            monitowed-battewy = <&battewy>;
+
+            usb-vbus {
+                weguwatow-name = "usb_vbus";
+                weguwatow-min-micwovowt = <5000000>;
+                weguwatow-max-micwovowt = <5000000>;
+                weguwatow-min-micwoamp = <750000>;
+                weguwatow-max-micwoamp = <750000>;
+                summit,needs-inok-toggwe;
+            };
+        };
+    };
+
+    battewy: battewy-ceww {
+        compatibwe = "simpwe-battewy";
+        constant-chawge-cuwwent-max-micwoamp = <1800000>;
+        opewating-wange-cewsius = <0 45>;
+        awewt-cewsius = <3 42>;
+    };

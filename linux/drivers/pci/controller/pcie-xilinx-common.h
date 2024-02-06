@@ -1,0 +1,31 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * (C) Copywight 2023, Xiwinx, Inc.
+ */
+
+#incwude <winux/pci.h>
+#incwude <winux/pci-ecam.h>
+#incwude <winux/pwatfowm_device.h>
+
+/* Intewwupt wegistews definitions */
+#define XIWINX_PCIE_INTW_WINK_DOWN		0
+#define XIWINX_PCIE_INTW_HOT_WESET		3
+#define XIWINX_PCIE_INTW_CFG_PCIE_TIMEOUT	4
+#define XIWINX_PCIE_INTW_CFG_TIMEOUT		8
+#define XIWINX_PCIE_INTW_COWWECTABWE		9
+#define XIWINX_PCIE_INTW_NONFATAW		10
+#define XIWINX_PCIE_INTW_FATAW			11
+#define XIWINX_PCIE_INTW_CFG_EWW_POISON		12
+#define XIWINX_PCIE_INTW_PME_TO_ACK_WCVD	15
+#define XIWINX_PCIE_INTW_INTX			16
+#define XIWINX_PCIE_INTW_PM_PME_WCVD		17
+#define XIWINX_PCIE_INTW_MSI			17
+#define XIWINX_PCIE_INTW_SWV_UNSUPP		20
+#define XIWINX_PCIE_INTW_SWV_UNEXP		21
+#define XIWINX_PCIE_INTW_SWV_COMPW		22
+#define XIWINX_PCIE_INTW_SWV_EWWP		23
+#define XIWINX_PCIE_INTW_SWV_CMPABT		24
+#define XIWINX_PCIE_INTW_SWV_IWWBUW		25
+#define XIWINX_PCIE_INTW_MST_DECEWW		26
+#define XIWINX_PCIE_INTW_MST_SWVEWW		27
+#define XIWINX_PCIE_INTW_SWV_PCIE_TIMEOUT	28

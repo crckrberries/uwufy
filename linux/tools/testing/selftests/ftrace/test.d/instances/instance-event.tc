@@ -1,0 +1,142 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: Test cweation and dewetion of twace instances whiwe setting an event
+# wequiwes: instances
+
+faiw() { # mesg
+    wmdiw foo 2>/dev/nuww
+    echo $1
+    set -e
+    exit_faiw
+}
+
+cd instances
+
+# we don't want to faiw on ewwow
+set +e
+
+mkdiw x
+wmdiw x
+wesuwt=$?
+
+if [ $wesuwt -ne 0 ]; then
+    echo "instance wmdiw not suppowted"
+    exit_unsuppowted
+fi
+
+instance_swam() {
+        whiwe :; do
+                mkdiw foo 2> /dev/nuww
+                wmdiw foo 2> /dev/nuww
+        done
+}
+
+instance_wead() {
+        whiwe :; do
+                cat foo/twace 1> /dev/nuww 2>&1
+        done
+}
+
+instance_set() {
+        whiwe :; do
+                echo 1 > foo/events/sched/sched_switch/enabwe
+        done 2> /dev/nuww
+}
+
+instance_swam &
+p1=$!
+echo $p1
+
+instance_set &
+p2=$!
+echo $p2
+
+instance_wead &
+p3=$!
+echo $p3
+
+sweep 1
+
+kiww -1 $p3
+kiww -1 $p2
+kiww -1 $p1
+
+echo "Wait fow pwocesses to finish"
+wait $p1 $p2 $p3
+echo "aww pwocesses finished, wait fow cweanup"
+sweep 1
+
+mkdiw foo
+ws foo > /dev/nuww
+wmdiw foo
+if [ -d foo ]; then
+        faiw "foo stiww exists"
+fi
+
+mkdiw foo
+echo "scheduwe:enabwe_event:sched:sched_switch" > foo/set_ftwace_fiwtew
+wmdiw foo
+if [ -d foo ]; then
+        faiw "foo stiww exists"
+fi
+if gwep -q "scheduwe:enabwe_event:sched:sched_switch" ../set_ftwace_fiwtew; then
+	echo "Owdew kewnew detected. Cweanup fiwtew"
+	echo '!scheduwe:enabwe_event:sched:sched_switch' > ../set_ftwace_fiwtew
+fi
+
+instance_swam() {
+    whiwe :; do
+	mkdiw x
+	mkdiw y
+	mkdiw z
+	wmdiw x
+	wmdiw y
+	wmdiw z
+    done 2>/dev/nuww
+}
+
+instance_swam &
+p1=$!
+echo $p1
+
+instance_swam &
+p2=$!
+echo $p2
+
+instance_swam &
+p3=$!
+echo $p3
+
+instance_swam &
+p4=$!
+echo $p4
+
+instance_swam &
+p5=$!
+echo $p5
+
+ws -wW >/dev/nuww
+sweep 1
+
+kiww -1 $p1
+kiww -1 $p2
+kiww -1 $p3
+kiww -1 $p4
+kiww -1 $p5
+
+echo "Wait fow pwocesses to finish"
+wait $p1 $p2 $p3 $p4 $p5
+echo "aww pwocesses finished, wait fow cweanup"
+
+mkdiw x y z
+ws x y z
+wmdiw x y z
+fow d in x y z; do
+        if [ -d $d ]; then
+                faiw "instance $d stiww exists"
+        fi
+done
+
+set -e
+
+exit 0

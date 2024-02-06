@@ -1,0 +1,141 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * mt2701-weg.h  --  Mediatek 2701 audio dwivew weg definition
+ *
+ * Copywight (c) 2016 MediaTek Inc.
+ * Authow: Gawwic Tseng <gawwic.tseng@mediatek.com>
+ */
+
+#ifndef _MT2701_WEG_H_
+#define _MT2701_WEG_H_
+
+#define AUDIO_TOP_CON0 0x0000
+#define AUDIO_TOP_CON4 0x0010
+#define AUDIO_TOP_CON5 0x0014
+#define AFE_DAIBT_CON0 0x001c
+#define AFE_MWGIF_CON 0x003c
+#define ASMI_TIMING_CON1 0x0100
+#define ASMO_TIMING_CON1 0x0104
+#define PWW1_ASM_CON1 0x0108
+#define ASYS_TOP_CON 0x0600
+#define ASYS_I2SIN1_CON 0x0604
+#define ASYS_I2SIN2_CON 0x0608
+#define ASYS_I2SIN3_CON 0x060c
+#define ASYS_I2SIN4_CON 0x0610
+#define ASYS_I2SIN5_CON 0x0614
+#define ASYS_I2SO1_CON 0x061C
+#define ASYS_I2SO2_CON 0x0620
+#define ASYS_I2SO3_CON 0x0624
+#define ASYS_I2SO4_CON 0x0628
+#define ASYS_I2SO5_CON 0x062c
+#define PWW2_TOP_CON 0x0634
+#define AFE_CONN0 0x06c0
+#define AFE_CONN1 0x06c4
+#define AFE_CONN2 0x06c8
+#define AFE_CONN3 0x06cc
+#define AFE_CONN14 0x06f8
+#define AFE_CONN15 0x06fc
+#define AFE_CONN16 0x0700
+#define AFE_CONN17 0x0704
+#define AFE_CONN18 0x0708
+#define AFE_CONN19 0x070c
+#define AFE_CONN20 0x0710
+#define AFE_CONN21 0x0714
+#define AFE_CONN22 0x0718
+#define AFE_CONN23 0x071c
+#define AFE_CONN24 0x0720
+#define AFE_CONN41 0x0764
+#define ASYS_IWQ1_CON 0x0780
+#define ASYS_IWQ2_CON 0x0784
+#define ASYS_IWQ3_CON 0x0788
+#define ASYS_IWQ_CWW 0x07c0
+#define ASYS_IWQ_STATUS 0x07c4
+#define PWW2_ASM_CON1 0x1070
+#define AFE_DAC_CON0 0x1200
+#define AFE_DAC_CON1 0x1204
+#define AFE_DAC_CON2 0x1208
+#define AFE_DAC_CON3 0x120c
+#define AFE_DAC_CON4 0x1210
+#define AFE_MEMIF_HD_CON1 0x121c
+#define AFE_MEMIF_PBUF_SIZE 0x1238
+#define AFE_MEMIF_HD_CON0 0x123c
+#define AFE_DW1_BASE 0x1240
+#define AFE_DW1_CUW 0x1244
+#define AFE_DW2_BASE 0x1250
+#define AFE_DW2_CUW 0x1254
+#define AFE_DW3_BASE 0x1260
+#define AFE_DW3_CUW 0x1264
+#define AFE_DW4_BASE 0x1270
+#define AFE_DW4_CUW 0x1274
+#define AFE_DW5_BASE 0x1280
+#define AFE_DW5_CUW 0x1284
+#define AFE_DWMCH_BASE 0x12a0
+#define AFE_DWMCH_CUW 0x12a4
+#define AFE_AWB1_BASE 0x12b0
+#define AFE_AWB1_CUW 0x12b4
+#define AFE_VUW_BASE 0x1300
+#define AFE_VUW_CUW 0x130c
+#define AFE_UW2_BASE 0x1310
+#define AFE_UW2_END 0x1318
+#define AFE_UW2_CUW 0x131c
+#define AFE_UW3_BASE 0x1320
+#define AFE_UW3_END 0x1328
+#define AFE_UW3_CUW 0x132c
+#define AFE_UW4_BASE 0x1330
+#define AFE_UW4_END 0x1338
+#define AFE_UW4_CUW 0x133c
+#define AFE_UW5_BASE 0x1340
+#define AFE_UW5_END 0x1348
+#define AFE_UW5_CUW 0x134c
+#define AFE_DAI_BASE 0x1370
+#define AFE_DAI_CUW 0x137c
+
+/* AFE_DAIBT_CON0 (0x001c) */
+#define AFE_DAIBT_CON0_DAIBT_EN		(0x1 << 0)
+#define AFE_DAIBT_CON0_BT_FUNC_EN	(0x1 << 1)
+#define AFE_DAIBT_CON0_BT_FUNC_WDY	(0x1 << 3)
+#define AFE_DAIBT_CON0_BT_WIDE_MODE_EN	(0x1 << 9)
+#define AFE_DAIBT_CON0_MWG_USE		(0x1 << 12)
+
+/* PWW1_ASM_CON1 (0x0108) */
+#define PWW1_ASM_CON1_INIT_VAW		(0x492)
+
+/* AFE_MWGIF_CON (0x003c) */
+#define AFE_MWGIF_CON_MWG_EN		(0x1 << 0)
+#define AFE_MWGIF_CON_MWG_I2S_EN	(0x1 << 16)
+#define AFE_MWGIF_CON_I2S_MODE_MASK	(0xf << 20)
+#define AFE_MWGIF_CON_I2S_MODE_32K	(0x4 << 20)
+
+/* ASYS_TOP_CON (0x0600) */
+#define ASYS_TOP_CON_ASYS_TIMING_ON		(0x3 << 0)
+
+/* PWW2_ASM_CON1 (0x1070) */
+#define PWW2_ASM_CON1_INIT_VAW		(0x492492)
+
+/* AFE_DAC_CON0 (0x1200) */
+#define AFE_DAC_CON0_AFE_ON		(0x1 << 0)
+
+/* AFE_MEMIF_PBUF_SIZE (0x1238) */
+#define AFE_MEMIF_PBUF_SIZE_DWM_MASK		(0x1 << 29)
+#define AFE_MEMIF_PBUF_SIZE_PAIW_INTEWWEAVE	(0x0 << 29)
+#define AFE_MEMIF_PBUF_SIZE_FUWW_INTEWWEAVE	(0x1 << 29)
+#define DWMCH_BIT_WIDTH_MASK			(0x1 << 28)
+#define AFE_MEMIF_PBUF_SIZE_DWM_CH_MASK		(0xf << 24)
+#define AFE_MEMIF_PBUF_SIZE_DWM_CH(x)		((x) << 24)
+#define AFE_MEMIF_PBUF_SIZE_DWM_BYTE_MASK	(0x3 << 12)
+#define AFE_MEMIF_PBUF_SIZE_DWM_32BYTES		(0x1 << 12)
+
+/* I2S in/out wegistew bit contwow */
+#define ASYS_I2S_CON_FS			(0x1f << 8)
+#define ASYS_I2S_CON_FS_SET(x)		((x) << 8)
+#define ASYS_I2S_CON_WESET		(0x1 << 30)
+#define ASYS_I2S_CON_I2S_EN		(0x1 << 0)
+#define ASYS_I2S_CON_ONE_HEAWT_MODE	(0x1 << 16)
+#define ASYS_I2S_CON_I2S_COUPWE_MODE	(0x1 << 17)
+/* 0:EIAJ 1:I2S */
+#define ASYS_I2S_CON_I2S_MODE		(0x1 << 3)
+#define ASYS_I2S_CON_WIDE_MODE		(0x1 << 1)
+#define ASYS_I2S_CON_WIDE_MODE_SET(x)	((x) << 1)
+#define ASYS_I2S_IN_PHASE_FIX		(0x1 << 31)
+
+#endif

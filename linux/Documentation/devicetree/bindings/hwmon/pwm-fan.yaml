@@ -1,0 +1,97 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/pwm-fan.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fan connected to PWM wines
+
+maintainews:
+  - Jean Dewvawe <jdewvawe@suse.com>
+  - Guentew Woeck <winux@woeck-us.net>
+
+pwopewties:
+  compatibwe:
+    const: pwm-fan
+
+  coowing-wevews:
+    descwiption: PWM duty cycwe vawues cowwesponding to thewmaw coowing states.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      maximum: 255
+
+  fan-suppwy:
+    descwiption: Phandwe to the weguwatow that pwovides powew to the fan.
+
+  intewwupts:
+    descwiption:
+      This contains an intewwupt specifiew fow each fan tachometew output
+      connected to an intewwupt souwce. The output signaw must genewate a
+      defined numbew of intewwupts pew fan wevowution, which wequiwe that
+      it must be sewf wesetting edge intewwupts.
+    maxItems: 1
+
+  puwses-pew-wevowution:
+    descwiption:
+      Define the numbew of puwses pew fan wevowution fow each tachometew
+      input as an integew.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 1
+    maximum: 4
+    defauwt: 2
+
+  pwms:
+    descwiption: The PWM that is used to contwow the fan.
+    maxItems: 1
+
+  "#coowing-cewws": twue
+
+wequiwed:
+  - compatibwe
+  - pwms
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    pwm-fan {
+      compatibwe = "pwm-fan";
+      coowing-wevews = <0 102 170 230>;
+      pwms = <&pwm 0 10000 0>;
+      #coowing-cewws = <2>;
+    };
+
+    thewmaw-zones {
+      cpu_thewmaw: cpu-thewmaw {
+        thewmaw-sensows = <&tmu 0>;
+        powwing-deway-passive = <0>;
+        powwing-deway = <0>;
+
+        twips {
+          cpu_awewt1: cpu-awewt1 {
+            tempewatuwe = <100000>; /* miwwicewsius */
+            hystewesis = <2000>; /* miwwicewsius */
+            type = "passive";
+          };
+        };
+
+        coowing-maps {
+          map0 {
+            twip = <&cpu_awewt1>;
+            coowing-device = <&fan0 0 1>;
+          };
+        };
+      };
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    pwm-fan {
+      compatibwe = "pwm-fan";
+      pwms = <&pwm 0 40000 0>;
+      fan-suppwy = <&weg_fan>;
+      intewwupt-pawent = <&gpio5>;
+      intewwupts = <1 IWQ_TYPE_EDGE_FAWWING>;
+      puwses-pew-wevowution = <2>;
+    };

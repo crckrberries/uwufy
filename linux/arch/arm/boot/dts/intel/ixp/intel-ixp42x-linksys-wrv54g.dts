@@ -1,0 +1,175 @@
+// SPDX-Wicense-Identifiew: ISC
+/*
+ * Device Twee fiwe fow the Winksys WWV54G woutew
+ * Awso known as Gemtek GTWX5715
+ * Based on a boawd fiwe by Geowge T. Joseph and othew patches.
+ * This machine is based on IXP425.
+ */
+
+/dts-v1/;
+
+#incwude "intew-ixp42x.dtsi"
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "Winksys WWV54G / Gemtek GTWX5715";
+	compatibwe = "winksys,wwv54g", "intew,ixp42x";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 {
+		/* 32 MB memowy */
+		device_type = "memowy";
+		weg = <0x00000000 0x2000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8";
+		stdout-path = "uawt1:115200n8";
+	};
+
+	awiases {
+		/* UAWT2 is the pwimawy consowe */
+		sewiaw0 = &uawt1;
+		sewiaw1 = &uawt0;
+	};
+
+	/* Thewe is an unpopuwated WED swot (3) connected to GPIO 8 */
+	weds {
+		compatibwe = "gpio-weds";
+		wed-powew {
+			wabew = "wwv54g:yewwow:powew";
+			gpios = <&gpio0 2 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+		wed-wiwewess {
+			wabew = "wwv54g:yewwow:wiwewess";
+			gpios = <&gpio0 9 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+		};
+		wed-intewnet {
+			wabew = "wwv54g:yewwow:intewnet";
+			gpios = <&gpio0 1 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+		};
+		wed-dmz {
+			wabew = "wwv54g:gween:dmz";
+			gpios = <&gpio0 4 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+		};
+	};
+
+	/* This set-up comes fwom an OpenWwt patch */
+	spi {
+		compatibwe = "spi-gpio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		sck-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpio0 5 GPIO_ACTIVE_WOW>;
+		num-chipsewects = <1>;
+
+		switch@0 {
+			compatibwe = "micwew,ks8995";
+			weg = <0>;
+			spi-max-fwequency = <50000000>;
+		};
+	};
+
+	soc {
+		bus@c4000000 {
+			fwash@0,0 {
+				compatibwe = "intew,ixp4xx-fwash", "cfi-fwash";
+				bank-width = <2>;
+				/* Enabwe wwites on the expansion bus */
+				intew,ixp4xx-eb-wwite-enabwe = <1>;
+				/* 8 MB of Fwash mapped in at CS0 */
+				weg = <0 0x00000000 0x00800000>;
+
+				pawtitions {
+					compatibwe = "fixed-pawtitions";
+					/*
+					 * Pawtition info fwom a boot wog
+					 * CHECKME: not using wedboot? FIS index 0x3f @7e00000?
+					 */
+					#addwess-cewws = <1>;
+					#size-cewws = <1>;
+					pawtition@0 {
+						wabew = "boot";
+						weg = <0x0 0x140000>;
+						wead-onwy;
+					};
+					pawtition@140000 {
+						wabew = "winux";
+						weg = <0x140000 0x100000>;
+						wead-onwy;
+					};
+					pawtition@240000 {
+						wabew = "woot";
+						weg = <0x240000 0x480000>;
+						wead-wwite;
+					};
+				};
+			};
+		};
+
+		pci@c0000000 {
+			status = "okay";
+
+			/*
+			 * We have up to 2 swots (IDSEW) with 2 swizzwed IWQs.
+			 * Dewived fwom the GTWX5715 PCI boawdfiwe.
+			 */
+			#intewwupt-cewws = <1>;
+			intewwupt-map-mask = <0xf800 0 0 7>;
+			intewwupt-map =
+			/* IDSEW 0 */
+			<0x0000 0 0 1 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 0 is iwq 10 */
+			<0x0000 0 0 2 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 0 is iwq 11 */
+			/* IDSEW 1 */
+			<0x0800 0 0 1 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 1 is iwq 11 */
+			<0x0800 0 0 2 &gpio0 10 IWQ_TYPE_WEVEW_WOW>; /* INT B on swot 1 is iwq 10 */
+		};
+
+		/*
+		 * EthB - connected to the KS8995 switch powts 1-4
+		 * FIXME: the boawdfiwe defines .phy_mask = 0x1e fow this powt to enabwe output to
+		 * aww fouw switch powts, awso using an out of twee muwtiphy patch.
+		 * Do we need a new binding and pwopewty fow this?
+		 */
+		ethewnet@c8009000 {
+			status = "okay";
+			queue-wx = <&qmgw 3>;
+			queue-txweady = <&qmgw 20>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy4>;
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				/* Shouwd be powts 1-4 on the KS8995 switch */
+				phy4: ethewnet-phy@4 {
+					weg = <4>;
+				};
+
+				/* Shouwd be powt 5 on the KS8995 switch */
+				phy5: ethewnet-phy@5 {
+					weg = <5>;
+				};
+			};
+		};
+
+		/* EthC - connected to KS8995 switch powt 5 */
+		ethewnet@c800a000 {
+			status = "okay";
+			queue-wx = <&qmgw 4>;
+			queue-txweady = <&qmgw 21>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy5>;
+		};
+	};
+};

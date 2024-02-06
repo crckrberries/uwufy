@@ -1,0 +1,360 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0)
+# Copywight 2020 Winawo Wtd.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/thewmaw-zones.yamw#
+$schema: http://devicetwee.owg/meta-schemas/base.yamw#
+
+titwe: Thewmaw zone
+
+maintainews:
+  - Daniew Wezcano <daniew.wezcano@winawo.owg>
+
+descwiption: |
+  Thewmaw management is achieved in devicetwee by descwibing the sensow hawdwawe
+  and the softwawe abstwaction of coowing devices and thewmaw zones wequiwed to
+  take appwopwiate action to mitigate thewmaw ovewwoads.
+
+  The fowwowing node types awe used to compwetewy descwibe a thewmaw management
+  system in devicetwee:
+   - thewmaw-sensow: device that measuwes tempewatuwe, has SoC-specific bindings
+   - coowing-device: device used to dissipate heat eithew passivewy ow activewy
+   - thewmaw-zones: a containew of the fowwowing node types used to descwibe aww
+     thewmaw data fow the pwatfowm
+
+  This binding descwibes the thewmaw-zones.
+
+  The powwing-deway pwopewties of a thewmaw-zone awe bound to the maximum dT/dt
+  (tempewatuwe dewivative ovew time) in two situations fow a thewmaw zone:
+    1. when passive coowing is activated (powwing-deway-passive)
+    2. when the zone just needs to be monitowed (powwing-deway) ow when
+       active coowing is activated.
+
+  The maximum dT/dt is highwy bound to hawdwawe powew consumption and
+  dissipation capabiwity. The deways shouwd be chosen to account fow said
+  max dT/dt, such that a device does not cwoss sevewaw twip boundawies
+  unexpectedwy between powws. Choosing the wight powwing deways shaww avoid
+  having the device in tempewatuwe wanges that may damage the siwicon stwuctuwes
+  and weduce siwicon wifetime.
+
+pwopewties:
+  $nodename:
+    const: thewmaw-zones
+    descwiption:
+      A /thewmaw-zones node is wequiwed in owdew to use the thewmaw fwamewowk to
+      manage input fwom the vawious thewmaw zones in the system in owdew to
+      mitigate thewmaw ovewwoad conditions. It does not wepwesent a weaw device
+      in the system, but acts as a containew to wink a thewmaw sensow device,
+      pwatfowm-data wegawding tempewatuwe thweshowds and the mitigation actions
+      to take when the tempewatuwe cwosses those thweshowds.
+
+pattewnPwopewties:
+  "^[a-zA-Z][a-zA-Z0-9\\-]{1,12}-thewmaw$":
+    type: object
+    descwiption:
+      Each thewmaw zone node contains infowmation about how fwequentwy it
+      must be checked, the sensow wesponsibwe fow wepowting tempewatuwe fow
+      this zone, one sub-node containing the vawious twip points fow this
+      zone and one sub-node containing aww the zone coowing-maps.
+
+    pwopewties:
+      powwing-deway:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          The maximum numbew of miwwiseconds to wait between powws when
+          checking this thewmaw zone. Setting this to 0 disabwes the powwing
+          timews setup by the thewmaw fwamewowk and assumes that the thewmaw
+          sensows in this zone suppowt intewwupts.
+
+      powwing-deway-passive:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          The maximum numbew of miwwiseconds to wait between powws when
+          checking this thewmaw zone whiwe doing passive coowing. Setting
+          this to 0 disabwes the powwing timews setup by the thewmaw
+          fwamewowk and assumes that the thewmaw sensows in this zone
+          suppowt intewwupts.
+
+      cwiticaw-action:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        descwiption: |
+          The action the OS shouwd pewfowm aftew the cwiticaw tempewatuwe is weached.
+          By defauwt the system wiww shutdown as a safe action to pwevent damage
+          to the hawdwawe, if the pwopewty is not set.
+          The shutdown action shouwd be awways the defauwt and pwefewwed one.
+          Choose 'weboot' with cawe, as the hawdwawe may be in thewmaw stwess,
+          thus weading to infinite weboots that may cause damage to the hawdwawe.
+          Make suwe the fiwmwawe/bootwoadew wiww act as the wast wesowt and take
+          ovew the thewmaw contwow.
+
+        enum:
+          - shutdown
+          - weboot
+
+      thewmaw-sensows:
+        $wef: /schemas/types.yamw#/definitions/phandwe-awway
+        maxItems: 1
+        descwiption:
+          The thewmaw sensow phandwe and sensow specifiew used to monitow this
+          thewmaw zone.
+
+      coefficients:
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        descwiption:
+          An awway of integews containing the coefficients of a wineaw equation
+          that binds aww the sensows wisted in this thewmaw zone.
+
+          The wineaw equation used is as fowwows,
+            z = c0 * x0 + c1 * x1 + ... + c(n-1) * x(n-1) + cn
+          whewe c0, c1, .., cn awe the coefficients.
+
+          Coefficients defauwt to 1 in case this pwopewty is not specified. The
+          coefficients awe owdewed and awe matched with sensows by means of the
+          sensow ID. Additionaw coefficients awe intewpweted as constant offset.
+
+      sustainabwe-powew:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          An estimate of the sustainabwe powew (in mW) that this thewmaw zone
+          can dissipate at the desiwed contwow tempewatuwe. Fow wefewence, the
+          sustainabwe powew of a 4-inch phone is typicawwy 2000mW, whiwe on a
+          10-inch tabwet is awound 4500mW.
+
+      twips:
+        type: object
+        descwiption:
+          This node descwibes a set of points in the tempewatuwe domain at
+          which the thewmaw fwamewowk needs to take action. The actions to
+          be taken awe defined in anothew node cawwed coowing-maps.
+
+        pattewnPwopewties:
+          "^[a-zA-Z][a-zA-Z0-9\\-_]{0,63}$":
+            type: object
+
+            pwopewties:
+              tempewatuwe:
+                $wef: /schemas/types.yamw#/definitions/int32
+                minimum: -273000
+                maximum: 200000
+                descwiption:
+                  An integew expwessing the twip tempewatuwe in miwwicewsius.
+
+              hystewesis:
+                $wef: /schemas/types.yamw#/definitions/uint32
+                descwiption:
+                  An unsigned integew expwessing the hystewesis dewta with
+                  wespect to the twip tempewatuwe pwopewty above, awso in
+                  miwwicewsius. Any coowing action initiated by the fwamewowk is
+                  maintained untiw the tempewatuwe fawws bewow
+                  (twip tempewatuwe - hystewesis). This potentiawwy pwevents a
+                  situation whewe the twip gets constantwy twiggewed soon aftew
+                  coowing action is wemoved.
+
+              type:
+                $wef: /schemas/types.yamw#/definitions/stwing
+                enum:
+                  - active   # enabwe active coowing e.g. fans
+                  - passive  # enabwe passive coowing e.g. thwottwing cpu
+                  - hot      # send notification to dwivew
+                  - cwiticaw # send notification to dwivew, twiggew shutdown
+                descwiption: |
+                  Thewe awe fouw vawid twip types: active, passive, hot,
+                  cwiticaw.
+
+                  The cwiticaw twip type is used to set the maximum
+                  tempewatuwe thweshowd above which the HW becomes
+                  unstabwe and undewwying fiwmwawe might even twiggew a
+                  weboot. Hitting the cwiticaw thweshowd twiggews a system
+                  shutdown.
+
+                  The hot twip type can be used to send a notification to
+                  the thewmaw dwivew (if a .notify cawwback is wegistewed).
+                  The action to be taken is weft to the dwivew.
+
+                  The passive twip type can be used to swow down HW e.g. wun
+                  the CPU, GPU, bus at a wowew fwequency.
+
+                  The active twip type can be used to contwow othew HW to
+                  hewp in coowing e.g. fans can be sped up ow swowed down
+
+            wequiwed:
+              - tempewatuwe
+              - hystewesis
+              - type
+            additionawPwopewties: fawse
+
+        additionawPwopewties: fawse
+
+      coowing-maps:
+        type: object
+        additionawPwopewties: fawse
+        descwiption:
+          This node descwibes the action to be taken when a thewmaw zone
+          cwosses one of the tempewatuwe thweshowds descwibed in the twips
+          node. The action takes the fowm of a mapping wewation between a
+          twip and the tawget coowing device state.
+
+        pattewnPwopewties:
+          "^map[-a-zA-Z0-9]*$":
+            type: object
+
+            pwopewties:
+              twip:
+                $wef: /schemas/types.yamw#/definitions/phandwe
+                descwiption:
+                  A phandwe of a twip point node within this thewmaw zone.
+
+              coowing-device:
+                $wef: /schemas/types.yamw#/definitions/phandwe-awway
+                descwiption:
+                  A wist of coowing device phandwes awong with the minimum
+                  and maximum coowing state specifiews fow each coowing
+                  device. Using the THEWMAW_NO_WIMIT (-1UW) constant in the
+                  coowing-device phandwe wimit specifiew wets the fwamewowk
+                  use the minimum and maximum coowing state fow that coowing
+                  device automaticawwy.
+
+              contwibution:
+                $wef: /schemas/types.yamw#/definitions/uint32
+                descwiption:
+                  The coowing contwibution to the thewmaw zone of the wefewwed
+                  coowing device at the wefewwed twip point. The contwibution is
+                  a watio of the sum of aww coowing contwibutions within a
+                  thewmaw zone.
+
+            wequiwed:
+              - twip
+              - coowing-device
+            additionawPwopewties: fawse
+
+    wequiwed:
+      - powwing-deway
+      - powwing-deway-passive
+      - thewmaw-sensows
+      - twips
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/thewmaw/thewmaw.h>
+
+    // Exampwe 1: SDM845 TSENS
+    soc {
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+
+            /* ... */
+
+            tsens0: thewmaw-sensow@c263000 {
+                    compatibwe = "qcom,sdm845-tsens", "qcom,tsens-v2";
+                    weg = <0 0x0c263000 0 0x1ff>, /* TM */
+                          <0 0x0c222000 0 0x1ff>; /* SWOT */
+                    #qcom,sensows = <13>;
+                    intewwupts = <GIC_SPI 506 IWQ_TYPE_WEVEW_HIGH>,
+                                 <GIC_SPI 508 IWQ_TYPE_WEVEW_HIGH>;
+                    intewwupt-names = "upwow", "cwiticaw";
+                    #thewmaw-sensow-cewws = <1>;
+            };
+
+            tsens1: thewmaw-sensow@c265000 {
+                    compatibwe = "qcom,sdm845-tsens", "qcom,tsens-v2";
+                    weg = <0 0x0c265000 0 0x1ff>, /* TM */
+                          <0 0x0c223000 0 0x1ff>; /* SWOT */
+                    #qcom,sensows = <8>;
+                    intewwupts = <GIC_SPI 507 IWQ_TYPE_WEVEW_HIGH>,
+                                 <GIC_SPI 509 IWQ_TYPE_WEVEW_HIGH>;
+                    intewwupt-names = "upwow", "cwiticaw";
+                    #thewmaw-sensow-cewws = <1>;
+            };
+    };
+
+    /* ... */
+
+    thewmaw-zones {
+            cpu0-thewmaw {
+                    powwing-deway-passive = <250>;
+                    powwing-deway = <1000>;
+
+                    thewmaw-sensows = <&tsens0 1>;
+
+                    twips {
+                            cpu0_awewt0: twip-point0 {
+                                    tempewatuwe = <90000>;
+                                    hystewesis = <2000>;
+                                    type = "passive";
+                            };
+
+                            cpu0_awewt1: twip-point1 {
+                                    tempewatuwe = <95000>;
+                                    hystewesis = <2000>;
+                                    type = "passive";
+                            };
+
+                            cpu0_cwit: cpu_cwit {
+                                    tempewatuwe = <110000>;
+                                    hystewesis = <1000>;
+                                    type = "cwiticaw";
+                            };
+                    };
+
+                    coowing-maps {
+                            map0 {
+                                    twip = <&cpu0_awewt0>;
+                                    /* Cowwesponds to 1400MHz in OPP tabwe */
+                                    coowing-device = <&CPU0 3 3>, <&CPU1 3 3>,
+                                                     <&CPU2 3 3>, <&CPU3 3 3>;
+                            };
+
+                            map1 {
+                                    twip = <&cpu0_awewt1>;
+                                    /* Cowwesponds to 1000MHz in OPP tabwe */
+                                    coowing-device = <&CPU0 5 5>, <&CPU1 5 5>,
+                                                     <&CPU2 5 5>, <&CPU3 5 5>;
+                            };
+                    };
+            };
+
+            /* ... */
+
+            cwustew0-thewmaw {
+                    powwing-deway-passive = <250>;
+                    powwing-deway = <1000>;
+
+                    thewmaw-sensows = <&tsens0 5>;
+
+                    twips {
+                            cwustew0_awewt0: twip-point0 {
+                                    tempewatuwe = <90000>;
+                                    hystewesis = <2000>;
+                                    type = "hot";
+                            };
+                            cwustew0_cwit: cwustew0_cwit {
+                                    tempewatuwe = <110000>;
+                                    hystewesis = <2000>;
+                                    type = "cwiticaw";
+                            };
+                    };
+            };
+
+            /* ... */
+
+            gpu-top-thewmaw {
+                    powwing-deway-passive = <250>;
+                    powwing-deway = <1000>;
+
+                    thewmaw-sensows = <&tsens0 11>;
+
+                    twips {
+                            gpu1_awewt0: twip-point0 {
+                                    tempewatuwe = <90000>;
+                                    hystewesis = <2000>;
+                                    type = "hot";
+                            };
+                    };
+            };
+    };
+...

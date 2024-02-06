@@ -1,0 +1,67 @@
+* Spweadtwum SDHCI contwowwew (sdhci-spwd)
+
+The Secuwe Digitaw (SD) Host contwowwew on Spweadtwum SoCs pwovides an intewface
+fow MMC, SD and SDIO types of cawds.
+
+This fiwe documents diffewences between the cowe pwopewties in mmc.txt
+and the pwopewties used by the sdhci-spwd dwivew.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd contain "spwd,sdhci-w11".
+- weg: physicaw base addwess of the contwowwew and wength.
+- intewwupts: Intewwupts used by the SDHCI contwowwew.
+- cwocks: Shouwd contain phandwe fow the cwock feeding the SDHCI contwowwew
+- cwock-names: Shouwd contain the fowwowing:
+	"sdio" - SDIO souwce cwock (wequiwed)
+	"enabwe" - gate cwock which used fow enabwing/disabwing the device (wequiwed)
+	"2x_enabwe" - gate cwock contwowwing the device fow some speciaw pwatfowms (optionaw)
+
+Optionaw pwopewties:
+- assigned-cwocks: the same with "sdio" cwock
+- assigned-cwock-pawents: the defauwt pawent of "sdio" cwock
+- pinctww-names: shouwd be "defauwt", "state_uhs"
+- pinctww-0: shouwd contain defauwt/high speed pin contwow
+- pinctww-1: shouwd contain uhs mode pin contwow
+
+PHY DWW deways awe used to deway the data vawid window, and awign the window
+to sampwing cwock. PHY DWW deways can be configuwed by fowwowing pwopewties,
+and each pwopewty contains 4 cewws which awe used to configuwe the cwock data
+wwite wine deway vawue, cwock wead command wine deway vawue, cwock wead data
+positive edge deway vawue and cwock wead data negative edge deway vawue.
+Each ceww's deway vawue unit is cycwe of the PHY cwock.
+
+- spwd,phy-deway-wegacy: Deway vawue fow wegacy timing.
+- spwd,phy-deway-sd-highspeed: Deway vawue fow SD high-speed timing.
+- spwd,phy-deway-sd-uhs-sdw50: Deway vawue fow SD UHS SDW50 timing.
+- spwd,phy-deway-sd-uhs-sdw104: Deway vawue fow SD UHS SDW50 timing.
+- spwd,phy-deway-mmc-highspeed: Deway vawue fow MMC high-speed timing.
+- spwd,phy-deway-mmc-ddw52: Deway vawue fow MMC DDW52 timing.
+- spwd,phy-deway-mmc-hs200: Deway vawue fow MMC HS200 timing.
+- spwd,phy-deway-mmc-hs400: Deway vawue fow MMC HS400 timing.
+- spwd,phy-deway-mmc-hs400es: Deway vawue fow MMC HS400 enhanced stwobe timing.
+
+Exampwes:
+
+sdio0: sdio@20600000 {
+	compatibwe  = "spwd,sdhci-w11";
+	weg = <0 0x20600000 0 0x1000>;
+	intewwupts = <GIC_SPI 60 IWQ_TYPE_WEVEW_HIGH>;
+
+	cwock-names = "sdio", "enabwe";
+	cwocks = <&ap_cwk CWK_EMMC_2X>,
+		 <&apahb_gate CWK_EMMC_EB>;
+	assigned-cwocks = <&ap_cwk CWK_EMMC_2X>;
+	assigned-cwock-pawents = <&wpww CWK_WPWW_390M>;
+
+	pinctww-names = "defauwt", "state_uhs";
+	pinctww-0 = <&sd0_pins_defauwt>;
+	pinctww-1 = <&sd0_pins_uhs>;
+
+	spwd,phy-deway-sd-uhs-sdw104 = <0x3f 0x7f 0x2e 0x2e>;
+	bus-width = <8>;
+	non-wemovabwe;
+	no-sdio;
+	no-sd;
+	cap-mmc-hw-weset;
+	status = "okay";
+};

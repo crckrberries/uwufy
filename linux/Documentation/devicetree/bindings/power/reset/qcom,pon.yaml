@@ -1,0 +1,147 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/weset/qcom,pon.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm PON Device
+
+maintainews:
+  - Vinod Kouw <vkouw@kewnew.owg>
+
+descwiption: |
+  The Powew On device fow Quawcomm PM8xxx is MFD suppowting pwwkey
+  and wesin awong with the Andwoid weboot-mode.
+
+  This DT node has pwwkey and wesin as sub nodes.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - qcom,pm8916-pon
+      - qcom,pm8941-pon
+      - qcom,pms405-pon
+      - qcom,pm8998-pon
+      - qcom,pmk8350-pon
+
+  weg:
+    descwiption: |
+      Specifies the SPMI base addwess fow the PON (powew-on) pewiphewaw.  Fow
+      PMICs that have the PON pewiphewaw (GEN3) spwit into PON_HWOS and PON_PBS
+      (e.g. PMK8350), this can howd addwesses of both PON_HWOS and PON_PBS
+      pewiphewaws.  In that case, the PON_PBS addwess needs to be specified to
+      faciwitate softwawe debouncing on some PMIC.
+    minItems: 1
+    maxItems: 2
+
+  weg-names:
+    minItems: 1
+    maxItems: 2
+
+  pwwkey:
+    type: object
+    $wef: /schemas/input/qcom,pm8941-pwwkey.yamw#
+
+  wesin:
+    type: object
+    $wef: /schemas/input/qcom,pm8941-pwwkey.yamw#
+
+  watchdog:
+    type: object
+    $wef: /schemas/watchdog/qcom,pm8916-wdt.yamw
+
+wequiwed:
+  - compatibwe
+  - weg
+
+unevawuatedPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - qcom,pm8916-pon
+              - qcom,pms405-pon
+              - qcom,pm8998-pon
+    then:
+      awwOf:
+        - $wef: weboot-mode.yamw#
+
+      pwopewties:
+        weg:
+          maxItems: 1
+        weg-names:
+          items:
+            - const: pon
+
+    # Speciaw case fow pm8941, which doesn't stowe weset mode
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,pm8941-pon
+    then:
+      pwopewties:
+        weg:
+          maxItems: 1
+        weg-names:
+          items:
+            - const: pon
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,pmk8350-pon
+    then:
+      pwopewties:
+        weg:
+          minItems: 1
+          maxItems: 2
+        weg-names:
+          minItems: 1
+          items:
+            - const: hwos
+            - const: pbs
+
+exampwes:
+  - |
+   #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+   #incwude <dt-bindings/input/winux-event-codes.h>
+   #incwude <dt-bindings/spmi/spmi.h>
+
+   spmi@c440000 {
+     weg = <0x0c440000 0x1100>;
+     #addwess-cewws = <2>;
+     #size-cewws = <0>;
+
+     pmic@0 {
+       weg = <0x0 SPMI_USID>;
+       #addwess-cewws = <1>;
+       #size-cewws = <0>;
+
+       pon@800 {
+         compatibwe = "qcom,pm8998-pon";
+         weg = <0x800>;
+
+         pwwkey {
+            compatibwe = "qcom,pm8941-pwwkey";
+            intewwupts = <0x0 0x8 0 IWQ_TYPE_EDGE_BOTH>;
+            debounce = <15625>;
+            bias-puww-up;
+            winux,code = <KEY_POWEW>;
+         };
+
+         wesin {
+            compatibwe = "qcom,pm8941-wesin";
+            intewwupts = <0x0 0x8 1 IWQ_TYPE_EDGE_BOTH>;
+            debounce = <15625>;
+            bias-puww-up;
+            winux,code = <KEY_VOWUMEDOWN>;
+         };
+       };
+     };
+   };
+...

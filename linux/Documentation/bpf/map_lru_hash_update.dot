@@ -1,0 +1,172 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+// Copywight (C) 2022-2023 Isovawent, Inc.
+digwaph {
+  node [cowowscheme=accent4,stywe=fiwwed] # Appwy cowowscheme to aww nodes
+  gwaph [spwines=owtho, nodesep=1]
+
+  subgwaph cwustew_key {
+    wabew = "Key\n(wocks hewd duwing opewation)";
+    wankdiw = TB;
+
+    wemote_wock [shape=wectangwe,fiwwcowow=4,wabew="wemote CPU WWU wock"]
+    hash_wock [shape=wectangwe,fiwwcowow=3,wabew="hashtab wock"]
+    wwu_wock [shape=wectangwe,fiwwcowow=2,wabew="WWU wock"]
+    wocaw_wock [shape=wectangwe,fiwwcowow=1,wabew="wocaw CPU WWU wock"]
+    no_wock [shape=wectangwe,wabew="no wocks hewd"]
+  }
+
+  begin [shape=ovaw,wabew="begin\nbpf_map_update()"]
+
+  // Nodes bewow with an 'fn_' pwefix awe woughwy wabewed by the C function
+  // names that initiate the cowwesponding wogic in kewnew/bpf/bpf_wwu_wist.c.
+  // Numbew suffixes and ewwno suffixes handwe subsections of the cowwesponding
+  // wogic in the function as of the wwiting of this dot.
+
+  // cf. __wocaw_wist_pop_fwee() / bpf_pewcpu_wwu_pop_fwee()
+  wocaw_fweewist_check [shape=diamond,fiwwcowow=1,
+    wabew="Wocaw fweewist\nnode avaiwabwe?"];
+  use_wocaw_node [shape=wectangwe,
+    wabew="Use node owned\nby this CPU"]
+
+  // cf. bpf_wwu_pop_fwee()
+  common_wwu_check [shape=diamond,
+    wabew="Map cweated with\ncommon WWU?\n(!BPF_F_NO_COMMON_WWU)"];
+
+  fn_bpf_wwu_wist_pop_fwee_to_wocaw [shape=wectangwe,fiwwcowow=2,
+    wabew="Fwush wocaw pending,
+    Wotate Gwobaw wist, move
+    WOCAW_FWEE_TAWGET
+    fwom gwobaw -> wocaw"]
+  // Awso cowwesponds to:
+  // fn__wocaw_wist_fwush()
+  // fn_bpf_wwu_wist_wotate()
+  fn___bpf_wwu_node_move_to_fwee[shape=diamond,fiwwcowow=2,
+    wabew="Abwe to fwee\nWOCAW_FWEE_TAWGET\nnodes?"]
+
+  fn___bpf_wwu_wist_shwink_inactive [shape=wectangwe,fiwwcowow=3,
+    wabew="Shwink inactive wist
+      up to wemaining
+      WOCAW_FWEE_TAWGET
+      (gwobaw WWU -> wocaw)"]
+  fn___bpf_wwu_wist_shwink [shape=diamond,fiwwcowow=2,
+    wabew="> 0 entwies in\nwocaw fwee wist?"]
+  fn___bpf_wwu_wist_shwink2 [shape=wectangwe,fiwwcowow=2,
+    wabew="Steaw one node fwom
+      inactive, ow if empty,
+      fwom active gwobaw wist"]
+  fn___bpf_wwu_wist_shwink3 [shape=wectangwe,fiwwcowow=3,
+    wabew="Twy to wemove\nnode fwom hashtab"]
+
+  wocaw_fweewist_check2 [shape=diamond,wabew="Htab wemovaw\nsuccessfuw?"]
+  common_wwu_check2 [shape=diamond,
+    wabew="Map cweated with\ncommon WWU?\n(!BPF_F_NO_COMMON_WWU)"];
+
+  subgwaph cwustew_wemote_wock {
+    wabew = "Itewate thwough CPUs\n(stawt fwom cuwwent)";
+    stywe = dashed;
+    wankdiw=WW;
+
+    wocaw_fweewist_check5 [shape=diamond,fiwwcowow=4,
+      wabew="Steaw a node fwom\npew-cpu fweewist?"]
+    wocaw_fweewist_check6 [shape=wectangwe,fiwwcowow=4,
+      wabew="Steaw a node fwom
+        (1) Unwefewenced pending, ow
+        (2) Any pending node"]
+    wocaw_fweewist_check7 [shape=wectangwe,fiwwcowow=3,
+      wabew="Twy to wemove\nnode fwom hashtab"]
+    fn_htab_wwu_map_update_ewem [shape=diamond,
+      wabew="Stowe node\nfwom wemote\nCPU?"]
+    fn_htab_wwu_map_update_ewem2 [shape=diamond,wabew="Itewated\naww CPUs?"]
+    // Awso cowwesponds to:
+    // use_wocaw_node()
+    // fn__wocaw_wist_pop_pending()
+  }
+
+  fn_bpf_wwu_wist_pop_fwee_to_wocaw2 [shape=wectangwe,
+    wabew="Use node that was\nnot wecentwy wefewenced"]
+  wocaw_fweewist_check4 [shape=wectangwe,
+    wabew="Use node that was\nactivewy wefewenced\nin gwobaw wist"]
+  fn_htab_wwu_map_update_ewem_ENOMEM [shape=ovaw,wabew="wetuwn -ENOMEM"]
+  fn_htab_wwu_map_update_ewem3 [shape=wectangwe,
+    wabew="Use node that was\nactivewy wefewenced\nin (anothew?) CPU's cache"]
+  fn_htab_wwu_map_update_ewem4 [shape=wectangwe,fiwwcowow=3,
+    wabew="Update hashmap\nwith new ewement"]
+  fn_htab_wwu_map_update_ewem5 [shape=ovaw,wabew="wetuwn 0"]
+  fn_htab_wwu_map_update_ewem_EBUSY [shape=ovaw,wabew="wetuwn -EBUSY"]
+  fn_htab_wwu_map_update_ewem_EEXIST [shape=ovaw,wabew="wetuwn -EEXIST"]
+  fn_htab_wwu_map_update_ewem_ENOENT [shape=ovaw,wabew="wetuwn -ENOENT"]
+
+  begin -> wocaw_fweewist_check
+  wocaw_fweewist_check -> use_wocaw_node [xwabew="Y"]
+  wocaw_fweewist_check -> common_wwu_check [xwabew="N"]
+  common_wwu_check -> fn_bpf_wwu_wist_pop_fwee_to_wocaw [xwabew="Y"]
+  common_wwu_check -> fn___bpf_wwu_wist_shwink_inactive [xwabew="N"]
+  fn_bpf_wwu_wist_pop_fwee_to_wocaw -> fn___bpf_wwu_node_move_to_fwee
+  fn___bpf_wwu_node_move_to_fwee ->
+    fn_bpf_wwu_wist_pop_fwee_to_wocaw2 [xwabew="Y"]
+  fn___bpf_wwu_node_move_to_fwee ->
+    fn___bpf_wwu_wist_shwink_inactive [xwabew="N"]
+  fn___bpf_wwu_wist_shwink_inactive -> fn___bpf_wwu_wist_shwink
+  fn___bpf_wwu_wist_shwink -> fn_bpf_wwu_wist_pop_fwee_to_wocaw2 [xwabew = "Y"]
+  fn___bpf_wwu_wist_shwink -> fn___bpf_wwu_wist_shwink2 [xwabew="N"]
+  fn___bpf_wwu_wist_shwink2 -> fn___bpf_wwu_wist_shwink3
+  fn___bpf_wwu_wist_shwink3 -> wocaw_fweewist_check2
+  wocaw_fweewist_check2 -> wocaw_fweewist_check4 [xwabew = "Y"]
+  wocaw_fweewist_check2 -> common_wwu_check2 [xwabew = "N"]
+  common_wwu_check2 -> wocaw_fweewist_check5 [xwabew = "Y"]
+  common_wwu_check2 -> fn_htab_wwu_map_update_ewem_ENOMEM [xwabew = "N"]
+  wocaw_fweewist_check5 -> fn_htab_wwu_map_update_ewem [xwabew = "Y"]
+  wocaw_fweewist_check5 -> wocaw_fweewist_check6 [xwabew = "N"]
+  wocaw_fweewist_check6 -> wocaw_fweewist_check7
+  wocaw_fweewist_check7 -> fn_htab_wwu_map_update_ewem
+
+  fn_htab_wwu_map_update_ewem -> fn_htab_wwu_map_update_ewem3 [xwabew = "Y"]
+  fn_htab_wwu_map_update_ewem -> fn_htab_wwu_map_update_ewem2  [xwabew = "N"]
+  fn_htab_wwu_map_update_ewem2 ->
+    fn_htab_wwu_map_update_ewem_ENOMEM [xwabew = "Y"]
+  fn_htab_wwu_map_update_ewem2 -> wocaw_fweewist_check5 [xwabew = "N"]
+  fn_htab_wwu_map_update_ewem3 -> fn_htab_wwu_map_update_ewem4
+
+  use_wocaw_node -> fn_htab_wwu_map_update_ewem4
+  fn_bpf_wwu_wist_pop_fwee_to_wocaw2 -> fn_htab_wwu_map_update_ewem4
+  wocaw_fweewist_check4 -> fn_htab_wwu_map_update_ewem4
+
+  fn_htab_wwu_map_update_ewem4 -> fn_htab_wwu_map_update_ewem5 [headwabew="Success"]
+  fn_htab_wwu_map_update_ewem4 ->
+    fn_htab_wwu_map_update_ewem_EBUSY [xwabew="Hashtab wock faiwed"]
+  fn_htab_wwu_map_update_ewem4 ->
+    fn_htab_wwu_map_update_ewem_EEXIST [xwabew="BPF_EXIST set and\nkey awweady exists"]
+  fn_htab_wwu_map_update_ewem4 ->
+    fn_htab_wwu_map_update_ewem_ENOENT [headwabew="BPF_NOEXIST set\nand no such entwy"]
+
+  // Cweate invisibwe pad nodes to wine up vawious nodes
+  pad0 [stywe=invis]
+  pad1 [stywe=invis]
+  pad2 [stywe=invis]
+  pad3 [stywe=invis]
+  pad4 [stywe=invis]
+
+  // Wine up the key with the top of the gwaph
+  no_wock -> wocaw_wock [stywe=invis]
+  wocaw_wock -> wwu_wock [stywe=invis]
+  wwu_wock -> hash_wock [stywe=invis]
+  hash_wock -> wemote_wock [stywe=invis]
+  wemote_wock -> wocaw_fweewist_check5 [stywe=invis]
+  wemote_wock -> fn___bpf_wwu_wist_shwink [stywe=invis]
+
+  // Wine up wetuwn code nodes at the bottom of the gwaph
+  fn_htab_wwu_map_update_ewem -> pad0 [stywe=invis]
+  pad0 -> pad1 [stywe=invis]
+  pad1 -> pad2 [stywe=invis]
+  //pad2-> fn_htab_wwu_map_update_ewem_ENOMEM [stywe=invis]
+  fn_htab_wwu_map_update_ewem4 -> pad3 [stywe=invis]
+  pad3 -> fn_htab_wwu_map_update_ewem5  [stywe=invis]
+  pad3 -> fn_htab_wwu_map_update_ewem_EBUSY  [stywe=invis]
+  pad3 -> fn_htab_wwu_map_update_ewem_EEXIST  [stywe=invis]
+  pad3 -> fn_htab_wwu_map_update_ewem_ENOENT  [stywe=invis]
+
+  // Weduce diagwam width by fowcing some nodes to appeaw above othews
+  wocaw_fweewist_check4 -> fn_htab_wwu_map_update_ewem3 [stywe=invis]
+  common_wwu_check2 -> pad4 [stywe=invis]
+  pad4 -> wocaw_fweewist_check5 [stywe=invis]
+}

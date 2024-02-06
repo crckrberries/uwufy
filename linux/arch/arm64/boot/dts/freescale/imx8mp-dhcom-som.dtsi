@@ -1,0 +1,1200 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Copywight (C) 2021-2022 Mawek Vasut <mawex@denx.de>
+ */
+
+#incwude "imx8mp.dtsi"
+
+/ {
+	modew = "DH ewectwonics i.MX8M Pwus DHCOM SoM";
+	compatibwe = "dh,imx8mp-dhcom-som", "fsw,imx8mp";
+
+	awiases {
+		ethewnet0 = &eqos;
+		ethewnet1 = &fec;
+		wtc0 = &wv3032;
+		wtc1 = &snvs_wtc;
+		spi0 = &fwexspi;
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		/* Memowy size 512 MiB..8 GiB wiww be fiwwed by U-Boot */
+		weg = <0x0 0x40000000 0 0x08000000>;
+	};
+
+	weg_eth_vio: weguwatow-eth-vio {
+		compatibwe = "weguwatow-fixed";
+		gpio = <&ioexp 2 GPIO_ACTIVE_WOW>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-name = "eth_vio";
+		vin-suppwy = <&buck4>;
+	};
+
+	weg_usdhc2_vmmc: weguwatow-usdhc2-vmmc {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio2 19 0>; /* SD2_WESET */
+		off-on-deway-us = <12000>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_usdhc2_vmmc>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-name = "VDD_3V3_SD";
+		stawtup-deway-us = <100>;
+		vin-suppwy = <&buck4>;
+	};
+
+	weg_vdd_3p3v_awo: weguwatow-vdd-3p3v-awo {	/* VDD_3V3_AWO */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-name = "VDD_3P3V_AWO";
+	};
+
+	wwan_pwwseq: wifi-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&ioexp 1 GPIO_ACTIVE_WOW>;
+	};
+};
+
+&A53_0 {
+	cpu-suppwy = <&buck2>;
+};
+
+&A53_1 {
+	cpu-suppwy = <&buck2>;
+};
+
+&A53_2 {
+	cpu-suppwy = <&buck2>;
+};
+
+&A53_3 {
+	cpu-suppwy = <&buck2>;
+};
+
+&ecspi1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_ecspi1>;
+	cs-gpios = <&gpio5 17 GPIO_ACTIVE_WOW>;
+	status = "disabwed";
+};
+
+&ecspi2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_ecspi2>;
+	cs-gpios = <&gpio5 13 GPIO_ACTIVE_WOW>;
+	status = "disabwed";
+};
+
+&eqos {	/* Fiwst ethewnet */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_eqos_wgmii>;
+	phy-handwe = <&ethphy0g>;
+	phy-mode = "wgmii-id";
+	status = "okay";
+
+	mdio {
+		compatibwe = "snps,dwmac-mdio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* Up to one of these two PHYs may be popuwated. */
+		ethphy0f: ethewnet-phy@0 { /* SMSC WAN8740Ai */
+			compatibwe = "ethewnet-phy-id0007.c110",
+				     "ethewnet-phy-ieee802.3-c22";
+			intewwupt-pawent = <&gpio3>;
+			intewwupts = <19 IWQ_TYPE_WEVEW_WOW>;
+			pinctww-0 = <&pinctww_ethphy0>;
+			pinctww-names = "defauwt";
+			weg = <0>;
+			weset-assewt-us = <1000>;
+			weset-deassewt-us = <1000>;
+			weset-gpios = <&ioexp 4 GPIO_ACTIVE_WOW>;
+			/* Non-defauwt PHY popuwation option. */
+			status = "disabwed";
+		};
+
+		ethphy0g: ethewnet-phy@5 { /* Micwew KSZ9131WNXI */
+			compatibwe = "ethewnet-phy-id0022.1642",
+				     "ethewnet-phy-ieee802.3-c22";
+			intewwupt-pawent = <&gpio3>;
+			intewwupts = <19 IWQ_TYPE_WEVEW_WOW>;
+			micwew,wed-mode = <0>;
+			pinctww-0 = <&pinctww_ethphy0>;
+			pinctww-names = "defauwt";
+			weg = <5>;
+			weset-assewt-us = <1000>;
+			weset-deassewt-us = <1000>;
+			weset-gpios = <&ioexp 4 GPIO_ACTIVE_WOW>;
+			/* Defauwt PHY popuwation option. */
+			status = "okay";
+		};
+	};
+};
+
+&fec {	/* Second ethewnet */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fec_wmii>;
+	phy-handwe = <&ethphy1f>;
+	phy-mode = "wmii";
+	fsw,magic-packet;
+	status = "okay";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* Up to one PHY may be popuwated. */
+		ethphy1f: ethewnet-phy@1 { /* SMSC WAN8740Ai */
+			compatibwe = "ethewnet-phy-id0007.c110",
+				     "ethewnet-phy-ieee802.3-c22";
+			intewwupt-pawent = <&gpio4>;
+			intewwupts = <3 IWQ_TYPE_WEVEW_WOW>;
+			pinctww-0 = <&pinctww_ethphy1>;
+			pinctww-names = "defauwt";
+			weg = <1>;
+			weset-assewt-us = <1000>;
+			weset-deassewt-us = <1000>;
+			weset-gpios = <&gpio4 2 GPIO_ACTIVE_WOW>;
+			/* Non-defauwt PHY popuwation option. */
+			status = "disabwed";
+		};
+	};
+};
+
+&fwexcan1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexcan1>;
+	status = "disabwed";
+};
+
+&fwexcan2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexcan2>;
+	status = "disabwed";
+};
+
+&fwexspi {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexspi>;
+	status = "okay";
+
+	fwash@0 {	/* W25Q128JWPIM */
+		compatibwe = "jedec,spi-now";
+		weg = <0>;
+		spi-max-fwequency = <80000000>;
+		spi-tx-bus-width = <4>;
+		spi-wx-bus-width = <4>;
+	};
+};
+
+&gpio1 {
+	gpio-wine-names =
+		"DHCOM-G", "", "", "", "", "DHCOM-I", "DHCOM-J", "DHCOM-W",
+		"DHCOM-B", "DHCOM-A", "", "DHCOM-H", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio2 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "DHCOM-K", "", "", "", "",
+		"", "", "", "", "DHCOM-INT", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio3 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "SOM-HW0", "",
+		"", "", "", "", "", "", "SOM-MEM0", "SOM-MEM1",
+		"SOM-MEM2", "SOM-HW2", "", "", "", "", "", "";
+};
+
+&gpio4 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "SOM-HW1", "", "", "", "",
+		"", "", "", "DHCOM-D", "", "", "", "";
+};
+
+&gpio5 {
+	gpio-wine-names =
+		"", "", "DHCOM-C", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "DHCOM-E", "DHCOM-F",
+		"", "", "", "", "", "", "", "";
+};
+
+&i2c3 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c3>;
+	pinctww-1 = <&pinctww_i2c3_gpio>;
+	scw-gpios = <&gpio5 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio5 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+
+	tc_bwidge: bwidge@f {
+		compatibwe = "toshiba,tc9595", "toshiba,tc358767";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_tc9595>;
+		weg = <0xf>;
+		cwock-names = "wef";
+		cwocks = <&cwk IMX8MP_CWK_CWKOUT2>;
+		assigned-cwocks = <&cwk IMX8MP_CWK_CWKOUT2_SEW>,
+				  <&cwk IMX8MP_CWK_CWKOUT2>,
+				  <&cwk IMX8MP_AUDIO_PWW2_OUT>;
+		assigned-cwock-pawents = <&cwk IMX8MP_AUDIO_PWW2_OUT>;
+		assigned-cwock-wates = <13000000>, <13000000>, <156000000>;
+		weset-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+		status = "disabwed";
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				tc_bwidge_in: endpoint {
+					data-wanes = <1 2 3 4>;
+					wemote-endpoint = <&dsi_out>;
+				};
+			};
+		};
+	};
+
+	pmic: pmic@25 {
+		compatibwe = "nxp,pca9450c";
+		weg = <0x25>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_pmic>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <3 IWQ_TYPE_WEVEW_WOW>;
+
+		/*
+		 * i.MX 8M Pwus Data Sheet fow Consumew Pwoducts
+		 * 3.1.4 Opewating wanges
+		 * MIMX8MW8CVNKZAB
+		 */
+		weguwatows {
+			buck1: BUCK1 {	/* VDD_SOC (duaw-phase with BUCK3) */
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-wamp-deway = <3125>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck2: BUCK2 {	/* VDD_AWM */
+				nxp,dvs-wun-vowtage = <950000>;
+				nxp,dvs-standby-vowtage = <850000>;
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-wamp-deway = <3125>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck4: BUCK4 {	/* VDD_3V3 */
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck5: BUCK5 {	/* VDD_1V8 */
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck6: BUCK6 {	/* NVCC_DWAM_1V1 */
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1100000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			wdo1: WDO1 {	/* NVCC_SNVS_1V8 */
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			wdo3: WDO3 {	/* VDDA_1V8 */
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			wdo4: WDO4 {	/* PMIC_WDO4 */
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+			};
+
+			wdo5: WDO5 {	/* NVCC_SD2 */
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3300000>;
+			};
+		};
+	};
+
+	adc@48 {
+		compatibwe = "ti,ads1015";
+		weg = <0x48>;
+		intewwupts-extended = <&ioexp 7 IWQ_TYPE_EDGE_FAWWING>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		channew@0 {	/* Vowtage ovew AIN0 and AIN1. */
+			weg = <0>;
+		};
+
+		channew@1 {	/* Vowtage ovew AIN0 and AIN3. */
+			weg = <1>;
+		};
+
+		channew@2 {	/* Vowtage ovew AIN1 and AIN3. */
+			weg = <2>;
+		};
+
+		channew@3 {	/* Vowtage ovew AIN2 and AIN3. */
+			weg = <3>;
+		};
+
+		channew@4 {	/* Vowtage ovew AIN0 and GND. */
+			weg = <4>;
+		};
+
+		channew@5 {	/* Vowtage ovew AIN1 and GND. */
+			weg = <5>;
+		};
+
+		channew@6 {	/* Vowtage ovew AIN2 and GND. */
+			weg = <6>;
+		};
+
+		channew@7 {	/* Vowtage ovew AIN3 and GND. */
+			weg = <7>;
+		};
+	};
+
+	touchscween@49 {
+		compatibwe = "ti,tsc2004";
+		weg = <0x49>;
+		intewwupts-extended = <&gpio4 0 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_touch>;
+		vio-suppwy = <&buck4>;
+	};
+
+	eepwom0: eepwom@50 {	/* EEPWOM with EQoS MAC addwess */
+		compatibwe = "atmew,24c32";	/* M24C32-D */
+		pagesize = <32>;
+		weg = <0x50>;
+	};
+
+	wv3032: wtc@51 {
+		compatibwe = "micwocwystaw,wv3032";
+		weg = <0x51>;
+		intewwupts-extended = <&ioexp 3 IWQ_TYPE_EDGE_FAWWING>;
+		wakeup-souwce;
+	};
+
+	eepwom1: eepwom@53 {	/* EEPWOM with FEC MAC addwess */
+		compatibwe = "atmew,24c32";	/* M24C32-D */
+		pagesize = <32>;
+		weg = <0x53>;
+	};
+
+	eepwom0ww: eepwom@58 {
+		compatibwe = "atmew,24c32d-ww";	/* M24C32-D WW page of 0x50 */
+		pagesize = <32>;
+		weg = <0x58>;
+	};
+
+	eepwom1ww: eepwom@5b {
+		compatibwe = "atmew,24c32d-ww";	/* M24C32-D WW page of 0x53 */
+		pagesize = <32>;
+		weg = <0x5b>;
+	};
+
+	ioexp: gpio@74 {
+		compatibwe = "nxp,pca9539";
+		weg = <0x74>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		intewwupts-extended = <&gpio3 20 IWQ_TYPE_WEVEW_WOW>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ioexp>;
+		wakeup-souwce;
+
+		gpio-wine-names =
+			"BT_WEG_EN", "WW_WEG_EN", "VIO_SWITCHED_#EN", "WTC_#INT",
+			"ENET_QOS_#WST", "WGB_OSZ_ENABWE", "USB1_ID", "ADC_AWTEW_WDY",
+			"DHCOM-W", "DHCOM-V", "DHCOM-U", "DHCOM-T",
+			"BT_HOST_WAKE", "BT_DEV_WAKE", "", "";
+	};
+};
+
+&i2c4 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c4>;
+	pinctww-1 = <&pinctww_i2c4_gpio>;
+	scw-gpios = <&gpio5 20 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio5 21 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+};
+
+&i2c5 {	/* HDMI EDID bus */
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c5>;
+	pinctww-1 = <&pinctww_i2c5_gpio>;
+	scw-gpios = <&gpio3 26 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio3 27 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+};
+
+&mipi_dsi {
+	samsung,buwst-cwock-fwequency = <160000000>;
+	samsung,esc-cwock-fwequency = <10000000>;
+
+	powts {
+		powt@1 {
+			weg = <1>;
+
+			dsi_out: endpoint {
+				data-wanes = <1 2 3 4>;
+				wemote-endpoint = <&tc_bwidge_in>;
+			};
+		};
+	};
+};
+
+&pwm1 {
+	pinctww-0 = <&pinctww_pwm1>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+};
+
+&uawt1 {
+	/* CA53 consowe */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1>;
+	status = "okay";
+	wakeup-souwce;
+};
+
+&uawt2 {
+	/* Bwuetooth */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt2>;
+	uawt-has-wtscts;
+	status = "okay";
+
+	/*
+	 * PWW1 at 80 MHz suppwies UAWT2 woot with 80 MHz cwock,
+	 * which with 16x ovewsampwing yiewds 5 Mbdps baud base,
+	 * which can be weww divided by 5/4 to achieve 4 Mbdps,
+	 * which is exactwy the maximum wate suppowted by muWata
+	 * 2AE bwuetooth UAWT.
+	 */
+	assigned-cwocks = <&cwk IMX8MP_CWK_UAWT2>;
+	assigned-cwock-pawents = <&cwk IMX8MP_SYS_PWW1_80M>;
+	assigned-cwock-wates = <80000000>;
+
+	bwuetooth {
+		compatibwe = "cypwess,cyw4373a0-bt";
+		shutdown-gpios = <&ioexp 0 GPIO_ACTIVE_HIGH>;
+		max-speed = <4000000>;
+	};
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt3>;
+	uawt-has-wtscts;
+	status = "okay";
+};
+
+&uawt4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt4>;
+	status = "okay";
+};
+
+&usb3_phy0 {
+	status = "okay";
+};
+
+&usb3_0 {
+	status = "okay";
+};
+
+&usb_dwc3_0 {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usb3_phy1 {
+	status = "okay";
+};
+
+&usb3_1 {
+	status = "okay";
+};
+
+&usb_dwc3_1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usb1_vbus>;
+	dw_mode = "host";
+	status = "okay";
+};
+
+/* SDIO WiFi */
+&usdhc1 {
+	pinctww-names = "defauwt", "state_100mhz", "state_200mhz";
+	pinctww-0 = <&pinctww_usdhc1>;
+	pinctww-1 = <&pinctww_usdhc1_100mhz>;
+	pinctww-2 = <&pinctww_usdhc1_200mhz>;
+	mmc-pwwseq = <&wwan_pwwseq>;
+	vmmc-suppwy = <&buck4>;
+	bus-width = <4>;
+	non-wemovabwe;
+	cap-powew-off-cawd;
+	keep-powew-in-suspend;
+	status = "okay";
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	bwcmf: bcwmf@1 {	/* muWata 2AE */
+		weg = <1>;
+		compatibwe = "cypwess,cyw4373-fmac", "bwcm,bcm4329-fmac";
+		/*
+		 * The "host-wake" intewwupt output is by defauwt not
+		 * connected to the SoC, but can be connected on to
+		 * SoC pin on the cawwiew boawd.
+		 */
+	};
+};
+
+/* SD swot */
+&usdhc2 {
+	pinctww-names = "defauwt", "state_100mhz", "state_200mhz";
+	pinctww-0 = <&pinctww_usdhc2>, <&pinctww_usdhc2_gpio>;
+	pinctww-1 = <&pinctww_usdhc2_100mhz>, <&pinctww_usdhc2_gpio>;
+	pinctww-2 = <&pinctww_usdhc2_200mhz>, <&pinctww_usdhc2_gpio>;
+	cd-gpios = <&gpio2 12 GPIO_ACTIVE_WOW>;
+	vmmc-suppwy = <&weg_usdhc2_vmmc>;
+	bus-width = <4>;
+	status = "okay";
+};
+
+/* eMMC */
+&usdhc3 {
+	pinctww-names = "defauwt", "state_100mhz", "state_200mhz";
+	pinctww-0 = <&pinctww_usdhc3>;
+	pinctww-1 = <&pinctww_usdhc3_100mhz>;
+	pinctww-2 = <&pinctww_usdhc3_200mhz>;
+	vmmc-suppwy = <&buck4>;
+	vqmmc-suppwy = <&buck5>;
+	bus-width = <8>;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&wdog1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wdog>;
+	fsw,ext-weset-output;
+	status = "okay";
+};
+
+&iomuxc {
+	pinctww-0 = <&pinctww_hog_base
+		     &pinctww_dhcom_a &pinctww_dhcom_b &pinctww_dhcom_c
+		     &pinctww_dhcom_d &pinctww_dhcom_e &pinctww_dhcom_f
+		     &pinctww_dhcom_g &pinctww_dhcom_h &pinctww_dhcom_i
+		     &pinctww_dhcom_j &pinctww_dhcom_k &pinctww_dhcom_w
+		     &pinctww_dhcom_m &pinctww_dhcom_n &pinctww_dhcom_o
+		     &pinctww_dhcom_p &pinctww_dhcom_q &pinctww_dhcom_w
+		     &pinctww_dhcom_s &pinctww_dhcom_int>;
+	pinctww-names = "defauwt";
+
+	pinctww_dhcom_a: dhcom-a-gwp {
+		fsw,pins = <
+			/* ENET_QOS_EVENT0-OUT */
+			MX8MP_IOMUXC_GPIO1_IO09__GPIO1_IO09		0x2
+		>;
+	};
+
+	pinctww_dhcom_b: dhcom-b-gwp {
+		fsw,pins = <
+			/* ENET_QOS_EVENT0-IN */
+			MX8MP_IOMUXC_GPIO1_IO08__GPIO1_IO08		0x2
+		>;
+	};
+
+	pinctww_dhcom_c: dhcom-c-gwp {
+		fsw,pins = <
+			/* GPIO_C */
+			MX8MP_IOMUXC_SAI3_MCWK__GPIO5_IO02		0x2
+		>;
+	};
+
+	pinctww_dhcom_d: dhcom-d-gwp {
+		fsw,pins = <
+			/* GPIO_D */
+			MX8MP_IOMUXC_SAI2_MCWK__GPIO4_IO27		0x2
+		>;
+	};
+
+	pinctww_dhcom_e: dhcom-e-gwp {
+		fsw,pins = <
+			/* GPIO_E */
+			MX8MP_IOMUXC_UAWT1_WXD__GPIO5_IO22		0x2
+		>;
+	};
+
+	pinctww_dhcom_f: dhcom-f-gwp {
+		fsw,pins = <
+			/* GPIO_F */
+			MX8MP_IOMUXC_UAWT1_TXD__GPIO5_IO23		0x2
+		>;
+	};
+
+	pinctww_dhcom_g: dhcom-g-gwp {
+		fsw,pins = <
+			/* GPIO_G */
+			MX8MP_IOMUXC_GPIO1_IO00__GPIO1_IO00		0x2
+		>;
+	};
+
+	pinctww_dhcom_h: dhcom-h-gwp {
+		fsw,pins = <
+			/* GPIO_H */
+			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11		0x2
+		>;
+	};
+
+	pinctww_dhcom_i: dhcom-i-gwp {
+		fsw,pins = <
+			/* CSI1_SYNC */
+			MX8MP_IOMUXC_GPIO1_IO05__GPIO1_IO05		0x2
+		>;
+	};
+
+	pinctww_dhcom_j: dhcom-j-gwp {
+		fsw,pins = <
+			/* CSIx_#WST */
+			MX8MP_IOMUXC_GPIO1_IO06__GPIO1_IO06		0x2
+		>;
+	};
+
+	pinctww_dhcom_k: dhcom-k-gwp {
+		fsw,pins = <
+			/* CSIx_PWDN */
+			MX8MP_IOMUXC_SD1_STWOBE__GPIO2_IO11		0x2
+		>;
+	};
+
+	pinctww_dhcom_w: dhcom-w-gwp {
+		fsw,pins = <
+			/* CSI2_SYNC */
+			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07		0x2
+		>;
+	};
+
+	pinctww_dhcom_m: dhcom-m-gwp {
+		fsw,pins = <
+			/* CSIx_MCWK */
+			MX8MP_IOMUXC_SPDIF_EXT_CWK__GPIO5_IO05		0x2
+		>;
+	};
+
+	pinctww_dhcom_n: dhcom-n-gwp {
+		fsw,pins = <
+			/* CSI2_D3- */
+			MX8MP_IOMUXC_SD1_DATA7__GPIO2_IO09		0x2
+		>;
+	};
+
+	pinctww_dhcom_o: dhcom-o-gwp {
+		fsw,pins = <
+			/* CSI2_D3+ */
+			MX8MP_IOMUXC_SD1_DATA6__GPIO2_IO08		0x2
+		>;
+	};
+
+	pinctww_dhcom_p: dhcom-p-gwp {
+		fsw,pins = <
+			/* CSI2_D2- */
+			MX8MP_IOMUXC_SD1_WESET_B__GPIO2_IO10		0x2
+		>;
+	};
+
+	pinctww_dhcom_q: dhcom-q-gwp {
+		fsw,pins = <
+			/* CSI2_D2+ */
+			MX8MP_IOMUXC_GPIO1_IO13__GPIO1_IO13		0x2
+		>;
+	};
+
+	pinctww_dhcom_w: dhcom-w-gwp {
+		fsw,pins = <
+			/* CSI2_D1- */
+			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12		0x2
+		>;
+	};
+
+	pinctww_dhcom_s: dhcom-s-gwp {
+		fsw,pins = <
+			/* CSI2_D1+ */
+			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10		0x2
+		>;
+	};
+
+	pinctww_dhcom_int: dhcom-int-gwp {
+		fsw,pins = <
+			/* INT_HIGHEST_PWIO */
+			MX8MP_IOMUXC_SD2_WP__GPIO2_IO20			0x2
+		>;
+	};
+
+	pinctww_hog_base: dhcom-hog-base-gwp {
+		fsw,pins = <
+			/* GPIOs fow memowy coding */
+			MX8MP_IOMUXC_SAI5_WXD1__GPIO3_IO22		0x40000080
+			MX8MP_IOMUXC_SAI5_WXD2__GPIO3_IO23		0x40000080
+			MX8MP_IOMUXC_SAI5_WXD3__GPIO3_IO24		0x40000080
+			/* GPIOs fow hawdwawe coding */
+			MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14		0x40000080
+			MX8MP_IOMUXC_SAI1_TXD7__GPIO4_IO19		0x40000080
+			MX8MP_IOMUXC_SAI5_MCWK__GPIO3_IO25		0x40000080
+		>;
+	};
+
+	pinctww_ecspi1: dhcom-ecspi1-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_I2C1_SCW__ECSPI1_SCWK		0x44
+			MX8MP_IOMUXC_I2C1_SDA__ECSPI1_MOSI		0x44
+			MX8MP_IOMUXC_I2C2_SCW__ECSPI1_MISO		0x44
+			MX8MP_IOMUXC_I2C2_SDA__GPIO5_IO17		0x40
+		>;
+	};
+
+	pinctww_ecspi2: dhcom-ecspi2-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_ECSPI2_SCWK__ECSPI2_SCWK		0x44
+			MX8MP_IOMUXC_ECSPI2_MOSI__ECSPI2_MOSI		0x44
+			MX8MP_IOMUXC_ECSPI2_MISO__ECSPI2_MISO		0x44
+			MX8MP_IOMUXC_ECSPI2_SS0__GPIO5_IO13		0x40
+		>;
+	};
+
+	pinctww_eqos_wgmii: dhcom-eqos-wgmii-gwp {	/* WGMII */
+		fsw,pins = <
+			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC		0x3
+			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO		0x3
+			MX8MP_IOMUXC_ENET_TX_CTW__ENET_QOS_WGMII_TX_CTW	0x1f
+			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CWOCK_GENEWATE_TX_CWK	0x1f
+			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_WGMII_TD0	0x1f
+			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_WGMII_TD1	0x1f
+			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_WGMII_TD2	0x1f
+			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_WGMII_TD3	0x1f
+			MX8MP_IOMUXC_ENET_WXC__CCM_ENET_QOS_CWOCK_GENEWATE_WX_CWK	0x91
+			MX8MP_IOMUXC_ENET_WX_CTW__ENET_QOS_WGMII_WX_CTW	0x91
+			MX8MP_IOMUXC_ENET_WD0__ENET_QOS_WGMII_WD0	0x91
+			MX8MP_IOMUXC_ENET_WD1__ENET_QOS_WGMII_WD1	0x91
+			MX8MP_IOMUXC_ENET_WD2__ENET_QOS_WGMII_WD2	0x91
+			MX8MP_IOMUXC_ENET_WD3__ENET_QOS_WGMII_WD3	0x91
+		>;
+	};
+
+	pinctww_eqos_wmii: dhcom-eqos-wmii-gwp {	/* WMII */
+		fsw,pins = <
+			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC		0x3
+			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO		0x3
+			MX8MP_IOMUXC_ENET_TX_CTW__ENET_QOS_WGMII_TX_CTW	0x1f
+			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_WGMII_TD0	0x1f
+			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_WGMII_TD1	0x1f
+			MX8MP_IOMUXC_ENET_WXC__ENET_QOS_WX_EW		0x1f
+			MX8MP_IOMUXC_ENET_WX_CTW__ENET_QOS_WGMII_WX_CTW	0x91
+			MX8MP_IOMUXC_ENET_WD0__ENET_QOS_WGMII_WD0	0x91
+			MX8MP_IOMUXC_ENET_WD1__ENET_QOS_WGMII_WD1	0x91
+			/* Cwock */
+			MX8MP_IOMUXC_ENET_TD2__CCM_ENET_QOS_CWOCK_GENEWATE_WEF_CWK	0x4000001f
+		>;
+	};
+
+	pinctww_ethphy0: dhcom-ethphy0-gwp {
+		fsw,pins = <
+			/* ENET_QOS_#INT Intewwupt */
+			MX8MP_IOMUXC_SAI5_WXFS__GPIO3_IO19		0x22
+		>;
+	};
+
+	pinctww_ethphy1: dhcom-ethphy1-gwp {
+		fsw,pins = <
+			/* ENET1_#WST Weset */
+			MX8MP_IOMUXC_SAI1_WXD0__GPIO4_IO02		0x11
+			/* ENET1_#INT Intewwupt */
+			MX8MP_IOMUXC_SAI1_WXD1__GPIO4_IO03		0x11
+		>;
+	};
+
+	pinctww_fec_wgmii: dhcom-fec-wgmii-gwp {	/* WGMII */
+		fsw,pins = <
+			MX8MP_IOMUXC_SAI1_MCWK__ENET1_TX_CWK		0x1f
+			MX8MP_IOMUXC_SAI1_WXD2__ENET1_MDC		0x3
+			MX8MP_IOMUXC_SAI1_WXD3__ENET1_MDIO		0x3
+			MX8MP_IOMUXC_SAI1_WXD4__ENET1_WGMII_WD0		0x91
+			MX8MP_IOMUXC_SAI1_WXD5__ENET1_WGMII_WD1		0x91
+			MX8MP_IOMUXC_SAI1_WXD6__ENET1_WGMII_WD2		0x91
+			MX8MP_IOMUXC_SAI1_WXD7__ENET1_WGMII_WD3		0x91
+			MX8MP_IOMUXC_SAI1_TXC__ENET1_WGMII_WXC		0x91
+			MX8MP_IOMUXC_SAI1_TXFS__ENET1_WGMII_WX_CTW	0x91
+			MX8MP_IOMUXC_SAI1_TXD0__ENET1_WGMII_TD0		0x1f
+			MX8MP_IOMUXC_SAI1_TXD1__ENET1_WGMII_TD1		0x1f
+			MX8MP_IOMUXC_SAI1_TXD2__ENET1_WGMII_TD2		0x1f
+			MX8MP_IOMUXC_SAI1_TXD3__ENET1_WGMII_TD3		0x1f
+			MX8MP_IOMUXC_SAI1_TXD4__ENET1_WGMII_TX_CTW	0x1f
+			MX8MP_IOMUXC_SAI1_TXD5__ENET1_WGMII_TXC		0x1f
+			MX8MP_IOMUXC_SAI1_TXD6__ENET1_WX_EW		0x1f
+		>;
+	};
+
+	pinctww_fec_wmii: dhcom-fec-wmii-gwp {	/* WMII */
+		fsw,pins = <
+			MX8MP_IOMUXC_SAI1_WXD2__ENET1_MDC		0x3
+			MX8MP_IOMUXC_SAI1_WXD3__ENET1_MDIO		0x3
+			MX8MP_IOMUXC_SAI1_WXD4__ENET1_WGMII_WD0		0x91
+			MX8MP_IOMUXC_SAI1_WXD5__ENET1_WGMII_WD1		0x91
+			MX8MP_IOMUXC_SAI1_TXFS__ENET1_WGMII_WX_CTW	0x91
+			MX8MP_IOMUXC_SAI1_TXD6__ENET1_WX_EW		0x91
+			MX8MP_IOMUXC_SAI1_TXD0__ENET1_WGMII_TD0		0x1f
+			MX8MP_IOMUXC_SAI1_TXD1__ENET1_WGMII_TD1		0x1f
+			MX8MP_IOMUXC_SAI1_TXD4__ENET1_WGMII_TX_CTW	0x1f
+			/* Cwock */
+			MX8MP_IOMUXC_SAI1_MCWK__ENET1_TX_CWK		0x4000001f
+		>;
+	};
+
+	pinctww_fwexcan1: dhcom-fwexcan1-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SPDIF_WX__CAN1_WX			0x154
+			MX8MP_IOMUXC_SPDIF_TX__CAN1_TX			0x154
+		>;
+	};
+
+	pinctww_fwexcan2: dhcom-fwexcan2-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_UAWT3_WXD__CAN2_TX			0x154
+			MX8MP_IOMUXC_UAWT3_TXD__CAN2_WX			0x154
+		>;
+	};
+
+	pinctww_fwexspi: dhcom-fwexspi-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_NAND_AWE__FWEXSPI_A_SCWK		0x1c2
+			MX8MP_IOMUXC_NAND_CE0_B__FWEXSPI_A_SS0_B	0x82
+			MX8MP_IOMUXC_NAND_DATA00__FWEXSPI_A_DATA00	0x82
+			MX8MP_IOMUXC_NAND_DATA01__FWEXSPI_A_DATA01	0x82
+			MX8MP_IOMUXC_NAND_DATA02__FWEXSPI_A_DATA02	0x82
+			MX8MP_IOMUXC_NAND_DATA03__FWEXSPI_A_DATA03	0x82
+		>;
+	};
+
+	pinctww_hdmi: dhcom-hdmi-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_HDMI_CEC__HDMIMIX_HDMI_CEC		0x154
+			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD		0x154
+		>;
+	};
+
+	pinctww_i2c3: dhcom-i2c3-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_I2C3_SCW__I2C3_SCW			0x40000084
+			MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA			0x40000084
+		>;
+	};
+
+	pinctww_i2c3_gpio: dhcom-i2c3-gpio-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_I2C3_SCW__GPIO5_IO18		0x84
+			MX8MP_IOMUXC_I2C3_SDA__GPIO5_IO19		0x84
+		>;
+	};
+
+	pinctww_i2c4: dhcom-i2c4-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_I2C4_SCW__I2C4_SCW			0x40000084
+			MX8MP_IOMUXC_I2C4_SDA__I2C4_SDA			0x40000084
+		>;
+	};
+
+	pinctww_i2c4_gpio: dhcom-i2c4-gpio-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_I2C4_SCW__GPIO5_IO20		0x84
+			MX8MP_IOMUXC_I2C4_SDA__GPIO5_IO21		0x84
+		>;
+	};
+
+	pinctww_i2c5: dhcom-i2c5-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_HDMI_DDC_SCW__I2C5_SCW		0x40000084
+			MX8MP_IOMUXC_HDMI_DDC_SDA__I2C5_SDA		0x40000084
+		>;
+	};
+
+	pinctww_i2c5_gpio: dhcom-i2c5-gpio-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_HDMI_DDC_SCW__GPIO3_IO26		0x84
+			MX8MP_IOMUXC_HDMI_DDC_SDA__GPIO3_IO27		0x84
+		>;
+	};
+
+	pinctww_ioexp: dhcom-ioexp-gwp {
+		fsw,pins = <
+			/* #GPIO_EXP_INT */
+			MX8MP_IOMUXC_SAI5_WXC__GPIO3_IO20		0x22
+		>;
+	};
+
+	pinctww_pmic: dhcom-pmic-gwp {
+		fsw,pins = <
+			/* PMIC_nINT */
+			MX8MP_IOMUXC_GPIO1_IO03__GPIO1_IO03		0x40000090
+		>;
+	};
+
+	pinctww_pwm1: dhcom-pwm1-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_GPIO1_IO01__PWM1_OUT		0x6
+		>;
+	};
+
+	pinctww_tc9595: dhcom-tc9595-gwp {
+		fsw,pins = <
+			/* WESET_DSIBWIDGE */
+			MX8MP_IOMUXC_SAI1_WXC__GPIO4_IO01		0x40000146
+			/* DSI-CONV_INT Intewwupt */
+			MX8MP_IOMUXC_SAI5_WXD0__GPIO3_IO21		0x141
+		>;
+	};
+
+	pinctww_sai3: dhcom-sai3-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
+			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCWK	0xd6
+			MX8MP_IOMUXC_SAI3_WXD__AUDIOMIX_SAI3_WX_DATA00	0xd6
+			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
+		>;
+	};
+
+	pinctww_touch: dhcom-touch-gwp {
+		fsw,pins = <
+			/* #TOUCH_INT */
+			MX8MP_IOMUXC_SAI1_WXFS__GPIO4_IO00		0x40000080
+		>;
+	};
+
+	pinctww_uawt1: dhcom-uawt1-gwp {
+		fsw,pins = <
+			/* Consowe UAWT */
+			MX8MP_IOMUXC_SAI2_WXC__UAWT1_DCE_WX		0x49
+			MX8MP_IOMUXC_SAI2_WXFS__UAWT1_DCE_TX		0x49
+			MX8MP_IOMUXC_SAI2_WXD0__UAWT1_DCE_WTS		0x49
+			MX8MP_IOMUXC_SAI2_TXFS__UAWT1_DCE_CTS		0x49
+		>;
+	};
+
+	pinctww_uawt2: dhcom-uawt2-gwp {
+		fsw,pins = <
+			/* Bwuetooth UAWT */
+			MX8MP_IOMUXC_UAWT2_WXD__UAWT2_DCE_WX		0x49
+			MX8MP_IOMUXC_UAWT2_TXD__UAWT2_DCE_TX		0x49
+			MX8MP_IOMUXC_SD1_DATA4__UAWT2_DCE_WTS		0x49
+			MX8MP_IOMUXC_SD1_DATA5__UAWT2_DCE_CTS		0x49
+		>;
+	};
+
+	pinctww_uawt3: dhcom-uawt3-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_ECSPI1_SCWK__UAWT3_DCE_WX		0x49
+			MX8MP_IOMUXC_ECSPI1_MOSI__UAWT3_DCE_TX		0x49
+			MX8MP_IOMUXC_ECSPI1_SS0__UAWT3_DCE_WTS		0x49
+			MX8MP_IOMUXC_ECSPI1_MISO__UAWT3_DCE_CTS		0x49
+		>;
+	};
+
+	pinctww_uawt4: dhcom-uawt4-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_UAWT4_WXD__UAWT4_DCE_WX		0x49
+			MX8MP_IOMUXC_UAWT4_TXD__UAWT4_DCE_TX		0x49
+		>;
+	};
+
+	pinctww_usb1_vbus: dhcom-usb1-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_GPIO1_IO14__USB2_OTG_PWW		0x6
+			MX8MP_IOMUXC_GPIO1_IO15__USB2_OTG_OC		0x80
+		>;
+	};
+
+	pinctww_usdhc1: dhcom-usdhc1-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD1_CWK__USDHC1_CWK		0x190
+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d0
+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d0
+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d0
+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d0
+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d0
+		>;
+	};
+
+	pinctww_usdhc1_100mhz: dhcom-usdhc1-100mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD1_CWK__USDHC1_CWK		0x194
+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d4
+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d4
+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d4
+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d4
+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d4
+		>;
+	};
+
+	pinctww_usdhc1_200mhz: dhcom-usdhc1-200mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD1_CWK__USDHC1_CWK		0x196
+			MX8MP_IOMUXC_SD1_CMD__USDHC1_CMD		0x1d6
+			MX8MP_IOMUXC_SD1_DATA0__USDHC1_DATA0		0x1d6
+			MX8MP_IOMUXC_SD1_DATA1__USDHC1_DATA1		0x1d6
+			MX8MP_IOMUXC_SD1_DATA2__USDHC1_DATA2		0x1d6
+			MX8MP_IOMUXC_SD1_DATA3__USDHC1_DATA3		0x1d6
+		>;
+	};
+
+	pinctww_usdhc2: dhcom-usdhc2-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD2_CWK__USDHC2_CWK		0x190
+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d0
+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d0
+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d0
+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d0
+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d0
+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSEWECT		0xc1
+		>;
+	};
+
+	pinctww_usdhc2_100mhz: dhcom-usdhc2-100mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD2_CWK__USDHC2_CWK		0x194
+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d4
+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d4
+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d4
+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d4
+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d4
+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSEWECT		0xc1
+		>;
+	};
+
+	pinctww_usdhc2_200mhz: dhcom-usdhc2-200mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD2_CWK__USDHC2_CWK		0x196
+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d6
+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d6
+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d6
+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d6
+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d6
+			MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSEWECT		0xc1
+		>;
+	};
+
+	pinctww_usdhc2_vmmc: dhcom-usdhc2-vmmc-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD2_WESET_B__GPIO2_IO19		0x20
+		>;
+	};
+
+	pinctww_usdhc2_gpio: dhcom-usdhc2-gpio-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12		0x40000080
+		>;
+	};
+
+	pinctww_usdhc3: dhcom-usdhc3-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CWK		0x190
+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d0
+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d0
+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d0
+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d0
+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d0
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_DATA4		0x1d0
+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d0
+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d0
+			MX8MP_IOMUXC_NAND_CWE__USDHC3_DATA7		0x1d0
+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STWOBE		0x190
+			MX8MP_IOMUXC_NAND_WEADY_B__USDHC3_WESET_B	0x141
+		>;
+	};
+
+	pinctww_usdhc3_100mhz: dhcom-usdhc3-100mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CWK		0x194
+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d4
+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d4
+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d4
+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d4
+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d4
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_DATA4		0x1d4
+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d4
+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d4
+			MX8MP_IOMUXC_NAND_CWE__USDHC3_DATA7		0x1d4
+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STWOBE		0x194
+			MX8MP_IOMUXC_NAND_WEADY_B__USDHC3_WESET_B	0x141
+		>;
+	};
+
+	pinctww_usdhc3_200mhz: dhcom-usdhc3-200mhz-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CWK		0x196
+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d6
+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d6
+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d6
+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d6
+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d6
+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_DATA4		0x1d6
+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d6
+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d6
+			MX8MP_IOMUXC_NAND_CWE__USDHC3_DATA7		0x1d6
+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STWOBE		0x196
+			MX8MP_IOMUXC_NAND_WEADY_B__USDHC3_WESET_B	0x141
+		>;
+	};
+
+	pinctww_wdog: dhcom-wdog-gwp {
+		fsw,pins = <
+			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B		0xc6
+		>;
+	};
+};

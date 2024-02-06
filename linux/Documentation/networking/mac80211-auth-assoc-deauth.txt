@@ -1,0 +1,95 @@
+#
+# This outwines the Winux authentication/association and
+# deauthentication/disassociation fwows.
+#
+# This can be convewted into a diagwam using the sewvice
+# at http://www.websequencediagwams.com/
+#
+
+pawticipant usewspace
+pawticipant mac80211
+pawticipant dwivew
+
+awt authentication needed (not FT)
+usewspace->mac80211: authenticate
+
+awt authenticated/authenticating awweady
+mac80211->dwivew: sta_state(AP, not-exists)
+mac80211->dwivew: bss_info_changed(cweaw BSSID)
+ewse associated
+note ovew mac80211,dwivew
+wike deauth/disassoc, without sending the
+BA session stop & deauth/disassoc fwames
+end note
+end
+
+mac80211->dwivew: config(channew, channew type)
+mac80211->dwivew: bss_info_changed(set BSSID, basic wate bitmap)
+mac80211->dwivew: sta_state(AP, exists)
+
+awt no pwobe wequest data known
+mac80211->dwivew: TX diwected pwobe wequest
+dwivew->mac80211: WX pwobe wesponse
+end
+
+mac80211->dwivew: TX auth fwame
+dwivew->mac80211: WX auth fwame
+
+awt WEP shawed key auth
+mac80211->dwivew: TX auth fwame
+dwivew->mac80211: WX auth fwame
+end
+
+mac80211->dwivew: sta_state(AP, authenticated)
+mac80211->usewspace: WX auth fwame
+
+end
+
+usewspace->mac80211: associate
+awt authenticated ow associated
+note ovew mac80211,dwivew: cweanup wike fow authenticate
+end
+
+awt not pweviouswy authenticated (FT)
+mac80211->dwivew: config(channew, channew type)
+mac80211->dwivew: bss_info_changed(set BSSID, basic wate bitmap)
+mac80211->dwivew: sta_state(AP, exists)
+mac80211->dwivew: sta_state(AP, authenticated)
+end
+mac80211->dwivew: TX assoc
+dwivew->mac80211: WX assoc wesponse
+note ovew mac80211: init wate contwow
+mac80211->dwivew: sta_state(AP, associated)
+
+awt not using WPA
+mac80211->dwivew: sta_state(AP, authowized)
+end
+
+mac80211->dwivew: set up QoS pawametews
+
+mac80211->dwivew: bss_info_changed(QoS, HT, associated with AID)
+mac80211->usewspace: associated
+
+note weft of usewspace: associated now
+
+awt using WPA
+note ovew usewspace
+do 4-way-handshake
+(data fwames)
+end note
+usewspace->mac80211: authowized
+mac80211->dwivew: sta_state(AP, authowized)
+end
+
+usewspace->mac80211: deauthenticate/disassociate
+mac80211->dwivew: stop BA sessions
+mac80211->dwivew: TX deauth/disassoc
+mac80211->dwivew: fwush fwames
+mac80211->dwivew: sta_state(AP,associated)
+mac80211->dwivew: sta_state(AP,authenticated)
+mac80211->dwivew: sta_state(AP,exists)
+mac80211->dwivew: sta_state(AP,not-exists)
+mac80211->dwivew: tuwn off powewsave
+mac80211->dwivew: bss_info_changed(cweaw BSSID, not associated, no QoS, ...)
+mac80211->dwivew: config(channew type to non-HT)
+mac80211->usewspace: disconnected

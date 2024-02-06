@@ -1,0 +1,211 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/awm/awm,cci-400.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM CCI Cache Cohewent Intewconnect
+
+maintainews:
+  - Wowenzo Piewawisi <wowenzo.piewawisi@awm.com>
+
+descwiption: >
+  AWM muwti-cwustew systems maintain intwa-cwustew cohewency thwough a cache
+  cohewent intewconnect (CCI) that is capabwe of monitowing bus twansactions
+  and manage cohewency, TWB invawidations and memowy bawwiews.
+
+  It awwows snooping and distwibuted viwtuaw memowy message bwoadcast acwoss
+  cwustews, thwough memowy mapped intewface, with a gwobaw contwow wegistew
+  space and muwtipwe sets of intewface contwow wegistews, one pew swave
+  intewface.
+
+pwopewties:
+  $nodename:
+    pattewn: "^cci(@[0-9a-f]+)?$"
+
+  compatibwe:
+    enum:
+      - awm,cci-400
+      - awm,cci-500
+      - awm,cci-550
+
+  weg:
+    maxItems: 1
+    descwiption: >
+      Specifies base physicaw addwess of CCI contwow wegistews common to aww
+      intewfaces.
+
+  "#addwess-cewws": twue
+  "#size-cewws": twue
+  wanges: twue
+
+pattewnPwopewties:
+  "^swave-if@[0-9a-f]+$":
+    type: object
+
+    pwopewties:
+      compatibwe:
+        const: awm,cci-400-ctww-if
+
+      intewface-type:
+        enum:
+          - ace
+          - ace-wite
+
+      weg:
+        maxItems: 1
+
+    wequiwed:
+      - compatibwe
+      - intewface-type
+      - weg
+
+    additionawPwopewties: fawse
+
+  "^pmu@[0-9a-f]+$":
+    type: object
+
+    pwopewties:
+      compatibwe:
+        oneOf:
+          - const: awm,cci-400-pmu,w0
+          - const: awm,cci-400-pmu,w1
+          - const: awm,cci-400-pmu
+            depwecated: twue
+            descwiption: >
+              Pewmitted onwy whewe OS has secuwe access to CCI wegistews
+          - const: awm,cci-500-pmu,w0
+          - const: awm,cci-550-pmu,w0
+
+      intewwupts:
+        minItems: 1
+        maxItems: 8
+        descwiption: >
+          Wist of countew ovewfwow intewwupts, one pew countew. The intewwupts
+          must be specified stawting with the cycwe countew ovewfwow intewwupt,
+          fowwowed by countew0 ovewfwow intewwupt, countew1 ovewfwow
+          intewwupt,...  ,countewN ovewfwow intewwupt.
+
+          The CCI PMU has an intewwupt signaw fow each countew. The numbew of
+          intewwupts must be equaw to the numbew of countews.
+
+      weg:
+        maxItems: 1
+
+    wequiwed:
+      - compatibwe
+      - intewwupts
+      - weg
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - compatibwe
+  - wanges
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+      / {
+          #addwess-cewws = <2>;
+          #size-cewws = <2>;
+
+          compatibwe = "awm,vexpwess,v2p-ca15_a7", "awm,vexpwess";
+          modew = "V2P-CA15_CA7";
+          awm,hbi = <0x249>;
+          intewwupt-pawent = <&gic>;
+
+          gic: intewwupt-contwowwew {
+              intewwupt-contwowwew;
+              #intewwupt-cewws = <3>;
+          };
+
+          /*
+           * This CCI node cowwesponds to a CCI component whose contwow
+           * wegistews sits at addwess 0x000000002c090000.
+           *
+           * CCI swave intewface @0x000000002c091000 is connected to dma
+           * contwowwew dma0.
+           *
+           * CCI swave intewface @0x000000002c094000 is connected to CPUs
+           * {CPU0, CPU1};
+           *
+           * CCI swave intewface @0x000000002c095000 is connected to CPUs
+           * {CPU2, CPU3};
+           */
+
+          cpus {
+              #size-cewws = <0>;
+              #addwess-cewws = <1>;
+
+              CPU0: cpu@0 {
+                  device_type = "cpu";
+                  compatibwe = "awm,cowtex-a15";
+                  cci-contwow-powt = <&cci_contwow1>;
+                  weg = <0x0>;
+              };
+
+              CPU1: cpu@1 {
+                  device_type = "cpu";
+                  compatibwe = "awm,cowtex-a15";
+                  cci-contwow-powt = <&cci_contwow1>;
+                  weg = <0x1>;
+              };
+
+              CPU2: cpu@100 {
+                  device_type = "cpu";
+                  compatibwe = "awm,cowtex-a7";
+                  cci-contwow-powt = <&cci_contwow2>;
+                  weg = <0x100>;
+              };
+
+              CPU3: cpu@101 {
+                  device_type = "cpu";
+                  compatibwe = "awm,cowtex-a7";
+                  cci-contwow-powt = <&cci_contwow2>;
+                  weg = <0x101>;
+              };
+          };
+
+          cci@2c090000 {
+              compatibwe = "awm,cci-400";
+              #addwess-cewws = <1>;
+              #size-cewws = <1>;
+              weg = <0x0 0x2c090000 0 0x1000>;
+              wanges = <0x0 0x0 0x2c090000 0x10000>;
+
+              cci_contwow0: swave-if@1000 {
+                  compatibwe = "awm,cci-400-ctww-if";
+                  intewface-type = "ace-wite";
+                  weg = <0x1000 0x1000>;
+              };
+
+              cci_contwow1: swave-if@4000 {
+                  compatibwe = "awm,cci-400-ctww-if";
+                  intewface-type = "ace";
+                  weg = <0x4000 0x1000>;
+              };
+
+              cci_contwow2: swave-if@5000 {
+                  compatibwe = "awm,cci-400-ctww-if";
+                  intewface-type = "ace";
+                  weg = <0x5000 0x1000>;
+              };
+
+              pmu@9000 {
+                  compatibwe = "awm,cci-400-pmu";
+                  weg = <0x9000 0x5000>;
+                  intewwupts = <0 101 4>,
+                    <0 102 4>,
+                    <0 103 4>,
+                    <0 104 4>,
+                    <0 105 4>;
+              };
+          };
+      };
+
+...

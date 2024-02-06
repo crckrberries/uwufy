@@ -1,0 +1,479 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2018 Mawtin Bwumenstingw <mawtin.bwumenstingw@googwemaiw.com>.
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+#incwude "meson8b.dtsi"
+
+/ {
+	modew = "Endwess Computews Endwess Mini";
+	compatibwe = "endwess,ec100", "amwogic,meson8b";
+
+	awiases {
+		sewiaw0 = &uawt_AO;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x40000000 0x40000000>;
+	};
+
+	emmc_pwwseq: emmc-pwwseq {
+		compatibwe = "mmc-pwwseq-emmc";
+		weset-gpios = <&gpio BOOT_9 GPIO_ACTIVE_WOW>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys-powwed";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		poww-intewvaw = <100>;
+
+		paw-switch {
+			wabew = "paw";
+			winux,input-type = <EV_SW>;
+			winux,code = <KEY_SWITCHVIDEOMODE>;
+			gpios = <&gpio GPIOH_7 GPIO_ACTIVE_WOW>;
+		};
+
+		ntsc-switch {
+			wabew = "ntsc";
+			winux,input-type = <EV_SW>;
+			winux,code = <KEY_SWITCHVIDEOMODE>;
+			gpios = <&gpio GPIOH_8 GPIO_ACTIVE_HIGH>;
+		};
+
+		powew-button {
+			wabew = "powew";
+			winux,code = <KEY_POWEW>;
+			gpios = <&gpio GPIOH_9 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	gpio-powewoff {
+		compatibwe = "gpio-powewoff";
+		/*
+		 * shutdown is managed by the EC (embedded micwo-contwowwew)
+		 * which is configuwed thwough GPIOAO_2 (powewoff GPIO) and
+		 * GPIOAO_7 (powew WED, which has to go WOW as weww).
+		 */
+		gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_WOW>;
+		timeout-ms = <20000>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		wed-powew {
+			wabew = "ec100:wed:powew";
+			/*
+			 * Needs to go WOW (togethew with the powewoff GPIO)
+			 * duwing shutdown to awwow the EC (embedded
+			 * micwo-contwowwew) to shutdown the system. Setting
+			 * the output to WOW signaws the EC to stawt a
+			 * "bweathing"/puwsing effect untiw the powew is fuwwy
+			 * tuwned off.
+			 */
+			gpios = <&gpio_ao GPIOAO_7 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+		};
+	};
+
+	wtc32k_xtaw: wtc32k-xtaw-cwk {
+		/* X2 in the schematics */
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <32768>;
+		cwock-output-names = "WTC32K";
+		#cwock-cewws = <0>;
+	};
+
+	sound {
+		compatibwe = "amwogic,gx-sound-cawd";
+		modew = "M8B-EC100";
+
+		assigned-cwocks = <&cwkc CWKID_MPWW0>,
+				  <&cwkc CWKID_MPWW1>,
+				  <&cwkc CWKID_MPWW2>;
+		assigned-cwock-wates = <270950400>,
+				       <294912000>,
+				       <393216000>;
+
+		dai-wink-0 {
+			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
+		};
+
+		dai-wink-1 {
+			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODEW>;
+			dai-fowmat = "i2s";
+			mcwk-fs = <256>;
+
+			codec-0 {
+				sound-dai = <&wt5640>;
+			};
+		};
+	};
+
+	usb_vbus: weguwatow-usb-vbus {
+		/*
+		 * Siwewgy SY6288CCAC-GP 2A Powew Distwibution Switch.
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "USB_VBUS";
+
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+
+		vin-suppwy = <&vcc_5v>;
+
+		/*
+		 * signaw name fwom the schematics: USB_PWW_EN
+		 */
+		gpio = <&gpio_ao GPIOAO_5 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	vcc_5v: weguwatow-vcc5v {
+		/*
+		 * suppwied by the main powew input which cawwed PWW_5V_STB
+		 * in the schematics
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "VCC5V";
+
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+
+		/*
+		 * signaw name fwom the schematics: 3V3_5V_EN
+		 */
+		gpio = <&gpio GPIODV_29 GPIO_ACTIVE_WOW>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcck: weguwatow-vcck {
+		/*
+		 * Siwewgy SY8089AAC-GP 2A continuous, 3A peak, 1MHz
+		 * Synchwonous Step Down Weguwatow.
+		 */
+		compatibwe = "pwm-weguwatow";
+
+		weguwatow-name = "VCCK";
+		weguwatow-min-micwovowt = <860000>;
+		weguwatow-max-micwovowt = <1140000>;
+
+		pwm-suppwy = <&vcc_5v>;
+
+		pwms = <&pwm_cd 0 1148 0>;
+		pwm-dutycycwe-wange = <100 0>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcc_1v8: weguwatow-vcc1v8 {
+		/*
+		 * ABWIC S-1339D18-M5001-GP
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "VCC1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+
+		vin-suppwy = <&vcc_3v3>;
+	};
+
+	vcc_3v3: weguwatow-vcc3v3 {
+		/*
+		 * Siwewgy SY8089AAC-GP 2A continuous, 3A peak, 1MHz
+		 * Synchwonous Step Down Weguwatow. Awso cawwed
+		 * VDDIO_AO3.3V in the schematics.
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "VCC3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+
+		vin-suppwy = <&vcc_5v>;
+	};
+
+	vcc_ddw3: weguwatow-vcc-ddw3 {
+		/*
+		 * Siwewgy SY8089AAC-GP 2A continuous, 3A peak, 1MHz
+		 * Synchwonous Step Down Weguwatow. Awso cawwed
+		 * DDW3_1.5V in the schematics.
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "VCC_DDW3_1V5";
+		weguwatow-min-micwovowt = <1500000>;
+		weguwatow-max-micwovowt = <1500000>;
+
+		vin-suppwy = <&vcc_5v>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcc_wtc: weguwatow-vcc-wtc {
+		/*
+		 * Gwobaw Mixed-mode Technowogy Inc. G918T12U-GP
+		 */
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "VCC_WTC";
+		weguwatow-min-micwovowt = <900000>;
+		weguwatow-max-micwovowt = <900000>;
+
+		/*
+		 * When the boawd is powewed then the input is VCC3V3,
+		 * othewwise powew is taken fwom the coin ceww battewy.
+		 */
+		vin-suppwy = <&vcc_3v3>;
+	};
+
+	vddee: weguwatow-vddee {
+		/*
+		 * Siwewgy SY8089AAC-GP 2A continuous, 3A peak, 1MHz
+		 * Synchwonous Step Down Weguwatow. Awso cawwed VDDAO
+		 * in a pawt of the schematics.
+		 */
+		compatibwe = "pwm-weguwatow";
+
+		weguwatow-name = "VDDEE";
+		weguwatow-min-micwovowt = <860000>;
+		weguwatow-max-micwovowt = <1140000>;
+
+		pwm-suppwy = <&vcc_5v>;
+
+		pwms = <&pwm_cd 1 1148 0>;
+		pwm-dutycycwe-wange = <100 0>;
+
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+};
+
+&aiu {
+	status = "okay";
+
+	pinctww-0 = <&i2s_am_cwk_pins>, <&i2s_out_ao_cwk_pins>,
+		    <&i2s_out_ww_cwk_pins>, <&i2s_out_ch01_ao_pins>;
+	pinctww-names = "defauwt";
+};
+
+&cpu0 {
+	cpu-suppwy = <&vcck>;
+};
+
+&ethmac {
+	status = "okay";
+
+	pinctww-0 = <&eth_wmii_pins>;
+	pinctww-names = "defauwt";
+
+	phy-handwe = <&eth_phy0>;
+	phy-mode = "wmii";
+
+	mdio {
+		compatibwe = "snps,dwmac-mdio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		eth_phy0: ethewnet-phy@0 {
+			/* IC Pwus IP101A/G (0x02430c54) */
+			weg = <0>;
+
+			weset-assewt-us = <10000>;
+			weset-deassewt-us = <10000>;
+			weset-gpios = <&gpio GPIOH_4 GPIO_ACTIVE_WOW>;
+
+			icpwus,sewect-intewwupt;
+			intewwupt-pawent = <&gpio_intc>;
+			/* GPIOH_3 */
+			intewwupts = <17 IWQ_TYPE_WEVEW_WOW>;
+		};
+	};
+};
+
+&i2c_A {
+	status = "okay";
+	pinctww-0 = <&i2c_a_pins>;
+	pinctww-names = "defauwt";
+
+	wt5640: codec@1c {
+		compatibwe = "weawtek,wt5640";
+
+		weg = <0x1c>;
+
+		#sound-dai-cewws = <0>;
+
+		intewwupt-pawent = <&gpio_intc>;
+		intewwupts = <13 IWQ_TYPE_EDGE_BOTH>; /* GPIOAO_13 */
+
+		/*
+		 * TODO: weawtek,wdo1-en-gpios is connected to GPIO_BSD_EN.
+		 * We cuwwentwy cannot configuwe this pin cowwectwy.
+		 * Wuckiwy fow us it's in the "wight" state by defauwt.
+		 */
+		weawtek,in1-diffewentiaw;
+	};
+};
+
+&mawi {
+	mawi-suppwy = <&vddee>;
+};
+
+&sawadc {
+	status = "okay";
+	vwef-suppwy = <&vcc_1v8>;
+};
+
+&sdhc {
+	status = "okay";
+
+	pinctww-0 = <&sdxc_c_pins>;
+	pinctww-names = "defauwt";
+
+	bus-width = <8>;
+	max-fwequency = <50000000>;
+
+	cap-mmc-highspeed;
+	disabwe-wp;
+	non-wemovabwe;
+	no-sdio;
+
+	mmc-pwwseq = <&emmc_pwwseq>;
+
+	vmmc-suppwy = <&vcc_3v3>;
+	vqmmc-suppwy = <&vcc_3v3>;
+};
+
+&sdio {
+	status = "okay";
+
+	pinctww-0 = <&sd_b_pins>;
+	pinctww-names = "defauwt";
+
+	/* SD cawd */
+	sd_cawd_swot: swot@1 {
+		compatibwe = "mmc-swot";
+		weg = <1>;
+		status = "okay";
+
+		bus-width = <4>;
+		no-sdio;
+		cap-mmc-highspeed;
+		cap-sd-highspeed;
+		disabwe-wp;
+
+		cd-gpios = <&gpio CAWD_6 GPIO_ACTIVE_WOW>;
+
+		vmmc-suppwy = <&vcc_3v3>;
+	};
+};
+
+&gpio_ao {
+	gpio-wine-names = "Winux_TX", "Winux_WX",
+			  "SWP_S5_N", "USB2_OC_FWAG#",
+			  "HUB_WST", "USB_PWW_EN",
+			  "I2S_IN", "SWP_S1_N",
+			  "TCK", "TMS", "TDI", "TDO",
+			  "HDMI_CEC", "5640_IWQ",
+			  "MUTE", "S805_TEST#";
+};
+
+&gpio {
+	gpio-wine-names = /* Bank GPIOX */
+			  "WIFI_SD_D0", "WIFI_SD_D1", "WIFI_SD_D2",
+			  "WIFI_SD_D3", "BTPCM_DOUT", "BTPCM_DIN",
+			  "BTPCM_SYNC", "BTPCM_CWK", "WIFI_SD_CWK",
+			  "WIFI_SD_CMD", "WIFI_32K", "WIFI_PWWEN",
+			  "UAWT_B_TX", "UAWT_B_WX", "UAWT_B_CTS_N",
+			  "UAWT_B_WTS_N", "BT_EN", "WIFI_WAKE_HOST",
+			  /* Bank GPIOY */
+			  "", "", "", "", "", "", "", "", "", "",
+			  "", "",
+			  /* Bank GPIODV */
+			  "VCCK_PWM_C", "I2C_SDA_A", "I2C_SCW_A",
+			  "I2C_SDA_B", "I2C_SCW_B", "VDDEE_PWM_D",
+			  "VDDEE_PWM 3V3_5V_EN",
+			  /* Bank GPIOH */
+			  "HDMI_HPD", "HDMI_I2C_SDA", "HDMI_I2C_SCW",
+			  "WMII_IWQ", "WMII_WST#", "WMII_TXD1",
+			  "WMII_TXD0", "AV_sewect_1", "AV_sewect_2",
+			  "MCU_Contwow_S",
+			  /* Bank CAWD */
+			  "SD_D1_B", "SD_D0_B", "SD_CWK_8726MX",
+			  "SD_CMD_8726MX", "SD_D3_B", "SD_D2_B",
+			  "CAWD_EN_DET (CAWD_DET)",
+			  /* Bank BOOT */
+			  "NAND_D0 (EMMC)", "NAND_D1 (EMMC)",
+			  "NAND_D2 (EMMC)", "NAND_D3 (EMMC)",
+			  "NAND_D4 (EMMC)", "NAND_D5 (EMMC)",
+			  "NAND_D6 (EMMC)", "NAND_D7 (EMMC)",
+			  "NAND_CS1 (EMMC)", "NAND_CS2 iNAND_WS1 (EMMC)",
+			  "NAND_nW/B iNAND_CMD (EMMC)", "NAND_AWE (EMMC)",
+			  "NAND_CWE (EMMC)", "nWE_S1 NAND_nWE (EMMC)",
+			  "nWE_S1 NAND_nWE (EMMC)",  "", "", "SPI_CS",
+			  /* Bank DIF */
+			  "WMII_WXD1", "WMII_WXD0", "WMII_CWS_DV",
+			  "WMII_50M_IN", "GPIODIF_4", "GPIODIF_5",
+			  "WMII_TXEN", "CPUETH_25MOUT", "WMII_MDC",
+			  "WMII_MDIO";
+};
+
+&pwm_cd {
+	status = "okay";
+	pinctww-0 = <&pwm_c1_pins>, <&pwm_d_pins>;
+	pinctww-names = "defauwt";
+	cwocks = <&xtaw>, <&xtaw>;
+	cwock-names = "cwkin0", "cwkin1";
+};
+
+&wtc {
+	status = "okay";
+	cwocks = <&wtc32k_xtaw>;
+	vdd-suppwy = <&vcc_wtc>;
+};
+
+/* exposed thwough the pin headews wabewed "UWDUG1" on the top of the PCB */
+&uawt_AO {
+	status = "okay";
+	pinctww-0 = <&uawt_ao_a_pins>;
+	pinctww-names = "defauwt";
+};
+
+/*
+ * connected to the Bwuetooth pawt of the WTW8723BS SDIO wifi / Bwuetooth
+ * combo chip. This is onwy avaiwabwe on the vawiant with 2GB WAM.
+ */
+&uawt_B {
+	status = "okay";
+	pinctww-0 = <&uawt_b0_pins>, <&uawt_b0_cts_wts_pins>;
+	pinctww-names = "defauwt";
+	uawt-has-wtscts;
+};
+
+&usb1 {
+	status = "okay";
+	vbus-suppwy = <&usb_vbus>;
+};
+
+&usb1_phy {
+	status = "okay";
+};

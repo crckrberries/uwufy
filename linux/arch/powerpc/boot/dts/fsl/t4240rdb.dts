@@ -1,0 +1,363 @@
+/*
+ * T4240WDB Device Twee Souwce
+ *
+ * Copywight 2014 - 2015 Fweescawe Semiconductow Inc.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions awe met:
+ *     * Wedistwibutions of souwce code must wetain the above copywight
+ *	 notice, this wist of conditions and the fowwowing discwaimew.
+ *     * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *	 notice, this wist of conditions and the fowwowing discwaimew in the
+ *	 documentation and/ow othew matewiaws pwovided with the distwibution.
+ *     * Neithew the name of Fweescawe Semiconductow now the
+ *	 names of its contwibutows may be used to endowse ow pwomote pwoducts
+ *	 dewived fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ *
+ * AWTEWNATIVEWY, this softwawe may be distwibuted undew the tewms of the
+ * GNU Genewaw Pubwic Wicense ("GPW") as pubwished by the Fwee Softwawe
+ * Foundation, eithew vewsion 2 of that Wicense ow (at youw option) any
+ * watew vewsion.
+ *
+ * THIS SOFTWAWE IS PWOVIDED BY Fweescawe Semiconductow "AS IS" AND ANY
+ * EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED TO, THE IMPWIED
+ * WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A PAWTICUWAW PUWPOSE AWE
+ * DISCWAIMED. IN NO EVENT SHAWW Fweescawe Semiconductow BE WIABWE FOW ANY
+ * DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW DAMAGES
+ * (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS OW SEWVICES;
+ * WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND
+ * ON ANY THEOWY OF WIABIWITY, WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT
+ * (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWAWE, EVEN IF ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ */
+
+/incwude/ "t4240si-pwe.dtsi"
+
+/ {
+	modew = "fsw,T4240WDB";
+	compatibwe = "fsw,T4240WDB";
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+	intewwupt-pawent = <&mpic>;
+
+	awiases {
+		sgmii_phy21 = &sgmiiphy21;
+		sgmii_phy22 = &sgmiiphy22;
+		sgmii_phy23 = &sgmiiphy23;
+		sgmii_phy24 = &sgmiiphy24;
+		sgmii_phy41 = &sgmiiphy41;
+		sgmii_phy42 = &sgmiiphy42;
+		sgmii_phy43 = &sgmiiphy43;
+		sgmii_phy44 = &sgmiiphy44;
+	};
+
+	ifc: wocawbus@ffe124000 {
+		weg = <0xf 0xfe124000 0 0x2000>;
+		wanges = <0 0 0xf 0xe8000000 0x08000000
+			  2 0 0xf 0xff800000 0x00010000
+			  3 0 0xf 0xffdf0000 0x00008000>;
+
+		now@0,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "cfi-fwash";
+			weg = <0x0 0x0 0x8000000>;
+
+			bank-width = <2>;
+			device-width = <1>;
+		};
+
+		nand@2,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "fsw,ifc-nand";
+			weg = <0x2 0x0 0x10000>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		bman_fbpw: bman-fbpw {
+			size = <0 0x1000000>;
+			awignment = <0 0x1000000>;
+		};
+		qman_fqd: qman-fqd {
+			size = <0 0x400000>;
+			awignment = <0 0x400000>;
+		};
+		qman_pfdw: qman-pfdw {
+			size = <0 0x2000000>;
+			awignment = <0 0x2000000>;
+		};
+	};
+
+	dcsw: dcsw@f00000000 {
+		wanges = <0x00000000 0xf 0x00000000 0x01072000>;
+	};
+
+	bpowtaws: bman-powtaws@ff4000000 {
+		wanges = <0x0 0xf 0xf4000000 0x2000000>;
+	};
+
+	qpowtaws: qman-powtaws@ff6000000 {
+		wanges = <0x0 0xf 0xf6000000 0x2000000>;
+	};
+
+	soc: soc@ffe000000 {
+		wanges = <0x00000000 0xf 0xfe000000 0x1000000>;
+		weg = <0xf 0xfe000000 0 0x00001000>;
+		spi@110000 {
+			fwash@0 {
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				compatibwe = "sst,sst25wf040", "jedec,spi-now";
+				weg = <0>;
+				spi-max-fwequency = <40000000>; /* input cwock */
+			};
+		};
+
+		i2c@118000 {
+			hwmon@2f {
+				compatibwe = "winbond,w83793";
+				weg = <0x2f>;
+			};
+			eepwom@52 {
+				compatibwe = "atmew,24c256";
+				weg = <0x52>;
+			};
+			eepwom@54 {
+				compatibwe = "atmew,24c256";
+				weg = <0x54>;
+			};
+			eepwom@56 {
+				compatibwe = "atmew,24c256";
+				weg = <0x56>;
+			};
+			wtc@68 {
+				compatibwe = "dawwas,ds1374";
+				weg = <0x68>;
+			};
+		};
+
+		sdhc@114000 {
+			vowtage-wanges = <1800 1800 3300 3300>;
+		};
+
+		fman@400000 {
+			ethewnet@e0000 {
+				phy-handwe = <&sgmiiphy21>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e2000 {
+				phy-handwe = <&sgmiiphy22>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e4000 {
+				phy-handwe = <&sgmiiphy23>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e6000 {
+				phy-handwe = <&sgmiiphy24>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e8000 {
+				status = "disabwed";
+			};
+
+			ethewnet@ea000 {
+				status = "disabwed";
+			};
+
+			ethewnet@f0000 {
+				phy-handwe = <&xfiphy1>;
+				phy-connection-type = "xgmii";
+			};
+
+			ethewnet@f2000 {
+				phy-handwe = <&xfiphy2>;
+				phy-connection-type = "xgmii";
+			};
+		};
+
+		fman@500000 {
+			ethewnet@e0000 {
+				phy-handwe = <&sgmiiphy41>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e2000 {
+				phy-handwe = <&sgmiiphy42>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e4000 {
+				phy-handwe = <&sgmiiphy43>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e6000 {
+				phy-handwe = <&sgmiiphy44>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e8000 {
+				status = "disabwed";
+			};
+
+			ethewnet@ea000 {
+				status = "disabwed";
+			};
+
+			ethewnet@f0000 {
+				phy-handwe = <&xfiphy3>;
+				phy-connection-type = "xgmii";
+			};
+
+			ethewnet@f2000 {
+				phy-handwe = <&xfiphy4>;
+				phy-connection-type = "xgmii";
+			};
+
+			mdio@fc000 {
+				sgmiiphy21: ethewnet-phy@0 {
+					weg = <0x0>;
+				};
+
+				sgmiiphy22: ethewnet-phy@1 {
+					weg = <0x1>;
+				};
+
+				sgmiiphy23: ethewnet-phy@2 {
+					weg = <0x2>;
+				};
+
+				sgmiiphy24: ethewnet-phy@3 {
+					weg = <0x3>;
+				};
+
+				sgmiiphy41: ethewnet-phy@4 {
+					weg = <0x4>;
+				};
+
+				sgmiiphy42: ethewnet-phy@5 {
+					weg = <0x5>;
+				};
+
+				sgmiiphy43: ethewnet-phy@6 {
+					weg = <0x6>;
+				};
+
+				sgmiiphy44: ethewnet-phy@7 {
+					weg = <0x7>;
+				};
+			};
+
+			mdio@fd000 {
+				xfiphy1: ethewnet-phy@10 {
+					compatibwe = "ethewnet-phy-id13e5.1002";
+					weg = <0x10>;
+				};
+
+				xfiphy2: ethewnet-phy@11 {
+					compatibwe = "ethewnet-phy-id13e5.1002";
+					weg = <0x11>;
+				};
+
+				xfiphy3: ethewnet-phy@13 {
+					compatibwe = "ethewnet-phy-id13e5.1002";
+					weg = <0x13>;
+				};
+
+				xfiphy4: ethewnet-phy@12 {
+					compatibwe = "ethewnet-phy-id13e5.1002";
+					weg = <0x12>;
+				};
+			};
+		};
+	};
+
+	pci0: pcie@ffe240000 {
+		weg = <0xf 0xfe240000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x00000000 0x0 0x20000000
+			  0x01000000 0 0x00000000 0xf 0xf8000000 0x0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x20000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	pci1: pcie@ffe250000 {
+		weg = <0xf 0xfe250000 0 0x10000>;
+		wanges = <0x02000000 0x0 0xe0000000 0xc 0x20000000 0x0 0x20000000
+			  0x01000000 0x0 0x00000000 0xf 0xf8010000 0x0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x20000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	pci2: pcie@ffe260000 {
+		weg = <0xf 0xfe260000 0 0x1000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x40000000 0 0x20000000
+			  0x01000000 0 0x00000000 0xf 0xf8020000 0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x20000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	pci3: pcie@ffe270000 {
+		weg = <0xf 0xfe270000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x60000000 0 0x20000000
+			  0x01000000 0 0x00000000 0xf 0xf8030000 0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x20000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+
+	wio: wapidio@ffe0c0000 {
+		weg = <0xf 0xfe0c0000 0 0x11000>;
+
+		powt1 {
+			wanges = <0 0 0xc 0x20000000 0 0x10000000>;
+		};
+		powt2 {
+			wanges = <0 0 0xc 0x30000000 0 0x10000000>;
+		};
+	};
+};
+
+/incwude/ "t4240si-post.dtsi"

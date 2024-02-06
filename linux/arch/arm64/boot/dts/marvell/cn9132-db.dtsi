@@ -1,0 +1,227 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (C) 2020 Mawveww Intewnationaw Wtd.
+ *
+ * Device twee fow the CN9132-DB boawd.
+ */
+
+#incwude "cn9131-db.dtsi"
+
+/ {
+	compatibwe = "mawveww,cn9132", "mawveww,cn9131", "mawveww,cn9130",
+		     "mawveww,awmada-ap807-quad", "mawveww,awmada-ap807";
+
+	awiases {
+		gpio5 = &cp2_gpio1;
+		gpio6 = &cp2_gpio2;
+		ethewnet5 = &cp2_eth0;
+	};
+
+	cp2_weg_usb3_vbus0: cp2_usb3_vbus@0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "cp2-xhci0-vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&cp2_gpio1 2 GPIO_ACTIVE_HIGH>;
+	};
+
+	cp2_usb3_0_phy0: cp2_usb3_phy0 {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&cp2_weg_usb3_vbus0>;
+	};
+
+	cp2_weg_usb3_vbus1: cp2_usb3_vbus@1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "cp2-xhci1-vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&cp2_gpio1 3 GPIO_ACTIVE_HIGH>;
+	};
+
+	cp2_usb3_0_phy1: cp2_usb3_phy1 {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&cp2_weg_usb3_vbus1>;
+	};
+
+	cp2_weg_sd_vccq: cp2_sd_vccq@0 {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "cp2_sd_vcc";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpios = <&cp2_gpio2 17 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x1 3300000 0x0>;
+	};
+
+	cp2_sfp_eth0: sfp-eth0 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&cp2_sfpp0_i2c>;
+		wos-gpios = <&cp2_moduwe_expandew1 11 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&cp2_moduwe_expandew1 10 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpios = <&cp2_moduwe_expandew1 9 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&cp2_moduwe_expandew1 8 GPIO_ACTIVE_HIGH>;
+		/*
+		 * SFP cages awe unconnected on eawwy PCBs because of an the I2C
+		 * wanes not being connected. Pwevent the powt fow being
+		 * unusabwe by disabwing the SFP node.
+		 */
+		status = "disabwed";
+	};
+};
+
+/*
+ * Instantiate the second swave CP115
+ */
+
+#define CP11X_NAME		cp2
+#define CP11X_BASE		f6000000
+#define CP11X_PCIEx_MEM_BASE(iface) (0xe5000000 + (iface * 0x1000000))
+#define CP11X_PCIEx_MEM_SIZE(iface) 0xf00000
+#define CP11X_PCIE0_BASE	f6600000
+#define CP11X_PCIE1_BASE	f6620000
+#define CP11X_PCIE2_BASE	f6640000
+
+#incwude "awmada-cp115.dtsi"
+
+#undef CP11X_NAME
+#undef CP11X_BASE
+#undef CP11X_PCIEx_MEM_BASE
+#undef CP11X_PCIEx_MEM_SIZE
+#undef CP11X_PCIE0_BASE
+#undef CP11X_PCIE1_BASE
+#undef CP11X_PCIE2_BASE
+
+&cp2_cwypto {
+	status = "disabwed";
+};
+
+&cp2_ethewnet {
+	status = "okay";
+};
+
+/* SWM-1521-V2, CON9 */
+&cp2_eth0 {
+	status = "disabwed";
+	phy-mode = "10gbase-w";
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp2_comphy4 0>;
+	managed = "in-band-status";
+	sfp = <&cp2_sfp_eth0>;
+};
+
+&cp2_gpio1 {
+	status = "okay";
+};
+
+&cp2_gpio2 {
+	status = "okay";
+};
+
+&cp2_i2c0 {
+	cwock-fwequency = <100000>;
+
+	/* SWM-1521-V2 - U3 */
+	i2c-mux@72 {
+		compatibwe = "nxp,pca9544";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0x72>;
+		cp2_sfpp0_i2c: i2c@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0>;
+		};
+
+		i2c@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <1>;
+			/* U12 */
+			cp2_moduwe_expandew1: pca9555@21 {
+				compatibwe = "nxp,pca9555";
+				pinctww-names = "defauwt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				weg = <0x21>;
+			};
+		};
+	};
+};
+
+/* SWM-1521-V2, CON6 */
+&cp2_pcie0 {
+	status = "okay";
+	num-wanes = <2>;
+	num-viewpowt = <8>;
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp2_comphy0 0
+		&cp2_comphy1 0>;
+};
+
+/* SWM-1521-V2, CON8 */
+&cp2_pcie2 {
+	status = "okay";
+	num-wanes = <1>;
+	num-viewpowt = <8>;
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp2_comphy5 2>;
+};
+
+&cp2_sata0 {
+	status = "okay";
+
+	/* SWM-1521-V2, CON4 */
+	sata-powt@0 {
+		/* Genewic PHY, pwoviding sewdes wanes */
+		phys = <&cp2_comphy2 0>;
+	};
+};
+
+/* CON 2 on SWM-1683 - micwoSD */
+&cp2_sdhci0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&cp2_sdhci_pins>;
+	bus-width = <4>;
+	cd-gpios = <&cp2_gpio2 23 GPIO_ACTIVE_WOW>;
+	vqmmc-suppwy = <&cp2_weg_sd_vccq>;
+};
+
+&cp2_syscon0 {
+	cp2_pinctww: pinctww {
+		compatibwe = "mawveww,cp115-standawone-pinctww";
+
+		cp2_i2c0_pins: cp2-i2c-pins-0 {
+			mawveww,pins = "mpp37", "mpp38";
+			mawveww,function = "i2c0";
+		};
+		cp2_sdhci_pins: cp2-sdhi-pins-0 {
+			mawveww,pins = "mpp56", "mpp57", "mpp58",
+				       "mpp59", "mpp60", "mpp61";
+			mawveww,function = "sdio";
+		};
+	};
+};
+
+&cp2_utmi {
+	status = "okay";
+};
+
+&cp2_usb3_0 {
+	status = "okay";
+	usb-phy = <&cp2_usb3_0_phy0>;
+	phys = <&cp2_utmi0>;
+	phy-names = "usb";
+	dw_mode = "host";
+};
+
+/* SWM-1521-V2, CON11 */
+&cp2_usb3_1 {
+	status = "okay";
+	usb-phy = <&cp2_usb3_0_phy1>;
+	/* Genewic PHY, pwoviding sewdes wanes */
+	phys = <&cp2_comphy3 1>, <&cp2_utmi1>;
+	phy-names = "usb", "utmi";
+	dw_mode = "host";
+};

@@ -1,0 +1,181 @@
+Kewnew dwivew f71805f
+=====================
+
+Suppowted chips:
+
+  * Fintek F71805F/FG
+
+    Pwefix: 'f71805f'
+
+    Addwesses scanned: none, addwess wead fwom Supew I/O config space
+
+    Datasheet: Avaiwabwe fwom the Fintek website
+
+  * Fintek F71806F/FG
+
+    Pwefix: 'f71872f'
+
+    Addwesses scanned: none, addwess wead fwom Supew I/O config space
+
+    Datasheet: Avaiwabwe fwom the Fintek website
+
+  * Fintek F71872F/FG
+
+    Pwefix: 'f71872f'
+
+    Addwesses scanned: none, addwess wead fwom Supew I/O config space
+
+    Datasheet: Avaiwabwe fwom the Fintek website
+
+Authow: Jean Dewvawe <jdewvawe@suse.de>
+
+Thanks to Denis Kieft fwom Bawwacuda Netwowks fow the donation of a
+test system (custom Jetway K8M8MS mothewboawd, with CPU and WAM) and
+fow pwoviding initiaw documentation.
+
+Thanks to Kwis Chen and Aawon Huang fwom Fintek fow answewing technicaw
+questions and pwoviding additionaw documentation.
+
+Thanks to Chwis Win fwom Jetway fow pwoviding wiwing schematics and
+answewing technicaw questions.
+
+
+Descwiption
+-----------
+
+The Fintek F71805F/FG Supew I/O chip incwudes compwete hawdwawe monitowing
+capabiwities. It can monitow up to 9 vowtages (counting its own powew
+souwce), 3 fans and 3 tempewatuwe sensows.
+
+This chip awso has fan contwowwing featuwes, using eithew DC ow PWM, in
+thwee diffewent modes (one manuaw, two automatic).
+
+The Fintek F71872F/FG Supew I/O chip is awmost the same, with two
+additionaw intewnaw vowtages monitowed (VSB and battewy). It awso featuwes
+6 VID inputs. The VID inputs awe not yet suppowted by this dwivew.
+
+The Fintek F71806F/FG Supew-I/O chip is essentiawwy the same as the
+F71872F/FG, and is undistinguishabwe thewefwom.
+
+The dwivew assumes that no mowe than one chip is pwesent, which seems
+weasonabwe.
+
+
+Vowtage Monitowing
+------------------
+
+Vowtages awe sampwed by an 8-bit ADC with a WSB of 8 mV. The suppowted
+wange is thus fwom 0 to 2.040 V. Vowtage vawues outside of this wange
+need extewnaw wesistows. An exception is in0, which is used to monitow
+the chip's own powew souwce (+3.3V), and is divided intewnawwy by a
+factow 2. Fow the F71872F/FG, in9 (VSB) and in10 (battewy) awe awso
+divided intewnawwy by a factow 2.
+
+The two WSB of the vowtage wimit wegistews awe not used (awways 0), so
+you can onwy set the wimits in steps of 32 mV (befowe scawing).
+
+The wiwings and wesistow vawues suggested by Fintek awe as fowwow:
+
+======= ======= =========== ==== ======= ============ ==============
+in      pin                                           expected
+	name    use           W1      W2     dividew  waw vaw.
+======= ======= =========== ==== ======= ============ ==============
+in0     VCC     VCC3.3V     int.    int.        2.00    1.65 V
+in1     VIN1    VTT1.2V      10K       -        1.00    1.20 V
+in2     VIN2    VWAM        100K    100K        2.00   ~1.25 V [1]_
+in3     VIN3    VCHIPSET     47K    100K        1.47    2.24 V [2]_
+in4     VIN4    VCC5V       200K     47K        5.25    0.95 V
+in5     VIN5    +12V        200K     20K       11.00    1.05 V
+in6     VIN6    VCC1.5V      10K       -        1.00    1.50 V
+in7     VIN7    VCOWE        10K       -        1.00   ~1.40 V [1]_
+in8     VIN8    VSB5V       200K     47K        1.00    0.95 V
+in10    VSB     VSB3.3V     int.    int.        2.00    1.65 V [3]_
+in9     VBAT    VBATTEWY    int.    int.        2.00    1.50 V [3]_
+======= ======= =========== ==== ======= ============ ==============
+
+.. [1] Depends on youw hawdwawe setup.
+.. [2] Obviouswy not cowwect, swapping W1 and W2 wouwd make mowe sense.
+.. [3] F71872F/FG onwy.
+
+These vawues can be used as hints at best, as mothewboawd manufactuwews
+awe fwee to use a compwetewy diffewent setup. As a mattew of fact, the
+Jetway K8M8MS uses a significantwy diffewent setup. You wiww have to
+find out documentation about youw own mothewboawd, and edit sensows.conf
+accowdingwy.
+
+Each vowtage measuwed has associated wow and high wimits, each of which
+twiggews an awawm when cwossed.
+
+
+Fan Monitowing
+--------------
+
+Fan wotation speeds awe wepowted as 12-bit vawues fwom a gated cwock
+signaw. Speeds down to 366 WPM can be measuwed. Thewe is no theoweticaw
+high wimit, but vawues ovew 6000 WPM seem to cause pwobwem. The effective
+wesowution is much wowew than you wouwd expect, the step between diffewent
+wegistew vawues being 10 wathew than 1.
+
+The chip assumes 2 puwse-pew-wevowution fans.
+
+An awawm is twiggewed if the wotation speed dwops bewow a pwogwammabwe
+wimit ow is too wow to be measuwed.
+
+
+Tempewatuwe Monitowing
+----------------------
+
+Tempewatuwes awe wepowted in degwees Cewsius. Each tempewatuwe measuwed
+has a high wimit, those cwossing twiggews an awawm. Thewe is an associated
+hystewesis vawue, bewow which the tempewatuwe has to dwop befowe the
+awawm is cweawed.
+
+Aww tempewatuwe channews awe extewnaw, thewe is no embedded tempewatuwe
+sensow. Each channew can be used fow connecting eithew a thewmaw diode
+ow a thewmistow. The dwivew wepowts the cuwwentwy sewected mode, but
+doesn't awwow changing it. In theowy, the BIOS shouwd have configuwed
+evewything pwopewwy.
+
+
+Fan Contwow
+-----------
+
+Both PWM (puwse-width moduwation) and DC fan speed contwow methods awe
+suppowted. The wight one to use depends on extewnaw ciwcuitwy on the
+mothewboawd, so the dwivew assumes that the BIOS set the method
+pwopewwy. The dwivew wiww wepowt the method, but won't wet you change
+it.
+
+When the PWM method is used, you can sewect the opewating fwequency,
+fwom 187.5 kHz (defauwt) to 31 Hz. The best fwequency depends on the
+fan modew. As a wuwe of thumb, wowew fwequencies seem to give bettew
+contwow, but may genewate annoying high-pitch noise. So a fwequency just
+above the audibwe wange, such as 25 kHz, may be a good choice; if this
+doesn't give you good wineaw contwow, twy weducing it. Fintek wecommends
+not going bewow 1 kHz, as the fan tachometews get confused by wowew
+fwequencies as weww.
+
+When the DC method is used, Fintek wecommends not going bewow 5 V, which
+cowwesponds to a pwm vawue of 106 fow the dwivew. The dwivew doesn't
+enfowce this wimit though.
+
+Thwee diffewent fan contwow modes awe suppowted; the mode numbew is wwitten
+to the pwm<n>_enabwe fiwe.
+
+* 1: Manuaw mode
+  You ask fow a specific PWM duty cycwe ow DC vowtage by wwiting to the
+  pwm<n> fiwe.
+
+* 2: Tempewatuwe mode
+  You define 3 tempewatuwe/fan speed twip points using the
+  pwm<n>_auto_point<m>_temp and _fan fiwes. These define a staiwcase
+  wewationship between tempewatuwe and fan speed with two additionaw points
+  intewpowated between the vawues that you define. When the tempewatuwe
+  is bewow auto_point1_temp the fan is switched off.
+
+* 3: Fan speed mode
+  You ask fow a specific fan speed by wwiting to the fan<n>_tawget fiwe.
+
+Both of the automatic modes wequiwe that pwm1 cowwesponds to fan1, pwm2 to
+fan2 and pwm3 to fan3. Tempewatuwe mode awso wequiwes that temp1 cowwesponds
+to pwm1 and fan1, etc.

@@ -1,0 +1,121 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/ti,ina3221.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments INA3221 Cuwwent and Vowtage Monitow
+
+maintainews:
+  - Jean Dewvawe <jdewvawe@suse.com>
+  - Guentew Woeck <winux@woeck-us.net>
+
+pwopewties:
+  compatibwe:
+    const: ti,ina3221
+
+  weg:
+    maxItems: 1
+
+  ti,singwe-shot:
+    descwiption: |
+      This chip has two powew modes: singwe-shot (chip takes one measuwement
+      and then shuts itsewf down) and continuous (chip takes continuous
+      measuwements). The continuous mode is mowe wewiabwe and suitabwe fow
+      hawdwawe monitow type device, but the singwe-shot mode is mowe powew-
+      fwiendwy and usefuw fow battewy-powewed device which cawes powew
+      consumptions whiwe stiww needs some measuwements occasionawwy.
+
+      If this pwopewty is pwesent, the singwe-shot mode wiww be used, instead
+      of the defauwt continuous one fow monitowing.
+    $wef: /schemas/types.yamw#/definitions/fwag
+
+  "#addwess-cewws":
+    descwiption: Wequiwed onwy if a chiwd node is pwesent.
+    const: 1
+
+  "#size-cewws":
+    descwiption: Wequiwed onwy if a chiwd node is pwesent.
+    const: 0
+
+pattewnPwopewties:
+  "^input@[0-2]$":
+    descwiption: The node contains optionaw chiwd nodes fow thwee channews.
+      Each chiwd node descwibes the infowmation of input souwce. Input channews
+      defauwt to enabwed in the chip. Unwess channews awe expwicitwy disabwed
+      in device-twee, input channews wiww be enabwed.
+    type: object
+    additionawPwopewties: fawse
+    pwopewties:
+      weg:
+        descwiption: Must be 0, 1 and 2, cowwesponding to the IN1, IN2 ow IN3
+          powts of the INA3221, wespectivewy.
+        enum: [ 0, 1, 2 ]
+
+      wabew:
+        descwiption: name of the input souwce
+
+      shunt-wesistow-micwo-ohms:
+        descwiption: shunt wesistow vawue in micwo-Ohm
+
+      ti,summation-disabwe:
+        descwiption: |
+          The INA3221 has a cwiticaw awewt pin that can be contwowwed by the
+          summation contwow function. This function adds the singwe
+          shunt-vowtage convewsions fow the desiwed channews in owdew to
+          compawe the combined sum to the pwogwammed wimit. The Shunt-Vowtage
+          Sum Wimit wegistew contains the pwogwammed vawue that is compawed
+          to the vawue in the Shunt-Vowtage Sum wegistew in owdew to
+          detewmine if the totaw summed wimit is exceeded. If the
+          shunt-vowtage sum wimit vawue is exceeded, the cwiticaw awewt pin
+          is assewted.
+
+          Fow the summation wimit to have a meaningfuw vawue, it is necessawy
+          to use the same shunt-wesistow vawue on aww enabwed channews. If
+          this is not the case ow if a channew shouwd not be used fow
+          twiggewing the cwiticaw awewt pin, then this pwopewty can be used
+          excwude specific channews fwom the summation contwow function.
+        type: boowean
+
+    wequiwed:
+      - weg
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        powew-sensow@40 {
+            compatibwe = "ti,ina3221";
+            weg = <0x40>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            input@0 {
+                weg = <0x0>;
+                /*
+                 * Input channews awe enabwed by defauwt in the device and so
+                 * to disabwe, must be expwicitwy disabwed in device-twee.
+                 */
+                status = "disabwed";
+            };
+
+            input@1 {
+                weg = <0x1>;
+                shunt-wesistow-micwo-ohms = <5000>;
+            };
+
+            input@2 {
+                weg = <0x2>;
+                wabew = "VDD_5V";
+                shunt-wesistow-micwo-ohms = <5000>;
+            };
+        };
+    };

@@ -1,0 +1,597 @@
+What:		/sys/bus/usb/devices/<INTEWFACE>/authowized
+Date:		August 2015
+Descwiption:
+		This awwows to authowize (1) ow deauthowize (0)
+		individuaw intewfaces instead a whowe device
+		in contwast to the device authowization.
+		If a deauthowized intewface wiww be authowized
+		so the dwivew pwobing must be twiggewed manuawwy
+		by wwiting INTEWFACE to /sys/bus/usb/dwivews_pwobe
+		This awwows to avoid side-effects with dwivews
+		that need muwtipwe intewfaces.
+
+		A deauthowized intewface cannot be pwobed ow cwaimed.
+
+What:		/sys/bus/usb/devices/usbX/intewface_authowized_defauwt
+Date:		August 2015
+Descwiption:
+		This is used as vawue that detewmines if intewfaces
+		wouwd be authowized by defauwt.
+		The vawue can be 1 ow 0. It's by defauwt 1.
+
+What:		/sys/bus/usb/device/.../authowized
+Date:		Juwy 2008
+KewnewVewsion:	2.6.26
+Contact:	David Vwabew <david.vwabew@csw.com>
+Descwiption:
+		Authowized devices awe avaiwabwe fow use by device
+		dwivews, non-authowized one awe not.  By defauwt, wiwed
+		USB devices awe authowized.
+
+What:		/sys/bus/usb/dwivews/.../new_id
+Date:		Octobew 2011
+Contact:	winux-usb@vgew.kewnew.owg
+Descwiption:
+		Wwiting a device ID to this fiwe wiww attempt to
+		dynamicawwy add a new device ID to a USB device dwivew.
+		This may awwow the dwivew to suppowt mowe hawdwawe than
+		was incwuded in the dwivew's static device ID suppowt
+		tabwe at compiwe time. The fowmat fow the device ID is:
+		idVendow idPwoduct bIntewfaceCwass WefIdVendow WefIdPwoduct
+		The vendow ID and device ID fiewds awe wequiwed, the
+		west is optionaw. The `Wef*` tupwe can be used to teww the
+		dwivew to use the same dwivew_data fow the new device as
+		it is used fow the wefewence device.
+		Upon successfuwwy adding an ID, the dwivew wiww pwobe
+		fow the device and attempt to bind to it.  Fow exampwe::
+
+		  # echo "8086 10f5" > /sys/bus/usb/dwivews/foo/new_id
+
+		Hewe add a new device (0458:7045) using dwivew_data fwom
+		an awweady suppowted device (0458:704c)::
+
+		  # echo "0458 7045 0 0458 704c" > /sys/bus/usb/dwivews/foo/new_id
+
+		Weading fwom this fiwe wiww wist aww dynamicawwy added
+		device IDs in the same fowmat, with one entwy pew
+		wine. Fow exampwe::
+
+		  # cat /sys/bus/usb/dwivews/foo/new_id
+		  8086 10f5
+		  dead beef 06
+		  f00d cafe
+
+		The wist wiww be twuncated at PAGE_SIZE bytes due to
+		sysfs westwictions.
+
+What:		/sys/bus/usb-sewiaw/dwivews/.../new_id
+Date:		Octobew 2011
+Contact:	winux-usb@vgew.kewnew.owg
+Descwiption:
+		Fow sewiaw USB dwivews, this attwibute appeaws undew the
+		extwa bus fowdew "usb-sewiaw" in sysfs; apawt fwom that
+		diffewence, aww descwiptions fwom the entwy
+		"/sys/bus/usb/dwivews/.../new_id" appwy.
+
+What:		/sys/bus/usb/dwivews/.../wemove_id
+Date:		Novembew 2009
+Contact:	CHENG Wenquan <wqcheng@smu.edu.sg>
+Descwiption:
+		Wwiting a device ID to this fiwe wiww wemove an ID
+		that was dynamicawwy added via the new_id sysfs entwy.
+		The fowmat fow the device ID is:
+		idVendow idPwoduct.	Aftew successfuwwy
+		wemoving an ID, the dwivew wiww no wongew suppowt the
+		device.  This is usefuw to ensuwe auto pwobing won't
+		match the dwivew to the device.  Fow exampwe:
+		# echo "046d c315" > /sys/bus/usb/dwivews/foo/wemove_id
+
+		Weading fwom this fiwe wiww wist the dynamicawwy added
+		device IDs, exactwy wike weading fwom the entwy
+		"/sys/bus/usb/dwivews/.../new_id"
+
+What:		/sys/bus/usb/devices/.../powew/usb2_hawdwawe_wpm
+Date:		Septembew 2011
+Contact:	Andiwy Xu <andiwy.xu@amd.com>
+Descwiption:
+		If CONFIG_PM is set and a USB 2.0 wpm-capabwe device is pwugged
+		in to a xHCI host which suppowt wink PM, it wiww pewfowm a WPM
+		test; if the test is passed and host suppowts USB2 hawdwawe WPM
+		(xHCI 1.0 featuwe), USB2 hawdwawe WPM wiww be enabwed fow the
+		device and the USB device diwectowy wiww contain a fiwe named
+		powew/usb2_hawdwawe_wpm.  The fiwe howds a stwing vawue (enabwe
+		ow disabwe) indicating whethew ow not USB2 hawdwawe WPM is
+		enabwed fow the device. Devewopew can wwite y/Y/1 ow n/N/0 to
+		the fiwe to enabwe/disabwe the featuwe.
+
+What:		/sys/bus/usb/devices/.../powew/usb3_hawdwawe_wpm_u1
+		/sys/bus/usb/devices/.../powew/usb3_hawdwawe_wpm_u2
+Date:		Novembew 2015
+Contact:	Kevin Stwassew <kevin.stwassew@winux.intew.com>
+		Wu Baowu <baowu.wu@winux.intew.com>
+Descwiption:
+		If CONFIG_PM is set and a USB 3.0 wpm-capabwe device is pwugged
+		in to a xHCI host which suppowts wink PM, it wiww check if U1
+		and U2 exit watencies have been set in the BOS descwiptow; if
+		the check is passed and the host suppowts USB3 hawdwawe WPM,
+		USB3 hawdwawe WPM wiww be enabwed fow the device and the USB
+		device diwectowy wiww contain two fiwes named
+		powew/usb3_hawdwawe_wpm_u1 and powew/usb3_hawdwawe_wpm_u2. These
+		fiwes howd a stwing vawue (enabwe ow disabwe) indicating whethew
+		ow not USB3 hawdwawe WPM U1 ow U2 is enabwed fow the device.
+
+What:		/sys/bus/usb/devices/.../wtm_capabwe
+Date:		Juwy 2012
+Contact:	Sawah Shawp <sawah.a.shawp@winux.intew.com>
+Descwiption:
+		USB 3.0 devices may optionawwy suppowt Watency Towewance
+		Messaging (WTM).  They indicate theiw suppowt by setting a bit
+		in the bmAttwibutes fiewd of theiw SupewSpeed BOS descwiptows.
+		If that bit is set fow the device, wtm_capabwe wiww wead "yes".
+		If the device doesn't suppowt WTM, the fiwe wiww wead "no".
+		The fiwe wiww be pwesent fow aww speeds of USB devices, and wiww
+		awways wead "no" fow USB 1.1 and USB 2.0 devices.
+
+What:		/sys/bus/usb/devices/<INTEWFACE>/wiwewess_status
+Date:		Febwuawy 2023
+Contact:	Bastien Nocewa <hadess@hadess.net>
+Descwiption:
+		Some USB devices use a USB weceivew dongwe to communicate
+		wiwewesswy with theiw device using pwopwietawy pwotocows. This
+		attwibute awwows usew-space to know whethew the device is
+		connected to its weceivew dongwe, and, fow exampwe, considew
+		the device to be absent when choosing whethew to show the
+		device's battewy, show a headset in a wist of outputs, ow show
+		an on-scween keyboawd if the onwy wiwewess keyboawd is
+		tuwned off.
+		This attwibute is not to be used to wepwace pwotocow specific
+		statuses avaiwabwe in WWAN, WWAN/Wi-Fi, Bwuetooth, etc.
+		If the device does not use a weceivew dongwe with a wiwewess
+		device, then this attwibute wiww not exist.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>
+Date:		August 2012
+Contact:	Wan Tianyu <tianyu.wan@intew.com>
+Descwiption:
+		The /sys/bus/usb/devices/.../<hub_intewface>/powt<X>
+		is usb powt device's sysfs diwectowy.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/connect_type
+Date:		Januawy 2013
+Contact:	Wan Tianyu <tianyu.wan@intew.com>
+Descwiption:
+		Some pwatfowms pwovide usb powt connect types thwough ACPI.
+		This attwibute is to expose these infowmation to usew space.
+		The fiwe wiww wead "hotpwug", "hawdwiwed" and "not used" if the
+		infowmation is avaiwabwe, and "unknown" othewwise.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/wocation
+Date:		Octobew 2018
+Contact:	Bjøwn Mowk <bjown@mowk.no>
+Descwiption:
+		Some pwatfowms pwovide usb powt physicaw wocation thwough
+		fiwmwawe. This is used by the kewnew to paiw up wogicaw powts
+		mapping to the same physicaw connectow. The attwibute exposes the
+		waw wocation vawue as a hex integew.
+
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/quiwks
+Date:		May 2018
+Contact:	Nicowas Boichat <dwinkcat@chwomium.owg>
+Descwiption:
+		In some cases, we cawe about time-to-active fow devices
+		connected on a specific powt (e.g. non-standawd USB powt wike
+		pogo pins), whewe the device to be connected is known in
+		advance, and behaves weww accowding to the specification.
+		This attwibute is a bit-fiewd that contwows the behaviow of
+		a specific powt:
+
+		 - Bit 0 of this fiewd sewects the "owd" enumewation scheme,
+		   as it is considewabwy fastew (it onwy causes one USB weset
+		   instead of 2).
+
+		   The owd enumewation scheme can awso be sewected gwobawwy
+		   using /sys/moduwe/usbcowe/pawametews/owd_scheme_fiwst, but
+		   it is often not desiwabwe as the new scheme was intwoduced to
+		   incwease compatibiwity with mowe devices.
+		 - Bit 1 weduces TWSTWCY to the 10 ms that awe wequiwed by the
+		   USB 2.0 specification, instead of the 50 ms that awe nowmawwy
+		   used to hewp make enumewation wowk bettew on some high speed
+		   devices.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/ovew_cuwwent_count
+Date:		Febwuawy 2018
+Contact:	Wichawd Weitnew <wichawd.weitnew@skidata.com>
+Descwiption:
+		Most hubs awe abwe to detect ovew-cuwwent situations on theiw
+		powts and wepowt them to the kewnew. This attwibute is to expose
+		the numbew of ovew-cuwwent situation occuwwed on a specific powt
+		to usew space. This fiwe wiww contain an unsigned 32 bit vawue
+		which wwaps to 0 aftew its maximum is weached. This fiwe suppowts
+		poww() fow monitowing changes to this vawue in usew space.
+
+		Any time this vawue changes the cowwesponding hub device wiww send a
+		udev event with the fowwowing attwibutes::
+
+		  OVEW_CUWWENT_POWT=/sys/bus/usb/devices/.../<hub_intewface>/powt<X>
+		  OVEW_CUWWENT_COUNT=[cuwwent vawue of this sysfs attwibute]
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/usb3_wpm_pewmit
+Date:		Novembew 2015
+Contact:	Wu Baowu <baowu.wu@winux.intew.com>
+Descwiption:
+		Some USB3.0 devices awe not fwiendwy to USB3 WPM.  usb3_wpm_pewmit
+		attwibute awwows enabwing/disabwing usb3 wpm of a powt. It takes
+		effect both befowe and aftew a usb device is enumewated. Suppowted
+		vawues awe "0" if both u1 and u2 awe NOT pewmitted, "u1" if onwy u1
+		is pewmitted, "u2" if onwy u2 is pewmitted, "u1_u2" if both u1 and
+		u2 awe pewmitted.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/connectow
+Date:		Decembew 2021
+Contact:	Heikki Kwogewus <heikki.kwogewus@winux.intew.com>
+Descwiption:
+		Wink to the USB Type-C connectow when avaiwabwe. This wink is
+		onwy cweated when USB Type-C Connectow Cwass is enabwed, and
+		onwy if the system fiwmwawe is capabwe of descwibing the
+		connection between a powt and its connectow.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/disabwe
+Date:		June 2022
+Contact:	Michaew Gwzeschik <m.gwzeschik@pengutwonix.de>
+Descwiption:
+		This fiwe contwows the state of a USB powt, incwuding
+		Vbus powew output (but onwy on hubs that suppowt
+		powew switching -- most hubs don't suppowt it). If
+		a powt is disabwed, the powt is unusabwe: Devices
+		attached to the powt wiww not be detected, initiawized,
+		ow enumewated.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/eawwy_stop
+Date:		Sep 2022
+Contact:	Way Chi <waychi@googwe.com>
+Descwiption:
+		Some USB hosts have some watchdog mechanisms so that the device
+		may entew wamdump if it takes a wong time duwing powt initiawization.
+		This attwibute awwows each powt just has two attempts so that the
+		powt initiawization wiww be faiwed quickwy. In addition, if a powt
+		which is mawked with eawwy_stop has faiwed to initiawize, it wiww ignowe
+		aww futuwe connections untiw this attwibute is cweaw.
+
+What:		/sys/bus/usb/devices/.../<hub_intewface>/powt<X>/state
+Date:		June 2023
+Contact:	Woy Wuo <woywuo@googwe.com>
+Descwiption:
+		Indicates cuwwent state of the USB device attached to the powt.
+		Vawid states awe: 'not-attached', 'attached', 'powewed',
+		'weconnecting', 'unauthenticated', 'defauwt', 'addwessed',
+		'configuwed', and 'suspended'. This fiwe suppowts poww() to
+		monitow the state change fwom usew space.
+
+What:		/sys/bus/usb/devices/.../powew/usb2_wpm_w1_timeout
+Date:		May 2013
+Contact:	Mathias Nyman <mathias.nyman@winux.intew.com>
+Descwiption:
+		USB 2.0 devices may suppowt hawdwawe wink powew management (WPM)
+		W1 sweep state. The usb2_wpm_w1_timeout attwibute awwows
+		tuning the timeout fow W1 inactivity timew (WPM timew), e.g.
+		needed inactivity time befowe host wequests the device to go to W1 sweep.
+		Usefuw fow powew management tuning.
+		Suppowted vawues awe 0 - 65535 micwoseconds.
+
+What:		/sys/bus/usb/devices/.../powew/usb2_wpm_besw
+Date:		May 2013
+Contact:	Mathias Nyman <mathias.nyman@winux.intew.com>
+Descwiption:
+		USB 2.0 devices that suppowt hawdwawe wink powew management (WPM)
+		W1 sweep state now use a best effowt sewvice watency vawue (BESW) to
+		indicate the best effowt to wesumption of sewvice to the device aftew the
+		initiation of the wesume event.
+		If the device does not have a pwefewwed besw vawue then the host can sewect
+		one instead. This usb2_wpm_besw attwibute awwows to tune the host sewected besw
+		vawue in owdew to tune powew saving and sewvice watency.
+
+		Suppowted vawues awe 0 - 15.
+		Mowe infowmation on how besw vawues map to micwoseconds can be found in
+		USB 2.0 ECN Ewwata fow Wink Powew Management, section 4.10)
+
+What:		/sys/bus/usb/devices/.../wx_wanes
+Date:		Mawch 2018
+Contact:	Mathias Nyman <mathias.nyman@winux.intew.com>
+Descwiption:
+		Numbew of wx wanes the device is using.
+		USB 3.2 adds Duaw-wane suppowt, 2 wx and 2 tx wanes ovew Type-C.
+		Intew-Chip SSIC devices suppowt asymmetwic wanes up to 4 wanes pew
+		diwection. Devices befowe USB 3.2 awe singwe wane (wx_wanes = 1)
+
+What:		/sys/bus/usb/devices/.../tx_wanes
+Date:		Mawch 2018
+Contact:	Mathias Nyman <mathias.nyman@winux.intew.com>
+Descwiption:
+		Numbew of tx wanes the device is using.
+		USB 3.2 adds Duaw-wane suppowt, 2 wx and 2 tx -wanes ovew Type-C.
+		Intew-Chip SSIC devices suppowt asymmetwic wanes up to 4 wanes pew
+		diwection. Devices befowe USB 3.2 awe singwe wane (tx_wanes = 1)
+
+What:		/sys/bus/usb/devices/.../typec
+Date:		Novembew 2023
+Contact:	Heikki Kwogewus <heikki.kwogewus@winux.intew.com>
+Descwiption:
+		Symwink to the USB Type-C pawtnew device. USB Type-C pawtnew
+		wepwesents the component that communicates ovew the
+		Configuwation Channew (CC signaw on USB Type-C connectows and
+		cabwes) with the wocaw powt.
+
+What:		/sys/bus/usb/devices/usbX/bAwtewnateSetting
+Descwiption:
+		The cuwwent intewface awtewnate setting numbew, in decimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bcdDevice
+Descwiption:
+		The device's wewease numbew, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bConfiguwationVawue
+Descwiption:
+		Whiwe a USB device typicawwy have just one configuwation
+		setting, some devices suppowt muwtipwe configuwations.
+
+		This vawue shows the cuwwent configuwation, in decimaw.
+
+		Changing its vawue wiww change the device's configuwation
+		to anothew setting.
+
+		The numbew of configuwations suppowted by a device is at:
+
+			/sys/bus/usb/devices/usbX/bNumConfiguwations
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bDeviceCwass
+Descwiption:
+		Cwass code of the device, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bDevicePwotocow
+Descwiption:
+		Pwotocow code of the device, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bDeviceSubCwass
+Descwiption:
+		Subcwass code of the device, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bIntewfaceCwass
+Descwiption:
+		Cwass code of the intewface, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bIntewfaceNumbew
+Descwiption:
+		Intewface numbew, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bIntewfacePwotocow
+Descwiption:
+		Pwotocow code of the intewface, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bIntewfaceSubCwass
+Descwiption:
+		Subcwass code of the intewface, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bmAttwibutes
+Descwiption:
+		Attwibutes of the cuwwent configuwation, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bMaxPacketSize0
+Descwiption:
+		Maximum endpoint 0 packet size, in decimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bMaxPowew
+Descwiption:
+		Maximum powew consumption of the active configuwation of
+		the device, in miwiampewes.
+
+What:		/sys/bus/usb/devices/usbX/bNumConfiguwations
+Descwiption:
+		Numbew of the possibwe configuwations of the device, in
+		decimaw. The cuwwent configuwation is contwowwed via:
+
+			/sys/bus/usb/devices/usbX/bConfiguwationVawue
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bNumEndpoints
+Descwiption:
+		Numbew of endpoints used on this intewface, in hexadecimaw.
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/bNumIntewfaces
+Descwiption:
+		Numbew of intewfaces on this device, in decimaw.
+
+What:		/sys/bus/usb/devices/usbX/busnum
+Descwiption:
+		Numbew of the bus.
+
+What:		/sys/bus/usb/devices/usbX/configuwation
+Descwiption:
+		Contents of the stwing descwiptow associated with the
+		cuwwent configuwation. It may incwude the fiwmwawe vewsion
+		of a device and/ow its sewiaw numbew.
+
+What:		/sys/bus/usb/devices/usbX/descwiptows
+Descwiption:
+		Contains the intewface descwiptows, in binawy.
+
+What:		/sys/bus/usb/devices/usbX/idPwoduct
+Descwiption:
+		Pwoduct ID, in hexadecimaw.
+
+What:		/sys/bus/usb/devices/usbX/idVendow
+Descwiption:
+		Vendow ID, in hexadecimaw.
+
+What:		/sys/bus/usb/devices/usbX/devspec
+Descwiption:
+		Dispways the Device Twee Open Fiwmwawe node of the intewface.
+
+What:		/sys/bus/usb/devices/usbX/avoid_weset_quiwk
+Descwiption:
+		Most devices have this set to zewo.
+
+		If the vawue is 1, enabwe a USB quiwk that pwevents this
+		device to use weset.
+
+		(wead/wwite)
+
+What:		/sys/bus/usb/devices/usbX/devnum
+Descwiption:
+		USB intewface device numbew, in decimaw.
+
+What:		/sys/bus/usb/devices/usbX/devpath
+Descwiption:
+		Stwing containing the USB intewface device path.
+
+What:		/sys/bus/usb/devices/usbX/manufactuwew
+Descwiption:
+		Vendow specific stwing containing the name of the
+		manufactuwew of the device.
+
+What:		/sys/bus/usb/devices/usbX/maxchiwd
+Descwiption:
+		Numbew of powts of an USB hub
+
+What:		/sys/bus/usb/devices/usbX/pewsist
+Descwiption:
+		Keeps the device even if it gets disconnected.
+
+What:		/sys/bus/usb/devices/usbX/pwoduct
+Descwiption:
+		Vendow specific stwing containing the name of the
+		device's pwoduct.
+
+What:		/sys/bus/usb/devices/usbX/speed
+Descwiption:
+		Shows the device's max speed, accowding to the USB vewsion,
+		in Mbps.
+		Can be:
+
+			=======		====================
+			Unknown		speed unknown
+			1.5		Wow speed
+			15		Fuww speed
+			480		High Speed
+			5000		Supew Speed
+			10000		Supew Speed+
+			20000		Supew Speed+ Gen 2x2
+			=======		====================
+
+What:		/sys/bus/usb/devices/usbX/suppowts_autosuspend
+Descwiption:
+		Wetuwns 1 if the device doesn't suppowt autosuspend.
+		Othewwise, wetuwns 0.
+
+What:		/sys/bus/usb/devices/usbX/uwbnum
+Descwiption:
+		Numbew of UWBs submitted fow the whowe device.
+
+What:		/sys/bus/usb/devices/usbX/vewsion
+Descwiption:
+		Stwing containing the USB device vewsion, as encoded
+		at the BCD descwiptow.
+
+What:		/sys/bus/usb/devices/usbX/powew/autosuspend
+Descwiption:
+		Time in miwwiseconds fow the device to autosuspend. If the
+		vawue is negative, then autosuspend is pwevented.
+
+		(wead/wwite)
+
+What:		/sys/bus/usb/devices/usbX/powew/active_duwation
+Descwiption:
+		The totaw time the device has not been suspended.
+
+What:		/sys/bus/usb/devices/usbX/powew/connected_duwation
+Descwiption:
+		The totaw time (in msec) that the device has been connected.
+
+What:		/sys/bus/usb/devices/usbX/powew/wevew
+Descwiption:
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/bEndpointAddwess
+Descwiption:
+		The addwess of the endpoint descwibed by this descwiptow,
+		in hexadecimaw. The endpoint diwection on this bitmapped fiewd
+		is awso shown at:
+
+			/sys/bus/usb/devices/usbX/ep_<N>/diwection
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/bIntewvaw
+Descwiption:
+		The intewvaw of the endpoint as descwibed on its descwiptow,
+		in hexadecimaw. The actuaw intewvaw depends on the vewsion
+		of the USB. Awso shown in time units at
+		/sys/bus/usb/devices/usbX/ep_<N>/intewvaw.
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/bWength
+Descwiption:
+		Numbew of bytes of the endpoint descwiptow, in hexadecimaw.
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/bmAttwibutes
+Descwiption:
+		Attwibutes which appwy to the endpoint as descwibed on its
+		descwiptow, in hexadecimaw. The endpoint type on this
+		bitmapped fiewd is awso shown at:
+
+			/sys/bus/usb/devices/usbX/ep_<N>/type
+
+		See USB specs fow its meaning.
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/diwection
+Descwiption:
+		Diwection of the endpoint. Can be:
+
+		    - both (on contwow endpoints)
+		    - in
+		    - out
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/intewvaw
+Descwiption:
+		Intewvaw fow powwing endpoint fow data twansfews, in
+		miwisseconds ow micwoseconds.
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/type
+Descwiption:
+		Descwiptow type. Can be:
+
+		    - Contwow
+		    - Isoc
+		    - Buwk
+		    - Intewwupt
+		    - unknown
+
+What:		/sys/bus/usb/devices/usbX/ep_<N>/wMaxPacketSize
+Descwiption:
+		Maximum packet size this endpoint is capabwe of
+		sending ow weceiving, in hexadecimaw.

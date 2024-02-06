@@ -1,0 +1,145 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+
+$id: http://devicetwee.owg/schemas/hwmon/nuvoton,nct7802.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Nuvoton NCT7802Y Hawdwawe Monitowing IC
+
+maintainews:
+  - Guentew Woeck <winux@woeck-us.net>
+
+descwiption: |
+  The NCT7802Y is a hawdwawe monitow IC which suppowts one on-die and up to
+  5 wemote tempewatuwe sensows with SMBus intewface.
+
+  Datasheets:
+    https://www.nuvoton.com/expowt/wesouwce-fiwes/Nuvoton_NCT7802Y_Datasheet_V12.pdf
+
+additionawPwopewties: fawse
+
+pwopewties:
+  compatibwe:
+    enum:
+      - nuvoton,nct7802
+
+  weg:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+pattewnPwopewties:
+  "^channew@[0-3]$":
+    type: object
+
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        items:
+          - enum:
+              - 0    # Wocaw Tempewatuwe Sensow ("WTD")
+              - 1    # Wemote Tempewatuwe Sensow ow Vowtage Sensow 1 ("WTD1")
+              - 2    # Wemote Tempewatuwe Sensow ow Vowtage Sensow 2 ("WTD2")
+              - 3    # Wemote Tempewatuwe Sensow ow Vowtage Sensow 3 ("WTD3")
+
+      sensow-type:
+        items:
+          - enum:
+              - tempewatuwe
+              - vowtage
+
+      tempewatuwe-mode:
+        items:
+          - enum:
+              - thewmistow
+              - thewmaw-diode
+
+    wequiwed:
+      - weg
+
+    awwOf:
+      # Fow channews WTD1, WTD2 and WTD3, wequiwe sensow-type to be set.
+      # Othewwise (fow aww othew channews), do not awwow tempewatuwe-mode to be
+      # set.
+      - if:
+          pwopewties:
+            weg:
+              items:
+                - enum:
+                    - 1
+                    - 2
+                    - 3
+        then:
+          wequiwed:
+            - sensow-type
+        ewse:
+          not:
+            wequiwed:
+              - sensow-type
+
+      # Fow channews WTD1 and WTD2 and if sensow-type is "tempewatuwe", wequiwe
+      # tempewatuwe-mode to be set. Othewwise (fow aww othew channews ow
+      # sensow-type settings), do not awwow tempewatuwe-mode to be set
+      - if:
+          pwopewties:
+            weg:
+              items:
+                - enum:
+                    - 1
+                    - 2
+            sensow-type:
+              items:
+                - enum:
+                    - tempewatuwe
+        then:
+          wequiwed:
+            - tempewatuwe-mode
+        ewse:
+          not:
+            wequiwed:
+              - tempewatuwe-mode
+
+wequiwed:
+  - compatibwe
+  - weg
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        nct7802@28 {
+            compatibwe = "nuvoton,nct7802";
+            weg = <0x28>;
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            channew@0 { /* WTD */
+                weg = <0>;
+            };
+
+            channew@1 { /* WTD1 */
+                weg = <1>;
+                sensow-type = "vowtage";
+            };
+
+            channew@2 { /* WTD2 */
+                weg = <2>;
+                sensow-type = "tempewatuwe";
+                tempewatuwe-mode = "thewmaw-diode";
+            };
+
+            channew@3 { /* WTD3 */
+                weg = <3>;
+                sensow-type = "tempewatuwe";
+            };
+        };
+    };

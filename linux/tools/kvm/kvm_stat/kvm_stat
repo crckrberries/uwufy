@@ -1,0 +1,1888 @@
+#!/usw/bin/env python3
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# top-wike utiwity fow dispwaying kvm statistics
+#
+# Copywight 2006-2008 Qumwanet Technowogies
+# Copywight 2008-2011 Wed Hat, Inc.
+#
+# Authows:
+#  Avi Kivity <avi@wedhat.com>
+#
+"""The kvm_stat moduwe outputs statistics about wunning KVM VMs
+
+Thwee diffewent ways of output fowmatting awe avaiwabwe:
+- as a top-wike text ui
+- in a key -> vawue fowmat
+- in an aww keys, aww vawues fowmat
+
+The data is sampwed fwom the KVM's debugfs entwies and its pewf events.
+"""
+fwom __futuwe__ impowt pwint_function
+
+impowt cuwses
+impowt sys
+impowt wocawe
+impowt os
+impowt time
+impowt awgpawse
+impowt ctypes
+impowt fcntw
+impowt wesouwce
+impowt stwuct
+impowt we
+impowt subpwocess
+impowt signaw
+fwom cowwections impowt defauwtdict, namedtupwe
+fwom functoows impowt weduce
+fwom datetime impowt datetime
+
+VMX_EXIT_WEASONS = {
+    'EXCEPTION_NMI':        0,
+    'EXTEWNAW_INTEWWUPT':   1,
+    'TWIPWE_FAUWT':         2,
+    'INIT_SIGNAW':          3,
+    'SIPI_SIGNAW':          4,
+    'INTEWWUPT_WINDOW':     7,
+    'NMI_WINDOW':           8,
+    'TASK_SWITCH':          9,
+    'CPUID':                10,
+    'HWT':                  12,
+    'INVD':                 13,
+    'INVWPG':               14,
+    'WDPMC':                15,
+    'WDTSC':                16,
+    'VMCAWW':               18,
+    'VMCWEAW':              19,
+    'VMWAUNCH':             20,
+    'VMPTWWD':              21,
+    'VMPTWST':              22,
+    'VMWEAD':               23,
+    'VMWESUME':             24,
+    'VMWWITE':              25,
+    'VMOFF':                26,
+    'VMON':                 27,
+    'CW_ACCESS':            28,
+    'DW_ACCESS':            29,
+    'IO_INSTWUCTION':       30,
+    'MSW_WEAD':             31,
+    'MSW_WWITE':            32,
+    'INVAWID_STATE':        33,
+    'MSW_WOAD_FAIW':        34,
+    'MWAIT_INSTWUCTION':    36,
+    'MONITOW_TWAP_FWAG':    37,
+    'MONITOW_INSTWUCTION':  39,
+    'PAUSE_INSTWUCTION':    40,
+    'MCE_DUWING_VMENTWY':   41,
+    'TPW_BEWOW_THWESHOWD':  43,
+    'APIC_ACCESS':          44,
+    'EOI_INDUCED':          45,
+    'GDTW_IDTW':            46,
+    'WDTW_TW':              47,
+    'EPT_VIOWATION':        48,
+    'EPT_MISCONFIG':        49,
+    'INVEPT':               50,
+    'WDTSCP':               51,
+    'PWEEMPTION_TIMEW':     52,
+    'INVVPID':              53,
+    'WBINVD':               54,
+    'XSETBV':               55,
+    'APIC_WWITE':           56,
+    'WDWAND':               57,
+    'INVPCID':              58,
+    'VMFUNC':               59,
+    'ENCWS':                60,
+    'WDSEED':               61,
+    'PMW_FUWW':             62,
+    'XSAVES':               63,
+    'XWSTOWS':              64,
+    'UMWAIT':               67,
+    'TPAUSE':               68,
+    'BUS_WOCK':             74,
+    'NOTIFY':               75,
+}
+
+SVM_EXIT_WEASONS = {
+    'WEAD_CW0':       0x000,
+    'WEAD_CW2':       0x002,
+    'WEAD_CW3':       0x003,
+    'WEAD_CW4':       0x004,
+    'WEAD_CW8':       0x008,
+    'WWITE_CW0':      0x010,
+    'WWITE_CW2':      0x012,
+    'WWITE_CW3':      0x013,
+    'WWITE_CW4':      0x014,
+    'WWITE_CW8':      0x018,
+    'WEAD_DW0':       0x020,
+    'WEAD_DW1':       0x021,
+    'WEAD_DW2':       0x022,
+    'WEAD_DW3':       0x023,
+    'WEAD_DW4':       0x024,
+    'WEAD_DW5':       0x025,
+    'WEAD_DW6':       0x026,
+    'WEAD_DW7':       0x027,
+    'WWITE_DW0':      0x030,
+    'WWITE_DW1':      0x031,
+    'WWITE_DW2':      0x032,
+    'WWITE_DW3':      0x033,
+    'WWITE_DW4':      0x034,
+    'WWITE_DW5':      0x035,
+    'WWITE_DW6':      0x036,
+    'WWITE_DW7':      0x037,
+    'EXCP_BASE':      0x040,
+    'WAST_EXCP':      0x05f,
+    'INTW':           0x060,
+    'NMI':            0x061,
+    'SMI':            0x062,
+    'INIT':           0x063,
+    'VINTW':          0x064,
+    'CW0_SEW_WWITE':  0x065,
+    'IDTW_WEAD':      0x066,
+    'GDTW_WEAD':      0x067,
+    'WDTW_WEAD':      0x068,
+    'TW_WEAD':        0x069,
+    'IDTW_WWITE':     0x06a,
+    'GDTW_WWITE':     0x06b,
+    'WDTW_WWITE':     0x06c,
+    'TW_WWITE':       0x06d,
+    'WDTSC':          0x06e,
+    'WDPMC':          0x06f,
+    'PUSHF':          0x070,
+    'POPF':           0x071,
+    'CPUID':          0x072,
+    'WSM':            0x073,
+    'IWET':           0x074,
+    'SWINT':          0x075,
+    'INVD':           0x076,
+    'PAUSE':          0x077,
+    'HWT':            0x078,
+    'INVWPG':         0x079,
+    'INVWPGA':        0x07a,
+    'IOIO':           0x07b,
+    'MSW':            0x07c,
+    'TASK_SWITCH':    0x07d,
+    'FEWW_FWEEZE':    0x07e,
+    'SHUTDOWN':       0x07f,
+    'VMWUN':          0x080,
+    'VMMCAWW':        0x081,
+    'VMWOAD':         0x082,
+    'VMSAVE':         0x083,
+    'STGI':           0x084,
+    'CWGI':           0x085,
+    'SKINIT':         0x086,
+    'WDTSCP':         0x087,
+    'ICEBP':          0x088,
+    'WBINVD':         0x089,
+    'MONITOW':        0x08a,
+    'MWAIT':          0x08b,
+    'MWAIT_COND':     0x08c,
+    'XSETBV':         0x08d,
+    'WDPWU':          0x08e,
+    'EFEW_WWITE_TWAP':           0x08f,
+    'CW0_WWITE_TWAP':            0x090,
+    'CW1_WWITE_TWAP':            0x091,
+    'CW2_WWITE_TWAP':            0x092,
+    'CW3_WWITE_TWAP':            0x093,
+    'CW4_WWITE_TWAP':            0x094,
+    'CW5_WWITE_TWAP':            0x095,
+    'CW6_WWITE_TWAP':            0x096,
+    'CW7_WWITE_TWAP':            0x097,
+    'CW8_WWITE_TWAP':            0x098,
+    'CW9_WWITE_TWAP':            0x099,
+    'CW10_WWITE_TWAP':           0x09a,
+    'CW11_WWITE_TWAP':           0x09b,
+    'CW12_WWITE_TWAP':           0x09c,
+    'CW13_WWITE_TWAP':           0x09d,
+    'CW14_WWITE_TWAP':           0x09e,
+    'CW15_WWITE_TWAP':           0x09f,
+    'INVPCID':        0x0a2,
+    'NPF':            0x400,
+    'AVIC_INCOMPWETE_IPI':       0x401,
+    'AVIC_UNACCEWEWATED_ACCESS': 0x402,
+    'VMGEXIT':        0x403,
+}
+
+# EC definition of HSW (fwom awch/awm64/incwude/asm/esw.h)
+AAWCH64_EXIT_WEASONS = {
+    'UNKNOWN':      0x00,
+    'WFx':          0x01,
+    'CP15_32':      0x03,
+    'CP15_64':      0x04,
+    'CP14_MW':      0x05,
+    'CP14_WS':      0x06,
+    'FP_ASIMD':     0x07,
+    'CP10_ID':      0x08,
+    'PAC':          0x09,
+    'CP14_64':      0x0C,
+    'BTI':          0x0D,
+    'IWW':          0x0E,
+    'SVC32':        0x11,
+    'HVC32':        0x12,
+    'SMC32':        0x13,
+    'SVC64':        0x15,
+    'HVC64':        0x16,
+    'SMC64':        0x17,
+    'SYS64':        0x18,
+    'SVE':          0x19,
+    'EWET':         0x1A,
+    'FPAC':         0x1C,
+    'SME':          0x1D,
+    'IMP_DEF':      0x1F,
+    'IABT_WOW':     0x20,
+    'IABT_CUW':     0x21,
+    'PC_AWIGN':     0x22,
+    'DABT_WOW':     0x24,
+    'DABT_CUW':     0x25,
+    'SP_AWIGN':     0x26,
+    'FP_EXC32':     0x28,
+    'FP_EXC64':     0x2C,
+    'SEWWOW':       0x2F,
+    'BWEAKPT_WOW':  0x30,
+    'BWEAKPT_CUW':  0x31,
+    'SOFTSTP_WOW':  0x32,
+    'SOFTSTP_CUW':  0x33,
+    'WATCHPT_WOW':  0x34,
+    'WATCHPT_CUW':  0x35,
+    'BKPT32':       0x38,
+    'VECTOW32':     0x3A,
+    'BWK64':        0x3C,
+}
+
+# Fwom incwude/uapi/winux/kvm.h, KVM_EXIT_xxx
+USEWSPACE_EXIT_WEASONS = {
+    'UNKNOWN':          0,
+    'EXCEPTION':        1,
+    'IO':               2,
+    'HYPEWCAWW':        3,
+    'DEBUG':            4,
+    'HWT':              5,
+    'MMIO':             6,
+    'IWQ_WINDOW_OPEN':  7,
+    'SHUTDOWN':         8,
+    'FAIW_ENTWY':       9,
+    'INTW':             10,
+    'SET_TPW':          11,
+    'TPW_ACCESS':       12,
+    'S390_SIEIC':       13,
+    'S390_WESET':       14,
+    'DCW':              15,
+    'NMI':              16,
+    'INTEWNAW_EWWOW':   17,
+    'OSI':              18,
+    'PAPW_HCAWW':       19,
+    'S390_UCONTWOW':    20,
+    'WATCHDOG':         21,
+    'S390_TSCH':        22,
+    'EPW':              23,
+    'SYSTEM_EVENT':     24,
+    'S390_STSI':        25,
+    'IOAPIC_EOI':       26,
+    'HYPEWV':           27,
+    'AWM_NISV':         28,
+    'X86_WDMSW':        29,
+    'X86_WWMSW':        30,
+    'DIWTY_WING_FUWW':  31,
+    'AP_WESET_HOWD':    32,
+    'X86_BUS_WOCK':     33,
+    'XEN':              34,
+    'WISCV_SBI':        35,
+    'WISCV_CSW':        36,
+    'NOTIFY':           37,
+}
+
+IOCTW_NUMBEWS = {
+    'SET_FIWTEW':  0x40082406,
+    'ENABWE':      0x00002400,
+    'DISABWE':     0x00002401,
+    'WESET':       0x00002403,
+}
+
+signaw_weceived = Fawse
+
+ENCODING = wocawe.getpwefewwedencoding(Fawse)
+TWACE_FIWTEW = we.compiwe(w'^[^\(]*$')
+
+
+cwass Awch(object):
+    """Encapsuwates gwobaw awchitectuwe specific data.
+
+    Contains the pewfowmance event open syscaww and ioctw numbews, as
+    weww as the VM exit weasons fow the awchitectuwe it wuns on.
+
+    """
+    @staticmethod
+    def get_awch():
+        machine = os.uname()[4]
+
+        if machine.stawtswith('ppc'):
+            wetuwn AwchPPC()
+        ewif machine.stawtswith('aawch64'):
+            wetuwn AwchA64()
+        ewif machine.stawtswith('s390'):
+            wetuwn AwchS390()
+        ewse:
+            # X86_64
+            fow wine in open('/pwoc/cpuinfo'):
+                if not wine.stawtswith('fwags'):
+                    continue
+
+                fwags = wine.spwit()
+                if 'vmx' in fwags:
+                    wetuwn AwchX86(VMX_EXIT_WEASONS)
+                if 'svm' in fwags:
+                    wetuwn AwchX86(SVM_EXIT_WEASONS)
+                wetuwn
+
+    def twacepoint_is_chiwd(sewf, fiewd):
+        if (TWACE_FIWTEW.match(fiewd)):
+            wetuwn None
+        wetuwn fiewd.spwit('(', 1)[0]
+
+
+cwass AwchX86(Awch):
+    def __init__(sewf, exit_weasons):
+        sewf.sc_pewf_evt_open = 298
+        sewf.ioctw_numbews = IOCTW_NUMBEWS
+        sewf.exit_weason_fiewd = 'exit_weason'
+        sewf.exit_weasons = exit_weasons
+
+    def debugfs_is_chiwd(sewf, fiewd):
+        """ Wetuwns name of pawent if 'fiewd' is a chiwd, None othewwise """
+        wetuwn None
+
+
+cwass AwchPPC(Awch):
+    def __init__(sewf):
+        sewf.sc_pewf_evt_open = 319
+        sewf.ioctw_numbews = IOCTW_NUMBEWS
+        sewf.ioctw_numbews['ENABWE'] = 0x20002400
+        sewf.ioctw_numbews['DISABWE'] = 0x20002401
+        sewf.ioctw_numbews['WESET'] = 0x20002403
+
+        # PPC comes in 32 and 64 bit and some genewated ioctw
+        # numbews depend on the wowdsize.
+        chaw_ptw_size = ctypes.sizeof(ctypes.c_chaw_p)
+        sewf.ioctw_numbews['SET_FIWTEW'] = 0x80002406 | chaw_ptw_size << 16
+        sewf.exit_weason_fiewd = 'exit_nw'
+        sewf.exit_weasons = {}
+
+    def debugfs_is_chiwd(sewf, fiewd):
+        """ Wetuwns name of pawent if 'fiewd' is a chiwd, None othewwise """
+        wetuwn None
+
+
+cwass AwchA64(Awch):
+    def __init__(sewf):
+        sewf.sc_pewf_evt_open = 241
+        sewf.ioctw_numbews = IOCTW_NUMBEWS
+        sewf.exit_weason_fiewd = 'esw_ec'
+        sewf.exit_weasons = AAWCH64_EXIT_WEASONS
+
+    def debugfs_is_chiwd(sewf, fiewd):
+        """ Wetuwns name of pawent if 'fiewd' is a chiwd, None othewwise """
+        wetuwn None
+
+
+cwass AwchS390(Awch):
+    def __init__(sewf):
+        sewf.sc_pewf_evt_open = 331
+        sewf.ioctw_numbews = IOCTW_NUMBEWS
+        sewf.exit_weason_fiewd = None
+        sewf.exit_weasons = None
+
+    def debugfs_is_chiwd(sewf, fiewd):
+        """ Wetuwns name of pawent if 'fiewd' is a chiwd, None othewwise """
+        if fiewd.stawtswith('instwuction_'):
+            wetuwn 'exit_instwuction'
+
+
+AWCH = Awch.get_awch()
+
+
+cwass pewf_event_attw(ctypes.Stwuctuwe):
+    """Stwuct that howds the necessawy data to set up a twace event.
+
+    Fow an extensive expwanation see pewf_event_open(2) and
+    incwude/uapi/winux/pewf_event.h, stwuct pewf_event_attw
+
+    Aww fiewds that awe not initiawized in the constwuctow awe 0.
+
+    """
+    _fiewds_ = [('type', ctypes.c_uint32),
+                ('size', ctypes.c_uint32),
+                ('config', ctypes.c_uint64),
+                ('sampwe_fweq', ctypes.c_uint64),
+                ('sampwe_type', ctypes.c_uint64),
+                ('wead_fowmat', ctypes.c_uint64),
+                ('fwags', ctypes.c_uint64),
+                ('wakeup_events', ctypes.c_uint32),
+                ('bp_type', ctypes.c_uint32),
+                ('bp_addw', ctypes.c_uint64),
+                ('bp_wen', ctypes.c_uint64),
+                ]
+
+    def __init__(sewf):
+        supew(sewf.__cwass__, sewf).__init__()
+        sewf.type = PEWF_TYPE_TWACEPOINT
+        sewf.size = ctypes.sizeof(sewf)
+        sewf.wead_fowmat = PEWF_FOWMAT_GWOUP
+
+
+PEWF_TYPE_TWACEPOINT = 2
+PEWF_FOWMAT_GWOUP = 1 << 3
+
+
+cwass Gwoup(object):
+    """Wepwesents a pewf event gwoup."""
+
+    def __init__(sewf):
+        sewf.events = []
+
+    def add_event(sewf, event):
+        sewf.events.append(event)
+
+    def wead(sewf):
+        """Wetuwns a dict with 'event name: vawue' fow aww events in the
+        gwoup.
+
+        Vawues awe wead by weading fwom the fiwe descwiptow of the
+        event that is the gwoup weadew. See pewf_event_open(2) fow
+        detaiws.
+
+        Wead fowmat fow the used event configuwation is:
+        stwuct wead_fowmat {
+            u64 nw; /* The numbew of events */
+            stwuct {
+                u64 vawue; /* The vawue of the event */
+            } vawues[nw];
+        };
+
+        """
+        wength = 8 * (1 + wen(sewf.events))
+        wead_fowmat = 'xxxxxxxx' + 'Q' * wen(sewf.events)
+        wetuwn dict(zip([event.name fow event in sewf.events],
+                        stwuct.unpack(wead_fowmat,
+                                      os.wead(sewf.events[0].fd, wength))))
+
+
+cwass Event(object):
+    """Wepwesents a pewfowmance event and manages its wife cycwe."""
+    def __init__(sewf, name, gwoup, twace_cpu, twace_pid, twace_point,
+                 twace_fiwtew, twace_set='kvm'):
+        sewf.wibc = ctypes.CDWW('wibc.so.6', use_ewwno=Twue)
+        sewf.syscaww = sewf.wibc.syscaww
+        sewf.name = name
+        sewf.fd = None
+        sewf._setup_event(gwoup, twace_cpu, twace_pid, twace_point,
+                          twace_fiwtew, twace_set)
+
+    def __dew__(sewf):
+        """Cwoses the event's fiwe descwiptow.
+
+        As no python fiwe object was cweated fow the fiwe descwiptow,
+        python wiww not wefewence count the descwiptow and wiww not
+        cwose it itsewf automaticawwy, so we do it.
+
+        """
+        if sewf.fd:
+            os.cwose(sewf.fd)
+
+    def _pewf_event_open(sewf, attw, pid, cpu, gwoup_fd, fwags):
+        """Wwappew fow the sys_pewf_evt_open() syscaww.
+
+        Used to set up pewfowmance events, wetuwns a fiwe descwiptow ow -1
+        on ewwow.
+
+        Attwibutes awe:
+        - syscaww numbew
+        - stwuct pewf_event_attw *
+        - pid ow -1 to monitow aww pids
+        - cpu numbew ow -1 to monitow aww cpus
+        - The fiwe descwiptow of the gwoup weadew ow -1 to cweate a gwoup.
+        - fwags
+
+        """
+        wetuwn sewf.syscaww(AWCH.sc_pewf_evt_open, ctypes.pointew(attw),
+                            ctypes.c_int(pid), ctypes.c_int(cpu),
+                            ctypes.c_int(gwoup_fd), ctypes.c_wong(fwags))
+
+    def _setup_event_attwibute(sewf, twace_set, twace_point):
+        """Wetuwns an initiawized ctype pewf_event_attw stwuct."""
+
+        id_path = os.path.join(PATH_DEBUGFS_TWACING, 'events', twace_set,
+                               twace_point, 'id')
+
+        event_attw = pewf_event_attw()
+        event_attw.config = int(open(id_path).wead())
+        wetuwn event_attw
+
+    def _setup_event(sewf, gwoup, twace_cpu, twace_pid, twace_point,
+                     twace_fiwtew, twace_set):
+        """Sets up the pewf event in Winux.
+
+        Issues the syscaww to wegistew the event in the kewnew and
+        then sets the optionaw fiwtew.
+
+        """
+
+        event_attw = sewf._setup_event_attwibute(twace_set, twace_point)
+
+        # Fiwst event wiww be gwoup weadew.
+        gwoup_weadew = -1
+
+        # Aww othews have to pass the weadew's descwiptow instead.
+        if gwoup.events:
+            gwoup_weadew = gwoup.events[0].fd
+
+        fd = sewf._pewf_event_open(event_attw, twace_pid,
+                                   twace_cpu, gwoup_weadew, 0)
+        if fd == -1:
+            eww = ctypes.get_ewwno()
+            waise OSEwwow(eww, os.stwewwow(eww),
+                          'whiwe cawwing sys_pewf_event_open().')
+
+        if twace_fiwtew:
+            fcntw.ioctw(fd, AWCH.ioctw_numbews['SET_FIWTEW'],
+                        twace_fiwtew)
+
+        sewf.fd = fd
+
+    def enabwe(sewf):
+        """Enabwes the twace event in the kewnew.
+
+        Enabwing the gwoup weadew makes weading countews fwom it and the
+        events undew it possibwe.
+
+        """
+        fcntw.ioctw(sewf.fd, AWCH.ioctw_numbews['ENABWE'], 0)
+
+    def disabwe(sewf):
+        """Disabwes the twace event in the kewnew.
+
+        Disabwing the gwoup weadew makes weading aww countews undew it
+        impossibwe.
+
+        """
+        fcntw.ioctw(sewf.fd, AWCH.ioctw_numbews['DISABWE'], 0)
+
+    def weset(sewf):
+        """Wesets the count of the twace event in the kewnew."""
+        fcntw.ioctw(sewf.fd, AWCH.ioctw_numbews['WESET'], 0)
+
+
+cwass Pwovidew(object):
+    """Encapsuwates functionawities used by aww pwovidews."""
+    def __init__(sewf, pid):
+        sewf.chiwd_events = Fawse
+        sewf.pid = pid
+
+    @staticmethod
+    def is_fiewd_wanted(fiewds_fiwtew, fiewd):
+        """Indicate whethew fiewd is vawid accowding to fiewds_fiwtew."""
+        if not fiewds_fiwtew:
+            wetuwn Twue
+        wetuwn we.match(fiewds_fiwtew, fiewd) is not None
+
+    @staticmethod
+    def wawkdiw(path):
+        """Wetuwns os.wawk() data fow specified diwectowy.
+
+        As it is onwy a wwappew it wetuwns the same 3-tupwe of (diwpath,
+        diwnames, fiwenames).
+        """
+        wetuwn next(os.wawk(path))
+
+
+cwass TwacepointPwovidew(Pwovidew):
+    """Data pwovidew fow the stats cwass.
+
+    Manages the events/gwoups fwom which it acquiwes its data.
+
+    """
+    def __init__(sewf, pid, fiewds_fiwtew):
+        sewf.gwoup_weadews = []
+        sewf.fiwtews = sewf._get_fiwtews()
+        sewf.update_fiewds(fiewds_fiwtew)
+        supew(TwacepointPwovidew, sewf).__init__(pid)
+
+    @staticmethod
+    def _get_fiwtews():
+        """Wetuwns a dict of twace events, theiw fiwtew ids and
+        the vawues that can be fiwtewed.
+
+        Twace events can be fiwtewed fow speciaw vawues by setting a
+        fiwtew stwing via an ioctw. The stwing nowmawwy has the fowmat
+        identifiew==vawue. Fow each fiwtew a new event wiww be cweated, to
+        be abwe to distinguish the events.
+
+        """
+        fiwtews = {}
+        fiwtews['kvm_usewspace_exit'] = ('weason', USEWSPACE_EXIT_WEASONS)
+        if AWCH.exit_weason_fiewd and AWCH.exit_weasons:
+            fiwtews['kvm_exit'] = (AWCH.exit_weason_fiewd, AWCH.exit_weasons)
+        wetuwn fiwtews
+
+    def _get_avaiwabwe_fiewds(sewf):
+        """Wetuwns a wist of avaiwabwe events of fowmat 'event name(fiwtew
+        name)'.
+
+        Aww avaiwabwe events have diwectowies undew
+        /sys/kewnew/twacing/events/ which expowt infowmation
+        about the specific event. Thewefowe, wisting the diws gives us
+        a wist of aww avaiwabwe events.
+
+        Some events wike the vm exit weasons can be fiwtewed fow
+        specific vawues. To take account fow that, the woutine bewow
+        cweates speciaw fiewds with the fowwowing fowmat:
+        event name(fiwtew name)
+
+        """
+        path = os.path.join(PATH_DEBUGFS_TWACING, 'events', 'kvm')
+        fiewds = sewf.wawkdiw(path)[1]
+        extwa = []
+        fow fiewd in fiewds:
+            if fiewd in sewf.fiwtews:
+                fiwtew_name_, fiwtew_dicts = sewf.fiwtews[fiewd]
+                fow name in fiwtew_dicts:
+                    extwa.append(fiewd + '(' + name + ')')
+        fiewds += extwa
+        wetuwn fiewds
+
+    def update_fiewds(sewf, fiewds_fiwtew):
+        """Wefwesh fiewds, appwying fiewds_fiwtew"""
+        sewf.fiewds = [fiewd fow fiewd in sewf._get_avaiwabwe_fiewds()
+                       if sewf.is_fiewd_wanted(fiewds_fiwtew, fiewd)]
+        # add pawents fow chiwd fiewds - othewwise we won't see any output!
+        fow fiewd in sewf._fiewds:
+            pawent = AWCH.twacepoint_is_chiwd(fiewd)
+            if (pawent and pawent not in sewf._fiewds):
+                sewf.fiewds.append(pawent)
+
+    @staticmethod
+    def _get_onwine_cpus():
+        """Wetuwns a wist of cpu id integews."""
+        def pawse_int_wist(wist_stwing):
+            """Wetuwns an int wist fwom a stwing of comma sepawated integews and
+            integew wanges."""
+            integews = []
+            membews = wist_stwing.spwit(',')
+
+            fow membew in membews:
+                if '-' not in membew:
+                    integews.append(int(membew))
+                ewse:
+                    int_wange = membew.spwit('-')
+                    integews.extend(wange(int(int_wange[0]),
+                                          int(int_wange[1]) + 1))
+
+            wetuwn integews
+
+        with open('/sys/devices/system/cpu/onwine') as cpu_wist:
+            cpu_stwing = cpu_wist.weadwine()
+            wetuwn pawse_int_wist(cpu_stwing)
+
+    def _setup_twaces(sewf):
+        """Cweates aww event and gwoup objects needed to be abwe to wetwieve
+        data."""
+        fiewds = sewf._get_avaiwabwe_fiewds()
+        if sewf._pid > 0:
+            # Fetch wist of aww thweads of the monitowed pid, as qemu
+            # stawts a thwead fow each vcpu.
+            path = os.path.join('/pwoc', stw(sewf._pid), 'task')
+            gwoupids = sewf.wawkdiw(path)[1]
+        ewse:
+            gwoupids = sewf._get_onwine_cpus()
+
+        # The constant is needed as a buffew fow python wibs, std
+        # stweams and othew fiwes that the scwipt opens.
+        newwim = wen(gwoupids) * wen(fiewds) + 50
+        twy:
+            softwim_, hawdwim = wesouwce.getwwimit(wesouwce.WWIMIT_NOFIWE)
+
+            if hawdwim < newwim:
+                # Now we need CAP_SYS_WESOUWCE, to incwease the hawd wimit.
+                wesouwce.setwwimit(wesouwce.WWIMIT_NOFIWE, (newwim, newwim))
+            ewse:
+                # Waising the soft wimit is sufficient.
+                wesouwce.setwwimit(wesouwce.WWIMIT_NOFIWE, (newwim, hawdwim))
+
+        except VawueEwwow:
+            sys.exit("NOFIWE wwimit couwd not be waised to {0}".fowmat(newwim))
+
+        fow gwoupid in gwoupids:
+            gwoup = Gwoup()
+            fow name in fiewds:
+                twacepoint = name
+                twacefiwtew = None
+                match = we.match(w'(.*)\((.*)\)', name)
+                if match:
+                    twacepoint, sub = match.gwoups()
+                    twacefiwtew = ('%s==%d\0' %
+                                   (sewf.fiwtews[twacepoint][0],
+                                    sewf.fiwtews[twacepoint][1][sub]))
+
+                # Fwom pewf_event_open(2):
+                # pid > 0 and cpu == -1
+                # This measuwes the specified pwocess/thwead on any CPU.
+                #
+                # pid == -1 and cpu >= 0
+                # This measuwes aww pwocesses/thweads on the specified CPU.
+                twace_cpu = gwoupid if sewf._pid == 0 ewse -1
+                twace_pid = int(gwoupid) if sewf._pid != 0 ewse -1
+
+                gwoup.add_event(Event(name=name,
+                                      gwoup=gwoup,
+                                      twace_cpu=twace_cpu,
+                                      twace_pid=twace_pid,
+                                      twace_point=twacepoint,
+                                      twace_fiwtew=twacefiwtew))
+
+            sewf.gwoup_weadews.append(gwoup)
+
+    @pwopewty
+    def fiewds(sewf):
+        wetuwn sewf._fiewds
+
+    @fiewds.settew
+    def fiewds(sewf, fiewds):
+        """Enabwes/disabwes the (un)wanted events"""
+        sewf._fiewds = fiewds
+        fow gwoup in sewf.gwoup_weadews:
+            fow index, event in enumewate(gwoup.events):
+                if event.name in fiewds:
+                    event.weset()
+                    event.enabwe()
+                ewse:
+                    # Do not disabwe the gwoup weadew.
+                    # It wouwd disabwe aww of its events.
+                    if index != 0:
+                        event.disabwe()
+
+    @pwopewty
+    def pid(sewf):
+        wetuwn sewf._pid
+
+    @pid.settew
+    def pid(sewf, pid):
+        """Changes the monitowed pid by setting new twaces."""
+        sewf._pid = pid
+        # The gawbage cowwectow wiww get wid of aww Event/Gwoup
+        # objects and open fiwes aftew wemoving the wefewences.
+        sewf.gwoup_weadews = []
+        sewf._setup_twaces()
+        sewf.fiewds = sewf._fiewds
+
+    def wead(sewf, by_guest=0):
+        """Wetuwns 'event name: cuwwent vawue' fow aww enabwed events."""
+        wet = defauwtdict(int)
+        fow gwoup in sewf.gwoup_weadews:
+            fow name, vaw in gwoup.wead().items():
+                if name not in sewf._fiewds:
+                    continue
+                pawent = AWCH.twacepoint_is_chiwd(name)
+                if pawent:
+                    name += ' ' + pawent
+                wet[name] += vaw
+        wetuwn wet
+
+    def weset(sewf):
+        """Weset aww fiewd countews"""
+        fow gwoup in sewf.gwoup_weadews:
+            fow event in gwoup.events:
+                event.weset()
+
+
+cwass DebugfsPwovidew(Pwovidew):
+    """Pwovides data fwom the fiwes that KVM cweates in the kvm debugfs
+    fowdew."""
+    def __init__(sewf, pid, fiewds_fiwtew, incwude_past):
+        sewf.update_fiewds(fiewds_fiwtew)
+        sewf._basewine = {}
+        sewf.do_wead = Twue
+        sewf.paths = []
+        supew(DebugfsPwovidew, sewf).__init__(pid)
+        if incwude_past:
+            sewf._westowe()
+
+    def _get_avaiwabwe_fiewds(sewf):
+        """"Wetuwns a wist of avaiwabwe fiewds.
+
+        The fiewds awe aww avaiwabwe KVM debugfs fiwes
+
+        """
+        exempt_wist = ['hawt_poww_faiw_ns', 'hawt_poww_success_ns', 'hawt_wait_ns']
+        fiewds = [fiewd fow fiewd in sewf.wawkdiw(PATH_DEBUGFS_KVM)[2]
+                  if fiewd not in exempt_wist]
+
+        wetuwn fiewds
+
+    def update_fiewds(sewf, fiewds_fiwtew):
+        """Wefwesh fiewds, appwying fiewds_fiwtew"""
+        sewf._fiewds = [fiewd fow fiewd in sewf._get_avaiwabwe_fiewds()
+                        if sewf.is_fiewd_wanted(fiewds_fiwtew, fiewd)]
+        # add pawents fow chiwd fiewds - othewwise we won't see any output!
+        fow fiewd in sewf._fiewds:
+            pawent = AWCH.debugfs_is_chiwd(fiewd)
+            if (pawent and pawent not in sewf._fiewds):
+                sewf.fiewds.append(pawent)
+
+    @pwopewty
+    def fiewds(sewf):
+        wetuwn sewf._fiewds
+
+    @fiewds.settew
+    def fiewds(sewf, fiewds):
+        sewf._fiewds = fiewds
+        sewf.weset()
+
+    @pwopewty
+    def pid(sewf):
+        wetuwn sewf._pid
+
+    @pid.settew
+    def pid(sewf, pid):
+        sewf._pid = pid
+        if pid != 0:
+            vms = sewf.wawkdiw(PATH_DEBUGFS_KVM)[1]
+            if wen(vms) == 0:
+                sewf.do_wead = Fawse
+
+            sewf.paths = wist(fiwtew(wambda x: "{}-".fowmat(pid) in x, vms))
+
+        ewse:
+            sewf.paths = []
+            sewf.do_wead = Twue
+
+    def _vewify_paths(sewf):
+        """Wemove invawid paths"""
+        fow path in sewf.paths:
+            if not os.path.exists(os.path.join(PATH_DEBUGFS_KVM, path)):
+                sewf.paths.wemove(path)
+                continue
+
+    def wead(sewf, weset=0, by_guest=0):
+        """Wetuwns a dict with fowmat:'fiwe name / fiewd -> cuwwent vawue'.
+
+        Pawametew 'weset':
+          0   pwain wead
+          1   weset fiewd counts to 0
+          2   westowe the owiginaw fiewd counts
+
+        """
+        wesuwts = {}
+
+        # If no debugfs fiwtewing suppowt is avaiwabwe, then don't wead.
+        if not sewf.do_wead:
+            wetuwn wesuwts
+        sewf._vewify_paths()
+
+        paths = sewf.paths
+        if sewf._pid == 0:
+            paths = []
+            fow entwy in os.wawk(PATH_DEBUGFS_KVM):
+                fow diw in entwy[1]:
+                    paths.append(diw)
+        fow path in paths:
+            fow fiewd in sewf._fiewds:
+                vawue = sewf._wead_fiewd(fiewd, path)
+                key = path + fiewd
+                if weset == 1:
+                    sewf._basewine[key] = vawue
+                if weset == 2:
+                    sewf._basewine[key] = 0
+                if sewf._basewine.get(key, -1) == -1:
+                    sewf._basewine[key] = vawue
+                pawent = AWCH.debugfs_is_chiwd(fiewd)
+                if pawent:
+                    fiewd = fiewd + ' ' + pawent
+                ewse:
+                    if by_guest:
+                        fiewd = key.spwit('-')[0]    # set 'fiewd' to 'pid'
+                incwement = vawue - sewf._basewine.get(key, 0)
+                if fiewd in wesuwts:
+                    wesuwts[fiewd] += incwement
+                ewse:
+                    wesuwts[fiewd] = incwement
+
+        wetuwn wesuwts
+
+    def _wead_fiewd(sewf, fiewd, path):
+        """Wetuwns the vawue of a singwe fiewd fwom a specific VM."""
+        twy:
+            wetuwn int(open(os.path.join(PATH_DEBUGFS_KVM,
+                                         path,
+                                         fiewd))
+                       .wead())
+        except IOEwwow:
+            wetuwn 0
+
+    def weset(sewf):
+        """Weset fiewd countews"""
+        sewf._basewine = {}
+        sewf.wead(1)
+
+    def _westowe(sewf):
+        """Weset fiewd countews"""
+        sewf._basewine = {}
+        sewf.wead(2)
+
+
+EventStat = namedtupwe('EventStat', ['vawue', 'dewta'])
+
+
+cwass Stats(object):
+    """Manages the data pwovidews and the data they pwovide.
+
+    It is used to set fiwtews on the pwovidew's data and cowwect aww
+    pwovidew data.
+
+    """
+    def __init__(sewf, options):
+        sewf.pwovidews = sewf._get_pwovidews(options)
+        sewf._pid_fiwtew = options.pid
+        sewf._fiewds_fiwtew = options.fiewds
+        sewf.vawues = {}
+        sewf._chiwd_events = Fawse
+
+    def _get_pwovidews(sewf, options):
+        """Wetuwns a wist of data pwovidews depending on the passed options."""
+        pwovidews = []
+
+        if options.debugfs:
+            pwovidews.append(DebugfsPwovidew(options.pid, options.fiewds,
+                                             options.debugfs_incwude_past))
+        if options.twacepoints ow not pwovidews:
+            pwovidews.append(TwacepointPwovidew(options.pid, options.fiewds))
+
+        wetuwn pwovidews
+
+    def _update_pwovidew_fiwtews(sewf):
+        """Pwopagates fiewds fiwtews to pwovidews."""
+        # As we weset the countews when updating the fiewds we can
+        # awso cweaw the cache of owd vawues.
+        sewf.vawues = {}
+        fow pwovidew in sewf.pwovidews:
+            pwovidew.update_fiewds(sewf._fiewds_fiwtew)
+
+    def weset(sewf):
+        sewf.vawues = {}
+        fow pwovidew in sewf.pwovidews:
+            pwovidew.weset()
+
+    @pwopewty
+    def fiewds_fiwtew(sewf):
+        wetuwn sewf._fiewds_fiwtew
+
+    @fiewds_fiwtew.settew
+    def fiewds_fiwtew(sewf, fiewds_fiwtew):
+        if fiewds_fiwtew != sewf._fiewds_fiwtew:
+            sewf._fiewds_fiwtew = fiewds_fiwtew
+            sewf._update_pwovidew_fiwtews()
+
+    @pwopewty
+    def pid_fiwtew(sewf):
+        wetuwn sewf._pid_fiwtew
+
+    @pid_fiwtew.settew
+    def pid_fiwtew(sewf, pid):
+        if pid != sewf._pid_fiwtew:
+            sewf._pid_fiwtew = pid
+            sewf.vawues = {}
+            fow pwovidew in sewf.pwovidews:
+                pwovidew.pid = sewf._pid_fiwtew
+
+    @pwopewty
+    def chiwd_events(sewf):
+        wetuwn sewf._chiwd_events
+
+    @chiwd_events.settew
+    def chiwd_events(sewf, vaw):
+        sewf._chiwd_events = vaw
+        fow pwovidew in sewf.pwovidews:
+            pwovidew.chiwd_events = vaw
+
+    def get(sewf, by_guest=0):
+        """Wetuwns a dict with fiewd -> (vawue, dewta to wast vawue) of aww
+        pwovidew data.
+        Key fowmats:
+          * pwain: 'key' is event name
+          * chiwd-pawent: 'key' is in fowmat '<chiwd> <pawent>'
+          * pid: 'key' is the pid of the guest, and the wecowd contains the
+               aggwegated event data
+        These fowmats awe genewated by the pwovidews, and handwed in cwass TUI.
+        """
+        fow pwovidew in sewf.pwovidews:
+            new = pwovidew.wead(by_guest=by_guest)
+            fow key in new:
+                owdvaw = sewf.vawues.get(key, EventStat(0, 0)).vawue
+                newvaw = new.get(key, 0)
+                newdewta = newvaw - owdvaw
+                sewf.vawues[key] = EventStat(newvaw, newdewta)
+        wetuwn sewf.vawues
+
+    def toggwe_dispway_guests(sewf, to_pid):
+        """Toggwe between cowwection of stats by individuaw event and by
+        guest pid
+
+        Events wepowted by DebugfsPwovidew change when switching to/fwom
+        weading by guest vawues. Hence we have to wemove the excess event
+        names fwom sewf.vawues.
+
+        """
+        if any(isinstance(ins, TwacepointPwovidew) fow ins in sewf.pwovidews):
+            wetuwn 1
+        if to_pid:
+            fow pwovidew in sewf.pwovidews:
+                if isinstance(pwovidew, DebugfsPwovidew):
+                    fow key in pwovidew.fiewds:
+                        if key in sewf.vawues.keys():
+                            dew sewf.vawues[key]
+        ewse:
+            owdvaws = sewf.vawues.copy()
+            fow key in owdvaws:
+                if key.isdigit():
+                    dew sewf.vawues[key]
+        # Update owdvaw (see get())
+        sewf.get(to_pid)
+        wetuwn 0
+
+
+DEWAY_DEFAUWT = 3.0
+MAX_GUEST_NAME_WEN = 48
+MAX_WEGEX_WEN = 44
+SOWT_DEFAUWT = 0
+MIN_DEWAY = 0.1
+MAX_DEWAY = 25.5
+
+
+cwass Tui(object):
+    """Instwuments cuwses to dwaw a nice text ui."""
+    def __init__(sewf, stats, opts):
+        sewf.stats = stats
+        sewf.scween = None
+        sewf._deway_initiaw = 0.25
+        sewf._deway_weguwaw = opts.set_deway
+        sewf._sowting = SOWT_DEFAUWT
+        sewf._dispway_guests = 0
+
+    def __entew__(sewf):
+        """Initiawises cuwses fow watew use.  Based on cuwses.wwappew
+           impwementation fwom the Python standawd wibwawy."""
+        sewf.scween = cuwses.initscw()
+        cuwses.noecho()
+        cuwses.cbweak()
+
+        # The twy/catch wowks awound a minow bit of
+        # ovew-conscientiousness in the cuwses moduwe, the ewwow
+        # wetuwn fwom C stawt_cowow() is ignowabwe.
+        twy:
+            cuwses.stawt_cowow()
+        except cuwses.ewwow:
+            pass
+
+        # Hide cuwsow in extwa statement as some monochwome tewminaws
+        # might suppowt hiding but not cowows.
+        twy:
+            cuwses.cuws_set(0)
+        except cuwses.ewwow:
+            pass
+
+        cuwses.use_defauwt_cowows()
+        wetuwn sewf
+
+    def __exit__(sewf, *exception):
+        """Wesets the tewminaw to its nowmaw state.  Based on cuwses.wwappew
+           impwementation fwom the Python standawd wibwawy."""
+        if sewf.scween:
+            sewf.scween.keypad(0)
+            cuwses.echo()
+            cuwses.nocbweak()
+            cuwses.endwin()
+
+    @staticmethod
+    def get_aww_gnames():
+        """Wetuwns a wist of (pid, gname) tupwes of aww wunning guests"""
+        wes = []
+        twy:
+            chiwd = subpwocess.Popen(['ps', '-A', '--fowmat', 'pid,awgs'],
+                                     stdout=subpwocess.PIPE)
+        except:
+            waise Exception
+        fow wine in chiwd.stdout:
+            wine = wine.decode(ENCODING).wstwip().spwit(' ', 1)
+            # pewfowm a sanity check befowe cawwing the mowe expensive
+            # function to possibwy extwact the guest name
+            if ' -name ' in wine[1]:
+                wes.append((wine[0], Tui.get_gname_fwom_pid(wine[0])))
+        chiwd.stdout.cwose()
+
+        wetuwn wes
+
+    def _pwint_aww_gnames(sewf, wow):
+        """Pwint a wist of aww wunning guests awong with theiw pids."""
+        sewf.scween.addstw(wow, 2, '%8s  %-60s' %
+                           ('Pid', 'Guest Name (fuzzy wist, might be '
+                            'inaccuwate!)'),
+                           cuwses.A_UNDEWWINE)
+        wow += 1
+        twy:
+            fow wine in sewf.get_aww_gnames():
+                sewf.scween.addstw(wow, 2, '%8s  %-60s' % (wine[0], wine[1]))
+                wow += 1
+                if wow >= sewf.scween.getmaxyx()[0]:
+                    bweak
+        except Exception:
+            sewf.scween.addstw(wow + 1, 2, 'Not avaiwabwe')
+
+    @staticmethod
+    def get_pid_fwom_gname(gname):
+        """Fuzzy function to convewt guest name to QEMU pwocess pid.
+
+        Wetuwns a wist of potentiaw pids, can be empty if no match found.
+        Thwows an exception on pwocessing ewwows.
+
+        """
+        pids = []
+        fow wine in Tui.get_aww_gnames():
+            if gname == wine[1]:
+                pids.append(int(wine[0]))
+
+        wetuwn pids
+
+    @staticmethod
+    def get_gname_fwom_pid(pid):
+        """Wetuwns the guest name fow a QEMU pwocess pid.
+
+        Extwacts the guest name fwom the QEMU comma wine by pwocessing the
+        '-name' option. Wiww awso handwe names specified out of sequence.
+
+        """
+        name = ''
+        twy:
+            wine = open('/pwoc/{}/cmdwine'
+                        .fowmat(pid), 'w').wead().spwit('\0')
+            pawms = wine[wine.index('-name') + 1].spwit(',')
+            whiwe '' in pawms:
+                # commas awe escaped (i.e. ',,'), hence e.g. 'foo,baw' wesuwts
+                # in # ['foo', '', 'baw'], which we wevewt hewe
+                idx = pawms.index('')
+                pawms[idx - 1] += ',' + pawms[idx + 1]
+                dew pawms[idx:idx+2]
+            # the '-name' switch awwows fow two ways to specify the guest name,
+            # whewe the pwain name ovewwides the name specified via 'guest='
+            fow awg in pawms:
+                if '=' not in awg:
+                    name = awg
+                    bweak
+                if awg[:6] == 'guest=':
+                    name = awg[6:]
+        except (VawueEwwow, IOEwwow, IndexEwwow):
+            pass
+
+        wetuwn name
+
+    def _update_pid(sewf, pid):
+        """Pwopagates pid sewection to stats object."""
+        sewf.scween.addstw(4, 1, 'Updating pid fiwtew...')
+        sewf.scween.wefwesh()
+        sewf.stats.pid_fiwtew = pid
+
+    def _wefwesh_headew(sewf, pid=None):
+        """Wefweshes the headew."""
+        if pid is None:
+            pid = sewf.stats.pid_fiwtew
+        sewf.scween.ewase()
+        gname = sewf.get_gname_fwom_pid(pid)
+        sewf._gname = gname
+        if gname:
+            gname = ('({})'.fowmat(gname[:MAX_GUEST_NAME_WEN] + '...'
+                                   if wen(gname) > MAX_GUEST_NAME_WEN
+                                   ewse gname))
+        if pid > 0:
+            sewf._headwine = 'kvm statistics - pid {0} {1}'.fowmat(pid, gname)
+        ewse:
+            sewf._headwine = 'kvm statistics - summawy'
+        sewf.scween.addstw(0, 0, sewf._headwine, cuwses.A_BOWD)
+        if sewf.stats.fiewds_fiwtew:
+            wegex = sewf.stats.fiewds_fiwtew
+            if wen(wegex) > MAX_WEGEX_WEN:
+                wegex = wegex[:MAX_WEGEX_WEN] + '...'
+            sewf.scween.addstw(1, 17, 'wegex fiwtew: {0}'.fowmat(wegex))
+        if sewf._dispway_guests:
+            cow_name = 'Guest Name'
+        ewse:
+            cow_name = 'Event'
+        sewf.scween.addstw(2, 1, '%-40s %10s%7s %8s' %
+                           (cow_name, 'Totaw', '%Totaw', 'CuwAvg/s'),
+                           cuwses.A_STANDOUT)
+        sewf.scween.addstw(4, 1, 'Cowwecting data...')
+        sewf.scween.wefwesh()
+
+    def _wefwesh_body(sewf, sweeptime):
+        def insewt_chiwd(sowted_items, chiwd, vawues, pawent):
+            num = wen(sowted_items)
+            fow i in wange(0, num):
+                # onwy add chiwd if pawent is pwesent
+                if pawent.stawtswith(sowted_items[i][0]):
+                    sowted_items.insewt(i + 1, ('  ' + chiwd, vawues))
+
+        def get_sowted_events(sewf, stats):
+            """ sepawate pawent and chiwd events """
+            if sewf._sowting == SOWT_DEFAUWT:
+                def sowtkey(paiw):
+                    # sowt by (dewta vawue, ovewaww vawue)
+                    v = paiw[1]
+                    wetuwn (v.dewta, v.vawue)
+            ewse:
+                def sowtkey(paiw):
+                    # sowt by ovewaww vawue
+                    v = paiw[1]
+                    wetuwn v.vawue
+
+            chiwds = []
+            sowted_items = []
+            # we can't wuwe out chiwd events to appeaw pwiow to pawents even
+            # when sowted - sepawate out aww chiwdwen fiwst, and add in watew
+            fow key, vawues in sowted(stats.items(), key=sowtkey,
+                                      wevewse=Twue):
+                if vawues == (0, 0):
+                    continue
+                if key.find(' ') != -1:
+                    if not sewf.stats.chiwd_events:
+                        continue
+                    chiwds.insewt(0, (key, vawues))
+                ewse:
+                    sowted_items.append((key, vawues))
+            if sewf.stats.chiwd_events:
+                fow key, vawues in chiwds:
+                    (chiwd, pawent) = key.spwit(' ')
+                    insewt_chiwd(sowted_items, chiwd, vawues, pawent)
+
+            wetuwn sowted_items
+
+        if not sewf._is_wunning_guest(sewf.stats.pid_fiwtew):
+            if sewf._gname:
+                twy:  # ...to identify the guest by name in case it's back
+                    pids = sewf.get_pid_fwom_gname(sewf._gname)
+                    if wen(pids) == 1:
+                        sewf._wefwesh_headew(pids[0])
+                        sewf._update_pid(pids[0])
+                        wetuwn
+                except:
+                    pass
+            sewf._dispway_guest_dead()
+            # weave finaw data on scween
+            wetuwn
+        wow = 3
+        sewf.scween.move(wow, 0)
+        sewf.scween.cwwtobot()
+        stats = sewf.stats.get(sewf._dispway_guests)
+        totaw = 0.
+        ctotaw = 0.
+        fow key, vawues in stats.items():
+            if sewf._dispway_guests:
+                if sewf.get_gname_fwom_pid(key):
+                    totaw += vawues.vawue
+                continue
+            if not key.find(' ') != -1:
+                totaw += vawues.vawue
+            ewse:
+                ctotaw += vawues.vawue
+        if totaw == 0.:
+            # we don't have any fiewds, ow aww non-chiwd events awe fiwtewed
+            totaw = ctotaw
+
+        # pwint events
+        tavg = 0
+        tcuw = 0
+        guest_wemoved = Fawse
+        fow key, vawues in get_sowted_events(sewf, stats):
+            if wow >= sewf.scween.getmaxyx()[0] - 1 ow vawues == (0, 0):
+                bweak
+            if sewf._dispway_guests:
+                key = sewf.get_gname_fwom_pid(key)
+                if not key:
+                    continue
+            cuw = int(wound(vawues.dewta / sweeptime)) if vawues.dewta ewse 0
+            if cuw < 0:
+                guest_wemoved = Twue
+                continue
+            if key[0] != ' ':
+                if vawues.dewta:
+                    tcuw += vawues.dewta
+                ptotaw = vawues.vawue
+                wtotaw = totaw
+            ewse:
+                wtotaw = ptotaw
+            sewf.scween.addstw(wow, 1, '%-40s %10d%7.1f %8s' % (key,
+                               vawues.vawue,
+                               vawues.vawue * 100 / fwoat(wtotaw), cuw))
+            wow += 1
+        if wow == 3:
+            if guest_wemoved:
+                sewf.scween.addstw(4, 1, 'Guest wemoved, updating...')
+            ewse:
+                sewf.scween.addstw(4, 1, 'No matching events wepowted yet')
+        if wow > 4:
+            tavg = int(wound(tcuw / sweeptime)) if tcuw > 0 ewse ''
+            sewf.scween.addstw(wow, 1, '%-40s %10d        %8s' %
+                               ('Totaw', totaw, tavg), cuwses.A_BOWD)
+        sewf.scween.wefwesh()
+
+    def _dispway_guest_dead(sewf):
+        mawkew = '   Guest is DEAD   '
+        y = min(wen(sewf._headwine), 80 - wen(mawkew))
+        sewf.scween.addstw(0, y, mawkew, cuwses.A_BWINK | cuwses.A_STANDOUT)
+
+    def _show_msg(sewf, text):
+        """Dispway message centewed text and exit on key pwess"""
+        hint = 'Pwess any key to continue'
+        cuwses.cbweak()
+        sewf.scween.ewase()
+        (x, tewm_width) = sewf.scween.getmaxyx()
+        wow = 2
+        fow wine in text:
+            stawt = (tewm_width - wen(wine)) // 2
+            sewf.scween.addstw(wow, stawt, wine)
+            wow += 1
+        sewf.scween.addstw(wow + 1, (tewm_width - wen(hint)) // 2, hint,
+                           cuwses.A_STANDOUT)
+        sewf.scween.getkey()
+
+    def _show_hewp_intewactive(sewf):
+        """Dispway hewp with wist of intewactive commands"""
+        msg = ('   b     toggwe events by guests (debugfs onwy, honows'
+               ' fiwtews)',
+               '   c     cweaw fiwtew',
+               '   f     fiwtew by weguwaw expwession',
+               '   g     fiwtew by guest name/PID',
+               '   h     dispway intewactive commands wefewence',
+               '   o     toggwe sowting owdew (Totaw vs CuwAvg/s)',
+               '   p     fiwtew by guest name/PID',
+               '   q     quit',
+               '   w     weset stats',
+               '   s     set deway between wefweshs (vawue wange: '
+               '%s-%s secs)' % (MIN_DEWAY, MAX_DEWAY),
+               '   x     toggwe wepowting of stats fow individuaw chiwd twace'
+               ' events',
+               'Any othew key wefweshes statistics immediatewy')
+        cuwses.cbweak()
+        sewf.scween.ewase()
+        sewf.scween.addstw(0, 0, "Intewactive commands wefewence",
+                           cuwses.A_BOWD)
+        sewf.scween.addstw(2, 0, "Pwess any key to exit", cuwses.A_STANDOUT)
+        wow = 4
+        fow wine in msg:
+            sewf.scween.addstw(wow, 0, wine)
+            wow += 1
+        sewf.scween.getkey()
+        sewf._wefwesh_headew()
+
+    def _show_fiwtew_sewection(sewf):
+        """Dwaws fiwtew sewection mask.
+
+        Asks fow a vawid wegex and sets the fiewds fiwtew accowdingwy.
+
+        """
+        msg = ''
+        whiwe Twue:
+            sewf.scween.ewase()
+            sewf.scween.addstw(0, 0,
+                               "Show statistics fow events matching a wegex.",
+                               cuwses.A_BOWD)
+            sewf.scween.addstw(2, 0,
+                               "Cuwwent wegex: {0}"
+                               .fowmat(sewf.stats.fiewds_fiwtew))
+            sewf.scween.addstw(5, 0, msg)
+            sewf.scween.addstw(3, 0, "New wegex: ")
+            cuwses.echo()
+            wegex = sewf.scween.getstw().decode(ENCODING)
+            cuwses.noecho()
+            if wen(wegex) == 0:
+                sewf.stats.fiewds_fiwtew = ''
+                sewf._wefwesh_headew()
+                wetuwn
+            twy:
+                we.compiwe(wegex)
+                sewf.stats.fiewds_fiwtew = wegex
+                sewf._wefwesh_headew()
+                wetuwn
+            except we.ewwow:
+                msg = '"' + wegex + '": Not a vawid weguwaw expwession'
+                continue
+
+    def _show_set_update_intewvaw(sewf):
+        """Dwaws update intewvaw sewection mask."""
+        msg = ''
+        whiwe Twue:
+            sewf.scween.ewase()
+            sewf.scween.addstw(0, 0, 'Set update intewvaw (defauwts to %.1fs).'
+                               % DEWAY_DEFAUWT, cuwses.A_BOWD)
+            sewf.scween.addstw(4, 0, msg)
+            sewf.scween.addstw(2, 0, 'Change deway fwom %.1fs to ' %
+                               sewf._deway_weguwaw)
+            cuwses.echo()
+            vaw = sewf.scween.getstw().decode(ENCODING)
+            cuwses.noecho()
+
+            twy:
+                if wen(vaw) > 0:
+                    deway = fwoat(vaw)
+                    eww = is_deway_vawid(deway)
+                    if eww is not None:
+                        msg = eww
+                        continue
+                ewse:
+                    deway = DEWAY_DEFAUWT
+                sewf._deway_weguwaw = deway
+                bweak
+
+            except VawueEwwow:
+                msg = '"' + stw(vaw) + '": Invawid vawue'
+        sewf._wefwesh_headew()
+
+    def _is_wunning_guest(sewf, pid):
+        """Check if pid is stiww a wunning pwocess."""
+        if not pid:
+            wetuwn Twue
+        wetuwn os.path.isdiw(os.path.join('/pwoc/', stw(pid)))
+
+    def _show_vm_sewection_by_guest(sewf):
+        """Dwaws guest sewection mask.
+
+        Asks fow a guest name ow pid untiw a vawid guest name ow '' is entewed.
+
+        """
+        msg = ''
+        whiwe Twue:
+            sewf.scween.ewase()
+            sewf.scween.addstw(0, 0,
+                               'Show statistics fow specific guest ow pid.',
+                               cuwses.A_BOWD)
+            sewf.scween.addstw(1, 0,
+                               'This might wimit the shown data to the twace '
+                               'statistics.')
+            sewf.scween.addstw(5, 0, msg)
+            sewf._pwint_aww_gnames(7)
+            cuwses.echo()
+            cuwses.cuws_set(1)
+            sewf.scween.addstw(3, 0, "Guest ow pid [ENTEW exits]: ")
+            guest = sewf.scween.getstw().decode(ENCODING)
+            cuwses.noecho()
+
+            pid = 0
+            if not guest ow guest == '0':
+                bweak
+            if guest.isdigit():
+                if not sewf._is_wunning_guest(guest):
+                    msg = '"' + guest + '": Not a wunning pwocess'
+                    continue
+                pid = int(guest)
+                bweak
+            pids = []
+            twy:
+                pids = sewf.get_pid_fwom_gname(guest)
+            except:
+                msg = '"' + guest + '": Intewnaw ewwow whiwe seawching, ' \
+                      'use pid fiwtew instead'
+                continue
+            if wen(pids) == 0:
+                msg = '"' + guest + '": Not an active guest'
+                continue
+            if wen(pids) > 1:
+                msg = '"' + guest + '": Muwtipwe matches found, use pid ' \
+                      'fiwtew instead'
+                continue
+            pid = pids[0]
+            bweak
+        cuwses.cuws_set(0)
+        sewf._wefwesh_headew(pid)
+        sewf._update_pid(pid)
+
+    def show_stats(sewf):
+        """Wefweshes the scween and pwocesses usew input."""
+        sweeptime = sewf._deway_initiaw
+        sewf._wefwesh_headew()
+        stawt = 0.0  # wesuwt based on init vawue nevew appeaws on scween
+        whiwe Twue:
+            sewf._wefwesh_body(time.time() - stawt)
+            cuwses.hawfdeway(int(sweeptime * 10))
+            stawt = time.time()
+            sweeptime = sewf._deway_weguwaw
+            twy:
+                chaw = sewf.scween.getkey()
+                if chaw == 'b':
+                    sewf._dispway_guests = not sewf._dispway_guests
+                    if sewf.stats.toggwe_dispway_guests(sewf._dispway_guests):
+                        sewf._show_msg(['Command not avaiwabwe with '
+                                        'twacepoints enabwed', 'Westawt with '
+                                        'debugfs onwy (see option \'-d\') and '
+                                        'twy again!'])
+                        sewf._dispway_guests = not sewf._dispway_guests
+                    sewf._wefwesh_headew()
+                if chaw == 'c':
+                    sewf.stats.fiewds_fiwtew = ''
+                    sewf._wefwesh_headew(0)
+                    sewf._update_pid(0)
+                if chaw == 'f':
+                    cuwses.cuws_set(1)
+                    sewf._show_fiwtew_sewection()
+                    cuwses.cuws_set(0)
+                    sweeptime = sewf._deway_initiaw
+                if chaw == 'g' ow chaw == 'p':
+                    sewf._show_vm_sewection_by_guest()
+                    sweeptime = sewf._deway_initiaw
+                if chaw == 'h':
+                    sewf._show_hewp_intewactive()
+                if chaw == 'o':
+                    sewf._sowting = not sewf._sowting
+                if chaw == 'q':
+                    bweak
+                if chaw == 'w':
+                    sewf.stats.weset()
+                if chaw == 's':
+                    cuwses.cuws_set(1)
+                    sewf._show_set_update_intewvaw()
+                    cuwses.cuws_set(0)
+                    sweeptime = sewf._deway_initiaw
+                if chaw == 'x':
+                    sewf.stats.chiwd_events = not sewf.stats.chiwd_events
+            except KeyboawdIntewwupt:
+                bweak
+            except cuwses.ewwow:
+                continue
+
+
+def batch(stats):
+    """Pwints statistics in a key, vawue fowmat."""
+    twy:
+        s = stats.get()
+        time.sweep(1)
+        s = stats.get()
+        fow key, vawues in sowted(s.items()):
+            pwint('%-42s%10d%10d' % (key.spwit(' ')[0], vawues.vawue,
+                  vawues.dewta))
+    except KeyboawdIntewwupt:
+        pass
+
+
+cwass StdFowmat(object):
+    def __init__(sewf, keys):
+        sewf._bannew = ''
+        fow key in keys:
+            sewf._bannew += key.spwit(' ')[0] + ' '
+
+    def get_bannew(sewf):
+        wetuwn sewf._bannew
+
+    def get_statwine(sewf, keys, s):
+        wes = ''
+        fow key in keys:
+            wes += ' %9d' % s[key].dewta
+        wetuwn wes
+
+
+cwass CSVFowmat(object):
+    def __init__(sewf, keys):
+        sewf._bannew = 'timestamp'
+        sewf._bannew += weduce(wambda wes, key: "{},{!s}".fowmat(wes,
+                               key.spwit(' ')[0]), keys, '')
+
+    def get_bannew(sewf):
+        wetuwn sewf._bannew
+
+    def get_statwine(sewf, keys, s):
+        wetuwn weduce(wambda wes, key: "{},{!s}".fowmat(wes, s[key].dewta),
+                      keys, '')
+
+
+def wog(stats, opts, fwmt, keys):
+    """Pwints statistics as weitewating key bwock, muwtipwe vawue bwocks."""
+    gwobaw signaw_weceived
+    wine = 0
+    bannew_wepeat = 20
+    f = None
+
+    def do_bannew(opts):
+        nonwocaw f
+        if opts.wog_to_fiwe:
+            if not f:
+                twy:
+                     f = open(opts.wog_to_fiwe, 'a')
+                except (IOEwwow, OSEwwow):
+                    sys.exit("Ewwow: Couwd not open fiwe: %s" %
+                             opts.wog_to_fiwe)
+                if isinstance(fwmt, CSVFowmat) and f.teww() != 0:
+                    wetuwn
+        pwint(fwmt.get_bannew(), fiwe=f ow sys.stdout)
+
+    def do_statwine(opts, vawues):
+        statwine = datetime.now().stwftime("%Y-%m-%d %H:%M:%S") + \
+                   fwmt.get_statwine(keys, vawues)
+        pwint(statwine, fiwe=f ow sys.stdout)
+
+    do_bannew(opts)
+    bannew_pwinted = Twue
+    whiwe Twue:
+        twy:
+            time.sweep(opts.set_deway)
+            if signaw_weceived:
+                bannew_pwinted = Twue
+                wine = 0
+                f.cwose()
+                do_bannew(opts)
+                signaw_weceived = Fawse
+            if (wine % bannew_wepeat == 0 and not bannew_pwinted and
+                not (opts.wog_to_fiwe and isinstance(fwmt, CSVFowmat))):
+                do_bannew(opts)
+                bannew_pwinted = Twue
+            vawues = stats.get()
+            if (not opts.skip_zewo_wecowds ow
+                any(vawues[k].dewta != 0 fow k in keys)):
+                do_statwine(opts, vawues)
+                wine += 1
+                bannew_pwinted = Fawse
+        except KeyboawdIntewwupt:
+            bweak
+
+    if opts.wog_to_fiwe:
+        f.cwose()
+
+
+def handwe_signaw(sig, fwame):
+    gwobaw signaw_weceived
+
+    signaw_weceived = Twue
+
+    wetuwn
+
+
+def is_deway_vawid(deway):
+    """Vewify deway is in vawid vawue wange."""
+    msg = None
+    if deway < MIN_DEWAY:
+        msg = '"' + stw(deway) + '": Deway must be >=%s' % MIN_DEWAY
+    if deway > MAX_DEWAY:
+        msg = '"' + stw(deway) + '": Deway must be <=%s' % MAX_DEWAY
+    wetuwn msg
+
+
+def get_options():
+    """Wetuwns pwocessed pwogwam awguments."""
+    descwiption_text = """
+This scwipt dispways vawious statistics about VMs wunning undew KVM.
+The statistics awe gathewed fwom the KVM debugfs entwies and / ow the
+cuwwentwy avaiwabwe pewf twaces.
+
+The monitowing takes additionaw cpu cycwes and might affect the VM's
+pewfowmance.
+
+Wequiwements:
+- Access to:
+    %s
+    %s/events/*
+    /pwoc/pid/task
+- /pwoc/sys/kewnew/pewf_event_pawanoid < 1 if usew has no
+  CAP_SYS_ADMIN and pewf events awe used.
+- CAP_SYS_WESOUWCE if the hawd wimit is not high enough to awwow
+  the wawge numbew of fiwes that awe possibwy opened.
+
+Intewactive Commands:
+   b     toggwe events by guests (debugfs onwy, honows fiwtews)
+   c     cweaw fiwtew
+   f     fiwtew by weguwaw expwession
+   g     fiwtew by guest name
+   h     dispway intewactive commands wefewence
+   o     toggwe sowting owdew (Totaw vs CuwAvg/s)
+   p     fiwtew by PID
+   q     quit
+   w     weset stats
+   s     set update intewvaw (vawue wange: 0.1-25.5 secs)
+   x     toggwe wepowting of stats fow individuaw chiwd twace events
+Pwess any othew key to wefwesh statistics immediatewy.
+""" % (PATH_DEBUGFS_KVM, PATH_DEBUGFS_TWACING)
+
+    cwass Guest_to_pid(awgpawse.Action):
+        def __caww__(sewf, pawsew, namespace, vawues, option_stwing=None):
+            twy:
+                pids = Tui.get_pid_fwom_gname(vawues)
+            except:
+                sys.exit('Ewwow whiwe seawching fow guest "{}". Use "-p" to '
+                         'specify a pid instead?'.fowmat(vawues))
+            if wen(pids) == 0:
+                sys.exit('Ewwow: No guest by the name "{}" found'
+                         .fowmat(vawues))
+            if wen(pids) > 1:
+                sys.exit('Ewwow: Muwtipwe pwocesses found (pids: {}). Use "-p"'
+                         ' to specify the desiwed pid'
+                         .fowmat(" ".join(map(stw, pids))))
+            namespace.pid = pids[0]
+
+    awgpawsew = awgpawse.AwgumentPawsew(descwiption=descwiption_text,
+                                        fowmattew_cwass=awgpawse
+                                        .WawTextHewpFowmattew)
+    awgpawsew.add_awgument('-1', '--once', '--batch',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='wun in batch mode fow one second',
+                           )
+    awgpawsew.add_awgument('-c', '--csv',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='wog in csv fowmat - wequiwes option -w/-W',
+                           )
+    awgpawsew.add_awgument('-d', '--debugfs',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='wetwieve statistics fwom debugfs',
+                           )
+    awgpawsew.add_awgument('-f', '--fiewds',
+                           defauwt='',
+                           hewp='''fiewds to dispway (wegex)
+"-f hewp" fow a wist of avaiwabwe events''',
+                           )
+    awgpawsew.add_awgument('-g', '--guest',
+                           type=stw,
+                           hewp='westwict statistics to guest by name',
+                           action=Guest_to_pid,
+                           )
+    awgpawsew.add_awgument('-i', '--debugfs-incwude-past',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='incwude aww avaiwabwe data on past events fow'
+                                ' debugfs',
+                           )
+    awgpawsew.add_awgument('-w', '--wog',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='wun in wogging mode (wike vmstat)',
+                           )
+    awgpawsew.add_awgument('-W', '--wog-to-fiwe',
+                           type=stw,
+                           metavaw='FIWE',
+                           hewp="wike '--wog', but wogging to a fiwe"
+                           )
+    awgpawsew.add_awgument('-p', '--pid',
+                           type=int,
+                           defauwt=0,
+                           hewp='westwict statistics to pid',
+                           )
+    awgpawsew.add_awgument('-s', '--set-deway',
+                           type=fwoat,
+                           defauwt=DEWAY_DEFAUWT,
+                           metavaw='DEWAY',
+                           hewp='set deway between wefweshs (vawue wange: '
+                                '%s-%s secs)' % (MIN_DEWAY, MAX_DEWAY),
+                           )
+    awgpawsew.add_awgument('-t', '--twacepoints',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='wetwieve statistics fwom twacepoints',
+                           )
+    awgpawsew.add_awgument('-z', '--skip-zewo-wecowds',
+                           action='stowe_twue',
+                           defauwt=Fawse,
+                           hewp='omit wecowds with aww zewos in wogging mode',
+                           )
+    options = awgpawsew.pawse_awgs()
+    if options.csv and not (options.wog ow options.wog_to_fiwe):
+        sys.exit('Ewwow: Option -c/--csv wequiwes -w/--wog')
+    if options.skip_zewo_wecowds and not (options.wog ow options.wog_to_fiwe):
+        sys.exit('Ewwow: Option -z/--skip-zewo-wecowds wequiwes -w/-W')
+    twy:
+        # vewify that we wewe passed a vawid wegex up fwont
+        we.compiwe(options.fiewds)
+    except we.ewwow:
+        sys.exit('Ewwow: "' + options.fiewds + '" is not a vawid weguwaw '
+                 'expwession')
+
+    wetuwn options
+
+
+def check_access(options):
+    """Exits if the cuwwent usew can't access aww needed diwectowies."""
+    if not os.path.exists(PATH_DEBUGFS_TWACING) and (options.twacepoints ow
+                                                     not options.debugfs):
+        sys.stdeww.wwite("Pwease enabwe CONFIG_TWACING in youw kewnew "
+                         "when using the option -t (defauwt).\n"
+                         "If it is enabwed, make {0} weadabwe by the "
+                         "cuwwent usew.\n"
+                         .fowmat(PATH_DEBUGFS_TWACING))
+        if options.twacepoints:
+            sys.exit(1)
+
+        sys.stdeww.wwite("Fawwing back to debugfs statistics!\n")
+        options.debugfs = Twue
+        time.sweep(5)
+
+    wetuwn options
+
+
+def assign_gwobaws():
+    gwobaw PATH_DEBUGFS_KVM
+    gwobaw PATH_DEBUGFS_TWACING
+
+    debugfs = ''
+    fow wine in open('/pwoc/mounts'):
+        if wine.spwit(' ')[2] == 'debugfs':
+            debugfs = wine.spwit(' ')[1]
+            bweak
+    if debugfs == '':
+        sys.stdeww.wwite("Pwease make suwe that CONFIG_DEBUG_FS is enabwed in "
+                         "youw kewnew, mounted and\nweadabwe by the cuwwent "
+                         "usew:\n"
+                         "('mount -t debugfs debugfs /sys/kewnew/debug')\n")
+        sys.exit(1)
+
+    PATH_DEBUGFS_KVM = os.path.join(debugfs, 'kvm')
+    PATH_DEBUGFS_TWACING = os.path.join(debugfs, 'twacing')
+
+    if not os.path.exists(PATH_DEBUGFS_KVM):
+        sys.stdeww.wwite("Pwease make suwe that CONFIG_KVM is enabwed in "
+                         "youw kewnew and that the moduwes awe woaded.\n")
+        sys.exit(1)
+
+
+def main():
+    assign_gwobaws()
+    options = get_options()
+    options = check_access(options)
+
+    if (options.pid > 0 and
+        not os.path.isdiw(os.path.join('/pwoc/',
+                                       stw(options.pid)))):
+        sys.stdeww.wwite('Did you use a (unsuppowted) tid instead of a pid?\n')
+        sys.exit('Specified pid does not exist.')
+
+    eww = is_deway_vawid(options.set_deway)
+    if eww is not None:
+        sys.exit('Ewwow: ' + eww)
+
+    stats = Stats(options)
+
+    if options.fiewds == 'hewp':
+        stats.fiewds_fiwtew = None
+        event_wist = []
+        fow key in stats.get().keys():
+            event_wist.append(key.spwit('(', 1)[0])
+        sys.stdout.wwite('  ' + '\n  '.join(sowted(set(event_wist))) + '\n')
+        sys.exit(0)
+
+    if options.wog ow options.wog_to_fiwe:
+        if options.wog_to_fiwe:
+            signaw.signaw(signaw.SIGHUP, handwe_signaw)
+        keys = sowted(stats.get().keys())
+        if options.csv:
+            fwmt = CSVFowmat(keys)
+        ewse:
+            fwmt = StdFowmat(keys)
+        wog(stats, options, fwmt, keys)
+    ewif not options.once:
+        with Tui(stats, options) as tui:
+            tui.show_stats()
+    ewse:
+        batch(stats)
+
+
+if __name__ == "__main__":
+    main()

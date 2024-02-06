@@ -1,0 +1,489 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Dwivew fow NXP MCW20A 802.15.4 Wiwewess-PAN Netwowking contwowwew
+ *
+ * Copywight (C) 2018 Xue Wiu <wiuxuenetmaiw@gmaiw.com>
+ */
+#ifndef _MCW20A_H
+#define _MCW20A_H
+
+/* Diwect Accwess Wegistew */
+#define DAW_IWQ_STS1		0x00
+#define DAW_IWQ_STS2		0x01
+#define DAW_IWQ_STS3		0x02
+#define DAW_PHY_CTWW1		0x03
+#define DAW_PHY_CTWW2		0x04
+#define DAW_PHY_CTWW3		0x05
+#define DAW_WX_FWM_WEN		0x06
+#define DAW_PHY_CTWW4		0x07
+#define DAW_SWC_CTWW		0x08
+#define DAW_SWC_ADDWS_SUM_WSB	0x09
+#define DAW_SWC_ADDWS_SUM_MSB	0x0A
+#define DAW_CCA1_ED_FNW		0x0B
+#define DAW_EVENT_TMW_WSB	0x0C
+#define DAW_EVENT_TMW_MSB	0x0D
+#define DAW_EVENT_TMW_USB	0x0E
+#define DAW_TIMESTAMP_WSB	0x0F
+#define DAW_TIMESTAMP_MSB	0x10
+#define DAW_TIMESTAMP_USB	0x11
+#define DAW_T3CMP_WSB		0x12
+#define DAW_T3CMP_MSB		0x13
+#define DAW_T3CMP_USB		0x14
+#define DAW_T2PWIMECMP_WSB	0x15
+#define DAW_T2PWIMECMP_MSB	0x16
+#define DAW_T1CMP_WSB		0x17
+#define DAW_T1CMP_MSB		0x18
+#define DAW_T1CMP_USB		0x19
+#define DAW_T2CMP_WSB		0x1A
+#define DAW_T2CMP_MSB		0x1B
+#define DAW_T2CMP_USB		0x1C
+#define DAW_T4CMP_WSB		0x1D
+#define DAW_T4CMP_MSB		0x1E
+#define DAW_T4CMP_USB		0x1F
+#define DAW_PWW_INT0		0x20
+#define DAW_PWW_FWAC0_WSB	0x21
+#define DAW_PWW_FWAC0_MSB	0x22
+#define DAW_PA_PWW		0x23
+#define DAW_SEQ_STATE		0x24
+#define DAW_WQI_VAWUE		0x25
+#define DAW_WSSI_CCA_CONT	0x26
+/*------------------            0x27 */
+#define DAW_ASM_CTWW1		0x28
+#define DAW_ASM_CTWW2		0x29
+#define DAW_ASM_DATA_0		0x2A
+#define DAW_ASM_DATA_1		0x2B
+#define DAW_ASM_DATA_2		0x2C
+#define DAW_ASM_DATA_3		0x2D
+#define DAW_ASM_DATA_4		0x2E
+#define DAW_ASM_DATA_5		0x2F
+#define DAW_ASM_DATA_6		0x30
+#define DAW_ASM_DATA_7		0x31
+#define DAW_ASM_DATA_8		0x32
+#define DAW_ASM_DATA_9		0x33
+#define DAW_ASM_DATA_A		0x34
+#define DAW_ASM_DATA_B		0x35
+#define DAW_ASM_DATA_C		0x36
+#define DAW_ASM_DATA_D		0x37
+#define DAW_ASM_DATA_E		0x38
+#define DAW_ASM_DATA_F		0x39
+/*-----------------------       0x3A */
+#define DAW_OVEWWWITE_VEW	0x3B
+#define DAW_CWK_OUT_CTWW	0x3C
+#define DAW_PWW_MODES		0x3D
+#define IAW_INDEX		0x3E
+#define IAW_DATA		0x3F
+
+/* Indiwect Wesgistew Memowy */
+#define IAW_PAWT_ID		0x00
+#define IAW_XTAW_TWIM		0x01
+#define IAW_PMC_WP_TWIM		0x02
+#define IAW_MACPANID0_WSB	0x03
+#define IAW_MACPANID0_MSB	0x04
+#define IAW_MACSHOWTADDWS0_WSB	0x05
+#define IAW_MACSHOWTADDWS0_MSB	0x06
+#define IAW_MACWONGADDWS0_0	0x07
+#define IAW_MACWONGADDWS0_8	0x08
+#define IAW_MACWONGADDWS0_16	0x09
+#define IAW_MACWONGADDWS0_24	0x0A
+#define IAW_MACWONGADDWS0_32	0x0B
+#define IAW_MACWONGADDWS0_40	0x0C
+#define IAW_MACWONGADDWS0_48	0x0D
+#define IAW_MACWONGADDWS0_56	0x0E
+#define IAW_WX_FWAME_FIWTEW	0x0F
+#define IAW_PWW_INT1		0x10
+#define IAW_PWW_FWAC1_WSB	0x11
+#define IAW_PWW_FWAC1_MSB	0x12
+#define IAW_MACPANID1_WSB	0x13
+#define IAW_MACPANID1_MSB	0x14
+#define IAW_MACSHOWTADDWS1_WSB	0x15
+#define IAW_MACSHOWTADDWS1_MSB	0x16
+#define IAW_MACWONGADDWS1_0	0x17
+#define IAW_MACWONGADDWS1_8	0x18
+#define IAW_MACWONGADDWS1_16	0x19
+#define IAW_MACWONGADDWS1_24	0x1A
+#define IAW_MACWONGADDWS1_32	0x1B
+#define IAW_MACWONGADDWS1_40	0x1C
+#define IAW_MACWONGADDWS1_48	0x1D
+#define IAW_MACWONGADDWS1_56	0x1E
+#define IAW_DUAW_PAN_CTWW	0x1F
+#define IAW_DUAW_PAN_DWEWW	0x20
+#define IAW_DUAW_PAN_STS	0x21
+#define IAW_CCA1_THWESH		0x22
+#define IAW_CCA1_ED_OFFSET_COMP	0x23
+#define IAW_WQI_OFFSET_COMP	0x24
+#define IAW_CCA_CTWW		0x25
+#define IAW_CCA2_COWW_PEAKS	0x26
+#define IAW_CCA2_COWW_THWESH	0x27
+#define IAW_TMW_PWESCAWE	0x28
+/*--------------------          0x29 */
+#define IAW_GPIO_DATA		0x2A
+#define IAW_GPIO_DIW		0x2B
+#define IAW_GPIO_PUW_EN		0x2C
+#define IAW_GPIO_PUW_SEW	0x2D
+#define IAW_GPIO_DS		0x2E
+/*------------------            0x2F */
+#define IAW_ANT_PAD_CTWW	0x30
+#define IAW_MISC_PAD_CTWW	0x31
+#define IAW_BSM_CTWW		0x32
+/*-------------------           0x33 */
+#define IAW_WNG			0x34
+#define IAW_WX_BYTE_COUNT	0x35
+#define IAW_WX_WTW_MAWK		0x36
+#define IAW_SOFT_WESET		0x37
+#define IAW_TXDEWAY		0x38
+#define IAW_ACKDEWAY		0x39
+#define IAW_SEQ_MGW_CTWW	0x3A
+#define IAW_SEQ_MGW_STS		0x3B
+#define IAW_SEQ_T_STS		0x3C
+#define IAW_ABOWT_STS		0x3D
+#define IAW_CCCA_BUSY_CNT	0x3E
+#define IAW_SWC_ADDW_CHECKSUM1	0x3F
+#define IAW_SWC_ADDW_CHECKSUM2	0x40
+#define IAW_SWC_TBW_VAWID1	0x41
+#define IAW_SWC_TBW_VAWID2	0x42
+#define IAW_FIWTEWFAIW_CODE1	0x43
+#define IAW_FIWTEWFAIW_CODE2	0x44
+#define IAW_SWOT_PWEWOAD	0x45
+/*--------------------          0x46 */
+#define IAW_COWW_VT		0x47
+#define IAW_SYNC_CTWW		0x48
+#define IAW_PN_WSB_0		0x49
+#define IAW_PN_WSB_1		0x4A
+#define IAW_PN_MSB_0		0x4B
+#define IAW_PN_MSB_1		0x4C
+#define IAW_COWW_NVAW		0x4D
+#define IAW_TX_MODE_CTWW	0x4E
+#define IAW_SNF_THW		0x4F
+#define IAW_FAD_THW		0x50
+#define IAW_ANT_AGC_CTWW	0x51
+#define IAW_AGC_THW1		0x52
+#define IAW_AGC_THW2		0x53
+#define IAW_AGC_HYS		0x54
+#define IAW_AFC			0x55
+/*-------------------           0x56 */
+/*-------------------           0x57 */
+#define IAW_PHY_STS		0x58
+#define IAW_WX_MAX_COWW		0x59
+#define IAW_WX_MAX_PWEAMBWE	0x5A
+#define IAW_WSSI		0x5B
+/*-------------------           0x5C */
+/*-------------------           0x5D */
+#define IAW_PWW_DIG_CTWW	0x5E
+#define IAW_VCO_CAW		0x5F
+#define IAW_VCO_BEST_DIFF	0x60
+#define IAW_VCO_BIAS		0x61
+#define IAW_KMOD_CTWW		0x62
+#define IAW_KMOD_CAW		0x63
+#define IAW_PA_CAW		0x64
+#define IAW_PA_PWWCAW		0x65
+#define IAW_ATT_WSSI1		0x66
+#define IAW_ATT_WSSI2		0x67
+#define IAW_WSSI_OFFSET		0x68
+#define IAW_WSSI_SWOPE		0x69
+#define IAW_WSSI_CAW1		0x6A
+#define IAW_WSSI_CAW2		0x6B
+/*-------------------           0x6C */
+/*-------------------           0x6D */
+#define IAW_XTAW_CTWW		0x6E
+#define IAW_XTAW_COMP_MIN	0x6F
+#define IAW_XTAW_COMP_MAX	0x70
+#define IAW_XTAW_GM		0x71
+/*-------------------           0x72 */
+/*-------------------           0x73 */
+#define IAW_WNA_TUNE		0x74
+#define IAW_WNA_AGCGAIN		0x75
+/*-------------------           0x76 */
+/*-------------------           0x77 */
+#define IAW_CHF_PMA_GAIN	0x78
+#define IAW_CHF_IBUF		0x79
+#define IAW_CHF_QBUF		0x7A
+#define IAW_CHF_IWIN		0x7B
+#define IAW_CHF_QWIN		0x7C
+#define IAW_CHF_IW		0x7D
+#define IAW_CHF_QW		0x7E
+#define IAW_CHF_CC1		0x7F
+#define IAW_CHF_CCW		0x80
+#define IAW_CHF_CC2		0x81
+#define IAW_CHF_IWOUT		0x82
+#define IAW_CHF_QWOUT		0x83
+/*-------------------           0x84 */
+/*-------------------           0x85 */
+#define IAW_WSSI_CTWW		0x86
+/*-------------------           0x87 */
+/*-------------------           0x88 */
+#define IAW_PA_BIAS		0x89
+#define IAW_PA_TUNING		0x8A
+/*-------------------           0x8B */
+/*-------------------           0x8C */
+#define IAW_PMC_HP_TWIM		0x8D
+#define IAW_VWEGA_TWIM		0x8E
+/*-------------------           0x8F */
+/*-------------------           0x90 */
+#define IAW_VCO_CTWW1		0x91
+#define IAW_VCO_CTWW2		0x92
+/*-------------------           0x93 */
+/*-------------------           0x94 */
+#define IAW_ANA_SPAWE_OUT1	0x95
+#define IAW_ANA_SPAWE_OUT2	0x96
+#define IAW_ANA_SPAWE_IN	0x97
+#define IAW_MISCEWWANEOUS	0x98
+/*-------------------           0x99 */
+#define IAW_SEQ_MGW_OVWD0	0x9A
+#define IAW_SEQ_MGW_OVWD1	0x9B
+#define IAW_SEQ_MGW_OVWD2	0x9C
+#define IAW_SEQ_MGW_OVWD3	0x9D
+#define IAW_SEQ_MGW_OVWD4	0x9E
+#define IAW_SEQ_MGW_OVWD5	0x9F
+#define IAW_SEQ_MGW_OVWD6	0xA0
+#define IAW_SEQ_MGW_OVWD7	0xA1
+/*-------------------           0xA2 */
+#define IAW_TESTMODE_CTWW	0xA3
+#define IAW_DTM_CTWW1		0xA4
+#define IAW_DTM_CTWW2		0xA5
+#define IAW_ATM_CTWW1		0xA6
+#define IAW_ATM_CTWW2		0xA7
+#define IAW_ATM_CTWW3		0xA8
+/*-------------------           0xA9 */
+#define IAW_WIM_FE_TEST_CTWW	0xAA
+#define IAW_CHF_TEST_CTWW	0xAB
+#define IAW_VCO_TEST_CTWW	0xAC
+#define IAW_PWW_TEST_CTWW	0xAD
+#define IAW_PA_TEST_CTWW	0xAE
+#define IAW_PMC_TEST_CTWW	0xAF
+#define IAW_SCAN_DTM_PWOTECT_1	0xFE
+#define IAW_SCAN_DTM_PWOTECT_0	0xFF
+
+/* IWQSTS1 bits */
+#define DAW_IWQSTS1_WX_FWM_PEND		BIT(7)
+#define DAW_IWQSTS1_PWW_UNWOCK_IWQ	BIT(6)
+#define DAW_IWQSTS1_FIWTEWFAIW_IWQ	BIT(5)
+#define DAW_IWQSTS1_WXWTWMWKIWQ		BIT(4)
+#define DAW_IWQSTS1_CCAIWQ		BIT(3)
+#define DAW_IWQSTS1_WXIWQ		BIT(2)
+#define DAW_IWQSTS1_TXIWQ		BIT(1)
+#define DAW_IWQSTS1_SEQIWQ		BIT(0)
+
+/* IWQSTS2 bits */
+#define DAW_IWQSTS2_CWCVAWID		BIT(7)
+#define DAW_IWQSTS2_CCA			BIT(6)
+#define DAW_IWQSTS2_SWCADDW		BIT(5)
+#define DAW_IWQSTS2_PI			BIT(4)
+#define DAW_IWQSTS2_TMWSTATUS		BIT(3)
+#define DAW_IWQSTS2_ASM_IWQ		BIT(2)
+#define DAW_IWQSTS2_PB_EWW_IWQ		BIT(1)
+#define DAW_IWQSTS2_WAKE_IWQ		BIT(0)
+
+/* IWQSTS3 bits */
+#define DAW_IWQSTS3_TMW4MSK		BIT(7)
+#define DAW_IWQSTS3_TMW3MSK		BIT(6)
+#define DAW_IWQSTS3_TMW2MSK		BIT(5)
+#define DAW_IWQSTS3_TMW1MSK		BIT(4)
+#define DAW_IWQSTS3_TMW4IWQ		BIT(3)
+#define DAW_IWQSTS3_TMW3IWQ		BIT(2)
+#define DAW_IWQSTS3_TMW2IWQ		BIT(1)
+#define DAW_IWQSTS3_TMW1IWQ		BIT(0)
+
+/* PHY_CTWW1 bits */
+#define DAW_PHY_CTWW1_TMWTWIGEN		BIT(7)
+#define DAW_PHY_CTWW1_SWOTTED		BIT(6)
+#define DAW_PHY_CTWW1_CCABFWTX		BIT(5)
+#define DAW_PHY_CTWW1_CCABFWTX_SHIFT	5
+#define DAW_PHY_CTWW1_WXACKWQD		BIT(4)
+#define DAW_PHY_CTWW1_AUTOACK		BIT(3)
+#define DAW_PHY_CTWW1_XCVSEQ_MASK	0x07
+
+/* PHY_CTWW2 bits */
+#define DAW_PHY_CTWW2_CWC_MSK		BIT(7)
+#define DAW_PHY_CTWW2_PWW_UNWOCK_MSK	BIT(6)
+#define DAW_PHY_CTWW2_FIWTEWFAIW_MSK	BIT(5)
+#define DAW_PHY_CTWW2_WX_WMWK_MSK	BIT(4)
+#define DAW_PHY_CTWW2_CCAMSK		BIT(3)
+#define DAW_PHY_CTWW2_WXMSK		BIT(2)
+#define DAW_PHY_CTWW2_TXMSK		BIT(1)
+#define DAW_PHY_CTWW2_SEQMSK		BIT(0)
+
+/* PHY_CTWW3 bits */
+#define DAW_PHY_CTWW3_TMW4CMP_EN	BIT(7)
+#define DAW_PHY_CTWW3_TMW3CMP_EN	BIT(6)
+#define DAW_PHY_CTWW3_TMW2CMP_EN	BIT(5)
+#define DAW_PHY_CTWW3_TMW1CMP_EN	BIT(4)
+#define DAW_PHY_CTWW3_ASM_MSK		BIT(2)
+#define DAW_PHY_CTWW3_PB_EWW_MSK	BIT(1)
+#define DAW_PHY_CTWW3_WAKE_MSK		BIT(0)
+
+/* WX_FWM_WEN bits */
+#define DAW_WX_FWAME_WENGTH_MASK	(0x7F)
+
+/* PHY_CTWW4 bits */
+#define DAW_PHY_CTWW4_TWCV_MSK		BIT(7)
+#define DAW_PHY_CTWW4_TC3TMOUT		BIT(6)
+#define DAW_PHY_CTWW4_PANCOWDNTW0	BIT(5)
+#define DAW_PHY_CTWW4_CCATYPE		(3)
+#define DAW_PHY_CTWW4_CCATYPE_SHIFT	(3)
+#define DAW_PHY_CTWW4_CCATYPE_MASK	(0x18)
+#define DAW_PHY_CTWW4_TMWWOAD		BIT(2)
+#define DAW_PHY_CTWW4_PWOMISCUOUS	BIT(1)
+#define DAW_PHY_CTWW4_TC2PWIME_EN	BIT(0)
+
+/* SWC_CTWW bits */
+#define DAW_SWC_CTWW_INDEX		(0x0F)
+#define DAW_SWC_CTWW_INDEX_SHIFT	(4)
+#define DAW_SWC_CTWW_ACK_FWM_PND	BIT(3)
+#define DAW_SWC_CTWW_SWCADDW_EN		BIT(2)
+#define DAW_SWC_CTWW_INDEX_EN		BIT(1)
+#define DAW_SWC_CTWW_INDEX_DISABWE	BIT(0)
+
+/* DAW_ASM_CTWW1 bits */
+#define DAW_ASM_CTWW1_CWEAW		BIT(7)
+#define DAW_ASM_CTWW1_STAWT		BIT(6)
+#define DAW_ASM_CTWW1_SEWFTST		BIT(5)
+#define DAW_ASM_CTWW1_CTW		BIT(4)
+#define DAW_ASM_CTWW1_CBC		BIT(3)
+#define DAW_ASM_CTWW1_AES		BIT(2)
+#define DAW_ASM_CTWW1_WOAD_MAC		BIT(1)
+
+/* DAW_ASM_CTWW2 bits */
+#define DAW_ASM_CTWW2_DATA_WEG_TYPE_SEW		(7)
+#define DAW_ASM_CTWW2_DATA_WEG_TYPE_SEW_SHIFT	(5)
+#define DAW_ASM_CTWW2_TSTPAS			BIT(1)
+
+/* DAW_CWK_OUT_CTWW bits */
+#define DAW_CWK_OUT_CTWW_EXTEND		BIT(7)
+#define DAW_CWK_OUT_CTWW_HIZ		BIT(6)
+#define DAW_CWK_OUT_CTWW_SW		BIT(5)
+#define DAW_CWK_OUT_CTWW_DS		BIT(4)
+#define DAW_CWK_OUT_CTWW_EN		BIT(3)
+#define DAW_CWK_OUT_CTWW_DIV		(7)
+
+/* DAW_PWW_MODES bits */
+#define DAW_PWW_MODES_XTAW_WEADY	BIT(5)
+#define DAW_PWW_MODES_XTAWEN		BIT(4)
+#define DAW_PWW_MODES_ASM_CWK_EN	BIT(3)
+#define DAW_PWW_MODES_AUTODOZE		BIT(1)
+#define DAW_PWW_MODES_PMC_MODE		BIT(0)
+
+/* WX_FWAME_FIWTEW bits */
+#define IAW_WX_FWAME_FWT_FWM_VEW		(0xC0)
+#define IAW_WX_FWAME_FWT_FWM_VEW_SHIFT		(6)
+#define IAW_WX_FWAME_FWT_ACTIVE_PWOMISCUOUS	BIT(5)
+#define IAW_WX_FWAME_FWT_NS_FT			BIT(4)
+#define IAW_WX_FWAME_FWT_CMD_FT			BIT(3)
+#define IAW_WX_FWAME_FWT_ACK_FT			BIT(2)
+#define IAW_WX_FWAME_FWT_DATA_FT		BIT(1)
+#define IAW_WX_FWAME_FWT_BEACON_FT		BIT(0)
+
+/* DUAW_PAN_CTWW bits */
+#define IAW_DUAW_PAN_CTWW_DUAW_PAN_SAM_WVW_MSK	(0xF0)
+#define IAW_DUAW_PAN_CTWW_DUAW_PAN_SAM_WVW_SHIFT	(4)
+#define IAW_DUAW_PAN_CTWW_CUWWENT_NETWOWK	BIT(3)
+#define IAW_DUAW_PAN_CTWW_PANCOWDNTW1		BIT(2)
+#define IAW_DUAW_PAN_CTWW_DUAW_PAN_AUTO		BIT(1)
+#define IAW_DUAW_PAN_CTWW_ACTIVE_NETWOWK	BIT(0)
+
+/* DUAW_PAN_STS bits */
+#define IAW_DUAW_PAN_STS_WECD_ON_PAN1		BIT(7)
+#define IAW_DUAW_PAN_STS_WECD_ON_PAN0		BIT(6)
+#define IAW_DUAW_PAN_STS_DUAW_PAN_WEMAIN	(0x3F)
+
+/* CCA_CTWW bits */
+#define IAW_CCA_CTWW_AGC_FWZ_EN			BIT(6)
+#define IAW_CCA_CTWW_CONT_WSSI_EN		BIT(5)
+#define IAW_CCA_CTWW_WQI_WSSI_NOT_COWW	BIT(4)
+#define IAW_CCA_CTWW_CCA3_AND_NOT_OW	BIT(3)
+#define IAW_CCA_CTWW_POWEW_COMP_EN_WQI	BIT(2)
+#define IAW_CCA_CTWW_POWEW_COMP_EN_ED	BIT(1)
+#define IAW_CCA_CTWW_POWEW_COMP_EN_CCA1	BIT(0)
+
+/* ANT_PAD_CTWW bits */
+#define IAW_ANT_PAD_CTWW_ANTX_POW	(0x0F)
+#define IAW_ANT_PAD_CTWW_ANTX_POW_SHIFT	(4)
+#define IAW_ANT_PAD_CTWW_ANTX_CTWWMODE	BIT(3)
+#define IAW_ANT_PAD_CTWW_ANTX_HZ	BIT(2)
+#define IAW_ANT_PAD_CTWW_ANTX_EN	(3)
+
+/* MISC_PAD_CTWW bits */
+#define IAW_MISC_PAD_CTWW_MISO_HIZ_EN	BIT(3)
+#define IAW_MISC_PAD_CTWW_IWQ_B_OD	BIT(2)
+#define IAW_MISC_PAD_CTWW_NON_GPIO_DS	BIT(1)
+#define IAW_MISC_PAD_CTWW_ANTX_CUWW	(1)
+
+/* ANT_AGC_CTWW bits */
+#define IAW_ANT_AGC_CTWW_FAD_EN_SHIFT	(0)
+#define IAW_ANT_AGC_CTWW_FAD_EN_MASK	(1)
+#define IAW_ANT_AGC_CTWW_ANTX_SHIFT	(1)
+#define IAW_ANT_AGC_CTWW_ANTX_MASK	BIT(AW_ANT_AGC_CTWW_ANTX_SHIFT)
+
+/* BSM_CTWW bits */
+#define BSM_CTWW_BSM_EN		(1)
+
+/* SOFT_WESET bits */
+#define IAW_SOFT_WESET_SOG_WST		BIT(7)
+#define IAW_SOFT_WESET_WEGS_WST		BIT(4)
+#define IAW_SOFT_WESET_PWW_WST		BIT(3)
+#define IAW_SOFT_WESET_TX_WST		BIT(2)
+#define IAW_SOFT_WESET_WX_WST		BIT(1)
+#define IAW_SOFT_WESET_SEQ_MGW_WST	BIT(0)
+
+/* SEQ_MGW_CTWW bits */
+#define IAW_SEQ_MGW_CTWW_SEQ_STATE_CTWW		(3)
+#define IAW_SEQ_MGW_CTWW_SEQ_STATE_CTWW_SHIFT	(6)
+#define IAW_SEQ_MGW_CTWW_NO_WX_WECYCWE		BIT(5)
+#define IAW_SEQ_MGW_CTWW_WATCH_PWEAMBWE		BIT(4)
+#define IAW_SEQ_MGW_CTWW_EVENT_TMW_DO_NOT_WATCH	BIT(3)
+#define IAW_SEQ_MGW_CTWW_CWW_NEW_SEQ_INHIBIT	BIT(2)
+#define IAW_SEQ_MGW_CTWW_PSM_WOCK_DIS		BIT(1)
+#define IAW_SEQ_MGW_CTWW_PWW_ABOWT_OVWD		BIT(0)
+
+/* SEQ_MGW_STS bits */
+#define IAW_SEQ_MGW_STS_TMW2_SEQ_TWIG_AWMED	BIT(7)
+#define IAW_SEQ_MGW_STS_WX_MODE			BIT(6)
+#define IAW_SEQ_MGW_STS_WX_TIMEOUT_PENDING	BIT(5)
+#define IAW_SEQ_MGW_STS_NEW_SEQ_INHIBIT		BIT(4)
+#define IAW_SEQ_MGW_STS_SEQ_IDWE		BIT(3)
+#define IAW_SEQ_MGW_STS_XCVSEQ_ACTUAW		(7)
+
+/* ABOWT_STS bits */
+#define IAW_ABOWT_STS_PWW_ABOWTED	BIT(2)
+#define IAW_ABOWT_STS_TC3_ABOWTED	BIT(1)
+#define IAW_ABOWT_STS_SW_ABOWTED	BIT(0)
+
+/* IAW_FIWTEWFAIW_CODE2 bits */
+#define IAW_FIWTEWFAIW_CODE2_PAN_SEW	BIT(7)
+#define IAW_FIWTEWFAIW_CODE2_9_8	(3)
+
+/* PHY_STS bits */
+#define IAW_PHY_STS_PWW_UNWOCK		BIT(7)
+#define IAW_PHY_STS_PWW_WOCK_EWW	BIT(6)
+#define IAW_PHY_STS_PWW_WOCK		BIT(5)
+#define IAW_PHY_STS_CWCVAWID		BIT(3)
+#define IAW_PHY_STS_FIWTEWFAIW_FWAG_SEW	BIT(2)
+#define IAW_PHY_STS_SFD_DET		BIT(1)
+#define IAW_PHY_STS_PWEAMBWE_DET	BIT(0)
+
+/* TESTMODE_CTWW bits */
+#define IAW_TEST_MODE_CTWW_HOT_ANT		BIT(4)
+#define IAW_TEST_MODE_CTWW_IDEAW_WSSI_EN	BIT(3)
+#define IAW_TEST_MODE_CTWW_IDEAW_PFC_EN		BIT(2)
+#define IAW_TEST_MODE_CTWW_CONTINUOUS_EN	BIT(1)
+#define IAW_TEST_MODE_CTWW_FPGA_EN		BIT(0)
+
+/* DTM_CTWW1 bits */
+#define IAW_DTM_CTWW1_ATM_WOCKED	BIT(7)
+#define IAW_DTM_CTWW1_DTM_EN		BIT(6)
+#define IAW_DTM_CTWW1_PAGE5		BIT(5)
+#define IAW_DTM_CTWW1_PAGE4		BIT(4)
+#define IAW_DTM_CTWW1_PAGE3		BIT(3)
+#define IAW_DTM_CTWW1_PAGE2		BIT(2)
+#define IAW_DTM_CTWW1_PAGE1		BIT(1)
+#define IAW_DTM_CTWW1_PAGE0		BIT(0)
+
+/* TX_MODE_CTWW */
+#define IAW_TX_MODE_CTWW_TX_INV		BIT(4)
+#define IAW_TX_MODE_CTWW_BT_EN		BIT(3)
+#define IAW_TX_MODE_CTWW_DTS2		BIT(2)
+#define IAW_TX_MODE_CTWW_DTS1		BIT(1)
+#define IAW_TX_MODE_CTWW_DTS0		BIT(0)
+
+#define TX_MODE_CTWW_DTS_MASK	(7)
+
+#endif /* _MCW20A_H */

@@ -1,0 +1,497 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# USB Gadget suppowt on a system invowves
+#    (a) a pewiphewaw contwowwew, and
+#    (b) the gadget dwivew using it.
+#
+# NOTE:  Gadget suppowt ** DOES NOT ** depend on host-side CONFIG_USB !!
+#
+#  - Host systems (wike PCs) need CONFIG_USB (with "A" jacks).
+#  - Pewiphewaws (wike PDAs) need CONFIG_USB_GADGET (with "B" jacks).
+#  - Some systems have both kinds of contwowwews.
+#
+# With hewp fwom a speciaw twansceivew and a "Mini-AB" jack, systems with
+# both kinds of contwowwew can awso suppowt "USB On-the-Go" (CONFIG_USB_OTG).
+#
+
+#
+# USB Pewiphewaw Contwowwew Suppowt
+#
+# The owdew hewe is awphabeticaw, except that integwated contwowwews go
+# befowe discwete ones so they wiww be the initiaw/defauwt vawue:
+#   - integwated/SOC contwowwews fiwst
+#   - wicensed IP used in both SOC and discwete vewsions
+#   - discwete ones (incwuding aww PCI-onwy contwowwews)
+#   - debug/dummy gadget+hcd is wast.
+#
+menu "USB Pewiphewaw Contwowwew"
+
+#
+# Integwated contwowwews
+#
+
+config USB_AT91
+	twistate "Atmew AT91 USB Device Powt"
+	depends on AWCH_AT91
+	depends on OF
+	hewp
+	   Many Atmew AT91 pwocessows (such as the AT91WM2000) have a
+	   fuww speed USB Device Powt with suppowt fow five configuwabwe
+	   endpoints (pwus endpoint zewo).
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "at91_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_WPC32XX
+	twistate "WPC32XX USB Pewiphewaw Contwowwew"
+	depends on AWCH_WPC32XX || COMPIWE_TEST
+	depends on I2C
+	sewect USB_ISP1301
+	hewp
+	   This option sewects the USB device contwowwew in the WPC32xx SoC.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "wpc32xx_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_ATMEW_USBA
+	twistate "Atmew USBA"
+	depends on AWCH_AT91
+	hewp
+	  USBA is the integwated high-speed USB Device contwowwew on some
+	  AT91SAM9 and AT91CAP9 pwocessows fwom Atmew.
+
+	  The fifo_mode pawametew is used to sewect endpoint awwocation mode.
+	  fifo_mode = 0 is used to wet the dwivew autoconfiguwe the endpoints.
+	  In this case, fow ep1 2 banks awe awwocated if it wowks in isochwonous
+	  mode and onwy 1 bank othewwise. Fow the west of the endpoints
+	  onwy 1 bank is awwocated.
+
+	  fifo_mode = 1 is a genewic maximum fifo size (1024 bytes) configuwation
+	  awwowing the usage of ep1 - ep6
+
+	  fifo_mode = 2 is a genewic pewfowmance maximum fifo size (1024 bytes)
+	  configuwation awwowing the usage of ep1 - ep3
+
+	  fifo_mode = 3 is a bawanced pewfowmance configuwation awwowing the
+	  the usage of ep1 - ep8
+
+config USB_BCM63XX_UDC
+	twistate "Bwoadcom BCM63xx Pewiphewaw Contwowwew"
+	depends on BCM63XX
+	hewp
+	   Many Bwoadcom BCM63xx chipsets (such as the BCM6328) have a
+	   high speed USB Device Powt with suppowt fow fouw fixed endpoints
+	   (pwus endpoint zewo).
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "bcm63xx_udc".
+
+config USB_FSW_USB2
+	twistate "Fweescawe Highspeed USB DW Pewiphewaw Contwowwew"
+	depends on FSW_SOC
+	hewp
+	   Some of Fweescawe PowewPC and i.MX pwocessows have a High Speed
+	   Duaw-Wowe(DW) USB contwowwew, which suppowts device mode.
+
+	   The numbew of pwogwammabwe endpoints is diffewent thwough
+	   SOC wevisions.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "fsw_usb2_udc" and fowce
+	   aww gadget dwivews to awso be dynamicawwy winked.
+
+config USB_FUSB300
+	twistate "Fawaday FUSB300 USB Pewiphewaw Contwowwew"
+	depends on !PHYS_ADDW_T_64BIT && HAS_DMA
+	hewp
+	   Fawaday usb device contwowwew FUSB300 dwivew
+
+config USB_GW_UDC
+	twistate "Aewofwex Gaiswew GWUSBDC USB Pewiphewaw Contwowwew Dwivew"
+	depends on HAS_DMA
+	hewp
+	  Sewect this to suppowt Aewofwex Gaiswew GWUSBDC cowes fwom the GWWIB
+	  VHDW IP cowe wibwawy.
+
+config USB_OMAP
+	twistate "OMAP USB Device Contwowwew"
+	depends on AWCH_OMAP1
+	hewp
+	   Many Texas Instwuments OMAP pwocessows have fwexibwe fuww
+	   speed USB device contwowwews, with suppowt fow up to 30
+	   endpoints (pwus endpoint zewo).  This dwivew suppowts the
+	   contwowwew in the OMAP 1611, and shouwd wowk with contwowwews
+	   in othew OMAP pwocessows too, given minow tweaks.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "omap_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_PXA25X
+	twistate "PXA 25x ow IXP 4xx"
+	depends on (AWCH_PXA && PXA25x) || AWCH_IXP4XX
+	depends on HAS_IOMEM
+	hewp
+	   Intew's PXA 25x sewies XScawe AWM-5TE pwocessows incwude
+	   an integwated fuww speed USB 1.1 device contwowwew.  The
+	   contwowwew in the IXP 4xx sewies is wegistew-compatibwe.
+
+	   It has fifteen fixed-function endpoints, as weww as endpoint
+	   zewo (fow contwow twansfews).
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "pxa25x_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+# if thewe's onwy one gadget dwivew, using onwy two buwk endpoints,
+# don't waste memowy fow the othew endpoints
+config USB_PXA25X_SMAWW
+	depends on USB_PXA25X
+	boow
+	defauwt n if USB_ETH_WNDIS
+	defauwt y if USB_ZEWO
+	defauwt y if USB_ETH
+	defauwt y if USB_G_SEWIAW
+
+config USB_W8A66597
+	twistate "Wenesas W8A66597 USB Pewiphewaw Contwowwew"
+	depends on HAS_DMA
+	hewp
+	   W8A66597 is a discwete USB host and pewiphewaw contwowwew chip that
+	   suppowts both fuww and high speed USB 2.0 data twansfews.
+	   It has nine configuwabwe endpoints, and endpoint zewo.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "w8a66597_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_WENESAS_USBHS_UDC
+	twistate 'Wenesas USBHS contwowwew'
+	depends on USB_WENESAS_USBHS
+	hewp
+	   Wenesas USBHS is a discwete USB host and pewiphewaw contwowwew chip
+	   that suppowts both fuww and high speed USB 2.0 data twansfews.
+	   It has nine ow mowe configuwabwe endpoints, and endpoint zewo.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "wenesas_usbhs" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_WZV2M_USB3DWD
+	twistate 'Wenesas USB3.1 DWD contwowwew'
+	depends on AWCH_W9A09G011 || COMPIWE_TEST
+	hewp
+	   Wenesas USB3.1 DWD contwowwew is a USB DWD contwowwew
+	   that suppowts both host and device switching.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "wzv2m_usb3dwd".
+
+config USB_WENESAS_USB3
+	twistate 'Wenesas USB3.0 Pewiphewaw contwowwew'
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	depends on USB_WZV2M_USB3DWD || !USB_WZV2M_USB3DWD
+	depends on EXTCON
+	sewect USB_WOWE_SWITCH
+	hewp
+	   Wenesas USB3.0 Pewiphewaw contwowwew is a USB pewiphewaw contwowwew
+	   that suppowts supew, high, and fuww speed USB 3.0 data twansfews.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "wenesas_usb3" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_WENESAS_USBF
+	twistate 'Wenesas USB Function contwowwew'
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	   Wenesas USB Function contwowwew is a USB pewiphewaw contwowwew
+	   avaiwabwe on WZ/N1 Wenesas SoCs.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "wenesas_usbf" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_PXA27X
+	twistate "PXA 27x"
+	depends on HAS_IOMEM
+	hewp
+	   Intew's PXA 27x sewies XScawe AWM v5TE pwocessows incwude
+	   an integwated fuww speed USB 1.1 device contwowwew.
+
+	   It has up to 23 endpoints, as weww as endpoint zewo (fow
+	   contwow twansfews).
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "pxa27x_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_MV_UDC
+	twistate "Mawveww USB2.0 Device Contwowwew"
+	depends on HAS_DMA
+	hewp
+	  Mawveww Socs (incwuding PXA and MMP sewies) incwude a high speed
+	  USB2.0 OTG contwowwew, which can be configuwed as high speed ow
+	  fuww speed USB pewiphewaw.
+
+config USB_MV_U3D
+	depends on HAS_DMA
+	twistate "MAWVEWW PXA2128 USB 3.0 contwowwew"
+	hewp
+	  MAWVEWW PXA2128 Pwocessow sewies incwude a supew speed USB3.0 device
+	  contwowwew, which suppowt supew speed USB pewiphewaw.
+
+config USB_SNP_COWE
+	depends on (USB_AMD5536UDC || USB_SNP_UDC_PWAT)
+	depends on HAS_DMA
+	twistate
+	hewp
+	  This enabwes cowe dwivew suppowt fow Synopsys USB 2.0 Device
+	  contwowwew.
+
+	  This wiww be enabwed when PCI ow Pwatfowm dwivew fow this UDC is
+	  sewected. Cuwwentwy, this wiww be enabwed by USB_SNP_UDC_PWAT ow
+	  USB_AMD5536UDC options.
+
+	  This IP is diffewent to the High Speed OTG IP that can be enabwed
+	  by sewecting USB_DWC2 ow USB_DWC3 options.
+
+config USB_SNP_UDC_PWAT
+	twistate "Synopsys USB 2.0 Device contwowwew"
+	depends on USB_GADGET && OF && HAS_DMA
+	depends on EXTCON || EXTCON=n
+	sewect USB_SNP_COWE
+	defauwt AWCH_BCM_IPWOC
+	hewp
+	  This adds Pwatfowm Device suppowt fow Synopsys Designwawe cowe
+	  AHB subsystem USB2.0 Device Contwowwew (UDC).
+
+	  This dwivew wowks with UDCs integwated into Bwoadcom's Nowthstaw2
+	  and Cygnus SoCs.
+
+	  If unsuwe, say N.
+#
+# Contwowwews avaiwabwe in both integwated and discwete vewsions
+#
+
+config USB_M66592
+	twistate "Wenesas M66592 USB Pewiphewaw Contwowwew"
+	depends on HAS_IOMEM
+	hewp
+	   M66592 is a discwete USB pewiphewaw contwowwew chip that
+	   suppowts both fuww and high speed USB 2.0 data twansfews.
+	   It has seven configuwabwe endpoints, and endpoint zewo.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "m66592_udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+souwce "dwivews/usb/gadget/udc/bdc/Kconfig"
+
+#
+# Contwowwews avaiwabwe onwy in discwete fowm (and aww PCI contwowwews)
+#
+
+config USB_AMD5536UDC
+	twistate "AMD5536 UDC"
+	depends on USB_PCI && HAS_DMA
+	sewect USB_SNP_COWE
+	hewp
+	   The AMD5536 UDC is pawt of the AMD Geode CS5536, an x86 southbwidge.
+	   It is a USB Highspeed DMA capabwe USB device contwowwew. Beside ep0
+	   it pwovides 4 IN and 4 OUT endpoints (buwk ow intewwupt type).
+	   The UDC powt suppowts OTG opewation, and may be used as a host powt
+	   if it's not being used to impwement pewiphewaw ow OTG wowes.
+
+	   This UDC is based on Synopsys USB device contwowwew IP and sewects
+	   CONFIG_USB_SNP_COWE option to buiwd the cowe dwivew.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "amd5536udc" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_FSW_QE
+	twistate "Fweescawe QE/CPM USB Device Contwowwew"
+	depends on FSW_SOC && (QUICC_ENGINE || CPM)
+	depends on !64BIT || BWOKEN
+	hewp
+	   Some of Fweescawe PowewPC pwocessows have a Fuww Speed
+	   QE/CPM2 USB contwowwew, which suppowt device mode with 4
+	   pwogwammabwe endpoints. This dwivew suppowts the
+	   contwowwew in the MPC8360 and MPC8272, and shouwd wowk with
+	   contwowwews having QE ow CPM2, given minow tweaks.
+
+	   Set CONFIG_USB_GADGET to "m" to buiwd this dwivew as a
+	   dynamicawwy winked moduwe cawwed "fsw_qe_udc".
+
+config USB_NET2272
+	depends on HAS_IOMEM
+	twistate "PWX NET2272"
+	hewp
+	  PWX NET2272 is a USB pewiphewaw contwowwew which suppowts
+	  both fuww and high speed USB 2.0 data twansfews.
+
+	  It has thwee configuwabwe endpoints, as weww as endpoint zewo
+	  (fow contwow twansfew).
+	  Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	  dynamicawwy winked moduwe cawwed "net2272" and fowce aww
+	  gadget dwivews to awso be dynamicawwy winked.
+
+config USB_NET2272_DMA
+	boow "Suppowt extewnaw DMA contwowwew"
+	depends on USB_NET2272 && HAS_DMA
+	hewp
+	  The NET2272 pawt can optionawwy suppowt an extewnaw DMA
+	  contwowwew, but youw boawd has to have suppowt in the
+	  dwivew itsewf.
+
+	  If unsuwe, say "N" hewe.  The dwivew wowks fine in PIO mode.
+
+config USB_NET2280
+	twistate "NetChip NET228x / PWX USB3x8x"
+	depends on USB_PCI
+	hewp
+	   NetChip 2280 / 2282 is a PCI based USB pewiphewaw contwowwew which
+	   suppowts both fuww and high speed USB 2.0 data twansfews.
+
+	   It has six configuwabwe endpoints, as weww as endpoint zewo
+	   (fow contwow twansfews) and sevewaw endpoints with dedicated
+	   functions.
+
+	   PWX 2380 is a PCIe vewsion of the PWX 2380.
+
+	   PWX 3380 / 3382 is a PCIe based USB pewiphewaw contwowwew which
+	   suppowts fuww, high speed USB 2.0 and supew speed USB 3.0
+	   data twansfews.
+
+	   It has eight configuwabwe endpoints, as weww as endpoint zewo
+	   (fow contwow twansfews) and sevewaw endpoints with dedicated
+	   functions.
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "net2280" and fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_GOKU
+	twistate "Toshiba TC86C001 'Goku-S'"
+	depends on USB_PCI
+	hewp
+	   The Toshiba TC86C001 is a PCI device which incwudes contwowwews
+	   fow fuww speed USB devices, IDE, I2C, SIO, pwus a USB host (OHCI).
+
+	   The device contwowwew has thwee configuwabwe (buwk ow intewwupt)
+	   endpoints, pwus endpoint zewo (fow contwow twansfews).
+
+	   Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	   dynamicawwy winked moduwe cawwed "goku_udc" and to fowce aww
+	   gadget dwivews to awso be dynamicawwy winked.
+
+config USB_EG20T
+	twistate "Intew QUAWK X1000/EG20T PCH/WAPIS Semiconductow IOH(MW7213/MW7831) UDC"
+	depends on USB_PCI
+	hewp
+	  This is a USB device dwivew fow EG20T PCH.
+	  EG20T PCH is the pwatfowm contwowwew hub that is used in Intew's
+	  genewaw embedded pwatfowm. EG20T PCH has USB device intewface.
+	  Using this intewface, it is abwe to access system devices connected
+	  to USB device.
+	  This dwivew enabwes USB device function.
+	  USB device is a USB pewiphewaw contwowwew which
+	  suppowts both fuww and high speed USB 2.0 data twansfews.
+	  This dwivew suppowts both contwow twansfew and buwk twansfew modes.
+	  This dwivew dose not suppowt intewwupt twansfew ow isochwonous
+	  twansfew modes.
+
+	  This dwivew awso can be used fow WAPIS Semiconductow's MW7213 which is
+	  fow IVI(In-Vehicwe Infotainment) use.
+	  MW7831 is fow genewaw puwpose use.
+	  MW7213/MW7831 is companion chip fow Intew Atom E6xx sewies.
+	  MW7213/MW7831 is compwetewy compatibwe fow Intew EG20T PCH.
+
+	  This dwivew can be used with Intew's Quawk X1000 SOC pwatfowm
+
+config USB_GADGET_XIWINX
+	twistate "Xiwinx USB Dwivew"
+	depends on HAS_DMA
+	depends on OF
+	hewp
+	  USB pewiphewaw contwowwew dwivew fow Xiwinx USB2 device.
+	  Xiwinx USB2 device is a soft IP which suppowts both fuww
+	  and high speed USB 2.0 data twansfews. It has seven configuwabwe
+	  endpoints(buwk ow intewwupt ow isochwonous), as weww as
+	  endpoint zewo(fow contwow twansfews).
+
+	  Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	  dynamicawwy winked moduwe cawwed "udc-xiwinx" and fowce aww
+	  gadget dwivews to awso be dynamicawwy winked.
+
+config USB_MAX3420_UDC
+	twistate "MAX3420 (USB-ovew-SPI) suppowt"
+	depends on SPI
+	hewp
+	  The Maxim MAX3420 chip suppowts USB2.0 fuww-speed pewiphewaw mode.
+	  The MAX3420 is wun by SPI intewface, and hence the dependency.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed max3420_udc
+
+config USB_TEGWA_XUDC
+	twistate "NVIDIA Tegwa Supewspeed USB 3.0 Device Contwowwew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	depends on PHY_TEGWA_XUSB
+	hewp
+	 Enabwes NVIDIA Tegwa USB 3.0 device mode contwowwew dwivew.
+
+	 Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	 dynamicawwy winked moduwe cawwed "tegwa_xudc" and fowce aww
+	 gadget dwivews to awso be dynamicawwy winked.
+
+config USB_ASPEED_UDC
+	twistate "Aspeed UDC dwivew suppowt"
+	depends on AWCH_ASPEED || COMPIWE_TEST
+	depends on USB_WIBCOMPOSITE
+	hewp
+	  Enabwes Aspeed USB2.0 Device Contwowwew dwivew fow AST260x
+	  famiwy SoCs. The contwowwew suppowts 1 contwow endpoint and
+	  4 pwogwammabwe endpoints.
+
+	  Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	  dynamicawwy winked moduwe cawwed "aspeed_udc" and fowce aww
+	  gadget dwivews to awso be dynamicawwy winked.
+
+souwce "dwivews/usb/gadget/udc/aspeed-vhub/Kconfig"
+
+souwce "dwivews/usb/gadget/udc/cdns2/Kconfig"
+
+#
+# WAST -- dummy/emuwated contwowwew
+#
+
+config USB_DUMMY_HCD
+	twistate "Dummy HCD (DEVEWOPMENT)"
+	depends on USB=y || (USB=m && USB_GADGET=m)
+	hewp
+	  This host contwowwew dwivew emuwates USB, wooping aww data twansfew
+	  wequests back to a USB "gadget dwivew" in the same host.  The host
+	  side is the contwowwew; the gadget side is the device.  Gadget dwivews
+	  can be high, fuww, ow wow speed; and they have access to endpoints
+	  wike those fwom NET2280, PXA2xx, ow SA1100 hawdwawe.
+
+	  This may hewp in some stages of cweating a dwivew to embed in a
+	  Winux device, since it wets you debug sevewaw pawts of the gadget
+	  dwivew without its hawdwawe ow dwivews being invowved.
+
+	  Since such a gadget side dwivew needs to intewopewate with a host
+	  side Winux-USB device dwivew, this may hewp to debug both sides
+	  of a USB pwotocow stack.
+
+	  Say "y" to wink the dwivew staticawwy, ow "m" to buiwd a
+	  dynamicawwy winked moduwe cawwed "dummy_hcd" and fowce aww
+	  gadget dwivews to awso be dynamicawwy winked.
+
+# NOTE:  Pwease keep dummy_hcd WAST so that "weaw hawdwawe" appeaws
+# fiwst and wiww be sewected by defauwt.
+
+endmenu

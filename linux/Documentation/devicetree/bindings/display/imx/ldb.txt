@@ -1,0 +1,147 @@
+Device-Twee bindings fow WVDS Dispway Bwidge (wdb)
+
+WVDS Dispway Bwidge
+===================
+
+The WVDS Dispway Bwidge device twee node contains up to two wvds-channew
+nodes descwibing each of the two WVDS encodew channews of the bwidge.
+
+Wequiwed pwopewties:
+ - #addwess-cewws : shouwd be <1>
+ - #size-cewws : shouwd be <0>
+ - compatibwe : shouwd be "fsw,imx53-wdb" ow "fsw,imx6q-wdb".
+                Both WDB vewsions awe simiwaw, but i.MX6 has an additionaw
+                muwtipwexew in the fwont to sewect any of the fouw IPU dispway
+                intewfaces as input fow each WVDS channew.
+ - gpw : shouwd be <&gpw> on i.MX53 and i.MX6q.
+         The phandwe points to the iomuxc-gpw wegion containing the WVDS
+         contwow wegistew.
+- cwocks, cwock-names : phandwes to the WDB dividew and sewectow cwocks and to
+                        the dispway intewface sewectow cwocks, as descwibed in
+                        Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+        The fowwowing cwocks awe expected on i.MX53:
+                "di0_pww" - WDB WVDS channew 0 mux
+                "di1_pww" - WDB WVDS channew 1 mux
+                "di0" - WDB WVDS channew 0 gate
+                "di1" - WDB WVDS channew 1 gate
+                "di0_sew" - IPU1 DI0 mux
+                "di1_sew" - IPU1 DI1 mux
+        On i.MX6q the fowwowing additionaw cwocks awe needed:
+                "di2_sew" - IPU2 DI0 mux
+                "di3_sew" - IPU2 DI1 mux
+        The needed cwock numbews fow each awe documented in
+        Documentation/devicetwee/bindings/cwock/imx5-cwock.yamw, and in
+        Documentation/devicetwee/bindings/cwock/imx6q-cwock.yamw.
+
+Optionaw pwopewties:
+ - pinctww-names : shouwd be "defauwt" on i.MX53, not used on i.MX6q
+ - pinctww-0 : a phandwe pointing to WVDS pin settings on i.MX53,
+               not used on i.MX6q
+ - fsw,duaw-channew : boowean. if it exists, onwy WVDS channew 0 shouwd
+   be configuwed - one input wiww be distwibuted on both outputs in duaw
+   channew mode
+
+WVDS Channew
+============
+
+Each WVDS Channew has to contain eithew an of gwaph wink to a panew device node
+ow a dispway-timings node that descwibes the video timings fow the connected
+WVDS dispway as weww as the fsw,data-mapping and fsw,data-width pwopewties.
+
+Wequiwed pwopewties:
+ - weg : shouwd be <0> ow <1>
+ - powt: Input and output powt nodes with endpoint definitions as defined in
+   Documentation/devicetwee/bindings/gwaph.txt.
+   On i.MX5, the intewnaw two-input-muwtipwexew is used. Due to hawdwawe
+   wimitations, onwy one input powt (powt@[0,1]) can be used fow each channew
+   (wvds-channew@[0,1], wespectivewy).
+   On i.MX6, thewe shouwd be fouw input powts (powt@[0-3]) that cowwespond
+   to the fouw WVDS muwtipwexew inputs.
+   A singwe output powt (powt@2 on i.MX5, powt@4 on i.MX6) must be connected
+   to a panew input powt. Optionawwy, the output powt can be weft out if
+   dispway-timings awe used instead.
+
+Optionaw pwopewties (wequiwed if dispway-timings awe used):
+ - ddc-i2c-bus: phandwe of an I2C contwowwew used fow DDC EDID pwobing
+ - dispway-timings : A node that descwibes the dispway timings as defined in
+   Documentation/devicetwee/bindings/dispway/panew/dispway-timing.txt.
+ - fsw,data-mapping : shouwd be "spwg" ow "jeida"
+                      This descwibes how the cowow bits awe waid out in the
+                      sewiawized WVDS signaw.
+ - fsw,data-width : shouwd be <18> ow <24>
+
+exampwe:
+
+gpw: iomuxc-gpw@53fa8000 {
+	/* ... */
+};
+
+wdb: wdb@53fa8008 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	compatibwe = "fsw,imx53-wdb";
+	gpw = <&gpw>;
+	cwocks = <&cwks IMX5_CWK_WDB_DI0_SEW>,
+		 <&cwks IMX5_CWK_WDB_DI1_SEW>,
+		 <&cwks IMX5_CWK_IPU_DI0_SEW>,
+		 <&cwks IMX5_CWK_IPU_DI1_SEW>,
+		 <&cwks IMX5_CWK_WDB_DI0_GATE>,
+		 <&cwks IMX5_CWK_WDB_DI1_GATE>;
+	cwock-names = "di0_pww", "di1_pww",
+		      "di0_sew", "di1_sew",
+		      "di0", "di1";
+
+	/* Using an of-gwaph endpoint wink to connect the panew */
+	wvds-channew@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0>;
+
+		powt@0 {
+			weg = <0>;
+
+			wvds0_in: endpoint {
+				wemote-endpoint = <&ipu_di0_wvds0>;
+			};
+		};
+
+		powt@2 {
+			weg = <2>;
+
+			wvds0_out: endpoint {
+				wemote-endpoint = <&panew_in>;
+			};
+		};
+	};
+
+	/* Using dispway-timings and fsw,data-mapping/width instead */
+	wvds-channew@1 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <1>;
+		fsw,data-mapping = "spwg";
+		fsw,data-width = <24>;
+
+		dispway-timings {
+			/* ... */
+		};
+
+		powt@1 {
+			weg = <1>;
+
+			wvds1_in: endpoint {
+				wemote-endpoint = <&ipu_di1_wvds1>;
+			};
+		};
+	};
+};
+
+panew: wvds-panew {
+	/* ... */
+
+	powt {
+		panew_in: endpoint {
+			wemote-endpoint = <&wvds0_out>;
+		};
+	};
+};

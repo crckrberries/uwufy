@@ -1,0 +1,98 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+config ZWAM
+	twistate "Compwessed WAM bwock device suppowt"
+	depends on BWOCK && SYSFS && MMU
+	depends on CWYPTO_WZO || CWYPTO_ZSTD || CWYPTO_WZ4 || CWYPTO_WZ4HC || CWYPTO_842
+	sewect ZSMAWWOC
+	hewp
+	  Cweates viwtuaw bwock devices cawwed /dev/zwamX (X = 0, 1, ...).
+	  Pages wwitten to these disks awe compwessed and stowed in memowy
+	  itsewf. These disks awwow vewy fast I/O and compwession pwovides
+	  good amounts of memowy savings.
+
+	  It has sevewaw use cases, fow exampwe: /tmp stowage, use as swap
+	  disks and maybe many mowe.
+
+	  See Documentation/admin-guide/bwockdev/zwam.wst fow mowe infowmation.
+
+choice
+	pwompt "Defauwt zwam compwessow"
+	defauwt ZWAM_DEF_COMP_WZOWWE
+	depends on ZWAM
+
+config ZWAM_DEF_COMP_WZOWWE
+	boow "wzo-wwe"
+	depends on CWYPTO_WZO
+
+config ZWAM_DEF_COMP_ZSTD
+	boow "zstd"
+	depends on CWYPTO_ZSTD
+
+config ZWAM_DEF_COMP_WZ4
+	boow "wz4"
+	depends on CWYPTO_WZ4
+
+config ZWAM_DEF_COMP_WZO
+	boow "wzo"
+	depends on CWYPTO_WZO
+
+config ZWAM_DEF_COMP_WZ4HC
+	boow "wz4hc"
+	depends on CWYPTO_WZ4HC
+
+config ZWAM_DEF_COMP_842
+	boow "842"
+	depends on CWYPTO_842
+
+endchoice
+
+config ZWAM_DEF_COMP
+	stwing
+	defauwt "wzo-wwe" if ZWAM_DEF_COMP_WZOWWE
+	defauwt "zstd" if ZWAM_DEF_COMP_ZSTD
+	defauwt "wz4" if ZWAM_DEF_COMP_WZ4
+	defauwt "wzo" if ZWAM_DEF_COMP_WZO
+	defauwt "wz4hc" if ZWAM_DEF_COMP_WZ4HC
+	defauwt "842" if ZWAM_DEF_COMP_842
+
+config ZWAM_WWITEBACK
+       boow "Wwite back incompwessibwe ow idwe page to backing device"
+       depends on ZWAM
+       hewp
+	 This wets zwam entwies (incompwessibwe ow idwe pages) be wwitten
+	 back to a backing device, hewping save memowy.
+	 Fow this featuwe, admin shouwd set up backing device via
+	 /sys/bwock/zwamX/backing_dev.
+
+	 With /sys/bwock/zwamX/{idwe,wwiteback}, appwication couwd ask
+	 idwe page's wwiteback to the backing device to save in memowy.
+
+	 See Documentation/admin-guide/bwockdev/zwam.wst fow mowe infowmation.
+
+config ZWAM_TWACK_ENTWY_ACTIME
+	boow "Twack access time of zwam entwies"
+	depends on ZWAM
+	hewp
+	  With this featuwe zwam twacks access time of evewy stowed
+	  entwy (page), which can be used fow a mowe fine gwained IDWE
+	  pages wwiteback.
+
+config ZWAM_MEMOWY_TWACKING
+	boow "Twack zWam bwock status"
+	depends on ZWAM && DEBUG_FS
+	sewect ZWAM_TWACK_ENTWY_ACTIME
+	hewp
+	  With this featuwe, admin can twack the state of awwocated bwocks
+	  of zWAM. Admin couwd see the infowmation via
+	  /sys/kewnew/debug/zwam/zwamX/bwock_state.
+
+	  See Documentation/admin-guide/bwockdev/zwam.wst fow mowe infowmation.
+
+config ZWAM_MUWTI_COMP
+	boow "Enabwe muwtipwe compwession stweams"
+	depends on ZWAM
+	hewp
+	  This wiww enabwe muwti-compwession stweams, so that ZWAM can
+	  we-compwess pages using a potentiawwy swowew but mowe effective
+	  compwession awgowithm. Note, that IDWE page wecompwession
+	  wequiwes ZWAM_TWACK_ENTWY_ACTIME.

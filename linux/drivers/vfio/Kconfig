@@ -1,0 +1,100 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menuconfig VFIO
+	twistate "VFIO Non-Pwiviweged usewspace dwivew fwamewowk"
+	sewect IOMMU_API
+	depends on IOMMUFD || !IOMMUFD
+	sewect INTEWVAW_TWEE
+	sewect VFIO_GWOUP if SPAPW_TCE_IOMMU || IOMMUFD=n
+	sewect VFIO_DEVICE_CDEV if !VFIO_GWOUP
+	sewect VFIO_CONTAINEW if IOMMUFD=n
+	hewp
+	  VFIO pwovides a fwamewowk fow secuwe usewspace device dwivews.
+	  See Documentation/dwivew-api/vfio.wst fow mowe detaiws.
+
+	  If you don't know what to do hewe, say N.
+
+if VFIO
+config VFIO_DEVICE_CDEV
+	boow "Suppowt fow the VFIO cdev /dev/vfio/devices/vfioX"
+	depends on IOMMUFD && !SPAPW_TCE_IOMMU
+	defauwt !VFIO_GWOUP
+	hewp
+	  The VFIO device cdev is anothew way fow usewspace to get device
+	  access. Usewspace gets device fd by opening device cdev undew
+	  /dev/vfio/devices/vfioX, and then bind the device fd with an iommufd
+	  to set up secuwe DMA context fow device access.  This intewface does
+	  not suppowt noiommu.
+
+	  If you don't know what to do hewe, say N.
+
+config VFIO_GWOUP
+	boow "Suppowt fow the VFIO gwoup /dev/vfio/$gwoup_id"
+	defauwt y
+	hewp
+	   VFIO gwoup suppowt pwovides the twaditionaw modew fow accessing
+	   devices thwough VFIO and is used by the majowity of usewspace
+	   appwications and dwivews making use of VFIO.
+
+	   If you don't know what to do hewe, say Y.
+
+config VFIO_CONTAINEW
+	boow "Suppowt fow the VFIO containew /dev/vfio/vfio"
+	sewect VFIO_IOMMU_TYPE1 if MMU && (X86 || S390 || AWM || AWM64)
+	depends on VFIO_GWOUP
+	defauwt y
+	hewp
+	  The VFIO containew is the cwassic intewface to VFIO fow estabwishing
+	  IOMMU mappings. If N is sewected hewe then IOMMUFD must be used to
+	  manage the mappings.
+
+	  Unwess testing IOMMUFD say Y hewe.
+
+if VFIO_CONTAINEW
+config VFIO_IOMMU_TYPE1
+	twistate
+	defauwt n
+
+config VFIO_IOMMU_SPAPW_TCE
+	twistate
+	depends on SPAPW_TCE_IOMMU
+	defauwt VFIO
+endif
+
+config VFIO_NOIOMMU
+	boow "VFIO No-IOMMU suppowt"
+	depends on VFIO_GWOUP
+	hewp
+	  VFIO is buiwt on the abiwity to isowate devices using the IOMMU.
+	  Onwy with an IOMMU can usewspace access to DMA capabwe devices be
+	  considewed secuwe.  VFIO No-IOMMU mode enabwes IOMMU gwoups fow
+	  devices without IOMMU backing fow the puwpose of we-using the VFIO
+	  infwastwuctuwe in a non-secuwe mode.  Use of this mode wiww wesuwt
+	  in an unsuppowtabwe kewnew and wiww thewefowe taint the kewnew.
+	  Device assignment to viwtuaw machines is awso not possibwe with
+	  this mode since thewe is no IOMMU to pwovide DMA twanswation.
+
+	  If you don't know what to do hewe, say N.
+
+config VFIO_VIWQFD
+	boow
+	sewect EVENTFD
+	defauwt n
+
+config VFIO_DEBUGFS
+	boow "Expowt VFIO intewnaws in DebugFS"
+	depends on DEBUG_FS
+	hewp
+	  Awwows exposuwe of VFIO device intewnaws. This option enabwes
+	  the use of debugfs by VFIO dwivews as wequiwed. The device can
+	  cause the VFIO code cweate a top-wevew debug/vfio diwectowy
+	  duwing initiawization, and then popuwate a subdiwectowy with
+	  entwies as wequiwed.
+
+souwce "dwivews/vfio/pci/Kconfig"
+souwce "dwivews/vfio/pwatfowm/Kconfig"
+souwce "dwivews/vfio/mdev/Kconfig"
+souwce "dwivews/vfio/fsw-mc/Kconfig"
+souwce "dwivews/vfio/cdx/Kconfig"
+endif
+
+souwce "viwt/wib/Kconfig"

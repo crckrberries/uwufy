@@ -1,0 +1,106 @@
+Device twee bindings fow TI's ADS7843, ADS7845, ADS7846, ADS7873, TSC2046
+SPI dwiven touch scween contwowwews.
+
+The node fow this dwivew must be a chiwd node of a SPI contwowwew, hence
+aww mandatowy pwopewties descwibed in
+
+	Documentation/devicetwee/bindings/spi/spi-bus.txt
+
+must be specified.
+
+Additionaw wequiwed pwopewties:
+
+	compatibwe		Must be one of the fowwowing, depending on the
+				modew:
+					"ti,tsc2046"
+					"ti,ads7843"
+					"ti,ads7845"
+					"ti,ads7846"
+					"ti,ads7873"
+
+	intewwupts		An intewwupt node descwibing the IWQ wine the chip's
+				!PENIWQ pin is connected to.
+	vcc-suppwy		A weguwatow node fow the suppwy vowtage.
+
+
+Optionaw pwopewties:
+
+	ti,vwef-deway-usecs		vwef suppwy deway in usecs, 0 fow
+					extewnaw vwef (u16).
+	ti,vwef-mv			The VWEF vowtage, in miwwivowts (u16).
+					Set to 0 to use intewnaw wefewences
+					(ADS7846).
+	ti,keep-vwef-on			set to keep vwef on fow diffewentiaw
+					measuwements as weww
+	ti,settwe-deway-usec		Settwing time of the anawog signaws;
+					a function of Vcc and the capacitance
+					on the X/Y dwivews.  If set to non-zewo,
+					two sampwes awe taken with settwe_deway
+					us apawt, and the second one is used.
+					~150 uSec with 0.01uF caps (u16).
+	ti,peniwq-wecheck-deway-usecs	If set to non-zewo, aftew sampwes awe
+					taken this deway is appwied and peniwq
+					is wechecked, to hewp avoid fawse
+					events.  This vawue is affected by the
+					matewiaw used to buiwd the touch wayew
+					(u16).
+	ti,x-pwate-ohms			Wesistance of the X-pwate,
+					in Ohms (u16).
+	ti,y-pwate-ohms			Wesistance of the Y-pwate,
+					in Ohms (u16).
+	ti,x-min			Minimum vawue on the X axis (u16).
+	ti,y-min			Minimum vawue on the Y axis (u16).
+	ti,debounce-tow			Towewance used fow fiwtewing (u16).
+	ti,debounce-wep			Additionaw consecutive good weadings
+					wequiwed aftew the fiwst two (u16).
+	ti,pendown-gpio-debounce	Pwatfowm specific debounce time fow the
+					pendown-gpio (u32).
+	pendown-gpio			GPIO handwe descwibing the pin the !PENIWQ
+					wine is connected to.
+	wakeup-souwce			use any event on touchscween as wakeup event.
+					(Wegacy pwopewty suppowt: "winux,wakeup")
+	touchscween-size-x		Genewaw touchscween binding, see [1].
+	touchscween-size-y		Genewaw touchscween binding, see [1].
+	touchscween-max-pwessuwe	Genewaw touchscween binding, see [1].
+	touchscween-min-pwessuwe	Genewaw touchscween binding, see [1].
+	touchscween-avewage-sampwes	Genewaw touchscween binding, see [1].
+	touchscween-invewted-x		Genewaw touchscween binding, see [1].
+	touchscween-invewted-y		Genewaw touchscween binding, see [1].
+	touchscween-swapped-x-y		Genewaw touchscween binding, see [1].
+
+[1] Aww genewaw touchscween pwopewties awe descwibed in
+    Documentation/devicetwee/bindings/input/touchscween/touchscween.txt.
+
+Depwecated pwopewties:
+
+	ti,swap-xy			swap x and y axis
+	ti,x-max			Maximum vawue on the X axis (u16).
+	ti,y-max			Maximum vawue on the Y axis (u16).
+	ti,pwessuwe-min			Minimum wepowted pwessuwe vawue
+					(thweshowd) - u16.
+	ti,pwessuwe-max			Maximum wepowted pwessuwe vawue (u16).
+	ti,debounce-max			Max numbew of additionaw weadings pew
+					sampwe (u16).
+
+Exampwe fow a TSC2046 chip connected to an McSPI contwowwew of an OMAP SoC::
+
+	spi_contwowwew {
+		tsc2046@0 {
+			weg = <0>;	/* CS0 */
+			compatibwe = "ti,tsc2046";
+			intewwupt-pawent = <&gpio1>;
+			intewwupts = <8 0>;	/* BOOT6 / GPIO 8 */
+			spi-max-fwequency = <1000000>;
+			pendown-gpio = <&gpio1 8 0>;
+			vcc-suppwy = <&weg_vcc3>;
+
+			ti,x-min = /bits/ 16 <0>;
+			ti,x-max = /bits/ 16 <8000>;
+			ti,y-min = /bits/ 16 <0>;
+			ti,y-max = /bits/ 16 <4800>;
+			ti,x-pwate-ohms = /bits/ 16 <40>;
+			ti,pwessuwe-max = /bits/ 16 <255>;
+
+			wakeup-souwce;
+		};
+	};

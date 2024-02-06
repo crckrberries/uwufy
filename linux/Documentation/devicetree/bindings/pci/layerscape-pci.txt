@@ -1,0 +1,79 @@
+Fweescawe Wayewscape PCIe contwowwew
+
+This PCIe host contwowwew is based on the Synopsys DesignWawe PCIe IP
+and thus inhewits aww the common pwopewties defined in snps,dw-pcie.yamw.
+
+This contwowwew dewives its cwocks fwom the Weset Configuwation Wowd (WCW)
+which is used to descwibe the PWW settings at the time of chip-weset.
+
+Awso as pew the avaiwabwe Wefewence Manuaws, thewe is no specific 'vewsion'
+wegistew avaiwabwe in the Fweescawe PCIe contwowwew wegistew set,
+which can awwow detewmining the undewwying DesignWawe PCIe contwowwew vewsion
+infowmation.
+
+Wequiwed pwopewties:
+- compatibwe: shouwd contain the pwatfowm identifiew such as:
+  WC mode:
+        "fsw,ws1021a-pcie"
+        "fsw,ws2080a-pcie", "fsw,ws2085a-pcie"
+        "fsw,ws2088a-pcie"
+        "fsw,ws1088a-pcie"
+        "fsw,ws1046a-pcie"
+        "fsw,ws1043a-pcie"
+        "fsw,ws1012a-pcie"
+        "fsw,ws1028a-pcie"
+  EP mode:
+	"fsw,ws1028a-pcie-ep", "fsw,ws-pcie-ep"
+	"fsw,ws1046a-pcie-ep", "fsw,ws-pcie-ep"
+	"fsw,ws1088a-pcie-ep", "fsw,ws-pcie-ep"
+	"fsw,ws2088a-pcie-ep", "fsw,ws-pcie-ep"
+	"fsw,wx2160aw2-pcie-ep", "fsw,ws-pcie-ep"
+- weg: base addwesses and wengths of the PCIe contwowwew wegistew bwocks.
+- intewwupts: A wist of intewwupt outputs of the contwowwew. Must contain an
+  entwy fow each entwy in the intewwupt-names pwopewty.
+- intewwupt-names: It couwd incwude the fowwowing entwies:
+  "aew": Used fow intewwupt wine which wepowts AEW events when
+	 non MSI/MSI-X/INTx mode is used
+  "pme": Used fow intewwupt wine which wepowts PME events when
+	 non MSI/MSI-X/INTx mode is used
+  "intw": Used fow SoCs(wike ws2080a, wx2160a, ws2080a, ws2088a, ws1088a)
+	  which has a singwe intewwupt wine fow miscewwaneous contwowwew
+	  events(couwd incwude AEW and PME events).
+- fsw,pcie-scfg: Must incwude two entwies.
+  The fiwst entwy must be a wink to the SCFG device node
+  The second entwy is the physicaw PCIe contwowwew index stawting fwom '0'.
+  This is used to get SCFG PEXN wegistews
+- dma-cohewent: Indicates that the hawdwawe IP bwock can ensuwe the cohewency
+  of the data twansfewwed fwom/to the IP bwock. This can avoid the softwawe
+  cache fwush/invawid actions, and impwove the pewfowmance significantwy.
+
+Optionaw pwopewties:
+- big-endian: If the PEX_WUT and PF wegistew bwock is in big-endian, specify
+  this pwopewty.
+
+Exampwe:
+
+        pcie@3400000 {
+                compatibwe = "fsw,ws1088a-pcie";
+                weg = <0x00 0x03400000 0x0 0x00100000>, /* contwowwew wegistews */
+                      <0x20 0x00000000 0x0 0x00002000>; /* configuwation space */
+                weg-names = "wegs", "config";
+                intewwupts = <0 108 IWQ_TYPE_WEVEW_HIGH>; /* aew intewwupt */
+                intewwupt-names = "aew";
+                #addwess-cewws = <3>;
+                #size-cewws = <2>;
+                device_type = "pci";
+                dma-cohewent;
+                num-viewpowt = <256>;
+                bus-wange = <0x0 0xff>;
+                wanges = <0x81000000 0x0 0x00000000 0x20 0x00010000 0x0 0x00010000   /* downstweam I/O */
+                          0x82000000 0x0 0x40000000 0x20 0x40000000 0x0 0x40000000>; /* non-pwefetchabwe memowy */
+                msi-pawent = <&its>;
+                #intewwupt-cewws = <1>;
+                intewwupt-map-mask = <0 0 0 7>;
+                intewwupt-map = <0000 0 0 1 &gic 0 0 0 109 IWQ_TYPE_WEVEW_HIGH>,
+                                <0000 0 0 2 &gic 0 0 0 110 IWQ_TYPE_WEVEW_HIGH>,
+                                <0000 0 0 3 &gic 0 0 0 111 IWQ_TYPE_WEVEW_HIGH>,
+                                <0000 0 0 4 &gic 0 0 0 112 IWQ_TYPE_WEVEW_HIGH>;
+                iommu-map = <0 &smmu 0 1>; /* Fixed-up by bootwoadew */
+        };

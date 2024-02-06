@@ -1,0 +1,1605 @@
+/*
+ * Initiaw wegistew settings functions
+ *
+ * Copywight (c) 2004-2007 Weyk Fwoetew <weyk@openbsd.owg>
+ * Copywight (c) 2006-2009 Nick Kossifidis <mickfwemm@gmaiw.com>
+ * Copywight (c) 2007-2008 Jiwi Swaby <jiwiswaby@gmaiw.com>
+ *
+ * Pewmission to use, copy, modify, and distwibute this softwawe fow any
+ * puwpose with ow without fee is heweby gwanted, pwovided that the above
+ * copywight notice and this pewmission notice appeaw in aww copies.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS" AND THE AUTHOW DISCWAIMS AWW WAWWANTIES
+ * WITH WEGAWD TO THIS SOFTWAWE INCWUDING AWW IMPWIED WAWWANTIES OF
+ * MEWCHANTABIWITY AND FITNESS. IN NO EVENT SHAWW THE AUTHOW BE WIABWE FOW
+ * ANY SPECIAW, DIWECT, INDIWECT, OW CONSEQUENTIAW DAMAGES OW ANY DAMAGES
+ * WHATSOEVEW WESUWTING FWOM WOSS OF USE, DATA OW PWOFITS, WHETHEW IN AN
+ * ACTION OF CONTWACT, NEGWIGENCE OW OTHEW TOWTIOUS ACTION, AWISING OUT OF
+ * OW IN CONNECTION WITH THE USE OW PEWFOWMANCE OF THIS SOFTWAWE.
+ *
+ */
+
+#define pw_fmt(fmt) KBUIWD_MODNAME ": " fmt
+
+#incwude "ath5k.h"
+#incwude "weg.h"
+#incwude "debug.h"
+
+/**
+ * stwuct ath5k_ini - Mode-independent initiaw wegistew wwites
+ * @ini_wegistew: Wegistew addwess
+ * @ini_vawue: Defauwt vawue
+ * @ini_mode: 0 to wwite 1 to wead (and cweaw)
+ */
+stwuct ath5k_ini {
+	u16	ini_wegistew;
+	u32	ini_vawue;
+
+	enum {
+		AW5K_INI_WWITE = 0,	/* Defauwt */
+		AW5K_INI_WEAD = 1,
+	} ini_mode;
+};
+
+/**
+ * stwuct ath5k_ini_mode - Mode specific initiaw wegistew vawues
+ * @mode_wegistew: Wegistew addwess
+ * @mode_vawue: Set of vawues fow each enum ath5k_dwivew_mode
+ */
+stwuct ath5k_ini_mode {
+	u16	mode_wegistew;
+	u32	mode_vawue[3];
+};
+
+/* Initiaw wegistew settings fow AW5210 */
+static const stwuct ath5k_ini aw5210_ini[] = {
+	/* PCU and MAC wegistews */
+	{ AW5K_NOQCU_TXDP0,	0 },
+	{ AW5K_NOQCU_TXDP1,	0 },
+	{ AW5K_WXDP,		0 },
+	{ AW5K_CW,		0 },
+	{ AW5K_ISW,		0, AW5K_INI_WEAD },
+	{ AW5K_IMW,		0 },
+	{ AW5K_IEW,		AW5K_IEW_DISABWE },
+	{ AW5K_BSW,		0, AW5K_INI_WEAD },
+	{ AW5K_TXCFG,		AW5K_DMASIZE_128B },
+	{ AW5K_WXCFG,		AW5K_DMASIZE_128B },
+	{ AW5K_CFG,		AW5K_INIT_CFG },
+	{ AW5K_TOPS,		8 },
+	{ AW5K_WXNOFWM,		8 },
+	{ AW5K_WPGTO,		0 },
+	{ AW5K_TXNOFWM,		0 },
+	{ AW5K_SFW,		0 },
+	{ AW5K_MIBC,		0 },
+	{ AW5K_MISC,		0 },
+	{ AW5K_WX_FIWTEW_5210,	0 },
+	{ AW5K_MCAST_FIWTEW0_5210, 0 },
+	{ AW5K_MCAST_FIWTEW1_5210, 0 },
+	{ AW5K_TX_MASK0,	0 },
+	{ AW5K_TX_MASK1,	0 },
+	{ AW5K_CWW_TMASK,	0 },
+	{ AW5K_TWIG_WVW,	AW5K_TUNE_MIN_TX_FIFO_THWES },
+	{ AW5K_DIAG_SW_5210,	0 },
+	{ AW5K_WSSI_THW,	AW5K_TUNE_WSSI_THWES },
+	{ AW5K_TSF_W32_5210,	0 },
+	{ AW5K_TIMEW0_5210,	0 },
+	{ AW5K_TIMEW1_5210,	0xffffffff },
+	{ AW5K_TIMEW2_5210,	0xffffffff },
+	{ AW5K_TIMEW3_5210,	1 },
+	{ AW5K_CFP_DUW_5210,	0 },
+	{ AW5K_CFP_PEWIOD_5210,	0 },
+	/* PHY wegistews */
+	{ AW5K_PHY(0),	0x00000047 },
+	{ AW5K_PHY_AGC,	0x00000000 },
+	{ AW5K_PHY(3),	0x09848ea6 },
+	{ AW5K_PHY(4),	0x3d32e000 },
+	{ AW5K_PHY(5),	0x0000076b },
+	{ AW5K_PHY_ACT,	AW5K_PHY_ACT_DISABWE },
+	{ AW5K_PHY(8),	0x02020200 },
+	{ AW5K_PHY(9),	0x00000e0e },
+	{ AW5K_PHY(10),	0x0a020201 },
+	{ AW5K_PHY(11),	0x00036ffc },
+	{ AW5K_PHY(12),	0x00000000 },
+	{ AW5K_PHY(13),	0x00000e0e },
+	{ AW5K_PHY(14),	0x00000007 },
+	{ AW5K_PHY(15),	0x00020100 },
+	{ AW5K_PHY(16),	0x89630000 },
+	{ AW5K_PHY(17),	0x1372169c },
+	{ AW5K_PHY(18),	0x0018b633 },
+	{ AW5K_PHY(19),	0x1284613c },
+	{ AW5K_PHY(20),	0x0de8b8e0 },
+	{ AW5K_PHY(21),	0x00074859 },
+	{ AW5K_PHY(22),	0x7e80beba },
+	{ AW5K_PHY(23),	0x313a665e },
+	{ AW5K_PHY_AGCCTW, 0x00001d08 },
+	{ AW5K_PHY(25),	0x0001ce00 },
+	{ AW5K_PHY(26),	0x409a4190 },
+	{ AW5K_PHY(28),	0x0000000f },
+	{ AW5K_PHY(29),	0x00000080 },
+	{ AW5K_PHY(30),	0x00000004 },
+	{ AW5K_PHY(31),	0x00000018 },	/* 0x987c */
+	{ AW5K_PHY(64),	0x00000000 },	/* 0x9900 */
+	{ AW5K_PHY(65),	0x00000000 },
+	{ AW5K_PHY(66),	0x00000000 },
+	{ AW5K_PHY(67),	0x00800000 },
+	{ AW5K_PHY(68),	0x00000003 },
+	/* BB gain tabwe (64bytes) */
+	{ AW5K_BB_GAIN(0), 0x00000000 },
+	{ AW5K_BB_GAIN(1), 0x00000020 },
+	{ AW5K_BB_GAIN(2), 0x00000010 },
+	{ AW5K_BB_GAIN(3), 0x00000030 },
+	{ AW5K_BB_GAIN(4), 0x00000008 },
+	{ AW5K_BB_GAIN(5), 0x00000028 },
+	{ AW5K_BB_GAIN(6), 0x00000028 },
+	{ AW5K_BB_GAIN(7), 0x00000004 },
+	{ AW5K_BB_GAIN(8), 0x00000024 },
+	{ AW5K_BB_GAIN(9), 0x00000014 },
+	{ AW5K_BB_GAIN(10), 0x00000034 },
+	{ AW5K_BB_GAIN(11), 0x0000000c },
+	{ AW5K_BB_GAIN(12), 0x0000002c },
+	{ AW5K_BB_GAIN(13), 0x00000002 },
+	{ AW5K_BB_GAIN(14), 0x00000022 },
+	{ AW5K_BB_GAIN(15), 0x00000012 },
+	{ AW5K_BB_GAIN(16), 0x00000032 },
+	{ AW5K_BB_GAIN(17), 0x0000000a },
+	{ AW5K_BB_GAIN(18), 0x0000002a },
+	{ AW5K_BB_GAIN(19), 0x00000001 },
+	{ AW5K_BB_GAIN(20), 0x00000021 },
+	{ AW5K_BB_GAIN(21), 0x00000011 },
+	{ AW5K_BB_GAIN(22), 0x00000031 },
+	{ AW5K_BB_GAIN(23), 0x00000009 },
+	{ AW5K_BB_GAIN(24), 0x00000029 },
+	{ AW5K_BB_GAIN(25), 0x00000005 },
+	{ AW5K_BB_GAIN(26), 0x00000025 },
+	{ AW5K_BB_GAIN(27), 0x00000015 },
+	{ AW5K_BB_GAIN(28), 0x00000035 },
+	{ AW5K_BB_GAIN(29), 0x0000000d },
+	{ AW5K_BB_GAIN(30), 0x0000002d },
+	{ AW5K_BB_GAIN(31), 0x00000003 },
+	{ AW5K_BB_GAIN(32), 0x00000023 },
+	{ AW5K_BB_GAIN(33), 0x00000013 },
+	{ AW5K_BB_GAIN(34), 0x00000033 },
+	{ AW5K_BB_GAIN(35), 0x0000000b },
+	{ AW5K_BB_GAIN(36), 0x0000002b },
+	{ AW5K_BB_GAIN(37), 0x00000007 },
+	{ AW5K_BB_GAIN(38), 0x00000027 },
+	{ AW5K_BB_GAIN(39), 0x00000017 },
+	{ AW5K_BB_GAIN(40), 0x00000037 },
+	{ AW5K_BB_GAIN(41), 0x0000000f },
+	{ AW5K_BB_GAIN(42), 0x0000002f },
+	{ AW5K_BB_GAIN(43), 0x0000002f },
+	{ AW5K_BB_GAIN(44), 0x0000002f },
+	{ AW5K_BB_GAIN(45), 0x0000002f },
+	{ AW5K_BB_GAIN(46), 0x0000002f },
+	{ AW5K_BB_GAIN(47), 0x0000002f },
+	{ AW5K_BB_GAIN(48), 0x0000002f },
+	{ AW5K_BB_GAIN(49), 0x0000002f },
+	{ AW5K_BB_GAIN(50), 0x0000002f },
+	{ AW5K_BB_GAIN(51), 0x0000002f },
+	{ AW5K_BB_GAIN(52), 0x0000002f },
+	{ AW5K_BB_GAIN(53), 0x0000002f },
+	{ AW5K_BB_GAIN(54), 0x0000002f },
+	{ AW5K_BB_GAIN(55), 0x0000002f },
+	{ AW5K_BB_GAIN(56), 0x0000002f },
+	{ AW5K_BB_GAIN(57), 0x0000002f },
+	{ AW5K_BB_GAIN(58), 0x0000002f },
+	{ AW5K_BB_GAIN(59), 0x0000002f },
+	{ AW5K_BB_GAIN(60), 0x0000002f },
+	{ AW5K_BB_GAIN(61), 0x0000002f },
+	{ AW5K_BB_GAIN(62), 0x0000002f },
+	{ AW5K_BB_GAIN(63), 0x0000002f },
+	/* 5110 WF gain tabwe (64btes) */
+	{ AW5K_WF_GAIN(0), 0x0000001d },
+	{ AW5K_WF_GAIN(1), 0x0000005d },
+	{ AW5K_WF_GAIN(2), 0x0000009d },
+	{ AW5K_WF_GAIN(3), 0x000000dd },
+	{ AW5K_WF_GAIN(4), 0x0000011d },
+	{ AW5K_WF_GAIN(5), 0x00000021 },
+	{ AW5K_WF_GAIN(6), 0x00000061 },
+	{ AW5K_WF_GAIN(7), 0x000000a1 },
+	{ AW5K_WF_GAIN(8), 0x000000e1 },
+	{ AW5K_WF_GAIN(9), 0x00000031 },
+	{ AW5K_WF_GAIN(10), 0x00000071 },
+	{ AW5K_WF_GAIN(11), 0x000000b1 },
+	{ AW5K_WF_GAIN(12), 0x0000001c },
+	{ AW5K_WF_GAIN(13), 0x0000005c },
+	{ AW5K_WF_GAIN(14), 0x00000029 },
+	{ AW5K_WF_GAIN(15), 0x00000069 },
+	{ AW5K_WF_GAIN(16), 0x000000a9 },
+	{ AW5K_WF_GAIN(17), 0x00000020 },
+	{ AW5K_WF_GAIN(18), 0x00000019 },
+	{ AW5K_WF_GAIN(19), 0x00000059 },
+	{ AW5K_WF_GAIN(20), 0x00000099 },
+	{ AW5K_WF_GAIN(21), 0x00000030 },
+	{ AW5K_WF_GAIN(22), 0x00000005 },
+	{ AW5K_WF_GAIN(23), 0x00000025 },
+	{ AW5K_WF_GAIN(24), 0x00000065 },
+	{ AW5K_WF_GAIN(25), 0x000000a5 },
+	{ AW5K_WF_GAIN(26), 0x00000028 },
+	{ AW5K_WF_GAIN(27), 0x00000068 },
+	{ AW5K_WF_GAIN(28), 0x0000001f },
+	{ AW5K_WF_GAIN(29), 0x0000001e },
+	{ AW5K_WF_GAIN(30), 0x00000018 },
+	{ AW5K_WF_GAIN(31), 0x00000058 },
+	{ AW5K_WF_GAIN(32), 0x00000098 },
+	{ AW5K_WF_GAIN(33), 0x00000003 },
+	{ AW5K_WF_GAIN(34), 0x00000004 },
+	{ AW5K_WF_GAIN(35), 0x00000044 },
+	{ AW5K_WF_GAIN(36), 0x00000084 },
+	{ AW5K_WF_GAIN(37), 0x00000013 },
+	{ AW5K_WF_GAIN(38), 0x00000012 },
+	{ AW5K_WF_GAIN(39), 0x00000052 },
+	{ AW5K_WF_GAIN(40), 0x00000092 },
+	{ AW5K_WF_GAIN(41), 0x000000d2 },
+	{ AW5K_WF_GAIN(42), 0x0000002b },
+	{ AW5K_WF_GAIN(43), 0x0000002a },
+	{ AW5K_WF_GAIN(44), 0x0000006a },
+	{ AW5K_WF_GAIN(45), 0x000000aa },
+	{ AW5K_WF_GAIN(46), 0x0000001b },
+	{ AW5K_WF_GAIN(47), 0x0000001a },
+	{ AW5K_WF_GAIN(48), 0x0000005a },
+	{ AW5K_WF_GAIN(49), 0x0000009a },
+	{ AW5K_WF_GAIN(50), 0x000000da },
+	{ AW5K_WF_GAIN(51), 0x00000006 },
+	{ AW5K_WF_GAIN(52), 0x00000006 },
+	{ AW5K_WF_GAIN(53), 0x00000006 },
+	{ AW5K_WF_GAIN(54), 0x00000006 },
+	{ AW5K_WF_GAIN(55), 0x00000006 },
+	{ AW5K_WF_GAIN(56), 0x00000006 },
+	{ AW5K_WF_GAIN(57), 0x00000006 },
+	{ AW5K_WF_GAIN(58), 0x00000006 },
+	{ AW5K_WF_GAIN(59), 0x00000006 },
+	{ AW5K_WF_GAIN(60), 0x00000006 },
+	{ AW5K_WF_GAIN(61), 0x00000006 },
+	{ AW5K_WF_GAIN(62), 0x00000006 },
+	{ AW5K_WF_GAIN(63), 0x00000006 },
+	/* PHY activation */
+	{ AW5K_PHY(53), 0x00000020 },
+	{ AW5K_PHY(51), 0x00000004 },
+	{ AW5K_PHY(50), 0x00060106 },
+	{ AW5K_PHY(39), 0x0000006d },
+	{ AW5K_PHY(48), 0x00000000 },
+	{ AW5K_PHY(52), 0x00000014 },
+	{ AW5K_PHY_ACT, AW5K_PHY_ACT_ENABWE },
+};
+
+/* Initiaw wegistew settings fow AW5211 */
+static const stwuct ath5k_ini aw5211_ini[] = {
+	{ AW5K_WXDP,		0x00000000 },
+	{ AW5K_WTSD0,		0x84849c9c },
+	{ AW5K_WTSD1,		0x7c7c7c7c },
+	{ AW5K_WXCFG,		0x00000005 },
+	{ AW5K_MIBC,		0x00000000 },
+	{ AW5K_TOPS,		0x00000008 },
+	{ AW5K_WXNOFWM,		0x00000008 },
+	{ AW5K_TXNOFWM,		0x00000010 },
+	{ AW5K_WPGTO,		0x00000000 },
+	{ AW5K_WFCNT,		0x0000001f },
+	{ AW5K_QUEUE_TXDP(0),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(1),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(2),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(3),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(4),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(5),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(6),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(7),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(8),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(9),	0x00000000 },
+	{ AW5K_DCU_FP,		0x00000000 },
+	{ AW5K_STA_ID1,		0x00000000 },
+	{ AW5K_BSS_ID0,		0x00000000 },
+	{ AW5K_BSS_ID1,		0x00000000 },
+	{ AW5K_WSSI_THW,	0x00000000 },
+	{ AW5K_CFP_PEWIOD_5211,	0x00000000 },
+	{ AW5K_TIMEW0_5211,	0x00000030 },
+	{ AW5K_TIMEW1_5211,	0x0007ffff },
+	{ AW5K_TIMEW2_5211,	0x01ffffff },
+	{ AW5K_TIMEW3_5211,	0x00000031 },
+	{ AW5K_CFP_DUW_5211,	0x00000000 },
+	{ AW5K_WX_FIWTEW_5211,	0x00000000 },
+	{ AW5K_MCAST_FIWTEW0_5211, 0x00000000 },
+	{ AW5K_MCAST_FIWTEW1_5211, 0x00000002 },
+	{ AW5K_DIAG_SW_5211,	0x00000000 },
+	{ AW5K_ADDAC_TEST,	0x00000000 },
+	{ AW5K_DEFAUWT_ANTENNA,	0x00000000 },
+	/* PHY wegistews */
+	{ AW5K_PHY_AGC,	0x00000000 },
+	{ AW5K_PHY(3),	0x2d849093 },
+	{ AW5K_PHY(4),	0x7d32e000 },
+	{ AW5K_PHY(5),	0x00000f6b },
+	{ AW5K_PHY_ACT,	0x00000000 },
+	{ AW5K_PHY(11),	0x00026ffe },
+	{ AW5K_PHY(12),	0x00000000 },
+	{ AW5K_PHY(15),	0x00020100 },
+	{ AW5K_PHY(16),	0x206a017a },
+	{ AW5K_PHY(19),	0x1284613c },
+	{ AW5K_PHY(21),	0x00000859 },
+	{ AW5K_PHY(26),	0x409a4190 },	/* 0x9868 */
+	{ AW5K_PHY(27),	0x050cb081 },
+	{ AW5K_PHY(28),	0x0000000f },
+	{ AW5K_PHY(29),	0x00000080 },
+	{ AW5K_PHY(30),	0x0000000c },
+	{ AW5K_PHY(64),	0x00000000 },
+	{ AW5K_PHY(65),	0x00000000 },
+	{ AW5K_PHY(66),	0x00000000 },
+	{ AW5K_PHY(67),	0x00800000 },
+	{ AW5K_PHY(68),	0x00000001 },
+	{ AW5K_PHY(71),	0x0000092a },
+	{ AW5K_PHY_IQ,	0x00000000 },
+	{ AW5K_PHY(73),	0x00058a05 },
+	{ AW5K_PHY(74),	0x00000001 },
+	{ AW5K_PHY(75),	0x00000000 },
+	{ AW5K_PHY_PAPD_PWOBE, 0x00000000 },
+	{ AW5K_PHY(77),	0x00000000 },	/* 0x9934 */
+	{ AW5K_PHY(78),	0x00000000 },	/* 0x9938 */
+	{ AW5K_PHY(79),	0x0000003f },	/* 0x993c */
+	{ AW5K_PHY(80),	0x00000004 },
+	{ AW5K_PHY(82),	0x00000000 },
+	{ AW5K_PHY(83),	0x00000000 },
+	{ AW5K_PHY(84),	0x00000000 },
+	{ AW5K_PHY_WADAW, 0x5d50f14c },
+	{ AW5K_PHY(86),	0x00000018 },
+	{ AW5K_PHY(87),	0x004b6a8e },
+	/* Initiaw Powew tabwe (32bytes)
+	 * common on aww cawds/modes.
+	 * Note: Tabwe is wewwitten duwing
+	 * txpowew setup watew using cawibwation
+	 * data etc. so next wwite is non-common */
+	{ AW5K_PHY_PCDAC_TXPOWEW(1), 0x06ff05ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(2), 0x07ff07ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(3), 0x08ff08ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(4), 0x09ff09ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(5), 0x0aff0aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(6), 0x0bff0bff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(7), 0x0cff0cff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(8), 0x0dff0dff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(9), 0x0fff0eff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(10), 0x12ff12ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(11), 0x14ff13ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(12), 0x16ff15ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(13), 0x19ff17ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(14), 0x1bff1aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(15), 0x1eff1dff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(16), 0x23ff20ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(17), 0x27ff25ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(18), 0x2cff29ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(19), 0x31ff2fff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(20), 0x37ff34ff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(21), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(22), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(23), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(24), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(25), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(26), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(27), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(28), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(29), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(30), 0x3aff3aff },
+	{ AW5K_PHY_PCDAC_TXPOWEW(31), 0x3aff3aff },
+	{ AW5K_PHY_CCKTXCTW, 0x00000000 },
+	{ AW5K_PHY(642), 0x503e4646 },
+	{ AW5K_PHY_GAIN_2GHZ, 0x6480416c },
+	{ AW5K_PHY(644), 0x0199a003 },
+	{ AW5K_PHY(645), 0x044cd610 },
+	{ AW5K_PHY(646), 0x13800040 },
+	{ AW5K_PHY(647), 0x1be00060 },
+	{ AW5K_PHY(648), 0x0c53800a },
+	{ AW5K_PHY(649), 0x0014df3b },
+	{ AW5K_PHY(650), 0x000001b5 },
+	{ AW5K_PHY(651), 0x00000020 },
+};
+
+/* Initiaw mode-specific settings fow AW5211
+ * 5211 suppowts OFDM-onwy g (dwaft g) but we
+ * need to test it ! */
+static const stwuct ath5k_ini_mode aw5211_ini_mode[] = {
+	{ AW5K_TXCFG,
+	/*	A          B           G       */
+	   { 0x00000015, 0x0000001d, 0x00000015 } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(0),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(1),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(2),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(3),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(4),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(5),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(6),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(7),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(8),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(9),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_DCU_GBW_IFS_SWOT,
+	   { 0x00000168, 0x000001b8, 0x00000168 } },
+	{ AW5K_DCU_GBW_IFS_SIFS,
+	   { 0x00000230, 0x000000b0, 0x00000230 } },
+	{ AW5K_DCU_GBW_IFS_EIFS,
+	   { 0x00000d98, 0x00001f48, 0x00000d98 } },
+	{ AW5K_DCU_GBW_IFS_MISC,
+	   { 0x0000a0e0, 0x00005880, 0x0000a0e0 } },
+	{ AW5K_TIME_OUT,
+	   { 0x04000400, 0x20003000, 0x04000400 } },
+	{ AW5K_USEC_5211,
+	   { 0x0e8d8fa7, 0x01608f95, 0x0e8d8fa7 } },
+	{ AW5K_PHY(8),
+	   { 0x02020200, 0x02010200, 0x02020200 } },
+	{ AW5K_PHY_WF_CTW2,
+	   { 0x00000e0e, 0x00000707, 0x00000e0e } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05010000, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e0e, 0x00000e0e, 0x00000e0e } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000007, 0x0000000b, 0x0000000b } },
+	{ AW5K_PHY_SETTWING,
+	   { 0x1372169c, 0x137216a8, 0x1372169c } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018ba67, 0x0018ba69, 0x0018ba69 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0c28b4e0, 0x0c28b4e0, 0x0c28b4e0 } },
+	{ AW5K_PHY_SIG,
+	   { 0x7e800d2e, 0x7ec00d2e, 0x7e800d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x31375d5e, 0x313a5d5e, 0x31375d5e } },
+	{ AW5K_PHY_AGCCTW,
+	   { 0x0000bd10, 0x0000bd38, 0x0000bd10 } },
+	{ AW5K_PHY_NF,
+	   { 0x0001ce00, 0x0001ce00, 0x0001ce00 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x00002710, 0x0000157c, 0x00002710 } },
+	{ AW5K_PHY(70),
+	   { 0x00000190, 0x00000084, 0x00000190 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0x6fe01020, 0x6fe00920, 0x6fe01020 } },
+	{ AW5K_PHY_PCDAC_TXPOWEW_BASE,
+	   { 0x05ff14ff, 0x05ff14ff, 0x05ff19ff } },
+	{ AW5K_WF_BUFFEW_CONTWOW_4,
+	   { 0x00000010, 0x00000010, 0x00000010 } },
+};
+
+/* Initiaw wegistew settings fow AW5212 and newew chips */
+static const stwuct ath5k_ini aw5212_ini_common_stawt[] = {
+	{ AW5K_WXDP,		0x00000000 },
+	{ AW5K_WXCFG,		0x00000005 },
+	{ AW5K_MIBC,		0x00000000 },
+	{ AW5K_TOPS,		0x00000008 },
+	{ AW5K_WXNOFWM,		0x00000008 },
+	{ AW5K_TXNOFWM,		0x00000010 },
+	{ AW5K_WPGTO,		0x00000000 },
+	{ AW5K_WFCNT,		0x0000001f },
+	{ AW5K_QUEUE_TXDP(0),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(1),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(2),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(3),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(4),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(5),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(6),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(7),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(8),	0x00000000 },
+	{ AW5K_QUEUE_TXDP(9),	0x00000000 },
+	{ AW5K_DCU_FP,		0x00000000 },
+	{ AW5K_DCU_TXP,		0x00000000 },
+	/* Tx fiwtew tabwe 0 (32 entwies) */
+	{ AW5K_DCU_TX_FIWTEW_0(0),  0x00000000 }, /* DCU 0 */
+	{ AW5K_DCU_TX_FIWTEW_0(1),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(2),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(3),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(4),  0x00000000 }, /* DCU 1 */
+	{ AW5K_DCU_TX_FIWTEW_0(5),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(6),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(7),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(8),  0x00000000 }, /* DCU 2 */
+	{ AW5K_DCU_TX_FIWTEW_0(9),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(10), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(11), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(12), 0x00000000 }, /* DCU 3 */
+	{ AW5K_DCU_TX_FIWTEW_0(13), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(14), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(15), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(16), 0x00000000 }, /* DCU 4 */
+	{ AW5K_DCU_TX_FIWTEW_0(17), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(18), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(19), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(20), 0x00000000 }, /* DCU 5 */
+	{ AW5K_DCU_TX_FIWTEW_0(21), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(22), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(23), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(24), 0x00000000 }, /* DCU 6 */
+	{ AW5K_DCU_TX_FIWTEW_0(25), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(26), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(27), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(28), 0x00000000 }, /* DCU 7 */
+	{ AW5K_DCU_TX_FIWTEW_0(29), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(30), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_0(31), 0x00000000 },
+	/* Tx fiwtew tabwe 1 (16 entwies) */
+	{ AW5K_DCU_TX_FIWTEW_1(0),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(1),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(2),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(3),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(4),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(5),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(6),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(7),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(8),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(9),  0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(10), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(11), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(12), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(13), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(14), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_1(15), 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_CWW, 0x00000000 },
+	{ AW5K_DCU_TX_FIWTEW_SET, 0x00000000 },
+	{ AW5K_STA_ID1,		0x00000000 },
+	{ AW5K_BSS_ID0,		0x00000000 },
+	{ AW5K_BSS_ID1,		0x00000000 },
+	{ AW5K_BEACON_5211,	0x00000000 },
+	{ AW5K_CFP_PEWIOD_5211, 0x00000000 },
+	{ AW5K_TIMEW0_5211,	0x00000030 },
+	{ AW5K_TIMEW1_5211,	0x0007ffff },
+	{ AW5K_TIMEW2_5211,	0x01ffffff },
+	{ AW5K_TIMEW3_5211,	0x00000031 },
+	{ AW5K_CFP_DUW_5211,	0x00000000 },
+	{ AW5K_WX_FIWTEW_5211,	0x00000000 },
+	{ AW5K_DIAG_SW_5211,	0x00000000 },
+	{ AW5K_ADDAC_TEST,	0x00000000 },
+	{ AW5K_DEFAUWT_ANTENNA,	0x00000000 },
+	{ AW5K_FWAME_CTW_QOSM,	0x000fc78f },
+	{ AW5K_XWMODE,		0x2a82301a },
+	{ AW5K_XWDEWAY,		0x05dc01e0 },
+	{ AW5K_XWTIMEOUT,	0x1f402710 },
+	{ AW5K_XWCHIWP,		0x01f40000 },
+	{ AW5K_XWSTOMP,		0x00001e1c },
+	{ AW5K_SWEEP0,		0x0002aaaa },
+	{ AW5K_SWEEP1,		0x02005555 },
+	{ AW5K_SWEEP2,		0x00000000 },
+	{ AW_BSSMSKW,		0xffffffff },
+	{ AW_BSSMSKU,		0x0000ffff },
+	{ AW5K_TXPC,		0x00000000 },
+	{ AW5K_PWOFCNT_TX,	0x00000000 },
+	{ AW5K_PWOFCNT_WX,	0x00000000 },
+	{ AW5K_PWOFCNT_WXCWW,	0x00000000 },
+	{ AW5K_PWOFCNT_CYCWE,	0x00000000 },
+	{ AW5K_QUIET_CTW1,	0x00000088 },
+	/* Initiaw wate duwation tabwe (32 entwies )*/
+	{ AW5K_WATE_DUW(0),	0x00000000 },
+	{ AW5K_WATE_DUW(1),	0x0000008c },
+	{ AW5K_WATE_DUW(2),	0x000000e4 },
+	{ AW5K_WATE_DUW(3),	0x000002d5 },
+	{ AW5K_WATE_DUW(4),	0x00000000 },
+	{ AW5K_WATE_DUW(5),	0x00000000 },
+	{ AW5K_WATE_DUW(6),	0x000000a0 },
+	{ AW5K_WATE_DUW(7),	0x000001c9 },
+	{ AW5K_WATE_DUW(8),	0x0000002c },
+	{ AW5K_WATE_DUW(9),	0x0000002c },
+	{ AW5K_WATE_DUW(10),	0x00000030 },
+	{ AW5K_WATE_DUW(11),	0x0000003c },
+	{ AW5K_WATE_DUW(12),	0x0000002c },
+	{ AW5K_WATE_DUW(13),	0x0000002c },
+	{ AW5K_WATE_DUW(14),	0x00000030 },
+	{ AW5K_WATE_DUW(15),	0x0000003c },
+	{ AW5K_WATE_DUW(16),	0x00000000 },
+	{ AW5K_WATE_DUW(17),	0x00000000 },
+	{ AW5K_WATE_DUW(18),	0x00000000 },
+	{ AW5K_WATE_DUW(19),	0x00000000 },
+	{ AW5K_WATE_DUW(20),	0x00000000 },
+	{ AW5K_WATE_DUW(21),	0x00000000 },
+	{ AW5K_WATE_DUW(22),	0x00000000 },
+	{ AW5K_WATE_DUW(23),	0x00000000 },
+	{ AW5K_WATE_DUW(24),	0x000000d5 },
+	{ AW5K_WATE_DUW(25),	0x000000df },
+	{ AW5K_WATE_DUW(26),	0x00000102 },
+	{ AW5K_WATE_DUW(27),	0x0000013a },
+	{ AW5K_WATE_DUW(28),	0x00000075 },
+	{ AW5K_WATE_DUW(29),	0x0000007f },
+	{ AW5K_WATE_DUW(30),	0x000000a2 },
+	{ AW5K_WATE_DUW(31),	0x00000000 },
+	{ AW5K_QUIET_CTW2,	0x00010002 },
+	{ AW5K_TSF_PAWM,	0x00000001 },
+	{ AW5K_QOS_NOACK,	0x000000c0 },
+	{ AW5K_PHY_EWW_FIW,	0x00000000 },
+	{ AW5K_XWWAT_TX,	0x00000168 },
+	{ AW5K_ACKSIFS,		0x00000000 },
+	/* Wate -> db tabwe
+	 * notice ...03<-02<-01<-00 ! */
+	{ AW5K_WATE2DB(0),	0x03020100 },
+	{ AW5K_WATE2DB(1),	0x07060504 },
+	{ AW5K_WATE2DB(2),	0x0b0a0908 },
+	{ AW5K_WATE2DB(3),	0x0f0e0d0c },
+	{ AW5K_WATE2DB(4),	0x13121110 },
+	{ AW5K_WATE2DB(5),	0x17161514 },
+	{ AW5K_WATE2DB(6),	0x1b1a1918 },
+	{ AW5K_WATE2DB(7),	0x1f1e1d1c },
+	/* Db -> Wate tabwe */
+	{ AW5K_DB2WATE(0),	0x03020100 },
+	{ AW5K_DB2WATE(1),	0x07060504 },
+	{ AW5K_DB2WATE(2),	0x0b0a0908 },
+	{ AW5K_DB2WATE(3),	0x0f0e0d0c },
+	{ AW5K_DB2WATE(4),	0x13121110 },
+	{ AW5K_DB2WATE(5),	0x17161514 },
+	{ AW5K_DB2WATE(6),	0x1b1a1918 },
+	{ AW5K_DB2WATE(7),	0x1f1e1d1c },
+	/* PHY wegistews (Common settings
+	 * fow aww chips/modes) */
+	{ AW5K_PHY(3),		0xad848e19 },
+	{ AW5K_PHY(4),		0x7d28e000 },
+	{ AW5K_PHY_TIMING_3,	0x9c0a9f6b },
+	{ AW5K_PHY_ACT,		0x00000000 },
+	{ AW5K_PHY(16),		0x206a017a },
+	{ AW5K_PHY(21),		0x00000859 },
+	{ AW5K_PHY_BIN_MASK_1,	0x00000000 },
+	{ AW5K_PHY_BIN_MASK_2,	0x00000000 },
+	{ AW5K_PHY_BIN_MASK_3,	0x00000000 },
+	{ AW5K_PHY_BIN_MASK_CTW, 0x00800000 },
+	{ AW5K_PHY_ANT_CTW,	0x00000001 },
+	/*{ AW5K_PHY(71), 0x0000092a },*/ /* Owd vawue */
+	{ AW5K_PHY_MAX_WX_WEN,	0x00000c80 },
+	{ AW5K_PHY_IQ,		0x05100000 },
+	{ AW5K_PHY_WAWM_WESET,	0x00000001 },
+	{ AW5K_PHY_CTW,		0x00000004 },
+	{ AW5K_PHY_TXPOWEW_WATE1, 0x1e1f2022 },
+	{ AW5K_PHY_TXPOWEW_WATE2, 0x0a0b0c0d },
+	{ AW5K_PHY_TXPOWEW_WATE_MAX, 0x0000003f },
+	{ AW5K_PHY(82),		0x9280b212 },
+	{ AW5K_PHY_WADAW,	0x5d50e188 },
+	/*{ AW5K_PHY(86), 0x000000ff },*/
+	{ AW5K_PHY(87),		0x004b6a8e },
+	{ AW5K_PHY_NFTHWES,	0x000003ce },
+	{ AW5K_PHY_WESTAWT,	0x192fb515 },
+	{ AW5K_PHY(94),		0x00000001 },
+	{ AW5K_PHY_WFBUS_WEQ,	0x00000000 },
+	/*{ AW5K_PHY(644), 0x0080a333 },*/ /* Owd vawue */
+	/*{ AW5K_PHY(645), 0x00206c10 },*/ /* Owd vawue */
+	{ AW5K_PHY(644),	0x00806333 },
+	{ AW5K_PHY(645),	0x00106c10 },
+	{ AW5K_PHY(646),	0x009c4060 },
+	/* { AW5K_PHY(647), 0x1483800a }, */
+	/* { AW5K_PHY(648), 0x01831061 }, */ /* Owd vawue */
+	{ AW5K_PHY(648),	0x018830c6 },
+	{ AW5K_PHY(649),	0x00000400 },
+	/*{ AW5K_PHY(650), 0x000001b5 },*/
+	{ AW5K_PHY(651),	0x00000000 },
+	{ AW5K_PHY_TXPOWEW_WATE3, 0x20202020 },
+	{ AW5K_PHY_TXPOWEW_WATE4, 0x20202020 },
+	/*{ AW5K_PHY(655), 0x13c889af },*/
+	{ AW5K_PHY(656),	0x38490a20 },
+	{ AW5K_PHY(657),	0x00007bb6 },
+	{ AW5K_PHY(658),	0x0fff3ffc },
+};
+
+/* Initiaw mode-specific settings fow AW5212 (Wwitten befowe aw5212_ini) */
+static const stwuct ath5k_ini_mode aw5212_ini_mode_stawt[] = {
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(0),
+	/*	A/XW          B           G       */
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(1),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(2),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(3),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(4),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(5),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(6),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(7),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(8),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_QUEUE_DFS_WOCAW_IFS(9),
+	   { 0x002ffc0f, 0x002ffc1f, 0x002ffc0f } },
+	{ AW5K_DCU_GBW_IFS_SIFS,
+	   { 0x00000230, 0x000000b0, 0x00000160 } },
+	{ AW5K_DCU_GBW_IFS_SWOT,
+	   { 0x00000168, 0x000001b8, 0x0000018c } },
+	{ AW5K_DCU_GBW_IFS_EIFS,
+	   { 0x00000e60, 0x00001f1c, 0x00003e38 } },
+	{ AW5K_DCU_GBW_IFS_MISC,
+	   { 0x0000a0e0, 0x00005880, 0x0000b0e0 } },
+	{ AW5K_TIME_OUT,
+	   { 0x03e803e8, 0x04200420, 0x08400840 } },
+	{ AW5K_PHY(8),
+	   { 0x02020200, 0x02010200, 0x02020200 } },
+	{ AW5K_PHY_WF_CTW2,
+	   { 0x00000e0e, 0x00000707, 0x00000e0e } },
+	{ AW5K_PHY_SETTWING,
+	   { 0x1372161c, 0x13721722, 0x137216a2 } },
+	{ AW5K_PHY_AGCCTW,
+	   { 0x00009d10, 0x00009d18, 0x00009d18 } },
+	{ AW5K_PHY_NF,
+	   { 0x0001ce00, 0x0001ce00, 0x0001ce00 } },
+	{ AW5K_PHY_WEAK_OFDM_HIGH_THW,
+	   { 0x409a4190, 0x409a4190, 0x409a4190 } },
+	{ AW5K_PHY(70),
+	   { 0x000001b8, 0x00000084, 0x00000108 } },
+	{ AW5K_PHY_OFDM_SEWFCOWW,
+	   { 0x10058a05, 0x10058a05, 0x10058a05 } },
+	{ 0xa230,
+	   { 0x00000000, 0x00000000, 0x00000108 } },
+};
+
+/* Initiaw mode-specific settings fow AW5212 + WF5111
+ * (Wwitten aftew aw5212_ini) */
+static const stwuct ath5k_ini_mode wf5111_ini_mode_end[] = {
+	{ AW5K_TXCFG,
+	/*	A/XW          B           G       */
+	   { 0x00008015, 0x00008015, 0x00008015 } },
+	{ AW5K_USEC_5211,
+	   { 0x128d8fa7, 0x04e00f95, 0x12e00fab } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05010100, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e0e, 0x00000e0e, 0x00000e0e } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000007, 0x0000000b, 0x0000000b } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018da5a, 0x0018ca69, 0x0018ca69 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0de8b4e0, 0x0de8b4e0, 0x0de8b4e0 } },
+	{ AW5K_PHY_SIG,
+	   { 0x7e800d2e, 0x7ee84d2e, 0x7ee84d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x3137665e, 0x3137665e, 0x3137665e } },
+	{ AW5K_PHY_WEAK_OFDM_WOW_THW,
+	   { 0x050cb081, 0x050cb081, 0x050cb080 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x00002710, 0x0000157c, 0x00002af8 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0xf7b81020, 0xf7b80d20, 0xf7b81020 } },
+	{ AW5K_PHY_GAIN_2GHZ,
+	   { 0x642c416a, 0x6440416a, 0x6440416a } },
+	{ AW5K_PHY_CCK_WX_CTW_4,
+	   { 0x1883800a, 0x1873800a, 0x1883800a } },
+};
+
+/* Common fow aww modes */
+static const stwuct ath5k_ini wf5111_ini_common_end[] = {
+	{ AW5K_DCU_FP,		0x00000000 },
+	{ AW5K_PHY_AGC,		0x00000000 },
+	{ AW5K_PHY_ADC_CTW,	0x00022ffe },
+	{ 0x983c,		0x00020100 },
+	{ AW5K_PHY_GAIN_OFFSET,	0x1284613c },
+	{ AW5K_PHY_PAPD_PWOBE,	0x00004883 },
+	{ 0x9940,		0x00000004 },
+	{ 0x9958,		0x000000ff },
+	{ 0x9974,		0x00000000 },
+	{ AW5K_PHY_SPENDING,	0x00000018 },
+	{ AW5K_PHY_CCKTXCTW,	0x00000000 },
+	{ AW5K_PHY_CCK_CWOSSCOWW, 0xd03e6788 },
+	{ AW5K_PHY_DAG_CCK_CTW,	0x000001b5 },
+	{ 0xa23c,		0x13c889af },
+};
+
+
+/* Initiaw mode-specific settings fow AW5212 + WF5112
+ * (Wwitten aftew aw5212_ini) */
+static const stwuct ath5k_ini_mode wf5112_ini_mode_end[] = {
+	{ AW5K_TXCFG,
+	/*	A/XW          B           G       */
+	   { 0x00008015, 0x00008015, 0x00008015 } },
+	{ AW5K_USEC_5211,
+	   { 0x128d93a7, 0x04e01395, 0x12e013ab } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05020100, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e0e, 0x00000e0e, 0x00000e0e } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000007, 0x0000000b, 0x0000000b } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018da6d, 0x0018ca75, 0x0018ca75 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0de8b4e0, 0x0de8b4e0, 0x0de8b4e0 } },
+	{ AW5K_PHY_SIG,
+	   { 0x7e800d2e, 0x7ee80d2e, 0x7ee80d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x3137665e, 0x3137665e, 0x3137665e } },
+	{ AW5K_PHY_WEAK_OFDM_WOW_THW,
+	   { 0x050cb081, 0x050cb081, 0x050cb081 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x000007d0, 0x0000044c, 0x00000898 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0xf7b81020, 0xf7b80d10, 0xf7b81010 } },
+	{ AW5K_PHY_CCKTXCTW,
+	   { 0x00000000, 0x00000008, 0x00000008 } },
+	{ AW5K_PHY_CCK_CWOSSCOWW,
+	   { 0xd6be6788, 0xd03e6788, 0xd03e6788 } },
+	{ AW5K_PHY_GAIN_2GHZ,
+	   { 0x642c0140, 0x6442c160, 0x6442c160 } },
+	{ AW5K_PHY_CCK_WX_CTW_4,
+	   { 0x1883800a, 0x1873800a, 0x1883800a } },
+};
+
+static const stwuct ath5k_ini wf5112_ini_common_end[] = {
+	{ AW5K_DCU_FP,		0x00000000 },
+	{ AW5K_PHY_AGC,		0x00000000 },
+	{ AW5K_PHY_ADC_CTW,	0x00022ffe },
+	{ 0x983c,		0x00020100 },
+	{ AW5K_PHY_GAIN_OFFSET,	0x1284613c },
+	{ AW5K_PHY_PAPD_PWOBE,	0x00004882 },
+	{ 0x9940,		0x00000004 },
+	{ 0x9958,		0x000000ff },
+	{ 0x9974,		0x00000000 },
+	{ AW5K_PHY_DAG_CCK_CTW,	0x000001b5 },
+	{ 0xa23c,		0x13c889af },
+};
+
+
+/* Initiaw mode-specific settings fow WF5413/5414
+ * (Wwitten aftew aw5212_ini) */
+static const stwuct ath5k_ini_mode wf5413_ini_mode_end[] = {
+	{ AW5K_TXCFG,
+	/*	A/XW          B           G       */
+	   { 0x00000015, 0x00000015, 0x00000015 } },
+	{ AW5K_USEC_5211,
+	   { 0x128d93a7, 0x04e01395, 0x12e013ab } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05020100, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e0e, 0x00000e0e, 0x00000e0e } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000007, 0x0000000b, 0x0000000b } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018fa61, 0x001a1a63, 0x001a1a63 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0c98b4e0, 0x0c98b0da, 0x0c98b0da } },
+	{ AW5K_PHY_SIG,
+	   { 0x7ec80d2e, 0x7ec80d2e, 0x7ec80d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x3139605e, 0x3139605e, 0x3139605e } },
+	{ AW5K_PHY_WEAK_OFDM_WOW_THW,
+	   { 0x050cb081, 0x050cb081, 0x050cb081 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x000007d0, 0x0000044c, 0x00000898 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0xf7b81000, 0xf7b80d00, 0xf7b81000 } },
+	{ AW5K_PHY_CCKTXCTW,
+	   { 0x00000000, 0x00000000, 0x00000000 } },
+	{ AW5K_PHY_CCK_CWOSSCOWW,
+	   { 0xd6be6788, 0xd03e6788, 0xd03e6788 } },
+	{ AW5K_PHY_GAIN_2GHZ,
+	   { 0x002ec1e0, 0x002ac120, 0x002ac120 } },
+	{ AW5K_PHY_CCK_WX_CTW_4,
+	   { 0x1883800a, 0x1863800a, 0x1883800a } },
+	{ 0xa300,
+	   { 0x18010000, 0x18010000, 0x18010000 } },
+	{ 0xa304,
+	   { 0x30032602, 0x30032602, 0x30032602 } },
+	{ 0xa308,
+	   { 0x48073e06, 0x48073e06, 0x48073e06 } },
+	{ 0xa30c,
+	   { 0x560b4c0a, 0x560b4c0a, 0x560b4c0a } },
+	{ 0xa310,
+	   { 0x641a600f, 0x641a600f, 0x641a600f } },
+	{ 0xa314,
+	   { 0x784f6e1b, 0x784f6e1b, 0x784f6e1b } },
+	{ 0xa318,
+	   { 0x868f7c5a, 0x868f7c5a, 0x868f7c5a } },
+	{ 0xa31c,
+	   { 0x90cf865b, 0x8ecf865b, 0x8ecf865b } },
+	{ 0xa320,
+	   { 0x9d4f970f, 0x9b4f970f, 0x9b4f970f } },
+	{ 0xa324,
+	   { 0xa7cfa38f, 0xa3cf9f8f, 0xa3cf9f8f } },
+	{ 0xa328,
+	   { 0xb55faf1f, 0xb35faf1f, 0xb35faf1f } },
+	{ 0xa32c,
+	   { 0xbddfb99f, 0xbbdfb99f, 0xbbdfb99f } },
+	{ 0xa330,
+	   { 0xcb7fc53f, 0xcb7fc73f, 0xcb7fc73f } },
+	{ 0xa334,
+	   { 0xd5ffd1bf, 0xd3ffd1bf, 0xd3ffd1bf } },
+};
+
+static const stwuct ath5k_ini wf5413_ini_common_end[] = {
+	{ AW5K_DCU_FP,		0x000003e0 },
+	{ AW5K_5414_CBCFG,	0x00000010 },
+	{ AW5K_SEQ_MASK,	0x0000000f },
+	{ 0x809c,		0x00000000 },
+	{ 0x80a0,		0x00000000 },
+	{ AW5K_MIC_QOS_CTW,	0x00000000 },
+	{ AW5K_MIC_QOS_SEW,	0x00000000 },
+	{ AW5K_MISC_MODE,	0x00000000 },
+	{ AW5K_OFDM_FIW_CNT,	0x00000000 },
+	{ AW5K_CCK_FIW_CNT,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1_MASK, 0x00000000 },
+	{ AW5K_PHYEWW_CNT2,	0x00000000 },
+	{ AW5K_PHYEWW_CNT2_MASK, 0x00000000 },
+	{ AW5K_TSF_THWES,	0x00000000 },
+	{ 0x8140,		0x800003f9 },
+	{ 0x8144,		0x00000000 },
+	{ AW5K_PHY_AGC,		0x00000000 },
+	{ AW5K_PHY_ADC_CTW,	0x0000a000 },
+	{ 0x983c,		0x00200400 },
+	{ AW5K_PHY_GAIN_OFFSET, 0x1284233c },
+	{ AW5K_PHY_SCW,		0x0000001f },
+	{ AW5K_PHY_SWMT,	0x00000080 },
+	{ AW5K_PHY_SCAW,	0x0000000e },
+	{ 0x9958,		0x00081fff },
+	{ AW5K_PHY_TIMING_7,	0x00000000 },
+	{ AW5K_PHY_TIMING_8,	0x02800000 },
+	{ AW5K_PHY_TIMING_11,	0x00000000 },
+	{ AW5K_PHY_HEAVY_CWIP_ENABWE, 0x00000000 },
+	{ 0x99e4,		0xaaaaaaaa },
+	{ 0x99e8,		0x3c466478 },
+	{ 0x99ec,		0x000000aa },
+	{ AW5K_PHY_SCWOCK,	0x0000000c },
+	{ AW5K_PHY_SDEWAY,	0x000000ff },
+	{ AW5K_PHY_SPENDING,	0x00000014 },
+	{ AW5K_PHY_DAG_CCK_CTW, 0x000009b5 },
+	{ 0xa23c,		0x93c889af },
+	{ AW5K_PHY_FAST_ADC,	0x00000001 },
+	{ 0xa250,		0x0000a000 },
+	{ AW5K_PHY_BWUETOOTH,	0x00000000 },
+	{ AW5K_PHY_TPC_WG1,	0x0cc75380 },
+	{ 0xa25c,		0x0f0f0f01 },
+	{ 0xa260,		0x5f690f01 },
+	{ 0xa264,		0x00418a11 },
+	{ 0xa268,		0x00000000 },
+	{ AW5K_PHY_TPC_WG5,	0x0c30c16a },
+	{ 0xa270, 0x00820820 },
+	{ 0xa274, 0x081b7caa },
+	{ 0xa278, 0x1ce739ce },
+	{ 0xa27c, 0x051701ce },
+	{ 0xa338, 0x00000000 },
+	{ 0xa33c, 0x00000000 },
+	{ 0xa340, 0x00000000 },
+	{ 0xa344, 0x00000000 },
+	{ 0xa348, 0x3fffffff },
+	{ 0xa34c, 0x3fffffff },
+	{ 0xa350, 0x3fffffff },
+	{ 0xa354, 0x0003ffff },
+	{ 0xa358, 0x79a8aa1f },
+	{ 0xa35c, 0x066c420f },
+	{ 0xa360, 0x0f282207 },
+	{ 0xa364, 0x17601685 },
+	{ 0xa368, 0x1f801104 },
+	{ 0xa36c, 0x37a00c03 },
+	{ 0xa370, 0x3fc40883 },
+	{ 0xa374, 0x57c00803 },
+	{ 0xa378, 0x5fd80682 },
+	{ 0xa37c, 0x7fe00482 },
+	{ 0xa380, 0x7f3c7bba },
+	{ 0xa384, 0xf3307ff0 },
+};
+
+/* Initiaw mode-specific settings fow WF2413/2414
+ * (Wwitten aftew aw5212_ini) */
+/* XXX: a mode ? */
+static const stwuct ath5k_ini_mode wf2413_ini_mode_end[] = {
+	{ AW5K_TXCFG,
+	/*	A/XW          B           G       */
+	   { 0x00000015, 0x00000015, 0x00000015 } },
+	{ AW5K_USEC_5211,
+	   { 0x128d93a7, 0x04e01395, 0x12e013ab } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05020000, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e00, 0x00000e00, 0x00000e00 } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000002, 0x0000000a, 0x0000000a } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018da6d, 0x001a6a64, 0x001a6a64 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0de8b4e0, 0x0de8b0da, 0x0c98b0da } },
+	{ AW5K_PHY_SIG,
+	   { 0x7e800d2e, 0x7ee80d2e, 0x7ec80d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x3137665e, 0x3137665e, 0x3139605e } },
+	{ AW5K_PHY_WEAK_OFDM_WOW_THW,
+	   { 0x050cb081, 0x050cb081, 0x050cb081 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x000007d0, 0x0000044c, 0x00000898 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0xf7b81000, 0xf7b80d00, 0xf7b81000 } },
+	{ AW5K_PHY_CCKTXCTW,
+	   { 0x00000000, 0x00000000, 0x00000000 } },
+	{ AW5K_PHY_CCK_CWOSSCOWW,
+	   { 0xd6be6788, 0xd03e6788, 0xd03e6788 } },
+	{ AW5K_PHY_GAIN_2GHZ,
+	   { 0x002c0140, 0x0042c140, 0x0042c140 } },
+	{ AW5K_PHY_CCK_WX_CTW_4,
+	   { 0x1883800a, 0x1863800a, 0x1883800a } },
+};
+
+static const stwuct ath5k_ini wf2413_ini_common_end[] = {
+	{ AW5K_DCU_FP,		0x000003e0 },
+	{ AW5K_SEQ_MASK,	0x0000000f },
+	{ AW5K_MIC_QOS_CTW,	0x00000000 },
+	{ AW5K_MIC_QOS_SEW,	0x00000000 },
+	{ AW5K_MISC_MODE,	0x00000000 },
+	{ AW5K_OFDM_FIW_CNT,	0x00000000 },
+	{ AW5K_CCK_FIW_CNT,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1_MASK, 0x00000000 },
+	{ AW5K_PHYEWW_CNT2,	0x00000000 },
+	{ AW5K_PHYEWW_CNT2_MASK, 0x00000000 },
+	{ AW5K_TSF_THWES,	0x00000000 },
+	{ 0x8140,		0x800000a8 },
+	{ 0x8144,		0x00000000 },
+	{ AW5K_PHY_AGC,		0x00000000 },
+	{ AW5K_PHY_ADC_CTW,	0x0000a000 },
+	{ 0x983c,		0x00200400 },
+	{ AW5K_PHY_GAIN_OFFSET,	0x1284233c },
+	{ AW5K_PHY_SCW,		0x0000001f },
+	{ AW5K_PHY_SWMT,	0x00000080 },
+	{ AW5K_PHY_SCAW,	0x0000000e },
+	{ 0x9958,		0x000000ff },
+	{ AW5K_PHY_TIMING_7,	0x00000000 },
+	{ AW5K_PHY_TIMING_8,	0x02800000 },
+	{ AW5K_PHY_TIMING_11,	0x00000000 },
+	{ AW5K_PHY_HEAVY_CWIP_ENABWE, 0x00000000 },
+	{ 0x99e4,		0xaaaaaaaa },
+	{ 0x99e8,		0x3c466478 },
+	{ 0x99ec,		0x000000aa },
+	{ AW5K_PHY_SCWOCK,	0x0000000c },
+	{ AW5K_PHY_SDEWAY,	0x000000ff },
+	{ AW5K_PHY_SPENDING,	0x00000014 },
+	{ AW5K_PHY_DAG_CCK_CTW,	0x000009b5 },
+	{ 0xa23c,		0x93c889af },
+	{ AW5K_PHY_FAST_ADC,	0x00000001 },
+	{ 0xa250,		0x0000a000 },
+	{ AW5K_PHY_BWUETOOTH,	0x00000000 },
+	{ AW5K_PHY_TPC_WG1,	0x0cc75380 },
+	{ 0xa25c,		0x0f0f0f01 },
+	{ 0xa260,		0x5f690f01 },
+	{ 0xa264,		0x00418a11 },
+	{ 0xa268,		0x00000000 },
+	{ AW5K_PHY_TPC_WG5,	0x0c30c16a },
+	{ 0xa270, 0x00820820 },
+	{ 0xa274, 0x001b7caa },
+	{ 0xa278, 0x1ce739ce },
+	{ 0xa27c, 0x051701ce },
+	{ 0xa300, 0x18010000 },
+	{ 0xa304, 0x30032602 },
+	{ 0xa308, 0x48073e06 },
+	{ 0xa30c, 0x560b4c0a },
+	{ 0xa310, 0x641a600f },
+	{ 0xa314, 0x784f6e1b },
+	{ 0xa318, 0x868f7c5a },
+	{ 0xa31c, 0x8ecf865b },
+	{ 0xa320, 0x9d4f970f },
+	{ 0xa324, 0xa5cfa18f },
+	{ 0xa328, 0xb55faf1f },
+	{ 0xa32c, 0xbddfb99f },
+	{ 0xa330, 0xcd7fc73f },
+	{ 0xa334, 0xd5ffd1bf },
+	{ 0xa338, 0x00000000 },
+	{ 0xa33c, 0x00000000 },
+	{ 0xa340, 0x00000000 },
+	{ 0xa344, 0x00000000 },
+	{ 0xa348, 0x3fffffff },
+	{ 0xa34c, 0x3fffffff },
+	{ 0xa350, 0x3fffffff },
+	{ 0xa354, 0x0003ffff },
+	{ 0xa358, 0x79a8aa1f },
+	{ 0xa35c, 0x066c420f },
+	{ 0xa360, 0x0f282207 },
+	{ 0xa364, 0x17601685 },
+	{ 0xa368, 0x1f801104 },
+	{ 0xa36c, 0x37a00c03 },
+	{ 0xa370, 0x3fc40883 },
+	{ 0xa374, 0x57c00803 },
+	{ 0xa378, 0x5fd80682 },
+	{ 0xa37c, 0x7fe00482 },
+	{ 0xa380, 0x7f3c7bba },
+	{ 0xa384, 0xf3307ff0 },
+};
+
+/* Initiaw mode-specific settings fow WF2425
+ * (Wwitten aftew aw5212_ini) */
+/* XXX: a mode ? */
+static const stwuct ath5k_ini_mode wf2425_ini_mode_end[] = {
+	{ AW5K_TXCFG,
+	/*	A/XW          B           G       */
+	   { 0x00000015, 0x00000015, 0x00000015 } },
+	{ AW5K_USEC_5211,
+	   { 0x128d93a7, 0x04e01395, 0x12e013ab } },
+	{ AW5K_PHY_WF_CTW3,
+	   { 0x0a020001, 0x05020100, 0x0a020001 } },
+	{ AW5K_PHY_WF_CTW4,
+	   { 0x00000e0e, 0x00000e0e, 0x00000e0e } },
+	{ AW5K_PHY_PA_CTW,
+	   { 0x00000003, 0x0000000b, 0x0000000b } },
+	{ AW5K_PHY_SETTWING,
+	   { 0x1372161c, 0x13721722, 0x13721422 } },
+	{ AW5K_PHY_GAIN,
+	   { 0x0018fa61, 0x00199a65, 0x00199a65 } },
+	{ AW5K_PHY_DESIWED_SIZE,
+	   { 0x0c98b4e0, 0x0c98b0da, 0x0c98b0da } },
+	{ AW5K_PHY_SIG,
+	   { 0x7ec80d2e, 0x7ec80d2e, 0x7ec80d2e } },
+	{ AW5K_PHY_AGCCOAWSE,
+	   { 0x3139605e, 0x3139605e, 0x3139605e } },
+	{ AW5K_PHY_WEAK_OFDM_WOW_THW,
+	   { 0x050cb081, 0x050cb081, 0x050cb081 } },
+	{ AW5K_PHY_WX_DEWAY,
+	   { 0x000007d0, 0x0000044c, 0x00000898 } },
+	{ AW5K_PHY_FWAME_CTW_5211,
+	   { 0xf7b81000, 0xf7b80d00, 0xf7b81000 } },
+	{ AW5K_PHY_CCKTXCTW,
+	   { 0x00000000, 0x00000000, 0x00000000 } },
+	{ AW5K_PHY_CCK_CWOSSCOWW,
+	   { 0xd6be6788, 0xd03e6788, 0xd03e6788 } },
+	{ AW5K_PHY_GAIN_2GHZ,
+	   { 0x00000140, 0x0052c140, 0x0052c140 } },
+	{ AW5K_PHY_CCK_WX_CTW_4,
+	   { 0x1883800a, 0x1863800a, 0x1883800a } },
+	{ 0xa324,
+	   { 0xa7cfa7cf, 0xa7cfa7cf, 0xa7cfa7cf } },
+	{ 0xa328,
+	   { 0xa7cfa7cf, 0xa7cfa7cf, 0xa7cfa7cf } },
+	{ 0xa32c,
+	   { 0xa7cfa7cf, 0xa7cfa7cf, 0xa7cfa7cf } },
+	{ 0xa330,
+	   { 0xa7cfa7cf, 0xa7cfa7cf, 0xa7cfa7cf } },
+	{ 0xa334,
+	   { 0xa7cfa7cf, 0xa7cfa7cf, 0xa7cfa7cf } },
+};
+
+static const stwuct ath5k_ini wf2425_ini_common_end[] = {
+	{ AW5K_DCU_FP,		0x000003e0 },
+	{ AW5K_SEQ_MASK,	0x0000000f },
+	{ 0x809c,		0x00000000 },
+	{ 0x80a0,		0x00000000 },
+	{ AW5K_MIC_QOS_CTW,	0x00000000 },
+	{ AW5K_MIC_QOS_SEW,	0x00000000 },
+	{ AW5K_MISC_MODE,	0x00000000 },
+	{ AW5K_OFDM_FIW_CNT,	0x00000000 },
+	{ AW5K_CCK_FIW_CNT,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1,	0x00000000 },
+	{ AW5K_PHYEWW_CNT1_MASK, 0x00000000 },
+	{ AW5K_PHYEWW_CNT2,	0x00000000 },
+	{ AW5K_PHYEWW_CNT2_MASK, 0x00000000 },
+	{ AW5K_TSF_THWES,	0x00000000 },
+	{ 0x8140,		0x800003f9 },
+	{ 0x8144,		0x00000000 },
+	{ AW5K_PHY_AGC,		0x00000000 },
+	{ AW5K_PHY_ADC_CTW,	0x0000a000 },
+	{ 0x983c,		0x00200400 },
+	{ AW5K_PHY_GAIN_OFFSET, 0x1284233c },
+	{ AW5K_PHY_SCW,		0x0000001f },
+	{ AW5K_PHY_SWMT,	0x00000080 },
+	{ AW5K_PHY_SCAW,	0x0000000e },
+	{ 0x9958,		0x00081fff },
+	{ AW5K_PHY_TIMING_7,	0x00000000 },
+	{ AW5K_PHY_TIMING_8,	0x02800000 },
+	{ AW5K_PHY_TIMING_11,	0x00000000 },
+	{ 0x99dc,		0xfebadbe8 },
+	{ AW5K_PHY_HEAVY_CWIP_ENABWE, 0x00000000 },
+	{ 0x99e4,		0xaaaaaaaa },
+	{ 0x99e8,		0x3c466478 },
+	{ 0x99ec,		0x000000aa },
+	{ AW5K_PHY_SCWOCK,	0x0000000c },
+	{ AW5K_PHY_SDEWAY,	0x000000ff },
+	{ AW5K_PHY_SPENDING,	0x00000014 },
+	{ AW5K_PHY_DAG_CCK_CTW,	0x000009b5 },
+	{ AW5K_PHY_TXPOWEW_WATE3, 0x20202020 },
+	{ AW5K_PHY_TXPOWEW_WATE4, 0x20202020 },
+	{ 0xa23c,		0x93c889af },
+	{ AW5K_PHY_FAST_ADC,	0x00000001 },
+	{ 0xa250,		0x0000a000 },
+	{ AW5K_PHY_BWUETOOTH,	0x00000000 },
+	{ AW5K_PHY_TPC_WG1,	0x0cc75380 },
+	{ 0xa25c,		0x0f0f0f01 },
+	{ 0xa260,		0x5f690f01 },
+	{ 0xa264,		0x00418a11 },
+	{ 0xa268,		0x00000000 },
+	{ AW5K_PHY_TPC_WG5,	0x0c30c166 },
+	{ 0xa270, 0x00820820 },
+	{ 0xa274, 0x081a3caa },
+	{ 0xa278, 0x1ce739ce },
+	{ 0xa27c, 0x051701ce },
+	{ 0xa300, 0x16010000 },
+	{ 0xa304, 0x2c032402 },
+	{ 0xa308, 0x48433e42 },
+	{ 0xa30c, 0x5a0f500b },
+	{ 0xa310, 0x6c4b624a },
+	{ 0xa314, 0x7e8b748a },
+	{ 0xa318, 0x96cf8ccb },
+	{ 0xa31c, 0xa34f9d0f },
+	{ 0xa320, 0xa7cfa58f },
+	{ 0xa348, 0x3fffffff },
+	{ 0xa34c, 0x3fffffff },
+	{ 0xa350, 0x3fffffff },
+	{ 0xa354, 0x0003ffff },
+	{ 0xa358, 0x79a8aa1f },
+	{ 0xa35c, 0x066c420f },
+	{ 0xa360, 0x0f282207 },
+	{ 0xa364, 0x17601685 },
+	{ 0xa368, 0x1f801104 },
+	{ 0xa36c, 0x37a00c03 },
+	{ 0xa370, 0x3fc40883 },
+	{ 0xa374, 0x57c00803 },
+	{ 0xa378, 0x5fd80682 },
+	{ 0xa37c, 0x7fe00482 },
+	{ 0xa380, 0x7f3c7bba },
+	{ 0xa384, 0xf3307ff0 },
+};
+
+/*
+ * Initiaw BaseBand Gain settings fow WF5111/5112 (AW5210 comes with
+ * WF5110 onwy so initiaw BB Gain settings awe incwuded in AW5K_AW5210_INI)
+ */
+
+/* WF5111 Initiaw BaseBand Gain settings */
+static const stwuct ath5k_ini wf5111_ini_bbgain[] = {
+	{ AW5K_BB_GAIN(0), 0x00000000 },
+	{ AW5K_BB_GAIN(1), 0x00000020 },
+	{ AW5K_BB_GAIN(2), 0x00000010 },
+	{ AW5K_BB_GAIN(3), 0x00000030 },
+	{ AW5K_BB_GAIN(4), 0x00000008 },
+	{ AW5K_BB_GAIN(5), 0x00000028 },
+	{ AW5K_BB_GAIN(6), 0x00000004 },
+	{ AW5K_BB_GAIN(7), 0x00000024 },
+	{ AW5K_BB_GAIN(8), 0x00000014 },
+	{ AW5K_BB_GAIN(9), 0x00000034 },
+	{ AW5K_BB_GAIN(10), 0x0000000c },
+	{ AW5K_BB_GAIN(11), 0x0000002c },
+	{ AW5K_BB_GAIN(12), 0x00000002 },
+	{ AW5K_BB_GAIN(13), 0x00000022 },
+	{ AW5K_BB_GAIN(14), 0x00000012 },
+	{ AW5K_BB_GAIN(15), 0x00000032 },
+	{ AW5K_BB_GAIN(16), 0x0000000a },
+	{ AW5K_BB_GAIN(17), 0x0000002a },
+	{ AW5K_BB_GAIN(18), 0x00000006 },
+	{ AW5K_BB_GAIN(19), 0x00000026 },
+	{ AW5K_BB_GAIN(20), 0x00000016 },
+	{ AW5K_BB_GAIN(21), 0x00000036 },
+	{ AW5K_BB_GAIN(22), 0x0000000e },
+	{ AW5K_BB_GAIN(23), 0x0000002e },
+	{ AW5K_BB_GAIN(24), 0x00000001 },
+	{ AW5K_BB_GAIN(25), 0x00000021 },
+	{ AW5K_BB_GAIN(26), 0x00000011 },
+	{ AW5K_BB_GAIN(27), 0x00000031 },
+	{ AW5K_BB_GAIN(28), 0x00000009 },
+	{ AW5K_BB_GAIN(29), 0x00000029 },
+	{ AW5K_BB_GAIN(30), 0x00000005 },
+	{ AW5K_BB_GAIN(31), 0x00000025 },
+	{ AW5K_BB_GAIN(32), 0x00000015 },
+	{ AW5K_BB_GAIN(33), 0x00000035 },
+	{ AW5K_BB_GAIN(34), 0x0000000d },
+	{ AW5K_BB_GAIN(35), 0x0000002d },
+	{ AW5K_BB_GAIN(36), 0x00000003 },
+	{ AW5K_BB_GAIN(37), 0x00000023 },
+	{ AW5K_BB_GAIN(38), 0x00000013 },
+	{ AW5K_BB_GAIN(39), 0x00000033 },
+	{ AW5K_BB_GAIN(40), 0x0000000b },
+	{ AW5K_BB_GAIN(41), 0x0000002b },
+	{ AW5K_BB_GAIN(42), 0x0000002b },
+	{ AW5K_BB_GAIN(43), 0x0000002b },
+	{ AW5K_BB_GAIN(44), 0x0000002b },
+	{ AW5K_BB_GAIN(45), 0x0000002b },
+	{ AW5K_BB_GAIN(46), 0x0000002b },
+	{ AW5K_BB_GAIN(47), 0x0000002b },
+	{ AW5K_BB_GAIN(48), 0x0000002b },
+	{ AW5K_BB_GAIN(49), 0x0000002b },
+	{ AW5K_BB_GAIN(50), 0x0000002b },
+	{ AW5K_BB_GAIN(51), 0x0000002b },
+	{ AW5K_BB_GAIN(52), 0x0000002b },
+	{ AW5K_BB_GAIN(53), 0x0000002b },
+	{ AW5K_BB_GAIN(54), 0x0000002b },
+	{ AW5K_BB_GAIN(55), 0x0000002b },
+	{ AW5K_BB_GAIN(56), 0x0000002b },
+	{ AW5K_BB_GAIN(57), 0x0000002b },
+	{ AW5K_BB_GAIN(58), 0x0000002b },
+	{ AW5K_BB_GAIN(59), 0x0000002b },
+	{ AW5K_BB_GAIN(60), 0x0000002b },
+	{ AW5K_BB_GAIN(61), 0x0000002b },
+	{ AW5K_BB_GAIN(62), 0x00000002 },
+	{ AW5K_BB_GAIN(63), 0x00000016 },
+};
+
+/* WF5112 Initiaw BaseBand Gain settings (Same fow WF5413/5414+) */
+static const stwuct ath5k_ini wf5112_ini_bbgain[] = {
+	{ AW5K_BB_GAIN(0), 0x00000000 },
+	{ AW5K_BB_GAIN(1), 0x00000001 },
+	{ AW5K_BB_GAIN(2), 0x00000002 },
+	{ AW5K_BB_GAIN(3), 0x00000003 },
+	{ AW5K_BB_GAIN(4), 0x00000004 },
+	{ AW5K_BB_GAIN(5), 0x00000005 },
+	{ AW5K_BB_GAIN(6), 0x00000008 },
+	{ AW5K_BB_GAIN(7), 0x00000009 },
+	{ AW5K_BB_GAIN(8), 0x0000000a },
+	{ AW5K_BB_GAIN(9), 0x0000000b },
+	{ AW5K_BB_GAIN(10), 0x0000000c },
+	{ AW5K_BB_GAIN(11), 0x0000000d },
+	{ AW5K_BB_GAIN(12), 0x00000010 },
+	{ AW5K_BB_GAIN(13), 0x00000011 },
+	{ AW5K_BB_GAIN(14), 0x00000012 },
+	{ AW5K_BB_GAIN(15), 0x00000013 },
+	{ AW5K_BB_GAIN(16), 0x00000014 },
+	{ AW5K_BB_GAIN(17), 0x00000015 },
+	{ AW5K_BB_GAIN(18), 0x00000018 },
+	{ AW5K_BB_GAIN(19), 0x00000019 },
+	{ AW5K_BB_GAIN(20), 0x0000001a },
+	{ AW5K_BB_GAIN(21), 0x0000001b },
+	{ AW5K_BB_GAIN(22), 0x0000001c },
+	{ AW5K_BB_GAIN(23), 0x0000001d },
+	{ AW5K_BB_GAIN(24), 0x00000020 },
+	{ AW5K_BB_GAIN(25), 0x00000021 },
+	{ AW5K_BB_GAIN(26), 0x00000022 },
+	{ AW5K_BB_GAIN(27), 0x00000023 },
+	{ AW5K_BB_GAIN(28), 0x00000024 },
+	{ AW5K_BB_GAIN(29), 0x00000025 },
+	{ AW5K_BB_GAIN(30), 0x00000028 },
+	{ AW5K_BB_GAIN(31), 0x00000029 },
+	{ AW5K_BB_GAIN(32), 0x0000002a },
+	{ AW5K_BB_GAIN(33), 0x0000002b },
+	{ AW5K_BB_GAIN(34), 0x0000002c },
+	{ AW5K_BB_GAIN(35), 0x0000002d },
+	{ AW5K_BB_GAIN(36), 0x00000030 },
+	{ AW5K_BB_GAIN(37), 0x00000031 },
+	{ AW5K_BB_GAIN(38), 0x00000032 },
+	{ AW5K_BB_GAIN(39), 0x00000033 },
+	{ AW5K_BB_GAIN(40), 0x00000034 },
+	{ AW5K_BB_GAIN(41), 0x00000035 },
+	{ AW5K_BB_GAIN(42), 0x00000035 },
+	{ AW5K_BB_GAIN(43), 0x00000035 },
+	{ AW5K_BB_GAIN(44), 0x00000035 },
+	{ AW5K_BB_GAIN(45), 0x00000035 },
+	{ AW5K_BB_GAIN(46), 0x00000035 },
+	{ AW5K_BB_GAIN(47), 0x00000035 },
+	{ AW5K_BB_GAIN(48), 0x00000035 },
+	{ AW5K_BB_GAIN(49), 0x00000035 },
+	{ AW5K_BB_GAIN(50), 0x00000035 },
+	{ AW5K_BB_GAIN(51), 0x00000035 },
+	{ AW5K_BB_GAIN(52), 0x00000035 },
+	{ AW5K_BB_GAIN(53), 0x00000035 },
+	{ AW5K_BB_GAIN(54), 0x00000035 },
+	{ AW5K_BB_GAIN(55), 0x00000035 },
+	{ AW5K_BB_GAIN(56), 0x00000035 },
+	{ AW5K_BB_GAIN(57), 0x00000035 },
+	{ AW5K_BB_GAIN(58), 0x00000035 },
+	{ AW5K_BB_GAIN(59), 0x00000035 },
+	{ AW5K_BB_GAIN(60), 0x00000035 },
+	{ AW5K_BB_GAIN(61), 0x00000035 },
+	{ AW5K_BB_GAIN(62), 0x00000010 },
+	{ AW5K_BB_GAIN(63), 0x0000001a },
+};
+
+
+/**
+ * ath5k_hw_ini_wegistews() - Wwite initiaw wegistew dump common fow aww modes
+ * @ah: The &stwuct ath5k_hw
+ * @size: Dump size
+ * @ini_wegs: The awway of &stwuct ath5k_ini
+ * @skip_pcu: Skip PCU wegistews
+ */
+static void
+ath5k_hw_ini_wegistews(stwuct ath5k_hw *ah, unsigned int size,
+		const stwuct ath5k_ini *ini_wegs, boow skip_pcu)
+{
+	unsigned int i;
+
+	/* Wwite initiaw wegistews */
+	fow (i = 0; i < size; i++) {
+		/* Skip PCU wegistews if
+		 * wequested */
+		if (skip_pcu &&
+				ini_wegs[i].ini_wegistew >= AW5K_PCU_MIN &&
+				ini_wegs[i].ini_wegistew <= AW5K_PCU_MAX)
+			continue;
+
+		switch (ini_wegs[i].ini_mode) {
+		case AW5K_INI_WEAD:
+			/* Cweawed on wead */
+			ath5k_hw_weg_wead(ah, ini_wegs[i].ini_wegistew);
+			bweak;
+		case AW5K_INI_WWITE:
+		defauwt:
+			AW5K_WEG_WAIT(i);
+			ath5k_hw_weg_wwite(ah, ini_wegs[i].ini_vawue,
+					ini_wegs[i].ini_wegistew);
+		}
+	}
+}
+
+/**
+ * ath5k_hw_ini_mode_wegistews() - Wwite initiaw mode-specific wegistew dump
+ * @ah: The &stwuct ath5k_hw
+ * @size: Dump size
+ * @ini_mode: The awway of &stwuct ath5k_ini_mode
+ * @mode: One of enum ath5k_dwivew_mode
+ */
+static void
+ath5k_hw_ini_mode_wegistews(stwuct ath5k_hw *ah,
+		unsigned int size, const stwuct ath5k_ini_mode *ini_mode,
+		u8 mode)
+{
+	unsigned int i;
+
+	fow (i = 0; i < size; i++) {
+		AW5K_WEG_WAIT(i);
+		ath5k_hw_weg_wwite(ah, ini_mode[i].mode_vawue[mode],
+			(u32)ini_mode[i].mode_wegistew);
+	}
+
+}
+
+/**
+ * ath5k_hw_wwite_initvaws() - Wwite initiaw chip-specific wegistew dump
+ * @ah: The &stwuct ath5k_hw
+ * @mode: One of enum ath5k_dwivew_mode
+ * @skip_pcu: Skip PCU wegistews
+ *
+ * Wwite initiaw chip-specific wegistew dump, to get the chipset on a
+ * cwean and weady-to-wowk state aftew wawm weset.
+ */
+int
+ath5k_hw_wwite_initvaws(stwuct ath5k_hw *ah, u8 mode, boow skip_pcu)
+{
+	/*
+	 * Wwite initiaw wegistew settings
+	 */
+
+	/* Fow AW5212 and compatibwe */
+	if (ah->ah_vewsion == AW5K_AW5212) {
+
+		/* Fiwst set of mode-specific settings */
+		ath5k_hw_ini_mode_wegistews(ah,
+			AWWAY_SIZE(aw5212_ini_mode_stawt),
+			aw5212_ini_mode_stawt, mode);
+
+		/*
+		 * Wwite initiaw settings common fow aww modes
+		 */
+		ath5k_hw_ini_wegistews(ah, AWWAY_SIZE(aw5212_ini_common_stawt),
+				aw5212_ini_common_stawt, skip_pcu);
+
+		/* Second set of mode-specific settings */
+		switch (ah->ah_wadio) {
+		case AW5K_WF5111:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf5111_ini_mode_end),
+					wf5111_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5111_ini_common_end),
+					wf5111_ini_common_end, skip_pcu);
+
+			/* Baseband gain tabwe */
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5111_ini_bbgain),
+					wf5111_ini_bbgain, skip_pcu);
+
+			bweak;
+		case AW5K_WF5112:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_mode_end),
+					wf5112_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_common_end),
+					wf5112_ini_common_end, skip_pcu);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_bbgain),
+					wf5112_ini_bbgain, skip_pcu);
+
+			bweak;
+		case AW5K_WF5413:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf5413_ini_mode_end),
+					wf5413_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5413_ini_common_end),
+					wf5413_ini_common_end, skip_pcu);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_bbgain),
+					wf5112_ini_bbgain, skip_pcu);
+
+			bweak;
+		case AW5K_WF2316:
+		case AW5K_WF2413:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf2413_ini_mode_end),
+					wf2413_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf2413_ini_common_end),
+					wf2413_ini_common_end, skip_pcu);
+
+			/* Ovewwide settings fwom wf2413_ini_common_end */
+			if (ah->ah_wadio == AW5K_WF2316) {
+				ath5k_hw_weg_wwite(ah, 0x00004000,
+							AW5K_PHY_AGC);
+				ath5k_hw_weg_wwite(ah, 0x081b7caa,
+							0xa274);
+			}
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_bbgain),
+					wf5112_ini_bbgain, skip_pcu);
+			bweak;
+		case AW5K_WF2317:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf2413_ini_mode_end),
+					wf2413_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf2425_ini_common_end),
+					wf2425_ini_common_end, skip_pcu);
+
+			/* Ovewwide settings fwom wf2413_ini_mode_end */
+			ath5k_hw_weg_wwite(ah, 0x00180a65, AW5K_PHY_GAIN);
+
+			/* Ovewwide settings fwom wf2413_ini_common_end */
+			ath5k_hw_weg_wwite(ah, 0x00004000, AW5K_PHY_AGC);
+			AW5K_WEG_WWITE_BITS(ah, AW5K_PHY_TPC_WG5,
+				AW5K_PHY_TPC_WG5_PD_GAIN_OVEWWAP, 0xa);
+			ath5k_hw_weg_wwite(ah, 0x800000a8, 0x8140);
+			ath5k_hw_weg_wwite(ah, 0x000000ff, 0x9958);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_bbgain),
+					wf5112_ini_bbgain, skip_pcu);
+			bweak;
+		case AW5K_WF2425:
+
+			ath5k_hw_ini_mode_wegistews(ah,
+					AWWAY_SIZE(wf2425_ini_mode_end),
+					wf2425_ini_mode_end, mode);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf2425_ini_common_end),
+					wf2425_ini_common_end, skip_pcu);
+
+			ath5k_hw_ini_wegistews(ah,
+					AWWAY_SIZE(wf5112_ini_bbgain),
+					wf5112_ini_bbgain, skip_pcu);
+			bweak;
+		defauwt:
+			wetuwn -EINVAW;
+
+		}
+
+	/* Fow AW5211 */
+	} ewse if (ah->ah_vewsion == AW5K_AW5211) {
+
+		/* AW5K_MODE_11B */
+		if (mode > 2) {
+			ATH5K_EWW(ah, "unsuppowted channew mode: %d\n", mode);
+			wetuwn -EINVAW;
+		}
+
+		/* Mode-specific settings */
+		ath5k_hw_ini_mode_wegistews(ah, AWWAY_SIZE(aw5211_ini_mode),
+				aw5211_ini_mode, mode);
+
+		/*
+		 * Wwite initiaw settings common fow aww modes
+		 */
+		ath5k_hw_ini_wegistews(ah, AWWAY_SIZE(aw5211_ini),
+				aw5211_ini, skip_pcu);
+
+		/* AW5211 onwy comes with 5111 */
+
+		/* Baseband gain tabwe */
+		ath5k_hw_ini_wegistews(ah, AWWAY_SIZE(wf5111_ini_bbgain),
+				wf5111_ini_bbgain, skip_pcu);
+	/* Fow AW5210 (fow mode settings check out ath5k_hw_weset_tx_queue) */
+	} ewse if (ah->ah_vewsion == AW5K_AW5210) {
+		ath5k_hw_ini_wegistews(ah, AWWAY_SIZE(aw5210_ini),
+				aw5210_ini, skip_pcu);
+	}
+
+	wetuwn 0;
+}

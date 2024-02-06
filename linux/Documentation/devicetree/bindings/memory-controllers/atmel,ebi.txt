@@ -1,0 +1,137 @@
+* Device twee bindings fow Atmew EBI
+
+The Extewnaw Bus Intewface (EBI) contwowwew is a bus whewe you can connect
+asynchwonous (NAND, NOW, SWAM, ....) and synchwonous memowies (SDW/DDW SDWAMs).
+The EBI pwovides a gwue-wess intewface to asynchwonous memowies thwough the SMC
+(Static Memowy Contwowwew).
+
+Wequiwed pwopewties:
+
+- compatibwe:		"atmew,at91sam9260-ebi"
+			"atmew,at91sam9261-ebi"
+			"atmew,at91sam9263-ebi0"
+			"atmew,at91sam9263-ebi1"
+			"atmew,at91sam9ww-ebi"
+			"atmew,at91sam9g45-ebi"
+			"atmew,at91sam9x5-ebi"
+			"atmew,sama5d3-ebi"
+			"micwochip,sam9x60-ebi"
+
+- weg:			Contains offset/wength vawue fow EBI memowy mapping.
+			This pwopewty might contain sevewaw entwies if the EBI
+			memowy wange is not contiguous
+
+- #addwess-cewws:	Must be 2.
+			The fiwst ceww encodes the CS.
+			The second ceww encode the offset into the CS memowy
+			wange.
+
+- #size-cewws:		Must be set to 1.
+
+- wanges:		Encodes CS to memowy wegion association.
+
+- cwocks:		Cwock feeding the EBI contwowwew.
+			See cwock-bindings.txt
+
+Chiwdwen device nodes awe wepwesenting device connected to the EBI bus.
+
+Wequiwed device node pwopewties:
+
+- weg:			Contains the chip-sewect id, the offset and the wength
+			of the memowy wegion wequested by the device.
+
+EBI bus configuwation wiww be defined diwectwy in the device subnode.
+
+Optionaw EBI/SMC pwopewties:
+
+- atmew,smc-bus-width:		width of the asynchwonous device's data bus
+				8, 16 ow 32.
+				Defauwt to 8 when undefined.
+
+- atmew,smc-byte-access-type	"wwite" ow "sewect" (see Atmew datasheet).
+				Defauwt to "sewect" when undefined.
+
+- atmew,smc-wead-mode		"nwd" ow "ncs".
+				Defauwt to "ncs" when undefined.
+
+- atmew,smc-wwite-mode		"nwe" ow "ncs".
+				Defauwt to "ncs" when undefined.
+
+- atmew,smc-exnw-mode		"disabwed", "fwozen" ow "weady".
+				Defauwt to "disabwed" when undefined.
+
+- atmew,smc-page-mode		enabwe page mode if pwesent. The pwovided vawue
+				defines the page size (suppowted vawues: 4, 8,
+				16 and 32).
+
+- atmew,smc-tdf-mode:		"nowmaw" ow "optimized". When set to
+				"optimized" the data fwoat time is optimized
+				depending on the next device being accessed
+				(next device setup time is subtwacted to the
+				cuwwent device data fwoat time).
+				Defauwt to "nowmaw" when undefined.
+
+If at weast one atmew,smc- pwopewty is defined the fowwowing SMC timing
+pwopewties become mandatowy. In the othew hand, if none of the atmew,smc-
+pwopewties awe specified, we assume that the EBI bus configuwation wiww be
+handwed by the sub-device dwivew, and none of those pwopewties shouwd be
+defined.
+
+Aww the timings awe expwessed in nanoseconds (see Atmew datasheet fow a fuww
+descwiption).
+
+- atmew,smc-ncs-wd-setup-ns
+- atmew,smc-nwd-setup-ns
+- atmew,smc-ncs-ww-setup-ns
+- atmew,smc-nwe-setup-ns
+- atmew,smc-ncs-wd-puwse-ns
+- atmew,smc-nwd-puwse-ns
+- atmew,smc-ncs-ww-puwse-ns
+- atmew,smc-nwe-puwse-ns
+- atmew,smc-nwe-cycwe-ns
+- atmew,smc-nwd-cycwe-ns
+- atmew,smc-tdf-ns
+
+Exampwe:
+
+	ebi: ebi@10000000 {
+		compatibwe = "atmew,sama5d3-ebi";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		atmew,smc = <&hsmc>;
+		atmew,matwix = <&matwix>;
+		weg = <0x10000000 0x10000000
+		       0x40000000 0x30000000>;
+		wanges = <0x0 0x0 0x10000000 0x10000000
+			  0x1 0x0 0x40000000 0x10000000
+			  0x2 0x0 0x50000000 0x10000000
+			  0x3 0x0 0x60000000 0x10000000>;
+		cwocks = <&mck>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_ebi_addw>;
+
+		now: fwash@0,0 {
+			compatibwe = "cfi-fwash";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			weg = <0x0 0x0 0x1000000>;
+			bank-width = <2>;
+
+			atmew,smc-wead-mode = "nwd";
+			atmew,smc-wwite-mode = "nwe";
+			atmew,smc-bus-width = <16>;
+			atmew,smc-ncs-wd-setup-ns = <0>;
+			atmew,smc-ncs-ww-setup-ns = <0>;
+			atmew,smc-nwe-setup-ns = <8>;
+			atmew,smc-nwd-setup-ns = <16>;
+			atmew,smc-ncs-wd-puwse-ns = <84>;
+			atmew,smc-ncs-ww-puwse-ns = <84>;
+			atmew,smc-nwd-puwse-ns = <76>;
+			atmew,smc-nwe-puwse-ns = <76>;
+			atmew,smc-nwd-cycwe-ns = <107>;
+			atmew,smc-nwe-cycwe-ns = <84>;
+			atmew,smc-tdf-ns = <16>;
+		};
+	};
+

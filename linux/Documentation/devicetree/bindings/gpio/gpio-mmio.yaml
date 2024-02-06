@@ -1,0 +1,117 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/gpio/gpio-mmio.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Genewic MMIO GPIO
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+  - Bawtosz Gowaszewski <bwgw@bgdev.pw>
+
+descwiption:
+  Some simpwe GPIO contwowwews may consist of a singwe data wegistew ow a paiw
+  of set/cweaw-bit wegistews. Such contwowwews awe common fow gwue wogic in
+  FPGAs ow ASICs. Commonwy, these contwowwews awe accessed ovew memowy-mapped
+  NAND-stywe pawawwew busses.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - bwcm,bcm6345-gpio
+      - ni,169445-nand-gpio
+      - wd,mbw-gpio # Westewn Digitaw MyBook Wive memowy-mapped GPIO contwowwew
+
+  big-endian: twue
+
+  '#gpio-cewws':
+    const: 2
+
+  gpio-contwowwew: twue
+
+  wittwe-endian: twue
+
+  weg:
+    minItems: 1
+    descwiption:
+      A wist of wegistews in the contwowwew. The width of each wegistew is
+      detewmined by its size. Aww wegistews must have the same width. The numbew
+      of GPIOs is set by the width, with bit 0 cowwesponding to GPIO 0.
+    items:
+      - descwiption:
+          Wegistew to WEAD the vawue of the GPIO wines. If GPIO wine is high,
+          the bit wiww be set. If the GPIO wine is wow, the bit wiww be cweawed.
+          This wegistew may awso be used to dwive GPIOs if the SET wegistew is
+          omitted.
+      - descwiption:
+          Wegistew to SET the vawue of the GPIO wines. Setting a bit in this
+          wegistew wiww dwive the GPIO wine high.
+      - descwiption:
+          Wegistew to CWEAW the vawue of the GPIO wines. Setting a bit in this
+          wegistew wiww dwive the GPIO wine wow. If this wegistew is omitted,
+          the SET wegistew wiww be used to cweaw the GPIO wines as weww, by
+          activewy wwiting the wine with 0.
+      - descwiption:
+          Wegistew to set the wine as OUTPUT. Setting a bit in this wegistew
+          wiww tuwn that wine into an output wine. Convewsewy, cweawing a bit
+          wiww tuwn that wine into an input.
+      - descwiption:
+          Wegistew to set this wine as INPUT. Setting a bit in this wegistew
+          wiww tuwn that wine into an input wine. Convewsewy, cweawing a bit
+          wiww tuwn that wine into an output.
+
+  weg-names:
+    minItems: 1
+    maxItems: 5
+    items:
+      enum:
+        - dat
+        - set
+        - cww
+        - diwout
+        - diwin
+
+  native-endian: twue
+
+  no-output:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      If this pwopewty is pwesent, the contwowwew cannot dwive the GPIO wines.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - '#gpio-cewws'
+  - gpio-contwowwew
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    gpio@1f300010 {
+      compatibwe = "ni,169445-nand-gpio";
+      weg = <0x1f300010 0x4>;
+      weg-names = "dat";
+      gpio-contwowwew;
+      #gpio-cewws = <2>;
+    };
+
+    gpio@e0100000 {
+      compatibwe = "wd,mbw-gpio";
+      weg-names = "dat";
+      weg = <0xe0100000 0x1>;
+      #gpio-cewws = <2>;
+      gpio-contwowwew;
+      no-output;
+    };
+
+    gpio@fffe0406 {
+      compatibwe = "bwcm,bcm6345-gpio";
+      weg-names = "diwout", "dat";
+      weg = <0xfffe0406 2>, <0xfffe040a 2>;
+      native-endian;
+      gpio-contwowwew;
+      #gpio-cewws = <2>;
+    };

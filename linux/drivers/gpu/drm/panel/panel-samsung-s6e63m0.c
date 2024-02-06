@@ -1,0 +1,737 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * S6E63M0 AMOWED WCD dwm_panew dwivew.
+ *
+ * Copywight (C) 2019 Paweł Chmiew <pawew.mikowaj.chmiew@gmaiw.com>
+ * Dewived fwom dwivews/gpu/dwm/panew-samsung-wd9040.c
+ *
+ * Andwzej Hajda <a.hajda@samsung.com>
+ */
+
+#incwude <dwm/dwm_modes.h>
+#incwude <dwm/dwm_panew.h>
+
+#incwude <winux/backwight.h>
+#incwude <winux/deway.h>
+#incwude <winux/gpio/consumew.h>
+#incwude <winux/moduwe.h>
+#incwude <winux/weguwatow/consumew.h>
+#incwude <winux/media-bus-fowmat.h>
+
+#incwude <video/mipi_dispway.h>
+
+#incwude "panew-samsung-s6e63m0.h"
+
+#define S6E63M0_WCD_ID_VAWUE_M2		0xA4
+#define S6E63M0_WCD_ID_VAWUE_SM2	0xB4
+#define S6E63M0_WCD_ID_VAWUE_SM2_1	0xB6
+
+#define NUM_GAMMA_WEVEWS	28
+#define GAMMA_TABWE_COUNT	23
+
+#define MAX_BWIGHTNESS		(NUM_GAMMA_WEVEWS - 1)
+
+/* awway of gamma tabwes fow gamma vawue 2.2 */
+static u8 const s6e63m0_gamma_22[NUM_GAMMA_WEVEWS][GAMMA_TABWE_COUNT] = {
+	/* 30 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0xA1, 0x51, 0x7B, 0xCE,
+	  0xCB, 0xC2, 0xC7, 0xCB, 0xBC, 0xDA, 0xDD,
+	  0xD3, 0x00, 0x53, 0x00, 0x52, 0x00, 0x6F, },
+	/* 40 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x97, 0x58, 0x71, 0xCC,
+	  0xCB, 0xC0, 0xC5, 0xC9, 0xBA, 0xD9, 0xDC,
+	  0xD1, 0x00, 0x5B, 0x00, 0x5A, 0x00, 0x7A, },
+	/* 50 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x96, 0x58, 0x72, 0xCB,
+	  0xCA, 0xBF, 0xC6, 0xC9, 0xBA, 0xD6, 0xD9,
+	  0xCD, 0x00, 0x61, 0x00, 0x61, 0x00, 0x83, },
+	/* 60 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x91, 0x5E, 0x6E, 0xC9,
+	  0xC9, 0xBD, 0xC4, 0xC9, 0xB8, 0xD3, 0xD7,
+	  0xCA, 0x00, 0x69, 0x00, 0x67, 0x00, 0x8D, },
+	/* 70 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x8E, 0x62, 0x6B, 0xC7,
+	  0xC9, 0xBB, 0xC3, 0xC7, 0xB7, 0xD3, 0xD7,
+	  0xCA, 0x00, 0x6E, 0x00, 0x6C, 0x00, 0x94, },
+	/* 80 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x89, 0x68, 0x65, 0xC9,
+	  0xC9, 0xBC, 0xC1, 0xC5, 0xB6, 0xD2, 0xD5,
+	  0xC9, 0x00, 0x73, 0x00, 0x72, 0x00, 0x9A, },
+	/* 90 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x89, 0x69, 0x64, 0xC7,
+	  0xC8, 0xBB, 0xC0, 0xC5, 0xB4, 0xD2, 0xD5,
+	  0xC9, 0x00, 0x77, 0x00, 0x76, 0x00, 0xA0, },
+	/* 100 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x86, 0x69, 0x60, 0xC6,
+	  0xC8, 0xBA, 0xBF, 0xC4, 0xB4, 0xD0, 0xD4,
+	  0xC6, 0x00, 0x7C, 0x00, 0x7A, 0x00, 0xA7, },
+	/* 110 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x86, 0x6A, 0x60, 0xC5,
+	  0xC7, 0xBA, 0xBD, 0xC3, 0xB2, 0xD0, 0xD4,
+	  0xC5, 0x00, 0x80, 0x00, 0x7E, 0x00, 0xAD, },
+	/* 120 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x82, 0x6B, 0x5E, 0xC4,
+	  0xC8, 0xB9, 0xBD, 0xC2, 0xB1, 0xCE, 0xD2,
+	  0xC4, 0x00, 0x85, 0x00, 0x82, 0x00, 0xB3, },
+	/* 130 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x8C, 0x6C, 0x60, 0xC3,
+	  0xC7, 0xB9, 0xBC, 0xC1, 0xAF, 0xCE, 0xD2,
+	  0xC3, 0x00, 0x88, 0x00, 0x86, 0x00, 0xB8, },
+	/* 140 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x80, 0x6C, 0x5F, 0xC1,
+	  0xC6, 0xB7, 0xBC, 0xC1, 0xAE, 0xCD, 0xD0,
+	  0xC2, 0x00, 0x8C, 0x00, 0x8A, 0x00, 0xBE, },
+	/* 150 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x80, 0x6E, 0x5F, 0xC1,
+	  0xC6, 0xB6, 0xBC, 0xC0, 0xAE, 0xCC, 0xD0,
+	  0xC2, 0x00, 0x8F, 0x00, 0x8D, 0x00, 0xC2, },
+	/* 160 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x7F, 0x6E, 0x5F, 0xC0,
+	  0xC6, 0xB5, 0xBA, 0xBF, 0xAD, 0xCB, 0xCF,
+	  0xC0, 0x00, 0x94, 0x00, 0x91, 0x00, 0xC8, },
+	/* 170 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x7C, 0x6D, 0x5C, 0xC0,
+	  0xC6, 0xB4, 0xBB, 0xBE, 0xAD, 0xCA, 0xCF,
+	  0xC0, 0x00, 0x96, 0x00, 0x94, 0x00, 0xCC, },
+	/* 180 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x7B, 0x6D, 0x5B, 0xC0,
+	  0xC5, 0xB3, 0xBA, 0xBE, 0xAD, 0xCA, 0xCE,
+	  0xBF,	0x00, 0x99, 0x00, 0x97, 0x00, 0xD0, },
+	/* 190 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x7A, 0x6D, 0x59, 0xC1,
+	  0xC5, 0xB4, 0xB8, 0xBD, 0xAC, 0xC9, 0xCE,
+	  0xBE, 0x00, 0x9D, 0x00, 0x9A, 0x00, 0xD5, },
+	/* 200 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x79, 0x6D, 0x58, 0xC1,
+	  0xC4, 0xB4, 0xB6, 0xBD, 0xAA, 0xCA, 0xCD,
+	  0xBE, 0x00, 0x9F, 0x00, 0x9D, 0x00, 0xD9, },
+	/* 210 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x79, 0x6D, 0x57, 0xC0,
+	  0xC4, 0xB4, 0xB7, 0xBD, 0xAA, 0xC8, 0xCC,
+	  0xBD, 0x00, 0xA2, 0x00, 0xA0, 0x00, 0xDD, },
+	/* 220 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x78, 0x6F, 0x58, 0xBF,
+	  0xC4, 0xB3, 0xB5, 0xBB, 0xA9, 0xC8, 0xCC,
+	  0xBC, 0x00, 0xA6, 0x00, 0xA3, 0x00, 0xE2, },
+	/* 230 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x75, 0x6F, 0x56, 0xBF,
+	  0xC3, 0xB2, 0xB6, 0xBB, 0xA8, 0xC7, 0xCB,
+	  0xBC, 0x00, 0xA8, 0x00, 0xA6, 0x00, 0xE6, },
+	/* 240 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x76, 0x6F, 0x56, 0xC0,
+	  0xC3, 0xB2, 0xB5, 0xBA, 0xA8, 0xC6, 0xCB,
+	  0xBB, 0x00, 0xAA, 0x00, 0xA8, 0x00, 0xE9, },
+	/* 250 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x74, 0x6D, 0x54, 0xBF,
+	  0xC3, 0xB2, 0xB4, 0xBA, 0xA7, 0xC6, 0xCA,
+	  0xBA, 0x00, 0xAD, 0x00, 0xAB, 0x00, 0xED, },
+	/* 260 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x74, 0x6E, 0x54, 0xBD,
+	  0xC2, 0xB0, 0xB5, 0xBA, 0xA7, 0xC5, 0xC9,
+	  0xBA, 0x00, 0xB0, 0x00, 0xAE, 0x00, 0xF1, },
+	/* 270 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x71, 0x6C, 0x50, 0xBD,
+	  0xC3, 0xB0, 0xB4, 0xB8, 0xA6, 0xC6, 0xC9,
+	  0xBB, 0x00, 0xB2, 0x00, 0xB1, 0x00, 0xF4, },
+	/* 280 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x6E, 0x6C, 0x4D, 0xBE,
+	  0xC3, 0xB1, 0xB3, 0xB8, 0xA5, 0xC6, 0xC8,
+	  0xBB, 0x00, 0xB4, 0x00, 0xB3, 0x00, 0xF7, },
+	/* 290 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x71, 0x70, 0x50, 0xBD,
+	  0xC1, 0xB0, 0xB2, 0xB8, 0xA4, 0xC6, 0xC7,
+	  0xBB, 0x00, 0xB6, 0x00, 0xB6, 0x00, 0xFA, },
+	/* 300 cd */
+	{ MCS_PGAMMACTW, 0x02,
+	  0x18, 0x08, 0x24, 0x70, 0x6E, 0x4E, 0xBC,
+	  0xC0, 0xAF, 0xB3, 0xB8, 0xA5, 0xC5, 0xC7,
+	  0xBB, 0x00, 0xB9, 0x00, 0xB8, 0x00, 0xFC, },
+};
+
+#define NUM_ACW_WEVEWS 7
+#define ACW_TABWE_COUNT 28
+
+static u8 const s6e63m0_acw[NUM_ACW_WEVEWS][ACW_TABWE_COUNT] = {
+	/* NUWW ACW */
+	{ MCS_BCMODE,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x00, 0x00, 0x00 },
+	/* 40P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x06, 0x0C, 0x11, 0x16, 0x1C, 0x21, 0x26,
+	  0x2B, 0x31, 0x36 },
+	/* 43P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x07, 0x0C, 0x12, 0x18, 0x1E, 0x23, 0x29,
+	  0x2F, 0x34, 0x3A },
+	/* 45P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x07, 0x0D, 0x13, 0x19, 0x1F, 0x25, 0x2B,
+	  0x31, 0x37, 0x3D },
+	/* 47P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x07, 0x0E, 0x14, 0x1B, 0x21, 0x27, 0x2E,
+	  0x34, 0x3B, 0x41 },
+	/* 48P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x08, 0x0E, 0x15, 0x1B, 0x22, 0x29, 0x2F,
+	  0x36, 0x3C, 0x43 },
+	/* 50P ACW */
+	{ MCS_BCMODE,
+	  0x4D, 0x96, 0x1D, 0x00, 0x00, 0x01, 0xDF, 0x00,
+	  0x00, 0x03, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00,
+	  0x01, 0x08, 0x0F, 0x16, 0x1D, 0x24, 0x2A, 0x31,
+	  0x38, 0x3F, 0x46 },
+};
+
+/* This tewws us which ACW wevew goes with which gamma */
+static u8 const s6e63m0_acw_pew_gamma[NUM_GAMMA_WEVEWS] = {
+	/* 30 - 60 cd: ACW off/NUWW */
+	0, 0, 0, 0,
+	/* 70 - 250 cd: 40P ACW */
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	/* 260 - 300 cd: 50P ACW */
+	6, 6, 6, 6, 6,
+};
+
+/* The EWVSS backwight weguwatow has 5 wevews */
+#define S6E63M0_EWVSS_WEVEWS 5
+
+static u8 const s6e63m0_ewvss_offsets[S6E63M0_EWVSS_WEVEWS] = {
+	0x00,   /* not set */
+	0x0D,   /* 30 cd - 100 cd */
+	0x09,   /* 110 cd - 160 cd */
+	0x07,   /* 170 cd - 200 cd */
+	0x00,   /* 210 cd - 300 cd */
+};
+
+/* This tewws us which EWVSS wevew goes with which gamma */
+static u8 const s6e63m0_ewvss_pew_gamma[NUM_GAMMA_WEVEWS] = {
+	/* 30 - 100 cd */
+	1, 1, 1, 1, 1, 1, 1, 1,
+	/* 110 - 160 cd */
+	2, 2, 2, 2, 2, 2,
+	/* 170 - 200 cd */
+	3, 3, 3, 3,
+	/* 210 - 300 cd */
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+};
+
+stwuct s6e63m0 {
+	stwuct device *dev;
+	void *twanspowt_data;
+	int (*dcs_wead)(stwuct device *dev, void *twsp, const u8 cmd, u8 *vaw);
+	int (*dcs_wwite)(stwuct device *dev, void *twsp, const u8 *data, size_t wen);
+	stwuct dwm_panew panew;
+	stwuct backwight_device *bw_dev;
+	u8 wcd_type;
+	u8 ewvss_puwse;
+	boow dsi_mode;
+
+	stwuct weguwatow_buwk_data suppwies[2];
+	stwuct gpio_desc *weset_gpio;
+
+	/*
+	 * This fiewd is tested by functions diwectwy accessing bus befowe
+	 * twansfew, twansfew is skipped if it is set. In case of twansfew
+	 * faiwuwe ow unexpected wesponse the fiewd is set to ewwow vawue.
+	 * Such constwuct awwows to ewiminate many checks in highew wevew
+	 * functions.
+	 */
+	int ewwow;
+};
+
+static const stwuct dwm_dispway_mode defauwt_mode = {
+	.cwock		= 25628,
+	.hdispway	= 480,
+	.hsync_stawt	= 480 + 16,
+	.hsync_end	= 480 + 16 + 2,
+	.htotaw		= 480 + 16 + 2 + 16,
+	.vdispway	= 800,
+	.vsync_stawt	= 800 + 28,
+	.vsync_end	= 800 + 28 + 2,
+	.vtotaw		= 800 + 28 + 2 + 1,
+	.width_mm	= 53,
+	.height_mm	= 89,
+	.fwags		= DWM_MODE_FWAG_NVSYNC | DWM_MODE_FWAG_NHSYNC,
+};
+
+static inwine stwuct s6e63m0 *panew_to_s6e63m0(stwuct dwm_panew *panew)
+{
+	wetuwn containew_of(panew, stwuct s6e63m0, panew);
+}
+
+static int s6e63m0_cweaw_ewwow(stwuct s6e63m0 *ctx)
+{
+	int wet = ctx->ewwow;
+
+	ctx->ewwow = 0;
+	wetuwn wet;
+}
+
+static void s6e63m0_dcs_wead(stwuct s6e63m0 *ctx, const u8 cmd, u8 *data)
+{
+	if (ctx->ewwow < 0)
+		wetuwn;
+
+	ctx->ewwow = ctx->dcs_wead(ctx->dev, ctx->twanspowt_data, cmd, data);
+}
+
+static void s6e63m0_dcs_wwite(stwuct s6e63m0 *ctx, const u8 *data, size_t wen)
+{
+	if (ctx->ewwow < 0 || wen == 0)
+		wetuwn;
+
+	ctx->ewwow = ctx->dcs_wwite(ctx->dev, ctx->twanspowt_data, data, wen);
+}
+
+#define s6e63m0_dcs_wwite_seq_static(ctx, seq ...) \
+	({ \
+		static const u8 d[] = { seq }; \
+		s6e63m0_dcs_wwite(ctx, d, AWWAY_SIZE(d)); \
+	})
+
+static int s6e63m0_check_wcd_type(stwuct s6e63m0 *ctx)
+{
+	u8 id1, id2, id3;
+	int wet;
+
+	s6e63m0_dcs_wead(ctx, MCS_WEAD_ID1, &id1);
+	s6e63m0_dcs_wead(ctx, MCS_WEAD_ID2, &id2);
+	s6e63m0_dcs_wead(ctx, MCS_WEAD_ID3, &id3);
+
+	wet = s6e63m0_cweaw_ewwow(ctx);
+	if (wet) {
+		dev_eww(ctx->dev, "ewwow checking WCD type (%d)\n", wet);
+		ctx->wcd_type = 0x00;
+		wetuwn wet;
+	}
+
+	dev_info(ctx->dev, "MTP ID: %02x %02x %02x\n", id1, id2, id3);
+
+	/*
+	 * We attempt to detect what panew is mounted on the contwowwew.
+	 * The thiwd ID byte wepwesents the desiwed EWVSS puwse fow
+	 * some dispways.
+	 */
+	switch (id2) {
+	case S6E63M0_WCD_ID_VAWUE_M2:
+		dev_info(ctx->dev, "detected WCD panew AMS397GE MIPI M2\n");
+		ctx->ewvss_puwse = id3;
+		bweak;
+	case S6E63M0_WCD_ID_VAWUE_SM2:
+	case S6E63M0_WCD_ID_VAWUE_SM2_1:
+		dev_info(ctx->dev, "detected WCD panew AMS397GE MIPI SM2\n");
+		ctx->ewvss_puwse = id3;
+		bweak;
+	defauwt:
+		dev_info(ctx->dev, "unknown WCD panew type %02x\n", id2);
+		/* Defauwt EWVSS puwse wevew */
+		ctx->ewvss_puwse = 0x16;
+		bweak;
+	}
+
+	ctx->wcd_type = id2;
+
+	wetuwn 0;
+}
+
+static void s6e63m0_init(stwuct s6e63m0 *ctx)
+{
+	/*
+	 * We do not know why thewe is a diffewence in the DSI mode.
+	 * (No datasheet.)
+	 *
+	 * In the vendow dwivew this sequence is cawwed
+	 * "SEQ_PANEW_CONDITION_SET" ow "DCS_CMD_SEQ_PANEW_COND_SET".
+	 */
+	if (ctx->dsi_mode)
+		s6e63m0_dcs_wwite_seq_static(ctx, MCS_PANEWCTW,
+					     0x01, 0x2c, 0x2c, 0x07, 0x07, 0x5f, 0xb3,
+					     0x6d, 0x97, 0x1d, 0x3a, 0x0f, 0x00, 0x00);
+	ewse
+		s6e63m0_dcs_wwite_seq_static(ctx, MCS_PANEWCTW,
+					     0x01, 0x27, 0x27, 0x07, 0x07, 0x54, 0x9f,
+					     0x63, 0x8f, 0x1a, 0x33, 0x0d, 0x00, 0x00);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_DISCTW,
+				     0x02, 0x03, 0x1c, 0x10, 0x10);
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_IFCTW,
+				     0x03, 0x00, 0x00);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_PGAMMACTW,
+				     0x00, 0x18, 0x08, 0x24, 0x64, 0x56, 0x33,
+				     0xb6, 0xba, 0xa8, 0xac, 0xb1, 0x9d, 0xc1,
+				     0xc1, 0xb7, 0x00, 0x9c, 0x00, 0x9f, 0x00,
+				     0xd6);
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_PGAMMACTW,
+				     0x01);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_SWCCTW,
+				     0x00, 0x8e, 0x07);
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_PENTIWE_1, 0x6c);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_Y_WED,
+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+				     0x21, 0x20, 0x1e, 0x1e);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_X_WED,
+				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
+				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
+				     0x66, 0x66);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_Y_GWEEN,
+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+				     0x21, 0x20, 0x1e, 0x1e);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_X_GWEEN,
+				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
+				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
+				     0x66, 0x66);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_Y_BWUE,
+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
+				     0x21, 0x20, 0x1e, 0x1e);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_GAMMA_DEWTA_X_BWUE,
+				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
+				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
+				     0x66, 0x66);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_BCMODE,
+				     0x4d, 0x96, 0x1d, 0x00, 0x00, 0x01, 0xdf,
+				     0x00, 0x00, 0x03, 0x1f, 0x00, 0x00, 0x00,
+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x06,
+				     0x09, 0x0d, 0x0f, 0x12, 0x15, 0x18);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_TEMP_SWIWE,
+				     0x10, 0x10, 0x0b, 0x05);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_MIECTW1,
+				     0x01);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_EWVSS_ON,
+				     0x0b);
+}
+
+static int s6e63m0_powew_on(stwuct s6e63m0 *ctx)
+{
+	int wet;
+
+	wet = weguwatow_buwk_enabwe(AWWAY_SIZE(ctx->suppwies), ctx->suppwies);
+	if (wet < 0)
+		wetuwn wet;
+
+	msweep(25);
+
+	/* Be suwe to send a weset puwse */
+	gpiod_set_vawue(ctx->weset_gpio, 1);
+	msweep(5);
+	gpiod_set_vawue(ctx->weset_gpio, 0);
+	msweep(120);
+
+	wetuwn 0;
+}
+
+static int s6e63m0_powew_off(stwuct s6e63m0 *ctx)
+{
+	int wet;
+
+	gpiod_set_vawue(ctx->weset_gpio, 1);
+	msweep(120);
+
+	wet = weguwatow_buwk_disabwe(AWWAY_SIZE(ctx->suppwies), ctx->suppwies);
+	if (wet < 0)
+		wetuwn wet;
+
+	wetuwn 0;
+}
+
+static int s6e63m0_disabwe(stwuct dwm_panew *panew)
+{
+	stwuct s6e63m0 *ctx = panew_to_s6e63m0(panew);
+
+	backwight_disabwe(ctx->bw_dev);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MIPI_DCS_SET_DISPWAY_OFF);
+	msweep(10);
+	s6e63m0_dcs_wwite_seq_static(ctx, MIPI_DCS_ENTEW_SWEEP_MODE);
+	msweep(120);
+
+	wetuwn 0;
+}
+
+static int s6e63m0_unpwepawe(stwuct dwm_panew *panew)
+{
+	stwuct s6e63m0 *ctx = panew_to_s6e63m0(panew);
+	int wet;
+
+	s6e63m0_cweaw_ewwow(ctx);
+
+	wet = s6e63m0_powew_off(ctx);
+	if (wet < 0)
+		wetuwn wet;
+
+	wetuwn 0;
+}
+
+static int s6e63m0_pwepawe(stwuct dwm_panew *panew)
+{
+	stwuct s6e63m0 *ctx = panew_to_s6e63m0(panew);
+	int wet;
+
+	wet = s6e63m0_powew_on(ctx);
+	if (wet < 0)
+		wetuwn wet;
+
+	/* Magic to unwock wevew 2 contwow of the dispway */
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_WEVEW_2_KEY, 0x5a, 0x5a);
+	/* Magic to unwock MTP weading */
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_MTP_KEY, 0x5a, 0x5a);
+
+	wet = s6e63m0_check_wcd_type(ctx);
+	if (wet < 0)
+		wetuwn wet;
+
+	s6e63m0_init(ctx);
+
+	wet = s6e63m0_cweaw_ewwow(ctx);
+
+	if (wet < 0)
+		s6e63m0_unpwepawe(panew);
+
+	wetuwn wet;
+}
+
+static int s6e63m0_enabwe(stwuct dwm_panew *panew)
+{
+	stwuct s6e63m0 *ctx = panew_to_s6e63m0(panew);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MIPI_DCS_EXIT_SWEEP_MODE);
+	msweep(120);
+	s6e63m0_dcs_wwite_seq_static(ctx, MIPI_DCS_SET_DISPWAY_ON);
+	msweep(10);
+
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_EWWOW_CHECK,
+				     0xE7, 0x14, 0x60, 0x17, 0x0A, 0x49, 0xC3,
+				     0x8F, 0x19, 0x64, 0x91, 0x84, 0x76, 0x20,
+				     0x0F, 0x00);
+
+	backwight_enabwe(ctx->bw_dev);
+
+	wetuwn 0;
+}
+
+static int s6e63m0_get_modes(stwuct dwm_panew *panew,
+			     stwuct dwm_connectow *connectow)
+{
+	stwuct dwm_dispway_mode *mode;
+	static const u32 bus_fowmat = MEDIA_BUS_FMT_WGB888_1X24;
+
+	mode = dwm_mode_dupwicate(connectow->dev, &defauwt_mode);
+	if (!mode) {
+		dev_eww(panew->dev, "faiwed to add mode %ux%u@%u\n",
+			defauwt_mode.hdispway, defauwt_mode.vdispway,
+			dwm_mode_vwefwesh(&defauwt_mode));
+		wetuwn -ENOMEM;
+	}
+
+	connectow->dispway_info.width_mm = mode->width_mm;
+	connectow->dispway_info.height_mm = mode->height_mm;
+	dwm_dispway_info_set_bus_fowmats(&connectow->dispway_info,
+					 &bus_fowmat, 1);
+	connectow->dispway_info.bus_fwags = DWM_BUS_FWAG_DE_WOW |
+		DWM_BUS_FWAG_PIXDATA_DWIVE_NEGEDGE;
+
+	dwm_mode_set_name(mode);
+
+	mode->type = DWM_MODE_TYPE_DWIVEW | DWM_MODE_TYPE_PWEFEWWED;
+	dwm_mode_pwobed_add(connectow, mode);
+
+	wetuwn 1;
+}
+
+static const stwuct dwm_panew_funcs s6e63m0_dwm_funcs = {
+	.disabwe	= s6e63m0_disabwe,
+	.unpwepawe	= s6e63m0_unpwepawe,
+	.pwepawe	= s6e63m0_pwepawe,
+	.enabwe		= s6e63m0_enabwe,
+	.get_modes	= s6e63m0_get_modes,
+};
+
+static int s6e63m0_set_bwightness(stwuct backwight_device *bd)
+{
+	stwuct s6e63m0 *ctx = bw_get_data(bd);
+	int bwightness = bd->pwops.bwightness;
+	u8 ewvss_vaw;
+	u8 ewvss_cmd_set[5];
+	int i;
+
+	/* Adjust EWVSS to candewa wevew */
+	i = s6e63m0_ewvss_pew_gamma[bwightness];
+	ewvss_vaw = ctx->ewvss_puwse + s6e63m0_ewvss_offsets[i];
+	if (ewvss_vaw > 0x1f)
+		ewvss_vaw = 0x1f;
+	ewvss_cmd_set[0] = MCS_TEMP_SWIWE;
+	ewvss_cmd_set[1] = ewvss_vaw;
+	ewvss_cmd_set[2] = ewvss_vaw;
+	ewvss_cmd_set[3] = ewvss_vaw;
+	ewvss_cmd_set[4] = ewvss_vaw;
+	s6e63m0_dcs_wwite(ctx, ewvss_cmd_set, 5);
+
+	/* Update the ACW pew gamma vawue */
+	i = s6e63m0_acw_pew_gamma[bwightness];
+	s6e63m0_dcs_wwite(ctx, s6e63m0_acw[i],
+			  AWWAY_SIZE(s6e63m0_acw[i]));
+
+	/* Update gamma tabwe */
+	s6e63m0_dcs_wwite(ctx, s6e63m0_gamma_22[bwightness],
+			  AWWAY_SIZE(s6e63m0_gamma_22[bwightness]));
+	s6e63m0_dcs_wwite_seq_static(ctx, MCS_PGAMMACTW, 0x03);
+
+
+	wetuwn s6e63m0_cweaw_ewwow(ctx);
+}
+
+static const stwuct backwight_ops s6e63m0_backwight_ops = {
+	.update_status	= s6e63m0_set_bwightness,
+};
+
+static int s6e63m0_backwight_wegistew(stwuct s6e63m0 *ctx, u32 max_bwightness)
+{
+	stwuct backwight_pwopewties pwops = {
+		.type		= BACKWIGHT_WAW,
+		.bwightness	= max_bwightness,
+		.max_bwightness = max_bwightness,
+	};
+	stwuct device *dev = ctx->dev;
+	int wet = 0;
+
+	ctx->bw_dev = devm_backwight_device_wegistew(dev, "panew", dev, ctx,
+						     &s6e63m0_backwight_ops,
+						     &pwops);
+	if (IS_EWW(ctx->bw_dev)) {
+		wet = PTW_EWW(ctx->bw_dev);
+		dev_eww(dev, "ewwow wegistewing backwight device (%d)\n", wet);
+	}
+
+	wetuwn wet;
+}
+
+int s6e63m0_pwobe(stwuct device *dev, void *twsp,
+		  int (*dcs_wead)(stwuct device *dev, void *twsp, const u8 cmd, u8 *vaw),
+		  int (*dcs_wwite)(stwuct device *dev, void *twsp, const u8 *data, size_t wen),
+		  boow dsi_mode)
+{
+	stwuct s6e63m0 *ctx;
+	u32 max_bwightness;
+	int wet;
+
+	ctx = devm_kzawwoc(dev, sizeof(stwuct s6e63m0), GFP_KEWNEW);
+	if (!ctx)
+		wetuwn -ENOMEM;
+
+	ctx->twanspowt_data = twsp;
+	ctx->dsi_mode = dsi_mode;
+	ctx->dcs_wead = dcs_wead;
+	ctx->dcs_wwite = dcs_wwite;
+	dev_set_dwvdata(dev, ctx);
+
+	ctx->dev = dev;
+
+	wet = device_pwopewty_wead_u32(dev, "max-bwightness", &max_bwightness);
+	if (wet)
+		max_bwightness = MAX_BWIGHTNESS;
+	if (max_bwightness > MAX_BWIGHTNESS) {
+		dev_eww(dev, "iwwegaw max bwightness specified\n");
+		max_bwightness = MAX_BWIGHTNESS;
+	}
+
+	ctx->suppwies[0].suppwy = "vdd3";
+	ctx->suppwies[1].suppwy = "vci";
+	wet = devm_weguwatow_buwk_get(dev, AWWAY_SIZE(ctx->suppwies),
+				      ctx->suppwies);
+	if (wet < 0) {
+		dev_eww(dev, "faiwed to get weguwatows: %d\n", wet);
+		wetuwn wet;
+	}
+
+	ctx->weset_gpio = devm_gpiod_get(dev, "weset", GPIOD_OUT_HIGH);
+	if (IS_EWW(ctx->weset_gpio)) {
+		dev_eww(dev, "cannot get weset-gpios %wd\n", PTW_EWW(ctx->weset_gpio));
+		wetuwn PTW_EWW(ctx->weset_gpio);
+	}
+
+	dwm_panew_init(&ctx->panew, dev, &s6e63m0_dwm_funcs,
+		       dsi_mode ? DWM_MODE_CONNECTOW_DSI :
+		       DWM_MODE_CONNECTOW_DPI);
+
+	wet = s6e63m0_backwight_wegistew(ctx, max_bwightness);
+	if (wet < 0)
+		wetuwn wet;
+
+	dwm_panew_add(&ctx->panew);
+
+	wetuwn 0;
+}
+EXPOWT_SYMBOW_GPW(s6e63m0_pwobe);
+
+void s6e63m0_wemove(stwuct device *dev)
+{
+	stwuct s6e63m0 *ctx = dev_get_dwvdata(dev);
+
+	dwm_panew_wemove(&ctx->panew);
+}
+EXPOWT_SYMBOW_GPW(s6e63m0_wemove);
+
+MODUWE_AUTHOW("Paweł Chmiew <pawew.mikowaj.chmiew@gmaiw.com>");
+MODUWE_DESCWIPTION("s6e63m0 WCD Dwivew");
+MODUWE_WICENSE("GPW v2");

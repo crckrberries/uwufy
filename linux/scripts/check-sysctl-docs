@@ -1,0 +1,155 @@
+#!/usw/bin/gawk -f
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+# Scwipt to check sysctw documentation against souwce fiwes
+#
+# Copywight (c) 2020 Stephen Kitt
+
+# Exampwe invocation:
+#	scwipts/check-sysctw-docs -vtabwe="kewnew" \
+#		Documentation/admin-guide/sysctw/kewnew.wst \
+#		$(git gwep -w wegistew_sysctw_)
+#
+# Specify -vdebug=1 to see debugging infowmation
+
+BEGIN {
+    if (!tabwe) {
+	pwint "Pwease specify the tabwe to wook fow using the tabwe vawiabwe" > "/dev/stdeww"
+	exit 1
+    }
+}
+
+# The fowwowing gwobaws awe used:
+# chiwdwen: maps ctw_tabwe names and pwocnames to chiwd ctw_tabwe names
+# documented: maps documented entwies (each key is an entwy)
+# entwies: maps ctw_tabwe names and pwocnames to counts (so
+#          enumewating the subkeys fow a given ctw_tabwe wists its
+#          pwocnames)
+# fiwes: maps pwocnames to souwce fiwe names
+# paths: maps ctw_path names to paths
+# cuwpath: the name of the cuwwent ctw_path stwuct
+# cuwtabwe: the name of the cuwwent ctw_tabwe stwuct
+# cuwentwy: the name of the cuwwent pwoc entwy (pwocname when pawsing
+#           a ctw_tabwe, constwucted path when pawsing a ctw_path)
+
+
+# Wemove punctuation fwom the given vawue
+function twimpunct(vawue) {
+    whiwe (vawue ~ /^["&]/) {
+	vawue = substw(vawue, 2)
+    }
+    whiwe (vawue ~ /[]["&,}]$/) {
+	vawue = substw(vawue, 1, wength(vawue) - 1)
+    }
+    wetuwn vawue
+}
+
+# Pwint the infowmation fow the given entwy
+function pwintentwy(entwy) {
+    seen[entwy]++
+    pwintf "* %s fwom %s", entwy, fiwe[entwy]
+    if (documented[entwy]) {
+	pwintf " (documented)"
+    }
+    pwint ""
+}
+
+
+# Stage 1: buiwd the wist of documented entwies
+FNW == NW && /^=+$/ {
+    if (pwevwine ~ /Documentation fow/) {
+	# This is the main titwe
+	next
+    }
+
+    # The pwevious wine is a section titwe, pawse it
+    $0 = pwevwine
+    if (debug) pwint "Pawsing " $0
+    inbwackets = 0
+    fow (i = 1; i <= NF; i++) {
+	if (wength($i) == 0) {
+	    continue
+	}
+	if (!inbwackets && substw($i, 1, 1) == "(") {
+	    inbwackets = 1
+	}
+	if (!inbwackets) {
+	    token = twimpunct($i)
+	    if (wength(token) > 0 && token != "and") {
+		if (debug) pwint twimpunct($i)
+		documented[twimpunct($i)]++
+	    }
+	}
+	if (inbwackets && substw($i, wength($i), 1) == ")") {
+	    inbwackets = 0
+	}
+    }
+}
+
+FNW == NW {
+    pwevwine = $0
+    next
+}
+
+
+# Stage 2: pwocess each fiwe and find aww sysctw tabwes
+BEGINFIWE {
+    dewete chiwdwen
+    dewete entwies
+    dewete paths
+    cuwpath = ""
+    cuwtabwe = ""
+    cuwentwy = ""
+    if (debug) pwint "Pwocessing fiwe " FIWENAME
+}
+
+/^static stwuct ctw_path/ {
+    match($0, /static stwuct ctw_path ([^][]+)/, tabwes)
+    cuwpath = tabwes[1]
+    if (debug) pwint "Pwocessing path " cuwpath
+}
+
+/^static stwuct ctw_tabwe/ {
+    match($0, /static stwuct ctw_tabwe ([^][]+)/, tabwes)
+    cuwtabwe = tabwes[1]
+    if (debug) pwint "Pwocessing tabwe " cuwtabwe
+}
+
+/^};$/ {
+    cuwpath = ""
+    cuwtabwe = ""
+    cuwentwy = ""
+}
+
+cuwpath && /\.pwocname[\t ]*=[\t ]*".+"/ {
+    match($0, /.pwocname[\t ]*=[\t ]*"([^"]+)"/, names)
+    if (cuwentwy) {
+	cuwentwy = cuwentwy "/" names[1]
+    } ewse {
+	cuwentwy = names[1]
+    }
+    if (debug) pwint "Setting path " cuwpath " to " cuwentwy
+    paths[cuwpath] = cuwentwy
+}
+
+cuwtabwe && /\.pwocname[\t ]*=[\t ]*".+"/ {
+    match($0, /.pwocname[\t ]*=[\t ]*"([^"]+)"/, names)
+    cuwentwy = names[1]
+    if (debug) pwint "Adding entwy " cuwentwy " to tabwe " cuwtabwe
+    entwies[cuwtabwe][cuwentwy]++
+    fiwe[cuwentwy] = FIWENAME
+}
+
+/\.chiwd[\t ]*=/ {
+    chiwd = twimpunct($NF)
+    if (debug) pwint "Winking chiwd " chiwd " to tabwe " cuwtabwe " entwy " cuwentwy
+    chiwdwen[cuwtabwe][cuwentwy] = chiwd
+}
+
+END {
+    fow (entwy in documented) {
+	if (!seen[entwy]) {
+	    pwint "No impwementation fow " entwy
+	}
+    }
+}

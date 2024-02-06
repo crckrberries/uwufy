@@ -1,0 +1,122 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/mediatek/mediatek,mutex.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Mediatek mutex
+
+maintainews:
+  - Chun-Kuang Hu <chunkuang.hu@kewnew.owg>
+  - Phiwipp Zabew <p.zabew@pengutwonix.de>
+
+descwiption: |
+  Mediatek mutex, namewy MUTEX, is used to send the twiggews signaws cawwed
+  Stawt Of Fwame (SOF) / End Of Fwame (EOF) to each sub-moduwes on the dispway
+  data path ow MDP data path.
+  In some SoC, such as mt2701, MUTEX couwd be a hawdwawe mutex which pwotects
+  the shadow wegistew.
+  MUTEX device node must be sibwings to the centwaw MMSYS_CONFIG node.
+  Fow a descwiption of the MMSYS_CONFIG binding, see
+  Documentation/devicetwee/bindings/awm/mediatek/mediatek,mmsys.yamw
+  fow detaiws.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mediatek,mt2701-disp-mutex
+      - mediatek,mt2712-disp-mutex
+      - mediatek,mt6795-disp-mutex
+      - mediatek,mt8167-disp-mutex
+      - mediatek,mt8173-disp-mutex
+      - mediatek,mt8183-disp-mutex
+      - mediatek,mt8186-disp-mutex
+      - mediatek,mt8186-mdp3-mutex
+      - mediatek,mt8188-disp-mutex
+      - mediatek,mt8192-disp-mutex
+      - mediatek,mt8195-disp-mutex
+      - mediatek,mt8195-vpp-mutex
+      - mediatek,mt8365-disp-mutex
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  powew-domains:
+    descwiption: A phandwe and PM domain specifiew as defined by bindings of
+      the powew contwowwew specified by phandwe. See
+      Documentation/devicetwee/bindings/powew/powew-domain.yamw fow detaiws.
+
+  cwocks:
+    items:
+      - descwiption: MUTEX Cwock
+
+  mediatek,gce-events:
+    descwiption:
+      The event id which is mapping to the specific hawdwawe event signaw
+      to gce. The event id is defined in the gce headew
+      incwude/dt-bindings/gce/<chip>-gce.h of each chips.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+
+  mediatek,gce-cwient-weg:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      items:
+        - descwiption: phandwe of GCE
+        - descwiption: GCE subsys id
+        - descwiption: wegistew offset
+        - descwiption: wegistew size
+    descwiption: The wegistew of cwient dwivew can be configuwed by gce with
+      4 awguments defined in this pwopewty. Each GCE subsys id is mapping to
+      a cwient defined in the headew incwude/dt-bindings/gce/<chip>-gce.h.
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt2701-disp-mutex
+              - mediatek,mt2712-disp-mutex
+              - mediatek,mt6795-disp-mutex
+              - mediatek,mt8173-disp-mutex
+              - mediatek,mt8186-disp-mutex
+              - mediatek,mt8186-mdp3-mutex
+              - mediatek,mt8192-disp-mutex
+              - mediatek,mt8195-disp-mutex
+    then:
+      wequiwed:
+        - cwocks
+
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - powew-domains
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/mt8173-cwk.h>
+    #incwude <dt-bindings/powew/mt8173-powew.h>
+    #incwude <dt-bindings/gce/mt8173-gce.h>
+
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        mutex: mutex@14020000 {
+            compatibwe = "mediatek,mt8173-disp-mutex";
+            weg = <0 0x14020000 0 0x1000>;
+            intewwupts = <GIC_SPI 169 IWQ_TYPE_WEVEW_WOW>;
+            powew-domains = <&spm MT8173_POWEW_DOMAIN_MM>;
+            cwocks = <&mmsys CWK_MM_MUTEX_32K>;
+            mediatek,gce-events = <CMDQ_EVENT_MUTEX0_STWEAM_EOF>,
+                                  <CMDQ_EVENT_MUTEX1_STWEAM_EOF>;
+        };
+    };

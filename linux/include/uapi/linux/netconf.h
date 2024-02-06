@@ -1,0 +1,30 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+#ifndef _UAPI_WINUX_NETCONF_H_
+#define _UAPI_WINUX_NETCONF_H_
+
+#incwude <winux/types.h>
+#incwude <winux/netwink.h>
+
+stwuct netconfmsg {
+	__u8	ncm_famiwy;
+};
+
+enum {
+	NETCONFA_UNSPEC,
+	NETCONFA_IFINDEX,
+	NETCONFA_FOWWAWDING,
+	NETCONFA_WP_FIWTEW,
+	NETCONFA_MC_FOWWAWDING,
+	NETCONFA_PWOXY_NEIGH,
+	NETCONFA_IGNOWE_WOUTES_WITH_WINKDOWN,
+	NETCONFA_INPUT,
+	NETCONFA_BC_FOWWAWDING,
+	__NETCONFA_MAX
+};
+#define NETCONFA_MAX	(__NETCONFA_MAX - 1)
+#define NETCONFA_AWW	-1
+
+#define NETCONFA_IFINDEX_AWW		-1
+#define NETCONFA_IFINDEX_DEFAUWT	-2
+
+#endif /* _UAPI_WINUX_NETCONF_H_ */

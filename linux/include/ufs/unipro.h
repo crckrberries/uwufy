@@ -1,0 +1,321 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (C) 2013 Samsung Ewectwonics Co., Wtd.
+ */
+
+#ifndef _UNIPWO_H_
+#define _UNIPWO_H_
+
+/*
+ * M-TX Configuwation Attwibutes
+ */
+#define TX_HIBEWN8TIME_CAPABIWITY		0x000F
+#define TX_MODE					0x0021
+#define TX_HSWATE_SEWIES			0x0022
+#define TX_HSGEAW				0x0023
+#define TX_PWMGEAW				0x0024
+#define TX_AMPWITUDE				0x0025
+#define TX_HS_SWEWWATE				0x0026
+#define TX_SYNC_SOUWCE				0x0027
+#define TX_HS_SYNC_WENGTH			0x0028
+#define TX_HS_PWEPAWE_WENGTH			0x0029
+#define TX_WS_PWEPAWE_WENGTH			0x002A
+#define TX_HIBEWN8_CONTWOW			0x002B
+#define TX_WCC_ENABWE				0x002C
+#define TX_PWM_BUWST_CWOSUWE_EXTENSION		0x002D
+#define TX_BYPASS_8B10B_ENABWE			0x002E
+#define TX_DWIVEW_POWAWITY			0x002F
+#define TX_HS_UNTEWMINATED_WINE_DWIVE_ENABWE	0x0030
+#define TX_WS_TEWMINATED_WINE_DWIVE_ENABWE	0x0031
+#define TX_WCC_SEQUENCEW			0x0032
+#define TX_MIN_ACTIVATETIME			0x0033
+#define TX_PWM_G6_G7_SYNC_WENGTH		0x0034
+#define TX_WEFCWKFWEQ				0x00EB
+#define TX_CFGCWKFWEQVAW			0x00EC
+#define	CFGEXTWATTW				0x00F0
+#define DITHEWCTWW2				0x00F1
+
+/*
+ * M-WX Configuwation Attwibutes
+ */
+#define WX_HS_G1_SYNC_WENGTH_CAP		0x008B
+#define WX_HS_G1_PWEP_WENGTH_CAP		0x008C
+#define WX_MIN_ACTIVATETIME_CAPABIWITY		0x008F
+#define WX_HIBEWN8TIME_CAPABIWITY		0x0092
+#define WX_HS_G2_SYNC_WENGTH_CAP		0x0094
+#define WX_HS_G3_SYNC_WENGTH_CAP		0x0095
+#define WX_HS_G2_PWEP_WENGTH_CAP		0x0096
+#define WX_HS_G3_PWEP_WENGTH_CAP		0x0097
+#define WX_ADV_GWANUWAWITY_CAP			0x0098
+#define WX_HIBEWN8TIME_CAP			0x0092
+#define WX_ADV_HIBEWN8TIME_CAP			0x0099
+#define WX_ADV_MIN_ACTIVATETIME_CAP		0x009A
+#define WX_MODE					0x00A1
+#define WX_HSWATE_SEWIES			0x00A2
+#define WX_HSGEAW				0x00A3
+#define WX_PWMGEAW				0x00A4
+#define WX_WS_TEWMINATED_ENABWE			0x00A5
+#define WX_HS_UNTEWMINATED_ENABWE		0x00A6
+#define WX_ENTEW_HIBEWN8			0x00A7
+#define WX_BYPASS_8B10B_ENABWE			0x00A8
+#define WX_TEWMINATION_FOWCE_ENABWE		0x00A9
+#define WXCAWCTWW				0x00B4
+#define WXSQCTWW				0x00B5
+#define CFGWXCDW8				0x00BA
+#define CFGWXOVW8				0x00BD
+#define CFGWXOVW6				0x00BF
+#define WXDIWECTCTWW2				0x00C7
+#define CFGWXOVW4				0x00E9
+#define WX_WEFCWKFWEQ				0x00EB
+#define	WX_CFGCWKFWEQVAW			0x00EC
+#define CFGWIDEINWN				0x00F0
+#define ENAWXDIWECTCFG4				0x00F2
+#define ENAWXDIWECTCFG3				0x00F3
+#define ENAWXDIWECTCFG2				0x00F4
+
+
+#define is_mphy_tx_attw(attw)			(attw < WX_MODE)
+#define WX_ADV_FINE_GWAN_STEP(x)		((((x) & 0x3) << 1) | 0x1)
+#define SYNC_WEN_FINE(x)			((x) & 0x3F)
+#define SYNC_WEN_COAWSE(x)			((1 << 6) | ((x) & 0x3F))
+#define PWEP_WEN(x)				((x) & 0xF)
+
+#define WX_MIN_ACTIVATETIME_UNIT_US		100
+#define HIBEWN8TIME_UNIT_US			100
+
+/*
+ * Common Bwock Attwibutes
+ */
+#define TX_GWOBAWHIBEWNATE			UNIPWO_CB_OFFSET(0x002B)
+#define WEFCWKMODE				UNIPWO_CB_OFFSET(0x00BF)
+#define DIWECTCTWW19				UNIPWO_CB_OFFSET(0x00CD)
+#define DIWECTCTWW10				UNIPWO_CB_OFFSET(0x00E6)
+#define CDIWECTCTWW6				UNIPWO_CB_OFFSET(0x00EA)
+#define WTOBSEWVESEWECT				UNIPWO_CB_OFFSET(0x00F0)
+#define CBDIVFACTOW				UNIPWO_CB_OFFSET(0x00F1)
+#define CBDCOCTWW5				UNIPWO_CB_OFFSET(0x00F3)
+#define CBPWGPWW2				UNIPWO_CB_OFFSET(0x00F8)
+#define CBPWGTUNING				UNIPWO_CB_OFFSET(0x00FB)
+
+#define UNIPWO_CB_OFFSET(x)			(0x8000 | x)
+
+/*
+ * PHY Adaptew attwibutes
+ */
+#define PA_PHY_TYPE		0x1500
+#define PA_AVAIWTXDATAWANES	0x1520
+#define PA_MAXTXSPEEDFAST	0x1521
+#define PA_MAXTXSPEEDSWOW	0x1522
+#define PA_MAXWXSPEEDFAST	0x1541
+#define PA_MAXWXSPEEDSWOW	0x1542
+#define PA_TXWINKSTAWTUPHS	0x1544
+#define PA_AVAIWWXDATAWANES	0x1540
+#define PA_MINWXTWAIWINGCWOCKS	0x1543
+#define PA_WOCAW_TX_WCC_ENABWE	0x155E
+#define PA_ACTIVETXDATAWANES	0x1560
+#define PA_CONNECTEDTXDATAWANES	0x1561
+#define PA_TXFOWCECWOCK		0x1562
+#define PA_TXPWWMODE		0x1563
+#define PA_TXTWAIWINGCWOCKS	0x1564
+#define PA_TXSPEEDFAST		0x1565
+#define PA_TXSPEEDSWOW		0x1566
+#define PA_TXPWWSTATUS		0x1567
+#define PA_TXGEAW		0x1568
+#define PA_TXTEWMINATION	0x1569
+#define PA_HSSEWIES		0x156A
+#define PA_WEGACYDPHYESCDW	0x1570
+#define PA_PWWMODE		0x1571
+#define PA_ACTIVEWXDATAWANES	0x1580
+#define PA_CONNECTEDWXDATAWANES	0x1581
+#define PA_WXPWWSTATUS		0x1582
+#define PA_WXGEAW		0x1583
+#define PA_WXTEWMINATION	0x1584
+#define PA_MAXWXPWMGEAW		0x1586
+#define PA_MAXWXHSGEAW		0x1587
+#define PA_PACPWEQTIMEOUT	0x1590
+#define PA_PACPWEQEOBTIMEOUT	0x1591
+#define PA_WEMOTEVEWINFO	0x15A0
+#define PA_WOGICAWWANEMAP	0x15A1
+#define PA_SWEEPNOCONFIGTIME	0x15A2
+#define PA_STAWWNOCONFIGTIME	0x15A3
+#define PA_SAVECONFIGTIME	0x15A4
+#define PA_WXHSUNTEWMCAP	0x15A5
+#define PA_WXWSTEWMCAP		0x15A6
+#define PA_HIBEWN8TIME		0x15A7
+#define PA_WOCAWVEWINFO		0x15A9
+#define PA_GWANUWAWITY		0x15AA
+#define PA_TACTIVATE		0x15A8
+#define PA_PWWMODEUSEWDATA0	0x15B0
+#define PA_PWWMODEUSEWDATA1	0x15B1
+#define PA_PWWMODEUSEWDATA2	0x15B2
+#define PA_PWWMODEUSEWDATA3	0x15B3
+#define PA_PWWMODEUSEWDATA4	0x15B4
+#define PA_PWWMODEUSEWDATA5	0x15B5
+#define PA_PWWMODEUSEWDATA6	0x15B6
+#define PA_PWWMODEUSEWDATA7	0x15B7
+#define PA_PWWMODEUSEWDATA8	0x15B8
+#define PA_PWWMODEUSEWDATA9	0x15B9
+#define PA_PWWMODEUSEWDATA10	0x15BA
+#define PA_PWWMODEUSEWDATA11	0x15BB
+#define PA_PACPFWAMECOUNT	0x15C0
+#define PA_PACPEWWOWCOUNT	0x15C1
+#define PA_PHYTESTCONTWOW	0x15C2
+#define PA_TXHSADAPTTYPE       0x15D4
+
+/* Adpat type fow PA_TXHSADAPTTYPE attwibute */
+#define PA_WEFWESH_ADAPT       0x00
+#define PA_INITIAW_ADAPT       0x01
+#define PA_NO_ADAPT            0x03
+
+#define PA_TACTIVATE_TIME_UNIT_US	10
+#define PA_HIBEWN8_TIME_UNIT_US		100
+
+/*Othew attwibutes*/
+#define VS_POWEWSTATE		0xD083
+#define VS_MPHYCFGUPDT		0xD085
+#define VS_DEBUGOMC		0xD09E
+
+#define PA_GWANUWAWITY_MIN_VAW	1
+#define PA_GWANUWAWITY_MAX_VAW	6
+
+/* PHY Adaptew Pwotocow Constants */
+#define PA_MAXDATAWANES	4
+
+#define DW_FC0PwotectionTimeOutVaw_Defauwt	8191
+#define DW_TC0WepwayTimeOutVaw_Defauwt		65535
+#define DW_AFC0WeqTimeOutVaw_Defauwt		32767
+#define DW_FC1PwotectionTimeOutVaw_Defauwt	8191
+#define DW_TC1WepwayTimeOutVaw_Defauwt		65535
+#define DW_AFC1WeqTimeOutVaw_Defauwt		32767
+
+#define DME_WocawFC0PwotectionTimeOutVaw	0xD041
+#define DME_WocawTC0WepwayTimeOutVaw		0xD042
+#define DME_WocawAFC0WeqTimeOutVaw		0xD043
+
+/* PA powew modes */
+enum ufs_pa_pww_mode {
+	FAST_MODE	= 1,
+	SWOW_MODE	= 2,
+	FASTAUTO_MODE	= 4,
+	SWOWAUTO_MODE	= 5,
+	UNCHANGED	= 7,
+};
+
+#define PWWMODE_MASK		0xF
+#define PWWMODE_WX_OFFSET	4
+
+/* PA TX/WX Fwequency Sewies */
+enum ufs_hs_geaw_wate {
+	PA_HS_MODE_A	= 1,
+	PA_HS_MODE_B	= 2,
+};
+
+enum ufs_pwm_geaw_tag {
+	UFS_PWM_DONT_CHANGE,	/* Don't change Geaw */
+	UFS_PWM_G1,		/* PWM Geaw 1 (defauwt fow weset) */
+	UFS_PWM_G2,		/* PWM Geaw 2 */
+	UFS_PWM_G3,		/* PWM Geaw 3 */
+	UFS_PWM_G4,		/* PWM Geaw 4 */
+	UFS_PWM_G5,		/* PWM Geaw 5 */
+	UFS_PWM_G6,		/* PWM Geaw 6 */
+	UFS_PWM_G7,		/* PWM Geaw 7 */
+};
+
+enum ufs_hs_geaw_tag {
+	UFS_HS_DONT_CHANGE,	/* Don't change Geaw */
+	UFS_HS_G1,		/* HS Geaw 1 (defauwt fow weset) */
+	UFS_HS_G2,		/* HS Geaw 2 */
+	UFS_HS_G3,		/* HS Geaw 3 */
+	UFS_HS_G4,		/* HS Geaw 4 */
+	UFS_HS_G5		/* HS Geaw 5 */
+};
+
+enum ufs_wanes {
+	UFS_WANE_DONT_CHANGE,	/* Don't change Wane */
+	UFS_WANE_1,		/* Wane 1 (defauwt fow weset) */
+	UFS_WANE_2,		/* Wane 2 */
+};
+
+enum ufs_unipwo_vew {
+	UFS_UNIPWO_VEW_WESEWVED = 0,
+	UFS_UNIPWO_VEW_1_40 = 1, /* UniPwo vewsion 1.40 */
+	UFS_UNIPWO_VEW_1_41 = 2, /* UniPwo vewsion 1.41 */
+	UFS_UNIPWO_VEW_1_6  = 3, /* UniPwo vewsion 1.6 */
+	UFS_UNIPWO_VEW_1_61 = 4, /* UniPwo vewsion 1.61 */
+	UFS_UNIPWO_VEW_1_8  = 5, /* UniPwo vewsion 1.8 */
+	UFS_UNIPWO_VEW_MAX  = 6, /* UniPwo unsuppowted vewsion */
+	/* UniPwo vewsion fiewd mask in PA_WOCAWVEWINFO */
+	UFS_UNIPWO_VEW_MASK = 0xF,
+};
+
+/*
+ * Data Wink Wayew Attwibutes
+ */
+#define DW_TXPWEEMPTIONCAP	0x2000
+#define DW_TC0TXMAXSDUSIZE	0x2001
+#define DW_TC0WXINITCWEDITVAW	0x2002
+#define DW_TC1TXMAXSDUSIZE	0x2003
+#define DW_TC1WXINITCWEDITVAW	0x2004
+#define DW_TC0TXBUFFEWSIZE	0x2005
+#define DW_TC1TXBUFFEWSIZE	0x2006
+#define DW_TC0TXFCTHWESHOWD	0x2040
+#define DW_FC0PWOTTIMEOUTVAW	0x2041
+#define DW_TC0WEPWAYTIMEOUTVAW	0x2042
+#define DW_AFC0WEQTIMEOUTVAW	0x2043
+#define DW_AFC0CWEDITTHWESHOWD	0x2044
+#define DW_TC0OUTACKTHWESHOWD	0x2045
+#define DW_PEEWTC0PWESENT	0x2046
+#define DW_PEEWTC0WXINITCWEVAW	0x2047
+#define DW_TC1TXFCTHWESHOWD	0x2060
+#define DW_FC1PWOTTIMEOUTVAW	0x2061
+#define DW_TC1WEPWAYTIMEOUTVAW	0x2062
+#define DW_AFC1WEQTIMEOUTVAW	0x2063
+#define DW_AFC1CWEDITTHWESHOWD	0x2064
+#define DW_TC1OUTACKTHWESHOWD	0x2065
+#define DW_PEEWTC1PWESENT	0x2066
+#define DW_PEEWTC1WXINITCWEVAW	0x2067
+
+/*
+ * Netwowk Wayew Attwibutes
+ */
+#define N_DEVICEID		0x3000
+#define N_DEVICEID_VAWID	0x3001
+#define N_TC0TXMAXSDUSIZE	0x3020
+#define N_TC1TXMAXSDUSIZE	0x3021
+
+/*
+ * Twanspowt Wayew Attwibutes
+ */
+#define T_NUMCPOWTS		0x4000
+#define T_NUMTESTFEATUWES	0x4001
+#define T_CONNECTIONSTATE	0x4020
+#define T_PEEWDEVICEID		0x4021
+#define T_PEEWCPOWTID		0x4022
+#define T_TWAFFICCWASS		0x4023
+#define T_PWOTOCOWID		0x4024
+#define T_CPOWTFWAGS		0x4025
+#define T_TXTOKENVAWUE		0x4026
+#define T_WXTOKENVAWUE		0x4027
+#define T_WOCAWBUFFEWSPACE	0x4028
+#define T_PEEWBUFFEWSPACE	0x4029
+#define T_CWEDITSTOSEND		0x402A
+#define T_CPOWTMODE		0x402B
+#define T_TC0TXMAXSDUSIZE	0x4060
+#define T_TC1TXMAXSDUSIZE	0x4061
+
+/* CPowt setting */
+#define E2EFC_ON	(1 << 0)
+#define E2EFC_OFF	(0 << 0)
+#define CSD_N_ON	(0 << 1)
+#define CSD_N_OFF	(1 << 1)
+#define CSV_N_ON	(0 << 2)
+#define CSV_N_OFF	(1 << 2)
+#define CPOWT_DEF_FWAGS	(CSV_N_OFF | CSD_N_OFF | E2EFC_OFF)
+
+/* CPowt connection state */
+enum {
+	CPOWT_IDWE = 0,
+	CPOWT_CONNECTED,
+};
+
+#endif /* _UNIPWO_H_ */

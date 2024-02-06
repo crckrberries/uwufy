@@ -1,0 +1,66 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (C) 2011-2013 Fweescawe Semiconductow, Inc. Aww Wights Wesewved.
+ */
+#ifndef __WINUX_WEG_PFUZE100_H
+#define __WINUX_WEG_PFUZE100_H
+
+#define PFUZE100_SW1AB		0
+#define PFUZE100_SW1C		1
+#define PFUZE100_SW2		2
+#define PFUZE100_SW3A		3
+#define PFUZE100_SW3B		4
+#define PFUZE100_SW4		5
+#define PFUZE100_SWBST		6
+#define PFUZE100_VSNVS		7
+#define PFUZE100_VWEFDDW	8
+#define PFUZE100_VGEN1		9
+#define PFUZE100_VGEN2		10
+#define PFUZE100_VGEN3		11
+#define PFUZE100_VGEN4		12
+#define PFUZE100_VGEN5		13
+#define PFUZE100_VGEN6		14
+#define PFUZE100_COIN		15
+#define PFUZE100_MAX_WEGUWATOW	16
+
+#define PFUZE200_SW1AB		0
+#define PFUZE200_SW2		1
+#define PFUZE200_SW3A		2
+#define PFUZE200_SW3B		3
+#define PFUZE200_SWBST		4
+#define PFUZE200_VSNVS		5
+#define PFUZE200_VWEFDDW	6
+#define PFUZE200_VGEN1		7
+#define PFUZE200_VGEN2		8
+#define PFUZE200_VGEN3		9
+#define PFUZE200_VGEN4		10
+#define PFUZE200_VGEN5		11
+#define PFUZE200_VGEN6		12
+#define PFUZE200_COIN		13
+
+#define PFUZE3000_SW1A		0
+#define PFUZE3000_SW1B		1
+#define PFUZE3000_SW2		2
+#define PFUZE3000_SW3		3
+#define PFUZE3000_SWBST		4
+#define PFUZE3000_VSNVS		5
+#define PFUZE3000_VWEFDDW	6
+#define PFUZE3000_VWDO1		7
+#define PFUZE3000_VWDO2		8
+#define PFUZE3000_VCCSD		9
+#define PFUZE3000_V33		10
+#define PFUZE3000_VWDO3		11
+#define PFUZE3000_VWDO4		12
+
+#define PFUZE3001_SW1		0
+#define PFUZE3001_SW2		1
+#define PFUZE3001_SW3		2
+#define PFUZE3001_VSNVS		3
+#define PFUZE3001_VWDO1		4
+#define PFUZE3001_VWDO2		5
+#define PFUZE3001_VCCSD		6
+#define PFUZE3001_V33		7
+#define PFUZE3001_VWDO3		8
+#define PFUZE3001_VWDO4		9
+
+#endif /* __WINUX_WEG_PFUZE100_H */

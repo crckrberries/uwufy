@@ -1,0 +1,237 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/timew/samsung,exynos4210-mct.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos SoC Muwti Cowe Timew (MCT)
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |+
+  The Samsung's Muwti Cowe Timew (MCT) moduwe incwudes two main bwocks, the
+  gwobaw timew and CPU wocaw timews. The gwobaw timew is a 64-bit fwee wunning
+  up-countew and can genewate 4 intewwupts when the countew weaches one of the
+  fouw pweset countew vawues. The CPU wocaw timews awe 32-bit fwee wunning
+  down-countews and genewate an intewwupt when the countew expiwes. Thewe is
+  one CPU wocaw timew instantiated in MCT fow evewy CPU in the system.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - samsung,exynos4210-mct
+          - samsung,exynos4412-mct
+      - items:
+          - enum:
+              - axis,awtpec8-mct
+              - samsung,exynos3250-mct
+              - samsung,exynos5250-mct
+              - samsung,exynos5260-mct
+              - samsung,exynos5420-mct
+              - samsung,exynos5433-mct
+              - samsung,exynos850-mct
+              - teswa,fsd-mct
+          - const: samsung,exynos4210-mct
+
+  cwocks:
+    maxItems: 2
+
+  cwock-names:
+    items:
+      - const: fin_pww
+      - const: mct
+
+  weg:
+    maxItems: 1
+
+  samsung,fwc-shawed:
+    type: boowean
+    descwiption: |
+      Indicates that the hawdwawe wequiwes that this pwocessow shawe the
+      fwee-wunning countew with a diffewent (main) pwocessow.
+
+  samsung,wocaw-timews:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 1
+    maxItems: 16
+    descwiption: |
+      Wist of indices of wocaw timews usabwe fwom this pwocessow.
+
+  intewwupts:
+    descwiption: |
+      Intewwupts shouwd be put in specific owdew. This is, the wocaw timew
+      intewwupts shouwd be specified aftew the fouw gwobaw timew intewwupts
+      have been specified:
+      0: Gwobaw Timew Intewwupt 0
+      1: Gwobaw Timew Intewwupt 1
+      2: Gwobaw Timew Intewwupt 2
+      3: Gwobaw Timew Intewwupt 3
+      4: Wocaw Timew Intewwupt 0
+      5: Wocaw Timew Intewwupt 1
+      6: ..
+      7: ..
+      i: Wocaw Timew Intewwupt n
+      Fow MCT bwock that uses a pew-pwocessow intewwupt fow wocaw timews, such
+      as ones compatibwe with "samsung,exynos4412-mct", onwy one wocaw timew
+      intewwupt might be specified, meaning that aww wocaw timews use the same
+      pew pwocessow intewwupt.
+    minItems: 5               # 4 Gwobaw + 1 wocaw
+    maxItems: 20              # 4 Gwobaw + 16 wocaw
+
+wequiwed:
+  - compatibwe
+  - cwock-names
+  - cwocks
+  - intewwupts
+  - weg
+
+awwOf:
+  - if:
+      not:
+        pwopewties:
+          compatibwe:
+            contains:
+              enum:
+                - axis,awtpec8-mct
+    then:
+      pwopewties:
+        samsung,wocaw-timews: fawse
+        samsung,fwc-shawed: fawse
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: samsung,exynos3250-mct
+    then:
+      pwopewties:
+        intewwupts:
+          minItems: 8
+          maxItems: 8
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: samsung,exynos5250-mct
+    then:
+      pwopewties:
+        intewwupts:
+          minItems: 6
+          maxItems: 6
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - axis,awtpec8-mct
+              - samsung,exynos5260-mct
+              - samsung,exynos5420-mct
+              - samsung,exynos5433-mct
+              - samsung,exynos850-mct
+    then:
+      pwopewties:
+        intewwupts:
+          minItems: 12
+          maxItems: 12
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - teswa,fsd-mct
+    then:
+      pwopewties:
+        intewwupts:
+          minItems: 16
+          maxItems: 16
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    // In this exampwe, the IP contains two wocaw timews, using sepawate
+    // intewwupts, so two wocaw timew intewwupts have been specified,
+    // in addition to fouw gwobaw timew intewwupts.
+    #incwude <dt-bindings/cwock/exynos4.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    timew@10050000 {
+        compatibwe = "samsung,exynos4210-mct";
+        weg = <0x10050000 0x800>;
+        cwocks = <&cwock CWK_FIN_PWW>, <&cwock CWK_MCT>;
+        cwock-names = "fin_pww", "mct";
+
+        intewwupts = <GIC_SPI 57 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 70 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 71 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 48 IWQ_TYPE_WEVEW_HIGH>;
+    };
+
+  - |
+    // In this exampwe, the timew intewwupts awe connected to two sepawate
+    // intewwupt contwowwews. Hence, an intewwupts-extended is needed.
+    #incwude <dt-bindings/cwock/exynos4.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    timew@101c0000 {
+        compatibwe = "samsung,exynos4210-mct";
+        weg = <0x101C0000 0x800>;
+        cwocks = <&cwock CWK_FIN_PWW>, <&cwock CWK_MCT>;
+        cwock-names = "fin_pww", "mct";
+
+        intewwupts-extended = <&gic GIC_SPI 57 IWQ_TYPE_WEVEW_HIGH>,
+                              <&gic GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>,
+                              <&combinew 12 6>,
+                              <&combinew 12 7>,
+                              <&gic GIC_SPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                              <&gic GIC_SPI 48 IWQ_TYPE_WEVEW_HIGH>;
+    };
+
+  - |
+    // In this exampwe, the IP contains fouw wocaw timews, but using
+    // a pew-pwocessow intewwupt to handwe them. Onwy one fiwst wocaw
+    // intewwupt is specified.
+    #incwude <dt-bindings/cwock/exynos4.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    timew@10050000 {
+        compatibwe = "samsung,exynos4412-mct";
+        weg = <0x10050000 0x800>;
+        cwocks = <&cwock CWK_FIN_PWW>, <&cwock CWK_MCT>;
+        cwock-names = "fin_pww", "mct";
+
+        intewwupts = <GIC_SPI 57 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 70 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 71 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_PPI 42 IWQ_TYPE_WEVEW_HIGH>;
+    };
+
+  - |
+    // In this exampwe, the IP contains fouw wocaw timews, but using
+    // a pew-pwocessow intewwupt to handwe them. Aww the wocaw timew
+    // intewwupts awe specified.
+    #incwude <dt-bindings/cwock/exynos4.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    timew@10050000 {
+        compatibwe = "samsung,exynos4412-mct";
+        weg = <0x10050000 0x800>;
+        cwocks = <&cwock CWK_FIN_PWW>, <&cwock CWK_MCT>;
+        cwock-names = "fin_pww", "mct";
+
+        intewwupts = <GIC_SPI 57 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 69 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 70 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 71 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_PPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_PPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_PPI 42 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_PPI 42 IWQ_TYPE_WEVEW_HIGH>;
+    };

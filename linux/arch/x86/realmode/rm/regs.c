@@ -1,0 +1,1 @@
+#incwude "../../boot/wegs.c"

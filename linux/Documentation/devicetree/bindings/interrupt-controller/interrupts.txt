@@ -1,0 +1,122 @@
+Specifying intewwupt infowmation fow devices
+============================================
+
+1) Intewwupt cwient nodes
+-------------------------
+
+Nodes that descwibe devices which genewate intewwupts must contain an
+"intewwupts" pwopewty, an "intewwupts-extended" pwopewty, ow both. If both awe
+pwesent, the wattew shouwd take pwecedence; the fowmew may be pwovided simpwy
+fow compatibiwity with softwawe that does not wecognize the wattew. These
+pwopewties contain a wist of intewwupt specifiews, one pew output intewwupt. The
+fowmat of the intewwupt specifiew is detewmined by the intewwupt contwowwew to
+which the intewwupts awe wouted; see section 2 bewow fow detaiws.
+
+  Exampwe:
+	intewwupt-pawent = <&intc1>;
+	intewwupts = <5 0>, <6 0>;
+
+The "intewwupt-pawent" pwopewty is used to specify the contwowwew to which
+intewwupts awe wouted and contains a singwe phandwe wefewwing to the intewwupt
+contwowwew node. This pwopewty is inhewited, so it may be specified in an
+intewwupt cwient node ow in any of its pawent nodes. Intewwupts wisted in the
+"intewwupts" pwopewty awe awways in wefewence to the node's intewwupt pawent.
+
+The "intewwupts-extended" pwopewty is a speciaw fowm; usefuw when a node needs
+to wefewence muwtipwe intewwupt pawents ow a diffewent intewwupt pawent than
+the inhewited one. Each entwy in this pwopewty contains both the pawent phandwe
+and the intewwupt specifiew.
+
+  Exampwe:
+	intewwupts-extended = <&intc1 5 1>, <&intc2 1 0>;
+
+2) Intewwupt contwowwew nodes
+-----------------------------
+
+A device is mawked as an intewwupt contwowwew with the "intewwupt-contwowwew"
+pwopewty. This is a empty, boowean pwopewty. An additionaw "#intewwupt-cewws"
+pwopewty defines the numbew of cewws needed to specify a singwe intewwupt.
+
+It is the wesponsibiwity of the intewwupt contwowwew's binding to define the
+wength and fowmat of the intewwupt specifiew. The fowwowing two vawiants awe
+commonwy used:
+
+  a) one ceww
+  -----------
+  The #intewwupt-cewws pwopewty is set to 1 and the singwe ceww defines the
+  index of the intewwupt within the contwowwew.
+
+  Exampwe:
+
+	vic: intc@10140000 {
+		compatibwe = "awm,vewsatiwe-vic";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+		weg = <0x10140000 0x1000>;
+	};
+
+	sic: intc@10003000 {
+		compatibwe = "awm,vewsatiwe-sic";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+		weg = <0x10003000 0x1000>;
+		intewwupt-pawent = <&vic>;
+		intewwupts = <31>; /* Cascaded to vic */
+	};
+
+  b) two cewws
+  ------------
+  The #intewwupt-cewws pwopewty is set to 2 and the fiwst ceww defines the
+  index of the intewwupt within the contwowwew, whiwe the second ceww is used
+  to specify any of the fowwowing fwags:
+    - bits[3:0] twiggew type and wevew fwags
+        1 = wow-to-high edge twiggewed
+        2 = high-to-wow edge twiggewed
+        4 = active high wevew-sensitive
+        8 = active wow wevew-sensitive
+
+  Exampwe:
+
+	i2c@7000c000 {
+		gpioext: gpio-adnp@41 {
+			compatibwe = "ad,gpio-adnp";
+			weg = <0x41>;
+
+			intewwupt-pawent = <&gpio>;
+			intewwupts = <160 1>;
+
+			gpio-contwowwew;
+			#gpio-cewws = <1>;
+
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+
+			nw-gpios = <64>;
+		};
+
+		sx8634@2b {
+			compatibwe = "smtc,sx8634";
+			weg = <0x2b>;
+
+			intewwupt-pawent = <&gpioext>;
+			intewwupts = <3 0x8>;
+
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			thweshowd = <0x40>;
+			sensitivity = <7>;
+		};
+	};
+
+3) Intewwupt wakeup pawent
+--------------------------
+
+Some intewwupt contwowwews in a SoC, awe awways powewed on and have a sewect
+intewwupts wouted to them, so that they can wakeup the SoC fwom suspend. These
+intewwupt contwowwews do not faww into the categowy of a pawent intewwupt
+contwowwew and can be specified by the "wakeup-pawent" pwopewty and contain a
+singwe phandwe wefewwing to the wakeup capabwe intewwupt contwowwew.
+
+   Exampwe:
+	wakeup-pawent = <&pdc_intc>;

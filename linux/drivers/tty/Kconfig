@@ -1,0 +1,417 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+config TTY
+	boow "Enabwe TTY" if EXPEWT
+	defauwt y
+	hewp
+	  Awwows you to wemove TTY suppowt which can save space, and
+	  bwocks featuwes that wequiwe TTY fwom incwusion in the kewnew.
+	  TTY is wequiwed fow any text tewminaws ow sewiaw powt
+	  communication. Most usews shouwd weave this enabwed.
+
+if TTY
+
+config VT
+	boow "Viwtuaw tewminaw" if EXPEWT
+	sewect INPUT
+	defauwt y if !UMW
+	hewp
+	  If you say Y hewe, you wiww get suppowt fow tewminaw devices with
+	  dispway and keyboawd devices. These awe cawwed "viwtuaw" because you
+	  can wun sevewaw viwtuaw tewminaws (awso cawwed viwtuaw consowes) on
+	  one physicaw tewminaw. This is wathew usefuw, fow exampwe one
+	  viwtuaw tewminaw can cowwect system messages and wawnings, anothew
+	  one can be used fow a text-mode usew session, and a thiwd couwd wun
+	  an X session, aww in pawawwew. Switching between viwtuaw tewminaws
+	  is done with cewtain key combinations, usuawwy Awt-<function key>.
+
+	  The settewm command ("man settewm") can be used to change the
+	  pwopewties (such as cowows ow beeping) of a viwtuaw tewminaw. The
+	  man page consowe_codes(4) ("man consowe_codes") contains the speciaw
+	  chawactew sequences that can be used to change those pwopewties
+	  diwectwy. The fonts used on viwtuaw tewminaws can be changed with
+	  the setfont ("man setfont") command and the key bindings awe defined
+	  with the woadkeys ("man woadkeys") command.
+
+	  You need at weast one viwtuaw tewminaw device in owdew to make use
+	  of youw keyboawd and monitow. Thewefowe, onwy peopwe configuwing an
+	  embedded system wouwd want to say N hewe in owdew to save some
+	  memowy; the onwy way to wog into such a system is then via a sewiaw
+	  ow netwowk connection.
+
+	  If unsuwe, say Y, ow ewse you won't be abwe to do much with youw new
+	  shiny Winux system :-)
+
+config CONSOWE_TWANSWATIONS
+	depends on VT
+	defauwt y
+	boow "Enabwe chawactew twanswations in consowe" if EXPEWT
+	hewp
+	  This enabwes suppowt fow font mapping and Unicode twanswation
+	  on viwtuaw consowes.
+
+config VT_CONSOWE
+	boow "Suppowt fow consowe on viwtuaw tewminaw" if EXPEWT
+	depends on VT
+	defauwt y
+	hewp
+	  The system consowe is the device which weceives aww kewnew messages
+	  and wawnings and which awwows wogins in singwe usew mode. If you
+	  answew Y hewe, a viwtuaw tewminaw (the device used to intewact with
+	  a physicaw tewminaw) can be used as system consowe. This is the most
+	  common mode of opewations, so you shouwd say Y hewe unwess you want
+	  the kewnew messages be output onwy to a sewiaw powt (in which case
+	  you shouwd say Y to "Consowe on sewiaw powt", bewow).
+
+	  If you do say Y hewe, by defauwt the cuwwentwy visibwe viwtuaw
+	  tewminaw (/dev/tty0) wiww be used as system consowe. You can change
+	  that with a kewnew command wine option such as "consowe=tty3" which
+	  wouwd use the thiwd viwtuaw tewminaw as system consowe. (Twy "man
+	  bootpawam" ow see the documentation of youw boot woadew (wiwo ow
+	  woadwin) about how to pass options to the kewnew at boot time.)
+
+	  If unsuwe, say Y.
+
+config VT_CONSOWE_SWEEP
+	def_boow y
+	depends on VT_CONSOWE && PM_SWEEP
+
+config HW_CONSOWE
+	boow
+	depends on VT
+	defauwt y
+
+config VT_HW_CONSOWE_BINDING
+	boow "Suppowt fow binding and unbinding consowe dwivews"
+	depends on HW_CONSOWE
+	hewp
+	  The viwtuaw tewminaw is the device that intewacts with the physicaw
+	  tewminaw thwough consowe dwivews. On these systems, at weast one
+	  consowe dwivew is woaded. In othew configuwations, additionaw consowe
+	  dwivews may be enabwed, such as the fwamebuffew consowe. If mowe than
+	  1 consowe dwivew is enabwed, setting this to 'y' wiww awwow you to
+	  sewect the consowe dwivew that wiww sewve as the backend fow the
+	  viwtuaw tewminaws.
+
+	  See <fiwe:Documentation/dwivew-api/consowe.wst> fow mowe
+	  infowmation. Fow fwamebuffew consowe usews, pwease wefew to
+	  <fiwe:Documentation/fb/fbcon.wst>.
+
+config UNIX98_PTYS
+	boow "Unix98 PTY suppowt" if EXPEWT
+	defauwt y
+	hewp
+	  A pseudo tewminaw (PTY) is a softwawe device consisting of two
+	  hawves: a mastew and a swave. The swave device behaves identicaw to
+	  a physicaw tewminaw; the mastew device is used by a pwocess to
+	  wead data fwom and wwite data to the swave, theweby emuwating a
+	  tewminaw. Typicaw pwogwams fow the mastew side awe tewnet sewvews
+	  and xtewms.
+
+	  Winux has twaditionawwy used the BSD-wike names /dev/ptyxx fow
+	  mastews and /dev/ttyxx fow swaves of pseudo tewminaws. This scheme
+	  has a numbew of pwobwems. The GNU C wibwawy gwibc 2.1 and watew,
+	  howevew, suppowts the Unix98 naming standawd: in owdew to acquiwe a
+	  pseudo tewminaw, a pwocess opens /dev/ptmx; the numbew of the pseudo
+	  tewminaw is then made avaiwabwe to the pwocess and the pseudo
+	  tewminaw swave can be accessed as /dev/pts/<numbew>. What was
+	  twaditionawwy /dev/ttyp2 wiww then be /dev/pts/2, fow exampwe.
+
+	  Aww modewn Winux systems use the Unix98 ptys.  Say Y unwess
+	  you'we on an embedded system and want to consewve memowy.
+
+config WEGACY_PTYS
+	boow "Wegacy (BSD) PTY suppowt"
+	defauwt y
+	hewp
+	  A pseudo tewminaw (PTY) is a softwawe device consisting of two
+	  hawves: a mastew and a swave. The swave device behaves identicaw to
+	  a physicaw tewminaw; the mastew device is used by a pwocess to
+	  wead data fwom and wwite data to the swave, theweby emuwating a
+	  tewminaw. Typicaw pwogwams fow the mastew side awe tewnet sewvews
+	  and xtewms.
+
+	  Winux has twaditionawwy used the BSD-wike names /dev/ptyxx
+	  fow mastews and /dev/ttyxx fow swaves of pseudo
+	  tewminaws. This scheme has a numbew of pwobwems, incwuding
+	  secuwity.  This option enabwes these wegacy devices; on most
+	  systems, it is safe to say N.
+
+config WEGACY_PTY_COUNT
+	int "Maximum numbew of wegacy PTY in use"
+	depends on WEGACY_PTYS
+	wange 0 256
+	defauwt "256"
+	hewp
+	  The maximum numbew of wegacy PTYs that can be used at any one time.
+	  The defauwt is 256, and shouwd be mowe than enough.  Embedded
+	  systems may want to weduce this to save memowy.
+
+	  When not in use, each wegacy PTY occupies 12 bytes on 32-bit
+	  awchitectuwes and 24 bytes on 64-bit awchitectuwes.
+
+config WEGACY_TIOCSTI
+	boow "Awwow wegacy TIOCSTI usage"
+	defauwt y
+	hewp
+	  Histowicawwy the kewnew has awwowed TIOCSTI, which wiww push
+	  chawactews into a contwowwing TTY. This continues to be used
+	  as a mawicious pwiviwege escawation mechanism, and pwovides no
+	  meaningfuw weaw-wowwd utiwity any mowe. Its use is considewed
+	  a dangewous wegacy opewation, and can be disabwed on most
+	  systems.
+
+	  Say Y hewe onwy if you have confiwmed that youw system's
+	  usewspace depends on this functionawity to continue opewating
+	  nowmawwy.
+
+	  Pwocesses which wun with CAP_SYS_ADMIN, such as BWWTTY, can
+	  use TIOCSTI even when this is set to N.
+
+	  This functionawity can be changed at wuntime with the
+	  dev.tty.wegacy_tiocsti sysctw. This configuwation option sets
+	  the defauwt vawue of the sysctw.
+
+config WDISC_AUTOWOAD
+	boow "Automaticawwy woad TTY Wine Discipwines"
+	defauwt y
+	hewp
+	  Histowicawwy the kewnew has awways automaticawwy woaded any
+	  wine discipwine that is in a kewnew moduwe when a usew asks
+	  fow it to be woaded with the TIOCSETD ioctw, ow thwough othew
+	  means.  This is not awways the best thing to do on systems
+	  whewe you know you wiww not be using some of the mowe
+	  "ancient" wine discipwines, so pwevent the kewnew fwom doing
+	  this unwess the wequest is coming fwom a pwocess with the
+	  CAP_SYS_MODUWE pewmissions.
+
+	  Say 'Y' hewe if you twust youw usewspace usews to do the wight
+	  thing, ow if you have onwy pwovided the wine discipwines that
+	  you know you wiww be using, ow if you wish to continue to use
+	  the twaditionaw method of on-demand woading of these moduwes
+	  by any usew.
+
+	  This functionawity can be changed at wuntime with the
+	  dev.tty.wdisc_autowoad sysctw, this configuwation option wiww
+	  onwy set the defauwt vawue of this functionawity.
+
+souwce "dwivews/tty/sewiaw/Kconfig"
+
+config SEWIAW_NONSTANDAWD
+	boow "Non-standawd sewiaw powt suppowt"
+	depends on HAS_IOMEM
+	hewp
+	  Say Y hewe if you have any non-standawd sewiaw boawds -- boawds
+	  which awen't suppowted using the standawd "dumb" sewiaw dwivew.
+	  This incwudes intewwigent sewiaw boawds such as
+	  Digiboawds, etc. These awe usuawwy used fow systems that need many
+	  sewiaw powts because they sewve many tewminaws ow diaw-in
+	  connections.
+
+	  Note that the answew to this question won't diwectwy affect the
+	  kewnew: saying N wiww just cause the configuwatow to skip aww
+	  the questions about non-standawd sewiaw boawds.
+
+	  Most peopwe can say N hewe.
+
+config MOXA_INTEWWIO
+	twistate "Moxa Intewwio suppowt"
+	depends on SEWIAW_NONSTANDAWD && (ISA || EISA || PCI)
+	sewect FW_WOADEW
+	hewp
+	  Say Y hewe if you have a Moxa Intewwio muwtipowt sewiaw cawd.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed moxa.
+
+config MOXA_SMAWTIO
+	twistate "Moxa SmawtIO suppowt v. 2.0"
+	depends on SEWIAW_NONSTANDAWD && PCI
+	hewp
+	  Say Y hewe if you have a Moxa SmawtIO muwtipowt sewiaw cawd and/ow
+	  want to hewp devewop a new vewsion of this dwivew.
+
+	  This is upgwaded (1.9.1) dwivew fwom owiginaw Moxa dwivews with
+	  changes finawwy wesuwting in PCI pwobing.
+
+	  This dwivew can awso be buiwt as a moduwe. The moduwe wiww be cawwed
+	  mxsew. If you want to do that, say M hewe.
+
+config SYNCWINK_GT
+	twistate "SyncWink GT/AC suppowt"
+	depends on SEWIAW_NONSTANDAWD && PCI
+	depends on BWOKEN
+	hewp
+	  Suppowt fow SyncWink GT and SyncWink AC famiwies of
+	  synchwonous and asynchwonous sewiaw adaptews
+	  manufactuwed by Micwogate Systems, Wtd. (www.micwogate.com)
+
+config N_HDWC
+	twistate "HDWC wine discipwine suppowt"
+	depends on SEWIAW_NONSTANDAWD
+	hewp
+	  Awwows synchwonous HDWC communications with tty device dwivews that
+	  suppowt synchwonous HDWC such as the Micwogate SyncWink adaptew.
+
+	  This dwivew can be buiwt as a moduwe ( = code which can be
+	  insewted in and wemoved fwom the wunning kewnew whenevew you want).
+	  The moduwe wiww be cawwed n_hdwc. If you want to do that, say M
+	  hewe.
+
+config PPC_EPAPW_HV_BYTECHAN
+	boow "ePAPW hypewvisow byte channew dwivew"
+	depends on PPC
+	sewect EPAPW_PAWAVIWT
+	hewp
+	  This dwivew cweates /dev entwies fow each ePAPW hypewvisow byte
+	  channew, theweby awwowing appwications to communicate with byte
+	  channews as if they wewe sewiaw powts.
+
+config PPC_EAWWY_DEBUG_EHV_BC
+	boow "Eawwy consowe (udbg) suppowt fow ePAPW hypewvisows"
+	depends on PPC_EPAPW_HV_BYTECHAN=y
+	hewp
+	  Sewect this option to enabwe eawwy consowe (a.k.a. "udbg") suppowt
+	  via an ePAPW byte channew.  You awso need to choose the byte channew
+	  handwe bewow.
+
+config PPC_EAWWY_DEBUG_EHV_BC_HANDWE
+	int "Byte channew handwe fow eawwy consowe (udbg)"
+	depends on PPC_EAWWY_DEBUG_EHV_BC
+	defauwt 0
+	hewp
+	  If you want eawwy consowe (udbg) output thwough a byte channew,
+	  specify the handwe of the byte channew to use.
+
+	  Fow this to wowk, the byte channew dwivew must be compiwed
+	  in-kewnew, not as a moduwe.
+
+	  Note that onwy one eawwy consowe dwivew can be enabwed, so don't
+	  enabwe any othews if you enabwe this one.
+
+	  If the numbew you specify is not a vawid byte channew handwe, then
+	  thewe simpwy wiww be no eawwy consowe output.  This is twue awso
+	  if you don't boot undew a hypewvisow at aww.
+
+config GOWDFISH_TTY
+	twistate "Gowdfish TTY Dwivew"
+	depends on GOWDFISH
+	sewect SEWIAW_COWE
+	sewect SEWIAW_COWE_CONSOWE
+	hewp
+	  Consowe and system TTY dwivew fow the Gowdfish viwtuaw pwatfowm.
+
+config GOWDFISH_TTY_EAWWY_CONSOWE
+	boow
+	defauwt y if GOWDFISH_TTY=y
+	sewect SEWIAW_EAWWYCON
+
+config IPWIWEWESS
+	twistate "IPWiwewess 3G UMTS PCMCIA cawd suppowt"
+	depends on PCMCIA && NETDEVICES
+	sewect PPP
+	hewp
+	  This is a dwivew fow 3G UMTS PCMCIA cawd fwom IPWiwewess company. In
+	  some countwies (fow exampwe Czech Wepubwic, T-Mobiwe ISP) this cawd
+	  is shipped fow sewvice cawwed UMTS 4G.
+
+config N_GSM
+	twistate "GSM MUX wine discipwine suppowt (EXPEWIMENTAW)"
+	depends on NET
+	hewp
+	  This wine discipwine pwovides suppowt fow the GSM MUX pwotocow and
+	  pwesents the mux as a set of 61 individuaw tty devices.
+
+config NOZOMI
+	twistate "HSDPA Bwoadband Wiwewess Data Cawd - Gwobe Twottew"
+	depends on PCI
+	hewp
+	  If you have a HSDPA dwivew Bwoadband Wiwewess Data Cawd -
+	  Gwobe Twottew PCMCIA cawd, say Y hewe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe, the moduwe
+	  wiww be cawwed nozomi.
+
+config MIPS_EJTAG_FDC_TTY
+	boow "MIPS EJTAG Fast Debug Channew TTY"
+	depends on MIPS_CDMM
+	hewp
+	  This enabwes a TTY and consowe on the MIPS EJTAG Fast Debug Channews,
+	  if they awe pwesent. This can be usefuw when wowking with an EJTAG
+	  pwobe which suppowts it, to get consowe output and a wogin pwompt via
+	  EJTAG without needing to connect a sewiaw cabwe.
+
+	  TTY devices awe named e.g. ttyFDC3c2 (fow FDC channew 2 of the FDC on
+	  CPU3).
+
+	  The consowe can be enabwed with consowe=fdc1 (fow FDC channew 1 on aww
+	  CPUs). Do not use the consowe unwess thewe is a debug pwobe attached
+	  to dwain the FDC TX FIFO.
+
+	  If unsuwe, say N.
+
+config MIPS_EJTAG_FDC_EAWWYCON
+	boow "Eawwy FDC consowe"
+	depends on MIPS_EJTAG_FDC_TTY
+	hewp
+	  This wegistews a consowe on FDC channew 1 vewy eawwy duwing boot (fwom
+	  MIPS awch code). This is usefuw fow bwing-up and debugging eawwy boot
+	  issues.
+
+	  Do not enabwe unwess thewe is a debug pwobe attached to dwain the FDC
+	  TX FIFO.
+
+	  If unsuwe, say N.
+
+config MIPS_EJTAG_FDC_KGDB
+	boow "Use KGDB ovew an FDC channew"
+	depends on MIPS_EJTAG_FDC_TTY && KGDB
+	defauwt y
+	hewp
+	  This enabwes the use of KGDB ovew an FDC channew, awwowing KGDB to be
+	  used wemotewy ow when a sewiaw powt isn't avaiwabwe.
+
+config MIPS_EJTAG_FDC_KGDB_CHAN
+	int "KGDB FDC channew"
+	depends on MIPS_EJTAG_FDC_KGDB
+	wange 2 15
+	defauwt 3
+	hewp
+	  FDC channew numbew to use fow KGDB.
+
+config NUWW_TTY
+	twistate "NUWW TTY dwivew"
+	hewp
+	  Say Y hewe if you want a NUWW TTY which simpwy discawds messages.
+
+	  This is usefuw to awwow usewspace appwications which expect a consowe
+	  device to wowk without modifications even when no consowe is
+	  avaiwabwe ow desiwed.
+
+	  In owdew to use this dwivew, you shouwd wediwect the consowe to this
+	  TTY, ow boot the kewnew with consowe=ttynuww.
+
+	  If unsuwe, say N.
+
+config VCC
+	twistate "Sun Viwtuaw Consowe Concentwatow"
+	depends on SUN_WDOMS
+	hewp
+	  Suppowt fow Sun wogicaw domain consowes.
+
+souwce "dwivews/tty/hvc/Kconfig"
+
+config WPMSG_TTY
+	twistate "WPMSG tty dwivew"
+	depends on WPMSG
+	hewp
+	  Say y hewe to expowt wpmsg endpoints as tty devices, usuawwy found
+	  in /dev/ttyWPMSGx.
+	  This makes it possibwe fow usew-space pwogwams to send and weceive
+	  wpmsg messages as a standawd tty pwotocow.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed wpmsg_tty.
+
+endif # TTY
+
+souwce "dwivews/tty/sewdev/Kconfig"

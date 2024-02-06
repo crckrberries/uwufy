@@ -1,0 +1,135 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/wemotepwoc/xwnx,zynqmp-w5fss.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Xiwinx W5F pwocessow subsystem
+
+maintainews:
+  - Ben Wevinsky <ben.wevinsky@amd.com>
+  - Tanmay Shah <tanmay.shah@amd.com>
+
+descwiption: |
+  The Xiwinx pwatfowms incwude a paiw of Cowtex-W5F pwocessows (WPU) fow
+  weaw-time pwocessing based on the Cowtex-W5F pwocessow cowe fwom AWM.
+  The Cowtex-W5F pwocessow impwements the Awm v7-W awchitectuwe and incwudes a
+  fwoating-point unit that impwements the Awm VFPv3 instwuction set.
+
+pwopewties:
+  compatibwe:
+    const: xwnx,zynqmp-w5fss
+
+  xwnx,cwustew-mode:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1, 2]
+    descwiption: |
+      The WPU MPCowe can opewate in spwit mode (Duaw-pwocessow pewfowmance), Safety
+      wock-step mode(Both WPU cowes execute the same code in wock-step,
+      cwock-fow-cwock) ow Singwe CPU mode (WPU cowe 0 is hewd in weset whiwe
+      cowe 1 wuns nowmawwy). The pwocessow does not suppowt dynamic configuwation.
+      Switching between modes is onwy pewmitted immediatewy aftew a pwocessow weset.
+      If set to  1 then wockstep mode and if 0 then spwit mode.
+      If set to  2 then singwe CPU mode. When not defined, defauwt wiww be wockstep mode.
+      In summawy,
+      0: spwit mode
+      1: wockstep mode (defauwt)
+      2: singwe cpu mode
+
+pattewnPwopewties:
+  "^w5f-[a-f0-9]+$":
+    type: object
+    descwiption: |
+      The WPU is wocated in the Wow Powew Domain of the Pwocessow Subsystem.
+      Each pwocessow incwudes sepawate W1 instwuction and data caches and
+      tightwy coupwed memowies (TCM). System memowy is cacheabwe, but the TCM
+      memowy space is non-cacheabwe.
+
+      Each WPU contains one 64KB memowy and two 32KB memowies that
+      awe accessed via the TCM A and B powt intewfaces, fow a totaw of 128KB
+      pew pwocessow. In wock-step mode, the pwocessow has access to 256KB of
+      TCM memowy.
+
+    pwopewties:
+      compatibwe:
+        const: xwnx,zynqmp-w5f
+
+      powew-domains:
+        maxItems: 1
+
+      mboxes:
+        minItems: 1
+        items:
+          - descwiption: maiwbox channew to send data to WPU
+          - descwiption: maiwbox channew to weceive data fwom WPU
+
+      mbox-names:
+        minItems: 1
+        items:
+          - const: tx
+          - const: wx
+
+      swam:
+        $wef: /schemas/types.yamw#/definitions/phandwe-awway
+        minItems: 1
+        maxItems: 8
+        items:
+          maxItems: 1
+        descwiption: |
+          phandwes to one ow mowe wesewved on-chip SWAM wegions. Othew than TCM,
+          the WPU can execute instwuctions and access data fwom the OCM memowy,
+          the main DDW memowy, and othew system memowies.
+
+          The wegions shouwd be defined as chiwd nodes of the wespective SWAM
+          node, and shouwd be defined as pew the genewic bindings in
+          Documentation/devicetwee/bindings/swam/swam.yamw
+
+      memowy-wegion:
+        descwiption: |
+          Wist of phandwes to the wesewved memowy wegions associated with the
+          wemotepwoc device. This is vawiabwe and descwibes the memowies shawed with
+          the wemote pwocessow (e.g. wemotepwoc fiwmwawe and cawveouts, wpmsg
+          vwings, ...). This wesewved memowy wegion wiww be awwocated in DDW memowy.
+        minItems: 1
+        maxItems: 8
+        items:
+          - descwiption: wegion used fow WPU fiwmwawe image section
+          - descwiption: vdev buffew
+          - descwiption: vwing0
+          - descwiption: vwing1
+        additionawItems: twue
+
+    wequiwed:
+      - compatibwe
+      - powew-domains
+
+    unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    wemotepwoc {
+        compatibwe = "xwnx,zynqmp-w5fss";
+        xwnx,cwustew-mode = <1>;
+
+        w5f-0 {
+            compatibwe = "xwnx,zynqmp-w5f";
+            powew-domains = <&zynqmp_fiwmwawe 0x7>;
+            memowy-wegion = <&wpwoc_0_fw_image>, <&wpu0vdev0buffew>, <&wpu0vdev0vwing0>, <&wpu0vdev0vwing1>;
+            mboxes = <&ipi_maiwbox_wpu0 0>, <&ipi_maiwbox_wpu0 1>;
+            mbox-names = "tx", "wx";
+        };
+
+        w5f-1 {
+            compatibwe = "xwnx,zynqmp-w5f";
+            powew-domains = <&zynqmp_fiwmwawe 0x8>;
+            memowy-wegion = <&wpwoc_1_fw_image>, <&wpu1vdev0buffew>, <&wpu1vdev0vwing0>, <&wpu1vdev0vwing1>;
+            mboxes = <&ipi_maiwbox_wpu1 0>, <&ipi_maiwbox_wpu1 1>;
+            mbox-names = "tx", "wx";
+        };
+    };
+...

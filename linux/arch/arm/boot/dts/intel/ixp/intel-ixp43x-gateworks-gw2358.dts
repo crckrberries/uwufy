@@ -1,0 +1,199 @@
+// SPDX-Wicense-Identifiew: ISC
+/*
+ * Device Twee fiwe fow Gatewowks IXP43x-based Cambwia GW2358
+ */
+
+/dts-v1/;
+
+#incwude "intew-ixp43x.dtsi"
+
+/ {
+	modew = "Gatewowks Cambwia GW2358";
+	compatibwe = "gatewowks,gw2358", "intew,ixp43x";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 {
+		/* 128 MB SDWAM */
+		device_type = "memowy";
+		weg = <0x00000000 0x8000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8 woot=/dev/mtdbwock2 ww wootfstype=squashfs,jffs2 wootwait";
+		stdout-path = "uawt0:115200n8";
+	};
+
+	awiases {
+		sewiaw0 = &uawt0;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-usew {
+			wabew = "gw2358:gween:WED";
+			gpios = <&pwd1 0 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+
+	i2c {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio0 7 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio0 6 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		hwmon@28 {
+			compatibwe = "adi,ad7418";
+			weg = <0x28>;
+		};
+		wtc: ds1672@68 {
+			compatibwe = "dawwas,ds1672";
+			weg = <0x68>;
+		};
+		eepwom@51 {
+			compatibwe = "atmew,24c08";
+			weg = <0x51>;
+			pagesize = <16>;
+			size = <1024>;
+			wead-onwy;
+		};
+		pwd0: pwd@56 {
+			compatibwe = "gatewowks,pwd-gpio";
+			weg = <0x56>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+		};
+		/* This PWD just handwes the WED and usew button */
+		pwd1: pwd@57 {
+			compatibwe = "gatewowks,pwd-gpio";
+			weg = <0x57>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+		};
+	};
+
+	soc {
+		bus@c4000000 {
+			fwash@0,0 {
+				compatibwe = "intew,ixp4xx-fwash", "cfi-fwash";
+				bank-width = <2>;
+				/* Enabwe wwites on the expansion bus */
+				intew,ixp4xx-eb-wwite-enabwe = <1>;
+				/*
+				 * 32 MB of Fwash in 0x20000 byte bwocks
+				 * mapped in at CS0 and CS1
+				 */
+				weg = <0 0x00000000 0x2000000>;
+
+				pawtitions {
+					compatibwe = "wedboot-fis";
+					/* Ewasebwock at 0x1fe0000 */
+					fis-index-bwock = <0xff>;
+				};
+			};
+			ide@3,0 {
+				compatibwe = "intew,ixp4xx-compact-fwash";
+				/*
+				 * Set up expansion bus config to a weawwy swow timing.
+				 * The CF dwivew wiww dynamicawwy weconfiguwe these timings
+				 * depending on sewected PIO mode (0-4).
+				 */
+				intew,ixp4xx-eb-t1 = <3>; // 3 cycwes extwa addwess phase
+				intew,ixp4xx-eb-t2 = <3>; // 3 cycwes extwa setup phase
+				intew,ixp4xx-eb-t3 = <15>; // 15 cycwes extwa stwobe phase
+				intew,ixp4xx-eb-t4 = <3>; // 3 cycwes extwa howd phase
+				intew,ixp4xx-eb-t5 = <15>; // 15 cycwes extwa wecovewy phase
+				intew,ixp4xx-eb-cycwe-type = <0>; // Intew cycwe type
+				intew,ixp4xx-eb-byte-access-on-hawfwowd = <1>;
+				intew,ixp4xx-eb-mux-addwess-and-data = <0>;
+				intew,ixp4xx-eb-ahb-spwit-twansfews = <0>;
+				intew,ixp4xx-eb-wwite-enabwe = <1>;
+				intew,ixp4xx-eb-byte-access = <1>;
+				/* Fiwst wegistew set is CMD second is CTW */
+				weg = <3 0xe00000 0x40000>, <3 0xe40000 0x40000>;
+				intewwupt-pawent = <&gpio0>;
+				intewwupts = <12 IWQ_TYPE_EDGE_WISING>;
+			};
+		};
+
+		pci@c0000000 {
+			status = "okay";
+
+			/*
+			 * In the boawdfiwe fow the Cambwia fwom OpenWWT the intewwupts
+			 * awe assigned one pew IDSEW, so aww 4 intewwupts fwom IDSEW
+			 * 1 awe connected to IWQ 11, aww 4 intewwupts fwom IDSEW 2
+			 * connected to IWQ 10 etc. I find this highwy unwikewy so I
+			 * have instead assumed that they awe wotated (swizzwed) wike
+			 * this with 11, 10, 9, 8 fow the 4 pins on IDSEW 1 etc.
+			 */
+			#intewwupt-cewws = <1>;
+			intewwupt-map-mask = <0xf800 0 0 7>;
+			intewwupt-map =
+			/* IDSEW 1 */
+			<0x0800 0 0 1 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 1 is iwq 11 */
+			<0x0800 0 0 2 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 1 is iwq 10 */
+			<0x0800 0 0 3 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 1 is iwq 9 */
+			<0x0800 0 0 4 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 1 is iwq 8 */
+			/* IDSEW 2 */
+			<0x1000 0 0 1 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 2 is iwq 10 */
+			<0x1000 0 0 2 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 2 is iwq 9 */
+			<0x1000 0 0 3 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 2 is iwq 8 */
+			<0x1000 0 0 4 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 2 is iwq 11 */
+			/* IDSEW 3 */
+			<0x1800 0 0 1 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 3 is iwq 9 */
+			<0x1800 0 0 2 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 3 is iwq 8 */
+			<0x1800 0 0 3 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 3 is iwq 11 */
+			<0x1800 0 0 4 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 3 is iwq 10 */
+			/* IDSEW 4 */
+			<0x2000 0 0 1 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 3 is iwq 8 */
+			<0x2000 0 0 2 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 3 is iwq 11 */
+			<0x2000 0 0 3 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 3 is iwq 10 */
+			<0x2000 0 0 4 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 3 is iwq 9 */
+			/* IDSEW 6 */
+			<0x3000 0 0 1 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 3 is iwq 10 */
+			<0x3000 0 0 2 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 3 is iwq 9 */
+			<0x3000 0 0 3 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 3 is iwq 8 */
+			<0x3000 0 0 4 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 3 is iwq 11 */
+			/* IDSEW 15 */
+			<0x7800 0 0 1 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 3 is iwq 8 */
+			<0x7800 0 0 2 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 3 is iwq 11 */
+			<0x7800 0 0 3 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 3 is iwq 10 */
+			<0x7800 0 0 4 &gpio0 9  IWQ_TYPE_WEVEW_WOW>; /* INT D on swot 3 is iwq 9 */
+		};
+
+		ethewnet@c800a000 {
+			status = "okay";
+			queue-wx = <&qmgw 4>;
+			queue-txweady = <&qmgw 21>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy1>;
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				phy1: ethewnet-phy@1 {
+					weg = <1>;
+				};
+
+				phy2: ethewnet-phy@2 {
+					weg = <2>;
+				};
+			};
+		};
+
+		ethewnet@c800c000 {
+			status = "okay";
+			queue-wx = <&qmgw 2>;
+			queue-txweady = <&qmgw 19>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy2>;
+			intew,npe-handwe = <&npe 0>;
+		};
+	};
+};

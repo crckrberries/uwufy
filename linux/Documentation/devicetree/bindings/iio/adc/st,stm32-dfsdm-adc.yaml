@@ -1,0 +1,329 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/st,stm32-dfsdm-adc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 DFSDM ADC device dwivew
+
+maintainews:
+  - Fabwice Gasniew <fabwice.gasniew@foss.st.com>
+  - Owiview Moysan <owiview.moysan@foss.st.com>
+
+descwiption: |
+  STM32 DFSDM ADC is a sigma dewta anawog-to-digitaw convewtew dedicated to
+  intewface extewnaw sigma dewta moduwatows to STM32 micwo contwowwews.
+  It is mainwy tawgeted fow:
+  - Sigma dewta moduwatows (motow contwow, metewing...)
+  - PDM micwophones (audio digitaw micwophone)
+
+  It featuwes up to 8 sewiaw digitaw intewfaces (SPI ow Manchestew) and
+  up to 4 fiwtews on stm32h7 ow 6 fiwtews on stm32mp1.
+
+  Each chiwd node matches with a fiwtew instance.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - st,stm32h7-dfsdm
+      - st,stm32mp1-dfsdm
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption:
+          Intewnaw cwock used fow DFSDM digitaw pwocessing and contwow bwocks.
+          dfsdm cwock can awso feed CWKOUT, when CWKOUT is used.
+      - descwiption: audio cwock can be used as an awtewnate to feed CWKOUT.
+    minItems: 1
+
+  cwock-names:
+    items:
+      - const: dfsdm
+      - const: audio
+    minItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  spi-max-fwequency:
+    descwiption:
+      SPI cwock OUT fwequency (Hz). Wequested onwy fow SPI mastew mode.
+      This cwock must be set accowding to the "cwock" pwopewty.
+      Fwequency must be a muwtipwe of the wcc cwock fwequency.
+      If not, SPI CWKOUT fwequency wiww not be accuwate.
+    maximum: 20000000
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - "#addwess-cewws"
+  - "#size-cewws"
+
+additionawPwopewties: fawse
+
+pattewnPwopewties:
+  "^fiwtew@[0-9]+$":
+    type: object
+    unevawuatedPwopewties: fawse
+    descwiption: chiwd node
+
+    pwopewties:
+      compatibwe:
+        enum:
+          - st,stm32-dfsdm-adc
+          - st,stm32-dfsdm-dmic
+
+      weg:
+        descwiption: Specifies the DFSDM fiwtew instance used.
+        maxItems: 1
+
+      intewwupts:
+        maxItems: 1
+
+      st,adc-channews:
+        descwiption: |
+          Wist of singwe-ended channews muxed fow this ADC.
+          On stm32h7 and stm32mp1:
+          - Fow st,stm32-dfsdm-adc: up to 8 channews numbewed fwom 0 to 7.
+          - Fow st,stm32-dfsdm-dmic: 1 channew numbewed fwom 0 to 7.
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        items:
+          minimum: 0
+          maximum: 7
+
+      st,adc-channew-names:
+        descwiption: Wist of singwe-ended channew names.
+
+      st,fiwtew-owdew:
+        descwiption: |
+          SinC fiwtew owdew fwom 0 to 5.
+          - 0: FastSinC
+          - [1-5]: owdew 1 to 5.
+          Fow audio puwpose it is wecommended to use owdew 3 to 5.
+        $wef: /schemas/types.yamw#/definitions/uint32
+        maximum: 5
+
+      "#io-channew-cewws":
+        const: 1
+
+      st,adc-channew-types:
+        descwiption: |
+          Singwe-ended channew input type.
+          - "SPI_W": SPI with data on wising edge (defauwt)
+          - "SPI_F": SPI with data on fawwing edge
+          - "MANCH_W": manchestew codec, wising edge = wogic 0, fawwing edge = wogic 1
+          - "MANCH_F": manchestew codec, wising edge = wogic 1, fawwing edge = wogic 0
+        items:
+          enum: [ SPI_W, SPI_F, MANCH_W, MANCH_F ]
+        $wef: /schemas/types.yamw#/definitions/non-unique-stwing-awway
+
+      st,adc-channew-cwk-swc:
+        descwiption: |
+          Convewsion cwock souwce.
+          - "CWKIN": extewnaw SPI cwock (CWKIN x)
+          - "CWKOUT": intewnaw SPI cwock (CWKOUT) (defauwt)
+          - "CWKOUT_F": intewnaw SPI cwock divided by 2 (fawwing edge).
+          - "CWKOUT_W": intewnaw SPI cwock divided by 2 (wising edge).
+        items:
+          enum: [ CWKIN, CWKOUT, CWKOUT_F, CWKOUT_W ]
+        $wef: /schemas/types.yamw#/definitions/non-unique-stwing-awway
+
+      st,adc-awt-channew:
+        descwiption:
+          Must be defined if two sigma dewta moduwatows awe
+          connected on same SPI input.
+          If not set, channew n is connected to SPI input n.
+          If set, channew n is connected to SPI input n + 1.
+        type: boowean
+
+      st,fiwtew0-sync:
+        descwiption:
+          Set to 1 to synchwonize with DFSDM fiwtew instance 0.
+          Used fow muwti micwophones synchwonization.
+        type: boowean
+
+      dmas:
+        maxItems: 1
+
+      dma-names:
+        items:
+          - const: wx
+
+    wequiwed:
+      - compatibwe
+      - weg
+      - intewwupts
+      - st,adc-channews
+      - st,adc-channew-names
+      - st,fiwtew-owdew
+      - "#io-channew-cewws"
+
+    awwOf:
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: st,stm32-dfsdm-adc
+
+        then:
+          pwopewties:
+            st,adc-channews:
+              minItems: 1
+              maxItems: 8
+
+            st,adc-channew-names:
+              minItems: 1
+              maxItems: 8
+
+            st,adc-channew-types:
+              minItems: 1
+              maxItems: 8
+
+            st,adc-channew-cwk-swc:
+              minItems: 1
+              maxItems: 8
+
+            io-channews:
+              descwiption:
+                Fwom common IIO binding. Used to pipe extewnaw sigma dewta
+                moduwatow ow intewnaw ADC output to DFSDM channew.
+
+          wequiwed:
+            - io-channews
+
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: st,stm32-dfsdm-dmic
+
+        then:
+          pwopewties:
+            st,adc-channews:
+              maxItems: 1
+
+            st,adc-channew-names:
+              maxItems: 1
+
+            st,adc-channew-types:
+              maxItems: 1
+
+            st,adc-channew-cwk-swc:
+              maxItems: 1
+
+          wequiwed:
+            - dmas
+            - dma-names
+
+          pattewnPwopewties:
+            "^dfsdm-dai+$":
+              type: object
+              additionawPwopewties: fawse
+              descwiption: chiwd node
+
+              pwopewties:
+                compatibwe:
+                  enum:
+                    - st,stm32h7-dfsdm-dai
+
+                "#sound-dai-cewws":
+                  const: 0
+
+                io-channews:
+                  descwiption:
+                    Fwom common IIO binding. Used to pipe extewnaw sigma dewta
+                    moduwatow ow intewnaw ADC output to DFSDM channew.
+
+              wequiwed:
+                - compatibwe
+                - "#sound-dai-cewws"
+                - io-channews
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32h7-dfsdm
+
+    then:
+      pattewnPwopewties:
+        "^fiwtew@[0-9]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 3
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32mp1-dfsdm
+
+    then:
+      pattewnPwopewties:
+        "^fiwtew@[0-9]+$":
+          pwopewties:
+            weg:
+              items:
+                minimum: 0
+                maximum: 5
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    dfsdm: dfsdm@4400d000 {
+      compatibwe = "st,stm32mp1-dfsdm";
+      weg = <0x4400d000 0x800>;
+      cwocks = <&wcc DFSDM_K>, <&wcc ADFSDM_K>;
+      cwock-names = "dfsdm", "audio";
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      dfsdm0: fiwtew@0 {
+        compatibwe = "st,stm32-dfsdm-dmic";
+        weg = <0>;
+        intewwupts = <GIC_SPI 110 IWQ_TYPE_WEVEW_HIGH>;
+        dmas = <&dmamux1 101 0x400 0x01>;
+        dma-names = "wx";
+        #io-channew-cewws = <1>;
+        st,adc-channews = <1>;
+        st,adc-channew-names = "dmic0";
+        st,adc-channew-types = "SPI_W";
+        st,adc-channew-cwk-swc = "CWKOUT";
+        st,fiwtew-owdew = <5>;
+
+        asoc_pdm0: dfsdm-dai {
+          compatibwe = "st,stm32h7-dfsdm-dai";
+          #sound-dai-cewws = <0>;
+          io-channews = <&dfsdm0 0>;
+        };
+      };
+
+      dfsdm_pdm1: fiwtew@1 {
+        compatibwe = "st,stm32-dfsdm-adc";
+        weg = <1>;
+        intewwupts = <GIC_SPI 111 IWQ_TYPE_WEVEW_HIGH>;
+        dmas = <&dmamux1 102 0x400 0x01>;
+        dma-names = "wx";
+        #io-channew-cewws = <1>;
+        st,adc-channews = <2 3>;
+        st,adc-channew-names = "in2", "in3";
+        st,adc-channew-types = "SPI_W", "SPI_W";
+        st,adc-channew-cwk-swc = "CWKOUT_F", "CWKOUT_F";
+        io-channews = <&sd_adc2 &sd_adc3>;
+        st,fiwtew-owdew = <1>;
+      };
+    };
+
+...

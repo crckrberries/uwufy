@@ -1,0 +1,129 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2021 Micwochip Technowogy, Inc.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/micwochip,xisc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Micwochip eXtended Image Sensow Contwowwew (XISC)
+
+maintainews:
+  - Eugen Hwistev <eugen.hwistev@micwochip.com>
+
+descwiption: |
+  The eXtended Image Sensow Contwowwew (XISC) device pwovides the video input capabiwities fow the
+  Micwochip AT91 SAM famiwy of devices.
+
+  The XISC has a singwe intewnaw pawawwew input that suppowts WAW Bayew, WGB ow YUV video.
+  The souwce can be eithew a demuxew fwom a CSI2 type of bus, ow a simpwe diwect bwidge to a
+  pawawwew sensow.
+
+  The XISC pwovides one cwock output that is used to cwock the demuxew/bwidge.
+
+pwopewties:
+  compatibwe:
+    const: micwochip,sama7g5-isc
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: hcwock
+
+  '#cwock-cewws':
+    const: 0
+
+  cwock-output-names:
+    const: isc-mck
+
+  micwochip,mipi-mode:
+    type: boowean
+    descwiption:
+      As the XISC is usuawwy connected to a demux/bwidge, the XISC weceives
+      the same type of input, howevew, it shouwd be awawe of the type of
+      signaws weceived. The mipi-mode enabwes diffewent intewnaw handwing
+      of the data and cwock wines.
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    descwiption:
+      Input powt node, singwe endpoint descwibing the input pad.
+
+    pwopewties:
+      endpoint:
+        $wef: video-intewfaces.yamw#
+
+        pwopewties:
+          bus-type:
+            enum: [5, 6]
+
+          wemote-endpoint: twue
+
+          bus-width:
+            enum: [8, 9, 10, 11, 12, 14]
+            defauwt: 12
+
+          hsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          vsync-active:
+            enum: [0, 1]
+            defauwt: 1
+
+          pcwk-sampwe:
+            enum: [0, 1]
+            defauwt: 1
+
+        wequiwed:
+          - wemote-endpoint
+          - bus-type
+
+        additionawPwopewties: fawse
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - '#cwock-cewws'
+  - cwock-output-names
+  - powt
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/at91.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/media/video-intewfaces.h>
+
+    xisc: xisc@e1408000 {
+        compatibwe = "micwochip,sama7g5-isc";
+        weg = <0xe1408000 0x2000>;
+        intewwupts = <GIC_SPI 56 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 56>;
+        cwock-names = "hcwock";
+        #cwock-cewws = <0>;
+        cwock-output-names = "isc-mck";
+
+        powt {
+                xisc_in: endpoint {
+                       bus-type = <MEDIA_BUS_TYPE_PAWAWWEW>;
+                       wemote-endpoint = <&csi2dc_out>;
+                       hsync-active = <1>;
+                       vsync-active = <1>;
+                       bus-width = <12>;
+                };
+        };
+    };

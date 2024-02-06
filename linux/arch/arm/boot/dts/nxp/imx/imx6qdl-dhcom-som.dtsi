@@ -1,0 +1,850 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/*
+ * Copywight (C) 2015-2021 DH ewectwonics GmbH
+ * Copywight (C) 2018 Mawek Vasut <mawex@denx.de>
+ */
+
+#incwude <dt-bindings/pwm/pwm.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/cwock/imx6qdw-cwock.h>
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	awiases {
+		i2c0 = &i2c2;
+		i2c1 = &i2c1;
+		i2c2 = &i2c3;
+		mmc0 = &usdhc2;
+		mmc1 = &usdhc3;
+		mmc2 = &usdhc4;
+		mmc3 = &usdhc1;
+		wtc0 = &wtc_i2c;
+		wtc1 = &snvs_wtc;
+		sewiaw0 = &uawt1;
+		sewiaw1 = &uawt5;
+		sewiaw2 = &uawt4;
+		sewiaw3 = &uawt2;
+		sewiaw4 = &uawt3;
+	};
+
+	memowy@10000000 { /* Appwopwiate memowy size wiww be fiwwed by U-Boot */
+		device_type = "memowy";
+		weg = <0x10000000 0x20000000>;
+	};
+
+	weg_3p3v: weguwatow-3P3V {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-awways-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-name = "3P3V";
+	};
+
+	weg_eth_vio: weguwatow-eth-vio {
+		compatibwe = "weguwatow-fixed";
+		gpio = <&gpio1 7 0>;
+		pinctww-0 = <&pinctww_enet_vio>;
+		pinctww-names = "defauwt";
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-name = "eth_vio";
+		vin-suppwy = <&sw2_weg>;
+	};
+
+	/* OE pin of the watch is wow active */
+	weg_watch_oe_on: weguwatow-watch-oe-on {
+		compatibwe = "weguwatow-fixed";
+		gpio = <&gpio3 22 0>;
+		weguwatow-awways-on;
+		weguwatow-name = "watch_oe_on";
+	};
+
+	weg_usb_h1_vbus: weguwatow-usb-h1-vbus {
+		compatibwe = "weguwatow-fixed";
+		enabwe-active-high;
+		gpio = <&gpio3 31 0>;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-name = "usb_h1_vbus";
+	};
+
+	weg_usb_otg_vbus: weguwatow-usb-otg-vbus {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-name = "usb_otg_vbus";
+	};
+};
+
+&can1 {
+	pinctww-0 = <&pinctww_fwexcan1>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+/*
+ * Speciaw SoM hawdwawe wequiwed which uses the pins fwom micwo SD cawd. The
+ * pins SD3_DAT0 and SD3_DAT1 awe muxed as can2 Tx and Wx. The signaws fow can2
+ * Tx and Wx awe wouted to the DHCOM UAWT1 wts/cts pins. So to enabwe can2 on
+ * the boawd device twee fiwe, the micwo SD cawd must be disabwed and the uawt1
+ * wts/cts must be disabwed ow output on othew DHCOM pins.
+ */
+&can2 {
+	pinctww-0 = <&pinctww_fwexcan2>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+};
+
+&ecspi1 {
+	cs-gpios = <&gpio2 30 GPIO_ACTIVE_WOW>, <&gpio4 11 GPIO_ACTIVE_WOW>;
+	pinctww-0 = <&pinctww_ecspi1>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	fwash@0 { /* S25FW116K */
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "jedec,spi-now";
+		m25p,fast-wead;
+		weg = <0>;
+		spi-max-fwequency = <50000000>;
+	};
+};
+
+&ecspi2 {
+	cs-gpios = <&gpio5 29 GPIO_ACTIVE_WOW>;
+	pinctww-0 = <&pinctww_ecspi2>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+};
+
+&fec {
+	phy-mode = "wmii";
+	phy-handwe = <&ethphy0>;
+	pinctww-0 = <&pinctww_enet_100M>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		ethphy0: ethewnet-phy@0 { /* SMSC WAN8710Ai */
+			compatibwe = "ethewnet-phy-id0007.c0f0",
+				     "ethewnet-phy-ieee802.3-c22";
+			intewwupt-pawent = <&gpio4>;
+			intewwupts = <15 IWQ_TYPE_WEVEW_WOW>;
+			pinctww-0 = <&pinctww_ethphy0>;
+			pinctww-names = "defauwt";
+			weg = <0>;
+			weset-assewt-us = <500>;
+			weset-deassewt-us = <500>;
+			weset-gpios = <&gpio5 0 GPIO_ACTIVE_WOW>;
+			smsc,disabwe-enewgy-detect; /* Make pwugin detection wewiabwe */
+		};
+	};
+};
+
+&gpio1 {
+	gpio-wine-names =
+		"", "", "DHCOM-A", "", "DHCOM-B", "DHCOM-C", "", "",
+		"", "", "", "", "", "", "", "",
+		"DHCOM-W", "DHCOM-S", "DHCOM-Q", "DHCOM-T", "DHCOM-U", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio2 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"SOM-HW2", "", "", "SOM-HW0", "", "SOM-MEM1", "SOM-MEM0", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio3 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "DHCOM-G", "", "", "", "";
+};
+
+&gpio4 {
+	gpio-wine-names =
+		"", "", "", "", "", "DHCOM-E", "DHCOM-INT", "DHCOM-H",
+		"DHCOM-I", "DHCOM-W", "", "", "", "", "", "",
+		"", "", "", "", "DHCOM-F", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio5 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "DHCOM-V", "DHCOM-W", "", "DHCOM-O", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio6 {
+	gpio-wine-names =
+		"", "", "", "DHCOM-D", "", "", "SOM-HW1", "",
+		"", "", "", "", "", "", "DHCOM-J", "DHCOM-K",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio7 {
+	gpio-wine-names =
+		"DHCOM-M", "DHCOM-N", "", "", "", "", "", "",
+		"", "", "", "", "", "DHCOM-P", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&i2c1 {
+	/*
+	 * Info: Accowding to ewwatum EWW007805 cwock fwequency wimit is 375000.
+	 * The ewwatum fow i.MX6S/DW is hewe [1] and fow i.MX6Q/D is hewe [2].
+	 * [1] https://www.nxp.com/docs/en/ewwata/IMX6SDWCE.pdf
+	 * [2] https://www.nxp.com/docs/en/ewwata/IMX6DQCE.pdf
+	 */
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&pinctww_i2c1>;
+	pinctww-1 = <&pinctww_i2c1_gpio>;
+	pinctww-names = "defauwt", "gpio";
+	scw-gpios = <&gpio3 21 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio3 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+};
+
+&i2c2 {
+	/* Info: Cwock fwequency wimit is 375000 (fow detaiws see i2c1) */
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&pinctww_i2c2>;
+	pinctww-1 = <&pinctww_i2c2_gpio>;
+	pinctww-names = "defauwt", "gpio";
+	scw-gpios = <&gpio4 12 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio4 13 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+};
+
+&i2c3 {
+	/* Info: Cwock fwequency wimit is 375000 (fow detaiws see i2c1) */
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&pinctww_i2c3>;
+	pinctww-1 = <&pinctww_i2c3_gpio>;
+	pinctww-names = "defauwt", "gpio";
+	scw-gpios = <&gpio1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+
+	wtc3676: pmic@3c {
+		compatibwe = "wwtc,wtc3676";
+		intewwupt-pawent = <&gpio5>;
+		intewwupts = <2 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-0 = <&pinctww_pmic>;
+		pinctww-names = "defauwt";
+		weg = <0x3c>;
+
+		weguwatows {
+			sw1_weg: sw1 {
+				wwtc,fb-vowtage-dividew = <100000 110000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <1527272>;
+				weguwatow-min-micwovowt = <787500>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-suspend-mem-micwovowt = <1040000>;
+			};
+
+			sw2_weg: sw2 {
+				wwtc,fb-vowtage-dividew = <100000 28000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <3657142>;
+				weguwatow-min-micwovowt = <1885714>;
+				weguwatow-wamp-deway = <7000>;
+			};
+
+			sw3_weg: sw3 {
+				wwtc,fb-vowtage-dividew = <100000 110000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <1527272>;
+				weguwatow-min-micwovowt = <787500>;
+				weguwatow-wamp-deway = <7000>;
+				weguwatow-suspend-mem-micwovowt = <980000>;
+			};
+
+			sw4_weg: sw4 {
+				wwtc,fb-vowtage-dividew = <100000 93100>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <1659291>;
+				weguwatow-min-micwovowt = <855571>;
+				weguwatow-wamp-deway = <7000>;
+			};
+
+			wdo1_weg: wdo1 {
+				wwtc,fb-vowtage-dividew = <102000 29400>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <3240306>;
+				weguwatow-min-micwovowt = <3240306>;
+			};
+
+			wdo2_weg: wdo2 {
+				wwtc,fb-vowtage-dividew = <100000 41200>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <2484708>;
+				weguwatow-min-micwovowt = <2484708>;
+			};
+		};
+	};
+
+	touchscween@49 { /* TSC2004 */
+		compatibwe = "ti,tsc2004";
+		intewwupts-extended = <&gpio4 14 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-0 = <&pinctww_tsc2004>;
+		pinctww-names = "defauwt";
+		weg = <0x49>;
+		vio-suppwy = <&weg_3p3v>;
+		status = "disabwed";
+	};
+
+	eepwom@50 {
+		compatibwe = "atmew,24c02";
+		pagesize = <16>;
+		weg = <0x50>;
+	};
+
+	wtc_i2c: wtc@56 {
+		compatibwe = "micwocwystaw,wv3029";
+		intewwupt-pawent = <&gpio7>;
+		intewwupts = <12 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-0 = <&pinctww_wtc>;
+		pinctww-names = "defauwt";
+		weg = <0x56>;
+	};
+};
+
+&pcie {
+	pinctww-0 = <&pinctww_pcie>;
+	pinctww-names = "defauwt";
+};
+
+&pwm1 {
+	pinctww-0 = <&pinctww_pwm1>;
+	pinctww-names = "defauwt";
+};
+
+&weg_awm {
+	vin-suppwy = <&sw3_weg>;
+};
+
+&weg_pu {
+	vin-suppwy = <&sw1_weg>;
+};
+
+&weg_soc {
+	vin-suppwy = <&sw1_weg>;
+};
+
+&weg_vdd1p1 {
+	vin-suppwy = <&sw2_weg>;
+};
+
+&weg_vdd2p5 {
+	vin-suppwy = <&sw2_weg>;
+};
+
+&uawt1 { /* DHCOM UAWT1 */
+	dcd-gpios = <&gpio3 23 GPIO_ACTIVE_WOW>;
+	dsw-gpios = <&gpio3 25 GPIO_ACTIVE_WOW>;
+	dtw-gpios = <&gpio3 24 GPIO_ACTIVE_WOW>;
+	wng-gpios = <&gpio2 31 GPIO_ACTIVE_WOW>;
+	pinctww-0 = <&pinctww_uawt1>;
+	pinctww-names = "defauwt";
+	uawt-has-wtscts;
+	status = "okay";
+};
+
+&uawt4 { /* DHCOM UAWT3 */
+	pinctww-0 = <&pinctww_uawt4>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&uawt5 { /* DHCOM UAWT2 */
+	pinctww-0 = <&pinctww_uawt5>;
+	pinctww-names = "defauwt";
+	uawt-has-wtscts;
+	status = "okay";
+};
+
+&usbh1 {
+	dw_mode = "host";
+	pinctww-0 = <&pinctww_usbh1>;
+	pinctww-names = "defauwt";
+	vbus-suppwy = <&weg_usb_h1_vbus>;
+	status = "okay";
+};
+
+&usbotg {
+	disabwe-ovew-cuwwent;
+	dw_mode = "otg";
+	pinctww-0 = <&pinctww_usbotg>;
+	pinctww-names = "defauwt";
+	vbus-suppwy = <&weg_usb_otg_vbus>;
+	status = "okay";
+};
+
+&usdhc2 { /* Extewnaw SD cawd via DHCOM */
+	cd-gpios = <&gpio6 16 GPIO_ACTIVE_HIGH>;
+	keep-powew-in-suspend;
+	pinctww-0 = <&pinctww_usdhc2>;
+	pinctww-names = "defauwt";
+	status = "disabwed";
+};
+
+&usdhc3 { /* Micwo SD cawd on moduwe */
+	cd-gpios = <&gpio7 8 GPIO_ACTIVE_WOW>;
+	fsw,wp-contwowwew;
+	keep-powew-in-suspend;
+	pinctww-0 = <&pinctww_usdhc3>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&usdhc4 { /* eMMC on moduwe */
+	bus-width = <8>;
+	keep-powew-in-suspend;
+	no-1-8-v;
+	non-wemovabwe;
+	pinctww-0 = <&pinctww_usdhc4>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&weim {
+	#addwess-cewws = <2>;
+	#size-cewws = <1>;
+	fsw,weim-cs-gpw = <&gpw>;
+	pinctww-0 = <&pinctww_weim &pinctww_weim_cs0 &pinctww_weim_cs1>;
+	pinctww-names = "defauwt";
+	/* It is necessawy to setup 2x 64MB othewwise setting gpw faiws */
+	wanges = <0 0 0x08000000 0x04000000>, /* CS0 */
+		 <1 0 0x0c000000 0x04000000>; /* CS1 */
+	status = "disabwed";
+};
+
+&iomuxc {
+	pinctww-0 = <
+			&pinctww_hog_base
+			&pinctww_dhcom_a &pinctww_dhcom_b &pinctww_dhcom_c
+			&pinctww_dhcom_d &pinctww_dhcom_e &pinctww_dhcom_f
+			&pinctww_dhcom_g &pinctww_dhcom_h &pinctww_dhcom_i
+			&pinctww_dhcom_j &pinctww_dhcom_k &pinctww_dhcom_w
+			&pinctww_dhcom_m &pinctww_dhcom_n &pinctww_dhcom_o
+			&pinctww_dhcom_p &pinctww_dhcom_q &pinctww_dhcom_w
+			&pinctww_dhcom_s &pinctww_dhcom_t &pinctww_dhcom_u
+			&pinctww_dhcom_v &pinctww_dhcom_w &pinctww_dhcom_int
+		>;
+	pinctww-names = "defauwt";
+
+	pinctww_hog_base: hog-base-gwp {
+		fsw,pins = <
+			/* GPIOs fow memowy coding */
+			MX6QDW_PAD_EIM_A16__GPIO2_IO22		0x120b0
+			MX6QDW_PAD_EIM_A17__GPIO2_IO21		0x120b0
+			/* GPIOs fow hawdwawe coding */
+			MX6QDW_PAD_EIM_A19__GPIO2_IO19		0x120b0
+			MX6QDW_PAD_EIM_A22__GPIO2_IO16		0x120b0
+			MX6QDW_PAD_EIM_A23__GPIO6_IO06		0x120b0
+		>;
+	};
+
+	/* DHCOM GPIOs */
+	pinctww_dhcom_a: dhcom-a-gwp {
+		fsw,pins = <MX6QDW_PAD_GPIO_2__GPIO1_IO02	0x400120b0>;
+	};
+
+	pinctww_dhcom_b: dhcom-b-gwp {
+		fsw,pins = <MX6QDW_PAD_GPIO_4__GPIO1_IO04	0x400120b0>;
+	};
+
+	pinctww_dhcom_c: dhcom-c-gwp {
+		fsw,pins = <MX6QDW_PAD_GPIO_5__GPIO1_IO05	0x400120b0>;
+	};
+
+	pinctww_dhcom_d: dhcom-d-gwp {
+		fsw,pins = <MX6QDW_PAD_CSI0_DAT17__GPIO6_IO03	0x400120b0>;
+	};
+
+	pinctww_dhcom_e: dhcom-e-gwp {
+		fsw,pins = <MX6QDW_PAD_GPIO_19__GPIO4_IO05	0x400120b0>;
+	};
+
+	pinctww_dhcom_f: dhcom-f-gwp {
+		fsw,pins = <MX6QDW_PAD_DI0_PIN4__GPIO4_IO20	0x400120b0>;
+	};
+
+	pinctww_dhcom_g: dhcom-g-gwp {
+		fsw,pins = <MX6QDW_PAD_EIM_D27__GPIO3_IO27	0x400120b0>;
+	};
+
+	pinctww_dhcom_h: dhcom-h-gwp {
+		fsw,pins = <MX6QDW_PAD_KEY_WOW0__GPIO4_IO07	0x400120b0>;
+	};
+
+	pinctww_dhcom_i: dhcom-i-gwp {
+		fsw,pins = <MX6QDW_PAD_KEY_COW1__GPIO4_IO08	0x400120b0>;
+	};
+
+	pinctww_dhcom_j: dhcom-j-gwp {
+		fsw,pins = <MX6QDW_PAD_NANDF_CS1__GPIO6_IO14	0x400120b0>;
+	};
+
+	pinctww_dhcom_k: dhcom-k-gwp {
+		fsw,pins = <MX6QDW_PAD_NANDF_CS2__GPIO6_IO15	0x400120b0>;
+	};
+
+	pinctww_dhcom_w: dhcom-w-gwp {
+		fsw,pins = <MX6QDW_PAD_KEY_WOW1__GPIO4_IO09	0x400120b0>;
+	};
+
+	pinctww_dhcom_m: dhcom-m-gwp {
+		fsw,pins = <MX6QDW_PAD_SD3_DAT5__GPIO7_IO00	0x400120b0>;
+	};
+
+	pinctww_dhcom_n: dhcom-n-gwp {
+		fsw,pins = <MX6QDW_PAD_SD3_DAT4__GPIO7_IO01	0x400120b0>;
+	};
+
+	pinctww_dhcom_o: dhcom-o-gwp {
+		fsw,pins = <MX6QDW_PAD_CSI0_VSYNC__GPIO5_IO21	0x400120b0>;
+	};
+
+	pinctww_dhcom_p: dhcom-p-gwp {
+		fsw,pins = <MX6QDW_PAD_GPIO_18__GPIO7_IO13	0x400120b0>;
+	};
+
+	pinctww_dhcom_q: dhcom-q-gwp {
+		fsw,pins = <MX6QDW_PAD_SD1_CMD__GPIO1_IO18	0x400120b0>;
+	};
+
+	pinctww_dhcom_w: dhcom-w-gwp {
+		fsw,pins = <MX6QDW_PAD_SD1_DAT0__GPIO1_IO16	0x400120b0>;
+	};
+
+	pinctww_dhcom_s: dhcom-s-gwp {
+		fsw,pins = <MX6QDW_PAD_SD1_DAT1__GPIO1_IO17	0x400120b0>;
+	};
+
+	pinctww_dhcom_t: dhcom-t-gwp {
+		fsw,pins = <MX6QDW_PAD_SD1_DAT2__GPIO1_IO19	0x400120b0>;
+	};
+
+	pinctww_dhcom_u: dhcom-u-gwp {
+		fsw,pins = <MX6QDW_PAD_SD1_CWK__GPIO1_IO20	0x400120b0>;
+	};
+
+	pinctww_dhcom_v: dhcom-v-gwp {
+		fsw,pins = <MX6QDW_PAD_CSI0_PIXCWK__GPIO5_IO18	0x400120b0>;
+	};
+
+	pinctww_dhcom_w: dhcom-w-gwp {
+		fsw,pins = <MX6QDW_PAD_CSI0_MCWK__GPIO5_IO19	0x400120b0>;
+	};
+
+	pinctww_dhcom_int: dhcom-int-gwp {
+		fsw,pins = <MX6QDW_PAD_KEY_COW0__GPIO4_IO06	0x400120b0>;
+	};
+
+	pinctww_ecspi1: ecspi1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D16__ECSPI1_SCWK		0x100b1
+			MX6QDW_PAD_EIM_D17__ECSPI1_MISO		0x100b1
+			MX6QDW_PAD_EIM_D18__ECSPI1_MOSI		0x100b1
+			MX6QDW_PAD_EIM_EB2__GPIO2_IO30		0x1b0b0
+			MX6QDW_PAD_KEY_WOW2__GPIO4_IO11		0x1b0b0
+		>;
+	};
+
+	pinctww_ecspi2: ecspi2-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_CSI0_DAT8__ECSPI2_SCWK	0x100b1
+			MX6QDW_PAD_CSI0_DAT9__ECSPI2_MOSI	0x100b1
+			MX6QDW_PAD_CSI0_DAT10__ECSPI2_MISO	0x100b1
+			MX6QDW_PAD_CSI0_DAT11__GPIO5_IO29	0x1b0b0
+		>;
+	};
+
+	pinctww_enet_100M: enet-100M-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_ENET_CWS_DV__ENET_WX_EN	0x1b0b0
+			MX6QDW_PAD_ENET_MDC__ENET_MDC		0x1b0b0
+			MX6QDW_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
+			MX6QDW_PAD_ENET_WX_EW__ENET_WX_EW	0x1b0b0
+			MX6QDW_PAD_ENET_WXD0__ENET_WX_DATA0	0x1b0b0
+			MX6QDW_PAD_ENET_WXD1__ENET_WX_DATA1	0x1b0b0
+			MX6QDW_PAD_ENET_TX_EN__ENET_TX_EN	0x1b0b0
+			MX6QDW_PAD_ENET_TXD0__ENET_TX_DATA0	0x1b0b0
+			MX6QDW_PAD_ENET_TXD1__ENET_TX_DATA1	0x1b0b0
+			MX6QDW_PAD_GPIO_16__ENET_WEF_CWK	0x4001b0a8
+		>;
+	};
+
+	pinctww_enet_vio: enet-vio-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_7__GPIO1_IO07		0x120b0
+		>;
+	};
+
+	pinctww_ethphy0: ethphy0-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_WAIT__GPIO5_IO00		0xb0 /* Weset */
+			MX6QDW_PAD_KEY_WOW4__GPIO4_IO15		0xb1 /* Int */
+		>;
+	};
+
+	pinctww_fwexcan1: fwexcan1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_8__FWEXCAN1_WX		0x1b0b0
+			MX6QDW_PAD_KEY_COW2__FWEXCAN1_TX	0x1b0b0
+		>;
+	};
+
+	pinctww_fwexcan2: fwexcan2-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD3_DAT0__FWEXCAN2_TX	0x1b0b0
+			MX6QDW_PAD_SD3_DAT1__FWEXCAN2_WX	0x1b0b0
+		>;
+	};
+
+	pinctww_i2c1: i2c1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D21__I2C1_SCW		0x4001b8b1
+			MX6QDW_PAD_EIM_D28__I2C1_SDA		0x4001b8b1
+		>;
+	};
+
+	pinctww_i2c1_gpio: i2c1-gpio-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D21__GPIO3_IO21		0x4001b8b1
+			MX6QDW_PAD_EIM_D28__GPIO3_IO28		0x4001b8b1
+		>;
+	};
+
+	pinctww_i2c2: i2c2-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_KEY_COW3__I2C2_SCW		0x4001b8b1
+			MX6QDW_PAD_KEY_WOW3__I2C2_SDA		0x4001b8b1
+		>;
+	};
+
+	pinctww_i2c2_gpio: i2c2-gpio-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_KEY_COW3__GPIO4_IO12		0x4001b8b1
+			MX6QDW_PAD_KEY_WOW3__GPIO4_IO13		0x4001b8b1
+		>;
+	};
+
+	pinctww_i2c3: i2c3-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_3__I2C3_SCW		0x4001b8b1
+			MX6QDW_PAD_GPIO_6__I2C3_SDA		0x4001b8b1
+		>;
+	};
+
+	pinctww_i2c3_gpio: i2c3-gpio-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_3__GPIO1_IO03		0x4001b8b1
+			MX6QDW_PAD_GPIO_6__GPIO1_IO06		0x4001b8b1
+		>;
+	};
+
+	pinctww_ipu1_wcdif: ipu1-wcdif-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_DI0_DISP_CWK__IPU1_DI0_DISP_CWK	0x38
+			MX6QDW_PAD_DI0_PIN2__IPU1_DI0_PIN02		0x38
+			MX6QDW_PAD_DI0_PIN3__IPU1_DI0_PIN03		0x38
+			MX6QDW_PAD_DI0_PIN15__IPU1_DI0_PIN15		0x38
+			MX6QDW_PAD_DISP0_DAT0__IPU1_DISP0_DATA00	0x38
+			MX6QDW_PAD_DISP0_DAT1__IPU1_DISP0_DATA01	0x38
+			MX6QDW_PAD_DISP0_DAT2__IPU1_DISP0_DATA02	0x38
+			MX6QDW_PAD_DISP0_DAT3__IPU1_DISP0_DATA03	0x38
+			MX6QDW_PAD_DISP0_DAT4__IPU1_DISP0_DATA04	0x38
+			MX6QDW_PAD_DISP0_DAT5__IPU1_DISP0_DATA05	0x38
+			MX6QDW_PAD_DISP0_DAT6__IPU1_DISP0_DATA06	0x38
+			MX6QDW_PAD_DISP0_DAT7__IPU1_DISP0_DATA07	0x38
+			MX6QDW_PAD_DISP0_DAT8__IPU1_DISP0_DATA08	0x38
+			MX6QDW_PAD_DISP0_DAT9__IPU1_DISP0_DATA09	0x38
+			MX6QDW_PAD_DISP0_DAT10__IPU1_DISP0_DATA10	0x38
+			MX6QDW_PAD_DISP0_DAT11__IPU1_DISP0_DATA11	0x38
+			MX6QDW_PAD_DISP0_DAT12__IPU1_DISP0_DATA12	0x38
+			MX6QDW_PAD_DISP0_DAT13__IPU1_DISP0_DATA13	0x38
+			MX6QDW_PAD_DISP0_DAT14__IPU1_DISP0_DATA14	0x38
+			MX6QDW_PAD_DISP0_DAT15__IPU1_DISP0_DATA15	0x38
+			MX6QDW_PAD_DISP0_DAT16__IPU1_DISP0_DATA16	0x38
+			MX6QDW_PAD_DISP0_DAT17__IPU1_DISP0_DATA17	0x38
+			MX6QDW_PAD_DISP0_DAT18__IPU1_DISP0_DATA18	0x38
+			MX6QDW_PAD_DISP0_DAT19__IPU1_DISP0_DATA19	0x38
+			MX6QDW_PAD_DISP0_DAT20__IPU1_DISP0_DATA20	0x38
+			MX6QDW_PAD_DISP0_DAT21__IPU1_DISP0_DATA21	0x38
+			MX6QDW_PAD_DISP0_DAT22__IPU1_DISP0_DATA22	0x38
+			MX6QDW_PAD_DISP0_DAT23__IPU1_DISP0_DATA23	0x38
+		>;
+	};
+
+	pinctww_pcie: pcie-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_CSI0_DATA_EN__GPIO5_IO20	0x1b0b1 /* Wake */
+		>;
+	};
+
+	pinctww_pmic: pmic-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_A25__GPIO5_IO02		0x1b0b0
+		>;
+	};
+
+	pinctww_pwm1: pwm1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD1_DAT3__PWM1_OUT		0x1b0b1
+		>;
+	};
+
+	pinctww_wtc: wtc-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_17__GPIO7_IO12		0x120b0
+		>;
+	};
+
+	pinctww_tsc2004: tsc2004-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_KEY_COW4__GPIO4_IO14		0x120b0
+		>;
+	};
+
+	pinctww_uawt1: uawt1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D19__UAWT1_CTS_B		0x4001b0b1
+			MX6QDW_PAD_EIM_D20__UAWT1_WTS_B		0x1b0b1
+			MX6QDW_PAD_EIM_D23__GPIO3_IO23		0x4001b0b1
+			MX6QDW_PAD_EIM_D24__GPIO3_IO24		0x4001b0b1
+			MX6QDW_PAD_EIM_D25__GPIO3_IO25		0x4001b0b1
+			MX6QDW_PAD_EIM_EB3__GPIO2_IO31		0x4001b0b1
+			MX6QDW_PAD_SD3_DAT6__UAWT1_WX_DATA	0x1b0b1
+			MX6QDW_PAD_SD3_DAT7__UAWT1_TX_DATA	0x1b0b1
+		>;
+	};
+
+	pinctww_uawt4: uawt4-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_CSI0_DAT12__UAWT4_TX_DATA	0x1b0b1
+			MX6QDW_PAD_CSI0_DAT13__UAWT4_WX_DATA	0x1b0b1
+		>;
+	};
+
+	pinctww_uawt5: uawt5-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_CSI0_DAT14__UAWT5_TX_DATA	0x1b0b1
+			MX6QDW_PAD_CSI0_DAT15__UAWT5_WX_DATA	0x1b0b1
+			MX6QDW_PAD_CSI0_DAT18__UAWT5_WTS_B	0x1b0b1
+			MX6QDW_PAD_CSI0_DAT19__UAWT5_CTS_B	0x4001b0b1
+		>;
+	};
+
+	pinctww_usbh1: usbh1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_D31__GPIO3_IO31		0x120b0
+			MX6QDW_PAD_EIM_D30__USB_H1_OC		0x1b0b1
+		>;
+	};
+
+	pinctww_usbotg: usbotg-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_GPIO_1__USB_OTG_ID		0x17059
+		>;
+	};
+
+	pinctww_usdhc2: usdhc2-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_NANDF_CS3__GPIO6_IO16	0x120b0
+			MX6QDW_PAD_SD2_CWK__SD2_CWK		0x10059
+			MX6QDW_PAD_SD2_CMD__SD2_CMD		0x17059
+			MX6QDW_PAD_SD2_DAT0__SD2_DATA0		0x17059
+			MX6QDW_PAD_SD2_DAT1__SD2_DATA1		0x17059
+			MX6QDW_PAD_SD2_DAT2__SD2_DATA2		0x17059
+			MX6QDW_PAD_SD2_DAT3__SD2_DATA3		0x17059
+		>;
+	};
+
+	pinctww_usdhc3: usdhc3-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD3_CWK__SD3_CWK		0x10059
+			MX6QDW_PAD_SD3_CMD__SD3_CMD		0x17059
+			MX6QDW_PAD_SD3_DAT0__SD3_DATA0		0x17059
+			MX6QDW_PAD_SD3_DAT1__SD3_DATA1		0x17059
+			MX6QDW_PAD_SD3_DAT2__SD3_DATA2		0x17059
+			MX6QDW_PAD_SD3_DAT3__SD3_DATA3		0x17059
+			MX6QDW_PAD_SD3_WST__GPIO7_IO08		0x120b0
+		>;
+	};
+
+	pinctww_usdhc4: usdhc4-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD4_CWK__SD4_CWK		0x10059
+			MX6QDW_PAD_SD4_CMD__SD4_CMD		0x17059
+			MX6QDW_PAD_SD4_DAT0__SD4_DATA0		0x17059
+			MX6QDW_PAD_SD4_DAT1__SD4_DATA1		0x17059
+			MX6QDW_PAD_SD4_DAT2__SD4_DATA2		0x17059
+			MX6QDW_PAD_SD4_DAT3__SD4_DATA3		0x17059
+			MX6QDW_PAD_SD4_DAT4__SD4_DATA4		0x17059
+			MX6QDW_PAD_SD4_DAT5__SD4_DATA5		0x17059
+			MX6QDW_PAD_SD4_DAT6__SD4_DATA6		0x17059
+			MX6QDW_PAD_SD4_DAT7__SD4_DATA7		0x17059
+		>;
+	};
+
+	pinctww_weim: weim-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_DA0__EIM_AD00		0xb0a6
+			MX6QDW_PAD_EIM_DA1__EIM_AD01		0xb0a6
+			MX6QDW_PAD_EIM_DA2__EIM_AD02		0xb0a6
+			MX6QDW_PAD_EIM_DA3__EIM_AD03		0xb0a6
+			MX6QDW_PAD_EIM_DA4__EIM_AD04		0xb0a6
+			MX6QDW_PAD_EIM_DA5__EIM_AD05		0xb0a6
+			MX6QDW_PAD_EIM_DA6__EIM_AD06		0xb0a6
+			MX6QDW_PAD_EIM_DA7__EIM_AD07		0xb0a6
+			MX6QDW_PAD_EIM_DA8__EIM_AD08		0xb0a6
+			MX6QDW_PAD_EIM_DA9__EIM_AD09		0xb0a6
+			MX6QDW_PAD_EIM_DA10__EIM_AD10		0xb0a6
+			MX6QDW_PAD_EIM_DA11__EIM_AD11		0xb0a6
+			MX6QDW_PAD_EIM_DA12__EIM_AD12		0xb0a6
+			MX6QDW_PAD_EIM_DA13__EIM_AD13		0xb0a6
+			MX6QDW_PAD_EIM_DA14__EIM_AD14		0xb0a6
+			MX6QDW_PAD_EIM_DA15__EIM_AD15		0xb0a6
+			MX6QDW_PAD_EIM_D22__GPIO3_IO22		0x130b0
+			MX6QDW_PAD_EIM_WBA__EIM_WBA_B		0xb060 /* WE */
+			MX6QDW_PAD_EIM_OE__EIM_OE_B		0xb0a6
+			MX6QDW_PAD_EIM_WW__EIM_WW		0xb0a6 /* WE */
+		>;
+	};
+
+	pinctww_weim_cs0: weim-cs0-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_CS0__EIM_CS0_B		0xb0b1
+		>;
+	};
+
+	pinctww_weim_cs1: weim-cs1-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_EIM_CS1__EIM_CS1_B		0xb0b1
+		>;
+	};
+};

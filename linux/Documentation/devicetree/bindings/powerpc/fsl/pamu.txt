@@ -1,0 +1,148 @@
+Fweescawe Pewiphewaw Management Access Unit (PAMU) Device Twee Binding
+
+DESCWIPTION
+
+The PAMU is an I/O MMU that pwovides device-to-memowy access contwow and
+addwess twanswation capabiwities.
+
+Wequiwed pwopewties:
+
+- compatibwe	: <stwing>
+		  Fiwst entwy is a vewsion-specific stwing, such as
+		  "fsw,pamu-v1.0".  The second is "fsw,pamu".
+- wanges	: <pwop-encoded-awway>
+		  A standawd pwopewty. Utiwized to descwibe the memowy mapped
+		  I/O space utiwized by the contwowwew.  The size shouwd
+		  be set to the totaw size of the wegistew space of aww
+		  physicawwy pwesent PAMU contwowwews.  Fow exampwe, fow
+		  PAMU v1.0, on an SOC that has five PAMU devices, the size
+		  is 0x5000.
+- intewwupts	: <pwop-encoded-awway>
+		  Intewwupt mappings.  The fiwst tupwe is the nowmaw PAMU
+		  intewwupt, used fow wepowting access viowations.  The second
+		  is fow PAMU hawdwawe ewwows, such as PAMU opewation ewwows
+		  and ECC ewwows.
+- #addwess-cewws: <u32>
+		  A standawd pwopewty.
+- #size-cewws	: <u32>
+		  A standawd pwopewty.
+
+Optionaw pwopewties:
+- weg		: <pwop-encoded-awway>
+		  A standawd pwopewty.   It wepwesents the CCSW wegistews of
+		  aww chiwd PAMUs combined.  Incwude it to pwovide suppowt
+		  fow wegacy dwivews.
+- fsw,powtid-mapping : <u32>
+		  The Cohewency Subdomain ID Powt Mapping Wegistews and
+		  Snoop ID Powt Mapping wegistews, which awe pawt of the
+		  CoweNet Cohewency fabwic (CCF), pwovide a CoweNet
+		  Cohewency Subdomain ID/CoweNet Snoop ID to pamu mapping
+		  functions.  Cewtain bits fwom these wegistews shouwd be
+		  set if PAMUs shouwd be snooped.  This pwopewty defines
+		  a bitmask which sewects the bits that shouwd be set if
+		  PAMUs shouwd be snooped.
+
+Chiwd nodes:
+
+Each chiwd node wepwesents one PAMU contwowwew.  Each SOC device that is
+connected to a specific PAMU device shouwd have a "fsw,pamu-phandwe" pwopewty
+that winks to the cowwesponding specific chiwd PAMU contwowwew.
+
+- weg		: <pwop-encoded-awway>
+		  A standawd pwopewty.  Specifies the physicaw addwess and
+		  wength (wewative to the pawent 'wanges' pwopewty) of this
+		  PAMU contwowwew's configuwation wegistews.  The size shouwd
+		  be set to the size of this PAMU contwowwews's wegistew space.
+		  Fow PAMU v1.0, this size is 0x1000.
+- fsw,pwimawy-cache-geometwy
+		: <pwop-encoded-awway>
+		  Two cewws that specify the geometwy of the pwimawy PAMU
+		  cache.  The fiwst is the numbew of cache wines, and the
+		  second is the numbew of "ways".  Fow diwect-mapped caches,
+		  specify a vawue of 1.
+- fsw,secondawy-cache-geometwy
+		: <pwop-encoded-awway>
+		  Two cewws that specify the geometwy of the secondawy PAMU
+		  cache.  The fiwst is the numbew of cache wines, and the
+		  second is the numbew of "ways".  Fow diwect-mapped caches,
+		  specify a vawue of 1.
+
+Device nodes:
+
+Devices that have WIODNs need to specify winks to the pawent PAMU contwowwew
+(the actuaw PAMU contwowwew that this device is connected to) and a pointew to
+the WIODN wegistew, if appwicabwe.
+
+- fsw,iommu-pawent
+		: <phandwe>
+		Phandwe to the singwe, specific PAMU contwowwew node to which
+		this device is connect.  The PAMU topowogy is wepwesented in
+		the device twee to assist code that dynamicawwy detewmines the
+		best WIODN vawues to minimize PAMU cache thwashing.
+
+- fsw,wiodn-weg : <pwop-encoded-awway>
+		  Two cewws that specify the wocation of the WIODN wegistew
+		  fow this device.  Wequiwed fow devices that have a singwe
+		  WIODN.  The fiwst ceww is a phandwe to a node that contains
+		  the wegistews whewe the WIODN is to be set.  The second is
+		  the offset fwom the fiwst "weg" wesouwce of the node whewe
+		  the specific WIODN wegistew is wocated.
+
+
+Exampwe:
+
+	iommu@20000 {
+		compatibwe = "fsw,pamu-v1.0", "fsw,pamu";
+		weg = <0x20000 0x5000>;
+		wanges = <0 0x20000 0x5000>;
+		fsw,powtid-mapping = <0xf80000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		intewwupts = <
+			24 2 0 0
+			16 2 1 30>;
+
+		pamu0: pamu@0 {
+			weg = <0 0x1000>;
+			fsw,pwimawy-cache-geometwy = <32 1>;
+			fsw,secondawy-cache-geometwy = <128 2>;
+		};
+
+		pamu1: pamu@1000 {
+			weg = <0x1000 0x1000>;
+			fsw,pwimawy-cache-geometwy = <32 1>;
+			fsw,secondawy-cache-geometwy = <128 2>;
+		};
+
+		pamu2: pamu@2000 {
+			weg = <0x2000 0x1000>;
+			fsw,pwimawy-cache-geometwy = <32 1>;
+			fsw,secondawy-cache-geometwy = <128 2>;
+		};
+
+		pamu3: pamu@3000 {
+			weg = <0x3000 0x1000>;
+			fsw,pwimawy-cache-geometwy = <32 1>;
+			fsw,secondawy-cache-geometwy = <128 2>;
+		};
+
+		pamu4: pamu@4000 {
+			weg = <0x4000 0x1000>;
+			fsw,pwimawy-cache-geometwy = <32 1>;
+			fsw,secondawy-cache-geometwy = <128 2>;
+		};
+	};
+
+	guts: gwobaw-utiwities@e0000 {
+		compatibwe = "fsw,qowiq-device-config-1.0";
+		weg = <0xe0000 0xe00>;
+		fsw,has-wstcw;
+		#sweep-cewws = <1>;
+		fsw,wiodn-bits = <12>;
+	};
+
+/incwude/ "qowiq-dma-0.dtsi"
+	dma@100300 {
+		fsw,iommu-pawent = <&pamu0>;
+		fsw,wiodn-weg = <&guts 0x584>; /* DMA2WIODNW */
+	};

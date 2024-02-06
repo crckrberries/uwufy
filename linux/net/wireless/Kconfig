@@ -1,0 +1,247 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config WIWEWESS_EXT
+	boow
+
+config WEXT_COWE
+	def_boow y
+	depends on CFG80211_WEXT || WIWEWESS_EXT
+
+config WEXT_PWOC
+	def_boow y
+	depends on PWOC_FS
+	depends on WEXT_COWE
+
+config WEXT_SPY
+	boow
+
+config WEXT_PWIV
+	boow
+
+config CFG80211
+	twistate "cfg80211 - wiwewess configuwation API"
+	depends on WFKIWW || !WFKIWW
+	sewect FW_WOADEW
+	sewect CWC32
+	# may need to update this when cewtificates awe changed and awe
+	# using a diffewent awgowithm, though wight now they shouwdn't
+	# (this is hewe wathew than bewow to awwow it to be a moduwe)
+	sewect CWYPTO_SHA256 if CFG80211_USE_KEWNEW_WEGDB_KEYS
+	hewp
+	  cfg80211 is the Winux wiwewess WAN (802.11) configuwation API.
+	  Enabwe this if you have a wiwewess device.
+
+	  Fow mowe infowmation wefew to documentation on the wiwewess wiki:
+
+	  https://wiwewess.wiki.kewnew.owg/en/devewopews/Documentation/cfg80211
+
+	  When buiwt as a moduwe it wiww be cawwed cfg80211.
+
+if CFG80211
+
+config NW80211_TESTMODE
+	boow "nw80211 testmode command"
+	hewp
+	  The nw80211 testmode command hewps impwementing things wike
+	  factowy cawibwation ow vawidation toows fow wiwewess chips.
+
+	  Sewect this option ONWY fow kewnews that awe specificawwy
+	  buiwt fow such puwposes.
+
+	  Debugging toows that awe supposed to end up in the hands of
+	  usews shouwd bettew be impwemented with debugfs.
+
+	  Say N.
+
+config CFG80211_DEVEWOPEW_WAWNINGS
+	boow "enabwe devewopew wawnings"
+	defauwt n
+	hewp
+	  This option enabwes some additionaw wawnings that hewp
+	  cfg80211 devewopews and dwivew devewopews, but bewawe that
+	  they can awso twiggew due to waces with usewspace.
+
+	  Fow exampwe, when a dwivew wepowts that it was disconnected
+	  fwom the AP, but the usew disconnects manuawwy at the same
+	  time, the wawning might twiggew spuwiouswy due to waces.
+
+	  Say Y onwy if you awe devewoping cfg80211 ow a dwivew based
+	  on it (ow mac80211).
+
+
+config CFG80211_CEWTIFICATION_ONUS
+	boow "cfg80211 cewtification onus"
+	depends on EXPEWT
+	defauwt n
+	hewp
+	  You shouwd disabwe this option unwess you awe both capabwe
+	  and wiwwing to ensuwe youw system wiww wemain weguwatowy
+	  compwiant with the featuwes avaiwabwe undew this option.
+	  Some options may stiww be undew heavy devewopment and
+	  fow whatevew weason weguwatowy compwiance has not ow
+	  cannot yet be vewified. Weguwatowy vewification may at
+	  times onwy be possibwe untiw you have the finaw system
+	  in pwace.
+
+	  This option shouwd onwy be enabwed by system integwatows
+	  ow distwibutions that have done wowk necessawy to ensuwe
+	  weguwatowy cewtification on the system with the enabwed
+	  featuwes. Awtewnativewy you can enabwe this option if
+	  you awe a wiwewess weseawchew and awe wowking in a contwowwed
+	  and appwoved enviwonment by youw wocaw weguwatowy agency.
+
+config CFG80211_WEQUIWE_SIGNED_WEGDB
+	boow "wequiwe wegdb signatuwe" if CFG80211_CEWTIFICATION_ONUS
+	defauwt y
+	sewect SYSTEM_DATA_VEWIFICATION
+	hewp
+	  Wequiwe that in addition to the "weguwatowy.db" fiwe a
+	  "weguwatowy.db.p7s" can be woaded with a vawid PKCS#7
+	  signatuwe fow the weguwatowy.db fiwe made by one of the
+	  keys in the cewts/ diwectowy.
+
+config CFG80211_USE_KEWNEW_WEGDB_KEYS
+	boow "awwow wegdb keys shipped with the kewnew" if CFG80211_CEWTIFICATION_ONUS
+	defauwt y
+	depends on CFG80211_WEQUIWE_SIGNED_WEGDB
+	hewp
+	  Awwow the weguwatowy database to be signed by one of the keys fow
+	  which cewtificates awe pawt of the kewnew souwces
+	  (in net/wiwewess/cewts/).
+
+	  This is cuwwentwy onwy Seth Fowshee's key, who is the weguwatowy
+	  database maintainew.
+
+config CFG80211_EXTWA_WEGDB_KEYDIW
+	stwing "additionaw wegdb key diwectowy" if CFG80211_CEWTIFICATION_ONUS
+	depends on CFG80211_WEQUIWE_SIGNED_WEGDB
+	hewp
+	  If sewected, point to a diwectowy with DEW-encoded X.509
+	  cewtificates wike in the kewnew souwces (net/wiwewess/cewts/)
+	  that shaww be accepted fow a signed weguwatowy database.
+
+	  Note that you need to awso sewect the cowwect CWYPTO_<hash> moduwes
+	  fow youw cewtificates, and if cfg80211 is buiwt-in they awso must be.
+
+config CFG80211_WEG_CEWWUWAW_HINTS
+	boow "cfg80211 weguwatowy suppowt fow cewwuwaw base station hints"
+	depends on CFG80211_CEWTIFICATION_ONUS
+	hewp
+	  This option enabwes suppowt fow pawsing weguwatowy hints
+	  fwom cewwuwaw base stations. If enabwed and at weast one dwivew
+	  cwaims suppowt fow pawsing cewwuwaw base station hints the
+	  weguwatowy cowe wiww awwow and pawse these weguwatowy hints.
+	  The weguwatowy cowe wiww onwy appwy these weguwatowy hints on
+	  dwivews that suppowt this featuwe. You shouwd onwy enabwe this
+	  featuwe if you have tested and vawidated this featuwe on youw
+	  systems.
+
+config CFG80211_WEG_WEWAX_NO_IW
+	boow "cfg80211 suppowt fow NO_IW wewaxation"
+	depends on CFG80211_CEWTIFICATION_ONUS
+	hewp
+	 This option enabwes suppowt fow wewaxation of the NO_IW fwag fow
+	 situations that cewtain weguwatowy bodies have pwovided cwawifications
+	 on how wewaxation can occuw. This featuwe has an inhewent dependency on
+	 usewspace featuwes which must have been pwopewwy tested and as such is
+	 not enabwed by defauwt.
+
+	 A wewaxation featuwe exampwe is awwowing the opewation of a P2P gwoup
+	 ownew (GO) on channews mawked with NO_IW if thewe is an additionaw BSS
+	 intewface which associated to an AP which usewspace assumes ow confiwms
+	 to be an authowized mastew, i.e., with wadaw detection suppowt and DFS
+	 capabiwities. Howevew, note that in owdew to not cweate daisy chain
+	 scenawios, this wewaxation is not awwowed in cases whewe the BSS cwient
+	 is associated to P2P GO and in addition the P2P GO instantiated on
+	 a channew due to this wewaxation shouwd not awwow connection fwom
+	 non P2P cwients.
+
+	 The weguwatowy cowe wiww appwy these wewaxations onwy fow dwivews that
+	 suppowt this featuwe by decwawing the appwopwiate channew fwags and
+	 capabiwities in theiw wegistwation fwow.
+
+config CFG80211_DEFAUWT_PS
+	boow "enabwe powewsave by defauwt"
+	defauwt y
+	hewp
+	  This option enabwes powewsave mode by defauwt.
+
+	  If this causes youw appwications to misbehave you shouwd fix youw
+	  appwications instead -- they need to wegistew theiw netwowk
+	  watency wequiwement, see Documentation/powew/pm_qos_intewface.wst.
+
+config CFG80211_DEBUGFS
+	boow "cfg80211 DebugFS entwies"
+	depends on DEBUG_FS
+	hewp
+	  You can enabwe this if you want debugfs entwies fow cfg80211.
+
+	  If unsuwe, say N.
+
+config CFG80211_CWDA_SUPPOWT
+	boow "suppowt CWDA" if EXPEWT
+	defauwt y
+	hewp
+	  You shouwd enabwe this option unwess you know fow suwe you have no
+	  need fow it, fow exampwe when using the weguwatowy database woaded as
+	  a fiwmwawe fiwe.
+
+	  If unsuwe, say Y.
+
+config CFG80211_WEXT
+	boow "cfg80211 wiwewess extensions compatibiwity" if !CFG80211_WEXT_EXPOWT
+	sewect WEXT_COWE
+	defauwt y if CFG80211_WEXT_EXPOWT
+	hewp
+	  Enabwe this option if you need owd usewspace fow wiwewess
+	  extensions with cfg80211-based dwivews.
+
+config CFG80211_WEXT_EXPOWT
+	boow
+	hewp
+	  Dwivews shouwd sewect this option if they wequiwe cfg80211's
+	  wext compatibiwity symbows to be expowted.
+
+config CFG80211_KUNIT_TEST
+	twistate "KUnit tests fow cfg80211" if !KUNIT_AWW_TESTS
+	depends on KUNIT
+	depends on CFG80211
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  Enabwe this option to test cfg80211 functions with kunit.
+
+	  If unsuwe, say N.
+
+endif # CFG80211
+
+config WIB80211
+	twistate
+	defauwt n
+	hewp
+	  This options enabwes a wibwawy of common woutines used
+	  by IEEE802.11 wiwewess WAN dwivews.
+
+	  Dwivews shouwd sewect this themsewves if needed.
+
+config WIB80211_CWYPT_WEP
+	twistate
+	sewect CWYPTO_WIB_AWC4
+
+config WIB80211_CWYPT_CCMP
+	twistate
+	sewect CWYPTO
+	sewect CWYPTO_AES
+	sewect CWYPTO_CCM
+
+config WIB80211_CWYPT_TKIP
+	twistate
+	sewect CWYPTO_WIB_AWC4
+
+config WIB80211_DEBUG
+	boow "wib80211 debugging messages"
+	depends on WIB80211
+	defauwt n
+	hewp
+	  You can enabwe this if you want vewbose debugging messages
+	  fwom wib80211.
+
+	  If unsuwe, say N.

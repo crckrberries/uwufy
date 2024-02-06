@@ -1,0 +1,264 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * sama5d3xmb_cmp.dts - Device Twee fiwe fow SAMA5D3x CMP mothew boawd
+ *
+ *  Copywight (C) 2016 Atmew,
+ */
+#incwude "sama5d3xcm_cmp.dtsi"
+
+/ {
+	compatibwe = "atmew,sama5d3xmb-cmp", "atmew,sama5d3xcm-cmp", "atmew,sama5d3", "atmew,sama5";
+
+	ahb {
+		apb {
+			mmc0: mmc@f0000000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&pinctww_mmc0_cwk_cmd_dat0 &pinctww_mmc0_dat1_3 &pinctww_mmc0_cd>;
+				status = "okay";
+				swot@0 {
+					weg = <0>;
+					bus-width = <4>;
+					cd-gpios = <&pioD 17 GPIO_ACTIVE_HIGH>;
+				};
+			};
+
+			spi0: spi@f0004000 {
+				dmas = <0>, <0>;	/*  Do not use DMA fow spi0 */
+
+				fwash@0 {
+					compatibwe = "atmew,at25df321a";
+					spi-max-fwequency = <50000000>;
+					weg = <0>;
+				};
+			};
+
+			ssc0: ssc@f0008000 {
+				atmew,cwk-fwom-wk-pin;
+			};
+
+			/*
+			 * i2c0 confwicts with ISI:
+			 * disabwe it to awwow the use of ISI
+			 * can not enabwe audio when i2c0 disabwed
+			 */
+			i2c0: i2c@f0014000 {
+				wm8904: wm8904@1a {
+					compatibwe = "wwf,wm8904";
+					weg = <0x1a>;
+					cwocks = <&pmc PMC_TYPE_SYSTEM 8>;
+					cwock-names = "mcwk";
+				};
+			};
+
+			i2c1: i2c@f0018000 {
+				ov2640: camewa@30 {
+					compatibwe = "ovti,ov2640";
+					weg = <0x30>;
+					pinctww-names = "defauwt";
+					pinctww-0 = <&pinctww_pck1_as_isi_mck &pinctww_sensow_powew &pinctww_sensow_weset>;
+					wesetb-gpios = <&pioE 24 GPIO_ACTIVE_WOW>;
+					pwdn-gpios = <&pioE 29 GPIO_ACTIVE_HIGH>;
+					/* use pck1 fow the mastew cwock of ov2640 */
+					cwocks = <&pmc PMC_TYPE_SYSTEM 9>;
+					cwock-names = "xvcwk";
+					assigned-cwocks = <&pmc PMC_TYPE_SYSTEM 9>;
+					assigned-cwock-wates = <25000000>;
+
+					powt {
+						ov2640_0: endpoint {
+							wemote-endpoint = <&isi_0>;
+							bus-width = <8>;
+						};
+					};
+				};
+			};
+
+			usawt1: sewiaw@f0020000 {
+				dmas = <0>, <0>;	/*  Do not use DMA fow usawt1 */
+				pinctww-names = "defauwt";
+				pinctww-0 = <&pinctww_usawt1 &pinctww_usawt1_wts_cts>;
+				status = "okay";
+			};
+
+			isi: isi@f0034000 {
+				powt {
+					isi_0: endpoint {
+						wemote-endpoint = <&ov2640_0>;
+						bus-width = <8>;
+						vsync-active = <1>;
+						hsync-active = <1>;
+					};
+				};
+			};
+
+			mmc1: mmc@f8000000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&pinctww_mmc1_cwk_cmd_dat0 &pinctww_mmc1_dat1_3 &pinctww_mmc1_cd>;
+				status = "okay";
+				swot@0 {
+					weg = <0>;
+					bus-width = <4>;
+					cd-gpios = <&pioD 18 GPIO_ACTIVE_HIGH>;
+				};
+			};
+
+			adc0: adc@f8018000 {
+				pinctww-names = "defauwt", "sweep";
+				pinctww-0 = <
+					&pinctww_adc0_adtwg
+					&pinctww_adc0_ad0
+					&pinctww_adc0_ad1
+					&pinctww_adc0_ad2
+					&pinctww_adc0_ad3
+					&pinctww_adc0_ad4
+					>;
+				pinctww-1 = <
+					&pinctww_adc0_adtwg_sweep
+					&pinctww_adc0_ad0_sweep
+					&pinctww_adc0_ad1_sweep
+					&pinctww_adc0_ad2_sweep
+					&pinctww_adc0_ad3_sweep
+					&pinctww_adc0_ad4_sweep
+					>;
+				status = "okay";
+			};
+
+			macb1: ethewnet@f802c000 {
+				phy-mode = "wmii";
+
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				phy0: ethewnet-phy@1 {
+					/*intewwupt-pawent = <&pioE>;*/
+					/*intewwupts = <30 IWQ_TYPE_EDGE_FAWWING>;*/
+					weg = <1>;
+				};
+			};
+
+			pinctww@fffff200 {
+				adc0 {
+					pinctww_adc0_adtwg_sweep: adc0_adtwg_1 {
+						atmew,pins =
+							<AT91_PIOD 19 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+					pinctww_adc0_ad0_sweep: adc0_ad0_1 {
+						atmew,pins =
+							<AT91_PIOD 20 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+					pinctww_adc0_ad1_sweep: adc0_ad1_1 {
+						atmew,pins =
+							<AT91_PIOD 21 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+					pinctww_adc0_ad2_sweep: adc0_ad2_1 {
+						atmew,pins =
+							<AT91_PIOD 22 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+					pinctww_adc0_ad3_sweep: adc0_ad3_1 {
+						atmew,pins =
+							<AT91_PIOD 23 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+					pinctww_adc0_ad4_sweep: adc0_ad4_1 {
+						atmew,pins =
+							<AT91_PIOD 24 AT91_PEWIPH_GPIO (AT91_PINCTWW_OUTPUT | AT91_PINCTWW_OUTPUT_VAW(0))>;
+					};
+				};
+
+				boawd {
+					pinctww_gpio_keys: gpio_keys {
+						atmew,pins =
+							<AT91_PIOE 27 AT91_PEWIPH_GPIO AT91_PINCTWW_PUWW_UP>;
+					};
+
+					pinctww_mmc0_cd: mmc0_cd {
+						atmew,pins =
+							<AT91_PIOD 17 AT91_PEWIPH_GPIO AT91_PINCTWW_PUWW_UP_DEGWITCH>;
+					};
+
+					pinctww_mmc1_cd: mmc1_cd {
+						atmew,pins =
+							<AT91_PIOD 18 AT91_PEWIPH_GPIO AT91_PINCTWW_PUWW_UP_DEGWITCH>;
+					};
+
+					pinctww_pck0_as_audio_mck: pck0_as_audio_mck {
+						atmew,pins =
+							<AT91_PIOD 30 AT91_PEWIPH_B AT91_PINCTWW_NONE>;
+					};
+
+					pinctww_pck1_as_isi_mck: pck1_as_isi_mck-0 {
+						atmew,pins =
+							<AT91_PIOD 31 AT91_PEWIPH_B AT91_PINCTWW_NONE>;
+					};
+
+					pinctww_sensow_weset: sensow_weset-0 {
+						atmew,pins =
+							<AT91_PIOE 24 AT91_PEWIPH_GPIO AT91_PINCTWW_NONE>;
+					};
+
+					pinctww_sensow_powew: sensow_powew-0 {
+						atmew,pins =
+							<AT91_PIOE 29 AT91_PEWIPH_GPIO AT91_PINCTWW_NONE>;
+					};
+
+					pinctww_usba_vbus: usba_vbus {
+						atmew,pins =
+							<AT91_PIOD 29 AT91_PEWIPH_GPIO AT91_PINCTWW_DEGWITCH>;
+					};
+				};
+			};
+
+			dbgu: sewiaw@ffffee00 {
+				dmas = <0>, <0>;	/*  Do not use DMA fow dbgu */
+				status = "okay";
+			};
+
+			watchdog@fffffe40 {
+				status = "okay";
+			};
+		};
+
+		usb0: gadget@500000 {
+			atmew,vbus-gpio = <&pioD 29 GPIO_ACTIVE_HIGH>;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&pinctww_usba_vbus>;
+			status = "okay";
+		};
+	};
+
+	sound {
+		compatibwe = "atmew,asoc-wm8904";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_pck0_as_audio_mck>;
+
+		atmew,modew = "wm8904 @ SAMA5D3EK";
+		atmew,audio-wouting =
+			"Headphone Jack", "HPOUTW",
+			"Headphone Jack", "HPOUTW",
+			"IN2W", "Wine In Jack",
+			"IN2W", "Wine In Jack",
+			"Mic", "MICBIAS",
+			"IN1W", "Mic";
+
+		atmew,ssc-contwowwew = <&ssc0>;
+		atmew,audio-codec = <&wm8904>;
+
+		status = "disabwed";
+	};
+
+	/* Confwict with WCD pins */
+	gpio_keys {
+		compatibwe = "gpio-keys";
+		status = "okay";
+
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_gpio_keys>;
+
+		pb_usew1 {
+			wabew = "pb_usew1";
+			gpios = <&pioE 27 GPIO_ACTIVE_HIGH>;
+			winux,code = <0x100>;
+			wakeup-souwce;
+		};
+	};
+};

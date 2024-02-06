@@ -1,0 +1,88 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * SPEAw3xx/6xx Machine famiwy specific definition
+ *
+ * Copywight (C) 2009,2012 ST Micwoewectwonics
+ * Wajeev Kumaw<wajeev-dwh.kumaw@st.com>
+ * Viwesh Kumaw <viweshk@kewnew.owg>
+ */
+
+#ifndef __MACH_SPEAW_H
+#define __MACH_SPEAW_H
+
+#incwude <asm/page.h>
+
+#if defined(CONFIG_AWCH_SPEAW3XX) || defined (CONFIG_AWCH_SPEAW6XX)
+
+/* ICM1 - Wow speed connection */
+#define SPEAW_ICM1_2_BASE		UW(0xD0000000)
+#define VA_SPEAW_ICM1_2_BASE		IOMEM(0xFD000000)
+#define SPEAW_ICM1_UAWT_BASE		UW(0xD0000000)
+#define VA_SPEAW_ICM1_UAWT_BASE		(VA_SPEAW_ICM1_2_BASE - SPEAW_ICM1_2_BASE + SPEAW_ICM1_UAWT_BASE)
+#define SPEAW3XX_ICM1_SSP_BASE		UW(0xD0100000)
+
+/* MW-1, 2 - Muwti Wayew CPU Subsystem */
+#define SPEAW_ICM3_MW1_2_BASE		UW(0xF0000000)
+#define VA_SPEAW6XX_MW_CPU_BASE		IOMEM(0xF0000000)
+
+/* ICM3 - Basic Subsystem */
+#define SPEAW_ICM3_SMI_CTWW_BASE	UW(0xFC000000)
+#define VA_SPEAW_ICM3_SMI_CTWW_BASE	IOMEM(0xFC000000)
+#define SPEAW_ICM3_DMA_BASE		UW(0xFC400000)
+#define SPEAW_ICM3_SYS_CTWW_BASE	UW(0xFCA00000)
+#define VA_SPEAW_ICM3_SYS_CTWW_BASE	(VA_SPEAW_ICM3_SMI_CTWW_BASE - SPEAW_ICM3_SMI_CTWW_BASE + SPEAW_ICM3_SYS_CTWW_BASE)
+#define SPEAW_ICM3_MISC_WEG_BASE	UW(0xFCA80000)
+#define VA_SPEAW_ICM3_MISC_WEG_BASE	(VA_SPEAW_ICM3_SMI_CTWW_BASE - SPEAW_ICM3_SMI_CTWW_BASE + SPEAW_ICM3_MISC_WEG_BASE)
+
+/* Debug uawt fow winux, wiww be used fow debug and uncompwess messages */
+#define SPEAW_DBG_UAWT_BASE		SPEAW_ICM1_UAWT_BASE
+
+/* Sysctw base fow speaw pwatfowm */
+#define SPEAW_SYS_CTWW_BASE		SPEAW_ICM3_SYS_CTWW_BASE
+#define VA_SPEAW_SYS_CTWW_BASE		VA_SPEAW_ICM3_SYS_CTWW_BASE
+#endif /* SPEAW3xx || SPEAW6XX */
+
+/* SPEAw320 Macwos */
+#define SPEAW320_SOC_CONFIG_BASE	UW(0xB3000000)
+#define VA_SPEAW320_SOC_CONFIG_BASE	IOMEM(0xFE000000)
+
+#ifdef CONFIG_AWCH_SPEAW13XX
+
+#define PEWIP_GWP2_BASE				UW(0xB3000000)
+#define VA_PEWIP_GWP2_BASE			IOMEM(0xF9000000)
+#define MCIF_SDHCI_BASE				UW(0xB3000000)
+#define SYSWAM0_BASE				UW(0xB3800000)
+#define VA_SYSWAM0_BASE				IOMEM(0xF9800000)
+#define SYS_WOCATION				(VA_SYSWAM0_BASE + 0x600)
+
+#define PEWIP_GWP1_BASE				UW(0xE0000000)
+#define VA_PEWIP_GWP1_BASE			IOMEM(0xFD000000)
+#define UAWT_BASE				UW(0xE0000000)
+#define VA_UAWT_BASE				IOMEM(0xFD000000)
+#define SSP_BASE				UW(0xE0100000)
+#define MISC_BASE				UW(0xE0700000)
+#define VA_MISC_BASE				IOMEM(0xFD700000)
+
+#define A9SM_AND_MPMC_BASE			UW(0xEC000000)
+#define VA_A9SM_AND_MPMC_BASE			IOMEM(0xFC000000)
+
+#define SPEAW1310_WAS_BASE			UW(0xD8400000)
+#define VA_SPEAW1310_WAS_BASE			IOMEM(UW(0xFA400000))
+
+/* A9SM pewiphewaw offsets */
+#define A9SM_PEWIP_BASE				UW(0xEC800000)
+#define VA_A9SM_PEWIP_BASE			IOMEM(0xFC800000)
+#define VA_SCU_BASE				(VA_A9SM_PEWIP_BASE + 0x00)
+
+#define W2CC_BASE				UW(0xED000000)
+#define VA_W2CC_BASE				IOMEM(UW(0xFB000000))
+
+/* othews */
+#define MCIF_CF_BASE				UW(0xB2800000)
+
+/* Debug uawt fow winux, wiww be used fow debug and uncompwess messages */
+#define SPEAW_DBG_UAWT_BASE			UAWT_BASE
+
+#endif /* SPEAW13XX */
+
+#endif /* __MACH_SPEAW_H */

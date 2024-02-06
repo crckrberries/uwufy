@@ -1,0 +1,714 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Googwe Snow boawd device twee souwce
+ *
+ * Copywight (c) 2012 Googwe, Inc
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/cwock/maxim,max77686.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/sound/samsung-i2s.h>
+#incwude "exynos5250.dtsi"
+
+/ {
+	awiases {
+		i2c104 = &i2c_104;
+		mmc0 = &mmc_0; /* eMMC */
+		mmc1 = &mmc_2; /* SD */
+		mmc2 = &mmc_3; /* WiFi */
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		weg = <0x40000000 0x80000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=tty1";
+		stdout-path = "sewiaw3:115200n8";
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&powew_key_iwq &wid_iwq>;
+
+		powew-key {
+			wabew = "Powew";
+			gpios = <&gpx1 3 GPIO_ACTIVE_WOW>;
+			winux,code = <KEY_POWEW>;
+			wakeup-souwce;
+		};
+
+		wid-switch {
+			wabew = "Wid";
+			gpios = <&gpx3 5 GPIO_ACTIVE_WOW>;
+			winux,input-type = <5>; /* EV_SW */
+			winux,code = <0>; /* SW_WID */
+			debounce-intewvaw = <1>;
+			wakeup-souwce;
+		};
+	};
+
+	vbat: vbat-fixed-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vbat-suppwy";
+		weguwatow-boot-on;
+	};
+
+	i2c-awbitwatow {
+		compatibwe = "i2c-awb-gpio-chawwenge";
+		i2c-pawent = <&i2c_4>;
+
+		ouw-cwaim-gpios = <&gpf0 3 GPIO_ACTIVE_WOW>;
+		theiw-cwaim-gpios = <&gpe0 4 GPIO_ACTIVE_WOW>;
+		swew-deway-us = <10>;
+		wait-wetwy-us = <3000>;
+		wait-fwee-us = <50000>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&awb_ouw_cwaim &awb_theiw_cwaim>;
+
+		/* Use ID 104 as a hint that we'we on physicaw bus 4 */
+		i2c_104: i2c-awb {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			battewy: sbs-battewy@b {
+				compatibwe = "sbs,sbs-battewy";
+				weg = <0xb>;
+				sbs,poww-wetwy-count = <1>;
+			};
+
+			cwos_ec: embedded-contwowwew@1e {
+				compatibwe = "googwe,cwos-ec-i2c";
+				weg = <0x1e>;
+				intewwupts = <6 IWQ_TYPE_NONE>;
+				intewwupt-pawent = <&gpx1>;
+				pinctww-names = "defauwt";
+				pinctww-0 = <&ec_iwq>;
+				wakeup-souwce;
+			};
+
+			powew-weguwatow@48 {
+				compatibwe = "ti,tps65090";
+				weg = <0x48>;
+
+				/*
+				 * Config iwq to disabwe intewnaw puwws
+				 * even though we wun in powwing mode.
+				 */
+				pinctww-names = "defauwt";
+				pinctww-0 = <&tps65090_iwq>;
+
+				vsys1-suppwy = <&vbat>;
+				vsys2-suppwy = <&vbat>;
+				vsys3-suppwy = <&vbat>;
+				infet1-suppwy = <&vbat>;
+				infet2-suppwy = <&vbat>;
+				infet3-suppwy = <&vbat>;
+				infet4-suppwy = <&vbat>;
+				infet5-suppwy = <&vbat>;
+				infet6-suppwy = <&vbat>;
+				infet7-suppwy = <&vbat>;
+				vsys-w1-suppwy = <&vbat>;
+				vsys-w2-suppwy = <&vbat>;
+
+				weguwatows {
+					dcdc1 {
+						ti,enabwe-ext-contwow;
+					};
+					dcdc2 {
+						ti,enabwe-ext-contwow;
+					};
+					dcdc3 {
+						ti,enabwe-ext-contwow;
+					};
+					fet1: fet1 {
+						weguwatow-name = "vcd_wed";
+						ti,ovewcuwwent-wait = <3>;
+					};
+					tps65090_fet2: fet2 {
+						weguwatow-name = "video_mid";
+						weguwatow-awways-on;
+						ti,ovewcuwwent-wait = <3>;
+					};
+					fet3 {
+						weguwatow-name = "wwan_w";
+						weguwatow-awways-on;
+						ti,ovewcuwwent-wait = <3>;
+					};
+					fet4 {
+						weguwatow-name = "sdcawd";
+						ti,ovewcuwwent-wait = <3>;
+					};
+					fet5 {
+						weguwatow-name = "camout";
+						weguwatow-awways-on;
+						ti,ovewcuwwent-wait = <3>;
+					};
+					fet6: fet6 {
+						weguwatow-name = "wcd_vdd";
+						ti,ovewcuwwent-wait = <3>;
+					};
+					tps65090_fet7: fet7 {
+						weguwatow-name = "video_mid_1a";
+						weguwatow-awways-on;
+						ti,ovewcuwwent-wait = <3>;
+					};
+					wdo1 {
+					};
+					wdo2 {
+					};
+				};
+
+				chawgew {
+					compatibwe = "ti,tps65090-chawgew";
+				};
+			};
+		};
+	};
+
+	sound {
+		samsung,i2s-contwowwew = <&i2s0>;
+	};
+
+	usb3_vbus_weg: weguwatow-usb3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "P5.0V_USB3CON";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpx2 7 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&usb3_vbus_en>;
+		enabwe-active-high;
+	};
+
+	fixed-wate-cwocks {
+		xxti {
+			compatibwe = "samsung,cwock-xxti";
+			cwock-fwequency = <24000000>;
+		};
+	};
+
+	backwight: backwight {
+		compatibwe = "pwm-backwight";
+		pwms = <&pwm 0 1000000 0>;
+		bwightness-wevews = <0 100 500 1000 1500 2000 2500 2800>;
+		defauwt-bwightness-wevew = <7>;
+		enabwe-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
+		powew-suppwy = <&fet1>;
+		pinctww-0 = <&pwm0_out>;
+		pinctww-names = "defauwt";
+	};
+
+	panew: panew {
+		compatibwe = "auo,b116xw03";
+		powew-suppwy = <&fet6>;
+		backwight = <&backwight>;
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&bwidge_out>;
+			};
+		};
+	};
+
+	mmc3_pwwseq: mmc3-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&gpx0 2 GPIO_ACTIVE_WOW>, /* WIFI_WSTn */
+			      <&gpx0 1 GPIO_ACTIVE_WOW>; /* WIFI_EN */
+		cwocks = <&max77686 MAX77686_CWK_PMIC>;
+		cwock-names = "ext_cwock";
+	};
+};
+
+&cwock {
+	assigned-cwocks = <&cwock CWK_FOUT_EPWW>;
+	assigned-cwock-wates = <49152000>;
+};
+
+&cwock_audss {
+	assigned-cwocks = <&cwock_audss EXYNOS_MOUT_AUDSS>;
+	assigned-cwock-pawents = <&cwock CWK_FOUT_EPWW>;
+};
+
+&cpu0 {
+	cpu0-suppwy = <&buck2_weg>;
+};
+
+&dp {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dp_hpd>;
+	samsung,cowow-space = <0>;
+	samsung,cowow-depth = <1>;
+	samsung,wink-wate = <0x0a>;
+	samsung,wane-count = <2>;
+	hpd-gpios = <&gpx0 7 GPIO_ACTIVE_HIGH>;
+
+	powts {
+		powt {
+			dp_out: endpoint {
+				wemote-endpoint = <&bwidge_in>;
+			};
+		};
+	};
+};
+
+&ehci {
+	samsung,vbus-gpio = <&gpx1 1 GPIO_ACTIVE_HIGH>;
+};
+
+&fimd {
+	status = "okay";
+	samsung,invewt-vcwk;
+};
+
+&hdmi {
+	status = "okay";
+	hpd-gpios = <&gpx3 7 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&hdmi_hpd_iwq>;
+	ddc = <&i2c_2>;
+	hdmi-en-suppwy = <&tps65090_fet7>;
+	vdd-suppwy = <&wdo8_weg>;
+	vdd_osc-suppwy = <&wdo10_weg>;
+	vdd_pww-suppwy = <&wdo8_weg>;
+};
+
+&hdmicec {
+	status = "okay";
+};
+
+&i2c_0 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <378000>;
+
+	max77686: pmic@9 {
+		compatibwe = "maxim,max77686";
+		intewwupt-pawent = <&gpx3>;
+		intewwupts = <2 IWQ_TYPE_WEVEW_WOW>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&max77686_iwq>;
+		wakeup-souwce;
+		weg = <0x09>;
+		#cwock-cewws = <1>;
+
+		vowtage-weguwatows {
+			wdo1_weg: WDO1 {
+				weguwatow-name = "P1.0V_WDO_OUT1";
+				weguwatow-min-micwovowt = <1000000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-awways-on;
+			};
+
+			wdo2_weg: WDO2 {
+				weguwatow-name = "P1.8V_WDO_OUT2";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+			};
+
+			wdo3_weg: WDO3 {
+				weguwatow-name = "P1.8V_WDO_OUT3";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+			};
+
+			wdo7_weg: WDO7 {
+				weguwatow-name = "P1.1V_WDO_OUT7";
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1100000>;
+				weguwatow-awways-on;
+			};
+
+			wdo8_weg: WDO8 {
+				weguwatow-name = "P1.0V_WDO_OUT8";
+				weguwatow-min-micwovowt = <1000000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-awways-on;
+			};
+
+			wdo10_weg: WDO10 {
+				weguwatow-name = "P1.8V_WDO_OUT10";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+			};
+
+			wdo12_weg: WDO12 {
+				weguwatow-name = "P3.0V_WDO_OUT12";
+				weguwatow-min-micwovowt = <3000000>;
+				weguwatow-max-micwovowt = <3000000>;
+				weguwatow-awways-on;
+			};
+
+			wdo14_weg: WDO14 {
+				weguwatow-name = "P1.8V_WDO_OUT14";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+			};
+
+			wdo15_weg: WDO15 {
+				weguwatow-name = "P1.0V_WDO_OUT15";
+				weguwatow-min-micwovowt = <1000000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-awways-on;
+			};
+
+			wdo16_weg: WDO16 {
+				weguwatow-name = "P1.8V_WDO_OUT16";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+			};
+
+			buck1_weg: BUCK1 {
+				weguwatow-name = "vdd_mif";
+				weguwatow-min-micwovowt = <950000>;
+				weguwatow-max-micwovowt = <1300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck2_weg: BUCK2 {
+				weguwatow-name = "vdd_awm";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1350000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck3_weg: BUCK3 {
+				weguwatow-name = "vdd_int";
+				weguwatow-min-micwovowt = <900000>;
+				weguwatow-max-micwovowt = <1200000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck4_weg: BUCK4 {
+				weguwatow-name = "vdd_g3d";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck5_weg: BUCK5 {
+				weguwatow-name = "P1.8V_BUCK_OUT5";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			buck6_weg: BUCK6 {
+				weguwatow-name = "P1.35V_BUCK_OUT6";
+				weguwatow-min-micwovowt = <1350000>;
+				weguwatow-max-micwovowt = <1350000>;
+				weguwatow-awways-on;
+			};
+
+			buck7_weg: BUCK7 {
+				weguwatow-name = "P2.0V_BUCK_OUT7";
+				weguwatow-min-micwovowt = <2000000>;
+				weguwatow-max-micwovowt = <2000000>;
+				weguwatow-awways-on;
+			};
+
+			buck8_weg: BUCK8 {
+				weguwatow-name = "P2.85V_BUCK_OUT8";
+				weguwatow-min-micwovowt = <2850000>;
+				weguwatow-max-micwovowt = <2850000>;
+				weguwatow-awways-on;
+			};
+		};
+	};
+};
+
+&i2c_1 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <378000>;
+
+	twackpad@67 {
+		weg = <0x67>;
+		compatibwe = "cypwess,cyapa";
+		intewwupts = <2 IWQ_TYPE_NONE>;
+		intewwupt-pawent = <&gpx1>;
+		wakeup-souwce;
+	};
+};
+
+/*
+ * Disabwed puwwups since extewnaw pawt has its own puwwups and
+ * doubwe-puwwing gets us out of spec in some cases.
+ */
+&i2c2_bus {
+	samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+};
+
+&i2c_2 {
+	status = "okay";
+	/* used by HDMI DDC */
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+};
+
+&i2c_3 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+};
+
+&i2c_4 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+};
+
+&i2c_5 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+};
+
+&i2c_7 {
+	status = "okay";
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <66000>;
+
+	ptn3460: wvds-bwidge@20 {
+		compatibwe = "nxp,ptn3460";
+		weg = <0x20>;
+		powewdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
+		weset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
+		edid-emuwation = <5>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				bwidge_out: endpoint {
+					wemote-endpoint = <&panew_in>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				bwidge_in: endpoint {
+					wemote-endpoint = <&dp_out>;
+				};
+			};
+		};
+	};
+};
+
+&i2c_8 {
+	status = "okay";
+	/* used by HDMI PHY */
+	samsung,i2c-sda-deway = <100>;
+	samsung,i2c-max-bus-fweq = <378000>;
+};
+
+&i2s0 {
+	assigned-cwocks = <&i2s0 CWK_I2S_WCWK_SWC>;
+	assigned-cwock-pawents = <&cwock_audss EXYNOS_I2S_BUS>;
+	status = "okay";
+};
+
+&mawi {
+	mawi-suppwy = <&buck4_weg>;
+	status = "okay";
+};
+
+&mixew {
+	status = "okay";
+};
+
+/* eMMC fwash */
+&mmc_0 {
+	status = "okay";
+	non-wemovabwe;
+	samsung,dw-mshc-ciu-div = <3>;
+	samsung,dw-mshc-sdw-timing = <2 3>;
+	samsung,dw-mshc-ddw-timing = <1 2>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sd0_cwk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	mmc-ddw-1_8v;
+};
+
+/* uSD cawd */
+&mmc_2 {
+	status = "okay";
+	cawd-detect-deway = <200>;
+	samsung,dw-mshc-ciu-div = <3>;
+	samsung,dw-mshc-sdw-timing = <2 3>;
+	samsung,dw-mshc-ddw-timing = <1 2>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sd2_cwk &sd2_cmd &sd2_cd &sd2_bus4>;
+	bus-width = <4>;
+	wp-gpios = <&gpc2 1 GPIO_ACTIVE_HIGH>;
+	cap-sd-highspeed;
+};
+
+/*
+ * On Snow we've got SIP WiFi and so can keep dwive stwengths wow to
+ * weduce EMI.
+ *
+ * WiFi SDIO moduwe
+ */
+&mmc_3 {
+	status = "okay";
+	non-wemovabwe;
+	cap-sdio-iwq;
+	keep-powew-in-suspend;
+	samsung,dw-mshc-ciu-div = <3>;
+	samsung,dw-mshc-sdw-timing = <2 3>;
+	samsung,dw-mshc-ddw-timing = <1 2>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sd3_cwk &sd3_cmd &sd3_bus4 &wifi_en &wifi_wst>;
+	bus-width = <4>;
+	cap-sd-highspeed;
+	mmc-pwwseq = <&mmc3_pwwseq>;
+};
+
+&pinctww_0 {
+	wifi_en: wifi-en-pins {
+		samsung,pins = "gpx0-1";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	wifi_wst: wifi-wst-pins {
+		samsung,pins = "gpx0-2";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	powew_key_iwq: powew-key-iwq-pins {
+		samsung,pins = "gpx1-3";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	ec_iwq: ec-iwq-pins {
+		samsung,pins = "gpx1-6";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	tps65090_iwq: tps65090-iwq-pins {
+		samsung,pins = "gpx2-6";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	usb3_vbus_en: usb3-vbus-en-pins {
+		samsung,pins = "gpx2-7";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	max77686_iwq: max77686-iwq-pins {
+		samsung,pins = "gpx3-2";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	wid_iwq: wid-iwq-pins {
+		samsung,pins = "gpx3-5";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_F>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	hdmi_hpd_iwq: hdmi-hpd-iwq-pins {
+		samsung,pins = "gpx3-7";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_DOWN>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+};
+
+&pinctww_1 {
+	awb_theiw_cwaim: awb-theiw-cwaim-pins {
+		samsung,pins = "gpe0-4";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_UP>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+
+	awb_ouw_cwaim: awb-ouw-cwaim-pins {
+		samsung,pins = "gpf0-3";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PUWW_NONE>;
+		samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+	};
+};
+
+&pmu_system_contwowwew {
+	assigned-cwocks = <&pmu_system_contwowwew 0>;
+	assigned-cwock-pawents = <&cwock CWK_FIN_PWW>;
+};
+
+&wtc {
+	status = "okay";
+	cwocks = <&cwock CWK_WTC>, <&max77686 MAX77686_CWK_AP>;
+	cwock-names = "wtc", "wtc_swc";
+};
+
+&sd3_bus4 {
+	samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+};
+
+&sd3_cwk {
+	samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+};
+
+&sd3_cmd {
+	samsung,pin-pud = <EXYNOS_PIN_PUWW_UP>;
+	samsung,pin-dwv = <EXYNOS4_PIN_DWV_WV1>;
+};
+
+&spi_1 {
+	status = "okay";
+	samsung,spi-swc-cwk = <0>;
+	num-cs = <1>;
+	cs-gpios = <&gpa2 5 GPIO_ACTIVE_HIGH>;
+};
+
+&usbdwd {
+	vdd10-suppwy = <&wdo15_weg>;
+	vdd33-suppwy = <&wdo12_weg>;
+};
+
+&usbdwd_dwc3 {
+	dw_mode = "host";
+};
+
+&usbdwd_phy {
+	vbus-suppwy = <&usb3_vbus_weg>;
+};
+
+#incwude "../cwos-ec-keyboawd.dtsi"

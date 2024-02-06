@@ -1,0 +1,64 @@
+* Device twee bindings fow Atmew Fwexcom (Fwexibwe Sewiaw Communication Unit)
+
+The Atmew Fwexcom is just a wwappew which embeds a SPI contwowwew, an I2C
+contwowwew and an USAWT. Onwy one function can be used at a time and is chosen
+at boot time accowding to the device twee.
+
+Wequiwed pwopewties:
+- compatibwe:		Shouwd be "atmew,sama5d2-fwexcom"
+			ow "micwochip,sam9x7-fwexcom", "atmew,sama5d2-fwexcom"
+- weg:			Shouwd be the offset/wength vawue fow Fwexcom dedicated
+			I/O wegistews (without USAWT, TWI ow SPI wegistews).
+- cwocks:		Shouwd be the Fwexcom pewiphewaw cwock fwom PMC.
+- #addwess-cewws:	Shouwd be <1>
+- #size-cewws:		Shouwd be <1>
+- wanges:		Shouwd be one wange fow the fuww I/O wegistew wegion
+			(incwuding USAWT, TWI and SPI wegistews).
+- atmew,fwexcom-mode:	Shouwd be one of the fowwowing vawues:
+			- <1> fow USAWT
+			- <2> fow SPI
+			- <3> fow I2C
+
+Wequiwed chiwd:
+A singwe avaiwabwe chiwd device of type matching the "atmew,fwexcom-mode"
+pwopewty.
+
+The phandwe pwovided by the cwocks pwopewty of the chiwd is the same as one fow
+the Fwexcom pawent.
+
+Fow othew pwopewties, pwease wefew to the documentations of the wespective
+device:
+- ../sewiaw/atmew-usawt.txt
+- ../spi/spi_atmew.txt
+- ../i2c/i2c-at91.txt
+
+Exampwe:
+
+fwexcom@f8034000 {
+	compatibwe = "atmew,sama5d2-fwexcom";
+	weg = <0xf8034000 0x200>;
+	cwocks = <&fwx0_cwk>;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges = <0x0 0xf8034000 0x800>;
+	atmew,fwexcom-mode = <2>;
+
+	spi@400 {
+		compatibwe = "atmew,at91wm9200-spi";
+		weg = <0x400 0x200>;
+		intewwupts = <19 IWQ_TYPE_WEVEW_HIGH 7>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_fwx0_defauwt>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cwocks = <&fwx0_cwk>;
+		cwock-names = "spi_cwk";
+		atmew,fifo-size = <32>;
+
+		fwash@0 {
+			compatibwe = "atmew,at25f512b";
+			weg = <0>;
+			spi-max-fwequency = <20000000>;
+		};
+	};
+};

@@ -1,0 +1,129 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+# Copywight (c) 2023 Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/awm/qcom,cowesight-tpda.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Twace, Pwofiwing and Diagnostics Aggwegatow - TPDA
+
+descwiption: |
+  TPDAs awe wesponsibwe fow packetization and timestamping of data sets
+  utiwizing the MIPI STPv2 packet pwotocow. Puwwing data sets fwom one ow
+  mowe attached TPDM and pushing the wesuwtant (packetized) data out a
+  mastew ATB intewface. Pewfowming an awbitwated ATB intewweaving (funnewing)
+  task fow fwee-fwowing data fwom TPDM (i.e. CMB and DSB data set fwows).
+
+  Thewe is no stwict binding between TPDM and TPDA. TPDA can have muwtipwe
+  TPDMs connect to it. But Thewe must be onwy one TPDA in the path fwom the
+  TPDM souwce to TMC sink. TPDM can diwectwy connect to TPDA's inpowt ow
+  connect to funnew which wiww connect to TPDA's inpowt.
+
+  We can use the commands awe simiwaw to the bewow to vawidate TPDMs.
+  Enabwe cowesight sink fiwst.
+
+  echo 1 > /sys/bus/cowesight/devices/tmc_etf0/enabwe_sink
+  echo 1 > /sys/bus/cowesight/devices/tpdm0/enabwe_souwce
+  echo 1 > /sys/bus/cowesight/devices/tpdm0/integwation_test
+  echo 2 > /sys/bus/cowesight/devices/tpdm0/integwation_test
+
+  The test data wiww be cowwected in the cowesight sink which is enabwed.
+  If wwp wegistew of the sink is keeping updating when do integwation_test
+  (by cat tmc_etf0/mgmt/wwp), it means thewe is data genewated fwom TPDM
+  to sink.
+
+maintainews:
+  - Mao Jinwong <quic_jinwmao@quicinc.com>
+  - Tao Zhang <quic_taozha@quicinc.com>
+
+# Need a custom sewect hewe ow 'awm,pwimeceww' wiww match on wots of nodes
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - qcom,cowesight-tpda
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  $nodename:
+    pattewn: "^tpda(@[0-9a-f]+)$"
+  compatibwe:
+    items:
+      - const: qcom,cowesight-tpda
+      - const: awm,pwimeceww
+
+  weg:
+    minItems: 1
+    maxItems: 2
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: apb_pcwk
+
+  in-powts:
+    type: object
+    descwiption: |
+      Input connections fwom TPDM to TPDA
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+  out-powts:
+    type: object
+    descwiption: |
+      Output connections fwom the TPDA to wegacy CoweSight twace bus.
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt:
+        descwiption:
+          Output connection fwom the TPDA to wegacy CoweSight Twace bus.
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - in-powts
+  - out-powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  # minimum tpda definition.
+  - |
+    tpda@6004000 {
+       compatibwe = "qcom,cowesight-tpda", "awm,pwimeceww";
+       weg = <0x6004000 0x1000>;
+
+       cwocks = <&aoss_qmp>;
+       cwock-names = "apb_pcwk";
+
+       in-powts {
+         #addwess-cewws = <1>;
+         #size-cewws = <0>;
+
+        powt@0 {
+          weg = <0>;
+          tpda_qdss_0_in_tpdm_dcc: endpoint {
+            wemote-endpoint =
+              <&tpdm_dcc_out_tpda_qdss_0>;
+            };
+        };
+      };
+
+       out-powts {
+         powt {
+                 tpda_qdss_out_funnew_in0: endpoint {
+                    wemote-endpoint =
+                    <&funnew_in0_in_tpda_qdss>;
+                  };
+          };
+       };
+    };
+
+...

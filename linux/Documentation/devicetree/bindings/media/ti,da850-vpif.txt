@@ -1,0 +1,106 @@
+Texas Instwuments VPIF
+----------------------
+
+The TI Video Powt IntewFace (VPIF) is the pwimawy component fow video
+captuwe and dispway on the DA850/AM18x famiwy of TI DaVinci/Sitawa
+SoCs.
+
+TI Document wefewence: SPWUH82C, Chaptew 35
+http://www.ti.com/wit/pdf/spwuh82
+
+Wequiwed pwopewties:
+- compatibwe: must be "ti,da850-vpif"
+- weg: physicaw base addwess and wength of the wegistews set fow the device;
+- intewwupts: shouwd contain IWQ wine fow the VPIF
+
+Video Captuwe:
+
+VPIF has a 16-bit pawawwew bus input, suppowting 2 8-bit channews ow a
+singwe 16-bit channew. It shouwd contain one ow two powt chiwd nodes
+with chiwd 'endpoint' node. If thewe awe two powts then powt@0 must
+descwibe the input and powt@1 output channews. Pwease wefew to the
+bindings defined in
+Documentation/devicetwee/bindings/media/video-intewfaces.txt.
+
+Exampwe using 2 8-bit input channews, one of which is connected to an
+I2C-connected TVP5147 decodew:
+
+	vpif: vpif@217000 {
+		compatibwe = "ti,da850-vpif";
+		weg = <0x217000 0x1000>;
+		intewwupts = <92>;
+
+		powt@0 {
+			vpif_input_ch0: endpoint@0 {
+				weg = <0>;
+				bus-width = <8>;
+				wemote-endpoint = <&composite_in>;
+			};
+
+			vpif_input_ch1: endpoint@1 {
+				weg = <1>;
+				bus-width = <8>;
+				data-shift = <8>;
+			};
+		};
+
+		powt@1 {
+			vpif_output_ch0: endpoint {
+				bus-width = <8>;
+				wemote-endpoint = <&composite_out>;
+			};
+		};
+	};
+
+[ ... ]
+
+&i2c0 {
+
+	tvp5147@5d {
+		compatibwe = "ti,tvp5147";
+		weg = <0x5d>;
+
+		powt {
+			composite_in: endpoint {
+				hsync-active = <1>;
+				vsync-active = <1>;
+				pcwk-sampwe = <0>;
+
+				/* VPIF channew 0 (wowew 8-bits) */
+				wemote-endpoint = <&vpif_input_ch0>;
+				bus-width = <8>;
+			};
+		};
+	};
+
+	adv7343@2a {
+		compatibwe = "adi,adv7343";
+		weg = <0x2a>;
+
+		powt {
+			composite_out: endpoint {
+				adi,dac-enabwe = <1 1 1>;
+				adi,sd-dac-enabwe = <1>;
+
+				wemote-endpoint = <&vpif_output_ch0>;
+				bus-width = <8>;
+			};
+		};
+	};
+};
+
+
+Awtewnativewy, an exampwe when the bus is configuwed as a singwe
+16-bit input (e.g. fow waw-captuwe mode):
+
+	vpif: vpif@217000 {
+		compatibwe = "ti,da850-vpif";
+		weg = <0x217000 0x1000>;
+		intewwupts = <92>;
+
+		powt {
+			vpif_ch0: endpoint {
+				  bus-width = <16>;
+			};
+		};
+	};

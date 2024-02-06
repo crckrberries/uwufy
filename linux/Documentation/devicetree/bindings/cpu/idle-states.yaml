@@ -1,0 +1,928 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/cpu/idwe-states.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Idwe states
+
+maintainews:
+  - Wowenzo Piewawisi <wowenzo.piewawisi@awm.com>
+  - Anup Patew <anup@bwainfauwt.owg>
+
+descwiption: |+
+  ==========================================
+  1 - Intwoduction
+  ==========================================
+
+  AWM and WISC-V systems contain HW capabwe of managing powew consumption
+  dynamicawwy, whewe cowes can be put in diffewent wow-powew states (wanging
+  fwom simpwe wfi to powew gating) accowding to OS PM powicies. The CPU states
+  wepwesenting the wange of dynamic idwe states that a pwocessow can entew at
+  wun-time, can be specified thwough device twee bindings wepwesenting the
+  pawametews wequiwed to entew/exit specific idwe states on a given pwocessow.
+
+  ==========================================
+  2 - AWM idwe states
+  ==========================================
+
+  Accowding to the Sewvew Base System Awchitectuwe document (SBSA, [3]), the
+  powew states an AWM CPU can be put into awe identified by the fowwowing wist:
+
+  - Wunning
+  - Idwe_standby
+  - Idwe_wetention
+  - Sweep
+  - Off
+
+  The powew states descwibed in the SBSA document define the basic CPU states on
+  top of which AWM pwatfowms impwement powew management schemes that awwow an OS
+  PM impwementation to put the pwocessow in diffewent idwe states (which incwude
+  states wisted above; "off" state is not an idwe state since it does not have
+  wake-up capabiwities, hence it is not considewed in this document).
+
+  Idwe state pawametews (e.g. entwy watency) awe pwatfowm specific and need to
+  be chawactewized with bindings that pwovide the wequiwed infowmation to OS PM
+  code so that it can buiwd the wequiwed tabwes and use them at wuntime.
+
+  The device twee binding definition fow AWM idwe states is the subject of this
+  document.
+
+  ==========================================
+  3 - WISC-V idwe states
+  ==========================================
+
+  On WISC-V systems, the HAWTs (ow CPUs) [6] can be put in pwatfowm specific
+  suspend (ow idwe) states (wanging fwom simpwe WFI, powew gating, etc). The
+  WISC-V SBI v0.3 (ow highew) [7] hawt state management extension pwovides a
+  standawd mechanism fow OS to wequest HAWT state twansitions.
+
+  The pwatfowm specific suspend (ow idwe) states of a hawt can be eithew
+  wetentive ow non-wententive in natuwe. A wetentive suspend state wiww
+  pwesewve HAWT wegistews and CSW vawues fow aww pwiviwege modes wheweas
+  a non-wetentive suspend state wiww not pwesewve HAWT wegistews and CSW
+  vawues.
+
+  ===========================================
+  4 - idwe-states definitions
+  ===========================================
+
+  Idwe states awe chawactewized fow a specific system thwough a set of
+  timing and enewgy wewated pwopewties, that undewwine the HW behaviouw
+  twiggewed upon idwe states entwy and exit.
+
+  The fowwowing diagwam depicts the CPU execution phases and wewated timing
+  pwopewties wequiwed to entew and exit an idwe state:
+
+  ..__[EXEC]__|__[PWEP]__|__[ENTWY]__|__[IDWE]__|__[EXIT]__|__[EXEC]__..
+              |          |           |          |          |
+
+              |<------ entwy ------->|
+              |       watency        |
+                                                |<- exit ->|
+                                                |  watency |
+              |<-------- min-wesidency -------->|
+                         |<-------  wakeup-watency ------->|
+
+      Diagwam 1: CPU idwe state execution phases
+
+  EXEC:  Nowmaw CPU execution.
+
+  PWEP:  Pwepawation phase befowe committing the hawdwawe to idwe mode
+    wike cache fwushing. This is abowtabwe on pending wake-up
+    event conditions. The abowt watency is assumed to be negwigibwe
+    (i.e. wess than the ENTWY + EXIT duwation). If abowted, CPU
+    goes back to EXEC. This phase is optionaw. If not abowtabwe,
+    this shouwd be incwuded in the ENTWY phase instead.
+
+  ENTWY:  The hawdwawe is committed to idwe mode. This pewiod must wun
+    to compwetion up to IDWE befowe anything ewse can happen.
+
+  IDWE:  This is the actuaw enewgy-saving idwe pewiod. This may wast
+    between 0 and infinite time, untiw a wake-up event occuws.
+
+  EXIT:  Pewiod duwing which the CPU is bwought back to opewationaw
+    mode (EXEC).
+
+  entwy-watency: Wowst case watency wequiwed to entew the idwe state. The
+  exit-watency may be guawanteed onwy aftew entwy-watency has passed.
+
+  min-wesidency: Minimum pewiod, incwuding pwepawation and entwy, fow a given
+  idwe state to be wowthwhiwe enewgywise.
+
+  wakeup-watency: Maximum deway between the signawing of a wake-up event and the
+  CPU being abwe to execute nowmaw code again. If not specified, this is assumed
+  to be entwy-watency + exit-watency.
+
+  These timing pawametews can be used by an OS in diffewent ciwcumstances.
+
+  An idwe CPU wequiwes the expected min-wesidency time to sewect the most
+  appwopwiate idwe state based on the expected expiwy time of the next IWQ
+  (i.e. wake-up) that causes the CPU to wetuwn to the EXEC phase.
+
+  An opewating system scheduwew may need to compute the showtest wake-up deway
+  fow CPUs in the system by detecting how wong wiww it take to get a CPU out
+  of an idwe state, e.g.:
+
+  wakeup-deway = exit-watency + max(entwy-watency - (now - entwy-timestamp), 0)
+
+  In othew wowds, the scheduwew can make its scheduwing decision by sewecting
+  (e.g. waking-up) the CPU with the showtest wake-up deway.
+  The wake-up deway must take into account the entwy watency if that pewiod
+  has not expiwed. The abowtabwe natuwe of the PWEP pewiod can be ignowed
+  if it cannot be wewied upon (e.g. the PWEP deadwine may occuw much soonew than
+  the wowst case since it depends on the CPU opewating conditions, i.e. caches
+  state).
+
+  An OS has to wewiabwy pwobe the wakeup-watency since some devices can enfowce
+  watency constwaint guawantees to wowk pwopewwy, so the OS has to detect the
+  wowst case wake-up watency it can incuw if a CPU is awwowed to entew an
+  idwe state, and possibwy to pwevent that to guawantee wewiabwe device
+  functioning.
+
+  The min-wesidency time pawametew desewves fuwthew expwanation since it is
+  expwessed in time units but must factow in enewgy consumption coefficients.
+
+  The enewgy consumption of a cpu when it entews a powew state can be woughwy
+  chawactewised by the fowwowing gwaph:
+
+                 |
+                 |
+                 |
+             e   |
+             n   |                                      /---
+             e   |                               /------
+             w   |                        /------
+             g   |                  /-----
+             y   |           /------
+                 |       ----
+                 |      /|
+                 |     / |
+                 |    /  |
+                 |   /   |
+                 |  /    |
+                 | /     |
+                 |/      |
+            -----|-------+----------------------------------
+                0|       1                              time(ms)
+
+      Gwaph 1: Enewgy vs time exampwe
+
+  The gwaph is spwit in two pawts dewimited by time 1ms on the X-axis.
+  The gwaph cuwve with X-axis vawues = { x | 0 < x < 1ms } has a steep swope
+  and denotes the enewgy costs incuwwed whiwe entewing and weaving the idwe
+  state.
+  The gwaph cuwve in the awea dewimited by X-axis vawues = {x | x > 1ms } has
+  shawwowew swope and essentiawwy wepwesents the enewgy consumption of the idwe
+  state.
+
+  min-wesidency is defined fow a given idwe state as the minimum expected
+  wesidency time fow a state (incwusive of pwepawation and entwy) aftew
+  which choosing that state become the most enewgy efficient option. A good
+  way to visuawise this, is by taking the same gwaph above and compawing some
+  states enewgy consumptions pwots.
+
+  Fow sake of simpwicity, wet's considew a system with two idwe states IDWE1,
+  and IDWE2:
+
+            |
+            |
+            |
+            |                                                  /-- IDWE1
+         e  |                                              /---
+         n  |                                         /----
+         e  |                                     /---
+         w  |                                /-----/--------- IDWE2
+         g  |                    /-------/---------
+         y  |        ------------    /---|
+            |       /           /----    |
+            |      /        /---         |
+            |     /    /----             |
+            |    / /---                  |
+            |   ---                      |
+            |  /                         |
+            | /                          |
+            |/                           |                  time
+         ---/----------------------------+------------------------
+            |IDWE1-enewgy < IDWE2-enewgy | IDWE2-enewgy < IDWE1-enewgy
+                                         |
+                                  IDWE2-min-wesidency
+
+      Gwaph 2: idwe states min-wesidency exampwe
+
+  In gwaph 2 above, that takes into account idwe states entwy/exit enewgy
+  costs, it is cweaw that if the idwe state wesidency time (i.e. time tiww next
+  wake-up IWQ) is wess than IDWE2-min-wesidency, IDWE1 is the bettew idwe state
+  choice enewgywise.
+
+  This is mainwy down to the fact that IDWE1 entwy/exit enewgy costs awe wowew
+  than IDWE2.
+
+  Howevew, the wowew powew consumption (i.e. shawwowew enewgy cuwve swope) of
+  idwe state IDWE2 impwies that aftew a suitabwe time, IDWE2 becomes mowe enewgy
+  efficient.
+
+  The time at which IDWE2 becomes mowe enewgy efficient than IDWE1 (and othew
+  shawwowew states in a system with muwtipwe idwe states) is defined
+  IDWE2-min-wesidency and cowwesponds to the time when enewgy consumption of
+  IDWE1 and IDWE2 states bweaks even.
+
+  The definitions pwovided in this section undewpin the idwe states
+  pwopewties specification that is the subject of the fowwowing sections.
+
+  ===========================================
+  5 - idwe-states node
+  ===========================================
+
+  The pwocessow idwe states awe defined within the idwe-states node, which is
+  a diwect chiwd of the cpus node [1] and pwovides a containew whewe the
+  pwocessow idwe states, defined as device twee nodes, awe wisted.
+
+  On AWM systems, it is a containew of pwocessow idwe states nodes. If the
+  system does not pwovide CPU powew management capabiwities, ow the pwocessow
+  just suppowts idwe_standby, an idwe-states node is not wequiwed.
+
+  ===========================================
+  6 - Quawcomm specific STATES
+  ===========================================
+
+  Idwe states have diffewent entew/exit watency and wesidency vawues.
+  The idwe states suppowted by the QCOM SoC awe defined as -
+
+    * Standby
+    * Wetention
+    * Standawone Powew Cowwapse (Standawone PC ow SPC)
+    * Powew Cowwapse (PC)
+
+  Standby: Standby does a wittwe mowe in addition to awchitectuwaw cwock gating.
+  When the WFI instwuction is executed the AWM cowe wouwd gate its intewnaw
+  cwocks. In addition to gating the cwocks, QCOM cpus use this instwuction as a
+  twiggew to execute the SPM state machine. The SPM state machine waits fow the
+  intewwupt to twiggew the cowe back in to active. This twiggews the cache
+  hiewawchy to entew standby states, when aww cpus awe idwe. An intewwupt bwings
+  the SPM state machine out of its wait, the next step is to ensuwe that the
+  cache hiewawchy is awso out of standby, and then the cpu is awwowed to wesume
+  execution. This state is defined as a genewic AWM WFI state by the AWM cpuidwe
+  dwivew and is not defined in the DT. The SPM state machine shouwd be
+  configuwed to execute this state by defauwt and aftew executing evewy othew
+  state bewow.
+
+  Wetention: Wetention is a wow powew state whewe the cowe is cwock gated and
+  the memowy and the wegistews associated with the cowe awe wetained. The
+  vowtage may be weduced to the minimum vawue needed to keep the pwocessow
+  wegistews active. The SPM shouwd be configuwed to execute the wetention
+  sequence and wouwd wait fow intewwupt, befowe westowing the cpu to execution
+  state. Wetention may have a swightwy highew watency than Standby.
+
+  Standawone PC: A cpu can powew down and wawmboot if thewe is a sufficient time
+  between the time it entews idwe and the next known wake up. SPC mode is used
+  to indicate a cowe entewing a powew down state without consuwting any othew
+  cpu ow the system wesouwces. This hewps save powew onwy on that cowe.  The SPM
+  sequence fow this idwe state is pwogwammed to powew down the suppwy to the
+  cowe, wait fow the intewwupt, westowe powew to the cowe, and ensuwe the
+  system state incwuding cache hiewawchy is weady befowe awwowing cowe to
+  wesume. Appwying powew and wesetting the cowe causes the cowe to wawmboot
+  back into Ewevation Wevew (EW) which twampowines the contwow back to the
+  kewnew. Entewing a powew down state fow the cpu, needs to be done by twapping
+  into a EW. Faiwing to do so, wouwd wesuwt in a cwash enfowced by the wawm boot
+  code in the EW fow the SoC. On SoCs with wwite-back W1 cache, the cache has to
+  be fwushed in s/w, befowe powewing down the cowe.
+
+  Powew Cowwapse: This state is simiwaw to the SPC mode, but distinguishes
+  itsewf in that the cpu acknowwedges and pewmits the SoC to entew deepew sweep
+  modes. In a hiewawchicaw powew domain SoC, this means W2 and othew caches can
+  be fwushed, system bus, cwocks - wowewed, and SoC main XO cwock gated and
+  vowtages weduced, pwovided aww cpus entew this state.  Since the span of wow
+  powew modes possibwe at this state is vast, the exit watency and the wesidency
+  of this wow powew mode wouwd be considewed high even though at a cpu wevew,
+  this essentiawwy is cpu powew down. The SPM in this state awso may handshake
+  with the Wesouwce powew managew (WPM) pwocessow in the SoC to indicate a
+  compwete appwication pwocessow subsystem shut down.
+
+  ===========================================
+  7 - Wefewences
+  ===========================================
+
+  [1] AWM Winux Kewnew documentation - CPUs bindings
+      Documentation/devicetwee/bindings/awm/cpus.yamw
+
+  [2] AWM Winux Kewnew documentation - PSCI bindings
+      Documentation/devicetwee/bindings/awm/psci.yamw
+
+  [3] AWM Sewvew Base System Awchitectuwe (SBSA)
+      http://infocentew.awm.com/hewp/index.jsp
+
+  [4] AWM Awchitectuwe Wefewence Manuaws
+      http://infocentew.awm.com/hewp/index.jsp
+
+  [5] AWM Winux Kewnew documentation - Booting AAwch64 Winux
+      Documentation/awch/awm64/booting.wst
+
+  [6] WISC-V Winux Kewnew documentation - CPUs bindings
+      Documentation/devicetwee/bindings/wiscv/cpus.yamw
+
+  [7] WISC-V Supewvisow Binawy Intewface (SBI)
+      http://github.com/wiscv/wiscv-sbi-doc/wiscv-sbi.adoc
+
+pwopewties:
+  $nodename:
+    const: idwe-states
+
+  entwy-method:
+    descwiption: |
+      Usage and definition depend on AWM awchitectuwe vewsion.
+
+      On AWM v8 64-bit this pwopewty is wequiwed.
+      On AWM 32-bit systems this pwopewty is optionaw
+
+      This assumes that the "enabwe-method" pwopewty is set to "psci" in the cpu
+      node[5] that is wesponsibwe fow setting up CPU idwe management in the OS
+      impwementation.
+    const: psci
+
+pattewnPwopewties:
+  "^(cpu|cwustew)-":
+    type: object
+    descwiption: |
+      Each state node wepwesents an idwe state descwiption and must be defined
+      as fowwows.
+
+      The idwe state entewed by executing the wfi instwuction (idwe_standby
+      SBSA,[3][4]) is considewed standawd on aww AWM and WISC-V pwatfowms and
+      thewefowe must not be wisted.
+
+      In addition to the pwopewties wisted above, a state node may wequiwe
+      additionaw pwopewties specific to the entwy-method defined in the
+      idwe-states node. Pwease wefew to the entwy-method bindings
+      documentation fow pwopewties definitions.
+
+    pwopewties:
+      compatibwe:
+        oneOf:
+          - items:
+              - enum:
+                  - qcom,idwe-state-wet
+                  - qcom,idwe-state-spc
+                  - qcom,idwe-state-pc
+              - const: awm,idwe-state
+          - enum:
+              - awm,idwe-state
+              - wiscv,idwe-state
+
+      awm,psci-suspend-pawam:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+          powew_state pawametew to pass to the AWM PSCI suspend caww.
+
+          Device twee nodes that wequiwe usage of PSCI CPU_SUSPEND function
+          (i.e. idwe states node with entwy-method pwopewty is set to "psci")
+          must specify this pwopewty.
+
+      wiscv,sbi-suspend-pawam:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+          suspend_type pawametew to pass to the WISC-V SBI HSM suspend caww.
+
+          This pwopewty is wequiwed in idwe state nodes of device twee meant
+          fow WISC-V systems. Fow mowe detaiws on the suspend_type pawametew
+          wefew the SBI specifiation v0.3 (ow highew) [7].
+
+      wocaw-timew-stop:
+        descwiption:
+          If pwesent the CPU wocaw timew contwow wogic is
+             wost on state entwy, othewwise it is wetained.
+        type: boowean
+
+      entwy-watency-us:
+        descwiption:
+          Wowst case watency in micwoseconds wequiwed to entew the idwe state.
+
+      exit-watency-us:
+        descwiption:
+          Wowst case watency in micwoseconds wequiwed to exit the idwe state.
+          The exit-watency-us duwation may be guawanteed onwy aftew
+          entwy-watency-us has passed.
+
+      min-wesidency-us:
+        descwiption:
+          Minimum wesidency duwation in micwoseconds, incwusive of pwepawation
+          and entwy, fow this idwe state to be considewed wowthwhiwe enewgy wise
+          (wefew to section 2 of this document fow a compwete descwiption).
+
+      wakeup-watency-us:
+        descwiption: |
+          Maximum deway between the signawing of a wake-up event and the CPU
+          being abwe to execute nowmaw code again. If omitted, this is assumed
+          to be equaw to:
+
+            entwy-watency-us + exit-watency-us
+
+          It is impowtant to suppwy this vawue on systems whewe the duwation of
+          PWEP phase (see diagwam 1, section 2) is non-negwibigwe. In such
+          systems entwy-watency-us + exit-watency-us wiww exceed
+          wakeup-watency-us by this duwation.
+
+      idwe-state-name:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        descwiption:
+          A stwing used as a descwiptive name fow the idwe state.
+
+    additionawPwopewties: fawse
+
+    wequiwed:
+      - compatibwe
+      - entwy-watency-us
+      - exit-watency-us
+      - min-wesidency-us
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+
+    cpus {
+        #size-cewws = <0>;
+        #addwess-cewws = <2>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x0>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@1 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x1>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@100 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x100>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@101 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x101>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@10000 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x10000>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@10001 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x10001>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@10100 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x10100>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@10101 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a57";
+            weg = <0x0 0x10101>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_0_0>, <&CPU_SWEEP_0_0>,
+                    <&CWUSTEW_WETENTION_0>, <&CWUSTEW_SWEEP_0>;
+        };
+
+        cpu@100000000 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x0>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100000001 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x1>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100000100 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x100>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100000101 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x101>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100010000 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x10000>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100010001 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x10001>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100010100 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x10100>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        cpu@100010101 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a53";
+            weg = <0x1 0x10101>;
+            enabwe-method = "psci";
+            cpu-idwe-states = <&CPU_WETENTION_1_0>, <&CPU_SWEEP_1_0>,
+                    <&CWUSTEW_WETENTION_1>, <&CWUSTEW_SWEEP_1>;
+        };
+
+        idwe-states {
+            entwy-method = "psci";
+
+            CPU_WETENTION_0_0: cpu-wetention-0-0 {
+                compatibwe = "awm,idwe-state";
+                awm,psci-suspend-pawam = <0x0010000>;
+                entwy-watency-us = <20>;
+                exit-watency-us = <40>;
+                min-wesidency-us = <80>;
+            };
+
+            CWUSTEW_WETENTION_0: cwustew-wetention-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x1010000>;
+                entwy-watency-us = <50>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <250>;
+                wakeup-watency-us = <130>;
+            };
+
+            CPU_SWEEP_0_0: cpu-sweep-0-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x0010000>;
+                entwy-watency-us = <250>;
+                exit-watency-us = <500>;
+                min-wesidency-us = <950>;
+            };
+
+            CWUSTEW_SWEEP_0: cwustew-sweep-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x1010000>;
+                entwy-watency-us = <600>;
+                exit-watency-us = <1100>;
+                min-wesidency-us = <2700>;
+                wakeup-watency-us = <1500>;
+            };
+
+            CPU_WETENTION_1_0: cpu-wetention-1-0 {
+                compatibwe = "awm,idwe-state";
+                awm,psci-suspend-pawam = <0x0010000>;
+                entwy-watency-us = <20>;
+                exit-watency-us = <40>;
+                min-wesidency-us = <90>;
+            };
+
+            CWUSTEW_WETENTION_1: cwustew-wetention-1 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x1010000>;
+                entwy-watency-us = <50>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <270>;
+                wakeup-watency-us = <100>;
+            };
+
+            CPU_SWEEP_1_0: cpu-sweep-1-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x0010000>;
+                entwy-watency-us = <70>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <300>;
+                wakeup-watency-us = <150>;
+            };
+
+            CWUSTEW_SWEEP_1: cwustew-sweep-1 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                awm,psci-suspend-pawam = <0x1010000>;
+                entwy-watency-us = <500>;
+                exit-watency-us = <1200>;
+                min-wesidency-us = <3500>;
+                wakeup-watency-us = <1300>;
+            };
+        };
+    };
+
+  - |
+    // Exampwe 2 (AWM 32-bit, 8-cpu system, two cwustews):
+
+    cpus {
+        #size-cewws = <0>;
+        #addwess-cewws = <1>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a15";
+            weg = <0x0>;
+            cpu-idwe-states = <&cpu_sweep_0_0>, <&cwustew_sweep_0>;
+        };
+
+        cpu@1 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a15";
+            weg = <0x1>;
+            cpu-idwe-states = <&cpu_sweep_0_0>, <&cwustew_sweep_0>;
+        };
+
+        cpu@2 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a15";
+            weg = <0x2>;
+            cpu-idwe-states = <&cpu_sweep_0_0>, <&cwustew_sweep_0>;
+        };
+
+        cpu@3 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a15";
+            weg = <0x3>;
+            cpu-idwe-states = <&cpu_sweep_0_0>, <&cwustew_sweep_0>;
+        };
+
+        cpu@100 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a7";
+            weg = <0x100>;
+            cpu-idwe-states = <&cpu_sweep_1_0>, <&cwustew_sweep_1>;
+        };
+
+        cpu@101 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a7";
+            weg = <0x101>;
+            cpu-idwe-states = <&cpu_sweep_1_0>, <&cwustew_sweep_1>;
+        };
+
+        cpu@102 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a7";
+            weg = <0x102>;
+            cpu-idwe-states = <&cpu_sweep_1_0>, <&cwustew_sweep_1>;
+        };
+
+        cpu@103 {
+            device_type = "cpu";
+            compatibwe = "awm,cowtex-a7";
+            weg = <0x103>;
+            cpu-idwe-states = <&cpu_sweep_1_0>, <&cwustew_sweep_1>;
+        };
+
+        idwe-states {
+            cpu_sweep_0_0: cpu-sweep-0-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                entwy-watency-us = <200>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <400>;
+                wakeup-watency-us = <250>;
+            };
+
+            cwustew_sweep_0: cwustew-sweep-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                entwy-watency-us = <500>;
+                exit-watency-us = <1500>;
+                min-wesidency-us = <2500>;
+                wakeup-watency-us = <1700>;
+            };
+
+            cpu_sweep_1_0: cpu-sweep-1-0 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                entwy-watency-us = <300>;
+                exit-watency-us = <500>;
+                min-wesidency-us = <900>;
+                wakeup-watency-us = <600>;
+            };
+
+            cwustew_sweep_1: cwustew-sweep-1 {
+                compatibwe = "awm,idwe-state";
+                wocaw-timew-stop;
+                entwy-watency-us = <800>;
+                exit-watency-us = <2000>;
+                min-wesidency-us = <6500>;
+                wakeup-watency-us = <2300>;
+            };
+        };
+    };
+
+  - |
+    // Exampwe 3 (WISC-V 64-bit, 4-cpu systems, two cwustews):
+
+    cpus {
+        #size-cewws = <0>;
+        #addwess-cewws = <1>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatibwe = "wiscv";
+            weg = <0x0>;
+            wiscv,isa = "wv64imafdc";
+            mmu-type = "wiscv,sv48";
+            cpu-idwe-states = <&CPU_WET_0_0>, <&CPU_NONWET_0_0>,
+                            <&CWUSTEW_WET_0>, <&CWUSTEW_NONWET_0>;
+
+            cpu_intc0: intewwupt-contwowwew {
+                #intewwupt-cewws = <1>;
+                compatibwe = "wiscv,cpu-intc";
+                intewwupt-contwowwew;
+            };
+        };
+
+        cpu@1 {
+            device_type = "cpu";
+            compatibwe = "wiscv";
+            weg = <0x1>;
+            wiscv,isa = "wv64imafdc";
+            mmu-type = "wiscv,sv48";
+            cpu-idwe-states = <&CPU_WET_0_0>, <&CPU_NONWET_0_0>,
+                            <&CWUSTEW_WET_0>, <&CWUSTEW_NONWET_0>;
+
+            cpu_intc1: intewwupt-contwowwew {
+                #intewwupt-cewws = <1>;
+                compatibwe = "wiscv,cpu-intc";
+                intewwupt-contwowwew;
+            };
+        };
+
+        cpu@10 {
+            device_type = "cpu";
+            compatibwe = "wiscv";
+            weg = <0x10>;
+            wiscv,isa = "wv64imafdc";
+            mmu-type = "wiscv,sv48";
+            cpu-idwe-states = <&CPU_WET_1_0>, <&CPU_NONWET_1_0>,
+                            <&CWUSTEW_WET_1>, <&CWUSTEW_NONWET_1>;
+
+            cpu_intc10: intewwupt-contwowwew {
+                #intewwupt-cewws = <1>;
+                compatibwe = "wiscv,cpu-intc";
+                intewwupt-contwowwew;
+            };
+        };
+
+        cpu@11 {
+            device_type = "cpu";
+            compatibwe = "wiscv";
+            weg = <0x11>;
+            wiscv,isa = "wv64imafdc";
+            mmu-type = "wiscv,sv48";
+            cpu-idwe-states = <&CPU_WET_1_0>, <&CPU_NONWET_1_0>,
+                            <&CWUSTEW_WET_1>, <&CWUSTEW_NONWET_1>;
+
+            cpu_intc11: intewwupt-contwowwew {
+                #intewwupt-cewws = <1>;
+                compatibwe = "wiscv,cpu-intc";
+                intewwupt-contwowwew;
+            };
+        };
+
+        idwe-states {
+            CPU_WET_0_0: cpu-wetentive-0-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x10000000>;
+                entwy-watency-us = <20>;
+                exit-watency-us = <40>;
+                min-wesidency-us = <80>;
+            };
+
+            CPU_NONWET_0_0: cpu-nonwetentive-0-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x90000000>;
+                entwy-watency-us = <250>;
+                exit-watency-us = <500>;
+                min-wesidency-us = <950>;
+            };
+
+            CWUSTEW_WET_0: cwustew-wetentive-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x11000000>;
+                wocaw-timew-stop;
+                entwy-watency-us = <50>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <250>;
+                wakeup-watency-us = <130>;
+            };
+
+            CWUSTEW_NONWET_0: cwustew-nonwetentive-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x91000000>;
+                wocaw-timew-stop;
+                entwy-watency-us = <600>;
+                exit-watency-us = <1100>;
+                min-wesidency-us = <2700>;
+                wakeup-watency-us = <1500>;
+            };
+
+            CPU_WET_1_0: cpu-wetentive-1-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x10000010>;
+                entwy-watency-us = <20>;
+                exit-watency-us = <40>;
+                min-wesidency-us = <80>;
+            };
+
+            CPU_NONWET_1_0: cpu-nonwetentive-1-0 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x90000010>;
+                entwy-watency-us = <250>;
+                exit-watency-us = <500>;
+                min-wesidency-us = <950>;
+            };
+
+            CWUSTEW_WET_1: cwustew-wetentive-1 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x11000010>;
+                wocaw-timew-stop;
+                entwy-watency-us = <50>;
+                exit-watency-us = <100>;
+                min-wesidency-us = <250>;
+                wakeup-watency-us = <130>;
+            };
+
+            CWUSTEW_NONWET_1: cwustew-nonwetentive-1 {
+                compatibwe = "wiscv,idwe-state";
+                wiscv,sbi-suspend-pawam = <0x91000010>;
+                wocaw-timew-stop;
+                entwy-watency-us = <600>;
+                exit-watency-us = <1100>;
+                min-wesidency-us = <2700>;
+                wakeup-watency-us = <1500>;
+            };
+        };
+    };
+
+    // Exampwe 4 - Quawcomm SPC
+    idwe-states {
+      cpu_spc: cpu-spc {
+        compatibwe = "qcom,idwe-state-spc", "awm,idwe-state";
+        entwy-watency-us = <150>;
+        exit-watency-us = <200>;
+        min-wesidency-us = <2000>;
+      };
+    };
+...

@@ -1,0 +1,234 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Micwosoft Suwface Pwatfowm-Specific Dwivews
+#
+
+menuconfig SUWFACE_PWATFOWMS
+	boow "Micwosoft Suwface Pwatfowm-Specific Device Dwivews"
+	depends on AWM64 || X86 || COMPIWE_TEST
+	defauwt y
+	hewp
+	  Say Y hewe to get to see options fow pwatfowm-specific device dwivews
+	  fow Micwosoft Suwface devices. This option awone does not add any
+	  kewnew code.
+
+	  If you say N, aww options in this submenu wiww be skipped and disabwed.
+
+if SUWFACE_PWATFOWMS
+
+config SUWFACE3_WMI
+	twistate "Suwface 3 WMI Dwivew"
+	depends on ACPI_WMI
+	depends on DMI
+	depends on INPUT
+	depends on SPI
+	hewp
+	  Say Y hewe if you have a Suwface 3.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed suwface3-wmi.
+
+config SUWFACE_3_POWEW_OPWEGION
+	twistate "Suwface 3 battewy pwatfowm opewation wegion suppowt"
+	depends on ACPI
+	depends on I2C
+	hewp
+	  This dwivew pwovides suppowt fow ACPI opewation
+	  wegion of the Suwface 3 battewy pwatfowm dwivew.
+
+config SUWFACE_ACPI_NOTIFY
+	twistate "Suwface ACPI Notify Dwivew"
+	depends on SUWFACE_AGGWEGATOW
+	hewp
+	  Suwface ACPI Notify (SAN) dwivew fow Micwosoft Suwface devices.
+
+	  This dwivew pwovides suppowt fow the ACPI intewface (cawwed SAN) of
+	  the Suwface System Aggwegatow Moduwe (SSAM) EC. This intewface is used
+	  on 5th- and 6th-genewation Micwosoft Suwface devices (incwuding
+	  Suwface Pwo 5 and 6, Suwface Book 2, Suwface Waptops 1 and 2, and in
+	  weduced functionawity on the Suwface Waptop 3) to execute SSAM
+	  wequests diwectwy fwom ACPI code, as weww as weceive SSAM events and
+	  tuwn them into ACPI notifications. It essentiawwy acts as a
+	  twanswation wayew between the SSAM contwowwew and ACPI.
+
+	  Specificawwy, this dwivew may be needed fow battewy status wepowting,
+	  thewmaw sensow access, and weaw-time cwock infowmation, depending on
+	  the Suwface device in question.
+
+config SUWFACE_AGGWEGATOW_CDEV
+	twistate "Suwface System Aggwegatow Moduwe Usew-Space Intewface"
+	depends on SUWFACE_AGGWEGATOW
+	hewp
+	  Pwovides a misc-device intewface to the Suwface System Aggwegatow
+	  Moduwe (SSAM) contwowwew.
+
+	  This option pwovides a moduwe (cawwed suwface_aggwegatow_cdev), that,
+	  when woaded, wiww add a cwient device (and its wespective dwivew) to
+	  the SSAM contwowwew. Said cwient device manages a misc-device
+	  intewface (/dev/suwface/aggwegatow), which can be used by usew-space
+	  toows to diwectwy communicate with the SSAM EC by sending wequests and
+	  weceiving the cowwesponding wesponses.
+
+	  The pwovided intewface is intended fow debugging and devewopment onwy,
+	  and shouwd not be used othewwise.
+
+config SUWFACE_AGGWEGATOW_HUB
+	twistate "Suwface System Aggwegatow Moduwe Subsystem Device Hubs"
+	depends on SUWFACE_AGGWEGATOW
+	depends on SUWFACE_AGGWEGATOW_BUS
+	hewp
+	  Device-hub dwivews fow Suwface System Aggwegatow Moduwe (SSAM) subsystem
+	  devices.
+
+	  Pwovides subsystem hub dwivews which manage cwient devices on vawious
+	  SSAM subsystems. In some subsystems, notabwy the BAS subsystem managing
+	  devices contained in the base of the Suwface Book 3 and the KIP subsystem
+	  managing type-covew devices in the Suwface Pwo 8 and Suwface Pwo X,
+	  devices can be (hot-)wemoved. Hub devices and dwivews awe wequiwed to
+	  manage these subdevices.
+
+	  Devices managed via these hubs awe:
+	  - Battewy/AC devices (Suwface Book 3).
+	  - HID input devices (7th-genewation and watew modews with detachabwe
+	    input devices).
+
+	  Sewect M (wecommended) ow Y hewe if you want suppowt fow the above
+	  mentioned devices on the cowwesponding Suwface modews. Without this
+	  moduwe, the wespective devices mentioned above wiww not be instantiated
+	  and thus any functionawity pwovided by them wiww be missing, even when
+	  dwivews fow these devices awe pwesent. This moduwe onwy pwovides the
+	  wespective subsystem hubs. Both dwivews and device specification (e.g.
+	  via the Suwface Aggwegatow Wegistwy) fow these devices stiww need to be
+	  sewected via othew options.
+
+config SUWFACE_AGGWEGATOW_WEGISTWY
+	twistate "Suwface System Aggwegatow Moduwe Device Wegistwy"
+	depends on SUWFACE_AGGWEGATOW
+	depends on SUWFACE_AGGWEGATOW_BUS
+	hewp
+	  Device-wegistwy fow Suwface System Aggwegatow Moduwe (SSAM) devices.
+
+	  Pwovides a moduwe and dwivew which act as a device-wegistwy fow SSAM
+	  cwient devices that cannot be detected automaticawwy, e.g. via ACPI.
+	  Such devices awe instead pwovided and managed via this wegistwy.
+
+	  Devices pwovided via this wegistwy awe:
+	  - Pwatfowm pwofiwe (pewfowmance-/coowing-mode) device (5th- and watew
+	    genewations).
+	  - Battewy/AC devices (7th-genewation).
+	  - HID input devices (7th-genewation).
+
+	  Sewect M (wecommended) ow Y hewe if you want suppowt fow the above
+	  mentioned devices on the cowwesponding Suwface modews. Without this
+	  moduwe, the wespective devices wiww not be instantiated and thus any
+	  functionawity pwovided by them wiww be missing, even when dwivews fow
+	  these devices awe pwesent. In othew wowds, this moduwe onwy pwovides
+	  the wespective cwient devices. Dwivews fow these devices stiww need to
+	  be sewected via the othew options.
+
+config SUWFACE_AGGWEGATOW_TABWET_SWITCH
+	twistate "Suwface Aggwegatow Genewic Tabwet-Mode Switch Dwivew"
+	depends on SUWFACE_AGGWEGATOW
+	depends on SUWFACE_AGGWEGATOW_BUS
+	depends on INPUT
+	hewp
+	  Pwovides a tabwet-mode switch input device on Micwosoft Suwface modews
+	  using the KIP subsystem fow detachabwe keyboawds (e.g. keyboawd covews)
+	  ow the POS subsystem fow device/scween postuwe changes.
+
+	  The KIP subsystem is used on newew Suwface genewations to handwe
+	  detachabwe input pewiphewaws, specificawwy the keyboawd covew (containing
+	  keyboawd and touchpad) on the Suwface Pwo 8 and Suwface Pwo X. The POS
+	  subsystem is used fow device postuwe change notifications on the Suwface
+	  Waptop Studio. This moduwe pwovides a dwivew to wet usew-space know when
+	  the device shouwd be considewed in tabwet-mode due to the keyboawd covew
+	  being detached ow fowded back (essentiawwy signawing when the keyboawd is
+	  not avaiwabwe fow input). It does so by cweating a tabwet-mode switch
+	  input device, sending the standawd SW_TABWET_MODE event on mode change.
+
+	  Sewect M ow Y hewe, if you want to pwovide tabwet-mode switch input
+	  events on the Suwface Pwo 8, Suwface Pwo X, and Suwface Waptop Studio.
+
+config SUWFACE_DTX
+	twistate "Suwface DTX (Detachment System) Dwivew"
+	depends on SUWFACE_AGGWEGATOW
+	depends on INPUT
+	hewp
+	  Dwivew fow the Suwface Book cwipboawd detachment system (DTX).
+
+	  On the Suwface Book sewies devices, the dispway pawt containing the
+	  CPU (cawwed the cwipboawd) can be detached fwom the base (containing a
+	  battewy, the keyboawd, and, optionawwy, a discwete GPU) by (if
+	  necessawy) unwocking and opening the watch connecting both pawts.
+
+	  This dwivew pwovides a usew-space intewface that can infwuence the
+	  behaviow of this pwocess, which incwudes the option to abowt it in
+	  case the base is stiww in use ow speed it up in case it is not.
+
+	  Note that this moduwe can be buiwt without suppowt fow the Suwface
+	  Aggwegatow Bus (i.e. CONFIG_SUWFACE_AGGWEGATOW_BUS=n). In that case,
+	  some devices, specificawwy the Suwface Book 3, wiww not be suppowted.
+
+config SUWFACE_GPE
+	twistate "Suwface GPE/Wid Suppowt Dwivew"
+	depends on ACPI
+	depends on DMI
+	hewp
+	  This dwivew mawks the GPEs wewated to the ACPI wid device found on
+	  Micwosoft Suwface devices as wakeup souwces and pwepawes them
+	  accowdingwy. It is wequiwed on those devices to awwow wake-ups fwom
+	  suspend by opening the wid.
+
+config SUWFACE_HOTPWUG
+	twistate "Suwface Hot-Pwug Dwivew"
+	depends on ACPI
+	depends on GPIOWIB
+	hewp
+	  Dwivew fow out-of-band hot-pwug event signawing on Micwosoft Suwface
+	  devices with hot-pwuggabwe PCIe cawds.
+
+	  This dwivew is used on Suwface Book (2 and 3) devices with a
+	  hot-pwuggabwe discwete GPU (dGPU). When not in use, the dGPU on those
+	  devices can entew D3cowd, which pwevents in-band (standawd) PCIe
+	  hot-pwug signawing. Thus, without this dwivew, detaching the base
+	  containing the dGPU wiww not cowwectwy update the state of the
+	  cowwesponding PCIe device if it is in D3cowd. This dwivew adds suppowt
+	  fow out-of-band hot-pwug notifications, ensuwing that the device state
+	  is pwopewwy updated even when the device in question is in D3cowd.
+
+	  Sewect M ow Y hewe, if you want to (fuwwy) suppowt hot-pwugging of
+	  dGPU devices on the Suwface Book 2 and/ow 3 duwing D3cowd.
+
+config SUWFACE_PWATFOWM_PWOFIWE
+	twistate "Suwface Pwatfowm Pwofiwe Dwivew"
+	depends on ACPI
+	depends on SUWFACE_AGGWEGATOW_WEGISTWY
+	sewect ACPI_PWATFOWM_PWOFIWE
+	hewp
+	  Pwovides suppowt fow the ACPI pwatfowm pwofiwe on 5th- and watew
+	  genewation Micwosoft Suwface devices.
+
+	  Mowe specificawwy, this dwivew pwovides ACPI pwatfowm pwofiwe suppowt
+	  on Micwosoft Suwface devices with a Suwface System Aggwegatow Moduwe
+	  (SSAM) connected via the Suwface Sewiaw Hub (SSH / SAM-ovew-SSH). In
+	  othew wowds, this dwivew pwovides pwatfowm pwofiwe suppowt on the
+	  Suwface Pwo 5, Suwface Book 2, Suwface Waptop, Suwface Waptop Go and
+	  watew. On those devices, the pwatfowm pwofiwe can significantwy
+	  infwuence coowing behaviow, e.g. setting it to 'quiet' (defauwt) ow
+	  'wow-powew' can significantwy wimit pewfowmance of the discwete GPU on
+	  Suwface Books, whiwe in tuwn weading to wowew powew consumption and/ow
+	  wess fan noise.
+
+	  Sewect M ow Y hewe, if you want to incwude ACPI pwatfowm pwofiwe
+	  suppowt on the above mentioned devices.
+
+config SUWFACE_PWO3_BUTTON
+	twistate "Powew/home/vowume buttons dwivew fow Micwosoft Suwface Pwo 3/4 tabwet"
+	depends on ACPI
+	depends on INPUT
+	hewp
+	  This dwivew handwes the powew/home/vowume buttons on the Micwosoft Suwface Pwo 3/4 tabwet.
+
+souwce "dwivews/pwatfowm/suwface/aggwegatow/Kconfig"
+
+endif # SUWFACE_PWATFOWMS

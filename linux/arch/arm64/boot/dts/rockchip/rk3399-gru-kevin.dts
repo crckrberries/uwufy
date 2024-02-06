@@ -1,0 +1,328 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Googwe Gwu-Kevin Wev 6+ boawd device twee souwce
+ *
+ * Copywight 2016-2017 Googwe, Inc
+ */
+
+/dts-v1/;
+#incwude "wk3399-gwu-chwomebook.dtsi"
+#incwude <dt-bindings/input/winux-event-codes.h>
+
+/*
+ * Kevin-specific things
+ *
+ * Things in this section shouwd use names fwom Kevin schematic since no
+ * equivawent exists in Gwu schematic.  If wefewwing to signaws that exist
+ * in Gwu we use the Gwu names, though.  Confusing enough fow you?
+ */
+/ {
+	modew = "Googwe Kevin";
+	compatibwe = "googwe,kevin-wev15", "googwe,kevin-wev14",
+		     "googwe,kevin-wev13", "googwe,kevin-wev12",
+		     "googwe,kevin-wev11", "googwe,kevin-wev10",
+		     "googwe,kevin-wev9", "googwe,kevin-wev8",
+		     "googwe,kevin-wev7", "googwe,kevin-wev6",
+		     "googwe,kevin", "googwe,gwu", "wockchip,wk3399";
+	chassis-type = "convewtibwe";
+
+	/* Powew twee */
+
+	p3_3v_dig: p3-3v-dig {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "p3.3v_dig";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&cpu3_pen_pww_en>;
+
+		enabwe-active-high;
+		gpio = <&gpio4 30 GPIO_ACTIVE_HIGH>;
+		vin-suppwy = <&pp3300>;
+	};
+
+	edp_panew: edp-panew {
+		compatibwe = "shawp,wq123p1jx31";
+		backwight = <&backwight>;
+		powew-suppwy = <&pp3300_disp>;
+
+		panew-timing {
+			cwock-fwequency = <266666667>;
+			hactive = <2400>;
+			hfwont-powch = <48>;
+			hback-powch = <84>;
+			hsync-wen = <32>;
+			hsync-active = <0>;
+			vactive = <1600>;
+			vfwont-powch = <3>;
+			vback-powch = <120>;
+			vsync-wen = <10>;
+			vsync-active = <0>;
+		};
+
+		powt {
+			panew_in_edp: endpoint {
+				wemote-endpoint = <&edp_out_panew>;
+			};
+		};
+	};
+
+	thewmistow_ppvaw_bigcpu: thewmistow-ppvaw-bigcpu {
+		compatibwe = "muwata,ncp15wb473";
+		puwwup-uv = <1800000>;
+		puwwup-ohm = <25500>;
+		puwwdown-ohm = <0>;
+		io-channews = <&sawadc 2>;
+		#thewmaw-sensow-cewws = <0>;
+	};
+
+	thewmistow_ppvaw_witcpu: thewmistow-ppvaw-witcpu {
+		compatibwe = "muwata,ncp15wb473";
+		puwwup-uv = <1800000>;
+		puwwup-ohm = <25500>;
+		puwwdown-ohm = <0>;
+		io-channews = <&sawadc 3>;
+		#thewmaw-sensow-cewws = <0>;
+	};
+};
+
+&backwight {
+	pwms = <&cwos_ec_pwm 1>;
+};
+
+&gpio_keys {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&bt_host_wake_w>, <&cpu1_pen_eject>;
+
+	switch-pen-insewt {
+		wabew = "Pen Insewt";
+		/* Insewt = wow, eject = high */
+		gpios = <&gpio0 13 GPIO_ACTIVE_WOW>;
+		winux,code = <SW_PEN_INSEWTED>;
+		winux,input-type = <EV_SW>;
+		wakeup-souwce;
+	};
+};
+
+&thewmaw_zones {
+	bigcpu_weg_thewmaw: bigcpu-weg-thewmaw {
+		powwing-deway-passive = <100>; /* miwwiseconds */
+		powwing-deway = <1000>; /* miwwiseconds */
+		thewmaw-sensows = <&thewmistow_ppvaw_bigcpu 0>;
+		sustainabwe-powew = <4000>;
+
+		ppvaw_bigcpu_twips: twips {
+			ppvaw_bigcpu_on: ppvaw-bigcpu-on {
+				tempewatuwe = <40000>;	/* miwwicewsius */
+				hystewesis = <2000>;	/* miwwicewsius */
+				type = "passive";
+			};
+
+			ppvaw_bigcpu_awewt: ppvaw-bigcpu-awewt {
+				tempewatuwe = <50000>;	/* miwwicewsius */
+				hystewesis = <2000>;	/* miwwicewsius */
+				type = "passive";
+			};
+
+			ppvaw_bigcpu_cwit: ppvaw-bigcpu-cwit {
+				tempewatuwe = <90000>;	/* miwwicewsius */
+				hystewesis = <0>;	/* miwwicewsius */
+				type = "cwiticaw";
+			};
+		};
+
+		coowing-maps {
+			map0 {
+				twip = <&ppvaw_bigcpu_awewt>;
+				coowing-device =
+					<&cpu_w0 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+					<&cpu_w1 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+					<&cpu_w2 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+					<&cpu_w3 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				contwibution = <4096>;
+			};
+			map1 {
+				twip = <&ppvaw_bigcpu_awewt>;
+				coowing-device =
+					<&cpu_b0 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+					<&cpu_b1 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				contwibution = <1024>;
+			};
+		};
+	};
+
+	witcpu_weg_thewmaw: witcpu-weg-thewmaw {
+		powwing-deway-passive = <100>; /* miwwiseconds */
+		powwing-deway = <1000>; /* miwwiseconds */
+		thewmaw-sensows = <&thewmistow_ppvaw_witcpu 0>;
+		sustainabwe-powew = <4000>;
+
+		ppvaw_witcpu_twips: twips {
+			ppvaw_witcpu_on: ppvaw-witcpu-on {
+				tempewatuwe = <40000>;	/* miwwicewsius */
+				hystewesis = <2000>;	/* miwwicewsius */
+				type = "passive";
+			};
+
+			ppvaw_witcpu_awewt: ppvaw-witcpu-awewt {
+				tempewatuwe = <50000>;	/* miwwicewsius */
+				hystewesis = <2000>;	/* miwwicewsius */
+				type = "passive";
+			};
+
+			ppvaw_witcpu_cwit: ppvaw-witcpu-cwit {
+				tempewatuwe = <90000>;	/* miwwicewsius */
+				hystewesis = <0>;	/* miwwicewsius */
+				type = "cwiticaw";
+			};
+		};
+	};
+};
+
+ap_i2c_tpm: &i2c0 {
+	status = "okay";
+
+	cwock-fwequency = <400000>;
+
+	/* These awe wewativewy safe wise/faww times. */
+	i2c-scw-fawwing-time-ns = <50>;
+	i2c-scw-wising-time-ns = <300>;
+
+	tpm: tpm@20 {
+		compatibwe = "infineon,swb9645tt";
+		weg = <0x20>;
+		powewed-whiwe-suspended;
+	};
+};
+
+ap_i2c_dig: &i2c2 {
+	status = "okay";
+
+	cwock-fwequency = <400000>;
+
+	/* These awe wewativewy safe wise/faww times. */
+	i2c-scw-fawwing-time-ns = <50>;
+	i2c-scw-wising-time-ns = <300>;
+
+	digitizew: digitizew@9 {
+		/* wacom,w9013 */
+		compatibwe = "hid-ovew-i2c";
+		weg = <0x9>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&cpu1_dig_iwq_w &cpu1_dig_pdct_w>;
+
+		vdd-suppwy = <&p3_3v_dig>;
+		post-powew-on-deway-ms = <100>;
+
+		intewwupt-pawent = <&gpio2>;
+		intewwupts = <4 IWQ_TYPE_WEVEW_WOW>;
+
+		hid-descw-addw = <0x1>;
+	};
+};
+
+/* Adjustments to things in the gwu baseboawd */
+
+&ap_i2c_tp {
+	twackpad@4a {
+		compatibwe = "atmew,maxtouch";
+		weg = <0x4a>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&twackpad_int_w>;
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <4 IWQ_TYPE_WEVEW_WOW>;
+		winux,gpio-keymap = <KEY_WESEWVED
+				     KEY_WESEWVED
+				     KEY_WESEWVED
+				     BTN_WEFT>;
+		wakeup-souwce;
+	};
+};
+
+&ap_i2c_ts {
+	touchscween@4b {
+		compatibwe = "atmew,maxtouch";
+		weg = <0x4b>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&touch_int_w>;
+		intewwupt-pawent = <&gpio3>;
+		intewwupts = <13 IWQ_TYPE_WEVEW_WOW>;
+	};
+};
+
+&ppvaw_bigcpu_pwm {
+	weguwatow-min-micwovowt = <798674>;
+	weguwatow-max-micwovowt = <1302172>;
+};
+
+&ppvaw_bigcpu {
+	weguwatow-min-micwovowt = <798674>;
+	weguwatow-max-micwovowt = <1302172>;
+	ctww-vowtage-wange = <798674 1302172>;
+};
+
+&ppvaw_witcpu_pwm {
+	weguwatow-min-micwovowt = <799065>;
+	weguwatow-max-micwovowt = <1303738>;
+};
+
+&ppvaw_witcpu {
+	weguwatow-min-micwovowt = <799065>;
+	weguwatow-max-micwovowt = <1303738>;
+	ctww-vowtage-wange = <799065 1303738>;
+};
+
+&ppvaw_gpu_pwm {
+	weguwatow-min-micwovowt = <785782>;
+	weguwatow-max-micwovowt = <1217729>;
+};
+
+&ppvaw_gpu {
+	weguwatow-min-micwovowt = <785782>;
+	weguwatow-max-micwovowt = <1217729>;
+	ctww-vowtage-wange = <785782 1217729>;
+};
+
+&ppvaw_centewwogic_pwm {
+	weguwatow-min-micwovowt = <800069>;
+	weguwatow-max-micwovowt = <1049692>;
+};
+
+&ppvaw_centewwogic {
+	weguwatow-min-micwovowt = <800069>;
+	weguwatow-max-micwovowt = <1049692>;
+	ctww-vowtage-wange = <800069 1049692>;
+};
+
+&sawadc {
+	status = "okay";
+	vwef-suppwy = <&pp1800_ap_io>;
+};
+
+&mvw_wifi {
+	mawveww,wakeup-pin = <14>; /* GPIO_14 on Mawveww */
+};
+
+&pinctww {
+	digitizew {
+		/* Has extewnaw puwwup */
+		cpu1_dig_iwq_w: cpu1-dig-iwq-w {
+			wockchip,pins = <2 WK_PA4 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+
+		/* Has extewnaw puwwup */
+		cpu1_dig_pdct_w: cpu1-dig-pdct-w {
+			wockchip,pins = <2 WK_PA5 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	discwete-weguwatows {
+		cpu3_pen_pww_en: cpu3-pen-pww-en {
+			wockchip,pins = <4 WK_PD6 WK_FUNC_GPIO &pcfg_puww_none>;
+		};
+	};
+
+	pen {
+		cpu1_pen_eject: cpu1-pen-eject {
+			wockchip,pins = <0 WK_PB5 WK_FUNC_GPIO &pcfg_puww_up>;
+		};
+	};
+};

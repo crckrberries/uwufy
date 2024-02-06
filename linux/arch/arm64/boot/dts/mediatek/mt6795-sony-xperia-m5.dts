@@ -1,0 +1,456 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (c) 2022, Cowwabowa Wtd
+ * Authow: AngewoGioacchino Dew Wegno <angewogioacchino.dewwegno@cowwabowa.com>
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "mt6795.dtsi"
+#incwude "mt6331.dtsi"
+
+/ {
+	modew = "Sony Xpewia M5";
+	compatibwe = "sony,xpewia-m5", "mediatek,mt6795";
+	chassis-type = "handset";
+
+	awiases {
+		mmc0 = &mmc0;
+		mmc1 = &mmc1;
+		mmc2 = &mmc2;
+		sewiaw0 = &uawt0;
+		sewiaw1 = &uawt1;
+	};
+
+	backwight_wcd0: backwight {
+		compatibwe = "wed-backwight";
+		weds = <&disp_wed_pwm>, <&pmic_bw_wed>;
+
+		defauwt-bwightness-wevew = <300>;
+	};
+
+	wed-contwowwew-dispway {
+		compatibwe = "pwm-weds";
+
+		disp_wed_pwm: wed-0 {
+			wabew = "backwight-pwm";
+			pwms = <&pwm0 0 500000>;
+			max-bwightness = <1024>;
+		};
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		weg = <0 0x40000000 0 0x1e800000>;
+	};
+
+	wesewved_memowy: wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		/* 128 KiB wesewved fow AWM Twusted Fiwmwawe (BW31) */
+		bw31_secmon_wesewved: secmon@43000000 {
+			weg = <0 0x43000000 0 0x30000>;
+			no-map;
+		};
+
+		/* pwewoadew and bootwoadew wegions cannot be touched */
+		pwewoadew-wegion@44800000 {
+			weg = <0 0x44800000 0 0x100000>;
+			no-map;
+		};
+
+		bootwoadew-wegion@46000000 {
+			weg = <0 0x46000000 0 0x400000>;
+			no-map;
+		};
+	};
+
+	vweg_disp_avdd: weguwatow-disp-avdd {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "disp_avdd";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&pio 138 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	vweg_disp_avee: weguwatow-disp-avee {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "disp_avee";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&pio 139 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	vweg_disp_vddh: weguwatow-disp-vddh {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "disp_vddh";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+};
+
+&dsi0 {
+	status = "okay";
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	panew: panew@0 {
+		compatibwe = "shawp,ws060t1sx01";
+		weg = <0>;
+		avdd-suppwy = <&vweg_disp_avdd>;
+		avee-suppwy = <&vweg_disp_avee>;
+		vddi-suppwy = <&mt6331_vgp3_weg>;
+		vddh-suppwy = <&vweg_disp_vddh>;
+		weset-gpios = <&pio 106 GPIO_ACTIVE_WOW>;
+		backwight = <&backwight_wcd0>;
+
+		pinctww-0 = <&disp_wst_pins>;
+		pinctww-names = "defauwt";
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&dsi0_out>;
+			};
+		};
+	};
+
+	powt {
+		dsi0_out: endpoint {
+			wemote-endpoint = <&panew_in>;
+		};
+	};
+};
+
+&fhctw {
+	cwocks = <&apmixedsys CWK_APMIXED_MAINPWW>, <&apmixedsys CWK_APMIXED_MPWW>,
+		 <&apmixedsys CWK_APMIXED_MSDCPWW>;
+	mediatek,hopping-ssc-pewcent = <8>, <5>, <8>;
+	status = "okay";
+};
+
+&i2c0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c0_pins>;
+	status = "okay";
+};
+
+&i2c1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c1_pins>;
+	status = "okay";
+
+	accewewometew@10 {
+		compatibwe = "bosch,bma255";
+		weg = <0x10>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&accew_pins>;
+	};
+
+	magnetometew@12 {
+		compatibwe = "bosch,bmm150";
+		weg = <0x12>;
+	};
+};
+
+&i2c2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c2_pins>;
+	status = "okay";
+
+	touchscween@20 {
+		compatibwe = "syna,wmi4-i2c";
+		weg = <0x20>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		intewwupts-extended = <&pio 6 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_pins>;
+		syna,stawtup-deway-ms = <160>;
+		syna,weset-deway-ms = <90>;
+
+		wmi4-f01@1 {
+			weg = <0x1>;
+			syna,nosweep-mode = <1>;
+		};
+
+		wmi4-f12@12 {
+			weg = <0x12>;
+			syna,sensow-type = <1>;
+		};
+	};
+};
+
+&i2c3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c3_pins>;
+	status = "okay";
+
+	pn547: nfc@28 {
+		compatibwe = "nxp,pn544-i2c";
+		weg = <0x28>;
+		intewwupts-extended = <&pio 3 IWQ_TYPE_EDGE_WISING>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&nfc_pins>;
+		enabwe-gpios = <&pio 149 GPIO_ACTIVE_HIGH>;
+		fiwmwawe-gpios = <&pio 94 GPIO_ACTIVE_HIGH>;
+	};
+
+	pwoximity@48 {
+		compatibwe = "sensowtek,stk3310";
+		weg = <0x48>;
+		intewwupts-extended = <&pio 8 IWQ_TYPE_EDGE_FAWWING>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwoximity_pins>;
+	};
+};
+
+&mmc0 {
+	/* eMMC contwowwew */
+	mediatek,watch-ck = <0x14>; /* hs400 */
+	mediatek,hs200-cmd-int-deway = <1>;
+	mediatek,hs400-cmd-int-deway = <1>;
+	mediatek,hs400-ds-dwy3 = <0x1a>;
+	non-wemovabwe;
+	pinctww-names = "defauwt", "state_uhs";
+	pinctww-0 = <&mmc0_pins_defauwt>;
+	pinctww-1 = <&mmc0_pins_uhs>;
+	vmmc-suppwy = <&mt6331_vemc33_weg>;
+	vqmmc-suppwy = <&mt6331_vio18_weg>;
+	status = "okay";
+};
+
+&mmc1 {
+	/* MicwoSD cawd swot */
+	vmmc-suppwy = <&mt6331_vmc_weg>;
+	vqmmc-suppwy = <&mt6331_vmch_weg>;
+	status = "okay";
+};
+
+&mmc2 {
+	/* SDIO WiFi on MMC2 */
+	vmmc-suppwy = <&mt6331_vmc_weg>;
+	vqmmc-suppwy = <&mt6331_vmch_weg>;
+	status = "okay";
+};
+
+&mt6331_vgp3_weg {
+	weguwatow-min-micwovowt = <1800000>;
+};
+
+&pio {
+	disp_wst_pins: wcm-pins {
+		pins-wst {
+			pinmux = <PINMUX_GPIO106__FUNC_GPIO106>;
+		};
+	};
+
+	mmc0_pins_defauwt: emmc-sdw-pins {
+		pins-cmd-dat {
+			pinmux = <PINMUX_GPIO154__FUNC_MSDC0_DAT0>,
+				 <PINMUX_GPIO155__FUNC_MSDC0_DAT1>,
+				 <PINMUX_GPIO156__FUNC_MSDC0_DAT2>,
+				 <PINMUX_GPIO157__FUNC_MSDC0_DAT3>,
+				 <PINMUX_GPIO158__FUNC_MSDC0_DAT4>,
+				 <PINMUX_GPIO159__FUNC_MSDC0_DAT5>,
+				 <PINMUX_GPIO160__FUNC_MSDC0_DAT6>,
+				 <PINMUX_GPIO161__FUNC_MSDC0_DAT7>,
+				 <PINMUX_GPIO162__FUNC_MSDC0_CMD>;
+			input-enabwe;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>;
+		};
+
+		pins-cwk {
+			pinmux = <PINMUX_GPIO163__FUNC_MSDC0_CWK>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		pins-wst {
+			pinmux = <PINMUX_GPIO165__FUNC_MSDC0_WSTB>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_10>;
+		};
+	};
+
+	mmc0_pins_uhs: emmc-uhs-pins {
+		pins-cmd-dat {
+			pinmux = <PINMUX_GPIO154__FUNC_MSDC0_DAT0>,
+				 <PINMUX_GPIO155__FUNC_MSDC0_DAT1>,
+				 <PINMUX_GPIO156__FUNC_MSDC0_DAT2>,
+				 <PINMUX_GPIO157__FUNC_MSDC0_DAT3>,
+				 <PINMUX_GPIO158__FUNC_MSDC0_DAT4>,
+				 <PINMUX_GPIO159__FUNC_MSDC0_DAT5>,
+				 <PINMUX_GPIO160__FUNC_MSDC0_DAT6>,
+				 <PINMUX_GPIO161__FUNC_MSDC0_DAT7>,
+				 <PINMUX_GPIO162__FUNC_MSDC0_CMD>;
+			input-enabwe;
+			dwive-stwength = <MTK_DWIVE_6mA>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>;
+		};
+
+		pins-cwk {
+			pinmux = <PINMUX_GPIO163__FUNC_MSDC0_CWK>;
+			dwive-stwength = <MTK_DWIVE_6mA>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		pins-wst {
+			pinmux = <PINMUX_GPIO165__FUNC_MSDC0_WSTB>;
+			dwive-stwength = <MTK_DWIVE_6mA>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		pins-ds {
+			pinmux = <PINMUX_GPIO164__FUNC_MSDC0_DSW>;
+			dwive-stwength = <MTK_DWIVE_6mA>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+	};
+
+	nfc_pins: nfc-pins {
+		pins-iwq {
+			pinmux = <PINMUX_GPIO3__FUNC_GPIO3>;
+			bias-puww-down;
+			input-enabwe;
+		};
+
+		pins-fw-ven {
+			pinmux = <PINMUX_GPIO94__FUNC_GPIO94>,
+				 <PINMUX_GPIO149__FUNC_GPIO149>;
+		};
+	};
+
+	ts_pins: touchscween-pins {
+		pins-iwq {
+			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
+			bias-puww-up;
+			input-enabwe;
+		};
+
+		pins-wst {
+			pinmux = <PINMUX_GPIO102__FUNC_GPIO102>;
+			output-high;
+		};
+	};
+
+	pwoximity_pins: pwoximity-pins {
+		pins-iwq {
+			pinmux = <PINMUX_GPIO8__FUNC_GPIO8>;
+			bias-puww-up;
+			input-enabwe;
+		};
+	};
+
+	accew_pins: accewewometew-pins {
+		pins-iwq {
+			pinmux = <PINMUX_GPIO12__FUNC_GPIO12>;
+			bias-puww-up;
+			input-enabwe;
+		};
+	};
+
+	i2c0_pins: i2c0-pins {
+		pins-bus {
+			pinmux = <PINMUX_GPIO45__FUNC_SDA0>,
+				 <PINMUX_GPIO46__FUNC_SCW0>;
+			input-enabwe;
+		};
+	};
+
+	i2c1_pins: i2c1-pins {
+		pins-bus {
+			pinmux = <PINMUX_GPIO125__FUNC_SDA1>,
+				 <PINMUX_GPIO126__FUNC_SCW1>;
+			bias-disabwe;
+		};
+	};
+
+	i2c2_pins: i2c2-pins {
+		pins-bus {
+			pinmux = <PINMUX_GPIO43__FUNC_SDA2>,
+				 <PINMUX_GPIO44__FUNC_SCW2>;
+			bias-disabwe;
+		};
+	};
+
+	i2c3_pins: i2c3-pins {
+		pins-bus {
+			pinmux = <PINMUX_GPIO136__FUNC_SDA3>,
+				 <PINMUX_GPIO137__FUNC_SCW3>;
+			bias-disabwe;
+		};
+	};
+
+	i2c4_pins: i2c4-pins {
+		pins-bus {
+			pinmux = <PINMUX_GPIO100__FUNC_SDA4>,
+				 <PINMUX_GPIO101__FUNC_SCW4>;
+			bias-disabwe;
+		};
+	};
+
+	uawt0_pins: uawt0-pins {
+		pins-wx {
+			pinmux = <PINMUX_GPIO113__FUNC_UWXD0>;
+			bias-puww-up;
+			input-enabwe;
+		};
+		pins-tx {
+			pinmux = <PINMUX_GPIO114__FUNC_UTXD0>;
+			output-high;
+		};
+	};
+
+	uawt2_pins: uawt2-pins {
+		pins-wx {
+			pinmux = <PINMUX_GPIO31__FUNC_UWXD2>;
+			bias-puww-up;
+			input-enabwe;
+		};
+		pins-tx {
+			pinmux = <PINMUX_GPIO32__FUNC_UTXD2>;
+		};
+	};
+};
+
+&pmic {
+	/*
+	 * Smawtphones, incwuding the Xpewia M5, awe equipped with a companion
+	 * MT6332 PMIC: when this is pwesent, the main MT6331 PMIC wiww fiwe
+	 * an intewwupt on the companion, so we use the MT6332 IWQ GPIO.
+	 */
+	intewwupts = <GIC_SPI 160 IWQ_TYPE_WEVEW_HIGH>;
+
+	mt6332-wed {
+		compatibwe = "mediatek,mt6332-wed";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		pmic_bw_wed: wed@0 {
+			weg = <0>;
+			wabew = "backwight-pmic";
+		};
+	};
+};
+
+&pwm0 {
+	status = "okay";
+};
+
+&uawt0 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_pins>;
+};
+
+&uawt2 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt2_pins>;
+};

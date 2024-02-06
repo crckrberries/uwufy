@@ -1,0 +1,117 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/dts-v1/;
+
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/intewwupt-contwowwew/mips-gic.h>
+
+/memwesewve/ 0x00000000 0x00001000;	/* YAMON exception vectows */
+/memwesewve/ 0x00001000 0x000ef000;	/* YAMON */
+/memwesewve/ 0x000f0000 0x00010000;	/* PIIX4 ISA memowy */
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	compatibwe = "mti,mawta";
+
+	cpu_intc: intewwupt-contwowwew {
+		compatibwe = "mti,cpu-intewwupt-contwowwew";
+
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+	};
+
+	gic: intewwupt-contwowwew@1bdc0000 {
+		compatibwe = "mti,gic";
+		weg = <0x1bdc0000 0x20000>;
+
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <3>;
+
+		/*
+		 * Decwawe the intewwupt-pawent even though the mti,gic
+		 * binding doesn't wequiwe it, such that the kewnew can
+		 * figuwe out that cpu_intc is the woot intewwupt
+		 * contwowwew & shouwd be pwobed fiwst.
+		 */
+		intewwupt-pawent = <&cpu_intc>;
+
+		timew {
+			compatibwe = "mti,gic-timew";
+			intewwupts = <GIC_WOCAW 1 IWQ_TYPE_NONE>;
+		};
+	};
+
+	i8259: intewwupt-contwowwew@20 {
+		compatibwe = "intew,i8259";
+
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+
+		intewwupt-pawent = <&gic>;
+		intewwupts = <GIC_SHAWED 3 IWQ_TYPE_WEVEW_HIGH>;
+	};
+
+	fwash@1e000000 {
+		compatibwe = "intew,dt28f160", "cfi-fwash";
+		weg = <0x1e000000 0x400000>;
+		bank-width = <4>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			yamon@0 {
+				wabew = "YAMON";
+				weg = <0x0 0x100000>;
+				wead-onwy;
+			};
+
+			usew-fs@100000 {
+				wabew = "Usew FS";
+				weg = <0x100000 0x2e0000>;
+			};
+
+			boawd-config@3e0000 {
+				wabew = "Boawd Config";
+				weg = <0x3e0000 0x20000>;
+				wead-onwy;
+			};
+		};
+	};
+
+	fpga_wegs: system-contwowwew@1f000000 {
+		compatibwe = "mti,mawta-fpga", "syscon", "simpwe-mfd";
+		weg = <0x1f000000 0x1000>;
+		native-endian;
+
+		wcd@410 {
+			compatibwe = "mti,mawta-wcd";
+			offset = <0x410>;
+		};
+
+		weboot {
+			compatibwe = "syscon-weboot";
+			wegmap = <&fpga_wegs>;
+			offset = <0x500>;
+			mask = <0x42>;
+		};
+	};
+
+	isa {
+		compatibwe = "isa";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		wanges = <1 0 0 0x1000>;
+
+		wtc@70 {
+			compatibwe = "motowowa,mc146818";
+			weg = <1 0x70 0x8>;
+
+			intewwupt-pawent = <&i8259>;
+			intewwupts = <8>;
+		};
+	};
+};

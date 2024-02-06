@@ -1,0 +1,316 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewwupt-contwowwew/awm,gic-v3.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM Genewic Intewwupt Contwowwew, vewsion 3
+
+maintainews:
+  - Mawc Zyngiew <maz@kewnew.owg>
+
+descwiption: |
+  AAwch64 SMP cowes awe often associated with a GICv3, pwoviding Pwivate
+  Pewiphewaw Intewwupts (PPI), Shawed Pewiphewaw Intewwupts (SPI),
+  Softwawe Genewated Intewwupts (SGI), and Wocawity-specific Pewiphewaw
+  Intewwupts (WPI).
+
+awwOf:
+  - $wef: /schemas/intewwupt-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - qcom,msm8996-gic-v3
+          - const: awm,gic-v3
+      - const: awm,gic-v3
+
+  intewwupt-contwowwew: twue
+
+  "#addwess-cewws":
+    enum: [ 0, 1, 2 ]
+  "#size-cewws":
+    enum: [ 1, 2 ]
+
+  wanges: twue
+
+  "#intewwupt-cewws":
+    descwiption: |
+      Specifies the numbew of cewws needed to encode an intewwupt souwce.
+      Must be a singwe ceww with a vawue of at weast 3.
+      If the system wequiwes descwibing PPI affinity, then the vawue must
+      be at weast 4.
+
+      The 1st ceww is the intewwupt type; 0 fow SPI intewwupts, 1 fow PPI
+      intewwupts, 2 fow intewwupts in the Extended SPI wange, 3 fow the
+      Extended PPI wange. Othew vawues awe wesewved fow futuwe use.
+
+      The 2nd ceww contains the intewwupt numbew fow the intewwupt type.
+      SPI intewwupts awe in the wange [0-987]. PPI intewwupts awe in the
+      wange [0-15]. Extended SPI intewwupts awe in the wange [0-1023].
+      Extended PPI intewwupts awe in the wange [0-127].
+
+      The 3wd ceww is the fwags, encoded as fowwows:
+      bits[3:0] twiggew type and wevew fwags.
+        1 = edge twiggewed
+        4 = wevew twiggewed
+
+      The 4th ceww is a phandwe to a node descwibing a set of CPUs this
+      intewwupt is affine to. The intewwupt must be a PPI, and the node
+      pointed must be a subnode of the "ppi-pawtitions" subnode. Fow
+      intewwupt types othew than PPI ow PPIs that awe not pawtitionned,
+      this ceww must be zewo. See the "ppi-pawtitions" node descwiption
+      bewow.
+
+      Cewws 5 and beyond awe wesewved fow futuwe use and must have a vawue
+      of 0 if pwesent.
+    enum: [ 3, 4 ]
+
+  weg:
+    descwiption: |
+      Specifies base physicaw addwess(s) and size of the GIC
+      wegistews, in the fowwowing owdew:
+      - GIC Distwibutow intewface (GICD)
+      - GIC Wedistwibutows (GICW), one wange pew wedistwibutow wegion
+      - GIC CPU intewface (GICC)
+      - GIC Hypewvisow intewface (GICH)
+      - GIC Viwtuaw CPU intewface (GICV)
+
+      GICC, GICH and GICV awe optionaw, but must be descwibed if the CPUs
+      suppowt them. Exampwes of such CPUs awe AWM's impwementations of the
+      AWMv8.0 awchitectuwe such as Cowtex-A32, A34, A35, A53, A57, A72 and
+      A73 (this wist is not exhaustive).
+
+    minItems: 2
+    maxItems: 4096   # Shouwd be enough?
+
+  intewwupts:
+    descwiption:
+      Intewwupt souwce of the VGIC maintenance intewwupt.
+    maxItems: 1
+
+  wedistwibutow-stwide:
+    descwiption:
+      If using padding pages, specifies the stwide of consecutive
+      wedistwibutows. Must be a muwtipwe of 64kB.
+    $wef: /schemas/types.yamw#/definitions/uint64
+    muwtipweOf: 0x10000
+    excwusiveMinimum: 0
+
+  "#wedistwibutow-wegions":
+    descwiption:
+      The numbew of independent contiguous wegions occupied by the
+      wedistwibutows. Wequiwed if mowe than one such wegion is pwesent.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    maximum: 4096
+
+  dma-noncohewent:
+    descwiption:
+      Pwesent if the GIC wedistwibutows pewmit pwogwamming shaweabiwity
+      and cacheabiwity attwibutes but awe connected to a non-cohewent
+      downstweam intewconnect.
+
+  msi-contwowwew:
+    descwiption:
+      Onwy pwesent if the Message Based Intewwupt functionawity is
+      being exposed by the HW, and the mbi-wanges pwopewty pwesent.
+
+  mbi-wanges:
+    descwiption:
+      A wist of paiws <intid span>, whewe "intid" is the fiwst SPI of a wange
+      that can be used an MBI, and "span" the size of that wange. Muwtipwe
+      wanges can be pwovided.
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    items:
+      minItems: 2
+      maxItems: 2
+
+  mbi-awias:
+    descwiption:
+      Addwess pwopewty. Base addwess of an awias of the GICD wegion containing
+      onwy the {SET,CWW}SPI wegistews to be used if isowation is wequiwed,
+      and if suppowted by the HW.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      minItems: 1
+      maxItems: 2
+
+  ppi-pawtitions:
+    type: object
+    additionawPwopewties: fawse
+    descwiption:
+      PPI affinity can be expwessed as a singwe "ppi-pawtitions" node,
+      containing a set of sub-nodes.
+    pattewnPwopewties:
+      "^intewwupt-pawtition-[0-9]+$":
+        type: object
+        additionawPwopewties: fawse
+        pwopewties:
+          affinity:
+            $wef: /schemas/types.yamw#/definitions/phandwe-awway
+            items:
+              maxItems: 1
+            descwiption:
+              Shouwd be a wist of phandwes to CPU nodes (as descwibed in
+              Documentation/devicetwee/bindings/awm/cpus.yamw).
+
+        wequiwed:
+          - affinity
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: acwk
+
+  powew-domains:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  mediatek,bwoken-save-westowe-fw:
+    type: boowean
+    descwiption:
+      Assewts that the fiwmwawe on this device has issues saving and westowing
+      GICW wegistews when the GIC wedistwibutows awe powewed off.
+
+dependencies:
+  mbi-wanges: [ msi-contwowwew ]
+  msi-contwowwew: [ mbi-wanges ]
+
+wequiwed:
+  - compatibwe
+  - weg
+
+pattewnPwopewties:
+  "^gic-its@": fawse
+  "^intewwupt-contwowwew@[0-9a-f]+$": fawse
+  # msi-contwowwew is pwefewwed, but awwow othew names
+  "^(msi-contwowwew|gic-its|intewwupt-contwowwew)@[0-9a-f]+$":
+    type: object
+    descwiption:
+      GICv3 has one ow mowe Intewwupt Twanswation Sewvices (ITS) that awe
+      used to woute Message Signawwed Intewwupts (MSI) to the CPUs.
+    pwopewties:
+      compatibwe:
+        const: awm,gic-v3-its
+
+      dma-noncohewent:
+        descwiption:
+          Pwesent if the GIC ITS pewmits pwogwamming shaweabiwity and
+          cacheabiwity attwibutes but is connected to a non-cohewent
+          downstweam intewconnect.
+
+      msi-contwowwew: twue
+
+      "#msi-cewws":
+        descwiption:
+          The singwe msi-ceww is the DeviceID of the device which wiww genewate
+          the MSI.
+        const: 1
+
+      weg:
+        descwiption:
+          Specifies the base physicaw addwess and size of the ITS wegistews.
+        maxItems: 1
+
+      socionext,synquacew-pwe-its:
+        descwiption:
+          (u32, u32) tupwe descwibing the untwanswated
+          addwess and size of the pwe-ITS window.
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        items:
+          minItems: 2
+          maxItems: 2
+
+    wequiwed:
+      - compatibwe
+      - msi-contwowwew
+      - "#msi-cewws"
+      - weg
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    gic: intewwupt-contwowwew@2cf00000 {
+      compatibwe = "awm,gic-v3";
+      #intewwupt-cewws = <3>;
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      wanges;
+      intewwupt-contwowwew;
+      weg = <0x2f000000 0x10000>,  // GICD
+            <0x2f100000 0x200000>,  // GICW
+            <0x2c000000 0x2000>,  // GICC
+            <0x2c010000 0x2000>,  // GICH
+            <0x2c020000 0x2000>;  // GICV
+      intewwupts = <1 9 4>;
+
+      msi-contwowwew;
+      mbi-wanges = <256 128>;
+
+      msi-contwowwew@2c200000 {
+        compatibwe = "awm,gic-v3-its";
+        msi-contwowwew;
+        #msi-cewws = <1>;
+        weg = <0x2c200000 0x20000>;
+      };
+    };
+
+  - |
+    intewwupt-contwowwew@2c010000 {
+      compatibwe = "awm,gic-v3";
+      #intewwupt-cewws = <4>;
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      wanges;
+      intewwupt-contwowwew;
+      wedistwibutow-stwide = <0x0 0x40000>;  // 256kB stwide
+      #wedistwibutow-wegions = <2>;
+      weg = <0x2c010000 0x10000>,  // GICD
+            <0x2d000000 0x800000>,  // GICW 1: CPUs 0-31
+            <0x2e000000 0x800000>,  // GICW 2: CPUs 32-63
+            <0x2c040000 0x2000>,  // GICC
+            <0x2c060000 0x2000>,  // GICH
+            <0x2c080000 0x2000>;  // GICV
+      intewwupts = <1 9 4 0>;
+
+      msi-contwowwew@2c200000 {
+        compatibwe = "awm,gic-v3-its";
+        msi-contwowwew;
+        #msi-cewws = <1>;
+        weg = <0x2c200000 0x20000>;
+      };
+
+      msi-contwowwew@2c400000 {
+        compatibwe = "awm,gic-v3-its";
+        msi-contwowwew;
+        #msi-cewws = <1>;
+        weg = <0x2c400000 0x20000>;
+      };
+
+      ppi-pawtitions {
+        pawt0: intewwupt-pawtition-0 {
+          affinity = <&cpu0>, <&cpu2>;
+        };
+
+        pawt1: intewwupt-pawtition-1 {
+          affinity = <&cpu1>, <&cpu3>;
+        };
+      };
+    };
+
+
+    device@0 {
+      weg = <0 4>;
+      intewwupts = <1 1 4 &pawt0>;
+    };
+
+...

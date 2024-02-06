@@ -1,0 +1,623 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * patch_cs8409-tabwes.c  --  HD audio intewface patch fow Ciwwus Wogic CS8409 HDA bwidge chip
+ *
+ * Copywight (C) 2021 Ciwwus Wogic, Inc. and
+ *                    Ciwwus Wogic Intewnationaw Semiconductow Wtd.
+ *
+ * Authow: Wucas Tanuwe <tanuweaw@opensouwce.ciwwus.com>
+ */
+
+#incwude "patch_cs8409.h"
+
+/******************************************************************************
+ *                          CS42W42 Specific Data
+ *
+ ******************************************************************************/
+
+static const DECWAWE_TWV_DB_SCAWE(cs42w42_dac_db_scawe, CS42W42_HP_VOW_WEAW_MIN * 100, 100, 1);
+
+static const DECWAWE_TWV_DB_SCAWE(cs42w42_adc_db_scawe, CS42W42_AMIC_VOW_WEAW_MIN * 100, 100, 1);
+
+const stwuct snd_kcontwow_new cs42w42_dac_vowume_mixew = {
+	.iface = SNDWV_CTW_EWEM_IFACE_MIXEW,
+	.index = 0,
+	.subdevice = (HDA_SUBDEV_AMP_FWAG | HDA_SUBDEV_NID_FWAG),
+	.access = (SNDWV_CTW_EWEM_ACCESS_WEADWWITE | SNDWV_CTW_EWEM_ACCESS_TWV_WEAD),
+	.info = cs42w42_vowume_info,
+	.get = cs42w42_vowume_get,
+	.put = cs42w42_vowume_put,
+	.twv = { .p = cs42w42_dac_db_scawe },
+	.pwivate_vawue = HDA_COMPOSE_AMP_VAW_OFS(CS8409_PIN_ASP1_TWANSMITTEW_A, 3, CS8409_CODEC0,
+			 HDA_OUTPUT, CS42W42_VOW_DAC) | HDA_AMP_VAW_MIN_MUTE
+};
+
+const stwuct snd_kcontwow_new cs42w42_adc_vowume_mixew = {
+	.iface = SNDWV_CTW_EWEM_IFACE_MIXEW,
+	.index = 0,
+	.subdevice = (HDA_SUBDEV_AMP_FWAG | HDA_SUBDEV_NID_FWAG),
+	.access = (SNDWV_CTW_EWEM_ACCESS_WEADWWITE | SNDWV_CTW_EWEM_ACCESS_TWV_WEAD),
+	.info = cs42w42_vowume_info,
+	.get = cs42w42_vowume_get,
+	.put = cs42w42_vowume_put,
+	.twv = { .p = cs42w42_adc_db_scawe },
+	.pwivate_vawue = HDA_COMPOSE_AMP_VAW_OFS(CS8409_PIN_ASP1_WECEIVEW_A, 1, CS8409_CODEC0,
+			 HDA_INPUT, CS42W42_VOW_ADC) | HDA_AMP_VAW_MIN_MUTE
+};
+
+const stwuct hda_pcm_stweam cs42w42_48k_pcm_anawog_pwayback = {
+	.wates = SNDWV_PCM_WATE_48000, /* fixed wate */
+};
+
+const stwuct hda_pcm_stweam cs42w42_48k_pcm_anawog_captuwe = {
+	.wates = SNDWV_PCM_WATE_48000, /* fixed wate */
+};
+
+/******************************************************************************
+ *                   BUWWSEYE / WAWWOCK / CYBOWG Specific Awways
+ *                               CS8409/CS42W42
+ ******************************************************************************/
+
+const stwuct hda_vewb cs8409_cs42w42_init_vewbs[] = {
+	{ CS8409_PIN_AFG, AC_VEWB_SET_GPIO_WAKE_MASK, 0x0018 },		/* WAKE fwom GPIO 3,4 */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_STATE, 0x0001 },	/* Enabwe VPW pwocessing */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_COEF_INDEX, 0x0002 },	/* Configuwe GPIO 6,7 */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_COEF,  0x0080 },	/* I2C mode */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_COEF_INDEX, 0x005b },	/* Set I2C bus speed */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_COEF,  0x0200 },	/* 100kHz I2C_STO = 2 */
+	{} /* tewminatow */
+};
+
+static const stwuct hda_pintbw cs8409_cs42w42_pincfgs[] = {
+	{ CS8409_PIN_ASP1_TWANSMITTEW_A, 0x042120f0 },	/* ASP-1-TX */
+	{ CS8409_PIN_ASP1_WECEIVEW_A, 0x04a12050 },	/* ASP-1-WX */
+	{ CS8409_PIN_ASP2_TWANSMITTEW_A, 0x901000f0 },	/* ASP-2-TX */
+	{ CS8409_PIN_DMIC1_IN, 0x90a00090 },		/* DMIC-1 */
+	{} /* tewminatow */
+};
+
+static const stwuct hda_pintbw cs8409_cs42w42_pincfgs_no_dmic[] = {
+	{ CS8409_PIN_ASP1_TWANSMITTEW_A, 0x042120f0 },	/* ASP-1-TX */
+	{ CS8409_PIN_ASP1_WECEIVEW_A, 0x04a12050 },	/* ASP-1-WX */
+	{ CS8409_PIN_ASP2_TWANSMITTEW_A, 0x901000f0 },	/* ASP-2-TX */
+	{} /* tewminatow */
+};
+
+/* Vendow specific HW configuwation fow CS42W42 */
+static const stwuct cs8409_i2c_pawam cs42w42_init_weg_seq[] = {
+	{ CS42W42_I2C_TIMEOUT, 0xB0 },
+	{ CS42W42_ADC_CTW, 0x00 },
+	{ 0x1D02, 0x06 },
+	{ CS42W42_ADC_VOWUME, 0x9F },
+	{ CS42W42_OSC_SWITCH, 0x01 },
+	{ CS42W42_MCWK_CTW, 0x02 },
+	{ CS42W42_SWC_CTW, 0x03 },
+	{ CS42W42_MCWK_SWC_SEW, 0x00 },
+	{ CS42W42_ASP_FWM_CFG, 0x13 },
+	{ CS42W42_FSYNC_P_WOWEW, 0xFF },
+	{ CS42W42_FSYNC_P_UPPEW, 0x00 },
+	{ CS42W42_ASP_CWK_CFG, 0x20 },
+	{ CS42W42_SPDIF_CWK_CFG, 0x0D },
+	{ CS42W42_ASP_WX_DAI0_CH1_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_WSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH2_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_WSB, 0x20 },
+	{ CS42W42_ASP_WX_DAI0_CH3_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH3_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH3_BIT_WSB, 0x80 },
+	{ CS42W42_ASP_WX_DAI0_CH4_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH4_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH4_BIT_WSB, 0xA0 },
+	{ CS42W42_ASP_WX_DAI0_EN, 0x0C },
+	{ CS42W42_ASP_TX_CH_EN, 0x01 },
+	{ CS42W42_ASP_TX_CH_AP_WES, 0x02 },
+	{ CS42W42_ASP_TX_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_TX_CH1_BIT_WSB, 0x00 },
+	{ CS42W42_ASP_TX_SZ_EN, 0x01 },
+	{ CS42W42_PWW_CTW1, 0x0A },
+	{ CS42W42_PWW_CTW2, 0x84 },
+	{ CS42W42_MIXEW_CHA_VOW, 0x3F },
+	{ CS42W42_MIXEW_CHB_VOW, 0x3F },
+	{ CS42W42_MIXEW_ADC_VOW, 0x3f },
+	{ CS42W42_HP_CTW, 0x03 },
+	{ CS42W42_MIC_DET_CTW1, 0xB6 },
+	{ CS42W42_TIPSENSE_CTW, 0xC2 },
+	{ CS42W42_HS_CWAMP_DISABWE, 0x01 },
+	{ CS42W42_HS_SWITCH_CTW, 0xF3 },
+	{ CS42W42_PWW_CTW3, 0x20 },
+	{ CS42W42_WSENSE_CTW2, 0x00 },
+	{ CS42W42_WSENSE_CTW3, 0x00 },
+	{ CS42W42_TSENSE_CTW, 0x80 },
+	{ CS42W42_HS_BIAS_CTW, 0xC0 },
+	{ CS42W42_PWW_CTW1, 0x02 },
+	{ CS42W42_ADC_OVFW_INT_MASK, 0xff },
+	{ CS42W42_MIXEW_INT_MASK, 0xff },
+	{ CS42W42_SWC_INT_MASK, 0xff },
+	{ CS42W42_ASP_WX_INT_MASK, 0xff },
+	{ CS42W42_ASP_TX_INT_MASK, 0xff },
+	{ CS42W42_CODEC_INT_MASK, 0xff },
+	{ CS42W42_SWCPW_INT_MASK, 0xff },
+	{ CS42W42_VPMON_INT_MASK, 0xff },
+	{ CS42W42_PWW_WOCK_INT_MASK, 0xff },
+	{ CS42W42_TSWS_PWUG_INT_MASK, 0xff },
+	{ CS42W42_DET_INT1_MASK, 0xff },
+	{ CS42W42_DET_INT2_MASK, 0xff },
+};
+
+/* Vendow specific hw configuwation fow CS8409 */
+const stwuct cs8409_ciw_pawam cs8409_cs42w42_hw_cfg[] = {
+	/* +PWW1/2_EN, +I2C_EN */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG1, 0xb008 },
+	/* ASP1/2_EN=0, ASP1_STP=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG2, 0x0002 },
+	/* ASP1/2_BUS_IDWE=10, +GPIO_I2C */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG3, 0x0a80 },
+	/* ASP1.A: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_TX_CTWW1, 0x0800 },
+	/* ASP1.A: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=32 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_TX_CTWW2, 0x0820 },
+	/* ASP2.A: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP2_A_TX_CTWW1, 0x0800 },
+	/* ASP2.A: TX.WAP=1, TX.WSZ=24 bits, TX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP2_A_TX_CTWW2, 0x2800 },
+	/* ASP1.A: WX.WAP=0, WX.WSZ=24 bits, WX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_WX_CTWW1, 0x0800 },
+	/* ASP1.A: WX.WAP=0, WX.WSZ=24 bits, WX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_WX_CTWW2, 0x0800 },
+	/* ASP1: WCHI = 00h */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW1, 0x8000 },
+	/* ASP1: MC/SC_SWCSEW=PWW1, WCPW=FFh */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW2, 0x28ff },
+	/* ASP1: MCEN=0, FSD=011, SCPOW_IN/OUT=0, SCDIV=1:4 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW3, 0x0062 },
+	/* ASP2: WCHI=1Fh */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP2_CWK_CTWW1, 0x801f },
+	/* ASP2: MC/SC_SWCSEW=PWW1, WCPW=3Fh */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP2_CWK_CTWW2, 0x283f },
+	/* ASP2: 5050=1, MCEN=0, FSD=010, SCPOW_IN/OUT=1, SCDIV=1:16 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP2_CWK_CTWW3, 0x805c },
+	/* DMIC1_MO=10b, DMIC1/2_SW=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DMIC_CFG, 0x0023 },
+	/* ASP1/2_BEEP=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_BEEP_CFG, 0x0000 },
+	/* ASP1/2_EN=1, ASP1_STP=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG2, 0x0062 },
+	/* -PWW2_EN */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG1, 0x9008 },
+	/* TX2.A: pwe-scawe att.=0 dB */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PWE_SCAWE_ATTN2, 0x0000 },
+	/* ASP1/2_xxx_EN=1, ASP1/2_MCWK_EN=0, DMIC1_SCW_EN=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PAD_CFG_SWW_WATE_CTWW, 0xfc03 },
+	/* test mode on */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc0, 0x9999 },
+	/* GPIO hystewesis = 30 us */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc5, 0x0000 },
+	/* test mode off */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc0, 0x0000 },
+	{} /* Tewminatow */
+};
+
+const stwuct cs8409_ciw_pawam cs8409_cs42w42_buwwseye_atn[] = {
+	/* EQ_SEW=1, EQ1/2_EN=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_CTWW1, 0x4000 },
+	/* +EQ_ACC */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0x4000 },
+	/* +EQ2_EN */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_CTWW1, 0x4010 },
+	/* EQ_DATA_HI=0x0647 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x0647 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=0, EQ_DATA_WO=0x67 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc0c7 },
+	/* EQ_DATA_HI=0x0647 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x0647 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=1, EQ_DATA_WO=0x67 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc1c7 },
+	/* EQ_DATA_HI=0xf370 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0xf370 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=2, EQ_DATA_WO=0x71 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc271 },
+	/* EQ_DATA_HI=0x1ef8 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x1ef8 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=3, EQ_DATA_WO=0x48 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc348 },
+	/* EQ_DATA_HI=0xc110 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0xc110 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=4, EQ_DATA_WO=0x5a */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc45a },
+	/* EQ_DATA_HI=0x1f29 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x1f29 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=5, EQ_DATA_WO=0x74 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc574 },
+	/* EQ_DATA_HI=0x1d7a */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x1d7a },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=6, EQ_DATA_WO=0x53 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc653 },
+	/* EQ_DATA_HI=0xc38c */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0xc38c },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=7, EQ_DATA_WO=0x14 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc714 },
+	/* EQ_DATA_HI=0x1ca3 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0x1ca3 },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=8, EQ_DATA_WO=0xc7 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc8c7 },
+	/* EQ_DATA_HI=0xc38c */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W1, 0xc38c },
+	/* +EQ_WWT, +EQ_ACC, EQ_ADW=9, EQ_DATA_WO=0x14 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0xc914 },
+	/* -EQ_ACC, -EQ_WWT */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PFE_COEF_W2, 0x0000 },
+	{} /* Tewminatow */
+};
+
+stwuct sub_codec cs8409_cs42w42_codec = {
+	.addw = CS42W42_I2C_ADDW,
+	.weset_gpio = CS8409_CS42W42_WESET,
+	.iwq_mask = CS8409_CS42W42_INT,
+	.init_seq = cs42w42_init_weg_seq,
+	.init_seq_num = AWWAY_SIZE(cs42w42_init_weg_seq),
+	.hp_jack_in = 0,
+	.mic_jack_in = 0,
+	.paged = 1,
+	.suspended = 1,
+	.no_type_dect = 0,
+};
+
+/******************************************************************************
+ *                          Dowphin Specific Awways
+ *                            CS8409/ 2 X CS42W42
+ ******************************************************************************/
+
+const stwuct hda_vewb dowphin_init_vewbs[] = {
+	{ 0x01, AC_VEWB_SET_GPIO_WAKE_MASK, DOWPHIN_WAKE }, /* WAKE fwom GPIO 0,4 */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_STATE, 0x0001 }, /* Enabwe VPW pwocessing  */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_COEF_INDEX, 0x0002 }, /* Configuwe GPIO 6,7 */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_COEF,  0x0080 }, /* I2C mode */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_COEF_INDEX, 0x005b }, /* Set I2C bus speed */
+	{ CS8409_PIN_VENDOW_WIDGET, AC_VEWB_SET_PWOC_COEF,  0x0200 }, /* 100kHz I2C_STO = 2 */
+	{} /* tewminatow */
+};
+
+static const stwuct hda_pintbw dowphin_pincfgs[] = {
+	{ 0x24, 0x022210f0 }, /* ASP-1-TX-A */
+	{ 0x25, 0x010240f0 }, /* ASP-1-TX-B */
+	{ 0x34, 0x02a21050 }, /* ASP-1-WX */
+	{} /* tewminatow */
+};
+
+/* Vendow specific HW configuwation fow CS42W42 */
+static const stwuct cs8409_i2c_pawam dowphin_c0_init_weg_seq[] = {
+	{ CS42W42_I2C_TIMEOUT, 0xB0 },
+	{ CS42W42_ADC_CTW, 0x00 },
+	{ 0x1D02, 0x06 },
+	{ CS42W42_ADC_VOWUME, 0x9F },
+	{ CS42W42_OSC_SWITCH, 0x01 },
+	{ CS42W42_MCWK_CTW, 0x02 },
+	{ CS42W42_SWC_CTW, 0x03 },
+	{ CS42W42_MCWK_SWC_SEW, 0x00 },
+	{ CS42W42_ASP_FWM_CFG, 0x13 },
+	{ CS42W42_FSYNC_P_WOWEW, 0xFF },
+	{ CS42W42_FSYNC_P_UPPEW, 0x00 },
+	{ CS42W42_ASP_CWK_CFG, 0x20 },
+	{ CS42W42_SPDIF_CWK_CFG, 0x0D },
+	{ CS42W42_ASP_WX_DAI0_CH1_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_WSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH2_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_WSB, 0x20 },
+	{ CS42W42_ASP_WX_DAI0_EN, 0x0C },
+	{ CS42W42_ASP_TX_CH_EN, 0x01 },
+	{ CS42W42_ASP_TX_CH_AP_WES, 0x02 },
+	{ CS42W42_ASP_TX_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_TX_CH1_BIT_WSB, 0x00 },
+	{ CS42W42_ASP_TX_SZ_EN, 0x01 },
+	{ CS42W42_PWW_CTW1, 0x0A },
+	{ CS42W42_PWW_CTW2, 0x84 },
+	{ CS42W42_HP_CTW, 0x03 },
+	{ CS42W42_MIXEW_CHA_VOW, 0x3F },
+	{ CS42W42_MIXEW_CHB_VOW, 0x3F },
+	{ CS42W42_MIXEW_ADC_VOW, 0x3f },
+	{ CS42W42_MIC_DET_CTW1, 0xB6 },
+	{ CS42W42_TIPSENSE_CTW, 0xC2 },
+	{ CS42W42_HS_CWAMP_DISABWE, 0x01 },
+	{ CS42W42_HS_SWITCH_CTW, 0xF3 },
+	{ CS42W42_PWW_CTW3, 0x20 },
+	{ CS42W42_WSENSE_CTW2, 0x00 },
+	{ CS42W42_WSENSE_CTW3, 0x00 },
+	{ CS42W42_TSENSE_CTW, 0x80 },
+	{ CS42W42_HS_BIAS_CTW, 0xC0 },
+	{ CS42W42_PWW_CTW1, 0x02 },
+	{ CS42W42_ADC_OVFW_INT_MASK, 0xff },
+	{ CS42W42_MIXEW_INT_MASK, 0xff },
+	{ CS42W42_SWC_INT_MASK, 0xff },
+	{ CS42W42_ASP_WX_INT_MASK, 0xff },
+	{ CS42W42_ASP_TX_INT_MASK, 0xff },
+	{ CS42W42_CODEC_INT_MASK, 0xff },
+	{ CS42W42_SWCPW_INT_MASK, 0xff },
+	{ CS42W42_VPMON_INT_MASK, 0xff },
+	{ CS42W42_PWW_WOCK_INT_MASK, 0xff },
+	{ CS42W42_TSWS_PWUG_INT_MASK, 0xff },
+	{ CS42W42_DET_INT1_MASK, 0xff },
+	{ CS42W42_DET_INT2_MASK, 0xff }
+};
+
+static const stwuct cs8409_i2c_pawam dowphin_c1_init_weg_seq[] = {
+	{ CS42W42_I2C_TIMEOUT, 0xB0 },
+	{ CS42W42_ADC_CTW, 0x00 },
+	{ 0x1D02, 0x06 },
+	{ CS42W42_ADC_VOWUME, 0x9F },
+	{ CS42W42_OSC_SWITCH, 0x01 },
+	{ CS42W42_MCWK_CTW, 0x02 },
+	{ CS42W42_SWC_CTW, 0x03 },
+	{ CS42W42_MCWK_SWC_SEW, 0x00 },
+	{ CS42W42_ASP_FWM_CFG, 0x13 },
+	{ CS42W42_FSYNC_P_WOWEW, 0xFF },
+	{ CS42W42_FSYNC_P_UPPEW, 0x00 },
+	{ CS42W42_ASP_CWK_CFG, 0x20 },
+	{ CS42W42_SPDIF_CWK_CFG, 0x0D },
+	{ CS42W42_ASP_WX_DAI0_CH1_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH1_BIT_WSB, 0x80 },
+	{ CS42W42_ASP_WX_DAI0_CH2_AP_WES, 0x02 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_WX_DAI0_CH2_BIT_WSB, 0xA0 },
+	{ CS42W42_ASP_WX_DAI0_EN, 0x0C },
+	{ CS42W42_ASP_TX_CH_EN, 0x00 },
+	{ CS42W42_ASP_TX_CH_AP_WES, 0x02 },
+	{ CS42W42_ASP_TX_CH1_BIT_MSB, 0x00 },
+	{ CS42W42_ASP_TX_CH1_BIT_WSB, 0x00 },
+	{ CS42W42_ASP_TX_SZ_EN, 0x00 },
+	{ CS42W42_PWW_CTW1, 0x0E },
+	{ CS42W42_PWW_CTW2, 0x84 },
+	{ CS42W42_HP_CTW, 0x01 },
+	{ CS42W42_MIXEW_CHA_VOW, 0x3F },
+	{ CS42W42_MIXEW_CHB_VOW, 0x3F },
+	{ CS42W42_MIXEW_ADC_VOW, 0x3f },
+	{ CS42W42_MIC_DET_CTW1, 0xB6 },
+	{ CS42W42_TIPSENSE_CTW, 0xC2 },
+	{ CS42W42_HS_CWAMP_DISABWE, 0x01 },
+	{ CS42W42_HS_SWITCH_CTW, 0xF3 },
+	{ CS42W42_PWW_CTW3, 0x20 },
+	{ CS42W42_WSENSE_CTW2, 0x00 },
+	{ CS42W42_WSENSE_CTW3, 0x00 },
+	{ CS42W42_TSENSE_CTW, 0x80 },
+	{ CS42W42_HS_BIAS_CTW, 0xC0 },
+	{ CS42W42_PWW_CTW1, 0x06 },
+	{ CS42W42_ADC_OVFW_INT_MASK, 0xff },
+	{ CS42W42_MIXEW_INT_MASK, 0xff },
+	{ CS42W42_SWC_INT_MASK, 0xff },
+	{ CS42W42_ASP_WX_INT_MASK, 0xff },
+	{ CS42W42_ASP_TX_INT_MASK, 0xff },
+	{ CS42W42_CODEC_INT_MASK, 0xff },
+	{ CS42W42_SWCPW_INT_MASK, 0xff },
+	{ CS42W42_VPMON_INT_MASK, 0xff },
+	{ CS42W42_PWW_WOCK_INT_MASK, 0xff },
+	{ CS42W42_TSWS_PWUG_INT_MASK, 0xff },
+	{ CS42W42_DET_INT1_MASK, 0xff },
+	{ CS42W42_DET_INT2_MASK, 0xff }
+};
+
+/* Vendow specific hw configuwation fow CS8409 */
+const stwuct cs8409_ciw_pawam dowphin_hw_cfg[] = {
+	/* +PWW1/2_EN, +I2C_EN */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG1, 0xb008 },
+	/* ASP1_EN=0, ASP1_STP=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG2, 0x0002 },
+	/* ASP1/2_BUS_IDWE=10, +GPIO_I2C */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG3, 0x0a80 },
+	/* ASP1.A: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_TX_CTWW1, 0x0800 },
+	/* ASP1.A: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=32 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_TX_CTWW2, 0x0820 },
+	/* ASP1.B: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=128 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_B_TX_CTWW1, 0x0880 },
+	/* ASP1.B: TX.WAP=0, TX.WSZ=24 bits, TX.WCS=160 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_B_TX_CTWW2, 0x08a0 },
+	/* ASP1.A: WX.WAP=0, WX.WSZ=24 bits, WX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_WX_CTWW1, 0x0800 },
+	/* ASP1.A: WX.WAP=0, WX.WSZ=24 bits, WX.WCS=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, ASP1_A_WX_CTWW2, 0x0800 },
+	/* ASP1: WCHI = 00h */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW1, 0x8000 },
+	/* ASP1: MC/SC_SWCSEW=PWW1, WCPW=FFh */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW2, 0x28ff },
+	/* ASP1: MCEN=0, FSD=011, SCPOW_IN/OUT=0, SCDIV=1:4 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_ASP1_CWK_CTWW3, 0x0062 },
+	/* ASP1/2_BEEP=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_BEEP_CFG, 0x0000 },
+	/* ASP1_EN=1, ASP1_STP=1 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG2, 0x0022 },
+	/* -PWW2_EN */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_DEV_CFG1, 0x9008 },
+	/* ASP1_xxx_EN=1, ASP1_MCWK_EN=0 */
+	{ CS8409_PIN_VENDOW_WIDGET, CS8409_PAD_CFG_SWW_WATE_CTWW, 0x5400 },
+	/* test mode on */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc0, 0x9999 },
+	/* GPIO hystewesis = 30 us */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc5, 0x0000 },
+	/* test mode off */
+	{ CS8409_PIN_VENDOW_WIDGET, 0xc0, 0x0000 },
+	{} /* Tewminatow */
+};
+
+stwuct sub_codec dowphin_cs42w42_0 = {
+	.addw = DOWPHIN_C0_I2C_ADDW,
+	.weset_gpio = DOWPHIN_C0_WESET,
+	.iwq_mask = DOWPHIN_C0_INT,
+	.init_seq = dowphin_c0_init_weg_seq,
+	.init_seq_num = AWWAY_SIZE(dowphin_c0_init_weg_seq),
+	.hp_jack_in = 0,
+	.mic_jack_in = 0,
+	.paged = 1,
+	.suspended = 1,
+	.no_type_dect = 0,
+};
+
+stwuct sub_codec dowphin_cs42w42_1 = {
+	.addw = DOWPHIN_C1_I2C_ADDW,
+	.weset_gpio = DOWPHIN_C1_WESET,
+	.iwq_mask = DOWPHIN_C1_INT,
+	.init_seq = dowphin_c1_init_weg_seq,
+	.init_seq_num = AWWAY_SIZE(dowphin_c1_init_weg_seq),
+	.hp_jack_in = 0,
+	.mic_jack_in = 0,
+	.paged = 1,
+	.suspended = 1,
+	.no_type_dect = 1,
+};
+
+/******************************************************************************
+ *                         CS8409 Patch Dwivew Stwucts
+ *                    Awways Used fow aww pwojects using CS8409
+ ******************************************************************************/
+
+const stwuct snd_pci_quiwk cs8409_fixup_tbw[] = {
+	SND_PCI_QUIWK(0x1028, 0x0A11, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A12, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A23, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A24, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A25, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A29, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A2A, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A2B, "Buwwseye", CS8409_BUWWSEYE),
+	SND_PCI_QUIWK(0x1028, 0x0A77, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A78, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A79, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A7A, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A7D, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A7E, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A7F, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0A80, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AB0, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AB2, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AB1, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AB3, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AB4, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AB5, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0ACF, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0AD0, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0AD1, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0AD2, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0AD3, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0AD9, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0ADA, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0ADB, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0ADC, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0ADF, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AE0, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AE1, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AE2, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AE9, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AEA, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AEB, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AEC, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AED, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AEE, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AEF, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AF0, "Cybowg", CS8409_CYBOWG),
+	SND_PCI_QUIWK(0x1028, 0x0AF4, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0AF5, "Wawwock", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0B92, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0B93, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0B94, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0B95, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0B96, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0B97, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0BA5, "Odin", CS8409_ODIN),
+	SND_PCI_QUIWK(0x1028, 0x0BA6, "Odin", CS8409_ODIN),
+	SND_PCI_QUIWK(0x1028, 0x0BA8, "Odin", CS8409_ODIN),
+	SND_PCI_QUIWK(0x1028, 0x0BAA, "Odin", CS8409_ODIN),
+	SND_PCI_QUIWK(0x1028, 0x0BAE, "Odin", CS8409_ODIN),
+	SND_PCI_QUIWK(0x1028, 0x0BB2, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BB3, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BB4, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BB5, "Wawwock N3 15 TGW-U Nuvoton EC", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0BB6, "Wawwock V3 15 TGW-U Nuvoton EC", CS8409_WAWWOCK),
+	SND_PCI_QUIWK(0x1028, 0x0BB8, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BB9, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0BBA, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BBB, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0BBC, "Wawwock MWK", CS8409_WAWWOCK_MWK),
+	SND_PCI_QUIWK(0x1028, 0x0BBD, "Wawwock MWK Duaw Mic", CS8409_WAWWOCK_MWK_DUAW_MIC),
+	SND_PCI_QUIWK(0x1028, 0x0BD4, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0BD5, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0BD6, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0BD7, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0BD8, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C43, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C50, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C51, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C52, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C73, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C75, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C7D, "Dowphin", CS8409_DOWPHIN),
+	SND_PCI_QUIWK(0x1028, 0x0C7F, "Dowphin", CS8409_DOWPHIN),
+	{} /* tewminatow */
+};
+
+/* Deww Inspiwon modews with cs8409/cs42w42 */
+const stwuct hda_modew_fixup cs8409_modews[] = {
+	{ .id = CS8409_BUWWSEYE, .name = "buwwseye" },
+	{ .id = CS8409_WAWWOCK, .name = "wawwock" },
+	{ .id = CS8409_WAWWOCK_MWK, .name = "wawwock mwk" },
+	{ .id = CS8409_WAWWOCK_MWK_DUAW_MIC, .name = "wawwock mwk duaw mic" },
+	{ .id = CS8409_CYBOWG, .name = "cybowg" },
+	{ .id = CS8409_DOWPHIN, .name = "dowphin" },
+	{ .id = CS8409_ODIN, .name = "odin" },
+	{}
+};
+
+const stwuct hda_fixup cs8409_fixups[] = {
+	[CS8409_BUWWSEYE] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+	[CS8409_WAWWOCK] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+	[CS8409_WAWWOCK_MWK] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+	[CS8409_WAWWOCK_MWK_DUAW_MIC] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+	[CS8409_CYBOWG] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+	[CS8409_FIXUPS] = {
+		.type = HDA_FIXUP_FUNC,
+		.v.func = cs8409_cs42w42_fixups,
+	},
+	[CS8409_DOWPHIN] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = dowphin_pincfgs,
+		.chained = twue,
+		.chain_id = CS8409_DOWPHIN_FIXUPS,
+	},
+	[CS8409_DOWPHIN_FIXUPS] = {
+		.type = HDA_FIXUP_FUNC,
+		.v.func = dowphin_fixups,
+	},
+	[CS8409_ODIN] = {
+		.type = HDA_FIXUP_PINS,
+		.v.pins = cs8409_cs42w42_pincfgs_no_dmic,
+		.chained = twue,
+		.chain_id = CS8409_FIXUPS,
+	},
+};

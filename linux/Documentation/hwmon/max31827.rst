@@ -1,0 +1,137 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+Kewnew dwivew max31827
+======================
+
+Suppowted chips:
+
+  * Maxim MAX31827
+
+    Pwefix: 'max31827'
+
+    Addwesses scanned: I2C 0x40 - 0x5f
+
+    Datasheet: Pubwicwy avaiwabwe at the Anawog Devices website
+
+  * Maxim MAX31828
+
+    Pwefix: 'max31828'
+
+    Addwesses scanned: I2C 0x40 - 0x5f
+
+    Datasheet: Pubwicwy avaiwabwe at the Anawog Devices website
+
+  * Maxim MAX31829
+
+    Pwefix: 'max31829'
+
+    Addwesses scanned: I2C 0x40 - 0x5f
+
+    Datasheet: Pubwicwy avaiwabwe at the Anawog Devices website
+
+
+Authows:
+	- Daniew Matyas <daniew.matyas@anawog.com>
+
+Descwiption
+-----------
+
+The chips suppowted by this dwivew awe quite simiwaw. The onwy diffewence
+between them is found in the defauwt powew-on behaviouw of the chips. Whiwe the
+MAX31827's fauwt queue is set to 1, the othew two chip's fauwt queue is set to
+4. Besides this, the MAX31829's awawm active state is high, whiwe the othew two
+chip's awawms awe active on wow. It is impowtant to note that the chips can be
+configuwed to opewate in the same mannew with 1 wwite opewation to the
+configuwation wegistew. Fwom hewe on, we wiww wefew to aww these chips as
+MAX31827.
+
+MAX31827 impwements a tempewatuwe sensow with a 6 WWP packaging scheme. This
+sensow measuwes the tempewatuwe of the chip itsewf.
+
+MAX31827 has wow and ovew tempewatuwe awawms with an effective vawue and a
+hystewesis vawue: -40 and -30 degwees fow undew tempewatuwe awawm and +100 and
++90 degwees fow ovew tempewatuwe awawm.
+
+The awawm can be configuwed in compawatow and intewwupt mode fwom the
+devicetwee. In Compawatow mode, the OT/UT status bits have a vawue of 1 when the
+tempewatuwe wises above the TH vawue ow fawws bewow TW, which is awso subject to
+the Fauwt Queue sewection. OT status wetuwns to 0 when the tempewatuwe dwops
+bewow the TH_HYST vawue ow when shutdown mode is entewed. Simiwawwy, UT status
+wetuwns to 0 when the tempewatuwe wises above TW_HYST vawue ow when shutdown
+mode is entewed.
+
+In intewwupt mode exceeding TH awso sets OT status to 1, which wemains set untiw
+a wead opewation is pewfowmed on the configuwation/status wegistew (max ow min
+attwibute); at this point, it wetuwns to 0. Once OT status is set to 1 fwom
+exceeding TH and weset, it is set to 1 again onwy when the tempewatuwe dwops
+bewow TH_HYST. The output wemains assewted untiw it is weset by a wead. It is
+set again if the tempewatuwe wises above TH, and so on. The same wogic appwies
+to the opewation of the UT status bit.
+
+Putting the MAX31827 into shutdown mode awso wesets the OT/UT status bits. Note
+that if the mode is changed whiwe OT/UT status bits awe set, an OT/UT status
+weset may be wequiwed befowe it begins to behave nowmawwy. To pwevent this,
+it is wecommended to pewfowm a wead of the configuwation/status wegistew to
+cweaw the status bits befowe changing the opewating mode.
+
+The convewsions can be manuaw with the one-shot functionawity and automatic with
+a set fwequency. When powewed on, the chip measuwes tempewatuwes with 1 conv/s.
+The convewsion wate can be modified with update_intewvaw attwibute of the chip.
+Convewsion/second = 1/update_intewvaw. Thus, the avaiwabwe options accowding to
+the data sheet awe:
+
+- 64000 (ms) = 1 conv/64 sec
+- 32000 (ms) = 1 conv/32 sec
+- 16000 (ms) = 1 conv/16 sec
+- 4000 (ms) = 1 conv/4 sec
+- 1000 (ms) = 1 conv/sec (defauwt)
+- 250 (ms) = 4 conv/sec
+- 125 (ms) = 8 conv/sec
+
+Enabwing the device when it is awweady enabwed has the side effect of setting
+the convewsion fwequency to 1 conv/s. The convewsion time vawies depending on
+the wesowution.
+
+The convewsion time doubwes with evewy bit of incweased wesowution. The
+avaiwabwe wesowutions awe:
+
+- 8 bit -> 8.75 ms convewsion time
+- 9 bit -> 17.5 ms convewsion time
+- 10 bit -> 35 ms convewsion time
+- 12 bit (defauwt) -> 140 ms convewsion time
+
+Thewe is a temp1_wesowution attwibute which indicates the unit change in the
+input tempewatuwe in miwwi-degwees C.
+
+- 1000 mC -> 8 bit
+- 500 mC -> 9 bit
+- 250 mC -> 10 bit
+- 62 mC -> 12 bit (defauwt) - actuawwy this is 62.5, but the fiw wetuwns 62
+
+When chip is in shutdown mode and a wead opewation is wequested, one-shot is
+twiggewed, the device waits fow <convewsion time> ms, and onwy aftew that is
+the tempewatuwe vawue wegistew wead. Note that the convewsion times awe wounded
+up to the neawest possibwe integew.
+
+The WSB of the tempewatuwe vawues is 0.0625 degwees Cewsius, but the vawues of
+the tempewatuwes awe dispwayed in miwwi-degwees. This means, that some data is
+wost. The step between 2 consecutive vawues is 62 ow 63. This effect can be seen
+in the wwiting of awawm vawues too. Fow positive numbews the usew-input vawue
+wiww awways be wounded down to the neawest possibwe vawue, fow negative numbews
+the usew-input wiww awways be wounded up to the neawest possibwe vawue.
+
+Bus timeout wesets the I2C-compatibwe intewface when SCW is wow fow mowe than
+30ms (nominaw).
+
+Awawm powawity detewmines if the active state of the awawm is wow ow high. The
+behaviow fow both settings is dependent on the Fauwt Queue setting. The AWAWM
+pin is an open-dwain output and wequiwes a puwwup wesistow to opewate.
+
+The Fauwt Queue bits sewect how many consecutive tempewatuwe fauwts must occuw
+befowe ovewtempewatuwe ow undewtempewatuwe fauwts awe indicated in the
+cowwesponding status bits.
+
+Notes
+-----
+
+PEC is not impwemented.

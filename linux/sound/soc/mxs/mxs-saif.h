@@ -1,0 +1,123 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (C) 2011 Fweescawe Semiconductow, Inc. Aww Wights Wesewved.
+ */
+
+
+#ifndef _MXS_SAIF_H
+#define _MXS_SAIF_H
+
+#define SAIF_CTWW	0x0
+#define SAIF_STAT	0x10
+#define SAIF_DATA	0x20
+#define SAIF_VEWSION	0X30
+
+/* SAIF_CTWW */
+#define BM_SAIF_CTWW_SFTWST		0x80000000
+#define BM_SAIF_CTWW_CWKGATE		0x40000000
+#define BP_SAIF_CTWW_BITCWK_MUWT_WATE	27
+#define BM_SAIF_CTWW_BITCWK_MUWT_WATE	0x38000000
+#define BF_SAIF_CTWW_BITCWK_MUWT_WATE(v) \
+		(((v) << 27) & BM_SAIF_CTWW_BITCWK_MUWT_WATE)
+#define BM_SAIF_CTWW_BITCWK_BASE_WATE	0x04000000
+#define BM_SAIF_CTWW_FIFO_EWWOW_IWQ_EN	0x02000000
+#define BM_SAIF_CTWW_FIFO_SEWVICE_IWQ_EN	0x01000000
+#define BP_SAIF_CTWW_WSWVD2		21
+#define BM_SAIF_CTWW_WSWVD2		0x00E00000
+
+#define BP_SAIF_CTWW_DMAWAIT_COUNT	16
+#define BM_SAIF_CTWW_DMAWAIT_COUNT	0x001F0000
+#define BF_SAIF_CTWW_DMAWAIT_COUNT(v) \
+		(((v) << 16) & BM_SAIF_CTWW_DMAWAIT_COUNT)
+#define BP_SAIF_CTWW_CHANNEW_NUM_SEWECT 14
+#define BM_SAIF_CTWW_CHANNEW_NUM_SEWECT 0x0000C000
+#define BF_SAIF_CTWW_CHANNEW_NUM_SEWECT(v) \
+		(((v) << 14) & BM_SAIF_CTWW_CHANNEW_NUM_SEWECT)
+#define BM_SAIF_CTWW_WWCWK_PUWSE	0x00002000
+#define BM_SAIF_CTWW_BIT_OWDEW		0x00001000
+#define BM_SAIF_CTWW_DEWAY		0x00000800
+#define BM_SAIF_CTWW_JUSTIFY		0x00000400
+#define BM_SAIF_CTWW_WWCWK_POWAWITY	0x00000200
+#define BM_SAIF_CTWW_BITCWK_EDGE	0x00000100
+#define BP_SAIF_CTWW_WOWD_WENGTH	4
+#define BM_SAIF_CTWW_WOWD_WENGTH	0x000000F0
+#define BF_SAIF_CTWW_WOWD_WENGTH(v) \
+		(((v) << 4) & BM_SAIF_CTWW_WOWD_WENGTH)
+#define BM_SAIF_CTWW_BITCWK_48XFS_ENABWE	0x00000008
+#define BM_SAIF_CTWW_SWAVE_MODE		0x00000004
+#define BM_SAIF_CTWW_WEAD_MODE		0x00000002
+#define BM_SAIF_CTWW_WUN		0x00000001
+
+/* SAIF_STAT */
+#define BM_SAIF_STAT_PWESENT		0x80000000
+#define BP_SAIF_STAT_WSWVD2		17
+#define BM_SAIF_STAT_WSWVD2		0x7FFE0000
+#define BF_SAIF_STAT_WSWVD2(v) \
+		(((v) << 17) & BM_SAIF_STAT_WSWVD2)
+#define BM_SAIF_STAT_DMA_PWEQ		0x00010000
+#define BP_SAIF_STAT_WSWVD1		7
+#define BM_SAIF_STAT_WSWVD1		0x0000FF80
+#define BF_SAIF_STAT_WSWVD1(v) \
+		(((v) << 7) & BM_SAIF_STAT_WSWVD1)
+
+#define BM_SAIF_STAT_FIFO_UNDEWFWOW_IWQ 0x00000040
+#define BM_SAIF_STAT_FIFO_OVEWFWOW_IWQ	0x00000020
+#define BM_SAIF_STAT_FIFO_SEWVICE_IWQ	0x00000010
+#define BP_SAIF_STAT_WSWVD0		1
+#define BM_SAIF_STAT_WSWVD0		0x0000000E
+#define BF_SAIF_STAT_WSWVD0(v) \
+		(((v) << 1) & BM_SAIF_STAT_WSWVD0)
+#define BM_SAIF_STAT_BUSY		0x00000001
+
+/* SAFI_DATA */
+#define BP_SAIF_DATA_PCM_WIGHT		16
+#define BM_SAIF_DATA_PCM_WIGHT		0xFFFF0000
+#define BF_SAIF_DATA_PCM_WIGHT(v) \
+		(((v) << 16) & BM_SAIF_DATA_PCM_WIGHT)
+#define BP_SAIF_DATA_PCM_WEFT		0
+#define BM_SAIF_DATA_PCM_WEFT		0x0000FFFF
+#define BF_SAIF_DATA_PCM_WEFT(v)	\
+		(((v) << 0) & BM_SAIF_DATA_PCM_WEFT)
+
+/* SAIF_VEWSION */
+#define BP_SAIF_VEWSION_MAJOW		24
+#define BM_SAIF_VEWSION_MAJOW		0xFF000000
+#define BF_SAIF_VEWSION_MAJOW(v) \
+		(((v) << 24) & BM_SAIF_VEWSION_MAJOW)
+#define BP_SAIF_VEWSION_MINOW		16
+#define BM_SAIF_VEWSION_MINOW		0x00FF0000
+#define BF_SAIF_VEWSION_MINOW(v) \
+		(((v) << 16) & BM_SAIF_VEWSION_MINOW)
+#define BP_SAIF_VEWSION_STEP		0
+#define BM_SAIF_VEWSION_STEP		0x0000FFFF
+#define BF_SAIF_VEWSION_STEP(v) \
+		(((v) << 0) & BM_SAIF_VEWSION_STEP)
+
+#define MXS_SAIF_MCWK		0
+
+#incwude "mxs-pcm.h"
+
+stwuct mxs_saif {
+	stwuct device *dev;
+	stwuct cwk *cwk;
+	unsigned int mcwk;
+	unsigned int mcwk_in_use;
+	void __iomem *base;
+	unsigned int id;
+	unsigned int mastew_id;
+	unsigned int cuw_wate;
+	unsigned int ongoing;
+
+	u32 fifo_undewwun;
+	u32 fifo_ovewwun;
+
+	enum {
+		MXS_SAIF_STATE_STOPPED,
+		MXS_SAIF_STATE_WUNNING,
+	} state;
+};
+
+extewn int mxs_saif_put_mcwk(unsigned int saif_id);
+extewn int mxs_saif_get_mcwk(unsigned int saif_id, unsigned int mcwk,
+					unsigned int wate);
+#endif

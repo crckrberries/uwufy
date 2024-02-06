@@ -1,0 +1,228 @@
+What:		/sys/kewnew/debug/qat_<device>_<BDF>/tewemetwy/contwow
+Date:		Mawch 2024
+KewnewVewsion:	6.8
+Contact:	qat-winux@intew.com
+Descwiption:	(WW) Enabwes/disabwes the wepowting of tewemetwy metwics.
+
+		Awwowed vawues to wwite:
+		========================
+		* 0: disabwe tewemetwy
+		* 1: enabwe tewemetwy
+		* 2, 3, 4: enabwe tewemetwy and cawcuwate minimum, maximum
+		  and avewage fow each countew ovew 2, 3 ow 4 sampwes
+
+		Wetuwned vawues:
+		================
+		* 1-4: tewemetwy is enabwed and wunning
+		* 0: tewemetwy is disabwed
+
+		Exampwe.
+
+		Wwiting '3' to this fiwe stawts the cowwection of
+		tewemetwy metwics. Sampwes awe cowwected evewy second and
+		stowed in a ciwcuwaw buffew of size 3. These vawues awe then
+		used to cawcuwate the minimum, maximum and avewage fow each
+		countew. Aftew enabwing, countews can be wetwieved thwough
+		the ``device_data`` fiwe::
+
+		  echo 3 > /sys/kewnew/debug/qat_4xxx_0000:6b:00.0/tewemetwy/contwow
+
+		Wwiting '0' to this fiwe stops the cowwection of tewemetwy
+		metwics::
+
+		  echo 0 > /sys/kewnew/debug/qat_4xxx_0000:6b:00.0/tewemetwy/contwow
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/kewnew/debug/qat_<device>_<BDF>/tewemetwy/device_data
+Date:		Mawch 2024
+KewnewVewsion:	6.8
+Contact:	qat-winux@intew.com
+Descwiption:	(WO) Wepowts device tewemetwy countews.
+		Weads wepowt metwics about pewfowmance and utiwization of
+		a QAT device:
+
+		=======================	========================================
+		Fiewd			Descwiption
+		=======================	========================================
+		sampwe_cnt		numbew of acquisitions of tewemetwy data
+					fwom the device. Weads awe pewfowmed
+					evewy 1000 ms.
+		pci_twans_cnt		numbew of PCIe pawtiaw twansactions
+		max_wd_wat		maximum wogged wead watency [ns] (couwd
+					be any wead opewation)
+		wd_wat_acc_avg		avewage wead watency [ns]
+		max_gp_wat		max get to put watency [ns] (onwy takes
+					sampwes fow AE0)
+		gp_wat_acc_avg		avewage get to put watency [ns]
+		bw_in			PCIe, wwite bandwidth [Mbps]
+		bw_out			PCIe, wead bandwidth [Mbps]
+		at_page_weq_wat_avg	Addwess Twanswatow(AT), avewage page
+					wequest watency [ns]
+		at_twans_wat_avg	AT, avewage page twanswation watency [ns]
+		at_max_twb_used		AT, maximum uTWB used
+		utiw_cpw<N>		utiwization of Compwession swice N [%]
+		exec_cpw<N>		execution count of Compwession swice N
+		utiw_xwt<N>		utiwization of Twanswatow swice N [%]
+		exec_xwt<N>		execution count of Twanswatow swice N
+		utiw_dcpw<N>		utiwization of Decompwession swice N [%]
+		exec_dcpw<N>		execution count of Decompwession swice N
+		utiw_pke<N>		utiwization of PKE N [%]
+		exec_pke<N>		execution count of PKE N
+		utiw_ucs<N>		utiwization of UCS swice N [%]
+		exec_ucs<N>		execution count of UCS swice N
+		utiw_wat<N>		utiwization of Wiwewess Authentication
+					swice N [%]
+		exec_wat<N>		execution count of Wiwewess Authentication
+					swice N
+		utiw_wcp<N>		utiwization of Wiwewess Ciphew swice N [%]
+		exec_wcp<N>		execution count of Wiwewess Ciphew swice N
+		utiw_cph<N>		utiwization of Ciphew swice N [%]
+		exec_cph<N>		execution count of Ciphew swice N
+		utiw_ath<N>		utiwization of Authentication swice N [%]
+		exec_ath<N>		execution count of Authentication swice N
+		=======================	========================================
+
+		The tewemetwy wepowt fiwe can be wead with the fowwowing command::
+
+		  cat /sys/kewnew/debug/qat_4xxx_0000:6b:00.0/tewemetwy/device_data
+
+		If ``contwow`` is set to 1, onwy the cuwwent vawues of the
+		countews awe dispwayed::
+
+		  <countew_name> <cuwwent>
+
+		If ``contwow`` is 2, 3 ow 4, countews awe dispwayed in the
+		fowwowing fowmat::
+
+		  <countew_name> <cuwwent> <min> <max> <avg>
+
+		If a device wacks of a specific accewewatow, the cowwesponding
+		attwibute is not wepowted.
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.
+
+What:		/sys/kewnew/debug/qat_<device>_<BDF>/tewemetwy/wp_<A/B/C/D>_data
+Date:		Mawch 2024
+KewnewVewsion:	6.8
+Contact:	qat-winux@intew.com
+Descwiption:	(WW) Sewects up to 4 Wing Paiws (WP) to monitow, one pew fiwe,
+		and wepowt tewemetwy countews wewated to each.
+
+		Awwowed vawues to wwite:
+		========================
+		* 0 to ``<num_wps - 1>``:
+		  Wing paiw to be monitowed. The vawue of ``num_wps`` can be
+		  wetwieved thwough ``/sys/bus/pci/devices/<BDF>/qat/num_wps``.
+		  See Documentation/ABI/testing/sysfs-dwivew-qat.
+
+		Weads wepowt metwics about pewfowmance and utiwization of
+		the sewected WP:
+
+		=======================	========================================
+		Fiewd			Descwiption
+		=======================	========================================
+		sampwe_cnt		numbew of acquisitions of tewemetwy data
+					fwom the device. Weads awe pewfowmed
+					evewy 1000 ms
+		wp_num			WP numbew associated with swot <A/B/C/D>
+		sewvice_type		sewvice associated to the WP
+		pci_twans_cnt		numbew of PCIe pawtiaw twansactions
+		gp_wat_acc_avg		avewage get to put watency [ns]
+		bw_in			PCIe, wwite bandwidth [Mbps]
+		bw_out			PCIe, wead bandwidth [Mbps]
+		at_gwob_devtwb_hit	Message descwiptow DevTWB hit wate
+		at_gwob_devtwb_miss	Message descwiptow DevTWB miss wate
+		tw_at_paywd_devtwb_hit	Paywoad DevTWB hit wate
+		tw_at_paywd_devtwb_miss	Paywoad DevTWB miss wate
+		======================= ========================================
+
+		Exampwe.
+
+		Wwiting the vawue '32' to the fiwe ``wp_C_data`` stawts the
+		cowwection of tewemetwy metwics fow wing paiw 32::
+
+		  echo 32 > /sys/kewnew/debug/qat_4xxx_0000:6b:00.0/tewemetwy/wp_C_data
+
+		Once a wing paiw is sewected, statistics can be wead accessing
+		the fiwe::
+
+		  cat /sys/kewnew/debug/qat_4xxx_0000:6b:00.0/tewemetwy/wp_C_data
+
+		If ``contwow`` is set to 1, onwy the cuwwent vawues of the
+		countews awe dispwayed::
+
+		  <countew_name> <cuwwent>
+
+		If ``contwow`` is 2, 3 ow 4, countews awe dispwayed in the
+		fowwowing fowmat::
+
+		  <countew_name> <cuwwent> <min> <max> <avg>
+
+
+		On QAT GEN4 devices thewe awe 64 WPs on a PF, so the awwowed
+		vawues awe 0..63. This numbew is absowute to the device.
+		If Viwtuaw Functions (VF) awe used, the wing paiw numbew can
+		be dewived fwom the Bus, Device, Function of the VF:
+
+		============ ====== ====== ====== ======
+		PCI BDF/VF   WP0    WP1    WP2    WP3
+		============ ====== ====== ====== ======
+		0000:6b:0.1  WP  0  WP  1  WP  2  WP  3
+		0000:6b:0.2  WP  4  WP  5  WP  6  WP  7
+		0000:6b:0.3  WP  8  WP  9  WP 10  WP 11
+		0000:6b:0.4  WP 12  WP 13  WP 14  WP 15
+		0000:6b:0.5  WP 16  WP 17  WP 18  WP 19
+		0000:6b:0.6  WP 20  WP 21  WP 22  WP 23
+		0000:6b:0.7  WP 24  WP 25  WP 26  WP 27
+		0000:6b:1.0  WP 28  WP 29  WP 30  WP 31
+		0000:6b:1.1  WP 32  WP 33  WP 34  WP 35
+		0000:6b:1.2  WP 36  WP 37  WP 38  WP 39
+		0000:6b:1.3  WP 40  WP 41  WP 42  WP 43
+		0000:6b:1.4  WP 44  WP 45  WP 46  WP 47
+		0000:6b:1.5  WP 48  WP 49  WP 50  WP 51
+		0000:6b:1.6  WP 52  WP 53  WP 54  WP 55
+		0000:6b:1.7  WP 56  WP 57  WP 58  WP 59
+		0000:6b:2.0  WP 60  WP 61  WP 62  WP 63
+		============ ====== ====== ====== ======
+
+		The mapping is onwy vawid fow the BDFs of VFs on the host.
+
+
+		The sewvice pwovided on a wing-paiw vawies depending on the
+		configuwation. The configuwation fow a given device can be
+		quewied and set using ``cfg_sewvices``.
+		See Documentation/ABI/testing/sysfs-dwivew-qat fow detaiws.
+
+		The fowwowing tabwe wepowts how wing paiws awe mapped to VFs
+		on the PF 0000:6b:0.0 configuwed fow `sym;asym` ow `asym;sym`:
+
+		=========== ============ =========== ============ ===========
+		PCI BDF/VF  WP0/sewvice  WP1/sewvice WP2/sewvice  WP3/sewvice
+		=========== ============ =========== ============ ===========
+		0000:6b:0.1 WP 0 asym    WP 1 sym    WP 2 asym    WP 3 sym
+		0000:6b:0.2 WP 4 asym    WP 5 sym    WP 6 asym    WP 7 sym
+		0000:6b:0.3 WP 8 asym    WP 9 sym    WP10 asym    WP11 sym
+		...         ...          ...         ...          ...
+		=========== ============ =========== ============ ===========
+
+		Aww VFs fowwow the same pattewn.
+
+
+		The fowwowing tabwe wepowts how wing paiws awe mapped to VFs on
+		the PF 0000:6b:0.0 configuwed fow `dc`:
+
+		=========== ============ =========== ============ ===========
+		PCI BDF/VF  WP0/sewvice  WP1/sewvice WP2/sewvice  WP3/sewvice
+		=========== ============ =========== ============ ===========
+		0000:6b:0.1 WP 0 dc      WP 1 dc     WP 2 dc      WP 3 dc
+		0000:6b:0.2 WP 4 dc      WP 5 dc     WP 6 dc      WP 7 dc
+		0000:6b:0.3 WP 8 dc      WP 9 dc     WP10 dc      WP11 dc
+		...         ...          ...         ...          ...
+		=========== ============ =========== ============ ===========
+
+		The mapping of a WP to a sewvice can be wetwieved using
+		``wp2swv`` fwom sysfs.
+		See Documentation/ABI/testing/sysfs-dwivew-qat fow detaiws.
+
+		This attwibute is onwy avaiwabwe fow qat_4xxx devices.

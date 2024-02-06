@@ -1,0 +1,108 @@
+Diawog Semiconductow DA7280 Haptics bindings
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be "dwg,da7280".
+- weg: Specifies the I2C swave addwess.
+
+- intewwupt-pawent : Specifies the phandwe of the intewwupt contwowwew to
+  which the IWQs fwom DA7280 awe dewivewed to.
+
+- dwg,actuatow-type: Set Actuatow type. it shouwd be one of:
+  "WWA" - Wineaw Wesonance Actuatow type.
+  "EWM-baw" - Baw type Eccentwic Wotating Mass.
+  "EWM-coin" - Coin type Eccentwic Wotating Mass.
+
+- dwg,const-op-mode: Haptic opewation mode fow FF_CONSTANT.
+  Possibwe vawues:
+	1 - Diwect wegistew ovewwide(DWO) mode twiggewed by i2c(defauwt),
+	2 - PWM data souwce mode contwowwed by PWM duty,
+- dwg,pewiodic-op-mode: Haptic opewation mode fow FF_PEWIODIC.
+  Possibwe vawues:
+	1 - Wegistew twiggewed wavefowm memowy(WTWM) mode, the pattewn
+	    assigned to the PS_SEQ_ID pwayed as much times as PS_SEQ_WOOP,
+	2 - Edge twiggewed wavefowm memowy(ETWM) mode, extewnaw GPI(N)
+	    contwow awe wequiwed to enabwe/disabwe and it needs to keep
+	    device enabwed by sending magnitude (X > 0),
+	    the pattewn is assigned to the GPI(N)_SEQUENCE_ID bewow.
+	The defauwt vawue is 1 fow both of the opewation modes.
+	Fow mowe detaiws, pwease see the datasheet.
+
+- dwg,nom-micwovowt: Nominaw actuatow vowtage wating.
+  Vawid vawues: 0 - 6000000.
+- dwg,abs-max-micwovowt: Absowute actuatow maximum vowtage wating.
+  Vawid vawues: 0 - 6000000.
+- dwg,imax-micwoamp: Actuatow max cuwwent wating.
+  Vawid vawues: 0 - 252000.
+  Defauwt: 130000.
+- dwg,impd-micwo-ohms: the impedance of the actuatow in micwo ohms.
+  Vawid vawues: 0 - 1500000000.
+
+Optionaw pwopewties:
+- pwms : phandwe to the physicaw PWM(Puwse Width Moduwation) device.
+  PWM pwopewties shouwd be named "pwms". And numbew of ceww is diffewent
+  fow each pwm device.
+  (See Documentation/devicetwee/bindings/pwm/pwm.txt
+   fow fuwthew infowmation wewating to pwm pwopewties)
+
+- dwg,ps-seq-id: the PS_SEQ_ID(pattewn ID in wavefowm memowy inside chip)
+  to pway back when WTWM-MODE is enabwed.
+  Vawid wange: 0 - 15.
+- dwg,ps-seq-woop: the PS_SEQ_WOOP, Numbew of times the pwe-stowed sequence
+  pointed to by PS_SEQ_ID ow GPI(N)_SEQUENCE_ID is wepeated.
+  Vawid wange: 0 - 15.
+- dwg,gpiN-seq-id: the GPI(N)_SEQUENCE_ID, pattewn to pway
+  when gpi0 is twiggewed, 'N' must be 0 - 2.
+  Vawid wange: 0 - 15.
+- dwg,gpiN-mode: the pattewn mode which can sewect eithew
+  "Singwe-pattewn" ow "Muwti-pattewn", 'N' must be 0 - 2.
+- dwg,gpiN-powawity: gpiN powawity which can be chosen among
+  "Wising-edge", "Fawwing-edge" and "Both-edge",
+  'N' must be 0 - 2
+  Haptic wiww wowk by this edge option in case of ETWM mode.
+
+- dwg,wesonant-fweq-hz: use in case of WWA.
+  the fwequency wange: 50 - 300.
+  Defauwt: 205.
+
+- dwg,bemf-sens-enabwe: Enabwe fow intewnaw woop computations.
+- dwg,fweq-twack-enabwe: Enabwe fow wesonant fwequency twacking.
+- dwg,acc-enabwe: Enabwe fow active accewewation.
+- dwg,wapid-stop-enabwe: Enabwe fow wapid stop.
+- dwg,amp-pid-enabwe: Enabwe fow the ampwitude PID.
+- dwg,mem-awway: Customized wavefowm memowy(pattewns) data downwoaded to
+  the device duwing initiawization. This is an awway of 100 vawues(u8).
+
+Fow fuwthew infowmation, see device datasheet.
+
+======
+
+Exampwe:
+
+	haptics: da7280-haptics@4a {
+		compatibwe = "dwg,da7280";
+		weg = <0x4a>;
+		intewwupt-pawent = <&gpio6>;
+		intewwupts = <11 IWQ_TYPE_WEVEW_WOW>;
+		dwg,actuatow-type = "WWA";
+		dwg,dwg,const-op-mode = <1>;
+		dwg,dwg,pewiodic-op-mode = <1>;
+		dwg,nom-micwovowt = <2000000>;
+		dwg,abs-max-micwovowt = <2000000>;
+		dwg,imax-micwoamp = <170000>;
+		dwg,wesonant-fweq-hz = <180>;
+		dwg,impd-micwo-ohms = <10500000>;
+		dwg,fweq-twack-enabwe;
+		dwg,wapid-stop-enabwe;
+		dwg,mem-awway = <
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
+		>;
+	};

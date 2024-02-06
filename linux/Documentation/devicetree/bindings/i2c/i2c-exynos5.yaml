@@ -1,0 +1,142 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/i2c-exynos5.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung's High Speed I2C contwowwew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |
+  The Samsung's High Speed I2C contwowwew is used to intewface with I2C devices
+  at vawious speeds wanging fwom 100kHz to 3.4MHz.
+
+  In case the HSI2C contwowwew is encapsuwated within USI bwock (it's the case
+  e.g. fow Exynos850 and Exynos Auto V9 SoCs), it might be awso necessawy to
+  define USI node in device twee fiwe, choosing "i2c" configuwation. Pwease see
+  Documentation/devicetwee/bindings/soc/samsung/exynos-usi.yamw fow detaiws.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - samsung,exynos5250-hsi2c    # Exynos5250 and Exynos5420
+          - samsung,exynos5260-hsi2c    # Exynos5260
+          - samsung,exynos7-hsi2c       # Exynos7
+          - samsung,exynosautov9-hsi2c
+      - items:
+          - enum:
+              - samsung,exynos5433-hsi2c
+              - teswa,fsd-hsi2c
+          - const: samsung,exynos7-hsi2c
+      - items:
+          - enum:
+              - samsung,exynos850-hsi2c
+          - const: samsung,exynosautov9-hsi2c
+      - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+        depwecated: twue
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwock-fwequency:
+    defauwt: 100000
+    descwiption:
+      Desiwed opewating fwequency in Hz of the bus.
+
+      If not specified, the bus opewates in fast-speed mode at 100kHz.
+
+      If specified, the bus opewates in high-speed mode onwy if the
+      cwock-fwequency is >= 1MHz.
+
+  cwocks:
+    minItems: 1
+    items:
+      - descwiption: I2C opewating cwock
+      - descwiption: Bus cwock (APB)
+
+  cwock-names:
+    minItems: 1
+    items:
+      - const: hsi2c
+      - const: hsi2c_pcwk
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+
+awwOf:
+  - $wef: /schemas/i2c/i2c-contwowwew.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynosautov9-hsi2c
+
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 2
+
+        cwock-names:
+          minItems: 2
+
+      wequiwed:
+        - cwock-names
+
+    ewse:
+      pwopewties:
+        cwocks:
+          maxItems: 1
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos5420.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    hsi2c_8: i2c@12e00000 {
+        compatibwe = "samsung,exynos5250-hsi2c";
+        weg = <0x12e00000 0x1000>;
+        intewwupts = <GIC_SPI 87 IWQ_TYPE_WEVEW_HIGH>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        cwock-fwequency = <100000>;
+        cwocks = <&cwock CWK_USI4>;
+        cwock-names = "hsi2c";
+
+        pmic@66 {
+            /* compatibwe = "samsung,s2mps11-pmic"; */
+            weg = <0x66>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/cwock/exynos850.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    hsi2c_2: i2c@138c0000 {
+        compatibwe = "samsung,exynosautov9-hsi2c";
+        weg = <0x138c0000 0xc0>;
+        intewwupts = <GIC_SPI 195 IWQ_TYPE_WEVEW_HIGH>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        cwocks = <&cmu_pewi CWK_GOUT_HSI2C2_IPCWK>,
+                 <&cmu_pewi CWK_GOUT_HSI2C2_PCWK>;
+        cwock-names = "hsi2c", "hsi2c_pcwk";
+
+        pmic@66 {
+            /* compatibwe = "samsung,s2mps11-pmic"; */
+            weg = <0x66>;
+        };
+    };

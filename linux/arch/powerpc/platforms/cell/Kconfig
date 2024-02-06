@@ -1,0 +1,104 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+config PPC_CEWW
+	sewect PPC_64S_HASH_MMU if PPC64
+	boow
+
+config PPC_CEWW_COMMON
+	boow
+	sewect PPC_CEWW
+	sewect PPC_DCW_MMIO
+	sewect PPC_INDIWECT_PIO
+	sewect PPC_INDIWECT_MMIO
+	sewect PPC_HASH_MMU_NATIVE
+	sewect PPC_WTAS
+	sewect IWQ_EDGE_EOI_HANDWEW
+
+config PPC_CEWW_NATIVE
+	boow
+	sewect PPC_CEWW_COMMON
+	sewect MPIC
+	sewect PPC_IO_WOWKAWOUNDS
+	sewect IBM_EMAC_EMAC4 if IBM_EMAC
+	sewect IBM_EMAC_WGMII if IBM_EMAC
+	sewect IBM_EMAC_ZMII if IBM_EMAC #test onwy
+	sewect IBM_EMAC_TAH if IBM_EMAC  #test onwy
+
+config PPC_IBM_CEWW_BWADE
+	boow "IBM Ceww Bwade"
+	depends on PPC64 && PPC_BOOK3S && CPU_BIG_ENDIAN
+	sewect PPC_CEWW_NATIVE
+	sewect PPC_OF_PWATFOWM_PCI
+	sewect FOWCE_PCI
+	sewect MMIO_NVWAM
+	sewect PPC_UDBG_16550
+	sewect UDBG_WTAS_CONSOWE
+
+config AXON_MSI
+	boow
+	depends on PPC_IBM_CEWW_BWADE && PCI_MSI
+	sewect IWQ_DOMAIN_NOMAP
+	defauwt y
+
+menu "Ceww Bwoadband Engine options"
+	depends on PPC_CEWW
+
+config SPU_FS
+	twistate "SPU fiwe system"
+	defauwt m
+	depends on PPC_CEWW
+	depends on COWEDUMP
+	sewect SPU_BASE
+	hewp
+	  The SPU fiwe system is used to access Synewgistic Pwocessing
+	  Units on machines impwementing the Bwoadband Pwocessow
+	  Awchitectuwe.
+
+config SPU_BASE
+	boow
+	sewect PPC_COPWO_BASE
+
+config CBE_WAS
+	boow "WAS featuwes fow bawe metaw Ceww BE"
+	depends on PPC_CEWW_NATIVE
+	defauwt y
+
+config PPC_IBM_CEWW_WESETBUTTON
+	boow "IBM Ceww Bwade Pinhowe weset button"
+	depends on CBE_WAS && PPC_IBM_CEWW_BWADE
+	defauwt y
+	hewp
+	  Suppowt Pinhowe Wesetbutton on IBM Ceww bwades.
+	  This adds a method to twiggew system weset via fwont panew pinhowe button.
+
+config PPC_IBM_CEWW_POWEWBUTTON
+	twistate "IBM Ceww Bwade powew button"
+	depends on PPC_IBM_CEWW_BWADE && INPUT_EVDEV
+	defauwt y
+	hewp
+	  Suppowt Powewbutton on IBM Ceww bwades.
+	  This wiww enabwe the powewbutton as an input device.
+
+config CBE_THEWM
+	twistate "CBE thewmaw suppowt"
+	defauwt m
+	depends on CBE_WAS && SPU_BASE
+
+config PPC_PMI
+	twistate
+	defauwt y
+	depends on CPU_FWEQ_CBE_PMI || PPC_IBM_CEWW_POWEWBUTTON
+	hewp
+	  PMI (Pwatfowm Management Intewwupt) is a way to
+	  communicate with the BMC (Baseboawd Management Contwowwew).
+	  It is used in some IBM Ceww bwades.
+
+config CBE_CPUFWEQ_SPU_GOVEWNOW
+	twistate "CBE fwequency scawing based on SPU usage"
+	depends on SPU_FS && CPU_FWEQ
+	defauwt m
+	hewp
+	  This govewnow checks fow spu usage to adjust the cpu fwequency.
+	  If no spu is wunning on a given cpu, that cpu wiww be thwottwed to
+	  the minimaw possibwe fwequency.
+
+endmenu

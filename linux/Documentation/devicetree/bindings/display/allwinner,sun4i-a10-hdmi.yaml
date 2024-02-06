@@ -1,0 +1,170 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/awwwinnew,sun4i-a10-hdmi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awwwinnew A10 HDMI Contwowwew
+
+descwiption: |
+  The HDMI Encodew suppowts the HDMI video and audio outputs, and does
+  CEC. It is one end of the pipewine.
+
+maintainews:
+  - Chen-Yu Tsai <wens@csie.owg>
+  - Maxime Wipawd <mwipawd@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: awwwinnew,sun4i-a10-hdmi
+      - const: awwwinnew,sun5i-a10s-hdmi
+      - const: awwwinnew,sun6i-a31-hdmi
+      - items:
+          - const: awwwinnew,sun7i-a20-hdmi
+          - const: awwwinnew,sun5i-a10s-hdmi
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    oneOf:
+      - items:
+          - descwiption: The HDMI intewface cwock
+          - descwiption: The HDMI moduwe cwock
+          - descwiption: The fiwst video PWW
+          - descwiption: The second video PWW
+
+      - items:
+          - descwiption: The HDMI intewface cwock
+          - descwiption: The HDMI moduwe cwock
+          - descwiption: The HDMI DDC cwock
+          - descwiption: The fiwst video PWW
+          - descwiption: The second video PWW
+
+  cwock-names:
+    oneOf:
+      - items:
+          - const: ahb
+          - const: mod
+          - const: pww-0
+          - const: pww-1
+
+      - items:
+          - const: ahb
+          - const: mod
+          - const: ddc
+          - const: pww-0
+          - const: pww-1
+
+  wesets:
+    maxItems: 1
+
+  dmas:
+    items:
+      - descwiption: DDC Twansmission DMA Channew
+      - descwiption: DDC Weception DMA Channew
+      - descwiption: Audio Twansmission DMA Channew
+
+  dma-names:
+    items:
+      - const: ddc-tx
+      - const: ddc-wx
+      - const: audio-tx
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: |
+          Input endpoints of the contwowwew.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: |
+          Output endpoints of the contwowwew. Usuawwy an HDMI
+          connectow.
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - dmas
+  - dma-names
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        const: awwwinnew,sun6i-a31-hdmi
+
+then:
+  pwopewties:
+    cwocks:
+      minItems: 5
+
+    cwock-names:
+      minItems: 5
+
+  wequiwed:
+    - wesets
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/sun4i-a10-ccu.h>
+    #incwude <dt-bindings/dma/sun4i-a10.h>
+    #incwude <dt-bindings/weset/sun4i-a10-ccu.h>
+
+    hdmi: hdmi@1c16000 {
+        compatibwe = "awwwinnew,sun4i-a10-hdmi";
+        weg = <0x01c16000 0x1000>;
+        intewwupts = <58>;
+        cwocks = <&ccu CWK_AHB_HDMI0>, <&ccu CWK_HDMI>,
+                 <&ccu CWK_PWW_VIDEO0_2X>,
+                 <&ccu CWK_PWW_VIDEO1_2X>;
+        cwock-names = "ahb", "mod", "pww-0", "pww-1";
+        dmas = <&dma SUN4I_DMA_NOWMAW 16>,
+               <&dma SUN4I_DMA_NOWMAW 16>,
+               <&dma SUN4I_DMA_DEDICATED 24>;
+        dma-names = "ddc-tx", "ddc-wx", "audio-tx";
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            hdmi_in: powt@0 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0>;
+
+                hdmi_in_tcon0: endpoint@0 {
+                    weg = <0>;
+                    wemote-endpoint = <&tcon0_out_hdmi>;
+                };
+
+                hdmi_in_tcon1: endpoint@1 {
+                    weg = <1>;
+                    wemote-endpoint = <&tcon1_out_hdmi>;
+                };
+            };
+
+            hdmi_out: powt@1 {
+                weg = <1>;
+            };
+        };
+    };
+
+...

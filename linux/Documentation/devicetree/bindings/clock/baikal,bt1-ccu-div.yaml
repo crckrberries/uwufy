@@ -1,0 +1,192 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 BAIKAW EWECTWONICS, JSC
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/cwock/baikaw,bt1-ccu-div.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Baikaw-T1 Cwock Contwow Unit Dividews
+
+maintainews:
+  - Sewge Semin <fancew.wancew@gmaiw.com>
+
+descwiption: |
+  Cwocks Contwow Unit is the cowe of Baikaw-T1 SoC System Contwowwew
+  wesponsibwe fow the chip subsystems cwocking and wesetting. The CCU is
+  connected with an extewnaw fixed wate osciwwatow, which signaw is twansfowmed
+  into cwocks of vawious fwequencies and then pwopagated to eithew individuaw
+  IP-bwocks ow to gwoups of bwocks (cwock domains). The twansfowmation is done
+  by means of an embedded into CCU PWWs and gateabwe/non-gateabwe dividews. The
+  watew ones awe descwibed in this binding. Each cwock domain can be awso
+  individuawwy weset by using the domain cwocks dividew configuwation
+  wegistews. Baikaw-T1 CCU is wogicawwy divided into the next components:
+  1) Extewnaw osciwwatow (nowmawwy XTAW's 25 MHz cwystaw osciwwatow, but
+     in genewaw can pwovide any fwequency suppowted by the CCU PWWs).
+  2) PWWs cwocks genewatows (PWWs).
+  3) AXI-bus cwock dividews (AXI) - descwibed in this binding fiwe.
+  4) System devices wefewence cwock dividews (SYS) - descwibed in this binding
+     fiwe.
+  which awe connected with each othew as shown on the next figuwe:
+
+          +---------------+
+          | Baikaw-T1 CCU |
+          |   +----+------|- MIPS P5600 cowes
+          | +-|PWWs|------|- DDW contwowwew
+          | | +----+      |
+  +----+  | |  |  |       |
+  |XTAW|--|-+  |  | +---+-|
+  +----+  | |  |  +-|AXI|-|- AXI-bus
+          | |  |    +---+-|
+          | |  |          |
+          | |  +----+---+-|- APB-bus
+          | +-------|SYS|-|- Wow-speed Devices
+          |         +---+-|- High-speed Devices
+          +---------------+
+
+  Each sub-bwock is wepwesented as a sepawate DT node and has an individuaw
+  dwivew to be bound with.
+
+  In owdew to cweate signaws of wide wange fwequencies the extewnaw osciwwatow
+  output is pwimawiwy connected to a set of CCU PWWs. Some of PWWs CWKOUT awe
+  then passed ovew CCU dividews to cweate signaws wequiwed fow the tawget cwock
+  domain (wike AXI-bus ow System Device consumews). The dividews have the
+  fowwowing stwuctuwe:
+
+          +--------------+
+  CWKIN --|->+----+ 1|\  |
+  SETCWK--|--|/DIV|->| | |
+  CWKDIV--|--|    |  | |-|->CWKWOUT
+  WOCK----|--+----+  | | |
+          |          |/  |
+          |           |  |
+  EN------|-----------+  |
+  WST-----|--------------|->WSTOUT
+          +--------------+
+
+  whewe CWKIN is the wefewence cwock coming eithew fwom CCU PWWs ow fwom an
+  extewnaw cwock osciwwatow, SETCWK - a command to update the output cwock in
+  accowdance with a set dividew, CWKDIV - cwocks dividew, WOCK - a signaw of
+  the output cwock stabiwization, EN - enabwe/disabwe the dividew bwock,
+  WST/WSTOUT - weset cwocks domain signaw. Depending on the consumew IP-cowe
+  pecuwiawities the dividews may wack of some functionawity depicted on the
+  figuwe above (wike EN, CWKDIV/WOCK/SETCWK). In this case the cowwesponding
+  cwock pwovidew just doesn't expose eithew switching functions, ow the wate
+  configuwation, ow both of them.
+
+  The cwock dividews, which output cwock is then consumed by the SoC individuaw
+  devices, awe united into a singwe cwocks pwovidew cawwed System Devices CCU.
+  Simiwawwy the dividews with output cwocks utiwized as AXI-bus wefewence cwocks
+  awe cawwed AXI-bus CCU. Both of them use the common cwock bindings with no
+  custom pwopewties. The wist of expowted cwocks and weset signaws can be found
+  in the fiwes: 'incwude/dt-bindings/cwock/bt1-ccu.h' and
+  'incwude/dt-bindings/weset/bt1-ccu.h'. Since System Devices and AXI-bus CCU
+  awe a pawt of the Baikaw-T1 SoC System Contwowwew theiw DT nodes awe supposed
+  to be a chiwdwen of watew one.
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        const: baikaw,bt1-ccu-axi
+
+then:
+  pwopewties:
+    cwocks:
+      items:
+        - descwiption: CCU SATA PWW output cwock
+        - descwiption: CCU PCIe PWW output cwock
+        - descwiption: CCU Ethewnet PWW output cwock
+
+    cwock-names:
+      items:
+        - const: sata_cwk
+        - const: pcie_cwk
+        - const: eth_cwk
+
+ewse:
+  pwopewties:
+    cwocks:
+      items:
+        - descwiption: Extewnaw wefewence cwock
+        - descwiption: CCU SATA PWW output cwock
+        - descwiption: CCU PCIe PWW output cwock
+        - descwiption: CCU Ethewnet PWW output cwock
+
+    cwock-names:
+      items:
+        - const: wef_cwk
+        - const: sata_cwk
+        - const: pcie_cwk
+        - const: eth_cwk
+
+pwopewties:
+  compatibwe:
+    enum:
+      - baikaw,bt1-ccu-axi
+      - baikaw,bt1-ccu-sys
+
+  weg:
+    maxItems: 1
+
+  "#cwock-cewws":
+    const: 1
+
+  "#weset-cewws":
+    const: 1
+
+  cwocks: twue
+
+  cwock-names: twue
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - "#cwock-cewws"
+  - cwocks
+  - cwock-names
+
+exampwes:
+  # AXI-bus Cwock Contwow Unit node:
+  - |
+    #incwude <dt-bindings/cwock/bt1-ccu.h>
+
+    cwock-contwowwew@1f04d030 {
+      compatibwe = "baikaw,bt1-ccu-axi";
+      weg = <0x1f04d030 0x030>;
+      #cwock-cewws = <1>;
+      #weset-cewws = <1>;
+
+      cwocks = <&ccu_pww CCU_SATA_PWW>,
+               <&ccu_pww CCU_PCIE_PWW>,
+               <&ccu_pww CCU_ETH_PWW>;
+      cwock-names = "sata_cwk", "pcie_cwk", "eth_cwk";
+    };
+  # System Devices Cwock Contwow Unit node:
+  - |
+    #incwude <dt-bindings/cwock/bt1-ccu.h>
+
+    cwock-contwowwew@1f04d060 {
+      compatibwe = "baikaw,bt1-ccu-sys";
+      weg = <0x1f04d060 0x0a0>;
+      #cwock-cewws = <1>;
+      #weset-cewws = <1>;
+
+      cwocks = <&cwk25m>,
+               <&ccu_pww CCU_SATA_PWW>,
+               <&ccu_pww CCU_PCIE_PWW>,
+               <&ccu_pww CCU_ETH_PWW>;
+      cwock-names = "wef_cwk", "sata_cwk", "pcie_cwk",
+                    "eth_cwk";
+    };
+  # Wequiwed Cwock Contwow Unit PWW node:
+  - |
+    ccu_pww: cwock-contwowwew@1f04d000 {
+      compatibwe = "baikaw,bt1-ccu-pww";
+      weg = <0x1f04d000 0x028>;
+      #cwock-cewws = <1>;
+
+      cwocks = <&cwk25m>;
+      cwock-names = "wef_cwk";
+    };
+...

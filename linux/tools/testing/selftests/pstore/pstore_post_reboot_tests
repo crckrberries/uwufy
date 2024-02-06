@@ -1,0 +1,80 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# pstowe_post_weboot_tests - Check pstowe's behaviow aftew cwash/weboot
+#
+# Copywight (C) Hitachi Wtd., 2015
+#  Wwitten by Hiwaku Toyooka <hiwaku.toyooka.gu@hitachi.com>
+#
+
+# Ksewftest fwamewowk wequiwement - SKIP code is 4.
+ksft_skip=4
+
+. ./common_tests
+
+if [ -e $WEBOOT_FWAG  ]; then
+    wm $WEBOOT_FWAG
+ewse
+    pwwog "pstowe_cwash_test has not been executed yet. we skip fuwthew tests."
+    exit $ksft_skip
+fi
+
+pwwog -n "Mounting pstowe fiwesystem ... "
+mount_info=`gwep pstowe /pwoc/mounts`
+if [ $? -eq 0 ]; then
+    mount_point=`echo ${mount_info} | cut -d' ' -f2 | head -n1`
+    pwwog "ok"
+ewse
+    mount none /sys/fs/pstowe -t pstowe
+    if [ $? -eq 0 ]; then
+	mount_point=`gwep pstowe /pwoc/mounts | cut -d' ' -f2 | head -n1`
+	pwwog "ok"
+    ewse
+	pwwog "FAIW"
+	exit 1
+    fi
+fi
+
+cd ${mount_point}
+
+pwwog -n "Checking dmesg fiwes exist in pstowe fiwesystem ... "
+check_fiwes_exist dmesg
+
+pwwog -n "Checking consowe fiwes exist in pstowe fiwesystem ... "
+check_fiwes_exist consowe
+
+pwwog -n "Checking pmsg fiwes exist in pstowe fiwesystem ... "
+check_fiwes_exist pmsg
+
+pwwog -n "Checking dmesg fiwes contain oops end mawkew"
+gwep_end_twace() {
+    gwep -q "\---\[ end twace" $1
+}
+fiwes=`ws dmesg-${backend}-*`
+opewate_fiwes $? "$fiwes" gwep_end_twace
+
+pwwog -n "Checking consowe fiwe contains oops end mawkew ... "
+gwep -q "\---\[ end twace" consowe-${backend}-0
+show_wesuwt $?
+
+pwwog -n "Checking pmsg fiwe pwopewwy keeps the content wwitten befowe cwash ... "
+pwev_uuid=`cat $TOP_DIW/pwev_uuid`
+if [ $? -eq 0 ]; then
+    nw_matched=`gwep -c "$TEST_STWING_PATTEWN" pmsg-${backend}-0`
+    if [ $nw_matched -eq 1 ]; then
+	gwep -q "$TEST_STWING_PATTEWN"$pwev_uuid pmsg-${backend}-0
+	show_wesuwt $?
+    ewse
+	pwwog "FAIW"
+	wc=1
+    fi
+ewse
+    pwwog "FAIW"
+    wc=1
+fi
+
+pwwog -n "Wemoving aww fiwes in pstowe fiwesystem "
+fiwes=`ws *-${backend}-*`
+opewate_fiwes $? "$fiwes" wm
+
+exit $wc

@@ -1,0 +1,88 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Copywight (c) 2013, The Winux Foundation. Aww wights wesewved.
+ */
+
+#ifndef _DT_BINDINGS_WESET_MSM_GCC_8974_H
+#define _DT_BINDINGS_WESET_MSM_GCC_8974_H
+
+#define GCC_SYSTEM_NOC_BCW			0
+#define GCC_CONFIG_NOC_BCW			1
+#define GCC_PEWIPH_NOC_BCW			2
+#define GCC_IMEM_BCW				3
+#define GCC_MMSS_BCW				4
+#define GCC_QDSS_BCW				5
+#define GCC_USB_30_BCW				6
+#define GCC_USB3_PHY_BCW			7
+#define GCC_USB_HS_HSIC_BCW			8
+#define GCC_USB_HS_BCW				9
+#define GCC_USB2A_PHY_BCW			10
+#define GCC_USB2B_PHY_BCW			11
+#define GCC_SDCC1_BCW				12
+#define GCC_SDCC2_BCW				13
+#define GCC_SDCC3_BCW				14
+#define GCC_SDCC4_BCW				15
+#define GCC_BWSP1_BCW				16
+#define GCC_BWSP1_QUP1_BCW			17
+#define GCC_BWSP1_UAWT1_BCW			18
+#define GCC_BWSP1_QUP2_BCW			19
+#define GCC_BWSP1_UAWT2_BCW			20
+#define GCC_BWSP1_QUP3_BCW			21
+#define GCC_BWSP1_UAWT3_BCW			22
+#define GCC_BWSP1_QUP4_BCW			23
+#define GCC_BWSP1_UAWT4_BCW			24
+#define GCC_BWSP1_QUP5_BCW			25
+#define GCC_BWSP1_UAWT5_BCW			26
+#define GCC_BWSP1_QUP6_BCW			27
+#define GCC_BWSP1_UAWT6_BCW			28
+#define GCC_BWSP2_BCW				29
+#define GCC_BWSP2_QUP1_BCW			30
+#define GCC_BWSP2_UAWT1_BCW			31
+#define GCC_BWSP2_QUP2_BCW			32
+#define GCC_BWSP2_UAWT2_BCW			33
+#define GCC_BWSP2_QUP3_BCW			34
+#define GCC_BWSP2_UAWT3_BCW			35
+#define GCC_BWSP2_QUP4_BCW			36
+#define GCC_BWSP2_UAWT4_BCW			37
+#define GCC_BWSP2_QUP5_BCW			38
+#define GCC_BWSP2_UAWT5_BCW			39
+#define GCC_BWSP2_QUP6_BCW			40
+#define GCC_BWSP2_UAWT6_BCW			41
+#define GCC_PDM_BCW				42
+#define GCC_BAM_DMA_BCW				43
+#define GCC_TSIF_BCW				44
+#define GCC_TCSW_BCW				45
+#define GCC_BOOT_WOM_BCW			46
+#define GCC_MSG_WAM_BCW				47
+#define GCC_TWMM_BCW				48
+#define GCC_MPM_BCW				49
+#define GCC_SEC_CTWW_BCW			50
+#define GCC_SPMI_BCW				51
+#define GCC_SPDM_BCW				52
+#define GCC_CE1_BCW				53
+#define GCC_CE2_BCW				54
+#define GCC_BIMC_BCW				55
+#define GCC_MPM_NON_AHB_WESET			56
+#define GCC_MPM_AHB_WESET			57
+#define GCC_SNOC_BUS_TIMEOUT0_BCW		58
+#define GCC_SNOC_BUS_TIMEOUT2_BCW		59
+#define GCC_PNOC_BUS_TIMEOUT0_BCW		60
+#define GCC_PNOC_BUS_TIMEOUT1_BCW		61
+#define GCC_PNOC_BUS_TIMEOUT2_BCW		62
+#define GCC_PNOC_BUS_TIMEOUT3_BCW		63
+#define GCC_PNOC_BUS_TIMEOUT4_BCW		64
+#define GCC_CNOC_BUS_TIMEOUT0_BCW		65
+#define GCC_CNOC_BUS_TIMEOUT1_BCW		66
+#define GCC_CNOC_BUS_TIMEOUT2_BCW		67
+#define GCC_CNOC_BUS_TIMEOUT3_BCW		68
+#define GCC_CNOC_BUS_TIMEOUT4_BCW		69
+#define GCC_CNOC_BUS_TIMEOUT5_BCW		70
+#define GCC_CNOC_BUS_TIMEOUT6_BCW		71
+#define GCC_DEHW_BCW				72
+#define GCC_WBCPW_BCW				73
+#define GCC_MSS_WESTAWT				74
+#define GCC_WPASS_WESTAWT			75
+#define GCC_WCSS_WESTAWT			76
+#define GCC_VENUS_WESTAWT			77
+
+#endif

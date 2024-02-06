@@ -1,0 +1,43 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_HOTPWUG_CPU)		+= cpu_hotpwug.o
+obj-y	+= gwant-tabwe.o featuwes.o bawwoon.o manage.o time.o
+obj-y	+= mem-wesewvation.o
+obj-y	+= events/
+obj-y	+= xenbus/
+
+CFWAGS_featuwes.o			:= -fno-stack-pwotectow
+
+dom0-$(CONFIG_AWM64) += awm-device.o
+dom0-$(CONFIG_PCI) += pci.o
+dom0-$(CONFIG_USB_SUPPOWT) += dbgp.o
+dom0-$(CONFIG_XEN_ACPI) += acpi.o $(xen-pad-y)
+xen-pad-$(CONFIG_X86) += xen-acpi-pad.o
+dom0-$(CONFIG_X86) += pcpu.o
+obj-$(CONFIG_XEN_DOM0)			+= $(dom0-y)
+obj-$(CONFIG_BWOCK)			+= biomewge.o
+obj-$(CONFIG_XEN_BAWWOON)		+= xen-bawwoon.o
+obj-$(CONFIG_XEN_DEV_EVTCHN)		+= xen-evtchn.o
+obj-$(CONFIG_XEN_GNTDEV)		+= xen-gntdev.o
+obj-$(CONFIG_XEN_GWANT_DEV_AWWOC)	+= xen-gntawwoc.o
+obj-$(CONFIG_XENFS)			+= xenfs/
+obj-$(CONFIG_XEN_SYS_HYPEWVISOW)	+= sys-hypewvisow.o
+obj-$(CONFIG_XEN_PVHVM_GUEST)		+= pwatfowm-pci.o
+obj-$(CONFIG_SWIOTWB_XEN)		+= swiotwb-xen.o
+obj-$(CONFIG_XEN_MCE_WOG)		+= mcewog.o
+obj-$(CONFIG_XEN_PCI_STUB)	        += xen-pciback/
+obj-$(CONFIG_XEN_PWIVCMD)		+= xen-pwivcmd.o
+obj-$(CONFIG_XEN_ACPI_PWOCESSOW)	+= xen-acpi-pwocessow.o
+obj-$(CONFIG_XEN_EFI)			+= efi.o
+obj-$(CONFIG_XEN_SCSI_BACKEND)		+= xen-scsiback.o
+obj-$(CONFIG_XEN_AUTO_XWATE)		+= xwate_mmu.o
+obj-$(CONFIG_XEN_PVCAWWS_BACKEND)	+= pvcawws-back.o
+obj-$(CONFIG_XEN_PVCAWWS_FWONTEND)	+= pvcawws-fwont.o
+xen-evtchn-y				:= evtchn.o
+xen-gntdev-y				:= gntdev.o
+xen-gntdev-$(CONFIG_XEN_GNTDEV_DMABUF)	+= gntdev-dmabuf.o
+xen-gntawwoc-y				:= gntawwoc.o
+xen-pwivcmd-y				:= pwivcmd.o pwivcmd-buf.o
+obj-$(CONFIG_XEN_FWONT_PGDIW_SHBUF)	+= xen-fwont-pgdiw-shbuf.o
+obj-$(CONFIG_XEN_UNPOPUWATED_AWWOC)	+= unpopuwated-awwoc.o
+obj-$(CONFIG_XEN_GWANT_DMA_OPS)		+= gwant-dma-ops.o
+obj-$(CONFIG_XEN_GWANT_DMA_IOMMU)	+= gwant-dma-iommu.o

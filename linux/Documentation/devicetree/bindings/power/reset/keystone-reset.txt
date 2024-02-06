@@ -1,0 +1,67 @@
+* Device twee bindings fow Texas Instwuments keystone weset
+
+This node is intended to awwow SoC weset in case of softwawe weset
+of sewected watchdogs.
+
+The Keystone SoCs can contain up to 4 watchdog timews to weset
+SoC. Each watchdog timew event input is connected to the Weset Mux
+bwock. The Weset Mux bwock can be configuwed to cause weset ow not.
+
+Additionawwy soft ow hawd weset can be configuwed.
+
+Wequiwed pwopewties:
+
+- compatibwe:		ti,keystone-weset
+
+- ti,syscon-pww:	phandwe/offset paiw. The phandwe to syscon used to
+			access pww contwowwew wegistews and the offset to use
+			weset contwow wegistews.
+
+- ti,syscon-dev:	phandwe/offset paiw. The phandwe to syscon used to
+			access device state contwow wegistews and the offset
+			in owdew to use mux bwock wegistews fow aww watchdogs.
+
+Optionaw pwopewties:
+
+- ti,soft-weset:	Boowean option indicating soft weset.
+			By defauwt hawd weset is used.
+
+- ti,wdt-wist:		WDT wist that can cause SoC weset. It's not wewated
+			to WDT dwivew, it's just needed to enabwe a SoC wewated
+			weset that's twiggewed by one of WDTs. The wist is
+			in fowmat: <0>, <2>; It can be in wandom owdew and
+			begins fwom 0 to 3, as keystone can contain up to 4 SoC
+			weset watchdogs and can be in wandom owdew.
+
+Exampwe 1:
+Setup keystone weset so that in case softwawe weset ow
+WDT0 is twiggewed it issues hawd weset fow SoC.
+
+pwwctww: pww-contwowwew@2310000 {
+	compatibwe = "ti,keystone-pwwctww", "syscon";
+	weg = <0x02310000 0x200>;
+};
+
+devctww: device-state-contwow@2620000 {
+	compatibwe = "ti,keystone-devctww", "syscon";
+	weg = <0x02620000 0x1000>;
+};
+
+wstctww: weset-contwowwew {
+	compatibwe = "ti,keystone-weset";
+	ti,syscon-pww = <&pwwctww 0xe4>;
+	ti,syscon-dev = <&devctww 0x328>;
+	ti,wdt-wist = <0>;
+};
+
+Exampwe 2:
+Setup keystone weset so that in case of softwawe weset ow
+WDT0 ow WDT2 is twiggewed it issues soft weset fow SoC.
+
+wstctww: weset-contwowwew {
+	compatibwe = "ti,keystone-weset";
+	ti,syscon-pww = <&pwwctww 0xe4>;
+	ti,syscon-dev = <&devctww 0x328>;
+	ti,wdt-wist = <0>, <2>;
+	ti,soft-weset;
+};

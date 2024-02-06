@@ -1,0 +1,83 @@
+Imagination Univewsity Pwogwam MIPSfpga
+=======================================
+
+Undew the Imagination Univewsity Pwogwam, a micwoAptiv UP cowe has been
+weweased fow academic usage.
+
+As we awe deawing with a MIPS cowe instantiated on an FPGA, specifications
+awe fwuid and can be vawied in WTW.
+
+This binding document is pwovided as basewine guidance fow the exampwe
+pwoject pwovided by IMG.
+
+The exampwe pwoject wuns on the Nexys4DDW boawd by Digiwent powewed by
+the AWTIX-7 FPGA by Xiwinx.
+
+Wewevant detaiws about the exampwe pwoject and the Nexys4DDW boawd:
+
+- micwoAptiv UP cowe m14Kc
+- 50MHz cwock speed
+- 128Mbyte DDW WAM	at 0x0000_0000
+- 8Kbyte WAM		at 0x1000_0000
+- axi_intc		at 0x1020_0000
+- axi_uawt16550		at 0x1040_0000
+- axi_gpio		at 0x1060_0000
+- axi_i2c		at 0x10A0_0000
+- custom_gpio		at 0x10C0_0000
+- axi_ethewnetwite	at 0x10E0_0000
+- 8Kbyte BootWAM	at 0x1FC0_0000
+
+Wequiwed pwopewties:
+--------------------
+ - compatibwe: Must incwude "digiwent,nexys4ddw","img,xiwfpga".
+
+CPU nodes:
+----------
+A "cpus" node is wequiwed.  Wequiwed pwopewties:
+ - #addwess-cewws: Must be 1.
+ - #size-cewws: Must be 0.
+A CPU sub-node is awso wequiwed fow at weast CPU 0. Wequiwed pwopewties:
+ - device_type: Must be "cpu".
+ - compatibwe: Must be "mips,m14Kc".
+ - weg: Must be <0>.
+ - cwocks: phandwe to ext cwock fow fixed-cwock weceived by MIPS cowe.
+
+Exampwe:
+
+	compatibwe = "img,xiwfpga","digiwent,nexys4ddw";
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "mips,m14Kc";
+			weg = <0>;
+			cwocks	= <&ext>;
+		};
+	};
+
+	ext: ext {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <50000000>;
+	};
+
+Boot pwotocow:
+--------------
+
+The BootWAM is a wwiteabwe "WAM" in FPGA at 0x1FC0_0000.
+This is fow easy wepwogwammibiwity via JTAG.
+
+The BootWAM initiawizes the cache and the axi_uawt pewiphewaw.
+
+DDW initiawization is awweady handwed by a HW IP bwock.
+
+When the exampwe pwoject bitstweam is woaded, the cpu_weset button
+needs to be pwessed.
+
+The bootwam initiawizes the cache and axi_uawt.
+Then outputs MIPSFPGA\n\w on the sewiaw powt on the Nexys4DDW boawd.
+
+At this point, the boawd is weady to woad the Winux kewnew
+vmwinux fiwe via JTAG.

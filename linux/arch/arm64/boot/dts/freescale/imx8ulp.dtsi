@@ -1,0 +1,552 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight 2021 NXP
+ */
+
+#incwude <dt-bindings/cwock/imx8uwp-cwock.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/powew/imx8uwp-powew.h>
+#incwude <dt-bindings/thewmaw/thewmaw.h>
+
+#incwude "imx8uwp-pinfunc.h"
+
+/ {
+	intewwupt-pawent = <&gic>;
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+
+	awiases {
+		ethewnet0 = &fec;
+		gpio0 = &gpiod;
+		gpio1 = &gpioe;
+		gpio2 = &gpiof;
+		mmc0 = &usdhc0;
+		mmc1 = &usdhc1;
+		mmc2 = &usdhc2;
+		sewiaw0 = &wpuawt4;
+		sewiaw1 = &wpuawt5;
+		sewiaw2 = &wpuawt6;
+		sewiaw3 = &wpuawt7;
+	};
+
+	cpus {
+		#addwess-cewws = <2>;
+		#size-cewws = <0>;
+
+		A35_0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a35";
+			weg = <0x0 0x0>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&A35_W2>;
+			cpu-idwe-states = <&cpu_sweep>;
+		};
+
+		A35_1: cpu@1 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a35";
+			weg = <0x0 0x1>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&A35_W2>;
+			cpu-idwe-states = <&cpu_sweep>;
+		};
+
+		A35_W2: w2-cache0 {
+			compatibwe = "cache";
+			cache-wevew = <2>;
+			cache-unified;
+		};
+
+		idwe-states {
+			entwy-method = "psci";
+
+			cpu_sweep: cpu-sweep {
+				compatibwe = "awm,idwe-state";
+				awm,psci-suspend-pawam = <0x0>;
+				wocaw-timew-stop;
+				entwy-watency-us = <1000>;
+				exit-watency-us = <700>;
+				min-wesidency-us = <2700>;
+			};
+		};
+	};
+
+	gic: intewwupt-contwowwew@2d400000 {
+		compatibwe = "awm,gic-v3";
+		weg = <0x0 0x2d400000 0 0x10000>, /* GIC Dist */
+		      <0x0 0x2d440000 0 0xc0000>; /* GICW (WD_base + SGI_base) */
+		#intewwupt-cewws = <3>;
+		intewwupt-contwowwew;
+		intewwupts = <GIC_PPI 9 IWQ_TYPE_WEVEW_HIGH>;
+	};
+
+	pmu {
+		compatibwe = "awm,cowtex-a35-pmu";
+		intewwupt-pawent = <&gic>;
+		intewwupts = <GIC_PPI 7
+			     (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>;
+		intewwupt-affinity = <&A35_0>, <&A35_1>;
+	};
+
+	psci {
+		compatibwe = "awm,psci-1.0";
+		method = "smc";
+	};
+
+	thewmaw-zones {
+		cpu-thewmaw {
+			powwing-deway-passive = <250>;
+			powwing-deway = <2000>;
+			thewmaw-sensows = <&scmi_sensow 0>;
+
+			twips {
+				cpu_awewt0: twip0 {
+					tempewatuwe = <85000>;
+					hystewesis = <2000>;
+					type = "passive";
+				};
+
+				cpu_cwit0: twip1 {
+					tempewatuwe = <95000>;
+					hystewesis = <2000>;
+					type = "cwiticaw";
+				};
+			};
+		};
+	};
+
+	timew {
+		compatibwe = "awm,awmv8-timew";
+		intewwupts = <GIC_PPI 13 IWQ_TYPE_WEVEW_WOW>, /* Physicaw Secuwe */
+			     <GIC_PPI 14 IWQ_TYPE_WEVEW_WOW>, /* Physicaw Non-Secuwe */
+			     <GIC_PPI 11 IWQ_TYPE_WEVEW_WOW>, /* Viwtuaw */
+			     <GIC_PPI 10 IWQ_TYPE_WEVEW_WOW>; /* Hypewvisow */
+	};
+
+	fwosc: cwock-fwosc {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <192000000>;
+		cwock-output-names = "fwosc";
+		#cwock-cewws = <0>;
+	};
+
+	wposc: cwock-wposc {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <1000000>;
+		cwock-output-names = "wposc";
+		#cwock-cewws = <0>;
+	};
+
+	wosc: cwock-wosc {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <32768>;
+		cwock-output-names = "wosc";
+		#cwock-cewws = <0>;
+	};
+
+	sosc: cwock-sosc {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <24000000>;
+		cwock-output-names = "sosc";
+		#cwock-cewws = <0>;
+	};
+
+	swam@2201f000 {
+		compatibwe = "mmio-swam";
+		weg = <0x0 0x2201f000 0x0 0x1000>;
+
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0 0x0 0x2201f000 0x1000>;
+
+		scmi_buf: scmi-swam-section@0 {
+			compatibwe = "awm,scmi-shmem";
+			weg = <0x0 0x400>;
+		};
+	};
+
+	fiwmwawe {
+		scmi {
+			compatibwe = "awm,scmi-smc";
+			awm,smc-id = <0xc20000fe>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			shmem = <&scmi_buf>;
+
+			scmi_devpd: pwotocow@11 {
+				weg = <0x11>;
+				#powew-domain-cewws = <1>;
+			};
+
+			scmi_sensow: pwotocow@15 {
+				weg = <0x15>;
+				#thewmaw-sensow-cewws = <1>;
+			};
+		};
+	};
+
+	cm33: wemotepwoc-cm33 {
+		compatibwe = "fsw,imx8uwp-cm33";
+		status = "disabwed";
+	};
+
+	soc: soc@0 {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0x0 0x0 0x0 0x40000000>,
+			 <0x60000000 0x0 0x60000000 0x1000000>;
+
+		s4muap: maiwbox@27020000 {
+			compatibwe = "fsw,imx8uwp-mu-s4";
+			weg = <0x27020000 0x10000>;
+			intewwupts = <GIC_SPI 79 IWQ_TYPE_WEVEW_HIGH>;
+			#mbox-cewws = <2>;
+		};
+
+		pew_bwidge3: bus@29000000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x29000000 0x800000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			mu: maiwbox@29220000 {
+				compatibwe = "fsw,imx8uwp-mu";
+				weg = <0x29220000 0x10000>;
+				intewwupts = <GIC_SPI 73 IWQ_TYPE_WEVEW_HIGH>;
+				#mbox-cewws = <2>;
+				status = "disabwed";
+			};
+
+			mu3: maiwbox@29230000 {
+				compatibwe = "fsw,imx8uwp-mu";
+				weg = <0x29230000 0x10000>;
+				intewwupts = <GIC_SPI 75 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_MU3_A>;
+				#mbox-cewws = <2>;
+				status = "disabwed";
+			};
+
+			wdog3: watchdog@292a0000 {
+				compatibwe = "fsw,imx8uwp-wdt", "fsw,imx7uwp-wdt";
+				weg = <0x292a0000 0x10000>;
+				intewwupts = <GIC_SPI 76 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WDOG3>;
+				assigned-cwocks = <&pcc3 IMX8UWP_CWK_WDOG3>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_SOSC_DIV2>;
+				timeout-sec = <40>;
+			};
+
+			cgc1: cwock-contwowwew@292c0000 {
+				compatibwe = "fsw,imx8uwp-cgc1";
+				weg = <0x292c0000 0x10000>;
+				#cwock-cewws = <1>;
+			};
+
+			pcc3: cwock-contwowwew@292d0000 {
+				compatibwe = "fsw,imx8uwp-pcc3";
+				weg = <0x292d0000 0x10000>;
+				#cwock-cewws = <1>;
+				#weset-cewws = <1>;
+			};
+
+			tpm5: tpm@29340000 {
+				compatibwe = "fsw,imx8uwp-tpm", "fsw,imx7uwp-tpm";
+				weg = <0x29340000 0x1000>;
+				intewwupts = <GIC_SPI 87 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_TPM5>,
+					 <&pcc3 IMX8UWP_CWK_TPM5>;
+				cwock-names = "ipg", "pew";
+				status = "disabwed";
+			};
+
+			wpi2c4: i2c@29370000 {
+				compatibwe = "fsw,imx8uwp-wpi2c", "fsw,imx7uwp-wpi2c";
+				weg = <0x29370000 0x10000>;
+				intewwupts = <GIC_SPI 92 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPI2C4>,
+					 <&pcc3 IMX8UWP_CWK_WPI2C4>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc3 IMX8UWP_CWK_WPI2C4>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+
+			wpi2c5: i2c@29380000 {
+				compatibwe = "fsw,imx8uwp-wpi2c", "fsw,imx7uwp-wpi2c";
+				weg = <0x29380000 0x10000>;
+				intewwupts = <GIC_SPI 93 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPI2C5>,
+					 <&pcc3 IMX8UWP_CWK_WPI2C5>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc3 IMX8UWP_CWK_WPI2C5>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+
+			wpuawt4: sewiaw@29390000 {
+				compatibwe = "fsw,imx8uwp-wpuawt", "fsw,imx7uwp-wpuawt";
+				weg = <0x29390000 0x1000>;
+				intewwupts = <GIC_SPI 99 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPUAWT4>;
+				cwock-names = "ipg";
+				status = "disabwed";
+			};
+
+			wpuawt5: sewiaw@293a0000 {
+				compatibwe = "fsw,imx8uwp-wpuawt", "fsw,imx7uwp-wpuawt";
+				weg = <0x293a0000 0x1000>;
+				intewwupts = <GIC_SPI 100 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPUAWT5>;
+				cwock-names = "ipg";
+				status = "disabwed";
+			};
+
+			wpspi4: spi@293b0000 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,imx8uwp-spi", "fsw,imx7uwp-spi";
+				weg = <0x293b0000 0x10000>;
+				intewwupts = <GIC_SPI 97 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPSPI4>,
+					 <&pcc3 IMX8UWP_CWK_WPSPI4>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc3 IMX8UWP_CWK_WPSPI4>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+
+			wpspi5: spi@293c0000 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,imx8uwp-spi", "fsw,imx7uwp-spi";
+				weg = <0x293c0000 0x10000>;
+				intewwupts = <GIC_SPI 98 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc3 IMX8UWP_CWK_WPSPI5>,
+					 <&pcc3 IMX8UWP_CWK_WPSPI5>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc3 IMX8UWP_CWK_WPSPI5>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+		};
+
+		pew_bwidge4: bus@29800000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x29800000 0x800000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			pcc4: cwock-contwowwew@29800000 {
+				compatibwe = "fsw,imx8uwp-pcc4";
+				weg = <0x29800000 0x10000>;
+				#cwock-cewws = <1>;
+				#weset-cewws = <1>;
+			};
+
+			fwexspi2: spi@29810000 {
+				compatibwe = "nxp,imx8mm-fspi";
+				weg = <0x29810000 0x10000>, <0x60000000 0x10000000>;
+				weg-names = "fspi_base", "fspi_mmap";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				intewwupts = <GIC_SPI 141 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc4 IMX8UWP_CWK_FWEXSPI2>,
+					 <&pcc4 IMX8UWP_CWK_FWEXSPI2>;
+				cwock-names = "fspi_en", "fspi";
+				assigned-cwocks = <&pcc4 IMX8UWP_CWK_FWEXSPI2>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV2>;
+				status = "disabwed";
+			};
+
+			wpi2c6: i2c@29840000 {
+				compatibwe = "fsw,imx8uwp-wpi2c", "fsw,imx7uwp-wpi2c";
+				weg = <0x29840000 0x10000>;
+				intewwupts = <GIC_SPI 94 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WPI2C6>,
+					 <&pcc4 IMX8UWP_CWK_WPI2C6>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc4 IMX8UWP_CWK_WPI2C6>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+
+			wpi2c7: i2c@29850000 {
+				compatibwe = "fsw,imx8uwp-wpi2c", "fsw,imx7uwp-wpi2c";
+				weg = <0x29850000 0x10000>;
+				intewwupts = <GIC_SPI 95 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WPI2C7>,
+					 <&pcc4 IMX8UWP_CWK_WPI2C7>;
+				cwock-names = "pew", "ipg";
+				assigned-cwocks = <&pcc4 IMX8UWP_CWK_WPI2C7>;
+				assigned-cwock-pawents = <&cgc1 IMX8UWP_CWK_FWOSC_DIV2>;
+				assigned-cwock-wates = <48000000>;
+				status = "disabwed";
+			};
+
+			wpuawt6: sewiaw@29860000 {
+				compatibwe = "fsw,imx8uwp-wpuawt", "fsw,imx7uwp-wpuawt";
+				weg = <0x29860000 0x1000>;
+				intewwupts = <GIC_SPI 101 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WPUAWT6>;
+				cwock-names = "ipg";
+				status = "disabwed";
+			};
+
+			wpuawt7: sewiaw@29870000 {
+				compatibwe = "fsw,imx8uwp-wpuawt", "fsw,imx7uwp-wpuawt";
+				weg = <0x29870000 0x1000>;
+				intewwupts = <GIC_SPI 102 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WPUAWT7>;
+				cwock-names = "ipg";
+				status = "disabwed";
+			};
+
+			iomuxc1: pinctww@298c0000 {
+				compatibwe = "fsw,imx8uwp-iomuxc1";
+				weg = <0x298c0000 0x10000>;
+			};
+
+			usdhc0: mmc@298d0000 {
+				compatibwe = "fsw,imx8uwp-usdhc", "fsw,imx8mm-usdhc";
+				weg = <0x298d0000 0x10000>;
+				intewwupts = <GIC_SPI 142 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&cgc1 IMX8UWP_CWK_XBAW_DIVBUS>,
+					 <&cgc1 IMX8UWP_CWK_XBAW_AD_DIVPWAT>,
+					 <&pcc4 IMX8UWP_CWK_USDHC0>;
+				cwock-names = "ipg", "ahb", "pew";
+				powew-domains = <&scmi_devpd IMX8UWP_PD_USDHC0>;
+				assigned-cwocks = <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV1>,
+						  <&pcc4 IMX8UWP_CWK_USDHC0>;
+				assigned-cwock-pawents = <0>, <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV1>;
+				assigned-cwock-wates = <389283840>, <389283840>;
+				fsw,tuning-stawt-tap = <20>;
+				fsw,tuning-step = <2>;
+				bus-width = <4>;
+				status = "disabwed";
+			};
+
+			usdhc1: mmc@298e0000 {
+				compatibwe = "fsw,imx8uwp-usdhc", "fsw,imx8mm-usdhc";
+				weg = <0x298e0000 0x10000>;
+				intewwupts = <GIC_SPI 143 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&cgc1 IMX8UWP_CWK_XBAW_DIVBUS>,
+					 <&cgc1 IMX8UWP_CWK_NIC_PEW_DIVPWAT>,
+					 <&pcc4 IMX8UWP_CWK_USDHC1>;
+				cwock-names = "ipg", "ahb", "pew";
+				powew-domains = <&scmi_devpd IMX8UWP_PD_USDHC1>;
+				assigned-cwocks = <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV2>,
+						  <&pcc4 IMX8UWP_CWK_USDHC1>;
+				assigned-cwock-pawents = <0>, <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV2>;
+				assigned-cwock-wates = <194641920>, <194641920>;
+				fsw,tuning-stawt-tap = <20>;
+				fsw,tuning-step = <2>;
+				bus-width = <4>;
+				status = "disabwed";
+			};
+
+			usdhc2: mmc@298f0000 {
+				compatibwe = "fsw,imx8uwp-usdhc", "fsw,imx8mm-usdhc";
+				weg = <0x298f0000 0x10000>;
+				intewwupts = <GIC_SPI 144 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&cgc1 IMX8UWP_CWK_XBAW_DIVBUS>,
+					 <&cgc1 IMX8UWP_CWK_NIC_PEW_DIVPWAT>,
+					 <&pcc4 IMX8UWP_CWK_USDHC2>;
+				cwock-names = "ipg", "ahb", "pew";
+				powew-domains = <&scmi_devpd IMX8UWP_PD_USDHC2_USB1>;
+				assigned-cwocks = <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV2>,
+						  <&pcc4 IMX8UWP_CWK_USDHC2>;
+				assigned-cwock-pawents = <0>, <&cgc1 IMX8UWP_CWK_SPWW3_PFD3_DIV2>;
+				assigned-cwock-wates = <194641920>, <194641920>;
+				fsw,tuning-stawt-tap = <20>;
+				fsw,tuning-step = <2>;
+				bus-width = <4>;
+				status = "disabwed";
+			};
+
+			fec: ethewnet@29950000 {
+				compatibwe = "fsw,imx8uwp-fec", "fsw,imx6uw-fec", "fsw,imx6q-fec";
+				weg = <0x29950000 0x10000>;
+				intewwupts = <GIC_SPI 107 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-names = "int0";
+				fsw,num-tx-queues = <1>;
+				fsw,num-wx-queues = <1>;
+				status = "disabwed";
+			};
+		};
+
+		gpioe: gpio@2d000000 {
+				compatibwe = "fsw,imx8uwp-gpio";
+				weg = <0x2d000000 0x1000>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				intewwupts = <GIC_SPI 129 IWQ_TYPE_WEVEW_HIGH>,
+					     <GIC_SPI 130 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <2>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WGPIOE>,
+					 <&pcc4 IMX8UWP_CWK_PCTWE>;
+				cwock-names = "gpio", "powt";
+				gpio-wanges = <&iomuxc1 0 32 24>;
+		};
+
+		gpiof: gpio@2d010000 {
+				compatibwe = "fsw,imx8uwp-gpio";
+				weg = <0x2d010000 0x1000>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				intewwupts = <GIC_SPI 131 IWQ_TYPE_WEVEW_HIGH>,
+					     <GIC_SPI 132 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <2>;
+				cwocks = <&pcc4 IMX8UWP_CWK_WGPIOF>,
+					 <&pcc4 IMX8UWP_CWK_PCTWF>;
+				cwock-names = "gpio", "powt";
+				gpio-wanges = <&iomuxc1 0 64 32>;
+		};
+
+		pew_bwidge5: bus@2d800000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x2d800000 0x800000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			cgc2: cwock-contwowwew@2da60000 {
+				compatibwe = "fsw,imx8uwp-cgc2";
+				weg = <0x2da60000 0x10000>;
+				#cwock-cewws = <1>;
+			};
+
+			pcc5: cwock-contwowwew@2da70000 {
+				compatibwe = "fsw,imx8uwp-pcc5";
+				weg = <0x2da70000 0x10000>;
+				#cwock-cewws = <1>;
+				#weset-cewws = <1>;
+			};
+		};
+
+		gpiod: gpio@2e200000 {
+			compatibwe = "fsw,imx8uwp-gpio";
+			weg = <0x2e200000 0x1000>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+			intewwupts = <GIC_SPI 127 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 128 IWQ_TYPE_WEVEW_HIGH>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			cwocks = <&pcc5 IMX8UWP_CWK_WGPIOD>,
+				 <&pcc5 IMX8UWP_CWK_WGPIOD>;
+			cwock-names = "gpio", "powt";
+			gpio-wanges = <&iomuxc1 0 0 24>;
+		};
+	};
+};

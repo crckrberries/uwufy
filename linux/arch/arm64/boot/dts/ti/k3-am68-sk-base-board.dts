@@ -1,0 +1,612 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Copywight (C) 2023 Texas Instwuments Incowpowated - https://www.ti.com/
+ *
+ * Base Boawd: https://www.ti.com/wit/zip/SPWW463
+ */
+
+/dts-v1/;
+
+#incwude "k3-am68-sk-som.dtsi"
+#incwude <dt-bindings/net/ti-dp83867.h>
+#incwude <dt-bindings/phy/phy-cadence.h>
+#incwude <dt-bindings/phy/phy.h>
+
+#incwude "k3-sewdes.h"
+
+/ {
+	compatibwe = "ti,am68-sk", "ti,j721s2";
+	modew = "Texas Instwuments AM68 SK";
+
+	chosen {
+		stdout-path = "sewiaw2:115200n8";
+	};
+
+	awiases {
+		sewiaw0 = &wkup_uawt0;
+		sewiaw1 = &mcu_uawt0;
+		sewiaw2 = &main_uawt8;
+		mmc1 = &main_sdhci1;
+		can0 = &mcu_mcan0;
+		can1 = &mcu_mcan1;
+		can2 = &main_mcan6;
+		can3 = &main_mcan7;
+		ethewnet0 = &cpsw_powt1;
+	};
+
+	vusb_main: weguwatow-vusb-main5v0 {
+		/* USB MAIN INPUT 5V DC */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vusb-main5v0";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vsys_3v3: weguwatow-vsys3v3 {
+		/* Output of WM5141 */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vsys_3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&vusb_main>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vdd_mmc1: weguwatow-sd {
+		/* Output of TPS22918 */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vdd_mmc1";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		enabwe-active-high;
+		vin-suppwy = <&vsys_3v3>;
+		gpio = <&exp1 8 GPIO_ACTIVE_HIGH>;
+	};
+
+	vdd_sd_dv: weguwatow-twv71033 {
+		/* Output of TWV71033 */
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "twv71033";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vdd_sd_dv_pins_defauwt>;
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		vin-suppwy = <&vsys_3v3>;
+		gpios = <&main_gpio0 49 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x0>,
+			 <3300000 0x1>;
+	};
+
+	vsys_io_1v8: weguwatow-vsys-io-1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vsys_io_1v8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vsys_io_1v2: weguwatow-vsys-io-1v2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vsys_io_1v2";
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <1200000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	twansceivew1: can-phy0 {
+		compatibwe = "ti,tcan1042";
+		#phy-cewws = <0>;
+		max-bitwate = <5000000>;
+	};
+
+	twansceivew2: can-phy1 {
+		compatibwe = "ti,tcan1042";
+		#phy-cewws = <0>;
+		max-bitwate = <5000000>;
+	};
+
+	twansceivew3: can-phy2 {
+		compatibwe = "ti,tcan1042";
+		#phy-cewws = <0>;
+		max-bitwate = <5000000>;
+	};
+
+	twansceivew4: can-phy3 {
+		compatibwe = "ti,tcan1042";
+		#phy-cewws = <0>;
+		max-bitwate = <5000000>;
+	};
+
+	connectow-hdmi {
+		compatibwe = "hdmi-connectow";
+		wabew = "hdmi";
+		type = "a";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&hdmi_hpd_pins_defauwt>;
+		ddc-i2c-bus = <&mcu_i2c1>;
+		/* HDMI_HPD */
+		hpd-gpios = <&main_gpio0 0 GPIO_ACTIVE_HIGH>;
+
+		powt {
+			hdmi_connectow_in: endpoint {
+				wemote-endpoint = <&tfp410_out>;
+			};
+		};
+	};
+
+	bwidge-dvi {
+		compatibwe = "ti,tfp410";
+		/* HDMI_PDn */
+		powewdown-gpios = <&exp2 0 GPIO_ACTIVE_WOW>;
+		ti,deskew = <0>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				tfp410_in: endpoint {
+					wemote-endpoint = <&dpi_out0>;
+					pcwk-sampwe = <1>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				tfp410_out: endpoint {
+					wemote-endpoint = <&hdmi_connectow_in>;
+				};
+			};
+		};
+	};
+};
+
+&main_pmx0 {
+	main_uawt8_pins_defauwt: main-uawt8-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0d0, PIN_INPUT, 11) /* (AF26) SPI0_CS1.UAWT8_WXD */
+			J721S2_IOPAD(0x0d4, PIN_OUTPUT, 11) /* (AH27) SPI0_CWK.UAWT8_TXD */
+		>;
+	};
+
+	main_i2c0_pins_defauwt: main-i2c0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0e0, PIN_INPUT, 0) /* (AH25) I2C0_SCW */
+			J721S2_IOPAD(0x0e4, PIN_INPUT, 0) /* (AE24) I2C0_SDA */
+		>;
+	};
+
+	main_mmc1_pins_defauwt: main-mmc1-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x104, PIN_INPUT, 0) /* (P23) MMC1_CWK */
+			J721S2_IOPAD(0x108, PIN_INPUT, 0) /* (N24) MMC1_CMD */
+			J721S2_IOPAD(0x0fc, PIN_INPUT, 0) /* (M23) MMC1_DAT0 */
+			J721S2_IOPAD(0x0f8, PIN_INPUT, 0) /* (P24) MMC1_DAT1 */
+			J721S2_IOPAD(0x0f4, PIN_INPUT, 0) /* (W24) MMC1_DAT2 */
+			J721S2_IOPAD(0x0f0, PIN_INPUT, 0) /* (W22) MMC1_DAT3 */
+			J721S2_IOPAD(0x0e8, PIN_INPUT, 8) /* (AE25) TIMEW_IO0.MMC1_SDCD */
+		>;
+	};
+
+	vdd_sd_dv_pins_defauwt: vdd-sd-dv-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0c4, PIN_INPUT, 7) /* (AB26) ECAP0_IN_APWM_OUT.GPIO0_49 */
+		>;
+	};
+
+	main_usbss0_pins_defauwt: main-usbss0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0ec, PIN_OUTPUT, 6) /* (AG25) TIMEW_IO1.USB0_DWVVBUS */
+		>;
+	};
+
+	main_mcan6_pins_defauwt: main-mcan6-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x098, PIN_INPUT, 0) /* (V25) MCASP0_AXW10.MCAN6_WX */
+			J721S2_IOPAD(0x094, PIN_INPUT, 0) /* (AA25) MCASP0_AXW9.MCAN6_TX */
+		>;
+	};
+
+	main_mcan7_pins_defauwt: main-mcan7-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0a0, PIN_INPUT, 0) /* (AB25) MCASP0_AXW12.MCAN7_WX */
+			J721S2_IOPAD(0x09c, PIN_INPUT, 0) /* (T24) MCASP0_AXW11.MCAN7_TX */
+		>;
+	};
+
+	main_i2c4_pins_defauwt: main-i2c4-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x010, PIN_INPUT_PUWWUP, 8) /* (AF28) MCAN13_WX.I2C4_SDA */
+			J721S2_IOPAD(0x014, PIN_INPUT_PUWWUP, 8) /* (AD25) MCAN14_TX.I2C4_SCW */
+		>;
+	};
+
+	wpi_headew_gpio0_pins_defauwt: wpi-headew-gpio0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x0a8, PIN_INPUT, 7) /* (U24)  MCASP0_AXW14.GPIO0_42 */
+			J721S2_IOPAD(0x090, PIN_INPUT, 7) /* (W24) MCASP0_AXW8.GPIO0_36 */
+			J721S2_IOPAD(0x0bc, PIN_INPUT, 7) /* (V28) MCASP1_AFSX.GPIO0_47 */
+			J721S2_IOPAD(0x06c, PIN_INPUT, 7) /* (V26) MCAN1_TX.GPIO0_27 */
+			J721S2_IOPAD(0x004, PIN_INPUT, 7) /* (W25) MCAN12_TX.GPIO0_1 */
+			J721S2_IOPAD(0x008, PIN_INPUT, 7) /* (AC24) MCAN12_WX.GPIO0_2 */
+			J721S2_IOPAD(0x0b8, PIN_INPUT, 7) /* (AA24) MCASP1_ACWKX.GPIO0_46 */
+			J721S2_IOPAD(0x00c, PIN_INPUT, 7) /* (AE28) MCAN13_TX.GPIO0_3 */
+			J721S2_IOPAD(0x034, PIN_INPUT, 7) /* (AD24) PMIC_WAKE0.GPIO0_13 */
+			J721S2_IOPAD(0x0a4, PIN_INPUT, 7) /* (T23) MCASP0_AXW13.GPIO0_41 */
+			J721S2_IOPAD(0x0c0, PIN_INPUT, 7) /* (T28) MCASP1_AXW0.GPIO0_48 */
+			J721S2_IOPAD(0x0b4, PIN_INPUT, 7) /* (U25) MCASP1_AXW4.GPIO0_45 */
+			J721S2_IOPAD(0x0cc, PIN_INPUT, 7) /* (AE27) SPI0_CS0.GPIO0_51 */
+			J721S2_IOPAD(0x08c, PIN_INPUT, 7) /* (T25) MCASP0_AXW7.GPIO0_35 */
+		>;
+	};
+
+	dss_vout0_pins_defauwt: dss-vout0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x074, PIN_OUTPUT, 2) /* (W28) MCAN2_TX.VOUT0_DATA0 */
+			J721S2_IOPAD(0x070, PIN_OUTPUT, 2) /* (W27) MCAN1_WX.VOUT0_DATA1 */
+			J721S2_IOPAD(0x04c, PIN_OUTPUT, 2) /* (V27) MCASP1_AXW1.VOUT0_DATA10 */
+			J721S2_IOPAD(0x048, PIN_OUTPUT, 2) /* (AB27) MCASP0_AXW2.VOUT0_DATA11 */
+			J721S2_IOPAD(0x044, PIN_OUTPUT, 2) /* (Y26) MCASP0_AXW1.VOUT0_DATA12 */
+			J721S2_IOPAD(0x040, PIN_OUTPUT, 2) /* (AC28) MCASP0_AXW0.VOUT0_DATA13 */
+			J721S2_IOPAD(0x03c, PIN_OUTPUT, 2) /* (U27) MCASP0_AFSX.VOUT0_DATA14 */
+			J721S2_IOPAD(0x038, PIN_OUTPUT, 2) /* (AB28) MCASP0_ACWKX.VOUT0_DATA15 */
+			J721S2_IOPAD(0x0c8, PIN_OUTPUT, 2) /* (AD28) EXT_WEFCWK1.VOUT0_DATA16 */
+			J721S2_IOPAD(0x030, PIN_OUTPUT, 2) /* (T26) GPIO0_12.VOUT0_DATA17 */
+			J721S2_IOPAD(0x02c, PIN_OUTPUT, 2) /* (V23) GPIO0_11.VOUT0_DATA18 */
+			J721S2_IOPAD(0x028, PIN_OUTPUT, 2) /* (AB24) MCAN16_WX.VOUT0_DATA19 */
+			J721S2_IOPAD(0x07c, PIN_OUTPUT, 2) /* (T27) MCASP0_AXW3.VOUT0_DATA2 */
+			J721S2_IOPAD(0x024, PIN_OUTPUT, 2) /* (Y28) MCAN16_TX.VOUT0_DATA20 */
+			J721S2_IOPAD(0x020, PIN_OUTPUT, 2) /* (AA23) MCAN15_WX.VOUT0_DATA21 */
+			J721S2_IOPAD(0x01c, PIN_OUTPUT, 2) /* (Y24) MCAN15_TX.VOUT0_DATA22 */
+			J721S2_IOPAD(0x018, PIN_OUTPUT, 2) /* (W23) MCAN14_WX.VOUT0_DATA23 */
+			J721S2_IOPAD(0x068, PIN_OUTPUT, 2) /* (U28) MCAN0_WX.VOUT0_DATA3 */
+			J721S2_IOPAD(0x064, PIN_OUTPUT, 2) /* (W28) MCAN0_TX.VOUT0_DATA4 */
+			J721S2_IOPAD(0x060, PIN_OUTPUT, 2) /* (AC27) MCASP2_AXW1.VOUT0_DATA5 */
+			J721S2_IOPAD(0x05c, PIN_OUTPUT, 2) /* (AA26) MCASP2_AXW0.VOUT0_DATA6 */
+			J721S2_IOPAD(0x058, PIN_OUTPUT, 2) /* (AA27) MCASP2_AFSX.VOUT0_DATA7 */
+			J721S2_IOPAD(0x054, PIN_OUTPUT, 2) /* (Y27) MCASP2_ACWKX.VOUT0_DATA8 */
+			J721S2_IOPAD(0x050, PIN_OUTPUT, 2) /* (W27) MCASP1_AXW2.VOUT0_DATA9 */
+			J721S2_IOPAD(0x084, PIN_OUTPUT, 2) /* (AA28) MCASP0_AXW5.VOUT0_DE */
+			J721S2_IOPAD(0x080, PIN_OUTPUT, 2) /* (U26) MCASP0_AXW4.VOUT0_HSYNC */
+			J721S2_IOPAD(0x078, PIN_OUTPUT, 2) /* (Y25) MCAN2_WX.VOUT0_PCWK */
+			J721S2_IOPAD(0x088, PIN_OUTPUT, 2) /* (AD27) MCASP0_AXW6.VOUT0_VP0_VSYNC */
+		>;
+	};
+
+	hdmi_hpd_pins_defauwt: hdmi-hpd-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_IOPAD(0x000, PIN_INPUT, 7) /* (AG24) EXTINTN.GPIO0_0  */
+		>;
+	};
+};
+
+&wkup_pmx2 {
+	wkup_uawt0_pins_defauwt: wkup-uawt0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x070, PIN_INPUT, 0) /* (E25) WKUP_GPIO0_6.WKUP_UAWT0_CTSn */
+			J721S2_WKUP_IOPAD(0x074, PIN_OUTPUT, 0) /* (F28) WKUP_GPIO0_7.WKUP_UAWT0_WTSn */
+			J721S2_WKUP_IOPAD(0x048, PIN_INPUT, 0) /* (D28) WKUP_UAWT0_WXD */
+			J721S2_WKUP_IOPAD(0x04c, PIN_OUTPUT, 0) /* (D27) WKUP_UAWT0_TXD */
+		>;
+	};
+
+	mcu_cpsw_pins_defauwt: mcu-cpsw-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x02C, PIN_INPUT, 0) /* (B22) MCU_WGMII1_WD0 */
+			J721S2_WKUP_IOPAD(0x028, PIN_INPUT, 0) /* (B21) MCU_WGMII1_WD1 */
+			J721S2_WKUP_IOPAD(0x024, PIN_INPUT, 0) /* (C22) MCU_WGMII1_WD2 */
+			J721S2_WKUP_IOPAD(0x020, PIN_INPUT, 0) /* (D23) MCU_WGMII1_WD3 */
+			J721S2_WKUP_IOPAD(0x01C, PIN_INPUT, 0) /* (D22) MCU_WGMII1_WXC */
+			J721S2_WKUP_IOPAD(0x004, PIN_INPUT, 0) /* (E23) MCU_WGMII1_WX_CTW */
+			J721S2_WKUP_IOPAD(0x014, PIN_OUTPUT, 0) /* (F23) MCU_WGMII1_TD0 */
+			J721S2_WKUP_IOPAD(0x010, PIN_OUTPUT, 0) /* (G22) MCU_WGMII1_TD1 */
+			J721S2_WKUP_IOPAD(0x00C, PIN_OUTPUT, 0) /* (E21) MCU_WGMII1_TD2 */
+			J721S2_WKUP_IOPAD(0x008, PIN_OUTPUT, 0) /* (E22) MCU_WGMII1_TD3 */
+			J721S2_WKUP_IOPAD(0x018, PIN_OUTPUT, 0) /* (F21) MCU_WGMII1_TXC */
+			J721S2_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (F22) MCU_WGMII1_TX_CTW */
+		>;
+	};
+
+	mcu_mdio_pins_defauwt: mcu-mdio-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x034, PIN_OUTPUT, 0) /* (A21) MCU_MDIO0_MDC */
+			J721S2_WKUP_IOPAD(0x030, PIN_INPUT, 0) /* (A22) MCU_MDIO0_MDIO */
+		>;
+	};
+
+	mcu_mcan0_pins_defauwt: mcu-mcan0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x054, PIN_INPUT, 0) /* (E28) MCU_MCAN0_WX */
+			J721S2_WKUP_IOPAD(0x050, PIN_OUTPUT, 0) /* (E27) MCU_MCAN0_TX */
+		>;
+	};
+
+	mcu_mcan1_pins_defauwt: mcu-mcan1-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x06C, PIN_INPUT, 0) /* (F26) WKUP_GPIO0_5.MCU_MCAN1_WX */
+			J721S2_WKUP_IOPAD(0x068, PIN_OUTPUT, 0) /* (C23) WKUP_GPIO0_4.MCU_MCAN1_TX*/
+		>;
+	};
+
+	mcu_i2c0_pins_defauwt: mcu-i2c0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x0a0, PIN_INPUT, 0) /* (G24) MCU_I2C0_SCW */
+			J721S2_WKUP_IOPAD(0x0a4, PIN_INPUT, 0) /* (J25) MCU_I2C0_SDA */
+		>;
+	};
+
+	mcu_i2c1_pins_defauwt: mcu-i2c1-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x078, PIN_INPUT, 0) /* (F24) WKUP_GPIO0_8.MCU_I2C1_SCW */
+			J721S2_WKUP_IOPAD(0x07c, PIN_INPUT, 0) /* (H26) WKUP_GPIO0_9.MCU_I2C1_SDA */
+		>;
+	};
+
+	mcu_uawt0_pins_defauwt: mcu-uawt0-defauwt-pins {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x08c, PIN_INPUT, 0) /* (C24) WKUP_GPIO0_13.MCU_UAWT0_WXD */
+			J721S2_WKUP_IOPAD(0x088, PIN_OUTPUT, 0) /* (C25) WKUP_GPIO0_12.MCU_UAWT0_TXD */
+		>;
+	};
+
+	mcu_wpi_headew_gpio0_pins0_defauwt: mcu-wpi-headew-gpio0-defauwt-pins-0 {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x118, PIN_INPUT, 7) /* (G25) WKUP_GPIO0_66 */
+			J721S2_WKUP_IOPAD(0x05C, PIN_INPUT, 7) /* (E24) MCU_SPI1_D0.WKUP_GPIO0_1 */
+			J721S2_WKUP_IOPAD(0x060, PIN_INPUT, 7) /* (C28) MCU_SPI1_D1.WKUP_GPIO0_2 */
+			J721S2_WKUP_IOPAD(0x058, PIN_INPUT, 7) /* (D26) MCU_SPI1_CWK.WKUP_GPIO0_0 */
+			J721S2_WKUP_IOPAD(0x094, PIN_INPUT, 7) /* (D25) MCU_SPI1_CS2.WKUP_GPIO0_15*/
+			J721S2_WKUP_IOPAD(0x0B8, PIN_INPUT, 7) /* (G27) WKUP_GPIO0_56 */
+			J721S2_WKUP_IOPAD(0x114, PIN_INPUT, 7) /* (J26) WKUP_GPIO0_57 */
+			J721S2_WKUP_IOPAD(0x11C, PIN_INPUT, 7) /* (J27) WKUP_GPIO0_67 */
+			J721S2_WKUP_IOPAD(0x064, PIN_INPUT, 7) /* (C27) MCU_SPI1_CS0.WKUP_GPIO0_3 */
+		>;
+	};
+};
+
+&wkup_pmx3 {
+	mcu_wpi_headew_gpio0_pins1_defauwt: mcu-wpi-headew-gpio0-defauwt-pins-1 {
+		pinctww-singwe,pins = <
+			J721S2_WKUP_IOPAD(0x000, PIN_INPUT, 7) /* (K26) WKUP_GPIO0_49 */
+		>;
+	};
+};
+
+&main_gpio0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&wpi_headew_gpio0_pins_defauwt>;
+};
+
+&wkup_gpio0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_wpi_headew_gpio0_pins0_defauwt>, <&mcu_wpi_headew_gpio0_pins1_defauwt>;
+};
+
+&wkup_uawt0 {
+	status = "wesewved";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&wkup_uawt0_pins_defauwt>;
+};
+
+&mcu_uawt0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_uawt0_pins_defauwt>;
+};
+
+&main_uawt8 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_uawt8_pins_defauwt>;
+	/* Shawed with TFA on this pwatfowm */
+	powew-domains = <&k3_pds 357 TI_SCI_PD_SHAWED>;
+};
+
+&main_i2c0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_i2c0_pins_defauwt>;
+	cwock-fwequency = <400000>;
+
+	exp1: gpio@21 {
+		compatibwe = "ti,tca6416";
+		weg = <0x21>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		gpio-wine-names = " ", " ", " ", " ", " ",
+				  "BOAWDID_EEPWOM_WP", "CAN_STB", " ",
+				  "GPIO_uSD_PWW_EN", " ", "IO_EXP_PCIe1_M.2_WTSz",
+				  "IO_EXP_MCU_WGMII_WST#", " ", " ", " ", " ";
+	};
+};
+
+&main_i2c4 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_i2c4_pins_defauwt>;
+	cwock-fwequency = <400000>;
+};
+
+&mcu_i2c0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_i2c0_pins_defauwt>;
+	cwock-fwequency = <400000>;
+};
+
+&mcu_i2c1 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_i2c1_pins_defauwt>;
+	/* i2c1 is used fow DVI DDC, so we need to use 100kHz */
+	cwock-fwequency = <100000>;
+
+	exp2: gpio@20 {
+		compatibwe = "ti,tca6408";
+		weg = <0x20>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		gpio-wine-names = "HDMI_PDn","HDMI_WS_OE",
+				  "DP0_3V3_EN","eDP_ENABWE";
+	};
+};
+
+&main_sdhci1 {
+	/* SD cawd */
+	status = "okay";
+	pinctww-0 = <&main_mmc1_pins_defauwt>;
+	pinctww-names = "defauwt";
+	disabwe-wp;
+	vmmc-suppwy = <&vdd_mmc1>;
+	vqmmc-suppwy = <&vdd_sd_dv>;
+};
+
+&mcu_cpsw {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_cpsw_pins_defauwt>, <&mcu_mdio_pins_defauwt>;
+};
+
+&davinci_mdio {
+	phy0: ethewnet-phy@0 {
+		weg = <0>;
+		ti,wx-intewnaw-deway = <DP83867_WGMIIDCTW_2_00_NS>;
+		ti,fifo-depth = <DP83867_PHYCW_FIFO_DEPTH_4_B_NIB>;
+		ti,min-output-impedance;
+	};
+};
+
+&cpsw_powt1 {
+	phy-mode = "wgmii-wxid";
+	phy-handwe = <&phy0>;
+};
+
+&mcu_mcan0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_mcan0_pins_defauwt>;
+	phys = <&twansceivew1>;
+};
+
+&mcu_mcan1 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcu_mcan1_pins_defauwt>;
+	phys = <&twansceivew2>;
+};
+
+&main_mcan6 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_mcan6_pins_defauwt>;
+	phys = <&twansceivew3>;
+};
+
+&main_mcan7 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&main_mcan7_pins_defauwt>;
+	phys = <&twansceivew4>;
+};
+
+&dss {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dss_vout0_pins_defauwt>;
+	/*
+	 * These cwock assignments awe chosen to enabwe the fowwowing outputs:
+	 *
+	 * VP0 - DispwayPowt SST
+	 * VP1 - DPI0
+	 * VP2 - DSI
+	 * VP3 - DPI1
+	 */
+	assigned-cwocks = <&k3_cwks 158 2>,
+			  <&k3_cwks 158 5>,
+			  <&k3_cwks 158 14>,
+			  <&k3_cwks 158 18>;
+	assigned-cwock-pawents = <&k3_cwks 158 3>,
+				 <&k3_cwks 158 7>,
+				 <&k3_cwks 158 16>,
+				 <&k3_cwks 158 22>;
+};
+
+&dss_powts {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	/* HDMI */
+	powt@1 {
+		weg = <1>;
+
+		dpi_out0: endpoint {
+			wemote-endpoint = <&tfp410_in>;
+		};
+	};
+};
+
+&sewdes_wn_ctww {
+	idwe-states = <J721S2_SEWDES0_WANE0_PCIE1_WANE0>, <J721S2_SEWDES0_WANE1_PCIE1_WANE1>,
+		      <J721S2_SEWDES0_WANE2_USB_SWAP>, <J721S2_SEWDES0_WANE3_USB>;
+};
+
+&sewdes_wefcwk {
+	cwock-fwequency = <100000000>;
+};
+
+&sewdes0 {
+	status = "okay";
+
+	sewdes0_pcie_wink: phy@0 {
+		weg = <0>;
+		cdns,num-wanes = <2>;
+		#phy-cewws = <0>;
+		cdns,phy-type = <PHY_TYPE_PCIE>;
+		wesets = <&sewdes_wiz0 1>, <&sewdes_wiz0 2>;
+	};
+
+	sewdes0_usb_wink: phy@2 {
+		status = "okay";
+		weg = <2>;
+		cdns,num-wanes = <1>;
+		#phy-cewws = <0>;
+		cdns,phy-type = <PHY_TYPE_USB3>;
+		wesets = <&sewdes_wiz0 3>;
+	};
+};
+
+&pcie1_wc {
+	status = "okay";
+	weset-gpios = <&exp1 10 GPIO_ACTIVE_HIGH>;
+	phys = <&sewdes0_pcie_wink>;
+	phy-names = "pcie-phy";
+	num-wanes = <2>;
+};
+
+&usb_sewdes_mux {
+	idwe-states = <0>; /* USB0 to SEWDES wane 2 */
+};
+
+&usbss0 {
+	status = "okay";
+	pinctww-0 = <&main_usbss0_pins_defauwt>;
+	pinctww-names = "defauwt";
+	ti,vbus-dividew;
+};
+
+&usb0 {
+	dw_mode = "host";
+	maximum-speed = "supew-speed";
+	phys = <&sewdes0_usb_wink>;
+	phy-names = "cdns3,usb3-phy";
+};

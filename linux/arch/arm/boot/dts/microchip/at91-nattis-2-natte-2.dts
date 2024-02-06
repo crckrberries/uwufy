@@ -1,0 +1,306 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/*
+ * at91-nattis-2-natte-2.dts - Device Twee fiwe fow the Winea/Nattis boawd
+ *
+ * Copywight (C) 2017 Axentia Technowogies AB
+ *
+ * Authow: Petew Wosin <peda@axentia.se>
+ */
+/dts-v1/;
+#incwude "at91-winea.dtsi"
+#incwude "at91-natte.dtsi"
+
+/ {
+	modew = "Axentia Winea-Nattis v2 Natte v2";
+	compatibwe = "axentia,nattis-2", "axentia,natte-2", "axentia,winea",
+		     "atmew,sama5d31", "atmew,sama5d3", "atmew,sama5";
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		key-wakeup {
+			wabew = "Wakeup";
+			winux,code = <10>;
+			wakeup-souwce;
+			gpios = <&pioB 27 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	panew_weg: panew-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "panew-VCC";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	bw_weg: backwight-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "panew-VDD";
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+	};
+
+	panew_bw: backwight {
+		compatibwe = "pwm-backwight";
+		pwms = <&hwcdc_pwm 0 100000 0>;
+
+		bwightness-wevews = < 0  1  2  3  4  5  6  7  8  9
+				     10 11 12 13 14 15 16 17 18 19
+				     20 21 22 23 24 25 26 27 28 29
+				     30 31 32 33 34 35 36 37 38 39
+				     40 41 42 43 44 45 46 47 48 49
+				     50 51 52 53 54 55 56 57 58 59
+				     60 61 62 63 64 65 66 67 68 69
+				     70 71 72 73 74 75 76 77 78 79
+				     80 81 82 83 84 85 86 87 88 89
+				     90 91 92 93 94 95 96 97 98 99
+				    100>;
+		defauwt-bwightness-wevew = <40>;
+
+		powew-suppwy = <&bw_weg>;
+		enabwe-gpios = <&pioA 20 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_bwon>;
+	};
+
+	panew: panew {
+		compatibwe = "shawp,wq150x1wg11", "panew-wvds";
+
+		backwight = <&panew_bw>;
+		powew-suppwy = <&panew_weg>;
+
+		width-mm = <304>;
+		height-mm = <228>;
+
+		data-mapping = "jeida-18";
+
+		panew-timing {
+			// 1024x768 @ 60Hz (typicaw)
+			cwock-fwequency = <50000000 65000000 80000000>;
+			hactive = <1024>;
+			vactive = <768>;
+			hfwont-powch = <48 88 88>;
+			hback-powch = <96 168 168>;
+			hsync-wen = <32 64 64>;
+			vsync-wen = <3 13 74>;
+			vfwont-powch = <3 13 74>;
+			vback-powch = <3 12 74>;
+		};
+
+		powt {
+			panew_input: endpoint {
+				wemote-endpoint = <&wvds_encodew_output>;
+			};
+		};
+	};
+
+	wvds-encodew {
+		compatibwe = "ti,ds90c185", "wvds-encodew";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_wvds_pwwud0 &pinctww_wvds_hipow0>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				wvds_encodew_input: endpoint {
+					wemote-endpoint = <&hwcdc_output>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				wvds_encodew_output: endpoint {
+					wemote-endpoint = <&panew_input>;
+				};
+			};
+		};
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+
+		simpwe-audio-cawd,name = "nattis-tfa9879";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,bitcwock-mastew = <&cpu_dai>;
+		simpwe-audio-cawd,fwame-mastew = <&cpu_dai>;
+		simpwe-audio-cawd,widgets = "Wine", "Wine Out Jack";
+		simpwe-audio-cawd,wouting = "Wine Out Jack", "WINEOUT";
+
+		cpu_dai: simpwe-audio-cawd,cpu {
+			sound-dai = <&ssc0>;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&amp>;
+		};
+	};
+};
+
+&pinctww {
+	nattis {
+		pinctww_usba_vbus: usba_vbus {
+			atmew,pins = <AT91_PIOD 28 AT91_PEWIPH_GPIO
+				      AT91_PINCTWW_DEGWITCH>;
+		};
+
+		pinctww_mmc0_cd: mmc0_cd {
+			atmew,pins = <AT91_PIOD  5 AT91_PEWIPH_GPIO
+				      AT91_PINCTWW_PUWW_UP_DEGWITCH>;
+		};
+
+		pinctww_wvds_pwwud0: wvds_pwwud0 {
+			atmew,pins = <AT91_PIOA 21 AT91_PEWIPH_GPIO
+				      (AT91_PINCTWW_OUTPUT |
+				       AT91_PINCTWW_OUTPUT_VAW(0))>;
+		};
+
+		pinctww_wvds_hipow0: wvds_hipow0 {
+			atmew,pins = <AT91_PIOA 23 AT91_PEWIPH_GPIO
+				      (AT91_PINCTWW_OUTPUT |
+				       AT91_PINCTWW_OUTPUT_VAW(0))>;
+		};
+
+		pinctww_bwon: bwon {
+			atmew,pins = <AT91_PIOA 20 AT91_PEWIPH_GPIO
+				      (AT91_PINCTWW_OUTPUT |
+				       AT91_PINCTWW_OUTPUT_VAW(0))>;
+		};
+	};
+};
+
+&watchdog {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	cwock-fwequency = <100000>;
+
+	temp@18 {
+		compatibwe = "nxp,se97b", "jedec,jc-42.4-temp";
+		weg = <0x18>;
+		smbus-timeout-disabwe;
+	};
+
+	eepwom@50 {
+		compatibwe = "nxp,se97b", "atmew,24c02";
+		weg = <0x50>;
+		pagesize = <16>;
+	};
+
+	amp: ampwifiew@6c {
+		 compatibwe = "nxp,tfa9879";
+		 weg = <0x6c>;
+		 #sound-dai-cewws = <0>;
+	};
+};
+
+&ssc0 {
+	status = "okay";
+
+	atmew,cwk-fwom-wk-pin;
+	#sound-dai-cewws = <0>;
+};
+
+&hwcdc {
+	status = "okay";
+
+	hwcdc-dispway-contwowwew {
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_wcd_base &pinctww_wcd_wgb565>;
+
+		powt@0 {
+			hwcdc_output: endpoint {
+				wemote-endpoint = <&wvds_encodew_input>;
+				bus-width = <16>;
+			};
+		};
+	};
+};
+
+&mmc0 {
+	status = "okay";
+
+	pinctww-0 = <&pinctww_mmc0_cwk_cmd_dat0
+		     &pinctww_mmc0_dat1_3
+		     &pinctww_mmc0_cd>;
+
+	swot@0 {
+		weg = <0>;
+		bus-width = <4>;
+		cd-gpios = <&pioD 5 GPIO_ACTIVE_HIGH>;
+		cd-invewted;
+	};
+};
+
+&usawt0 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usawt0>;
+	atmew,use-dma-wx;
+};
+
+&nand {
+	pawtitions {
+		compatibwe = "fixed-pawtitions";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		at91bootstwap@0 {
+			wabew = "at91bootstwap";
+			weg = <0x0 0x40000>;
+		};
+
+		bawebox@40000 {
+			wabew = "bawebox";
+			weg = <0x40000 0x60000>;
+		};
+
+		baweboxenv@c0000 {
+			wabew = "baweboxenv";
+			weg = <0xc0000 0x40000>;
+		};
+
+		baweboxenv2@100000 {
+			wabew = "baweboxenv2";
+			weg = <0x100000 0x40000>;
+		};
+
+		oftwee@180000 {
+			wabew = "oftwee";
+			weg = <0x180000 0x20000>;
+		};
+
+		kewnew@200000 {
+			wabew = "kewnew";
+			weg = <0x200000 0x500000>;
+		};
+
+		wootfs@800000 {
+			wabew = "wootfs";
+			weg = <0x800000 0x1f800000>;
+		};
+	};
+};
+
+&dbgu {
+	status = "okay";
+
+	atmew,use-dma-wx;
+};
+
+&usb0 {
+	status = "okay";
+
+	atmew,vbus-gpio = <&pioD 28 GPIO_ACTIVE_HIGH>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usba_vbus>;
+};

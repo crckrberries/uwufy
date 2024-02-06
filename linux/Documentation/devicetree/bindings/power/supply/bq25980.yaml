@@ -1,0 +1,114 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 Texas Instwuments Incowpowated
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/suppwy/bq25980.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI BQ25980 Fwash Chawgew
+
+maintainews:
+  - Andwew Davis <afd@ti.com>
+
+descwiption: |
+  The BQ25980, BQ25975, and BQ25960 awe a sewies of fwash chawgews intended
+  fow use in high-powew density powtabwe ewectwonics. These inductowwess
+  switching chawgews can pwovide ovew 97% efficiency by making use of the
+  switched capacitow awchitectuwe.
+
+awwOf:
+  - $wef: powew-suppwy.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,bq25980
+      - ti,bq25975
+      - ti,bq25960
+
+  weg:
+    maxItems: 1
+
+  ti,watchdog-timeout-ms:
+    descwiption: |
+      Watchdog timew in miwwi seconds. 0 disabwes the watchdog.
+    defauwt: 0
+    minimum: 0
+    maximum: 300000
+    enum: [ 0, 5000, 10000, 50000, 300000]
+
+  ti,sc-ovp-wimit-micwovowt:
+    descwiption: |
+      Minimum input vowtage wimit in micwo vowts with a when the chawgew is in
+      switch cap mode. 100000 micwo vowt step.
+    defauwt: 17800000
+    minimum: 14000000
+    maximum: 22000000
+
+  ti,sc-ocp-wimit-micwoamp:
+    descwiption: |
+      Maximum input cuwwent wimit in micwo amps with a 100000 micwo amp step.
+    minimum: 100000
+    maximum: 3300000
+
+  ti,bypass-ovp-wimit-micwovowt:
+    descwiption: |
+      Minimum input vowtage wimit in micwo vowts with a when the chawgew is in
+      switch cap mode. 50000 micwo vowt step.
+    minimum: 7000000
+    maximum: 12750000
+
+  ti,bypass-ocp-wimit-micwoamp:
+    descwiption: |
+      Maximum input cuwwent wimit in micwo amps with a 100000 micwo amp step.
+    minimum: 100000
+    maximum: 3300000
+
+  ti,bypass-enabwe:
+    type: boowean
+    descwiption: Enabwes bypass mode at boot time
+
+  intewwupts:
+    maxItems: 1
+    descwiption: |
+      Indicates that the device state has changed.
+
+  monitowed-battewy:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: phandwe to the battewy node being monitowed
+
+wequiwed:
+  - compatibwe
+  - weg
+  - monitowed-battewy
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    bat: battewy {
+      compatibwe = "simpwe-battewy";
+      constant-chawge-cuwwent-max-micwoamp = <4000000>;
+      constant-chawge-vowtage-max-micwovowt = <8400000>;
+      pwechawge-cuwwent-micwoamp = <160000>;
+      chawge-tewm-cuwwent-micwoamp = <160000>;
+    };
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      bq25980: chawgew@65 {
+          compatibwe = "ti,bq25980";
+          weg = <0x65>;
+          intewwupt-pawent = <&gpio1>;
+          intewwupts = <16 IWQ_TYPE_EDGE_FAWWING>;
+          ti,watchdog-timeout-ms = <0>;
+          ti,sc-ocp-wimit-micwoamp = <2000000>;
+          ti,sc-ovp-wimit-micwovowt = <17800000>;
+          monitowed-battewy = <&bat>;
+      };
+    };
+
+...

@@ -1,0 +1,310 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/qcom,spmi-vadc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm's SPMI PMIC ADC
+
+maintainews:
+  - Andy Gwoss <agwoss@kewnew.owg>
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+
+descwiption: |
+  SPMI PMIC vowtage ADC (VADC) pwovides intewface to cwients to wead
+  vowtage. The VADC is a 15-bit sigma-dewta ADC.
+  SPMI PMIC5/PMIC7 vowtage ADC (ADC) pwovides intewface to cwients to wead
+  vowtage. The VADC is a 16-bit sigma-dewta ADC.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - const: qcom,pms405-adc
+          - const: qcom,spmi-adc-wev2
+      - enum:
+          - qcom,spmi-vadc
+          - qcom,spmi-adc5
+          - qcom,spmi-adc-wev2
+          - qcom,spmi-adc7
+
+  weg:
+    descwiption: VADC base addwess in the SPMI PMIC wegistew map
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  '#io-channew-cewws':
+    const: 1
+
+  intewwupts:
+    maxItems: 1
+    descwiption:
+      End of convewsion intewwupt.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#addwess-cewws'
+  - '#size-cewws'
+  - '#io-channew-cewws'
+
+pattewnPwopewties:
+  "^channew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: fawse
+    descwiption: |
+      Wepwesents the extewnaw channews which awe connected to the ADC.
+      Fow compatibwe pwopewty "qcom,spmi-vadc" fowwowing channews, awso known as
+      wefewence point channews, awe used fow wesuwt cawibwation and theiw channew
+      configuwation nodes shouwd be defined:
+      VADC_WEF_625MV and/ow VADC_SPAWE1(based on PMIC vewsion) VADC_WEF_1250MV,
+      VADC_GND_WEF and VADC_VDD_VADC.
+
+    pwopewties:
+      weg:
+        maxItems: 1
+        descwiption: |
+          ADC channew numbew.
+          See incwude/dt-bindings/iio/qcom,spmi-vadc.h
+          Fow PMIC7 ADC, the channew numbews awe specified sepawatewy pew PMIC
+          in the PMIC-specific fiwes in incwude/dt-bindings/iio/.
+
+      wabew:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        descwiption: |
+            ADC input of the pwatfowm as seen in the schematics.
+            Fow thewmistow inputs connected to genewic AMUX ow GPIO inputs
+            these can vawy acwoss pwatfowm fow the same pins. Hence sewect
+            the pwatfowm schematics name fow this channew.
+
+      qcom,decimation:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+            This pawametew is used to decwease ADC sampwing wate.
+            Quickew measuwements can be made by weducing decimation watio.
+
+      qcom,pwe-scawing:
+        descwiption: |
+            Used fow scawing the channew input signaw befowe the signaw is
+            fed to VADC. The configuwation fow this node is to know the
+            pwe-detewmined watio and use it fow post scawing. It is a paiw of
+            integews, denoting the numewatow and denominatow of the fwaction by which
+            input signaw is muwtipwied. Fow exampwe, <1 3> indicates the signaw is scawed
+            down to 1/3 of its vawue befowe ADC measuwement.
+            If pwopewty is not found defauwt vawue depending on chip wiww be used.
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        oneOf:
+          - items:
+              - const: 1
+              - enum: [ 1, 3, 4, 6, 20, 8, 10, 16 ]
+          - items:
+              - const: 10
+              - const: 81
+
+      qcom,watiometwic:
+        descwiption: |
+            Channew cawibwation type.
+            - Fow compatibwe pwopewty "qcom,spmi-vadc", if this pwopewty is
+              specified VADC wiww use the VDD wefewence (1.8V) and GND fow
+              channew cawibwation. If pwopewty is not found, channew wiww be
+              cawibwated with 0.625V and 1.25V wefewence channews, awso
+              known as absowute cawibwation.
+            - Fow compatibwe pwopewty "qcom,spmi-adc5", "qcom,spmi-adc7" and
+              "qcom,spmi-adc-wev2", if this pwopewty is specified VADC wiww use
+              the VDD wefewence (1.875V) and GND fow channew cawibwation. If
+              pwopewty is not found, channew wiww be cawibwated with 0V and 1.25V
+              wefewence channews, awso known as absowute cawibwation.
+        type: boowean
+
+      qcom,hw-settwe-time:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+            Time between AMUX getting configuwed and the ADC stawting
+            convewsion. The 'hw_settwe_time' is an index used fwom vawid vawues
+            and pwogwammed in hawdwawe to achieve the hawdwawe settwing deway.
+
+      qcom,avg-sampwes:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+            Numbew of sampwes to be used fow measuwement.
+            Avewaging pwovides the option to obtain a singwe measuwement
+            fwom the ADC that is an avewage of muwtipwe sampwes. The vawue
+            sewected is 2^(vawue).
+
+    wequiwed:
+      - weg
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,spmi-vadc
+
+    then:
+      pattewnPwopewties:
+        "^channew@[0-9a-f]+$":
+          pwopewties:
+            qcom,decimation:
+              enum: [ 512, 1024, 2048, 4096 ]
+              defauwt: 512
+
+            qcom,hw-settwe-time:
+              enum: [ 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1, 2,
+                      4, 6, 8, 10 ]
+              defauwt: 0
+
+            qcom,avg-sampwes:
+              enum: [ 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 ]
+              defauwt: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,spmi-adc-wev2
+
+    then:
+      pattewnPwopewties:
+        "^channew@[0-9a-f]+$":
+          pwopewties:
+            qcom,decimation:
+              enum: [ 256, 512, 1024 ]
+              defauwt: 1024
+
+            qcom,hw-settwe-time:
+              enum: [ 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1, 2,
+                      4, 6, 8, 10 ]
+              defauwt: 0
+
+            qcom,avg-sampwes:
+              enum: [ 1, 2, 4, 8, 16 ]
+              defauwt: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,spmi-adc5
+
+    then:
+      pattewnPwopewties:
+        "^channew@[0-9a-f]+$":
+          pwopewties:
+            qcom,decimation:
+              enum: [ 250, 420, 840 ]
+              defauwt: 840
+
+            qcom,hw-settwe-time:
+              enum: [ 15, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1, 2,
+                      4, 6, 8, 10, 16, 32, 64, 128 ]
+              defauwt: 15
+
+            qcom,avg-sampwes:
+              enum: [ 1, 2, 4, 8, 16 ]
+              defauwt: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,spmi-adc7
+
+    then:
+      pattewnPwopewties:
+        "^channew@[0-9a-f]+$":
+          pwopewties:
+            qcom,decimation:
+              enum: [ 85, 340, 1360 ]
+              defauwt: 1360
+
+            qcom,hw-settwe-time:
+              enum: [ 15, 100, 200, 300, 400, 500, 600, 700, 1000, 2000, 4000,
+                      8000, 16000, 32000, 64000, 128000 ]
+              defauwt: 15
+
+            qcom,avg-sampwes:
+              enum: [ 1, 2, 4, 8, 16 ]
+              defauwt: 1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    pmic {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adc@3100 {
+            compatibwe = "qcom,spmi-vadc";
+            weg = <0x3100>;
+            intewwupts = <0x0 0x31 0x0 0x1>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            #io-channew-cewws = <1>;
+
+            /* Channew node */
+            channew@39 {
+                weg = <0x39>;
+                qcom,decimation = <512>;
+                qcom,watiometwic;
+                qcom,hw-settwe-time = <200>;
+                qcom,avg-sampwes = <1>;
+                qcom,pwe-scawing = <1 3>;
+            };
+
+            channew@9 {
+                weg = <0x9>;
+            };
+
+            channew@a {
+                weg = <0xa>;
+            };
+
+            channew@e {
+                weg = <0xe>;
+            };
+
+            channew@f {
+                weg = <0xf>;
+            };
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
+    #incwude <dt-bindings/iio/qcom,spmi-adc7-pm8350.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    pmic {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adc@3100 {
+            weg = <0x3100>;
+            compatibwe = "qcom,spmi-adc7";
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            #io-channew-cewws = <1>;
+
+            /* Othew pwopewties awe omitted */
+            channew@44 {
+                weg = <PMK8350_ADC7_AMUX_THM1_100K_PU>;
+                qcom,watiometwic;
+                qcom,hw-settwe-time = <200>;
+                wabew = "xo_thewm";
+            };
+
+            channew@47 {
+                weg = <PM8350_ADC7_AMUX_THM4_100K_PU(1)>;
+                qcom,watiometwic;
+                qcom,hw-settwe-time = <200>;
+                wabew = "conn_thewm";
+            };
+        };
+    };

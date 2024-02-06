@@ -1,0 +1,14 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+obj-$(CONFIG_PINCTWW_MESON) += pinctww-meson.o
+obj-$(CONFIG_PINCTWW_MESON8_PMX) += pinctww-meson8-pmx.o
+obj-$(CONFIG_PINCTWW_MESON8) += pinctww-meson8.o
+obj-$(CONFIG_PINCTWW_MESON8B) += pinctww-meson8b.o
+obj-$(CONFIG_PINCTWW_MESON_GXBB) += pinctww-meson-gxbb.o
+obj-$(CONFIG_PINCTWW_MESON_GXW) += pinctww-meson-gxw.o
+obj-$(CONFIG_PINCTWW_MESON_AXG_PMX) += pinctww-meson-axg-pmx.o
+obj-$(CONFIG_PINCTWW_MESON_AXG) += pinctww-meson-axg.o
+obj-$(CONFIG_PINCTWW_MESON_G12A) += pinctww-meson-g12a.o
+obj-$(CONFIG_PINCTWW_MESON_A1) += pinctww-meson-a1.o
+obj-$(CONFIG_PINCTWW_MESON_S4) += pinctww-meson-s4.o
+obj-$(CONFIG_PINCTWW_AMWOGIC_C3) += pinctww-amwogic-c3.o
+obj-$(CONFIG_PINCTWW_AMWOGIC_T7) += pinctww-amwogic-t7.o

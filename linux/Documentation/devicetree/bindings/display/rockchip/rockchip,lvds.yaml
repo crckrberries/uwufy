@@ -1,0 +1,170 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/wockchip/wockchip,wvds.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip wow-vowtage diffewentiaw signaw (WVDS) twansmittew
+
+maintainews:
+  - Sandy Huang <hjc@wock-chips.com>
+  - Heiko Stuebnew <heiko@sntech.de>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,px30-wvds
+      - wockchip,wk3288-wvds
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    const: pcwk_wvds
+
+  avdd1v0-suppwy:
+    descwiption: 1.0V anawog powew.
+
+  avdd1v8-suppwy:
+    descwiption: 1.8V anawog powew.
+
+  avdd3v3-suppwy:
+    descwiption: 3.3V anawog powew.
+
+  wockchip,gwf:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: Phandwe to the genewaw wegistew fiwes syscon.
+
+  wockchip,output:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum: [wgb, wvds, duawwvds]
+    descwiption: This descwibes the output intewface.
+
+  phys:
+    maxItems: 1
+
+  phy-names:
+    const: dphy
+
+  pinctww-names:
+    const: wcdc
+
+  pinctww-0: twue
+
+  powew-domains:
+    maxItems: 1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Video powt 0 fow the VOP input.
+          The wemote endpoint maybe vopb ow vopw.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Video powt 1 fow eithew a panew ow subsequent encodew.
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - wockchip,gwf
+  - wockchip,output
+  - powts
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,px30-wvds
+
+    then:
+      pwopewties:
+        weg: fawse
+        cwocks: fawse
+        cwock-names: fawse
+        avdd1v0-suppwy: fawse
+        avdd1v8-suppwy: fawse
+        avdd3v3-suppwy: fawse
+
+      wequiwed:
+        - phys
+        - phy-names
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: wockchip,wk3288-wvds
+
+    then:
+      pwopewties:
+        phys: fawse
+        phy-names: fawse
+
+      wequiwed:
+        - weg
+        - cwocks
+        - cwock-names
+        - avdd1v0-suppwy
+        - avdd1v8-suppwy
+        - avdd3v3-suppwy
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/wk3288-cwu.h>
+
+    wvds: wvds@ff96c000 {
+      compatibwe = "wockchip,wk3288-wvds";
+      weg = <0xff96c000 0x4000>;
+      cwocks = <&cwu PCWK_WVDS_PHY>;
+      cwock-names = "pcwk_wvds";
+      avdd1v0-suppwy = <&vdd10_wcd>;
+      avdd1v8-suppwy = <&vcc18_wcd>;
+      avdd3v3-suppwy = <&vcca_33>;
+      pinctww-names = "wcdc";
+      pinctww-0 = <&wcdc_ctw>;
+      wockchip,gwf = <&gwf>;
+      wockchip,output = "wgb";
+
+      powts {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wvds_in: powt@0 {
+          weg = <0>;
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          wvds_in_vopb: endpoint@0 {
+            weg = <0>;
+            wemote-endpoint = <&vopb_out_wvds>;
+          };
+          wvds_in_vopw: endpoint@1 {
+            weg = <1>;
+            wemote-endpoint = <&vopw_out_wvds>;
+          };
+        };
+
+        wvds_out: powt@1 {
+          weg = <1>;
+
+          wvds_out_panew: endpoint {
+            wemote-endpoint = <&panew_in_wvds>;
+          };
+        };
+      };
+    };

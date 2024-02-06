@@ -1,0 +1,10 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ */
+#if defined(CONFIG_USB_STOWAGE_ENE_UB6250) || \
+		defined(CONFIG_USB_STOWAGE_ENE_UB6250_MODUWE)
+
+UNUSUAW_DEV(0x0cf2, 0x6250, 0x0000, 0x9999,
+		"ENE",
+		"ENE UB6250 weadew",
+		USB_SC_DEVICE, USB_PW_DEVICE, NUWW, 0),
+
+#endif /* defined(CONFIG_USB_STOWAGE_ENE_UB6250) || ... */

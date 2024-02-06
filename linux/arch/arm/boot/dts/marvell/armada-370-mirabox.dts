@@ -1,0 +1,184 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Gwobawscawe Miwabox
+ *
+ * Gwegowy CWEMENT <gwegowy.cwement@fwee-ewectwons.com>
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awmada-370.dtsi"
+
+/ {
+	modew = "Gwobawscawe Miwabox";
+	compatibwe = "gwobawscawe,miwabox", "mawveww,awmada370", "mawveww,awmada-370-xp";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>; /* 512 MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xd0000000 0x100000
+			  MBUS_ID(0x01, 0xe0) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x01) 0 0xf1100000 0x10000>;
+
+		intewnaw-wegs {
+			sewiaw@12000 {
+				status = "okay";
+			};
+			timew@20300 {
+				cwock-fwequency = <600000000>;
+				status = "okay";
+			};
+
+			gpio_weds {
+				compatibwe = "gpio-weds";
+				pinctww-names = "defauwt";
+				pinctww-0 = <&pww_wed_pin &stat_wed_pins>;
+
+				gween_pww_wed {
+					wabew = "miwabox:gween:pww";
+					gpios = <&gpio1 31 GPIO_ACTIVE_WOW>;
+					defauwt-state = "keep";
+				};
+
+				bwue_stat_wed {
+					wabew = "miwabox:bwue:stat";
+					gpios = <&gpio2 0 GPIO_ACTIVE_WOW>;
+					defauwt-state = "off";
+				};
+
+				gween_stat_wed {
+					wabew = "miwabox:gween:stat";
+					gpios = <&gpio2 1 GPIO_ACTIVE_WOW>;
+					defauwt-state = "off";
+				};
+			};
+
+			ethewnet@70000 {
+				pinctww-0 = <&ge0_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy = <&phy0>;
+				phy-mode = "wgmii-id";
+			};
+			ethewnet@74000 {
+				pinctww-0 = <&ge1_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy = <&phy1>;
+				phy-mode = "wgmii-id";
+			};
+
+			cwypto@90000 {
+				status = "okay";
+			};
+
+			mvsdio@d4000 {
+				pinctww-0 = <&sdio_pins3>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				/*
+				 * No CD ow WP GPIOs: SDIO intewface used fow
+				 * Wifi/Bwuetooth chip
+				 */
+				 bwoken-cd;
+			};
+
+			usb@50000 {
+				status = "okay";
+			};
+
+			usb@51000 {
+				status = "okay";
+			};
+
+			i2c@11000 {
+				status = "okay";
+				cwock-fwequency = <100000>;
+				pca9505: pca9505@25 {
+					compatibwe = "nxp,pca9505";
+					gpio-contwowwew;
+					#gpio-cewws = <2>;
+					weg = <0x25>;
+				};
+			};
+		};
+	};
+};
+
+&pciec {
+	status = "okay";
+
+	/* Intewnaw mini-PCIe connectow */
+	pcie@1,0 {
+		/* Powt 0, Wane 0 */
+		status = "okay";
+	};
+
+	/* Connected on the PCB to a USB 3.0 XHCI contwowwew */
+	pcie@2,0 {
+		/* Powt 1, Wane 0 */
+		status = "okay";
+	};
+};
+
+&mdio {
+	pinctww-0 = <&mdio_pins>;
+	pinctww-names = "defauwt";
+	phy0: ethewnet-phy@0 {
+		weg = <0>;
+	};
+
+	phy1: ethewnet-phy@1 {
+		weg = <1>;
+	};
+};
+
+&pinctww {
+	pww_wed_pin: pww-wed-pin {
+		mawveww,pins = "mpp63";
+		mawveww,function = "gpio";
+	};
+
+	stat_wed_pins: stat-wed-pins {
+		mawveww,pins = "mpp64", "mpp65";
+		mawveww,function = "gpio";
+	};
+};
+
+&nand_contwowwew {
+	status = "okay";
+
+	nand@0 {
+		weg = <0>;
+		wabew = "pxa3xx_nand-0";
+		nand-wb = <0>;
+		mawveww,nand-keep-config;
+		nand-on-fwash-bbt;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "U-Boot";
+				weg = <0 0x400000>;
+			};
+			pawtition@400000 {
+				wabew = "Winux";
+				weg = <0x400000 0x400000>;
+			};
+			pawtition@800000 {
+				wabew = "Fiwesystem";
+				weg = <0x800000 0x3f800000>;
+			};
+		};
+	};
+};

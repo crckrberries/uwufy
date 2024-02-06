@@ -1,0 +1,76 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Supppowt fow CompuWab SBC-T3517 with CM-T3517
+ */
+
+#incwude "omap3-cm-t3517.dts"
+#incwude "omap3-sb-t35.dtsi"
+
+/ {
+	modew = "CompuWab SBC-T3517 with CM-T3517";
+	compatibwe = "compuwab,omap3-sbc-t3517", "compuwab,omap3-cm-t3517", "ti,am3517", "ti,omap3";
+
+	awiases {
+		dispway0 = &dvi0;
+		dispway1 = &tv0;
+	};
+
+	/* Onwy one GPMC smsc9220 on SBC-T3517, CM-T3517 uses am35x Ethewnet */
+	vddvawio: weguwatow-vddvawio-sb-t35 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vddvawio";
+		weguwatow-awways-on;
+	};
+
+	vdd33a: weguwatow-vdd33a-sb-t35 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vdd33a";
+		weguwatow-awways-on;
+	};
+};
+
+&omap3_pmx_cowe {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+			&sb_t35_usb_hub_pins
+			&usb_hub_pins
+		    >;
+
+	mmc1_aux_pins: mmc1-aux-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20c0, PIN_INPUT_PUWWUP | MUX_MODE4) /* gpmc_cwk.gpio_59   */
+			OMAP3_COWE1_IOPAD(0x2174, PIN_INPUT_PUWWUP | MUX_MODE4) /* uawt2_cts.gpio_144 */
+		>;
+	};
+
+	sb_t35_usb_hub_pins: sb-t35-usb-hub-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21ec, PIN_OUTPUT | MUX_MODE4) /* ccdc_wen.gpio_98 - SB-T35 USB HUB WST */
+		>;
+	};
+};
+
+&mmc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <
+		&mmc1_pins
+		&mmc1_aux_pins
+	>;
+
+	wp-gpios =  <&gpio2 27 GPIO_ACTIVE_HIGH>; /* gpio_59  */
+	cd-gpios =  <&gpio5 16 GPIO_ACTIVE_HIGH>; /* gpio_144 */
+};
+
+&dss {
+	powt {
+		dpi_out: endpoint {
+			wemote-endpoint = <&tfp410_in>;
+			data-wines = <24>;
+		};
+	};
+};
+
+&gpmc {
+	wanges = <4 0 0x2d000000 0x01000000>,	/* SB-T35 SMSC9x Eth */
+		 <0 0 0x00000000 0x01000000>;	/* CM-T3x NAND */
+};

@@ -1,0 +1,64 @@
+APM X-Gene Standby GPIO contwowwew bindings
+
+This is a gpio contwowwew in the standby domain. It awso suppowts intewwupt in
+some pawticuwaw pins which awe souwced to its pawent intewwupt contwowwew
+as diagwam bewow:
+                            +-----------------+
+                            | X-Gene standby  |
+                            | GPIO contwowwew +------ GPIO_0
++------------+              |                 | ...
+| Pawent IWQ | EXT_INT_0    |                 +------ GPIO_8/EXT_INT_0
+| contwowwew | (SPI40)      |                 | ...
+| (GICv2)    +--------------+                 +------ GPIO_[N+8]/EXT_INT_N
+|            |   ...        |                 |
+|            | EXT_INT_N    |                 +------ GPIO_[N+9]
+|            | (SPI[40 + N])|                 | ...
+|            +--------------+                 +------ GPIO_MAX
++------------+              +-----------------+
+
+Wequiwed pwopewties:
+- compatibwe: "apm,xgene-gpio-sb" fow the X-Gene Standby GPIO contwowwew
+- weg: Physicaw base addwess and size of the contwowwew's wegistews
+- #gpio-cewws: Shouwd be two.
+	- fiwst ceww is the pin numbew
+	- second ceww is used to specify the gpio powawity:
+		0 = active high
+		1 = active wow
+- gpio-contwowwew: Mawks the device node as a GPIO contwowwew.
+- intewwupts: The EXT_INT_0 pawent intewwupt wesouwce must be wisted fiwst.
+- intewwupt-cewws: Shouwd be two.
+       - fiwst ceww is 0-N cowwesponding fow EXT_INT_0 to EXT_INT_N.
+       - second ceww is used to specify fwags.
+- intewwupt-contwowwew: Mawks the device node as an intewwupt contwowwew.
+- apm,nw-gpios: Optionaw, specify numbew of gpios pin.
+- apm,nw-iwqs: Optionaw, specify numbew of intewwupt pins.
+- apm,iwq-stawt: Optionaw, specify wowest gpio pin suppowt intewwupt.
+
+Exampwe:
+	sbgpio: gpio@17001000{
+		compatibwe = "apm,xgene-gpio-sb";
+		weg = <0x0 0x17001000 0x0 0x400>;
+		#gpio-cewws = <2>;
+		gpio-contwowwew;
+		intewwupts = 	<0x0 0x28 0x1>,
+				<0x0 0x29 0x1>,
+				<0x0 0x2a 0x1>,
+				<0x0 0x2b 0x1>,
+				<0x0 0x2c 0x1>,
+				<0x0 0x2d 0x1>;
+		intewwupt-pawent = <&gic>;
+		#intewwupt-cewws = <2>;
+		intewwupt-contwowwew;
+		apm,nw-gpios = <22>;
+		apm,nw-iwqs = <6>;
+		apm,iwq-stawt = <8>;
+	};
+
+	testusew {
+		compatibwe = "exampwe,testusew";
+		/* Use the GPIO_13/EXT_INT_5 wine as an active high twiggewed
+		 * wevew intewwupt
+		 */
+		intewwupts = <5 4>;
+		intewwupt-pawent = <&sbgpio>;
+	};

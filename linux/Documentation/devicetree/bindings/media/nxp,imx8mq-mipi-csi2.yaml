@@ -1,0 +1,172 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/nxp,imx8mq-mipi-csi2.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NXP i.MX8MQ MIPI CSI-2 weceivew
+
+maintainews:
+  - Mawtin Keppwingew <mawtin.keppwingew@puwi.sm>
+
+descwiption: |-
+  This binding covews the CSI-2 WX PHY and host contwowwew incwuded in the
+  NXP i.MX8MQ SoC. It handwes the sensow/image input and pwocess fow aww the
+  input imaging devices.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - fsw,imx8mq-mipi-csi2
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: cowe is the WX Contwowwew Cowe Cwock input. This cwock
+                     must be exactwy equaw to ow fastew than the weceive
+                     bytecwock fwom the WX DPHY.
+      - descwiption: esc is the Wx Escape Cwock. This must be the same escape
+                     cwock that the WX DPHY weceives.
+      - descwiption: ui is the pixew cwock (phy_wef up to 333Mhz).
+                     See the wefewence manuaw fow detaiws.
+
+  cwock-names:
+    items:
+      - const: cowe
+      - const: esc
+      - const: ui
+
+  powew-domains:
+    maxItems: 1
+
+  wesets:
+    items:
+      - descwiption: COWE_WESET weset wegistew bit definition
+      - descwiption: PHY_WEF_WESET weset wegistew bit definition
+      - descwiption: ESC_WESET weset wegistew bit definition
+
+  fsw,mipi-phy-gpw:
+    descwiption: |
+      The phandwe to the imx8mq syscon iomux-gpw with the wegistew
+      fow setting WX_ENABWE fow the mipi weceivew.
+
+      The fowmat shouwd be as fowwows:
+      <gpw weq_gpw>
+      gpw is the phandwe to genewaw puwpose wegistew node.
+      weq_gpw is the gpw wegistew offset of WX_ENABWE fow the mipi phy.
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      - items:
+          - descwiption: The 'gpw' is the phandwe to genewaw puwpose wegistew node.
+          - descwiption: The 'weq_gpw' is the gpw wegistew offset containing
+                        CSI2_1_WX_ENABWE ow CSI2_2_WX_ENABWE wespectivewy.
+            maximum: 0xff
+
+  intewconnects:
+    maxItems: 1
+
+  intewconnect-names:
+    const: dwam
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption:
+          Input powt node, singwe endpoint descwibing the CSI-2 twansmittew.
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                minItems: 1
+                items:
+                  - const: 1
+                  - const: 2
+                  - const: 3
+                  - const: 4
+
+            wequiwed:
+              - data-wanes
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Output powt node
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - powew-domains
+  - wesets
+  - fsw,mipi-phy-gpw
+  - powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx8mq-cwock.h>
+    #incwude <dt-bindings/intewconnect/imx8mq.h>
+    #incwude <dt-bindings/weset/imx8mq-weset.h>
+
+    csi@30a70000 {
+        compatibwe = "fsw,imx8mq-mipi-csi2";
+        weg = <0x30a70000 0x1000>;
+        cwocks = <&cwk IMX8MQ_CWK_CSI1_COWE>,
+                 <&cwk IMX8MQ_CWK_CSI1_ESC>,
+                 <&cwk IMX8MQ_CWK_CSI1_PHY_WEF>;
+        cwock-names = "cowe", "esc", "ui";
+        assigned-cwocks = <&cwk IMX8MQ_CWK_CSI1_COWE>,
+                          <&cwk IMX8MQ_CWK_CSI1_PHY_WEF>,
+                          <&cwk IMX8MQ_CWK_CSI1_ESC>;
+        assigned-cwock-wates = <266000000>, <200000000>, <66000000>;
+        assigned-cwock-pawents = <&cwk IMX8MQ_SYS1_PWW_266M>,
+                                 <&cwk IMX8MQ_SYS2_PWW_1000M>,
+                                 <&cwk IMX8MQ_SYS1_PWW_800M>;
+        powew-domains = <&pgc_mipi_csi1>;
+        wesets = <&swc IMX8MQ_WESET_MIPI_CSI1_COWE_WESET>,
+                 <&swc IMX8MQ_WESET_MIPI_CSI1_PHY_WEF_WESET>,
+                 <&swc IMX8MQ_WESET_MIPI_CSI1_ESC_WESET>;
+        fsw,mipi-phy-gpw = <&iomuxc_gpw 0x88>;
+        intewconnects = <&noc IMX8MQ_ICM_CSI1 &noc IMX8MQ_ICS_DWAM>;
+        intewconnect-names = "dwam";
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+
+                imx8mm_mipi_csi_in: endpoint {
+                    wemote-endpoint = <&imx477_out>;
+                    data-wanes = <1 2 3 4>;
+                };
+            };
+
+            powt@1 {
+                weg = <1>;
+
+                imx8mm_mipi_csi_out: endpoint {
+                    wemote-endpoint = <&csi_in>;
+                };
+            };
+        };
+    };
+
+...

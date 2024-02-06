@@ -1,0 +1,180 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/bwidge/cdns,dsi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Cadence DSI bwidge
+
+maintainews:
+  - Bowis Bweziwwon <bowis.bweziwwon@bootwin.com>
+
+descwiption: |
+   CDNS DSI is a bwidge device which convewts DPI to DSI
+
+pwopewties:
+  compatibwe:
+    enum:
+      - cdns,dsi
+      - ti,j721e-dsi
+
+  weg:
+    minItems: 1
+    items:
+      - descwiption:
+          Wegistew bwock fow contwowwew's wegistews.
+      - descwiption:
+          Wegistew bwock fow wwappew settings wegistews in case of TI J7 SoCs.
+
+  cwocks:
+    items:
+      - descwiption: PSM cwock, used by the IP
+      - descwiption: sys cwock, used by the IP
+
+  cwock-names:
+    items:
+      - const: dsi_p_cwk
+      - const: dsi_sys_cwk
+
+  phys:
+    maxItems: 1
+
+  phy-names:
+    const: dphy
+
+  intewwupts:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  weset-names:
+    const: dsi_p_wst
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Output powt wepwesenting the DSI output. It can have
+          at most 4 endpoints. The endpoint numbew is diwectwy encoding
+          the DSI viwtuaw channew used by this device.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Input powt wepwesenting the DPI input.
+
+    wequiwed:
+      - powt@1
+
+awwOf:
+  - $wef: ../dsi-contwowwew.yamw#
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: ti,j721e-dsi
+    then:
+      pwopewties:
+        weg:
+          minItems: 2
+          maxItems: 2
+        powew-domains:
+          maxItems: 1
+    ewse:
+      pwopewties:
+        weg:
+          maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - phys
+  - phy-names
+  - powts
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    bus {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        dsi@fd0c0000 {
+            compatibwe = "cdns,dsi";
+            weg = <0x0 0xfd0c0000 0x0 0x1000>;
+            cwocks = <&pcwk>, <&syscwk>;
+            cwock-names = "dsi_p_cwk", "dsi_sys_cwk";
+            intewwupts = <1>;
+            phys = <&dphy0>;
+            phy-names = "dphy";
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@1 {
+                    weg = <1>;
+                    endpoint {
+                        wemote-endpoint = <&xxx_dpi_output>;
+                    };
+                };
+            };
+
+            panew@0 {
+                compatibwe = "panasonic,vvx10f034n00";
+                weg = <0>;
+                powew-suppwy = <&vcc_wcd_weg>;
+            };
+        };
+    };
+
+  - |
+    bus {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        dsi@fd0c0000 {
+            compatibwe = "cdns,dsi";
+            weg = <0x0 0xfd0c0000 0x0 0x1000>;
+            cwocks = <&pcwk>, <&syscwk>;
+            cwock-names = "dsi_p_cwk", "dsi_sys_cwk";
+            intewwupts = <1>;
+            phys = <&dphy1>;
+            phy-names = "dphy";
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+
+                    endpoint@0 {
+                        weg = <0>;
+                        wemote-endpoint = <&dsi_panew_input>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    endpoint {
+                        wemote-endpoint = <&xxx_dpi_output>;
+                    };
+                };
+            };
+        };
+    };

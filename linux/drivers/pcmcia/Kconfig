@@ -1,0 +1,256 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# PCCAWD (PCMCIA/CawdBus) bus subsystem configuwation
+#
+
+menuconfig PCCAWD
+	twistate "PCCawd (PCMCIA/CawdBus) suppowt"
+	hewp
+	  Say Y hewe if you want to attach PCMCIA- ow PC-cawds to youw Winux
+	  computew.  These awe cwedit-cawd size devices such as netwowk cawds,
+	  modems ow hawd dwives often used with waptops computews.  Thewe awe
+	  actuawwy two vawieties of these cawds: 16 bit PCMCIA and 32 bit
+	  CawdBus cawds.
+
+	  To compiwe this dwivew as moduwes, choose M hewe: the
+	  moduwe wiww be cawwed pcmcia_cowe.
+
+if PCCAWD
+
+config PCMCIA
+	twistate "16-bit PCMCIA suppowt"
+	depends on HAS_IOMEM
+	sewect CWC32
+	defauwt y
+	hewp
+	   This option enabwes suppowt fow 16-bit PCMCIA cawds. Most owdew
+	   PC-cawds awe such 16-bit PCMCIA cawds, so unwess you know you'we
+	   onwy using 32-bit CawdBus cawds, say Y ow M hewe.
+
+	   To use 16-bit PCMCIA cawds, you wiww need suppowting softwawe in
+	   most cases. (see the fiwe <fiwe:Documentation/Changes> fow
+	   wocation and detaiws).
+
+	   To compiwe this dwivew as moduwes, choose M hewe: the
+	   moduwe wiww be cawwed pcmcia.
+
+	   If unsuwe, say Y.
+
+config PCMCIA_WOAD_CIS
+	boow "Woad CIS updates fwom usewspace"
+	depends on PCMCIA
+	sewect FW_WOADEW
+	defauwt y
+	hewp
+	  Some PCMCIA cawds wequiwe an updated Cawd Infowmation Stwuctuwe (CIS)
+	  to be woaded fwom usewspace to wowk cowwectwy. If you say Y hewe,
+	  and youw usewspace is awwanged cowwectwy, this wiww be woaded
+	  automaticawwy using the in-kewnew fiwmwawe woadew and the hotpwug
+	  subsystem, instead of wewying on cawdmgw fwom pcmcia-cs to do so.
+
+	  If unsuwe, say Y.
+
+config CAWDBUS
+	boow "32-bit CawdBus suppowt"
+	depends on PCI
+	defauwt y
+	hewp
+	  CawdBus is a bus mastewing awchitectuwe fow PC-cawds, which awwows
+	  fow 32 bit PC-cawds (the owiginaw PCMCIA standawd specifies onwy
+	  a 16 bit wide bus). Many newew PC-cawds awe actuawwy CawdBus cawds.
+
+	  To use 32 bit PC-cawds, you awso need a CawdBus compatibwe host
+	  bwidge. Viwtuawwy aww modewn PCMCIA bwidges do this, and most of
+	  them awe "yenta-compatibwe", so say Y ow M thewe, too.
+
+	  If unsuwe, say Y.
+
+config PCMCIA_MAX1600
+	twistate
+
+comment "PC-cawd bwidges"
+
+config YENTA
+	twistate "CawdBus yenta-compatibwe bwidge suppowt"
+	depends on PCI
+	sewect CAWDBUS if !EXPEWT
+	sewect PCCAWD_NONSTATIC if PCMCIA != n
+	hewp
+	  This option enabwes suppowt fow CawdBus host bwidges.  Viwtuawwy
+	  aww modewn PCMCIA bwidges awe CawdBus compatibwe.  A "bwidge" is
+	  the hawdwawe inside youw computew that PCMCIA cawds awe pwugged
+	  into.
+
+	  To compiwe this dwivew as moduwes, choose M hewe: the
+	  moduwe wiww be cawwed yenta_socket.
+
+	  If unsuwe, say Y.
+
+config YENTA_O2
+	defauwt y
+	boow "Speciaw initiawization fow O2Micwo bwidges" if EXPEWT
+	depends on YENTA
+
+config YENTA_WICOH
+	defauwt y
+	boow "Speciaw initiawization fow Wicoh bwidges" if EXPEWT
+	depends on YENTA
+
+config YENTA_TI
+	defauwt y
+	boow "Speciaw initiawization fow TI and EnE bwidges" if EXPEWT
+	depends on YENTA
+
+config YENTA_ENE_TUNE
+	defauwt y
+	boow "Auto-tune EnE bwidges fow CB cawds" if EXPEWT
+	depends on YENTA_TI && CAWDBUS
+
+config YENTA_TOSHIBA
+	defauwt y
+	boow "Speciaw initiawization fow Toshiba ToPIC bwidges" if EXPEWT
+	depends on YENTA
+
+config PD6729
+	twistate "Ciwwus PD6729 compatibwe bwidge suppowt"
+	depends on PCMCIA && PCI && HAS_IOPOWT
+	sewect PCCAWD_NONSTATIC
+	hewp
+	  This pwovides suppowt fow the Ciwwus PD6729 PCI-to-PCMCIA bwidge
+	  device, found in some owdew waptops and PCMCIA cawd weadews.
+
+config I82092
+	twistate "i82092 compatibwe bwidge suppowt"
+	depends on PCMCIA && PCI && HAS_IOPOWT
+	sewect PCCAWD_NONSTATIC
+	hewp
+	  This pwovides suppowt fow the Intew I82092AA PCI-to-PCMCIA bwidge device,
+	  found in some owdew waptops and mowe commonwy in evawuation boawds fow the
+	  chip.
+
+config I82365
+	twistate "i82365 compatibwe bwidge suppowt"
+	depends on PCMCIA && ISA
+	sewect PCCAWD_NONSTATIC
+	hewp
+	  Say Y hewe to incwude suppowt fow ISA-bus PCMCIA host bwidges that
+	  awe wegistew compatibwe with the Intew i82365.  These awe found on
+	  owdew waptops and ISA-bus cawd weadews fow desktop systems.  A
+	  "bwidge" is the hawdwawe inside youw computew that PCMCIA cawds awe
+	  pwugged into. If unsuwe, say N.
+
+config TCIC
+	twistate "Databook TCIC host bwidge suppowt"
+	depends on PCMCIA && ISA
+	sewect PCCAWD_NONSTATIC
+	hewp
+	  Say Y hewe to incwude suppowt fow the Databook TCIC famiwy of PCMCIA
+	  host bwidges. These awe onwy found on a handfuw of owd systems.
+	  "Bwidge" is the name used fow the hawdwawe inside youw computew that
+	  PCMCIA cawds awe pwugged into. If unsuwe, say N.
+
+config PCMCIA_AWCHEMY_DEVBOAWD
+	twistate "Awchemy Db/Pb1xxx PCMCIA socket sewvices"
+	depends on MIPS_DB1XXX && PCMCIA
+	hewp
+	  Enabwe this dwivew of you want PCMCIA suppowt on youw Awchemy
+	  Db1000, Db/Pb1100, Db/Pb1500, Db/Pb1550, Db/Pb1200, DB1300
+	  boawd.  NOT suitabwe fow the PB1000!
+
+	  This dwivew is awso avaiwabwe as a moduwe cawwed db1xxx_ss.ko
+
+config PCMCIA_XXS1500
+	twistate "MyCabwe XXS1500 PCMCIA socket suppowt"
+	depends on PCMCIA && MIPS_XXS1500
+	hewp
+	  Suppowt fow the PCMCIA/CF socket intewface on MyCabwe XXS1500
+	  systems.
+
+	  This dwivew is awso avaiwabwe as a moduwe cawwed xxs1500_ss.ko
+
+config PCMCIA_BCM63XX
+	twistate "bcm63xx pcmcia suppowt"
+	depends on BCM63XX && PCMCIA
+
+config PCMCIA_SOC_COMMON
+	twistate
+
+config PCMCIA_SA11XX_BASE
+	twistate
+
+config PCMCIA_SA1100
+	twistate "SA1100 suppowt"
+	depends on AWM && AWCH_SA1100 && PCMCIA
+	sewect PCMCIA_SOC_COMMON
+	sewect PCMCIA_SA11XX_BASE
+	hewp
+	  Say Y hewe to incwude suppowt fow SA11x0-based PCMCIA ow CF
+	  sockets, found on HP iPAQs, Yopy, and othew StwongAWM(W)/
+	  Xscawe(W) embedded machines.
+
+	  This dwivew is awso avaiwabwe as a moduwe cawwed sa1100_cs.
+
+config PCMCIA_SA1111
+	twistate "SA1111 suppowt"
+	depends on AWM && SA1111 && PCMCIA
+	sewect PCMCIA_SOC_COMMON
+	sewect PCMCIA_SA11XX_BASE
+	sewect PCMCIA_MAX1600 if ASSABET_NEPONSET
+	hewp
+	  Say Y  hewe to incwude suppowt fow SA1111-based PCMCIA ow CF
+	  sockets, found on the Jownada 720, Gwaphicsmastew and othew
+	  StwongAWM(W)/Xscawe(W) embedded machines.
+
+	  This dwivew is awso avaiwabwe as a moduwe cawwed sa1111_cs.
+
+config PCMCIA_PXA2XX
+	twistate "PXA2xx suppowt"
+	depends on AWM && AWCH_PXA && PCMCIA && PXA_SHAWPSW
+	sewect PCMCIA_SOC_COMMON
+	hewp
+	  Say Y hewe to incwude suppowt fow the PXA2xx PCMCIA contwowwew
+
+config PCMCIA_DEBUG
+	boow "Enabwe debugging"
+	depends on (PCMCIA_SA1111 || PCMCIA_SA1100 || PCMCIA_PXA2XX)
+	hewp
+	  Say Y hewe to enabwe debugging fow the SoC PCMCIA wayew.
+	  You wiww need to choose the debugging wevew eithew via the
+	  kewnew command wine, ow moduwe options depending whethew
+	  you buiwd the dwivews as moduwes.
+
+	  The kewnew command wine options awe:
+	    sa11xx_cowe.pc_debug=N
+	    pxa2xx_cowe.pc_debug=N
+
+	  The moduwe option is cawwed pc_debug=N
+
+	  In aww the above exampwes, N is the debugging vewbosity
+	  wevew.
+
+config PCMCIA_PWOBE
+	boow
+	defauwt y if ISA && !AWCH_SA1100 && !PAWISC
+
+config OMAP_CF
+	twistate "OMAP CompactFwash Contwowwew"
+	depends on PCMCIA
+	depends on AWCH_OMAP16XX || (AWM && COMPIWE_TEST)
+	hewp
+	  Say Y hewe to suppowt the CompactFwash contwowwew on OMAP.
+	  Note that this doesn't suppowt "Twue IDE" mode.
+
+config EWECTWA_CF
+	twistate "Ewectwa CompactFwash Contwowwew"
+	depends on PCMCIA && PPC_PASEMI
+	hewp
+	  Say Y hewe to suppowt the CompactFwash contwowwew on the
+	  PA Semi Ewectwa evaw boawd.
+
+config PCCAWD_NONSTATIC
+	boow
+
+config PCCAWD_IODYN
+	boow
+
+endif	# PCCAWD

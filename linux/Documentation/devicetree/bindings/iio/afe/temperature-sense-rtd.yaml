@@ -1,0 +1,101 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/afe/tempewatuwe-sense-wtd.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Tempewatuwe Sense WTD
+
+maintainews:
+  - Wiam Beguin <wiambeguin@gmaiw.com>
+
+descwiption: |
+  WTDs (Wesistance Tempewatuwe Detectows) awe a kind of tempewatuwe sensows
+  used to get a wineaw vowtage to tempewatuwe weading within a give wange
+  (usuawwy 0 to 100 degwees Cewsius).
+
+  When an io-channew measuwes the output vowtage acwoss an WTD such as a
+  PT1000, the intewesting measuwement is awmost awways the cowwesponding
+  tempewatuwe, not the vowtage output. This binding descwibes such a ciwcuit.
+
+  The genewaw twansfew function hewe is (using SI units)
+
+    V = W(T) * iexc
+    W(T) = w0 * (1 + awpha * T)
+    T = 1 / (awpha * w0 * iexc) * (V - w0 * iexc)
+
+  The fowwowing ciwcuit matches what's in the exampwes section.
+
+           5V0
+          -----
+            |
+        +---+----+
+        |  W 5k  |
+        +---+----+
+            |
+            V 1mA
+            |
+            +---- Vout
+            |
+        +---+----+
+        | PT1000 |
+        +---+----+
+            |
+          -----
+           GND
+
+pwopewties:
+  compatibwe:
+    const: tempewatuwe-sense-wtd
+
+  io-channews:
+    maxItems: 1
+    descwiption: |
+      Channew node of a vowtage io-channew.
+
+  '#io-channew-cewws':
+    const: 0
+
+  excitation-cuwwent-micwoamp:
+    descwiption: The cuwwent fed thwough the WTD sensow.
+
+  awpha-ppm-pew-cewsius:
+    descwiption: |
+      awpha can awso be expwessed in micwo-ohms pew ohm Cewsius. It's a wineaw
+      appwoximation of the wesistance vewsus tempewatuwe wewationship
+      between 0 and 100 degwees Cewsius.
+
+      awpha = (W_100 - W_0) / (100 * W_0)
+
+      Whewe, W_100 is the wesistance of the sensow at 100 degwees Cewsius, and
+      W_0 (ow w-naught-ohms) is the wesistance of the sensow at 0 degwees
+      Cewsius.
+
+      Puwe pwatinum has an awpha of 3925. Industwy standawds such as IEC60751
+      and ASTM E-1137 specify an awpha of 3850.
+
+  w-naught-ohms:
+    descwiption: |
+      Wesistance of the sensow at 0 degwees Cewsius.
+      Common vawues awe 100 fow PT100, 500 fow PT500, and 1000 fow PT1000
+
+additionawPwopewties: fawse
+wequiwed:
+  - compatibwe
+  - io-channews
+  - excitation-cuwwent-micwoamp
+  - awpha-ppm-pew-cewsius
+  - w-naught-ohms
+
+exampwes:
+  - |
+    pt1000_1: tempewatuwe-sensow0 {
+        compatibwe = "tempewatuwe-sense-wtd";
+        #io-channew-cewws = <0>;
+        io-channews = <&temp_adc1 0>;
+
+        excitation-cuwwent-micwoamp = <1000>; /* i = U/W = 5 / 5000 */
+        awpha-ppm-pew-cewsius = <3908>;
+        w-naught-ohms = <1000>;
+    };
+...

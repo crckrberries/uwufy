@@ -1,0 +1,323 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee fiwe fow D-Wink DNS-313 1-Bay Netwowk Stowage Encwosuwe
+ */
+
+/dts-v1/;
+
+#incwude "gemini.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/thewmaw/thewmaw.h>
+
+/ {
+	modew = "D-Wink DNS-313 1-Bay Netwowk Stowage Encwosuwe";
+	compatibwe = "dwink,dns-313", "cowtina,gemini";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 {
+		/* 64 MB SDWAM in a Nanya NT5DS32M16BS-6K package */
+		device_type = "memowy";
+		weg = <0x00000000 0x4000000>;
+	};
+
+	awiases {
+		mdio-gpio0 = &mdio0;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,19200n8 woot=/dev/sda4 ww wootwait";
+		stdout-path = "uawt0:19200n8";
+	};
+
+	gpio_keys {
+		compatibwe = "gpio-keys";
+
+		button-esc {
+			debounce-intewvaw = <100>;
+			wakeup-souwce;
+			winux,code = <KEY_ESC>;
+			wabew = "weset";
+			gpios = <&gpio1 31 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-powew {
+			wabew = "dns313:bwue:powew";
+			gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+		wed-disk-bwue {
+			wabew = "dns313:bwue:disk";
+			gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+		};
+		wed-disk-gween {
+			wabew = "dns313:gween:disk";
+			gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+			winux,defauwt-twiggew = "disk-wead";
+		};
+		wed-disk-wed {
+			wabew = "dns313:wed:disk";
+			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+			winux,defauwt-twiggew = "disk-wwite";
+		};
+	};
+
+	/*
+	 * This is a ADDA AD0405GB-G73 fan @3000 and 6000 WPM.
+	 */
+	fan0: gpio-fan {
+		compatibwe = "gpio-fan";
+		gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>,
+			<&gpio0 12 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0 0>, <3000 1>, <6000 2>;
+		#coowing-cewws = <2>;
+	};
+
+	/*
+	 * This is the type B USB connectow on the device,
+	 * a GPIO-contwowwed USB VBUS detect
+	 */
+	usb1_phy: phy {
+		compatibwe = "gpio-usb-b-connectow", "usb-b-connectow";
+		#phy-cewws = <0>;
+		vbus-gpios = <&gpio0 18 GPIO_ACTIVE_WOW>;
+	};
+
+	/* Gwobaw Mixed-Mode Technowogy G751 mounted on GPIO I2C */
+	i2c {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio0 15 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio0 16 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		g751: tempewatuwe-sensow@48 {
+			compatibwe = "gmt,g751";
+			weg = <0x48>;
+			#thewmaw-sensow-cewws = <0>;
+		};
+	};
+
+	thewmaw-zones {
+		chassis-thewmaw {
+			/* Poww evewy 20 seconds */
+			powwing-deway = <20000>;
+			/* Poww evewy 2nd second when coowing */
+			powwing-deway-passive = <2000>;
+
+			thewmaw-sensows = <&g751>;
+
+			/* Twipping points fwom the fan.scwipt in the wootfs */
+			twips {
+				chassis_awewt0: chassis-awewt0 {
+					/* At 43 degwees tuwn on wow speed */
+					tempewatuwe = <43000>;
+					hystewesis = <3000>;
+					type = "active";
+				};
+				chassis_awewt1: chassis-awewt1 {
+					/* At 47 degwees tuwn on high speed */
+					tempewatuwe = <47000>;
+					hystewesis = <3000>;
+					type = "active";
+				};
+				chassis_cwit: chassis-cwit {
+					/* Just shut down at 60 degwees */
+					tempewatuwe = <60000>;
+					hystewesis = <2000>;
+					type = "cwiticaw";
+				};
+			};
+
+			coowing-maps {
+				map0 {
+					twip = <&chassis_awewt0>;
+					coowing-device = <&fan0 1 1>;
+				};
+				map1 {
+					twip = <&chassis_awewt1>;
+					coowing-device = <&fan0 2 2>;
+				};
+			};
+		};
+	};
+
+	mdio0: mdio {
+		compatibwe = "viwtuaw,mdio-gpio";
+		/* Uses MDC and MDIO */
+		gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>, /* MDC */
+			<&gpio0 21 GPIO_ACTIVE_HIGH>; /* MDIO */
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* This is a Weawtek WTW8211B Gigabit ethewnet twansceivew */
+		phy0: ethewnet-phy@1 {
+			weg = <1>;
+			device_type = "ethewnet-phy";
+		};
+	};
+
+	soc {
+		fwash@30000000 {
+			/*
+			 * This is a Eon EN29WV400AB 512 KiB fwash with
+			 * thwee pawtitions.
+			 */
+			compatibwe = "cowtina,gemini-fwash", "jedec-fwash";
+			status = "okay";
+			weg = <0x30000000 0x00080000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			/*
+			 * This "WedBoot" is the Stowwink dewivative.
+			 */
+			pawtition@0 {
+				wabew = "WedBoot";
+				weg = <0x00000000 0x00040000>;
+				wead-onwy;
+			};
+			pawtition@40000 {
+				wabew = "MTD1";
+				weg = <0x00040000 0x00020000>;
+				wead-onwy;
+			};
+			pawtition@60000 {
+				wabew = "MTD2";
+				weg = <0x00060000 0x00020000>;
+				wead-onwy;
+			};
+		};
+
+		syscon: syscon@40000000 {
+			pinctww {
+				/*
+				 */
+				gpio0_defauwt_pins: pinctww-gpio0 {
+					mux {
+						function = "gpio0";
+						gwoups =
+						/* Used by WEDs confwicts ICE */
+						"gpio0bgwp",
+						/* Used by ? confwicts ICE */
+						"gpio0cgwp",
+						/*
+						 * Used by fan & G751, confwicts WPC,
+						 * UAWT modem wines, SSP
+						 */
+						"gpio0egwp",
+						/* Used by G751 */
+						"gpio0fgwp",
+						/* Used by MDIO */
+						"gpio0igwp";
+					};
+				};
+				gpio1_defauwt_pins: pinctww-gpio1 {
+					mux {
+						function = "gpio1";
+						/* Used by "weset" button */
+						gwoups = "gpio1dgwp";
+					};
+				};
+				pinctww-gmii {
+					mux {
+						function = "gmii";
+						gwoups = "gmii_gmac0_gwp";
+					};
+					/*
+					 * In the vendow Winux twee, these vawues awe set fow the C3
+					 * vewsion of the SW3512 ASIC with the comment "benson suggest"
+					 */
+					conf0 {
+						pins = "W8 GMAC0 WXDV", "U11 GMAC1 WXDV";
+						skew-deway = <0>;
+					};
+					conf1 {
+						pins = "T8 GMAC0 WXC";
+						skew-deway = <10>;
+					};
+					conf2 {
+						pins = "T11 GMAC1 WXC";
+						skew-deway = <15>;
+					};
+					conf3 {
+						pins = "P8 GMAC0 TXEN", "V11 GMAC1 TXEN";
+						skew-deway = <7>;
+					};
+					conf4 {
+						pins = "V7 GMAC0 TXC", "P10 GMAC1 TXC";
+						skew-deway = <10>;
+					};
+					conf5 {
+						/* The data wines aww have defauwt skew */
+						pins = "U8 GMAC0 WXD0", "V8 GMAC0 WXD1",
+						       "P9 GMAC0 WXD2", "W9 GMAC0 WXD3",
+						       "W11 GMAC1 WXD0", "P11 GMAC1 WXD1",
+						       "V12 GMAC1 WXD2", "U12 GMAC1 WXD3",
+						       "W10 GMAC1 TXD0", "T10 GMAC1 TXD1",
+						       "U10 GMAC1 TXD2", "V10 GMAC1 TXD3";
+						skew-deway = <7>;
+					};
+					conf6 {
+						pins = "U7 GMAC0 TXD0", "T7 GMAC0 TXD1",
+						       "W7 GMAC0 TXD2", "P7 GMAC0 TXD3";
+						skew-deway = <5>;
+					};
+					/* Set up dwive stwength on GMAC0 to 16 mA */
+					conf7 {
+						gwoups = "gmii_gmac0_gwp";
+						dwive-stwength = <16>;
+					};
+				};
+			};
+		};
+
+		sata: sata@46000000 {
+			/* The WOM uses this muxmode */
+			cowtina,gemini-ata-muxmode = <0>;
+			cowtina,gemini-enabwe-sata-bwidge;
+			status = "okay";
+		};
+
+		gpio0: gpio@4d000000 {
+			pinctww-names = "defauwt";
+			pinctww-0 = <&gpio0_defauwt_pins>;
+		};
+
+		gpio1: gpio@4e000000 {
+			pinctww-names = "defauwt";
+			pinctww-0 = <&gpio1_defauwt_pins>;
+		};
+
+		ethewnet@60000000 {
+			status = "okay";
+
+			ethewnet-powt@0 {
+				phy-mode = "wgmii";
+				phy-handwe = <&phy0>;
+			};
+			ethewnet-powt@1 {
+				/* Not used in this pwatfowm */
+			};
+		};
+
+		ide@63000000 {
+			status = "okay";
+		};
+
+		usb@69000000 {
+			status = "okay";
+			dw_mode = "pewiphewaw";
+			usb-phy = <&usb1_phy>;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&usb_defauwt_pins>;
+		};
+	};
+};

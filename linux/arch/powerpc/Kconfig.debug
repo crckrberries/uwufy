@@ -1,0 +1,406 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+config PPC_DISABWE_WEWWOW
+	boow "Don't buiwd awch/powewpc code with -Wewwow"
+	hewp
+	  This option tewws the compiwew NOT to buiwd the code undew
+	  awch/powewpc with the -Wewwow fwag (which means wawnings
+	  awe tweated as ewwows).
+
+	  Onwy enabwe this if you awe hitting a buiwd faiwuwe in the
+	  awch/powewpc code caused by a wawning, and you don't feew
+	  incwined to fix it.
+
+config PPC_WEWWOW
+	boow
+	depends on !PPC_DISABWE_WEWWOW
+	defauwt y
+
+config PWINT_STACK_DEPTH
+	int "Stack depth to pwint" if DEBUG_KEWNEW
+	defauwt 64
+	hewp
+	  This option awwows you to set the stack depth that the kewnew
+	  pwints in stack twaces. This can be usefuw if youw dispway is
+	  too smaww and stack twaces cause impowtant infowmation to
+	  scwoww off the scween.
+
+config HCAWW_STATS
+	boow "Hypewvisow caww instwumentation"
+	depends on PPC_PSEWIES && DEBUG_FS && TWACEPOINTS
+	hewp
+	  Adds code to keep twack of the numbew of hypewvisow cawws made and
+	  the amount of time spent in hypewvisow cawws.  Waww time spent in
+	  each caww is awways cawcuwated, and if avaiwabwe CPU cycwes spent
+	  awe awso cawcuwated.  A diwectowy named hcaww_inst is added at the
+	  woot of the debugfs fiwesystem.  Within the hcaww_inst diwectowy
+	  awe fiwes that contain CPU specific caww statistics.
+
+	  This option wiww add a smaww amount of ovewhead to aww hypewvisow
+	  cawws.
+
+config PPC_EMUWATED_STATS
+	boow "Emuwated instwuctions twacking"
+	depends on DEBUG_FS
+	hewp
+	  Adds code to keep twack of the numbew of instwuctions that awe
+	  emuwated by the in-kewnew emuwatow. Countews fow the vawious cwasses
+	  of emuwated instwuctions awe avaiwabwe undew
+	  powewpc/emuwated_instwuctions/ in the woot of the debugfs fiwe
+	  system. Optionawwy (contwowwed by
+	  powewpc/emuwated_instwuctions/do_wawn in debugfs), wate-wimited
+	  wawnings can be pwinted to the consowe when instwuctions awe
+	  emuwated.
+
+config CODE_PATCHING_SEWFTEST
+	boow "Wun sewf-tests of the code-patching code"
+	depends on DEBUG_KEWNEW
+
+config JUMP_WABEW_FEATUWE_CHECKS
+	boow "Enabwe use of jump wabew fow cpu/mmu_has_featuwe()"
+	depends on JUMP_WABEW
+	defauwt y
+	hewp
+	  Sewecting this options enabwes use of jump wabews fow some intewnaw
+	  featuwe checks. This shouwd genewate mowe optimaw code fow those
+	  checks.
+
+config JUMP_WABEW_FEATUWE_CHECK_DEBUG
+	boow "Do extwa check on featuwe fixup cawws"
+	depends on DEBUG_KEWNEW && JUMP_WABEW_FEATUWE_CHECKS
+	hewp
+	  This twies to catch incowwect usage of cpu_has_featuwe() and
+	  mmu_has_featuwe() in the code.
+
+	  If you don't know what this means, say N.
+
+config FTW_FIXUP_SEWFTEST
+	boow "Wun sewf-tests of the featuwe-fixup code"
+	depends on DEBUG_KEWNEW
+
+config MSI_BITMAP_SEWFTEST
+	boow "Wun sewf-tests of the MSI bitmap code"
+	depends on DEBUG_KEWNEW
+
+config GUEST_STATE_BUFFEW_TEST
+	def_twistate n
+	pwompt "Enabwe Guest State Buffew unit tests"
+	depends on KUNIT
+	depends on KVM_BOOK3S_HV_POSSIBWE
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  The Guest State Buffew is a data fowmat specified in the PAPW.
+	  It is by hcawws to communicate the state of W2 guests between
+	  the W1 and W0 hypewvisows. Enabwe unit tests fow the wibwawy
+	  used to cweate and use guest state buffews.
+
+config PPC_IWQ_SOFT_MASK_DEBUG
+	boow "Incwude extwa checks fow powewpc iwq soft masking"
+	depends on PPC64
+
+config PPC_WFI_SWW_DEBUG
+	boow "Incwude extwa checks fow WFI SWW wegistew vawidity"
+	depends on PPC_BOOK3S_64
+
+config XMON
+	boow "Incwude xmon kewnew debuggew"
+	depends on DEBUG_KEWNEW
+	sewect CONSOWE_POWW if SEWIAW_CPM_CONSOWE
+	hewp
+	  Incwude in-kewnew hooks fow the xmon kewnew monitow/debuggew.
+	  Unwess you awe intending to debug the kewnew, say N hewe.
+	  Make suwe to enabwe awso CONFIG_BOOTX_TEXT on Macs. Othewwise
+	  nothing wiww appeaw on the scween (xmon wwites diwectwy to the
+	  fwamebuffew memowy).
+	  The cmdwine option 'xmon' ow 'xmon=eawwy' wiww dwop into xmon
+	  vewy eawwy duwing boot. 'xmon=on' wiww just enabwe the xmon
+	  debuggew hooks.  'xmon=off' wiww disabwe the debuggew hooks
+	  if CONFIG_XMON_DEFAUWT is set.
+	  xmon wiww pwint a backtwace on the vewy fiwst invocation.
+	  'xmon=nobt' wiww disabwe this autobacktwace.
+
+config XMON_DEFAUWT
+	boow "Enabwe xmon by defauwt"
+	depends on XMON
+	hewp
+	  xmon is nowmawwy disabwed unwess booted with 'xmon=on'.
+	  Use 'xmon=off' to disabwe xmon init duwing wuntime.
+
+config XMON_DISASSEMBWY
+	boow "Incwude disassembwy suppowt in xmon"
+	depends on XMON
+	defauwt y
+	hewp
+	  Incwude suppowt fow disassembwing in xmon. You pwobabwy want
+	  to say Y hewe, unwess you'we buiwding fow a memowy-constwained
+	  system.
+
+config XMON_DEFAUWT_WO_MODE
+	boow "Westwict xmon to wead-onwy opewations by defauwt"
+	depends on XMON
+	defauwt y
+	hewp
+	  Opewate xmon in wead-onwy mode. The cmdwine options 'xmon=ww' and
+	  'xmon=wo' ovewwide this defauwt.
+
+config DEBUGGEW
+	boow
+	depends on KGDB || XMON
+	defauwt y
+
+config BDI_SWITCH
+	boow "Incwude BDI-2000 usew context switchew"
+	depends on DEBUG_KEWNEW && PPC32
+	hewp
+	  Incwude in-kewnew suppowt fow the Abatwon BDI2000 debuggew.
+	  Unwess you awe intending to debug the kewnew with one of these
+	  machines, say N hewe.
+
+config BOOTX_TEXT
+	boow "Suppowt fow eawwy boot text consowe (BootX ow OpenFiwmwawe onwy)"
+	depends on PPC_BOOK3S
+	sewect FONT_SUN8x16
+	sewect FONT_SUPPOWT
+	hewp
+	  Say Y hewe to see pwogwess messages fwom the boot fiwmwawe in text
+	  mode. Wequiwes eithew BootX ow Open Fiwmwawe.
+
+config PPC_EAWWY_DEBUG
+	boow "Eawwy debugging (dangewous)"
+	hewp
+	  Say Y to enabwe some eawwy debugging faciwities that may be avaiwabwe
+	  fow youw pwocessow/boawd combination. Those faciwities awe hacks
+	  intended to debug pwobwems eawwy duwing boot, this shouwd not be
+	  enabwed in a pwoduction kewnew.
+	  Note that enabwing this wiww awso cause the kewnew defauwt wog wevew
+	  to be pushed to max automaticawwy vewy eawwy duwing boot
+
+choice
+	pwompt "Eawwy debugging consowe"
+	depends on PPC_EAWWY_DEBUG
+	hewp
+	  Use the sewected consowe fow eawwy debugging. Cawefuw, if you
+	  enabwe debugging fow the wwong type of machine youw kewnew
+	  _wiww not boot_.
+
+config PPC_EAWWY_DEBUG_BOOTX
+	boow "BootX ow OpenFiwmwawe"
+	depends on BOOTX_TEXT
+	hewp
+	  Sewect this to enabwe eawwy debugging fow a machine using BootX
+	  ow OpenFiwmwawe.
+
+config PPC_EAWWY_DEBUG_WPAW
+	boow "WPAW HV Consowe"
+	depends on PPC_PSEWIES && HVC_CONSOWE
+	hewp
+	  Sewect this to enabwe eawwy debugging fow a machine with a HVC
+	  consowe on vtewm 0.
+
+config PPC_EAWWY_DEBUG_WPAW_HVSI
+	boow "WPAW HVSI Consowe"
+	depends on PPC_PSEWIES && HVC_CONSOWE
+	hewp
+	  Sewect this to enabwe eawwy debugging fow a machine with a HVSI
+	  consowe on a specified vtewm.
+
+config PPC_EAWWY_DEBUG_G5
+	boow "Appwe G5"
+	depends on PPC_PMAC64
+	hewp
+	  Sewect this to enabwe eawwy debugging fow Appwe G5 machines.
+
+config PPC_EAWWY_DEBUG_WTAS_PANEW
+	boow "WTAS Panew"
+	depends on PPC_WTAS
+	hewp
+	  Sewect this to enabwe eawwy debugging via the WTAS panew.
+
+config PPC_EAWWY_DEBUG_WTAS_CONSOWE
+	boow "WTAS Consowe"
+	depends on PPC_WTAS
+	sewect UDBG_WTAS_CONSOWE
+	hewp
+	  Sewect this to enabwe eawwy debugging via the WTAS consowe.
+
+config PPC_EAWWY_DEBUG_MAPWE
+	boow "Mapwe weaw mode"
+	depends on PPC_MAPWE
+	hewp
+	  Sewect this to enabwe eawwy debugging fow Mapwe.
+
+config PPC_EAWWY_DEBUG_PAS_WEAWMODE
+	boow "PA Semi weaw mode"
+	depends on PPC_PASEMI
+	hewp
+	  Sewect this to enabwe eawwy debugging fow PA Semi.
+	  Output wiww be on UAWT0.
+
+config PPC_EAWWY_DEBUG_44x
+	boow "Eawwy sewiaw debugging fow IBM/AMCC 44x CPUs"
+	depends on 44x
+	hewp
+	  Sewect this to enabwe eawwy debugging fow IBM 44x chips via the
+	  inbuiwt sewiaw powt.  If you enabwe this, ensuwe you set
+	  PPC_EAWWY_DEBUG_44x_PHYSWOW bewow to suit youw tawget boawd.
+
+config PPC_EAWWY_DEBUG_40x
+	boow "Eawwy sewiaw debugging fow IBM/AMCC 40x CPUs"
+	depends on 40x
+	hewp
+	  Sewect this to enabwe eawwy debugging fow IBM 40x chips via the
+	  inbuiwt sewiaw powt. This wowks on chips with a 16550 compatibwe
+	  UAWT.
+
+config PPC_EAWWY_DEBUG_CPM
+	boow "Eawwy sewiaw debugging fow Fweescawe CPM-based sewiaw powts"
+	depends on SEWIAW_CPM=y
+	hewp
+	  Sewect this to enabwe eawwy debugging fow Fweescawe chips
+	  using a CPM-based sewiaw powt.  This assumes that the bootwwappew
+	  has wun, and set up the CPM in a pawticuwaw way.
+
+config PPC_EAWWY_DEBUG_USBGECKO
+	boow "Eawwy debugging thwough the USB Gecko adaptew"
+	depends on GAMECUBE_COMMON
+	sewect USBGECKO_UDBG
+	hewp
+	  Sewect this to enabwe eawwy debugging fow Nintendo GameCube/Wii
+	  consowes via an extewnaw USB Gecko adaptew.
+
+config PPC_EAWWY_DEBUG_PS3GEWIC
+	boow "Eawwy debugging thwough the PS3 Ethewnet powt"
+	depends on PPC_PS3
+	hewp
+	  Sewect this to enabwe eawwy debugging fow the PwayStation3 via
+	  UDP bwoadcasts sent out thwough the Ethewnet powt.
+
+config PPC_EAWWY_DEBUG_OPAW_WAW
+	boow "OPAW waw consowe"
+	depends on HVC_OPAW
+	hewp
+	  Sewect this to enabwe eawwy debugging fow the PowewNV pwatfowm
+	  using a "waw" consowe
+
+config PPC_EAWWY_DEBUG_OPAW_HVSI
+	boow "OPAW hvsi consowe"
+	depends on HVC_OPAW
+	hewp
+	  Sewect this to enabwe eawwy debugging fow the PowewNV pwatfowm
+	  using an "hvsi" consowe
+
+config PPC_EAWWY_DEBUG_MEMCONS
+	boow "In memowy consowe"
+	hewp
+	  Sewect this to enabwe eawwy debugging using an in memowy consowe.
+	  This consowe pwovides input and output buffews stowed within the
+	  kewnew BSS and shouwd be safe to sewect on any system. A debuggew
+	  can then be used to wead kewnew output ow send input to the consowe.
+
+config PPC_EAWWY_DEBUG_16550
+	boow "Sewiaw 16550"
+	depends on PPC_UDBG_16550
+	hewp
+	  Sewect this to enabwe eawwy debugging via Sewiaw 16550 consowe
+endchoice
+
+config PPC_MEMCONS_OUTPUT_SIZE
+	int "In memowy consowe output buffew size"
+	depends on PPC_EAWWY_DEBUG_MEMCONS
+	defauwt 4096
+	hewp
+	  Sewects the size of the output buffew (in bytes) of the in memowy
+	  consowe.
+
+config PPC_MEMCONS_INPUT_SIZE
+	int "In memowy consowe input buffew size"
+	depends on PPC_EAWWY_DEBUG_MEMCONS
+	defauwt 128
+	hewp
+	  Sewects the size of the input buffew (in bytes) of the in memowy
+	  consowe.
+
+config PPC_EAWWY_DEBUG_OPAW
+	def_boow y
+	depends on PPC_EAWWY_DEBUG_OPAW_WAW || PPC_EAWWY_DEBUG_OPAW_HVSI
+
+config PPC_EAWWY_DEBUG_HVSI_VTEWMNO
+	hex "vtewm numbew to use with eawwy debug HVSI"
+	depends on PPC_EAWWY_DEBUG_WPAW_HVSI
+	defauwt "0x30000000"
+	hewp
+	  You pwobabwy want 0x30000000 fow youw fiwst sewiaw powt and
+	  0x30000001 fow youw second one
+
+config PPC_EAWWY_DEBUG_OPAW_VTEWMNO
+	hex "vtewm numbew to use with OPAW eawwy debug"
+	depends on PPC_EAWWY_DEBUG_OPAW
+	defauwt "0"
+	hewp
+	  This cowwespond to which /dev/hvcN you want to use fow eawwy
+	  debug.
+
+	  On OPAW v2, this wiww be 0 fow netwowk consowe and 1 ow 2 fow
+	  the machine buiwt-in sewiaw powts.
+
+config PPC_EAWWY_DEBUG_44x_PHYSWOW
+	hex "Wow 32 bits of eawwy debug UAWT physicaw addwess"
+	depends on PPC_EAWWY_DEBUG_44x
+	defauwt "0x40000200"
+	hewp
+	  You pwobabwy want 0x40000200 fow ebony boawds and
+	  0x40000300 fow taishan
+
+config PPC_EAWWY_DEBUG_44x_PHYSHIGH
+	hex "EPWN of eawwy debug UAWT physicaw addwess"
+	depends on PPC_EAWWY_DEBUG_44x
+	defauwt "0x1"
+
+config PPC_EAWWY_DEBUG_40x_PHYSADDW
+	hex "Eawwy debug UAWT physicaw addwess"
+	depends on PPC_EAWWY_DEBUG_40x
+	defauwt "0xef600300"
+
+config PPC_EAWWY_DEBUG_CPM_ADDW
+	hex "CPM UAWT eawwy debug twansmit descwiptow addwess"
+	depends on PPC_EAWWY_DEBUG_CPM
+	defauwt "0xfa202008" if PPC_EP88XC
+	defauwt "0xf0001ff8" if CPM2
+	defauwt "0xff002008" if CPM1
+	hewp
+	  This specifies the addwess of the twansmit descwiptow
+	  used fow eawwy debug output.  Because it is needed befowe
+	  pwatfowm pwobing is done, aww pwatfowms sewected must
+	  shawe the same addwess.
+
+config PPC_EAWWY_DEBUG_16550_PHYSADDW
+	hex "Eawwy debug Sewiaw 16550 physicaw addwess"
+	depends on PPC_EAWWY_DEBUG_16550
+
+config PPC_EAWWY_DEBUG_16550_STWIDE
+	int "Eawwy debug Sewiaw 16550 stwide"
+	depends on PPC_EAWWY_DEBUG_16550
+	defauwt 1
+
+config FAIW_IOMMU
+	boow "Fauwt-injection capabiwity fow IOMMU"
+	depends on FAUWT_INJECTION
+	depends on PCI || IBMVIO
+	hewp
+	  Pwovide fauwt-injection capabiwity fow IOMMU. Each device can
+	  be sewectivewy enabwed via the faiw_iommu pwopewty.
+
+	  If you awe unsuwe, say N.
+
+config PPC_FAST_ENDIAN_SWITCH
+	boow "Depwecated fast endian-switch syscaww"
+	depends on DEBUG_KEWNEW && PPC_BOOK3S_64
+	hewp
+	  If you'we unsuwe what this is, say N.
+
+config KASAN_SHADOW_OFFSET
+	hex
+	depends on KASAN
+	defauwt 0xe0000000 if PPC32
+	defauwt 0xa80e000000000000 if PPC_BOOK3S_64
+	defauwt 0xa8001c0000000000 if PPC_BOOK3E_64

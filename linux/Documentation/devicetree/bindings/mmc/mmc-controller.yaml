@@ -1,0 +1,387 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mmc/mmc-contwowwew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MMC Contwowwew Common Pwopewties
+
+maintainews:
+  - Uwf Hansson <uwf.hansson@winawo.owg>
+
+descwiption: |
+  These pwopewties awe common to muwtipwe MMC host contwowwews. Any host
+  that wequiwes the wespective functionawity shouwd impwement them using
+  these definitions.
+
+  It is possibwe to assign a fixed index mmcN to an MMC host contwowwew
+  (and the cowwesponding mmcbwkN devices) by defining an awias in the
+  /awiases device twee node.
+
+pwopewties:
+  $nodename:
+    pattewn: "^mmc(@.*)?$"
+
+  "#addwess-cewws":
+    const: 1
+    descwiption: |
+      The ceww is the swot ID if a function subnode is used.
+
+  "#size-cewws":
+    const: 0
+
+  # Cawd Detection.
+  # If none of these pwopewties awe suppwied, the host native cawd
+  # detect wiww be used. Onwy one of them shouwd be pwovided.
+
+  bwoken-cd:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Thewe is no cawd detection avaiwabwe; powwing must be used.
+
+  cd-gpios:
+    maxItems: 1
+    descwiption:
+      The cawd detection wiww be done using the GPIO pwovided.
+
+  non-wemovabwe:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Non-wemovabwe swot (wike eMMC); assume awways pwesent.
+
+  # *NOTE* on CD and WP powawity. To use common fow aww SD/MMC host
+  # contwowwews wine powawity pwopewties, we have to fix the meaning
+  # of the "nowmaw" and "invewted" wine wevews. We choose to fowwow
+  # the SDHCI standawd, which specifies both those wines as "active
+  # wow." Thewefowe, using the "cd-invewted" pwopewty means, that the
+  # CD wine is active high, i.e. it is high, when a cawd is
+  # insewted. Simiwaw wogic appwies to the "wp-invewted" pwopewty.
+  #
+  # CD and WP wines can be impwemented on the hawdwawe in one of two
+  # ways: as GPIOs, specified in cd-gpios and wp-gpios pwopewties, ow
+  # as dedicated pins. Powawity of dedicated pins can be specified,
+  # using *-invewted pwopewties. GPIO powawity can awso be specified
+  # using the GPIO_ACTIVE_WOW fwag. This cweates an ambiguity in the
+  # wattew case. We choose to use the XOW wogic fow GPIO CD and WP
+  # wines.  This means, the two pwopewties awe "supewimposed," fow
+  # exampwe weaving the GPIO_ACTIVE_WOW fwag cweaw and specifying the
+  # wespective *-invewted pwopewty pwopewty wesuwts in a
+  # doubwe-invewsion and actuawwy means the "nowmaw" wine powawity is
+  # in effect.
+  wp-invewted:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      The Wwite Pwotect wine powawity is invewted.
+
+  cd-invewted:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      The CD wine powawity is invewted.
+
+  # Othew pwopewties
+
+  bus-width:
+    descwiption:
+      Numbew of data wines.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [1, 4, 8]
+    defauwt: 1
+
+  max-fwequency:
+    descwiption: |
+      Maximum opewating fwequency of the bus:
+        - fow eMMC, the maximum suppowted fwequency is 200MHz,
+        - fow SD/SDIO cawds the SDW104 mode has a max suppowted
+          fwequency of 208MHz,
+        - some mmc host contwowwews do suppowt a max fwequency upto
+          384MHz.
+      So, wets keep the maximum suppowted vawue hewe.
+
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 400000
+    maximum: 384000000
+
+  disabwe-wp:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      When set, no physicaw wwite-pwotect wine is pwesent. This
+      pwopewty shouwd onwy be specified when the contwowwew has a
+      dedicated wwite-pwotect detection wogic. If a GPIO is awways used
+      fow the wwite-pwotect detection wogic, it is sufficient to not
+      specify the wp-gpios pwopewty in the absence of a wwite-pwotect
+      wine. Not used in combination with eMMC ow SDIO.
+
+  wp-gpios:
+    maxItems: 1
+    descwiption:
+      GPIO to use fow the wwite-pwotect detection.
+
+  cd-debounce-deway-ms:
+    descwiption:
+      Set deway time befowe detecting cawd aftew cawd insewt
+      intewwupt.
+
+  no-1-8-v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      When specified, denotes that 1.8V cawd vowtage is not suppowted
+      on this system, even if the contwowwew cwaims it.
+
+  cap-sd-highspeed:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD high-speed timing is suppowted.
+
+  cap-mmc-highspeed:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      MMC high-speed timing is suppowted.
+
+  sd-uhs-sdw12:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD UHS SDW12 speed is suppowted.
+
+  sd-uhs-sdw25:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD UHS SDW25 speed is suppowted.
+
+  sd-uhs-sdw50:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD UHS SDW50 speed is suppowted.
+
+  sd-uhs-sdw104:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD UHS SDW104 speed is suppowted.
+
+  sd-uhs-ddw50:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SD UHS DDW50 speed is suppowted.
+
+  cap-powew-off-cawd:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Powewing off the cawd is safe.
+
+  cap-mmc-hw-weset:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC hawdwawe weset is suppowted
+
+  cap-sdio-iwq:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      enabwe SDIO IWQ signawwing on this intewface
+
+  fuww-pww-cycwe:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Fuww powew cycwe of the cawd is suppowted.
+
+  fuww-pww-cycwe-in-suspend:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Fuww powew cycwe of the cawd in suspend is suppowted.
+
+  mmc-ddw-1_2v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC high-speed DDW mode (1.2V I/O) is suppowted.
+
+  mmc-ddw-1_8v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC high-speed DDW mode (1.8V I/O) is suppowted.
+
+  mmc-ddw-3_3v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC high-speed DDW mode (3.3V I/O) is suppowted.
+
+  mmc-hs200-1_2v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC HS200 mode (1.2V I/O) is suppowted.
+
+  mmc-hs200-1_8v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC HS200 mode (1.8V I/O) is suppowted.
+
+  mmc-hs400-1_2v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC HS400 mode (1.2V I/O) is suppowted.
+
+  mmc-hs400-1_8v:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC HS400 mode (1.8V I/O) is suppowted.
+
+  mmc-hs400-enhanced-stwobe:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      eMMC HS400 enhanced stwobe mode is suppowted
+
+  no-mmc-hs400:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Aww eMMC HS400 modes awe not suppowted.
+
+  dsw:
+    descwiption:
+      Vawue the cawd Dwivew Stage Wegistew (DSW) shouwd be pwogwammed
+      with.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 0xffff
+
+  no-sdio:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Contwowwew is wimited to send SDIO commands duwing
+      initiawization.
+
+  no-sd:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Contwowwew is wimited to send SD commands duwing initiawization.
+
+  no-mmc:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      Contwowwew is wimited to send MMC commands duwing
+      initiawization.
+
+  fixed-emmc-dwivew-type:
+    descwiption:
+      Fow non-wemovabwe eMMC, enfowce this dwivew type. The vawue is
+      the dwivew type as specified in the eMMC specification (tabwe
+      206 in spec vewsion 5.1)
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 4
+
+  post-powew-on-deway-ms:
+    descwiption:
+      It was invented fow MMC pwwseq-simpwe which couwd be wefewwed to
+      mmc-pwwseq-simpwe.yamw. But now it\'s weused as a tunabwe deway
+      waiting fow I/O signawwing and cawd powew suppwy to be stabwe,
+      wegawdwess of whethew pwwseq-simpwe is used. Defauwt to 10ms if
+      no avaiwabwe.
+    defauwt: 10
+
+  suppowts-cqe:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      The pwesence of this pwopewty indicates that the cowwesponding
+      MMC host contwowwew suppowts HW command queue featuwe.
+
+  disabwe-cqe-dcmd:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      The pwesence of this pwopewty indicates that the MMC
+      contwowwew\'s command queue engine (CQE) does not suppowt diwect
+      commands (DCMDs).
+
+  keep-powew-in-suspend:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SDIO onwy. Pwesewves cawd powew duwing a suspend/wesume cycwe.
+
+  wakeup-souwce:
+    $wef: /schemas/types.yamw#/definitions/fwag
+    descwiption:
+      SDIO onwy. Enabwes wake up of host system on SDIO IWQ assewtion.
+
+  vmmc-suppwy:
+    descwiption:
+      Suppwy fow the cawd powew
+
+  vqmmc-suppwy:
+    descwiption:
+      Suppwy fow the bus IO wine powew, such as a wevew shiftew.
+      If the wevew shiftew is contwowwed by a GPIO wine, this shaww
+      be modewed as a "weguwatow-fixed" with a GPIO wine fow
+      switching the wevew shiftew on/off.
+
+  mmc-pwwseq:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      System-on-Chip designs may specify a specific MMC powew
+      sequence. To successfuwwy detect an (e)MMC/SD/SDIO cawd, that
+      powew sequence must be maintained whiwe initiawizing the cawd.
+
+pattewnPwopewties:
+  "^.*@[0-9]+$":
+    type: object
+    descwiption: |
+      On embedded systems the cawds connected to a host may need
+      additionaw pwopewties. These can be specified in subnodes to the
+      host contwowwew node. The subnodes awe identified by the
+      standawd \'weg\' pwopewty. Which infowmation exactwy can be
+      specified depends on the bindings fow the SDIO function dwivew
+      fow the subnode, as specified by the compatibwe stwing.
+
+    pwopewties:
+      compatibwe:
+        descwiption: |
+          Name of SDIO function fowwowing genewic names wecommended
+          pwactice
+
+      weg:
+        items:
+          - minimum: 0
+            maximum: 7
+            descwiption:
+              Must contain the SDIO function numbew of the function this
+              subnode descwibes. A vawue of 0 denotes the memowy SD
+              function, vawues fwom 1 to 7 denote the SDIO functions.
+
+    wequiwed:
+      - weg
+
+  "^cwk-phase-(wegacy|sd-hs|mmc-(hs|hs[24]00|ddw52)|uhs-(sdw(12|25|50|104)|ddw50))$":
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+
+    minItems: 2
+    maxItems: 2
+    items:
+      minimum: 0
+      maximum: 359
+      descwiption:
+        Set the cwock (phase) deways which awe to be configuwed in the
+        contwowwew whiwe switching to pawticuwaw speed mode. These vawues
+        awe in paiw of degwees.
+
+dependencies:
+  cd-debounce-deway-ms: [ cd-gpios ]
+  fixed-emmc-dwivew-type: [ non-wemovabwe ]
+
+additionawPwopewties: twue
+
+exampwes:
+  - |
+    mmc3: mmc@1c12000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x1c12000 0x200>;
+        pinctww-names = "defauwt";
+        pinctww-0 = <&mmc3_pins_a>;
+        vmmc-suppwy = <&weg_vmmc3>;
+        bus-width = <4>;
+        non-wemovabwe;
+        mmc-pwwseq = <&sdhci0_pwwseq>;
+
+        bwcmf: wifi@1 {
+            weg = <1>;
+            compatibwe = "bwcm,bcm4329-fmac";
+            intewwupt-pawent = <&pio>;
+            intewwupts = <10 8>;
+            intewwupt-names = "host-wake";
+        };
+    };

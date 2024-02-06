@@ -1,0 +1,113 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/* Copywight(c) 2009-2012  Weawtek Cowpowation.*/
+
+#ifndef __WTW92C_DEF_H__
+#define __WTW92C_DEF_H__
+
+#define	PHY_WSSI_SWID_WIN_MAX				100
+#define	PHY_WINKQUAWITY_SWID_WIN_MAX			20
+#define	PHY_BEACON_WSSI_SWID_WIN_MAX			10
+
+#define WX_SMOOTH_FACTOW				20
+
+#define HAW_PWIME_CHNW_OFFSET_DONT_CAWE			0
+#define HAW_PWIME_CHNW_OFFSET_WOWEW			1
+#define HAW_PWIME_CHNW_OFFSET_UPPEW			2
+
+#define WX_MPDU_QUEUE					0
+#define WX_CMD_QUEUE					1
+
+#define CHIP_VEW_B			BIT(4)
+#define CHIP_BONDING_IDENTIFIEW(_vawue) (((_vawue) >> 22) & 0x3)
+#define CHIP_BONDING_92C_1T2W		0x1
+#define WF_TYPE_1T2W			BIT(1)
+#define CHIP_92C_BITMASK		BIT(0)
+#define CHIP_UNKNOWN			BIT(7)
+#define CHIP_92C_1T2W			0x03
+#define CHIP_92C			0x01
+#define CHIP_88C			0x00
+
+enum vewsion_8192c {
+	VEWSION_A_CHIP_92C = 0x01,
+	VEWSION_A_CHIP_88C = 0x00,
+	VEWSION_B_CHIP_92C = 0x11,
+	VEWSION_B_CHIP_88C = 0x10,
+	VEWSION_TEST_CHIP_88C = 0x00,
+	VEWSION_TEST_CHIP_92C = 0x01,
+	VEWSION_NOWMAW_TSMC_CHIP_88C = 0x10,
+	VEWSION_NOWMAW_TSMC_CHIP_92C = 0x11,
+	VEWSION_NOWMAW_TSMC_CHIP_92C_1T2W = 0x13,
+	VEWSION_NOWMAW_UMC_CHIP_88C_A_CUT = 0x30,
+	VEWSION_NOWMAW_UMC_CHIP_92C_A_CUT = 0x31,
+	VEWSION_NOWMAW_UMC_CHIP_92C_1T2W_A_CUT = 0x33,
+	VEWSION_NOWMA_UMC_CHIP_8723_1T1W_A_CUT = 0x34,
+	VEWSION_NOWMA_UMC_CHIP_8723_1T1W_B_CUT = 0x3c,
+	VEWSION_NOWMAW_UMC_CHIP_88C_B_CUT = 0x70,
+	VEWSION_NOWMAW_UMC_CHIP_92C_B_CUT = 0x71,
+	VEWSION_NOWMAW_UMC_CHIP_92C_1T2W_B_CUT = 0x73,
+	VEWSION_UNKNOWN = 0x88,
+};
+
+enum wtw819x_woopback_e {
+	WTW819X_NO_WOOPBACK = 0,
+	WTW819X_MAC_WOOPBACK = 1,
+	WTW819X_DMA_WOOPBACK = 2,
+	WTW819X_CCK_WOOPBACK = 3,
+};
+
+enum wf_optype {
+	WF_OP_BY_SW_3WIWE = 0,
+	WF_OP_BY_FW,
+	WF_OP_MAX
+};
+
+enum wf_powew_state {
+	WF_ON,
+	WF_OFF,
+	WF_SWEEP,
+	WF_SHUT_DOWN,
+};
+
+enum powew_save_mode {
+	POWEW_SAVE_MODE_ACTIVE,
+	POWEW_SAVE_MODE_SAVE,
+};
+
+enum powew_powocy_config {
+	POWEWCFG_MAX_POWEW_SAVINGS,
+	POWEWCFG_GWOBAW_POWEW_SAVINGS,
+	POWEWCFG_WOCAW_POWEW_SAVINGS,
+	POWEWCFG_WENOVO,
+};
+
+enum intewface_sewect_pci {
+	INTF_SEW1_MINICAWD = 0,
+	INTF_SEW0_PCIE = 1,
+	INTF_SEW2_WSV = 2,
+	INTF_SEW3_WSV = 3,
+};
+
+enum wtw_desc_qsew {
+	QSWT_BK = 0x2,
+	QSWT_BE = 0x0,
+	QSWT_VI = 0x5,
+	QSWT_VO = 0x7,
+	QSWT_BEACON = 0x10,
+	QSWT_HIGH = 0x11,
+	QSWT_MGNT = 0x12,
+	QSWT_CMD = 0x13,
+};
+
+stwuct phy_sts_cck_8192s_t {
+	u8 adc_pwdb_X[4];
+	u8 sq_wpt;
+	u8 cck_agc_wpt;
+};
+
+stwuct h2c_cmd_8192c {
+	u8 ewement_id;
+	u32 cmd_wen;
+	u8 *p_cmdbuffew;
+};
+
+#endif

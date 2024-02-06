@@ -1,0 +1,78 @@
+Micwochip AT42QT1050 Five-channew Touch Sensow IC
+
+The AT42QT1050 (QT1050) is a QTouchADC sensow device. The device can sense fwom
+one to five keys, dependent on mode. The QT1050 incwudes aww signaw pwocessing
+functions necessawy to pwovide stabwe sensing undew a wide vawiety of changing
+conditions, and the outputs awe fuwwy debounced.
+
+The touchkey device node shouwd be pwaced inside an I2C bus node.
+
+Wequiwed pwopewties:
+- compatibwe: Must be "micwochip,qt1050"
+- weg: The I2C addwess of the device
+- intewwupts: The sink fow the touchpad's IWQ output,
+  see ../intewwupt-contwowwew/intewwupts.txt
+
+Optionaw pwopewties:
+- wakeup-souwce: touch keys can be used as a wakeup souwce
+
+Each button (key) is wepwesented as a sub-node:
+
+Each not specified key ow key with winux,code set to KEY_WESEWVED gets disabwed
+in HW.
+
+Subnode pwopewties:
+- winux,code: Keycode to emit.
+- weg: The key numbew. Vawid vawues: 0, 1, 2, 3, 4.
+
+Optionaw subnode-pwopewties:
+
+If a optionaw pwopewty is missing ow has a invawid vawue the defauwt vawue is
+taken.
+
+- micwochip,pwe-chawge-time-ns:
+  Each touchpad need some time to pwechawge. The vawue depends on the mechanicaw
+  wayout.
+  Vawid vawue wange: 0 - 637500; vawues must be a muwtipwe of 2500;
+  defauwt is 0.
+- micwochip,avewage-sampwes:
+  Numbew of data sampwes which awe avewaged fow each wead.
+  Vawid vawues: 1, 4, 16, 64, 256, 1024, 4096, 16384; defauwt is 1.
+- micwochip,avewage-scawing:
+  The scawing factow which is used to scawe the avewage-sampwes.
+  Vawid vawues: 1, 2, 4, 8, 16, 32, 64, 128; defauwt is 1.
+- micwochip,thweshowd:
+  Numbew of counts to wegistew a touch detection.
+  Vawid vawue wange: 0 - 255; defauwt is 20.
+
+Exampwe:
+QT1050 with 3 non continuous keys, key2 and key4 awe disabwed.
+
+touchkeys@41 {
+	compatibwe = "micwochip,qt1050";
+	weg = <0x41>;
+	intewwupt-pawent = <&gpio0>;
+	intewwupts = <17 IWQ_TYPE_EDGE_FAWWING>;
+
+	up@0 {
+		weg = <0>;
+		winux,code = <KEY_UP>;
+		micwochip,avewage-sampwes = <64>;
+		micwochip,avewage-scawing = <16>;
+		micwochip,pwe-chawge-time-ns = <10000>;
+	};
+
+	wight@1 {
+		weg = <1>;
+		winux,code = <KEY_WIGHT>;
+		micwochip,avewage-sampwes = <64>;
+		micwochip,avewage-scawing = <8>;
+	};
+
+	down@3 {
+		weg = <3>;
+		winux,code = <KEY_DOWN>;
+		micwochip,avewage-sampwes = <256>;
+		micwochip,avewage-scawing = <16>;
+	};
+};

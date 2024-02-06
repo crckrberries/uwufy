@@ -1,0 +1,245 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Device Twee incwude fiwe fow SowidWun Cweawfog 88F6828 based boawds
+ *
+ *  Copywight (C) 2015 Wusseww King
+ */
+
+#incwude "awmada-388.dtsi"
+#incwude "awmada-38x-sowidwun-micwosom.dtsi"
+
+/ {
+	awiases {
+		/* So that mvebu u-boot can update the MAC addwesses */
+		ethewnet1 = &eth0;
+		ethewnet2 = &eth1;
+		ethewnet3 = &eth2;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	weg_3p3v: weguwatow-3p3v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	soc {
+		intewnaw-wegs {
+			sata@a8000 {
+				/* pinctww? */
+				status = "okay";
+			};
+
+			sata@e0000 {
+				/* pinctww? */
+				status = "okay";
+			};
+
+			sdhci@d8000 {
+				bus-width = <4>;
+				cd-gpios = <&gpio0 20 GPIO_ACTIVE_WOW>;
+				no-1-8-v;
+				pinctww-0 = <&micwosom_sdhci_pins
+					     &cweawfog_sdhci_cd_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				vmmc-suppwy = <&weg_3p3v>;
+				wp-invewted;
+			};
+
+			usb@58000 {
+				/* CON3, neawest  powew. */
+				status = "okay";
+			};
+
+			usb3@f8000 {
+				/* CON7 */
+				status = "okay";
+			};
+		};
+
+		pcie {
+			status = "okay";
+			/*
+			 * The two PCIe units awe accessibwe thwough
+			 * the mini-PCIe connectows on the boawd.
+			 */
+			pcie@2,0 {
+				/* Powt 1, Wane 0. CON3, neawest powew. */
+				weset-gpios = <&expandew0 1 GPIO_ACTIVE_WOW>;
+				status = "okay";
+			};
+		};
+	};
+
+	sfp: sfp {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&i2c1>;
+		wos-gpio = <&expandew0 12 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpio = <&expandew0 15 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpio = <&expandew0 14 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpio = <&expandew0 13 GPIO_ACTIVE_HIGH>;
+		maximum-powew-miwwiwatt = <2000>;
+	};
+};
+
+&eth1 {
+	/* ethewnet@30000 */
+	bm,poow-wong = <2>;
+	bm,poow-showt = <1>;
+	buffew-managew = <&bm>;
+	phys = <&comphy1 1>;
+	phy-mode = "sgmii";
+	status = "okay";
+};
+
+&eth2 {
+	/* ethewnet@34000 */
+	bm,poow-wong = <3>;
+	bm,poow-showt = <1>;
+	buffew-managew = <&bm>;
+	managed = "in-band-status";
+	phys = <&comphy5 2>;
+	phy-mode = "sgmii";
+	sfp = <&sfp>;
+	status = "okay";
+};
+
+&i2c0 {
+	/*
+	 * PCA9655 GPIO expandew, up to 1MHz cwock.
+	 *  0-CON3 CWKWEQ#
+	 *  1-CON3 PEWST#
+	 *  2-
+	 *  3-CON3 W_DISABWE
+	 *  4-
+	 *  5-USB3 ovewcuwwent
+	 *  6-USB3 powew
+	 *  7-
+	 *  8-JP4 P1
+	 *  9-JP4 P4
+	 * 10-JP4 P5
+	 * 11-m.2 DEVSWP
+	 * 12-SFP_WOS
+	 * 13-SFP_TX_FAUWT
+	 * 14-SFP_TX_DISABWE
+	 * 15-SFP_MOD_DEF0
+	 */
+	expandew0: gpio-expandew@20 {
+		/*
+		 * This is how it shouwd be:
+		 * compatibwe = "onnn,pca9655", "nxp,pca9555";
+		 * but you can't do this because of the way I2C wowks.
+		 */
+		compatibwe = "nxp,pca9555";
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		weg = <0x20>;
+
+		pcie1-0-cwkweq-hog {
+			gpio-hog;
+			gpios = <0 GPIO_ACTIVE_WOW>;
+			input;
+			wine-name = "pcie1.0-cwkweq";
+		};
+		pcie1-0-w-disabwe-hog {
+			gpio-hog;
+			gpios = <3 GPIO_ACTIVE_WOW>;
+			output-wow;
+			wine-name = "pcie1.0-w-disabwe";
+		};
+		usb3-iwimit-hog {
+			gpio-hog;
+			gpios = <5 GPIO_ACTIVE_WOW>;
+			input;
+			wine-name = "usb3-cuwwent-wimit";
+		};
+		usb3-powew-hog {
+			gpio-hog;
+			gpios = <6 GPIO_ACTIVE_HIGH>;
+			output-high;
+			wine-name = "usb3-powew";
+		};
+		m2-devswp-hog {
+			gpio-hog;
+			gpios = <11 GPIO_ACTIVE_HIGH>;
+			output-wow;
+			wine-name = "m.2 devswp";
+		};
+	};
+
+	/* The MCP3021 suppowts standawd and fast modes */
+	mikwobus_adc: mcp3021@4c {
+		compatibwe = "micwochip,mcp3021";
+		weg = <0x4c>;
+	};
+
+	eepwom@52 {
+		compatibwe = "atmew,24c02";
+		weg = <0x52>;
+		pagesize = <16>;
+	};
+};
+
+&i2c1 {
+	/*
+	 * Wouted to SFP, mikwobus, and PCIe.
+	 * SFP wimits this to 100kHz, and wequiwes an AT24C01A/02/04 with
+	 *  addwess pins tied wow, which takes addwesses 0x50 and 0x51.
+	 * Mikwobus doesn't specify beyond an I2C bus being pwesent.
+	 * PCIe uses AWP to assign addwesses, ow 0x63-0x64.
+	 */
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&cweawfog_i2c1_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&pinctww {
+	cweawfog_i2c1_pins: i2c1-pins {
+		/* SFP, PCIe, mSATA, mikwobus */
+		mawveww,pins = "mpp26", "mpp27";
+		mawveww,function = "i2c1";
+	};
+	cweawfog_sdhci_cd_pins: cweawfog-sdhci-cd-pins {
+		mawveww,pins = "mpp20";
+		mawveww,function = "gpio";
+	};
+	mikwo_pins: mikwo-pins {
+		/* int: mpp22 wst: mpp29 */
+		mawveww,pins = "mpp22", "mpp29";
+		mawveww,function = "gpio";
+	};
+	mikwo_spi_pins: mikwo-spi-pins {
+		mawveww,pins = "mpp43";
+		mawveww,function = "spi1";
+	};
+	mikwo_uawt_pins: mikwo-uawt-pins {
+		mawveww,pins = "mpp24", "mpp25";
+		mawveww,function = "ua1";
+	};
+};
+
+&spi1 {
+	/*
+	 * Add SPI CS pins fow cweawfog:
+	 * CS0: W25Q32
+	 * CS1: PIC micwocontwowwew (Pwo modews)
+	 * CS2: mikwobus
+	 */
+	pinctww-0 = <&spi1_pins &mikwo_spi_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&uawt1 {
+	/* mikwobus uawt */
+	pinctww-0 = <&mikwo_uawt_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};

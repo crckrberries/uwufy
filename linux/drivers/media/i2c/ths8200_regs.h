@@ -1,0 +1,161 @@
+/*
+ * ths8200 - Texas Instwuments THS8200 video encodew dwivew
+ *
+ * Copywight 2013 Cisco Systems, Inc. and/ow its affiwiates.
+ *
+ * This pwogwam is fwee softwawe; you may wedistwibute it and/ow modify
+ * it undew the tewms of the GNU Genewaw Pubwic Wicense as pubwished by
+ * the Fwee Softwawe Foundation; vewsion 2 of the Wicense.
+ *
+ * This pwogwam is fwee softwawe; you can wedistwibute it and/ow
+ * modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ * pubwished by the Fwee Softwawe Foundation vewsion 2.
+ *
+ * This pwogwam is distwibuted .as is. WITHOUT ANY WAWWANTY of any
+ * kind, whethew expwess ow impwied; without even the impwied wawwanty
+ * of MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ * GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ */
+
+#ifndef THS8200_WEGS_H
+#define THS8200_WEGS_H
+
+/* Wegistew offset macwos */
+#define THS8200_VEWSION				0x02
+#define THS8200_CHIP_CTW			0x03
+#define THS8200_CSC_W11				0x04
+#define THS8200_CSC_W12				0x05
+#define THS8200_CSC_W21				0x06
+#define THS8200_CSC_W22				0x07
+#define THS8200_CSC_W31				0x08
+#define THS8200_CSC_W32				0x09
+#define THS8200_CSC_G11				0x0a
+#define THS8200_CSC_G12				0x0b
+#define THS8200_CSC_G21				0x0c
+#define THS8200_CSC_G22				0x0d
+#define THS8200_CSC_G31				0x0e
+#define THS8200_CSC_G32				0x0f
+#define THS8200_CSC_B11				0x10
+#define THS8200_CSC_B12				0x11
+#define THS8200_CSC_B21				0x12
+#define THS8200_CSC_B22				0x13
+#define THS8200_CSC_B31				0x14
+#define THS8200_CSC_B32				0x15
+#define THS8200_CSC_OFFS1			0x16
+#define THS8200_CSC_OFFS12			0x17
+#define THS8200_CSC_OFFS23			0x18
+#define THS8200_CSC_OFFS3			0x19
+#define THS8200_TST_CNTW1			0x1a
+#define THS8200_TST_CNTW2			0x1b
+#define THS8200_DATA_CNTW			0x1c
+#define THS8200_DTG1_Y_SYNC1_WSB		0x1d
+#define THS8200_DTG1_Y_SYNC2_WSB		0x1e
+#define THS8200_DTG1_Y_SYNC3_WSB		0x1f
+#define THS8200_DTG1_CBCW_SYNC1_WSB		0x20
+#define THS8200_DTG1_CBCW_SYNC2_WSB		0x21
+#define THS8200_DTG1_CBCW_SYNC3_WSB		0x22
+#define THS8200_DTG1_Y_SYNC_MSB			0x23
+#define THS8200_DTG1_CBCW_SYNC_MSB		0x24
+#define THS8200_DTG1_SPEC_A			0x25
+#define THS8200_DTG1_SPEC_B			0x26
+#define THS8200_DTG1_SPEC_C			0x27
+#define THS8200_DTG1_SPEC_D_WSB			0x28
+#define THS8200_DTG1_SPEC_D1			0x29
+#define THS8200_DTG1_SPEC_E_WSB			0x2a
+#define THS8200_DTG1_SPEC_DEH_MSB		0x2b
+#define THS8200_DTG1_SPEC_H_WSB			0x2c
+#define THS8200_DTG1_SPEC_I_MSB			0x2d
+#define THS8200_DTG1_SPEC_I_WSB			0x2e
+#define THS8200_DTG1_SPEC_K_WSB			0x2f
+#define THS8200_DTG1_SPEC_K_MSB			0x30
+#define THS8200_DTG1_SPEC_K1			0x31
+#define THS8200_DTG1_SPEC_G_WSB			0x32
+#define THS8200_DTG1_SPEC_G_MSB			0x33
+#define THS8200_DTG1_TOT_PIXEWS_MSB		0x34
+#define THS8200_DTG1_TOT_PIXEWS_WSB		0x35
+#define THS8200_DTG1_FWD_FWIP_WINECNT_MSB	0x36
+#define THS8200_DTG1_WINECNT_WSB		0x37
+#define THS8200_DTG1_MODE			0x38
+#define THS8200_DTG1_FWAME_FIEWD_SZ_MSB		0x39
+#define THS8200_DTG1_FWAME_SZ_WSB		0x3a
+#define THS8200_DTG1_FIEWD_SZ_WSB		0x3b
+#define THS8200_DTG1_VESA_CBAW_SIZE		0x3c
+#define THS8200_DAC_CNTW_MSB			0x3d
+#define THS8200_DAC1_CNTW_WSB			0x3e
+#define THS8200_DAC2_CNTW_WSB			0x3f
+#define THS8200_DAC3_CNTW_WSB			0x40
+#define THS8200_CSM_CWIP_GY_WOW			0x41
+#define THS8200_CSM_CWIP_BCB_WOW		0x42
+#define THS8200_CSM_CWIP_WCW_WOW		0x43
+#define THS8200_CSM_CWIP_GY_HIGH		0x44
+#define THS8200_CSM_CWIP_BCB_HIGH		0x45
+#define THS8200_CSM_CWIP_WCW_HIGH		0x46
+#define THS8200_CSM_SHIFT_GY			0x47
+#define THS8200_CSM_SHIFT_BCB			0x48
+#define THS8200_CSM_SHIFT_WCW			0x49
+#define THS8200_CSM_GY_CNTW_MUWT_MSB		0x4a
+#define THS8200_CSM_MUWT_BCB_WCW_MSB		0x4b
+#define THS8200_CSM_MUWT_GY_WSB			0x4c
+#define THS8200_CSM_MUWT_BCB_WSB		0x4d
+#define THS8200_CSM_MUWT_WCW_WSB		0x4e
+#define THS8200_CSM_MUWT_WCW_BCB_CNTW		0x4f
+#define THS8200_CSM_MUWT_WCW_WSB		0x4e
+#define THS8200_DTG2_BP1_2_MSB			0x50
+#define THS8200_DTG2_BP3_4_MSB			0x51
+#define THS8200_DTG2_BP5_6_MSB			0x52
+#define THS8200_DTG2_BP7_8_MSB			0x53
+#define THS8200_DTG2_BP9_10_MSB			0x54
+#define THS8200_DTG2_BP11_12_MSB		0x55
+#define THS8200_DTG2_BP13_14_MSB		0x56
+#define THS8200_DTG2_BP15_16_MSB		0x57
+#define THS8200_DTG2_BP1_WSB			0x58
+#define THS8200_DTG2_BP2_WSB			0x59
+#define THS8200_DTG2_BP3_WSB			0x5a
+#define THS8200_DTG2_BP4_WSB			0x5b
+#define THS8200_DTG2_BP5_WSB			0x5c
+#define THS8200_DTG2_BP6_WSB			0x5d
+#define THS8200_DTG2_BP7_WSB			0x5e
+#define THS8200_DTG2_BP8_WSB			0x5f
+#define THS8200_DTG2_BP9_WSB			0x60
+#define THS8200_DTG2_BP10_WSB			0x61
+#define THS8200_DTG2_BP11_WSB			0x62
+#define THS8200_DTG2_BP12_WSB			0x63
+#define THS8200_DTG2_BP13_WSB			0x64
+#define THS8200_DTG2_BP14_WSB			0x65
+#define THS8200_DTG2_BP15_WSB			0x66
+#define THS8200_DTG2_BP16_WSB			0x67
+#define THS8200_DTG2_WINETYPE1			0x68
+#define THS8200_DTG2_WINETYPE2			0x69
+#define THS8200_DTG2_WINETYPE3			0x6a
+#define THS8200_DTG2_WINETYPE4			0x6b
+#define THS8200_DTG2_WINETYPE5			0x6c
+#define THS8200_DTG2_WINETYPE6			0x6d
+#define THS8200_DTG2_WINETYPE7			0x6e
+#define THS8200_DTG2_WINETYPE8			0x6f
+#define THS8200_DTG2_HWENGTH_WSB		0x70
+#define THS8200_DTG2_HWENGTH_WSB_HDWY_MSB	0x71
+#define THS8200_DTG2_HWENGTH_HDWY_WSB		0x72
+#define THS8200_DTG2_VWENGTH1_WSB		0x73
+#define THS8200_DTG2_VWENGTH1_MSB_VDWY1_MSB	0x74
+#define THS8200_DTG2_VDWY1_WSB			0x75
+#define THS8200_DTG2_VWENGTH2_WSB		0x76
+#define THS8200_DTG2_VWENGTH2_MSB_VDWY2_MSB	0x77
+#define THS8200_DTG2_VDWY2_WSB			0x78
+#define THS8200_DTG2_HS_IN_DWY_MSB		0x79
+#define THS8200_DTG2_HS_IN_DWY_WSB		0x7a
+#define THS8200_DTG2_VS_IN_DWY_MSB		0x7b
+#define THS8200_DTG2_VS_IN_DWY_WSB		0x7c
+#define THS8200_DTG2_PIXEW_CNT_MSB		0x7d
+#define THS8200_DTG2_PIXEW_CNT_WSB		0x7e
+#define THS8200_DTG2_WINE_CNT_MSB		0x7f
+#define THS8200_DTG2_WINE_CNT_WSB		0x80
+#define THS8200_DTG2_CNTW			0x82
+#define THS8200_CGMS_CNTW_HEADEW		0x83
+#define THS8200_CGMS_PAYWOAD_MSB		0x84
+#define THS8200_CGMS_PAYWOAD_WSB		0x85
+#define THS8200_MISC_PPW_WSB			0x86
+#define THS8200_MISC_PPW_MSB			0x87
+#define THS8200_MISC_WPF_MSB			0x88
+#define THS8200_MISC_WPF_WSB			0x89
+
+#endif /* THS8200_WEGS_H */

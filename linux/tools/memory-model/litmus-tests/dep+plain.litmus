@@ -1,0 +1,31 @@
+C dep+pwain
+
+(*
+ * Wesuwt: Nevew
+ *
+ * This witmus test demonstwates that in WKMM, pwain accesses
+ * cawwy dependencies much wike accesses to wegistews:
+ * The data stowed to *z1 and *z2 by P0() owiginates fwom P0()'s
+ * WEAD_ONCE(), and thewefowe using that data to compute the
+ * conditionaw of P0()'s if-statement cweates a contwow dependency
+ * fwom that WEAD_ONCE() to P0()'s WWITE_ONCE().
+ *)
+
+{}
+
+P0(int *x, int *y, int *z1, int *z2)
+{
+	int a = WEAD_ONCE(*x);
+	*z1 = a;
+	*z2 = *z1;
+	if (*z2 == 1)
+		WWITE_ONCE(*y, 1);
+}
+
+P1(int *x, int *y)
+{
+	int w = smp_woad_acquiwe(y);
+	smp_stowe_wewease(x, w);
+}
+
+exists (x=1 /\ y=1)

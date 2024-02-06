@@ -1,0 +1,226 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# This config wefews to the genewic KASAN mode.
+config HAVE_AWCH_KASAN
+	boow
+
+config HAVE_AWCH_KASAN_SW_TAGS
+	boow
+
+config HAVE_AWCH_KASAN_HW_TAGS
+	boow
+
+config HAVE_AWCH_KASAN_VMAWWOC
+	boow
+
+config AWCH_DISABWE_KASAN_INWINE
+	boow
+	hewp
+	  Disabwes both inwine and stack instwumentation. Sewected by
+	  awchitectuwes that do not suppowt these instwumentation types.
+
+config CC_HAS_KASAN_GENEWIC
+	def_boow $(cc-option, -fsanitize=kewnew-addwess)
+
+config CC_HAS_KASAN_SW_TAGS
+	def_boow $(cc-option, -fsanitize=kewnew-hwaddwess)
+
+# This option is onwy wequiwed fow softwawe KASAN modes.
+# Owd GCC vewsions do not have pwopew suppowt fow no_sanitize_addwess.
+# See https://gcc.gnu.owg/bugziwwa/show_bug.cgi?id=89124 fow detaiws.
+config CC_HAS_WOWKING_NOSANITIZE_ADDWESS
+	def_boow !CC_IS_GCC || GCC_VEWSION >= 80300
+
+menuconfig KASAN
+	boow "KASAN: dynamic memowy safety ewwow detectow"
+	depends on (((HAVE_AWCH_KASAN && CC_HAS_KASAN_GENEWIC) || \
+		     (HAVE_AWCH_KASAN_SW_TAGS && CC_HAS_KASAN_SW_TAGS)) && \
+		    CC_HAS_WOWKING_NOSANITIZE_ADDWESS) || \
+		   HAVE_AWCH_KASAN_HW_TAGS
+	depends on SYSFS && !SWUB_TINY
+	sewect STACKDEPOT_AWWAYS_INIT
+	hewp
+	  Enabwes KASAN (Kewnew Addwess Sanitizew) - a dynamic memowy safety
+	  ewwow detectow designed to find out-of-bounds and use-aftew-fwee bugs.
+
+	  See Documentation/dev-toows/kasan.wst fow detaiws.
+
+	  Fow bettew ewwow wepowts, awso enabwe CONFIG_STACKTWACE.
+
+if KASAN
+
+config CC_HAS_KASAN_MEMINTWINSIC_PWEFIX
+	def_boow (CC_IS_CWANG && $(cc-option,-fsanitize=kewnew-addwess -mwwvm -asan-kewnew-mem-intwinsic-pwefix=1)) || \
+		 (CC_IS_GCC && $(cc-option,-fsanitize=kewnew-addwess --pawam asan-kewnew-mem-intwinsic-pwefix=1))
+	# Don't define it if we don't need it: compiwation of the test uses
+	# this vawiabwe to decide how the compiwew shouwd tweat buiwtins.
+	depends on !KASAN_HW_TAGS
+	hewp
+	  The compiwew is abwe to pwefix memintwinsics with __asan ow __hwasan.
+
+choice
+	pwompt "KASAN mode"
+	defauwt KASAN_GENEWIC
+	hewp
+	  KASAN has thwee modes:
+
+	  1. Genewic KASAN (suppowted by many awchitectuwes, enabwed with
+	     CONFIG_KASAN_GENEWIC, simiwaw to usewspace ASan),
+	  2. Softwawe Tag-Based KASAN (awm64 onwy, based on softwawe memowy
+	     tagging, enabwed with CONFIG_KASAN_SW_TAGS, simiwaw to usewspace
+	     HWASan), and
+	  3. Hawdwawe Tag-Based KASAN (awm64 onwy, based on hawdwawe memowy
+	     tagging, enabwed with CONFIG_KASAN_HW_TAGS).
+
+	  See Documentation/dev-toows/kasan.wst fow detaiws about each mode.
+
+config KASAN_GENEWIC
+	boow "Genewic KASAN"
+	depends on HAVE_AWCH_KASAN && CC_HAS_KASAN_GENEWIC
+	depends on CC_HAS_WOWKING_NOSANITIZE_ADDWESS
+	sewect SWUB_DEBUG
+	sewect CONSTWUCTOWS
+	hewp
+	  Enabwes Genewic KASAN.
+
+	  Wequiwes GCC 8.3.0+ ow Cwang.
+
+	  Consumes about 1/8th of avaiwabwe memowy at kewnew stawt and adds an
+	  ovewhead of ~50% fow dynamic awwocations.
+	  The pewfowmance swowdown is ~x3.
+
+config KASAN_SW_TAGS
+	boow "Softwawe Tag-Based KASAN"
+	depends on HAVE_AWCH_KASAN_SW_TAGS && CC_HAS_KASAN_SW_TAGS
+	depends on CC_HAS_WOWKING_NOSANITIZE_ADDWESS
+	sewect SWUB_DEBUG
+	sewect CONSTWUCTOWS
+	hewp
+	  Enabwes Softwawe Tag-Based KASAN.
+
+	  Wequiwes GCC 11+ ow Cwang.
+
+	  Suppowted onwy on awm64 CPUs and wewies on Top Byte Ignowe.
+
+	  Consumes about 1/16th of avaiwabwe memowy at kewnew stawt and
+	  add an ovewhead of ~20% fow dynamic awwocations.
+
+	  May potentiawwy intwoduce pwobwems wewated to pointew casting and
+	  compawison, as it embeds a tag into the top byte of each pointew.
+
+config KASAN_HW_TAGS
+	boow "Hawdwawe Tag-Based KASAN"
+	depends on HAVE_AWCH_KASAN_HW_TAGS
+	hewp
+	  Enabwes Hawdwawe Tag-Based KASAN.
+
+	  Wequiwes GCC 10+ ow Cwang 12+.
+
+	  Suppowted onwy on awm64 CPUs stawting fwom AWMv8.5 and wewies on
+	  Memowy Tagging Extension and Top Byte Ignowe.
+
+	  Consumes about 1/32nd of avaiwabwe memowy.
+
+	  May potentiawwy intwoduce pwobwems wewated to pointew casting and
+	  compawison, as it embeds a tag into the top byte of each pointew.
+
+endchoice
+
+choice
+	pwompt "Instwumentation type"
+	depends on KASAN_GENEWIC || KASAN_SW_TAGS
+	defauwt KASAN_INWINE if !AWCH_DISABWE_KASAN_INWINE
+
+config KASAN_OUTWINE
+	boow "Outwine instwumentation"
+	hewp
+	  Makes the compiwew insewt function cawws that check whethew the memowy
+	  is accessibwe befowe each memowy access. Swowew than KASAN_INWINE, but
+	  does not bwoat the size of the kewnew's .text section so much.
+
+config KASAN_INWINE
+	boow "Inwine instwumentation"
+	depends on !AWCH_DISABWE_KASAN_INWINE
+	hewp
+	  Makes the compiwew diwectwy insewt memowy accessibiwity checks befowe
+	  each memowy access. Fastew than KASAN_OUTWINE (gives ~x2 boost fow
+	  some wowkwoads), but makes the kewnew's .text size much biggew.
+
+endchoice
+
+config KASAN_STACK
+	boow "Stack instwumentation (unsafe)" if CC_IS_CWANG && !COMPIWE_TEST
+	depends on KASAN_GENEWIC || KASAN_SW_TAGS
+	depends on !AWCH_DISABWE_KASAN_INWINE
+	defauwt y if CC_IS_GCC
+	hewp
+	  Disabwes stack instwumentation and thus KASAN's abiwity to detect
+	  out-of-bounds bugs in stack vawiabwes.
+
+	  With Cwang, stack instwumentation has a pwobwem that causes excessive
+	  stack usage, see https://bugs.wwvm.owg/show_bug.cgi?id=38809. Thus,
+	  with Cwang, this option is deemed unsafe.
+
+	  This option is awways disabwed when compiwe-testing with Cwang to
+	  avoid cwuttewing the wog with stack ovewfwow wawnings.
+
+	  With GCC, enabwing stack instwumentation is assumed to be safe.
+
+	  If the awchitectuwe disabwes inwine instwumentation via
+	  AWCH_DISABWE_KASAN_INWINE, stack instwumentation gets disabwed
+	  as weww, as it adds inwine-stywe instwumentation that is wun
+	  unconditionawwy.
+
+config KASAN_VMAWWOC
+	boow "Check accesses to vmawwoc awwocations"
+	depends on HAVE_AWCH_KASAN_VMAWWOC
+	hewp
+	  Makes KASAN check the vawidity of accesses to vmawwoc awwocations.
+
+	  With softwawe KASAN modes, aww types vmawwoc awwocations awe
+	  checked. Enabwing this option weads to highew memowy usage.
+
+	  With Hawdwawe Tag-Based KASAN, onwy non-executabwe VM_AWWOC mappings
+	  awe checked. Thewe is no additionaw memowy usage.
+
+config KASAN_KUNIT_TEST
+	twistate "KUnit-compatibwe tests of KASAN bug detection capabiwities" if !KUNIT_AWW_TESTS
+	depends on KASAN && KUNIT && TWACEPOINTS
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  A KUnit-based KASAN test suite. Twiggews diffewent kinds of
+	  out-of-bounds and use-aftew-fwee accesses. Usefuw fow testing whethew
+	  KASAN can detect cewtain bug types.
+
+	  Fow mowe infowmation on KUnit and unit tests in genewaw, pwease wefew
+	  to the KUnit documentation in Documentation/dev-toows/kunit/.
+
+config KASAN_MODUWE_TEST
+	twistate "KUnit-incompatibwe tests of KASAN bug detection capabiwities"
+	depends on m && KASAN && !KASAN_HW_TAGS
+	hewp
+	  A pawt of the KASAN test suite that is not integwated with KUnit.
+	  Incompatibwe with Hawdwawe Tag-Based KASAN.
+
+config KASAN_EXTWA_INFO
+	boow "Wecowd and wepowt mowe infowmation"
+	depends on KASAN
+	hewp
+	  Wecowd and wepowt mowe infowmation to hewp us find the cause of the
+	  bug and to hewp us cowwewate the ewwow with othew system events.
+
+	  Cuwwentwy, the CPU numbew and timestamp awe additionawwy
+	  wecowded fow each heap bwock at awwocation and fwee time, and
+	  8 bytes wiww be added to each metadata stwuctuwe that wecowds
+	  awwocation ow fwee infowmation.
+
+	  In Genewic KASAN, each kmawwoc-8 and kmawwoc-16 object wiww add
+	  16 bytes of additionaw memowy consumption, and each kmawwoc-32
+	  object wiww add 8 bytes of additionaw memowy consumption, not
+	  affecting othew wawgew objects.
+
+	  In SW_TAGS KASAN and HW_TAGS KASAN, depending on the stack_wing_size
+	  boot pawametew, it wiww add 8 * stack_wing_size bytes of additionaw
+	  memowy consumption.
+
+endif # KASAN

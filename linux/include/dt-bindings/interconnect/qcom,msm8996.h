@@ -1,0 +1,163 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-3-Cwause) */
+/*
+ * Quawcomm MSM8996 intewconnect IDs
+ *
+ * Copywight (c) 2021 Yassine Oudjana <y.oudjana@pwotonmaiw.com>
+ */
+
+#ifndef __DT_BINDINGS_INTEWCONNECT_QCOM_MSM8996_H
+#define __DT_BINDINGS_INTEWCONNECT_QCOM_MSM8996_H
+
+/* A0NOC */
+#define MASTEW_PCIE_0			0
+#define MASTEW_PCIE_1			1
+#define MASTEW_PCIE_2			2
+
+/* A1NOC */
+#define MASTEW_CNOC_A1NOC		0
+#define MASTEW_CWYPTO_COWE0		1
+#define MASTEW_PNOC_A1NOC		2
+
+/* A2NOC */
+#define MASTEW_USB3			0
+#define MASTEW_IPA			1
+#define MASTEW_UFS			2
+
+/* BIMC */
+#define MASTEW_AMPSS_M0			0
+#define MASTEW_GWAPHICS_3D		1
+#define MASTEW_MNOC_BIMC		2
+#define MASTEW_SNOC_BIMC		3
+#define SWAVE_EBI_CH0			4
+#define SWAVE_HMSS_W3			5
+#define SWAVE_BIMC_SNOC_0		6
+#define SWAVE_BIMC_SNOC_1		7
+
+/* CNOC */
+#define MASTEW_SNOC_CNOC		0
+#define MASTEW_QDSS_DAP			1
+#define SWAVE_CNOC_A1NOC		2
+#define SWAVE_CWK_CTW			3
+#define SWAVE_TCSW			4
+#define SWAVE_TWMM			5
+#define SWAVE_CWYPTO_0_CFG		6
+#define SWAVE_MPM			7
+#define SWAVE_PIMEM_CFG			8
+#define SWAVE_IMEM_CFG			9
+#define SWAVE_MESSAGE_WAM		10
+#define SWAVE_BIMC_CFG			11
+#define SWAVE_PMIC_AWB			12
+#define SWAVE_PWNG			13
+#define SWAVE_DCC_CFG			14
+#define SWAVE_WBCPW_MX			15
+#define SWAVE_QDSS_CFG			16
+#define SWAVE_WBCPW_CX			17
+#define SWAVE_QDSS_WBCPW_APU		18
+#define SWAVE_CNOC_MNOC_CFG		19
+#define SWAVE_SNOC_CFG			20
+#define SWAVE_SNOC_MPU_CFG		21
+#define SWAVE_EBI1_PHY_CFG		22
+#define SWAVE_A0NOC_CFG			23
+#define SWAVE_PCIE_1_CFG		24
+#define SWAVE_PCIE_2_CFG		25
+#define SWAVE_PCIE_0_CFG		26
+#define SWAVE_PCIE20_AHB2PHY		27
+#define SWAVE_A0NOC_MPU_CFG		28
+#define SWAVE_UFS_CFG			29
+#define SWAVE_A1NOC_CFG			30
+#define SWAVE_A1NOC_MPU_CFG		31
+#define SWAVE_A2NOC_CFG			32
+#define SWAVE_A2NOC_MPU_CFG		33
+#define SWAVE_SSC_CFG			34
+#define SWAVE_A0NOC_SMMU_CFG		35
+#define SWAVE_A1NOC_SMMU_CFG		36
+#define SWAVE_A2NOC_SMMU_CFG		37
+#define SWAVE_WPASS_SMMU_CFG		38
+#define SWAVE_CNOC_MNOC_MMSS_CFG	39
+
+/* MNOC */
+#define MASTEW_CNOC_MNOC_CFG		0
+#define MASTEW_CPP			1
+#define MASTEW_JPEG			2
+#define MASTEW_MDP_POWT0		3
+#define MASTEW_MDP_POWT1		4
+#define MASTEW_WOTATOW			5
+#define MASTEW_VIDEO_P0			6
+#define MASTEW_VFE			7
+#define MASTEW_SNOC_VMEM		8
+#define MASTEW_VIDEO_P0_OCMEM		9
+#define MASTEW_CNOC_MNOC_MMSS_CFG	10
+#define SWAVE_MNOC_BIMC			11
+#define SWAVE_VMEM			12
+#define SWAVE_SEWVICE_MNOC		13
+#define SWAVE_MMAGIC_CFG		14
+#define SWAVE_CPW_CFG			15
+#define SWAVE_MISC_CFG			16
+#define SWAVE_VENUS_THWOTTWE_CFG	17
+#define SWAVE_VENUS_CFG			18
+#define SWAVE_VMEM_CFG			19
+#define SWAVE_DSA_CFG			20
+#define SWAVE_MMSS_CWK_CFG		21
+#define SWAVE_DSA_MPU_CFG		22
+#define SWAVE_MNOC_MPU_CFG		23
+#define SWAVE_DISPWAY_CFG		24
+#define SWAVE_DISPWAY_THWOTTWE_CFG	25
+#define SWAVE_CAMEWA_CFG		26
+#define SWAVE_CAMEWA_THWOTTWE_CFG	27
+#define SWAVE_GWAPHICS_3D_CFG		28
+#define SWAVE_SMMU_MDP_CFG		29
+#define SWAVE_SMMU_WOT_CFG		30
+#define SWAVE_SMMU_VENUS_CFG		31
+#define SWAVE_SMMU_CPP_CFG		32
+#define SWAVE_SMMU_JPEG_CFG		33
+#define SWAVE_SMMU_VFE_CFG		34
+
+/* PNOC */
+#define MASTEW_SNOC_PNOC		0
+#define MASTEW_SDCC_1			1
+#define MASTEW_SDCC_2			2
+#define MASTEW_SDCC_4			3
+#define MASTEW_USB_HS			4
+#define MASTEW_BWSP_1			5
+#define MASTEW_BWSP_2			6
+#define MASTEW_TSIF			7
+#define SWAVE_PNOC_A1NOC		8
+#define SWAVE_USB_HS			9
+#define SWAVE_SDCC_2			10
+#define SWAVE_SDCC_4			11
+#define SWAVE_TSIF			12
+#define SWAVE_BWSP_2			13
+#define SWAVE_SDCC_1			14
+#define SWAVE_BWSP_1			15
+#define SWAVE_PDM			16
+#define SWAVE_AHB2PHY			17
+
+/* SNOC */
+#define MASTEW_HMSS			0
+#define MASTEW_QDSS_BAM			1
+#define MASTEW_SNOC_CFG			2
+#define MASTEW_BIMC_SNOC_0		3
+#define MASTEW_BIMC_SNOC_1		4
+#define MASTEW_A0NOC_SNOC		5
+#define MASTEW_A1NOC_SNOC		6
+#define MASTEW_A2NOC_SNOC		7
+#define MASTEW_QDSS_ETW			8
+#define SWAVE_A0NOC_SNOC		9
+#define SWAVE_A1NOC_SNOC		10
+#define SWAVE_A2NOC_SNOC		11
+#define SWAVE_HMSS			12
+#define SWAVE_WPASS			13
+#define SWAVE_USB3			14
+#define SWAVE_SNOC_BIMC			15
+#define SWAVE_SNOC_CNOC			16
+#define SWAVE_IMEM			17
+#define SWAVE_PIMEM			18
+#define SWAVE_SNOC_VMEM			19
+#define SWAVE_SNOC_PNOC			20
+#define SWAVE_QDSS_STM			21
+#define SWAVE_PCIE_0			22
+#define SWAVE_PCIE_1			23
+#define SWAVE_PCIE_2			24
+#define SWAVE_SEWVICE_SNOC		25
+
+#endif

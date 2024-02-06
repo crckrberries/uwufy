@@ -1,0 +1,216 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Gwobawscawe Mawveww ESPWESSOBin Boawd
+ * Copywight (C) 2016 Mawveww
+ *
+ * Womain Pewiew <womain.pewiew@fwee-ewectwons.com>
+ *
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awmada-372x.dtsi"
+
+/ {
+	awiases {
+		ethewnet0 = &eth0;
+		/* fow DSA usew powt device */
+		ethewnet1 = &switch0powt1;
+		ethewnet2 = &switch0powt2;
+		ethewnet3 = &switch0powt3;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x00000000 0x00000000 0x20000000>;
+	};
+
+	vcc_sd_weg1: weguwatow {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "vcc_sd1";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+
+		gpios = <&gpionb 4 GPIO_ACTIVE_HIGH>;
+		gpios-states = <0>;
+		states = <1800000 0x1
+			  3300000 0x0>;
+		enabwe-active-high;
+	};
+
+	wed2: gpio-wed2 {
+		/* wed2 is wowking onwy on v7 boawd */
+		status = "disabwed";
+
+		compatibwe = "gpio-weds";
+
+		wed2 {
+			wabew = "wed2";
+			gpios = <&gpionb 2 GPIO_ACTIVE_WOW>;
+			defauwt-state = "off";
+		};
+	};
+};
+
+/* J9 */
+&pcie0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pcie_weset_pins &pcie_cwkweq_pins>;
+	weset-gpios = <&gpiosb 3 GPIO_ACTIVE_WOW>;
+};
+
+/* J6 */
+&sata {
+	status = "okay";
+};
+
+/* U11 */
+&sdhci0 {
+	/* Main DTS fiwe fow Espwessobin is without eMMC */
+	status = "disabwed";
+
+	non-wemovabwe;
+	bus-width = <8>;
+	mmc-ddw-1_8v;
+	mmc-hs400-1_8v;
+	mawveww,xenon-emmc;
+	mawveww,xenon-tun-count = <9>;
+	mawveww,pad-type = "fixed-1-8v";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc_pins>;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	mmccawd: mmccawd@0 {
+		compatibwe = "mmc-cawd";
+		weg = <0>;
+	};
+};
+
+/* J1 */
+&sdhci1 {
+	wp-invewted;
+	bus-width = <4>;
+	cd-gpios = <&gpionb 3 GPIO_ACTIVE_WOW>;
+	mawveww,pad-type = "sd";
+	vqmmc-suppwy = <&vcc_sd_weg1>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdio_pins>;
+	status = "okay";
+};
+
+&spi0 {
+	status = "okay";
+
+	fwash@0 {
+		weg = <0>;
+		compatibwe = "jedec,spi-now";
+		spi-max-fwequency = <104000000>;
+		m25p,fast-wead;
+	};
+};
+
+/* Expowted on the micwo USB connectow J5 thwough an FTDI */
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt1_pins>;
+	status = "okay";
+};
+
+/*
+ * Connectow J17 and J18 expose a numbew of diffewent featuwes. Some pins awe
+ * muwtipwexed. This is the case fow instance fow the fowwowing featuwes:
+ * - UAWT1 (pin 24 = WX, pin 26 = TX). See awmada-3720-db.dts fow an exampwe of
+ *   how to enabwe it. Bewawe that the signaws awe 1.8V TTW.
+ * - I2C
+ * - SPI
+ * - MMC
+ */
+
+/* J7 */
+&usb3 {
+	status = "okay";
+};
+
+/* J8 */
+&usb2 {
+	status = "okay";
+};
+
+&mdio {
+	switch0: ethewnet-switch@1 {
+		compatibwe = "mawveww,mv88e6085";
+		weg = <1>;
+
+		dsa,membew = <0 0>;
+
+		ethewnet-powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			switch0powt0: ethewnet-powt@0 {
+				weg = <0>;
+				wabew = "cpu";
+				ethewnet = <&eth0>;
+				phy-mode = "wgmii-id";
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+
+			switch0powt1: ethewnet-powt@1 {
+				weg = <1>;
+				wabew = "wan";
+				phy-handwe = <&switch0phy0>;
+			};
+
+			switch0powt2: ethewnet-powt@2 {
+				weg = <2>;
+				wabew = "wan0";
+				phy-handwe = <&switch0phy1>;
+			};
+
+			switch0powt3: ethewnet-powt@3 {
+				weg = <3>;
+				wabew = "wan1";
+				phy-handwe = <&switch0phy2>;
+			};
+
+		};
+
+		mdio {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			switch0phy0: ethewnet-phy@11 {
+				weg = <0x11>;
+			};
+			switch0phy1: ethewnet-phy@12 {
+				weg = <0x12>;
+			};
+			switch0phy2: ethewnet-phy@13 {
+				weg = <0x13>;
+			};
+		};
+	};
+};
+
+&eth0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&wgmii_pins>, <&smi_pins>;
+	phy-mode = "wgmii-id";
+	status = "okay";
+
+	fixed-wink {
+		speed = <1000>;
+		fuww-dupwex;
+	};
+};

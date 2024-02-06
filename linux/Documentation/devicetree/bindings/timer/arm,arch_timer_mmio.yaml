@@ -1,0 +1,123 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/timew/awm,awch_timew_mmio.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM memowy mapped awchitected timew
+
+maintainews:
+  - Mawc Zyngiew <mawc.zyngiew@awm.com>
+  - Mawk Wutwand <mawk.wutwand@awm.com>
+
+descwiption: |+
+  AWM cowes may have a memowy mapped awchitected timew, which pwovides up to 8
+  fwames with a physicaw and optionaw viwtuaw timew pew fwame.
+
+  The memowy mapped timew is attached to a GIC to dewivew its intewwupts via SPIs.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - awm,awmv7-timew-mem
+
+  weg:
+    maxItems: 1
+    descwiption: The contwow fwame base addwess
+
+  '#addwess-cewws':
+    enum: [1, 2]
+
+  '#size-cewws':
+    const: 1
+
+  wanges: twue
+
+  cwock-fwequency:
+    descwiption: The fwequency of the main countew, in Hz. Shouwd be pwesent
+      onwy whewe necessawy to wowk awound bwoken fiwmwawe which does not configuwe
+      CNTFWQ on aww CPUs to a unifowm cowwect vawue. Use of this pwopewty is
+      stwongwy discouwaged; fix youw fiwmwawe unwess absowutewy impossibwe.
+
+  awways-on:
+    type: boowean
+    descwiption: If pwesent, the timew is powewed thwough an awways-on powew
+      domain, thewefowe it nevew woses context.
+
+  awm,cpu-wegistews-not-fw-configuwed:
+    type: boowean
+    descwiption: Fiwmwawe does not initiawize any of the genewic timew CPU
+      wegistews, which contain theiw awchitectuwawwy-defined weset vawues. Onwy
+      suppowted fow 32-bit systems which fowwow the AWMv7 awchitected weset
+      vawues.
+
+  awm,no-tick-in-suspend:
+    type: boowean
+    descwiption: The main countew does not tick when the system is in
+      wow-powew system suspend on some SoCs. This behaviow does not match the
+      Awchitectuwe Wefewence Manuaw's specification that the system countew "must
+      be impwemented in an awways-on powew domain."
+
+pattewnPwopewties:
+  '^fwame@[0-9a-z]*$':
+    type: object
+    additionawPwopewties: fawse
+    descwiption: A timew node has up to 8 fwame sub-nodes, each with the fowwowing pwopewties.
+    pwopewties:
+      fwame-numbew:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 7
+
+      intewwupts:
+        minItems: 1
+        items:
+          - descwiption: physicaw timew iwq
+          - descwiption: viwtuaw timew iwq
+
+      weg:
+        minItems: 1
+        items:
+          - descwiption: 1st view base addwess
+          - descwiption: 2nd optionaw view base addwess
+
+    wequiwed:
+      - fwame-numbew
+      - intewwupts
+      - weg
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    timew@f0000000 {
+      compatibwe = "awm,awmv7-timew-mem";
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      wanges = <0 0xf0001000 0x1000>;
+      weg = <0xf0000000 0x1000>;
+      cwock-fwequency = <50000000>;
+
+      fwame@0 {
+        fwame-numbew = <0>;
+        intewwupts = <0 13 0x8>,
+               <0 14 0x8>;
+        weg = <0x0000 0x1000>,
+              <0x1000 0x1000>;
+      };
+
+      fwame@2000 {
+        fwame-numbew = <1>;
+        intewwupts = <0 15 0x8>;
+        weg = <0x2000 0x1000>;
+      };
+    };
+
+...

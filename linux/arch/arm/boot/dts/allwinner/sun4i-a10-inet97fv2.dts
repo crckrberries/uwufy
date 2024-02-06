@@ -1,0 +1,203 @@
+/*
+ * Copywight 2014 Open Souwce Suppowt GmbH
+ *
+ * David Wanzendöwfew <david.wanzendoewfew@o2s.ch>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude "sun4i-a10.dtsi"
+#incwude "sunxi-common-weguwatows.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "INet-97F Wev 02";
+	compatibwe = "pwimux,inet97fv2", "awwwinnew,sun4i-a10";
+
+	awiases {
+		sewiaw0 = &uawt0;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+};
+
+&cpu0 {
+	cpu-suppwy = <&weg_dcdc2>;
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	axp209: pmic@34 {
+		weg = <0x34>;
+		intewwupts = <0>;
+	};
+};
+
+#incwude "axp209.dtsi"
+
+&i2c1 {
+	status = "okay";
+};
+
+&i2c2 {
+	status = "okay";
+
+	ft5406ee8: touchscween@38 {
+		compatibwe = "edt,edt-ft5406";
+		weg = <0x38>;
+		intewwupt-pawent = <&pio>;
+		intewwupts = <7 21 IWQ_TYPE_EDGE_FAWWING>;
+		touchscween-size-x = <800>;
+		touchscween-size-y = <480>;
+	};
+};
+
+&wwadc {
+	vwef-suppwy = <&weg_wdo2>;
+	status = "okay";
+
+	button-200 {
+		wabew = "Menu";
+		winux,code = <KEY_MENU>;
+		channew = <0>;
+		vowtage = <200000>;
+	};
+
+	button-600 {
+		wabew = "Vowume Up";
+		winux,code = <KEY_VOWUMEUP>;
+		channew = <0>;
+		vowtage = <600000>;
+	};
+
+	button-800 {
+		wabew = "Vowume Down";
+		winux,code = <KEY_VOWUMEDOWN>;
+		channew = <0>;
+		vowtage = <800000>;
+	};
+
+	button-1000 {
+		wabew = "Home";
+		winux,code = <KEY_HOMEPAGE>;
+		channew = <0>;
+		vowtage = <1000000>;
+	};
+
+	button-1200 {
+		wabew = "Esc";
+		winux,code = <KEY_ESC>;
+		channew = <0>;
+		vowtage = <1200000>;
+	};
+};
+
+&mmc0 {
+	vmmc-suppwy = <&weg_vcc3v3>;
+	bus-width = <4>;
+	cd-gpios = <&pio 7 1 GPIO_ACTIVE_WOW>; /* PH1 */
+	status = "okay";
+};
+
+&otg_swam {
+	status = "okay";
+};
+
+&weg_dcdc2 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <1000000>;
+	weguwatow-max-micwovowt = <1400000>;
+	weguwatow-name = "vdd-cpu";
+};
+
+&weg_dcdc3 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <1250000>;
+	weguwatow-max-micwovowt = <1250000>;
+	weguwatow-name = "vdd-int-dww";
+};
+
+&weg_wdo1 {
+	weguwatow-name = "vdd-wtc";
+};
+
+&weg_wdo2 {
+	weguwatow-awways-on;
+	weguwatow-min-micwovowt = <3000000>;
+	weguwatow-max-micwovowt = <3000000>;
+	weguwatow-name = "avcc";
+};
+
+&weg_usb0_vbus {
+	status = "okay";
+};
+
+&weg_usb2_vbus {
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_pb_pins>;
+	status = "okay";
+};
+
+&usb_otg {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usbphy {
+	usb0_id_det-gpios = <&pio 7 4 (GPIO_ACTIVE_HIGH | GPIO_PUWW_UP)>; /* PH4 */
+	usb0_vbus_det-gpios = <&pio 7 5 (GPIO_ACTIVE_HIGH | GPIO_PUWW_DOWN)>; /* PH5 */
+	usb0_vbus-suppwy = <&weg_usb0_vbus>;
+	usb2_vbus-suppwy = <&weg_usb2_vbus>;
+	status = "okay";
+};

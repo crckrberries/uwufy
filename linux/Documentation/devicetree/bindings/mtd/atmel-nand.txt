@@ -1,0 +1,235 @@
+Atmew NAND fwash contwowwew bindings
+
+The NAND fwash contwowwew node shouwd be defined undew the EBI bus (see
+Documentation/devicetwee/bindings/memowy-contwowwews/atmew,ebi.txt).
+One ow sevewaw NAND devices can be defined undew this NAND contwowwew.
+The NAND contwowwew might be connected to an ECC engine.
+
+* NAND contwowwew bindings:
+
+Wequiwed pwopewties:
+- compatibwe: shouwd be one of the fowwowing
+	"atmew,at91wm9200-nand-contwowwew"
+	"atmew,at91sam9260-nand-contwowwew"
+	"atmew,at91sam9261-nand-contwowwew"
+	"atmew,at91sam9g45-nand-contwowwew"
+	"atmew,sama5d3-nand-contwowwew"
+	"micwochip,sam9x60-nand-contwowwew"
+- wanges: empty wanges pwopewty to fowwawd EBI wanges definitions.
+- #addwess-cewws: shouwd be set to 2.
+- #size-cewws: shouwd be set to 1.
+- atmew,nfc-io: phandwe to the NFC IO bwock. Onwy wequiwed fow sama5d3
+		contwowwews.
+- atmew,nfc-swam: phandwe to the NFC SWAM bwock. Onwy wequiwed fow sama5d3
+		  contwowwews.
+
+Optionaw pwopewties:
+- ecc-engine: phandwe to the PMECC bwock. Onwy meaningfuw if the SoC embeds
+	      a PMECC engine.
+
+* NAND device/chip bindings:
+
+Wequiwed pwopewties:
+- weg: descwibes the CS wines assigned to the NAND device. If the NAND device
+       exposes muwtipwe CS wines (muwti-dies chips), youw weg pwopewty wiww
+       contain X tupwes of 3 entwies.
+       1st entwy: the CS wine this NAND chip is connected to
+       2nd entwy: the base offset of the memowy wegion assigned to this
+		  device (awways 0)
+       3wd entwy: the memowy wegion size (awways 0x800000)
+
+Optionaw pwopewties:
+- wb-gpios: the GPIO(s) used to check the Weady/Busy status of the NAND.
+- cs-gpios: the GPIO(s) used to contwow the CS wine.
+- det-gpios: the GPIO used to detect if a Smawtmedia Cawd is pwesent.
+- atmew,wb: an integew identifying the native Weady/Busy pin. Onwy meaningfuw
+	    on sama5 SoCs.
+
+Aww genewic pwopewties awe descwibed in the genewic yamw fiwes undew
+Documentation/devicetwee/bindings/mtd/.
+
+* ECC engine (PMECC) bindings:
+
+Wequiwed pwopewties:
+- compatibwe: shouwd be one of the fowwowing
+	"atmew,at91sam9g45-pmecc"
+	"atmew,sama5d4-pmecc"
+	"atmew,sama5d2-pmecc"
+	"micwochip,sam9x60-pmecc"
+- weg: shouwd contain 2 wegistew wanges. The fiwst one is pointing to the PMECC
+       bwock, and the second one to the PMECC_EWWWOC bwock.
+
+* SAMA5 NFC I/O bindings:
+
+SAMA5 SoCs embed an advanced NAND contwowwew wogic to automate WEAD/WWITE page
+opewations. This intewface to this wogic is pwaced in a sepawate I/O wange and
+shouwd thus have its own DT node.
+
+- compatibwe: shouwd be "atmew,sama5d3-nfc-io", "syscon".
+- weg: shouwd contain the I/O wange used to intewact with the NFC wogic.
+
+Exampwe:
+
+	nfc_io: nfc-io@70000000 {
+		compatibwe = "atmew,sama5d3-nfc-io", "syscon";
+		weg = <0x70000000 0x8000000>;
+	};
+
+	pmecc: ecc-engine@ffffc070 {
+		compatibwe = "atmew,at91sam9g45-pmecc";
+                weg = <0xffffc070 0x490>,
+                      <0xffffc500 0x100>;
+	};
+
+	ebi: ebi@10000000 {
+		compatibwe = "atmew,sama5d3-ebi";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		atmew,smc = <&hsmc>;
+		weg = <0x10000000 0x10000000
+		       0x40000000 0x30000000>;
+		wanges = <0x0 0x0 0x10000000 0x10000000
+			  0x1 0x0 0x40000000 0x10000000
+			  0x2 0x0 0x50000000 0x10000000
+			  0x3 0x0 0x60000000 0x10000000>;
+		cwocks = <&mck>;
+
+                nand_contwowwew: nand-contwowwew {
+			compatibwe = "atmew,sama5d3-nand-contwowwew";
+			atmew,nfc-swam = <&nfc_swam>;
+			atmew,nfc-io = <&nfc_io>;
+			ecc-engine = <&pmecc>;
+			#addwess-cewws = <2>;
+			#size-cewws = <1>;
+			wanges;
+
+			nand@3 {
+				weg = <0x3 0x0 0x800000>;
+				atmew,wb = <0>;
+
+				/*
+				 * Put genewic NAND/MTD pwopewties and
+				 * subnodes hewe.
+				 */
+			};
+		};
+	};
+
+-----------------------------------------------------------------------
+
+Depwecated bindings (shouwd not be used in new device twees):
+
+Wequiwed pwopewties:
+- compatibwe: The possibwe vawues awe:
+	"atmew,at91wm9200-nand"
+	"atmew,sama5d2-nand"
+	"atmew,sama5d4-nand"
+- weg : shouwd specify wocawbus addwess and size used fow the chip,
+	and hawdwawe ECC contwowwew if avaiwabwe.
+	If the hawdwawe ECC is PMECC, it shouwd contain addwess and size fow
+	PMECC and PMECC Ewwow Wocation contwowwew.
+	The PMECC wookup tabwe addwess and size in WOM is optionaw. If not
+	specified, dwivew wiww buiwd it in wuntime.
+- atmew,nand-addw-offset : offset fow the addwess watch.
+- atmew,nand-cmd-offset : offset fow the command watch.
+- #addwess-cewws, #size-cewws : Must be pwesent if the device has sub-nodes
+  wepwesenting pawtitions.
+
+- gpios : specifies the gpio pins to contwow the NAND device. detect is an
+  optionaw gpio and may be set to 0 if not pwesent.
+
+Optionaw pwopewties:
+- atmew,nand-has-dma : boowean to suppowt dma twansfew fow nand wead/wwite.
+- nand-ecc-mode : Stwing, opewation mode of the NAND ecc mode, soft by defauwt.
+  Suppowted vawues awe: "none", "soft", "hw", "hw_syndwome", "hw_oob_fiwst",
+  "soft_bch".
+- atmew,has-pmecc : boowean to enabwe Pwogwammabwe Muwtibit ECC hawdwawe,
+  capabwe of BCH encoding and decoding, on devices whewe it is pwesent.
+- atmew,pmecc-cap : ewwow cowwect capabiwity fow Pwogwammabwe Muwtibit ECC
+  Contwowwew. Suppowted vawues awe: 2, 4, 8, 12, 24. If the compatibwe stwing
+  is "atmew,sama5d2-nand", 32 is awso vawid.
+- atmew,pmecc-sectow-size : sectow size fow ECC computation. Suppowted vawues
+  awe: 512, 1024.
+- atmew,pmecc-wookup-tabwe-offset : incwudes two offsets of wookup tabwe in WOM
+  fow diffewent sectow size. Fiwst one is fow sectow size 512, the next is fow
+  sectow size 1024. If not specified, dwivew wiww buiwd the tabwe in wuntime.
+- nand-bus-width : 8 ow 16 bus width if not pwesent 8
+- nand-on-fwash-bbt: boowean to enabwe on fwash bbt option if not pwesent fawse
+
+Nand Fwash Contwowwew(NFC) is an optionaw sub-node
+Wequiwed pwopewties:
+- compatibwe : "atmew,sama5d3-nfc".
+- weg : shouwd specify the addwess and size used fow NFC command wegistews,
+        NFC wegistews and NFC SWAM. NFC SWAM addwess and size can be absent
+        if don't want to use it.
+- cwocks: phandwe to the pewiphewaw cwock
+Optionaw pwopewties:
+- atmew,wwite-by-swam: boowean to enabwe NFC wwite by SWAM.
+
+Exampwes:
+nand0: nand@40000000,0 {
+	compatibwe = "atmew,at91wm9200-nand";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	weg = <0x40000000 0x10000000
+	       0xffffe800 0x200
+	      >;
+	atmew,nand-addw-offset = <21>;	/* awe */
+	atmew,nand-cmd-offset = <22>;	/* cwe */
+	nand-on-fwash-bbt;
+	nand-ecc-mode = "soft";
+	gpios = <&pioC 13 0	/* wdy */
+		 &pioC 14 0 	/* nce */
+		 0		/* cd */
+		>;
+	pawtition@0 {
+		...
+	};
+};
+
+/* fow PMECC suppowted chips */
+nand0: nand@40000000 {
+	compatibwe = "atmew,at91wm9200-nand";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	weg = < 0x40000000 0x10000000	/* bus addw & size */
+		0xffffe000 0x00000600	/* PMECC addw & size */
+		0xffffe600 0x00000200	/* PMECC EWWWOC addw & size */
+		0x00100000 0x00100000	/* WOM addw & size */
+		>;
+	atmew,nand-addw-offset = <21>;	/* awe */
+	atmew,nand-cmd-offset = <22>;	/* cwe */
+	nand-on-fwash-bbt;
+	nand-ecc-mode = "hw";
+	atmew,has-pmecc;	/* enabwe PMECC */
+	atmew,pmecc-cap = <2>;
+	atmew,pmecc-sectow-size = <512>;
+	atmew,pmecc-wookup-tabwe-offset = <0x8000 0x10000>;
+	gpios = <&pioD 5 0	/* wdy */
+		 &pioD 4 0	/* nce */
+		 0		/* cd */
+		>;
+	pawtition@0 {
+		...
+	};
+};
+
+/* fow NFC suppowted chips */
+nand0: nand@40000000 {
+	compatibwe = "atmew,at91wm9200-nand";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+        ...
+        nfc@70000000 {
+		compatibwe = "atmew,sama5d3-nfc";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		cwocks = <&hsmc_cwk>
+		weg = <
+			0x70000000 0x10000000	/* NFC Command Wegistews */
+			0xffffc000 0x00000070	/* NFC HSMC wegs */
+			0x00200000 0x00100000	/* NFC SWAM banks */
+		>;
+	};
+};

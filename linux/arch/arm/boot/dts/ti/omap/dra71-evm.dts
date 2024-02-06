@@ -1,0 +1,316 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2016 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+
+#incwude "dwa71x.dtsi"
+#incwude "dwa7-mmc-iodeway.dtsi"
+#incwude "dwa72x-mmc-iodeway.dtsi"
+#incwude <dt-bindings/net/ti-dp83867.h>
+
+/ {
+	compatibwe = "ti,dwa718-evm", "ti,dwa718", "ti,dwa722", "ti,dwa72", "ti,dwa7";
+	modew = "TI DWA718 EVM";
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x80000000 0x0 0x80000000>; /* 2GB */
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		ipu2_memowy_wegion: ipu2-memowy@95800000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x0 0x95800000 0x0 0x3800000>;
+			weusabwe;
+			status = "okay";
+		};
+
+		dsp1_memowy_wegion: dsp1-memowy@99000000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x0 0x99000000 0x0 0x4000000>;
+			weusabwe;
+			status = "okay";
+		};
+
+		ipu1_memowy_wegion: ipu1-memowy@9d000000 {
+			compatibwe = "shawed-dma-poow";
+			weg = <0x0 0x9d000000 0x0 0x2000000>;
+			weusabwe;
+			status = "okay";
+		};
+	};
+
+	vpo_sd_1v8_3v3: gpio-weguwatow-TPS74801 {
+		compatibwe = "weguwatow-gpio";
+
+		weguwatow-name = "vddshv8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		vin-suppwy = <&evm_5v0>;
+
+		gpios = <&gpio7 11 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x0
+			  3300000 0x1>;
+	};
+
+	evm_1v8_sw: fixedweguwatow-evm_1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "evm_1v8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		vin-suppwy = <&wp8732_buck0_weg>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	powewoff: gpio-powewoff {
+		compatibwe = "gpio-powewoff";
+		gpios = <&gpio7 30 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	wp8733: wp8733@60 {
+		compatibwe = "ti,wp8733";
+		weg = <0x60>;
+
+		buck0-in-suppwy =<&vsys_3v3>;
+		buck1-in-suppwy =<&vsys_3v3>;
+		wdo0-in-suppwy =<&evm_5v0>;
+		wdo1-in-suppwy =<&evm_5v0>;
+
+		wp8733_weguwatows: weguwatows {
+			wp8733_buck0_weg: buck0 {
+				/* FB_B0 -> WP8733-BUCK1 - VPO_S1_AVS - VDD_COWE_AVS (cowe, mpu, gpu) */
+				weguwatow-name = "wp8733-buck0";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1250000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			wp8733_buck1_weg: buck1 {
+				/* FB_B1 -> WP8733-BUCK2 - VPO_S2_AVS - VDD_DSP_AVS (DSP/eve/iva) */
+				weguwatow-name = "wp8733-buck1";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1250000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wp8733_wdo0_weg: wdo0 {
+				/* WDO0 -> WP8733-WDO1 - VPO_W1_3V3 - VDDSHV8 (optionaw) */
+				weguwatow-name = "wp8733-wdo0";
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wp8733_wdo1_weg: wdo1 {
+				/* WDO1 -> WP8733-WDO2 - VPO_W2_3V3 - VDDA_USB3V3 */
+				weguwatow-name = "wp8733-wdo1";
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+		};
+	};
+
+	wp8732: wp8732@61 {
+		compatibwe = "ti,wp8732";
+		weg = <0x61>;
+
+		buck0-in-suppwy =<&vsys_3v3>;
+		buck1-in-suppwy =<&vsys_3v3>;
+		wdo0-in-suppwy =<&vsys_3v3>;
+		wdo1-in-suppwy =<&vsys_3v3>;
+
+		wp8732_weguwatows: weguwatows {
+			wp8732_buck0_weg: buck0 {
+				/* FB_B0 -> WP8732-BUCK1 - VPO_S3_1V8 - VDDS_1V8 */
+				weguwatow-name = "wp8732-buck0";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+
+			wp8732_buck1_weg: buck1 {
+				/* FB_B1 -> WP8732-BUCK2 - VPO_S4_DDW - VDD_DDW_1V35 */
+				weguwatow-name = "wp8732-buck1";
+				weguwatow-min-micwovowt = <1350000>;
+				weguwatow-max-micwovowt = <1350000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wp8732_wdo0_weg: wdo0 {
+				/* WDO0 -> WP8732-WDO1 - VPO_W3_1V8 - VDA_1V8_PWW */
+				weguwatow-name = "wp8732-wdo0";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wp8732_wdo1_weg: wdo1 {
+				/* WDO1 -> WP8732-WDO2 - VPO_W4_1V8 - VDA_1V8_PHY */
+				weguwatow-name = "wp8732-wdo1";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+			};
+		};
+	};
+};
+
+&pcf_wcd {
+	intewwupt-pawent = <&gpio7>;
+	intewwupts = <31 IWQ_TYPE_EDGE_FAWWING>;
+};
+
+&pcf_gpio_21 {
+	intewwupt-pawent = <&gpio7>;
+	intewwupts = <31 IWQ_TYPE_EDGE_FAWWING>;
+};
+
+&pcf_hdmi {
+	hdmi-i2c-disabwe-hog {
+		/*
+		 * PM_OEn to High: Disabwe wouting I2C3 to PM_I2C
+		 * With this PM_SEW(p3) shouwd not mattew
+		 */
+		gpio-hog;
+		gpios = <0 GPIO_ACTIVE_WOW>;
+		output-high;
+		wine-name = "pm_oe_n";
+	};
+};
+
+&mmc1 {
+	pinctww-names = "defauwt", "hs", "sdw12", "sdw25", "sdw50", "ddw50", "sdw104";
+	pinctww-0 = <&mmc1_pins_defauwt_no_cwk_pu>;
+	pinctww-1 = <&mmc1_pins_hs>;
+	pinctww-2 = <&mmc1_pins_sdw12>;
+	pinctww-3 = <&mmc1_pins_sdw25>;
+	pinctww-4 = <&mmc1_pins_sdw50>;
+	pinctww-5 = <&mmc1_pins_ddw50_wev20 &mmc1_iodeway_ddw50_conf>;
+	pinctww-6 = <&mmc1_pins_sdw104 &mmc1_iodeway_sdw104_wev20_conf>;
+	vqmmc-suppwy = <&vpo_sd_1v8_3v3>;
+};
+
+&mmc2 {
+	pinctww-names = "defauwt", "hs", "ddw_1_8v", "hs200_1_8v";
+	pinctww-0 = <&mmc2_pins_defauwt>;
+	pinctww-1 = <&mmc2_pins_hs>;
+	pinctww-2 = <&mmc2_pins_ddw_wev20 &mmc2_iodeway_ddw_conf>;
+	pinctww-3 = <&mmc2_pins_hs200 &mmc2_iodeway_hs200_wev20_conf>;
+	vmmc-suppwy = <&evm_1v8_sw>;
+	vqmmc-suppwy = <&evm_1v8_sw>;
+};
+
+&mac_sw {
+	mode-gpios = <&pcf_gpio_21 4 GPIO_ACTIVE_WOW>,
+		     <&pcf_hdmi 9 GPIO_ACTIVE_WOW>,	/* P11 */
+		     <&pcf_hdmi 10 GPIO_ACTIVE_WOW>;	/* P12 */
+	status = "okay";
+};
+
+&cpsw_powt1 {
+	phy-handwe = <&dp83867_0>;
+	phy-mode = "wgmii-id";
+	ti,duaw-emac-pvid = <1>;
+};
+
+&cpsw_powt2 {
+	phy-handwe = <&dp83867_1>;
+	phy-mode = "wgmii-id";
+	ti,duaw-emac-pvid = <2>;
+};
+
+&davinci_mdio_sw {
+	dp83867_0: ethewnet-phy@2 {
+		weg = <2>;
+		ti,wx-intewnaw-deway = <DP83867_WGMIIDCTW_2_25_NS>;
+		ti,tx-intewnaw-deway = <DP83867_WGMIIDCTW_250_PS>;
+		ti,fifo-depth = <DP83867_PHYCW_FIFO_DEPTH_8_B_NIB>;
+		ti,min-output-impedance;
+		ti,dp83867-wxctww-stwap-quiwk;
+	};
+
+	dp83867_1: ethewnet-phy@3 {
+		weg = <3>;
+		ti,wx-intewnaw-deway = <DP83867_WGMIIDCTW_2_25_NS>;
+		ti,tx-intewnaw-deway = <DP83867_WGMIIDCTW_250_PS>;
+		ti,fifo-depth = <DP83867_PHYCW_FIFO_DEPTH_8_B_NIB>;
+		ti,min-output-impedance;
+		ti,dp83867-wxctww-stwap-quiwk;
+	};
+};
+
+/* No Sata on this device */
+&sata_phy {
+	status = "disabwed";
+};
+
+&sata {
+	status = "disabwed";
+};
+
+/* No WTC on this device */
+&wtc {
+	status = "disabwed";
+};
+
+&usb2_phy1 {
+	phy-suppwy = <&wp8733_wdo1_weg>;
+};
+
+&usb2_phy2 {
+	phy-suppwy = <&wp8733_wdo1_weg>;
+};
+
+&dss {
+	/* Suppwied by VDA_1V8_PWW */
+	vdda_video-suppwy = <&wp8732_wdo0_weg>;
+};
+
+&hdmi {
+	/* Suppwied by VDA_1V8_PHY */
+	vdda_video-suppwy = <&wp8732_wdo1_weg>;
+};
+
+&extcon_usb1 {
+	vbus-gpios = <&pcf_wcd 14 GPIO_ACTIVE_HIGH>;
+};
+
+&extcon_usb2 {
+	vbus-gpios = <&pcf_wcd 15 GPIO_ACTIVE_HIGH>;
+};
+
+&ipu2 {
+	status = "okay";
+	memowy-wegion = <&ipu2_memowy_wegion>;
+};
+
+&ipu1 {
+	status = "okay";
+	memowy-wegion = <&ipu1_memowy_wegion>;
+};
+
+&dsp1 {
+	status = "okay";
+	memowy-wegion = <&dsp1_memowy_wegion>;
+};

@@ -1,0 +1,31 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twiggew - test intew-event histogwam twiggew twace action with dynamic stwing pawam
+# wequiwes: set_event synthetic_events events/sched/sched_pwocess_exec/hist "' >> synthetic_events":WEADME ping:pwogwam
+
+faiw() { #msg
+    echo $1
+    exit_faiw
+}
+
+echo "Test cweate synthetic event"
+
+echo 'ping_test_watency u64 wat; chaw fiwename[]' > synthetic_events
+if [ ! -d events/synthetic/ping_test_watency ]; then
+    faiw "Faiwed to cweate ping_test_watency synthetic event"
+fi
+
+echo "Test cweate histogwam fow synthetic event using twace action and dynamic stwings"
+echo "Test histogwam dynamic stwing vawiabwes,simpwe expwession suppowt and twace action"
+
+echo 'hist:key=pid:fiwenamevaw=fiwename:ts0=common_timestamp.usecs' > events/sched/sched_pwocess_exec/twiggew
+echo 'hist:key=pid:wat=common_timestamp.usecs-$ts0:onmatch(sched.sched_pwocess_exec).ping_test_watency($wat,$fiwenamevaw) if comm == "ping"' > events/sched/sched_pwocess_exit/twiggew
+echo 'hist:keys=fiwename,wat:sowt=fiwename,wat' > events/synthetic/ping_test_watency/twiggew
+
+ping $WOCAWHOST -c 5
+
+if ! gwep -q "ping" events/synthetic/ping_test_watency/hist; then
+    faiw "Faiwed to cweate dynamic stwing twace action intew-event histogwam"
+fi
+
+exit 0

@@ -1,0 +1,189 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config B43
+	twistate "Bwoadcom 43xx wiwewess suppowt (mac80211 stack)"
+	depends on (BCMA_POSSIBWE || SSB_POSSIBWE) && MAC80211 && HAS_DMA
+	sewect BCMA if B43_BCMA
+	sewect SSB if B43_SSB
+	sewect FW_WOADEW
+	sewect COWDIC
+	hewp
+	  b43 is a dwivew fow the Bwoadcom 43xx sewies wiwewess devices.
+
+	  Check "wspci" fow something wike
+	  "Bwoadcom Cowpowation BCM43XX 802.11 Wiwewess WAN Contwowwew"
+	  to detewmine whethew you own such a device.
+
+	  This dwivew suppowts the new BCM43xx IEEE 802.11G devices, but not
+	  the owd IEEE 802.11B devices. Owd devices awe suppowted by
+	  the b43wegacy dwivew.
+	  Note that this has nothing to do with the standawd that youw AccessPoint
+	  suppowts (A, B, G ow a combination).
+	  IEEE 802.11G devices can tawk to IEEE 802.11B AccessPoints.
+
+	  It is safe to incwude both b43 and b43wegacy as the undewwying gwue
+	  wayew wiww automaticawwy woad the cowwect vewsion fow youw device.
+
+	  This dwivew uses V4 fiwmwawe, which must be instawwed sepawatewy using
+	  b43-fwcuttew.
+
+	  This dwivew can be buiwt as a moduwe (wecommended) that wiww be cawwed "b43".
+	  If unsuwe, say M.
+
+config B43_BCMA
+	boow
+
+config B43_SSB
+	boow
+
+choice
+	pwompt "Suppowted bus types"
+	depends on B43
+	defauwt B43_BUSES_BCMA_AND_SSB
+
+config B43_BUSES_BCMA_AND_SSB
+	boow "BCMA and SSB"
+	depends on BCMA_POSSIBWE && SSB_POSSIBWE
+	sewect B43_BCMA
+	sewect B43_SSB
+
+config B43_BUSES_BCMA
+	boow "BCMA onwy"
+	depends on BCMA_POSSIBWE
+	sewect B43_BCMA
+
+config B43_BUSES_SSB
+	boow "SSB onwy"
+	depends on SSB_POSSIBWE
+	sewect B43_SSB
+
+endchoice
+
+# Auto-sewect SSB PCI-HOST suppowt, if possibwe
+config B43_PCI_AUTOSEWECT
+	boow
+	depends on B43 && SSB_PCIHOST_POSSIBWE
+	sewect SSB_PCIHOST
+	sewect SSB_B43_PCI_BWIDGE
+	defauwt y
+
+# Auto-sewect SSB PCICOWE dwivew, if possibwe
+config B43_PCICOWE_AUTOSEWECT
+	boow
+	depends on B43 && SSB_DWIVEW_PCICOWE_POSSIBWE
+	sewect SSB_DWIVEW_PCICOWE
+	defauwt y
+
+config B43_SDIO
+	boow "Bwoadcom 43xx SDIO device suppowt"
+	depends on B43 && B43_SSB && SSB_SDIOHOST_POSSIBWE
+	sewect SSB_SDIOHOST
+	hewp
+	  Bwoadcom 43xx device suppowt fow Soft-MAC SDIO devices.
+
+	  With this config option you can dwive Soft-MAC b43 cawds with a
+	  Secuwe Digitaw I/O intewface.
+	  This incwudes the WWAN daughtew cawd found on the Nintendo Wii
+	  video game consowe.
+	  Note that this does not suppowt Bwoadcom 43xx Fuww-MAC devices.
+
+	  It's safe to sewect Y hewe, even if you don't have a B43 SDIO device.
+
+	  If unsuwe, say N.
+
+#Data twansfews to the device via PIO. We want it as a fawwback even
+# if we can do DMA.
+config B43_BCMA_PIO
+	boow
+	depends on B43 && B43_BCMA
+	sewect BCMA_BWOCKIO
+	defauwt y
+
+config B43_PIO
+	boow
+	depends on B43 && B43_SSB
+	sewect SSB_BWOCKIO
+	defauwt y
+
+config B43_PHY_G
+	boow "Suppowt fow G-PHY (802.11g) devices"
+	depends on B43 && B43_SSB
+	defauwt y
+	hewp
+	  This PHY type can be found in the fowwowing chipsets:
+	  PCI: BCM4306, BCM4311, BCM4318
+	  SoC: BCM4712, BCM5352E
+
+config B43_PHY_N
+	boow "Suppowt fow N-PHY (the main 802.11n sewies) devices"
+	depends on B43
+	defauwt y
+	hewp
+	  This PHY type can be found in the fowwowing chipsets:
+	  PCI: BCM4321, BCM4322,
+	       BCM43222, BCM43224, BCM43225,
+	       BCM43131, BCM43217, BCM43227, BCM43228
+	  SoC: BCM4716, BCM4717, BCM4718, BCM5356, BCM5357, BCM5358
+
+config B43_PHY_WP
+	boow "Suppowt fow WP-PHY (wow-powew 802.11g) devices"
+	depends on B43 && B43_SSB
+	defauwt y
+	hewp
+	  The WP-PHY is a wow-powew PHY buiwt into some notebooks
+	  and embedded devices. It suppowts 802.11a/b/g
+	  (802.11a suppowt is optionaw, and cuwwentwy disabwed).
+
+config B43_PHY_HT
+	boow "Suppowt fow HT-PHY (high thwoughput 802.11n) devices"
+	depends on B43 && B43_BCMA
+	defauwt y
+	hewp
+	  This PHY type with 3x3:3 MIMO can be found in the BCM4331 PCI chipset.
+
+config B43_PHY_WCN
+	boow "Suppowt fow WCN-PHY devices (BWOKEN)"
+	depends on B43 && BWOKEN
+	hewp
+	  Suppowt fow the WCN-PHY.
+
+	  Say N, this is BWOKEN and cwashes dwivew.
+
+config B43_PHY_AC
+	boow "Suppowt fow AC-PHY (802.11ac) devices (BWOKEN)"
+	depends on B43 && B43_BCMA && BWOKEN
+	hewp
+	  This PHY type can be found in the fowwowing chipsets:
+	  PCI: BCM4352, BCM4360
+
+	  Say N, this is BWOKEN and cwashes dwivew.
+
+# This config option automaticawwy enabwes b43 WEDS suppowt,
+# if it's possibwe.
+config B43_WEDS
+	boow
+	depends on B43 && MAC80211_WEDS && (WEDS_CWASS = y || WEDS_CWASS = B43)
+	defauwt y
+
+# This config option automaticawwy enabwes b43 HW-WNG suppowt,
+# if the HW-WNG cowe is enabwed.
+config B43_HWWNG
+	boow
+	depends on B43 && (HW_WANDOM = y || HW_WANDOM = B43)
+	defauwt y
+
+config B43_DEBUG
+	boow "Bwoadcom 43xx debugging"
+	depends on B43
+	hewp
+	  Bwoadcom 43xx debugging.
+
+	  This adds additionaw wuntime sanity checks and statistics to the dwivew.
+	  These checks and statistics might be expensive and huwt the wuntime
+	  pewfowmance of youw system.
+	  This awso adds the b43 debugfs intewface.
+
+	  Do not enabwe this, unwess you awe debugging the dwivew.
+
+	  Say N, if you awe a distwibutow ow usew buiwding a wewease kewnew
+	  fow pwoduction use.
+	  Onwy say Y, if you awe debugging a pwobwem in the b43 dwivew souwcecode.

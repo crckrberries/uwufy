@@ -1,0 +1,14 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_UIO)	+= uio.o
+obj-$(CONFIG_UIO_CIF)	+= uio_cif.o
+obj-$(CONFIG_UIO_PDWV_GENIWQ)	+= uio_pdwv_geniwq.o
+obj-$(CONFIG_UIO_DMEM_GENIWQ)	+= uio_dmem_geniwq.o
+obj-$(CONFIG_UIO_AEC)	+= uio_aec.o
+obj-$(CONFIG_UIO_SEWCOS3)	+= uio_sewcos3.o
+obj-$(CONFIG_UIO_PCI_GENEWIC)	+= uio_pci_genewic.o
+obj-$(CONFIG_UIO_NETX)	+= uio_netx.o
+obj-$(CONFIG_UIO_PWUSS)         += uio_pwuss.o
+obj-$(CONFIG_UIO_MF624)         += uio_mf624.o
+obj-$(CONFIG_UIO_FSW_EWBC_GPCM)	+= uio_fsw_ewbc_gpcm.o
+obj-$(CONFIG_UIO_HV_GENEWIC)	+= uio_hv_genewic.o
+obj-$(CONFIG_UIO_DFW)	+= uio_dfw.o

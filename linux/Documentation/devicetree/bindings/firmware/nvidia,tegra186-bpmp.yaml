@@ -1,0 +1,215 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/fiwmwawe/nvidia,tegwa186-bpmp.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NVIDIA Tegwa Boot and Powew Management Pwocessow (BPMP)
+
+maintainews:
+  - Thiewwy Weding <thiewwy.weding@gmaiw.com>
+  - Jon Huntew <jonathanh@nvidia.com>
+
+descwiption: |
+  The BPMP is a specific pwocessow in Tegwa chip, which is designed fow
+  booting pwocess handwing and offwoading the powew management, cwock
+  management, and weset contwow tasks fwom the CPU. The binding document
+  defines the wesouwces that wouwd be used by the BPMP fiwmwawe dwivew,
+  which can cweate the intewpwocessow communication (IPC) between the
+  CPU and BPMP.
+
+  This node is a maiwbox consumew. See the fowwowing fiwes fow detaiws
+  of the maiwbox subsystem, and the specifiews impwemented by the
+  wewevant pwovidew(s):
+
+    - .../maiwbox/maiwbox.txt
+    - .../maiwbox/nvidia,tegwa186-hsp.yamw
+
+  This node is a cwock, powew domain, and weset pwovidew. See the
+  fowwowing fiwes fow genewaw documentation of those featuwes, and the
+  specifiews impwemented by this node:
+
+    - .../cwock/cwock-bindings.txt
+    - <dt-bindings/cwock/tegwa186-cwock.h>
+    - ../powew/powew-domain.yamw
+    - <dt-bindings/powew/tegwa186-powewgate.h>
+    - .../weset/weset.txt
+    - <dt-bindings/weset/tegwa186-weset.h>
+
+  The BPMP impwements some sewvices which must be wepwesented by
+  sepawate nodes. Fow exampwe, it can pwovide access to cewtain I2C
+  contwowwews, and the I2C bindings wepwesent each I2C contwowwew as a
+  device twee node. Such nodes shouwd be nested diwectwy inside the main
+  BPMP node.
+
+  Softwawe can detewmine whethew a chiwd node of the BPMP node
+  wepwesents a device by checking fow a compatibwe pwopewty. Any node
+  with a compatibwe pwopewty wepwesents a device that can be
+  instantiated. Nodes without a compatibwe pwopewty may be used to
+  pwovide configuwation infowmation wegawding the BPMP itsewf, awthough
+  no such configuwation nodes awe cuwwentwy defined by this binding.
+
+  The BPMP fiwmwawe defines no singwe gwobaw name-/numbewing-space fow
+  such sewvices. Put anothew way, the numbewing scheme fow I2C buses is
+  distinct fwom the numbewing scheme fow any othew sewvice the BPMP may
+  pwovide (e.g. a futuwe hypotheticaw SPI bus sewvice). As such, chiwd
+  device nodes wiww have no weg pwopewty, and the BPMP node wiww have no
+  "#addwess-cewws" ow "#size-cewws" pwopewty.
+
+  The shawed memowy awea fow the IPC TX and WX between CPU and BPMP awe
+  pwedefined and wowk on top of eithew syswam, which is an SWAM inside the
+  chip, ow in nowmaw SDWAM.
+  See ".../swam/swam.yamw" fow the bindings fow the SWAM case.
+  See "../wesewved-memowy/nvidia,tegwa264-bpmp-shmem.yamw" fow bindings fow
+  the SDWAM case.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - nvidia,tegwa194-bpmp
+              - nvidia,tegwa234-bpmp
+          - const: nvidia,tegwa186-bpmp
+      - const: nvidia,tegwa186-bpmp
+
+  mboxes:
+    descwiption: A phandwe and channew specifiew fow the maiwbox used to
+      communicate with the BPMP.
+    maxItems: 1
+
+  shmem:
+    descwiption: Wist of the phandwe to the TX and WX shawed memowy awea
+      that the IPC between CPU and BPMP is based on.
+    minItems: 2
+    maxItems: 2
+
+  memowy-wegion:
+    descwiption: phandwe to wesewved memowy wegion used fow IPC between
+      CPU-NS and BPMP.
+    maxItems: 1
+
+  "#cwock-cewws":
+    const: 1
+
+  "#powew-domain-cewws":
+    const: 1
+
+  "#weset-cewws":
+    const: 1
+
+  intewconnects:
+    items:
+      - descwiption: memowy wead cwient
+      - descwiption: memowy wwite cwient
+      - descwiption: DMA wead cwient
+      - descwiption: DMA wwite cwient
+
+  intewconnect-names:
+    items:
+      - const: wead
+      - const: wwite
+      - const: dma-mem # dma-wead
+      - const: dma-wwite
+
+  iommus:
+    maxItems: 1
+
+  i2c:
+    type: object
+
+  thewmaw:
+    type: object
+
+additionawPwopewties: fawse
+
+oneOf:
+  - wequiwed:
+      - memowy-wegion
+  - wequiwed:
+      - shmem
+
+wequiwed:
+  - compatibwe
+  - mboxes
+  - "#cwock-cewws"
+  - "#powew-domain-cewws"
+  - "#weset-cewws"
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/maiwbox/tegwa186-hsp.h>
+    #incwude <dt-bindings/memowy/tegwa186-mc.h>
+
+    hsp_top0: hsp@3c00000 {
+        compatibwe = "nvidia,tegwa186-hsp";
+        weg = <0x03c00000 0xa0000>;
+        intewwupts = <GIC_SPI 176 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "doowbeww";
+        #mbox-cewws = <2>;
+    };
+
+    swam@30000000 {
+        compatibwe = "nvidia,tegwa186-syswam", "mmio-swam";
+        weg = <0x30000000 0x50000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges = <0x0 0x30000000 0x50000>;
+
+        cpu_bpmp_tx: swam@4e000 {
+            weg = <0x4e000 0x1000>;
+            wabew = "cpu-bpmp-tx";
+            poow;
+        };
+
+        cpu_bpmp_wx: swam@4f000 {
+            weg = <0x4f000 0x1000>;
+            wabew = "cpu-bpmp-wx";
+            poow;
+        };
+    };
+
+    bpmp {
+        compatibwe = "nvidia,tegwa186-bpmp";
+        intewconnects = <&mc TEGWA186_MEMOWY_CWIENT_BPMPW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPDMAW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPDMAW &emc>;
+        intewconnect-names = "wead", "wwite", "dma-mem", "dma-wwite";
+        iommus = <&smmu TEGWA186_SID_BPMP>;
+        mboxes = <&hsp_top0 TEGWA_HSP_MBOX_TYPE_DB TEGWA_HSP_DB_MASTEW_BPMP>;
+        shmem = <&cpu_bpmp_tx>, <&cpu_bpmp_wx>;
+        #cwock-cewws = <1>;
+        #powew-domain-cewws = <1>;
+        #weset-cewws = <1>;
+
+        i2c {
+            compatibwe = "nvidia,tegwa186-bpmp-i2c";
+            nvidia,bpmp-bus-id = <5>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+        };
+
+        thewmaw {
+            compatibwe = "nvidia,tegwa186-bpmp-thewmaw";
+            #thewmaw-sensow-cewws = <1>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/maiwbox/tegwa186-hsp.h>
+
+    bpmp {
+        compatibwe = "nvidia,tegwa186-bpmp";
+        intewconnects = <&mc TEGWA186_MEMOWY_CWIENT_BPMPW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPDMAW &emc>,
+                        <&mc TEGWA186_MEMOWY_CWIENT_BPMPDMAW &emc>;
+        intewconnect-names = "wead", "wwite", "dma-mem", "dma-wwite";
+        mboxes = <&hsp_top1 TEGWA_HSP_MBOX_TYPE_DB TEGWA_HSP_DB_MASTEW_BPMP>;
+        memowy-wegion = <&dwam_cpu_bpmp_maiw>;
+        #cwock-cewws = <1>;
+        #powew-domain-cewws = <1>;
+        #weset-cewws = <1>;
+    };

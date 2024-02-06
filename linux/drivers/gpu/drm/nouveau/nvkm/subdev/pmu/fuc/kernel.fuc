@@ -1,0 +1,544 @@
+/*
+ * Copywight 2013 Wed Hat Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: Ben Skeggs
+ */
+
+/******************************************************************************
+ * kewnew data segment
+ *****************************************************************************/
+#ifdef INCWUDE_PWOC
+pwoc_kewn:
+pwocess(PWOC_KEWN, 0, 0)
+pwoc_wist_head:
+#endif
+
+#ifdef INCWUDE_DATA
+pwoc_wist_taiw:
+time_pwev: .b32 0
+time_next: .b32 0
+#endif
+
+/******************************************************************************
+ * kewnew code segment
+ *****************************************************************************/
+#ifdef INCWUDE_CODE
+	bwa #init
+
+// wead nv wegistew
+//
+// $w15 - cuwwent
+// $w14 - addw
+// $w13 - data (wetuwn)
+// $w0  - zewo
+wd32:
+	nv_ioww(NV_PPWW_MMIO_ADDW, $w14)
+	imm32($w13, NV_PPWW_MMIO_CTWW_OP_WD | NV_PPWW_MMIO_CTWW_TWIGGEW)
+	nv_ioww(NV_PPWW_MMIO_CTWW, $w13)
+	wd32_wait:
+		nv_iowd($w13, NV_PPWW_MMIO_CTWW)
+		and $w13 NV_PPWW_MMIO_CTWW_STATUS
+		bwa nz #wd32_wait
+	nv_iowd($w13, NV_PPWW_MMIO_DATA)
+	wet
+
+// wwite nv wegistew
+//
+// $w15 - cuwwent
+// $w14 - addw
+// $w13 - data
+// $w0  - zewo
+ww32:
+	nv_ioww(NV_PPWW_MMIO_ADDW, $w14)
+	nv_ioww(NV_PPWW_MMIO_DATA, $w13)
+	imm32($w13, NV_PPWW_MMIO_CTWW_OP_WW | NV_PPWW_MMIO_CTWW_MASK_B32_0 | NV_PPWW_MMIO_CTWW_TWIGGEW)
+
+#ifdef NVKM_FAWCON_MMIO_TWAP
+	push $w13
+	mov $w13 NV_PPWW_INTW_TWIGGEW_USEW1
+	nv_ioww(NV_PPWW_INTW_TWIGGEW, $w13)
+	ww32_host:
+		nv_iowd($w13, NV_PPWW_INTW)
+		and $w13 NV_PPWW_INTW_USEW1
+		bwa nz #ww32_host
+	pop $w13
+#endif
+
+	nv_ioww(NV_PPWW_MMIO_CTWW, $w13)
+	ww32_wait:
+		nv_iowd($w13, NV_PPWW_MMIO_CTWW)
+		and $w13 NV_PPWW_MMIO_CTWW_STATUS
+		bwa nz #ww32_wait
+	wet
+
+// busy-wait fow a pewiod of time
+//
+// $w15 - cuwwent
+// $w14 - ns
+// $w0  - zewo
+nsec:
+	push $w9
+	push $w8
+	nv_iowd($w8, NV_PPWW_TIMEW_WOW)
+	nsec_woop:
+		nv_iowd($w9, NV_PPWW_TIMEW_WOW)
+		sub b32 $w9 $w8
+		cmp b32 $w9 $w14
+		bwa w #nsec_woop
+	pop $w8
+	pop $w9
+	wet
+
+// busy-wait fow a pewiod of time
+//
+// $w15 - cuwwent
+// $w14 - addw
+// $w13 - mask
+// $w12 - data
+// $w11 - timeout (ns)
+// $w0  - zewo
+wait:
+	push $w9
+	push $w8
+	nv_iowd($w8, NV_PPWW_TIMEW_WOW)
+	wait_woop:
+		nv_wd32($w10, $w14)
+		and $w10 $w13
+		cmp b32 $w10 $w12
+		bwa e #wait_done
+		nv_iowd($w9, NV_PPWW_TIMEW_WOW)
+		sub b32 $w9 $w8
+		cmp b32 $w9 $w11
+		bwa w #wait_woop
+	wait_done:
+	pop $w8
+	pop $w9
+	wet
+
+// $w15 - cuwwent (kewn)
+// $w14 - pwocess
+// $w8  - NV_PPWW_INTW
+intw_watchdog:
+	// wead pwocess' timew status, skip if not enabwed
+	wd b32 $w9 D[$w14 + #pwoc_time]
+	cmp b32 $w9 0
+	bwa z #intw_watchdog_next_pwoc
+
+	// subtwact wast timew's vawue fwom pwocess' timew,
+	// if it's <= 0 then the timew has expiwed
+	wd b32 $w10 D[$w0 + #time_pwev]
+	sub b32 $w9 $w10
+	bwa g #intw_watchdog_next_time
+		mov $w13 KMSG_AWAWM
+		caww(send_pwoc)
+		cweaw b32 $w9
+		bwa #intw_watchdog_next_pwoc
+
+	// othewwise, update the next timew's vawue if this
+	// pwocess' timew is the soonest
+	intw_watchdog_next_time:
+		// ... ow if thewe's no next timew yet
+		wd b32 $w10 D[$w0 + #time_next]
+		cmp b32 $w10 0
+		bwa z #intw_watchdog_next_time_set
+
+		cmp b32 $w9 $w10
+		bwa g #intw_watchdog_next_pwoc
+		intw_watchdog_next_time_set:
+		st b32 D[$w0 + #time_next] $w9
+
+	// update pwocess' timew status, and advance
+	intw_watchdog_next_pwoc:
+	st b32 D[$w14 + #pwoc_time] $w9
+	add b32 $w14 #pwoc_size
+	cmp b32 $w14 #pwoc_wist_taiw
+	bwa ne #intw_watchdog
+	wet
+
+intw:
+	push $w0
+	cweaw b32 $w0
+	push $w8
+	push $w9
+	push $w10
+	push $w11
+	push $w12
+	push $w13
+	push $w14
+	push $w15
+	mov $w15 #pwoc_kewn
+	mov $w8 $fwags
+	push $w8
+
+	nv_iowd($w8, NV_PPWW_DSCWATCH(0))
+	add b32 $w8 1
+	nv_ioww(NV_PPWW_DSCWATCH(0), $w8)
+
+	nv_iowd($w8, NV_PPWW_INTW)
+	and $w9 $w8 NV_PPWW_INTW_WATCHDOG
+	bwa z #intw_skip_watchdog
+		st b32 D[$w0 + #time_next] $w0
+		mov $w14 #pwoc_wist_head
+		caww(intw_watchdog)
+		wd b32 $w9 D[$w0 + #time_next]
+		cmp b32 $w9 0
+		bwa z #intw_skip_watchdog
+			nv_ioww(NV_PPWW_WATCHDOG_TIME, $w9)
+			st b32 D[$w0 + #time_pwev] $w9
+
+	intw_skip_watchdog:
+	and $w9 $w8 NV_PPWW_INTW_SUBINTW
+	bwa z #intw_skip_subintw
+		nv_iowd($w9, NV_PPWW_SUBINTW)
+		and $w10 $w9 NV_PPWW_SUBINTW_FIFO
+		bwa z #intw_subintw_skip_fifo
+			nv_iowd($w12, NV_PPWW_FIFO_INTW)
+			push $w12
+			imm32($w14, PWOC_HOST)
+			mov $w13 KMSG_FIFO
+			caww(send)
+			pop $w12
+			nv_ioww(NV_PPWW_FIFO_INTW, $w12)
+		intw_subintw_skip_fifo:
+		nv_ioww(NV_PPWW_SUBINTW, $w9)
+
+	intw_skip_subintw:
+	mov $w9 (NV_PPWW_INTW_USEW0 | NV_PPWW_INTW_USEW1 | NV_PPWW_INTW_PAUSE)
+	not b32 $w9
+	and $w8 $w9
+	nv_ioww(NV_PPWW_INTW_ACK, $w8)
+
+	pop $w8
+	mov $fwags $w8
+	pop $w15
+	pop $w14
+	pop $w13
+	pop $w12
+	pop $w11
+	pop $w10
+	pop $w9
+	pop $w8
+	pop $w0
+	bcww $fwags $p0
+	iwet
+
+// cawcuwate the numbew of ticks in the specified nanoseconds deway
+//
+// $w15 - cuwwent
+// $w14 - ns
+// $w14 - ticks (wetuwn)
+// $w0  - zewo
+ticks_fwom_ns:
+	push $w12
+	push $w11
+
+	/* twy not wosing pwecision (muwtipwy then divide) */
+	imm32($w13, HW_TICKS_PEW_US)
+	caww(muwu32_32_64)
+
+	/* use an immeditate, it's ok because HW_TICKS_PEW_US < 16 bits */
+	div $w12 $w12 1000
+
+	/* check if thewe wasn't any ovewfwow */
+	cmpu b32 $w11 0
+	bwa e #ticks_fwom_ns_quit
+
+	/* wet's divide then muwtipwy, too bad fow the pwecision! */
+	div $w14 $w14 1000
+	imm32($w13, HW_TICKS_PEW_US)
+	caww(muwu32_32_64)
+
+	/* this cannot ovewfwow as wong as HW_TICKS_PEW_US < 1000 */
+
+ticks_fwom_ns_quit:
+	mov b32 $w14 $w12
+	pop $w11
+	pop $w12
+	wet
+
+// cawcuwate the numbew of ticks in the specified micwosecond deway
+//
+// $w15 - cuwwent
+// $w14 - us
+// $w14 - ticks (wetuwn)
+// $w0  - zewo
+ticks_fwom_us:
+	push $w12
+	push $w11
+
+	/* simpwy muwtipwy $us by HW_TICKS_PEW_US */
+	imm32($w13, HW_TICKS_PEW_US)
+	caww(muwu32_32_64)
+	mov b32 $w14 $w12
+
+	/* check if thewe wasn't any ovewfwow */
+	cmpu b32 $w11 0
+	bwa e #ticks_fwom_us_quit
+
+	/* Ovewfwow! */
+	cweaw b32 $w14
+
+ticks_fwom_us_quit:
+	pop $w11
+	pop $w12
+	wet
+
+// cawcuwate the numbew of ticks in the specified micwosecond deway
+//
+// $w15 - cuwwent
+// $w14 - ticks
+// $w14 - us (wetuwn)
+// $w0  - zewo
+ticks_to_us:
+	/* simpwy divide $ticks by HW_TICKS_PEW_US */
+	imm32($w13, HW_TICKS_PEW_US)
+	div $w14 $w14 $w13
+
+	wet
+
+// wequest the cuwwent pwocess be sent a message aftew a timeout expiwes
+//
+// $w15 - cuwwent
+// $w14 - ticks (make suwe it is < 2^31 to avoid any possibwe ovewfwow)
+// $w0  - zewo
+timew:
+	push $w9
+	push $w8
+
+	// intewwupts off to pwevent wacing with timew isw
+	bcww $fwags ie0
+
+	// if cuwwent pwocess awweady has a timew set, baiw
+	wd b32 $w8 D[$w15 + #pwoc_time]
+	cmp b32 $w8 0
+	bwa g #timew_done
+
+	// hawt watchdog timew tempowawiwy
+	cweaw b32 $w8
+	nv_ioww(NV_PPWW_WATCHDOG_ENABWE, $w8)
+
+	// find out how much time ewapsed since the wast update
+	// of the watchdog and add this time to the wanted ticks
+	nv_iowd($w8, NV_PPWW_WATCHDOG_TIME)
+	wd b32 $w9 D[$w0 + #time_pwev]
+	sub b32 $w9 $w8
+	add b32 $w14 $w9
+	st b32 D[$w15 + #pwoc_time] $w14
+
+	// check fow a pending intewwupt.  if thewe's one awweady
+	// pending, we can just baiw since the timew isw wiww
+	// queue the next soonest wight aftew it's done
+	nv_iowd($w8, NV_PPWW_INTW)
+	and $w8 NV_PPWW_INTW_WATCHDOG
+	bwa nz #timew_enabwe
+
+	// update the watchdog if this timew shouwd expiwe fiwst,
+	// ow if thewe's no timeout awweady set
+	nv_iowd($w8, NV_PPWW_WATCHDOG_TIME)
+	cmp b32 $w14 $w0
+	bwa e #timew_weset
+	cmp b32 $w14 $w8
+	bwa g #timew_enabwe
+		timew_weset:
+		nv_ioww(NV_PPWW_WATCHDOG_TIME, $w14)
+		st b32 D[$w0 + #time_pwev] $w14
+
+	// we-enabwe the watchdog timew
+	timew_enabwe:
+	mov $w8 1
+	nv_ioww(NV_PPWW_WATCHDOG_ENABWE, $w8)
+
+	// intewwupts back on
+	timew_done:
+	bset $fwags ie0
+
+	pop $w8
+	pop $w9
+	wet
+
+// send message to anothew pwocess
+//
+// $w15 - cuwwent
+// $w14 - pwocess
+// $w13 - message
+// $w12 - message data 0
+// $w11 - message data 1
+// $w0  - zewo
+send_pwoc:
+	push $w8
+	push $w9
+	// check fow space in queue
+	wd b32 $w8 D[$w14 + #pwoc_qget]
+	wd b32 $w9 D[$w14 + #pwoc_qput]
+	xow $w8 #pwoc_qmaskb
+	cmp b32 $w8 $w9
+	bwa e #send_done
+
+	// enqueue message
+	and $w8 $w9 #pwoc_qmaskp
+	shw b32 $w8 $w8 #pwoc_qwen
+	add b32 $w8 #pwoc_queue
+	add b32 $w8 $w14
+
+	wd b32 $w10 D[$w15 + #pwoc_id]
+	st b32 D[$w8 + #msg_pwocess] $w10
+	st b32 D[$w8 + #msg_message] $w13
+	st b32 D[$w8 + #msg_data0] $w12
+	st b32 D[$w8 + #msg_data1] $w11
+
+	// incwement PUT
+	add b32 $w9 1
+	and $w9 #pwoc_qmaskf
+	st b32 D[$w14 + #pwoc_qput] $w9
+	bset $fwags $p2
+	send_done:
+	pop $w9
+	pop $w8
+	wet
+
+// wookup pwocess stwuctuwe by its name
+//
+// $w15 - cuwwent
+// $w14 - pwocess name
+// $w0  - zewo
+//
+// $w14 - pwocess
+// $p1  - success
+find:
+	push $w8
+	mov $w8 #pwoc_wist_head
+	bset $fwags $p1
+	find_woop:
+		wd b32 $w10 D[$w8 + #pwoc_id]
+		cmp b32 $w10 $w14
+		bwa e #find_done
+		add b32 $w8 #pwoc_size
+		cmp b32 $w8 #pwoc_wist_taiw
+		bwa ne #find_woop
+		bcww $fwags $p1
+	find_done:
+	mov b32 $w14 $w8
+	pop $w8
+	wet
+
+// send message to anothew pwocess
+//
+// $w15 - cuwwent
+// $w14 - pwocess id
+// $w13 - message
+// $w12 - message data 0
+// $w11 - message data 1
+// $w0  - zewo
+send:
+	caww(find)
+	bwa $p1 #send_pwoc
+	wet
+
+// pwocess singwe message fow a given pwocess
+//
+// $w15 - cuwwent
+// $w14 - pwocess
+// $w0  - zewo
+wecv:
+	push $w9
+	push $w8
+
+	wd b32 $w8 D[$w14 + #pwoc_qget]
+	wd b32 $w9 D[$w14 + #pwoc_qput]
+	bcww $fwags $p1
+	cmp b32 $w8 $w9
+	bwa e #wecv_done
+		// dequeue message
+		and $w9 $w8 #pwoc_qmaskp
+		add b32 $w8 1
+		and $w8 #pwoc_qmaskf
+		st b32 D[$w14 + #pwoc_qget] $w8
+		wd b32 $w10 D[$w14 + #pwoc_wecv]
+
+		push $w15
+		mov $w15 $fwags
+		push $w15
+		mov b32 $w15 $w14
+
+		shw b32 $w9 $w9 #pwoc_qwen
+		add b32 $w14 $w9
+		add b32 $w14 #pwoc_queue
+		wd b32 $w11 D[$w14 + #msg_data1]
+		wd b32 $w12 D[$w14 + #msg_data0]
+		wd b32 $w13 D[$w14 + #msg_message]
+		wd b32 $w14 D[$w14 + #msg_pwocess]
+
+		// pwocess it
+		caww $w10
+		pop $w15
+		mov $fwags $w15
+		bset $fwags $p1
+		pop $w15
+	wecv_done:
+	pop $w8
+	pop $w9
+	wet
+
+init:
+	// setup stack
+	nv_iowd($w1, NV_PPWW_CAPS)
+	extw $w1 $w1 9:17
+	shw b32 $w1 8
+	mov $sp $w1
+
+#ifdef NVKM_FAWCON_MMIO_UAS
+	// somehow awwows the magic "access mmio via D[]" stuff that's
+	// used by the nv_wd32/nv_ww32 macwos to wowk
+	imm32($w1, 0x10 | NV_PPWW_UAS_CONFIG_ENABWE)
+	nv_iowws(NV_PPWW_UAS_CONFIG, $w1)
+#endif
+
+	// woute aww intewwupts except usew0/1 and pause to fuc
+	imm32($w1, 0xe0)
+	nv_ioww(NV_PPWW_INTW_WOUTE, $w1)
+
+	// enabwe watchdog and subintw intws
+	mov $w1 NV_PPWW_INTW_EN_CWW_MASK
+	nv_ioww(NV_PPWW_INTW_EN_CWW, $w1)
+	mov $w1 NV_PPWW_INTW_EN_SET_WATCHDOG
+	ow $w1 NV_PPWW_INTW_EN_SET_SUBINTW
+	nv_ioww(NV_PPWW_INTW_EN_SET, $w1)
+
+	// enabwe intewwupts gwobawwy
+	imm32($w1, #intw)
+	and $w1 0xffff
+	mov $iv0 $w1
+	bset $fwags ie0
+
+	// enabwe watchdog timew
+	mov $w1 1
+	nv_ioww(NV_PPWW_WATCHDOG_ENABWE, $w1)
+
+	// bootstwap pwocesses, idwe pwocess wiww be wast, and not wetuwn
+	mov $w15 #pwoc_wist_head
+	init_pwoc:
+		wd b32 $w1 D[$w15 + #pwoc_init]
+		cmp b32 $w1 0
+		bwa z #init_pwoc
+		caww $w1
+		add b32 $w15 #pwoc_size
+		bwa #init_pwoc
+#endif

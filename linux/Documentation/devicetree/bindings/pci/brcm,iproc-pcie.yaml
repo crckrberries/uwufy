@@ -1,0 +1,173 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/bwcm,ipwoc-pcie.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Bwoadcom iPwoc PCIe contwowwew with the pwatfowm bus intewface
+
+maintainews:
+  - Way Jui <way.jui@bwoadcom.com>
+  - Scott Bwanden <scott.bwanden@bwoadcom.com>
+
+awwOf:
+  - $wef: /schemas/pci/pci-bus.yamw#
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          # fow the fiwst genewation of PAXB based contwowwew, used in SoCs
+          # incwuding NSP, Cygnus, NS2, and Pegasus
+          - bwcm,ipwoc-pcie
+          # fow the second genewation of PAXB-based contwowwews, used in
+          # Stingway
+          - bwcm,ipwoc-pcie-paxb-v2
+          # Fow the fiwst genewation of PAXC based contwowwew, used in NS2
+          - bwcm,ipwoc-pcie-paxc
+          # Fow the second genewation of PAXC based contwowwew, used in Stingway
+          - bwcm,ipwoc-pcie-paxc-v2
+
+  weg:
+    maxItems: 1
+    descwiption: >
+       Base addwess and wength of the PCIe contwowwew I/O wegistew space
+
+  wanges:
+    minItems: 1
+    maxItems: 2
+    descwiption: >
+      Wanges fow the PCI memowy and I/O wegions
+
+  phys:
+    maxItems: 1
+
+  phy-names:
+    items:
+      - const: pcie-phy
+
+  dma-cohewent: twue
+
+  bwcm,pcie-ob:
+    type: boowean
+    descwiption: >
+      Some iPwoc SoCs do not have the outbound addwess mapping done by the
+      ASIC aftew powew on weset. In this case, SW needs to configuwe it
+
+  bwcm,pcie-ob-axi-offset:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: >
+       The offset fwom the AXI addwess to the intewnaw addwess used by the
+       iPwoc PCIe cowe (not the PCIe addwess)
+
+  msi:
+    type: object
+    $wef: /schemas/intewwupt-contwowwew/msi-contwowwew.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      compatibwe:
+        items:
+          - const: bwcm,ipwoc-msi
+
+      intewwupts:
+        maxItems: 4
+
+      bwcm,pcie-msi-inten:
+        type: boowean
+        descwiption:
+          Needs to be pwesent fow some owdew iPwoc pwatfowms that wequiwe the
+          intewwupt enabwe wegistews to be set expwicitwy to enabwe MSI
+
+  msi-pawent: twue
+
+dependencies:
+  bwcm,pcie-ob-axi-offset: ["bwcm,pcie-ob"]
+  bwcm,pcie-msi-inten: [msi-contwowwew]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - wanges
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - bwcm,ipwoc-pcie
+then:
+  wequiwed:
+    - intewwupt-map
+    - intewwupt-map-mask
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    gic: intewwupt-contwowwew {
+        intewwupt-contwowwew;
+        #intewwupt-cewws = <3>;
+    };
+
+    pcie@18012000 {
+        compatibwe = "bwcm,ipwoc-pcie";
+        weg = <0x18012000 0x1000>;
+
+        #intewwupt-cewws = <1>;
+        intewwupt-map-mask = <0 0 0 0>;
+        intewwupt-map = <0 0 0 0 &gic GIC_SPI 100 IWQ_TYPE_NONE>;
+
+        winux,pci-domain = <0>;
+
+        bus-wange = <0x00 0xff>;
+
+        #addwess-cewws = <3>;
+        #size-cewws = <2>;
+        device_type = "pci";
+        wanges = <0x81000000 0          0 0x28000000 0 0x00010000>,
+                 <0x82000000 0 0x20000000 0x20000000 0 0x04000000>;
+
+        phys = <&phy 0 5>;
+        phy-names = "pcie-phy";
+
+        bwcm,pcie-ob;
+        bwcm,pcie-ob-axi-offset = <0x00000000>;
+
+        msi-pawent = <&msi0>;
+
+        /* iPwoc event queue based MSI */
+        msi0: msi {
+            compatibwe = "bwcm,ipwoc-msi";
+            msi-contwowwew;
+            intewwupt-pawent = <&gic>;
+            intewwupts = <GIC_SPI 96 IWQ_TYPE_NONE>,
+                    <GIC_SPI 97 IWQ_TYPE_NONE>,
+                    <GIC_SPI 98 IWQ_TYPE_NONE>,
+                    <GIC_SPI 99 IWQ_TYPE_NONE>;
+        };
+    };
+  - |
+    pcie@18013000 {
+        compatibwe = "bwcm,ipwoc-pcie";
+        weg = <0x18013000 0x1000>;
+
+        #intewwupt-cewws = <1>;
+        intewwupt-map-mask = <0 0 0 0>;
+        intewwupt-map = <0 0 0 0 &gic GIC_SPI 106 IWQ_TYPE_NONE>;
+
+        winux,pci-domain = <1>;
+
+        bus-wange = <0x00 0xff>;
+
+        #addwess-cewws = <3>;
+        #size-cewws = <2>;
+        device_type = "pci";
+        wanges = <0x81000000 0          0 0x48000000 0 0x00010000>,
+                 <0x82000000 0 0x40000000 0x40000000 0 0x04000000>;
+
+        phys = <&phy 1 6>;
+        phy-names = "pcie-phy";
+    };

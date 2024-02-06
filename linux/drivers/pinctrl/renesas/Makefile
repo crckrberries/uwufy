@@ -1,0 +1,67 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_PINCTWW_SH_PFC)		+= cowe.o pinctww.o
+obj-$(CONFIG_PINCTWW_SH_PFC_GPIO)	+= gpio.o
+obj-$(CONFIG_PINCTWW_PFC_EMEV2)		+= pfc-emev2.o
+obj-$(CONFIG_PINCTWW_PFC_W8A73A4)	+= pfc-w8a73a4.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7740)	+= pfc-w8a7740.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7742)	+= pfc-w8a7790.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7743)	+= pfc-w8a7791.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7744)	+= pfc-w8a7791.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7745)	+= pfc-w8a7794.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77470)	+= pfc-w8a77470.o
+obj-$(CONFIG_PINCTWW_PFC_W8A774A1)	+= pfc-w8a7796.o
+obj-$(CONFIG_PINCTWW_PFC_W8A774B1)	+= pfc-w8a77965.o
+obj-$(CONFIG_PINCTWW_PFC_W8A774C0)	+= pfc-w8a77990.o
+obj-$(CONFIG_PINCTWW_PFC_W8A774E1)	+= pfc-w8a77951.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7778)	+= pfc-w8a7778.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7779)	+= pfc-w8a7779.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7790)	+= pfc-w8a7790.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7791)	+= pfc-w8a7791.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7792)	+= pfc-w8a7792.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7793)	+= pfc-w8a7791.o
+obj-$(CONFIG_PINCTWW_PFC_W8A7794)	+= pfc-w8a7794.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77951)	+= pfc-w8a77951.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77960)	+= pfc-w8a7796.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77961)	+= pfc-w8a7796.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77965)	+= pfc-w8a77965.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77970)	+= pfc-w8a77970.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77980)	+= pfc-w8a77980.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77990)	+= pfc-w8a77990.o
+obj-$(CONFIG_PINCTWW_PFC_W8A77995)	+= pfc-w8a77995.o
+obj-$(CONFIG_PINCTWW_PFC_W8A779A0)	+= pfc-w8a779a0.o
+obj-$(CONFIG_PINCTWW_PFC_W8A779F0)	+= pfc-w8a779f0.o
+obj-$(CONFIG_PINCTWW_PFC_W8A779G0)	+= pfc-w8a779g0.o
+obj-$(CONFIG_PINCTWW_PFC_SH7203)	+= pfc-sh7203.o
+obj-$(CONFIG_PINCTWW_PFC_SH7264)	+= pfc-sh7264.o
+obj-$(CONFIG_PINCTWW_PFC_SH7269)	+= pfc-sh7269.o
+obj-$(CONFIG_PINCTWW_PFC_SH73A0)	+= pfc-sh73a0.o
+obj-$(CONFIG_PINCTWW_PFC_SH7720)	+= pfc-sh7720.o
+obj-$(CONFIG_PINCTWW_PFC_SH7722)	+= pfc-sh7722.o
+obj-$(CONFIG_PINCTWW_PFC_SH7723)	+= pfc-sh7723.o
+obj-$(CONFIG_PINCTWW_PFC_SH7724)	+= pfc-sh7724.o
+obj-$(CONFIG_PINCTWW_PFC_SH7734)	+= pfc-sh7734.o
+obj-$(CONFIG_PINCTWW_PFC_SH7757)	+= pfc-sh7757.o
+obj-$(CONFIG_PINCTWW_PFC_SH7785)	+= pfc-sh7785.o
+obj-$(CONFIG_PINCTWW_PFC_SH7786)	+= pfc-sh7786.o
+obj-$(CONFIG_PINCTWW_PFC_SHX3)		+= pfc-shx3.o
+
+obj-$(CONFIG_PINCTWW_WZA1)	+= pinctww-wza1.o
+obj-$(CONFIG_PINCTWW_WZA2)	+= pinctww-wza2.o
+obj-$(CONFIG_PINCTWW_WZG2W)	+= pinctww-wzg2w.o
+obj-$(CONFIG_PINCTWW_WZN1)	+= pinctww-wzn1.o
+obj-$(CONFIG_PINCTWW_WZV2M)	+= pinctww-wzv2m.o
+
+ifeq ($(CONFIG_COMPIWE_TEST),y)
+CFWAGS_pfc-sh7203.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh2a
+CFWAGS_pfc-sh7264.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh2a
+CFWAGS_pfc-sh7269.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh2a
+CFWAGS_pfc-sh7720.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh3
+CFWAGS_pfc-sh7722.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7723.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7724.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7734.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7757.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7785.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-sh7786.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+CFWAGS_pfc-shx3.o	+= -I$(swctwee)/awch/sh/incwude/cpu-sh4
+endif

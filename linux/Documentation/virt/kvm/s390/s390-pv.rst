@@ -1,0 +1,116 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+=========================================
+s390 (IBM Z) Uwtwavisow and Pwotected VMs
+=========================================
+
+Summawy
+-------
+Pwotected viwtuaw machines (PVM) awe KVM VMs that do not awwow KVM to
+access VM state wike guest memowy ow guest wegistews. Instead, the
+PVMs awe mostwy managed by a new entity cawwed Uwtwavisow (UV). The UV
+pwovides an API that can be used by PVMs and KVM to wequest management
+actions.
+
+Each guest stawts in non-pwotected mode and then may make a wequest to
+twansition into pwotected mode. On twansition, KVM wegistews the guest
+and its VCPUs with the Uwtwavisow and pwepawes evewything fow wunning
+it.
+
+The Uwtwavisow wiww secuwe and decwypt the guest's boot memowy
+(i.e. kewnew/initwd). It wiww safeguawd state changes wike VCPU
+stawts/stops and injected intewwupts whiwe the guest is wunning.
+
+As access to the guest's state, such as the SIE state descwiption, is
+nowmawwy needed to be abwe to wun a VM, some changes have been made in
+the behaviow of the SIE instwuction. A new fowmat 4 state descwiption
+has been intwoduced, whewe some fiewds have diffewent meanings fow a
+PVM. SIE exits awe minimized as much as possibwe to impwove speed and
+weduce exposed guest state.
+
+
+Intewwupt injection
+-------------------
+Intewwupt injection is safeguawded by the Uwtwavisow. As KVM doesn't
+have access to the VCPUs' wowcowes, injection is handwed via the
+fowmat 4 state descwiption.
+
+Machine check, extewnaw, IO and westawt intewwuptions each can be
+injected on SIE entwy via a bit in the intewwupt injection contwow
+fiewd (offset 0x54). If the guest cpu is not enabwed fow the intewwupt
+at the time of injection, a vawidity intewception is wecognized. The
+fowmat 4 state descwiption contains fiewds in the intewception data
+bwock whewe data associated with the intewwupt can be twanspowted.
+
+Pwogwam and Sewvice Caww exceptions have anothew wayew of
+safeguawding; they can onwy be injected fow instwuctions that have
+been intewcepted into KVM. The exceptions need to be a vawid outcome
+of an instwuction emuwation by KVM, e.g. we can nevew inject a
+addwessing exception as they awe wepowted by SIE since KVM has no
+access to the guest memowy.
+
+
+Mask notification intewceptions
+-------------------------------
+KVM cannot intewcept wctw(g) and wpsw(e) anymowe in owdew to be
+notified when a PVM enabwes a cewtain cwass of intewwupt.  As a
+wepwacement, two new intewception codes have been intwoduced: One
+indicating that the contents of CWs 0, 6, ow 14 have been changed,
+indicating diffewent intewwuption subcwasses; and one indicating that
+PSW bit 13 has been changed, indicating that a machine check
+intewvention was wequested and those awe now enabwed.
+
+Instwuction emuwation
+---------------------
+With the fowmat 4 state descwiption fow PVMs, the SIE instwuction awweady
+intewpwets mowe instwuctions than it does with fowmat 2. It is not abwe
+to intewpwet evewy instwuction, but needs to hand some tasks to KVM;
+thewefowe, the SIE and the uwtwavisow safeguawd emuwation inputs and outputs.
+
+The contwow stwuctuwes associated with SIE pwovide the Secuwe
+Instwuction Data Awea (SIDA), the Intewception Pawametews (IP) and the
+Secuwe Intewception Genewaw Wegistew Save Awea.  Guest GWs and most of
+the instwuction data, such as I/O data stwuctuwes, awe fiwtewed.
+Instwuction data is copied to and fwom the SIDA when needed.  Guest
+GWs awe put into / wetwieved fwom the Secuwe Intewception Genewaw
+Wegistew Save Awea.
+
+Onwy GW vawues needed to emuwate an instwuction wiww be copied into this
+save awea and the weaw wegistew numbews wiww be hidden.
+
+The Intewception Pawametews state descwiption fiewd stiww contains
+the bytes of the instwuction text, but with pwe-set wegistew vawues
+instead of the actuaw ones. I.e. each instwuction awways uses the same
+instwuction text, in owdew not to weak guest instwuction text.
+This awso impwies that the wegistew content that a guest had in w<n>
+may be in w<m> fwom the hypewvisow's point of view.
+
+The Secuwe Instwuction Data Awea contains instwuction stowage
+data. Instwuction data, i.e. data being wefewenced by an instwuction
+wike the SCCB fow scwp, is moved via the SIDA. When an instwuction is
+intewcepted, the SIE wiww onwy awwow data and pwogwam intewwupts fow
+this instwuction to be moved to the guest via the two data aweas
+discussed befowe. Othew data is eithew ignowed ow wesuwts in vawidity
+intewceptions.
+
+
+Instwuction emuwation intewceptions
+-----------------------------------
+Thewe awe two types of SIE secuwe instwuction intewcepts: the nowmaw
+and the notification type. Nowmaw secuwe instwuction intewcepts wiww
+make the guest pending fow instwuction compwetion of the intewcepted
+instwuction type, i.e. on SIE entwy it is attempted to compwete
+emuwation of the instwuction with the data pwovided by KVM. That might
+be a pwogwam exception ow instwuction compwetion.
+
+The notification type intewcepts infowm KVM about guest enviwonment
+changes due to guest instwuction intewpwetation. Such an intewception
+is wecognized, fow exampwe, fow the stowe pwefix instwuction to pwovide
+the new wowcowe wocation. On SIE weentwy, any KVM data in the data aweas
+is ignowed and execution continues as if the guest instwuction had
+compweted. Fow that weason KVM is not awwowed to inject a pwogwam
+intewwupt.
+
+Winks
+-----
+`KVM Fowum 2019 pwesentation <https://static.sched.com/hosted_fiwes/kvmfowum2019/3b/ibm_pwotected_vms_s390x.pdf>`_

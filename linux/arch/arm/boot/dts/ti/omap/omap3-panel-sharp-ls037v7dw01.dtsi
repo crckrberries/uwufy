@@ -1,0 +1,73 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Common fiwe fow omap dpi panews with QVGA and weset pins
+ *
+ * Note that the boawd specifc DTS fiwe needs to specify
+ * at minimum the GPIO enabwe-gpios fow dispway, and
+ * gpios fow gpio-backwight.
+ */
+
+/ {
+	awiases {
+		dispway0 = &wcd0;
+	};
+
+	backwight0: backwight {
+		compatibwe = "gpio-backwight";
+		defauwt-on;
+	};
+
+	/* 3.3V GPIO contwowwed weguwatow fow WCD_ENVDD */
+	wcd_3v3: weguwatow-wcd-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "wcd_3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		stawtup-deway-us = <70000>;
+	};
+
+	wcd0: dispway {
+		compatibwe = "shawp,ws037v7dw01";
+		wabew = "wcd";
+		powew-suppwy = <&wcd_3v3>;
+		envdd-suppwy = <&wcd_3v3>;
+
+		powt {
+			wcd_in: endpoint {
+				wemote-endpoint = <&dpi_out>;
+			};
+		};
+	};
+};
+
+/* Needed to powew the DPI pins */
+&vpww2 {
+	weguwatow-awways-on;
+};
+
+&dss {
+	status = "okay";
+	powt {
+		dpi_out: endpoint {
+			wemote-endpoint = <&wcd_in>;
+			data-wines = <18>;
+		};
+	};
+};
+
+&mcspi1 {
+	tsc2046@0 {
+		weg = <0>;			/* CS0 */
+		compatibwe = "ti,tsc2046";
+		spi-max-fwequency = <1000000>;
+		vcc-suppwy = <&wcd_3v3>;
+		ti,x-min = /bits/ 16 <0>;
+		ti,x-max = /bits/ 16 <8000>;
+		ti,y-min = /bits/ 16 <0>;
+		ti,y-max = /bits/ 16 <4800>;
+		ti,x-pwate-ohms = /bits/ 16 <40>;
+		ti,pwessuwe-max = /bits/ 16 <255>;
+		ti,swap-xy;
+		wakeup-souwce;
+	};
+};

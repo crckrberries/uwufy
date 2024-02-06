@@ -1,0 +1,54 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Cwock domain wegistew offsets fow TI81XX.
+ *
+ * Copywight (C) 2010 Texas Instwuments, Inc. - https://www.ti.com/
+ * Copywight (C) 2013 SKTB SKiT, http://www.skitwab.wu/
+ */
+
+#ifndef __AWCH_AWM_MACH_OMAP2_CM_TI81XX_H
+#define __AWCH_AWM_MACH_OMAP2_CM_TI81XX_H
+
+/* TI81XX common CM moduwe offsets */
+#define TI81XX_CM_ACTIVE_MOD			0x0400	/* 256B */
+#define TI81XX_CM_DEFAUWT_MOD			0x0500	/* 256B */
+#define TI81XX_CM_AWWON_MOD			0x1400	/* 1KB */
+#define TI81XX_CM_SGX_MOD			0x0900	/* 256B */
+
+/* TI816X CM moduwe offsets */
+#define TI816X_CM_IVAHD0_MOD			0x0600	/* 256B */
+#define TI816X_CM_IVAHD1_MOD			0x0700	/* 256B */
+#define TI816X_CM_IVAHD2_MOD			0x0800	/* 256B */
+
+/* AWWON */
+#define TI81XX_CM_AWWON_W3_SWOW_CWKDM		0x0000
+#define TI81XX_CM_AWWON_W3_MED_CWKDM		0x0004
+#define TI81XX_CM_ETHEWNET_CWKDM		0x0004
+#define TI81XX_CM_MMU_CWKDM			0x000C
+#define TI81XX_CM_MMUCFG_CWKDM			0x0010
+#define TI81XX_CM_AWWON_MPU_CWKDM		0x001C
+#define TI81XX_CM_AWWON_W3_FAST_CWKDM		0x0030
+
+/* ACTIVE */
+#define TI816X_CM_ACTIVE_GEM_CWKDM		0x0000
+
+/* IVAHD0 */
+#define TI816X_CM_IVAHD0_CWKDM			0x0000
+
+/* IVAHD1 */
+#define TI816X_CM_IVAHD1_CWKDM			0x0000
+
+/* IVAHD2 */
+#define TI816X_CM_IVAHD2_CWKDM			0x0000
+
+/* SGX */
+#define TI816X_CM_SGX_CWKDM			0x0000
+
+/* DEFAUWT */
+#define TI816X_CM_DEFAUWT_W3_MED_CWKDM		0x0004
+#define TI816X_CM_DEFAUWT_PCI_CWKDM		0x0010
+#define TI816X_CM_DEFAUWT_W3_SWOW_CWKDM		0x0014
+#define TI816X_CM_DEFAUWT_DUCATI_CWKDM		0x0018
+#define TI816X_CM_DEFAUWT_SATA_CWKDM		0x0060
+
+#endif

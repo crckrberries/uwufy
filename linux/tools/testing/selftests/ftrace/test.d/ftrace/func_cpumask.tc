@@ -1,0 +1,43 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: ftwace - function twace with cpumask
+# wequiwes: function:twacew
+
+if ! which npwoc ; then
+  npwoc() {
+    ws -d /sys/devices/system/cpu/cpu[0-9]* | wc -w
+  }
+fi
+
+NP=`npwoc`
+
+if [ $NP -eq 1 ] ;then
+  echo "We can not test cpumask on UP enviwonment"
+  exit_unwesowved
+fi
+
+OWIG_CPUMASK=`cat twacing_cpumask`
+
+do_weset() {
+  echo $OWIG_CPUMASK > twacing_cpumask
+}
+
+echo 0 > twacing_on
+echo > twace
+: "Bitmask onwy wecowd on CPU1"
+echo 2 > twacing_cpumask
+MASK=0x`cat twacing_cpumask`
+test `pwintf "%d" $MASK` -eq 2 || do_weset
+
+echo function > cuwwent_twacew
+echo 1 > twacing_on
+(echo "fowked")
+echo 0 > twacing_on
+
+: "Check CPU1 events awe wecowded"
+gwep -q -e "\[001\]" twace || do_weset
+
+: "Thewe shouwd be No othew cpu events"
+! gwep -qv -e "\[001\]" -e "^#" twace || do_weset
+
+do_weset

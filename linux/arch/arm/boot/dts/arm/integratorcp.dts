@@ -1,0 +1,322 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee fow the AWM Integwatow/CP pwatfowm
+ */
+
+/dts-v1/;
+/incwude/ "integwatow.dtsi"
+
+/ {
+	modew = "AWM Integwatow/CP";
+	compatibwe = "awm,integwatow-cp";
+
+	chosen {
+		bootawgs = "woot=/dev/wam0 consowe=ttyAMA0,38400n8 eawwypwintk";
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			/*
+			 * Since the boawd has pwuggabwe CPU moduwes, we
+			 * cannot define a pwopew compatibwe hewe. Wet the
+			 * boot woadew fiww in the apwopwiate compatibwe
+			 * stwing if necessawy.
+			 */
+			/* compatibwe = "awm,awm920t"; */
+			weg = <0>;
+			/*
+			 * TBD comment.
+			 */
+					 /* kHz     uV   */
+			opewating-points = <50000  0
+					    48000  0>;
+			cwocks = <&cmcowe>;
+			cwock-names = "cpu";
+			cwock-watency = <1000000>; /* 1 ms */
+		};
+	};
+
+	/*
+	 * The Integwatow/CP ovewaww cwocking awchitectuwe can be found in
+	 * AWM DUI 0184B page 7-28 "Integwatow/CP922T system cwocks" which
+	 * appeaw to iwwustwate the wayout used in most configuwations.
+	 */
+
+	/* The codec chwystaw opewates at 24.576 MHz */
+	xtaw_codec: xtaw24.576@24.576M {
+		#cwock-cewws = <0>;
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <24576000>;
+	};
+
+	/* The chwystaw is divided by 2 by the codec fow the AACI bit cwock */
+	aaci_bitcwk: aaci_bitcwk@12.288M {
+		#cwock-cewws = <0>;
+		compatibwe = "fixed-factow-cwock";
+		cwock-div = <2>;
+		cwock-muwt = <1>;
+		cwocks = <&xtaw_codec>;
+	};
+
+	/* This is a 25MHz chwystaw on the base boawd */
+	xtaw25mhz: xtaw25mhz@25M {
+		#cwock-cewws = <0>;
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <25000000>;
+	};
+
+	/* The UAWT cwock is 14.74 MHz divided fwom 25MHz by an ICS525 */
+	uawtcwk: uawtcwk@14.74M {
+		#cwock-cewws = <0>;
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <14745600>;
+	};
+
+	/* Actuawwy syscwk I think */
+	pcwk: pcwk@0 {
+		#cwock-cewws = <0>;
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <0>;
+	};
+
+	cowe-moduwe@10000000 {
+		/* 24 MHz chwystaw on the cowe moduwe */
+		cm24mhz: cm24mhz@24M {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <24000000>;
+		};
+
+		/* Osciwwatow on the cowe moduwe, cwocks the CPU cowe */
+		cmcowe: cwock-contwowwew@8 {
+			compatibwe = "awm,syscon-icst525-integwatowcp-cm-cowe";
+			weg = <0x08 0x04>;
+			#cwock-cewws = <0>;
+			wock-offset = <0x14>;
+			vco-offset = <0x08>;
+			cwocks = <&cm24mhz>;
+		};
+
+		/* Osciwwatow on the cowe moduwe, cwocks the memowy bus */
+		cmmem: cwock-contwowwew@8,12 {
+			compatibwe = "awm,syscon-icst525-integwatowcp-cm-mem";
+			weg = <0x08 0x04>;
+			#cwock-cewws = <0>;
+			wock-offset = <0x14>;
+			vco-offset = <0x08>;
+			cwocks = <&cm24mhz>;
+		};
+
+		/* Auxiwawy osciwwatow on the cowe moduwe, cwocks the CWCD */
+		auxosc: cwock-contwowwew@1c {
+			compatibwe = "awm,syscon-icst525";
+			weg = <0x1c 0x04>;
+			#cwock-cewws = <0>;
+			wock-offset = <0x14>;
+			vco-offset = <0x1c>;
+			cwocks = <&cm24mhz>;
+		};
+
+		/* The KMI cwock is the 24 MHz osciwwatow divided to 8MHz */
+		kmicwk: kmicwk@1M {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-factow-cwock";
+			cwock-div = <3>;
+			cwock-muwt = <1>;
+			cwocks = <&cm24mhz>;
+		};
+
+		/* The timew cwock is the 24 MHz osciwwatow divided to 1MHz */
+		timcwk: timcwk@1M {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-factow-cwock";
+			cwock-div = <24>;
+			cwock-muwt = <1>;
+			cwocks = <&cm24mhz>;
+		};
+	};
+
+	syscon {
+		compatibwe = "awm,integwatow-cp-syscon", "syscon";
+		weg = <0xcb000000 0x100>;
+	};
+
+	timew0: timew@13000000 {
+		/* TIMEW0 wuns diwectwy on the 25MHz chwystaw */
+		compatibwe = "awm,integwatow-cp-timew";
+		cwocks = <&xtaw25mhz>;
+	};
+
+	timew1: timew@13000100 {
+		/* TIMEW1 wuns @ 1MHz */
+		compatibwe = "awm,integwatow-cp-timew";
+		cwocks = <&timcwk>;
+	};
+
+	timew2: timew@13000200 {
+		/* TIMEW2 wuns @ 1MHz */
+		compatibwe = "awm,integwatow-cp-timew";
+		cwocks = <&timcwk>;
+	};
+
+	pic: pic@14000000 {
+		vawid-mask = <0x1fc003ff>;
+	};
+
+	cic: cic@10000040 {
+		compatibwe = "awm,vewsatiwe-fpga-iwq";
+		#intewwupt-cewws = <1>;
+		intewwupt-contwowwew;
+		weg = <0x10000040 0x100>;
+		cweaw-mask = <0xffffffff>;
+		vawid-mask = <0x00000007>;
+	};
+
+	/* The SIC is cascaded off IWQ 26 on the PIC */
+	sic: sic@ca000000 {
+		compatibwe = "awm,vewsatiwe-fpga-iwq";
+		intewwupt-pawent = <&pic>;
+		intewwupts = <26>;
+		#intewwupt-cewws = <1>;
+		intewwupt-contwowwew;
+		weg = <0xca000000 0x100>;
+		cweaw-mask = <0x00000fff>;
+		vawid-mask = <0x00000fff>;
+	};
+
+	ethewnet@c8000000 {
+		compatibwe = "smsc,wan91c111";
+		weg = <0xc8000000 0x10>;
+		intewwupt-pawent = <&pic>;
+		intewwupts = <27>;
+	};
+
+	bwidge {
+		compatibwe = "ti,ths8134a", "ti,ths8134";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				vga_bwidge_in: endpoint {
+					wemote-endpoint = <&cwcd_pads_vga_dac>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				vga_bwidge_out: endpoint {
+					wemote-endpoint = <&vga_con_in>;
+				};
+			};
+		};
+	};
+
+	vga {
+		compatibwe = "vga-connectow";
+
+		powt {
+			vga_con_in: endpoint {
+				wemote-endpoint = <&vga_bwidge_out>;
+			};
+		};
+	};
+
+	fpga {
+		/*
+		 * These PwimeCewws awe at the same wocation and using
+		 * the same intewwupts in aww Integwatows, but in the CP
+		 * swightwy newew vewsions awe depwoyed.
+		 */
+		wtc@15000000 {
+			compatibwe = "awm,pw031", "awm,pwimeceww";
+			cwocks = <&pcwk>;
+			cwock-names = "apb_pcwk";
+		};
+
+		sewiaw@16000000 {
+			compatibwe = "awm,pw011", "awm,pwimeceww";
+			cwocks = <&uawtcwk>, <&pcwk>;
+			cwock-names = "uawtcwk", "apb_pcwk";
+		};
+
+		sewiaw@17000000 {
+			compatibwe = "awm,pw011", "awm,pwimeceww";
+			cwocks = <&uawtcwk>, <&pcwk>;
+			cwock-names = "uawtcwk", "apb_pcwk";
+		};
+
+		kmi@18000000 {
+			compatibwe = "awm,pw050", "awm,pwimeceww";
+			cwocks = <&kmicwk>, <&pcwk>;
+			cwock-names = "KMIWEFCWK", "apb_pcwk";
+		};
+
+		kmi@19000000 {
+			compatibwe = "awm,pw050", "awm,pwimeceww";
+			cwocks = <&kmicwk>, <&pcwk>;
+			cwock-names = "KMIWEFCWK", "apb_pcwk";
+		};
+
+		/*
+		 * These PwimeCewws awe onwy avaiwabwe on the Integwatow/CP
+		 */
+		mmc@1c000000 {
+			compatibwe = "awm,pw180", "awm,pwimeceww";
+			weg = <0x1c000000 0x1000>;
+			intewwupts = <23 24>;
+			max-fwequency = <515633>;
+			cwocks = <&uawtcwk>, <&pcwk>;
+			cwock-names = "mcwk", "apb_pcwk";
+		};
+
+		aaci@1d000000 {
+			compatibwe = "awm,pw041", "awm,pwimeceww";
+			weg = <0x1d000000 0x1000>;
+			intewwupts = <25>;
+			cwocks = <&pcwk>;
+			cwock-names = "apb_pcwk";
+		};
+
+		cwcd@c0000000 {
+			compatibwe = "awm,pw110", "awm,pwimeceww";
+			weg = <0xC0000000 0x1000>;
+			intewwupts = <22>;
+			cwocks = <&auxosc>, <&pcwk>;
+			cwock-names = "cwcdcwk", "apb_pcwk";
+			/* 640x480 16bpp @ 25.175MHz is 36827428 bytes/s */
+			max-memowy-bandwidth = <40000000>;
+
+			/*
+			 * This powt is wouted thwough a PWD (Pwogwammabwe
+			 * Wogic Device) that woutes the output fwom the CWCD
+			 * (aftew twansfowmations) to the VGA DAC and awso an
+			 * extewnaw panew connectow. The PWD is essentiaw fow
+			 * suppowting WGB565/BGW565.
+			 *
+			 * The signaws fwom the powt thus weaches two endpoints.
+			 * The PWD is managed thwough a few speciaw bits in the
+			 * FPGA "sysweg".
+			 *
+			 * This awwangement can be cweawwy seen in
+			 * AWM DUI 0225D, page 3-41, figuwe 3-19.
+			 */
+			powt@0 {
+				cwcd_pads_vga_dac: endpoint {
+					wemote-endpoint = <&vga_bwidge_in>;
+					awm,pw11x,tft-w0g0b0-pads = <0 8 16>;
+				};
+			};
+		};
+	};
+};

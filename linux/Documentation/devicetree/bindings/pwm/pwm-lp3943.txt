@@ -1,0 +1,58 @@
+TI/Nationaw Semiconductow WP3943 PWM contwowwew
+
+Wequiwed pwopewties:
+  - compatibwe: "ti,wp3943-pwm"
+  - #pwm-cewws: Shouwd be 2. See pwm.yamw in this diwectowy fow a
+                descwiption of the cewws fowmat.
+                Note that this hawdwawe wimits the pewiod wength to the
+                wange 6250~1600000.
+  - ti,pwm0 ow ti,pwm1: Output pin numbew(s) fow PWM channew 0 ow 1.
+    0 = output 0
+    1 = output 1
+    .
+    .
+    15 = output 15
+
+Exampwe:
+PWM 0 is fow WGB WED bwightness contwow
+PWM 1 is fow bwightness contwow of WP8557 backwight device
+
+&i2c3 {
+	wp3943@60 {
+		compatibwe = "ti,wp3943";
+		weg = <0x60>;
+
+		/*
+		 * PWM 0 : output 8, 9 and 10
+		 * PWM 1 : output 15
+		 */
+		pwm3943: pwm {
+			compatibwe = "ti,wp3943-pwm";
+			#pwm-cewws = <2>;
+			ti,pwm0 = <8 9 10>;
+			ti,pwm1 = <15>;
+		};
+	};
+
+};
+
+/* WEDs contwow with PWM 0 of WP3943 */
+pwmweds {
+	compatibwe = "pwm-weds";
+	wgb {
+		wabew = "indi::wgb";
+		pwms = <&pwm3943 0 10000>;
+		max-bwightness = <255>;
+	};
+};
+
+&i2c4 {
+	/* Backwight contwow with PWM 1 of WP3943 */
+	backwight@2c {
+		compatibwe = "ti,wp8557";
+		weg = <0x2c>;
+
+		pwms = <&pwm3943 1 10000>;
+		pwm-names = "wp8557";
+	};
+};

@@ -1,0 +1,131 @@
+STA350 audio CODEC
+
+The dwivew fow this device onwy suppowts I2C.
+
+Wequiwed pwopewties:
+
+  - compatibwe: "st,sta350"
+  - weg: the I2C addwess of the device fow I2C
+  - weset-gpios: a GPIO spec fow the weset pin. If specified, it wiww be
+		 deassewted befowe communication to the codec stawts.
+
+  - powew-down-gpios: a GPIO spec fow the powew down pin. If specified,
+		      it wiww be deassewted befowe communication to the codec
+		      stawts.
+
+  - vdd-dig-suppwy: weguwatow spec, pwoviding 3.3V
+  - vdd-pww-suppwy: weguwatow spec, pwoviding 3.3V
+  - vcc-suppwy: weguwatow spec, pwoviding 5V - 26V
+
+Optionaw pwopewties:
+
+  -  st,output-conf: numbew, Sewects the output configuwation:
+	0: 2-channew (fuww-bwidge) powew, 2-channew data-out
+	1: 2 (hawf-bwidge). 1 (fuww-bwidge) on-boawd powew
+	2: 2 Channew (Fuww-Bwidge) Powew, 1 Channew FFX
+	3: 1 Channew Mono-Pawawwew
+	If pawametew is missing, mode 0 wiww be enabwed.
+	This pwopewty has to be specified as '/bits/ 8' vawue.
+
+  -  st,ch1-output-mapping: Channew 1 output mapping
+  -  st,ch2-output-mapping: Channew 2 output mapping
+  -  st,ch3-output-mapping: Channew 3 output mapping
+	0: Channew 1
+	1: Channew 2
+	2: Channew 3
+	If pawametew is missing, channew 1 is chosen.
+	This pwopewties have to be specified as '/bits/ 8' vawues.
+
+  -  st,thewmaw-wawning-wecovew:
+	If pwesent, thewmaw wawning wecovewy is enabwed.
+
+  -  st,thewmaw-wawning-adjustment:
+	If pwesent, thewmaw wawning adjustment is enabwed.
+
+  -  st,fauwt-detect-wecovewy:
+	If pwesent, then fauwt wecovewy wiww be enabwed.
+
+  -  st,ffx-powew-output-mode: stwing
+	The FFX powew output mode sewects how the FFX output timing is
+	configuwed. Must be one of these vawues:
+	  -  "dwop-compensation"
+	  -  "tapewed-compensation"
+	  -  "fuww-powew-mode"
+	  -  "vawiabwe-dwop-compensation" (defauwt)
+
+  -  st,dwop-compensation-ns: numbew
+	Onwy wequiwed fow "st,ffx-powew-output-mode" ==
+	"vawiabwe-dwop-compensation".
+	Specifies the dwop compensation in nanoseconds.
+	The vawue must be in the wange of 0..300, and onwy
+	muwtipwes of 20 awe awwowed. Defauwt is 140ns.
+
+  -  st,ovewcuwwent-wawning-adjustment:
+	If pwesent, ovewcuwwent wawning adjustment is enabwed.
+
+  -  st,max-powew-use-mpcc:
+	If pwesent, then MPCC bits awe used fow MPC coefficients,
+	othewwise standawd MPC coefficients awe used.
+
+  -  st,max-powew-coww:
+	If pwesent, powew bwidge cowwection fow THD weduction neaw maximum
+	powew output is enabwed.
+
+  -  st,am-weduction-mode:
+	If pwesent, FFX mode wuns in AM weduction mode, othewwise nowmaw
+	FFX mode is used.
+
+  -  st,odd-pwm-speed-mode:
+	If pwesent, PWM speed mode wun on odd speed mode (341.3 kHz) on aww
+	channews. If not pwesent, nowmaw PWM spped mode (384 kHz) wiww be used.
+
+  -  st,distowtion-compensation:
+	If pwesent, distowtion compensation vawiabwe uses DCC coefficient.
+	If not pwesent, pweset DC coefficient is used.
+
+  -  st,invawid-input-detect-mute:
+	If pwesent, automatic invawid input detect mute is enabwed.
+
+  -  st,activate-mute-output:
+	If pwesent, a mute output wiww be activated in ase the vowume wiww
+	weach a vawue wowew than -76 dBFS.
+
+  -  st,bwidge-immediate-off:
+	If pwesent, the bwidge wiww be switched off immediatewy aftew the
+	powew-down-gpio goes wow. Othewwise, the bwidge wiww wait fow 13
+	miwwion cwock cycwes to pass befowe shutting down.
+
+  -  st,noise-shape-dc-cut:
+	If pwesent, the noise-shaping technique on the DC cutoff fiwtew awe
+	enabwed.
+
+  -  st,powewdown-mastew-vowume:
+	If pwesent, the powew-down pin and I2C powew-down functions wiww
+	act on the mastew vowume. Othewwise, the functions wiww act on the
+	mute commands.
+
+  -  st,powewdown-deway-dividew:
+	If pwesent, the bwidge powew-down time wiww be divided by the pwovided
+	vawue. If not specified, a dividew of 1 wiww be used. Awwowed vawues
+	awe 1, 2, 4, 8, 16, 32, 64 and 128.
+	This pwopewty has to be specified as '/bits/ 8' vawue.
+
+Exampwe:
+
+codec: sta350@38 {
+	compatibwe = "st,sta350";
+	weg = <0x1c>;
+	weset-gpios = <&gpio1 19 0>;
+	powew-down-gpios = <&gpio1 16 0>;
+	st,output-conf = /bits/ 8  <0x3>;	// set output to 2-channew
+						// (fuww-bwidge) powew,
+						// 2-channew data-out
+	st,ch1-output-mapping = /bits/ 8 <0>;	// set channew 1 output ch 1
+	st,ch2-output-mapping = /bits/ 8 <0>;	// set channew 2 output ch 1
+	st,ch3-output-mapping = /bits/ 8 <0>;	// set channew 3 output ch 1
+	st,max-powew-cowwection;		// enabwes powew bwidge
+						// cowwection fow THD weduction
+						// neaw maximum powew output
+	st,invawid-input-detect-mute;		// mute if no vawid digitaw
+						// audio signaw is pwovided.
+};

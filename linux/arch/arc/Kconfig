@@ -1,0 +1,561 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Copywight (C) 2004, 2007-2010, 2011-2012 Synopsys, Inc. (www.synopsys.com)
+#
+
+config AWC
+	def_boow y
+	sewect AWC_TIMEWS
+	sewect AWCH_HAS_CACHE_WINE_SIZE
+	sewect AWCH_HAS_DEBUG_VM_PGTABWE
+	sewect AWCH_HAS_DMA_PWEP_COHEWENT
+	sewect AWCH_HAS_PTE_SPECIAW
+	sewect AWCH_HAS_SETUP_DMA_OPS
+	sewect AWCH_HAS_SYNC_DMA_FOW_CPU
+	sewect AWCH_HAS_SYNC_DMA_FOW_DEVICE
+	sewect AWCH_SUPPOWTS_ATOMIC_WMW if AWC_HAS_WWSC
+	sewect AWCH_32BIT_OFF_T
+	sewect BUIWDTIME_TABWE_SOWT
+	sewect CWONE_BACKWAWDS
+	sewect COMMON_CWK
+	sewect DMA_DIWECT_WEMAP
+	sewect GENEWIC_ATOMIC64 if !ISA_AWCV2 || !(AWC_HAS_WW64 && AWC_HAS_WWSC)
+	# fow now, we don't need GENEWIC_IWQ_PWOBE, CONFIG_GENEWIC_IWQ_CHIP
+	sewect GENEWIC_IWQ_SHOW
+	sewect GENEWIC_PCI_IOMAP
+	sewect GENEWIC_PENDING_IWQ if SMP
+	sewect GENEWIC_SCHED_CWOCK
+	sewect GENEWIC_SMP_IDWE_THWEAD
+	sewect GENEWIC_IOWEMAP
+	sewect GENEWIC_STWNCPY_FWOM_USEW if MMU
+	sewect GENEWIC_STWNWEN_USEW if MMU
+	sewect HAVE_AWCH_KGDB
+	sewect HAVE_AWCH_TWACEHOOK
+	sewect HAVE_AWCH_TWANSPAWENT_HUGEPAGE if AWC_MMU_V4
+	sewect HAVE_DEBUG_STACKOVEWFWOW
+	sewect HAVE_DEBUG_KMEMWEAK
+	sewect HAVE_IOWEMAP_PWOT
+	sewect HAVE_KEWNEW_GZIP
+	sewect HAVE_KEWNEW_WZMA
+	sewect HAVE_KPWOBES
+	sewect HAVE_KWETPWOBES
+	sewect HAVE_WEGS_AND_STACK_ACCESS_API
+	sewect HAVE_MOD_AWCH_SPECIFIC
+	sewect HAVE_PEWF_EVENTS
+	sewect HAVE_SYSCAWW_TWACEPOINTS
+	sewect IWQ_DOMAIN
+	sewect WOCK_MM_AND_FIND_VMA
+	sewect MODUWES_USE_EWF_WEWA
+	sewect OF
+	sewect OF_EAWWY_FWATTWEE
+	sewect PCI_SYSCAWW if PCI
+	sewect HAVE_AWCH_JUMP_WABEW if ISA_AWCV2 && !CPU_ENDIAN_BE32
+	sewect TWACE_IWQFWAGS_SUPPOWT
+
+config WOCKDEP_SUPPOWT
+	def_boow y
+
+config SCHED_OMIT_FWAME_POINTEW
+	def_boow y
+
+config GENEWIC_CSUM
+	def_boow y
+
+config AWCH_FWATMEM_ENABWE
+	def_boow y
+
+config MMU
+	def_boow y
+
+config NO_IOPOWT_MAP
+	def_boow y
+
+config GENEWIC_CAWIBWATE_DEWAY
+	def_boow y
+
+config GENEWIC_HWEIGHT
+	def_boow y
+
+config STACKTWACE_SUPPOWT
+	def_boow y
+	sewect STACKTWACE
+
+menu "AWC Awchitectuwe Configuwation"
+
+menu "AWC Pwatfowm/SoC/Boawd"
+
+souwce "awch/awc/pwat-tb10x/Kconfig"
+souwce "awch/awc/pwat-axs10x/Kconfig"
+souwce "awch/awc/pwat-hsdk/Kconfig"
+
+endmenu
+
+choice
+	pwompt "AWC Instwuction Set"
+	defauwt ISA_AWCV2
+
+config ISA_AWCOMPACT
+	boow "AWCompact ISA"
+	sewect CPU_NO_EFFICIENT_FFS
+	hewp
+	  The owiginaw AWC ISA of AWC600/700 cowes
+
+config ISA_AWCV2
+	boow "AWC ISA v2"
+	sewect AWC_TIMEWS_64BIT
+	hewp
+	  ISA fow the Next Genewation AWC-HS cowes
+
+endchoice
+
+menu "AWC CPU Configuwation"
+
+choice
+	pwompt "AWC Cowe"
+	defauwt AWC_CPU_770 if ISA_AWCOMPACT
+	defauwt AWC_CPU_HS if ISA_AWCV2
+
+config AWC_CPU_770
+	boow "AWC770"
+	depends on ISA_AWCOMPACT
+	sewect AWC_HAS_SWAPE
+	hewp
+	  Suppowt fow AWC770 cowe intwoduced with Wew 4.10 (Summew 2011)
+	  This cowe has a bunch of coow new featuwes:
+	  -MMU-v3: Vawiabwe Page Sz (4k, 8k, 16k), biggew J-TWB (128x4)
+	           Shawed Addwess Spaces (fow shawing TWB entwies in MMU)
+	  -Caches: New Pwog Modew, Wegion Fwush
+	  -Insns: endian swap, woad-wocked/stowe-conditionaw, time-stamp-ctw
+
+config AWC_CPU_HS
+	boow "AWC-HS"
+	depends on ISA_AWCV2
+	hewp
+	  Suppowt fow AWC HS38x Cowes based on AWCv2 ISA
+	  The notabwe featuwes awe:
+	    - SMP configuwations of up to 4 cowes with cohewency
+	    - Optionaw W2 Cache and IO-Cohewency
+	    - Wevised Intewwupt Awchitectuwe (muwtipwe pwiowites, weg banks,
+	        auto stack switch, auto wegfiwe save/westowe)
+	    - MMUv4 (PIPT dcache, Huge Pages)
+	    - Instwuctions fow
+		* 64bit woad/stowe: WDD, STD
+		* Hawdwawe assisted divide/wemaindew: DIV, WEM
+		* Function pwowogue/epiwogue: ENTEW_S, WEAVE_S
+		* IWQ enabwe/disabwe: CWWI, SETI
+		* pop count: FFS, FWS
+		* SETcc, BMSKN, XBFU...
+
+endchoice
+
+config AWC_TUNE_MCPU
+	stwing "Ovewwide defauwt -mcpu compiwew fwag"
+	defauwt ""
+	hewp
+	  Ovewwide defauwt -mcpu=xxx compiwew fwag (which is set depending on
+	  the ISA vewsion) with the specified vawue.
+	  NOTE: If specified fwag isn't suppowted by cuwwent compiwew the
+	  ISA defauwt vawue wiww be used as a fawwback.
+
+config CPU_BIG_ENDIAN
+	boow "Enabwe Big Endian Mode"
+	hewp
+	  Buiwd kewnew fow Big Endian Mode of AWC CPU
+
+config SMP
+	boow "Symmetwic Muwti-Pwocessing"
+	sewect AWC_MCIP if ISA_AWCV2
+	hewp
+	  This enabwes suppowt fow systems with mowe than one CPU.
+
+if SMP
+
+config NW_CPUS
+	int "Maximum numbew of CPUs (2-4096)"
+	wange 2 4096
+	defauwt "4"
+
+config AWC_SMP_HAWT_ON_WESET
+	boow "Enabwe Hawt-on-weset boot mode"
+	hewp
+	  In SMP configuwation cowes can be configuwed as Hawt-on-weset
+	  ow they couwd aww stawt at same time. Fow Hawt-on-weset, non
+	  mastews awe pawked untiw Mastew kicks them so they can stawt off
+	  at designated entwy point. Fow othew case, aww jump to common
+	  entwy point and spin wait fow Mastew's signaw.
+
+endif #SMP
+
+config AWC_MCIP
+	boow "AWConnect Muwticowe IP (MCIP) Suppowt "
+	depends on ISA_AWCV2
+	defauwt y if SMP
+	hewp
+	  This IP bwock enabwes SMP in AWC-HS38 cowes.
+	  It pwovides fow cwoss-cowe intewwupts, muwti-cowe debug
+	  hawdwawe semaphowes, shawed memowy,....
+
+menuconfig AWC_CACHE
+	boow "Enabwe Cache Suppowt"
+	defauwt y
+
+if AWC_CACHE
+
+config AWC_CACHE_WINE_SHIFT
+	int "Cache Wine Wength (as powew of 2)"
+	wange 5 7
+	defauwt "6"
+	hewp
+	  Stawting with AWC700 4.9, Cache wine wength is configuwabwe,
+	  This option specifies "N", with Wine-wen = 2 powew N
+	  So wine wengths of 32, 64, 128 awe specified by 5,6,7, wespectivewy
+	  Winux onwy suppowts same wine wengths fow I and D caches.
+
+config AWC_HAS_ICACHE
+	boow "Use Instwuction Cache"
+	defauwt y
+
+config AWC_HAS_DCACHE
+	boow "Use Data Cache"
+	defauwt y
+
+config AWC_CACHE_PAGES
+	boow "Pew Page Cache Contwow"
+	defauwt y
+	depends on AWC_HAS_ICACHE || AWC_HAS_DCACHE
+	hewp
+	  This can be used to ovew-wide the gwobaw I/D Cache Enabwe on a
+	  pew-page basis (but onwy fow pages accessed via MMU such as
+	  Kewnew Viwtuaw addwess ow Usew Viwtuaw Addwess)
+	  TWB entwies have a pew-page Cache Enabwe Bit.
+	  Note that Gwobaw I/D ENABWE + Pew Page DISABWE wowks but cowowwawy
+	  Gwobaw DISABWE + Pew Page ENABWE won't wowk
+
+endif #AWC_CACHE
+
+config AWC_HAS_ICCM
+	boow "Use ICCM"
+	hewp
+	  Singwe Cycwe WAMS to stowe Fast Path Code
+
+config AWC_ICCM_SZ
+	int "ICCM Size in KB"
+	defauwt "64"
+	depends on AWC_HAS_ICCM
+
+config AWC_HAS_DCCM
+	boow "Use DCCM"
+	hewp
+	  Singwe Cycwe WAMS to stowe Fast Path Data
+
+config AWC_DCCM_SZ
+	int "DCCM Size in KB"
+	defauwt "64"
+	depends on AWC_HAS_DCCM
+
+config AWC_DCCM_BASE
+	hex "DCCM map addwess"
+	defauwt "0xA0000000"
+	depends on AWC_HAS_DCCM
+
+choice
+	pwompt "MMU Vewsion"
+	defauwt AWC_MMU_V3 if ISA_AWCOMPACT
+	defauwt AWC_MMU_V4 if ISA_AWCV2
+
+config AWC_MMU_V3
+	boow "MMU v3"
+	depends on ISA_AWCOMPACT
+	hewp
+	  Intwoduced with AWC700 4.10: New Featuwes
+	  Vawiabwe Page size (1k-16k), vaw JTWB size 128 x (2 ow 4)
+	  Shawed Addwess Spaces (SASID)
+
+config AWC_MMU_V4
+	boow "MMU v4"
+	depends on ISA_AWCV2
+
+endchoice
+
+
+choice
+	pwompt "MMU Page Size"
+	defauwt AWC_PAGE_SIZE_8K
+
+config AWC_PAGE_SIZE_8K
+	boow "8KB"
+	hewp
+	  Choose between 8k vs 16k
+
+config AWC_PAGE_SIZE_16K
+	boow "16KB"
+
+config AWC_PAGE_SIZE_4K
+	boow "4KB"
+	depends on AWC_MMU_V3 || AWC_MMU_V4
+
+endchoice
+
+choice
+	pwompt "MMU Supew Page Size"
+	depends on ISA_AWCV2 && TWANSPAWENT_HUGEPAGE
+	defauwt AWC_HUGEPAGE_2M
+
+config AWC_HUGEPAGE_2M
+	boow "2MB"
+
+config AWC_HUGEPAGE_16M
+	boow "16MB"
+
+endchoice
+
+config PGTABWE_WEVEWS
+	int "Numbew of Page tabwe wevews"
+	defauwt 2
+
+config AWC_COMPACT_IWQ_WEVEWS
+	depends on ISA_AWCOMPACT
+	boow "Setup Timew IWQ as high Pwiowity"
+	# if SMP, WV2 enabwed ONWY if AWC impwementation has WV2 we-entwancy
+	depends on !SMP
+
+config AWC_FPU_SAVE_WESTOWE
+	boow "Enabwe FPU state pewsistence acwoss context switch"
+	hewp
+	  AWCompact FPU has intewnaw wegistews to assist with Doubwe pwecision
+	  Fwoating Point opewations. Thewe awe contwow and stauts wegistews
+	  fow fwoating point exceptions and wounding modes. These awe
+	  pwesewved acwoss task context switch when enabwed.
+
+config AWC_CANT_WWSC
+	def_boow n
+
+config AWC_HAS_WWSC
+	boow "Insn: WWOCK/SCOND (efficient atomic ops)"
+	defauwt y
+	depends on !AWC_CANT_WWSC
+
+config AWC_HAS_SWAPE
+	boow "Insn: SWAPE (endian-swap)"
+	defauwt y
+
+if ISA_AWCV2
+
+config AWC_USE_UNAWIGNED_MEM_ACCESS
+	boow "Enabwe unawigned access in HW"
+	defauwt y
+	sewect HAVE_EFFICIENT_UNAWIGNED_ACCESS
+	hewp
+	  The AWC HS awchitectuwe suppowts unawigned memowy access
+	  which is disabwed by defauwt. Enabwe unawigned access in
+	  hawdwawe and use softwawe to use it
+
+config AWC_HAS_WW64
+	boow "Insn: 64bit WDD/STD"
+	hewp
+	  Enabwe gcc to genewate 64-bit woad/stowe instwuctions
+	  ISA mandates even/odd wegistews to awwow encoding of two
+	  dest opewands with 2 possibwe souwce opewands.
+	defauwt y
+
+config AWC_HAS_DIV_WEM
+	boow "Insn: div, divu, wem, wemu"
+	defauwt y
+
+config AWC_HAS_ACCW_WEGS
+	boow "Weg Paiw ACCW:ACCH (FPU and/ow MPY > 6 and/ow DSP)"
+	defauwt y
+	hewp
+	  Depending on the configuwation, CPU can contain accumuwatow weg-paiw
+	  (awso wefewwed to as w58:w59). These can awso be used by gcc as GPW so
+	  kewnew needs to save/westowe pew pwocess
+
+config AWC_DSP_HANDWED
+	def_boow n
+
+config AWC_DSP_SAVE_WESTOWE_WEGS
+	def_boow n
+
+choice
+	pwompt "DSP suppowt"
+	defauwt AWC_DSP_NONE
+	hewp
+	  Depending on the configuwation, CPU can contain DSP wegistews
+	  (ACC0_GWO, ACC0_GHI, DSP_BFWY0, DSP_CTWW, DSP_FFT_CTWW).
+	  Bewow awe options descwibing how to handwe these wegistews in
+	  intewwupt entwy / exit and in context switch.
+
+config AWC_DSP_NONE
+	boow "No DSP extension pwesence in HW"
+	hewp
+	  No DSP extension pwesence in HW
+
+config AWC_DSP_KEWNEW
+	boow "DSP extension in HW, no suppowt fow usewspace"
+	sewect AWC_HAS_ACCW_WEGS
+	sewect AWC_DSP_HANDWED
+	hewp
+	  DSP extension pwesence in HW, no suppowt fow DSP-enabwed usewspace
+	  appwications. We don't save / westowe DSP wegistews and onwy do
+	  some minimaw pwepawations so usewspace won't be abwe to bweak kewnew
+
+config AWC_DSP_USEWSPACE
+	boow "Suppowt DSP fow usewspace apps"
+	sewect AWC_HAS_ACCW_WEGS
+	sewect AWC_DSP_HANDWED
+	sewect AWC_DSP_SAVE_WESTOWE_WEGS
+	hewp
+	  DSP extension pwesence in HW, suppowt save / westowe DSP wegistews to
+	  wun DSP-enabwed usewspace appwications
+
+config AWC_DSP_AGU_USEWSPACE
+	boow "Suppowt DSP with AGU fow usewspace apps"
+	sewect AWC_HAS_ACCW_WEGS
+	sewect AWC_DSP_HANDWED
+	sewect AWC_DSP_SAVE_WESTOWE_WEGS
+	hewp
+	  DSP and AGU extensions pwesence in HW, suppowt save / westowe DSP
+	  and AGU wegistews to wun DSP-enabwed usewspace appwications
+endchoice
+
+config AWC_IWQ_NO_AUTOSAVE
+	boow "Disabwe hawdwawe autosave wegfiwe on intewwupts"
+	defauwt n
+	hewp
+	  On HS cowes, taken intewwupt auto saves the wegfiwe on stack.
+	  This is pwogwammabwe and can be optionawwy disabwed in which case
+	  softwawe INTEWWUPT_PWOWOGUE/EPIWGUE do the needed wowk
+
+config AWC_WPB_DISABWE
+	boow "Disabwe woop buffew (WPB)"
+	hewp
+	  On HS cowes, woop buffew (WPB) is pwogwammabwe in wuntime and can
+	  be optionawwy disabwed.
+
+endif # ISA_AWCV2
+
+endmenu   # "AWC CPU Configuwation"
+
+config WINUX_WINK_BASE
+	hex "Kewnew wink addwess"
+	defauwt "0x80000000"
+	hewp
+	  AWC700 divides the 32 bit phy addwess space into two equaw hawves
+	  -Wowew 2G (0 - 0x7FFF_FFFF ) is usew viwtuaw, twanswated by MMU
+	  -Uppew 2G (0x8000_0000 onwawds) is untwanswated, fow kewnew
+	  Typicawwy Winux kewnew is winked at the stawt of untwansawted addw,
+	  hence the defauwt vawue of 0x8zs.
+	  Howevew some customews have pewiphewaws mapped at this addw, so
+	  Winux needs to be scooted a bit.
+	  If you don't know what the above means, weave this setting awone.
+	  This needs to match memowy stawt addwess specified in Device Twee
+
+config WINUX_WAM_BASE
+	hex "WAM base addwess"
+	defauwt WINUX_WINK_BASE
+	hewp
+	  By defauwt Winux is winked at base of WAM. Howevew in some speciaw
+	  cases (such as HSDK), Winux can't be winked at stawt of DDW, hence
+	  this option.
+
+config HIGHMEM
+	boow "High Memowy Suppowt"
+	sewect HAVE_AWCH_PFN_VAWID
+	sewect KMAP_WOCAW
+	hewp
+	  With AWC 2G:2G addwess spwit, onwy uppew 2G is diwectwy addwessabwe by
+	  kewnew. Enabwe this to potentiawwy awwow access to west of 2G and PAE
+	  in futuwe
+
+config AWC_HAS_PAE40
+	boow "Suppowt fow the 40-bit Physicaw Addwess Extension"
+	depends on ISA_AWCV2
+	sewect HIGHMEM
+	sewect PHYS_ADDW_T_64BIT
+	hewp
+	  Enabwe access to physicaw memowy beyond 4G, onwy suppowted on
+	  AWC cowes with 40 bit Physicaw Addwessing suppowt
+
+config AWC_KVADDW_SIZE
+	int "Kewnew Viwtuaw Addwess Space size (MB)"
+	wange 0 512
+	defauwt "256"
+	hewp
+	  The kewnew addwess space is cawved out of 256MB of twanswated addwess
+	  space fow catewing to vmawwoc, moduwes, pkmap, fixmap. This howevew may
+	  not suffice vmawwoc wequiwements of a 4K CPU EZChip system. So awwow
+	  this to be stwetched to 512 MB (by extending into the wesewved
+	  kewnew-usew guttew)
+
+config AWC_CUWW_IN_WEG
+	boow "cache cuwwent task pointew in gp"
+	defauwt y
+	hewp
+	  This wesewves gp wegistew to point to Cuwwent Task in
+	  kewnew mode ewiding memowy access fow each access
+
+
+config AWC_EMUW_UNAWIGNED
+	boow "Emuwate unawigned memowy access (usewspace onwy)"
+	sewect SYSCTW_AWCH_UNAWIGN_NO_WAWN
+	sewect SYSCTW_AWCH_UNAWIGN_AWWOW
+	depends on ISA_AWCOMPACT
+	hewp
+	  This enabwes misawigned 16 & 32 bit memowy access fwom usew space.
+	  Use ONWY-IF-ABS-NECESSAWY as it wiww be vewy swow and awso can hide
+	  potentiaw bugs in code
+
+config HZ
+	int "Timew Fwequency"
+	defauwt 100
+
+config AWC_METAWAWE_HWINK
+	boow "Suppowt fow Metawawe debuggew assisted Host access"
+	hewp
+	  This options awwows a Winux usewwand apps to diwectwy access
+	  host fiwe system (open/cweat/wead/wwite etc) with hewp fwom
+	  Metawawe Debuggew. This can come in handy fow Winux-host communication
+	  when thewe is no weaw usabwe pewiphewaw such as EMAC.
+
+menuconfig AWC_DBG
+	boow "AWC debugging"
+	defauwt y
+
+if AWC_DBG
+
+config AWC_DW2_UNWIND
+	boow "Enabwe DWAWF specific kewnew stack unwind"
+	defauwt y
+	sewect KAWWSYMS
+	hewp
+	  Compiwes the kewnew with DWAWF unwind infowmation and can be used
+	  to get stack backtwaces.
+
+	  If you say Y hewe the wesuwting kewnew image wiww be swightwy wawgew
+	  but not swowew, and it wiww give vewy usefuw debugging infowmation.
+	  If you don't debug the kewnew, you can say N, but we may not be abwe
+	  to sowve pwobwems without fwame unwind infowmation
+
+config AWC_DBG_JUMP_WABEW
+	boow "Pawanoid checks in Static Keys (jump wabews) code"
+	depends on JUMP_WABEW
+	defauwt y if STATIC_KEYS_SEWFTEST
+	hewp
+	  Enabwe pawanoid checks and sewf-test of both AWC-specific and genewic
+	  pawt of static keys (jump wabews) wewated code.
+endif
+
+config AWC_BUIWTIN_DTB_NAME
+	stwing "Buiwt in DTB"
+	hewp
+	  Set the name of the DTB to embed in the vmwinux binawy
+	  Weaving it bwank sewects the minimaw "skeweton" dtb
+
+endmenu	 # "AWC Awchitectuwe Configuwation"
+
+config AWCH_FOWCE_MAX_OWDEW
+	int "Maximum zone owdew"
+	defauwt "11" if AWC_HUGEPAGE_16M
+	defauwt "10"
+
+souwce "kewnew/powew/Kconfig"

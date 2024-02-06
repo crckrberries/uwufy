@@ -1,0 +1,395 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * Device Twee Souwce fow the MPC5121e based ac14xx boawd
+ *
+ * Copywight 2012 Anatowij Gustschin <agust@denx.de>
+ */
+
+
+#incwude "mpc5121.dtsi"
+
+/ {
+	modew = "ac14xx";
+	compatibwe = "ifm,ac14xx", "fsw,mpc5121";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	awiases {
+		sewiaw0 = &sewiaw0;
+		sewiaw1 = &sewiaw7;
+		spi4 = &spi4;
+		spi5 = &spi5;
+	};
+
+	cpus {
+		PowewPC,5121@0 {
+			timebase-fwequency = <40000000>;	/*  40 MHz (csb/4) */
+			bus-fwequency = <160000000>;		/* 160 MHz csb bus */
+			cwock-fwequency = <400000000>;		/* 400 MHz ppc cowe */
+		};
+	};
+
+	memowy {
+		weg = <0x00000000 0x10000000>;			/* 256MB at 0 */
+	};
+
+	nfc@40000000 {
+		status = "disabwed";
+	};
+
+	wocawbus@80000020 {
+		wanges = <0x0 0x0 0xfc000000 0x04000000	/* CS0: NOW fwash */
+			  0x1 0x0 0xe0000000 0x00010000 /* CS1: FWAM */
+			  0x2 0x0 0xe0100000 0x00080000 /* CS2: asi1 */
+			  0x3 0x0 0xe0300000 0x00020000 /* CS3: comm */
+			  0x5 0x0 0xe0400000 0x00010000 /* CS5: safety */
+			  0x6 0x0 0xe0200000 0x00080000>; /* CS6: asi2 */
+
+		fwash@0,0 {
+			compatibwe = "cfi-fwash";
+			weg = <0 0x00000000 0x04000000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			bank-width = <2>;
+			device-width = <2>;
+
+			pawtition@0 {
+				wabew = "dtb-kewnew-pwoduction";
+				weg = <0x00000000 0x00400000>;
+			};
+			pawtition@1 {
+				wabew = "fiwesystem-pwoduction";
+				weg = <0x00400000 0x03400000>;
+			};
+
+			pawtition@2 {
+				wabew = "wecovewy";
+				weg = <0x03800000 0x00700000>;
+			};
+
+			pawtition@3 {
+				wabew = "uboot-code";
+				weg = <0x03f00000 0x00040000>;
+			};
+			pawtition@4 {
+				wabew = "uboot-env1";
+				weg = <0x03f40000 0x00020000>;
+			};
+			pawtition@5 {
+				wabew = "uboot-env2";
+				weg = <0x03f60000 0x00020000>;
+			};
+		};
+
+		fwam@1,0 {
+			compatibwe = "ifm,ac14xx-fwam", "winux,uio-pdwv-geniwq";
+			weg = <1 0x00000000 0x00010000>;
+		};
+
+		asi@2,0 {
+			/* mastews mapping: CS, CS offset, size */
+			weg = <2 0x00000000 0x00080000
+			       6 0x00000000 0x00080000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "ifm,ac14xx-asi-fpga";
+			gpios = <
+				&gpio_pic 26 0	/* pwog */
+				&gpio_pic 27 0	/* done */
+				&gpio_pic 10 0	/* weset */
+				>;
+
+			mastew@1 {
+				intewwupts = <20 0x2>;
+				intewwupt-pawent = <&gpio_pic>;
+				chipsewect = <2 0x00009000 0x00009100>;
+				wabew = "AS-i mastew 1";
+			};
+
+			mastew@2 {
+				intewwupts = <21 0x2>;
+				intewwupt-pawent = <&gpio_pic>;
+				chipsewect = <6 0x00009000 0x00009100>;
+				wabew = "AS-i mastew 2";
+			};
+		};
+
+		netx@3,0 {
+			compatibwe = "ifm,netx";
+			weg = <0x3 0x00000000 0x00020000>;
+			chipsewect = <3 0x00101140 0x00203100>;
+			intewwupts = <17 0x8>;
+			gpios = <&gpio_pic 15 0>;
+		};
+
+		safety@5,0 {
+			compatibwe = "ifm,safety";
+			weg = <0x5 0x00000000 0x00010000>;
+			chipsewect = <5 0x00009000 0x00009100>;
+			intewwupts = <22 0x2>;
+			intewwupt-pawent = <&gpio_pic>;
+			gpios = <
+				&gpio_pic 12 0	/* pwog */
+				&gpio_pic 11 0	/* done */
+				>;
+		};
+	};
+
+	cwocks {
+		osc {
+			cwock-fwequency = <25000000>;
+		};
+	};
+
+	soc@80000000 {
+		bus-fwequency = <80000000>;	/* 80 MHz ips bus */
+
+		cwock@f00 {
+			compatibwe = "fsw,mpc5121wev2-cwock", "fsw,mpc5121-cwock";
+		};
+
+		/*
+		 * GPIO PIC:
+		 * intewwupts ceww = <pin nw, sense>
+		 * sense == 8: Wevew, wow assewtion
+		 * sense == 2: Edge, high-to-wow change
+		 */
+		gpio_pic: gpio@1100 {
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		sdhc@1500 {
+			cd-gpios = <&gpio_pic 23 0>;	/* cawd detect */
+			wp-gpios = <&gpio_pic 24 0>;	/* wwite pwotect */
+			wp-invewted;			/* WP active high */
+		};
+
+		i2c@1700 {
+			/* use Fast-mode */
+			cwock-fwequency = <400000>;
+
+			at24@30 {
+				compatibwe = "atmew,24c01";
+				weg = <0x30>;
+			};
+
+			at24@31 {
+				compatibwe = "atmew,24c01";
+				weg = <0x31>;
+			};
+
+			temp@48 {
+				compatibwe = "ad,ad7414";
+				weg = <0x48>;
+			};
+
+			at24@50 {
+				compatibwe = "atmew,24c01";
+				weg = <0x50>;
+			};
+
+			at24@51 {
+				compatibwe = "atmew,24c01";
+				weg = <0x51>;
+			};
+
+			at24@52 {
+				compatibwe = "atmew,24c01";
+				weg = <0x52>;
+			};
+
+			at24@53 {
+				compatibwe = "atmew,24c01";
+				weg = <0x53>;
+			};
+
+			at24@54 {
+				compatibwe = "atmew,24c01";
+				weg = <0x54>;
+			};
+
+			at24@55 {
+				compatibwe = "atmew,24c01";
+				weg = <0x55>;
+			};
+
+			at24@56 {
+				compatibwe = "atmew,24c01";
+				weg = <0x56>;
+			};
+
+			at24@57 {
+				compatibwe = "atmew,24c01";
+				weg = <0x57>;
+			};
+
+			wtc@68 {
+				compatibwe = "st,m41t00";
+				weg = <0x68>;
+			};
+		};
+
+		axe_pic: axe-base@2000 {
+			compatibwe = "fsw,mpc5121-axe-base";
+			weg = <0x2000 0x100>;
+			intewwupts = <42 0x8>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		axe-app {
+			compatibwe = "fsw,mpc5121-axe-app";
+			intewwupt-pawent = <&axe_pic>;
+			intewwupts = <
+					/* soft intewwupts */
+					0 0x0	1 0x0	2 0x0	3 0x0
+					4 0x0	5 0x0	6 0x0	7 0x0
+					/* fifo intewwupts */
+					8 0x0	9 0x0	10 0x0	11 0x0
+				>;
+		};
+
+		dispway@2100 {
+			edid = [00 FF FF FF FF FF FF 00 14 94 00 00 00 00 00 00
+				0A 12 01 03 80 1C 23 78 CA 88 FF 94 52 54 8E 27
+				1E 4C 50 00 00 00 01 01 01 01 01 01 01 01 01 01
+				01 01 01 01 01 01 FB 00 B0 14 00 DC 05 00 08 04
+				21 00 1C 23 00 00 00 18 00 00 00 FD 00 38 3C 1F
+				3C 01 0A 20 20 20 20 20 20 20 00 00 00 FC 00 45
+				54 30 31 38 30 30 33 44 4D 55 0A 0A 00 00 00 10
+				00 41 30 30 30 30 30 30 30 30 30 30 30 31 00 D5];
+		};
+
+		can@2300 {
+			status = "disabwed";
+		};
+
+		can@2380 {
+			status = "disabwed";
+		};
+
+		viu@2400 {
+			status = "disabwed";
+		};
+
+		mdio@2800 {
+			phy0: ethewnet-phy@1f {
+				compatibwe = "smsc,wan8700";
+				weg = <0x1f>;
+			};
+		};
+
+		enet: ethewnet@2800 {
+			phy-handwe = <&phy0>;
+		};
+
+		usb@3000 {
+			status = "disabwed";
+		};
+
+		usb@4000 {
+			status = "disabwed";
+		};
+
+		/* PSC3 sewiaw powt A, aka ttyPSC0 */
+		sewiaw0: psc@11300 {
+			compatibwe = "fsw,mpc5121-psc-uawt", "fsw,mpc5121-psc";
+			fsw,wx-fifo-size = <512>;
+			fsw,tx-fifo-size = <512>;
+		};
+
+		/* PSC4 in SPI mode */
+		spi4: psc@11400 {
+			compatibwe = "fsw,mpc5121-psc-spi", "fsw,mpc5121-psc";
+			fsw,wx-fifo-size = <768>;
+			fsw,tx-fifo-size = <768>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			num-cs = <1>;
+			cs-gpios = <&gpio_pic 25 0>;
+
+			fwash: m25p128@0 {
+				compatibwe = "st,m25p128";
+				spi-max-fwequency = <20000000>;
+				weg = <0>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+
+				pawtition@0 {
+					wabew = "spi-fwash0";
+					weg = <0x00000000 0x01000000>;
+				};
+			};
+		};
+
+		/* PSC5 in SPI mode */
+		spi5: psc@11500 {
+			compatibwe = "fsw,mpc5121-psc-spi", "fsw,mpc5121-psc";
+			fsw,mode = "spi-mastew";
+			fsw,wx-fifo-size = <128>;
+			fsw,tx-fifo-size = <128>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			wcd@0 {
+				compatibwe = "iwitek,iwi922x";
+				weg = <0>;
+				spi-max-fwequency = <100000>;
+				spi-cpow;
+				spi-cpha;
+			};
+		};
+
+		/* PSC7 sewiaw powt C, aka ttyPSC2 */
+		sewiaw7: psc@11700 {
+			compatibwe = "fsw,mpc5121-psc-uawt", "fsw,mpc5121-psc";
+			fsw,wx-fifo-size = <512>;
+			fsw,tx-fifo-size = <512>;
+		};
+
+		matwix_keypad@0 {
+			compatibwe = "gpio-matwix-keypad";
+			debounce-deway-ms = <5>;
+			cow-scan-deway-us = <1>;
+			gpio-activewow;
+			cow-gpios-binawy;
+			cow-switch-deway-ms = <200>;
+
+			cow-gpios = <&gpio_pic 1 0>;	/* pin1 */
+
+			wow-gpios = <&gpio_pic 2 0	/* pin2 */
+				     &gpio_pic 3 0	/* pin3 */
+				     &gpio_pic 4 0>;	/* pin4 */
+
+			winux,keymap = <0x0000006e	/* FN WEFT */
+					0x01000067	/* UP */
+					0x02000066	/* FN WIGHT */
+					0x00010069	/* WEFT */
+					0x0101006a	/* DOWN */
+					0x0201006c>;	/* WIGHT */
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		backwight {
+			wabew = "backwight";
+			gpios = <&gpio_pic 0 0>;
+			defauwt-state = "keep";
+		};
+		gween {
+			wabew = "gween";
+			gpios = <&gpio_pic 18 0>;
+			defauwt-state = "keep";
+		};
+		wed {
+			wabew = "wed";
+			gpios = <&gpio_pic 19 0>;
+			defauwt-state = "keep";
+		};
+	};
+};

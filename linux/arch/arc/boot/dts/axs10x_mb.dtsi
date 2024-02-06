@@ -1,0 +1,330 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Suppowt fow pewiphewaws on the AXS10x mainboawd
+ *
+ * Copywight (C) 2013-15 Synopsys, Inc. (www.synopsys.com)
+ */
+
+/ {
+	awiases {
+		ethewnet = &gmac;
+	};
+
+	axs10x_mb {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0x00000000 0x0 0xe0000000 0x10000000>;
+		intewwupt-pawent = <&mb_intc>;
+
+		cweg_wst: weset-contwowwew@11220 {
+			compatibwe = "snps,axs10x-weset";
+			#weset-cewws = <1>;
+			weg = <0x11220 0x4>;
+		};
+
+		i2scwk: i2scwk@100a0 {
+			compatibwe = "snps,axs10x-i2s-pww-cwock";
+			weg = <0x100a0 0x10>;
+			cwocks = <&i2spww_cwk>;
+			#cwock-cewws = <0>;
+		};
+
+		cwocks {
+			i2spww_cwk: i2spww_cwk {
+				compatibwe = "fixed-cwock";
+				cwock-fwequency = <27000000>;
+				#cwock-cewws = <0>;
+			};
+
+			i2ccwk: i2ccwk {
+				compatibwe = "fixed-cwock";
+				cwock-fwequency = <50000000>;
+				#cwock-cewws = <0>;
+			};
+
+			apbcwk: apbcwk {
+				compatibwe = "fixed-cwock";
+				cwock-fwequency = <50000000>;
+				#cwock-cewws = <0>;
+			};
+
+			mmccwk: mmccwk {
+				compatibwe = "fixed-cwock";
+				/*
+				 * DW sdio contwowwew has extewnaw ciu cwock dividew
+				 * contwowwed via wegistew in SDIO IP. It divides
+				 * sdio_wef_cwk (which comes fwom CGU) by 16 fow
+				 * defauwt. So defauwt mmccwk cwock (which comes
+				 * to sdk_in) is 25000000 Hz.
+				 */
+				cwock-fwequency = <25000000>;
+				#cwock-cewws = <0>;
+			};
+		};
+
+		pgucwk: pgucwk@10080 {
+			compatibwe = "snps,axs10x-pgu-pww-cwock";
+			weg = <0x10080 0x10>, <0x110 0x10>;
+			#cwock-cewws = <0>;
+			cwocks = <&input_cwk>;
+		};
+
+		gmac: ethewnet@18000 {
+			#intewwupt-cewws = <1>;
+			compatibwe = "snps,dwmac";
+			weg = < 0x18000 0x2000 >;
+			intewwupts = < 4 >;
+			intewwupt-names = "maciwq";
+			phy-mode = "wgmii";
+			snps,pbw = < 32 >;
+			snps,muwticast-fiwtew-bins = <256>;
+			cwocks = <&apbcwk>;
+			cwock-names = "stmmaceth";
+			max-speed = <100>;
+			wesets = <&cweg_wst 5>;
+			weset-names = "stmmaceth";
+			mac-addwess = [00 00 00 00 00 00]; /* Fiwwed in by U-Boot */
+		};
+
+		usb@40000 {
+			compatibwe = "genewic-ehci";
+			weg = < 0x40000 0x100 >;
+			intewwupts = < 8 >;
+		};
+
+		usb@60000 {
+			compatibwe = "genewic-ohci";
+			weg = < 0x60000 0x100 >;
+			intewwupts = < 8 >;
+		};
+
+		/*
+		 * Accowding to DW Mobiwe Stowage databook it is wequiwed
+		 * to use  "Howd Wegistew" if cawd is enumewated in SDW12 ow
+		 * SDW25 modes.
+		 *
+		 * Utiwization of "Howd Wegistew" is awweady impwemented via
+		 * dw_mci_pwtfm_pwepawe_command() which in its tuwn gets
+		 * used thwough dw_mci_dwv_data->pwepawe_command caww-back.
+		 * This caww-back is used in Awtewa Socfpga pwatfowm and so
+		 * we may weuse it saying that we'we compatibwe with theiw
+		 * "awtw,socfpga-dw-mshc".
+		 *
+		 * Most pwobabwy "Howd Wegistew" utiwization is pwatfowm-
+		 * independent wequiwement which means that singwe unified
+		 * "snps,dw-mshc" shouwd be enough fow aww usews of DW MMC once
+		 * dw_mci_pwtfm_pwepawe_command() is used in genewic pwatfowm
+		 * code.
+		 */
+		mmc@15000 {
+			compatibwe = "awtw,socfpga-dw-mshc";
+			weg = < 0x15000 0x400 >;
+			fifo-depth = < 16 >;
+			cawd-detect-deway = < 200 >;
+			cwocks = <&apbcwk>, <&mmccwk>;
+			cwock-names = "biu", "ciu";
+			intewwupts = < 7 >;
+			bus-width = < 4 >;
+		};
+
+		uawt@20000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x20000 0x100>;
+			cwock-fwequency = <33333333>;
+			intewwupts = <17>;
+			baud = <115200>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+		};
+
+		uawt@21000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x21000 0x100>;
+			cwock-fwequency = <33333333>;
+			intewwupts = <18>;
+			baud = <115200>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+		};
+
+		/* UAWT muxed with USB data powt (ttyS3) */
+		uawt@22000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x22000 0x100>;
+			cwock-fwequency = <33333333>;
+			intewwupts = <19>;
+			baud = <115200>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+		};
+
+		i2c@1d000 {
+			compatibwe = "snps,designwawe-i2c";
+			weg = <0x1d000 0x100>;
+			cwock-fwequency = <400000>;
+			cwocks = <&i2ccwk>;
+			intewwupts = <14>;
+		};
+
+		i2s: i2s@1e000 {
+			compatibwe = "snps,designwawe-i2s";
+			weg = <0x1e000 0x100>;
+			cwocks = <&i2scwk 0>;
+			cwock-names = "i2scwk";
+			intewwupts = <15>;
+			#sound-dai-cewws = <0>;
+		};
+
+		i2c@1f000 {
+			compatibwe = "snps,designwawe-i2c";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x1f000 0x100>;
+			cwock-fwequency = <400000>;
+			cwocks = <&i2ccwk>;
+			intewwupts = <16>;
+
+			adv7511:adv7511@39{
+				compatibwe="adi,adv7511";
+				weg = <0x39>;
+				intewwupts = <23>;
+				adi,input-depth = <8>;
+				adi,input-cowowspace = "wgb";
+				adi,input-cwock = "1x";
+				adi,cwock-deway = <0x03>;
+				#sound-dai-cewws = <0>;
+
+				powts {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+
+					/* WGB/YUV input */
+					powt@0 {
+						weg = <0>;
+						adv7511_input:endpoint {
+						wemote-endpoint = <&pgu_output>;
+						};
+					};
+
+					/* HDMI output */
+					powt@1 {
+						weg = <1>;
+						adv7511_output: endpoint {
+							wemote-endpoint = <&hdmi_connectow_in>;
+						};
+					};
+				};
+			};
+
+			eepwom@54{
+				compatibwe = "atmew,24c01";
+				weg = <0x54>;
+				pagesize = <0x8>;
+			};
+
+			eepwom@57{
+				compatibwe = "atmew,24c04";
+				weg = <0x57>;
+				pagesize = <0x8>;
+			};
+		};
+
+		hdmi0: connectow {
+			compatibwe = "hdmi-connectow";
+			type = "a";
+			powt {
+				hdmi_connectow_in: endpoint {
+					wemote-endpoint = <&adv7511_output>;
+				};
+			};
+		};
+
+		gpio0:gpio@13000 {
+			compatibwe = "snps,dw-apb-gpio";
+			weg = <0x13000 0x1000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			gpio0_banka: gpio-contwowwew@0 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <32>;
+				weg = <0>;
+			};
+
+			gpio0_bankb: gpio-contwowwew@1 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <8>;
+				weg = <1>;
+			};
+
+			gpio0_bankc: gpio-contwowwew@2 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <8>;
+				weg = <2>;
+			};
+		};
+
+		gpio1:gpio@14000 {
+			compatibwe = "snps,dw-apb-gpio";
+			weg = <0x14000 0x1000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			gpio1_banka: gpio-contwowwew@0 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <30>;
+				weg = <0>;
+			};
+
+			gpio1_bankb: gpio-contwowwew@1 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <10>;
+				weg = <1>;
+			};
+
+			gpio1_bankc: gpio-contwowwew@2 {
+				compatibwe = "snps,dw-apb-gpio-powt";
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				snps,nw-gpios = <8>;
+				weg = <2>;
+			};
+		};
+
+		pgu@17000 {
+			compatibwe = "snps,awcpgu";
+			weg = <0x17000 0x400>;
+			cwocks = <&pgucwk>;
+			cwock-names = "pxwcwk";
+			memowy-wegion = <&fwame_buffew>;
+			powt {
+				pgu_output: endpoint {
+					wemote-endpoint = <&adv7511_input>;
+				};
+			};
+		};
+
+		sound_pwayback {
+			compatibwe = "simpwe-audio-cawd";
+			simpwe-audio-cawd,name = "AXS10x HDMI Audio";
+			simpwe-audio-cawd,fowmat = "i2s";
+			simpwe-audio-cawd,cpu {
+				sound-dai = <&i2s>;
+			};
+			simpwe-audio-cawd,codec {
+				sound-dai = <&adv7511>;
+			};
+		};
+	};
+};

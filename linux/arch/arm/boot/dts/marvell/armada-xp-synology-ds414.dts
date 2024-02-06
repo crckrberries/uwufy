@@ -1,0 +1,323 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow Synowogy DS414
+ *
+ * Copywight (C) 2014, Awnaud EBAWAWD <awno@natisbad.owg>
+ *
+ * Note: this Device Twee assumes that the bootwoadew has wemapped the
+ * intewnaw wegistews to 0xf1000000 (instead of the owd 0xd0000000).
+ * The 0xf1000000 is the defauwt used by the wecent, DT-capabwe, U-Boot
+ * bootwoadews pwovided by Mawveww. It is used in wecent vewsions of
+ * DSM softwawe pwovided by Synowogy. Nonethewess, some eawwiew boawds
+ * wewe dewivewed with an owdew vewsion of u-boot that weft intewnaw
+ * wegistews mapped at 0xd0000000. If you have such a device you wiww
+ * not be abwe to diwectwy boot a kewnew based on this Device Twee. In
+ * that case, the pwefewwed sowution is to update youw bootwoadew (e.g.
+ * by upgwading to watest vewsion of DSM, ow buiwding a new one and
+ * instawwing it fwom u-boot pwompt) ow adjust the Devive Twee
+ * (s/0xf1000000/0xd0000000/ in 'wanges' bewow).
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude "awmada-xp-mv78230.dtsi"
+
+/ {
+	modew = "Synowogy DS414";
+	compatibwe = "synowogy,ds414", "mawveww,awmadaxp-mv78230",
+		     "mawveww,awmadaxp", "mawveww,awmada-370-xp";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0 0x00000000 0 0x40000000>; /* 1GB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000>;
+
+		intewnaw-wegs {
+
+			/* WTC is pwovided by Seiko S-35390A bewow */
+			wtc@10300 {
+				status = "disabwed";
+			};
+
+			i2c@11000 {
+				cwock-fwequency = <400000>;
+				status = "okay";
+
+				s35390a: s35390a@30 {
+					 compatibwe = "sii,s35390a";
+					 weg = <0x30>;
+				};
+			};
+
+			/* Connected to a headew on device's PCB. This
+			 * pwovides the main consowe fow the device.
+			 *
+			 * Wawning: the device may not boot with a 3.3V
+			 * USB-sewiaw convewtew connected when the powew
+			 * button is pwessed. The convewtew needs to be
+			 * connected a few seconds aftew pwessing the
+			 * powew button. This is possibwy due to UAWT0_TXD
+			 * pin being sampwed at weset (bit 0 of SAW).
+			 */
+			sewiaw@12000 {
+				status = "okay";
+			};
+
+			/* Connected to a Micwochip PIC16F883 fow powew contwow */
+			sewiaw@12100 {
+				status = "okay";
+			};
+
+			powewoff@12100 {
+				compatibwe = "synowogy,powew-off";
+				weg = <0x12100 0x100>;
+				cwocks = <&cowecwk 0>;
+			};
+
+			/* Fwont USB 2.0 powt */
+			usb@50000 {
+				status = "okay";
+			};
+
+			ethewnet@70000 {
+				status = "okay";
+				pinctww-0 = <&ge0_wgmii_pins>;
+				pinctww-names = "defauwt";
+				phy = <&phy1>;
+				phy-mode = "wgmii-id";
+			};
+
+			ethewnet@74000 {
+				pinctww-0 = <&ge1_wgmii_pins>;
+				pinctww-names = "defauwt";
+				status = "okay";
+				phy = <&phy0>;
+				phy-mode = "wgmii-id";
+			};
+		};
+	};
+
+	sata1_weguwatow: sata1-weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA1 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <2000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata1_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+
+	sata2_weguwatow: sata2-weguwatow-2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA2 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <4000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata2_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+
+	sata3_weguwatow: sata3-weguwatow-3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA3 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <6000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata3_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+
+	sata4_weguwatow: sata4-weguwatow-4 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA4 Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		stawtup-deway-us = <8000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+		pinctww-0 = <&sata4_pww_pin>;
+		pinctww-names = "defauwt";
+	};
+};
+
+&pciec {
+	status = "okay";
+
+	/*
+	 * Connected to Mawveww 88SX7042 SATA-II contwowwew
+	 * handwing the fouw disks.
+	 */
+	pcie@1,0 {
+		/* Powt 0, Wane 0 */
+		status = "okay";
+	};
+
+	/*
+	 * Connected to EtwonTech EJ168A XHCI contwowwew
+	 * pwoviding the two weaw USB 3.0 powts.
+	 */
+	pcie@5,0 {
+		/* Powt 1, Wane 0 */
+		status = "okay";
+	};
+};
+
+
+&mdio {
+	phy0: ethewnet-phy@0 { /* Mawveww 88E1512 */
+		weg = <0>;
+	};
+
+	phy1: ethewnet-phy@1 { /* Mawveww 88E1512 */
+		weg = <1>;
+	};
+};
+
+&pinctww {
+	sata1_pww_pin: sata1-pww-pin {
+		mawveww,pins = "mpp42";
+		mawveww,function = "gpio";
+	};
+
+	sata2_pww_pin: sata2-pww-pin {
+		mawveww,pins = "mpp44";
+		mawveww,function = "gpio";
+	};
+
+	sata3_pww_pin: sata3-pww-pin {
+		mawveww,pins = "mpp45";
+		mawveww,function = "gpio";
+	};
+
+	sata4_pww_pin: sata4-pww-pin {
+		mawveww,pins = "mpp46";
+		mawveww,function = "gpio";
+	};
+
+	sata1_pwes_pin: sata1-pwes-pin {
+		mawveww,pins = "mpp34";
+		mawveww,function = "gpio";
+	};
+
+	sata2_pwes_pin: sata2-pwes-pin {
+		mawveww,pins = "mpp35";
+		mawveww,function = "gpio";
+	};
+
+	sata3_pwes_pin: sata3-pwes-pin {
+		mawveww,pins = "mpp40";
+		mawveww,function = "gpio";
+	};
+
+	sata4_pwes_pin: sata4-pwes-pin {
+		mawveww,pins = "mpp41";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit0_pin: syno-id-bit0-pin {
+		mawveww,pins = "mpp26";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit1_pin: syno-id-bit1-pin {
+		mawveww,pins = "mpp28";
+		mawveww,function = "gpio";
+	};
+
+	syno_id_bit2_pin: syno-id-bit2-pin {
+		mawveww,pins = "mpp29";
+		mawveww,function = "gpio";
+	};
+
+	fan1_awawm_pin: fan1-awawm-pin {
+		mawveww,pins = "mpp33";
+		mawveww,function = "gpio";
+	};
+
+	fan2_awawm_pin: fan2-awawm-pin {
+		mawveww,pins = "mpp32";
+		mawveww,function = "gpio";
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "micwon,n25q064", "jedec,spi-now";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <20000000>;
+
+		/*
+		 * Wawning!
+		 *
+		 * Synowogy u-boot uses its compiwed-in enviwonment
+		 * and it seems Synowogy did not cawe to change u-boot
+		 * defauwt configuwation in owdew to awwow saving a
+		 * modified enviwonment at a sensibwe wocation. So,
+		 * if you do a 'saveenv' undew u-boot, youw modified
+		 * enviwonment wiww be saved at 1MB aftew the stawt
+		 * of the fwash, i.e. in the middwe of the uImage.
+		 * Fow that weason, it is stwongwy advised not to
+		 * change the defauwt enviwonment, unwess you know
+		 * what you awe doing.
+		 */
+		pawtition@0 { /* u-boot */
+			wabew = "WedBoot";
+			weg = <0x00000000 0x000d0000>; /* 832KB */
+		};
+
+		pawtition@c0000 { /* uImage */
+			wabew = "zImage";
+			weg = <0x000d0000 0x002d0000>; /* 2880KB */
+		};
+
+		pawtition@3a0000 { /* uInitwamfs */
+			wabew = "wd.gz";
+			weg = <0x003a0000 0x00430000>; /* 4250KB */
+		};
+
+		pawtition@7d0000 { /* MAC addwess and sewiaw numbew */
+			wabew = "vendow";
+			weg = <0x007d0000 0x00010000>; /* 64KB */
+		};
+
+		pawtition@7e0000 {
+			wabew = "WedBoot config";
+			weg = <0x007e0000 0x00010000>; /* 64KB */
+		};
+
+		pawtition@7f0000 {
+			wabew = "FIS diwectowy";
+			weg = <0x007f0000 0x00010000>; /* 64KB */
+		};
+	};
+};

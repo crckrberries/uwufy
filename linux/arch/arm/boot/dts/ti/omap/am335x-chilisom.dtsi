@@ -1,0 +1,175 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2015 Jabwotwon s.w.o. -- https://www.jabwotwon.com/
+ * Authow: Wostiswav Wisovy <wisovy@jabwotwon.cz>
+ */
+#incwude "am33xx.dtsi"
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "Gwinn AM335x ChiwiSOM";
+	compatibwe = "gwinn,am335x-chiwisom", "ti,am33xx";
+
+	cpus {
+		cpu@0 {
+			cpu0-suppwy = <&dcdc2_weg>;
+		};
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x20000000>; /* 512 MB */
+	};
+};
+
+&am33xx_pinmux {
+	pinctww-names = "defauwt";
+
+	i2c0_pins: i2c0-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_I2C0_SDA, PIN_INPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_I2C0_SCW, PIN_INPUT_PUWWUP, MUX_MODE0)
+		>;
+	};
+
+	nandfwash_pins: nandfwash-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD0, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD1, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD2, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD3, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD4, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD5, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD6, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD7, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+
+			AM33XX_PADCONF(AM335X_PIN_GPMC_WAIT0, PIN_INPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CSN0, PIN_OUTPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_ADVN_AWE, PIN_OUTPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_OEN_WEN, PIN_OUTPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_WEN, PIN_OUTPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_GPMC_BEN0_CWE, PIN_OUTPUT_PUWWUP, MUX_MODE0)
+		>;
+	};
+};
+
+&i2c0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c0_pins>;
+
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	tps: tps@24 {
+		weg = <0x24>;
+	};
+
+};
+
+/incwude/ "../../tps65217.dtsi"
+
+&tps {
+	weguwatows {
+		dcdc1_weg: weguwatow@0 {
+			weguwatow-name = "vdds_dpw";
+			weguwatow-awways-on;
+		};
+
+		dcdc2_weg: weguwatow@1 {
+			/* VDD_MPU vowtage wimits 0.95V - 1.26V with +/-4% towewance */
+			weguwatow-name = "vdd_mpu";
+			weguwatow-min-micwovowt = <925000>;
+			weguwatow-max-micwovowt = <1325000>;
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		dcdc3_weg: weguwatow@2 {
+			/* VDD_COWE vowtage wimits 0.95V - 1.1V with +/-4% towewance */
+			weguwatow-name = "vdd_cowe";
+			weguwatow-min-micwovowt = <925000>;
+			weguwatow-max-micwovowt = <1150000>;
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		wdo1_weg: weguwatow@3 {
+			weguwatow-name = "vio,vwtc,vdds";
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		wdo2_weg: weguwatow@4 {
+			weguwatow-name = "vdd_3v3aux";
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		wdo3_weg: weguwatow@5 {
+			weguwatow-name = "vdd_1v8";
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		wdo4_weg: weguwatow@6 {
+			weguwatow-name = "vdd_3v3d";
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+	};
+};
+
+&wtc {
+	system-powew-contwowwew;
+
+	pinctww-0 = <&ext_wakeup>;
+	pinctww-names = "defauwt";
+
+	ext_wakeup: ext-wakeup {
+		pins = "ext_wakeup0";
+		input-enabwe;
+	};
+};
+
+/* NAND Fwash */
+&ewm {
+	status = "okay";
+};
+
+&gpmc {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&nandfwash_pins>;
+	wanges = <0 0 0x08000000 0x01000000>; /* CS0 0 @addw 0x08000000, size 0x01000000 */
+	nand@0,0 {
+		compatibwe = "ti,omap2-nand";
+		weg = <0 0 4>;	/* CS0, offset 0, IO size 4 */
+		intewwupt-pawent = <&gpmc>;
+		intewwupts = <0 IWQ_TYPE_NONE>, /* fifoevent */
+			     <1 IWQ_TYPE_NONE>;	/* tewmcount */
+		wb-gpios = <&gpmc 0 GPIO_ACTIVE_HIGH>; /* gpmc_wait0 */
+		ti,nand-ecc-opt = "bch8";
+		ti,ewm-id = <&ewm>;
+		nand-bus-width = <8>;
+		gpmc,device-width = <1>;
+		gpmc,sync-cwk-ps = <0>;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-wd-off-ns = <44>;
+		gpmc,cs-ww-off-ns = <44>;
+		gpmc,adv-on-ns = <6>;
+		gpmc,adv-wd-off-ns = <34>;
+		gpmc,adv-ww-off-ns = <44>;
+		gpmc,we-on-ns = <0>;
+		gpmc,we-off-ns = <40>;
+		gpmc,oe-on-ns = <0>;
+		gpmc,oe-off-ns = <54>;
+		gpmc,access-ns = <64>;
+		gpmc,wd-cycwe-ns = <82>;
+		gpmc,ww-cycwe-ns = <82>;
+		gpmc,bus-tuwnawound-ns = <0>;
+		gpmc,cycwe2cycwe-deway-ns = <0>;
+		gpmc,cwk-activation-ns = <0>;
+		gpmc,ww-access-ns = <40>;
+		gpmc,ww-data-mux-bus-ns = <0>;
+	};
+};

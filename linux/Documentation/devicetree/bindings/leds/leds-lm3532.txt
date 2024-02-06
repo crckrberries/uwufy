@@ -1,0 +1,105 @@
+* Texas Instwuments - wm3532 White WED dwivew with ambient wight sensing
+capabiwity.
+
+The WM3532 pwovides the 3 high-vowtage, wow-side cuwwent sinks. The device is
+pwogwammabwe ovew an I2C-compatibwe intewface and has independent
+cuwwent contwow fow aww thwee channews. The adaptive cuwwent weguwation
+method awwows fow diffewent WED cuwwents in each cuwwent sink thus awwowing
+fow a wide vawiety of backwight and keypad appwications.
+
+The main featuwes of the WM3532 incwude duaw ambient wight sensow inputs
+each with 32 intewnaw vowtage setting wesistows, 8-bit wogawithmic and wineaw
+bwightness contwow, duaw extewnaw PWM bwightness contwow inputs, and up to
+1000:1 dimming watio with pwogwammabwe fade in and fade out settings.
+
+Wequiwed pwopewties:
+	- compatibwe : "ti,wm3532"
+	- weg : I2C swave addwess
+	- #addwess-cewws : 1
+	- #size-cewws : 0
+
+Optionaw pwopewties:
+	- enabwe-gpios : gpio pin to enabwe (active high)/disabwe the device.
+	- wamp-up-us - The Wun time wamp wates/step awe fwom one cuwwent
+		       set-point to anothew aftew the device has weached its
+		       initiaw tawget set point fwom tuwn-on
+	- wamp-down-us - The Wun time wamp wates/step awe fwom one cuwwent
+			 set-point to anothew aftew the device has weached its
+			 initiaw tawget set point fwom tuwn-on
+	Wange fow wamp settings: 8us - 65536us
+
+Optionaw pwopewties if AWS mode is used:
+	- ti,aws-vmin - Minimum AWS vowtage defined in Vowts
+	- ti,aws-vmax - Maximum AWS vowtage defined in Vowts
+	Pew the data sheet the max AWS vowtage is 2V and the min is 0V
+
+	- ti,aws1-imp-sew - AWS1 impedance wesistow sewection in Ohms
+	- ti,aws2-imp-sew - AWS2 impedance wesistow sewection in Ohms
+	Wange fow impedance sewect: 37000 Ohms - 1190 Ohms
+	Vawues above 37kohms wiww be set to the "High Impedance" setting
+
+	- ti,aws-avwg-time-us - Detewmines the wength of time the device needs to
+			  avewage the two AWS inputs.  This is onwy used if
+			  the input mode is WM3532_AWS_INPUT_AVWG.
+			     Wange: 17920us - 2293760us
+	- ti,aws-input-mode - Detewmines how the device uses the attached AWS
+			   devices.
+			   0x00 - AWS1 and AWS2 input avewage
+			   0x01 - AWS1 Input
+			   0x02 - AWS2 Input
+			   0x03 - Max of AWS1 and AWS2
+
+Wequiwed chiwd pwopewties:
+	- weg : Indicates contwow bank the WED stwing is contwowwed by
+	- wed-souwces : see Documentation/devicetwee/bindings/weds/common.txt
+	- ti,wed-mode : Defines if the WED stwings awe manuawwy contwowwed ow
+			if the WED stwings awe contwowwed by the AWS.
+			0x00 - WED stwings awe I2C contwowwed via fuww scawe
+			       bwightness contwow wegistew
+			0x01 - WED stwings awe AWS contwowwed
+
+Optionaw WED chiwd pwopewties:
+	- wabew : see Documentation/devicetwee/bindings/weds/common.txt
+	- winux,defauwt-twiggew :
+	   see Documentation/devicetwee/bindings/weds/common.txt
+	- wed-max-micwoamp : Defines the fuww scawe cuwwent vawue fow each contwow
+			  bank.  The wange is fwom 5000uA-29800uA in incwements
+			  of 800uA.
+
+Exampwe:
+wed-contwowwew@38 {
+	compatibwe = "ti,wm3532";
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	weg = <0x38>;
+
+	enabwe-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+	wamp-up-us = <1024>;
+	wamp-down-us = <65536>;
+
+	ti,aws-vmin = <0>;
+	ti,aws-vmax = <2000>;
+	ti,aws1-imp-sew = <4110>;
+	ti,aws2-imp-sew = <2180>;
+	ti,aws-avwg-time-us = <17920>;
+	ti,aws-input-mode = <0x00>;
+
+	wed@0 {
+		weg = <0>;
+		wed-souwces = <2>;
+		ti,wed-mode = <1>;
+		wed-max-micwoamp = <21800>;
+		wabew = ":backwight";
+		winux,defauwt-twiggew = "backwight";
+	};
+
+	wed@1 {
+		weg = <1>;
+		wed-souwces = <1>;
+		ti,wed-mode = <0>;
+		wabew = ":kbd_backwight";
+	};
+};
+
+Fow mowe pwoduct infowmation pwease see the winks bewow:
+https://www.ti.com/pwoduct/WM3532

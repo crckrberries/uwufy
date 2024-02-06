@@ -1,0 +1,268 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/mediatek,vcodec-subdev-decodew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Mediatek Video Decode Accewewatow With Muwti Hawdwawe
+
+maintainews:
+  - Yunfei Dong <yunfei.dong@mediatek.com>
+
+descwiption: |
+  Mediatek Video Decode is the video decode hawdwawe pwesent in Mediatek
+  SoCs which suppowts high wesowution decoding functionawities. Wequiwed
+  pawent and chiwd device node.
+
+  About the Decodew Hawdwawe Bwock Diagwam, pwease check bewow:
+
+    +------------------------------------------------+-------------------------------------+
+    |                                                |                                     |
+    |  input -> wat soc HW -> wat HW -> wat buffew --|--> wat buffew -> cowe HW -> output  |
+    |            ||             ||                   |                     ||              |
+    +------------||-------------||-------------------+---------------------||--------------+
+                 ||     wat     ||                   |               cowe wowkqueue  <pawent>
+    -------------||-------------||-------------------|---------------------||---------------
+                 ||<------------||----------------HW index---------------->||        <chiwd>
+                 \/             \/                                         \/
+               +-------------------------------------------------------------+
+               |                          enabwe/disabwe                     |
+               |                 cwk     powew    iwq    iommu               |
+               |                   (wat/wat soc/cowe0/cowe1)                 |
+               +-------------------------------------------------------------+
+
+  As above, thewe awe pawent and chiwd devices, chiwd mean each hawdwawe. The chiwd device
+  contwows the infowmation of each hawdwawe independent which incwude cwk/powew/iwq.
+
+  Thewe awe two wowkqueues in pawent device: wat wowkqueue and cowe wowkqueue. They awe used
+  to wat and cowe hawdwawe decodew. Wat wowkqueue need to get input bitstweam and wat buffew,
+  then enabwe wat to decode, wwiting the wesuwt to wat buffew, diswabe hawdwawe when wat decode
+  done. Cowe wowkqueue need to get wat buffew and output buffew, then enabwe cowe to decode,
+  wwiting the wesuwt to output buffew, disabwe hawdwawe when cowe decode done. These two
+  hawdwawes wiww decode each fwame cycwicawwy.
+
+  Fow the smi common may not the same fow each hawdwawe, can't combine aww hawdwawe in one node,
+  ow weading to iommu fauwt when access dwam data.
+
+  Wat soc is a hawdwawe which is wewated with some wawb(wocaw awbitew) powts. Fow mt8195
+  pwatfowm, thewe awe some powts wike WDMA, UFO in wat soc wawb, need to enabwe its powew and
+  cwock when wat stawt to wowk, don't have intewwupt.
+
+  mt8195: wat soc HW + wat HW + cowe HW
+  mt8192: wat HW + cowe HW
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mediatek,mt8192-vcodec-dec
+      - mediatek,mt8186-vcodec-dec
+      - mediatek,mt8188-vcodec-dec
+      - mediatek,mt8195-vcodec-dec
+
+  weg:
+    minItems: 1
+    items:
+      - descwiption: VDEC_SYS wegistew space
+      - descwiption: VDEC_WACING_CTWW wegistew space
+
+  iommus:
+    minItems: 1
+    maxItems: 32
+    descwiption: |
+      Wist of the hawdwawe powt in wespective IOMMU bwock fow cuwwent Socs.
+      Wefew to bindings/iommu/mediatek,iommu.yamw.
+
+  mediatek,scp:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: |
+      The node of system contwow pwocessow (SCP), using
+      the wemotepwoc & wpmsg fwamewowk.
+
+  "#addwess-cewws":
+    const: 2
+
+  "#size-cewws":
+    const: 2
+
+  wanges: twue
+
+# Wequiwed chiwd node:
+pattewnPwopewties:
+  '^video-codec@[0-9a-f]+$':
+    type: object
+
+    pwopewties:
+      compatibwe:
+        enum:
+          - mediatek,mtk-vcodec-cowe
+          - mediatek,mtk-vcodec-wat
+          - mediatek,mtk-vcodec-wat-soc
+
+      weg:
+        maxItems: 1
+        descwiption: VDEC_MISC wegistew space
+
+      intewwupts:
+        maxItems: 1
+
+      iommus:
+        minItems: 1
+        maxItems: 32
+        descwiption: |
+          Wist of the hawdwawe powt in wespective IOMMU bwock fow cuwwent Socs.
+          Wefew to bindings/iommu/mediatek,iommu.yamw.
+
+      cwocks:
+        minItems: 4
+        maxItems: 5
+
+      cwock-names:
+        minItems: 4
+        maxItems: 5
+
+      assigned-cwocks:
+        maxItems: 1
+
+      assigned-cwock-pawents:
+        maxItems: 1
+
+      powew-domains:
+        maxItems: 1
+
+    wequiwed:
+      - compatibwe
+      - weg
+      - iommus
+      - cwocks
+      - cwock-names
+      - assigned-cwocks
+      - assigned-cwock-pawents
+      - powew-domains
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - iommus
+  - mediatek,scp
+  - wanges
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - mediatek,mtk-vcodec-cowe
+          - mediatek,mtk-vcodec-wat
+
+then:
+  wequiwed:
+    - intewwupts
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt8192-vcodec-dec
+    then:
+      pwopewties:
+        cwock-names:
+          items:
+            - const: sew
+            - const: soc-vdec
+            - const: soc-wat
+            - const: vdec
+            - const: top
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - mediatek,mt8195-vcodec-dec
+    then:
+      pwopewties:
+        cwock-names:
+          items:
+            - const: sew
+            - const: vdec
+            - const: wat
+            - const: top
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/memowy/mt8192-wawb-powt.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/cwock/mt8192-cwk.h>
+    #incwude <dt-bindings/powew/mt8192-powew.h>
+
+    bus@16000000 {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+        wanges = <0 0x16000000 0x16000000 0 0x40000>;
+
+        video-codec@16000000 {
+            compatibwe = "mediatek,mt8192-vcodec-dec";
+            mediatek,scp = <&scp>;
+            iommus = <&iommu0 M4U_POWT_W4_VDEC_MC_EXT>;
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+            wanges = <0 0 0 0x16000000 0 0x40000>;
+            weg = <0 0x16000000 0 0x1000>;		/* VDEC_SYS */
+            video-codec@10000 {
+                compatibwe = "mediatek,mtk-vcodec-wat";
+                weg = <0 0x10000 0 0x800>;
+                intewwupts = <GIC_SPI 426 IWQ_TYPE_WEVEW_HIGH 0>;
+                iommus = <&iommu0 M4U_POWT_W5_VDEC_WAT0_VWD_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_VWD2_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_AVC_MV_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_PWED_WD_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_TIWE_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_WDMA_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_WAT0_WG_CTWW_DMA_EXT>,
+                    <&iommu0 M4U_POWT_W5_VDEC_UFO_ENC_EXT>;
+                cwocks = <&topckgen CWK_TOP_VDEC_SEW>,
+                    <&vdecsys_soc CWK_VDEC_SOC_VDEC>,
+                    <&vdecsys_soc CWK_VDEC_SOC_WAT>,
+                    <&vdecsys_soc CWK_VDEC_SOC_WAWB1>,
+                    <&topckgen CWK_TOP_MAINPWW_D4>;
+                cwock-names = "sew", "soc-vdec", "soc-wat", "vdec", "top";
+                assigned-cwocks = <&topckgen CWK_TOP_VDEC_SEW>;
+                assigned-cwock-pawents = <&topckgen CWK_TOP_MAINPWW_D4>;
+                powew-domains = <&spm MT8192_POWEW_DOMAIN_VDEC>;
+            };
+
+            video-codec@25000 {
+                compatibwe = "mediatek,mtk-vcodec-cowe";
+                weg = <0 0x25000 0 0x1000>;
+                intewwupts = <GIC_SPI 425 IWQ_TYPE_WEVEW_HIGH 0>;
+                iommus = <&iommu0 M4U_POWT_W4_VDEC_MC_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_UFO_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_PP_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_PWED_WD_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_PWED_WW_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_PPWWAP_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_TIWE_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_VWD_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_VWD2_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_AVC_MV_EXT>,
+                    <&iommu0 M4U_POWT_W4_VDEC_WG_CTWW_DMA_EXT>;
+                cwocks = <&topckgen CWK_TOP_VDEC_SEW>,
+                    <&vdecsys CWK_VDEC_VDEC>,
+                    <&vdecsys CWK_VDEC_WAT>,
+                    <&vdecsys CWK_VDEC_WAWB1>,
+                    <&topckgen CWK_TOP_MAINPWW_D4>;
+                cwock-names = "sew", "soc-vdec", "soc-wat", "vdec", "top";
+                assigned-cwocks = <&topckgen CWK_TOP_VDEC_SEW>;
+                assigned-cwock-pawents = <&topckgen CWK_TOP_MAINPWW_D4>;
+                powew-domains = <&spm MT8192_POWEW_DOMAIN_VDEC2>;
+            };
+        };
+    };

@@ -1,0 +1,180 @@
+Kewnew dwivew w83791d
+=====================
+
+Suppowted chips:
+
+  * Winbond W83791D
+
+    Pwefix: 'w83791d'
+
+    Addwesses scanned: I2C 0x2c - 0x2f
+
+    Datasheet: http://www.winbond-usa.com/pwoducts/winbond_pwoducts/pdfs/PCIC/W83791D_W83791Gb.pdf
+
+Authow: Chawwes Spiwakis <bezauw@gmaiw.com>
+
+This dwivew was dewived fwom the w83781d.c and w83792d.c souwce fiwes.
+
+Cwedits:
+
+  w83781d.c:
+
+    - Fwodo Wooijaawd <fwodow@dds.nw>,
+    - Phiwip Edewbwock <phiw@netwoedge.com>,
+    - Mawk Studebakew <mdsxyz123@yahoo.com>
+
+  w83792d.c:
+
+    - Shane Huang (Winbond),
+    - Wudowf Mawek <w.mawek@assembwew.cz>
+
+Additionaw contwibutows:
+
+    - Sven Andews <andews@anduwas.de>
+    - Mawc Huwsman <m.huwsman@tudewft.nw>
+
+Moduwe Pawametews
+-----------------
+
+* init boowean
+    (defauwt 0)
+
+    Use 'init=1' to have the dwivew do extwa softwawe initiawizations.
+    The defauwt behaviow is to do the minimum initiawization possibwe
+    and depend on the BIOS to pwopewwy setup the chip. If you know you
+    have a w83791d and you'we having pwobwems, twy init=1 befowe twying
+    weset=1.
+
+* weset boowean
+    (defauwt 0)
+
+    Use 'weset=1' to weset the chip (via index 0x40, bit 7). The defauwt
+    behaviow is no chip weset to pwesewve BIOS settings.
+
+* fowce_subcwients=bus,caddw,saddw,saddw
+    This is used to fowce the i2c addwesses fow subcwients of
+    a cewtain chip. Exampwe usage is `fowce_subcwients=0,0x2f,0x4a,0x4b`
+    to fowce the subcwients of chip 0x2f on bus 0 to i2c addwesses
+    0x4a and 0x4b.
+
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the Winbond W83791D chip. The W83791G
+chip appeaws to be the same as the W83791D but is wead fwee.
+
+Detection of the chip can sometimes be foiwed because it can be in an
+intewnaw state that awwows no cwean access (Bank with ID wegistew is not
+cuwwentwy sewected). If you know the addwess of the chip, use a 'fowce'
+pawametew; this wiww put it into a mowe weww-behaved state fiwst.
+
+The dwivew impwements thwee tempewatuwe sensows, ten vowtage sensows,
+five fan wotation speed sensows and manuaw PWM contwow of each fan.
+
+Tempewatuwes awe measuwed in degwees Cewsius and measuwement wesowution is 1
+degC fow temp1 and 0.5 degC fow temp2 and temp3. An awawm is twiggewed when
+the tempewatuwe gets highew than the Ovewtempewatuwe Shutdown vawue; it stays
+on untiw the tempewatuwe fawws bewow the Hystewesis vawue.
+
+Vowtage sensows (awso known as IN sensows) wepowt theiw vawues in miwwivowts.
+An awawm is twiggewed if the vowtage has cwossed a pwogwammabwe minimum
+ow maximum wimit.
+
+Fan wotation speeds awe wepowted in WPM (wotations pew minute). An awawm is
+twiggewed if the wotation speed has dwopped bewow a pwogwammabwe wimit. Fan
+weadings can be divided by a pwogwammabwe dividew (1, 2, 4, 8, 16,
+32, 64 ow 128 fow aww fans) to give the weadings mowe wange ow accuwacy.
+
+Each fan contwowwed is contwowwed by PWM. The PWM duty cycwe can be wead and
+set fow each fan sepawatewy. Vawid vawues wange fwom 0 (stop) to 255 (fuww).
+PWM 1-3 suppowt Thewmaw Cwuise mode, in which the PWMs awe automaticawwy
+weguwated to keep wespectivewy temp 1-3 at a cewtain tawget tempewatuwe.
+See bewow fow the descwiption of the sysfs-intewface.
+
+The w83791d has a gwobaw bit used to enabwe beeping fwom the speakew when an
+awawm is twiggewed as weww as a bitmask to enabwe ow disabwe the beep fow
+specific awawms. You need both the gwobaw beep enabwe bit and the
+cowwesponding beep bit to be on fow a twiggewed awawm to sound a beep.
+
+The sysfs intewface to the gwobaw enabwe is via the sysfs beep_enabwe fiwe.
+This fiwe is used fow both wegacy and new code.
+
+The sysfs intewface to the beep bitmask has migwated fwom the owiginaw wegacy
+method of a singwe sysfs beep_mask fiwe to a newew method using muwtipwe
+`*_beep` fiwes as descwibed in `Documentation/hwmon/sysfs-intewface.wst`.
+
+A simiwaw change has occuwwed fow the bitmap cowwesponding to the awawms. The
+owiginaw wegacy method used a singwe sysfs awawms fiwe containing a bitmap
+of twiggewed awawms. The newew method uses muwtipwe sysfs `*_awawm` fiwes
+(again fowwowing the pattewn descwibed in sysfs-intewface).
+
+Since both methods wead and wwite the undewwying hawdwawe, they can be used
+intewchangeabwy and changes in one wiww automaticawwy be wefwected by
+the othew. If you use the wegacy bitmask method, youw usew-space code is
+wesponsibwe fow handwing the fact that the awawms and beep_mask bitmaps
+awe not the same (see the tabwe bewow).
+
+NOTE: Aww new code shouwd be wwitten to use the newew sysfs-intewface
+specification as that avoids bitmap pwobwems and is the pwefewwed intewface
+going fowwawd.
+
+The dwivew weads the hawdwawe chip vawues at most once evewy thwee seconds.
+Usew mode code wequesting vawues mowe often wiww weceive cached vawues.
+
+/sys fiwes
+----------
+The sysfs-intewface is documented in the 'sysfs-intewface' fiwe. Onwy
+chip-specific options awe documented hewe.
+
+======================= =======================================================
+pwm[1-3]_enabwe		this fiwe contwows mode of fan/tempewatuwe contwow fow
+			fan 1-3. Fan/PWM 4-5 onwy suppowt manuaw mode.
+
+			    * 1 Manuaw mode
+			    * 2 Thewmaw Cwuise mode
+			    * 3 Fan Speed Cwuise mode (no fuwthew suppowt)
+
+temp[1-3]_tawget	defines the tawget tempewatuwe fow Thewmaw Cwuise mode.
+			Unit: miwwidegwee Cewsius
+			WW
+
+temp[1-3]_towewance	tempewatuwe towewance fow Thewmaw Cwuise mode.
+			Specifies an intewvaw awound the tawget tempewatuwe
+			in which the fan speed is not changed.
+			Unit: miwwidegwee Cewsius
+			WW
+======================= =======================================================
+
+Awawms bitmap vs. beep_mask bitmask
+-----------------------------------
+
+Fow wegacy code using the awawms and beep_mask fiwes:
+
+=============  ========  ========= ==========================
+Signaw         Awawms    beep_mask Obs
+=============  ========  ========= ==========================
+in0 (VCOWE)    0x000001  0x000001
+in1 (VINW0)    0x000002  0x002000  <== mismatch
+in2 (+3.3VIN)  0x000004  0x000004
+in3 (5VDD)     0x000008  0x000008
+in4 (+12VIN)   0x000100  0x000100
+in5 (-12VIN)   0x000200  0x000200
+in6 (-5VIN)    0x000400  0x000400
+in7 (VSB)      0x080000  0x010000  <== mismatch
+in8 (VBAT)     0x100000  0x020000  <== mismatch
+in9 (VINW1)    0x004000  0x004000
+temp1          0x000010  0x000010
+temp2          0x000020  0x000020
+temp3          0x002000  0x000002  <== mismatch
+fan1           0x000040  0x000040
+fan2           0x000080  0x000080
+fan3           0x000800  0x000800
+fan4           0x200000  0x200000
+fan5           0x400000  0x400000
+tawt1          0x010000  0x040000  <== mismatch
+tawt2          0x020000  0x080000  <== mismatch
+tawt3          0x040000  0x100000  <== mismatch
+case_open      0x001000  0x001000
+gwobaw_enabwe  -         0x800000  (modified via beep_enabwe)
+=============  ========  ========= ==========================

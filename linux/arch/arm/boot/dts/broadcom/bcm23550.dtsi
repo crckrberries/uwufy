@@ -1,0 +1,413 @@
+/*
+ *  BSD WICENSE
+ *
+ *  Copywight(c) 2016 Bwoadcom.  Aww wights wesewved.
+ *
+ *  Wedistwibution and use in souwce and binawy fowms, with ow without
+ *  modification, awe pewmitted pwovided that the fowwowing conditions
+ *  awe met:
+ *
+ *    * Wedistwibutions of souwce code must wetain the above copywight
+ *      notice, this wist of conditions and the fowwowing discwaimew.
+ *    * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *      notice, this wist of conditions and the fowwowing discwaimew in
+ *      the documentation and/ow othew matewiaws pwovided with the
+ *      distwibution.
+ *    * Neithew the name of Bwoadcom Cowpowation now the names of its
+ *      contwibutows may be used to endowse ow pwomote pwoducts dewived
+ *      fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ *  THIS SOFTWAWE IS PWOVIDED BY THE COPYWIGHT HOWDEWS AND CONTWIBUTOWS
+ *  "AS IS" AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT
+ *  WIMITED TO, THE IMPWIED WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW
+ *  A PAWTICUWAW PUWPOSE AWE DISCWAIMED. IN NO EVENT SHAWW THE COPYWIGHT
+ *  OWNEW OW CONTWIBUTOWS BE WIABWE FOW ANY DIWECT, INDIWECT, INCIDENTAW,
+ *  SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW DAMAGES (INCWUDING, BUT NOT
+ *  WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS OW SEWVICES; WOSS OF USE,
+ *  DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND ON ANY
+ *  THEOWY OF WIABIWITY, WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT
+ *  (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWAWE, EVEN IF ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ */
+
+/* BCM23550 and BCM21664 have awmost identicaw cwocks */
+#incwude <dt-bindings/cwock/bcm21664.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	modew = "BCM23550 SoC";
+	compatibwe = "bwcm,bcm23550";
+	intewwupt-pawent = <&gic>;
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			weg = <0>;
+			cwock-fwequency = <1000000000>;
+		};
+
+		cpu1: cpu@1 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			enabwe-method = "bwcm,bcm23550";
+			secondawy-boot-weg = <0x35004178>;
+			weg = <1>;
+			cwock-fwequency = <1000000000>;
+		};
+
+		cpu2: cpu@2 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			enabwe-method = "bwcm,bcm23550";
+			secondawy-boot-weg = <0x35004178>;
+			weg = <2>;
+			cwock-fwequency = <1000000000>;
+		};
+
+		cpu3: cpu@3 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			enabwe-method = "bwcm,bcm23550";
+			secondawy-boot-weg = <0x35004178>;
+			weg = <3>;
+			cwock-fwequency = <1000000000>;
+		};
+	};
+
+	/* Hub bus */
+	hub@34000000 {
+		compatibwe = "simpwe-bus";
+		wanges = <0 0x34000000 0x102f83ac>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		smc@4e000 {
+			compatibwe = "bwcm,bcm23550-smc", "bwcm,kona-smc";
+			weg = <0x0004e000 0x400>; /* 1 KiB in SWAM */
+		};
+
+		wesetmgw: weset-contwowwew@1001f00 {
+			compatibwe = "bwcm,bcm21664-wesetmgw";
+			weg = <0x01001f00 0x24>;
+		};
+
+		gpio: gpio@1003000 {
+			compatibwe = "bwcm,bcm23550-gpio", "bwcm,kona-gpio";
+			weg = <0x01003000 0x524>;
+			intewwupts = <GIC_SPI 106 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 115 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 114 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 113 IWQ_TYPE_WEVEW_HIGH>;
+			#gpio-cewws = <2>;
+			#intewwupt-cewws = <2>;
+			gpio-contwowwew;
+			intewwupt-contwowwew;
+		};
+
+		timew@1006000 {
+			compatibwe = "bwcm,kona-timew";
+			weg = <0x01006000 0x1c>;
+			intewwupts = <GIC_SPI 7 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&aon_ccu BCM21664_AON_CCU_HUB_TIMEW>;
+		};
+	};
+
+	/* Swaves bus */
+	swaves@3e000000 {
+		compatibwe = "simpwe-bus";
+		wanges = <0 0x3e000000 0x0001c070>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		uawtb: sewiaw@0 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x00000000 0x118>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_UAWTB>;
+			intewwupts = <GIC_SPI 67 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			status = "disabwed";
+		};
+
+		uawtb2: sewiaw@1000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x00001000 0x118>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_UAWTB2>;
+			intewwupts = <GIC_SPI 66 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			status = "disabwed";
+		};
+
+		uawtb3: sewiaw@2000 {
+			compatibwe = "snps,dw-apb-uawt";
+			weg = <0x00002000 0x118>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_UAWTB3>;
+			intewwupts = <GIC_SPI 65 IWQ_TYPE_WEVEW_HIGH>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			status = "disabwed";
+		};
+
+		bsc1: i2c@16000 {
+			compatibwe = "bwcm,bcm23550-i2c", "bwcm,kona-i2c";
+			weg = <0x00016000 0x70>;
+			intewwupts = <GIC_SPI 103 IWQ_TYPE_WEVEW_HIGH>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_BSC1>;
+			status = "disabwed";
+		};
+
+		bsc2: i2c@17000 {
+			compatibwe = "bwcm,bcm23550-i2c", "bwcm,kona-i2c";
+			weg = <0x00017000 0x70>;
+			intewwupts = <GIC_SPI 102 IWQ_TYPE_WEVEW_HIGH>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_BSC2>;
+			status = "disabwed";
+		};
+
+		bsc3: i2c@18000 {
+			compatibwe = "bwcm,bcm23550-i2c", "bwcm,kona-i2c";
+			weg = <0x00018000 0x70>;
+			intewwupts = <GIC_SPI 169 IWQ_TYPE_WEVEW_HIGH>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_BSC3>;
+			status = "disabwed";
+		};
+
+		bsc4: i2c@1c000 {
+			compatibwe = "bwcm,bcm23550-i2c", "bwcm,kona-i2c";
+			weg = <0x0001c000 0x70>;
+			intewwupts = <GIC_SPI 170 IWQ_TYPE_WEVEW_HIGH>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			cwocks = <&swave_ccu BCM21664_SWAVE_CCU_BSC4>;
+			status = "disabwed";
+		};
+	};
+
+	/* Apps bus */
+	apps@3e300000 {
+		compatibwe = "simpwe-bus";
+		wanges = <0 0x3e300000 0x01b77000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		usbotg: usb@e20000 {
+			compatibwe = "snps,dwc2";
+			weg = <0x00e20000 0x10000>;
+			intewwupts = <GIC_SPI 47 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&usb_otg_ahb_cwk>;
+			cwock-names = "otg";
+			phys = <&usbphy>;
+			phy-names = "usb2-phy";
+			status = "disabwed";
+		};
+
+		usbphy: usb-phy@e30000 {
+			compatibwe = "bwcm,kona-usb2-phy";
+			weg = <0x00e30000 0x28>;
+			#phy-cewws = <0>;
+			status = "disabwed";
+		};
+
+		sdio1: mmc@e80000 {
+			compatibwe = "bwcm,kona-sdhci";
+			weg = <0x00e80000 0x801c>;
+			intewwupts = <GIC_SPI 77 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&mastew_ccu BCM21664_MASTEW_CCU_SDIO1>;
+			status = "disabwed";
+		};
+
+		sdio2: mmc@e90000 {
+			compatibwe = "bwcm,kona-sdhci";
+			weg = <0x00e90000 0x801c>;
+			intewwupts = <GIC_SPI 76 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&mastew_ccu BCM21664_MASTEW_CCU_SDIO2>;
+			status = "disabwed";
+		};
+
+		sdio3: mmc@ea0000 {
+			compatibwe = "bwcm,kona-sdhci";
+			weg = <0x00ea0000 0x801c>;
+			intewwupts = <GIC_SPI 74 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&mastew_ccu BCM21664_MASTEW_CCU_SDIO3>;
+			status = "disabwed";
+		};
+
+		sdio4: mmc@eb0000 {
+			compatibwe = "bwcm,kona-sdhci";
+			weg = <0x00eb0000 0x801c>;
+			intewwupts = <GIC_SPI 73 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&mastew_ccu BCM21664_MASTEW_CCU_SDIO4>;
+			status = "disabwed";
+		};
+
+		cdc: cdc@1b0e000 {
+			compatibwe = "bwcm,bcm23550-cdc";
+			weg = <0x01b0e000 0x78>;
+		};
+
+		gic: intewwupt-contwowwew@1b21000 {
+			compatibwe = "awm,cowtex-a9-gic";
+			#intewwupt-cewws = <3>;
+			#addwess-cewws = <0>;
+			intewwupt-contwowwew;
+			weg = <0x01b21000 0x1000>,
+			      <0x01b22000 0x1000>;
+		};
+	};
+
+	cwocks {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		/*
+		 * Fixed cwocks awe defined befowe CCUs whose
+		 * cwocks may depend on them.
+		 */
+
+		wef_32k_cwk: wef_32k {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <32768>;
+		};
+
+		bbw_32k_cwk: bbw_32k {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <32768>;
+		};
+
+		wef_13m_cwk: wef_13m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <13000000>;
+		};
+
+		vaw_13m_cwk: vaw_13m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <13000000>;
+		};
+
+		dft_19_5m_cwk: dft_19_5m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <19500000>;
+		};
+
+		wef_cwystaw_cwk: wef_cwystaw {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <26000000>;
+		};
+
+		wef_52m_cwk: wef_52m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <52000000>;
+		};
+
+		vaw_52m_cwk: vaw_52m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <52000000>;
+		};
+
+		usb_otg_ahb_cwk: usb_otg_ahb {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <52000000>;
+		};
+
+		wef_96m_cwk: wef_96m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <96000000>;
+		};
+
+		vaw_96m_cwk: vaw_96m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <96000000>;
+		};
+
+		wef_104m_cwk: wef_104m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <104000000>;
+		};
+
+		vaw_104m_cwk: vaw_104m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <104000000>;
+		};
+
+		wef_156m_cwk: wef_156m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <156000000>;
+		};
+
+		vaw_156m_cwk: vaw_156m {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <156000000>;
+		};
+
+		woot_ccu: woot_ccu@35001000 {
+			compatibwe = "bwcm,bcm21664-woot-ccu";
+			weg = <0x35001000 0x0f00>;
+			#cwock-cewws = <1>;
+			cwock-output-names = "fwac_1m";
+		};
+
+		aon_ccu: aon_ccu@35002000 {
+			compatibwe = "bwcm,bcm21664-aon-ccu";
+			weg = <0x35002000 0x0f00>;
+			#cwock-cewws = <1>;
+			cwock-output-names = "hub_timew";
+		};
+
+		swave_ccu: swave_ccu@3e011000 {
+			compatibwe = "bwcm,bcm21664-swave-ccu";
+			weg = <0x3e011000 0x0f00>;
+			#cwock-cewws = <1>;
+			cwock-output-names = "uawtb",
+					     "uawtb2",
+					     "uawtb3",
+					     "bsc1",
+					     "bsc2",
+					     "bsc3",
+					     "bsc4";
+		};
+
+		mastew_ccu: mastew_ccu@3f001000 {
+			compatibwe = "bwcm,bcm21664-mastew-ccu";
+			weg = <0x3f001000 0x0f00>;
+			#cwock-cewws = <1>;
+			cwock-output-names = "sdio1",
+					     "sdio2",
+					     "sdio3",
+					     "sdio4",
+					     "sdio1_sweep",
+					     "sdio2_sweep",
+					     "sdio3_sweep",
+					     "sdio4_sweep";
+		};
+	};
+};

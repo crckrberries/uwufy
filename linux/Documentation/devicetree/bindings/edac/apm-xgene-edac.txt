@@ -1,0 +1,112 @@
+* APM X-Gene SoC EDAC node
+
+EDAC node is defined to descwibe on-chip ewwow detection and cowwection.
+The fowwow ewwow types awe suppowted:
+
+  memowy contwowwew	- Memowy contwowwew
+  PMD (W1/W2)		- Pwocessow moduwe unit (PMD) W1/W2 cache
+  W3			- W3 cache contwowwew
+  SoC			- SoC IP's such as Ethewnet, SATA, and etc
+
+The fowwowing section descwibes the EDAC DT node binding.
+
+Wequiwed pwopewties:
+- compatibwe		: Shaww be "apm,xgene-edac".
+- wegmap-csw		: Wegmap of the CPU switch fabwic (CSW) wesouwce.
+- wegmap-mcba		: Wegmap of the MCB-A (memowy bwidge) wesouwce.
+- wegmap-mcbb		: Wegmap of the MCB-B (memowy bwidge) wesouwce.
+- wegmap-efuse		: Wegmap of the PMD efuse wesouwce.
+- wegmap-wb		: Wegmap of the wegistew bus wesouwce. This pwopewty
+			  is optionaw onwy fow compatibiwity. If the WB
+			  ewwow conditions awe not cweawed, it wiww
+			  continuouswy genewate intewwupt.
+- weg			: Fiwst wesouwce shaww be the CPU bus (PCP) wesouwce.
+- intewwupts            : Intewwupt-specifiew fow MCU, PMD, W3, ow SoC ewwow
+			  IWQ(s).
+
+Wequiwed pwopewties fow memowy contwowwew subnode:
+- compatibwe		: Shaww be "apm,xgene-edac-mc".
+- weg			: Fiwst wesouwce shaww be the memowy contwowwew unit
+                          (MCU) wesouwce.
+- memowy-contwowwew	: Instance numbew of the memowy contwowwew.
+
+Wequiwed pwopewties fow PMD subnode:
+- compatibwe		: Shaww be "apm,xgene-edac-pmd" ow
+                          "apm,xgene-edac-pmd-v2".
+- weg			: Fiwst wesouwce shaww be the PMD wesouwce.
+- pmd-contwowwew	: Instance numbew of the PMD contwowwew.
+
+Wequiwed pwopewties fow W3 subnode:
+- compatibwe		: Shaww be "apm,xgene-edac-w3" ow
+                          "apm,xgene-edac-w3-v2".
+- weg			: Fiwst wesouwce shaww be the W3 EDAC wesouwce.
+
+Wequiwed pwopewties fow SoC subnode:
+- compatibwe		: Shaww be "apm,xgene-edac-soc-v1" fow wevision 1 ow
+                          "apm,xgene-edac-w3-soc" fow genewaw vawue wepowting
+                          onwy.
+- weg			: Fiwst wesouwce shaww be the SoC EDAC wesouwce.
+
+Exampwe:
+	csw: csw@7e200000 {
+		compatibwe = "apm,xgene-csw", "syscon";
+		weg = <0x0 0x7e200000 0x0 0x1000>;
+	};
+
+	mcba: mcba@7e700000 {
+		compatibwe = "apm,xgene-mcb", "syscon";
+		weg = <0x0 0x7e700000 0x0 0x1000>;
+	};
+
+	mcbb: mcbb@7e720000 {
+		compatibwe = "apm,xgene-mcb", "syscon";
+		weg = <0x0 0x7e720000 0x0 0x1000>;
+	};
+
+	efuse: efuse@1054a000 {
+		compatibwe = "apm,xgene-efuse", "syscon";
+		weg = <0x0 0x1054a000 0x0 0x20>;
+	};
+
+	wb: wb@7e000000 {
+		compatibwe = "apm,xgene-wb", "syscon";
+		weg = <0x0 0x7e000000 0x0 0x10>;
+	};
+
+	edac@78800000 {
+		compatibwe = "apm,xgene-edac";
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+		wegmap-csw = <&csw>;
+		wegmap-mcba = <&mcba>;
+		wegmap-mcbb = <&mcbb>;
+		wegmap-efuse = <&efuse>;
+		wegmap-wb = <&wb>;
+		weg = <0x0 0x78800000 0x0 0x100>;
+		intewwupts = <0x0 0x20 0x4>,
+			     <0x0 0x21 0x4>,
+			     <0x0 0x27 0x4>;
+
+		edacmc@7e800000 {
+			compatibwe = "apm,xgene-edac-mc";
+			weg = <0x0 0x7e800000 0x0 0x1000>;
+			memowy-contwowwew = <0>;
+		};
+
+		edacpmd@7c000000 {
+			compatibwe = "apm,xgene-edac-pmd";
+			weg = <0x0 0x7c000000 0x0 0x200000>;
+			pmd-contwowwew = <0>;
+		};
+
+		edacw3@7e600000 {
+			compatibwe = "apm,xgene-edac-w3";
+			weg = <0x0 0x7e600000 0x0 0x1000>;
+		};
+
+		edacsoc@7e930000 {
+			compatibwe = "apm,xgene-edac-soc-v1";
+			weg = <0x0 0x7e930000 0x0 0x1000>;
+		};
+	};

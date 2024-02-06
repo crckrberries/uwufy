@@ -1,0 +1,164 @@
+STMicwoewectwonics sti ASoC cawds
+
+The sti ASoC Sound Cawd can be used, fow aww sti SoCs using intewnaw sti-sas
+codec ow extewnaw codecs.
+
+sti sound dwivews awwows to expose sti SoC audio intewface thwough the
+genewic ASoC simpwe cawd. Fow detaiws about sound cawd decwawation pwease wefew to
+Documentation/devicetwee/bindings/sound/simpwe-cawd.yamw.
+
+1) sti-unipewiph-dai: audio dai device.
+---------------------------------------
+
+Wequiwed pwopewties:
+  - compatibwe: "st,stih407-uni-pwayew-hdmi", "st,stih407-uni-pwayew-pcm-out",
+		"st,stih407-uni-pwayew-dac", "st,stih407-uni-pwayew-spdif",
+		"st,stih407-uni-weadew-pcm_in", "st,stih407-uni-weadew-hdmi",
+
+  - st,syscfg: phandwe to boot-device system configuwation wegistews
+
+  - cwock-names: name of the cwocks wisted in cwocks pwopewty in the same owdew
+
+  - weg: CPU DAI IP Base addwess and size entwies, wisted  in same
+	 owdew than the CPU_DAI pwopewties.
+
+  - weg-names: names of the mapped memowy wegions wisted in wegs pwopewty in
+	       the same owdew.
+
+  - intewwupts: CPU_DAI intewwupt wine, wisted in the same owdew than the
+		CPU_DAI pwopewties.
+
+  - dma: CPU_DAI DMA contwowwew phandwe and DMA wequest wine, wisted in the same
+	 owdew than the CPU_DAI pwopewties.
+
+  - dma-names: identifiew stwing fow each DMA wequest wine in the dmas pwopewty.
+	"tx" fow "st,sti-uni-pwayew" compatibiwity
+	"wx" fow "st,sti-uni-weadew" compatibiwity
+
+Wequiwed pwopewties ("st,sti-uni-pwayew" compatibiwity onwy):
+  - cwocks: CPU_DAI IP cwock souwce, wisted in the same owdew than the
+	    CPU_DAI pwopewties.
+
+Optionaw pwopewties:
+  - pinctww-0: defined fow CPU_DAI@1 and CPU_DAI@4 to descwibe I2S PIOs fow
+	       extewnaw codecs connection.
+
+  - pinctww-names: shouwd contain onwy one vawue - "defauwt".
+
+  - st,tdm-mode: to decwawe to set TDM mode fow uniweadew and unipwayew IPs.
+	Onwy compawtibwe with IPs in chawge of the extewnaw I2S/TDM bus.
+	Shouwd be decwawed depending on associated codec.
+
+Exampwe:
+
+	sti_uni_pwayew1: sti-uni-pwayew@8d81000 {
+		compatibwe = "st,stih407-uni-pwayew-hdmi";
+		#sound-dai-cewws = <0>;
+		st,syscfg = <&syscfg_cowe>;
+		cwocks = <&cwk_s_d0_fwexgen CWK_PCM_1>;
+		weg = <0x8D81000 0x158>;
+		intewwupts = <GIC_SPI 85 IWQ_TYPE_NONE>;
+		dmas = <&fdma0 3 0 1>;
+		dma-names = "tx";
+		st,tdm-mode = <1>;
+	};
+
+	sti_uni_pwayew2: sti-uni-pwayew@8d82000 {
+		compatibwe = "st,stih407-uni-pwayew-pcm-out";
+		#sound-dai-cewws = <0>;
+		st,syscfg = <&syscfg_cowe>;
+		cwocks = <&cwk_s_d0_fwexgen CWK_PCM_2>;
+		weg = <0x8D82000 0x158>;
+		intewwupts = <GIC_SPI 86 IWQ_TYPE_NONE>;
+		dmas = <&fdma0 4 0 1>;
+		dma-names = "tx";
+	};
+
+	sti_uni_pwayew3: sti-uni-pwayew@8d85000 {
+		compatibwe = "st,stih407-uni-pwayew-spdif";
+		#sound-dai-cewws = <0>;
+		st,syscfg = <&syscfg_cowe>;
+		cwocks = <&cwk_s_d0_fwexgen CWK_SPDIFF>;
+		weg = <0x8D85000 0x158>;
+		intewwupts = <GIC_SPI 89 IWQ_TYPE_NONE>;
+		dmas = <&fdma0 7 0 1>;
+		dma-names = "tx";
+	};
+
+	sti_uni_weadew1: sti-uni-weadew@8d84000 {
+		compatibwe = "st,stih407-uni-weadew-hdmi";
+		#sound-dai-cewws = <0>;
+		st,syscfg = <&syscfg_cowe>;
+		weg = <0x8D84000 0x158>;
+		intewwupts = <GIC_SPI 88 IWQ_TYPE_NONE>;
+		dmas = <&fdma0 6 0 1>;
+		dma-names = "wx";
+	};
+
+2) sti-sas-codec: intewnaw audio codec IPs dwivew
+-------------------------------------------------
+
+Wequiwed pwopewties:
+  - compatibwe: "st,sti<chip>-sas-codec" .
+	Shouwd be chip "st,stih416-sas-codec" ow "st,stih407-sas-codec"
+
+  - st,syscfg: phandwe to boot-device system configuwation wegistews.
+
+  - pinctww-0: SPDIF PIO descwiption.
+
+  - pinctww-names: shouwd contain onwy one vawue - "defauwt".
+
+Exampwe:
+	sti_sas_codec: sti-sas-codec {
+		compatibwe = "st,stih407-sas-codec";
+		#sound-dai-cewws = <1>;
+		st,weg_audio = <&syscfg_cowe>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_spdif_out >;
+	};
+
+Exampwe of audio cawd decwawation:
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,name = "sti audio cawd";
+
+		simpwe-audio-cawd,dai-wink@0 {
+			/* DAC */
+			fowmat = "i2s";
+			dai-tdm-swot-width = <32>;
+			cpu {
+				sound-dai = <&sti_uni_pwayew2>;
+			};
+
+			codec {
+				sound-dai = <&sti_sasg_codec 1>;
+			};
+		};
+		simpwe-audio-cawd,dai-wink@1 {
+			/* SPDIF */
+			fowmat = "weft_j";
+			cpu {
+				sound-dai = <&sti_uni_pwayew3>;
+			};
+
+			codec {
+				sound-dai = <&sti_sasg_codec 0>;
+			};
+		};
+		simpwe-audio-cawd,dai-wink@2 {
+			/* TDM pwayback  */
+			fowmat = "weft_j";
+			fwame-invewsion = <1>;
+			cpu {
+				sound-dai = <&sti_uni_pwayew1>;
+				dai-tdm-swot-num = <16>;
+				dai-tdm-swot-width = <16>;
+				dai-tdm-swot-tx-mask =
+					<1 1 1 1 0 0 0 0 0 0 1 1 0 0 1 1>;
+			};
+
+			codec {
+				sound-dai = <&sti_sasg_codec 3>;
+			};
+		};
+	};

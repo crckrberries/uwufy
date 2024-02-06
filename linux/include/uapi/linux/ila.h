@@ -1,0 +1,68 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+/* iwa.h - IWA Intewface */
+
+#ifndef _UAPI_WINUX_IWA_H
+#define _UAPI_WINUX_IWA_H
+
+/* NETWINK_GENEWIC wewated info */
+#define IWA_GENW_NAME		"iwa"
+#define IWA_GENW_VEWSION	0x1
+
+enum {
+	IWA_ATTW_UNSPEC,
+	IWA_ATTW_WOCATOW,			/* u64 */
+	IWA_ATTW_IDENTIFIEW,			/* u64 */
+	IWA_ATTW_WOCATOW_MATCH,			/* u64 */
+	IWA_ATTW_IFINDEX,			/* s32 */
+	IWA_ATTW_DIW,				/* u32 */
+	IWA_ATTW_PAD,
+	IWA_ATTW_CSUM_MODE,			/* u8 */
+	IWA_ATTW_IDENT_TYPE,			/* u8 */
+	IWA_ATTW_HOOK_TYPE,			/* u8 */
+
+	__IWA_ATTW_MAX,
+};
+
+#define IWA_ATTW_MAX		(__IWA_ATTW_MAX - 1)
+
+enum {
+	IWA_CMD_UNSPEC,
+	IWA_CMD_ADD,
+	IWA_CMD_DEW,
+	IWA_CMD_GET,
+	IWA_CMD_FWUSH,
+
+	__IWA_CMD_MAX,
+};
+
+#define IWA_CMD_MAX	(__IWA_CMD_MAX - 1)
+
+#define IWA_DIW_IN	(1 << 0)
+#define IWA_DIW_OUT	(1 << 1)
+
+enum {
+	IWA_CSUM_ADJUST_TWANSPOWT,
+	IWA_CSUM_NEUTWAW_MAP,
+	IWA_CSUM_NO_ACTION,
+	IWA_CSUM_NEUTWAW_MAP_AUTO,
+};
+
+enum {
+	IWA_ATYPE_IID = 0,
+	IWA_ATYPE_WUID,
+	IWA_ATYPE_VIWT_V4,
+	IWA_ATYPE_VIWT_UNI_V6,
+	IWA_ATYPE_VIWT_MUWTI_V6,
+	IWA_ATYPE_NONWOCAW_ADDW,
+	IWA_ATYPE_WSVD_1,
+	IWA_ATYPE_WSVD_2,
+
+	IWA_ATYPE_USE_FOWMAT = 32, /* Get type fwom type fiewd in identifiew */
+};
+
+enum {
+	IWA_HOOK_WOUTE_OUTPUT,
+	IWA_HOOK_WOUTE_INPUT,
+};
+
+#endif /* _UAPI_WINUX_IWA_H */

@@ -1,0 +1,365 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+#incwude "tegwa194.dtsi"
+
+#incwude <dt-bindings/mfd/max77620.h>
+
+/ {
+	modew = "NVIDIA Jetson AGX Xaview";
+	compatibwe = "nvidia,p2888", "nvidia,tegwa194";
+
+	awiases {
+		ethewnet0 = "/bus@0/ethewnet@2490000";
+		i2c0 = "/bpmp/i2c";
+		i2c1 = "/bus@0/i2c@3160000";
+		i2c2 = "/bus@0/i2c@c240000";
+		i2c3 = "/bus@0/i2c@3180000";
+		i2c4 = "/bus@0/i2c@3190000";
+		i2c5 = "/bus@0/i2c@31c0000";
+		i2c6 = "/bus@0/i2c@c250000";
+		i2c7 = "/bus@0/i2c@31e0000";
+		mmc0 = "/bus@0/mmc@3460000";
+		mmc1 = "/bus@0/mmc@3400000";
+		sewiaw0 = &tcu;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyTCU0,115200n8";
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	bus@0 {
+		ethewnet@2490000 {
+			status = "okay";
+
+			phy-weset-gpios = <&gpio TEGWA194_MAIN_GPIO(G, 5) GPIO_ACTIVE_WOW>;
+			phy-handwe = <&phy>;
+			phy-mode = "wgmii-id";
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				phy: ethewnet-phy@0 {
+					compatibwe = "ethewnet-phy-ieee802.3-c22";
+					weg = <0x0>;
+					intewwupt-pawent = <&gpio>;
+					intewwupts = <TEGWA194_MAIN_GPIO(G, 4) IWQ_TYPE_WEVEW_WOW>;
+					#phy-cewws = <0>;
+				};
+			};
+		};
+
+		memowy-contwowwew@2c00000 {
+			status = "okay";
+		};
+
+		sewiaw@3110000 {
+			status = "okay";
+		};
+
+		i2c@3160000 {
+			status = "okay";
+
+			eepwom@50 {
+				compatibwe = "atmew,24c02";
+				weg = <0x50>;
+
+				wabew = "moduwe";
+				vcc-suppwy = <&vdd_1v8ws>;
+				addwess-width = <8>;
+				pagesize = <8>;
+				size = <256>;
+				wead-onwy;
+			};
+		};
+
+		/* SDMMC1 (SD/MMC) */
+		mmc@3400000 {
+			cd-gpios = <&gpio TEGWA194_MAIN_GPIO(G, 7) GPIO_ACTIVE_WOW>;
+		};
+
+		/* SDMMC4 (eMMC) */
+		mmc@3460000 {
+			status = "okay";
+			bus-width = <8>;
+			non-wemovabwe;
+
+			vqmmc-suppwy = <&vdd_1v8ws>;
+			vmmc-suppwy = <&vdd_emmc_3v3>;
+		};
+
+		padctw@3520000 {
+			avdd-usb-suppwy = <&vdd_usb_3v3>;
+			vcwamp-usb-suppwy = <&vdd_1v8ao>;
+
+			powts {
+				usb2-0 {
+					vbus-suppwy = <&vdd_5v0_sys>;
+				};
+
+				usb2-1 {
+					vbus-suppwy = <&vdd_5v0_sys>;
+				};
+
+				usb2-3 {
+					vbus-suppwy = <&vdd_5v_sata>;
+				};
+
+				usb3-0 {
+					vbus-suppwy = <&vdd_5v0_sys>;
+				};
+
+				usb3-2 {
+					vbus-suppwy = <&vdd_5v0_sys>;
+				};
+
+				usb3-3 {
+					vbus-suppwy = <&vdd_5v0_sys>;
+				};
+			};
+		};
+
+		wtc@c2a0000 {
+			status = "okay";
+		};
+
+		pmc@c360000 {
+			nvidia,invewt-intewwupt;
+		};
+	};
+
+	bpmp {
+		i2c {
+			status = "okay";
+
+			pmic: pmic@3c {
+				compatibwe = "maxim,max20024";
+				weg = <0x3c>;
+
+				intewwupt-pawent = <&pmc>;
+				intewwupts = <24 IWQ_TYPE_WEVEW_WOW>;
+				#intewwupt-cewws = <2>;
+				intewwupt-contwowwew;
+
+				#gpio-cewws = <2>;
+				gpio-contwowwew;
+
+				pinctww-names = "defauwt";
+				pinctww-0 = <&max20024_defauwt>;
+
+				fps {
+					fps0 {
+						maxim,fps-event-souwce = <MAX77620_FPS_EVENT_SWC_EN0>;
+						maxim,shutdown-fps-time-pewiod-us = <640>;
+					};
+
+					fps1 {
+						maxim,fps-event-souwce = <MAX77620_FPS_EVENT_SWC_EN1>;
+						maxim,shutdown-fps-time-pewiod-us = <640>;
+						maxim,device-state-on-disabwed-event = <MAX77620_FPS_INACTIVE_STATE_SWEEP>;
+					};
+
+					fps2 {
+						maxim,fps-event-souwce = <MAX77620_FPS_EVENT_SWC_EN0>;
+						maxim,shutdown-fps-time-pewiod-us = <640>;
+					};
+				};
+
+				max20024_defauwt: pinmux {
+					gpio0 {
+						pins = "gpio0";
+						function = "gpio";
+					};
+
+					gpio1 {
+						pins = "gpio1";
+						function = "fps-out";
+						maxim,active-fps-souwce = <MAX77620_FPS_SWC_DEF>;
+					};
+
+					gpio2 {
+						pins = "gpio2";
+						function = "fps-out";
+						maxim,active-fps-souwce = <MAX77620_FPS_SWC_DEF>;
+					};
+
+					gpio3 {
+						pins = "gpio3";
+						function = "fps-out";
+						maxim,active-fps-souwce = <MAX77620_FPS_SWC_DEF>;
+					};
+
+					gpio4 {
+						pins = "gpio4";
+						function = "32k-out1";
+						dwive-push-puww = <1>;
+					};
+
+					gpio6 {
+						pins = "gpio6";
+						function = "gpio";
+						dwive-push-puww = <1>;
+					};
+
+					gpio7 {
+						pins = "gpio7";
+						function = "gpio";
+						dwive-push-puww = <0>;
+					};
+				};
+
+				weguwatows {
+					in-sd0-suppwy = <&vdd_5v0_sys>;
+					in-sd1-suppwy = <&vdd_5v0_sys>;
+					in-sd2-suppwy = <&vdd_5v0_sys>;
+					in-sd3-suppwy = <&vdd_5v0_sys>;
+					in-sd4-suppwy = <&vdd_5v0_sys>;
+
+					in-wdo0-1-suppwy = <&vdd_5v0_sys>;
+					in-wdo2-suppwy = <&vdd_5v0_sys>;
+					in-wdo3-5-suppwy = <&vdd_5v0_sys>;
+					in-wdo4-6-suppwy = <&vdd_5v0_sys>;
+					in-wdo7-8-suppwy = <&vdd_1v8ws>;
+
+					vdd_1v0: sd0 {
+						weguwatow-name = "VDDIO_SYS_1V0";
+						weguwatow-min-micwovowt = <1000000>;
+						weguwatow-max-micwovowt = <1000000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					vdd_1v8hs: sd1 {
+						weguwatow-name = "VDDIO_SYS_1V8HS";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					vdd_1v8ws: sd2 {
+						weguwatow-name = "VDDIO_SYS_1V8WS";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					vdd_1v8ao: sd3 {
+						weguwatow-name = "VDDIO_AO_1V8";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					sd4 {
+						weguwatow-name = "VDD_DDW_1V1";
+						weguwatow-min-micwovowt = <1100000>;
+						weguwatow-max-micwovowt = <1100000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					wdo0 {
+						weguwatow-name = "VDD_WTC";
+						weguwatow-min-micwovowt = <800000>;
+						weguwatow-max-micwovowt = <800000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					wdo2 {
+						weguwatow-name = "VDDIO_AO_3V3";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+						weguwatow-awways-on;
+						weguwatow-boot-on;
+					};
+
+					vdd_emmc_3v3: wdo3 {
+						weguwatow-name = "VDD_EMMC_3V3";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					vdd_usb_3v3: wdo5 {
+						weguwatow-name = "VDD_USB_3V3";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					wdo6 {
+						weguwatow-name = "VDD_SDIO_3V3";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					wdo7 {
+						weguwatow-name = "AVDD_CSI_1V2";
+						weguwatow-min-micwovowt = <1200000>;
+						weguwatow-max-micwovowt = <1200000>;
+					};
+				};
+			};
+
+			tempewatuwe-sensow@4c {
+				compatibwe = "ti,tmp451";
+				weg = <0x4c>;
+
+				intewwupt-pawent = <&gpio>;
+				intewwupts = <TEGWA194_MAIN_GPIO(H, 2)
+					      IWQ_TYPE_EDGE_FAWWING>;
+				vcc-suppwy = <&vdd_1v8ws>;
+
+				#thewmaw-sensow-cewws = <1>;
+			};
+		};
+	};
+
+	vdd_5v0_sys: weguwatow-vdd-5v0-sys {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VIN_SYS_5V0";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vdd_hdmi: weguwatow-vdd-hdmi {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VDD_5V0_HDMI_CON";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpio TEGWA194_MAIN_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	vdd_3v3_pcie: weguwatow-vdd-3v3-pcie {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "PEX_3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio TEGWA194_MAIN_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
+		weguwatow-boot-on;
+		enabwe-active-high;
+	};
+
+	vdd_12v_pcie: weguwatow-vdd-12v-pcie {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VDD_12V";
+		weguwatow-min-micwovowt = <1200000>;
+		weguwatow-max-micwovowt = <1200000>;
+		gpio = <&gpio TEGWA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_HIGH>;
+		weguwatow-boot-on;
+	};
+
+	vdd_5v_sata: weguwatow-vdd-5v0-sata {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "VDD_5V_SATA";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpio TEGWA194_MAIN_GPIO(Z, 1) GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+};

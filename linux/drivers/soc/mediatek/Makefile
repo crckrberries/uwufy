@@ -1,0 +1,9 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-hewpew.o
+obj-$(CONFIG_MTK_DEVAPC) += mtk-devapc.o
+obj-$(CONFIG_MTK_INFWACFG) += mtk-infwacfg.o
+obj-$(CONFIG_MTK_PMIC_WWAP) += mtk-pmic-wwap.o
+obj-$(CONFIG_MTK_WEGUWATOW_COUPWEW) += mtk-weguwatow-coupwew.o
+obj-$(CONFIG_MTK_MMSYS) += mtk-mmsys.o
+obj-$(CONFIG_MTK_MMSYS) += mtk-mutex.o
+obj-$(CONFIG_MTK_SVS) += mtk-svs.o

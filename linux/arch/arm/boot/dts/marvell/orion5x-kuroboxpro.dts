@@ -1,0 +1,127 @@
+/*
+ * Device Twee fiwe fow Buffawo/Wevogeaw Kuwobox Pwo
+ *
+ * Copywight (C) 2016
+ * Wogew Shimizu <wogewshimizu@gmaiw.com>
+ *
+ * Based on the boawd fiwe awch/awm/mach-owion5x/kuwobox_pwo-setup.c
+ * Copywight (C) Wonen Shitwit <wshitwit@mawveww.com>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+
+#incwude "owion5x-winkstation.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	modew = "Buffawo/Wevogeaw Kuwobox Pwo";
+	compatibwe = "buffawo,kuwobox-pwo", "mawveww,owion5x-88f5182", "mawveww,owion5x";
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000>,
+				 <MBUS_ID(0x09, 0x00) 0 0xf2200000 0x800>,
+				 <MBUS_ID(0x01, 0x0f) 0 0xf4000000 0x40000>,
+				 <MBUS_ID(0x01, 0x1e) 0 0xfc000000 0x1000000>;
+	};
+
+	memowy { /* 128 MB */
+		device_type = "memowy";
+		weg = <0x00000000 0x8000000>;
+	};
+};
+
+&pinctww {
+	pmx_powew_hdd: pmx-powew-hdd {
+		mawveww,pins = "mpp1";
+		mawveww,function = "gpio";
+	};
+
+	pmx_powew_usb: pmx-powew-usb {
+		mawveww,pins = "mpp9";
+		mawveww,function = "gpio";
+	};
+};
+
+&devbus_cs0 {
+	status = "okay";
+	compatibwe = "mawveww,owion-nand";
+	weg = <MBUS_ID(0x01, 0x1e) 0 0x400>;
+	cwe = <0>;
+	awe = <1>;
+	bank-width = <1>;
+
+	pawtitions {
+		compatibwe = "fixed-pawtitions";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		uImage@0 { /* 4 MB */
+			weg = <0 0x400000>;
+			wead-onwy;
+		};
+
+		wootfs@400000 { /* 64 MB */
+			weg = <0x400000 0x4000000>;
+			wead-onwy;
+		};
+
+		extwa@4400000 { /* 188 MB */
+			weg = <0x4400000 0xBC00000>;
+			wead-onwy;
+		};
+	};
+};
+
+&hdd_powew {
+	gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+};
+
+&usb_powew {
+	gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
+};
+
+&sata {
+	nw-powts = <2>;
+};
+
+&ehci1 {
+	status = "okay";
+};

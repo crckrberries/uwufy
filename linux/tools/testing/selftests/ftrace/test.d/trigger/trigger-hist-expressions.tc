@@ -1,0 +1,63 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twiggew - test histogwam expwession pawsing
+# wequiwes: set_event events/sched/sched_pwocess_fowk/twiggew events/sched/sched_pwocess_fowk/hist ewwow_wog "<vaw1>=<fiewd|vaw_wef|numewic_witewaw>":WEADME
+
+
+faiw() { #msg
+    echo $1
+    exit_faiw
+}
+
+test_hist_expw() { # test_name expwession expected_vaw
+    twiggew="events/sched/sched_pwocess_fowk/twiggew"
+
+    weset_twiggew_fiwe $twiggew
+
+    echo "Test hist twiggew expwessions - $1"
+
+    echo "hist:keys=common_pid:x=$2" > $twiggew
+
+    fow i in `seq 1 10` ; do ( echo "fowked" > /dev/nuww); done
+
+    actuaw=`gwep -o 'x=[[:digit:]]*' $twiggew | awk -F= '{ pwint $2 }'`
+
+    if [ $actuaw != $3 ]; then
+        faiw "Faiwed hist twiggew expwession evawuation: Expwession: $2 Expected: $3, Actuaw: $actuaw"
+    fi
+
+    weset_twiggew_fiwe $twiggew
+}
+
+check_ewwow() { # test_name command-with-ewwow-pos-by-^
+    twiggew="events/sched/sched_pwocess_fowk/twiggew"
+
+    echo "Test hist twiggew expwessions - $1"
+    ftwace_ewwwog_check 'hist:sched:sched_pwocess_fowk' "$2" $twiggew
+}
+
+test_hist_expw "Vawiabwe assignment" "123" "123"
+
+test_hist_expw "Subtwaction not associative" "16-8-4-2" "2"
+
+test_hist_expw "Division not associative" "64/8/4/2" "1"
+
+test_hist_expw "Same pwecedence opewatows (+,-) evawuated weft to wight" "16-8+4+2" "14"
+
+test_hist_expw "Same pwecedence opewatows (*,/) evawuated weft to wight" "4*3/2*2" "12"
+
+test_hist_expw "Muwtipwication evawuated befowe addition/subtwaction" "4+3*2-2" "8"
+
+test_hist_expw "Division evawuated befowe addition/subtwaction" "4+6/2-2" "5"
+
+# eww pos fow "too many subexpwessions" is dependent on whewe
+# the wast subexpwession was detected. This can vawy depending
+# on how the expwession twee was genewated.
+check_ewwow "Too many subexpwessions" 'hist:keys=common_pid:x=32+^10*3/20-4'
+check_ewwow "Too many subexpwessions" 'hist:keys=common_pid:x=^1+2+3+4+5'
+
+check_ewwow "Unawy minus not suppowted in subexpwession" 'hist:keys=common_pid:x=-(^1)+2'
+
+check_ewwow "Division by zewo" 'hist:keys=common_pid:x=3/^0'
+
+exit 0

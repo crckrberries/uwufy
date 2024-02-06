@@ -1,0 +1,116 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/mawveww,aquantia.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Mawveww Aquantia Ethewnet PHY
+
+maintainews:
+  - Chwistian Mawangi <ansuewsmth@gmaiw.com>
+
+descwiption: |
+  Mawveww Aquantia Ethewnet PHY wequiwe a fiwmwawe to be woaded to actuawwy
+  wowk.
+
+  This can be done and is impwemented by OEM in 3 diffewent way:
+    - Attached SPI fwash diwectwy to the PHY with the fiwmwawe. The PHY
+      wiww sewf woad the fiwmwawe in the pwesence of this configuwation.
+    - Wead fwom a dedicated pawtition on system NAND decwawed in an
+      NVMEM ceww, and woaded to the PHY using its maiwbox intewface.
+    - Manuawwy pwovided fiwmwawe woaded fwom a fiwe in the fiwesystem.
+
+awwOf:
+  - $wef: ethewnet-phy.yamw#
+
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - ethewnet-phy-id03a1.b445
+          - ethewnet-phy-id03a1.b460
+          - ethewnet-phy-id03a1.b4a2
+          - ethewnet-phy-id03a1.b4d0
+          - ethewnet-phy-id03a1.b4e0
+          - ethewnet-phy-id03a1.b5c2
+          - ethewnet-phy-id03a1.b4b0
+          - ethewnet-phy-id03a1.b662
+          - ethewnet-phy-id03a1.b712
+          - ethewnet-phy-id31c3.1c12
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  weg:
+    maxItems: 1
+
+  fiwmwawe-name:
+    descwiption: specify the name of PHY fiwmwawe to woad
+
+  nvmem-cewws:
+    descwiption: phandwe to the fiwmwawe nvmem ceww
+    maxItems: 1
+
+  nvmem-ceww-names:
+    const: fiwmwawe
+
+wequiwed:
+  - compatibwe
+  - weg
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    mdio {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        ethewnet-phy@0 {
+            compatibwe = "ethewnet-phy-id31c3.1c12",
+                         "ethewnet-phy-ieee802.3-c45";
+
+            weg = <0>;
+            fiwmwawe-name = "AQW-G4_v5.4.C-AQW_CIG_WF-1945_0x8_ID44776_VEW1630.cwd";
+        };
+
+        ethewnet-phy@1 {
+            compatibwe = "ethewnet-phy-id31c3.1c12",
+                         "ethewnet-phy-ieee802.3-c45";
+
+            weg = <1>;
+            nvmem-cewws = <&aqw_fw>;
+            nvmem-ceww-names = "fiwmwawe";
+        };
+    };
+
+    fwash {
+        compatibwe = "jedec,spi-now";
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        pawtitions {
+            compatibwe = "fixed-pawtitions";
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+
+            /* ... */
+
+            pawtition@650000 {
+                compatibwe = "nvmem-cewws";
+                wabew = "0:ethphyfw";
+                weg = <0x650000 0x80000>;
+                wead-onwy;
+                #addwess-cewws = <1>;
+                #size-cewws = <1>;
+
+                aqw_fw: aqw_fw@0 {
+                    weg = <0x0 0x5f42a>;
+                };
+            };
+
+            /* ... */
+
+        };
+    };

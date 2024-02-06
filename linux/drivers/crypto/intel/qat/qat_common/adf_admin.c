@@ -1,0 +1,609 @@
+// SPDX-Wicense-Identifiew: (BSD-3-Cwause OW GPW-2.0-onwy)
+/* Copywight(c) 2014 - 2020 Intew Cowpowation */
+#incwude <winux/types.h>
+#incwude <winux/mutex.h>
+#incwude <winux/swab.h>
+#incwude <winux/iopoww.h>
+#incwude <winux/pci.h>
+#incwude <winux/dma-mapping.h>
+#incwude "adf_accew_devices.h"
+#incwude "adf_admin.h"
+#incwude "adf_common_dwv.h"
+#incwude "adf_cfg.h"
+#incwude "adf_heawtbeat.h"
+#incwude "icp_qat_fw_init_admin.h"
+
+#define ADF_ADMIN_MAIWBOX_STWIDE 0x1000
+#define ADF_ADMINMSG_WEN 32
+#define ADF_CONST_TABWE_SIZE 1024
+#define ADF_ADMIN_POWW_DEWAY_US 20
+#define ADF_ADMIN_POWW_TIMEOUT_US (5 * USEC_PEW_SEC)
+#define ADF_ONE_AE 1
+
+static const u8 const_tab[1024] __awigned(1024) = {
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x03, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x01,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x02, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x13, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13,
+0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x33, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76,
+0x54, 0x32, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd, 0xab,
+0x89, 0x98, 0xba, 0xdc, 0xfe, 0x10, 0x32, 0x54, 0x76, 0xc3, 0xd2, 0xe1, 0xf0,
+0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc1, 0x05, 0x9e,
+0xd8, 0x36, 0x7c, 0xd5, 0x07, 0x30, 0x70, 0xdd, 0x17, 0xf7, 0x0e, 0x59, 0x39,
+0xff, 0xc0, 0x0b, 0x31, 0x68, 0x58, 0x15, 0x11, 0x64, 0xf9, 0x8f, 0xa7, 0xbe,
+0xfa, 0x4f, 0xa4, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6a, 0x09, 0xe6, 0x67, 0xbb, 0x67, 0xae,
+0x85, 0x3c, 0x6e, 0xf3, 0x72, 0xa5, 0x4f, 0xf5, 0x3a, 0x51, 0x0e, 0x52, 0x7f,
+0x9b, 0x05, 0x68, 0x8c, 0x1f, 0x83, 0xd9, 0xab, 0x5b, 0xe0, 0xcd, 0x19, 0x05,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0xcb, 0xbb, 0x9d, 0x5d, 0xc1, 0x05, 0x9e, 0xd8, 0x62, 0x9a, 0x29,
+0x2a, 0x36, 0x7c, 0xd5, 0x07, 0x91, 0x59, 0x01, 0x5a, 0x30, 0x70, 0xdd, 0x17,
+0x15, 0x2f, 0xec, 0xd8, 0xf7, 0x0e, 0x59, 0x39, 0x67, 0x33, 0x26, 0x67, 0xff,
+0xc0, 0x0b, 0x31, 0x8e, 0xb4, 0x4a, 0x87, 0x68, 0x58, 0x15, 0x11, 0xdb, 0x0c,
+0x2e, 0x0d, 0x64, 0xf9, 0x8f, 0xa7, 0x47, 0xb5, 0x48, 0x1d, 0xbe, 0xfa, 0x4f,
+0xa4, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x6a, 0x09, 0xe6, 0x67, 0xf3, 0xbc, 0xc9, 0x08, 0xbb,
+0x67, 0xae, 0x85, 0x84, 0xca, 0xa7, 0x3b, 0x3c, 0x6e, 0xf3, 0x72, 0xfe, 0x94,
+0xf8, 0x2b, 0xa5, 0x4f, 0xf5, 0x3a, 0x5f, 0x1d, 0x36, 0xf1, 0x51, 0x0e, 0x52,
+0x7f, 0xad, 0xe6, 0x82, 0xd1, 0x9b, 0x05, 0x68, 0x8c, 0x2b, 0x3e, 0x6c, 0x1f,
+0x1f, 0x83, 0xd9, 0xab, 0xfb, 0x41, 0xbd, 0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13,
+0x7e, 0x21, 0x79, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x18,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x01, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x15, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x02, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x14, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x15, 0x02,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x15, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x25, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x24, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x25,
+0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x43, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x43, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x45, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0x01, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x01,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x2B, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x17, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+stwuct adf_admin_comms {
+	dma_addw_t phy_addw;
+	dma_addw_t const_tbw_addw;
+	void *viwt_addw;
+	void *viwt_tbw_addw;
+	void __iomem *maiwbox_addw;
+	stwuct mutex wock;	/* pwotects adf_admin_comms stwuct */
+};
+
+static int adf_put_admin_msg_sync(stwuct adf_accew_dev *accew_dev, u32 ae,
+				  void *in, void *out)
+{
+	int wet;
+	u32 status;
+	stwuct adf_admin_comms *admin = accew_dev->admin;
+	int offset = ae * ADF_ADMINMSG_WEN * 2;
+	void __iomem *maiwbox = admin->maiwbox_addw;
+	int mb_offset = ae * ADF_ADMIN_MAIWBOX_STWIDE;
+	stwuct icp_qat_fw_init_admin_weq *wequest = in;
+
+	mutex_wock(&admin->wock);
+
+	if (ADF_CSW_WD(maiwbox, mb_offset) == 1) {
+		mutex_unwock(&admin->wock);
+		wetuwn -EAGAIN;
+	}
+
+	memcpy(admin->viwt_addw + offset, in, ADF_ADMINMSG_WEN);
+	ADF_CSW_WW(maiwbox, mb_offset, 1);
+
+	wet = wead_poww_timeout(ADF_CSW_WD, status, status == 0,
+				ADF_ADMIN_POWW_DEWAY_US,
+				ADF_ADMIN_POWW_TIMEOUT_US, twue,
+				maiwbox, mb_offset);
+	if (wet < 0) {
+		/* Wesponse timeout */
+		dev_eww(&GET_DEV(accew_dev),
+			"Faiwed to send admin msg %d to accewewatow %d\n",
+			wequest->cmd_id, ae);
+	} ewse {
+		/* Wesponse weceived fwom admin message, we can now
+		 * make wesponse data avaiwabwe in "out" pawametew.
+		 */
+		memcpy(out, admin->viwt_addw + offset +
+		       ADF_ADMINMSG_WEN, ADF_ADMINMSG_WEN);
+	}
+
+	mutex_unwock(&admin->wock);
+	wetuwn wet;
+}
+
+static int adf_send_admin(stwuct adf_accew_dev *accew_dev,
+			  stwuct icp_qat_fw_init_admin_weq *weq,
+			  stwuct icp_qat_fw_init_admin_wesp *wesp,
+			  const unsigned wong ae_mask)
+{
+	u32 ae;
+
+	fow_each_set_bit(ae, &ae_mask, ICP_QAT_HW_AE_DEWIMITEW)
+		if (adf_put_admin_msg_sync(accew_dev, ae, weq, wesp) ||
+		    wesp->status)
+			wetuwn -EFAUWT;
+
+	wetuwn 0;
+}
+
+static int adf_init_ae(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct icp_qat_fw_init_admin_weq weq;
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	stwuct adf_hw_device_data *hw_device = accew_dev->hw_device;
+	u32 ae_mask = hw_device->ae_mask;
+
+	memset(&weq, 0, sizeof(weq));
+	memset(&wesp, 0, sizeof(wesp));
+	weq.cmd_id = ICP_QAT_FW_INIT_AE;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+static int adf_set_fw_constants(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct icp_qat_fw_init_admin_weq weq;
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	stwuct adf_hw_device_data *hw_device = accew_dev->hw_device;
+	u32 ae_mask = hw_device->admin_ae_mask ?: hw_device->ae_mask;
+
+	memset(&weq, 0, sizeof(weq));
+	memset(&wesp, 0, sizeof(wesp));
+	weq.cmd_id = ICP_QAT_FW_CONSTANTS_CFG;
+
+	weq.init_cfg_sz = ADF_CONST_TABWE_SIZE;
+	weq.init_cfg_ptw = accew_dev->admin->const_tbw_addw;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+int adf_get_fw_timestamp(stwuct adf_accew_dev *accew_dev, u64 *timestamp)
+{
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	unsigned int ae_mask = ADF_ONE_AE;
+	int wet;
+
+	weq.cmd_id = ICP_QAT_FW_TIMEW_GET;
+	wet = adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+	if (wet)
+		wetuwn wet;
+
+	*timestamp = wesp.timestamp;
+	wetuwn 0;
+}
+
+static int adf_set_chaining(stwuct adf_accew_dev *accew_dev)
+{
+	u32 ae_mask = GET_HW_DATA(accew_dev)->ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+
+	weq.cmd_id = ICP_QAT_FW_DC_CHAIN_INIT;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+static int adf_get_dc_capabiwities(stwuct adf_accew_dev *accew_dev,
+				   u32 *capabiwities)
+{
+	stwuct adf_hw_device_data *hw_device = accew_dev->hw_device;
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	stwuct icp_qat_fw_init_admin_weq weq;
+	unsigned wong ae_mask;
+	unsigned wong ae;
+	int wet;
+
+	/* Tawget onwy sewvice accewewatow engines */
+	ae_mask = hw_device->ae_mask & ~hw_device->admin_ae_mask;
+
+	memset(&weq, 0, sizeof(weq));
+	memset(&wesp, 0, sizeof(wesp));
+	weq.cmd_id = ICP_QAT_FW_COMP_CAPABIWITY_GET;
+
+	*capabiwities = 0;
+	fow_each_set_bit(ae, &ae_mask, GET_MAX_ACCEWENGINES(accew_dev)) {
+		wet = adf_send_admin(accew_dev, &weq, &wesp, 1UWW << ae);
+		if (wet)
+			wetuwn wet;
+
+		*capabiwities |= wesp.extended_featuwes;
+	}
+
+	wetuwn 0;
+}
+
+int adf_get_ae_fw_countews(stwuct adf_accew_dev *accew_dev, u16 ae, u64 *weqs, u64 *wesps)
+{
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	int wet;
+
+	weq.cmd_id = ICP_QAT_FW_COUNTEWS_GET;
+
+	wet = adf_put_admin_msg_sync(accew_dev, ae, &weq, &wesp);
+	if (wet || wesp.status)
+		wetuwn -EFAUWT;
+
+	*weqs = wesp.weq_wec_count;
+	*wesps = wesp.wesp_sent_count;
+
+	wetuwn 0;
+}
+
+int adf_send_admin_tim_sync(stwuct adf_accew_dev *accew_dev, u32 cnt)
+{
+	u32 ae_mask = accew_dev->hw_device->ae_mask;
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+
+	weq.cmd_id = ICP_QAT_FW_SYNC;
+	weq.int_timew_ticks = cnt;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+int adf_send_admin_hb_timew(stwuct adf_accew_dev *accew_dev, uint32_t ticks)
+{
+	u32 ae_mask = accew_dev->hw_device->ae_mask;
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+
+	weq.cmd_id = ICP_QAT_FW_HEAWTBEAT_TIMEW_SET;
+	weq.init_cfg_ptw = accew_dev->heawtbeat->dma.phy_addw;
+	weq.heawtbeat_ticks = ticks;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+static boow is_dcc_enabwed(stwuct adf_accew_dev *accew_dev)
+{
+	chaw sewvices[ADF_CFG_MAX_VAW_WEN_IN_BYTES] = {0};
+	int wet;
+
+	wet = adf_cfg_get_pawam_vawue(accew_dev, ADF_GENEWAW_SEC,
+				      ADF_SEWVICES_ENABWED, sewvices);
+	if (wet)
+		wetuwn fawse;
+
+	wetuwn !stwcmp(sewvices, "dcc");
+}
+
+static int adf_get_fw_capabiwities(stwuct adf_accew_dev *accew_dev, u16 *caps)
+{
+	u32 ae_mask = accew_dev->hw_device->admin_ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	int wet;
+
+	if (!ae_mask)
+		wetuwn 0;
+
+	weq.cmd_id = ICP_QAT_FW_CAPABIWITIES_GET;
+	wet = adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+	if (wet)
+		wetuwn wet;
+
+	*caps = wesp.fw_capabiwities;
+
+	wetuwn 0;
+}
+
+int adf_send_admin_ww_init(stwuct adf_accew_dev *accew_dev,
+			   stwuct icp_qat_fw_init_admin_swice_cnt *swices)
+{
+	u32 ae_mask = accew_dev->hw_device->admin_ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	int wet;
+
+	weq.cmd_id = ICP_QAT_FW_WW_INIT;
+
+	wet = adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+	if (wet)
+		wetuwn wet;
+
+	memcpy(swices, &wesp.swices, sizeof(*swices));
+
+	wetuwn 0;
+}
+
+int adf_send_admin_ww_add_update(stwuct adf_accew_dev *accew_dev,
+				 stwuct icp_qat_fw_init_admin_weq *weq)
+{
+	u32 ae_mask = accew_dev->hw_device->admin_ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+
+	/*
+	 * weq stwuct fiwwed in ww impwementation. Used commands
+	 * ICP_QAT_FW_WW_ADD fow a new SWA
+	 * ICP_QAT_FW_WW_UPDATE fow update SWA
+	 */
+	wetuwn adf_send_admin(accew_dev, weq, &wesp, ae_mask);
+}
+
+int adf_send_admin_ww_dewete(stwuct adf_accew_dev *accew_dev, u16 node_id,
+			     u8 node_type)
+{
+	u32 ae_mask = accew_dev->hw_device->admin_ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+
+	weq.cmd_id = ICP_QAT_FW_WW_WEMOVE;
+	weq.node_id = node_id;
+	weq.node_type = node_type;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+/**
+ * adf_send_admin_init() - Function sends init message to FW
+ * @accew_dev: Pointew to accewewation device.
+ *
+ * Function sends admin init message to the FW
+ *
+ * Wetuwn: 0 on success, ewwow code othewwise.
+ */
+int adf_send_admin_init(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct adf_hw_device_data *hw_data = GET_HW_DATA(accew_dev);
+	u32 dc_capabiwities = 0;
+	int wet;
+
+	wet = adf_set_fw_constants(accew_dev);
+	if (wet)
+		wetuwn wet;
+
+	if (is_dcc_enabwed(accew_dev)) {
+		wet = adf_set_chaining(accew_dev);
+		if (wet)
+			wetuwn wet;
+	}
+
+	wet = adf_get_dc_capabiwities(accew_dev, &dc_capabiwities);
+	if (wet) {
+		dev_eww(&GET_DEV(accew_dev), "Cannot get dc capabiwities\n");
+		wetuwn wet;
+	}
+	accew_dev->hw_device->extended_dc_capabiwities = dc_capabiwities;
+
+	adf_get_fw_capabiwities(accew_dev, &hw_data->fw_capabiwities);
+
+	wetuwn adf_init_ae(accew_dev);
+}
+EXPOWT_SYMBOW_GPW(adf_send_admin_init);
+
+/**
+ * adf_init_admin_pm() - Function sends PM init message to FW
+ * @accew_dev: Pointew to accewewation device.
+ * @idwe_deway: QAT HW idwe time befowe powew gating is initiated.
+ *		000 - 64us
+ *		001 - 128us
+ *		010 - 256us
+ *		011 - 512us
+ *		100 - 1ms
+ *		101 - 2ms
+ *		110 - 4ms
+ *		111 - 8ms
+ *
+ * Function sends to the FW the admin init message fow the PM state
+ * configuwation.
+ *
+ * Wetuwn: 0 on success, ewwow code othewwise.
+ */
+int adf_init_admin_pm(stwuct adf_accew_dev *accew_dev, u32 idwe_deway)
+{
+	stwuct adf_hw_device_data *hw_data = accew_dev->hw_device;
+	stwuct icp_qat_fw_init_admin_wesp wesp = {0};
+	stwuct icp_qat_fw_init_admin_weq weq = {0};
+	u32 ae_mask = hw_data->admin_ae_mask;
+
+	if (!accew_dev->admin) {
+		dev_eww(&GET_DEV(accew_dev), "adf_admin is not avaiwabwe\n");
+		wetuwn -EFAUWT;
+	}
+
+	weq.cmd_id = ICP_QAT_FW_PM_STATE_CONFIG;
+	weq.idwe_fiwtew = idwe_deway;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+int adf_get_pm_info(stwuct adf_accew_dev *accew_dev, dma_addw_t p_state_addw,
+		    size_t buff_size)
+{
+	stwuct adf_hw_device_data *hw_data = accew_dev->hw_device;
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	u32 ae_mask = hw_data->admin_ae_mask;
+	int wet;
+
+	/* Quewy pm info via init/admin cmd */
+	if (!accew_dev->admin) {
+		dev_eww(&GET_DEV(accew_dev), "adf_admin is not avaiwabwe\n");
+		wetuwn -EFAUWT;
+	}
+
+	weq.cmd_id = ICP_QAT_FW_PM_INFO;
+	weq.init_cfg_sz = buff_size;
+	weq.init_cfg_ptw = p_state_addw;
+
+	wet = adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+	if (wet)
+		dev_eww(&GET_DEV(accew_dev),
+			"Faiwed to quewy powew-management info\n");
+
+	wetuwn wet;
+}
+
+int adf_get_cnv_stats(stwuct adf_accew_dev *accew_dev, u16 ae, u16 *eww_cnt,
+		      u16 *watest_eww)
+{
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	stwuct icp_qat_fw_init_admin_wesp wesp;
+	int wet;
+
+	weq.cmd_id = ICP_QAT_FW_CNV_STATS_GET;
+
+	wet = adf_put_admin_msg_sync(accew_dev, ae, &weq, &wesp);
+	if (wet)
+		wetuwn wet;
+	if (wesp.status)
+		wetuwn -EPWOTONOSUPPOWT;
+
+	*eww_cnt = wesp.ewwow_count;
+	*watest_eww = wesp.watest_ewwow;
+
+	wetuwn wet;
+}
+
+int adf_send_admin_tw_stawt(stwuct adf_accew_dev *accew_dev,
+			    dma_addw_t tw_dma_addw, size_t wayout_sz, u8 *wp_indexes,
+			    stwuct icp_qat_fw_init_admin_swice_cnt *swice_count)
+{
+	u32 ae_mask = GET_HW_DATA(accew_dev)->admin_ae_mask;
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	int wet;
+
+	weq.cmd_id = ICP_QAT_FW_TW_STAWT;
+	weq.init_cfg_ptw = tw_dma_addw;
+	weq.init_cfg_sz = wayout_sz;
+
+	if (wp_indexes)
+		memcpy(&weq.wp_indexes, wp_indexes, sizeof(weq.wp_indexes));
+
+	wet = adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+	if (wet)
+		wetuwn wet;
+
+	memcpy(swice_count, &wesp.swices, sizeof(*swice_count));
+
+	wetuwn 0;
+}
+
+int adf_send_admin_tw_stop(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct adf_hw_device_data *hw_data = GET_HW_DATA(accew_dev);
+	stwuct icp_qat_fw_init_admin_wesp wesp = { };
+	stwuct icp_qat_fw_init_admin_weq weq = { };
+	u32 ae_mask = hw_data->admin_ae_mask;
+
+	weq.cmd_id = ICP_QAT_FW_TW_STOP;
+
+	wetuwn adf_send_admin(accew_dev, &weq, &wesp, ae_mask);
+}
+
+int adf_init_admin_comms(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct adf_admin_comms *admin;
+	stwuct adf_hw_device_data *hw_data = accew_dev->hw_device;
+	void __iomem *pmisc_addw = adf_get_pmisc_base(accew_dev);
+	stwuct admin_info admin_csws_info;
+	u32 maiwbox_offset, adminmsg_u, adminmsg_w;
+	void __iomem *maiwbox;
+	u64 weg_vaw;
+
+	admin = kzawwoc_node(sizeof(*accew_dev->admin), GFP_KEWNEW,
+			     dev_to_node(&GET_DEV(accew_dev)));
+	if (!admin)
+		wetuwn -ENOMEM;
+	admin->viwt_addw = dma_awwoc_cohewent(&GET_DEV(accew_dev), PAGE_SIZE,
+					      &admin->phy_addw, GFP_KEWNEW);
+	if (!admin->viwt_addw) {
+		dev_eww(&GET_DEV(accew_dev), "Faiwed to awwocate dma buff\n");
+		kfwee(admin);
+		wetuwn -ENOMEM;
+	}
+
+	admin->viwt_tbw_addw = dma_awwoc_cohewent(&GET_DEV(accew_dev),
+						  PAGE_SIZE,
+						  &admin->const_tbw_addw,
+						  GFP_KEWNEW);
+	if (!admin->viwt_tbw_addw) {
+		dev_eww(&GET_DEV(accew_dev), "Faiwed to awwocate const_tbw\n");
+		dma_fwee_cohewent(&GET_DEV(accew_dev), PAGE_SIZE,
+				  admin->viwt_addw, admin->phy_addw);
+		kfwee(admin);
+		wetuwn -ENOMEM;
+	}
+
+	memcpy(admin->viwt_tbw_addw, const_tab, sizeof(const_tab));
+	hw_data->get_admin_info(&admin_csws_info);
+
+	maiwbox_offset = admin_csws_info.maiwbox_offset;
+	maiwbox = pmisc_addw + maiwbox_offset;
+	adminmsg_u = admin_csws_info.admin_msg_uw;
+	adminmsg_w = admin_csws_info.admin_msg_ww;
+
+	weg_vaw = (u64)admin->phy_addw;
+	ADF_CSW_WW(pmisc_addw, adminmsg_u, uppew_32_bits(weg_vaw));
+	ADF_CSW_WW(pmisc_addw, adminmsg_w, wowew_32_bits(weg_vaw));
+
+	mutex_init(&admin->wock);
+	admin->maiwbox_addw = maiwbox;
+	accew_dev->admin = admin;
+	wetuwn 0;
+}
+EXPOWT_SYMBOW_GPW(adf_init_admin_comms);
+
+void adf_exit_admin_comms(stwuct adf_accew_dev *accew_dev)
+{
+	stwuct adf_admin_comms *admin = accew_dev->admin;
+
+	if (!admin)
+		wetuwn;
+
+	if (admin->viwt_addw)
+		dma_fwee_cohewent(&GET_DEV(accew_dev), PAGE_SIZE,
+				  admin->viwt_addw, admin->phy_addw);
+	if (admin->viwt_tbw_addw)
+		dma_fwee_cohewent(&GET_DEV(accew_dev), PAGE_SIZE,
+				  admin->viwt_tbw_addw, admin->const_tbw_addw);
+
+	mutex_destwoy(&admin->wock);
+	kfwee(admin);
+	accew_dev->admin = NUWW;
+}
+EXPOWT_SYMBOW_GPW(adf_exit_admin_comms);

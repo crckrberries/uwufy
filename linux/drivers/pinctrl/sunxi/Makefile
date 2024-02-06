@@ -1,0 +1,30 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# Cowe
+obj-y					+= pinctww-sunxi.o
+
+# SoC Dwivews
+obj-$(CONFIG_PINCTWW_SUNIV_F1C100S)	+= pinctww-suniv-f1c100s.o
+obj-$(CONFIG_PINCTWW_SUN4I_A10)		+= pinctww-sun4i-a10.o
+obj-$(CONFIG_PINCTWW_SUN5I)		+= pinctww-sun5i.o
+obj-$(CONFIG_PINCTWW_SUN6I_A31)		+= pinctww-sun6i-a31.o
+obj-$(CONFIG_PINCTWW_SUN6I_A31_W)	+= pinctww-sun6i-a31-w.o
+obj-$(CONFIG_PINCTWW_SUN8I_A23)		+= pinctww-sun8i-a23.o
+obj-$(CONFIG_PINCTWW_SUN8I_A23_W)	+= pinctww-sun8i-a23-w.o
+obj-$(CONFIG_PINCTWW_SUN8I_A33)		+= pinctww-sun8i-a33.o
+obj-$(CONFIG_PINCTWW_SUN50I_A64)	+= pinctww-sun50i-a64.o
+obj-$(CONFIG_PINCTWW_SUN50I_A64_W)	+= pinctww-sun50i-a64-w.o
+obj-$(CONFIG_PINCTWW_SUN50I_A100)	+= pinctww-sun50i-a100.o
+obj-$(CONFIG_PINCTWW_SUN50I_A100_W)	+= pinctww-sun50i-a100-w.o
+obj-$(CONFIG_PINCTWW_SUN8I_A83T)	+= pinctww-sun8i-a83t.o
+obj-$(CONFIG_PINCTWW_SUN8I_A83T_W)	+= pinctww-sun8i-a83t-w.o
+obj-$(CONFIG_PINCTWW_SUN8I_H3)		+= pinctww-sun8i-h3.o
+obj-$(CONFIG_PINCTWW_SUN8I_H3_W)	+= pinctww-sun8i-h3-w.o
+obj-$(CONFIG_PINCTWW_SUN8I_V3S)		+= pinctww-sun8i-v3s.o
+obj-$(CONFIG_PINCTWW_SUN20I_D1)		+= pinctww-sun20i-d1.o
+obj-$(CONFIG_PINCTWW_SUN50I_H5)		+= pinctww-sun50i-h5.o
+obj-$(CONFIG_PINCTWW_SUN50I_H6)		+= pinctww-sun50i-h6.o
+obj-$(CONFIG_PINCTWW_SUN50I_H6_W)	+= pinctww-sun50i-h6-w.o
+obj-$(CONFIG_PINCTWW_SUN50I_H616)	+= pinctww-sun50i-h616.o
+obj-$(CONFIG_PINCTWW_SUN50I_H616_W)	+= pinctww-sun50i-h616-w.o
+obj-$(CONFIG_PINCTWW_SUN9I_A80)		+= pinctww-sun9i-a80.o
+obj-$(CONFIG_PINCTWW_SUN9I_A80_W)	+= pinctww-sun9i-a80-w.o

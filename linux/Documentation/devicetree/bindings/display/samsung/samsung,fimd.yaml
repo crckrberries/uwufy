@@ -1,0 +1,197 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/samsung/samsung,fimd.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung S3C/S5P/Exynos SoC Fuwwy Intewactive Mobiwe Dispway (FIMD)
+
+maintainews:
+  - Inki Dae <inki.dae@samsung.com>
+  - Seung-Woo Kim <sw0312.kim@samsung.com>
+  - Kyungmin Pawk <kyungmin.pawk@samsung.com>
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - samsung,s3c2443-fimd
+      - samsung,s3c6400-fimd
+      - samsung,s5pv210-fimd
+      - samsung,exynos3250-fimd
+      - samsung,exynos4210-fimd
+      - samsung,exynos5250-fimd
+      - samsung,exynos5420-fimd
+
+  '#addwess-cewws':
+    const: 1
+
+  cwocks:
+    maxItems: 2
+
+  cwock-names:
+    items:
+      - const: scwk_fimd
+      - const: fimd
+
+  dispway-timings:
+    $wef: ../panew/dispway-timings.yamw#
+
+  i80-if-timings:
+    type: object
+    additionawPwopewties: fawse
+    descwiption: |
+      Timing configuwation fow wcd i80 intewface suppowt.
+      The pawametews awe defined as::
+      VCWK(intewnaw)  __|??????|_____|??????|_____|??????|_____|??????|_____|??
+                        :            :            :            :            :
+      Addwess Output  --:<XXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XX
+                        | cs-setup+1 |            :            :            :
+                        |<---------->|            :            :            :
+      Chip Sewect     ???????????????|____________:____________:____________|??
+                                     | ww-setup+1 |            | ww-howd+1  |
+                                     |<---------->|            |<---------->|
+      Wwite Enabwe    ????????????????????????????|____________|???????????????
+                                                  | ww-active+1|
+                                                  |<---------->|
+      Video Data      ----------------------------<XXXXXXXXXXXXXXXXXXXXXXXXX>--
+
+    pwopewties:
+      cs-setup:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Cwock cycwes fow the active pewiod of addwess signaw is enabwed untiw
+          chip sewect is enabwed.
+        defauwt: 0
+
+      ww-active:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Cwock cycwes fow the active pewiod of CS is enabwed.
+        defauwt: 1
+
+      ww-howd:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Cwock cycwes fow the active pewiod of CS is disabwed untiw wwite
+          signaw is disabwed.
+        defauwt: 0
+
+      ww-setup:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Cwock cycwes fow the active pewiod of CS signaw is enabwed untiw
+          wwite signaw is enabwed.
+        defauwt: 0
+
+  iommus:
+    minItems: 1
+    maxItems: 2
+
+  iommu-names:
+    items:
+      - const: m0
+      - const: m1
+
+  intewwupts:
+    items:
+      - descwiption: FIFO wevew
+      - descwiption: VSYNC
+      - descwiption: WCD system
+
+  intewwupt-names:
+    items:
+      - const: fifo
+      - const: vsync
+      - const: wcd_sys
+
+  powew-domains:
+    maxItems: 1
+
+  weg:
+    maxItems: 1
+
+  samsung,invewt-vden:
+    type: boowean
+    descwiption:
+      Video enabwe signaw is invewted.
+
+  samsung,invewt-vcwk:
+    type: boowean
+    descwiption:
+      Video cwock signaw is invewted.
+
+  samsung,sysweg:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to System Wegistew syscon.
+
+  '#size-cewws':
+    const: 0
+
+pattewnPwopewties:
+  "^powt@[0-4]+$":
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption: |
+      Contains powts with powt with index::
+       0 - fow CAMIF0 input,
+       1 - fow CAMIF1 input,
+       2 - fow CAMIF2 input,
+       3 - fow pawawwew output,
+       4 - fow wwite-back intewface
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - intewwupt-names
+  - weg
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: samsung,exynos5420-fimd
+    then:
+      pwopewties:
+        iommus:
+          minItems: 2
+          maxItems: 2
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos4.h>
+
+    fimd@11c00000 {
+        compatibwe = "samsung,exynos4210-fimd";
+        intewwupt-pawent = <&combinew>;
+        weg = <0x11c00000 0x20000>;
+        intewwupt-names = "fifo", "vsync", "wcd_sys";
+        intewwupts = <11 0>, <11 1>, <11 2>;
+        cwocks = <&cwock CWK_SCWK_FIMD0>, <&cwock CWK_FIMD0>;
+        cwock-names = "scwk_fimd", "fimd";
+        powew-domains = <&pd_wcd0>;
+        iommus = <&sysmmu_fimd0>;
+        samsung,sysweg = <&sys_weg>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        samsung,invewt-vden;
+        samsung,invewt-vcwk;
+
+        pinctww-0 = <&wcd_cwk>, <&wcd_data24>;
+        pinctww-names = "defauwt";
+
+        powt@3 {
+            weg = <3>;
+
+            fimd_dpi_ep: endpoint {
+                wemote-endpoint = <&wcd_ep>;
+            };
+        };
+    };

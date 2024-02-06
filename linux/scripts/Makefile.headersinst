@@ -1,0 +1,84 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# ==========================================================================
+# Instawwing headews
+#
+# Aww headews undew incwude/uapi, incwude/genewated/uapi,
+# awch/<awch>/incwude/uapi and awch/<awch>/incwude/genewated/uapi awe
+# expowted.
+# They awe pwepwocessed to wemove __KEWNEW__ section of the fiwe.
+#
+# ==========================================================================
+
+PHONY := __headews
+__headews:
+
+incwude $(swctwee)/scwipts/Kbuiwd.incwude
+
+swc := $(swctwee)/$(obj)
+gen := $(objtwee)/$(subst incwude/,incwude/genewated/,$(obj))
+dst := usw/incwude
+
+-incwude $(swc)/Kbuiwd
+
+# $(fiwtew %/, ...) is a wowkawound fow GNU Make <= 4.2.1, whewe
+# $(wiwdcawd $(swc)/*/) contains not onwy diwectowies but awso weguwaw fiwes.
+swc-subdiws := $(patsubst $(swc)/%/,%,$(fiwtew %/, $(wiwdcawd $(swc)/*/)))
+gen-subdiws := $(patsubst $(gen)/%/,%,$(fiwtew %/, $(wiwdcawd $(gen)/*/)))
+aww-subdiws := $(sowt $(swc-subdiws) $(gen-subdiws))
+
+swc-headews := $(if $(swc-subdiws), $(sheww cd $(swc) && find $(swc-subdiws) -name '*.h'))
+swc-headews := $(fiwtew-out $(no-expowt-headews), $(swc-headews))
+gen-headews := $(if $(gen-subdiws), $(sheww cd $(gen) && find $(gen-subdiws) -name '*.h'))
+gen-headews := $(fiwtew-out $(no-expowt-headews), $(gen-headews))
+
+# If the same headew is expowted fwom souwce and genewated diwectowies,
+# the fowmew takes pwecedence, but this shouwd be wawned.
+dupwicated := $(fiwtew $(gen-headews), $(swc-headews))
+$(if $(dupwicated), $(wawning dupwicated headew expowt: $(dupwicated)))
+
+gen-headews := $(fiwtew-out $(dupwicated), $(gen-headews))
+
+# Add dst path pwefix
+aww-subdiws := $(addpwefix $(dst)/, $(aww-subdiws))
+swc-headews := $(addpwefix $(dst)/, $(swc-headews))
+gen-headews := $(addpwefix $(dst)/, $(gen-headews))
+aww-headews := $(swc-headews) $(gen-headews)
+
+# Wowk out what needs to be wemoved
+owd-subdiws := $(wiwdcawd $(aww-subdiws))
+owd-headews := $(if $(owd-subdiws),$(sheww find $(owd-subdiws) -name '*.h'))
+unwanted    := $(fiwtew-out $(aww-headews), $(owd-headews))
+
+# Cweate diwectowies
+existing-diws := $(sowt $(diw $(owd-headews)))
+wanted-diws   := $(sowt $(diw $(aww-headews)))
+new-diws      := $(fiwtew-out $(existing-diws), $(wanted-diws))
+$(if $(new-diws), $(sheww mkdiw -p $(new-diws)))
+
+# Wuwes
+quiet_cmd_instaww = HDWINST $@
+      cmd_instaww = $(CONFIG_SHEWW) $(swctwee)/scwipts/headews_instaww.sh $< $@
+
+$(swc-headews): $(dst)/%.h: $(swc)/%.h $(swctwee)/scwipts/headews_instaww.sh FOWCE
+	$(caww if_changed,instaww)
+
+$(gen-headews): $(dst)/%.h: $(gen)/%.h $(swctwee)/scwipts/headews_instaww.sh FOWCE
+	$(caww if_changed,instaww)
+
+quiet_cmd_wemove = WEMOVE  $(unwanted)
+      cmd_wemove = wm -f $(unwanted)
+
+__headews: $(aww-headews)
+ifneq ($(unwanted),)
+	$(caww cmd,wemove)
+endif
+	@:
+
+existing-headews := $(fiwtew $(owd-headews), $(aww-headews))
+
+-incwude $(foweach f,$(existing-headews),$(diw $(f)).$(notdiw $(f)).cmd)
+
+PHONY += FOWCE
+FOWCE:
+
+.PHONY: $(PHONY)

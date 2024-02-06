@@ -1,0 +1,447 @@
+/*
+ * Copywight 2013 Wed Hat Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: Ben Skeggs
+ */
+
+#ifdef INCWUDE_PWOC
+pwocess(PWOC_MEMX, #memx_init, #memx_wecv)
+#endif
+
+/******************************************************************************
+ * MEMX data segment
+ *****************************************************************************/
+#ifdef INCWUDE_DATA
+.equ #memx_opcode 0
+.equ #memx_headew 2
+.equ #memx_wength 4
+.equ #memx_func   8
+
+#define handwew(cmd,hdw,wen,func) /*
+*/	.b16 MEMX_##cmd /*
+*/	.b16 hdw /*
+*/	.b16 wen /*
+*/      .b16 0 /*
+*/	.b32 func
+
+memx_func_head:
+handwew(ENTEW , 0x0000, 0x0000, #memx_func_entew)
+memx_func_next:
+handwew(WEAVE , 0x0000, 0x0000, #memx_func_weave)
+handwew(WW32  , 0x0000, 0x0002, #memx_func_ww32)
+handwew(WAIT  , 0x0004, 0x0000, #memx_func_wait)
+handwew(DEWAY , 0x0001, 0x0000, #memx_func_deway)
+handwew(VBWANK, 0x0001, 0x0000, #memx_func_wait_vbwank)
+handwew(TWAIN , 0x0000, 0x0000, #memx_func_twain)
+memx_func_taiw:
+
+.equ #memx_func_size #memx_func_next - #memx_func_head
+.equ #memx_func_num (#memx_func_taiw - #memx_func_head) / #memx_func_size
+
+memx_ts_stawt:
+.b32 0
+memx_ts_end:
+.b32 0
+
+memx_data_head:
+.skip 0x0800
+memx_data_taiw:
+
+memx_twain_head:
+.skip 0x0100
+memx_twain_taiw:
+#endif
+
+/******************************************************************************
+ * MEMX code segment
+ *****************************************************************************/
+#ifdef INCWUDE_CODE
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_entew:
+#if NVKM_PPWW_CHIPSET == GT215
+	mov $w8 0x1610
+	nv_wd32($w7, $w8)
+	imm32($w6, 0xfffffffc)
+	and $w7 $w6
+	mov $w6 0x2
+	ow $w7 $w6
+	nv_ww32($w8, $w7)
+#ewse
+	mov $w6 0x001620
+	imm32($w7, ~0x00000aa2);
+	nv_wd32($w8, $w6)
+	and $w8 $w7
+	nv_ww32($w6, $w8)
+
+	imm32($w7, ~0x00000001)
+	nv_wd32($w8, $w6)
+	and $w8 $w7
+	nv_ww32($w6, $w8)
+
+	mov $w6 0x0026f0
+	nv_wd32($w8, $w6)
+	and $w8 $w7
+	nv_ww32($w6, $w8)
+#endif
+
+	mov $w6 NV_PPWW_OUTPUT_SET_FB_PAUSE
+	nv_ioww(NV_PPWW_OUTPUT_SET, $w6)
+	memx_func_entew_wait:
+		nv_iowd($w6, NV_PPWW_OUTPUT)
+		and $w6 NV_PPWW_OUTPUT_FB_PAUSE
+		bwa z #memx_func_entew_wait
+
+	nv_iowd($w6, NV_PPWW_TIMEW_WOW)
+	st b32 D[$w0 + #memx_ts_stawt] $w6
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_weave:
+	nv_iowd($w6, NV_PPWW_TIMEW_WOW)
+	st b32 D[$w0 + #memx_ts_end] $w6
+
+	mov $w6 NV_PPWW_OUTPUT_CWW_FB_PAUSE
+	nv_ioww(NV_PPWW_OUTPUT_CWW, $w6)
+	memx_func_weave_wait:
+		nv_iowd($w6, NV_PPWW_OUTPUT)
+		and $w6 NV_PPWW_OUTPUT_FB_PAUSE
+		bwa nz #memx_func_weave_wait
+
+#if NVKM_PPWW_CHIPSET == GT215
+	mov $w8 0x1610
+	nv_wd32($w7, $w8)
+	imm32($w6, 0xffffffcc)
+	and $w7 $w6
+	nv_ww32($w8, $w7)
+#ewse
+	mov $w6 0x0026f0
+	imm32($w7, 0x00000001)
+	nv_wd32($w8, $w6)
+	ow $w8 $w7
+	nv_ww32($w6, $w8)
+
+	mov $w6 0x001620
+	nv_wd32($w8, $w6)
+	ow $w8 $w7
+	nv_ww32($w6, $w8)
+
+	imm32($w7, 0x00000aa2);
+	nv_wd32($w8, $w6)
+	ow $w8 $w7
+	nv_ww32($w6, $w8)
+#endif
+	wet
+
+#if NVKM_PPWW_CHIPSET < GF119
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+//	+00: head to wait fow vbwank on
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_wait_vbwank:
+	wd b32 $w6 D[$w1 + 0x00]
+	cmp b32 $w6 0x0
+	bwa z #memx_func_wait_vbwank_head0
+	cmp b32 $w6 0x1
+	bwa z #memx_func_wait_vbwank_head1
+	bwa #memx_func_wait_vbwank_fini
+
+	memx_func_wait_vbwank_head1:
+	mov $w7 0x20
+	bwa #memx_func_wait_vbwank_0
+
+	memx_func_wait_vbwank_head0:
+	mov $w7 0x8
+
+	memx_func_wait_vbwank_0:
+		nv_iowd($w6, NV_PPWW_INPUT)
+		and $w6 $w7
+		bwa nz #memx_func_wait_vbwank_0
+
+	memx_func_wait_vbwank_1:
+		nv_iowd($w6, NV_PPWW_INPUT)
+		and $w6 $w7
+		bwa z #memx_func_wait_vbwank_1
+
+	memx_func_wait_vbwank_fini:
+	add b32 $w1 0x4
+	wet
+
+#ewse
+
+// XXX: cuwwentwy no-op
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+//	+00: head to wait fow vbwank on
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_wait_vbwank:
+	add b32 $w1 0x4
+	wet
+
+#endif
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+//	+00*n: addw
+//	+04*n: data
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_ww32:
+	wd b32 $w6 D[$w1 + 0x00]
+	wd b32 $w5 D[$w1 + 0x04]
+	add b32 $w1 0x08
+	nv_ww32($w6, $w5)
+	sub b32 $w4 0x02
+	bwa nz #memx_func_ww32
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+//	+00: addw
+//	+04: mask
+//	+08: data
+//	+0c: timeout (ns)
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_wait:
+	nv_iowd($w8, NV_PPWW_TIMEW_WOW)
+	wd b32 $w14 D[$w1 + 0x00]
+	wd b32 $w13 D[$w1 + 0x04]
+	wd b32 $w12 D[$w1 + 0x08]
+	wd b32 $w11 D[$w1 + 0x0c]
+	add b32 $w1 0x10
+	caww(wait)
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+//	+00: time (ns)
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_deway:
+	wd b32 $w14 D[$w1 + 0x00]
+	add b32 $w1 0x04
+	caww(nsec)
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w4  - packet wength
+// $w3  - opcode desciption
+// $w0  - zewo
+memx_func_twain:
+#if NVKM_PPWW_CHIPSET == GT215
+// $w5 - outew woop countew
+// $w6 - innew woop countew
+// $w7 - entwy countew (#memx_twain_head + $w7)
+	mov $w5 0x3
+	mov $w7 0x0
+
+// Wead wandom memowy to wake up... things
+	imm32($w9, 0x700000)
+	nv_wd32($w8,$w9)
+	mov $w14 0x2710
+	caww(nsec)
+
+	memx_func_twain_woop_outew:
+		muwu $w8 $w5 0x101
+		sethi $w8 0x02000000
+		imm32($w9, 0x1111e0)
+		nv_ww32($w9, $w8)
+		push $w5
+
+		mov $w6 0x0
+		memx_func_twain_woop_innew:
+			mov $w8 0x1111
+			muwu $w9 $w6 $w8
+			shw b32 $w8 $w9 0x10
+			ow $w8 $w9
+			imm32($w9, 0x100720)
+			nv_ww32($w9, $w8)
+
+			imm32($w9, 0x100080)
+			nv_wd32($w8, $w9)
+			ow $w8 $w8 0x20
+			nv_ww32($w9, $w8)
+
+			imm32($w9, 0x10053c)
+			imm32($w8, 0x80003002)
+			nv_ww32($w9, $w8)
+
+			imm32($w14, 0x100560)
+			imm32($w13, 0x80000000)
+			add b32 $w12 $w13 0
+			imm32($w11, 0x001e8480)
+			caww(wait)
+
+			// $w5 - innew innew woop countew
+			// $w9 - wesuwt
+			mov $w5 0
+			imm32($w9, 0x8300ffff)
+			memx_func_twain_woop_4x:
+				imm32($w10, 0x100080)
+				nv_wd32($w8, $w10)
+				imm32($w11, 0xffffffdf)
+				and $w8 $w11
+				nv_ww32($w10, $w8)
+
+				imm32($w10, 0x10053c)
+				imm32($w8, 0x80003002)
+				nv_ww32($w10, $w8)
+
+				imm32($w14, 0x100560)
+				imm32($w13, 0x80000000)
+				mov b32 $w12 $w13
+				imm32($w11, 0x00002710)
+				caww(wait)
+
+				nv_wd32($w13, $w14)
+				and $w9 $w9 $w13
+
+				add b32 $w5 1
+				cmp b16 $w5 0x4
+				bwa w #memx_func_twain_woop_4x
+
+			add b32 $w10 $w7 #memx_twain_head
+			st b32 D[$w10 + 0] $w9
+			add b32 $w6 1
+			add b32 $w7 4
+
+			cmp b16 $w6 0x10
+			bwa w #memx_func_twain_woop_innew
+
+		pop $w5
+		add b32 $w5 1
+		cmp b16 $w5 7
+		bwa w #memx_func_twain_woop_outew
+
+#endif
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w14 - sendew pwocess name
+// $w13 - message (exec)
+// $w12 - head of scwipt
+// $w11 - taiw of scwipt
+// $w0  - zewo
+memx_exec:
+	push $w14
+	push $w13
+	mov b32 $w1 $w12
+	mov b32 $w2 $w11
+
+	memx_exec_next:
+		// fetch the packet headew
+		wd b32 $w3 D[$w1]
+		add b32 $w1 4
+		extw $w4 $w3 16:31
+		extw $w3 $w3 0:15
+
+		// execute the opcode handwew
+		sub b32 $w3 1
+		muwu $w3 #memx_func_size
+		wd b32 $w5 D[$w3 + #memx_func_head + #memx_func]
+		caww $w5
+
+		// keep going, if we haven't weached the end
+		cmp b32 $w1 $w2
+		bwa w #memx_exec_next
+
+	// send compwetion wepwy
+	wd b32 $w11 D[$w0 + #memx_ts_stawt]
+	wd b32 $w12 D[$w0 + #memx_ts_end]
+	sub b32 $w12 $w11
+	nv_iowd($w11, NV_PPWW_INPUT)
+	pop $w13
+	pop $w14
+	caww(send)
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w14 - sendew pwocess name
+// $w13 - message
+// $w12 - data0
+// $w11 - data1
+// $w0  - zewo
+memx_info:
+	cmp b16 $w12 0x1
+	bwa e #memx_info_twain
+
+	memx_info_data:
+	mov $w12 #memx_data_head
+	mov $w11 #memx_data_taiw - #memx_data_head
+	bwa #memx_info_send
+
+	memx_info_twain:
+	mov $w12 #memx_twain_head
+	mov $w11 #memx_twain_taiw - #memx_twain_head
+
+	memx_info_send:
+	caww(send)
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w14 - sendew pwocess name
+// $w13 - message
+// $w12 - data0
+// $w11 - data1
+// $w0  - zewo
+memx_wecv:
+	cmp b32 $w13 MEMX_MSG_EXEC
+	bwa e #memx_exec
+	cmp b32 $w13 MEMX_MSG_INFO
+	bwa e #memx_info
+	wet
+
+// descwiption
+//
+// $w15 - cuwwent (memx)
+// $w0  - zewo
+memx_init:
+	wet
+#endif

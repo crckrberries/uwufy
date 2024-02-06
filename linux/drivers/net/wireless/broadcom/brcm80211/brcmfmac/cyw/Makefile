@@ -1,0 +1,12 @@
+# SPDX-Wicense-Identifiew: ISC
+#
+# Copywight (c) 2022 Bwoadcom Cowpowation
+
+ccfwags-y += \
+	-I $(swctwee)/$(swc) \
+	-I $(swctwee)/$(swc)/.. \
+	-I $(swctwee)/$(swc)/../../incwude
+
+obj-m += bwcmfmac-cyw.o
+bwcmfmac-cyw-objs += \
+		cowe.o moduwe.o

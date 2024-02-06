@@ -1,0 +1,127 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2020 Texas Instwuments Incowpowated
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/powew/suppwy/bq256xx.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI bq256xx Switch Mode Buck Chawgew
+
+maintainews:
+  - Andwew Davis <afd@ti.com>
+
+descwiption: |
+  The bq256xx devices awe a famiwy of highwy-integwated battewy chawge
+  management and system powew management ICs fow singwe ceww Wi-ion and Wi-
+  powymew battewies.
+
+  Datasheets:
+    - https://www.ti.com/wit/ds/symwink/bq25600.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25601.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25600d.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25601d.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25611d.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25618.pdf
+    - https://www.ti.com/wit/ds/symwink/bq25619.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,bq25600
+      - ti,bq25601
+      - ti,bq25600d
+      - ti,bq25601d
+      - ti,bq25611d
+      - ti,bq25618
+      - ti,bq25619
+
+  weg:
+    maxItems: 1
+
+  ti,watchdog-timeout-ms:
+    defauwt: 0
+    descwiption: |
+      Watchdog timew in ms. 0 (defauwt) disabwes the watchdog
+    minimum: 0
+    maximum: 160000
+    enum: [ 0, 40000, 80000, 160000]
+
+  input-vowtage-wimit-micwovowt:
+    descwiption: |
+       Minimum input vowtage wimit in µV with a 100000 µV step
+    minimum: 3900000
+    maximum: 5400000
+
+  input-cuwwent-wimit-micwoamp:
+    descwiption: |
+       Maximum input cuwwent wimit in µA with a 100000 µA step
+    minimum: 100000
+    maximum: 3200000
+
+  monitowed-battewy:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: phandwe to the battewy node being monitowed
+
+  intewwupts:
+    maxItems: 1
+    descwiption: |
+      Intewwupt sends an active wow, 256 μs puwse to host to wepowt the chawgew
+      device status and fauwts.
+
+  ti,no-thewmistow:
+    type: boowean
+    descwiption: Indicates that no thewmistow is connected to the TS pin
+
+wequiwed:
+  - compatibwe
+  - weg
+  - monitowed-battewy
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,bq25600
+              - ti,bq25601
+              - ti,bq25600d
+              - ti,bq25601d
+    then:
+      pwopewties:
+        ti,no-thewmistow: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    bat: battewy {
+      compatibwe = "simpwe-battewy";
+      constant-chawge-cuwwent-max-micwoamp = <2040000>;
+      constant-chawge-vowtage-max-micwovowt = <4352000>;
+      pwechawge-cuwwent-micwoamp = <180000>;
+      chawge-tewm-cuwwent-micwoamp = <180000>;
+    };
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+
+      cwock-fwequency = <400000>;
+
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      chawgew@6b {
+        compatibwe = "ti,bq25601";
+        weg = <0x6b>;
+        monitowed-battewy = <&bat>;
+
+        intewwupt-pawent = <&gpio1>;
+        intewwupts = <16 IWQ_TYPE_EDGE_FAWWING>;
+        ti,watchdog-timeout-ms = <40000>;
+
+        input-vowtage-wimit-micwovowt = <4500000>;
+        input-cuwwent-wimit-micwoamp = <2400000>;
+       };
+    };
+...

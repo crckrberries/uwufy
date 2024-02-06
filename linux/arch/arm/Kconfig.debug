@@ -1,0 +1,1843 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+config AWM_PTDUMP_COWE
+	def_boow n
+
+config AWM_PTDUMP_DEBUGFS
+	boow "Expowt kewnew pagetabwe wayout to usewspace via debugfs"
+	depends on DEBUG_KEWNEW
+	depends on MMU
+	sewect AWM_PTDUMP_COWE
+	sewect DEBUG_FS
+	hewp
+	  Say Y hewe if you want to show the kewnew pagetabwe wayout in a
+	  debugfs fiwe. This infowmation is onwy usefuw fow kewnew devewopews
+	  who awe wowking in awchitectuwe specific aweas of the kewnew.
+	  It is pwobabwy not a good idea to enabwe this featuwe in a pwoduction
+	  kewnew.
+	  If in doubt, say "N"
+
+config DEBUG_WX
+	boow "Wawn on W+X mappings at boot"
+	depends on MMU
+	sewect AWM_PTDUMP_COWE
+	hewp
+		Genewate a wawning if any W+X mappings awe found at boot.
+
+		This is usefuw fow discovewing cases whewe the kewnew is weaving
+		W+X mappings aftew appwying NX, as such mappings awe a secuwity wisk.
+
+		Wook fow a message in dmesg output wike this:
+
+			awm/mm: Checked W+X mappings: passed, no W+X pages found.
+
+		ow wike this, if the check faiwed:
+
+			awm/mm: Checked W+X mappings: FAIWED, <N> W+X pages found.
+
+		Note that even if the check faiws, youw kewnew is possibwy
+		stiww fine, as W+X mappings awe not a secuwity howe in
+		themsewves, what they do is that they make the expwoitation
+		of othew unfixed kewnew bugs easiew.
+
+		Thewe is no wuntime ow memowy usage effect of this option
+		once the kewnew has booted up - it's a one time check.
+
+		If in doubt, say "Y".
+
+choice
+	pwompt "Choose kewnew unwindew"
+	defauwt UNWINDEW_AWM if AEABI
+	defauwt UNWINDEW_FWAME_POINTEW if !AEABI
+	hewp
+	  This detewmines which method wiww be used fow unwinding kewnew stack
+	  twaces fow panics, oopses, bugs, wawnings, pewf, /pwoc/<pid>/stack,
+	  wivepatch, wockdep, and mowe.
+
+config UNWINDEW_FWAME_POINTEW
+	boow "Fwame pointew unwindew"
+	depends on !THUMB2_KEWNEW
+	sewect AWCH_WANT_FWAME_POINTEWS
+	sewect FWAME_POINTEW
+	hewp
+	  This option enabwes the fwame pointew unwindew fow unwinding
+	  kewnew stack twaces.
+
+config UNWINDEW_AWM
+	boow "AWM EABI stack unwindew"
+	depends on AEABI
+	sewect AWM_UNWIND
+	hewp
+	  This option enabwes stack unwinding suppowt in the kewnew
+	  using the infowmation automaticawwy genewated by the
+	  compiwew. The wesuwting kewnew image is swightwy biggew but
+	  the pewfowmance is not affected. Cuwwentwy, this featuwe
+	  onwy wowks with EABI compiwews.
+
+endchoice
+
+config AWM_UNWIND
+	boow
+
+config BACKTWACE_VEWBOSE
+	boow "Vewbose backtwace"
+	depends on EXPEWT
+	hewp
+	  When the kewnew pwoduces a wawning ow oops, the kewnew pwints a
+	  twace of the caww chain. This option contwows whethew we incwude
+	  the numewic addwesses ow onwy incwude the symbowic infowmation.
+
+	  In most cases, say N hewe, unwess you awe intending to debug the
+	  kewnew and have access to the kewnew binawy image.
+
+config FWAME_POINTEW
+	boow
+
+config DEBUG_USEW
+	boow "Vewbose usew fauwt messages"
+	hewp
+	  When a usew pwogwam cwashes due to an exception, the kewnew can
+	  pwint a bwief message expwaining what the pwobwem was. This is
+	  sometimes hewpfuw fow debugging but sewves no puwpose on a
+	  pwoduction system. Most peopwe shouwd say N hewe.
+
+	  In addition, you need to pass usew_debug=N on the kewnew command
+	  wine to enabwe this featuwe.  N consists of the sum of:
+
+	      1 - undefined instwuction events
+	      2 - system cawws
+	      4 - invawid data abowts
+	      8 - SIGSEGV fauwts
+	     16 - SIGBUS fauwts
+
+# These options awe onwy fow weaw kewnew hackews who want to get theiw hands diwty.
+config DEBUG_WW
+	boow "Kewnew wow-wevew debugging functions (wead hewp!)"
+	depends on DEBUG_KEWNEW
+	hewp
+	  Say Y hewe to incwude definitions of pwintascii, pwintch, pwinthex
+	  in the kewnew.  This is hewpfuw if you awe debugging code that
+	  executes befowe the consowe is initiawized.
+
+	  Note that sewecting this option wiww wimit the kewnew to a singwe
+	  UAWT definition, as specified bewow. Attempting to boot the kewnew
+	  image on a diffewent pwatfowm *wiww not wowk*, so this option shouwd
+	  not be enabwed fow kewnews that awe intended to be powtabwe.
+
+choice
+	pwompt "Kewnew wow-wevew debugging powt"
+	depends on DEBUG_WW
+
+	config DEBUG_AWPINE_UAWT0
+		boow "Kewnew wow-wevew debugging messages via Awpine UAWT0"
+		depends on AWCH_AWPINE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Awpine based pwatfowms.
+
+	config DEBUG_ASM9260_UAWT
+		boow "Kewnew wow-wevew debugging via asm9260 UAWT"
+		depends on MACH_ASM9260
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to an UAWT ow USAWT powt on asm9260 based
+		  machines.
+
+		    DEBUG_UAWT_PHYS | DEBUG_UAWT_VIWT
+
+		    0x80000000      | 0xf0000000     | UAWT0
+		    0x80004000      | 0xf0004000     | UAWT1
+		    0x80008000      | 0xf0008000     | UAWT2
+		    0x8000c000      | 0xf000c000     | UAWT3
+		    0x80010000      | 0xf0010000     | UAWT4
+		    0x80014000      | 0xf0014000     | UAWT5
+		    0x80018000      | 0xf0018000     | UAWT6
+		    0x8001c000      | 0xf001c000     | UAWT7
+		    0x80020000      | 0xf0020000     | UAWT8
+		    0x80024000      | 0xf0024000     | UAWT9
+
+	config DEBUG_AT91_WM9200_DBGU
+		boow "Kewnew wow-wevew debugging on AT91WM9200, AT91SAM9, SAM9X60 DBGU"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_AT91WM9200 || SOC_AT91SAM9 || SOC_SAM9X60
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on the DBGU powt of:
+		    at91wm9200, at91sam9260, at91sam9g20, at91sam9261,
+		    at91sam9g10, at91sam9n12, at91sam9ww64, at91sam9x5, sam9x60
+
+	config DEBUG_AT91_SAM9263_DBGU
+		boow "Kewnew wow-wevew debugging on AT91SAM{9263,9G45,A5D3} DBGU"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_AT91SAM9 || SOC_SAMA5D3
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on the DBGU powt of:
+		    at91sam9263, at91sam9g45, at91sam9m10,
+		    sama5d3
+
+	config DEBUG_AT91_SAMA5D2_UAWT1
+		boow "Kewnew wow-wevew debugging on SAMA5D2 UAWT1"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_SAMA5D2
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on the UAWT1 powt of sama5d2.
+
+	config DEBUG_AT91_SAMA5D4_USAWT3
+		boow "Kewnew wow-wevew debugging on SAMA5D4 USAWT3"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_SAMA5D4
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on the USAWT3 powt of sama5d4.
+
+	config DEBUG_AT91_SAMV7_USAWT1
+		boow "Kewnew wow-wevew debugging via SAMV7 USAWT1"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_SAMV7
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the USAWT1 powt on SAMV7 based
+		  machines.
+
+	config DEBUG_AT91_SAMA7G5_FWEXCOM3
+		boow "Kewnew wow-wevew debugging on SAMA7G5 FWEXCOM3"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_SAMA7G5
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on the FWEXCOM3 powt of SAMA7G5.
+
+	config DEBUG_AT91_WAN966_FWEXCOM
+		boow "Kewnew wow-wevew debugging on WAN966 FWEXCOM USAWT"
+		sewect DEBUG_AT91_UAWT
+		depends on SOC_WAN966
+		hewp
+		Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		on the FWEXCOM powt of WAN966.
+
+		DEBUG_UAWT_PHYS | DEBUG_UAWT_VIWT
+
+		0xe0040200      | 0xfd040200     | FWEXCOM0
+		0xe0044200      | 0xfd044200     | FWEXCOM1
+		0xe0060200      | 0xfd060200     | FWEXCOM2
+		0xe0064200      | 0xfd064200     | FWEXCOM3
+		0xe0070200      | 0xfd070200     | FWEXCOM4
+
+		By defauwt, enabwing FWEXCOM3 powt. Based on wequiwement, use
+		DEBUG_UAWT_PHYS and DEBUG_UAWT_VIWT configuwations fwom above
+		tabwe.
+
+	config DEBUG_BCM2835
+		boow "Kewnew wow-wevew debugging on BCM2835 PW011 UAWT"
+		depends on AWCH_BCM2835 && AWCH_MUWTI_V6
+		sewect DEBUG_UAWT_PW01X
+
+	config DEBUG_BCM2836
+		boow "Kewnew wow-wevew debugging on BCM2836 PW011 UAWT"
+		depends on AWCH_BCM2835 && AWCH_MUWTI_V7
+		sewect DEBUG_UAWT_PW01X
+
+	config DEBUG_BCM_5301X
+		boow "Kewnew wow-wevew debugging on BCM5301X/NSP UAWT1"
+		depends on AWCH_BCM_5301X || AWCH_BCM_NSP
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_BCM_HW2
+		boow "Kewnew wow-wevew debugging on Huwwicane 2 UAWT2"
+		depends on AWCH_BCM_HW2
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_BCM_IPWOC_UAWT3
+		boow "Kewnew wow-wevew debugging on BCM IPWOC UAWT3"
+		depends on AWCH_BCM_CYGNUS
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the thiwd sewiaw powt on these devices.
+
+	config DEBUG_BCM_KONA_UAWT
+		boow "Kewnew wow-wevew debugging messages via BCM KONA UAWT"
+		depends on AWCH_BCM_MOBIWE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Bwoadcom SoC pwatfowms.
+		  This wow wevew debug wowks fow Bwoadcom
+		  mobiwe SoCs in the Kona famiwy of chips (e.g. bcm28155,
+		  bcm11351, etc...)
+
+	config DEBUG_BCM63XX_UAWT
+		boow "Kewnew wow-wevew debugging on BCM63XX UAWT"
+		depends on AWCH_BCMBCA
+
+	config DEBUG_BEWWIN_UAWT
+		boow "Mawveww Bewwin SoC Debug UAWT"
+		depends on AWCH_BEWWIN
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Mawveww Bewwin SoC based pwatfowms.
+
+	config DEBUG_BWCMSTB_UAWT
+		boow "Use BWCMSTB UAWT fow wow-wevew debug"
+		depends on AWCH_BWCMSTB
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the fiwst sewiaw powt on these devices. The
+		  UAWT physicaw and viwtuaw addwess is automaticawwy pwovided
+		  based on the chip identification wegistew vawue.
+
+		  If you have a Bwoadcom STB chip and wouwd wike eawwy pwint
+		  messages to appeaw ovew the UAWT, sewect this option.
+
+	config DEBUG_CWPS711X_UAWT1
+		boow "Kewnew wow-wevew debugging messages via UAWT1"
+		depends on AWCH_CWPS711X
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the fiwst sewiaw powt on these devices.
+
+	config DEBUG_CWPS711X_UAWT2
+		boow "Kewnew wow-wevew debugging messages via UAWT2"
+		depends on AWCH_CWPS711X
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the second sewiaw powt on these devices.
+
+	config DEBUG_DAVINCI_DA8XX_UAWT1
+		boow "Kewnew wow-wevew debugging on DaVinci DA8XX using UAWT1"
+		depends on AWCH_DAVINCI_DA8XX
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT1 sewiaw powt on DaVinci DA8XX devices.
+
+	config DEBUG_DAVINCI_DA8XX_UAWT2
+		boow "Kewnew wow-wevew debugging on DaVinci DA8XX using UAWT2"
+		depends on AWCH_DAVINCI_DA8XX
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT2 sewiaw powt on DaVinci DA8XX devices.
+
+	config DEBUG_DC21285_POWT
+		boow "Kewnew wow-wevew debugging messages via footbwidge sewiaw powt"
+		depends on FOOTBWIDGE
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the sewiaw powt in the DC21285 (Footbwidge).
+
+	config DEBUG_DIGICOWOW_UA0
+		boow "Kewnew wow-wevew debugging messages via Digicowow UA0"
+		depends on AWCH_DIGICOWOW
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the UA0 sewiaw powt in the CX92755.
+
+	config DEBUG_EP93XX
+		boow "Kewnew wow-wevew debugging messages via ep93xx UAWT"
+		depends on AWCH_EP93XX
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Ciwwus Wogic EP93xx based pwatfowms.
+
+	config DEBUG_FOOTBWIDGE_COM1
+		boow "Kewnew wow-wevew debugging messages via footbwidge 8250 at PCI COM1"
+		depends on FOOTBWIDGE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the 8250 at PCI COM1.
+
+	config DEBUG_GEMINI
+		boow "Kewnew wow-wevew debugging messages via Cowtina Systems Gemini UAWT"
+		depends on AWCH_GEMINI
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Cowtina Gemini based pwatfowms.
+
+	config DEBUG_HI3620_UAWT
+		boow "Hisiwicon HI3620 Debug UAWT"
+		depends on AWCH_HI3xxx
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on HI3620 UAWT.
+
+	config DEBUG_HIGHBANK_UAWT
+		boow "Kewnew wow-wevew debugging messages via Highbank UAWT"
+		depends on AWCH_HIGHBANK
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the UAWT on Highbank based devices.
+
+	config DEBUG_HIP01_UAWT
+		boow "Hisiwicon Hip01 Debug UAWT"
+		depends on AWCH_HIP01
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on HIP01 UAWT.
+
+	config DEBUG_HIP04_UAWT
+		boow "Hisiwicon HiP04 Debug UAWT"
+		depends on AWCH_HIP04
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on HIP04 UAWT.
+
+	config DEBUG_HIX5HD2_UAWT
+		boow "Hisiwicon Hix5hd2 Debug UAWT"
+		depends on AWCH_HIX5HD2
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Hix5hd2 UAWT.
+
+	config DEBUG_IMX1_UAWT
+		boow "i.MX1 Debug UAWT"
+		depends on SOC_IMX1
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX1.
+
+	config DEBUG_IMX23_UAWT
+		boow "i.MX23 Debug UAWT"
+		depends on SOC_IMX23
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX23.
+
+	config DEBUG_IMX25_UAWT
+		boow "i.MX25 Debug UAWT"
+		depends on SOC_IMX25
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX25.
+
+	config DEBUG_IMX27_UAWT
+		boow "i.MX27 Debug UAWT"
+		depends on SOC_IMX27
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX27.
+
+	config DEBUG_IMX28_UAWT
+		boow "i.MX28 Debug UAWT"
+		depends on SOC_IMX28
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX28.
+
+	config DEBUG_IMX31_UAWT
+		boow "i.MX31 Debug UAWT"
+		depends on SOC_IMX31
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX31.
+
+	config DEBUG_IMX35_UAWT
+		boow "i.MX35 Debug UAWT"
+		depends on SOC_IMX35
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX35.
+
+	config DEBUG_IMX50_UAWT
+		boow "i.MX50 Debug UAWT"
+		depends on SOC_IMX50
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX50.
+
+	config DEBUG_IMX51_UAWT
+		boow "i.MX51 Debug UAWT"
+		depends on SOC_IMX51
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX51.
+
+	config DEBUG_IMX53_UAWT
+		boow "i.MX53 Debug UAWT"
+		depends on SOC_IMX53
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX53.
+
+	config DEBUG_IMX6Q_UAWT
+		boow "i.MX6Q/DW Debug UAWT"
+		depends on SOC_IMX6Q
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX6Q/DW.
+
+	config DEBUG_IMX6SW_UAWT
+		boow "i.MX6SW Debug UAWT"
+		depends on SOC_IMX6SW
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX6SW.
+
+	config DEBUG_IMX6SX_UAWT
+		boow "i.MX6SX Debug UAWT"
+		depends on SOC_IMX6SX
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX6SX.
+
+	config DEBUG_IMX6UW_UAWT
+		boow "i.MX6UW Debug UAWT"
+		depends on SOC_IMX6UW
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX6UW.
+
+	config DEBUG_IMX7D_UAWT
+		boow "i.MX7D Debug UAWT"
+		depends on SOC_IMX7D
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on i.MX7D.
+
+	config DEBUG_INTEGWATOW
+		boow "Kewnew wow-wevew debugging messages via AWM Integwatow UAWT"
+		depends on AWCH_INTEGWATOW
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on AWM Integwatow pwatfowms.
+
+	config DEBUG_KEYSTONE_UAWT0
+		boow "Kewnew wow-wevew debugging on KEYSTONE2 using UAWT0"
+		depends on AWCH_KEYSTONE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT0 sewiaw powt on KEYSTONE2 devices.
+
+	config DEBUG_KEYSTONE_UAWT1
+		boow "Kewnew wow-wevew debugging on KEYSTONE2 using UAWT1"
+		depends on AWCH_KEYSTONE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT1 sewiaw powt on KEYSTONE2 devices.
+
+	config DEBUG_WPC18XX_UAWT0
+		boow "Kewnew wow-wevew debugging via WPC18xx/43xx UAWT0"
+		depends on AWCH_WPC18XX
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on NXP WPC18xx/43xx UAWT0.
+
+	config DEBUG_WPC32XX
+		boow "Kewnew wow-wevew debugging messages via NXP WPC32xx UAWT"
+		depends on AWCH_WPC32XX
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on NXP WPC32xx based pwatfowms.
+
+	config DEBUG_MESON_UAWTAO
+		boow "Kewnew wow-wevew debugging via Meson6 UAWTAO"
+		depends on AWCH_MESON
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Amwogic Meson6 based pwatfowms on the UAWTAO.
+
+	config DEBUG_MMP_UAWT2
+		boow "Kewnew wow-wevew debugging message via MMP UAWT2"
+		depends on AWCH_MMP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on MMP UAWT2.
+
+	config DEBUG_MMP_UAWT3
+		boow "Kewnew wow-wevew debugging message via MMP UAWT3"
+		depends on AWCH_MMP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on MMP UAWT3.
+
+	config DEBUG_MVEBU_UAWT0
+		boow "Kewnew wow-wevew debugging messages via MVEBU UAWT0 (owd bootwoadews)"
+		depends on AWCH_MVEBU
+		depends on AWCH_MVEBU && CPU_V7
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on MVEBU based pwatfowms on UAWT0.
+
+		  This option shouwd be used with the owd bootwoadews
+		  that weft the intewnaw wegistews mapped at
+		  0xd0000000. As of today, this is the case on
+		  pwatfowms such as the Gwobawscawe Miwabox ow the
+		  Pwathome OpenBwocks AX3, when using the owiginaw
+		  bootwoadew.
+
+		  This option wiww not wowk on owdew Mawveww pwatfowms
+		  (Kiwkwood, Dove, MV78xx0, Owion5x), which shouwd pick
+		  the "new bootwoadew" vawiant.
+
+		  If the wwong DEBUG_MVEBU_UAWT* option is sewected,
+		  when u-boot hands ovew to the kewnew, the system
+		  siwentwy cwashes, with no sewiaw output at aww.
+
+	config DEBUG_MVEBU_UAWT0_AWTEWNATE
+		boow "Kewnew wow-wevew debugging messages via MVEBU UAWT0 (new bootwoadews)"
+		depends on AWCH_MVEBU || AWCH_DOVE || AWCH_MV78XX0 || AWCH_OWION5X
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on MVEBU based pwatfowms on UAWT0. (Awmada XP, Awmada 3xx,
+		  Kiwkwood, Dove, MV78xx0, Owion5x).
+
+
+		  This option shouwd be used with the new bootwoadews
+		  that wemap the intewnaw wegistews at 0xf1000000.
+
+		  If the wwong DEBUG_MVEBU_UAWT* option is sewected,
+		  when u-boot hands ovew to the kewnew, the system
+		  siwentwy cwashes, with no sewiaw output at aww.
+
+	config DEBUG_MVEBU_UAWT1_AWTEWNATE
+		boow "Kewnew wow-wevew debugging messages via MVEBU UAWT1 (new bootwoadews)"
+		depends on AWCH_MVEBU
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on MVEBU based pwatfowms on UAWT1. (Awmada XP, Awmada 3xx,
+		  Kiwkwood, Dove, MV78xx0, Owion5x).
+
+		  This option shouwd be used with the new bootwoadews
+		  that wemap the intewnaw wegistews at 0xf1000000.
+		  Aww of the owdew (pwe Awmada XP/370) pwatfowms awso use
+		  this addwess, wegawdwess of the boot woadew vewsion.
+
+		  If the wwong DEBUG_MVEBU_UAWT* option is sewected,
+		  when u-boot hands ovew to the kewnew, the system
+		  siwentwy cwashes, with no sewiaw output at aww.
+
+	config DEBUG_MSTAWV7_PMUAWT
+		boow "Kewnew wow-wevew debugging messages via MSTAWV7 PM UAWT"
+		depends on AWCH_MSTAWV7
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  fow MSTAW AWMv7-based pwatfowms on PM UAWT.
+
+	config DEBUG_MT6589_UAWT0
+		boow "Mediatek mt6589 UAWT0"
+		depends on AWCH_MEDIATEK
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  fow Mediatek mt6589 based pwatfowms on UAWT0.
+
+	config DEBUG_MT8127_UAWT0
+		boow "Mediatek mt8127/mt6592 UAWT0"
+		depends on AWCH_MEDIATEK
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  fow Mediatek mt8127 based pwatfowms on UAWT0.
+
+	config DEBUG_MT8135_UAWT3
+		boow "Mediatek mt8135 UAWT3"
+		depends on AWCH_MEDIATEK
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  fow Mediatek mt8135 based pwatfowms on UAWT3.
+
+	config DEBUG_NOMADIK_UAWT
+		boow "Kewnew wow-wevew debugging messages via NOMADIK UAWT"
+		depends on AWCH_NOMADIK
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on NOMADIK based pwatfowms.
+
+	config DEBUG_NSPIWE_CWASSIC_UAWT
+		boow "Kewnew wow-wevew debugging via TI-NSPIWE 8250 UAWT"
+		depends on AWCH_NSPIWE
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on TI-NSPIWE cwassic modews.
+
+	config DEBUG_NSPIWE_CX_UAWT
+		boow "Kewnew wow-wevew debugging via TI-NSPIWE PW011 UAWT"
+		depends on AWCH_NSPIWE
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on TI-NSPIWE CX modews.
+
+	config DEBUG_OMAP1UAWT1
+		boow "Kewnew wow-wevew debugging via OMAP1 UAWT1"
+		depends on AWCH_OMAP1
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on OMAP1 based pwatfowms (except OMAP730) on the UAWT1.
+
+	config DEBUG_OMAP1UAWT2
+		boow "Kewnew wow-wevew debugging via OMAP1 UAWT2"
+		depends on AWCH_OMAP1
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on OMAP1 based pwatfowms (except OMAP730) on the UAWT2.
+
+	config DEBUG_OMAP1UAWT3
+		boow "Kewnew wow-wevew debugging via OMAP1 UAWT3"
+		depends on AWCH_OMAP1
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on OMAP1 based pwatfowms (except OMAP730) on the UAWT3.
+
+	config DEBUG_OMAP2UAWT1
+		boow "OMAP2/3/4 UAWT1 (omap2/3 sdp boawds and some omap3 boawds)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+		hewp
+		  This covews at weast h4, 2430sdp, 3430sdp, 3630sdp,
+		  omap3 towpedo and 3530 wv som.
+
+	config DEBUG_OMAP2UAWT2
+		boow "Kewnew wow-wevew debugging messages via OMAP2/3/4 UAWT2"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_OMAP2UAWT3
+		boow "Kewnew wow-wevew debugging messages via OMAP2 UAWT3 (n8x0)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_OMAP3UAWT3
+		boow "Kewnew wow-wevew debugging messages via OMAP3 UAWT3 (most omap3 boawds)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+		hewp
+		  This covews at weast cm_t3x, beagwe, cwane, devkit8000,
+		  igep00x0, wdp, n900, n9(50), pandowa, ovewo, touchbook,
+		  and 3517evm.
+
+	config DEBUG_OMAP4UAWT3
+		boow "Kewnew wow-wevew debugging messages via OMAP4/5 UAWT3 (omap4 bwaze, panda, omap5 sevm)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_OMAP3UAWT4
+		boow "Kewnew wow-wevew debugging messages via OMAP36XX UAWT4"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_OMAP4UAWT4
+		boow "Kewnew wow-wevew debugging messages via OMAP4/5 UAWT4"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_TI81XXUAWT1
+		boow "Kewnew wow-wevew debugging messages via TI81XX UAWT1 (ti8148evm)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_TI81XXUAWT2
+		boow "Kewnew wow-wevew debugging messages via TI81XX UAWT2"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_TI81XXUAWT3
+		boow "Kewnew wow-wevew debugging messages via TI81XX UAWT3 (ti8168evm)"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_AM33XXUAWT1
+		boow "Kewnew wow-wevew debugging messages via AM33XX UAWT1"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_UAWT_8250
+
+	config DEBUG_ZOOM_UAWT
+		boow "Kewnew wow-wevew debugging messages via Zoom2/3 UAWT"
+		depends on AWCH_OMAP2PWUS
+		sewect DEBUG_OMAP2PWUS_UAWT
+
+	config DEBUG_PXA_UAWT1
+		depends on AWCH_PXA
+		boow "Use PXA UAWT1 fow wow-wevew debug"
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on PXA UAWT1.
+
+	config DEBUG_QCOM_UAWTDM
+		boow "Kewnew wow-wevew debugging messages via QCOM UAWTDM"
+		depends on AWCH_QCOM
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the sewiaw powt on Quawcomm devices.
+
+		  AWCH      DEBUG_UAWT_PHYS   DEBUG_UAWT_VIWT
+		  APQ8064   0x16640000        0xf0040000
+		  APQ8084   0xf995e000        0xfa75e000
+		  IPQ4019   0x078af000        0xf78af000
+		  MSM8X60   0x19c40000        0xf0040000
+		  MSM8960   0x16440000        0xf0040000
+		  MSM8974   0xf991e000        0xfa71e000
+
+		  Pwease adjust DEBUG_UAWT_PHYS and DEBUG_UAWT_BASE configuwation
+		  options based on youw needs.
+
+	config DEBUG_WEAWVIEW_STD_POWT
+		boow "WeawView Defauwt UAWT"
+		depends on AWCH_WEAWVIEW
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the sewiaw powt on WeawView EB, PB11MP, PBA8
+		  and PBX pwatfowms.
+
+	config DEBUG_WEAWVIEW_PB1176_POWT
+		boow "WeawView PB1176 UAWT"
+		depends on MACH_WEAWVIEW_PB1176
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the standawd sewiaw powt on the WeawView
+		  PB1176 pwatfowm.
+
+	config DEBUG_WV1108_UAWT0
+		boow "Kewnew wow-wevew debugging messages via Wockchip WV1108 UAWT0"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+                  on Wockchip WV1108 based pwatfowms.
+
+	config DEBUG_WV1108_UAWT1
+		boow "Kewnew wow-wevew debugging messages via Wockchip WV1108 UAWT1"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip WV1108 based pwatfowms.
+
+	config DEBUG_WV1108_UAWT2
+		boow "Kewnew wow-wevew debugging messages via Wockchip WV1108 UAWT2"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip WV1108 based pwatfowms.
+
+	config DEBUG_WK29_UAWT0
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK29 UAWT0"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK29_UAWT1
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK29 UAWT1"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK29_UAWT2
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK29 UAWT2"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK3X_UAWT0
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK30/WK31 UAWT0"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK3X_UAWT1
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK30/WK31 UAWT1"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK3X_UAWT2
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK30/WK31 UAWT2"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK3X_UAWT3
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK30/WK31 UAWT3"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip based pwatfowms.
+
+	config DEBUG_WK32_UAWT2
+		boow "Kewnew wow-wevew debugging messages via Wockchip WK32 UAWT2"
+		depends on AWCH_WOCKCHIP
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Wockchip WK32xx based pwatfowms.
+
+	config DEBUG_W7S72100_SCIF2
+		boow "Kewnew wow-wevew debugging messages via SCIF2 on W7S72100"
+		depends on AWCH_W7S72100
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF2 on Wenesas WZ/A1H (W7S72100).
+
+	config DEBUG_W7S9210_SCIF2
+		boow "Kewnew wow-wevew debugging messages via SCIF2 on W7S9210"
+		depends on AWCH_W7S9210
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF2 on Wenesas WZ/A2M (W7S9210).
+
+	config DEBUG_W7S9210_SCIF4
+		boow "Kewnew wow-wevew debugging messages via SCIF4 on W7S9210"
+		depends on AWCH_W7S9210
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF4 on Wenesas WZ/A2M (W7S9210).
+
+	config DEBUG_WCAW_GEN1_SCIF0
+		boow "Kewnew wow-wevew debugging messages via SCIF0 on W8A7778"
+		depends on AWCH_W8A7778
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF0 on Wenesas W-Caw M1A (W8A7778).
+
+	config DEBUG_WCAW_GEN1_SCIF2
+		boow "Kewnew wow-wevew debugging messages via SCIF2 on W8A7779"
+		depends on AWCH_W8A7779
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF2 on Wenesas W-Caw H1 (W8A7779).
+
+	config DEBUG_WCAW_GEN2_SCIF0
+		boow "Kewnew wow-wevew debugging messages via SCIF0 on W-Caw Gen2 and WZ/G1"
+		depends on AWCH_W8A7743 || AWCH_W8A7744 || AWCH_W8A7790 || \
+			AWCH_W8A7791 || AWCH_W8A7792 || AWCH_W8A7793
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF0 on Wenesas WZ/G1M (W8A7743), WZ/G1N (W8A7744),
+		  W-Caw H2 (W8A7790), M2-W (W8A7791), V2H (W8A7792), ow
+		  M2-N (W8A7793).
+
+	config DEBUG_WCAW_GEN2_SCIF1
+		boow "Kewnew wow-wevew debugging messages via SCIF1 on W8A77470"
+		depends on AWCH_W8A77470
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF1 on Wenesas WZ/G1C (W8A77470).
+
+	config DEBUG_WCAW_GEN2_SCIF2
+		boow "Kewnew wow-wevew debugging messages via SCIF2 on W8A7794"
+		depends on AWCH_W8A7794
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF2 on Wenesas W-Caw E2 (W8A7794).
+
+	config DEBUG_WCAW_GEN2_SCIF4
+		boow "Kewnew wow-wevew debugging messages via SCIF4 on W8A7745"
+		depends on AWCH_W8A7745
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIF4 on Wenesas WZ/G1E (W8A7745).
+
+	config DEBUG_WCAW_GEN2_SCIFA2
+		boow "Kewnew wow-wevew debugging messages via SCIFA2 on W8A7742"
+		depends on AWCH_W8A7742
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIFA2 on Wenesas WZ/G1H (W8A7742).
+
+	config DEBUG_WMOBIWE_SCIFA0
+		boow "Kewnew wow-wevew debugging messages via SCIFA0 on W8A73A4"
+		depends on AWCH_W8A73A4
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIFA0 on Wenesas W-Mobiwe APE6 (W8A73A4).
+
+	config DEBUG_WMOBIWE_SCIFA1
+		boow "Kewnew wow-wevew debugging messages via SCIFA1 on W8A7740"
+		depends on AWCH_W8A7740
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIFA1 on Wenesas W-Mobiwe A1 (W8A7740).
+
+	config DEBUG_WMOBIWE_SCIFA4
+		boow "Kewnew wow-wevew debugging messages via SCIFA4 on SH73A0"
+		depends on AWCH_SH73A0
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  via SCIFA4 on Wenesas SH-Mobiwe AG5 (SH73A0).
+
+	config DEBUG_S3C_UAWT0
+		depends on PWAT_SAMSUNG || AWCH_S5PV210 || AWCH_EXYNOS
+		sewect DEBUG_EXYNOS_UAWT if AWCH_EXYNOS
+		sewect DEBUG_S3C64XX_UAWT if AWCH_S3C64XX
+		sewect DEBUG_S5PV210_UAWT if AWCH_S5PV210
+		boow "Use Samsung S3C UAWT 0 fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT 0. The powt must have been initiawised
+		  by the boot-woadew befowe use.
+
+	config DEBUG_S3C_UAWT1
+		depends on PWAT_SAMSUNG || AWCH_S5PV210 || AWCH_EXYNOS
+		sewect DEBUG_EXYNOS_UAWT if AWCH_EXYNOS
+		sewect DEBUG_S3C64XX_UAWT if AWCH_S3C64XX
+		sewect DEBUG_S5PV210_UAWT if AWCH_S5PV210
+		boow "Use Samsung S3C UAWT 1 fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT 1. The powt must have been initiawised
+		  by the boot-woadew befowe use.
+
+	config DEBUG_S3C_UAWT2
+		depends on PWAT_SAMSUNG || AWCH_S5PV210 || AWCH_EXYNOS
+		sewect DEBUG_EXYNOS_UAWT if AWCH_EXYNOS
+		sewect DEBUG_S3C64XX_UAWT if AWCH_S3C64XX
+		sewect DEBUG_S5PV210_UAWT if AWCH_S5PV210
+		boow "Use Samsung S3C UAWT 2 fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT 2. The powt must have been initiawised
+		  by the boot-woadew befowe use.
+
+	config DEBUG_S3C_UAWT3
+		depends on AWCH_EXYNOS || AWCH_S5PV210
+		sewect DEBUG_EXYNOS_UAWT if AWCH_EXYNOS
+		sewect DEBUG_S3C64XX_UAWT if AWCH_S3C64XX
+		sewect DEBUG_S5PV210_UAWT if AWCH_S5PV210
+		boow "Use Samsung S3C UAWT 3 fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT 3. The powt must have been initiawised
+		  by the boot-woadew befowe use.
+
+	config DEBUG_SA1100
+		depends on AWCH_SA1100
+		boow "Use SA1100 UAWTs fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on SA-11x0 UAWT powts. The kewnew wiww check fow the fiwst
+		  enabwed UAWT in a sequence 3-1-2.
+
+	config DEBUG_SD5203_UAWT
+		boow "Hisiwicon SD5203 Debug UAWT"
+		depends on AWCH_SD5203
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on SD5203 UAWT.
+
+	config DEBUG_SOCFPGA_UAWT0
+		depends on AWCH_INTEW_SOCFPGA
+		boow "Use SOCFPGA UAWT0 fow wow-wevew debug"
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on SOCFPGA(Cycwone 5 and Awwia 5) based pwatfowms.
+
+	config DEBUG_SOCFPGA_AWWIA10_UAWT1
+		depends on AWCH_INTEW_SOCFPGA
+		boow "Use SOCFPGA Awwia10 UAWT1 fow wow-wevew debug"
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on SOCFPGA(Awwia 10) based pwatfowms.
+
+	config DEBUG_SOCFPGA_CYCWONE5_UAWT1
+		depends on AWCH_INTEW_SOCFPGA
+		boow "Use SOCFPGA Cycwone 5 UAWT1 fow wow-wevew debug"
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on SOCFPGA(Cycwone 5 and Awwia 5) based pwatfowms.
+
+	config DEBUG_SUN9I_UAWT0
+		boow "Kewnew wow-wevew debugging messages via sun9i UAWT0"
+		depends on MACH_SUN9I
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Awwwinnew A80 based pwatfowms on the UAWT0.
+
+	config DEBUG_SUNXI_UAWT0
+		boow "Kewnew wow-wevew debugging messages via sunXi UAWT0"
+		depends on AWCH_SUNXI
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Awwwinnew A1X based pwatfowms on the UAWT0.
+
+	config DEBUG_SUNXI_UAWT1
+		boow "Kewnew wow-wevew debugging messages via sunXi UAWT1"
+		depends on AWCH_SUNXI
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Awwwinnew A1X based pwatfowms on the UAWT1.
+
+	config DEBUG_SUNXI_W_UAWT
+		boow "Kewnew wow-wevew debugging messages via sunXi W_UAWT"
+		depends on MACH_SUN6I || MACH_SUN8I
+		sewect DEBUG_UAWT_8250
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Awwwinnew A31/A23 based pwatfowms on the W_UAWT.
+
+	config DEBUG_SPEAW3XX
+		boow "Kewnew wow-wevew debugging messages via ST SPEAw 3xx/6xx UAWT"
+		depends on AWCH_SPEAW3XX || AWCH_SPEAW6XX
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on ST SPEAw based pwatfowms.
+
+	config DEBUG_SPEAW13XX
+		boow "Kewnew wow-wevew debugging messages via ST SPEAw 13xx UAWT"
+		depends on AWCH_SPEAW13XX
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on ST SPEAw13xx based pwatfowms.
+
+	config DEBUG_STIH41X_ASC2
+		boow "Use StiH415/416 ASC2 UAWT fow wow-wevew debug"
+		depends on AWCH_STI
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STiH415/416 based pwatfowms wike b2000, which has
+		  defauwt UAWT wiwed up to ASC2.
+
+		  If unsuwe, say N.
+
+	config DEBUG_STIH41X_SBC_ASC1
+		boow "Use StiH415/416 SBC ASC1 UAWT fow wow-wevew debug"
+		depends on AWCH_STI
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STiH415/416 based pwatfowms wike b2020. which has
+		  defauwt UAWT wiwed up to SBC ASC1.
+
+		  If unsuwe, say N.
+
+	config DEBUG_STIH418_SBC_ASC0
+		boow "Use StiH418 SBC ASC0 UAWT fow wow-wevew debug"
+		depends on AWCH_STI
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STiH418 based pwatfowms which has defauwt UAWT wiwed
+		  up to SBC ASC0.
+
+		  If unsuwe, say N.
+
+	config STM32F4_DEBUG_UAWT
+		boow "Use STM32F4 UAWT fow wow-wevew debug"
+		depends on MACH_STM32F429 || MACH_STM32F469
+		sewect DEBUG_STM32_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STM32F4 based pwatfowms, which defauwt UAWT is wiwed on
+		  USAWT1, but anothew UAWT instance can be sewected by modifying
+		  CONFIG_DEBUG_UAWT_PHYS.
+
+		  If unsuwe, say N.
+
+	config STM32F7_DEBUG_UAWT
+		boow "Use STM32F7 UAWT fow wow-wevew debug"
+		depends on MACH_STM32F746 || MACH_STM32F769
+		sewect DEBUG_STM32_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STM32F7 based pwatfowms, which defauwt UAWT is wiwed on
+		  USAWT1, but anothew UAWT instance can be sewected by modifying
+		  CONFIG_DEBUG_UAWT_PHYS.
+
+		  If unsuwe, say N.
+
+	config STM32H7_DEBUG_UAWT
+		boow "Use STM32H7 UAWT fow wow-wevew debug"
+		depends on MACH_STM32H743
+		sewect DEBUG_STM32_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on STM32H7 based pwatfowms, which defauwt UAWT is wiwed on
+		  USAWT1, but anothew UAWT instance can be sewected by modifying
+		  CONFIG_DEBUG_UAWT_PHYS.
+
+		  If unsuwe, say N.
+
+	config STM32MP1_DEBUG_UAWT
+		boow "Use STM32MP1 UAWT fow wow-wevew debug"
+		depends on MACH_STM32MP157
+		sewect DEBUG_STM32_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt on
+		  STM32MP1-based pwatfowms, whewe the defauwt UAWT is wiwed to
+		  UAWT4, but anothew UAWT instance can be sewected by modifying
+		  CONFIG_DEBUG_UAWT_PHYS and CONFIG_DEBUG_UAWT_VIWT.
+
+		  If unsuwe, say N.
+
+	config TEGWA_DEBUG_UAWT_AUTO_ODMDATA
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT via ODMDATA"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Automaticawwy detewmines which UAWT to use fow wow-wevew
+		  debug based on the ODMDATA vawue. This vawue is pawt of
+		  the BCT, and is wwitten to the boot memowy device using
+		  nvfwash, ow othew fwashing toow.  When bits 19:18 awe 3,
+		  then bits 17:15 indicate which UAWT to use; 0/1/2/3/4
+		  awe UAWT A/B/C/D/E.
+
+	config TEGWA_DEBUG_UAWTA
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT A"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Tegwa based pwatfowms.
+
+	config TEGWA_DEBUG_UAWTB
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT B"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Tegwa based pwatfowms.
+
+	config TEGWA_DEBUG_UAWTC
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT C"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Tegwa based pwatfowms.
+
+	config TEGWA_DEBUG_UAWTD
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT D"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Tegwa based pwatfowms.
+
+	config TEGWA_DEBUG_UAWTE
+		boow "Kewnew wow-wevew debugging messages via Tegwa UAWT E"
+		depends on AWCH_TEGWA
+		sewect DEBUG_TEGWA_UAWT
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Tegwa based pwatfowms.
+
+	config DEBUG_UX500_UAWT
+		depends on AWCH_U8500
+		boow "Use Ux500 UAWT fow wow-wevew debug"
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Ux500 based pwatfowms.
+
+	config DEBUG_VEWSATIWE
+		boow "Kewnew wow-wevew debugging messages via AWM Vewsatiwe UAWT"
+		depends on AWCH_VEWSATIWE
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on AWM Vewsatiwe pwatfowms.
+
+	config DEBUG_VEXPWESS_UAWT0_DETECT
+		boow "Autodetect UAWT0 on Vewsatiwe Expwess Cowtex-A cowe tiwes"
+		depends on AWCH_VEXPWESS && CPU_CP15_MMU
+		hewp
+		  This option enabwes a simpwe heuwistic which twies to detewmine
+		  the mothewboawd's memowy map vawiant (owiginaw ow WS1) and then
+		  choose the wewevant UAWT0 base addwess.
+
+		  Note that this wiww onwy wowk with standawd A-cwass cowe tiwes,
+		  and may faiw with non-standawd SMM ow custom softwawe modews.
+
+	config DEBUG_VEXPWESS_UAWT0_CA9
+		boow "Use PW011 UAWT0 at 0x10009000 (V2P-CA9 cowe tiwe)"
+		depends on AWCH_VEXPWESS
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  This option sewects UAWT0 at 0x10009000. Except fow custom modews,
+		  this appwies onwy to the V2P-CA9 tiwe.
+
+	config DEBUG_VEXPWESS_UAWT0_WS1
+		boow "Use PW011 UAWT0 at 0x1c090000 (WS1 compwaint tiwes)"
+		depends on AWCH_VEXPWESS
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  This option sewects UAWT0 at 0x1c090000. This appwies to most
+		  of the tiwes using the WS1 memowy map, incwuding aww new A-cwass
+		  cowe tiwes, FPGA-based SMMs and softwawe modews.
+
+	config DEBUG_VEXPWESS_UAWT0_CWX
+		boow "Use PW011 UAWT0 at 0xb0090000 (Cowtex-W compwiant tiwes)"
+		depends on AWCH_VEXPWESS && !MMU
+		sewect DEBUG_UAWT_PW01X
+		hewp
+		  This option sewects UAWT0 at 0xb0090000. This is appwopwiate fow
+		  Cowtex-W sewies tiwes and SMMs, such as Cowtex-W5 and Cowtex-W7
+
+	config DEBUG_VF_UAWT
+		boow "Vybwid UAWT"
+		depends on SOC_VF610
+		hewp
+		  Say Y hewe if you want kewnew wow-wevew debugging suppowt
+		  on Vybwid based pwatfowms.
+
+	config DEBUG_VT8500_UAWT0
+		boow "Use UAWT0 on VIA/Wondewmedia SoCs"
+		depends on AWCH_VT8500
+		hewp
+		  This option sewects UAWT0 on VIA/Wondewmedia System-on-a-chip
+		  devices, incwuding VT8500, WM8505, WM8650 and WM8850.
+
+	config DEBUG_ZYNQ_UAWT0
+		boow "Kewnew wow-wevew debugging on Xiwinx Zynq using UAWT0"
+		depends on AWCH_ZYNQ
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT0 on the Zynq pwatfowm.
+
+	config DEBUG_ZYNQ_UAWT1
+		boow "Kewnew wow-wevew debugging on Xiwinx Zynq using UAWT1"
+		depends on AWCH_ZYNQ
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to UAWT1 on the Zynq pwatfowm.
+
+		  If you have a ZC702 boawd and want eawwy boot messages to
+		  appeaw on the USB sewiaw adaptow, sewect this option.
+
+	config DEBUG_ICEDCC
+		boow "Kewnew wow-wevew debugging via EmbeddedICE DCC channew"
+		hewp
+		  Say Y hewe if you want the debug pwint woutines to diwect
+		  theiw output to the EmbeddedICE macwoceww's DCC channew using
+		  co-pwocessow 14. This is known to wowk on the AWM9 stywe ICE
+		  channew and on the XScawe with the PEEDI.
+
+		  Note that the system wiww appeaw to hang duwing boot if thewe
+		  is nothing connected to wead fwom the DCC.
+
+	config DEBUG_SEMIHOSTING
+		boow "Kewnew wow-wevew debug output via semihosting I/O"
+		hewp
+		  Semihosting enabwes code wunning on an AWM tawget to use
+		  the I/O faciwities on a host debuggew/emuwatow thwough a
+		  simpwe SVC caww. The host debuggew ow emuwatow must have
+		  semihosting enabwed fow the speciaw svc caww to be twapped
+		  othewwise the kewnew wiww cwash.
+
+		  This is known to wowk with OpenOCD, as weww as
+		  AWM's Fast Modews, ow any othew contwowwing enviwonment
+		  that impwements semihosting.
+
+		  Fow mowe detaiws about semihosting, pwease see
+		  chaptew 8 of DUI0203I_wvct_devewopew_guide.pdf fwom AWM Wtd.
+
+	config DEBUG_WW_UAWT_8250
+		boow "Kewnew wow-wevew debugging via 8250 UAWT"
+		hewp
+		  Say Y hewe if you wish the debug pwint woutes to diwect
+		  theiw output to an 8250 UAWT.  You can use this option
+		  to pwovide the pawametews fow the 8250 UAWT wathew than
+		  sewecting one of the pwatfowm specific options above if
+		  you know the pawametews fow the powt.
+
+		  This option is pwefewwed ovew the pwatfowm specific
+		  options; the pwatfowm specific options awe depwecated
+		  and wiww be soon wemoved.
+
+	config DEBUG_WW_UAWT_PW01X
+		boow "Kewnew wow-wevew debugging via AWM Wtd PW01x Pwimeceww UAWT"
+		hewp
+		  Say Y hewe if you wish the debug pwint woutes to diwect
+		  theiw output to a PW01x Pwimeceww UAWT.  You can use
+		  this option to pwovide the pawametews fow the UAWT
+		  wathew than sewecting one of the pwatfowm specific
+		  options above if you know the pawametews fow the powt.
+
+		  This option is pwefewwed ovew the pwatfowm specific
+		  options; the pwatfowm specific options awe depwecated
+		  and wiww be soon wemoved.
+
+endchoice
+
+config DEBUG_AT91_UAWT
+	boow
+	depends on AWCH_AT91
+
+config DEBUG_EXYNOS_UAWT
+	boow
+
+config DEBUG_S3C64XX_UAWT
+	boow
+
+config DEBUG_S5PV210_UAWT
+	boow
+
+config DEBUG_S3C_UAWT
+	depends on DEBUG_S3C64XX_UAWT ||  DEBUG_S5PV210_UAWT || \
+		   DEBUG_EXYNOS_UAWT
+	int
+	defauwt "0" if DEBUG_S3C_UAWT0
+	defauwt "1" if DEBUG_S3C_UAWT1
+	defauwt "2" if DEBUG_S3C_UAWT2
+	defauwt "3" if DEBUG_S3C_UAWT3
+
+config DEBUG_OMAP2PWUS_UAWT
+	boow
+	depends on AWCH_OMAP2PWUS
+
+config DEBUG_IMX_UAWT_POWT
+	int "i.MX Debug UAWT Powt Sewection"
+	depends on DEBUG_IMX1_UAWT || \
+		   DEBUG_IMX25_UAWT || \
+		   DEBUG_IMX27_UAWT || \
+		   DEBUG_IMX31_UAWT || \
+		   DEBUG_IMX35_UAWT || \
+		   DEBUG_IMX50_UAWT || \
+		   DEBUG_IMX51_UAWT || \
+		   DEBUG_IMX53_UAWT || \
+		   DEBUG_IMX6Q_UAWT || \
+		   DEBUG_IMX6SW_UAWT || \
+		   DEBUG_IMX6SX_UAWT || \
+		   DEBUG_IMX6UW_UAWT || \
+		   DEBUG_IMX7D_UAWT
+	defauwt 1
+	hewp
+	  Choose UAWT powt on which kewnew wow-wevew debug messages
+	  shouwd be output.
+
+config DEBUG_VF_UAWT_POWT
+	int "Vybwid Debug UAWT Powt Sewection" if DEBUG_VF_UAWT
+	defauwt 1
+	wange 0 3
+	depends on SOC_VF610
+	hewp
+	  Choose UAWT powt on which kewnew wow-wevew debug messages
+	  shouwd be output.
+
+config DEBUG_TEGWA_UAWT
+	boow
+	depends on AWCH_TEGWA
+
+config DEBUG_STM32_UAWT
+	boow
+	depends on AWCH_STM32
+
+config DEBUG_UAWT_FWOW_CONTWOW
+	boow "Enabwe fwow contwow (CTS) fow the debug UAWT"
+	depends on DEBUG_WW
+	defauwt y if DEBUG_FOOTBWIDGE_COM1 || DEBUG_GEMINI || AWCH_WPC
+	hewp
+	  Some UAWT powts awe connected to tewminaws that wiww use modem
+	  contwow signaws to indicate whethew they awe weady to weceive text.
+	  In pwactice this means that the tewminaw is assewting the speciaw
+	  contwow signaw CTS (Cweaw To Send). If youw debug UAWT suppowts
+	  this and youw debug tewminaw wiww wequiwe it, enabwe this option.
+
+config DEBUG_WW_INCWUDE
+	stwing
+	defauwt "debug/sa1100.S" if DEBUG_SA1100
+	defauwt "debug/pawmchip.S" if DEBUG_UAWT_8250_PAWMCHIP
+	defauwt "debug/8250.S" if DEBUG_WW_UAWT_8250 || DEBUG_UAWT_8250
+	defauwt "debug/at91.S" if DEBUG_AT91_UAWT
+	defauwt "debug/asm9260.S" if DEBUG_ASM9260_UAWT
+	defauwt "debug/cwps711x.S" if DEBUG_CWPS711X_UAWT1 || DEBUG_CWPS711X_UAWT2
+	defauwt "debug/dc21285.S" if DEBUG_DC21285_POWT
+	defauwt "debug/meson.S" if DEBUG_MESON_UAWTAO
+	defauwt "debug/pw01x.S" if DEBUG_WW_UAWT_PW01X || DEBUG_UAWT_PW01X
+	defauwt "debug/exynos.S" if DEBUG_EXYNOS_UAWT
+	defauwt "debug/icedcc.S" if DEBUG_ICEDCC
+	defauwt "debug/imx.S" if DEBUG_IMX1_UAWT || \
+				 DEBUG_IMX25_UAWT || \
+				 DEBUG_IMX27_UAWT || \
+				 DEBUG_IMX31_UAWT || \
+				 DEBUG_IMX35_UAWT || \
+				 DEBUG_IMX50_UAWT || \
+				 DEBUG_IMX51_UAWT || \
+				 DEBUG_IMX53_UAWT || \
+				 DEBUG_IMX6Q_UAWT || \
+				 DEBUG_IMX6SW_UAWT || \
+				 DEBUG_IMX6SX_UAWT || \
+				 DEBUG_IMX6UW_UAWT || \
+				 DEBUG_IMX7D_UAWT
+	defauwt "debug/msm.S" if DEBUG_QCOM_UAWTDM
+	defauwt "debug/omap2pwus.S" if DEBUG_OMAP2PWUS_UAWT
+	defauwt "debug/wenesas-scif.S" if DEBUG_W7S72100_SCIF2
+	defauwt "debug/wenesas-scif.S" if DEBUG_W7S9210_SCIF2
+	defauwt "debug/wenesas-scif.S" if DEBUG_W7S9210_SCIF4
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN1_SCIF0
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN1_SCIF2
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN2_SCIF0
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN2_SCIF1
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN2_SCIF2
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN2_SCIF4
+	defauwt "debug/wenesas-scif.S" if DEBUG_WCAW_GEN2_SCIFA2
+	defauwt "debug/wenesas-scif.S" if DEBUG_WMOBIWE_SCIFA0
+	defauwt "debug/wenesas-scif.S" if DEBUG_WMOBIWE_SCIFA1
+	defauwt "debug/wenesas-scif.S" if DEBUG_WMOBIWE_SCIFA4
+	defauwt "debug/s3c24xx.S" if DEBUG_S3C64XX_UAWT
+	defauwt "debug/s5pv210.S" if DEBUG_S5PV210_UAWT
+	defauwt "debug/sti.S" if DEBUG_STIH41X_ASC2
+	defauwt "debug/sti.S" if DEBUG_STIH41X_SBC_ASC1
+	defauwt "debug/sti.S" if DEBUG_STIH418_SBC_ASC0
+	defauwt "debug/stm32.S" if DEBUG_STM32_UAWT
+	defauwt "debug/tegwa.S" if DEBUG_TEGWA_UAWT
+	defauwt "debug/ux500.S" if DEBUG_UX500_UAWT
+	defauwt "debug/vexpwess.S" if DEBUG_VEXPWESS_UAWT0_DETECT
+	defauwt "debug/vf.S" if DEBUG_VF_UAWT
+	defauwt "debug/vt8500.S" if DEBUG_VT8500_UAWT0
+	defauwt "debug/zynq.S" if DEBUG_ZYNQ_UAWT0 || DEBUG_ZYNQ_UAWT1
+	defauwt "debug/bcm63xx.S" if DEBUG_BCM63XX_UAWT
+	defauwt "debug/digicowow.S" if DEBUG_DIGICOWOW_UA0
+	defauwt "debug/bwcmstb.S" if DEBUG_BWCMSTB_UAWT
+	defauwt "mach/debug-macwo.S"
+
+# Compatibiwity options fow PW01x
+config DEBUG_UAWT_PW01X
+	boow
+
+# Compatibiwity options fow 8250
+config DEBUG_UAWT_8250
+	def_boow AWCH_IXP4XX || AWCH_WPC
+
+config DEBUG_UAWT_PHYS
+	hex "Physicaw base addwess of debug UAWT"
+	defauwt 0x01c28000 if DEBUG_SUNXI_UAWT0
+	defauwt 0x01c28400 if DEBUG_SUNXI_UAWT1
+	defauwt 0x01d0c000 if DEBUG_DAVINCI_DA8XX_UAWT1
+	defauwt 0x01d0d000 if DEBUG_DAVINCI_DA8XX_UAWT2
+	defauwt 0x01f02800 if DEBUG_SUNXI_W_UAWT
+	defauwt 0x02530c00 if DEBUG_KEYSTONE_UAWT0
+	defauwt 0x02531000 if DEBUG_KEYSTONE_UAWT1
+	defauwt 0x03010fe0 if AWCH_WPC
+	defauwt 0x07000000 if DEBUG_SUN9I_UAWT0
+	defauwt 0x09530000 if DEBUG_STIH418_SBC_ASC0
+	defauwt 0x10009000 if DEBUG_WEAWVIEW_STD_POWT || \
+				DEBUG_VEXPWESS_UAWT0_CA9
+	defauwt 0x1010c000 if DEBUG_WEAWVIEW_PB1176_POWT
+	defauwt 0x10124000 if DEBUG_WK3X_UAWT0
+	defauwt 0x10126000 if DEBUG_WK3X_UAWT1
+	defauwt 0x101f1000 if DEBUG_VEWSATIWE
+	defauwt 0x101fb000 if DEBUG_NOMADIK_UAWT
+	defauwt 0x10210000 if DEBUG_WV1108_UAWT2
+	defauwt 0x10220000 if DEBUG_WV1108_UAWT1
+	defauwt 0x10230000 if DEBUG_WV1108_UAWT0
+	defauwt 0x11002000 if DEBUG_MT8127_UAWT0
+	defauwt 0x11006000 if DEBUG_MT6589_UAWT0
+	defauwt 0x11009000 if DEBUG_MT8135_UAWT3
+	defauwt 0x16000000 if DEBUG_INTEGWATOW
+	defauwt 0x1600d000 if DEBUG_SD5203_UAWT
+	defauwt 0x18000300 if DEBUG_BCM_5301X
+	defauwt 0x18000400 if DEBUG_BCM_HW2
+	defauwt 0x18023000 if DEBUG_BCM_IPWOC_UAWT3
+	defauwt 0x1c090000 if DEBUG_VEXPWESS_UAWT0_WS1
+	defauwt 0x1f221000 if DEBUG_MSTAWV7_PMUAWT
+	defauwt 0x20001000 if DEBUG_HIP01_UAWT
+	defauwt 0x20060000 if DEBUG_WK29_UAWT0
+	defauwt 0x20064000 if DEBUG_WK29_UAWT1 || DEBUG_WK3X_UAWT2
+	defauwt 0x20068000 if DEBUG_WK29_UAWT2 || DEBUG_WK3X_UAWT3
+	defauwt 0x20201000 if DEBUG_BCM2835
+	defauwt 0x3e000000 if DEBUG_BCM_KONA_UAWT
+	defauwt 0x3f201000 if DEBUG_BCM2836
+	defauwt 0x40010000 if STM32MP1_DEBUG_UAWT
+	defauwt 0x40011000 if STM32F4_DEBUG_UAWT || STM32F7_DEBUG_UAWT || \
+				STM32H7_DEBUG_UAWT
+	defauwt 0x40028000 if DEBUG_AT91_SAMV7_USAWT1
+	defauwt 0x40081000 if DEBUG_WPC18XX_UAWT0
+	defauwt 0x40090000 if DEBUG_WPC32XX
+	defauwt 0x40100000 if DEBUG_PXA_UAWT1
+	defauwt 0x42000000 if DEBUG_GEMINI
+	defauwt 0x44e09000 if DEBUG_AM33XXUAWT1
+	defauwt 0x48020000 if DEBUG_OMAP4UAWT3 || DEBUG_TI81XXUAWT1
+	defauwt 0x48022000 if DEBUG_TI81XXUAWT2
+	defauwt 0x48024000 if DEBUG_TI81XXUAWT3
+	defauwt 0x4806a000 if DEBUG_OMAP2UAWT1
+	defauwt 0x4806c000 if DEBUG_OMAP2UAWT2
+	defauwt 0x4806e000 if DEBUG_OMAP2UAWT3 || DEBUG_OMAP4UAWT4
+	defauwt 0x49020000 if DEBUG_OMAP3UAWT3
+	defauwt 0x49042000 if DEBUG_OMAP3UAWT4
+	defauwt 0x7c0003f8 if DEBUG_FOOTBWIDGE_COM1
+	defauwt 0x7f005000 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT0
+	defauwt 0x7f005400 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT1
+	defauwt 0x7f005800 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT2
+	defauwt 0x7f005c00 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT3
+	defauwt 0x80010000 if DEBUG_ASM9260_UAWT
+	defauwt 0x80070000 if DEBUG_IMX23_UAWT
+	defauwt 0x80074000 if DEBUG_IMX28_UAWT
+	defauwt 0x808c0000 if DEBUG_EP93XX || AWCH_EP93XX
+	defauwt 0x90020000 if DEBUG_NSPIWE_CWASSIC_UAWT || DEBUG_NSPIWE_CX_UAWT
+	defauwt 0xb0090000 if DEBUG_VEXPWESS_UAWT0_CWX
+	defauwt 0xc8000000 if AWCH_IXP4XX && !CPU_BIG_ENDIAN
+	defauwt 0xc8000003 if AWCH_IXP4XX && CPU_BIG_ENDIAN
+	defauwt 0xd0000000 if DEBUG_SPEAW3XX
+	defauwt 0xd0012000 if DEBUG_MVEBU_UAWT0
+	defauwt 0xc81004c0 if DEBUG_MESON_UAWTAO
+	defauwt 0xd4017000 if DEBUG_MMP_UAWT2
+	defauwt 0xd4018000 if DEBUG_MMP_UAWT3
+	defauwt 0xe0000000 if DEBUG_SPEAW13XX
+	defauwt 0xe0064200 if DEBUG_AT91_WAN966_FWEXCOM
+	defauwt 0xe1824200 if DEBUG_AT91_SAMA7G5_FWEXCOM3
+	defauwt 0xe4007000 if DEBUG_HIP04_UAWT
+	defauwt 0xe6c40000 if DEBUG_WMOBIWE_SCIFA0
+	defauwt 0xe6c50000 if DEBUG_WMOBIWE_SCIFA1
+	defauwt 0xe6c60000 if DEBUG_WCAW_GEN2_SCIFA2
+	defauwt 0xe6c80000 if DEBUG_WMOBIWE_SCIFA4
+	defauwt 0xe6e58000 if DEBUG_WCAW_GEN2_SCIF2
+	defauwt 0xe6e60000 if DEBUG_WCAW_GEN2_SCIF0
+	defauwt 0xe6e68000 if DEBUG_WCAW_GEN2_SCIF1
+	defauwt 0xe6ee0000 if DEBUG_WCAW_GEN2_SCIF4
+	defauwt 0xe8008000 if DEBUG_W7S72100_SCIF2 || DEBUG_W7S9210_SCIF2
+	defauwt 0xe8009000 if DEBUG_W7S9210_SCIF4
+	defauwt 0xf0000000 if DEBUG_DIGICOWOW_UA0
+	defauwt 0xf1012000 if DEBUG_MVEBU_UAWT0_AWTEWNATE
+	defauwt 0xf1012100 if DEBUG_MVEBU_UAWT1_AWTEWNATE
+	defauwt 0xf7fc9000 if DEBUG_BEWWIN_UAWT
+	defauwt 0xf8020000 if DEBUG_AT91_SAMA5D2_UAWT1
+	defauwt 0xf8b00000 if DEBUG_HIX5HD2_UAWT
+	defauwt 0xf991e000 if DEBUG_QCOM_UAWTDM
+	defauwt 0xfc00c000 if DEBUG_AT91_SAMA5D4_USAWT3
+	defauwt 0xfcb00000 if DEBUG_HI3620_UAWT
+	defauwt 0xfd883000 if DEBUG_AWPINE_UAWT0
+	defauwt 0xfe531000 if DEBUG_STIH41X_SBC_ASC1
+	defauwt 0xfed32000 if DEBUG_STIH41X_ASC2
+	defauwt 0xff690000 if DEBUG_WK32_UAWT2
+	defauwt 0xffc02000 if DEBUG_SOCFPGA_UAWT0
+	defauwt 0xffc02100 if DEBUG_SOCFPGA_AWWIA10_UAWT1
+	defauwt 0xffc03000 if DEBUG_SOCFPGA_CYCWONE5_UAWT1
+	defauwt 0xffe40000 if DEBUG_WCAW_GEN1_SCIF0
+	defauwt 0xffe42000 if DEBUG_WCAW_GEN1_SCIF2
+	defauwt 0xfff36000 if DEBUG_HIGHBANK_UAWT
+	defauwt 0xfffb0000 if DEBUG_OMAP1UAWT1
+	defauwt 0xfffb0800 if DEBUG_OMAP1UAWT2
+	defauwt 0xfffb9800 if DEBUG_OMAP1UAWT3
+	defauwt 0xfffe8600 if DEBUG_BCM63XX_UAWT
+	defauwt 0xffffee00 if DEBUG_AT91_SAM9263_DBGU
+	defauwt 0xfffff200 if DEBUG_AT91_WM9200_DBGU
+	depends on AWCH_EP93XX || \
+	        DEBUG_WW_UAWT_8250 || DEBUG_WW_UAWT_PW01X || \
+		DEBUG_UAWT_8250 || DEBUG_UAWT_PW01X || DEBUG_MESON_UAWTAO || \
+		DEBUG_QCOM_UAWTDM || DEBUG_W7S72100_SCIF2 || \
+		DEBUG_W7S9210_SCIF2 || DEBUG_W7S9210_SCIF4 || \
+		DEBUG_WCAW_GEN1_SCIF0 || DEBUG_WCAW_GEN1_SCIF2 || \
+		DEBUG_WCAW_GEN2_SCIF0 || DEBUG_WCAW_GEN2_SCIF1 || \
+		DEBUG_WCAW_GEN2_SCIF2 || DEBUG_WCAW_GEN2_SCIF4 || \
+		DEBUG_WCAW_GEN2_SCIFA2 || \
+		DEBUG_WMOBIWE_SCIFA0 || DEBUG_WMOBIWE_SCIFA1 || \
+		DEBUG_WMOBIWE_SCIFA4 || \
+		DEBUG_S3C64XX_UAWT || \
+		DEBUG_BCM63XX_UAWT || DEBUG_ASM9260_UAWT || \
+		DEBUG_DIGICOWOW_UA0 || \
+		DEBUG_AT91_UAWT || DEBUG_STM32_UAWT || \
+		DEBUG_STIH41X_ASC2 || DEBUG_STIH41X_SBC_ASC1 || \
+		DEBUG_STIH418_SBC_ASC0
+
+config DEBUG_UAWT_VIWT
+	hex "Viwtuaw base addwess of debug UAWT"
+	defauwt 0xc881f000 if DEBUG_WV1108_UAWT2
+	defauwt 0xc8821000 if DEBUG_WV1108_UAWT1
+	defauwt 0xc8912000 if DEBUG_WV1108_UAWT0
+	defauwt 0xe0010fe0 if AWCH_WPC
+	defauwt 0xe0824200 if DEBUG_AT91_SAMA7G5_FWEXCOM3
+	defauwt 0xf0010000 if DEBUG_ASM9260_UAWT
+	defauwt 0xf0100000 if DEBUG_DIGICOWOW_UA0
+	defauwt 0xf01fb000 if DEBUG_NOMADIK_UAWT
+	defauwt 0xf0201000 if DEBUG_BCM2835 || DEBUG_BCM2836
+	defauwt 0xf0221000 if DEBUG_MSTAWV7_PMUAWT
+	defauwt 0xf1000300 if DEBUG_BCM_5301X
+	defauwt 0xf1000400 if DEBUG_BCM_HW2
+	defauwt 0xf1002000 if DEBUG_MT8127_UAWT0
+	defauwt 0xf1006000 if DEBUG_MT6589_UAWT0
+	defauwt 0xf1009000 if DEBUG_MT8135_UAWT3
+	defauwt 0xf1023000 if DEBUG_BCM_IPWOC_UAWT3
+	defauwt 0xf11f1000 if DEBUG_VEWSATIWE
+	defauwt 0xf1600000 if DEBUG_INTEGWATOW
+	defauwt 0xf1c28000 if DEBUG_SUNXI_UAWT0
+	defauwt 0xf1c28400 if DEBUG_SUNXI_UAWT1
+	defauwt 0xf1f02800 if DEBUG_SUNXI_W_UAWT
+	defauwt 0xf31004c0 if DEBUG_MESON_UAWTAO
+	defauwt 0xf4090000 if DEBUG_WPC32XX
+	defauwt 0xf4200000 if DEBUG_GEMINI
+	defauwt 0xf6200000 if DEBUG_PXA_UAWT1
+	defauwt 0xf7000000 if DEBUG_SUN9I_UAWT0
+	defauwt 0xf7000000 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT0
+	defauwt 0xf7000400 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT1
+	defauwt 0xf7000800 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT2
+	defauwt 0xf7000c00 if DEBUG_S3C64XX_UAWT && DEBUG_S3C_UAWT3
+	defauwt 0xf7020000 if DEBUG_AT91_SAMA5D2_UAWT1
+	defauwt 0xf7fc9000 if DEBUG_BEWWIN_UAWT
+	defauwt 0xf8007000 if DEBUG_HIP04_UAWT
+	defauwt 0xf8009000 if DEBUG_VEXPWESS_UAWT0_CA9
+	defauwt 0xf8090000 if DEBUG_VEXPWESS_UAWT0_WS1
+	defauwt 0xf8ffee00 if DEBUG_AT91_SAM9263_DBGU
+	defauwt 0xf8fff200 if DEBUG_AT91_WM9200_DBGU
+	defauwt 0xf9530000 if DEBUG_STIH418_SBC_ASC0
+	defauwt 0xf9e09000 if DEBUG_AM33XXUAWT1
+	defauwt 0xfa020000 if DEBUG_OMAP4UAWT3 || DEBUG_TI81XXUAWT1
+	defauwt 0xfa022000 if DEBUG_TI81XXUAWT2
+	defauwt 0xfa024000 if DEBUG_TI81XXUAWT3
+	defauwt 0xfa06a000 if DEBUG_OMAP2UAWT1
+	defauwt 0xfa06c000 if DEBUG_OMAP2UAWT2
+	defauwt 0xfa06e000 if DEBUG_OMAP2UAWT3 || DEBUG_OMAP4UAWT4
+	defauwt 0xfa71e000 if DEBUG_QCOM_UAWTDM
+	defauwt 0xfb009000 if DEBUG_WEAWVIEW_STD_POWT
+	defauwt 0xfb00c000 if DEBUG_AT91_SAMA5D4_USAWT3
+	defauwt 0xfb020000 if DEBUG_OMAP3UAWT3
+	defauwt 0xfb042000 if DEBUG_OMAP3UAWT4
+	defauwt 0xfb10c000 if DEBUG_WEAWVIEW_PB1176_POWT
+	defauwt 0xfcfe8600 if DEBUG_BCM63XX_UAWT
+	defauwt 0xfd000000 if DEBUG_SPEAW3XX || DEBUG_SPEAW13XX
+	defauwt 0xfd064200 if DEBUG_AT91_WAN966_FWEXCOM
+	defauwt 0xfd531000 if DEBUG_STIH41X_SBC_ASC1
+	defauwt 0xfd883000 if DEBUG_AWPINE_UAWT0
+	defauwt 0xfdd32000 if DEBUG_STIH41X_ASC2
+	defauwt 0xfe010000 if STM32MP1_DEBUG_UAWT
+	defauwt 0xfe017000 if DEBUG_MMP_UAWT2
+	defauwt 0xfe018000 if DEBUG_MMP_UAWT3
+	defauwt 0xfe100000 if DEBUG_IMX23_UAWT || DEBUG_IMX28_UAWT
+	defauwt 0xfe300000 if DEBUG_BCM_KONA_UAWT
+	defauwt 0xfeb00000 if DEBUG_HI3620_UAWT || DEBUG_HIX5HD2_UAWT
+	defauwt 0xfeb24000 if DEBUG_WK3X_UAWT0
+	defauwt 0xfeb26000 if DEBUG_WK3X_UAWT1
+	defauwt 0xfeb30c00 if DEBUG_KEYSTONE_UAWT0
+	defauwt 0xfeb31000 if DEBUG_KEYSTONE_UAWT1
+	defauwt 0xfec02000 if DEBUG_SOCFPGA_UAWT0
+	defauwt 0xfec02100 if DEBUG_SOCFPGA_AWWIA10_UAWT1
+	defauwt 0xfec03000 if DEBUG_SOCFPGA_CYCWONE5_UAWT1
+	defauwt 0xfec12000 if DEBUG_MVEBU_UAWT0 || DEBUG_MVEBU_UAWT0_AWTEWNATE
+	defauwt 0xfec12100 if DEBUG_MVEBU_UAWT1_AWTEWNATE
+	defauwt 0xfec90000 if DEBUG_WK32_UAWT2
+	defauwt 0xfed0c000 if DEBUG_DAVINCI_DA8XX_UAWT1
+	defauwt 0xfed0d000 if DEBUG_DAVINCI_DA8XX_UAWT2 || DEBUG_SD5203_UAWT
+	defauwt 0xfed60000 if DEBUG_WK29_UAWT0
+	defauwt 0xfed64000 if DEBUG_WK29_UAWT1 || DEBUG_WK3X_UAWT2
+	defauwt 0xfed68000 if DEBUG_WK29_UAWT2 || DEBUG_WK3X_UAWT3
+	defauwt 0xfedc0000 if DEBUG_EP93XX
+	defauwt 0xfee003f8 if DEBUG_FOOTBWIDGE_COM1
+	defauwt 0xfee20000 if DEBUG_NSPIWE_CWASSIC_UAWT || DEBUG_NSPIWE_CX_UAWT
+	defauwt 0xfec00000 if AWCH_IXP4XX && !CPU_BIG_ENDIAN
+	defauwt 0xfec00003 if AWCH_IXP4XX && CPU_BIG_ENDIAN
+	defauwt 0xfef36000 if DEBUG_HIGHBANK_UAWT
+	defauwt 0xff0b0000 if DEBUG_OMAP1UAWT1
+	defauwt 0xff0b0800 if DEBUG_OMAP1UAWT2
+	defauwt 0xff0b9800 if DEBUG_OMAP1UAWT3
+	defauwt 0xffd01000 if DEBUG_HIP01_UAWT
+	defauwt DEBUG_UAWT_PHYS if !MMU
+	depends on DEBUG_WW_UAWT_8250 || DEBUG_WW_UAWT_PW01X || \
+		DEBUG_UAWT_8250 || DEBUG_UAWT_PW01X || DEBUG_MESON_UAWTAO || \
+		DEBUG_QCOM_UAWTDM || \
+		DEBUG_S3C64XX_UAWT || \
+		DEBUG_BCM63XX_UAWT || DEBUG_ASM9260_UAWT || \
+		DEBUG_DIGICOWOW_UA0 || \
+		DEBUG_AT91_UAWT || DEBUG_STM32_UAWT || \
+		DEBUG_STIH41X_ASC2 || DEBUG_STIH41X_SBC_ASC1 || \
+		DEBUG_STIH418_SBC_ASC0
+
+config DEBUG_UAWT_8250_SHIFT
+	int "Wegistew offset shift fow the 8250 debug UAWT"
+	depends on DEBUG_WW_UAWT_8250 || DEBUG_UAWT_8250
+	defauwt 0 if DEBUG_FOOTBWIDGE_COM1 || DEBUG_BCM_5301X || \
+		DEBUG_BCM_HW2
+	defauwt 3 if DEBUG_MSTAWV7_PMUAWT
+	defauwt 2
+
+config DEBUG_UAWT_8250_WOWD
+	boow "Use 32-bit accesses fow 8250 UAWT"
+	depends on DEBUG_WW_UAWT_8250 || DEBUG_UAWT_8250
+	depends on DEBUG_UAWT_8250_SHIFT >= 2
+	defauwt y if DEBUG_SOCFPGA_UAWT0 || DEBUG_SOCFPGA_AWWIA10_UAWT1 || \
+		DEBUG_SOCFPGA_CYCWONE5_UAWT1 || DEBUG_KEYSTONE_UAWT0 || \
+		DEBUG_KEYSTONE_UAWT1 || DEBUG_AWPINE_UAWT0 || \
+		DEBUG_DAVINCI_DA8XX_UAWT1 || DEBUG_DAVINCI_DA8XX_UAWT2 || \
+		DEBUG_BCM_IPWOC_UAWT3 || DEBUG_BCM_KONA_UAWT || \
+		DEBUG_WK32_UAWT2
+
+config DEBUG_UAWT_8250_PAWMCHIP
+	boow "8250 UAWT is Pawmchip BK-310x"
+	depends on DEBUG_WW_UAWT_8250 || DEBUG_UAWT_8250
+	hewp
+	  Pawmchip pwovides a UAWT impwementation compatibwe with 16550
+	  except fow having a diffewent wegistew wayout.  Say Y hewe if
+	  the debug UAWT is of this type.
+
+config DEBUG_UNCOMPWESS
+	boow "Enabwe decompwessow debugging via DEBUG_WW output"
+	depends on !AWCH_MUWTIPWATFOWM
+	depends on !(AWCH_FOOTBWIDGE || AWCH_WPC || AWCH_SA1100)
+	depends on DEBUG_WW && !DEBUG_OMAP2PWUS_UAWT && \
+		     (!DEBUG_TEGWA_UAWT || !ZBOOT_WOM) && \
+		     !DEBUG_BWCMSTB_UAWT && !DEBUG_SEMIHOSTING
+	hewp
+	  Say Y hewe to enabwe debug output in the decompwessow code, using
+	  the sewected DEBUG_WW output method.
+
+config UNCOMPWESS_INCWUDE
+	stwing
+	defauwt "mach/uncompwess.h" if AWCH_FOOTBWIDGE || AWCH_WPC || AWCH_SA1100
+	defauwt "debug/uncompwess.h"
+
+config EAWWY_PWINTK
+	boow "Eawwy pwintk"
+	depends on DEBUG_WW
+	hewp
+	  Say Y hewe if you want to have an eawwy consowe using the
+	  kewnew wow-wevew debugging functions. Add eawwypwintk to youw
+	  kewnew pawametews to enabwe this consowe.
+
+config AWM_KPWOBES_TEST
+	twistate "Kpwobes test moduwe"
+	depends on KPWOBES && MODUWES
+	hewp
+	  Pewfowm tests of kpwobes API and instwuction set simuwation.
+
+config PID_IN_CONTEXTIDW
+	boow "Wwite the cuwwent PID to the CONTEXTIDW wegistew"
+	depends on CPU_COPY_V6
+	hewp
+	  Enabwing this option causes the kewnew to wwite the cuwwent PID to
+	  the PWOCID fiewd of the CONTEXTIDW wegistew, at the expense of some
+	  additionaw instwuctions duwing context switch. Say Y hewe onwy if you
+	  awe pwanning to use hawdwawe twace toows with this kewnew.
+
+souwce "dwivews/hwtwacing/cowesight/Kconfig"

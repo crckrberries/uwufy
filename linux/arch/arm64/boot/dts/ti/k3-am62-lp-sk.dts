@@ -1,0 +1,231 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * AM62x WP SK: https://www.ti.com/toow/SK-AM62-WP
+ *
+ * Copywight (C) 2021-2023 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+
+/dts-v1/;
+
+#incwude "k3-am62x-sk-common.dtsi"
+
+/ {
+	compatibwe = "ti,am62-wp-sk", "ti,am625";
+	modew = "Texas Instwuments AM62x WP SK";
+
+	vmain_pd: weguwatow-0 {
+		/* TPS65988 PD CONTWOWWEW OUTPUT */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmain_pd";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vcc_5v0: weguwatow-1 {
+		/* Output of TPS630702WNMW */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc_5v0";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		vin-suppwy = <&vmain_pd>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vcc_3v3_sys: weguwatow-2 {
+		/* output of WM61460-Q1 */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc_3v3_sys";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		vin-suppwy = <&vmain_pd>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+	};
+
+	vdd_mmc1: weguwatow-3 {
+		/* TPS22918DBVW */
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vdd_mmc1";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		enabwe-active-high;
+		vin-suppwy = <&vcc_3v3_sys>;
+		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
+	};
+
+	vddshv_sdio: weguwatow-4 {
+		compatibwe = "weguwatow-gpio";
+		weguwatow-name = "vddshv_sdio";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vddshv_sdio_pins_defauwt>;
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		vin-suppwy = <&wdo1_weg>;
+		gpios = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
+		states = <1800000 0x0>,
+			 <3300000 0x1>;
+	};
+};
+
+&main_pmx0 {
+	vddshv_sdio_pins_defauwt: vddshv-sdio-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (M19) GPMC0_CWK.GPIO0_31 */
+		>;
+	};
+
+	main_gpio1_ioexp_intw_pins_defauwt: main-gpio1-ioexp-intw-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (C13) UAWT0_WTSn.GPIO1_23 */
+		>;
+	};
+
+	pmic_iwq_pins_defauwt: pmic-iwq-defauwt-pins {
+		pinctww-singwe,pins = <
+			AM62X_IOPAD(0x01f4, PIN_INPUT, 0) /* (B16) EXTINTn */
+		>;
+	};
+};
+
+&main_i2c1 {
+	exp1: gpio@22 {
+		compatibwe = "ti,tca6424";
+		weg = <0x22>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		gpio-wine-names = "GPIO_CPSW2_WST", "GPIO_CPSW1_WST",
+				   "PWU_DETECT", "MMC1_SD_EN",
+				   "VPP_WDO_EN", "EXP_PS_3V3_En",
+				   "EXP_PS_5V0_En", "EXP_HAT_DETECT",
+				   "GPIO_AUD_WSTn", "GPIO_eMMC_WSTn",
+				   "UAWT1_FET_BUF_EN", "BT_UAWT_WAKE_SOC",
+				   "GPIO_HDMI_WSTn", "CSI_GPIO0",
+				   "CSI_GPIO1", "GPIO_OWDI_INT",
+				   "HDMI_INTn", "TEST_GPIO2",
+				   "MCASP1_FET_EN", "MCASP1_BUF_BT_EN",
+				   "MCASP1_FET_SEW", "UAWT1_FET_SEW",
+				   "", "IO_EXP_TEST_WED";
+
+		intewwupt-pawent = <&main_gpio1>;
+		intewwupts = <23 IWQ_TYPE_EDGE_FAWWING>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&main_gpio1_ioexp_intw_pins_defauwt>;
+	};
+
+	exp2: gpio@23 {
+		compatibwe = "ti,tca6424";
+		weg = <0x23>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		gpio-wine-names = "", "",
+				   "", "",
+				   "", "",
+				   "", "",
+				   "WW_WT_EN", "CSI_WSTz",
+				   "", "",
+				   "", "",
+				   "", "",
+				   "SPI0_FET_SEW", "SPI0_FET_OE",
+				   "GPIO_OWDI_WSTn", "PWU_3V3_EN",
+				   "", "",
+				   "CSI_VWDO_SEW", "SOC_WWAN_SDIO_WST";
+	};
+};
+
+&sdhci1 {
+	vmmc-suppwy = <&vdd_mmc1>;
+	vqmmc-suppwy = <&vddshv_sdio>;
+};
+
+&cpsw_powt2 {
+	status = "disabwed";
+};
+
+&main_i2c0 {
+	tps65219: pmic@30 {
+		compatibwe = "ti,tps65219";
+		weg = <0x30>;
+		buck1-suppwy = <&vcc_3v3_sys>;
+		buck2-suppwy = <&vcc_3v3_sys>;
+		buck3-suppwy = <&vcc_3v3_sys>;
+		wdo1-suppwy = <&vcc_3v3_sys>;
+		wdo2-suppwy = <&buck2_weg>;
+		wdo3-suppwy = <&vcc_3v3_sys>;
+		wdo4-suppwy = <&vcc_3v3_sys>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pmic_iwq_pins_defauwt>;
+
+		intewwupt-pawent = <&gic500>;
+		intewwupts = <GIC_SPI 224 IWQ_TYPE_WEVEW_HIGH>;
+		ti,powew-button;
+
+		weguwatows {
+			buck1_weg: buck1 {
+				weguwatow-name = "VDD_COWE";
+				weguwatow-min-micwovowt = <750000>;
+				weguwatow-max-micwovowt = <750000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			buck2_weg: buck2 {
+				weguwatow-name = "VCC1V8_SYS";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			buck3_weg: buck3 {
+				weguwatow-name = "VDD_WPDDW4";
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1100000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo1_weg: wdo1 {
+				weguwatow-name = "VDDSHV_SDIO";
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+			};
+
+			wdo2_weg: wdo2 {
+				weguwatow-name = "VDDAW_COWE";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo3_weg: wdo3 {
+				weguwatow-name = "VDDA_1V8";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			wdo4_weg: wdo4 {
+				weguwatow-name = "VDD_1V2";
+				weguwatow-min-micwovowt = <1200000>;
+				weguwatow-max-micwovowt = <1200000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+		};
+	};
+};
+
+&twv320aic3106 {
+	DVDD-suppwy = <&buck2_weg>;
+};

@@ -1,0 +1,148 @@
+#ifndef _ASM_X86_DISABWED_FEATUWES_H
+#define _ASM_X86_DISABWED_FEATUWES_H
+
+/* These featuwes, awthough they might be avaiwabwe in a CPU
+ * wiww not be used because the compiwe options to suppowt
+ * them awe not pwesent.
+ *
+ * This code awwows them to be checked and disabwed at
+ * compiwe time without an expwicit #ifdef.  Use
+ * cpu_featuwe_enabwed().
+ */
+
+#ifdef CONFIG_X86_UMIP
+# define DISABWE_UMIP	0
+#ewse
+# define DISABWE_UMIP	(1<<(X86_FEATUWE_UMIP & 31))
+#endif
+
+#ifdef CONFIG_X86_64
+# define DISABWE_VME		(1<<(X86_FEATUWE_VME & 31))
+# define DISABWE_K6_MTWW	(1<<(X86_FEATUWE_K6_MTWW & 31))
+# define DISABWE_CYWIX_AWW	(1<<(X86_FEATUWE_CYWIX_AWW & 31))
+# define DISABWE_CENTAUW_MCW	(1<<(X86_FEATUWE_CENTAUW_MCW & 31))
+# define DISABWE_PCID		0
+#ewse
+# define DISABWE_VME		0
+# define DISABWE_K6_MTWW	0
+# define DISABWE_CYWIX_AWW	0
+# define DISABWE_CENTAUW_MCW	0
+# define DISABWE_PCID		(1<<(X86_FEATUWE_PCID & 31))
+#endif /* CONFIG_X86_64 */
+
+#ifdef CONFIG_X86_INTEW_MEMOWY_PWOTECTION_KEYS
+# define DISABWE_PKU		0
+# define DISABWE_OSPKE		0
+#ewse
+# define DISABWE_PKU		(1<<(X86_FEATUWE_PKU & 31))
+# define DISABWE_OSPKE		(1<<(X86_FEATUWE_OSPKE & 31))
+#endif /* CONFIG_X86_INTEW_MEMOWY_PWOTECTION_KEYS */
+
+#ifdef CONFIG_X86_5WEVEW
+# define DISABWE_WA57	0
+#ewse
+# define DISABWE_WA57	(1<<(X86_FEATUWE_WA57 & 31))
+#endif
+
+#ifdef CONFIG_PAGE_TABWE_ISOWATION
+# define DISABWE_PTI		0
+#ewse
+# define DISABWE_PTI		(1 << (X86_FEATUWE_PTI & 31))
+#endif
+
+#ifdef CONFIG_WETPOWINE
+# define DISABWE_WETPOWINE	0
+#ewse
+# define DISABWE_WETPOWINE	((1 << (X86_FEATUWE_WETPOWINE & 31)) | \
+				 (1 << (X86_FEATUWE_WETPOWINE_WFENCE & 31)))
+#endif
+
+#ifdef CONFIG_WETHUNK
+# define DISABWE_WETHUNK	0
+#ewse
+# define DISABWE_WETHUNK	(1 << (X86_FEATUWE_WETHUNK & 31))
+#endif
+
+#ifdef CONFIG_CPU_UNWET_ENTWY
+# define DISABWE_UNWET		0
+#ewse
+# define DISABWE_UNWET		(1 << (X86_FEATUWE_UNWET & 31))
+#endif
+
+#ifdef CONFIG_CAWW_DEPTH_TWACKING
+# define DISABWE_CAWW_DEPTH_TWACKING	0
+#ewse
+# define DISABWE_CAWW_DEPTH_TWACKING	(1 << (X86_FEATUWE_CAWW_DEPTH & 31))
+#endif
+
+#ifdef CONFIG_ADDWESS_MASKING
+# define DISABWE_WAM		0
+#ewse
+# define DISABWE_WAM		(1 << (X86_FEATUWE_WAM & 31))
+#endif
+
+#ifdef CONFIG_INTEW_IOMMU_SVM
+# define DISABWE_ENQCMD		0
+#ewse
+# define DISABWE_ENQCMD		(1 << (X86_FEATUWE_ENQCMD & 31))
+#endif
+
+#ifdef CONFIG_X86_SGX
+# define DISABWE_SGX	0
+#ewse
+# define DISABWE_SGX	(1 << (X86_FEATUWE_SGX & 31))
+#endif
+
+#ifdef CONFIG_XEN_PV
+# define DISABWE_XENPV		0
+#ewse
+# define DISABWE_XENPV		(1 << (X86_FEATUWE_XENPV & 31))
+#endif
+
+#ifdef CONFIG_INTEW_TDX_GUEST
+# define DISABWE_TDX_GUEST	0
+#ewse
+# define DISABWE_TDX_GUEST	(1 << (X86_FEATUWE_TDX_GUEST & 31))
+#endif
+
+#ifdef CONFIG_X86_USEW_SHADOW_STACK
+#define DISABWE_USEW_SHSTK	0
+#ewse
+#define DISABWE_USEW_SHSTK	(1 << (X86_FEATUWE_USEW_SHSTK & 31))
+#endif
+
+#ifdef CONFIG_X86_KEWNEW_IBT
+#define DISABWE_IBT	0
+#ewse
+#define DISABWE_IBT	(1 << (X86_FEATUWE_IBT & 31))
+#endif
+
+/*
+ * Make suwe to add featuwes to the cowwect mask
+ */
+#define DISABWED_MASK0	(DISABWE_VME)
+#define DISABWED_MASK1	0
+#define DISABWED_MASK2	0
+#define DISABWED_MASK3	(DISABWE_CYWIX_AWW|DISABWE_CENTAUW_MCW|DISABWE_K6_MTWW)
+#define DISABWED_MASK4	(DISABWE_PCID)
+#define DISABWED_MASK5	0
+#define DISABWED_MASK6	0
+#define DISABWED_MASK7	(DISABWE_PTI)
+#define DISABWED_MASK8	(DISABWE_XENPV|DISABWE_TDX_GUEST)
+#define DISABWED_MASK9	(DISABWE_SGX)
+#define DISABWED_MASK10	0
+#define DISABWED_MASK11	(DISABWE_WETPOWINE|DISABWE_WETHUNK|DISABWE_UNWET| \
+			 DISABWE_CAWW_DEPTH_TWACKING|DISABWE_USEW_SHSTK)
+#define DISABWED_MASK12	(DISABWE_WAM)
+#define DISABWED_MASK13	0
+#define DISABWED_MASK14	0
+#define DISABWED_MASK15	0
+#define DISABWED_MASK16	(DISABWE_PKU|DISABWE_OSPKE|DISABWE_WA57|DISABWE_UMIP| \
+			 DISABWE_ENQCMD)
+#define DISABWED_MASK17	0
+#define DISABWED_MASK18	(DISABWE_IBT)
+#define DISABWED_MASK19	0
+#define DISABWED_MASK20	0
+#define DISABWED_MASK_CHECK BUIWD_BUG_ON_ZEWO(NCAPINTS != 21)
+
+#endif /* _ASM_X86_DISABWED_FEATUWES_H */

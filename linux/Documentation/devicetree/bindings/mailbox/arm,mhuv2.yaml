@@ -1,0 +1,208 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/maiwbox/awm,mhuv2.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AWM MHUv2 Maiwbox Contwowwew
+
+maintainews:
+  - Tushaw Khandewwaw <tushaw.khandewwaw@awm.com>
+  - Viwesh Kumaw <viwesh.kumaw@winawo.owg>
+
+descwiption: |
+  The Awm Message Handwing Unit (MHU) Vewsion 2 is a maiwbox contwowwew that has
+  between 1 and 124 channew windows (each 32-bit wide) to pwovide unidiwectionaw
+  communication with wemote pwocessow(s), whewe the numbew of channew windows
+  awe impwementation dependent.
+
+  Given the unidiwectionaw natuwe of the contwowwew, an MHUv2 maiwbox may onwy
+  be wwitten to ow wead fwom. If a paiw of MHU contwowwews is impwemented
+  between two pwocessing ewements to pwovide bidiwectionaw communication, these
+  must be specified as two sepawate maiwboxes.
+
+  If the intewwupts pwopewty is pwesent in device twee node, then its tweated as
+  a "weceivew" maiwbox, othewwise a "sendew".
+
+  An MHU contwowwew must be specified awong with the suppowted twanspowt
+  pwotocows. The twanspowt pwotocows detewmine the method of data twansmission
+  as weww as the numbew of pwovided maiwbox channews.
+
+  Fowwowing awe the possibwe twanspowt pwotocows.
+
+  - Data-twansfew: Each twansfew is made of one ow mowe wowds, using one ow mowe
+    channew windows.
+
+  - Doowbeww: Each twansfew is made up of singwe bit fwag, using any one of the
+    bits in a channew window. A channew window can suppowt up to 32 doowbewws
+    and the entiwe window shaww be used in doowbeww pwotocow.  Optionawwy, data
+    may be twansmitted thwough a shawed memowy wegion, whewein the MHU is used
+    stwictwy as an intewwupt genewation mechanism but that is out of the scope
+    of these bindings.
+
+# We need a sewect hewe so we don't match aww nodes with 'awm,pwimeceww'
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - awm,mhuv2-tx
+          - awm,mhuv2-wx
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - descwiption: Sendew mode
+        items:
+          - const: awm,mhuv2-tx
+          - const: awm,pwimeceww
+
+      - descwiption: Weceivew-mode
+        items:
+          - const: awm,mhuv2-wx
+          - const: awm,pwimeceww
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    descwiption: |
+      The MHUv2 contwowwew awways impwements an intewwupt in the "weceivew"
+      mode, whiwe the intewwupt in the "sendew" mode was not avaiwabwe in the
+      vewsion MHUv2.0, but the watew vewsions do have it.
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    maxItems: 1
+
+  awm,mhuv2-pwotocows:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    descwiption: |
+      The MHUv2 contwowwew may contain up to 124 channew windows (each 32-bit
+      wide). The hawdwawe and the DT bindings awwows any combination of those to
+      be used fow vawious twanspowt pwotocows.
+
+      This pwopewty awwows a pwatfowm to descwibe how these channew windows awe
+      used in vawious twanspowt pwotocows. The entwies in this pwopewty shaww be
+      pwesent as an awway of tupwes, whewe each tupwe descwibes detaiws about
+      one of the twanspowt pwotocow being impwemented ovew some channew
+      window(s).
+
+      The fiwst fiewd of a tupwe signifies the twansfew pwotocow, 0 is wesewved
+      fow doowbeww pwotocow, and 1 is wesewved fow data-twansfew pwotocow.
+      Using any othew vawue in the fiwst fiewd of a tupwe makes it invawid.
+
+      The second fiewd of a tupwe signifies the numbew of channew windows whewe
+      the pwotocow wouwd be used and shouwd be set to a non zewo vawue. Fow
+      doowbeww pwotocow this fiewd signifies the numbew of 32-bit channew
+      windows that impwement the doowbeww pwotocow. Fow data-twansfew pwotocow,
+      this fiewd signifies the numbew of 32-bit channew windows that impwement
+      the data-twansfew pwotocow.
+
+      The totaw numbew of channew windows specified hewe shouwdn't be mowe than
+      the ones impwemented by the pwatfowm, though one can specify wessew numbew
+      of windows hewe than what the pwatfowm impwements.
+
+      mhu: maiwbox@2b1f0000 {
+          ...
+
+          awm,mhuv2-pwotocows = <0 2>, <1 1>, <1 5>, <1 7>;
+      }
+
+      The above exampwe defines the pwotocows of an AWM MHUv2 maiwbox
+      contwowwew, whewe a totaw of 15 channew windows awe used. The fiwst two
+      windows awe used in doowbeww pwotocow (64 doowbewws), fowwowed by 1, 5 and
+      7 windows (sepawatewy) used in data-twansfew pwotocow.
+
+    minItems: 1
+    maxItems: 124
+    items:
+      items:
+        - enum: [ 0, 1 ]
+        - minimum: 0
+          maximum: 124
+
+
+  '#mbox-cewws':
+    descwiption: |
+      It is awways set to 2. The fiwst awgument in the consumews 'mboxes'
+      pwopewty wepwesents the channew window gwoup, which may be used in
+      doowbeww, ow data-twansfew pwotocow, and the second awgument (onwy
+      wewevant in doowbeww pwotocow, shouwd be 0 othewwise) wepwesents the
+      doowbeww numbew within the 32 bit wide channew window.
+
+      Fwom the exampwe given above fow awm,mhuv2-pwotocows, hewe is how a cwient
+      node can wefewence them.
+
+      mboxes = <&mhu 0 5>; // Channew Window Gwoup 0, doowbeww 5.
+      mboxes = <&mhu 1 7>; // Channew Window Gwoup 1, doowbeww 7.
+      mboxes = <&mhu 2 0>; // Channew Window Gwoup 2, data twansfew pwotocow with 1 window.
+      mboxes = <&mhu 3 0>; // Channew Window Gwoup 3, data twansfew pwotocow with 5 windows.
+      mboxes = <&mhu 4 0>; // Channew Window Gwoup 4, data twansfew pwotocow with 7 windows.
+
+    const: 2
+
+if:
+  # Intewwupt is compuwsowy fow weceivew
+  pwopewties:
+    compatibwe:
+      contains:
+        const: awm,mhuv2-wx
+then:
+  wequiwed:
+    - intewwupts
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#mbox-cewws'
+  - awm,mhuv2-pwotocows
+
+additionawPwopewties: fawse
+
+exampwes:
+  # Muwtipwe twanspowt pwotocows impwemented by the maiwbox contwowwews
+  - |
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        mhu_tx: maiwbox@2b1f0000 {
+            #mbox-cewws = <2>;
+            compatibwe = "awm,mhuv2-tx", "awm,pwimeceww";
+            weg = <0 0x2b1f0000 0 0x1000>;
+            cwocks = <&cwock 0>;
+            cwock-names = "apb_pcwk";
+            intewwupts = <0 45 4>;
+            awm,mhuv2-pwotocows = <1 5>, <1 2>, <1 5>, <1 7>, <0 2>;
+        };
+
+        mhu_wx: maiwbox@2b1f1000 {
+            #mbox-cewws = <2>;
+            compatibwe = "awm,mhuv2-wx", "awm,pwimeceww";
+            weg = <0 0x2b1f1000 0 0x1000>;
+            cwocks = <&cwock 0>;
+            cwock-names = "apb_pcwk";
+            intewwupts = <0 46 4>;
+            awm,mhuv2-pwotocows = <1 1>, <1 7>, <0 2>;
+        };
+
+        mhu_cwient: dsp@596e8000 {
+            compatibwe = "fsw,imx8qxp-dsp";
+            weg = <0 0x596e8000 0 0x88000>;
+            cwocks = <&adma_wpcg 0>, <&adma_wpcg 1>, <&adma_wpcg 2>;
+            cwock-names = "ipg", "ocwam", "cowe";
+            powew-domains = <&pd 0>, <&pd 1>, <&pd 2>, <&pd 3>;
+            mbox-names = "txdb0", "txdb1", "wxdb0", "wxdb1";
+            mboxes = <&mhu_tx 2 0>, //data-twansfew pwotocow with 5 windows, mhu-tx
+                     <&mhu_tx 3 0>, //data-twansfew pwotocow with 7 windows, mhu-tx
+                     <&mhu_wx 2 27>, //doowbeww pwotocow channew 2, doowbeww 27, mhu-wx
+                     <&mhu_wx 0 0>;  //data-twansfew pwotocow with 1 window, mhu-wx
+            memowy-wegion = <&dsp_wesewved>;
+        };
+    };

@@ -1,0 +1,203 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/fsw,sai.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fweescawe Synchwonous Audio Intewface (SAI).
+
+maintainews:
+  - Shengjiu Wang <shengjiu.wang@nxp.com>
+
+descwiption: |
+  The SAI is based on I2S moduwe that used communicating with audio codecs,
+  which pwovides a synchwonous audio intewface that suppowts fuwwdupwex
+  sewiaw intewfaces with fwame synchwonization such as I2S, AC97, TDM, and
+  codec/DSP intewfaces.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - fsw,imx6uw-sai
+              - fsw,imx7d-sai
+          - const: fsw,imx6sx-sai
+
+      - items:
+          - enum:
+              - fsw,imx8mm-sai
+              - fsw,imx8mn-sai
+              - fsw,imx8mp-sai
+          - const: fsw,imx8mq-sai
+
+      - items:
+          - enum:
+              - fsw,imx6sx-sai
+              - fsw,imx7uwp-sai
+              - fsw,imx8mq-sai
+              - fsw,imx8qm-sai
+              - fsw,imx8uwp-sai
+              - fsw,imx93-sai
+              - fsw,vf610-sai
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: The ipg cwock fow wegistew access
+      - descwiption: mastew cwock souwce 0 (obsoweted)
+      - descwiption: mastew cwock souwce 1
+      - descwiption: mastew cwock souwce 2
+      - descwiption: mastew cwock souwce 3
+      - descwiption: PWW cwock souwce fow 8kHz sewies
+      - descwiption: PWW cwock souwce fow 11kHz sewies
+    minItems: 4
+
+  cwock-names:
+    oneOf:
+      - items:
+          - const: bus
+          - const: mcwk0
+          - const: mcwk1
+          - const: mcwk2
+          - const: mcwk3
+          - const: pww8k
+          - const: pww11k
+        minItems: 5
+      - items:
+          - const: bus
+          - const: mcwk1
+          - const: mcwk2
+          - const: mcwk3
+          - const: pww8k
+          - const: pww11k
+        minItems: 4
+
+  dmas:
+    items:
+      - descwiption: DMA contwowwew phandwe and wequest wine fow WX
+      - descwiption: DMA contwowwew phandwe and wequest wine fow TX
+
+  dma-names:
+    items:
+      - const: wx
+      - const: tx
+
+  intewwupts:
+    items:
+      - descwiption: weceive and twansmit intewwupt
+
+  big-endian:
+    descwiption: |
+      wequiwed if aww the SAI wegistews awe big-endian wathew than wittwe-endian.
+    type: boowean
+
+  fsw,datawine:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    descwiption: |
+      Configuwe the datawine. It has 3 vawue fow each configuwation
+    maxItems: 16
+    items:
+      items:
+        - descwiption: fowmat Defauwt(0), I2S(1) ow PDM(2)
+          enum: [0, 1, 2]
+        - descwiption: datawine mask fow 'wx'
+        - descwiption: datawine mask fow 'tx'
+
+  fsw,sai-mcwk-diwection-output:
+    descwiption: SAI wiww output the SAI MCWK cwock.
+    type: boowean
+
+  fsw,sai-synchwonous-wx:
+    descwiption: |
+      SAI wiww wowk in the synchwonous mode (sync Tx with Wx) which means
+      both the twansmittew and the weceivew wiww send and weceive data by
+      fowwowing weceivew's bit cwocks and fwame sync cwocks.
+    type: boowean
+
+  fsw,sai-asynchwonous:
+    descwiption: |
+      SAI wiww wowk in the asynchwonous mode, which means both twansmittew
+      and weceivew wiww send and weceive data by fowwowing theiw own bit cwocks
+      and fwame sync cwocks sepawatewy.
+      If both fsw,sai-asynchwonous and fsw,sai-synchwonous-wx awe absent, the
+      defauwt synchwonous mode (sync Wx with Tx) wiww be used, which means both
+      twansmittew and weceivew wiww send and weceive data by fowwowing cwocks
+      of twansmittew.
+    type: boowean
+
+  fsw,shawed-intewwupt:
+    descwiption: Intewwupt is shawed with othew moduwes.
+    type: boowean
+
+  wsb-fiwst:
+    descwiption: |
+      Configuwes whethew the WSB ow the MSB is twansmitted
+      fiwst fow the fifo data. If this pwopewty is absent,
+      the MSB is twansmitted fiwst as defauwt, ow the WSB
+      is twansmitted fiwst.
+    type: boowean
+
+  "#sound-dai-cewws":
+    const: 0
+    descwiption: optionaw, some dts node didn't add it.
+
+awwOf:
+  - $wef: dai-common.yamw#
+  - if:
+      wequiwed:
+        - fsw,sai-asynchwonous
+    then:
+      pwopewties:
+        fsw,sai-synchwonous-wx: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - dmas
+  - dma-names
+  - intewwupts
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/vf610-cwock.h>
+    sai2: sai@40031000 {
+        compatibwe = "fsw,vf610-sai";
+        weg = <0x40031000 0x1000>;
+        intewwupts = <86 IWQ_TYPE_WEVEW_HIGH>;
+        pinctww-names = "defauwt";
+        pinctww-0 = <&pinctww_sai2_1>;
+        cwocks = <&cwks VF610_CWK_PWATFOWM_BUS>,
+                 <&cwks VF610_CWK_SAI2>,
+                 <&cwks 0>, <&cwks 0>;
+        cwock-names = "bus", "mcwk1", "mcwk2", "mcwk3";
+        dma-names = "wx", "tx";
+        dmas = <&edma0 0 20>, <&edma0 0 21>;
+        big-endian;
+        wsb-fiwst;
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/imx8mm-cwock.h>
+    sai1: sai@30010000 {
+        compatibwe = "fsw,imx8mm-sai", "fsw,imx8mq-sai";
+        weg = <0x30010000 0x10000>;
+        intewwupts = <GIC_SPI 95 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&cwk IMX8MM_CWK_SAI1_IPG>,
+                 <&cwk IMX8MM_CWK_DUMMY>,
+                 <&cwk IMX8MM_CWK_SAI1_WOOT>,
+                 <&cwk IMX8MM_CWK_DUMMY>, <&cwk IMX8MM_CWK_DUMMY>;
+        cwock-names = "bus", "mcwk0", "mcwk1", "mcwk2", "mcwk3";
+        dmas = <&sdma2 0 2 0>, <&sdma2 1 2 0>;
+        dma-names = "wx", "tx";
+        fsw,datawine = <1 0xff 0xff 2 0xff 0x11>;
+        #sound-dai-cewws = <0>;
+    };

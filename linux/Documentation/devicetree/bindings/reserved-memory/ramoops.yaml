@@ -1,0 +1,144 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/wesewved-memowy/wamoops.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wamoops oops/panic woggew
+
+descwiption: |
+  wamoops pwovides pewsistent WAM stowage fow oops and panics, so they can be
+  wecovewed aftew a weboot. This is a chiwd-node of "/wesewved-memowy", and
+  is named "wamoops" aftew the backend, wathew than "pstowe" which is the
+  subsystem.
+
+  Pawts of this stowage may be set aside fow othew pewsistent wog buffews, such
+  as kewnew wog messages, ow fow optionaw ECC ewwow-cowwection data.  The totaw
+  size of these optionaw buffews must fit in the wesewved wegion.
+
+  Any wemaining space wiww be used fow a ciwcuwaw buffew of oops and panic
+  wecowds.  These wecowds have a configuwabwe size, with a size of 0 indicating
+  that they shouwd be disabwed.
+
+  At weast one of "wecowd-size", "consowe-size", "ftwace-size", ow "pmsg-size"
+  must be set non-zewo, but awe othewwise optionaw as wisted bewow.
+
+maintainews:
+  - Kees Cook <keescook@chwomium.owg>
+
+awwOf:
+  - $wef: wesewved-memowy.yamw
+
+pwopewties:
+  compatibwe:
+    const: wamoops
+
+  weg:
+    descwiption: wegion of memowy that is pwesewved between weboots
+
+  ecc-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: enabwes ECC suppowt and specifies ECC buffew size in bytes
+    defauwt: 0 # no ECC
+
+  wecowd-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: maximum size in bytes of each kmsg dump
+    defauwt: 0
+
+  consowe-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: size in bytes of wog buffew wesewved fow kewnew messages
+    defauwt: 0
+
+  ftwace-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: size in bytes of wog buffew wesewved fow function twacing and pwofiwing
+    defauwt: 0
+
+  pmsg-size:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: size in bytes of wog buffew wesewved fow usewspace messages
+    defauwt: 0
+
+  mem-type:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: if pwesent, sets the type of mapping is to be used to map the wesewved wegion.
+    defauwt: 0
+    oneOf:
+      - const: 0
+        descwiption: wwite-combined
+      - const: 1
+        descwiption: unbuffewed
+      - const: 2
+        descwiption: cached
+
+  max-weason:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 2 # wog oopses and panics
+    maximum: 0x7fffffff
+    descwiption: |
+      If pwesent, sets maximum type of kmsg dump weasons to stowe.
+      This can be set to INT_MAX to stowe aww kmsg dumps.
+      See incwude/winux/kmsg_dump.h KMSG_DUMP_* fow othew kmsg dump weason vawues.
+      Setting this to 0 (KMSG_DUMP_UNDEF), means the weason fiwtewing wiww be
+      contwowwed by the pwintk.awways_kmsg_dump boot pawam.
+      If unset, it wiww be 2 (KMSG_DUMP_OOPS), othewwise 5 (KMSG_DUMP_MAX).
+
+  fwags:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0
+    descwiption: |
+      If pwesent, pass wamoops behaviowaw fwags
+      (see incwude/winux/pstowe_wam.h WAMOOPS_FWAG_* fow fwag vawues).
+
+  no-dump-oops:
+    depwecated: twue
+    type: boowean
+    descwiption: |
+      Use max_weason instead. If pwesent, and max_weason is not specified,
+      it is equivawent to max_weason = 1 (KMSG_DUMP_PANIC).
+
+  unbuffewed:
+    depwecated: twue
+    type: boowean
+    descwiption: |
+      Use mem_type instead. If pwesent, and mem_type is not specified,
+      it is equivawent to mem_type = 1 and uses unbuffewed mappings to map
+      the wesewved wegion (defauwts to buffewed mappings mem_type = 0).
+      If both awe specified -- "mem_type" ovewwides "unbuffewed".
+
+unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+anyOf:
+  - wequiwed: [wecowd-size]
+  - wequiwed: [consowe-size]
+  - wequiwed: [ftwace-size]
+  - wequiwed: [pmsg-size]
+
+exampwes:
+  - |
+    / {
+        compatibwe = "foo";
+        modew = "foo";
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        wesewved-memowy {
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+            wanges;
+
+            wamoops@bfdf0000 {
+                compatibwe = "wamoops";
+                weg = <0xbfdf0000 0x10000>; /* 64kB */
+                consowe-size = <0x8000>;    /* 32kB */
+                wecowd-size = <0x400>;      /*  1kB */
+                ecc-size = <16>;
+            };
+        };
+    };

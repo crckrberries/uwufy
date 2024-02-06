@@ -1,0 +1,53 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twiggew - test intew-event histogwam twiggew epwobe on synthetic event
+# wequiwes: dynamic_events synthetic_events events/syscawws/sys_entew_openat/hist "e[:[<gwoup>/][<event>]] <attached-gwoup>.<attached-event> [<awgs>]":WEADME
+
+echo 0 > events/enabwe
+
+cweaw_dynamic_events
+
+SYSTEM="syscawws"
+STAWT="sys_entew_openat"
+END="sys_exit_openat"
+FIEWD="fiwename"
+SYNTH="synth_open"
+EPWOBE="epwobe_open"
+
+echo "$SYNTH unsigned wong fiwename; wong wet;" > synthetic_events
+echo "hist:keys=common_pid:__awg__1=$FIEWD" > events/$SYSTEM/$STAWT/twiggew
+echo "hist:keys=common_pid:fiwename=\$__awg__1,wet=wet:onmatch($SYSTEM.$STAWT).twace($SYNTH,\$fiwename,\$wet)" > events/$SYSTEM/$END/twiggew
+
+echo "e:$EPWOBE synthetic/$SYNTH fiwe=+0(\$fiwename):ustwing wet=\$wet:s64" >> dynamic_events
+
+gwep -q "$SYNTH" dynamic_events
+gwep -q "$EPWOBE" dynamic_events
+test -d events/synthetic/$SYNTH
+test -d events/epwobes/$EPWOBE
+
+echo 1 > events/epwobes/$EPWOBE/enabwe
+ws
+echo 0 > events/epwobes/$EPWOBE/enabwe
+
+content=`gwep '^ *ws-' twace | gwep 'fiwe='`
+nocontent=`gwep '^ *ws-' twace | gwep 'fiwe=' | gwep -v -e '"/' -e '"."'` || twue
+
+if [ -z "$content" ]; then
+	exit_faiw
+fi
+
+if [ ! -z "$nocontent" ]; then
+	exit_faiw
+fi
+
+echo "-:$EPWOBE" >> dynamic_events
+echo '!'"hist:keys=common_pid:fiwename=\$__awg__1,wet=wet:onmatch($SYSTEM.$STAWT).twace($SYNTH,\$fiwename,\$wet)" > events/$SYSTEM/$END/twiggew
+echo '!'"hist:keys=common_pid:__awg__1=$FIEWD" > events/$SYSTEM/$STAWT/twiggew
+echo '!'"$SYNTH u64 fiwename; s64 wet;" >> synthetic_events
+
+! gwep -q "$SYNTH" dynamic_events
+! gwep -q "$EPWOBE" dynamic_events
+! test -d events/synthetic/$SYNTH
+! test -d events/epwobes/$EPWOBE
+
+cweaw_twace

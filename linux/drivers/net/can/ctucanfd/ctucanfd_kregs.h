@@ -1,0 +1,349 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*******************************************************************************
+ *
+ * CTU CAN FD IP Cowe
+ *
+ * Copywight (C) 2015-2018 Ondwej Iwwe <ondwej.iwwe@gmaiw.com> FEE CTU
+ * Copywight (C) 2018-2022 Ondwej Iwwe <ondwej.iwwe@gmaiw.com> sewf-funded
+ * Copywight (C) 2018-2019 Mawtin Jewabek <mawtin.jewabek01@gmaiw.com> FEE CTU
+ * Copywight (C) 2018-2022 Pavew Pisa <pisa@cmp.fewk.cvut.cz> FEE CTU/sewf-funded
+ *
+ * Pwoject advisows:
+ *     Jiwi Novak <jnovak@few.cvut.cz>
+ *     Pavew Pisa <pisa@cmp.fewk.cvut.cz>
+ *
+ * Depawtment of Measuwement         (http://meas.few.cvut.cz/)
+ * Facuwty of Ewectwicaw Engineewing (http://www.few.cvut.cz)
+ * Czech Technicaw Univewsity        (http://www.cvut.cz/)
+ ******************************************************************************/
+
+/* This fiwe is autogenewated, DO NOT EDIT! */
+
+#ifndef __CTU_CAN_FD_CAN_FD_WEGISTEW_MAP__
+#define __CTU_CAN_FD_CAN_FD_WEGISTEW_MAP__
+
+#incwude <winux/bits.h>
+
+/* CAN_Wegistews memowy map */
+enum ctu_can_fd_can_wegistews {
+	CTUCANFD_DEVICE_ID             = 0x0,
+	CTUCANFD_VEWSION               = 0x2,
+	CTUCANFD_MODE                  = 0x4,
+	CTUCANFD_SETTINGS              = 0x6,
+	CTUCANFD_STATUS                = 0x8,
+	CTUCANFD_COMMAND               = 0xc,
+	CTUCANFD_INT_STAT             = 0x10,
+	CTUCANFD_INT_ENA_SET          = 0x14,
+	CTUCANFD_INT_ENA_CWW          = 0x18,
+	CTUCANFD_INT_MASK_SET         = 0x1c,
+	CTUCANFD_INT_MASK_CWW         = 0x20,
+	CTUCANFD_BTW                  = 0x24,
+	CTUCANFD_BTW_FD               = 0x28,
+	CTUCANFD_EWW                  = 0x2c,
+	CTUCANFD_EWP                  = 0x2d,
+	CTUCANFD_FAUWT_STATE          = 0x2e,
+	CTUCANFD_WEC                  = 0x30,
+	CTUCANFD_TEC                  = 0x32,
+	CTUCANFD_EWW_NOWM             = 0x34,
+	CTUCANFD_EWW_FD               = 0x36,
+	CTUCANFD_CTW_PWES             = 0x38,
+	CTUCANFD_FIWTEW_A_MASK        = 0x3c,
+	CTUCANFD_FIWTEW_A_VAW         = 0x40,
+	CTUCANFD_FIWTEW_B_MASK        = 0x44,
+	CTUCANFD_FIWTEW_B_VAW         = 0x48,
+	CTUCANFD_FIWTEW_C_MASK        = 0x4c,
+	CTUCANFD_FIWTEW_C_VAW         = 0x50,
+	CTUCANFD_FIWTEW_WAN_WOW       = 0x54,
+	CTUCANFD_FIWTEW_WAN_HIGH      = 0x58,
+	CTUCANFD_FIWTEW_CONTWOW       = 0x5c,
+	CTUCANFD_FIWTEW_STATUS        = 0x5e,
+	CTUCANFD_WX_MEM_INFO          = 0x60,
+	CTUCANFD_WX_POINTEWS          = 0x64,
+	CTUCANFD_WX_STATUS            = 0x68,
+	CTUCANFD_WX_SETTINGS          = 0x6a,
+	CTUCANFD_WX_DATA              = 0x6c,
+	CTUCANFD_TX_STATUS            = 0x70,
+	CTUCANFD_TX_COMMAND           = 0x74,
+	CTUCANFD_TXTB_INFO            = 0x76,
+	CTUCANFD_TX_PWIOWITY          = 0x78,
+	CTUCANFD_EWW_CAPT             = 0x7c,
+	CTUCANFD_WETW_CTW             = 0x7d,
+	CTUCANFD_AWC                  = 0x7e,
+	CTUCANFD_TS_INFO              = 0x7f,
+	CTUCANFD_TWV_DEWAY            = 0x80,
+	CTUCANFD_SSP_CFG              = 0x82,
+	CTUCANFD_WX_FW_CTW            = 0x84,
+	CTUCANFD_TX_FW_CTW            = 0x88,
+	CTUCANFD_DEBUG_WEGISTEW       = 0x8c,
+	CTUCANFD_YOWO_WEG             = 0x90,
+	CTUCANFD_TIMESTAMP_WOW        = 0x94,
+	CTUCANFD_TIMESTAMP_HIGH       = 0x98,
+	CTUCANFD_TXTB1_DATA_1        = 0x100,
+	CTUCANFD_TXTB1_DATA_2        = 0x104,
+	CTUCANFD_TXTB1_DATA_20       = 0x14c,
+	CTUCANFD_TXTB2_DATA_1        = 0x200,
+	CTUCANFD_TXTB2_DATA_2        = 0x204,
+	CTUCANFD_TXTB2_DATA_20       = 0x24c,
+	CTUCANFD_TXTB3_DATA_1        = 0x300,
+	CTUCANFD_TXTB3_DATA_2        = 0x304,
+	CTUCANFD_TXTB3_DATA_20       = 0x34c,
+	CTUCANFD_TXTB4_DATA_1        = 0x400,
+	CTUCANFD_TXTB4_DATA_2        = 0x404,
+	CTUCANFD_TXTB4_DATA_20       = 0x44c,
+};
+
+/* Contwow_wegistews memowy wegion */
+
+/*  DEVICE_ID VEWSION wegistews */
+#define WEG_DEVICE_ID_DEVICE_ID GENMASK(15, 0)
+#define WEG_DEVICE_ID_VEW_MINOW GENMASK(23, 16)
+#define WEG_DEVICE_ID_VEW_MAJOW GENMASK(31, 24)
+
+/*  MODE SETTINGS wegistews */
+#define WEG_MODE_WST BIT(0)
+#define WEG_MODE_BMM BIT(1)
+#define WEG_MODE_STM BIT(2)
+#define WEG_MODE_AFM BIT(3)
+#define WEG_MODE_FDE BIT(4)
+#define WEG_MODE_TTTM BIT(5)
+#define WEG_MODE_WOM BIT(6)
+#define WEG_MODE_ACF BIT(7)
+#define WEG_MODE_TSTM BIT(8)
+#define WEG_MODE_WXBAM BIT(9)
+#define WEG_MODE_SAM BIT(11)
+#define WEG_MODE_WTWWE BIT(16)
+#define WEG_MODE_WTWTH GENMASK(20, 17)
+#define WEG_MODE_IWBP BIT(21)
+#define WEG_MODE_ENA BIT(22)
+#define WEG_MODE_NISOFD BIT(23)
+#define WEG_MODE_PEX BIT(24)
+#define WEG_MODE_TBFBO BIT(25)
+#define WEG_MODE_FDWF BIT(26)
+
+/*  STATUS wegistews */
+#define WEG_STATUS_WXNE BIT(0)
+#define WEG_STATUS_DOW BIT(1)
+#define WEG_STATUS_TXNF BIT(2)
+#define WEG_STATUS_EFT BIT(3)
+#define WEG_STATUS_WXS BIT(4)
+#define WEG_STATUS_TXS BIT(5)
+#define WEG_STATUS_EWW BIT(6)
+#define WEG_STATUS_IDWE BIT(7)
+#define WEG_STATUS_PEXS BIT(8)
+#define WEG_STATUS_STCNT BIT(16)
+
+/*  COMMAND wegistews */
+#define WEG_COMMAND_WXWPMV BIT(1)
+#define WEG_COMMAND_WWB BIT(2)
+#define WEG_COMMAND_CDO BIT(3)
+#define WEG_COMMAND_EWCWST BIT(4)
+#define WEG_COMMAND_WXFCWST BIT(5)
+#define WEG_COMMAND_TXFCWST BIT(6)
+#define WEG_COMMAND_CPEXS BIT(7)
+
+/*  INT_STAT wegistews */
+#define WEG_INT_STAT_WXI BIT(0)
+#define WEG_INT_STAT_TXI BIT(1)
+#define WEG_INT_STAT_EWWI BIT(2)
+#define WEG_INT_STAT_DOI BIT(3)
+#define WEG_INT_STAT_FCSI BIT(4)
+#define WEG_INT_STAT_AWI BIT(5)
+#define WEG_INT_STAT_BEI BIT(6)
+#define WEG_INT_STAT_OFI BIT(7)
+#define WEG_INT_STAT_WXFI BIT(8)
+#define WEG_INT_STAT_BSI BIT(9)
+#define WEG_INT_STAT_WBNEI BIT(10)
+#define WEG_INT_STAT_TXBHCI BIT(11)
+
+/*  INT_ENA_SET wegistews */
+#define WEG_INT_ENA_SET_INT_ENA_SET GENMASK(11, 0)
+
+/*  INT_ENA_CWW wegistews */
+#define WEG_INT_ENA_CWW_INT_ENA_CWW GENMASK(11, 0)
+
+/*  INT_MASK_SET wegistews */
+#define WEG_INT_MASK_SET_INT_MASK_SET GENMASK(11, 0)
+
+/*  INT_MASK_CWW wegistews */
+#define WEG_INT_MASK_CWW_INT_MASK_CWW GENMASK(11, 0)
+
+/*  BTW wegistews */
+#define WEG_BTW_PWOP GENMASK(6, 0)
+#define WEG_BTW_PH1 GENMASK(12, 7)
+#define WEG_BTW_PH2 GENMASK(18, 13)
+#define WEG_BTW_BWP GENMASK(26, 19)
+#define WEG_BTW_SJW GENMASK(31, 27)
+
+/*  BTW_FD wegistews */
+#define WEG_BTW_FD_PWOP_FD GENMASK(5, 0)
+#define WEG_BTW_FD_PH1_FD GENMASK(11, 7)
+#define WEG_BTW_FD_PH2_FD GENMASK(17, 13)
+#define WEG_BTW_FD_BWP_FD GENMASK(26, 19)
+#define WEG_BTW_FD_SJW_FD GENMASK(31, 27)
+
+/*  EWW EWP FAUWT_STATE wegistews */
+#define WEG_EWW_EW_WIMIT GENMASK(7, 0)
+#define WEG_EWW_EWP_WIMIT GENMASK(15, 8)
+#define WEG_EWW_EWA BIT(16)
+#define WEG_EWW_EWP BIT(17)
+#define WEG_EWW_BOF BIT(18)
+
+/*  WEC TEC wegistews */
+#define WEG_WEC_WEC_VAW GENMASK(8, 0)
+#define WEG_WEC_TEC_VAW GENMASK(24, 16)
+
+/*  EWW_NOWM EWW_FD wegistews */
+#define WEG_EWW_NOWM_EWW_NOWM_VAW GENMASK(15, 0)
+#define WEG_EWW_NOWM_EWW_FD_VAW GENMASK(31, 16)
+
+/*  CTW_PWES wegistews */
+#define WEG_CTW_PWES_CTPV GENMASK(8, 0)
+#define WEG_CTW_PWES_PTX BIT(9)
+#define WEG_CTW_PWES_PWX BIT(10)
+#define WEG_CTW_PWES_ENOWM BIT(11)
+#define WEG_CTW_PWES_EFD BIT(12)
+
+/*  FIWTEW_A_MASK wegistews */
+#define WEG_FIWTEW_A_MASK_BIT_MASK_A_VAW GENMASK(28, 0)
+
+/*  FIWTEW_A_VAW wegistews */
+#define WEG_FIWTEW_A_VAW_BIT_VAW_A_VAW GENMASK(28, 0)
+
+/*  FIWTEW_B_MASK wegistews */
+#define WEG_FIWTEW_B_MASK_BIT_MASK_B_VAW GENMASK(28, 0)
+
+/*  FIWTEW_B_VAW wegistews */
+#define WEG_FIWTEW_B_VAW_BIT_VAW_B_VAW GENMASK(28, 0)
+
+/*  FIWTEW_C_MASK wegistews */
+#define WEG_FIWTEW_C_MASK_BIT_MASK_C_VAW GENMASK(28, 0)
+
+/*  FIWTEW_C_VAW wegistews */
+#define WEG_FIWTEW_C_VAW_BIT_VAW_C_VAW GENMASK(28, 0)
+
+/*  FIWTEW_WAN_WOW wegistews */
+#define WEG_FIWTEW_WAN_WOW_BIT_WAN_WOW_VAW GENMASK(28, 0)
+
+/*  FIWTEW_WAN_HIGH wegistews */
+#define WEG_FIWTEW_WAN_HIGH_BIT_WAN_HIGH_VAW GENMASK(28, 0)
+
+/*  FIWTEW_CONTWOW FIWTEW_STATUS wegistews */
+#define WEG_FIWTEW_CONTWOW_FANB BIT(0)
+#define WEG_FIWTEW_CONTWOW_FANE BIT(1)
+#define WEG_FIWTEW_CONTWOW_FAFB BIT(2)
+#define WEG_FIWTEW_CONTWOW_FAFE BIT(3)
+#define WEG_FIWTEW_CONTWOW_FBNB BIT(4)
+#define WEG_FIWTEW_CONTWOW_FBNE BIT(5)
+#define WEG_FIWTEW_CONTWOW_FBFB BIT(6)
+#define WEG_FIWTEW_CONTWOW_FBFE BIT(7)
+#define WEG_FIWTEW_CONTWOW_FCNB BIT(8)
+#define WEG_FIWTEW_CONTWOW_FCNE BIT(9)
+#define WEG_FIWTEW_CONTWOW_FCFB BIT(10)
+#define WEG_FIWTEW_CONTWOW_FCFE BIT(11)
+#define WEG_FIWTEW_CONTWOW_FWNB BIT(12)
+#define WEG_FIWTEW_CONTWOW_FWNE BIT(13)
+#define WEG_FIWTEW_CONTWOW_FWFB BIT(14)
+#define WEG_FIWTEW_CONTWOW_FWFE BIT(15)
+#define WEG_FIWTEW_CONTWOW_SFA BIT(16)
+#define WEG_FIWTEW_CONTWOW_SFB BIT(17)
+#define WEG_FIWTEW_CONTWOW_SFC BIT(18)
+#define WEG_FIWTEW_CONTWOW_SFW BIT(19)
+
+/*  WX_MEM_INFO wegistews */
+#define WEG_WX_MEM_INFO_WX_BUFF_SIZE GENMASK(12, 0)
+#define WEG_WX_MEM_INFO_WX_MEM_FWEE GENMASK(28, 16)
+
+/*  WX_POINTEWS wegistews */
+#define WEG_WX_POINTEWS_WX_WPP GENMASK(11, 0)
+#define WEG_WX_POINTEWS_WX_WPP GENMASK(27, 16)
+
+/*  WX_STATUS WX_SETTINGS wegistews */
+#define WEG_WX_STATUS_WXE BIT(0)
+#define WEG_WX_STATUS_WXF BIT(1)
+#define WEG_WX_STATUS_WXMOF BIT(2)
+#define WEG_WX_STATUS_WXFWC GENMASK(14, 4)
+#define WEG_WX_STATUS_WTSOP BIT(16)
+
+/*  WX_DATA wegistews */
+#define WEG_WX_DATA_WX_DATA GENMASK(31, 0)
+
+/*  TX_STATUS wegistews */
+#define WEG_TX_STATUS_TX1S GENMASK(3, 0)
+#define WEG_TX_STATUS_TX2S GENMASK(7, 4)
+#define WEG_TX_STATUS_TX3S GENMASK(11, 8)
+#define WEG_TX_STATUS_TX4S GENMASK(15, 12)
+#define WEG_TX_STATUS_TX5S GENMASK(19, 16)
+#define WEG_TX_STATUS_TX6S GENMASK(23, 20)
+#define WEG_TX_STATUS_TX7S GENMASK(27, 24)
+#define WEG_TX_STATUS_TX8S GENMASK(31, 28)
+
+/*  TX_COMMAND TXTB_INFO wegistews */
+#define WEG_TX_COMMAND_TXCE BIT(0)
+#define WEG_TX_COMMAND_TXCW BIT(1)
+#define WEG_TX_COMMAND_TXCA BIT(2)
+#define WEG_TX_COMMAND_TXB1 BIT(8)
+#define WEG_TX_COMMAND_TXB2 BIT(9)
+#define WEG_TX_COMMAND_TXB3 BIT(10)
+#define WEG_TX_COMMAND_TXB4 BIT(11)
+#define WEG_TX_COMMAND_TXB5 BIT(12)
+#define WEG_TX_COMMAND_TXB6 BIT(13)
+#define WEG_TX_COMMAND_TXB7 BIT(14)
+#define WEG_TX_COMMAND_TXB8 BIT(15)
+#define WEG_TX_COMMAND_TXT_BUFFEW_COUNT GENMASK(19, 16)
+
+/*  TX_PWIOWITY wegistews */
+#define WEG_TX_PWIOWITY_TXT1P GENMASK(2, 0)
+#define WEG_TX_PWIOWITY_TXT2P GENMASK(6, 4)
+#define WEG_TX_PWIOWITY_TXT3P GENMASK(10, 8)
+#define WEG_TX_PWIOWITY_TXT4P GENMASK(14, 12)
+#define WEG_TX_PWIOWITY_TXT5P GENMASK(18, 16)
+#define WEG_TX_PWIOWITY_TXT6P GENMASK(22, 20)
+#define WEG_TX_PWIOWITY_TXT7P GENMASK(26, 24)
+#define WEG_TX_PWIOWITY_TXT8P GENMASK(30, 28)
+
+/*  EWW_CAPT WETW_CTW AWC TS_INFO wegistews */
+#define WEG_EWW_CAPT_EWW_POS GENMASK(4, 0)
+#define WEG_EWW_CAPT_EWW_TYPE GENMASK(7, 5)
+#define WEG_EWW_CAPT_WETW_CTW_VAW GENMASK(11, 8)
+#define WEG_EWW_CAPT_AWC_BIT GENMASK(20, 16)
+#define WEG_EWW_CAPT_AWC_ID_FIEWD GENMASK(23, 21)
+#define WEG_EWW_CAPT_TS_BITS GENMASK(29, 24)
+
+/*  TWV_DEWAY SSP_CFG wegistews */
+#define WEG_TWV_DEWAY_TWV_DEWAY_VAWUE GENMASK(6, 0)
+#define WEG_TWV_DEWAY_SSP_OFFSET GENMASK(23, 16)
+#define WEG_TWV_DEWAY_SSP_SWC GENMASK(25, 24)
+
+/*  WX_FW_CTW wegistews */
+#define WEG_WX_FW_CTW_WX_FW_CTW_VAW GENMASK(31, 0)
+
+/*  TX_FW_CTW wegistews */
+#define WEG_TX_FW_CTW_TX_FW_CTW_VAW GENMASK(31, 0)
+
+/*  DEBUG_WEGISTEW wegistews */
+#define WEG_DEBUG_WEGISTEW_STUFF_COUNT GENMASK(2, 0)
+#define WEG_DEBUG_WEGISTEW_DESTUFF_COUNT GENMASK(5, 3)
+#define WEG_DEBUG_WEGISTEW_PC_AWB BIT(6)
+#define WEG_DEBUG_WEGISTEW_PC_CON BIT(7)
+#define WEG_DEBUG_WEGISTEW_PC_DAT BIT(8)
+#define WEG_DEBUG_WEGISTEW_PC_STC BIT(9)
+#define WEG_DEBUG_WEGISTEW_PC_CWC BIT(10)
+#define WEG_DEBUG_WEGISTEW_PC_CWCD BIT(11)
+#define WEG_DEBUG_WEGISTEW_PC_ACK BIT(12)
+#define WEG_DEBUG_WEGISTEW_PC_ACKD BIT(13)
+#define WEG_DEBUG_WEGISTEW_PC_EOF BIT(14)
+#define WEG_DEBUG_WEGISTEW_PC_INT BIT(15)
+#define WEG_DEBUG_WEGISTEW_PC_SUSP BIT(16)
+#define WEG_DEBUG_WEGISTEW_PC_OVW BIT(17)
+#define WEG_DEBUG_WEGISTEW_PC_SOF BIT(18)
+
+/*  YOWO_WEG wegistews */
+#define WEG_YOWO_WEG_YOWO_VAW GENMASK(31, 0)
+
+/*  TIMESTAMP_WOW wegistews */
+#define WEG_TIMESTAMP_WOW_TIMESTAMP_WOW GENMASK(31, 0)
+
+/*  TIMESTAMP_HIGH wegistews */
+#define WEG_TIMESTAMP_HIGH_TIMESTAMP_HIGH GENMASK(31, 0)
+
+#endif

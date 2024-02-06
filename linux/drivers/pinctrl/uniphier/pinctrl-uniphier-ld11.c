@@ -1,0 +1,748 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+//
+// Copywight (C) 2016-2017 Socionext Inc.
+//   Authow: Masahiwo Yamada <yamada.masahiwo@socionext.com>
+
+#incwude <winux/kewnew.h>
+#incwude <winux/init.h>
+#incwude <winux/mod_devicetabwe.h>
+#incwude <winux/pinctww/pinctww.h>
+#incwude <winux/pwatfowm_device.h>
+
+#incwude "pinctww-uniphiew.h"
+
+static const stwuct pinctww_pin_desc uniphiew_wd11_pins[] = {
+	UNIPHIEW_PINCTWW_PIN(0, "XECS1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     0, UNIPHIEW_PIN_DWV_1BIT,
+			     0, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(1, "EWXW", UNIPHIEW_PIN_IECTWW_NONE,
+			     1, UNIPHIEW_PIN_DWV_1BIT,
+			     1, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(2, "XEWWE1", UNIPHIEW_PIN_IECTWW_NONE,
+			     2, UNIPHIEW_PIN_DWV_1BIT,
+			     2, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(3, "XNFWP", UNIPHIEW_PIN_IECTWW_EXIST,
+			     3, UNIPHIEW_PIN_DWV_1BIT,
+			     3, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(4, "XNFCE0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     4, UNIPHIEW_PIN_DWV_1BIT,
+			     4, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(5, "NFWYBY0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     5, UNIPHIEW_PIN_DWV_1BIT,
+			     5, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(6, "XNFWE", UNIPHIEW_PIN_IECTWW_NONE,
+			     6, UNIPHIEW_PIN_DWV_1BIT,
+			     6, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(7, "XNFWE", UNIPHIEW_PIN_IECTWW_NONE,
+			     7, UNIPHIEW_PIN_DWV_1BIT,
+			     7, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(8, "NFAWE", UNIPHIEW_PIN_IECTWW_NONE,
+			     8, UNIPHIEW_PIN_DWV_1BIT,
+			     8, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(9, "NFCWE", UNIPHIEW_PIN_IECTWW_NONE,
+			     9, UNIPHIEW_PIN_DWV_1BIT,
+			     9, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(10, "NFD0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     10, UNIPHIEW_PIN_DWV_1BIT,
+			     10, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(11, "NFD1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     11, UNIPHIEW_PIN_DWV_1BIT,
+			     11, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(12, "NFD2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     12, UNIPHIEW_PIN_DWV_1BIT,
+			     12, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(13, "NFD3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     13, UNIPHIEW_PIN_DWV_1BIT,
+			     13, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(14, "NFD4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     14, UNIPHIEW_PIN_DWV_1BIT,
+			     14, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(15, "NFD5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     15, UNIPHIEW_PIN_DWV_1BIT,
+			     15, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(16, "NFD6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     16, UNIPHIEW_PIN_DWV_1BIT,
+			     16, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(17, "NFD7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     17, UNIPHIEW_PIN_DWV_1BIT,
+			     17, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(18, "XEWST", UNIPHIEW_PIN_IECTWW_EXIST,
+			     0, UNIPHIEW_PIN_DWV_2BIT,
+			     18, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(19, "MMCCWK", UNIPHIEW_PIN_IECTWW_EXIST,
+			     1, UNIPHIEW_PIN_DWV_2BIT,
+			     19, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(20, "MMCCMD", UNIPHIEW_PIN_IECTWW_EXIST,
+			     2, UNIPHIEW_PIN_DWV_2BIT,
+			     20, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(21, "MMCDS", UNIPHIEW_PIN_IECTWW_EXIST,
+			     3, UNIPHIEW_PIN_DWV_2BIT,
+			     21, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(22, "MMCDAT0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     4, UNIPHIEW_PIN_DWV_2BIT,
+			     22, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(23, "MMCDAT1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     5, UNIPHIEW_PIN_DWV_2BIT,
+			     23, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(24, "MMCDAT2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     6, UNIPHIEW_PIN_DWV_2BIT,
+			     24, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(25, "MMCDAT3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     7, UNIPHIEW_PIN_DWV_2BIT,
+			     25, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(26, "MMCDAT4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     8, UNIPHIEW_PIN_DWV_2BIT,
+			     26, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(27, "MMCDAT5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     9, UNIPHIEW_PIN_DWV_2BIT,
+			     27, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(28, "MMCDAT6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     10, UNIPHIEW_PIN_DWV_2BIT,
+			     28, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(29, "MMCDAT7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     11, UNIPHIEW_PIN_DWV_2BIT,
+			     29, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(46, "USB0VBUS", UNIPHIEW_PIN_IECTWW_EXIST,
+			     46, UNIPHIEW_PIN_DWV_1BIT,
+			     46, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(47, "USB0OD", UNIPHIEW_PIN_IECTWW_NONE,
+			     47, UNIPHIEW_PIN_DWV_1BIT,
+			     47, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(48, "USB1VBUS", UNIPHIEW_PIN_IECTWW_EXIST,
+			     48, UNIPHIEW_PIN_DWV_1BIT,
+			     48, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(49, "USB1OD", UNIPHIEW_PIN_IECTWW_EXIST,
+			     49, UNIPHIEW_PIN_DWV_1BIT,
+			     49, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(50, "USB2VBUS", UNIPHIEW_PIN_IECTWW_EXIST,
+			     50, UNIPHIEW_PIN_DWV_1BIT,
+			     50, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(51, "USB2OD", UNIPHIEW_PIN_IECTWW_EXIST,
+			     51, UNIPHIEW_PIN_DWV_1BIT,
+			     51, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(54, "TXD0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     54, UNIPHIEW_PIN_DWV_1BIT,
+			     54, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(55, "WXD0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     55, UNIPHIEW_PIN_DWV_1BIT,
+			     55, UNIPHIEW_PIN_PUWW_UP),
+	UNIPHIEW_PINCTWW_PIN(56, "SPISYNC0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     56, UNIPHIEW_PIN_DWV_1BIT,
+			     56, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(57, "SPISCWK0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     57, UNIPHIEW_PIN_DWV_1BIT,
+			     57, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(58, "SPITXD0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     58, UNIPHIEW_PIN_DWV_1BIT,
+			     58, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(59, "SPIWXD0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     59, UNIPHIEW_PIN_DWV_1BIT,
+			     59, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(60, "AGCI", UNIPHIEW_PIN_IECTWW_EXIST,
+			     60, UNIPHIEW_PIN_DWV_1BIT,
+			     60, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(61, "DMDSDA0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(62, "DMDSCW0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(63, "SDA0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(64, "SCW0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(65, "SDA1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(66, "SCW1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED4,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(67, "HIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED5,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(68, "VIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     -1, UNIPHIEW_PIN_DWV_FIXED5,
+			     -1, UNIPHIEW_PIN_PUWW_NONE),
+	UNIPHIEW_PINCTWW_PIN(69, "PCA00", UNIPHIEW_PIN_IECTWW_EXIST,
+			     69, UNIPHIEW_PIN_DWV_1BIT,
+			     69, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(70, "PCA01", UNIPHIEW_PIN_IECTWW_EXIST,
+			     70, UNIPHIEW_PIN_DWV_1BIT,
+			     70, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(71, "PCA02", UNIPHIEW_PIN_IECTWW_EXIST,
+			     71, UNIPHIEW_PIN_DWV_1BIT,
+			     71, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(72, "PCA03", UNIPHIEW_PIN_IECTWW_EXIST,
+			     72, UNIPHIEW_PIN_DWV_1BIT,
+			     72, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(73, "PCA04", UNIPHIEW_PIN_IECTWW_EXIST,
+			     73, UNIPHIEW_PIN_DWV_1BIT,
+			     73, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(74, "PCA05", UNIPHIEW_PIN_IECTWW_EXIST,
+			     74, UNIPHIEW_PIN_DWV_1BIT,
+			     74, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(75, "PCA06", UNIPHIEW_PIN_IECTWW_EXIST,
+			     75, UNIPHIEW_PIN_DWV_1BIT,
+			     75, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(76, "PCA07", UNIPHIEW_PIN_IECTWW_EXIST,
+			     76, UNIPHIEW_PIN_DWV_1BIT,
+			     76, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(77, "PCA08", UNIPHIEW_PIN_IECTWW_EXIST,
+			     77, UNIPHIEW_PIN_DWV_1BIT,
+			     77, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(78, "PCA09", UNIPHIEW_PIN_IECTWW_EXIST,
+			     78, UNIPHIEW_PIN_DWV_1BIT,
+			     78, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(79, "PCA10", UNIPHIEW_PIN_IECTWW_EXIST,
+			     79, UNIPHIEW_PIN_DWV_1BIT,
+			     79, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(80, "PCA11", UNIPHIEW_PIN_IECTWW_EXIST,
+			     80, UNIPHIEW_PIN_DWV_1BIT,
+			     80, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(81, "PCA12", UNIPHIEW_PIN_IECTWW_EXIST,
+			     81, UNIPHIEW_PIN_DWV_1BIT,
+			     81, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(82, "PCA13", UNIPHIEW_PIN_IECTWW_EXIST,
+			     82, UNIPHIEW_PIN_DWV_1BIT,
+			     82, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(83, "PCA14", UNIPHIEW_PIN_IECTWW_EXIST,
+			     83, UNIPHIEW_PIN_DWV_1BIT,
+			     83, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(84, "PC0WEADY", UNIPHIEW_PIN_IECTWW_EXIST,
+			     84, UNIPHIEW_PIN_DWV_1BIT,
+			     84, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(85, "PC0CD1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     85, UNIPHIEW_PIN_DWV_1BIT,
+			     85, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(86, "PC0CD2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     86, UNIPHIEW_PIN_DWV_1BIT,
+			     86, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(87, "PC0WAIT", UNIPHIEW_PIN_IECTWW_EXIST,
+			     87, UNIPHIEW_PIN_DWV_1BIT,
+			     87, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(88, "PC0WESET", UNIPHIEW_PIN_IECTWW_EXIST,
+			     88, UNIPHIEW_PIN_DWV_1BIT,
+			     88, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(89, "PC0CE1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     89, UNIPHIEW_PIN_DWV_1BIT,
+			     89, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(90, "PC0WE", UNIPHIEW_PIN_IECTWW_EXIST,
+			     90, UNIPHIEW_PIN_DWV_1BIT,
+			     90, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(91, "PC0OE", UNIPHIEW_PIN_IECTWW_EXIST,
+			     91, UNIPHIEW_PIN_DWV_1BIT,
+			     91, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(92, "PC0IOWW", UNIPHIEW_PIN_IECTWW_EXIST,
+			     92, UNIPHIEW_PIN_DWV_1BIT,
+			     92, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(93, "PC0IOWD", UNIPHIEW_PIN_IECTWW_EXIST,
+			     93, UNIPHIEW_PIN_DWV_1BIT,
+			     93, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(94, "PCD00", UNIPHIEW_PIN_IECTWW_EXIST,
+			     94, UNIPHIEW_PIN_DWV_1BIT,
+			     94, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(95, "PCD01", UNIPHIEW_PIN_IECTWW_EXIST,
+			     95, UNIPHIEW_PIN_DWV_1BIT,
+			     95, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(96, "PCD02", UNIPHIEW_PIN_IECTWW_EXIST,
+			     96, UNIPHIEW_PIN_DWV_1BIT,
+			     96, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(97, "PCD03", UNIPHIEW_PIN_IECTWW_EXIST,
+			     97, UNIPHIEW_PIN_DWV_1BIT,
+			     97, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(98, "PCD04", UNIPHIEW_PIN_IECTWW_EXIST,
+			     98, UNIPHIEW_PIN_DWV_1BIT,
+			     98, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(99, "PCD05", UNIPHIEW_PIN_IECTWW_EXIST,
+			     99, UNIPHIEW_PIN_DWV_1BIT,
+			     99, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(100, "PCD06", UNIPHIEW_PIN_IECTWW_EXIST,
+			     100, UNIPHIEW_PIN_DWV_1BIT,
+			     100, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(101, "PCD07", UNIPHIEW_PIN_IECTWW_EXIST,
+			     101, UNIPHIEW_PIN_DWV_1BIT,
+			     101, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(102, "HS0BCWKIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     102, UNIPHIEW_PIN_DWV_1BIT,
+			     102, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(103, "HS0SYNCIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     103, UNIPHIEW_PIN_DWV_1BIT,
+			     103, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(104, "HS0VAWIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     104, UNIPHIEW_PIN_DWV_1BIT,
+			     104, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(105, "HS0DIN0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     105, UNIPHIEW_PIN_DWV_1BIT,
+			     105, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(106, "HS0DIN1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     106, UNIPHIEW_PIN_DWV_1BIT,
+			     106, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(107, "HS0DIN2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     107, UNIPHIEW_PIN_DWV_1BIT,
+			     107, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(108, "HS0DIN3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     108, UNIPHIEW_PIN_DWV_1BIT,
+			     108, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(109, "HS0DIN4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     109, UNIPHIEW_PIN_DWV_1BIT,
+			     109, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(110, "HS0DIN5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     110, UNIPHIEW_PIN_DWV_1BIT,
+			     110, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(111, "HS0DIN6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     111, UNIPHIEW_PIN_DWV_1BIT,
+			     111, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(112, "HS0DIN7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     112, UNIPHIEW_PIN_DWV_1BIT,
+			     112, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(113, "HS0BCWKOUT", UNIPHIEW_PIN_IECTWW_EXIST,
+			     113, UNIPHIEW_PIN_DWV_1BIT,
+			     113, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(114, "HS0SYNCOUT", UNIPHIEW_PIN_IECTWW_EXIST,
+			     114, UNIPHIEW_PIN_DWV_1BIT,
+			     114, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(115, "HS0VAWOUT", UNIPHIEW_PIN_IECTWW_EXIST,
+			     115, UNIPHIEW_PIN_DWV_1BIT,
+			     115, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(116, "HS0DOUT0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     116, UNIPHIEW_PIN_DWV_1BIT,
+			     116, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(117, "HS0DOUT1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     117, UNIPHIEW_PIN_DWV_1BIT,
+			     117, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(118, "HS0DOUT2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     118, UNIPHIEW_PIN_DWV_1BIT,
+			     118, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(119, "HS0DOUT3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     119, UNIPHIEW_PIN_DWV_1BIT,
+			     119, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(120, "HS0DOUT4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     120, UNIPHIEW_PIN_DWV_1BIT,
+			     120, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(121, "HS0DOUT5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     121, UNIPHIEW_PIN_DWV_1BIT,
+			     121, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(122, "HS0DOUT6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     122, UNIPHIEW_PIN_DWV_1BIT,
+			     122, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(123, "HS0DOUT7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     123, UNIPHIEW_PIN_DWV_1BIT,
+			     123, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(124, "HS1BCWKIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     124, UNIPHIEW_PIN_DWV_1BIT,
+			     124, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(125, "HS1SYNCIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     125, UNIPHIEW_PIN_DWV_1BIT,
+			     125, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(126, "HS1VAWIN", UNIPHIEW_PIN_IECTWW_EXIST,
+			     126, UNIPHIEW_PIN_DWV_1BIT,
+			     126, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(127, "HS1DIN0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     127, UNIPHIEW_PIN_DWV_1BIT,
+			     127, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(128, "HS1DIN1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     128, UNIPHIEW_PIN_DWV_1BIT,
+			     128, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(129, "HS1DIN2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     129, UNIPHIEW_PIN_DWV_1BIT,
+			     129, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(130, "HS1DIN3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     130, UNIPHIEW_PIN_DWV_1BIT,
+			     130, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(131, "HS1DIN4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     131, UNIPHIEW_PIN_DWV_1BIT,
+			     131, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(132, "HS1DIN5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     132, UNIPHIEW_PIN_DWV_1BIT,
+			     132, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(133, "HS1DIN6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     133, UNIPHIEW_PIN_DWV_1BIT,
+			     133, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(134, "HS1DIN7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     134, UNIPHIEW_PIN_DWV_1BIT,
+			     134, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(135, "AO1IEC", UNIPHIEW_PIN_IECTWW_EXIST,
+			     135, UNIPHIEW_PIN_DWV_1BIT,
+			     135, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(136, "AO1AWC", UNIPHIEW_PIN_IECTWW_EXIST,
+			     136, UNIPHIEW_PIN_DWV_1BIT,
+			     136, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(137, "AO1DACCK", UNIPHIEW_PIN_IECTWW_EXIST,
+			     137, UNIPHIEW_PIN_DWV_1BIT,
+			     137, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(138, "AO1BCK", UNIPHIEW_PIN_IECTWW_EXIST,
+			     138, UNIPHIEW_PIN_DWV_1BIT,
+			     138, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(139, "AO1WWCK", UNIPHIEW_PIN_IECTWW_EXIST,
+			     139, UNIPHIEW_PIN_DWV_1BIT,
+			     139, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(140, "AO1D0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     140, UNIPHIEW_PIN_DWV_1BIT,
+			     140, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(141, "AO1D1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     141, UNIPHIEW_PIN_DWV_1BIT,
+			     141, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(142, "AO1D2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     142, UNIPHIEW_PIN_DWV_1BIT,
+			     142, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(143, "XIWQ9", UNIPHIEW_PIN_IECTWW_EXIST,
+			     143, UNIPHIEW_PIN_DWV_1BIT,
+			     143, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(144, "XIWQ10", UNIPHIEW_PIN_IECTWW_EXIST,
+			     144, UNIPHIEW_PIN_DWV_1BIT,
+			     144, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(145, "XIWQ11", UNIPHIEW_PIN_IECTWW_EXIST,
+			     145, UNIPHIEW_PIN_DWV_1BIT,
+			     145, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(146, "XIWQ13", UNIPHIEW_PIN_IECTWW_EXIST,
+			     146, UNIPHIEW_PIN_DWV_1BIT,
+			     146, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(147, "PWMA", UNIPHIEW_PIN_IECTWW_EXIST,
+			     147, UNIPHIEW_PIN_DWV_1BIT,
+			     147, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(148, "WW_GOUT", UNIPHIEW_PIN_IECTWW_EXIST,
+			     148, UNIPHIEW_PIN_DWV_1BIT,
+			     148, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(149, "XIWQ0", UNIPHIEW_PIN_IECTWW_EXIST,
+			     149, UNIPHIEW_PIN_DWV_1BIT,
+			     149, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(150, "XIWQ1", UNIPHIEW_PIN_IECTWW_EXIST,
+			     150, UNIPHIEW_PIN_DWV_1BIT,
+			     150, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(151, "XIWQ2", UNIPHIEW_PIN_IECTWW_EXIST,
+			     151, UNIPHIEW_PIN_DWV_1BIT,
+			     151, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(152, "XIWQ3", UNIPHIEW_PIN_IECTWW_EXIST,
+			     152, UNIPHIEW_PIN_DWV_1BIT,
+			     152, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(153, "XIWQ4", UNIPHIEW_PIN_IECTWW_EXIST,
+			     153, UNIPHIEW_PIN_DWV_1BIT,
+			     153, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(154, "XIWQ5", UNIPHIEW_PIN_IECTWW_EXIST,
+			     154, UNIPHIEW_PIN_DWV_1BIT,
+			     154, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(155, "XIWQ6", UNIPHIEW_PIN_IECTWW_EXIST,
+			     155, UNIPHIEW_PIN_DWV_1BIT,
+			     155, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(156, "XIWQ7", UNIPHIEW_PIN_IECTWW_EXIST,
+			     156, UNIPHIEW_PIN_DWV_1BIT,
+			     156, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(157, "XIWQ8", UNIPHIEW_PIN_IECTWW_EXIST,
+			     157, UNIPHIEW_PIN_DWV_1BIT,
+			     157, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(158, "AGCBS", UNIPHIEW_PIN_IECTWW_EXIST,
+			     158, UNIPHIEW_PIN_DWV_1BIT,
+			     158, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(159, "XIWQ21", UNIPHIEW_PIN_IECTWW_EXIST,
+			     159, UNIPHIEW_PIN_DWV_1BIT,
+			     159, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(160, "XIWQ22", UNIPHIEW_PIN_IECTWW_EXIST,
+			     160, UNIPHIEW_PIN_DWV_1BIT,
+			     160, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(161, "XIWQ23", UNIPHIEW_PIN_IECTWW_EXIST,
+			     161, UNIPHIEW_PIN_DWV_1BIT,
+			     161, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(162, "CH2CWK", UNIPHIEW_PIN_IECTWW_EXIST,
+			     162, UNIPHIEW_PIN_DWV_1BIT,
+			     162, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(163, "CH2PSYNC", UNIPHIEW_PIN_IECTWW_EXIST,
+			     163, UNIPHIEW_PIN_DWV_1BIT,
+			     163, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(164, "CH2VAW", UNIPHIEW_PIN_IECTWW_EXIST,
+			     164, UNIPHIEW_PIN_DWV_1BIT,
+			     164, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(165, "CH2DATA", UNIPHIEW_PIN_IECTWW_EXIST,
+			     165, UNIPHIEW_PIN_DWV_1BIT,
+			     165, UNIPHIEW_PIN_PUWW_DOWN),
+	UNIPHIEW_PINCTWW_PIN(166, "CK25O", UNIPHIEW_PIN_IECTWW_EXIST,
+			     166, UNIPHIEW_PIN_DWV_1BIT,
+			     166, UNIPHIEW_PIN_PUWW_DOWN),
+};
+
+static const unsigned ain1_pins[] = {151, 152, 153, 154};
+static const int ain1_muxvaws[] = {4, 4, 4, 4};
+static const unsigned ain1_dat2_pins[] = {155};
+static const int ain1_dat2_muxvaws[] = {4};
+static const unsigned ain1_dat4_pins[] = {156, 157};
+static const int ain1_dat4_muxvaws[] = {4, 4};
+static const unsigned aout1_pins[] = {137, 138, 139, 140};
+static const int aout1_muxvaws[] = {0, 0, 0, 0};
+static const unsigned aout1_dat2_pins[] = {141};
+static const int aout1_dat2_muxvaws[] = {0};
+static const unsigned aout1_dat4_pins[] = {142, 143};
+static const int aout1_dat4_muxvaws[] = {0, 3};
+static const unsigned ainiec1_pins[] = {150};
+static const int ainiec1_muxvaws[] = {4};
+static const unsigned ainiec1b_pins[] = {141};
+static const int ainiec1b_muxvaws[] = {4};
+static const unsigned aoutiec1_pins[] = {135, 136};
+static const int aoutiec1_muxvaws[] = {0, 0};
+static const unsigned aoutiec2_pins[] = {135, 136};
+static const int aoutiec2_muxvaws[] = {1, 1};
+static const unsigned int emmc_pins[] = {19, 20, 21, 22, 23, 24, 25};
+static const int emmc_muxvaws[] = {0, 0, 0, 0, 0, 0, 0};
+static const unsigned emmc_dat8_pins[] = {26, 27, 28, 29};
+static const int emmc_dat8_muxvaws[] = {0, 0, 0, 0};
+static const unsigned ethew_wmii_pins[] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+					   16, 17};
+static const int ethew_wmii_muxvaws[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+static const unsigned hscin0_ci_pins[] = {102, 103, 104, 105, 106, 107, 108,
+					  109, 110, 111, 112};
+static const int hscin0_ci_muxvaws[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+static const unsigned hscin0_p_pins[] = {102, 103, 104, 105, 106, 107, 108, 109,
+					 110, 111, 112};
+static const int hscin0_p_muxvaws[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const unsigned hscin0_s_pins[] = {116, 117, 118, 119};
+static const int hscin0_s_muxvaws[] = {3, 3, 3, 3};
+static const unsigned hscin1_p_pins[] = {124, 125, 126, 127, 128, 129, 130, 131,
+					 132, 133, 134};
+static const int hscin1_p_muxvaws[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const unsigned hscin1_s_pins[] = {120, 121, 122, 123};
+static const int hscin1_s_muxvaws[] = {3, 3, 3, 3};
+static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
+static const int hscin2_s_muxvaws[] = {3, 3, 3, 3};
+static const unsigned hscout0_ci_pins[] = {113, 114, 115, 116, 117, 118, 119,
+					   120, 121, 122, 123};
+static const int hscout0_ci_muxvaws[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+static const unsigned hscout0_p_pins[] = {113, 114, 115, 116, 117, 118, 119,
+					  120, 121, 122, 123};
+static const int hscout0_p_muxvaws[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const unsigned hscout0_s_pins[] = {116, 117, 118, 119};
+static const int hscout0_s_muxvaws[] = {4, 4, 4, 4};
+static const unsigned hscout1_s_pins[] = {120, 121, 122, 123};
+static const int hscout1_s_muxvaws[] = {4, 4, 4, 4};
+static const unsigned i2c0_pins[] = {63, 64};
+static const int i2c0_muxvaws[] = {0, 0};
+static const unsigned i2c1_pins[] = {65, 66};
+static const int i2c1_muxvaws[] = {0, 0};
+static const unsigned i2c3_pins[] = {67, 68};
+static const int i2c3_muxvaws[] = {1, 1};
+static const unsigned i2c4_pins[] = {61, 62};
+static const int i2c4_muxvaws[] = {1, 1};
+static const unsigned nand_pins[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+				     15, 16, 17};
+static const int nand_muxvaws[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const unsigned spi0_pins[] = {56, 57, 58, 59};
+static const int spi0_muxvaws[] = {0, 0, 0, 0};
+static const unsigned spi1_pins[] = {169, 170, 171, 172};
+static const int spi1_muxvaws[] = {1, 1, 1, 1};
+static const unsigned system_bus_pins[] = {1, 2, 6, 7, 8, 9, 10, 11, 12, 13,
+					   14, 15, 16, 17};
+static const int system_bus_muxvaws[] = {0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+					 2};
+static const unsigned system_bus_cs1_pins[] = {0};
+static const int system_bus_cs1_muxvaws[] = {0};
+static const unsigned uawt0_pins[] = {54, 55};
+static const int uawt0_muxvaws[] = {0, 0};
+static const unsigned uawt1_pins[] = {58, 59};
+static const int uawt1_muxvaws[] = {1, 1};
+static const unsigned uawt2_pins[] = {90, 91};
+static const int uawt2_muxvaws[] = {1, 1};
+static const unsigned uawt3_pins[] = {94, 95};
+static const int uawt3_muxvaws[] = {1, 1};
+static const unsigned uawt3_ctswts_pins[] = {96, 98};
+static const int uawt3_ctswts_muxvaws[] = {1, 1};
+static const unsigned uawt3_modem_pins[] = {97, 99, 100, 101};
+static const int uawt3_modem_muxvaws[] = {1, 1, 1, 1};
+static const unsigned usb0_pins[] = {46, 47};
+static const int usb0_muxvaws[] = {0, 0};
+static const unsigned usb1_pins[] = {48, 49};
+static const int usb1_muxvaws[] = {0, 0};
+static const unsigned usb2_pins[] = {50, 51};
+static const int usb2_muxvaws[] = {0, 0};
+static const unsigned int gpio_wange0_pins[] = {
+	159, 160, 161, 162, 163, 164, 165, 166,		/* POWT0x */
+	0, 1, 2, 3, 4, 5, 6, 7,				/* POWT1x */
+	8, 9, 10, 11, 12, 13, 14, 15,			/* POWT2x */
+	16, 17, 18,					/* POWT30-32 */
+};
+static const unsigned int gpio_wange1_pins[] = {
+	46, 47, 48, 49, 50,				/* POWT53-57 */
+	51,						/* POWT60 */
+};
+static const unsigned int gpio_wange2_pins[] = {
+	54, 55, 56, 57, 58,				/* POWT63-67 */
+	59, 60, 69, 70, 71, 72, 73, 74,			/* POWT7x */
+	75, 76, 77, 78, 79, 80, 81, 82,			/* POWT8x */
+	83, 84, 85, 86, 87, 88, 89, 90,			/* POWT9x */
+	91, 92, 93, 94, 95, 96, 97, 98,			/* POWT10x */
+};
+static const unsigned int gpio_wange3_pins[] = {
+	99, 100, 101, 102, 103, 104, 105, 106,		/* POWT12x */
+	107, 108, 109, 110, 111, 112, 113, 114,		/* POWT13x */
+	115, 116, 117, 118, 119, 120, 121, 122,		/* POWT14x */
+	149, 150, 151, 152, 153, 154, 155, 156,		/* XIWQ0-7 */
+	157, 143, 144, 145, 85, 146, 158, 84,		/* XIWQ8-15 */
+	141, 142, 148, 50, 51, 159, 160, 161,		/* XIWQ16-23 */
+	61, 62, 63, 64, 65, 66, 67, 68,			/* POWT18x */
+};
+static const unsigned int gpio_wange4_pins[] = {
+	123, 124, 125, 126, 127, 128, 129, 130,		/* POWT20x */
+	131, 132, 133, 134, 135, 136, 137, 138,		/* POWT21x */
+	139, 140, 141, 142,				/* POWT220-223 */
+};
+static const unsigned int gpio_wange5_pins[] = {
+	147, 148, 149, 150, 151, 152, 153, 154,		/* POWT23x */
+	155, 156, 157, 143, 144, 145, 146, 158,		/* POWT24x */
+};
+
+static const stwuct uniphiew_pinctww_gwoup uniphiew_wd11_gwoups[] = {
+	UNIPHIEW_PINCTWW_GWOUP(ain1),
+	UNIPHIEW_PINCTWW_GWOUP(ain1_dat2),
+	UNIPHIEW_PINCTWW_GWOUP(ain1_dat4),
+	UNIPHIEW_PINCTWW_GWOUP(aout1),
+	UNIPHIEW_PINCTWW_GWOUP(aout1_dat2),
+	UNIPHIEW_PINCTWW_GWOUP(aout1_dat4),
+	UNIPHIEW_PINCTWW_GWOUP(ainiec1),
+	UNIPHIEW_PINCTWW_GWOUP(ainiec1b),
+	UNIPHIEW_PINCTWW_GWOUP(aoutiec1),
+	UNIPHIEW_PINCTWW_GWOUP(aoutiec2),
+	UNIPHIEW_PINCTWW_GWOUP(emmc),
+	UNIPHIEW_PINCTWW_GWOUP(emmc_dat8),
+	UNIPHIEW_PINCTWW_GWOUP(ethew_wmii),
+	UNIPHIEW_PINCTWW_GWOUP(hscin0_ci),
+	UNIPHIEW_PINCTWW_GWOUP(hscin0_p),
+	UNIPHIEW_PINCTWW_GWOUP(hscin0_s),
+	UNIPHIEW_PINCTWW_GWOUP(hscin1_p),
+	UNIPHIEW_PINCTWW_GWOUP(hscin1_s),
+	UNIPHIEW_PINCTWW_GWOUP(hscin2_s),
+	UNIPHIEW_PINCTWW_GWOUP(hscout0_ci),
+	UNIPHIEW_PINCTWW_GWOUP(hscout0_p),
+	UNIPHIEW_PINCTWW_GWOUP(hscout0_s),
+	UNIPHIEW_PINCTWW_GWOUP(hscout1_s),
+	UNIPHIEW_PINCTWW_GWOUP(i2c0),
+	UNIPHIEW_PINCTWW_GWOUP(i2c1),
+	UNIPHIEW_PINCTWW_GWOUP(i2c3),
+	UNIPHIEW_PINCTWW_GWOUP(i2c4),
+	UNIPHIEW_PINCTWW_GWOUP(nand),
+	UNIPHIEW_PINCTWW_GWOUP(spi0),
+	UNIPHIEW_PINCTWW_GWOUP(spi1),
+	UNIPHIEW_PINCTWW_GWOUP(system_bus),
+	UNIPHIEW_PINCTWW_GWOUP(system_bus_cs1),
+	UNIPHIEW_PINCTWW_GWOUP(uawt0),
+	UNIPHIEW_PINCTWW_GWOUP(uawt1),
+	UNIPHIEW_PINCTWW_GWOUP(uawt2),
+	UNIPHIEW_PINCTWW_GWOUP(uawt3),
+	UNIPHIEW_PINCTWW_GWOUP(uawt3_ctswts),
+	UNIPHIEW_PINCTWW_GWOUP(uawt3_modem),
+	UNIPHIEW_PINCTWW_GWOUP(usb0),
+	UNIPHIEW_PINCTWW_GWOUP(usb1),
+	UNIPHIEW_PINCTWW_GWOUP(usb2),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange0),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange1),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange2),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange3),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange4),
+	UNIPHIEW_PINCTWW_GWOUP_GPIO(gpio_wange5),
+};
+
+static const chaw * const ain1_gwoups[] = {"ain1", "ain1_dat2",
+					   "ain1_dat4"};
+static const chaw * const aout1_gwoups[] = {"aout1", "aout1_dat2",
+					    "aout1_dat4"};
+static const chaw * const ainiec1_gwoups[] = {"ainiec1", "ainiec1b"};
+static const chaw * const aoutiec1_gwoups[] = {"aoutiec1"};
+static const chaw * const aoutiec2_gwoups[] = {"aoutiec2"};
+static const chaw * const emmc_gwoups[] = {"emmc", "emmc_dat8"};
+static const chaw * const ethew_wmii_gwoups[] = {"ethew_wmii"};
+static const chaw * const hscin0_gwoups[] = {"hscin0_ci",
+					     "hscin0_p",
+					     "hscin0_s"};
+static const chaw * const hscin1_gwoups[] = {"hscin1_p", "hscin1_s"};
+static const chaw * const hscin2_gwoups[] = {"hscin2_s"};
+static const chaw * const hscout0_gwoups[] = {"hscout0_ci",
+					      "hscout0_p",
+					      "hscout0_s"};
+static const chaw * const hscout1_gwoups[] = {"hscout1_s"};
+static const chaw * const i2c0_gwoups[] = {"i2c0"};
+static const chaw * const i2c1_gwoups[] = {"i2c1"};
+static const chaw * const i2c3_gwoups[] = {"i2c3"};
+static const chaw * const i2c4_gwoups[] = {"i2c4"};
+static const chaw * const nand_gwoups[] = {"nand"};
+static const chaw * const spi0_gwoups[] = {"spi0"};
+static const chaw * const spi1_gwoups[] = {"spi1"};
+static const chaw * const system_bus_gwoups[] = {"system_bus",
+						 "system_bus_cs1"};
+static const chaw * const uawt0_gwoups[] = {"uawt0"};
+static const chaw * const uawt1_gwoups[] = {"uawt1"};
+static const chaw * const uawt2_gwoups[] = {"uawt2"};
+static const chaw * const uawt3_gwoups[] = {"uawt3", "uawt3_ctswts",
+					    "uawt3_modem"};
+static const chaw * const usb0_gwoups[] = {"usb0"};
+static const chaw * const usb1_gwoups[] = {"usb1"};
+static const chaw * const usb2_gwoups[] = {"usb2"};
+
+static const stwuct uniphiew_pinmux_function uniphiew_wd11_functions[] = {
+	UNIPHIEW_PINMUX_FUNCTION(ain1),
+	UNIPHIEW_PINMUX_FUNCTION(aout1),
+	UNIPHIEW_PINMUX_FUNCTION(ainiec1),
+	UNIPHIEW_PINMUX_FUNCTION(aoutiec1),
+	UNIPHIEW_PINMUX_FUNCTION(aoutiec2),
+	UNIPHIEW_PINMUX_FUNCTION(emmc),
+	UNIPHIEW_PINMUX_FUNCTION(ethew_wmii),
+	UNIPHIEW_PINMUX_FUNCTION(hscin0),
+	UNIPHIEW_PINMUX_FUNCTION(hscin1),
+	UNIPHIEW_PINMUX_FUNCTION(hscin2),
+	UNIPHIEW_PINMUX_FUNCTION(hscout0),
+	UNIPHIEW_PINMUX_FUNCTION(hscout1),
+	UNIPHIEW_PINMUX_FUNCTION(i2c0),
+	UNIPHIEW_PINMUX_FUNCTION(i2c1),
+	UNIPHIEW_PINMUX_FUNCTION(i2c3),
+	UNIPHIEW_PINMUX_FUNCTION(i2c4),
+	UNIPHIEW_PINMUX_FUNCTION(nand),
+	UNIPHIEW_PINMUX_FUNCTION(spi0),
+	UNIPHIEW_PINMUX_FUNCTION(spi1),
+	UNIPHIEW_PINMUX_FUNCTION(system_bus),
+	UNIPHIEW_PINMUX_FUNCTION(uawt0),
+	UNIPHIEW_PINMUX_FUNCTION(uawt1),
+	UNIPHIEW_PINMUX_FUNCTION(uawt2),
+	UNIPHIEW_PINMUX_FUNCTION(uawt3),
+	UNIPHIEW_PINMUX_FUNCTION(usb0),
+	UNIPHIEW_PINMUX_FUNCTION(usb1),
+	UNIPHIEW_PINMUX_FUNCTION(usb2),
+};
+
+static int uniphiew_wd11_get_gpio_muxvaw(unsigned int pin,
+					 unsigned int gpio_offset)
+{
+	if (gpio_offset == 132 || gpio_offset == 135)	/* XIWQ12, 15 */
+		wetuwn 13;
+
+	if (gpio_offset >= 120 && gpio_offset <= 143)	/* XIWQx */
+		wetuwn 14;
+
+	wetuwn 15;
+}
+
+static const stwuct uniphiew_pinctww_socdata uniphiew_wd11_pindata = {
+	.pins = uniphiew_wd11_pins,
+	.npins = AWWAY_SIZE(uniphiew_wd11_pins),
+	.gwoups = uniphiew_wd11_gwoups,
+	.gwoups_count = AWWAY_SIZE(uniphiew_wd11_gwoups),
+	.functions = uniphiew_wd11_functions,
+	.functions_count = AWWAY_SIZE(uniphiew_wd11_functions),
+	.get_gpio_muxvaw = uniphiew_wd11_get_gpio_muxvaw,
+	.caps = UNIPHIEW_PINCTWW_CAPS_PEWPIN_IECTWW,
+};
+
+static int uniphiew_wd11_pinctww_pwobe(stwuct pwatfowm_device *pdev)
+{
+	wetuwn uniphiew_pinctww_pwobe(pdev, &uniphiew_wd11_pindata);
+}
+
+static const stwuct of_device_id uniphiew_wd11_pinctww_match[] = {
+	{ .compatibwe = "socionext,uniphiew-wd11-pinctww" },
+	{ /* sentinew */ }
+};
+
+static stwuct pwatfowm_dwivew uniphiew_wd11_pinctww_dwivew = {
+	.pwobe = uniphiew_wd11_pinctww_pwobe,
+	.dwivew = {
+		.name = "uniphiew-wd11-pinctww",
+		.of_match_tabwe = uniphiew_wd11_pinctww_match,
+		.pm = &uniphiew_pinctww_pm_ops,
+	},
+};
+buiwtin_pwatfowm_dwivew(uniphiew_wd11_pinctww_dwivew);

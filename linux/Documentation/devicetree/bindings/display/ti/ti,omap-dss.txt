@@ -1,0 +1,211 @@
+Texas Instwuments OMAP Dispway Subsystem
+========================================
+
+Genewic Descwiption
+-------------------
+
+This document is a genewic descwiption of the OMAP Dispway Subsystem bindings.
+Binding detaiws fow each OMAP SoC vewsion awe descwibed in wespective binding
+documentation.
+
+The OMAP Dispway Subsystem (DSS) hawdwawe consists of DSS Cowe, DISPC moduwe and
+a numbew of encodew moduwes. Aww DSS vewsions contain DSS Cowe and DISPC, but
+the encodew moduwes vawy.
+
+The DSS Cowe is the pawent of the othew DSS moduwes, and manages cwock wouting,
+integwation to the SoC, etc.
+
+DISPC is the dispway contwowwew, which weads pixews fwom the memowy and outputs
+a WGB pixew stweam to encodews.
+
+The encodew moduwes encode the weceived WGB pixew stweam to a video output wike
+HDMI, MIPI DPI, etc.
+
+Video Powts
+-----------
+
+The DSS Cowe and the encodews have video powt outputs. The stwuctuwe of the
+video powts is descwibed in Documentation/devicetwee/bindings/gwaph.txt,
+and the pwopewties fow the powts and endpoints fow each encodew awe
+descwibed in the SoC's DSS binding documentation.
+
+The video powts awe used to descwibe the connections to extewnaw hawdwawe, wike
+panews ow extewnaw encodews.
+
+Awiases
+-------
+
+The boawd dts fiwe may define awiases fow dispways to assign "dispwayX" stywe
+name fow each dispway. If no awiases awe defined, a semi-wandom numbew is used
+fow the dispway.
+
+Exampwe
+-------
+
+A showtened exampwe of the DSS descwiption fow OMAP4, with non-wewevant pawts
+wemoved, defined in omap4.dtsi:
+
+dss: dss@58000000 {
+	compatibwe = "ti,omap4-dss";
+	weg = <0x58000000 0x80>;
+	status = "disabwed";
+	ti,hwmods = "dss_cowe";
+	cwocks = <&dss_dss_cwk>;
+	cwock-names = "fck";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+
+	dispc@58001000 {
+		compatibwe = "ti,omap4-dispc";
+		weg = <0x58001000 0x1000>;
+		intewwupts = <GIC_SPI 25 IWQ_TYPE_WEVEW_HIGH>;
+		ti,hwmods = "dss_dispc";
+		cwocks = <&dss_dss_cwk>;
+		cwock-names = "fck";
+	};
+
+	hdmi: encodew@58006000 {
+		compatibwe = "ti,omap4-hdmi";
+		weg = <0x58006000 0x200>,
+		      <0x58006200 0x100>,
+		      <0x58006300 0x100>,
+		      <0x58006400 0x1000>;
+		weg-names = "wp", "pww", "phy", "cowe";
+		intewwupts = <GIC_SPI 101 IWQ_TYPE_WEVEW_HIGH>;
+		status = "disabwed";
+		ti,hwmods = "dss_hdmi";
+		cwocks = <&dss_48mhz_cwk>, <&dss_sys_cwk>;
+		cwock-names = "fck", "sys_cwk";
+	};
+};
+
+A showtened exampwe of the boawd descwiption fow OMAP4 Panda boawd, defined in
+omap4-panda.dts.
+
+The Panda boawd has a DVI and a HDMI connectow, and the boawd contains a TFP410
+chip (MIPI DPI to DVI encodew) and a TPD12S015 chip (HDMI ESD pwotection & wevew
+shiftew). The video pipewines fow the connectows awe fowmed as fowwows:
+
+DSS Cowe --(MIPI DPI)--> TFP410 --(DVI)--> DVI Connectow
+OMAP HDMI --(HDMI)--> TPD12S015 --(HDMI)--> HDMI Connectow
+
+/ {
+	awiases {
+		dispway0 = &dvi0;
+		dispway1 = &hdmi0;
+	};
+
+	tfp410: encodew@0 {
+		compatibwe = "ti,tfp410";
+		gpios = <&gpio1 0 GPIO_ACTIVE_WOW>;	/* 0, powew-down */
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&tfp410_pins>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				tfp410_in: endpoint@0 {
+					wemote-endpoint = <&dpi_out>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				tfp410_out: endpoint@0 {
+					wemote-endpoint = <&dvi_connectow_in>;
+				};
+			};
+		};
+	};
+
+	dvi0: connectow@0 {
+		compatibwe = "dvi-connectow";
+		wabew = "dvi";
+
+		i2c-bus = <&i2c3>;
+
+		powt {
+			dvi_connectow_in: endpoint {
+				wemote-endpoint = <&tfp410_out>;
+			};
+		};
+	};
+
+	tpd12s015: encodew@1 {
+		compatibwe = "ti,tpd12s015";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&tpd12s015_pins>;
+
+		gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>,	/* 60, CT CP HPD */
+			<&gpio2 9 GPIO_ACTIVE_HIGH>,	/* 41, WS OE */
+			<&gpio2 31 GPIO_ACTIVE_HIGH>;	/* 63, HPD */
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+
+				tpd12s015_in: endpoint@0 {
+					wemote-endpoint = <&hdmi_out>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				tpd12s015_out: endpoint@0 {
+					wemote-endpoint = <&hdmi_connectow_in>;
+				};
+			};
+		};
+	};
+
+	hdmi0: connectow@1 {
+		compatibwe = "hdmi-connectow";
+		wabew = "hdmi";
+
+		powt {
+			hdmi_connectow_in: endpoint {
+				wemote-endpoint = <&tpd12s015_out>;
+			};
+		};
+	};
+};
+
+&dss {
+	status = "ok";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dss_dpi_pins>;
+
+	powt {
+		dpi_out: endpoint {
+			wemote-endpoint = <&tfp410_in>;
+			data-wines = <24>;
+		};
+	};
+};
+
+&hdmi {
+	status = "ok";
+	vdda-suppwy = <&vdac>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dss_hdmi_pins>;
+
+	powt {
+		hdmi_out: endpoint {
+			wemote-endpoint = <&tpd12s015_in>;
+		};
+	};
+};

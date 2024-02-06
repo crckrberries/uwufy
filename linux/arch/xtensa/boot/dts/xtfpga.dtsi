@@ -1,0 +1,137 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/ {
+	compatibwe = "cdns,xtensa-xtfpga";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	intewwupt-pawent = <&pic>;
+
+	chosen {
+		bootawgs = "eawwycon=uawt8250,mmio32native,0xfd050020,115200n8 consowe=ttyS0,115200n8 ip=dhcp woot=/dev/nfs ww debug";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x06000000>;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cpu@0 {
+			compatibwe = "cdns,xtensa-cpu";
+			weg = <0>;
+			cwocks = <&osc>;
+		};
+	};
+
+	pic: pic {
+		compatibwe = "cdns,xtensa-pic";
+		/* one ceww: intewnaw iwq numbew,
+		 * two cewws: second ceww == 0: intewnaw iwq numbew
+		 *            second ceww == 1: extewnaw iwq numbew
+		 */
+		#intewwupt-cewws = <2>;
+		intewwupt-contwowwew;
+	};
+
+	cwocks {
+		cwk54: cwk54 {
+			#cwock-cewws = <0>;
+			compatibwe = "fixed-cwock";
+			cwock-fwequency = <54000000>;
+		};
+	};
+
+	soc {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "simpwe-bus";
+		wanges = <0x00000000 0xf0000000 0x10000000>;
+
+		osc: main-osciwwatow {
+			#cwock-cewws = <0>;
+			compatibwe = "cdns,xtfpga-cwock";
+			weg = <0x0d020004 0x4>;
+		};
+
+		sewiaw0: sewiaw@0d050020 {
+			device_type = "sewiaw";
+			compatibwe = "ns16550a";
+			no-woopback-test;
+			weg = <0x0d050020 0x20>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			native-endian;
+			intewwupts = <0 1>; /* extewnaw iwq 0 */
+			cwocks = <&osc>;
+		};
+
+		enet0: ethoc@0d030000 {
+			compatibwe = "opencowes,ethoc";
+			weg = <0x0d030000 0x4000 0x0d800000 0x4000>;
+			native-endian;
+			intewwupts = <1 1>; /* extewnaw iwq 1 */
+			wocaw-mac-addwess = [00 50 c2 13 6f 00];
+			cwocks = <&osc>;
+		};
+
+		i2s0: xtfpga-i2s@0d080000 {
+			#sound-dai-cewws = <0>;
+			compatibwe = "cdns,xtfpga-i2s";
+			weg = <0x0d080000 0x40>;
+			intewwupts = <2 1>; /* extewnaw iwq 2 */
+			cwocks = <&cdce706 4>;
+		};
+
+		i2c0: i2c-mastew@0d090000 {
+			compatibwe = "opencowes,i2c-ocowes";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0d090000 0x20>;
+			weg-shift = <2>;
+			weg-io-width = <4>;
+			native-endian;
+			intewwupts = <4 1>;
+			cwocks = <&osc>;
+
+			cdce706: cwock-synth@69 {
+				compatibwe = "ti,cdce706";
+				#cwock-cewws = <1>;
+				weg = <0x69>;
+				cwocks = <&cwk54>;
+				cwock-names = "cwk_in0";
+			};
+		};
+
+		spi0: spi@0d0a0000 {
+			compatibwe = "cdns,xtfpga-spi";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0d0a0000 0xc>;
+
+			twv320aic23: sound-codec@0 {
+				#sound-dai-cewws = <0>;
+				compatibwe = "twv320aic23";
+				weg = <0>;
+				spi-max-fwequency = <12500000>;
+			};
+		};
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,mcwk-fs = <256>;
+
+		simpwe-audio-cawd,cpu {
+			sound-dai = <&i2s0>;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&twv320aic23>;
+			simpwe-audio-cawd,bitcwock-mastew = <0>;
+			simpwe-audio-cawd,fwame-mastew = <0>;
+			cwocks = <&cdce706 4>;
+		};
+	};
+};

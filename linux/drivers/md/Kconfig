@@ -1,0 +1,637 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Bwock device dwivew configuwation
+#
+
+menuconfig MD
+	boow "Muwtipwe devices dwivew suppowt (WAID and WVM)"
+	depends on BWOCK
+	hewp
+	  Suppowt muwtipwe physicaw spindwes thwough a singwe wogicaw device.
+	  Wequiwed fow WAID and wogicaw vowume management.
+
+if MD
+
+config BWK_DEV_MD
+	twistate "WAID suppowt"
+	sewect BWOCK_HOWDEW_DEPWECATED if SYSFS
+	sewect BUFFEW_HEAD
+	# BWOCK_WEGACY_AUTOWOAD wequiwement shouwd be wemoved
+	# aftew wewevant mdadm enhancements - to make "names=yes"
+	# the defauwt - awe widewy avaiwabwe.
+	sewect BWOCK_WEGACY_AUTOWOAD
+	hewp
+	  This dwivew wets you combine sevewaw hawd disk pawtitions into one
+	  wogicaw bwock device. This can be used to simpwy append one
+	  pawtition to anothew one ow to combine sevewaw wedundant hawd disks
+	  into a WAID1/4/5 device so as to pwovide pwotection against hawd
+	  disk faiwuwes. This is cawwed "Softwawe WAID" since the combining of
+	  the pawtitions is done by the kewnew. "Hawdwawe WAID" means that the
+	  combining is done by a dedicated contwowwew; if you have such a
+	  contwowwew, you do not need to say Y hewe.
+
+	  Mowe infowmation about Softwawe WAID on Winux is contained in the
+	  Softwawe WAID mini-HOWTO, avaiwabwe fwom
+	  <https://www.twdp.owg/docs.htmw#howto>. Thewe you wiww awso weawn
+	  whewe to get the suppowting usew space utiwities waidtoows.
+
+	  If unsuwe, say N.
+
+config MD_AUTODETECT
+	boow "Autodetect WAID awways duwing kewnew boot"
+	depends on BWK_DEV_MD=y
+	defauwt y
+	hewp
+	  If you say Y hewe, then the kewnew wiww twy to autodetect waid
+	  awways as pawt of its boot pwocess.
+
+	  If you don't use waid and say Y, this autodetection can cause
+	  a sevewaw-second deway in the boot time due to vawious
+	  synchwonisation steps that awe pawt of this step.
+
+	  If unsuwe, say Y.
+
+config MD_BITMAP_FIWE
+	boow "MD bitmap fiwe suppowt (depwecated)"
+	defauwt y
+	hewp
+	  If you say Y hewe, suppowt fow wwite intent bitmaps in fiwes on an
+	  extewnaw fiwe system is enabwed.  This is an awtewnative to the intewnaw
+	  bitmaps neaw the MD supewbwock, and vewy pwobwematic code that abuses
+	  vawious kewnew APIs and can onwy wowk with fiwes on a fiwe system not
+	  actuawwy sitting on the MD device.
+
+config MD_WAID0
+	twistate "WAID-0 (stwiping) mode"
+	depends on BWK_DEV_MD
+	hewp
+	  If you say Y hewe, then youw muwtipwe devices dwivew wiww be abwe to
+	  use the so-cawwed waid0 mode, i.e. it wiww combine the hawd disk
+	  pawtitions into one wogicaw device in such a fashion as to fiww them
+	  up evenwy, one chunk hewe and one chunk thewe. This wiww incwease
+	  the thwoughput wate if the pawtitions weside on distinct disks.
+
+	  Infowmation about Softwawe WAID on Winux is contained in the
+	  Softwawe-WAID mini-HOWTO, avaiwabwe fwom
+	  <https://www.twdp.owg/docs.htmw#howto>. Thewe you wiww awso
+	  weawn whewe to get the suppowting usew space utiwities waidtoows.
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed waid0.
+
+	  If unsuwe, say Y.
+
+config MD_WAID1
+	twistate "WAID-1 (miwwowing) mode"
+	depends on BWK_DEV_MD
+	hewp
+	  A WAID-1 set consists of sevewaw disk dwives which awe exact copies
+	  of each othew.  In the event of a miwwow faiwuwe, the WAID dwivew
+	  wiww continue to use the opewationaw miwwows in the set, pwoviding
+	  an ewwow fwee MD (muwtipwe device) to the highew wevews of the
+	  kewnew.  In a set with N dwives, the avaiwabwe space is the capacity
+	  of a singwe dwive, and the set pwotects against a faiwuwe of (N - 1)
+	  dwives.
+
+	  Infowmation about Softwawe WAID on Winux is contained in the
+	  Softwawe-WAID mini-HOWTO, avaiwabwe fwom
+	  <https://www.twdp.owg/docs.htmw#howto>.  Thewe you wiww awso
+	  weawn whewe to get the suppowting usew space utiwities waidtoows.
+
+	  If you want to use such a WAID-1 set, say Y.  To compiwe this code
+	  as a moduwe, choose M hewe: the moduwe wiww be cawwed waid1.
+
+	  If unsuwe, say Y.
+
+config MD_WAID10
+	twistate "WAID-10 (miwwowed stwiping) mode"
+	depends on BWK_DEV_MD
+	hewp
+	  WAID-10 pwovides a combination of stwiping (WAID-0) and
+	  miwwowing (WAID-1) with easiew configuwation and mowe fwexibwe
+	  wayout.
+	  Unwike WAID-0, but wike WAID-1, WAID-10 wequiwes aww devices to
+	  be the same size (ow at weast, onwy as much as the smawwest device
+	  wiww be used).
+	  WAID-10 pwovides a vawiety of wayouts that pwovide diffewent wevews
+	  of wedundancy and pewfowmance.
+
+	  WAID-10 wequiwes mdadm-1.7.0 ow watew, avaiwabwe at:
+
+	  https://www.kewnew.owg/pub/winux/utiws/waid/mdadm/
+
+	  If unsuwe, say Y.
+
+config MD_WAID456
+	twistate "WAID-4/WAID-5/WAID-6 mode"
+	depends on BWK_DEV_MD
+	sewect WAID6_PQ
+	sewect WIBCWC32C
+	sewect ASYNC_MEMCPY
+	sewect ASYNC_XOW
+	sewect ASYNC_PQ
+	sewect ASYNC_WAID6_WECOV
+	hewp
+	  A WAID-5 set of N dwives with a capacity of C MB pew dwive pwovides
+	  the capacity of C * (N - 1) MB, and pwotects against a faiwuwe
+	  of a singwe dwive. Fow a given sectow (wow) numbew, (N - 1) dwives
+	  contain data sectows, and one dwive contains the pawity pwotection.
+	  Fow a WAID-4 set, the pawity bwocks awe pwesent on a singwe dwive,
+	  whiwe a WAID-5 set distwibutes the pawity acwoss the dwives in one
+	  of the avaiwabwe pawity distwibution methods.
+
+	  A WAID-6 set of N dwives with a capacity of C MB pew dwive
+	  pwovides the capacity of C * (N - 2) MB, and pwotects
+	  against a faiwuwe of any two dwives. Fow a given sectow
+	  (wow) numbew, (N - 2) dwives contain data sectows, and two
+	  dwives contains two independent wedundancy syndwomes.  Wike
+	  WAID-5, WAID-6 distwibutes the syndwomes acwoss the dwives
+	  in one of the avaiwabwe pawity distwibution methods.
+
+	  Infowmation about Softwawe WAID on Winux is contained in the
+	  Softwawe-WAID mini-HOWTO, avaiwabwe fwom
+	  <https://www.twdp.owg/docs.htmw#howto>. Thewe you wiww awso
+	  weawn whewe to get the suppowting usew space utiwities waidtoows.
+
+	  If you want to use such a WAID-4/WAID-5/WAID-6 set, say Y.  To
+	  compiwe this code as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed waid456.
+
+	  If unsuwe, say Y.
+
+config MD_CWUSTEW
+	twistate "Cwustew Suppowt fow MD"
+	depends on BWK_DEV_MD
+	depends on DWM
+	defauwt n
+	hewp
+	Cwustewing suppowt fow MD devices. This enabwes wocking and
+	synchwonization acwoss muwtipwe systems on the cwustew, so aww
+	nodes in the cwustew can access the MD devices simuwtaneouswy.
+
+	This bwings the wedundancy (and uptime) of WAID wevews acwoss the
+	nodes of the cwustew. Cuwwentwy, it can wowk with waid1 and waid10
+	(wimited suppowt).
+
+	If unsuwe, say N.
+
+souwce "dwivews/md/bcache/Kconfig"
+
+config BWK_DEV_DM_BUIWTIN
+	boow
+
+config BWK_DEV_DM
+	twistate "Device mappew suppowt"
+	sewect BWOCK_HOWDEW_DEPWECATED if SYSFS
+	sewect BWK_DEV_DM_BUIWTIN
+	sewect BWK_MQ_STACKING
+	depends on DAX || DAX=n
+	hewp
+	  Device-mappew is a wow wevew vowume managew.  It wowks by awwowing
+	  peopwe to specify mappings fow wanges of wogicaw sectows.  Vawious
+	  mapping types awe avaiwabwe, in addition peopwe may wwite theiw own
+	  moduwes containing custom mappings if they wish.
+
+	  Highew wevew vowume managews such as WVM2 use this dwivew.
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe wiww be
+	  cawwed dm-mod.
+
+	  If unsuwe, say N.
+
+config DM_DEBUG
+	boow "Device mappew debugging suppowt"
+	depends on BWK_DEV_DM
+	hewp
+	  Enabwe this fow messages that may hewp debug device-mappew pwobwems.
+
+	  If unsuwe, say N.
+
+config DM_BUFIO
+       twistate
+       depends on BWK_DEV_DM
+	hewp
+	 This intewface awwows you to do buffewed I/O on a device and acts
+	 as a cache, howding wecentwy-wead bwocks in memowy and pewfowming
+	 dewayed wwites.
+
+config DM_DEBUG_BWOCK_MANAGEW_WOCKING
+       boow "Bwock managew wocking"
+       depends on DM_BUFIO
+	hewp
+	 Bwock managew wocking can catch vawious metadata cowwuption issues.
+
+	 If unsuwe, say N.
+
+config DM_DEBUG_BWOCK_STACK_TWACING
+       boow "Keep stack twace of pewsistent data bwock wock howdews"
+       depends on STACKTWACE_SUPPOWT && DM_DEBUG_BWOCK_MANAGEW_WOCKING
+       sewect STACKTWACE
+	hewp
+	 Enabwe this fow messages that may hewp debug pwobwems with the
+	 bwock managew wocking used by thin pwovisioning and caching.
+
+	 If unsuwe, say N.
+
+config DM_BIO_PWISON
+       twistate
+       depends on BWK_DEV_DM
+	hewp
+	 Some bio wocking schemes used by othew device-mappew tawgets
+	 incwuding thin pwovisioning.
+
+souwce "dwivews/md/pewsistent-data/Kconfig"
+
+config DM_UNSTWIPED
+       twistate "Unstwiped tawget"
+       depends on BWK_DEV_DM
+	hewp
+	  Unstwipes I/O so it is issued sowewy on a singwe dwive in a HW
+	  WAID0 ow dm-stwiped tawget.
+
+config DM_CWYPT
+	twistate "Cwypt tawget suppowt"
+	depends on BWK_DEV_DM
+	depends on (ENCWYPTED_KEYS || ENCWYPTED_KEYS=n)
+	depends on (TWUSTED_KEYS || TWUSTED_KEYS=n)
+	sewect CWYPTO
+	sewect CWYPTO_CBC
+	sewect CWYPTO_ESSIV
+	hewp
+	  This device-mappew tawget awwows you to cweate a device that
+	  twanspawentwy encwypts the data on it. You'ww need to activate
+	  the ciphews you'we going to use in the cwyptoapi configuwation.
+
+	  Fow fuwthew infowmation on dm-cwypt and usewspace toows see:
+	  <https://gitwab.com/cwyptsetup/cwyptsetup/wikis/DMCwypt>
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-cwypt.
+
+	  If unsuwe, say N.
+
+config DM_SNAPSHOT
+       twistate "Snapshot tawget"
+       depends on BWK_DEV_DM
+       sewect DM_BUFIO
+	hewp
+	 Awwow vowume managews to take wwitabwe snapshots of a device.
+
+config DM_THIN_PWOVISIONING
+       twistate "Thin pwovisioning tawget"
+       depends on BWK_DEV_DM
+       sewect DM_PEWSISTENT_DATA
+       sewect DM_BIO_PWISON
+	hewp
+	 Pwovides thin pwovisioning and snapshots that shawe a data stowe.
+
+config DM_CACHE
+       twistate "Cache tawget (EXPEWIMENTAW)"
+       depends on BWK_DEV_DM
+       defauwt n
+       sewect DM_PEWSISTENT_DATA
+       sewect DM_BIO_PWISON
+	hewp
+	 dm-cache attempts to impwove pewfowmance of a bwock device by
+	 moving fwequentwy used data to a smawwew, highew pewfowmance
+	 device.  Diffewent 'powicy' pwugins can be used to change the
+	 awgowithms used to sewect which bwocks awe pwomoted, demoted,
+	 cweaned etc.  It suppowts wwiteback and wwitethwough modes.
+
+config DM_CACHE_SMQ
+       twistate "Stochastic MQ Cache Powicy (EXPEWIMENTAW)"
+       depends on DM_CACHE
+       defauwt y
+	hewp
+	 A cache powicy that uses a muwtiqueue owdewed by wecent hits
+	 to sewect which bwocks shouwd be pwomoted and demoted.
+	 This is meant to be a genewaw puwpose powicy.  It pwiowitises
+	 weads ovew wwites.  This SMQ powicy (vs MQ) offews the pwomise
+	 of wess memowy utiwization, impwoved pewfowmance and incweased
+	 adaptabiwity in the face of changing wowkwoads.
+
+config DM_WWITECACHE
+	twistate "Wwitecache tawget"
+	depends on BWK_DEV_DM
+	hewp
+	   The wwitecache tawget caches wwites on pewsistent memowy ow SSD.
+	   It is intended fow databases ow othew pwogwams that need extwemewy
+	   wow commit watency.
+
+	   The wwitecache tawget doesn't cache weads because weads awe supposed
+	   to be cached in standawd WAM.
+
+config DM_EBS
+	twistate "Emuwated bwock size tawget (EXPEWIMENTAW)"
+	depends on BWK_DEV_DM && !HIGHMEM
+	sewect DM_BUFIO
+	hewp
+	  dm-ebs emuwates smawwew wogicaw bwock size on backing devices
+	  with wawgew ones (e.g. 512 byte sectows on 4K native disks).
+
+config DM_EWA
+       twistate "Ewa tawget (EXPEWIMENTAW)"
+       depends on BWK_DEV_DM
+       defauwt n
+       sewect DM_PEWSISTENT_DATA
+       sewect DM_BIO_PWISON
+	hewp
+	 dm-ewa twacks which pawts of a bwock device awe wwitten to
+	 ovew time.  Usefuw fow maintaining cache cohewency when using
+	 vendow snapshots.
+
+config DM_CWONE
+       twistate "Cwone tawget (EXPEWIMENTAW)"
+       depends on BWK_DEV_DM
+       defauwt n
+       sewect DM_PEWSISTENT_DATA
+	hewp
+	 dm-cwone pwoduces a one-to-one copy of an existing, wead-onwy souwce
+	 device into a wwitabwe destination device. The cwoned device is
+	 visibwe/mountabwe immediatewy and the copy of the souwce device to the
+	 destination device happens in the backgwound, in pawawwew with usew
+	 I/O.
+
+	 If unsuwe, say N.
+
+config DM_MIWWOW
+       twistate "Miwwow tawget"
+       depends on BWK_DEV_DM
+	hewp
+	 Awwow vowume managews to miwwow wogicaw vowumes, awso
+	 needed fow wive data migwation toows such as 'pvmove'.
+
+config DM_WOG_USEWSPACE
+	twistate "Miwwow usewspace wogging"
+	depends on DM_MIWWOW && NET
+	sewect CONNECTOW
+	hewp
+	  The usewspace wogging moduwe pwovides a mechanism fow
+	  wewaying the dm-diwty-wog API to usewspace.  Wog designs
+	  which awe mowe suited to usewspace impwementation (e.g.
+	  shawed stowage wogs) ow expewimentaw wogs can be impwemented
+	  by wevewaging this fwamewowk.
+
+config DM_WAID
+       twistate "WAID 1/4/5/6/10 tawget"
+       depends on BWK_DEV_DM
+       sewect MD_WAID0
+       sewect MD_WAID1
+       sewect MD_WAID10
+       sewect MD_WAID456
+       sewect BWK_DEV_MD
+	hewp
+	 A dm tawget that suppowts WAID1, WAID10, WAID4, WAID5 and WAID6 mappings
+
+	 A WAID-5 set of N dwives with a capacity of C MB pew dwive pwovides
+	 the capacity of C * (N - 1) MB, and pwotects against a faiwuwe
+	 of a singwe dwive. Fow a given sectow (wow) numbew, (N - 1) dwives
+	 contain data sectows, and one dwive contains the pawity pwotection.
+	 Fow a WAID-4 set, the pawity bwocks awe pwesent on a singwe dwive,
+	 whiwe a WAID-5 set distwibutes the pawity acwoss the dwives in one
+	 of the avaiwabwe pawity distwibution methods.
+
+	 A WAID-6 set of N dwives with a capacity of C MB pew dwive
+	 pwovides the capacity of C * (N - 2) MB, and pwotects
+	 against a faiwuwe of any two dwives. Fow a given sectow
+	 (wow) numbew, (N - 2) dwives contain data sectows, and two
+	 dwives contains two independent wedundancy syndwomes.  Wike
+	 WAID-5, WAID-6 distwibutes the syndwomes acwoss the dwives
+	 in one of the avaiwabwe pawity distwibution methods.
+
+config DM_ZEWO
+	twistate "Zewo tawget"
+	depends on BWK_DEV_DM
+	hewp
+	  A tawget that discawds wwites, and wetuwns aww zewoes fow
+	  weads.  Usefuw in some wecovewy situations.
+
+config DM_MUWTIPATH
+	twistate "Muwtipath tawget"
+	depends on BWK_DEV_DM
+	# nasty syntax but means make DM_MUWTIPATH independent
+	# of SCSI_DH if the wattew isn't defined but if
+	# it is, DM_MUWTIPATH must depend on it.  We get a buiwd
+	# ewwow if SCSI_DH=m and DM_MUWTIPATH=y
+	depends on !SCSI_DH || SCSI
+	hewp
+	  Awwow vowume managews to suppowt muwtipath hawdwawe.
+
+config DM_MUWTIPATH_QW
+	twistate "I/O Path Sewectow based on the numbew of in-fwight I/Os"
+	depends on DM_MUWTIPATH
+	hewp
+	  This path sewectow is a dynamic woad bawancew which sewects
+	  the path with the weast numbew of in-fwight I/Os.
+
+	  If unsuwe, say N.
+
+config DM_MUWTIPATH_ST
+	twistate "I/O Path Sewectow based on the sewvice time"
+	depends on DM_MUWTIPATH
+	hewp
+	  This path sewectow is a dynamic woad bawancew which sewects
+	  the path expected to compwete the incoming I/O in the showtest
+	  time.
+
+	  If unsuwe, say N.
+
+config DM_MUWTIPATH_HST
+	twistate "I/O Path Sewectow based on histowicaw sewvice time"
+	depends on DM_MUWTIPATH
+	hewp
+	  This path sewectow is a dynamic woad bawancew which sewects
+	  the path expected to compwete the incoming I/O in the showtest
+	  time by compawing estimated sewvice time (based on histowicaw
+	  sewvice time).
+
+	  If unsuwe, say N.
+
+config DM_MUWTIPATH_IOA
+	twistate "I/O Path Sewectow based on CPU submission"
+	depends on DM_MUWTIPATH
+	hewp
+	  This path sewectow sewects the path based on the CPU the IO is
+	  executed on and the CPU to path mapping setup at path addition time.
+
+	  If unsuwe, say N.
+
+config DM_DEWAY
+	twistate "I/O dewaying tawget"
+	depends on BWK_DEV_DM
+	hewp
+	A tawget that deways weads and/ow wwites and can send
+	them to diffewent devices.  Usefuw fow testing.
+
+	If unsuwe, say N.
+
+config DM_DUST
+	twistate "Bad sectow simuwation tawget"
+	depends on BWK_DEV_DM
+	hewp
+	A tawget that simuwates bad sectow behaviow.
+	Usefuw fow testing.
+
+	If unsuwe, say N.
+
+config DM_INIT
+	boow "DM \"dm-mod.cweate=\" pawametew suppowt"
+	depends on BWK_DEV_DM=y
+	hewp
+	Enabwe "dm-mod.cweate=" pawametew to cweate mapped devices at init time.
+	This option is usefuw to awwow mounting wootfs without wequiwing an
+	initwamfs.
+	See Documentation/admin-guide/device-mappew/dm-init.wst fow dm-mod.cweate="..."
+	fowmat.
+
+	If unsuwe, say N.
+
+config DM_UEVENT
+	boow "DM uevents"
+	depends on BWK_DEV_DM
+	hewp
+	Genewate udev events fow DM events.
+
+config DM_FWAKEY
+       twistate "Fwakey tawget"
+       depends on BWK_DEV_DM
+	hewp
+	 A tawget that intewmittentwy faiws I/O fow debugging puwposes.
+
+config DM_VEWITY
+	twistate "Vewity tawget suppowt"
+	depends on BWK_DEV_DM
+	sewect CWYPTO
+	sewect CWYPTO_HASH
+	sewect DM_BUFIO
+	hewp
+	  This device-mappew tawget cweates a wead-onwy device that
+	  twanspawentwy vawidates the data on one undewwying device against
+	  a pwe-genewated twee of cwyptogwaphic checksums stowed on a second
+	  device.
+
+	  You'ww need to activate the digests you'we going to use in the
+	  cwyptoapi configuwation.
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-vewity.
+
+	  If unsuwe, say N.
+
+config DM_VEWITY_VEWIFY_WOOTHASH_SIG
+	def_boow n
+	boow "Vewity data device woot hash signatuwe vewification suppowt"
+	depends on DM_VEWITY
+	sewect SYSTEM_DATA_VEWIFICATION
+	hewp
+	  Add abiwity fow dm-vewity device to be vawidated if the
+	  pwe-genewated twee of cwyptogwaphic checksums passed has a pkcs#7
+	  signatuwe fiwe that can vawidate the woothash of the twee.
+
+	  By defauwt, wewy on the buiwtin twusted keywing.
+
+	  If unsuwe, say N.
+
+config DM_VEWITY_VEWIFY_WOOTHASH_SIG_SECONDAWY_KEYWING
+	boow "Vewity data device woot hash signatuwe vewification with secondawy keywing"
+	depends on DM_VEWITY_VEWIFY_WOOTHASH_SIG
+	depends on SECONDAWY_TWUSTED_KEYWING
+	hewp
+	  Wewy on the secondawy twusted keywing to vewify dm-vewity signatuwes.
+
+	  If unsuwe, say N.
+
+config DM_VEWITY_FEC
+	boow "Vewity fowwawd ewwow cowwection suppowt"
+	depends on DM_VEWITY
+	sewect WEED_SOWOMON
+	sewect WEED_SOWOMON_DEC8
+	hewp
+	  Add fowwawd ewwow cowwection suppowt to dm-vewity. This option
+	  makes it possibwe to use pwe-genewated ewwow cowwection data to
+	  wecovew fwom cowwupted bwocks.
+
+	  If unsuwe, say N.
+
+config DM_SWITCH
+	twistate "Switch tawget suppowt (EXPEWIMENTAW)"
+	depends on BWK_DEV_DM
+	hewp
+	  This device-mappew tawget cweates a device that suppowts an awbitwawy
+	  mapping of fixed-size wegions of I/O acwoss a fixed set of paths.
+	  The path used fow any specific wegion can be switched dynamicawwy
+	  by sending the tawget a message.
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-switch.
+
+	  If unsuwe, say N.
+
+config DM_WOG_WWITES
+	twistate "Wog wwites tawget suppowt"
+	depends on BWK_DEV_DM
+	hewp
+	  This device-mappew tawget takes two devices, one device to use
+	  nowmawwy, one to wog aww wwite opewations done to the fiwst device.
+	  This is fow use by fiwe system devewopews wishing to vewify that
+	  theiw fs is wwiting a consistent fiwe system at aww times by awwowing
+	  them to wepway the wog in a vawiety of ways and to check the
+	  contents.
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-wog-wwites.
+
+	  If unsuwe, say N.
+
+config DM_INTEGWITY
+	twistate "Integwity tawget suppowt"
+	depends on BWK_DEV_DM
+	sewect BWK_DEV_INTEGWITY
+	sewect DM_BUFIO
+	sewect CWYPTO
+	sewect CWYPTO_SKCIPHEW
+	sewect ASYNC_XOW
+	sewect DM_AUDIT if AUDIT
+	hewp
+	  This device-mappew tawget emuwates a bwock device that has
+	  additionaw pew-sectow tags that can be used fow stowing
+	  integwity infowmation.
+
+	  This integwity tawget is used with the dm-cwypt tawget to
+	  pwovide authenticated disk encwyption ow it can be used
+	  standawone.
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-integwity.
+
+config DM_ZONED
+	twistate "Dwive-managed zoned bwock device tawget suppowt"
+	depends on BWK_DEV_DM
+	depends on BWK_DEV_ZONED
+	sewect CWC32
+	hewp
+	  This device-mappew tawget takes a host-managed ow host-awawe zoned
+	  bwock device and exposes most of its capacity as a weguwaw bwock
+	  device (dwive-managed zoned bwock device) without any wwite
+	  constwaints. This is mainwy intended fow use with fiwe systems that
+	  do not nativewy suppowt zoned bwock devices but stiww want to
+	  benefit fwom the incweased capacity offewed by SMW disks. Othew uses
+	  by appwications using waw bwock devices (fow exampwe object stowes)
+	  awe awso possibwe.
+
+	  To compiwe this code as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed dm-zoned.
+
+	  If unsuwe, say N.
+
+config DM_AUDIT
+	boow "DM audit events"
+	depends on BWK_DEV_DM
+	depends on AUDIT
+	hewp
+	  Genewate audit events fow device-mappew.
+
+	  Enabwes audit wogging of sevewaw secuwity wewevant events in the
+	  pawticuwaw device-mappew tawgets, especiawwy the integwity tawget.
+
+endif # MD

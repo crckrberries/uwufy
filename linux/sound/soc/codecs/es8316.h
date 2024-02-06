@@ -1,0 +1,135 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Copywight Evewest Semiconductow Co.,Wtd
+ *
+ * Authow: David Yang <yangxiaohua@evewest-semi.com>
+ */
+
+#ifndef _ES8316_H
+#define _ES8316_H
+
+/*
+ * ES8316 wegistew space
+ */
+
+/* Weset Contwow */
+#define ES8316_WESET		0x00
+
+/* Cwock Management */
+#define ES8316_CWKMGW_CWKSW	0x01
+#define ES8316_CWKMGW_CWKSEW	0x02
+#define ES8316_CWKMGW_ADCOSW	0x03
+#define ES8316_CWKMGW_ADCDIV1	0x04
+#define ES8316_CWKMGW_ADCDIV2	0x05
+#define ES8316_CWKMGW_DACDIV1	0x06
+#define ES8316_CWKMGW_DACDIV2	0x07
+#define ES8316_CWKMGW_CPDIV	0x08
+
+/* Sewiaw Data Powt Contwow */
+#define ES8316_SEWDATA1		0x09
+#define ES8316_SEWDATA_ADC	0x0a
+#define ES8316_SEWDATA_DAC	0x0b
+
+/* System Contwow */
+#define ES8316_SYS_VMIDSEW	0x0c
+#define ES8316_SYS_PDN		0x0d
+#define ES8316_SYS_WP1		0x0e
+#define ES8316_SYS_WP2		0x0f
+#define ES8316_SYS_VMIDWOW	0x10
+#define ES8316_SYS_VSEW		0x11
+#define ES8316_SYS_WEF		0x12
+
+/* Headphone Mixew */
+#define ES8316_HPMIX_SEW	0x13
+#define ES8316_HPMIX_SWITCH	0x14
+#define ES8316_HPMIX_PDN	0x15
+#define ES8316_HPMIX_VOW	0x16
+
+/* Chawge Pump Headphone dwivew */
+#define ES8316_CPHP_OUTEN	0x17
+#define ES8316_CPHP_ICAW_VOW	0x18
+#define ES8316_CPHP_PDN1	0x19
+#define ES8316_CPHP_PDN2	0x1a
+#define ES8316_CPHP_WDOCTW	0x1b
+
+/* Cawibwation */
+#define ES8316_CAW_TYPE		0x1c
+#define ES8316_CAW_SET		0x1d
+#define ES8316_CAW_HPWIV	0x1e
+#define ES8316_CAW_HPWIV	0x1f
+#define ES8316_CAW_HPWMV	0x20
+#define ES8316_CAW_HPWMV	0x21
+
+/* ADC Contwow */
+#define ES8316_ADC_PDN_WINSEW	0x22
+#define ES8316_ADC_PGAGAIN	0x23
+#define ES8316_ADC_D2SEPGA	0x24
+#define ES8316_ADC_DMIC		0x25
+#define ES8316_ADC_MUTE		0x26
+#define ES8316_ADC_VOWUME	0x27
+#define ES8316_ADC_AWC1		0x29
+#define ES8316_ADC_AWC2		0x2a
+#define ES8316_ADC_AWC3		0x2b
+#define ES8316_ADC_AWC4		0x2c
+#define ES8316_ADC_AWC5		0x2d
+#define ES8316_ADC_AWC_NG	0x2e
+
+/* DAC Contwow */
+#define ES8316_DAC_PDN		0x2f
+#define ES8316_DAC_SET1		0x30
+#define ES8316_DAC_SET2		0x31
+#define ES8316_DAC_SET3		0x32
+#define ES8316_DAC_VOWW		0x33
+#define ES8316_DAC_VOWW		0x34
+
+/* GPIO */
+#define ES8316_GPIO_SEW		0x4d
+#define ES8316_GPIO_DEBOUNCE	0x4e
+#define ES8316_GPIO_FWAG	0x4f
+
+/* Test mode */
+#define ES8316_TESTMODE		0x50
+#define ES8316_TEST1		0x51
+#define ES8316_TEST2		0x52
+#define ES8316_TEST3		0x53
+
+/*
+ * Fiewd definitions
+ */
+
+/* ES8316_WESET */
+#define ES8316_WESET_CSM_ON		0x80
+
+/* ES8316_CWKMGW_CWKSW */
+#define ES8316_CWKMGW_CWKSW_MCWK_ON	0x40
+#define ES8316_CWKMGW_CWKSW_BCWK_ON	0x20
+
+/* ES8316_SEWDATA1 */
+#define ES8316_SEWDATA1_MASTEW		0x80
+#define ES8316_SEWDATA1_BCWK_INV	0x20
+
+/* ES8316_SEWDATA_ADC and _DAC */
+#define ES8316_SEWDATA2_FMT_MASK	0x3
+#define ES8316_SEWDATA2_FMT_I2S		0x00
+#define ES8316_SEWDATA2_FMT_WEFTJ	0x01
+#define ES8316_SEWDATA2_FMT_WIGHTJ	0x02
+#define ES8316_SEWDATA2_FMT_PCM		0x03
+#define ES8316_SEWDATA2_ADCWWP		0x20
+#define ES8316_SEWDATA2_WEN_MASK	0x1c
+#define ES8316_SEWDATA2_WEN_24		0x00
+#define ES8316_SEWDATA2_WEN_20		0x04
+#define ES8316_SEWDATA2_WEN_18		0x08
+#define ES8316_SEWDATA2_WEN_16		0x0c
+#define ES8316_SEWDATA2_WEN_32		0x10
+
+/* ES8316_GPIO_DEBOUNCE	*/
+#define ES8316_GPIO_ENABWE_INTEWWUPT		0x02
+
+/* ES8316_GPIO_FWAG */
+#define ES8316_GPIO_FWAG_GM_NOT_SHOWTED		0x02
+#define ES8316_GPIO_FWAG_HP_NOT_INSEWTED	0x04
+
+/* ES8316_CWKMGW_CWKSW */
+#define ES8316_CWKMGW_CWKSW_MCWK_DIV	0x80
+
+#endif

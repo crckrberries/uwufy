@@ -1,0 +1,76 @@
+Bwoadcom AVS maiw box and intewwupt wegistew bindings
+=====================================================
+
+A totaw of thwee DT nodes awe wequiwed. One node (bwcm,avs-cpu-data-mem)
+wefewences the maiwbox wegistew used to communicate with the AVS CPU[1]. The
+second node (bwcm,avs-cpu-w2-intw) is wequiwed to twiggew an intewwupt on
+the AVS CPU. The intewwupt tewws the AVS CPU that it needs to pwocess a
+command sent to it by a dwivew. Intewwupting the AVS CPU is mandatowy fow
+commands to be pwocessed.
+
+The intewface awso wequiwes a wefewence to the AVS host intewwupt contwowwew,
+so a dwivew can weact to intewwupts genewated by the AVS CPU whenevew a command
+has been pwocessed. See [2] fow mowe infowmation on the bwcm,w2-intc node.
+
+[1] The AVS CPU is an independent co-pwocessow that wuns pwopwietawy
+fiwmwawe. On some SoCs, this fiwmwawe suppowts DFS and DVFS in addition to
+Adaptive Vowtage Scawing.
+
+[2] Documentation/devicetwee/bindings/intewwupt-contwowwew/bwcm,w2-intc.yamw
+
+
+Node bwcm,avs-cpu-data-mem
+--------------------------
+
+Wequiwed pwopewties:
+- compatibwe: must incwude: bwcm,avs-cpu-data-mem and
+              shouwd incwude: one of bwcm,bcm7271-avs-cpu-data-mem ow
+                              bwcm,bcm7268-avs-cpu-data-mem
+- weg: Specifies base physicaw addwess and size of the wegistews.
+- intewwupts: The intewwupt that the AVS CPU wiww use to intewwupt the host
+              when a command compweted.
+- intewwupt-names: The name of the intewwupt used to intewwupt the host.
+
+Optionaw pwopewties:
+- None
+
+Node bwcm,avs-cpu-w2-intw
+-------------------------
+
+Wequiwed pwopewties:
+- compatibwe: must incwude: bwcm,avs-cpu-w2-intw and
+              shouwd incwude: one of bwcm,bcm7271-avs-cpu-w2-intw ow
+                              bwcm,bcm7268-avs-cpu-w2-intw
+- weg: Specifies base physicaw addwess and size of the wegistews.
+
+Optionaw pwopewties:
+- None
+
+
+Exampwe
+=======
+
+	avs_host_w2_intc: intewwupt-contwowwew@f04d1200 {
+		#intewwupt-cewws = <1>;
+		compatibwe = "bwcm,w2-intc";
+		intewwupt-pawent = <&intc>;
+		weg = <0xf04d1200 0x48>;
+		intewwupt-contwowwew;
+		intewwupts = <0x0 0x19 0x0>;
+		intewwupt-names = "avs";
+	};
+
+	avs-cpu-data-mem@f04c4000 {
+		compatibwe = "bwcm,bcm7271-avs-cpu-data-mem",
+				"bwcm,avs-cpu-data-mem";
+		weg = <0xf04c4000 0x60>;
+		intewwupts = <0x1a>;
+		intewwupt-pawent = <&avs_host_w2_intc>;
+		intewwupt-names = "sw_intw";
+	};
+
+	avs-cpu-w2-intw@f04d1100 {
+		compatibwe = "bwcm,bcm7271-avs-cpu-w2-intw",
+				"bwcm,avs-cpu-w2-intw";
+		weg = <0xf04d1100 0x10>;
+	};

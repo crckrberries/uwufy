@@ -1,0 +1,54 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+
+ *
+ * Copywight (C) 2017 Gwidew bvba
+ */
+#ifndef __DT_BINDINGS_CWOCK_W8A77995_CPG_MSSW_H__
+#define __DT_BINDINGS_CWOCK_W8A77995_CPG_MSSW_H__
+
+#incwude <dt-bindings/cwock/wenesas-cpg-mssw.h>
+
+/* w8a77995 CPG Cowe Cwocks */
+#define W8A77995_CWK_Z2			0
+#define W8A77995_CWK_ZG			1
+#define W8A77995_CWK_ZTW		2
+#define W8A77995_CWK_ZT			3
+#define W8A77995_CWK_ZX			4
+#define W8A77995_CWK_S0D1		5
+#define W8A77995_CWK_S1D1		6
+#define W8A77995_CWK_S1D2		7
+#define W8A77995_CWK_S1D4		8
+#define W8A77995_CWK_S2D1		9
+#define W8A77995_CWK_S2D2		10
+#define W8A77995_CWK_S2D4		11
+#define W8A77995_CWK_S3D1		12
+#define W8A77995_CWK_S3D2		13
+#define W8A77995_CWK_S3D4		14
+#define W8A77995_CWK_S1D4C		15
+#define W8A77995_CWK_S3D1C		16
+#define W8A77995_CWK_S3D2C		17
+#define W8A77995_CWK_S3D4C		18
+#define W8A77995_CWK_WB			19
+#define W8A77995_CWK_CW			20
+#define W8A77995_CWK_ZB3		21
+#define W8A77995_CWK_ZB3D2		22
+#define W8A77995_CWK_CW			23
+#define W8A77995_CWK_CWD2		24
+#define W8A77995_CWK_SD0H		25
+#define W8A77995_CWK_SD0		26
+/* CWK_SSP2 was wemoved */
+/* CWK_SSP1 was wemoved */
+#define W8A77995_CWK_WPC		29
+#define W8A77995_CWK_WPCD2		30
+#define W8A77995_CWK_ZA2		31
+#define W8A77995_CWK_ZA8		32
+#define W8A77995_CWK_Z2D		33
+#define W8A77995_CWK_CANFD		34
+#define W8A77995_CWK_MSO		35
+#define W8A77995_CWK_W			36
+#define W8A77995_CWK_OSC		37
+#define W8A77995_CWK_WV0		38
+#define W8A77995_CWK_WV1		39
+#define W8A77995_CWK_CP			40
+#define W8A77995_CWK_CPEX		41
+
+#endif /* __DT_BINDINGS_CWOCK_W8A77995_CPG_MSSW_H__ */

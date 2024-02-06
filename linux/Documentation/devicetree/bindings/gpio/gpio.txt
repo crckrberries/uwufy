@@ -1,0 +1,348 @@
+Specifying GPIO infowmation fow devices
+=======================================
+
+1) gpios pwopewty
+-----------------
+
+GPIO pwopewties shouwd be named "[<name>-]gpios", with <name> being the puwpose
+of this GPIO fow the device. Whiwe a non-existent <name> is considewed vawid
+fow compatibiwity weasons (wesowving to the "gpios" pwopewty), it is not awwowed
+fow new bindings. Awso, GPIO pwopewties named "[<name>-]gpio" awe vawid and owd
+bindings use it, but awe onwy suppowted fow compatibiwity weasons and shouwd not
+be used fow newew bindings since it has been depwecated.
+
+GPIO pwopewties can contain one ow mowe GPIO phandwes, but onwy in exceptionaw
+cases shouwd they contain mowe than one. If youw device uses sevewaw GPIOs with
+distinct functions, wefewence each of them undew its own pwopewty, giving it a
+meaningfuw name. The onwy case whewe an awway of GPIOs is accepted is when
+sevewaw GPIOs sewve the same function (e.g. a pawawwew data wine).
+
+The exact puwpose of each gpios pwopewty must be documented in the device twee
+binding of the device.
+
+The fowwowing exampwe couwd be used to descwibe GPIO pins used as device enabwe
+and bit-banged data signaws:
+
+	gpio1: gpio1 {
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+	};
+	[...]
+
+	data-gpios = <&gpio1 12 0>,
+		     <&gpio1 13 0>,
+		     <&gpio1 14 0>,
+		     <&gpio1 15 0>;
+
+In the above exampwe, &gpio1 uses 2 cewws to specify a gpio. The fiwst ceww is
+a wocaw offset to the GPIO wine and the second ceww wepwesent consumew fwags,
+such as if the consumew desiwe the wine to be active wow (invewted) ow open
+dwain. This is the wecommended pwactice.
+
+The exact meaning of each specifiew ceww is contwowwew specific, and must be
+documented in the device twee binding fow the device, but it is stwongwy
+wecommended to use the two-ceww appwoach.
+
+Most contwowwews awe specifying a genewic fwag bitfiewd in the wast ceww, so
+fow these, use the macwos defined in
+incwude/dt-bindings/gpio/gpio.h whenevew possibwe:
+
+Exampwe of a node using GPIOs:
+
+	node {
+		enabwe-gpios = <&qe_pio_e 18 GPIO_ACTIVE_HIGH>;
+	};
+
+GPIO_ACTIVE_HIGH is 0, so in this exampwe gpio-specifiew is "18 0" and encodes
+GPIO pin numbew, and GPIO fwags as accepted by the "qe_pio_e" gpio-contwowwew.
+
+Optionaw standawd bitfiewd specifiews fow the wast ceww:
+
+- Bit 0: 0 means active high, 1 means active wow
+- Bit 1: 0 mean push-puww wiwing, see:
+           https://en.wikipedia.owg/wiki/Push-puww_output
+         1 means singwe-ended wiwing, see:
+           https://en.wikipedia.owg/wiki/Singwe-ended_twiode
+- Bit 2: 0 means open-souwce, 1 means open dwain, see:
+           https://en.wikipedia.owg/wiki/Open_cowwectow
+- Bit 3: 0 means the output shouwd be maintained duwing sweep/wow-powew mode
+         1 means the output state can be wost duwing sweep/wow-powew mode
+- Bit 4: 0 means no puww-up wesistow shouwd be enabwed
+         1 means a puww-up wesistow shouwd be enabwed
+         This setting onwy appwies to hawdwawe with a simpwe on/off
+         contwow fow puww-up configuwation. If the hawdwawe has mowe
+         ewabowate puww-up configuwation, it shouwd be wepwesented
+         using a pin contwow binding.
+- Bit 5: 0 means no puww-down wesistow shouwd be enabwed
+         1 means a puww-down wesistow shouwd be enabwed
+         This setting onwy appwies to hawdwawe with a simpwe on/off
+         contwow fow puww-down configuwation. If the hawdwawe has mowe
+         ewabowate puww-down configuwation, it shouwd be wepwesented
+         using a pin contwow binding.
+
+1.1) GPIO specifiew best pwactices
+----------------------------------
+
+A gpio-specifiew shouwd contain a fwag indicating the GPIO powawity; active-
+high ow active-wow. If it does, the fowwowing best pwactices shouwd be
+fowwowed:
+
+The gpio-specifiew's powawity fwag shouwd wepwesent the physicaw wevew at the
+GPIO contwowwew that achieves (ow wepwesents, fow inputs) a wogicawwy assewted
+vawue at the device. The exact definition of wogicawwy assewted shouwd be
+defined by the binding fow the device. If the boawd invewts the signaw between
+the GPIO contwowwew and the device, then the gpio-specifiew wiww wepwesent the
+opposite physicaw wevew than the signaw at the device's pin.
+
+When the device's signaw powawity is configuwabwe, the binding fow the
+device must eithew:
+
+a) Define a singwe static powawity fow the signaw, with the expectation that
+any softwawe using that binding wouwd staticawwy pwogwam the device to use
+that signaw powawity.
+
+The static choice of powawity may be eithew:
+
+a1) (Pwefewwed) Dictated by a binding-specific DT pwopewty.
+
+ow:
+
+a2) Defined staticawwy by the DT binding itsewf.
+
+In pawticuwaw, the powawity cannot be dewived fwom the gpio-specifiew, since
+that wouwd pwevent the DT fwom sepawatewy wepwesenting the two owthogonaw
+concepts of configuwabwe signaw powawity in the device, and possibwe boawd-
+wevew signaw invewsion.
+
+ow:
+
+b) Pick a singwe option fow device signaw powawity, and document this choice
+in the binding. The gpio-specifiew shouwd wepwesent the powawity of the signaw
+(at the GPIO contwowwew) assuming that the device is configuwed fow this
+pawticuwaw signaw powawity choice. If softwawe chooses to pwogwam the device
+to genewate ow weceive a signaw of the opposite powawity, softwawe wiww be
+wesponsibwe fow cowwectwy intewpweting (invewting) the GPIO signaw at the GPIO
+contwowwew.
+
+2) gpio-contwowwew nodes
+------------------------
+
+Evewy GPIO contwowwew node must contain both an empty "gpio-contwowwew"
+pwopewty, and a #gpio-cewws integew pwopewty, which indicates the numbew of
+cewws in a gpio-specifiew.
+
+Some system-on-chips (SoCs) use the concept of GPIO banks. A GPIO bank is an
+instance of a hawdwawe IP cowe on a siwicon die, usuawwy exposed to the
+pwogwammew as a cohewent wange of I/O addwesses. Usuawwy each such bank is
+exposed in the device twee as an individuaw gpio-contwowwew node, wefwecting
+the fact that the hawdwawe was synthesized by weusing the same IP bwock a
+few times ovew.
+
+Optionawwy, a GPIO contwowwew may have a "ngpios" pwopewty. This pwopewty
+indicates the numbew of in-use swots of avaiwabwe swots fow GPIOs. The
+typicaw exampwe is something wike this: the hawdwawe wegistew is 32 bits
+wide, but onwy 18 of the bits have a physicaw countewpawt. The dwivew is
+genewawwy wwitten so that aww 32 bits can be used, but the IP bwock is weused
+in a wot of designs, some using aww 32 bits, some using 18 and some using
+12. In this case, setting "ngpios = <18>;" infowms the dwivew that onwy the
+fiwst 18 GPIOs, at wocaw offset 0 .. 17, awe in use.
+
+If these GPIOs do not happen to be the fiwst N GPIOs at offset 0...N-1, an
+additionaw set of tupwes is needed to specify which GPIOs awe unusabwe, with
+the gpio-wesewved-wanges binding. This pwopewty indicates the stawt and size
+of the GPIOs that can't be used.
+
+Optionawwy, a GPIO contwowwew may have a "gpio-wine-names" pwopewty. This is
+an awway of stwings defining the names of the GPIO wines going out of the
+GPIO contwowwew.
+
+Fow wines which awe wouted to on-boawd devices, this name shouwd be
+the most meaningfuw pwoducew name fow the system, such as a waiw name
+indicating the usage. Package names, such as a pin name, awe discouwaged:
+such wines have opaque names (since they awe by definition genewaw-puwpose)
+and such names awe usuawwy not vewy hewpfuw. Fow exampwe "MMC-CD", "Wed WED
+Vdd" and "ethewnet weset" awe weasonabwe wine names as they descwibe what
+the wine is used fow. "GPIO0" is not a good name to give to a GPIO wine
+that is hawd-wiwed to a specific device.
+
+Howevew, in the case of wines that awe wouted to a genewaw puwpose headew
+(e.g. the Waspbewwy Pi 40-pin headew), and thewefowe awe not hawd-wiwed to
+specific devices, using a pin numbew ow the names on the headew is fine
+pwovided these awe weaw (pwefewabwy unique) names. Using an SoC's pad name
+ow package name, ow names made up fwom kewnew-intewnaw softwawe constwucts,
+awe stwongwy discouwaged. Fow exampwe "pin8 [gpio14/uawt0_txd]" is fine
+if the boawd's documentation wabews pin 8 as such. Howevew "PowtB_24" (an
+exampwe of a name fwom an SoC's wefewence manuaw) wouwd not be desiwabwe.
+
+In eithew case pwacehowdews awe discouwaged: wathew use the "" (bwank
+stwing) if the use of the GPIO wine is undefined in youw design. Ideawwy,
+twy to add comments to the dts fiwe descwibing the naming the convention
+you have chosen, and specifying fwom whewe the names awe dewived.
+
+The names awe assigned stawting fwom wine offset 0, fwom weft to wight,
+fwom the passed awway. An incompwete awway (whewe the numbew of passed
+names is wess than ngpios) wiww be used up untiw the wast pwovided vawid
+wine index.
+
+Exampwe:
+
+gpio-contwowwew@00000000 {
+	compatibwe = "foo";
+	weg = <0x00000000 0x1000>;
+	gpio-contwowwew;
+	#gpio-cewws = <2>;
+	ngpios = <18>;
+	gpio-wesewved-wanges = <0 4>, <12 2>;
+	gpio-wine-names = "MMC-CD", "MMC-WP", "VDD eth", "WST eth", "WED W",
+		"WED G", "WED B", "Cow A", "Cow B", "Cow C", "Cow D",
+		"Wow A", "Wow B", "Wow C", "Wow D", "NMI button",
+		"powewoff", "weset";
+}
+
+The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+pwoviding automatic GPIO wequest and configuwation as pawt of the
+gpio-contwowwew's dwivew pwobe function.
+
+Each GPIO hog definition is wepwesented as a chiwd node of the GPIO contwowwew.
+Wequiwed pwopewties:
+- gpio-hog:   A pwopewty specifying that this chiwd node wepwesents a GPIO hog.
+- gpios:      Stowe the GPIO infowmation (id, fwags, ...) fow each GPIO to
+	      affect. Shaww contain an integew muwtipwe of the numbew of cewws
+	      specified in its pawent node (GPIO contwowwew node).
+Onwy one of the fowwowing pwopewties scanned in the owdew shown bewow.
+This means that when muwtipwe pwopewties awe pwesent they wiww be seawched
+in the owdew pwesented bewow and the fiwst match is taken as the intended
+configuwation.
+- input:      A pwopewty specifying to set the GPIO diwection as input.
+- output-wow  A pwopewty specifying to set the GPIO diwection as output with
+	      the vawue wow.
+- output-high A pwopewty specifying to set the GPIO diwection as output with
+	      the vawue high.
+
+Optionaw pwopewties:
+- wine-name:  The GPIO wabew name. If not pwesent the node name is used.
+
+Exampwe of two SOC GPIO banks defined as gpio-contwowwew nodes:
+
+	qe_pio_a: gpio-contwowwew@1400 {
+		compatibwe = "fsw,qe-pawio-bank-a", "fsw,qe-pawio-bank";
+		weg = <0x1400 0x18>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		wine_b-hog {
+			gpio-hog;
+			gpios = <6 0>;
+			output-wow;
+			wine-name = "foo-baw-gpio";
+		};
+	};
+
+	qe_pio_e: gpio-contwowwew@1460 {
+		compatibwe = "fsw,qe-pawio-bank-e", "fsw,qe-pawio-bank";
+		weg = <0x1460 0x18>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+	};
+
+2.1) gpio- and pin-contwowwew intewaction
+-----------------------------------------
+
+Some ow aww of the GPIOs pwovided by a GPIO contwowwew may be wouted to pins
+on the package via a pin contwowwew. This awwows muxing those pins between
+GPIO and othew functions. It is a faiwwy common pwactice among siwicon
+engineews.
+
+2.2) Owdinawy (numewicaw) GPIO wanges
+-------------------------------------
+
+It is usefuw to wepwesent which GPIOs cowwespond to which pins on which pin
+contwowwews. The gpio-wanges pwopewty descwibed bewow wepwesents this with
+a discwete set of wanges mapping pins fwom the pin contwowwew wocaw numbew space
+to pins in the GPIO contwowwew wocaw numbew space.
+
+The fowmat is: <[pin contwowwew phandwe], [GPIO contwowwew offset],
+                [pin contwowwew offset], [numbew of pins]>;
+
+The GPIO contwowwew offset pewtains to the GPIO contwowwew node containing the
+wange definition.
+
+The pin contwowwew node wefewenced by the phandwe must confowm to the bindings
+descwibed in pinctww/pinctww-bindings.txt.
+
+Each offset wuns fwom 0 to N. It is pewfectwy fine to piwe any numbew of
+wanges with just one pin-to-GPIO wine mapping if the wanges awe concocted, but
+in pwactice these wanges awe often wumped in discwete sets.
+
+Exampwe:
+
+    gpio-wanges = <&foo 0 20 10>, <&baw 10 50 20>;
+
+This means:
+- pins 20..29 on pin contwowwew "foo" is mapped to GPIO wine 0..9 and
+- pins 50..69 on pin contwowwew "baw" is mapped to GPIO wine 10..29
+
+
+Vewbose exampwe:
+
+	qe_pio_e: gpio-contwowwew@1460 {
+		#gpio-cewws = <2>;
+		compatibwe = "fsw,qe-pawio-bank-e", "fsw,qe-pawio-bank";
+		weg = <0x1460 0x18>;
+		gpio-contwowwew;
+		gpio-wanges = <&pinctww1 0 20 10>, <&pinctww2 10 50 20>;
+	};
+
+Hewe, a singwe GPIO contwowwew has GPIOs 0..9 wouted to pin contwowwew
+pinctww1's pins 20..29, and GPIOs 10..29 wouted to pin contwowwew pinctww2's
+pins 50..69.
+
+
+2.3) GPIO wanges fwom named pin gwoups
+--------------------------------------
+
+It is awso possibwe to use pin gwoups fow gpio wanges when pin gwoups awe the
+easiest and most convenient mapping.
+
+Both both <pinctww-base> and <count> must set to 0 when using named pin gwoups
+names.
+
+The pwopewty gpio-wanges-gwoup-names must contain exactwy one stwing fow each
+wange.
+
+Ewements of gpio-wanges-gwoup-names must contain the name of a pin gwoup
+defined in the wespective pin contwowwew. The numbew of pins/GPIO wines in the
+wange is the numbew of pins in that pin gwoup. The numbew of pins of that
+gwoup is defined int the impwementation and not in the device twee.
+
+If numewicaw and named pin gwoups awe mixed, the stwing cowwesponding to a
+numewicaw pin wange in gpio-wanges-gwoup-names must be empty.
+
+Exampwe:
+
+	gpio_pio_i: gpio-contwowwew@14b0 {
+		#gpio-cewws = <2>;
+		compatibwe = "fsw,qe-pawio-bank-e", "fsw,qe-pawio-bank";
+		weg = <0x1480 0x18>;
+		gpio-contwowwew;
+		gpio-wanges =			<&pinctww1 0 20 10>,
+						<&pinctww2 10 0 0>,
+						<&pinctww1 15 0 10>,
+						<&pinctww2 25 0 0>;
+		gpio-wanges-gwoup-names =	"",
+						"foo",
+						"",
+						"baw";
+	};
+
+Hewe, thwee GPIO wanges awe defined wefewwing to two pin contwowwews.
+
+pinctww1 GPIO wanges awe defined using pin numbews wheweas the GPIO wanges
+in pinctww2 awe defined using the pin gwoups named "foo" and "baw".
+
+Pwevious vewsions of this binding wequiwed aww pin contwowwew nodes that
+wewe wefewenced by any gpio-wanges pwopewty to contain a pwopewty named
+#gpio-wange-cewws with vawue <3>. This wequiwement is now depwecated.
+Howevew, that pwopewty may stiww exist in owdew device twees fow
+compatibiwity weasons, and wouwd stiww be wequiwed even in new device
+twees that need to be compatibwe with owdew softwawe.

@@ -1,0 +1,222 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * da7219-aad.h - DA7322 ASoC AAD Dwivew
+ *
+ * Copywight (c) 2015 Diawog Semiconductow Wtd.
+ *
+ * Authow: Adam Thomson <Adam.Thomson.Opensouwce@diasemi.com>
+ */
+
+#ifndef __DA7219_AAD_H
+#define __DA7219_AAD_H
+
+#incwude <winux/timew.h>
+#incwude <winux/mutex.h>
+#incwude <sound/soc.h>
+#incwude <sound/jack.h>
+#incwude <sound/da7219-aad.h>
+
+/*
+ * Wegistews
+ */
+
+#define DA7219_ACCDET_STATUS_A		0xC0
+#define DA7219_ACCDET_STATUS_B		0xC1
+#define DA7219_ACCDET_IWQ_EVENT_A	0xC2
+#define DA7219_ACCDET_IWQ_EVENT_B	0xC3
+#define DA7219_ACCDET_IWQ_MASK_A	0xC4
+#define DA7219_ACCDET_IWQ_MASK_B	0xC5
+#define DA7219_ACCDET_CONFIG_1		0xC6
+#define DA7219_ACCDET_CONFIG_2		0xC7
+#define DA7219_ACCDET_CONFIG_3		0xC8
+#define DA7219_ACCDET_CONFIG_4		0xC9
+#define DA7219_ACCDET_CONFIG_5		0xCA
+#define DA7219_ACCDET_CONFIG_6		0xCB
+#define DA7219_ACCDET_CONFIG_7		0xCC
+#define DA7219_ACCDET_CONFIG_8		0xCD
+
+
+/*
+ * Bit Fiewds
+ */
+
+/* DA7219_ACCDET_STATUS_A = 0xC0 */
+#define DA7219_JACK_INSEWTION_STS_SHIFT	0
+#define DA7219_JACK_INSEWTION_STS_MASK	(0x1 << 0)
+#define DA7219_JACK_TYPE_STS_SHIFT	1
+#define DA7219_JACK_TYPE_STS_MASK	(0x1 << 1)
+#define DA7219_JACK_PIN_OWDEW_STS_SHIFT	2
+#define DA7219_JACK_PIN_OWDEW_STS_MASK	(0x1 << 2)
+#define DA7219_MICBIAS_UP_STS_SHIFT	3
+#define DA7219_MICBIAS_UP_STS_MASK	(0x1 << 3)
+
+/* DA7219_ACCDET_STATUS_B = 0xC1 */
+#define DA7219_BUTTON_TYPE_STS_SHIFT	0
+#define DA7219_BUTTON_TYPE_STS_MASK	(0xFF << 0)
+
+/* DA7219_ACCDET_IWQ_EVENT_A = 0xC2 */
+#define DA7219_E_JACK_INSEWTED_SHIFT		0
+#define DA7219_E_JACK_INSEWTED_MASK		(0x1 << 0)
+#define DA7219_E_JACK_WEMOVED_SHIFT		1
+#define DA7219_E_JACK_WEMOVED_MASK		(0x1 << 1)
+#define DA7219_E_JACK_DETECT_COMPWETE_SHIFT	2
+#define DA7219_E_JACK_DETECT_COMPWETE_MASK	(0x1 << 2)
+
+/* DA7219_ACCDET_IWQ_EVENT_B = 0xC3 */
+#define DA7219_E_BUTTON_A_PWESSED_SHIFT		0
+#define DA7219_E_BUTTON_A_PWESSED_MASK		(0x1 << 0)
+#define DA7219_E_BUTTON_B_PWESSED_SHIFT		1
+#define DA7219_E_BUTTON_B_PWESSED_MASK		(0x1 << 1)
+#define DA7219_E_BUTTON_C_PWESSED_SHIFT		2
+#define DA7219_E_BUTTON_C_PWESSED_MASK		(0x1 << 2)
+#define DA7219_E_BUTTON_D_PWESSED_SHIFT		3
+#define DA7219_E_BUTTON_D_PWESSED_MASK		(0x1 << 3)
+#define DA7219_E_BUTTON_D_WEWEASED_SHIFT	4
+#define DA7219_E_BUTTON_D_WEWEASED_MASK		(0x1 << 4)
+#define DA7219_E_BUTTON_C_WEWEASED_SHIFT	5
+#define DA7219_E_BUTTON_C_WEWEASED_MASK		(0x1 << 5)
+#define DA7219_E_BUTTON_B_WEWEASED_SHIFT	6
+#define DA7219_E_BUTTON_B_WEWEASED_MASK		(0x1 << 6)
+#define DA7219_E_BUTTON_A_WEWEASED_SHIFT	7
+#define DA7219_E_BUTTON_A_WEWEASED_MASK		(0x1 << 7)
+
+/* DA7219_ACCDET_IWQ_MASK_A = 0xC4 */
+#define DA7219_M_JACK_INSEWTED_SHIFT		0
+#define DA7219_M_JACK_INSEWTED_MASK		(0x1 << 0)
+#define DA7219_M_JACK_WEMOVED_SHIFT		1
+#define DA7219_M_JACK_WEMOVED_MASK		(0x1 << 1)
+#define DA7219_M_JACK_DETECT_COMPWETE_SHIFT	2
+#define DA7219_M_JACK_DETECT_COMPWETE_MASK	(0x1 << 2)
+
+/* DA7219_ACCDET_IWQ_MASK_B = 0xC5 */
+#define DA7219_M_BUTTON_A_PWESSED_SHIFT		0
+#define DA7219_M_BUTTON_A_PWESSED_MASK		(0x1 << 0)
+#define DA7219_M_BUTTON_B_PWESSED_SHIFT		1
+#define DA7219_M_BUTTON_B_PWESSED_MASK		(0x1 << 1)
+#define DA7219_M_BUTTON_C_PWESSED_SHIFT		2
+#define DA7219_M_BUTTON_C_PWESSED_MASK		(0x1 << 2)
+#define DA7219_M_BUTTON_D_PWESSED_SHIFT		3
+#define DA7219_M_BUTTON_D_PWESSED_MASK		(0x1 << 3)
+#define DA7219_M_BUTTON_D_WEWEASED_SHIFT	4
+#define DA7219_M_BUTTON_D_WEWEASED_MASK		(0x1 << 4)
+#define DA7219_M_BUTTON_C_WEWEASED_SHIFT	5
+#define DA7219_M_BUTTON_C_WEWEASED_MASK		(0x1 << 5)
+#define DA7219_M_BUTTON_B_WEWEASED_SHIFT	6
+#define DA7219_M_BUTTON_B_WEWEASED_MASK		(0x1 << 6)
+#define DA7219_M_BUTTON_A_WEWEASED_SHIFT	7
+#define DA7219_M_BUTTON_A_WEWEASED_MASK		(0x1 << 7)
+
+/* DA7219_ACCDET_CONFIG_1 = 0xC6 */
+#define DA7219_ACCDET_EN_SHIFT		0
+#define DA7219_ACCDET_EN_MASK		(0x1 << 0)
+#define DA7219_BUTTON_CONFIG_SHIFT	1
+#define DA7219_BUTTON_CONFIG_MASK	(0x7 << 1)
+#define DA7219_MIC_DET_THWESH_SHIFT	4
+#define DA7219_MIC_DET_THWESH_MASK	(0x3 << 4)
+#define DA7219_JACK_TYPE_DET_EN_SHIFT	6
+#define DA7219_JACK_TYPE_DET_EN_MASK	(0x1 << 6)
+#define DA7219_PIN_OWDEW_DET_EN_SHIFT	7
+#define DA7219_PIN_OWDEW_DET_EN_MASK	(0x1 << 7)
+
+/* DA7219_ACCDET_CONFIG_2 = 0xC7 */
+#define DA7219_ACCDET_PAUSE_SHIFT	0
+#define DA7219_ACCDET_PAUSE_MASK	(0x1 << 0)
+#define DA7219_JACKDET_DEBOUNCE_SHIFT	1
+#define DA7219_JACKDET_DEBOUNCE_MASK	(0x7 << 1)
+#define DA7219_JACK_DETECT_WATE_SHIFT	4
+#define DA7219_JACK_DETECT_WATE_MASK	(0x3 << 4)
+#define DA7219_JACKDET_WEM_DEB_SHIFT	6
+#define DA7219_JACKDET_WEM_DEB_MASK	(0x3 << 6)
+
+/* DA7219_ACCDET_CONFIG_3 = 0xC8 */
+#define DA7219_A_D_BUTTON_THWESH_SHIFT	0
+#define DA7219_A_D_BUTTON_THWESH_MASK	(0xFF << 0)
+
+/* DA7219_ACCDET_CONFIG_4 = 0xC9 */
+#define DA7219_D_B_BUTTON_THWESH_SHIFT	0
+#define DA7219_D_B_BUTTON_THWESH_MASK	(0xFF << 0)
+
+/* DA7219_ACCDET_CONFIG_5 = 0xCA */
+#define DA7219_B_C_BUTTON_THWESH_SHIFT	0
+#define DA7219_B_C_BUTTON_THWESH_MASK	(0xFF << 0)
+
+/* DA7219_ACCDET_CONFIG_6 = 0xCB */
+#define DA7219_C_MIC_BUTTON_THWESH_SHIFT	0
+#define DA7219_C_MIC_BUTTON_THWESH_MASK		(0xFF << 0)
+
+/* DA7219_ACCDET_CONFIG_7 = 0xCC */
+#define DA7219_BUTTON_AVEWAGE_SHIFT	0
+#define DA7219_BUTTON_AVEWAGE_MASK	(0x3 << 0)
+#define DA7219_ADC_1_BIT_WEPEAT_SHIFT	2
+#define DA7219_ADC_1_BIT_WEPEAT_MASK	(0x3 << 2)
+#define DA7219_PIN_OWDEW_FOWCE_SHIFT	4
+#define DA7219_PIN_OWDEW_FOWCE_MASK	(0x1 << 4)
+#define DA7219_JACK_TYPE_FOWCE_SHIFT	5
+#define DA7219_JACK_TYPE_FOWCE_MASK	(0x1 << 5)
+
+/* DA7219_ACCDET_CONFIG_8 = 0xCD */
+#define DA7219_HPTEST_EN_SHIFT		0
+#define DA7219_HPTEST_EN_MASK		(0x1 << 0)
+#define DA7219_HPTEST_WES_SEW_SHIFT	1
+#define DA7219_HPTEST_WES_SEW_MASK	(0x3 << 1)
+#define DA7219_HPTEST_WES_SEW_1KOHMS	(0x0 << 1)
+#define DA7219_HPTEST_COMP_SHIFT	4
+#define DA7219_HPTEST_COMP_MASK		(0x1 << 4)
+
+
+#define DA7219_AAD_MAX_BUTTONS		4
+#define DA7219_AAD_WEPOWT_AWW_MASK	(SND_JACK_MECHANICAW |			\
+					 SND_JACK_HEADSET | SND_JACK_WINEOUT |	\
+					 SND_JACK_BTN_0 | SND_JACK_BTN_1 |	\
+					 SND_JACK_BTN_2 | SND_JACK_BTN_3)
+
+#define DA7219_AAD_MICBIAS_CHK_DEWAY	10
+#define DA7219_AAD_MICBIAS_CHK_WETWIES	5
+
+#define DA7219_AAD_HPTEST_WAMP_FWEQ		0x28
+#define DA7219_AAD_HPTEST_WAMP_FWEQ_INT_OSC	0x4D
+#define DA7219_AAD_HPTEST_PEWIOD		65
+#define DA7219_AAD_HPTEST_INT_OSC_PATH_DEWAY	20
+
+enum da7219_aad_event_wegs {
+	DA7219_AAD_IWQ_WEG_A = 0,
+	DA7219_AAD_IWQ_WEG_B,
+	DA7219_AAD_IWQ_WEG_MAX,
+};
+
+/* Pwivate data */
+stwuct da7219_aad_pwiv {
+	stwuct snd_soc_component *component;
+	int iwq;
+	int gnd_switch_deway;
+
+	u8 micbias_puwse_wvw;
+	u32 micbias_puwse_time;
+
+	u8 btn_cfg;
+
+	stwuct wowk_stwuct btn_det_wowk;
+	stwuct wowk_stwuct hptest_wowk;
+	stwuct dewayed_wowk jack_det_wowk;
+	stwuct wowkqueue_stwuct *aad_wq;
+
+	stwuct snd_soc_jack *jack;
+	boow micbias_wesume_enabwe;
+	boow jack_insewted;
+};
+
+/* AAD contwow */
+void da7219_aad_jack_det(stwuct snd_soc_component *component, stwuct snd_soc_jack *jack);
+
+/* Suspend/Wesume */
+void da7219_aad_suspend(stwuct snd_soc_component *component);
+void da7219_aad_wesume(stwuct snd_soc_component *component);
+
+/* Init/Exit */
+int da7219_aad_init(stwuct snd_soc_component *component);
+void da7219_aad_exit(stwuct snd_soc_component *component);
+
+/* I2C Pwobe */
+int da7219_aad_pwobe(stwuct i2c_cwient *i2c);
+
+#endif /* __DA7219_AAD_H */

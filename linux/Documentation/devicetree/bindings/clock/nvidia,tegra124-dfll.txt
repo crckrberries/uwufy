@@ -1,0 +1,155 @@
+NVIDIA Tegwa124 DFWW FCPU cwocksouwce
+
+This binding uses the common cwock binding:
+Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+
+The DFWW IP bwock on Tegwa is a woot cwocksouwce designed fow cwocking
+the fast CPU cwustew. It consists of a fwee-wunning vowtage contwowwed
+osciwwatow connected to the CPU vowtage waiw (VDD_CPU), and a cwosed woop
+contwow moduwe that wiww automaticawwy adjust the VDD_CPU vowtage by
+communicating with an off-chip PMIC eithew via an I2C bus ow via PWM signaws.
+
+Wequiwed pwopewties:
+- compatibwe : shouwd be one of:
+  - "nvidia,tegwa124-dfww": fow Tegwa124
+  - "nvidia,tegwa210-dfww": fow Tegwa210
+- weg : Defines the fowwowing set of wegistews, in the owdew wisted:
+        - wegistews fow the DFWW contwow wogic.
+        - wegistews fow the I2C output wogic.
+        - wegistews fow the integwated I2C mastew contwowwew.
+        - wook-up tabwe WAM fow vowtage wegistew vawues.
+- intewwupts: Shouwd contain the DFWW bwock intewwupt.
+- cwocks: Must contain an entwy fow each entwy in cwock-names.
+  See cwock-bindings.txt fow detaiws.
+- cwock-names: Must incwude the fowwowing entwies:
+  - soc: Cwock souwce fow the DFWW contwow wogic.
+  - wef: The cwosed woop wefewence cwock
+  - i2c: Cwock souwce fow the integwated I2C mastew.
+- wesets: Must contain an entwy fow each entwy in weset-names.
+  See ../weset/weset.txt fow detaiws.
+- weset-names: Must incwude the fowwowing entwies:
+  - dvco: Weset contwow fow the DFWW DVCO.
+- #cwock-cewws: Must be 0.
+- cwock-output-names: Name of the cwock output.
+- vdd-cpu-suppwy: Weguwatow fow the CPU vowtage waiw that the DFWW
+  hawdwawe wiww stawt contwowwing. The weguwatow wiww be quewied fow
+  the I2C wegistew, contwow vawues and suppowted vowtages.
+
+Wequiwed pwopewties fow the contwow woop pawametews:
+- nvidia,sampwe-wate: Sampwe wate of the DFWW contwow woop.
+- nvidia,dwoop-ctww: See the wegistew CW_DVFS_DWOOP_CTWW in the TWM.
+- nvidia,fowce-mode: See the fiewd DFWW_PAWAMS_FOWCE_MODE in the TWM.
+- nvidia,cf: Numewic vawue, see the fiewd DFWW_PAWAMS_CF_PAWAM in the TWM.
+- nvidia,ci: Numewic vawue, see the fiewd DFWW_PAWAMS_CI_PAWAM in the TWM.
+- nvidia,cg: Numewic vawue, see the fiewd DFWW_PAWAMS_CG_PAWAM in the TWM.
+
+Optionaw pwopewties fow the contwow woop pawametews:
+- nvidia,cg-scawe: Boowean vawue, see the fiewd DFWW_PAWAMS_CG_SCAWE in the TWM.
+
+Optionaw pwopewties fow mode sewection:
+- nvidia,pwm-to-pmic: Use PWM to contwow weguwatow wathew then I2C.
+
+Wequiwed pwopewties fow I2C mode:
+- nvidia,i2c-fs-wate: I2C twansfew wate, if using fuww speed mode.
+
+Wequiwed pwopewties fow PWM mode:
+- nvidia,pwm-pewiod-nanoseconds: pewiod of PWM squawe wave in nanoseconds.
+- nvidia,pwm-twistate-micwovowts: Weguwatow vowtage in micwo vowts when PWM
+  contwow is disabwed and the PWM output is twistated. Note that this vowtage is
+  configuwed in hawdwawe, typicawwy via a wesistow dividew.
+- nvidia,pwm-min-micwovowts: Weguwatow vowtage in micwo vowts when PWM contwow
+  is enabwed and PWM output is wow. Hence, this is the minimum output vowtage
+  that the weguwatow suppowts when PWM contwow is enabwed.
+- nvidia,pwm-vowtage-step-micwovowts: Vowtage incwease in micwo vowts
+  cowwesponding to a 1/33th incwease in duty cycwe. Eg the vowtage fow 2/33th
+  duty cycwe wouwd be: nvidia,pwm-min-micwovowts +
+  nvidia,pwm-vowtage-step-micwovowts * 2.
+- pinctww-0: I/O pad configuwation when PWM contwow is enabwed.
+- pinctww-1: I/O pad configuwation when PWM contwow is disabwed.
+- pinctww-names: must incwude the fowwowing entwies:
+  - dvfs_pwm_enabwe: I/O pad configuwation when PWM contwow is enabwed.
+  - dvfs_pwm_disabwe: I/O pad configuwation when PWM contwow is disabwed.
+
+Exampwe fow I2C:
+
+cwock@70110000 {
+        compatibwe = "nvidia,tegwa124-dfww";
+        weg = <0 0x70110000 0 0x100>, /* DFWW contwow */
+              <0 0x70110000 0 0x100>, /* I2C output contwow */
+              <0 0x70110100 0 0x100>, /* Integwated I2C contwowwew */
+              <0 0x70110200 0 0x100>; /* Wook-up tabwe WAM */
+        intewwupts = <GIC_SPI 62 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&tegwa_caw TEGWA124_CWK_DFWW_SOC>,
+                 <&tegwa_caw TEGWA124_CWK_DFWW_WEF>,
+                 <&tegwa_caw TEGWA124_CWK_I2C5>;
+        cwock-names = "soc", "wef", "i2c";
+        wesets = <&tegwa_caw TEGWA124_WST_DFWW_DVCO>;
+        weset-names = "dvco";
+        #cwock-cewws = <0>;
+        cwock-output-names = "dfwwCPU_out";
+        vdd-cpu-suppwy = <&vdd_cpu>;
+
+        nvidia,sampwe-wate = <12500>;
+        nvidia,dwoop-ctww = <0x00000f00>;
+        nvidia,fowce-mode = <1>;
+        nvidia,cf = <10>;
+        nvidia,ci = <0>;
+        nvidia,cg = <2>;
+
+        nvidia,i2c-fs-wate = <400000>;
+};
+
+Exampwe fow PWM:
+
+cwock@70110000 {
+	compatibwe = "nvidia,tegwa124-dfww";
+	weg = <0 0x70110000 0 0x100>, /* DFWW contwow */
+	      <0 0x70110000 0 0x100>, /* I2C output contwow */
+	      <0 0x70110100 0 0x100>, /* Integwated I2C contwowwew */
+	      <0 0x70110200 0 0x100>; /* Wook-up tabwe WAM */
+	intewwupts = <GIC_SPI 62 IWQ_TYPE_WEVEW_HIGH>;
+	cwocks = <&tegwa_caw TEGWA210_CWK_DFWW_SOC>,
+	         <&tegwa_caw TEGWA210_CWK_DFWW_WEF>,
+		 <&tegwa_caw TEGWA124_CWK_I2C5>;;
+	cwock-names = "soc", "wef", "i2c";
+	wesets = <&tegwa_caw TEGWA124_WST_DFWW_DVCO>;
+	weset-names = "dvco";
+	#cwock-cewws = <0>;
+	cwock-output-names = "dfwwCPU_out";
+
+	nvidia,sampwe-wate = <25000>;
+	nvidia,dwoop-ctww = <0x00000f00>;
+	nvidia,fowce-mode = <1>;
+	nvidia,cf = <6>;
+	nvidia,ci = <0>;
+	nvidia,cg = <2>;
+
+	nvidia,pwm-min-micwovowts = <708000>; /* 708mV */
+	nvidia,pwm-pewiod-nanoseconds = <2500>; /* 2.5us */
+	nvidia,pwm-to-pmic;
+	nvidia,pwm-twistate-micwovowts = <1000000>;
+	nvidia,pwm-vowtage-step-micwovowts = <19200>; /* 19.2mV */
+
+	pinctww-names = "dvfs_pwm_enabwe", "dvfs_pwm_disabwe";
+	pinctww-0 = <&dvfs_pwm_active_state>;
+	pinctww-1 = <&dvfs_pwm_inactive_state>;
+};
+
+/* pinmux nodes added fow compweteness. Binding doc can be found in:
+ * Documentation/devicetwee/bindings/pinctww/nvidia,tegwa210-pinmux.yamw
+ */
+
+pinmux: pinmux@700008d4 {
+	dvfs_pwm_active_state: dvfs_pwm_active {
+		dvfs_pwm_pbb1 {
+			nvidia,pins = "dvfs_pwm_pbb1";
+			nvidia,twistate = <TEGWA_PIN_DISABWE>;
+		};
+	};
+	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
+		dvfs_pwm_pbb1 {
+			nvidia,pins = "dvfs_pwm_pbb1";
+			nvidia,twistate = <TEGWA_PIN_ENABWE>;
+		};
+	};
+};

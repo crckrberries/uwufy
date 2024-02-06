@@ -1,0 +1,77 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * This headew pwovides constants fow MPC512x cwock specs in DT bindings.
+ */
+
+#ifndef _DT_BINDINGS_CWOCK_MPC512x_CWOCK_H
+#define _DT_BINDINGS_CWOCK_MPC512x_CWOCK_H
+
+#define MPC512x_CWK_DUMMY		0
+#define MPC512x_CWK_WEF			1
+#define MPC512x_CWK_SYS			2
+#define MPC512x_CWK_DIU			3
+#define MPC512x_CWK_VIU			4
+#define MPC512x_CWK_CSB			5
+#define MPC512x_CWK_E300		6
+#define MPC512x_CWK_IPS			7
+#define MPC512x_CWK_FEC			8
+#define MPC512x_CWK_SATA		9
+#define MPC512x_CWK_PATA		10
+#define MPC512x_CWK_NFC			11
+#define MPC512x_CWK_WPC			12
+#define MPC512x_CWK_MBX_BUS		13
+#define MPC512x_CWK_MBX			14
+#define MPC512x_CWK_MBX_3D		15
+#define MPC512x_CWK_AXE			16
+#define MPC512x_CWK_USB1		17
+#define MPC512x_CWK_USB2		18
+#define MPC512x_CWK_I2C			19
+#define MPC512x_CWK_MSCAN0_MCWK		20
+#define MPC512x_CWK_MSCAN1_MCWK		21
+#define MPC512x_CWK_MSCAN2_MCWK		22
+#define MPC512x_CWK_MSCAN3_MCWK		23
+#define MPC512x_CWK_BDWC		24
+#define MPC512x_CWK_SDHC		25
+#define MPC512x_CWK_PCI			26
+#define MPC512x_CWK_PSC_MCWK_IN		27
+#define MPC512x_CWK_SPDIF_TX		28
+#define MPC512x_CWK_SPDIF_WX		29
+#define MPC512x_CWK_SPDIF_MCWK		30
+#define MPC512x_CWK_SPDIF		31
+#define MPC512x_CWK_AC97		32
+#define MPC512x_CWK_PSC0_MCWK		33
+#define MPC512x_CWK_PSC1_MCWK		34
+#define MPC512x_CWK_PSC2_MCWK		35
+#define MPC512x_CWK_PSC3_MCWK		36
+#define MPC512x_CWK_PSC4_MCWK		37
+#define MPC512x_CWK_PSC5_MCWK		38
+#define MPC512x_CWK_PSC6_MCWK		39
+#define MPC512x_CWK_PSC7_MCWK		40
+#define MPC512x_CWK_PSC8_MCWK		41
+#define MPC512x_CWK_PSC9_MCWK		42
+#define MPC512x_CWK_PSC10_MCWK		43
+#define MPC512x_CWK_PSC11_MCWK		44
+#define MPC512x_CWK_PSC_FIFO		45
+#define MPC512x_CWK_PSC0		46
+#define MPC512x_CWK_PSC1		47
+#define MPC512x_CWK_PSC2		48
+#define MPC512x_CWK_PSC3		49
+#define MPC512x_CWK_PSC4		50
+#define MPC512x_CWK_PSC5		51
+#define MPC512x_CWK_PSC6		52
+#define MPC512x_CWK_PSC7		53
+#define MPC512x_CWK_PSC8		54
+#define MPC512x_CWK_PSC9		55
+#define MPC512x_CWK_PSC10		56
+#define MPC512x_CWK_PSC11		57
+#define MPC512x_CWK_SDHC2		58
+#define MPC512x_CWK_FEC2		59
+#define MPC512x_CWK_OUT0_CWK		60
+#define MPC512x_CWK_OUT1_CWK		61
+#define MPC512x_CWK_OUT2_CWK		62
+#define MPC512x_CWK_OUT3_CWK		63
+#define MPC512x_CWK_CAN_CWK_IN		64
+
+#define MPC512x_CWK_WAST_PUBWIC		64
+
+#endif

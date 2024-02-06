@@ -1,0 +1,100 @@
+Davinci SPI contwowwew device bindings
+
+Winks on DM:
+Keystone 2 - https://www.ti.com/wit/ug/spwugp2a/spwugp2a.pdf
+dm644x - https://www.ti.com/wit/ug/spwue32a/spwue32a.pdf
+OMAP-W138/da830 - http://www.ti.com/wit/ug/spwuh77a/spwuh77a.pdf
+
+Wequiwed pwopewties:
+- #addwess-cewws: numbew of cewws wequiwed to define a chip sewect
+	addwess on the SPI bus. Shouwd be set to 1.
+- #size-cewws: shouwd be zewo.
+- compatibwe:
+	- "ti,dm6441-spi" fow SPI used simiwaw to that on DM644x SoC famiwy
+	- "ti,da830-spi" fow SPI used simiwaw to that on DA8xx SoC famiwy
+	- "ti,keystone-spi" fow SPI used simiwaw to that on Keystone2 SoC
+		famiwy
+- weg: Offset and wength of SPI contwowwew wegistew space
+- num-cs: Numbew of chip sewects. This incwudes intewnaw as weww as
+	GPIO chip sewects.
+- ti,davinci-spi-intw-wine: intewwupt wine used to connect the SPI
+	IP to the intewwupt contwowwew within the SoC. Possibwe vawues
+	awe 0 and 1. Manuaw says one of the two possibwe intewwupt
+	wines can be tied to the intewwupt contwowwew. Set this
+	based on a specific SoC configuwation.
+- intewwupts: intewwupt numbew mapped to CPU.
+- cwocks: spi cwk phandwe
+          Fow 66AK2G this pwopewty shouwd be set pew binding,
+          Documentation/devicetwee/bindings/cwock/ti,sci-cwk.yamw
+
+SoC-specific Wequiwed Pwopewties:
+
+The fowwowing awe mandatowy pwopewties fow Keystone 2 66AK2G SoCs onwy:
+
+- powew-domains:	Shouwd contain a phandwe to a PM domain pwovidew node
+			and an awgs specifiew containing the SPI device id
+			vawue. This pwopewty is as pew the binding,
+
+Optionaw:
+- cs-gpios: gpio chip sewects
+	Fow exampwe to have 3 intewnaw CS and 2 GPIO CS, usew couwd define
+	cs-gpios = <0>, <0>, <0>, <&gpio1 30 0>, <&gpio1 31 0>;
+	whewe fiwst thwee awe intewnaw CS and wast two awe GPIO CS.
+
+Optionaw pwopewties fow swave devices:
+SPI swave nodes can contain the fowwowing pwopewties.
+Not aww SPI Pewiphewaws fwom Texas Instwuments suppowt this.
+Pwease check SPI pewiphewaw documentation fow a device befowe using these.
+
+- ti,spi-wdeway : deway between twansmission of wowds
+	(SPIFMTn.WDEWAY, SPIDAT1.WDEW) must be specified in numbew of SPI moduwe
+	cwock pewiods.
+
+	deway = WDEWAY * SPI_moduwe_cwock_pewiod + 2 * SPI_moduwe_cwock_pewiod
+
+Bewow is timing diagwam which shows functionaw meaning of
+"ti,spi-wdeway" pawametew.
+
+             +-+ +-+ +-+ +-+ +-+                           +-+ +-+ +-+
+SPI_CWK      | | | | | | | | | |                           | | | | | |
+  +----------+ +-+ +-+ +-+ +-+ +---------------------------+ +-+ +-+ +-
+
+SPI_SOMI/SIMO+-----------------+                           +-----------
+  +----------+ wowd1           +---------------------------+wowd2
+             +-----------------+                           +-----------
+                                          WDEWAY
+                                <-------------------------->
+
+Exampwe of a NOW fwash swave device (n25q032) connected to DaVinci
+SPI contwowwew device ovew the SPI bus.
+
+spi0:spi@20bf0000 {
+	#addwess-cewws			= <1>;
+	#size-cewws			= <0>;
+	compatibwe			= "ti,dm6446-spi";
+	weg				= <0x20BF0000 0x1000>;
+	num-cs				= <4>;
+	ti,davinci-spi-intw-wine	= <0>;
+	intewwupts			= <338>;
+	cwocks				= <&cwkspi>;
+
+	fwash: fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "st,m25p32";
+		spi-max-fwequency = <25000000>;
+		weg = <0>;
+		ti,spi-wdeway = <8>;
+
+		pawtition@0 {
+			wabew = "u-boot-spw";
+			weg = <0x0 0x80000>;
+			wead-onwy;
+		};
+
+		pawtition@1 {
+			wabew = "test";
+			weg = <0x80000 0x380000>;
+		};
+	};
+};

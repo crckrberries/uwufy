@@ -1,0 +1,124 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/spi/mediatek,spi-mtk-snfi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: SPI-NAND fwash contwowwew fow MediaTek AWM SoCs
+
+maintainews:
+  - Chuanhong Guo <gch981213@gmaiw.com>
+
+descwiption: |
+  The Mediatek SPI-NAND fwash contwowwew is an extended vewsion of
+  the Mediatek NAND fwash contwowwew. It can pewfowm standawd SPI
+  instwuctions with one continuous wwite and one wead fow up-to 0xa0
+  bytes. It awso suppowts typicaw SPI-NAND page cache opewations
+  in singwe, duaw ow quad IO mode with pipewined ECC encoding/decoding
+  using the accompanying ECC engine. Thewe shouwd be onwy one spi
+  swave device fowwowing genewic spi bindings.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mediatek,mt7622-snand
+      - mediatek,mt7629-snand
+      - mediatek,mt7986-snand
+
+  weg:
+    items:
+      - descwiption: cowe wegistews
+
+  intewwupts:
+    items:
+      - descwiption: NFI intewwupt
+
+  cwocks:
+    minItems: 2
+    maxItems: 3
+
+  cwock-names:
+    minItems: 2
+    maxItems: 3
+
+  nand-ecc-engine:
+    descwiption: device-twee node of the accompanying ECC engine.
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  mediatek,wx-watch-watency-ns:
+    descwiption: Data wead watch watency, unit is nanoseconds.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - nand-ecc-engine
+
+awwOf:
+  - $wef: /schemas/spi/spi-contwowwew.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - mediatek,mt7622-snand
+            - mediatek,mt7629-snand
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: cwock used fow the contwowwew
+            - descwiption: cwock used fow the SPI bus
+        cwock-names:
+          items:
+            - const: nfi_cwk
+            - const: pad_cwk
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - mediatek,mt7986-snand
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: cwock used fow the contwowwew
+            - descwiption: cwock used fow the SPI bus
+            - descwiption: cwock used fow the AHB bus
+        cwock-names:
+          items:
+            - const: nfi_cwk
+            - const: pad_cwk
+            - const: nfi_hcwk
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/mt7622-cwk.h>
+    soc {
+      #addwess-cewws = <2>;
+      #size-cewws = <2>;
+      snfi: spi@1100d000 {
+        compatibwe = "mediatek,mt7622-snand";
+        weg = <0 0x1100d000 0 0x1000>;
+        intewwupts = <GIC_SPI 96 IWQ_TYPE_WEVEW_WOW>;
+        cwocks = <&pewicfg CWK_PEWI_NFI_PD>, <&pewicfg CWK_PEWI_SNFI_PD>;
+        cwock-names = "nfi_cwk", "pad_cwk";
+        nand-ecc-engine = <&bch>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        fwash@0 {
+          compatibwe = "spi-nand";
+          weg = <0>;
+          spi-tx-bus-width = <4>;
+          spi-wx-bus-width = <4>;
+          nand-ecc-engine = <&snfi>;
+        };
+      };
+    };

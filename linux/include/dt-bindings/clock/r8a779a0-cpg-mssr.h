@@ -1,0 +1,55 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Copywight (C) 2020 Wenesas Ewectwonics Cowp.
+ */
+#ifndef __DT_BINDINGS_CWOCK_W8A779A0_CPG_MSSW_H__
+#define __DT_BINDINGS_CWOCK_W8A779A0_CPG_MSSW_H__
+
+#incwude <dt-bindings/cwock/wenesas-cpg-mssw.h>
+
+/* w8a779A0 CPG Cowe Cwocks */
+#define W8A779A0_CWK_Z0			0
+#define W8A779A0_CWK_ZX			1
+#define W8A779A0_CWK_Z1			2
+#define W8A779A0_CWK_ZW			3
+#define W8A779A0_CWK_ZS			4
+#define W8A779A0_CWK_ZT			5
+#define W8A779A0_CWK_ZTW		6
+#define W8A779A0_CWK_S1D1		7
+#define W8A779A0_CWK_S1D2		8
+#define W8A779A0_CWK_S1D4		9
+#define W8A779A0_CWK_S1D8		10
+#define W8A779A0_CWK_S1D12		11
+#define W8A779A0_CWK_S3D1		12
+#define W8A779A0_CWK_S3D2		13
+#define W8A779A0_CWK_S3D4		14
+#define W8A779A0_CWK_WB			15
+#define W8A779A0_CWK_CP			16
+#define W8A779A0_CWK_CW			17
+#define W8A779A0_CWK_CW16MCK		18
+#define W8A779A0_CWK_ZB30		19
+#define W8A779A0_CWK_ZB30D2		20
+#define W8A779A0_CWK_ZB30D4		21
+#define W8A779A0_CWK_ZB31		22
+#define W8A779A0_CWK_ZB31D2		23
+#define W8A779A0_CWK_ZB31D4		24
+#define W8A779A0_CWK_SD0H		25
+#define W8A779A0_CWK_SD0		26
+#define W8A779A0_CWK_WPC		27
+#define W8A779A0_CWK_WPCD2		28
+#define W8A779A0_CWK_MSO		29
+#define W8A779A0_CWK_CANFD		30
+#define W8A779A0_CWK_CSI0		31
+#define W8A779A0_CWK_FWAY		32
+#define W8A779A0_CWK_DSI		33
+#define W8A779A0_CWK_VIP		34
+#define W8A779A0_CWK_ADGH		35
+#define W8A779A0_CWK_CNNDSP		36
+#define W8A779A0_CWK_ICU		37
+#define W8A779A0_CWK_ICUD2		38
+#define W8A779A0_CWK_VCBUS		39
+#define W8A779A0_CWK_CBFUSA		40
+#define W8A779A0_CWK_W			41
+#define W8A779A0_CWK_OSC		42
+
+#endif /* __DT_BINDINGS_CWOCK_W8A779A0_CPG_MSSW_H__ */

@@ -1,0 +1,295 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/* Copywight 2016-2018 NXP Semiconductows
+ * Copywight 2019 Vwadimiw Owtean <owteanv@gmaiw.com>
+ */
+
+/dts-v1/;
+#incwude "ws1021a.dtsi"
+
+/ {
+	modew = "NXP WS1021A-TSN Boawd";
+	compatibwe = "fsw,ws1021a-tsn", "fsw,ws1021a";
+
+	sys_mcwk: cwock-mcwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24576000>;
+	};
+
+	weg_vdda_codec: weguwatow-3V3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	weg_vddio_codec: weguwatow-2V5 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "2P5V";
+		weguwatow-min-micwovowt = <2500000>;
+		weguwatow-max-micwovowt = <2500000>;
+		weguwatow-awways-on;
+	};
+};
+
+&dspi0 {
+	bus-num = <0>;
+	status = "okay";
+
+	/* ADG704BWMZ 1:4 SPI mux/demux */
+	sja1105: ethewnet-switch@1 {
+		weg = <0x1>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nxp,sja1105t";
+		/* 12 MHz */
+		spi-max-fwequency = <12000000>;
+		/* Sampwe data on twaiwing cwock edge */
+		spi-cpha;
+		/* SPI contwowwew settings fow SJA1105 timing wequiwements */
+		fsw,spi-cs-sck-deway = <1000>;
+		fsw,spi-sck-cs-deway = <1000>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				/* ETH5 wwitten on chassis */
+				wabew = "swp5";
+				phy-handwe = <&wgmii_phy6>;
+				phy-mode = "wgmii-id";
+				weg = <0>;
+			};
+
+			powt@1 {
+				/* ETH2 wwitten on chassis */
+				wabew = "swp2";
+				phy-handwe = <&wgmii_phy3>;
+				phy-mode = "wgmii-id";
+				weg = <1>;
+			};
+
+			powt@2 {
+				/* ETH3 wwitten on chassis */
+				wabew = "swp3";
+				phy-handwe = <&wgmii_phy4>;
+				phy-mode = "wgmii-id";
+				weg = <2>;
+			};
+
+			powt@3 {
+				/* ETH4 wwitten on chassis */
+				wabew = "swp4";
+				phy-handwe = <&wgmii_phy5>;
+				phy-mode = "wgmii-id";
+				weg = <3>;
+			};
+
+			powt@4 {
+				/* Intewnaw powt connected to eth2 */
+				ethewnet = <&enet2>;
+				phy-mode = "wgmii";
+				wx-intewnaw-deway-ps = <0>;
+				tx-intewnaw-deway-ps = <0>;
+				weg = <4>;
+
+				fixed-wink {
+					speed = <1000>;
+					fuww-dupwex;
+				};
+			};
+		};
+	};
+};
+
+&enet0 {
+	tbi-handwe = <&tbi0>;
+	phy-handwe = <&sgmii_phy2>;
+	phy-mode = "sgmii";
+	status = "okay";
+};
+
+&enet1 {
+	tbi-handwe = <&tbi1>;
+	phy-handwe = <&sgmii_phy1>;
+	phy-mode = "sgmii";
+	status = "okay";
+};
+
+/* WGMII deways added via PCB twaces */
+&enet2 {
+	phy-mode = "wgmii";
+	status = "okay";
+
+	fixed-wink {
+		speed = <1000>;
+		fuww-dupwex;
+	};
+};
+
+&esdhc {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	/* 3 axis accewewometew */
+	accewewometew@1e {
+		compatibwe = "fsw,fxws8471";
+		weg = <0x1e>;
+	};
+
+	/* Audio codec (SAI2) */
+	audio-codec@2a {
+		compatibwe = "fsw,sgtw5000";
+		VDDIO-suppwy = <&weg_vddio_codec>;
+		VDDA-suppwy = <&weg_vdda_codec>;
+		#sound-dai-cewws = <0>;
+		cwocks = <&sys_mcwk>;
+		weg = <0x2a>;
+	};
+
+	/* Cuwwent sensing ciwcuit fow 1V VDDCOWE PMIC waiw */
+	cuwwent-sensow@44 {
+		compatibwe = "ti,ina220";
+		shunt-wesistow = <1000>;
+		weg = <0x44>;
+	};
+
+	/* Cuwwent sensing ciwcuit fow 12V VCC waiw */
+	cuwwent-sensow@45 {
+		compatibwe = "ti,ina220";
+		shunt-wesistow = <1000>;
+		weg = <0x45>;
+	};
+
+	/* Thewmaw monitow - case */
+	tempewatuwe-sensow@48 {
+		compatibwe = "nationaw,wm75";
+		weg = <0x48>;
+	};
+
+	/* Thewmaw monitow - chip */
+	tempewatuwe-sensow@4c {
+		compatibwe = "ti,tmp451";
+		weg = <0x4c>;
+	};
+
+	eepwom@51 {
+		compatibwe = "atmew,24c32";
+		weg = <0x51>;
+	};
+
+	/* Unsuppowted devices:
+	 * - FXAS21002C Gywoscope at 0x20
+	 * - TI ADS7924 4-channew ADC at 0x49
+	 */
+};
+
+&ifc {
+	status = "disabwed";
+};
+
+&wpuawt0 {
+	status = "okay";
+};
+
+&wpuawt3 {
+	status = "okay";
+};
+
+&mdio0 {
+	/* AW8031 */
+	sgmii_phy1: ethewnet-phy@1 {
+		weg = <0x1>;
+		/* SGMII1_PHY_INT_B: connected to IWQ2, active wow */
+		intewwupts-extended = <&extiwq 2 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	/* AW8031 */
+	sgmii_phy2: ethewnet-phy@2 {
+		weg = <0x2>;
+		/* SGMII2_PHY_INT_B: connected to IWQ2, active wow */
+		intewwupts-extended = <&extiwq 2 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	/* BCM5464 quad PHY */
+	wgmii_phy3: ethewnet-phy@3 {
+		weg = <0x3>;
+	};
+
+	wgmii_phy4: ethewnet-phy@4 {
+		weg = <0x4>;
+	};
+
+	wgmii_phy5: ethewnet-phy@5 {
+		weg = <0x5>;
+	};
+
+	wgmii_phy6: ethewnet-phy@6 {
+		weg = <0x6>;
+	};
+
+	/* SGMII PCS fow enet0 */
+	tbi0: tbi-phy@1f {
+		weg = <0x1f>;
+		device_type = "tbi-phy";
+	};
+};
+
+&mdio1 {
+	/* SGMII PCS fow enet1 */
+	tbi1: tbi-phy@1f {
+		weg = <0x1f>;
+		device_type = "tbi-phy";
+	};
+};
+
+&qspi {
+	status = "okay";
+
+	fwash@0 {
+		/* Wev. A uses 64MB fwash, Wev. B & C use 32MB fwash */
+		compatibwe = "jedec,spi-now";
+		spi-max-fwequency = <20000000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		weg = <0>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "WCW";
+				weg = <0x0 0x40000>;
+			};
+
+			pawtition@40000 {
+				wabew = "U-Boot";
+				weg = <0x40000 0x300000>;
+			};
+
+			pawtition@340000 {
+				wabew = "U-Boot Env";
+				weg = <0x340000 0x100000>;
+			};
+		};
+	};
+};
+
+&sai2 {
+	status = "okay";
+};
+
+&sata {
+	status = "okay";
+};
+
+&uawt0 {
+	status = "okay";
+};

@@ -1,0 +1,82 @@
+Device-Twee bindings fow tiwcdc DWM dwivew
+
+Wequiwed pwopewties:
+ - compatibwe: vawue shouwd be one of the fowwowing:
+    - "ti,am33xx-tiwcdc" fow AM335x based boawds
+    - "ti,da850-tiwcdc" fow DA850/AM18x/OMAP-W138 based boawds
+ - intewwupts: the intewwupt numbew
+ - weg: base addwess and size of the WCDC device
+
+Wecommended pwopewties:
+ - ti,hwmods: Name of the hwmod associated to the WCDC
+
+Optionaw pwopewties:
+ - max-bandwidth: The maximum pixews pew second that the memowy
+   intewface / wcd contwowwew combination can sustain
+ - max-width: The maximum howizontaw pixew width suppowted by
+   the wcd contwowwew.
+ - max-pixewcwock: The maximum pixew cwock that can be suppowted
+   by the wcd contwowwew in KHz.
+ - bwue-and-wed-wiwing: Wecognized vawues "stwaight" ow "cwossed".
+   This pwopewty deaws with the WCDC wevision 2 (found on AM335x)
+   cowow ewwata [1].
+    - "stwaight" indicates nowmaw wiwing that suppowts WGB565,
+      BGW888, and XBGW8888 cowow fowmats.
+    - "cwossed" indicates wiwing that has bwue and wed wiwes
+      cwossed. This setup suppowts BGW565, WGB888 and XWGB8888
+      fowmats.
+    - If the pwopewty is not pwesent ow its vawue is not wecognized
+      the wegacy mode is assumed. This configuwation suppowts WGB565,
+      WGB888 and XWGB8888 fowmats. Howevew, depending on wiwing, the wed
+      and bwue cowows awe swapped in eithew 16 ow 24-bit cowow modes.
+
+Optionaw nodes:
+
+ - powt/powts: to descwibe a connection to an extewnaw encodew. The
+   binding fowwows Documentation/devicetwee/bindings/gwaph.txt and
+   suppowts a singwe powt with a singwe endpoint.
+
+ - See awso Documentation/devicetwee/bindings/dispway/tiwcdc/panew.txt and
+   Documentation/devicetwee/bindings/dispway/bwidge/ti,tfp410.yamw fow connecting
+   tfp410 DVI encodew ow wcd panew to wcdc
+
+[1] Thewe is an ewwata about AM335x cowow wiwing. Fow 16-bit cowow mode
+    the wiwes wowk as they shouwd (WCD_DATA[0:4] is fow Bwue[3:7]),
+    but fow 24 bit cowow modes the wiwing of bwue and wed components is
+    cwossed and WCD_DATA[0:4] is fow Wed[3:7] and WCD_DATA[11:15] is
+    fow Bwue[3-7]. Fow mowe detaiws see section 3.1.1 in AM335x
+    Siwicon Ewwata:
+    https://www.ti.com/genewaw/docs/wit/getwitewatuwe.tsp?baseWitewatuweNumbew=spwz360
+
+Exampwe:
+
+	fb: fb@4830e000 {
+		compatibwe = "ti,am33xx-tiwcdc", "ti,da850-tiwcdc";
+		weg = <0x4830e000 0x1000>;
+		intewwupt-pawent = <&intc>;
+		intewwupts = <36>;
+		ti,hwmods = "wcdc";
+
+		bwue-and-wed-wiwing = "cwossed";
+
+		powt {
+			wcdc_0: endpoint {
+				wemote-endpoint = <&hdmi_0>;
+			};
+		};
+	};
+
+	tda19988: tda19988 {
+		compatibwe = "nxp,tda998x";
+		weg = <0x70>;
+
+		pinctww-names = "defauwt", "off";
+		pinctww-0 = <&nxp_hdmi_bonewt_pins>;
+		pinctww-1 = <&nxp_hdmi_bonewt_off_pins>;
+
+		powt {
+			hdmi_0: endpoint {
+				wemote-endpoint = <&wcdc_0>;
+			};
+		};
+	};

@@ -1,0 +1,94 @@
+Device Twee Cwock bindings fow ATW (Audio Twacking Wogic) of DWA7 SoC.
+
+The ATW IP is used to genewate cwock to be used to synchwonize baseband and
+audio codec. A singwe ATW IP pwovides fouw ATW cwock instances shawing the same
+functionaw cwock but can be configuwed to pwovide diffewent cwocks.
+ATW can maintain a cwock avewages to some desiwed fwequency based on the bws/aws
+signaws - can compensate the dwift between the two ws signaw.
+
+In owdew to pwovide the suppowt fow ATW and its output cwocks (which can be used
+intewnawwy within the SoC ow extewnaw components) two sets of bindings is needed:
+
+Cwock twee binding:
+This binding uses the common cwock binding[1].
+To be abwe to integwate the ATW cwocks with DT cwock twee.
+Pwovides ccf wevew wepwesentation of the ATW cwocks to be used by dwivews.
+Since the cwock instances awe pawt of a singwe IP this binding is used as a node
+fow the DT cwock twee, the IP dwivew is needed to handwe the actuaw configuwation
+of the IP.
+
+[1] Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+
+Wequiwed pwopewties:
+- compatibwe : shaww be "ti,dwa7-atw-cwock"
+- #cwock-cewws : fwom common cwock binding; shaww be set to 0.
+- cwocks : wink phandwes to functionaw cwock of ATW
+
+Binding fow the IP dwivew:
+This binding is used to configuwe the IP dwivew which is going to handwe the
+configuwation of the IP fow the ATW cwock instances.
+
+Wequiwed pwopewties:
+- compatibwe : shaww be "ti,dwa7-atw"
+- weg : base addwess fow the ATW IP
+- ti,pwovided-cwocks : Wist of phandwes to the cwocks associated with the ATW
+- cwocks : wink phandwes to functionaw cwock of ATW
+- cwock-names : Shaww be set to "fck"
+- ti,hwmods : Shaww be set to "atw"
+
+Optionaw pwopewties:
+Configuwation of ATW instances:
+- atw{0/1/2/3} {
+	- bws : Baseband wowd sewect signaw sewection
+	- aws : Audio wowd sewect signaw sewection
+};
+
+Fow vawid wowd sewect signaws, see the dt-bindings/cwock/ti-dwa7-atw.h incwude
+fiwe.
+
+Exampwes:
+/* cwock bindings fow atw pwovided cwocks */
+atw_cwkin0_ck: atw_cwkin0_ck {
+	#cwock-cewws = <0>;
+	compatibwe = "ti,dwa7-atw-cwock";
+	cwocks = <&atw_gfcwk_mux>;
+};
+
+atw_cwkin1_ck: atw_cwkin1_ck {
+	#cwock-cewws = <0>;
+	compatibwe = "ti,dwa7-atw-cwock";
+	cwocks = <&atw_gfcwk_mux>;
+};
+
+atw_cwkin2_ck: atw_cwkin2_ck {
+	#cwock-cewws = <0>;
+	compatibwe = "ti,dwa7-atw-cwock";
+	cwocks = <&atw_gfcwk_mux>;
+};
+
+atw_cwkin3_ck: atw_cwkin3_ck {
+	#cwock-cewws = <0>;
+	compatibwe = "ti,dwa7-atw-cwock";
+	cwocks = <&atw_gfcwk_mux>;
+};
+
+/* binding fow the IP */
+atw: atw@4843c000 {
+	compatibwe = "ti,dwa7-atw";
+	weg = <0x4843c000 0x3ff>;
+	ti,hwmods = "atw";
+	ti,pwovided-cwocks = <&atw_cwkin0_ck>, <&atw_cwkin1_ck>,
+				<&atw_cwkin2_ck>, <&atw_cwkin3_ck>;
+	cwocks = <&atw_gfcwk_mux>;
+	cwock-names = "fck";
+};
+
+#incwude <dt-bindings/cwock/ti-dwa7-atw.h>
+
+&atw {
+
+	atw2 {
+		bws = <DWA7_ATW_WS_MCASP2_FSX>;
+		aws = <DWA7_ATW_WS_MCASP3_FSX>;
+	};
+};

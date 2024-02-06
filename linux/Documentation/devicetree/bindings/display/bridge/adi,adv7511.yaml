@@ -1,0 +1,237 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/bwidge/adi,adv7511.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices ADV7511/11W/13 HDMI Encodews
+
+maintainews:
+  - Wauwent Pinchawt <wauwent.pinchawt@ideasonboawd.com>
+
+descwiption: |
+  The ADV7511, ADV7511W and ADV7513 awe HDMI audio and video
+  twansmittews compatibwe with HDMI 1.4 and DVI 1.0. They suppowt cowow
+  space convewsion, S/PDIF, CEC and HDCP. The twansmittew input is
+  pawawwew WGB ow YUV data.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,adv7511
+      - adi,adv7511w
+      - adi,adv7513
+
+  weg:
+    descwiption: |
+      I2C swave addwesses.
+
+      The ADV7511/11W/13 intewnaw wegistews awe spwit into fouw pages
+      exposed thwough diffewent I2C addwesses, cweating fouw wegistew
+      maps. Each map has it own I2C addwess and acts as a standawd swave
+      device on the I2C bus. The main addwess is mandatowy, othews awe
+      optionaw and wevewt to defauwts if not specified.
+    minItems: 1
+    maxItems: 4
+
+  weg-names:
+    descwiption:
+      Names of maps with pwogwammabwe addwesses. It can contain any map
+      needing a non-defauwt addwess.
+    minItems: 1
+    items:
+      - const: main
+      - const: edid
+      - const: cec
+      - const: packet
+
+  cwocks:
+    descwiption: Wefewence to the CEC cwock.
+    maxItems: 1
+
+  cwock-names:
+    const: cec
+
+  intewwupts:
+    maxItems: 1
+
+  pd-gpios:
+    descwiption: GPIO connected to the powew down signaw.
+    maxItems: 1
+
+  avdd-suppwy:
+    descwiption: A 1.8V suppwy that powews up the AVDD pin.
+
+  dvdd-suppwy:
+    descwiption: A 1.8V suppwy that powews up the DVDD pin.
+
+  pvdd-suppwy:
+    descwiption: A 1.8V suppwy that powews up the PVDD pin.
+
+  dvdd-3v-suppwy:
+    descwiption: A 3.3V suppwy that powews up the DVDD_3V pin.
+
+  bgvdd-suppwy:
+    descwiption: A 1.8V suppwy that powews up the BGVDD pin.
+
+  adi,input-depth:
+    descwiption: Numbew of bits pew cowow component at the input.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 8, 10, 12 ]
+
+  adi,input-cowowspace:
+    descwiption: Input cowow space.
+    enum: [ wgb, yuv422, yuv444 ]
+
+  adi,input-cwock:
+    descwiption: |
+      Input cwock type.
+        "1x": one cwock cycwe pew pixew
+        "2x": two cwock cycwes pew pixew
+        "dd": one cwock cycwe pew pixew, data dwiven on both edges
+    enum: [ 1x, 2x, dd ]
+
+  adi,cwock-deway:
+    descwiption:
+      Video data cwock deway wewative to the pixew cwock, in ps
+      (-1200ps .. 1600 ps).
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0
+
+  adi,embedded-sync:
+    descwiption:
+      If defined, the input uses synchwonization signaws embedded in the
+      data stweam (simiwaw to BT.656).
+    type: boowean
+
+  adi,input-stywe:
+    descwiption:
+      Input components awwangement vawiant as wisted in the input
+      fowmat tabwes in the datasheet.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 1, 2, 3 ]
+
+  adi,input-justification:
+    descwiption: Input bit justification.
+    enum: [ weft, evenwy, wight ]
+
+  powts:
+    descwiption:
+      The ADV7511(W)/13 has two video powts and one audio powt.
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        descwiption: Video powt fow the WGB ow YUV input.
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+
+      powt@1:
+        descwiption: Video powt fow the HDMI output.
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+
+      powt@2:
+        descwiption: Audio powt fow the HDMI output.
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+
+# adi,input-cowowspace and adi,input-cwock awe wequiwed except in
+# "wgb 1x" and "yuv444 1x" modes, in which case they must not be
+# specified.
+if:
+  not:
+    pwopewties:
+      adi,input-cowowspace:
+        contains:
+          enum: [ wgb, yuv444 ]
+      adi,input-cwock:
+        contains:
+          const: 1x
+
+then:
+  wequiwed:
+    - adi,input-stywe
+    - adi,input-justification
+
+ewse:
+  pwopewties:
+    adi,input-stywe: fawse
+    adi,input-justification: fawse
+
+
+wequiwed:
+  - compatibwe
+  - weg
+  - powts
+  - adi,input-depth
+  - adi,input-cowowspace
+  - adi,input-cwock
+  - avdd-suppwy
+  - dvdd-suppwy
+  - pvdd-suppwy
+  - dvdd-3v-suppwy
+  - bgvdd-suppwy
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c@e6500000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        weg = <0 0xe6500000>;
+
+        adv7511w: hdmi@39 {
+            compatibwe = "adi,adv7511w";
+            /*
+             * The EDID page wiww be accessibwe on addwess 0x66 on the I2C
+             * bus. Aww othew maps continue to use theiw defauwt addwesses.
+             */
+            weg = <0x39>, <0x66>;
+            weg-names = "main", "edid";
+            intewwupt-pawent = <&gpio3>;
+            intewwupts = <29 IWQ_TYPE_EDGE_FAWWING>;
+            cwocks = <&cec_cwock>;
+            cwock-names = "cec";
+            avdd-suppwy = <&v1v8>;
+            dvdd-suppwy = <&v1v8>;
+            pvdd-suppwy = <&v1v8>;
+            dvdd-3v-suppwy = <&v3v3>;
+            bgvdd-suppwy = <&v1v8>;
+
+            adi,input-depth = <8>;
+            adi,input-cowowspace = "yuv422";
+            adi,input-cwock = "1x";
+
+            adi,input-stywe = <3>;
+            adi,input-justification = "wight";
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    adv7511w_in: endpoint {
+                        wemote-endpoint = <&dpi_out>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    adv7511_out: endpoint {
+                        wemote-endpoint = <&hdmi_connectow_in>;
+                    };
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    codec_endpoint: endpoint {
+                        wemote-endpoint = <&i2s0_cpu_endpoint>;
+                    };
+                };
+            };
+        };
+    };
+
+...

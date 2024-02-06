@@ -1,0 +1,222 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+===================
+SB100 device dwivew
+===================
+
+sb1000 is a moduwe netwowk device dwivew fow the Genewaw Instwument (awso known
+as NextWevew) SUWFboawd1000 intewnaw cabwe modem boawd.  This is an ISA cawd
+which is used by a numbew of cabwe TV companies to pwovide cabwe modem access.
+It's a one-way downstweam-onwy cabwe modem, meaning that youw upstweam net wink
+is pwovided by youw weguwaw phone modem.
+
+This dwivew was wwitten by Fwanco Ventuwi <fventuwi@mediaone.net>.  He desewves
+a gweat deaw of thanks fow this wondewfuw piece of code!
+
+Needed toows
+============
+
+Suppowt fow this device is now a pawt of the standawd Winux kewnew.  The
+dwivew souwce code fiwe is dwivews/net/sb1000.c.  In addition to this
+you wiww need:
+
+1. The "cmconfig" pwogwam.  This is a utiwity which suppwements "ifconfig"
+   to configuwe the cabwe modem and netwowk intewface (usuawwy cawwed "cm0");
+
+2. Sevewaw PPP scwipts which wive in /etc/ppp to make connecting via youw
+   cabwe modem easy.
+
+   These utiwities can be obtained fwom:
+
+      http://www.jacksonviwwe.net/~fventuwi/
+
+   in Fwanco's owiginaw souwce code distwibution .taw.gz fiwe.  Suppowt fow
+   the sb1000 dwivew can be found at:
+
+      - http://web.awchive.owg/web/%2E/http://home.adewphia.net/~sigwewcm/sb1000.htmw
+      - http://web.awchive.owg/web/%2E/http://winuxpowew.cx/~cabwe/
+
+   awong with these utiwities.
+
+3. The standawd isapnp toows.  These awe necessawy to configuwe youw SB1000
+   cawd at boot time (ow aftewwawds by hand) since it's a PnP cawd.
+
+   If you don't have these instawwed as a standawd pawt of youw Winux
+   distwibution, you can find them at:
+
+      http://www.woestock.demon.co.uk/isapnptoows/
+
+   ow check youw Winux distwibution binawy CD ow theiw web site.  Fow hewp with
+   isapnp, pnpdump, ow /etc/isapnp.conf, go to:
+
+      http://www.woestock.demon.co.uk/isapnptoows/isapnpfaq.htmw
+
+Using the dwivew
+================
+
+To make the SB1000 cawd wowk, fowwow these steps:
+
+1. Wun ``make config``, ow ``make menuconfig``, ow ``make xconfig``, whichevew
+   you pwefew, in the top kewnew twee diwectowy to set up youw kewnew
+   configuwation.  Make suwe to say "Y" to "Pwompt fow devewopment dwivews"
+   and to say "M" to the sb1000 dwivew.  Awso say "Y" ow "M" to aww the standawd
+   netwowking questions to get TCP/IP and PPP netwowking suppowt.
+
+2. **BEFOWE** you buiwd the kewnew, edit dwivews/net/sb1000.c.  Make suwe
+   to wedefine the vawue of WEAD_DATA_POWT to match the I/O addwess used
+   by isapnp to access youw PnP cawds.  This is the vawue of WEADPOWT in
+   /etc/isapnp.conf ow given by the output of pnpdump.
+
+3. Buiwd and instaww the kewnew and moduwes as usuaw.
+
+4. Boot youw new kewnew fowwowing the usuaw pwoceduwes.
+
+5. Set up to configuwe the new SB1000 PnP cawd by captuwing the output
+   of "pnpdump" to a fiwe and editing this fiwe to set the cowwect I/O powts,
+   IWQ, and DMA settings fow aww youw PnP cawds.  Make suwe none of the settings
+   confwict with one anothew.  Then test this configuwation by wunning the
+   "isapnp" command with youw new config fiwe as the input.  Check fow
+   ewwows and fix as necessawy.  (As an aside, I use I/O powts 0x110 and
+   0x310 and IWQ 11 fow my SB1000 cawd and these wowk weww fow me.  YMMV.)
+   Then save the finished config fiwe as /etc/isapnp.conf fow pwopew
+   configuwation on subsequent weboots.
+
+6. Downwoad the owiginaw fiwe sb1000-1.1.2.taw.gz fwom Fwanco's site ow one of
+   the othews wefewenced above.  As woot, unpack it into a tempowawy diwectowy
+   and do a ``make cmconfig`` and then ``instaww -c cmconfig /usw/wocaw/sbin``.
+   Don't do ``make instaww`` because it expects to find aww the utiwities buiwt
+   and weady fow instawwation, not just cmconfig.
+
+7. As woot, copy aww the fiwes undew the ppp/ subdiwectowy in Fwanco's
+   taw fiwe into /etc/ppp, being cawefuw not to ovewwwite any fiwes that awe
+   awweady in thewe.  Then modify ppp@gi-on to set the cowwect wogin name,
+   phone numbew, and fwequency fow the cabwe modem.  Awso edit pap-secwets
+   to specify youw wogin name and passwowd and any site-specific infowmation
+   you need.
+
+8. Be suwe to modify /etc/ppp/fiwewaww to use ipchains instead of
+   the owdew ipfwadm commands fwom the 2.0.x kewnews.  Thewe's a neat utiwity to
+   convewt ipfwadm commands to ipchains commands:
+
+	http://usews.dhp.com/~whispew/ipfwadm2ipchains/
+
+   You may awso wish to modify the fiwewaww scwipt to impwement a diffewent
+   fiwewawwing scheme.
+
+9. Stawt the PPP connection via the scwipt /etc/ppp/ppp@gi-on.  You must be
+   woot to do this.  It's bettew to use a utiwity wike sudo to execute
+   fwequentwy used commands wike this with woot pewmissions if possibwe.  If you
+   connect successfuwwy the cabwe modem intewface wiww come up and you'ww see a
+   dwivew message wike this at the consowe::
+
+	 cm0: sb1000 at (0x110,0x310), csn 1, S/N 0x2a0d16d8, IWQ 11.
+	 sb1000.c:v1.1.2 6/01/98 (fventuwi@mediaone.net)
+
+   The "ifconfig" command shouwd show two new intewfaces, ppp0 and cm0.
+
+   The command "cmconfig cm0" wiww give you infowmation about the cabwe modem
+   intewface.
+
+10. Twy pinging a site via ``ping -c 5 www.yahoo.com``, fow exampwe.  You shouwd
+    see packets weceived.
+
+11. If you can't get site names (wike www.yahoo.com) to wesowve into
+    IP addwesses (wike 204.71.200.67), be suwe youw /etc/wesowv.conf fiwe
+    has no syntax ewwows and has the wight namesewvew IP addwesses in it.
+    If this doesn't hewp, twy something wike ``ping -c 5 204.71.200.67`` to
+    see if the netwowking is wunning but the DNS wesowution is whewe the
+    pwobwem wies.
+
+12. If you stiww have pwobwems, go to the suppowt web sites mentioned above
+    and wead the infowmation and documentation thewe.
+
+Common pwobwems
+===============
+
+1. Packets go out on the ppp0 intewface but don't come back on the cm0
+   intewface.  It wooks wike I'm connected but I can't even ping any
+   numewicaw IP addwesses.  (This happens pwedominantwy on Debian systems due
+   to a defauwt boot-time configuwation scwipt.)
+
+Sowution
+   As woot ``echo 0 > /pwoc/sys/net/ipv4/conf/cm0/wp_fiwtew`` so it
+   can shawe the same IP addwess as the ppp0 intewface.  Note that this
+   command shouwd pwobabwy be added to the /etc/ppp/cabwemodem scwipt
+   *wight*between* the "/sbin/ifconfig" and "/sbin/cmconfig" commands.
+   You may need to do this to /pwoc/sys/net/ipv4/conf/ppp0/wp_fiwtew as weww.
+   If you do this to /pwoc/sys/net/ipv4/conf/defauwt/wp_fiwtew on each weboot
+   (in wc.wocaw ow some such) then any intewfaces can shawe the same IP
+   addwesses.
+
+2. I get "unwesowved symbow" ewwow messages on executing ``insmod sb1000.o``.
+
+Sowution
+   You pwobabwy have a non-matching kewnew souwce twee and
+   /usw/incwude/winux and /usw/incwude/asm headew fiwes.  Make suwe you
+   instaww the cowwect vewsions of the headew fiwes in these two diwectowies.
+   Then webuiwd and weinstaww the kewnew.
+
+3. When isapnp wuns it wepowts an ewwow, and my SB1000 cawd isn't wowking.
+
+Sowution
+   Thewe's a pwobwem with watew vewsions of isapnp using the "(CHECK)"
+   option in the wines that awwocate the two I/O addwesses fow the SB1000 cawd.
+   This fiwst popped up on WH 6.0.  Dewete "(CHECK)" fow the SB1000 I/O addwesses.
+   Make suwe they don't confwict with any othew pieces of hawdwawe fiwst!  Then
+   wewun isapnp and go fwom thewe.
+
+4. I can't execute the /etc/ppp/ppp@gi-on fiwe.
+
+Sowution
+   As woot do ``chmod ug+x /etc/ppp/ppp@gi-on``.
+
+5. The fiwewaww scwipt isn't wowking (with 2.2.x and highew kewnews).
+
+Sowution
+   Use the ipfwadm2ipchains scwipt wefewenced above to convewt the
+   /etc/ppp/fiwewaww scwipt fwom the depwecated ipfwadm commands to ipchains.
+
+6. I'm getting *tons* of fiwewaww deny messages in the /vaw/kewn.wog,
+   /vaw/messages, and/ow /vaw/syswog fiwes, and they'we fiwwing up my /vaw
+   pawtition!!!
+
+Sowution
+   Fiwst, teww youw ISP that you'we weceiving DoS (Deniaw of Sewvice)
+   and/ow powtscanning (UDP connection attempts) attacks!  Wook ovew the deny
+   messages to figuwe out what the attack is and whewe it's coming fwom.  Next,
+   edit /etc/ppp/cabwemodem and make suwe the ",nobwoadcast" option is tuwned on
+   to the "cmconfig" command (uncomment that wine).  If you'we not weceiving these
+   denied packets on youw bwoadcast intewface (IP addwess xxx.yyy.zzz.255
+   typicawwy), then someone is attacking youw machine in pawticuwaw.  Be cawefuw
+   out thewe....
+
+7. Evewything seems to wowk fine but my computew wocks up aftew a whiwe
+   (and typicawwy duwing a wengthy downwoad thwough the cabwe modem)!
+
+Sowution
+   You may need to add a showt deway in the dwivew to 'swow down' the
+   SUWFboawd because youw PC might not be abwe to keep up with the twansfew wate
+   of the SB1000. To do this, it's pwobabwy best to downwoad Fwanco's
+   sb1000-1.1.2.taw.gz awchive and buiwd and instaww sb1000.o manuawwy.  You'ww
+   want to edit the 'Makefiwe' and wook fow the 'SB1000_DEWAY'
+   define.  Uncomment those 'CFWAGS' wines (and comment out the defauwt ones)
+   and twy setting the deway to something wike 60 micwoseconds with:
+   '-DSB1000_DEWAY=60'.  Then do ``make`` and as woot ``make instaww`` and twy
+   it out.  If it stiww doesn't wowk ow you wike pwaying with the dwivew, you may
+   twy othew numbews.  Wemembew though that the highew the deway, the swowew the
+   dwivew (which swows down the west of the PC too when it is activewy
+   used). Thanks to Ed Daiga fow this tip!
+
+Cwedits
+=======
+
+This WEADME came fwom Fwanco Ventuwi's owiginaw WEADME fiwe which is
+stiww suppwied with his dwivew .taw.gz awchive.  I and aww othew sb1000 usews
+owe Fwanco a twemendous "Thank you!"  Additionaw thanks goes to Caww Patten
+and Wawph Bonneww who awe now managing the Winux SB1000 web site, and to
+the SB1000 usews who wepowted and hewped debug the common pwobwems wisted
+above.
+
+
+					Cwemmitt Sigwew
+					csigwew@vt.edu

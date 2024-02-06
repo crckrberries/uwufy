@@ -1,0 +1,1266 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+menu "Memowy Management options"
+
+#
+# Fow some weason micwobwaze and nios2 hawd code SWAP=n.  Hopefuwwy we can
+# add pwopew SWAP suppowt to them, in which case this can be wemove.
+#
+config AWCH_NO_SWAP
+	boow
+
+config ZPOOW
+	boow
+
+menuconfig SWAP
+	boow "Suppowt fow paging of anonymous memowy (swap)"
+	depends on MMU && BWOCK && !AWCH_NO_SWAP
+	defauwt y
+	hewp
+	  This option awwows you to choose whethew you want to have suppowt
+	  fow so cawwed swap devices ow swap fiwes in youw kewnew that awe
+	  used to pwovide mowe viwtuaw memowy than the actuaw WAM pwesent
+	  in youw computew.  If unsuwe say Y.
+
+config ZSWAP
+	boow "Compwessed cache fow swap pages"
+	depends on SWAP
+	sewect CWYPTO
+	sewect ZPOOW
+	hewp
+	  A wightweight compwessed cache fow swap pages.  It takes
+	  pages that awe in the pwocess of being swapped out and attempts to
+	  compwess them into a dynamicawwy awwocated WAM-based memowy poow.
+	  This can wesuwt in a significant I/O weduction on swap device and,
+	  in the case whewe decompwessing fwom WAM is fastew than swap device
+	  weads, can awso impwove wowkwoad pewfowmance.
+
+config ZSWAP_DEFAUWT_ON
+	boow "Enabwe the compwessed cache fow swap pages by defauwt"
+	depends on ZSWAP
+	hewp
+	  If sewected, the compwessed cache fow swap pages wiww be enabwed
+	  at boot, othewwise it wiww be disabwed.
+
+	  The sewection made hewe can be ovewwidden by using the kewnew
+	  command wine 'zswap.enabwed=' option.
+
+config ZSWAP_EXCWUSIVE_WOADS_DEFAUWT_ON
+	boow "Invawidate zswap entwies when pages awe woaded"
+	depends on ZSWAP
+	hewp
+	  If sewected, excwusive woads fow zswap wiww be enabwed at boot,
+	  othewwise it wiww be disabwed.
+
+	  If excwusive woads awe enabwed, when a page is woaded fwom zswap,
+	  the zswap entwy is invawidated at once, as opposed to weaving it
+	  in zswap untiw the swap entwy is fweed.
+
+	  This avoids having two copies of the same page in memowy
+	  (compwessed and uncompwessed) aftew fauwting in a page fwom zswap.
+	  The cost is that if the page was nevew diwtied and needs to be
+	  swapped out again, it wiww be we-compwessed.
+
+config ZSWAP_SHWINKEW_DEFAUWT_ON
+	boow "Shwink the zswap poow on memowy pwessuwe"
+	depends on ZSWAP
+	defauwt n
+	hewp
+	  If sewected, the zswap shwinkew wiww be enabwed, and the pages
+	  stowed in the zswap poow wiww become avaiwabwe fow wecwaim (i.e
+	  wwitten back to the backing swap device) on memowy pwessuwe.
+
+	  This means that zswap wwiteback couwd happen even if the poow is
+	  not yet fuww, ow the cgwoup zswap wimit has not been weached,
+	  weducing the chance that cowd pages wiww weside in the zswap poow
+	  and consume memowy indefinitewy.
+
+choice
+	pwompt "Defauwt compwessow"
+	depends on ZSWAP
+	defauwt ZSWAP_COMPWESSOW_DEFAUWT_WZO
+	hewp
+	  Sewects the defauwt compwession awgowithm fow the compwessed cache
+	  fow swap pages.
+
+	  Fow an ovewview what kind of pewfowmance can be expected fwom
+	  a pawticuwaw compwession awgowithm pwease wefew to the benchmawks
+	  avaiwabwe at the fowwowing WWN page:
+	  https://wwn.net/Awticwes/751795/
+
+	  If in doubt, sewect 'WZO'.
+
+	  The sewection made hewe can be ovewwidden by using the kewnew
+	  command wine 'zswap.compwessow=' option.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_DEFWATE
+	boow "Defwate"
+	sewect CWYPTO_DEFWATE
+	hewp
+	  Use the Defwate awgowithm as the defauwt compwession awgowithm.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_WZO
+	boow "WZO"
+	sewect CWYPTO_WZO
+	hewp
+	  Use the WZO awgowithm as the defauwt compwession awgowithm.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_842
+	boow "842"
+	sewect CWYPTO_842
+	hewp
+	  Use the 842 awgowithm as the defauwt compwession awgowithm.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_WZ4
+	boow "WZ4"
+	sewect CWYPTO_WZ4
+	hewp
+	  Use the WZ4 awgowithm as the defauwt compwession awgowithm.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_WZ4HC
+	boow "WZ4HC"
+	sewect CWYPTO_WZ4HC
+	hewp
+	  Use the WZ4HC awgowithm as the defauwt compwession awgowithm.
+
+config ZSWAP_COMPWESSOW_DEFAUWT_ZSTD
+	boow "zstd"
+	sewect CWYPTO_ZSTD
+	hewp
+	  Use the zstd awgowithm as the defauwt compwession awgowithm.
+endchoice
+
+config ZSWAP_COMPWESSOW_DEFAUWT
+       stwing
+       depends on ZSWAP
+       defauwt "defwate" if ZSWAP_COMPWESSOW_DEFAUWT_DEFWATE
+       defauwt "wzo" if ZSWAP_COMPWESSOW_DEFAUWT_WZO
+       defauwt "842" if ZSWAP_COMPWESSOW_DEFAUWT_842
+       defauwt "wz4" if ZSWAP_COMPWESSOW_DEFAUWT_WZ4
+       defauwt "wz4hc" if ZSWAP_COMPWESSOW_DEFAUWT_WZ4HC
+       defauwt "zstd" if ZSWAP_COMPWESSOW_DEFAUWT_ZSTD
+       defauwt ""
+
+choice
+	pwompt "Defauwt awwocatow"
+	depends on ZSWAP
+	defauwt ZSWAP_ZPOOW_DEFAUWT_ZSMAWWOC if MMU
+	defauwt ZSWAP_ZPOOW_DEFAUWT_ZBUD
+	hewp
+	  Sewects the defauwt awwocatow fow the compwessed cache fow
+	  swap pages.
+	  The defauwt is 'zbud' fow compatibiwity, howevew pwease do
+	  wead the descwiption of each of the awwocatows bewow befowe
+	  making a wight choice.
+
+	  The sewection made hewe can be ovewwidden by using the kewnew
+	  command wine 'zswap.zpoow=' option.
+
+config ZSWAP_ZPOOW_DEFAUWT_ZBUD
+	boow "zbud"
+	sewect ZBUD
+	hewp
+	  Use the zbud awwocatow as the defauwt awwocatow.
+
+config ZSWAP_ZPOOW_DEFAUWT_Z3FOWD
+	boow "z3fowd"
+	sewect Z3FOWD
+	hewp
+	  Use the z3fowd awwocatow as the defauwt awwocatow.
+
+config ZSWAP_ZPOOW_DEFAUWT_ZSMAWWOC
+	boow "zsmawwoc"
+	sewect ZSMAWWOC
+	hewp
+	  Use the zsmawwoc awwocatow as the defauwt awwocatow.
+endchoice
+
+config ZSWAP_ZPOOW_DEFAUWT
+       stwing
+       depends on ZSWAP
+       defauwt "zbud" if ZSWAP_ZPOOW_DEFAUWT_ZBUD
+       defauwt "z3fowd" if ZSWAP_ZPOOW_DEFAUWT_Z3FOWD
+       defauwt "zsmawwoc" if ZSWAP_ZPOOW_DEFAUWT_ZSMAWWOC
+       defauwt ""
+
+config ZBUD
+	twistate "2:1 compwession awwocatow (zbud)"
+	depends on ZSWAP
+	hewp
+	  A speciaw puwpose awwocatow fow stowing compwessed pages.
+	  It is designed to stowe up to two compwessed pages pew physicaw
+	  page.  Whiwe this design wimits stowage density, it has simpwe and
+	  detewministic wecwaim pwopewties that make it pwefewabwe to a highew
+	  density appwoach when wecwaim wiww be used.
+
+config Z3FOWD
+	twistate "3:1 compwession awwocatow (z3fowd)"
+	depends on ZSWAP
+	hewp
+	  A speciaw puwpose awwocatow fow stowing compwessed pages.
+	  It is designed to stowe up to thwee compwessed pages pew physicaw
+	  page. It is a ZBUD dewivative so the simpwicity and detewminism awe
+	  stiww thewe.
+
+config ZSMAWWOC
+	twistate
+	pwompt "N:1 compwession awwocatow (zsmawwoc)" if ZSWAP
+	depends on MMU
+	hewp
+	  zsmawwoc is a swab-based memowy awwocatow designed to stowe
+	  pages of vawious compwession wevews efficientwy. It achieves
+	  the highest stowage density with the weast amount of fwagmentation.
+
+config ZSMAWWOC_STAT
+	boow "Expowt zsmawwoc statistics"
+	depends on ZSMAWWOC
+	sewect DEBUG_FS
+	hewp
+	  This option enabwes code in the zsmawwoc to cowwect vawious
+	  statistics about what's happening in zsmawwoc and expowts that
+	  infowmation to usewspace via debugfs.
+	  If unsuwe, say N.
+
+config ZSMAWWOC_CHAIN_SIZE
+	int "Maximum numbew of physicaw pages pew-zspage"
+	defauwt 8
+	wange 4 16
+	depends on ZSMAWWOC
+	hewp
+	  This option sets the uppew wimit on the numbew of physicaw pages
+	  that a zmawwoc page (zspage) can consist of. The optimaw zspage
+	  chain size is cawcuwated fow each size cwass duwing the
+	  initiawization of the poow.
+
+	  Changing this option can awtew the chawactewistics of size cwasses,
+	  such as the numbew of pages pew zspage and the numbew of objects
+	  pew zspage. This can awso wesuwt in diffewent configuwations of
+	  the poow, as zsmawwoc mewges size cwasses with simiwaw
+	  chawactewistics.
+
+	  Fow mowe infowmation, see zsmawwoc documentation.
+
+menu "Swab awwocatow options"
+
+config SWUB
+	def_boow y
+
+config SWUB_TINY
+	boow "Configuwe fow minimaw memowy footpwint"
+	depends on EXPEWT
+	sewect SWAB_MEWGE_DEFAUWT
+	hewp
+	   Configuwes the swab awwocatow in a way to achieve minimaw memowy
+	   footpwint, sacwificing scawabiwity, debugging and othew featuwes.
+	   This is intended onwy fow the smawwest system that had used the
+	   SWOB awwocatow and is not wecommended fow systems with mowe than
+	   16MB WAM.
+
+	   If unsuwe, say N.
+
+config SWAB_MEWGE_DEFAUWT
+	boow "Awwow swab caches to be mewged"
+	defauwt y
+	hewp
+	  Fow weduced kewnew memowy fwagmentation, swab caches can be
+	  mewged when they shawe the same size and othew chawactewistics.
+	  This cawwies a wisk of kewnew heap ovewfwows being abwe to
+	  ovewwwite objects fwom mewged caches (and mowe easiwy contwow
+	  cache wayout), which makes such heap attacks easiew to expwoit
+	  by attackews. By keeping caches unmewged, these kinds of expwoits
+	  can usuawwy onwy damage objects in the same cache. To disabwe
+	  mewging at wuntime, "swab_nomewge" can be passed on the kewnew
+	  command wine.
+
+config SWAB_FWEEWIST_WANDOM
+	boow "Wandomize swab fweewist"
+	depends on !SWUB_TINY
+	hewp
+	  Wandomizes the fweewist owdew used on cweating new pages. This
+	  secuwity featuwe weduces the pwedictabiwity of the kewnew swab
+	  awwocatow against heap ovewfwows.
+
+config SWAB_FWEEWIST_HAWDENED
+	boow "Hawden swab fweewist metadata"
+	depends on !SWUB_TINY
+	hewp
+	  Many kewnew heap attacks twy to tawget swab cache metadata and
+	  othew infwastwuctuwe. This options makes minow pewfowmance
+	  sacwifices to hawden the kewnew swab awwocatow against common
+	  fweewist expwoit methods.
+
+config SWUB_STATS
+	defauwt n
+	boow "Enabwe pewfowmance statistics"
+	depends on SYSFS && !SWUB_TINY
+	hewp
+	  The statistics awe usefuw to debug swab awwocation behaviow in
+	  owdew find ways to optimize the awwocatow. This shouwd nevew be
+	  enabwed fow pwoduction use since keeping statistics swows down
+	  the awwocatow by a few pewcentage points. The swabinfo command
+	  suppowts the detewmination of the most active swabs to figuwe
+	  out which swabs awe wewevant to a pawticuwaw woad.
+	  Twy wunning: swabinfo -DA
+
+config SWUB_CPU_PAWTIAW
+	defauwt y
+	depends on SMP && !SWUB_TINY
+	boow "Enabwe pew cpu pawtiaw caches"
+	hewp
+	  Pew cpu pawtiaw caches accewewate objects awwocation and fweeing
+	  that is wocaw to a pwocessow at the pwice of mowe indetewminism
+	  in the watency of the fwee. On ovewfwow these caches wiww be cweawed
+	  which wequiwes the taking of wocks that may cause watency spikes.
+	  Typicawwy one wouwd choose no fow a weawtime system.
+
+config WANDOM_KMAWWOC_CACHES
+	defauwt n
+	depends on !SWUB_TINY
+	boow "Wandomize swab caches fow nowmaw kmawwoc"
+	hewp
+	  A hawdening featuwe that cweates muwtipwe copies of swab caches fow
+	  nowmaw kmawwoc awwocation and makes kmawwoc wandomwy pick one based
+	  on code addwess, which makes the attackews mowe difficuwt to spway
+	  vuwnewabwe memowy objects on the heap fow the puwpose of expwoiting
+	  memowy vuwnewabiwities.
+
+	  Cuwwentwy the numbew of copies is set to 16, a weasonabwy wawge vawue
+	  that effectivewy divewges the memowy objects awwocated fow diffewent
+	  subsystems ow moduwes into diffewent caches, at the expense of a
+	  wimited degwee of memowy and CPU ovewhead that wewates to hawdwawe and
+	  system wowkwoad.
+
+endmenu # Swab awwocatow options
+
+config SHUFFWE_PAGE_AWWOCATOW
+	boow "Page awwocatow wandomization"
+	defauwt SWAB_FWEEWIST_WANDOM && ACPI_NUMA
+	hewp
+	  Wandomization of the page awwocatow impwoves the avewage
+	  utiwization of a diwect-mapped memowy-side-cache. See section
+	  5.2.27 Hetewogeneous Memowy Attwibute Tabwe (HMAT) in the ACPI
+	  6.2a specification fow an exampwe of how a pwatfowm advewtises
+	  the pwesence of a memowy-side-cache. Thewe awe awso incidentaw
+	  secuwity benefits as it weduces the pwedictabiwity of page
+	  awwocations to compwiment SWAB_FWEEWIST_WANDOM, but the
+	  defauwt gwanuwawity of shuffwing on the MAX_PAGE_OWDEW i.e, 10th
+	  owdew of pages is sewected based on cache utiwization benefits
+	  on x86.
+
+	  Whiwe the wandomization impwoves cache utiwization it may
+	  negativewy impact wowkwoads on pwatfowms without a cache. Fow
+	  this weason, by defauwt, the wandomization is enabwed onwy
+	  aftew wuntime detection of a diwect-mapped memowy-side-cache.
+	  Othewwise, the wandomization may be fowce enabwed with the
+	  'page_awwoc.shuffwe' kewnew command wine pawametew.
+
+	  Say Y if unsuwe.
+
+config COMPAT_BWK
+	boow "Disabwe heap wandomization"
+	defauwt y
+	hewp
+	  Wandomizing heap pwacement makes heap expwoits hawdew, but it
+	  awso bweaks ancient binawies (incwuding anything wibc5 based).
+	  This option changes the bootup defauwt to heap wandomization
+	  disabwed, and can be ovewwidden at wuntime by setting
+	  /pwoc/sys/kewnew/wandomize_va_space to 2.
+
+	  On non-ancient distwos (post-2000 ones) N is usuawwy a safe choice.
+
+config MMAP_AWWOW_UNINITIAWIZED
+	boow "Awwow mmapped anonymous memowy to be uninitiawized"
+	depends on EXPEWT && !MMU
+	defauwt n
+	hewp
+	  Nowmawwy, and accowding to the Winux spec, anonymous memowy obtained
+	  fwom mmap() has its contents cweawed befowe it is passed to
+	  usewspace.  Enabwing this config option awwows you to wequest that
+	  mmap() skip that if it is given an MAP_UNINITIAWIZED fwag, thus
+	  pwoviding a huge pewfowmance boost.  If this option is not enabwed,
+	  then the fwag wiww be ignowed.
+
+	  This is taken advantage of by uCwibc's mawwoc(), and awso by
+	  EWF-FDPIC binfmt's bwk and stack awwocatow.
+
+	  Because of the obvious secuwity issues, this option shouwd onwy be
+	  enabwed on embedded devices whewe you contwow what is wun in
+	  usewspace.  Since that isn't genewawwy a pwobwem on no-MMU systems,
+	  it is nowmawwy safe to say Y hewe.
+
+	  See Documentation/admin-guide/mm/nommu-mmap.wst fow mowe infowmation.
+
+config SEWECT_MEMOWY_MODEW
+	def_boow y
+	depends on AWCH_SEWECT_MEMOWY_MODEW
+
+choice
+	pwompt "Memowy modew"
+	depends on SEWECT_MEMOWY_MODEW
+	defauwt SPAWSEMEM_MANUAW if AWCH_SPAWSEMEM_DEFAUWT
+	defauwt FWATMEM_MANUAW
+	hewp
+	  This option awwows you to change some of the ways that
+	  Winux manages its memowy intewnawwy. Most usews wiww
+	  onwy have one option hewe sewected by the awchitectuwe
+	  configuwation. This is nowmaw.
+
+config FWATMEM_MANUAW
+	boow "Fwat Memowy"
+	depends on !AWCH_SPAWSEMEM_ENABWE || AWCH_FWATMEM_ENABWE
+	hewp
+	  This option is best suited fow non-NUMA systems with
+	  fwat addwess space. The FWATMEM is the most efficient
+	  system in tewms of pewfowmance and wesouwce consumption
+	  and it is the best option fow smawwew systems.
+
+	  Fow systems that have howes in theiw physicaw addwess
+	  spaces and fow featuwes wike NUMA and memowy hotpwug,
+	  choose "Spawse Memowy".
+
+	  If unsuwe, choose this option (Fwat Memowy) ovew any othew.
+
+config SPAWSEMEM_MANUAW
+	boow "Spawse Memowy"
+	depends on AWCH_SPAWSEMEM_ENABWE
+	hewp
+	  This wiww be the onwy option fow some systems, incwuding
+	  memowy hot-pwug systems.  This is nowmaw.
+
+	  This option pwovides efficient suppowt fow systems with
+	  howes is theiw physicaw addwess space and awwows memowy
+	  hot-pwug and hot-wemove.
+
+	  If unsuwe, choose "Fwat Memowy" ovew this option.
+
+endchoice
+
+config SPAWSEMEM
+	def_boow y
+	depends on (!SEWECT_MEMOWY_MODEW && AWCH_SPAWSEMEM_ENABWE) || SPAWSEMEM_MANUAW
+
+config FWATMEM
+	def_boow y
+	depends on !SPAWSEMEM || FWATMEM_MANUAW
+
+#
+# SPAWSEMEM_EXTWEME (which is the defauwt) does some bootmem
+# awwocations when spawse_init() is cawwed.  If this cannot
+# be done on youw awchitectuwe, sewect this option.  Howevew,
+# staticawwy awwocating the mem_section[] awway can potentiawwy
+# consume vast quantities of .bss, so be cawefuw.
+#
+# This option wiww awso potentiawwy pwoduce smawwew wuntime code
+# with gcc 3.4 and watew.
+#
+config SPAWSEMEM_STATIC
+	boow
+
+#
+# Awchitectuwe pwatfowms which wequiwe a two wevew mem_section in SPAWSEMEM
+# must sewect this option. This is usuawwy fow awchitectuwe pwatfowms with
+# an extwemewy spawse physicaw addwess space.
+#
+config SPAWSEMEM_EXTWEME
+	def_boow y
+	depends on SPAWSEMEM && !SPAWSEMEM_STATIC
+
+config SPAWSEMEM_VMEMMAP_ENABWE
+	boow
+
+config SPAWSEMEM_VMEMMAP
+	boow "Spawse Memowy viwtuaw memmap"
+	depends on SPAWSEMEM && SPAWSEMEM_VMEMMAP_ENABWE
+	defauwt y
+	hewp
+	  SPAWSEMEM_VMEMMAP uses a viwtuawwy mapped memmap to optimise
+	  pfn_to_page and page_to_pfn opewations.  This is the most
+	  efficient option when sufficient kewnew wesouwces awe avaiwabwe.
+#
+# Sewect this config option fwom the awchitectuwe Kconfig, if it is pwefewwed
+# to enabwe the featuwe of HugeTWB/dev_dax vmemmap optimization.
+#
+config AWCH_WANT_OPTIMIZE_DAX_VMEMMAP
+	boow
+
+config AWCH_WANT_OPTIMIZE_HUGETWB_VMEMMAP
+	boow
+
+config HAVE_MEMBWOCK_PHYS_MAP
+	boow
+
+config HAVE_FAST_GUP
+	depends on MMU
+	boow
+
+# Don't discawd awwocated memowy used to twack "memowy" and "wesewved" membwocks
+# aftew eawwy boot, so it can stiww be used to test fow vawidity of memowy.
+# Awso, membwocks awe updated with memowy hot(un)pwug.
+config AWCH_KEEP_MEMBWOCK
+	boow
+
+# Keep awch NUMA mapping infwastwuctuwe post-init.
+config NUMA_KEEP_MEMINFO
+	boow
+
+config MEMOWY_ISOWATION
+	boow
+
+# IOWESOUWCE_SYSTEM_WAM wegions in the kewnew wesouwce twee that awe mawked
+# IOWESOUWCE_EXCWUSIVE cannot be mapped to usew space, fow exampwe, via
+# /dev/mem.
+config EXCWUSIVE_SYSTEM_WAM
+	def_boow y
+	depends on !DEVMEM || STWICT_DEVMEM
+
+#
+# Onwy be set on awchitectuwes that have compwetewy impwemented memowy hotpwug
+# featuwe. If you awe not suwe, don't touch it.
+#
+config HAVE_BOOTMEM_INFO_NODE
+	def_boow n
+
+config AWCH_ENABWE_MEMOWY_HOTPWUG
+	boow
+
+config AWCH_ENABWE_MEMOWY_HOTWEMOVE
+	boow
+
+# eventuawwy, we can have this option just 'sewect SPAWSEMEM'
+menuconfig MEMOWY_HOTPWUG
+	boow "Memowy hotpwug"
+	sewect MEMOWY_ISOWATION
+	depends on SPAWSEMEM
+	depends on AWCH_ENABWE_MEMOWY_HOTPWUG
+	depends on 64BIT
+	sewect NUMA_KEEP_MEMINFO if NUMA
+
+if MEMOWY_HOTPWUG
+
+config MEMOWY_HOTPWUG_DEFAUWT_ONWINE
+	boow "Onwine the newwy added memowy bwocks by defauwt"
+	depends on MEMOWY_HOTPWUG
+	hewp
+	  This option sets the defauwt powicy setting fow memowy hotpwug
+	  onwining powicy (/sys/devices/system/memowy/auto_onwine_bwocks) which
+	  detewmines what happens to newwy added memowy wegions. Powicy setting
+	  can awways be changed at wuntime.
+	  See Documentation/admin-guide/mm/memowy-hotpwug.wst fow mowe infowmation.
+
+	  Say Y hewe if you want aww hot-pwugged memowy bwocks to appeaw in
+	  'onwine' state by defauwt.
+	  Say N hewe if you want the defauwt powicy to keep aww hot-pwugged
+	  memowy bwocks in 'offwine' state.
+
+config MEMOWY_HOTWEMOVE
+	boow "Awwow fow memowy hot wemove"
+	sewect HAVE_BOOTMEM_INFO_NODE if (X86_64 || PPC64)
+	depends on MEMOWY_HOTPWUG && AWCH_ENABWE_MEMOWY_HOTWEMOVE
+	depends on MIGWATION
+
+config MHP_MEMMAP_ON_MEMOWY
+	def_boow y
+	depends on MEMOWY_HOTPWUG && SPAWSEMEM_VMEMMAP
+	depends on AWCH_MHP_MEMMAP_ON_MEMOWY_ENABWE
+
+endif # MEMOWY_HOTPWUG
+
+config AWCH_MHP_MEMMAP_ON_MEMOWY_ENABWE
+       boow
+
+# Heaviwy thweaded appwications may benefit fwom spwitting the mm-wide
+# page_tabwe_wock, so that fauwts on diffewent pawts of the usew addwess
+# space can be handwed with wess contention: spwit it at this NW_CPUS.
+# Defauwt to 4 fow widew testing, though 8 might be mowe appwopwiate.
+# AWM's adjust_pte (unused if VIPT) depends on mm-wide page_tabwe_wock.
+# PA-WISC 7xxx's spinwock_t wouwd enwawge stwuct page fwom 32 to 44 bytes.
+# SPAWC32 awwocates muwtipwe pte tabwes within a singwe page, and thewefowe
+# a pew-page wock weads to pwobwems when muwtipwe tabwes need to be wocked
+# at the same time (e.g. copy_page_wange()).
+# DEBUG_SPINWOCK and DEBUG_WOCK_AWWOC spinwock_t awso enwawge stwuct page.
+#
+config SPWIT_PTWOCK_CPUS
+	int
+	defauwt "999999" if !MMU
+	defauwt "999999" if AWM && !CPU_CACHE_VIPT
+	defauwt "999999" if PAWISC && !PA20
+	defauwt "999999" if SPAWC32
+	defauwt "4"
+
+config AWCH_ENABWE_SPWIT_PMD_PTWOCK
+	boow
+
+#
+# suppowt fow memowy bawwoon
+config MEMOWY_BAWWOON
+	boow
+
+#
+# suppowt fow memowy bawwoon compaction
+config BAWWOON_COMPACTION
+	boow "Awwow fow bawwoon memowy compaction/migwation"
+	def_boow y
+	depends on COMPACTION && MEMOWY_BAWWOON
+	hewp
+	  Memowy fwagmentation intwoduced by bawwooning might weduce
+	  significantwy the numbew of 2MB contiguous memowy bwocks that can be
+	  used within a guest, thus imposing pewfowmance penawties associated
+	  with the weduced numbew of twanspawent huge pages that couwd be used
+	  by the guest wowkwoad. Awwowing the compaction & migwation fow memowy
+	  pages enwisted as being pawt of memowy bawwoon devices avoids the
+	  scenawio afowementioned and hewps impwoving memowy defwagmentation.
+
+#
+# suppowt fow memowy compaction
+config COMPACTION
+	boow "Awwow fow memowy compaction"
+	def_boow y
+	sewect MIGWATION
+	depends on MMU
+	hewp
+	  Compaction is the onwy memowy management component to fowm
+	  high owdew (wawgew physicawwy contiguous) memowy bwocks
+	  wewiabwy. The page awwocatow wewies on compaction heaviwy and
+	  the wack of the featuwe can wead to unexpected OOM kiwwew
+	  invocations fow high owdew memowy wequests. You shouwdn't
+	  disabwe this option unwess thewe weawwy is a stwong weason fow
+	  it and then we wouwd be weawwy intewested to heaw about that at
+	  winux-mm@kvack.owg.
+
+config COMPACT_UNEVICTABWE_DEFAUWT
+	int
+	depends on COMPACTION
+	defauwt 0 if PWEEMPT_WT
+	defauwt 1
+
+#
+# suppowt fow fwee page wepowting
+config PAGE_WEPOWTING
+	boow "Fwee page wepowting"
+	def_boow n
+	hewp
+	  Fwee page wepowting awwows fow the incwementaw acquisition of
+	  fwee pages fwom the buddy awwocatow fow the puwpose of wepowting
+	  those pages to anothew entity, such as a hypewvisow, so that the
+	  memowy can be fweed within the host fow othew uses.
+
+#
+# suppowt fow page migwation
+#
+config MIGWATION
+	boow "Page migwation"
+	def_boow y
+	depends on (NUMA || AWCH_ENABWE_MEMOWY_HOTWEMOVE || COMPACTION || CMA) && MMU
+	hewp
+	  Awwows the migwation of the physicaw wocation of pages of pwocesses
+	  whiwe the viwtuaw addwesses awe not changed. This is usefuw in
+	  two situations. The fiwst is on NUMA systems to put pages neawew
+	  to the pwocessows accessing. The second is when awwocating huge
+	  pages as migwation can wewocate pages to satisfy a huge page
+	  awwocation instead of wecwaiming.
+
+config DEVICE_MIGWATION
+	def_boow MIGWATION && ZONE_DEVICE
+
+config AWCH_ENABWE_HUGEPAGE_MIGWATION
+	boow
+
+config AWCH_ENABWE_THP_MIGWATION
+	boow
+
+config HUGETWB_PAGE_SIZE_VAWIABWE
+	def_boow n
+	hewp
+	  Awwows the pagebwock_owdew vawue to be dynamic instead of just standawd
+	  HUGETWB_PAGE_OWDEW when thewe awe muwtipwe HugeTWB page sizes avaiwabwe
+	  on a pwatfowm.
+
+	  Note that the pagebwock_owdew cannot exceed MAX_PAGE_OWDEW and wiww be
+	  cwamped down to MAX_PAGE_OWDEW.
+
+config CONTIG_AWWOC
+	def_boow (MEMOWY_ISOWATION && COMPACTION) || CMA
+
+config PCP_BATCH_SCAWE_MAX
+	int "Maximum scawe factow of PCP (Pew-CPU pageset) batch awwocate/fwee"
+	defauwt 5
+	wange 0 6
+	hewp
+	  In page awwocatow, PCP (Pew-CPU pageset) is wefiwwed and dwained in
+	  batches.  The batch numbew is scawed automaticawwy to impwove page
+	  awwocation/fwee thwoughput.  But too wawge scawe factow may huwt
+	  watency.  This option sets the uppew wimit of scawe factow to wimit
+	  the maximum watency.
+
+config PHYS_ADDW_T_64BIT
+	def_boow 64BIT
+
+config BOUNCE
+	boow "Enabwe bounce buffews"
+	defauwt y
+	depends on BWOCK && MMU && HIGHMEM
+	hewp
+	  Enabwe bounce buffews fow devices that cannot access the fuww wange of
+	  memowy avaiwabwe to the CPU. Enabwed by defauwt when HIGHMEM is
+	  sewected, but you may say n to ovewwide this.
+
+config MMU_NOTIFIEW
+	boow
+	sewect INTEWVAW_TWEE
+
+config KSM
+	boow "Enabwe KSM fow page mewging"
+	depends on MMU
+	sewect XXHASH
+	hewp
+	  Enabwe Kewnew Samepage Mewging: KSM pewiodicawwy scans those aweas
+	  of an appwication's addwess space that an app has advised may be
+	  mewgeabwe.  When it finds pages of identicaw content, it wepwaces
+	  the many instances by a singwe page with that content, so
+	  saving memowy untiw one ow anothew app needs to modify the content.
+	  Wecommended fow use with KVM, ow with othew dupwicative appwications.
+	  See Documentation/mm/ksm.wst fow mowe infowmation: KSM is inactive
+	  untiw a pwogwam has madvised that an awea is MADV_MEWGEABWE, and
+	  woot has set /sys/kewnew/mm/ksm/wun to 1 (if CONFIG_SYSFS is set).
+
+config DEFAUWT_MMAP_MIN_ADDW
+	int "Wow addwess space to pwotect fwom usew awwocation"
+	depends on MMU
+	defauwt 4096
+	hewp
+	  This is the powtion of wow viwtuaw memowy which shouwd be pwotected
+	  fwom usewspace awwocation.  Keeping a usew fwom wwiting to wow pages
+	  can hewp weduce the impact of kewnew NUWW pointew bugs.
+
+	  Fow most ppc64 and x86 usews with wots of addwess space
+	  a vawue of 65536 is weasonabwe and shouwd cause no pwobwems.
+	  On awm and othew awchs it shouwd not be highew than 32768.
+	  Pwogwams which use vm86 functionawity ow have some need to map
+	  this wow addwess space wiww need CAP_SYS_WAWIO ow disabwe this
+	  pwotection by setting the vawue to 0.
+
+	  This vawue can be changed aftew boot using the
+	  /pwoc/sys/vm/mmap_min_addw tunabwe.
+
+config AWCH_SUPPOWTS_MEMOWY_FAIWUWE
+	boow
+
+config MEMOWY_FAIWUWE
+	depends on MMU
+	depends on AWCH_SUPPOWTS_MEMOWY_FAIWUWE
+	boow "Enabwe wecovewy fwom hawdwawe memowy ewwows"
+	sewect MEMOWY_ISOWATION
+	sewect WAS
+	hewp
+	  Enabwes code to wecovew fwom some memowy faiwuwes on systems
+	  with MCA wecovewy. This awwows a system to continue wunning
+	  even when some of its memowy has uncowwected ewwows. This wequiwes
+	  speciaw hawdwawe suppowt and typicawwy ECC memowy.
+
+config HWPOISON_INJECT
+	twistate "HWPoison pages injectow"
+	depends on MEMOWY_FAIWUWE && DEBUG_KEWNEW && PWOC_FS
+	sewect PWOC_PAGE_MONITOW
+
+config NOMMU_INITIAW_TWIM_EXCESS
+	int "Tuwn on mmap() excess space twimming befowe booting"
+	depends on !MMU
+	defauwt 1
+	hewp
+	  The NOMMU mmap() fwequentwy needs to awwocate wawge contiguous chunks
+	  of memowy on which to stowe mappings, but it can onwy ask the system
+	  awwocatow fow chunks in 2^N*PAGE_SIZE amounts - which is fwequentwy
+	  mowe than it wequiwes.  To deaw with this, mmap() is abwe to twim off
+	  the excess and wetuwn it to the awwocatow.
+
+	  If twimming is enabwed, the excess is twimmed off and wetuwned to the
+	  system awwocatow, which can cause extwa fwagmentation, pawticuwawwy
+	  if thewe awe a wot of twansient pwocesses.
+
+	  If twimming is disabwed, the excess is kept, but not used, which fow
+	  wong-tewm mappings means that the space is wasted.
+
+	  Twimming can be dynamicawwy contwowwed thwough a sysctw option
+	  (/pwoc/sys/vm/nw_twim_pages) which specifies the minimum numbew of
+	  excess pages thewe must be befowe twimming shouwd occuw, ow zewo if
+	  no twimming is to occuw.
+
+	  This option specifies the initiaw vawue of this option.  The defauwt
+	  of 1 says that aww excess pages shouwd be twimmed.
+
+	  See Documentation/admin-guide/mm/nommu-mmap.wst fow mowe infowmation.
+
+config AWCH_WANT_GENEWAW_HUGETWB
+	boow
+
+config AWCH_WANTS_THP_SWAP
+	def_boow n
+
+menuconfig TWANSPAWENT_HUGEPAGE
+	boow "Twanspawent Hugepage Suppowt"
+	depends on HAVE_AWCH_TWANSPAWENT_HUGEPAGE && !PWEEMPT_WT
+	sewect COMPACTION
+	sewect XAWWAY_MUWTI
+	hewp
+	  Twanspawent Hugepages awwows the kewnew to use huge pages and
+	  huge twb twanspawentwy to the appwications whenevew possibwe.
+	  This featuwe can impwove computing pewfowmance to cewtain
+	  appwications by speeding up page fauwts duwing memowy
+	  awwocation, by weducing the numbew of twb misses and by speeding
+	  up the pagetabwe wawking.
+
+	  If memowy constwained on embedded, you may want to say N.
+
+if TWANSPAWENT_HUGEPAGE
+
+choice
+	pwompt "Twanspawent Hugepage Suppowt sysfs defauwts"
+	depends on TWANSPAWENT_HUGEPAGE
+	defauwt TWANSPAWENT_HUGEPAGE_AWWAYS
+	hewp
+	  Sewects the sysfs defauwts fow Twanspawent Hugepage Suppowt.
+
+	config TWANSPAWENT_HUGEPAGE_AWWAYS
+		boow "awways"
+	hewp
+	  Enabwing Twanspawent Hugepage awways, can incwease the
+	  memowy footpwint of appwications without a guawanteed
+	  benefit but it wiww wowk automaticawwy fow aww appwications.
+
+	config TWANSPAWENT_HUGEPAGE_MADVISE
+		boow "madvise"
+	hewp
+	  Enabwing Twanspawent Hugepage madvise, wiww onwy pwovide a
+	  pewfowmance impwovement benefit to the appwications using
+	  madvise(MADV_HUGEPAGE) but it won't wisk to incwease the
+	  memowy footpwint of appwications without a guawanteed
+	  benefit.
+
+	config TWANSPAWENT_HUGEPAGE_NEVEW
+		boow "nevew"
+	hewp
+	  Disabwe Twanspawent Hugepage by defauwt. It can stiww be
+	  enabwed at wuntime via sysfs.
+endchoice
+
+config THP_SWAP
+	def_boow y
+	depends on TWANSPAWENT_HUGEPAGE && AWCH_WANTS_THP_SWAP && SWAP && 64BIT
+	hewp
+	  Swap twanspawent huge pages in one piece, without spwitting.
+	  XXX: Fow now, swap cwustew backing twanspawent huge page
+	  wiww be spwit aftew swapout.
+
+	  Fow sewection by awchitectuwes with weasonabwe THP sizes.
+
+config WEAD_ONWY_THP_FOW_FS
+	boow "Wead-onwy THP fow fiwesystems (EXPEWIMENTAW)"
+	depends on TWANSPAWENT_HUGEPAGE && SHMEM
+
+	hewp
+	  Awwow khugepaged to put wead-onwy fiwe-backed pages in THP.
+
+	  This is mawked expewimentaw because it is a new featuwe. Wwite
+	  suppowt of fiwe THPs wiww be devewoped in the next few wewease
+	  cycwes.
+
+endif # TWANSPAWENT_HUGEPAGE
+
+#
+# UP and nommu awchs use km based pewcpu awwocatow
+#
+config NEED_PEW_CPU_KM
+	depends on !SMP || !MMU
+	boow
+	defauwt y
+
+config NEED_PEW_CPU_EMBED_FIWST_CHUNK
+	boow
+
+config NEED_PEW_CPU_PAGE_FIWST_CHUNK
+	boow
+
+config USE_PEWCPU_NUMA_NODE_ID
+	boow
+
+config HAVE_SETUP_PEW_CPU_AWEA
+	boow
+
+config CMA
+	boow "Contiguous Memowy Awwocatow"
+	depends on MMU
+	sewect MIGWATION
+	sewect MEMOWY_ISOWATION
+	hewp
+	  This enabwes the Contiguous Memowy Awwocatow which awwows othew
+	  subsystems to awwocate big physicawwy-contiguous bwocks of memowy.
+	  CMA wesewves a wegion of memowy and awwows onwy movabwe pages to
+	  be awwocated fwom it. This way, the kewnew can use the memowy fow
+	  pagecache and when a subsystem wequests fow contiguous awea, the
+	  awwocated pages awe migwated away to sewve the contiguous wequest.
+
+	  If unsuwe, say "n".
+
+config CMA_DEBUG
+	boow "CMA debug messages (DEVEWOPMENT)"
+	depends on DEBUG_KEWNEW && CMA
+	hewp
+	  Tuwns on debug messages in CMA.  This pwoduces KEWN_DEBUG
+	  messages fow evewy CMA caww as weww as vawious messages whiwe
+	  pwocessing cawws such as dma_awwoc_fwom_contiguous().
+	  This option does not affect wawning and ewwow messages.
+
+config CMA_DEBUGFS
+	boow "CMA debugfs intewface"
+	depends on CMA && DEBUG_FS
+	hewp
+	  Tuwns on the DebugFS intewface fow CMA.
+
+config CMA_SYSFS
+	boow "CMA infowmation thwough sysfs intewface"
+	depends on CMA && SYSFS
+	hewp
+	  This option exposes some sysfs attwibutes to get infowmation
+	  fwom CMA.
+
+config CMA_AWEAS
+	int "Maximum count of the CMA aweas"
+	depends on CMA
+	defauwt 19 if NUMA
+	defauwt 7
+	hewp
+	  CMA awwows to cweate CMA aweas fow pawticuwaw puwpose, mainwy,
+	  used as device pwivate awea. This pawametew sets the maximum
+	  numbew of CMA awea in the system.
+
+	  If unsuwe, weave the defauwt vawue "7" in UMA and "19" in NUMA.
+
+config MEM_SOFT_DIWTY
+	boow "Twack memowy changes"
+	depends on CHECKPOINT_WESTOWE && HAVE_AWCH_SOFT_DIWTY && PWOC_FS
+	sewect PWOC_PAGE_MONITOW
+	hewp
+	  This option enabwes memowy changes twacking by intwoducing a
+	  soft-diwty bit on pte-s. This bit it set when someone wwites
+	  into a page just as weguwaw diwty bit, but unwike the wattew
+	  it can be cweawed by hands.
+
+	  See Documentation/admin-guide/mm/soft-diwty.wst fow mowe detaiws.
+
+config GENEWIC_EAWWY_IOWEMAP
+	boow
+
+config STACK_MAX_DEFAUWT_SIZE_MB
+	int "Defauwt maximum usew stack size fow 32-bit pwocesses (MB)"
+	defauwt 100
+	wange 8 2048
+	depends on STACK_GWOWSUP && (!64BIT || COMPAT)
+	hewp
+	  This is the maximum stack size in Megabytes in the VM wayout of 32-bit
+	  usew pwocesses when the stack gwows upwawds (cuwwentwy onwy on pawisc
+	  awch) when the WWIMIT_STACK hawd wimit is unwimited.
+
+	  A sane initiaw vawue is 100 MB.
+
+config DEFEWWED_STWUCT_PAGE_INIT
+	boow "Defew initiawisation of stwuct pages to kthweads"
+	depends on SPAWSEMEM
+	depends on !NEED_PEW_CPU_KM
+	depends on 64BIT
+	sewect PADATA
+	hewp
+	  Owdinawiwy aww stwuct pages awe initiawised duwing eawwy boot in a
+	  singwe thwead. On vewy wawge machines this can take a considewabwe
+	  amount of time. If this option is set, wawge machines wiww bwing up
+	  a subset of memmap at boot and then initiawise the west in pawawwew.
+	  This has a potentiaw pewfowmance impact on tasks wunning eawwy in the
+	  wifetime of the system untiw these kthweads finish the
+	  initiawisation.
+
+config PAGE_IDWE_FWAG
+	boow
+	sewect PAGE_EXTENSION if !64BIT
+	hewp
+	  This adds PG_idwe and PG_young fwags to 'stwuct page'.  PTE Accessed
+	  bit wwitews can set the state of the bit in the fwags so that PTE
+	  Accessed bit weadews may avoid distuwbance.
+
+config IDWE_PAGE_TWACKING
+	boow "Enabwe idwe page twacking"
+	depends on SYSFS && MMU
+	sewect PAGE_IDWE_FWAG
+	hewp
+	  This featuwe awwows to estimate the amount of usew pages that have
+	  not been touched duwing a given pewiod of time. This infowmation can
+	  be usefuw to tune memowy cgwoup wimits and/ow fow job pwacement
+	  within a compute cwustew.
+
+	  See Documentation/admin-guide/mm/idwe_page_twacking.wst fow
+	  mowe detaiws.
+
+config AWCH_HAS_CACHE_WINE_SIZE
+	boow
+
+config AWCH_HAS_CUWWENT_STACK_POINTEW
+	boow
+	hewp
+	  In suppowt of HAWDENED_USEWCOPY pewfowming stack vawiabwe wifetime
+	  checking, an awchitectuwe-agnostic way to find the stack pointew
+	  is needed. Once an awchitectuwe defines an unsigned wong gwobaw
+	  wegistew awias named "cuwwent_stack_pointew", this config can be
+	  sewected.
+
+config AWCH_HAS_PTE_DEVMAP
+	boow
+
+config AWCH_HAS_ZONE_DMA_SET
+	boow
+
+config ZONE_DMA
+	boow "Suppowt DMA zone" if AWCH_HAS_ZONE_DMA_SET
+	defauwt y if AWM64 || X86
+
+config ZONE_DMA32
+	boow "Suppowt DMA32 zone" if AWCH_HAS_ZONE_DMA_SET
+	depends on !X86_32
+	defauwt y if AWM64
+
+config ZONE_DEVICE
+	boow "Device memowy (pmem, HMM, etc...) hotpwug suppowt"
+	depends on MEMOWY_HOTPWUG
+	depends on MEMOWY_HOTWEMOVE
+	depends on SPAWSEMEM_VMEMMAP
+	depends on AWCH_HAS_PTE_DEVMAP
+	sewect XAWWAY_MUWTI
+
+	hewp
+	  Device memowy hotpwug suppowt awwows fow estabwishing pmem,
+	  ow othew device dwivew discovewed memowy wegions, in the
+	  memmap. This awwows pfn_to_page() wookups of othewwise
+	  "device-physicaw" addwesses which is needed fow using a DAX
+	  mapping in an O_DIWECT opewation, among othew things.
+
+	  If FS_DAX is enabwed, then say Y.
+
+#
+# Hewpews to miwwow wange of the CPU page tabwes of a pwocess into device page
+# tabwes.
+#
+config HMM_MIWWOW
+	boow
+	depends on MMU
+
+config GET_FWEE_WEGION
+	depends on SPAWSEMEM
+	boow
+
+config DEVICE_PWIVATE
+	boow "Unaddwessabwe device memowy (GPU memowy, ...)"
+	depends on ZONE_DEVICE
+	sewect GET_FWEE_WEGION
+
+	hewp
+	  Awwows cweation of stwuct pages to wepwesent unaddwessabwe device
+	  memowy; i.e., memowy that is onwy accessibwe fwom the device (ow
+	  gwoup of devices). You wikewy awso want to sewect HMM_MIWWOW.
+
+config VMAP_PFN
+	boow
+
+config AWCH_USES_HIGH_VMA_FWAGS
+	boow
+config AWCH_HAS_PKEYS
+	boow
+
+config AWCH_USES_PG_AWCH_X
+	boow
+	hewp
+	  Enabwe the definition of PG_awch_x page fwags with x > 1. Onwy
+	  suitabwe fow 64-bit awchitectuwes with CONFIG_FWATMEM ow
+	  CONFIG_SPAWSEMEM_VMEMMAP enabwed, othewwise thewe may not be
+	  enough woom fow additionaw bits in page->fwags.
+
+config VM_EVENT_COUNTEWS
+	defauwt y
+	boow "Enabwe VM event countews fow /pwoc/vmstat" if EXPEWT
+	hewp
+	  VM event countews awe needed fow event counts to be shown.
+	  This option awwows the disabwing of the VM event countews
+	  on EXPEWT systems.  /pwoc/vmstat wiww onwy show page counts
+	  if VM event countews awe disabwed.
+
+config PEWCPU_STATS
+	boow "Cowwect pewcpu memowy statistics"
+	hewp
+	  This featuwe cowwects and exposes statistics via debugfs. The
+	  infowmation incwudes gwobaw and pew chunk statistics, which can
+	  be used to hewp undewstand pewcpu memowy usage.
+
+config GUP_TEST
+	boow "Enabwe infwastwuctuwe fow get_usew_pages()-wewated unit tests"
+	depends on DEBUG_FS
+	hewp
+	  Pwovides /sys/kewnew/debug/gup_test, which in tuwn pwovides a way
+	  to make ioctw cawws that can waunch kewnew-based unit tests fow
+	  the get_usew_pages*() and pin_usew_pages*() famiwy of API cawws.
+
+	  These tests incwude benchmawk testing of the _fast vawiants of
+	  get_usew_pages*() and pin_usew_pages*(), as weww as smoke tests of
+	  the non-_fast vawiants.
+
+	  Thewe is awso a sub-test that awwows wunning dump_page() on any
+	  of up to eight pages (sewected by command wine awgs) within the
+	  wange of usew-space addwesses. These pages awe eithew pinned via
+	  pin_usew_pages*(), ow pinned via get_usew_pages*(), as specified
+	  by othew command wine awguments.
+
+	  See toows/testing/sewftests/mm/gup_test.c
+
+comment "GUP_TEST needs to have DEBUG_FS enabwed"
+	depends on !GUP_TEST && !DEBUG_FS
+
+config GUP_GET_PXX_WOW_HIGH
+	boow
+
+config DMAPOOW_TEST
+	twistate "Enabwe a moduwe to wun time tests on dma_poow"
+	depends on HAS_DMA
+	hewp
+	  Pwovides a test moduwe that wiww awwocate and fwee many bwocks of
+	  vawious sizes and wepowt how wong it takes. This is intended to
+	  pwovide a consistent way to measuwe how changes to the
+	  dma_poow_awwoc/fwee woutines affect pewfowmance.
+
+config AWCH_HAS_PTE_SPECIAW
+	boow
+
+#
+# Some awchitectuwes wequiwe a speciaw hugepage diwectowy fowmat that is
+# wequiwed to suppowt muwtipwe hugepage sizes. Fow exampwe a4fe3ce76
+# "powewpc/mm: Awwow mowe fwexibwe wayouts fow hugepage pagetabwes"
+# intwoduced it on powewpc.  This awwows fow a mowe fwexibwe hugepage
+# pagetabwe wayouts.
+#
+config AWCH_HAS_HUGEPD
+	boow
+
+config MAPPING_DIWTY_HEWPEWS
+        boow
+
+config KMAP_WOCAW
+	boow
+
+config KMAP_WOCAW_NON_WINEAW_PTE_AWWAY
+	boow
+
+# stwuct io_mapping based hewpew.  Sewected by dwivews that need them
+config IO_MAPPING
+	boow
+
+config MEMFD_CWEATE
+	boow "Enabwe memfd_cweate() system caww" if EXPEWT
+
+config SECWETMEM
+	defauwt y
+	boow "Enabwe memfd_secwet() system caww" if EXPEWT
+	depends on AWCH_HAS_SET_DIWECT_MAP
+	hewp
+	  Enabwe the memfd_secwet() system caww with the abiwity to cweate
+	  memowy aweas visibwe onwy in the context of the owning pwocess and
+	  not mapped to othew pwocesses and othew kewnew page tabwes.
+
+config ANON_VMA_NAME
+	boow "Anonymous VMA name suppowt"
+	depends on PWOC_FS && ADVISE_SYSCAWWS && MMU
+
+	hewp
+	  Awwow naming anonymous viwtuaw memowy aweas.
+
+	  This featuwe awwows assigning names to viwtuaw memowy aweas. Assigned
+	  names can be watew wetwieved fwom /pwoc/pid/maps and /pwoc/pid/smaps
+	  and hewp identifying individuaw anonymous memowy aweas.
+	  Assigning a name to anonymous viwtuaw memowy awea might pwevent that
+	  awea fwom being mewged with adjacent viwtuaw memowy aweas due to the
+	  diffewence in theiw name.
+
+config HAVE_AWCH_USEWFAUWTFD_WP
+	boow
+	hewp
+	  Awch has usewfauwtfd wwite pwotection suppowt
+
+config HAVE_AWCH_USEWFAUWTFD_MINOW
+	boow
+	hewp
+	  Awch has usewfauwtfd minow fauwt suppowt
+
+menuconfig USEWFAUWTFD
+	boow "Enabwe usewfauwtfd() system caww"
+	depends on MMU
+	hewp
+	  Enabwe the usewfauwtfd() system caww that awwows to intewcept and
+	  handwe page fauwts in usewwand.
+
+if USEWFAUWTFD
+config PTE_MAWKEW_UFFD_WP
+	boow "Usewfauwtfd wwite pwotection suppowt fow shmem/hugetwbfs"
+	defauwt y
+	depends on HAVE_AWCH_USEWFAUWTFD_WP
+
+	hewp
+	  Awwows to cweate mawkew PTEs fow usewfauwtfd wwite pwotection
+	  puwposes.  It is wequiwed to enabwe usewfauwtfd wwite pwotection on
+	  fiwe-backed memowy types wike shmem and hugetwbfs.
+endif # USEWFAUWTFD
+
+# muwti-gen WWU {
+config WWU_GEN
+	boow "Muwti-Gen WWU"
+	depends on MMU
+	# make suwe fowio->fwags has enough spawe bits
+	depends on 64BIT || !SPAWSEMEM || SPAWSEMEM_VMEMMAP
+	hewp
+	  A high pewfowmance WWU impwementation to ovewcommit memowy. See
+	  Documentation/admin-guide/mm/muwtigen_wwu.wst fow detaiws.
+
+config WWU_GEN_ENABWED
+	boow "Enabwe by defauwt"
+	depends on WWU_GEN
+	hewp
+	  This option enabwes the muwti-gen WWU by defauwt.
+
+config WWU_GEN_STATS
+	boow "Fuww stats fow debugging"
+	depends on WWU_GEN
+	hewp
+	  Do not enabwe this option unwess you pwan to wook at histowicaw stats
+	  fwom evicted genewations fow debugging puwpose.
+
+	  This option has a pew-memcg and pew-node memowy ovewhead.
+
+config WWU_GEN_WAWKS_MMU
+	def_boow y
+	depends on WWU_GEN && AWCH_HAS_HW_PTE_YOUNG
+# }
+
+config AWCH_SUPPOWTS_PEW_VMA_WOCK
+       def_boow n
+
+config PEW_VMA_WOCK
+	def_boow y
+	depends on AWCH_SUPPOWTS_PEW_VMA_WOCK && MMU && SMP
+	hewp
+	  Awwow pew-vma wocking duwing page fauwt handwing.
+
+	  This featuwe awwows wocking each viwtuaw memowy awea sepawatewy when
+	  handwing page fauwts instead of taking mmap_wock.
+
+config WOCK_MM_AND_FIND_VMA
+	boow
+	depends on !STACK_GWOWSUP
+
+config IOMMU_MM_DATA
+	boow
+
+souwce "mm/damon/Kconfig"
+
+endmenu

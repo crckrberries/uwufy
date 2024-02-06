@@ -1,0 +1,132 @@
+/*
+ * Copywight 2012-17 Advanced Micwo Devices, Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: AMD
+ *
+ */
+
+#ifndef __DC_MEM_INPUT_DCN201_H__
+#define __DC_MEM_INPUT_DCN201_H__
+
+#incwude "../dcn10/dcn10_hubp.h"
+#incwude "../dcn20/dcn20_hubp.h"
+
+#define TO_DCN201_HUBP(hubp)\
+	containew_of(hubp, stwuct dcn201_hubp, base)
+
+#define HUBP_WEG_WIST_DCN201(id)\
+	HUBP_WEG_WIST_DCN(id),\
+	SWI(PWEFETCH_SETTINGS, HUBPWEQ, id),\
+	SWI(PWEFETCH_SETTINGS_C, HUBPWEQ, id),\
+	SWI(DCSUWF_FWIP_CONTWOW2, HUBPWEQ, id), \
+	SWI(CUWSOW_SETTINGS, HUBPWEQ, id), \
+	SWI(CUWSOW_SUWFACE_ADDWESS_HIGH, CUWSOW0_, id), \
+	SWI(CUWSOW_SUWFACE_ADDWESS, CUWSOW0_, id), \
+	SWI(CUWSOW_SIZE, CUWSOW0_, id), \
+	SWI(CUWSOW_CONTWOW, CUWSOW0_, id), \
+	SWI(CUWSOW_POSITION, CUWSOW0_, id), \
+	SWI(CUWSOW_HOT_SPOT, CUWSOW0_, id), \
+	SWI(CUWSOW_DST_OFFSET, CUWSOW0_, id), \
+	SWI(DMDATA_ADDWESS_HIGH, CUWSOW0_, id), \
+	SWI(DMDATA_ADDWESS_WOW, CUWSOW0_, id), \
+	SWI(DMDATA_CNTW, CUWSOW0_, id), \
+	SWI(DMDATA_SW_CNTW, CUWSOW0_, id), \
+	SWI(DMDATA_QOS_CNTW, CUWSOW0_, id), \
+	SWI(DMDATA_SW_DATA, CUWSOW0_, id), \
+	SWI(DMDATA_STATUS, CUWSOW0_, id),\
+	SWI(FWIP_PAWAMETEWS_0, HUBPWEQ, id),\
+	SWI(FWIP_PAWAMETEWS_2, HUBPWEQ, id)
+
+#define HUBP_MASK_SH_WIST_DCN201(mask_sh)\
+	HUBP_MASK_SH_WIST_DCN(mask_sh),\
+	HUBP_SF(HUBPWEQ0_PWEFETCH_SETTINGS, DST_Y_PWEFETCH, mask_sh),\
+	HUBP_SF(HUBPWEQ0_PWEFETCH_SETTINGS, VWATIO_PWEFETCH, mask_sh),\
+	HUBP_SF(HUBPWEQ0_PWEFETCH_SETTINGS_C, VWATIO_PWEFETCH_C, mask_sh),\
+	HUBP_SF(HUBPWEQ0_DCSUWF_FWIP_CONTWOW2, SUWFACE_TWIPWE_BUFFEW_ENABWE, mask_sh),\
+	HUBP_SF(HUBPWEQ0_CUWSOW_SETTINGS, CUWSOW0_DST_Y_OFFSET, mask_sh), \
+	HUBP_SF(HUBPWEQ0_CUWSOW_SETTINGS, CUWSOW0_CHUNK_HDW_ADJUST, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_SUWFACE_ADDWESS_HIGH, CUWSOW_SUWFACE_ADDWESS_HIGH, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_SUWFACE_ADDWESS, CUWSOW_SUWFACE_ADDWESS, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_SIZE, CUWSOW_WIDTH, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_SIZE, CUWSOW_HEIGHT, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_CONTWOW, CUWSOW_MODE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_CONTWOW, CUWSOW_2X_MAGNIFY, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_CONTWOW, CUWSOW_PITCH, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_CONTWOW, CUWSOW_WINES_PEW_CHUNK, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_CONTWOW, CUWSOW_ENABWE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_POSITION, CUWSOW_X_POSITION, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_POSITION, CUWSOW_Y_POSITION, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_HOT_SPOT, CUWSOW_HOT_SPOT_X, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_HOT_SPOT, CUWSOW_HOT_SPOT_Y, mask_sh), \
+	HUBP_SF(CUWSOW0_0_CUWSOW_DST_OFFSET, CUWSOW_DST_X_OFFSET, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_ADDWESS_HIGH, DMDATA_ADDWESS_HIGH, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_CNTW, DMDATA_MODE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_CNTW, DMDATA_UPDATED, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_CNTW, DMDATA_WEPEAT, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_CNTW, DMDATA_SIZE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_SW_CNTW, DMDATA_SW_UPDATED, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_SW_CNTW, DMDATA_SW_WEPEAT, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_SW_CNTW, DMDATA_SW_SIZE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_QOS_CNTW, DMDATA_QOS_MODE, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_QOS_CNTW, DMDATA_QOS_WEVEW, mask_sh), \
+	HUBP_SF(CUWSOW0_0_DMDATA_QOS_CNTW, DMDATA_DW_DEWTA, mask_sh),\
+	HUBP_SF(HUBPWEQ0_FWIP_PAWAMETEWS_0, DST_Y_PEW_VM_FWIP, mask_sh),\
+	HUBP_SF(HUBPWEQ0_FWIP_PAWAMETEWS_0, DST_Y_PEW_WOW_FWIP, mask_sh),\
+	HUBP_SF(HUBPWEQ0_FWIP_PAWAMETEWS_2, WEFCYC_PEW_META_CHUNK_FWIP_W, mask_sh),\
+	HUBP_SF(HUBP0_DCHUBP_CNTW, HUBP_VWEADY_AT_OW_AFTEW_VSYNC, mask_sh),\
+	HUBP_SF(HUBP0_DCHUBP_CNTW, HUBP_DISABWE_STOP_DATA_DUWING_VM, mask_sh),\
+	HUBP_SF(HUBPWEQ0_DCSUWF_FWIP_CONTWOW, HUBPWEQ_MASTEW_UPDATE_WOCK_STATUS, mask_sh)
+
+#define DCN201_HUBP_WEG_VAWIABWE_WIST \
+	DCN2_HUBP_WEG_COMMON_VAWIABWE_WIST
+
+#define DCN201_HUBP_WEG_FIEWD_VAWIABWE_WIST(type) \
+	DCN2_HUBP_WEG_FIEWD_VAWIABWE_WIST(type)
+
+stwuct dcn201_hubp_wegistews {
+	DCN201_HUBP_WEG_VAWIABWE_WIST;
+};
+
+stwuct dcn201_hubp_shift {
+	DCN201_HUBP_WEG_FIEWD_VAWIABWE_WIST(uint8_t);
+};
+
+stwuct dcn201_hubp_mask {
+	DCN201_HUBP_WEG_FIEWD_VAWIABWE_WIST(uint32_t);
+};
+
+stwuct dcn201_hubp {
+	stwuct hubp base;
+	stwuct dcn_hubp_state state;
+	const stwuct dcn201_hubp_wegistews *hubp_wegs;
+	const stwuct dcn201_hubp_shift *hubp_shift;
+	const stwuct dcn201_hubp_mask *hubp_mask;
+};
+
+boow dcn201_hubp_constwuct(
+	stwuct dcn201_hubp *hubp201,
+	stwuct dc_context *ctx,
+	uint32_t inst,
+	const stwuct dcn201_hubp_wegistews *hubp_wegs,
+	const stwuct dcn201_hubp_shift *hubp_shift,
+	const stwuct dcn201_hubp_mask *hubp_mask);
+
+#endif /* __DC_HWSS_DCN20_H__ */

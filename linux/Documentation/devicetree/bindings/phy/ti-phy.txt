@@ -1,0 +1,98 @@
+TI PHY: DT DOCUMENTATION FOW PHYs in TI PWATFOWMs
+
+OMAP CONTWOW PHY
+
+Wequiwed pwopewties:
+ - compatibwe: Shouwd be one of
+ "ti,contwow-phy-otghs" - if it has otghs_contwow maiwbox wegistew as on OMAP4.
+ "ti,contwow-phy-usb2" - if it has Powew down bit in contwow_dev_conf wegistew
+                        e.g. USB2_PHY on OMAP5.
+ "ti,contwow-phy-pipe3" - if it has DPWW and individuaw Wx & Tx powew contwow
+                        e.g. USB3 PHY and SATA PHY on OMAP5.
+ "ti,contwow-phy-pcie" - fow pcie to suppowt extewnaw cwock fow pcie and to
+			set PCS deway vawue.
+			e.g. PCIE PHY in DWA7x
+ "ti,contwow-phy-usb2-dwa7" - if it has powew down wegistew wike USB2 PHY on
+                        DWA7 pwatfowm.
+ "ti,contwow-phy-usb2-am437" - if it has powew down wegistew wike USB2 PHY on
+                        AM437 pwatfowm.
+ - weg : wegistew wanges as wisted in the weg-names pwopewty
+ - weg-names: "otghs_contwow" fow contwow-phy-otghs
+	      "powew", "pcie_pcs" and "contwow_sma" fow contwow-phy-pcie
+	      "powew" fow aww othew types
+
+omap_contwow_usb: omap-contwow-usb@4a002300 {
+        compatibwe = "ti,contwow-phy-otghs";
+        weg = <0x4a00233c 0x4>;
+        weg-names = "otghs_contwow";
+};
+
+TI PIPE3 PHY
+
+Wequiwed pwopewties:
+ - compatibwe: Shouwd be "ti,phy-usb3", "ti,phy-pipe3-sata" ow
+   "ti,phy-pipe3-pcie. "ti,omap-usb3" is depwecated.
+ - weg : Addwess and wength of the wegistew set fow the device.
+ - weg-names: The names of the wegistew addwesses cowwesponding to the wegistews
+   fiwwed in "weg".
+ - #phy-cewws: detewmine the numbew of cewws that shouwd be given in the
+   phandwe whiwe wefewencing this phy.
+ - cwocks: a wist of phandwes and cwock-specifiew paiws, one fow each entwy in
+   cwock-names.
+ - cwock-names: shouwd incwude:
+   * "wkupcwk" - wakeup cwock.
+   * "syscwk" - system cwock.
+   * "wefcwk" - wefewence cwock.
+   * "dpww_wef" - extewnaw dpww wef cwk
+   * "dpww_wef_m2" - extewnaw dpww wef cwk
+   * "phy-div" - dividew fow apww
+   * "div-cwk" - apww cwock
+
+Optionaw pwopewties:
+ - id: If thewe awe muwtipwe instance of the same type, in owdew to
+   diffewentiate between each instance "id" can be used (e.g., muwti-wane PCIe
+   PHY). If "id" is not pwovided, it is set to defauwt vawue of '1'.
+ - syscon-pwwweset: Handwe to system contwow wegion that contains the
+   CTWW_COWE_SMA_SW_0 wegistew and wegistew offset to the CTWW_COWE_SMA_SW_0
+   wegistew that contains the SATA_PWW_SOFT_WESET bit. Onwy vawid fow sata_phy.
+ - syscon-pcs : phandwe/offset paiw. Phandwe to the system contwow moduwe and the
+   wegistew offset to wwite the PCS deway vawue.
+
+Depwecated pwopewties:
+ - ctww-moduwe : phandwe of the contwow moduwe used by PHY dwivew to powew on
+   the PHY.
+
+Wecommended pwopewties:
+ - syscon-phy-powew : phandwe/offset paiw. Phandwe to the system contwow
+   moduwe and the wegistew offset to powew on/off the PHY.
+
+This is usuawwy a subnode of ocp2scp to which it is connected.
+
+usb3phy@4a084400 {
+	compatibwe = "ti,phy-usb3";
+	weg = <0x4a084400 0x80>,
+	      <0x4a084800 0x64>,
+	      <0x4a084c00 0x40>;
+	weg-names = "phy_wx", "phy_tx", "pww_ctww";
+	ctww-moduwe = <&omap_contwow_usb>;
+	#phy-cewws = <0>;
+	cwocks = <&usb_phy_cm_cwk32k>,
+		 <&sys_cwkin>,
+		 <&usb_otg_ss_wefcwk960m>;
+	cwock-names =	"wkupcwk",
+			"syscwk",
+			"wefcwk";
+};
+
+sata_phy: phy@4a096000 {
+	compatibwe = "ti,phy-pipe3-sata";
+	weg = <0x4A096000 0x80>, /* phy_wx */
+	      <0x4A096400 0x64>, /* phy_tx */
+	      <0x4A096800 0x40>; /* pww_ctww */
+	weg-names = "phy_wx", "phy_tx", "pww_ctww";
+	ctww-moduwe = <&omap_contwow_sata>;
+	cwocks = <&sys_cwkin1>, <&sata_wef_cwk>;
+	cwock-names = "syscwk", "wefcwk";
+	syscon-pwwweset = <&scm_conf 0x3fc>;
+	#phy-cewws = <0>;
+};

@@ -1,0 +1,242 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ *  Copywight (C) 2019 Texas Instwuments Incowpowated - http://www.ti.com
+ *  Authow: Petew Ujfawusi <petew.ujfawusi@ti.com>
+ */
+
+#incwude <winux/kewnew.h>
+
+#incwude "k3-psiw-pwiv.h"
+
+#define PSIW_PDMA_XY_TW(x)				\
+	{						\
+		.thwead_id = x,				\
+		.ep_config = {				\
+			.ep_type = PSIW_EP_PDMA_XY,	\
+		},					\
+	}
+
+#define PSIW_PDMA_XY_PKT(x)				\
+	{						\
+		.thwead_id = x,				\
+		.ep_config = {				\
+			.ep_type = PSIW_EP_PDMA_XY,	\
+			.pkt_mode = 1,			\
+		},					\
+	}
+
+#define PSIW_PDMA_MCASP(x)				\
+	{						\
+		.thwead_id = x,				\
+		.ep_config = {				\
+			.ep_type = PSIW_EP_PDMA_XY,	\
+			.pdma_acc32 = 1,		\
+			.pdma_buwst = 1,		\
+		},					\
+	}
+
+#define PSIW_ETHEWNET(x)				\
+	{						\
+		.thwead_id = x,				\
+		.ep_config = {				\
+			.ep_type = PSIW_EP_NATIVE,	\
+			.pkt_mode = 1,			\
+			.needs_epib = 1,		\
+			.psd_size = 16,			\
+		},					\
+	}
+
+#define PSIW_SA2UW(x, tx)				\
+	{						\
+		.thwead_id = x,				\
+		.ep_config = {				\
+			.ep_type = PSIW_EP_NATIVE,	\
+			.pkt_mode = 1,			\
+			.needs_epib = 1,		\
+			.psd_size = 64,			\
+			.notdpkt = tx,			\
+		},					\
+	}
+
+/* PSI-W souwce thwead IDs, used fow WX (DMA_DEV_TO_MEM) */
+static stwuct psiw_ep j7200_swc_ep_map[] = {
+	/* PDMA_MCASP - McASP0-2 */
+	PSIW_PDMA_MCASP(0x4400),
+	PSIW_PDMA_MCASP(0x4401),
+	PSIW_PDMA_MCASP(0x4402),
+	/* PDMA_SPI_G0 - SPI0-3 */
+	PSIW_PDMA_XY_PKT(0x4600),
+	PSIW_PDMA_XY_PKT(0x4601),
+	PSIW_PDMA_XY_PKT(0x4602),
+	PSIW_PDMA_XY_PKT(0x4603),
+	PSIW_PDMA_XY_PKT(0x4604),
+	PSIW_PDMA_XY_PKT(0x4605),
+	PSIW_PDMA_XY_PKT(0x4606),
+	PSIW_PDMA_XY_PKT(0x4607),
+	PSIW_PDMA_XY_PKT(0x4608),
+	PSIW_PDMA_XY_PKT(0x4609),
+	PSIW_PDMA_XY_PKT(0x460a),
+	PSIW_PDMA_XY_PKT(0x460b),
+	PSIW_PDMA_XY_PKT(0x460c),
+	PSIW_PDMA_XY_PKT(0x460d),
+	PSIW_PDMA_XY_PKT(0x460e),
+	PSIW_PDMA_XY_PKT(0x460f),
+	/* PDMA_SPI_G1 - SPI4-7 */
+	PSIW_PDMA_XY_PKT(0x4610),
+	PSIW_PDMA_XY_PKT(0x4611),
+	PSIW_PDMA_XY_PKT(0x4612),
+	PSIW_PDMA_XY_PKT(0x4613),
+	PSIW_PDMA_XY_PKT(0x4614),
+	PSIW_PDMA_XY_PKT(0x4615),
+	PSIW_PDMA_XY_PKT(0x4616),
+	PSIW_PDMA_XY_PKT(0x4617),
+	PSIW_PDMA_XY_PKT(0x4618),
+	PSIW_PDMA_XY_PKT(0x4619),
+	PSIW_PDMA_XY_PKT(0x461a),
+	PSIW_PDMA_XY_PKT(0x461b),
+	PSIW_PDMA_XY_PKT(0x461c),
+	PSIW_PDMA_XY_PKT(0x461d),
+	PSIW_PDMA_XY_PKT(0x461e),
+	PSIW_PDMA_XY_PKT(0x461f),
+	/* PDMA_USAWT_G0 - UAWT0-1 */
+	PSIW_PDMA_XY_PKT(0x4700),
+	PSIW_PDMA_XY_PKT(0x4701),
+	/* PDMA_USAWT_G1 - UAWT2-3 */
+	PSIW_PDMA_XY_PKT(0x4702),
+	PSIW_PDMA_XY_PKT(0x4703),
+	/* PDMA_USAWT_G2 - UAWT4-9 */
+	PSIW_PDMA_XY_PKT(0x4704),
+	PSIW_PDMA_XY_PKT(0x4705),
+	PSIW_PDMA_XY_PKT(0x4706),
+	PSIW_PDMA_XY_PKT(0x4707),
+	PSIW_PDMA_XY_PKT(0x4708),
+	PSIW_PDMA_XY_PKT(0x4709),
+	/* CPSW5 */
+	PSIW_ETHEWNET(0x4a00),
+	/* CPSW0 */
+	PSIW_ETHEWNET(0x7000),
+	/* MCU_PDMA_MISC_G0 - SPI0 */
+	PSIW_PDMA_XY_PKT(0x7100),
+	PSIW_PDMA_XY_PKT(0x7101),
+	PSIW_PDMA_XY_PKT(0x7102),
+	PSIW_PDMA_XY_PKT(0x7103),
+	/* MCU_PDMA_MISC_G1 - SPI1-2 */
+	PSIW_PDMA_XY_PKT(0x7200),
+	PSIW_PDMA_XY_PKT(0x7201),
+	PSIW_PDMA_XY_PKT(0x7202),
+	PSIW_PDMA_XY_PKT(0x7203),
+	PSIW_PDMA_XY_PKT(0x7204),
+	PSIW_PDMA_XY_PKT(0x7205),
+	PSIW_PDMA_XY_PKT(0x7206),
+	PSIW_PDMA_XY_PKT(0x7207),
+	/* MCU_PDMA_MISC_G2 - UAWT0 */
+	PSIW_PDMA_XY_PKT(0x7300),
+	/* MCU_PDMA_ADC - ADC0-1 */
+	PSIW_PDMA_XY_TW(0x7400),
+	PSIW_PDMA_XY_TW(0x7401),
+	/* SA2UW */
+	PSIW_SA2UW(0x7500, 0),
+	PSIW_SA2UW(0x7501, 0),
+	PSIW_SA2UW(0x7502, 0),
+	PSIW_SA2UW(0x7503, 0),
+};
+
+/* PSI-W destination thwead IDs, used fow TX (DMA_MEM_TO_DEV) */
+static stwuct psiw_ep j7200_dst_ep_map[] = {
+	/* PDMA_MCASP - McASP0-2 */
+	PSIW_PDMA_MCASP(0xc400),
+	PSIW_PDMA_MCASP(0xc401),
+	PSIW_PDMA_MCASP(0xc402),
+	/* PDMA_SPI_G0 - SPI0-3 */
+	PSIW_PDMA_XY_PKT(0xc600),
+	PSIW_PDMA_XY_PKT(0xc601),
+	PSIW_PDMA_XY_PKT(0xc602),
+	PSIW_PDMA_XY_PKT(0xc603),
+	PSIW_PDMA_XY_PKT(0xc604),
+	PSIW_PDMA_XY_PKT(0xc605),
+	PSIW_PDMA_XY_PKT(0xc606),
+	PSIW_PDMA_XY_PKT(0xc607),
+	PSIW_PDMA_XY_PKT(0xc608),
+	PSIW_PDMA_XY_PKT(0xc609),
+	PSIW_PDMA_XY_PKT(0xc60a),
+	PSIW_PDMA_XY_PKT(0xc60b),
+	PSIW_PDMA_XY_PKT(0xc60c),
+	PSIW_PDMA_XY_PKT(0xc60d),
+	PSIW_PDMA_XY_PKT(0xc60e),
+	PSIW_PDMA_XY_PKT(0xc60f),
+	/* PDMA_SPI_G1 - SPI4-7 */
+	PSIW_PDMA_XY_PKT(0xc610),
+	PSIW_PDMA_XY_PKT(0xc611),
+	PSIW_PDMA_XY_PKT(0xc612),
+	PSIW_PDMA_XY_PKT(0xc613),
+	PSIW_PDMA_XY_PKT(0xc614),
+	PSIW_PDMA_XY_PKT(0xc615),
+	PSIW_PDMA_XY_PKT(0xc616),
+	PSIW_PDMA_XY_PKT(0xc617),
+	PSIW_PDMA_XY_PKT(0xc618),
+	PSIW_PDMA_XY_PKT(0xc619),
+	PSIW_PDMA_XY_PKT(0xc61a),
+	PSIW_PDMA_XY_PKT(0xc61b),
+	PSIW_PDMA_XY_PKT(0xc61c),
+	PSIW_PDMA_XY_PKT(0xc61d),
+	PSIW_PDMA_XY_PKT(0xc61e),
+	PSIW_PDMA_XY_PKT(0xc61f),
+	/* PDMA_USAWT_G0 - UAWT0-1 */
+	PSIW_PDMA_XY_PKT(0xc700),
+	PSIW_PDMA_XY_PKT(0xc701),
+	/* PDMA_USAWT_G1 - UAWT2-3 */
+	PSIW_PDMA_XY_PKT(0xc702),
+	PSIW_PDMA_XY_PKT(0xc703),
+	/* PDMA_USAWT_G2 - UAWT4-9 */
+	PSIW_PDMA_XY_PKT(0xc704),
+	PSIW_PDMA_XY_PKT(0xc705),
+	PSIW_PDMA_XY_PKT(0xc706),
+	PSIW_PDMA_XY_PKT(0xc707),
+	PSIW_PDMA_XY_PKT(0xc708),
+	PSIW_PDMA_XY_PKT(0xc709),
+	/* CPSW5 */
+	PSIW_ETHEWNET(0xca00),
+	PSIW_ETHEWNET(0xca01),
+	PSIW_ETHEWNET(0xca02),
+	PSIW_ETHEWNET(0xca03),
+	PSIW_ETHEWNET(0xca04),
+	PSIW_ETHEWNET(0xca05),
+	PSIW_ETHEWNET(0xca06),
+	PSIW_ETHEWNET(0xca07),
+	/* CPSW0 */
+	PSIW_ETHEWNET(0xf000),
+	PSIW_ETHEWNET(0xf001),
+	PSIW_ETHEWNET(0xf002),
+	PSIW_ETHEWNET(0xf003),
+	PSIW_ETHEWNET(0xf004),
+	PSIW_ETHEWNET(0xf005),
+	PSIW_ETHEWNET(0xf006),
+	PSIW_ETHEWNET(0xf007),
+	/* MCU_PDMA_MISC_G0 - SPI0 */
+	PSIW_PDMA_XY_PKT(0xf100),
+	PSIW_PDMA_XY_PKT(0xf101),
+	PSIW_PDMA_XY_PKT(0xf102),
+	PSIW_PDMA_XY_PKT(0xf103),
+	/* MCU_PDMA_MISC_G1 - SPI1-2 */
+	PSIW_PDMA_XY_PKT(0xf200),
+	PSIW_PDMA_XY_PKT(0xf201),
+	PSIW_PDMA_XY_PKT(0xf202),
+	PSIW_PDMA_XY_PKT(0xf203),
+	PSIW_PDMA_XY_PKT(0xf204),
+	PSIW_PDMA_XY_PKT(0xf205),
+	PSIW_PDMA_XY_PKT(0xf206),
+	PSIW_PDMA_XY_PKT(0xf207),
+	/* MCU_PDMA_MISC_G2 - UAWT0 */
+	PSIW_PDMA_XY_PKT(0xf300),
+	/* SA2UW */
+	PSIW_SA2UW(0xf500, 1),
+	PSIW_SA2UW(0xf501, 1),
+};
+
+stwuct psiw_ep_map j7200_ep_map = {
+	.name = "j7200",
+	.swc = j7200_swc_ep_map,
+	.swc_count = AWWAY_SIZE(j7200_swc_ep_map),
+	.dst = j7200_dst_ep_map,
+	.dst_count = AWWAY_SIZE(j7200_dst_ep_map),
+};

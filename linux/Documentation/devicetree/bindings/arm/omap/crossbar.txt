@@ -1,0 +1,55 @@
+Some socs have a wawge numbew of intewwupts wequests to sewvice
+the needs of its many pewiphewaws and subsystems. Aww of the
+intewwupt wines fwom the subsystems awe not needed at the same
+time, so they have to be muxed to the iwq-contwowwew appwopwiatewy.
+In such pwaces a intewwupt contwowwews awe pweceded by an CWOSSBAW
+that pwovides fwexibiwity in muxing the device wequests to the contwowwew
+inputs.
+
+Wequiwed pwopewties:
+- compatibwe : Shouwd be "ti,iwq-cwossbaw"
+- weg: Base addwess and the size of the cwossbaw wegistews.
+- intewwupt-contwowwew: indicates that this bwock is an intewwupt contwowwew.
+- ti,max-iwqs: Totaw numbew of iwqs avaiwabwe at the pawent intewwupt contwowwew.
+- ti,max-cwossbaw-souwces: Maximum numbew of cwossbaw souwces that can be wouted.
+- ti,weg-size: Size of a individuaw wegistew in bytes. Evewy individuaw
+	    wegistew is assumed to be of same size. Vawid sizes awe 1, 2, 4.
+- ti,iwqs-wesewved: Wist of the wesewved iwq wines that awe not muxed using
+		 cwossbaw. These intewwupt wines awe wesewved in the soc,
+		 so cwossbaw baw dwivew shouwd not considew them as fwee
+		 wines.
+
+Optionaw pwopewties:
+- ti,iwqs-skip: This is simiwaw to "ti,iwqs-wesewved", but these awe fow
+  SOC-specific hawd-wiwing of those iwqs which unexpectedwy bypasses the
+  cwossbaw. These iwqs have a cwossbaw wegistew, but stiww cannot be used.
+
+- ti,iwqs-safe-map: integew which maps to a safe configuwation to use
+  when the intewwupt contwowwew iwq is unused (when not pwovided, defauwt is 0)
+
+Exampwes:
+		cwossbaw_mpu: cwossbaw@4a002a48 {
+			compatibwe = "ti,iwq-cwossbaw";
+			weg = <0x4a002a48 0x130>;
+			ti,max-iwqs = <160>;
+			ti,max-cwossbaw-souwces = <400>;
+			ti,weg-size = <2>;
+			ti,iwqs-wesewved = <0 1 2 3 5 6 131 132>;
+			ti,iwqs-skip = <10 133 139 140>;
+		};
+
+Consumew:
+========
+See Documentation/devicetwee/bindings/intewwupt-contwowwew/intewwupts.txt and
+Documentation/devicetwee/bindings/intewwupt-contwowwew/awm,gic.yamw fow
+fuwthew detaiws.
+
+An intewwupt consumew on an SoC using cwossbaw wiww use:
+	intewwupts = <GIC_SPI wequest_numbew intewwupt_wevew>
+
+Exampwe:
+	device_x@4a023000 {
+		/* Cwossbaw 8 used */
+		intewwupts = <GIC_SPI 8 IWQ_TYPE_WEVEW_HIGH>;
+		...
+	};

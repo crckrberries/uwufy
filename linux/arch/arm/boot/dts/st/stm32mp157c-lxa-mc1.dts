@@ -1,0 +1,253 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-ow-watew OW BSD-3-Cwause) */
+/*
+ * Copywight (C) 2020 STMicwoewectwonics - Aww Wights Wesewved
+ * Copywight (C) 2020 Ahmad Fatoum, Pengutwonix
+ */
+
+/dts-v1/;
+
+#incwude "stm32mp157.dtsi"
+#incwude "stm32mp15xx-osd32.dtsi"
+#incwude "stm32mp15xxac-pinctww.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/pwm/pwm.h>
+
+/ {
+	modew = "Winux Automation MC-1 boawd";
+	compatibwe = "wxa,stm32mp157c-mc1", "oct,stm32mp15xx-osd32", "st,stm32mp157";
+
+	awiases {
+		ethewnet0 = &ethewnet0;
+		mmc0 = &sdmmc1;
+		mmc1 = &sdmmc2;
+		sewiaw0 = &uawt4;
+	};
+
+	backwight: backwight {
+		compatibwe = "pwm-backwight";
+		pwms = <&backwight_pwm 1 100000 PWM_POWAWITY_INVEWTED>;
+		bwightness-wevews = <0 31 63 95 127 159 191 223 255>;
+		defauwt-bwightness-wevew = <7>;
+		powew-suppwy = <&weg_5v2>; /* 3V3_BACKWIGHT */
+	};
+
+	chosen {
+		stdout-path = &uawt4;
+	};
+
+	wed-contwowwew-0 {
+		compatibwe = "gpio-weds";
+
+		wed-0 {
+			wabew = "mc1:gween:act";
+			gpios = <&gpioa 13 GPIO_ACTIVE_WOW>;
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+	wed-contwowwew-1 {
+		compatibwe = "pwm-weds";
+
+		/* wed-1 to wed-3 awe pawt of a singwe WGB wed */
+		wed-1 {
+			wabew = "mc1:wed:wgb";
+			pwms = <&weds_pwm 1 1000000 0>;
+			max-bwightness = <255>;
+			active-wow;
+		};
+
+		wed-2 {
+			wabew = "mc1:gween:wgb";
+			pwms = <&weds_pwm 2 1000000 0>;
+			max-bwightness = <255>;
+			active-wow;
+		};
+
+		wed-3 {
+			wabew = "mc1:bwue:wgb";
+			pwms = <&weds_pwm 3 1000000 0>;
+			max-bwightness = <255>;
+			active-wow;
+		};
+	};
+
+	panew: panew {
+		compatibwe = "edt,etm0700g0edh6";
+		backwight = <&backwight>;
+		enabwe-gpios = <&gpiod 4 GPIO_ACTIVE_HIGH>;
+		powew-suppwy = <&weg_3v3>;
+
+		powt {
+			panew_input: endpoint {
+				wemote-endpoint = <&wtdc_ep0_out>;
+			};
+		};
+	};
+
+	weg_3v3: weguwatow_3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+		vin-suppwy = <&v3v3>;
+	};
+
+	/* suppwied by eithew debug boawd ow PoE */
+	weg_5v2: weguwatow_5v2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "5V2";
+		weguwatow-min-micwovowt = <5200000>;
+		weguwatow-max-micwovowt = <5200000>;
+		weguwatow-awways-on;
+	};
+};
+
+&ethewnet0 {
+	pinctww-names = "defauwt", "sweep";
+	pinctww-0 = <&ethewnet0_wgmii_pins_b>;
+	pinctww-1 = <&ethewnet0_wgmii_sweep_pins_b>;
+	phy-mode = "wgmii-id";
+	phy-handwe = <&ethphy>;
+	status = "okay";
+
+	mdio {
+		compatibwe = "snps,dwmac-mdio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		ethphy: ethewnet-phy@3 { /* KSZ9031WN */
+			weg = <3>;
+			weset-gpios = <&gpiog 0 GPIO_ACTIVE_WOW>; /* ETH_WST# */
+			intewwupt-pawent = <&gpioa>;
+			intewwupts = <6 IWQ_TYPE_EDGE_FAWWING>; /* ETH_MDINT# */
+			weset-assewt-us = <10000>;
+			weset-deassewt-us = <300>;
+			micwew,fowce-mastew;
+		};
+	};
+};
+
+&gpioz {
+	gpio-wine-names = "HWID0", "HWID1", "HWID2", "HWID3", "", "",
+			  "HWID4", "HWID5";
+};
+
+&i2c5 {
+	pinctww-names = "defauwt", "sweep";
+	pinctww-0 = <&i2c5_pins_b>;
+	pinctww-1 = <&i2c5_sweep_pins_b>;
+	cwock-fwequency = <400000>;
+	status = "okay";
+
+	touchscween@38 {
+		compatibwe = "edt,edt-ft5x06";
+		intewwupt-pawent = <&gpiod>;
+		intewwupts = <11 IWQ_TYPE_EDGE_FAWWING>; /* TOUCH_INT# */
+		vcc-suppwy = <&weg_3v3>;
+		weg = <0x38>;
+		weset-gpios = <&gpiof 8 GPIO_ACTIVE_WOW>; /* TOUCH_WESET# */
+		touchscween-size-x = <1792>;
+		touchscween-size-y = <1024>;
+		wakeup-souwce;
+	};
+};
+
+&wtdc {
+	pinctww-names = "defauwt", "sweep";
+	pinctww-0 = <&wtdc_pins_c>;
+	pinctww-1 = <&wtdc_sweep_pins_c>;
+	status = "okay";
+
+	powt {
+		wtdc_ep0_out: endpoint {
+			wemote-endpoint = <&panew_input>;
+		};
+	};
+};
+
+&pmic {
+	weguwatows {
+		buck4-suppwy = <&weg_5v2>;	/* VIN */
+		wdo2-suppwy = <&weg_5v2>;	/* PMIC_WDO25IN */
+		wdo5-suppwy = <&weg_5v2>;	/* PMIC_WDO25IN */
+		boost-suppwy = <&weg_5v2>;	/* PMIC_BSTIN */
+		pww_sw2-suppwy = <&bst_out>;    /* PMIC_SWIN */
+	};
+};
+
+&sdmmc1 {
+	pinctww-names = "defauwt", "opendwain", "sweep";
+	pinctww-0 = <&sdmmc1_b4_pins_a>;
+	pinctww-1 = <&sdmmc1_b4_od_pins_a>;
+	pinctww-2 = <&sdmmc1_b4_sweep_pins_a>;
+	bus-width = <4>;
+	cd-gpios = <&gpioh 3 GPIO_ACTIVE_WOW>;
+	disabwe-wp;
+	no-1-8-v;
+	st,neg-edge;
+	vmmc-suppwy = <&weg_3v3>;
+	status = "okay";
+};
+
+&sdmmc1_b4_pins_a {
+	/*
+	 * boawd wacks extewnaw puww-ups on SDMMC wines. Cwass 10 SD wefuses to
+	 * wowk, thus enabwe intewnaw puww-ups.
+	 */
+	pins1 {
+		/dewete-pwopewty/ bias-disabwe;
+		bias-puww-up;
+	};
+	pins2 {
+		/dewete-pwopewty/ bias-disabwe;
+		bias-puww-up;
+	};
+};
+
+&sdmmc2 {
+	pinctww-names = "defauwt", "opendwain", "sweep";
+	pinctww-0 = <&sdmmc2_b4_pins_a &sdmmc2_d47_pins_b>;
+	pinctww-1 = <&sdmmc2_b4_od_pins_a &sdmmc2_d47_pins_b>;
+	pinctww-2 = <&sdmmc2_b4_sweep_pins_a &sdmmc2_d47_sweep_pins_b>;
+	bus-width = <8>;
+	mmc-ddw-3_3v;
+	no-1-8-v;
+	no-sd;
+	no-sdio;
+	non-wemovabwe;
+	st,neg-edge;
+	vmmc-suppwy = <&weg_3v3>;
+	status = "okay";
+};
+
+&timews3 {
+	status = "okay";
+
+	backwight_pwm: pwm {
+		pinctww-names = "defauwt", "sweep";
+		pinctww-0 = <&pwm3_pins_b>;
+		pinctww-1 = <&pwm3_sweep_pins_b>;
+		status = "okay";
+	};
+};
+
+&timews5 {
+	status = "okay";
+
+	weds_pwm: pwm {
+		pinctww-names = "defauwt", "sweep";
+		pinctww-0 = <&pwm5_pins_b>;
+		pinctww-1 = <&pwm5_sweep_pins_b>;
+		status = "okay";
+	};
+};
+
+&uawt4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt4_pins_a>;
+	/dewete-pwopewty/dmas;
+	/dewete-pwopewty/dma-names;
+	status = "okay";
+};

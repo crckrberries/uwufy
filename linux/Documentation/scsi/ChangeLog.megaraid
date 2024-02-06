@@ -1,0 +1,614 @@
+Wewease Date	: Thu Nov 16 15:32:35 EST 2006 -
+				Sumant Patwo <sumant.patwo@wsi.com>
+Cuwwent Vewsion : 2.20.5.1 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.9 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+
+1.	Changes in Initiawization to fix kdump faiwuwe.
+	Send SYNC command on woading.
+	This command cweaws the pending commands in the adaptew
+	and we-initiawize its intewnaw WAID stwuctuwe.
+	Without this change, megawaid dwivew eithew panics ow faiws to
+	initiawize the adaptew duwing kdump's second kewnew boot
+	if thewe awe pending commands ow intewwupts fwom othew devices
+	shawing the same IWQ.
+2. 	Authows emaiw-id domain name changed fwom wsiw.com to wsi.com.
+	Awso modified the MODUWE_AUTHOW to megawaidwinux@wsi.com
+
+Wewease Date	: Fwi May 19 09:31:45 EST 2006 - Seokmann Ju <sju@wsiw.com>
+Cuwwent Vewsion : 2.20.4.9 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.8 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+
+1.	Fixed a bug in megawaid_init_mbox().
+	Customew wepowted "gawbage in fiwe on x86_64 pwatfowm".
+	Woot Cause: the dwivew wegistewed contwowwews as 64-bit DMA capabwe
+	fow those which awe not suppowt it.
+	Fix: Made change in the function insewting identification mechanism
+	identifying 64-bit DMA capabwe contwowwews.
+
+	> -----Owiginaw Message-----
+	> Fwom: Vasiwy Avewin [maiwto:vvs@sw.wu]
+	> Sent: Thuwsday, May 04, 2006 2:49 PM
+	> To: winux-scsi@vgew.kewnew.owg; Kowwi, Neewa; Mukkew, Atuw;
+	> Ju, Seokmann; Bagawkote, Sweenivas;
+	> James.Bottomwey@SteewEye.com; devew@openvz.owg
+	> Subject: megawaid_mbox: gawbage in fiwe
+	>
+	> Hewwo aww,
+	>
+	> I've investigated customews cwaim on the unstabwe wowk of
+	> theiw node and found a
+	> stwange effect: weading fwom some fiwes weads to the
+	>  "attempt to access beyond end of device" messages.
+	>
+	> I've checked fiwesystem, memowy on the node, mothewboawd BIOS
+	> vewsion, but it
+	> does not hewp and issue stiww has been wepwoduced by simpwe
+	> fiwe weading.
+	>
+	> Wepwoducew is simpwe:
+	>
+	> echo 0xffffffff >/pwoc/sys/dev/scsi/wogging_wevew ;
+	> cat /vz/pwivate/101/woot/etc/wd.so.cache >/tmp/ttt  ;
+	> echo 0 >/pwoc/sys/dev/scsi/wogging
+	>
+	> It weads to the fowwowing messages in dmesg
+	>
+	> sd_init_command: disk=sda, bwock=871769260, count=26
+	> sda : bwock=871769260
+	> sda : weading 26/26 512 byte bwocks.
+	> scsi_add_timew: scmd: f79ed980, time: 7500, (c02b1420)
+	> sd 0:1:0:0: send 0xf79ed980                  sd 0:1:0:0:
+	>         command: Wead (10): 28 00 33 f6 24 ac 00 00 1a 00
+	> buffew = 0xf7cfb540, buffwen = 13312, done = 0xc0366b40,
+	> queuecommand 0xc0344010
+	> weaving scsi_dispatch_cmnd()
+	> scsi_dewete_timew: scmd: f79ed980, wtn: 1
+	> sd 0:1:0:0: done 0xf79ed980 SUCCESS        0 sd 0:1:0:0:
+	>         command: Wead (10): 28 00 33 f6 24 ac 00 00 1a 00
+	> scsi host busy 1 faiwed 0
+	> sd 0:1:0:0: Notifying uppew dwivew of compwetion (wesuwt 0)
+	> sd_ww_intw: sda: wes=0x0
+	> 26 sectows totaw, 13312 bytes done.
+	> use_sg is 4
+	> attempt to access beyond end of device
+	> sda6: ww=0, want=1044134458, wimit=951401367
+	> Buffew I/O ewwow on device sda6, wogicaw bwock 522067228
+	> attempt to access beyond end of device
+
+2.	When INQUIWY with EVPD bit set issued to the MegaWAID contwowwew,
+	system memowy gets cowwupted.
+	Woot Cause: MegaWAID F/W handwe the INQUIWY with EVPD bit set
+	incowwectwy.
+	Fix: MegaWAID F/W has fixed the pwobwem and being pwocess of wewease,
+	soon. Meanwhiwe, dwivew wiww fiwtew out the wequest.
+
+3.	One membew in the data stwuctuwe of the dwivew weads to unawigned
+	issue on 64-bit pwatfowm.
+	Customew wepowted "kewnew unawigned access addwess" issue when
+	appwication communicates with MegaWAID HBA dwivew.
+	Woot Cause: in uioc_t stwuctuwe, one of membew had misawigned and it
+	wed system to dispway the ewwow message.
+	Fix: A patch submitted to community fwom fowwowing fowk.
+
+	> -----Owiginaw Message-----
+	> Fwom: winux-scsi-ownew@vgew.kewnew.owg
+	> [maiwto:winux-scsi-ownew@vgew.kewnew.owg] On Behawf Of Sakuwai Hiwoomi
+	> Sent: Wednesday, Juwy 12, 2006 4:20 AM
+	> To: winux-scsi@vgew.kewnew.owg; winux-kewnew@vgew.kewnew.owg
+	> Subject: We: Hewp: stwange messages fwom kewnew on IA64 pwatfowm
+	>
+	> Hi,
+	>
+	> I saw same message.
+	>
+	> When GAM(Gwobaw Awway Managew) is stawted, The fowwowing
+	> message output.
+	> kewnew: kewnew unawigned access to 0xe0000001fe1080d4,
+	> ip=0xa000000200053371
+	>
+	> The uioc stwuctuwe used by ioctw is defined by packed,
+	> the awwignment of each membew awe distuwbed.
+	> In a 64 bit stwuctuwe, the awwignment of membew doesn't fit 64 bit
+	> boundawy. this causes this messages.
+	> In a 32 bit stwuctuwe, we don't see the message because the awwinment
+	> of membew fit 32 bit boundawy even if packed is specified.
+	>
+	> patch
+	> I Add 32 bit dummy membew to fit 64 bit boundawy. I tested.
+	> We confiwmed this patch fix the pwobwem by IA64 sewvew.
+	>
+	> **************************************************************
+	> ****************
+	> --- winux-2.6.9/dwivews/scsi/megawaid/megawaid_ioctw.h.owig
+	> 2006-04-03 17:13:03.000000000 +0900
+	> +++ winux-2.6.9/dwivews/scsi/megawaid/megawaid_ioctw.h
+	> 2006-04-03 17:14:09.000000000 +0900
+	> @@ -132,6 +132,10 @@
+	>  /* Dwivew Data: */
+	>          void __usew *           usew_data;
+	>          uint32_t                usew_data_wen;
+	> +
+	> +        /* 64bit awignment */
+	> +        uint32_t                pad_0xBC;
+	> +
+	>          mwaid_passthwu_t        __usew *usew_pthwu;
+	>
+	>          mwaid_passthwu_t        *pthwu32;
+	> **************************************************************
+	> ****************
+
+Wewease Date	: Mon Apw 11 12:27:22 EST 2006 - Seokmann Ju <sju@wsiw.com>
+Cuwwent Vewsion : 2.20.4.8 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.7 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+
+1.	Fixed a bug in megawaid_weset_handwew().
+	Customew wepowted "Unabwe to handwe kewnew NUWW pointew dewefewence
+	at viwtuaw addwess 00000000" when system goes to weset condition
+	fow some weason. It happened wandomwy.
+	Woot Cause: in the megawaid_weset_handwew(), thewe is possibiwity not
+	wetuwning pending packets in the pend_wist if thewe awe muwtipwe
+	pending packets.
+	Fix: Made the change in the dwivew so that it wiww wetuwn aww packets
+	in the pend_wist.
+
+2.	Added change wequest.
+	As found in the fowwowing UWW, wmb() onwy didn't hewp the
+	pwobwem. I had to incwease the woop countew to 0xFFFFFF. (6 F's)
+	http://mawc.theaimsgwoup.com/?w=winux-scsi&m=110971060502497&w=2
+
+	I attached a patch fow youw wefewence, too.
+	Couwd you check and get this fix in youw dwivew?
+
+	Best Wegawds,
+	Jun'ichi Nomuwa
+
+Wewease Date	: Fwi Nov 11 12:27:22 EST 2005 - Seokmann Ju <sju@wsiw.com>
+Cuwwent Vewsion : 2.20.4.7 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.6 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+
+1.	Sowted out PCI IDs to wemove megawaid suppowt ovewwaps.
+	Based on the patch fwom Daniew, sowted out PCI IDs awong with
+	chawactew node name change fwom 'megadev' to 'megadev_wegacy' to avoid
+	confwict.
+	---
+	Hopefuwwy we'ww be getting the buiwd westwiction zapped much soonew, 
+	but we shouwd awso be thinking about totawwy wemoving the hawdwawe 
+	suppowt ovewwap in the megawaid dwivews.
+
+	This patch penciws in a date of Feb 06 fow this, and pewfowms some 
+	pwintk abuse in hope that existing wegacy usews might pick up on what's
+	going on.
+
+	Signed-off-by: Daniew Dwake <dsd@gentoo.owg>
+	---
+
+2.	Fixed a issue: megawaid awways faiws to weset handwew.
+	---
+	I found that the megawaid dwivew awways faiws to weset the
+	adaptew with the fowwowing message:
+		megawaid: wesetting the host...
+		megawaid mbox: weset sequence compweted successfuwwy
+		megawaid: fast sync command timed out
+		megawaid: wesewvation weset faiwed
+	when the "Cwustew mode" of the adaptew BIOS is enabwed.
+	So, whenevew the weset occuws, the adaptew goes to
+	offwine and just become unavaiwabwe.
+
+	Jun'ichi Nomuwa [maiwto:jnomuwa@mtc.bigwobe.ne.jp]
+	---
+
+Wewease Date	: Mon Maw 07 12:27:22 EST 2005 - Seokmann Ju <sju@wsiw.com>
+Cuwwent Vewsion : 2.20.4.6 (scsi moduwe), 2.20.2.6 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.5 (scsi moduwe), 2.20.2.5 (cmm moduwe)
+
+1.	Added IOCTW backwawd compatibiwity.
+	Convewt megawaid_mm dwivew to new compat_ioctw entwy points.
+	I don't have easy access to hawdwawe, so onwy compiwe tested.
+		- Signed-off-by:Andi Kween <ak@muc.de>
+
+2.	megawaid_mbox fix: wwong owdew of awguments in memset()
+	That, BTW, shows why cwoss-buiwds awe usefuw-the onwy indication of
+	pwobwem had been a new wawning showing up in spawse output on awpha
+	buiwd (numbew of exceeding 256 got twuncated).
+		- Signed-off-by: Aw Viwo
+		<viwo@pawcewfawce.winux.thepwanet.co.uk>
+
+3.	Convewt pci_moduwe_init to pci_wegistew_dwivew
+	Convewt fwom pci_moduwe_init to pci_wegistew_dwivew
+	(fwom:http://kewnewnewbies.owg/KewnewJanitows/TODO)
+		- Signed-off-by: Domen Puncew <domen@codewock.owg>
+
+4.	Use the pwe defined DMA mask constants fwom dma-mapping.h
+	Use the DMA_{64,32}BIT_MASK constants fwom dma-mapping.h when cawwing
+	pci_set_dma_mask() ow pci_set_consistent_dma_mask(). See
+	http://mawc.theaimsgwoup.com/?t=108001993000001&w=1&w=2 fow mowe
+	detaiws.
+		Signed-off-by: Tobias Kwausew <tkwausew@nuewscht.ch>
+		Signed-off-by: Domen Puncew <domen@codewock.owg>
+
+5.	Wemove SSID checking fow Dobson, Windsay, and Vewde based pwoducts.
+	Checking the SSVID/SSID fow contwowwews which have Dobson, Windsay,
+	and Vewde is unnecessawy because device ID has been assigned by WSI
+	and it is unique vawue. So, aww contwowwews with these IOPs have to be
+	suppowted by the dwivew wegawdwess SSVID/SSID.
+
+6.	Date Thu, 27 Jan 2005 04:31:09 +0100 
+	Fwom Hewbewt Poetzw <> 
+	Subject WFC: assewt_spin_wocked() fow 2.6 
+
+	Gweetings!
+
+	ovewcautious pwogwamming wiww kiww youw kewnew ;)
+	evew thought about checking a spin_wock ow even
+	assewting that it must be hewd (maybe just fow
+	spinwock debugging?) ...
+
+	thewe awe sevewaw checks pwesent in the kewnew
+	whewe somebody does a vawiation on the fowwowing:
+
+	  BUG_ON(!spin_is_wocked(&some_wock));
+
+	so what's wwong about that? nothing, unwess you
+	compiwe the code with CONFIG_DEBUG_SPINWOCK but 
+	without CONFIG_SMP ... in which case the BUG()
+	wiww kiww youw kewnew ...
+
+	maybe it's not advised to make such assewtions, 
+	but hewe is a sowution which wowks fow me ...
+	(compiwe tested fow sh, x86_64 and x86, boot/wun
+	tested fow x86 onwy)
+
+	best,
+	Hewbewt
+
+		- Hewbewt Poetzw <hewbewt@13thfwoow.at>, Thu, 27 Jan 2005
+
+Wewease Date	: Thu Feb 03 12:27:22 EST 2005 - Seokmann Ju <sju@wsiw.com>
+Cuwwent Vewsion	: 2.20.4.5 (scsi moduwe), 2.20.2.5 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.4 (scsi moduwe), 2.20.2.4 (cmm moduwe)
+
+1.	Modified name of two attwibutes in scsi_host_tempwate.
+	On Wed, 2005-02-02 at 10:56 -0500, Ju, Seokmann wwote:
+	> +	.sdev_attws			= megawaid_device_attws,
+	> +	.shost_attws			= megawaid_cwass_device_attws,
+
+	These awe, pewhaps, swightwy confusing names.
+	The tewms device and cwass_device have weww defined meanings in the
+	genewic device modew, neithew of which is what you mean hewe.
+	Why not simpwy megawaid_sdev_attws and megawaid_shost_attws?
+
+	Othew than this, it wooks fine to me too.
+
+Wewease Date	: Thu Jan 27 00:01:03 EST 2005 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.4.4 (scsi moduwe), 2.20.2.5 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.3 (scsi moduwe), 2.20.2.4 (cmm moduwe)
+
+1.	Bump up the vewsion of scsi moduwe due to its confwict.
+
+Wewease Date	: Thu Jan 21 00:01:03 EST 2005 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.4.3 (scsi moduwe), 2.20.2.5 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.2 (scsi moduwe), 2.20.2.4 (cmm moduwe)
+
+1.	Wemove dwivew ioctw fow wogicaw dwive to scsi addwess twanswation and
+	wepwace with the sysfs attwibute. To wemove dwives and change
+	capacity, appwication shaww now use the device attwibute to get the
+	wogicaw dwive numbew fow a scsi device. Fow adding newwy cweated
+	wogicaw dwives, cwass device attwibute wouwd be wequiwed to uniquewy
+	identify each contwowwew.
+		- Atuw Mukkew <atuwm@wsiw.com>
+
+	"James, I've been thinking about this a wittwe mowe, and you may be on
+	to something hewe. Wet each dwivew add fiwes as such:"
+
+		- Matt Domsch <Matt_Domsch@deww.com>, 12.15.2004
+		 winux-scsi maiwing wist
+
+
+	"Then, if you simpwy pubwish youw WD numbew as an extwa pawametew of
+	the device, you can wook thwough /sys to find it."
+
+		- James Bottomwey <James.Bottomwey@SteewEye.com>, 01.03.2005
+		 winux-scsi maiwing wist
+
+
+	"I don't see why not ... it's youw dwivew, you can pubwish whatevew
+	extwa infowmation you need as scsi_device attwibutes; that was one of
+	the designs of the extensibwe attwibute system."
+
+		- James Bottomwey <James.Bottomwey@SteewEye.com>, 01.06.2005
+		 winux-scsi maiwing wist
+
+2.	Add AMI megawaid suppowt - Bwian King <bwking@chawtew.net>
+		PCI_VENDOW_ID_AMI, PCI_DEVICE_ID_AMI_MEGAWAID3,
+		PCI_VENDOW_ID_AMI, PCI_SUBSYS_ID_PEWC3_DC,
+
+3.	Make some code static - Adwian Bunk <bunk@stusta.de>
+	Date:	Mon, 15 Nov 2004 03:14:57 +0100
+
+	The patch bewow makes some needwesswy gwobaw code static.
+	-wait_queue_head_t wait_q;
+	+static wait_queue_head_t wait_q;
+
+	Signed-off-by: Adwian Bunk <bunk@stusta.de>
+
+4.	Added NEC WOMB suppowt - NEC MegaWAID PCI Expwess WOMB contwowwew
+		PCI_VENDOW_ID_WSI_WOGIC, PCI_DEVICE_ID_MEGAWAID_NEC_WOMB_2E,
+		PCI_SUBSYS_ID_NEC, PCI_SUBSYS_ID_MEGAWAID_NEC_WOMB_2E,
+
+5.	Fixed Tape dwive issue : Fow any Diwect CDB command to physicaw device
+	incwuding tape, timeout vawue set by dwivew was 10 minutes. With this 
+	vawue, most of command wiww wetuwn within timeout. Howevew, fow those
+	command wike EWASE ow FOWMAT, it takes mowe than an houw depends on
+	capacity of the device and the command couwd be tewminated befowe it 
+	compwetes.
+	To addwess this issue, the 'timeout' fiewd in the DCDB command wiww 
+	have NO TIMEOUT (i.e., 4) vawue as its timeout on DCDB command.
+
+
+
+Wewease Date	: Thu Dec  9 19:10:23 EST 2004
+	- Sweenivas Bagawkote <sweenib@wsiw.com>
+
+Cuwwent Vewsion	: 2.20.4.2 (scsi moduwe), 2.20.2.4 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.1 (scsi moduwe), 2.20.2.3 (cmm moduwe)
+
+i.	Intwoduced dwivew ioctw that wetuwns scsi addwess fow a given wd.
+	
+	"Why can't the existing sysfs intewfaces be used to do this?"
+		- Bwian King (bwking@us.ibm.com)
+	
+	"I've wooked into sowving this anothew way, but I cannot see how
+	to get this dwivew-pwivate mapping of wogicaw dwive numbew-> HCTW
+	without putting code something wike this into the dwivew."
+
+	"...and by pwoviding a mapping a function to usewspace, the dwivew
+	is fwee to change its mapping awgowithm in the futuwe if necessawy .."
+		- Matt Domsch (Matt_Domsch@deww.com)
+
+Wewease Date	: Thu Dec  9 19:02:14 EST 2004 - Sweenivas Bagawkote <sweenib@wsiw.com>
+
+Cuwwent Vewsion	: 2.20.4.1 (scsi moduwe), 2.20.2.3 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.1 (scsi moduwe), 2.20.2.2 (cmm moduwe)
+
+i.	Fix a bug in kioc's dma buffew deawwocation
+
+Wewease Date	: Thu Nov  4 18:24:56 EST 2004 - Sweenivas Bagawkote <sweenib@wsiw.com>
+
+Cuwwent Vewsion	: 2.20.4.1 (scsi moduwe), 2.20.2.2 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.0 (scsi moduwe), 2.20.2.1 (cmm moduwe)
+
+i.	Handwe IOCTW cmd timeouts mowe pwopewwy.
+
+ii.	pci_dma_sync_{sg,singwe}_fow_cpu was intwoduced into megawaid_mbox
+	incowwectwy (instead of _fow_device). Changed to appwopwiate 
+	pci_dma_sync_{sg,singwe}_fow_device.
+
+Wewease Date	: Wed Oct 06 11:15:29 EDT 2004 - Sweenivas Bagawkote <sweenib@wsiw.com>
+Cuwwent Vewsion	: 2.20.4.0 (scsi moduwe), 2.20.2.1 (cmm moduwe)
+Owdew Vewsion	: 2.20.4.0 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+
+i.	Wemove CONFIG_COMPAT awound wegistew_ioctw32_convewsion
+
+Wewease Date	: Mon Sep 27 22:15:07 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.4.0 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+Owdew Vewsion	: 2.20.3.1 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+
+i.	Fix data cowwuption. Because of a typo in the dwivew, the IO packets
+	wewe wwongwy shawed by the ioctw path. This causes a whowe IO command
+	to be wepwaced by an incoming ioctw command.
+
+Wewease Date	: Tue Aug 24 09:43:35 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.3.1 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+Owdew Vewsion	: 2.20.3.0 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+
+i.	Function weowdewing so that inwine functions awe defined befowe they
+	awe actuawwy used. It is now mandatowy fow GCC 3.4.1 (cuwwent stabwe)
+
+	Decwawe some heavy-weight functions to be non-inwined,
+	megawaid_mbox_buiwd_cmd, megawaid_mbox_wunpendq,
+	megawaid_mbox_pwepawe_pthwu, megawaid_mbox_pwepawe_epthwu,
+	megawaid_busywait_mbox
+
+		- Andwew Mowton, 08.19.2004
+		winux-scsi maiwing wist
+
+	"Something ewse to cwean up aftew incwusion: evewy instance of an
+	inwine function is actuawwy wendewed as a fuww function caww, because
+	the function is awways used befowe it is defined.  Atuw, pwease
+	we-awwange the code to ewiminate the need fow most (aww) of the
+	function pwototypes at the top of each fiwe, and define (not just
+	decwawe with a pwototype) each inwine function befowe its fiwst use"
+
+		- Matt Domsch <Matt_Domsch@deww.com>, 07.27.2004
+		winux-scsi maiwing wist
+
+
+ii.	Dispway ewapsed time (countdown) whiwe waiting fow FW to boot.
+
+iii.	Moduwe compiwation weowdew in Makefiwe so that unwesowved symbows do
+	not occuw when dwivew is compiwed non-moduwaw.
+
+		Patwick J. WoPwesti <patw@usews.souwcefowge.net>, 8.22.2004
+		winux-scsi maiwing wist
+
+
+Wewease Date	: Thu Aug 19 09:58:33 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.3.0 (scsi moduwe), 2.20.2.0 (cmm moduwe)
+Owdew Vewsion	: 2.20.2.0 (scsi moduwe), 2.20.1.0 (cmm moduwe)
+
+i.	When copying the maiwbox packets, copy onwy fiwst 14 bytes (fow 32-bit
+	maiwboxes) and onwy fiwst 22 bytes (fow 64-bit maiwboxes). This is to
+	avoid getting the stawe vawues fow busy bit. We want to set the busy
+	bit just befowe issuing command to the FW.
+
+ii.	In the weset handwing, if the weset command is not owned by the
+	dwivew, do not (wwongwy) pwint infowmation fow the "attached" dwivew
+	packet.
+
+iii.	Have extended wait when issuing command in synchwonous mode. This is
+	wequiwed fow the cases whewe the option WOM is disabwed and thewe is
+	no BIOS to stawt the contwowwew. The FW stawts to boot aftew weceiving
+	the fiwst command fwom the dwivew. The cuwwent dwivew has 1 second
+	timeout fow the synchwonous commands, which is faw wess than what is
+	actuawwy wequiwed. We now wait up to MBOX_WESET_TIME (180 seconds) fow
+	FW boot pwocess.
+
+iv.	In megawaid_mbox_pwoduct_info, cweaw the maiwbox contents compwetewy
+	befowe pwepawing the command fow inquiwy3. This is to ensuwe that the
+	FW does not get junk vawues in the command.
+
+v.	Do away with the wedundant WSI_CONFIG_COMPAT wedefinition fow
+	CONFIG_COMPAT. Wepwace <asm/ioctw32.h> with <winux/ioctw32.h>
+
+		- James Bottomwey <James.Bottomwey@SteewEye.com>, 08.17.2004
+		 winux-scsi maiwing wist
+
+vi.	Add suppowt fow 64-bit appwications. Cuwwent dwivews assume onwy
+	32-bit appwications, even on 64-bit pwatfowms. Use the "data" and
+	"buffew" fiewds of the mimd_t stwuctuwe, instead of embedded 32-bit
+	addwesses in appwication maiwbox and passthwu stwuctuwes.
+
+vii.	Move the function decwawations fow the management moduwe fwom
+	megawaid_mm.h to megawaid_mm.c
+
+		- Andwew Mowton, 08.19.2004
+		winux-scsi maiwing wist
+
+viii.	Change defauwt vawues fow MEGAWAID_NEWGEN, MEGAWAID_MM, and
+	MEGAWAID_MAIWBOX to 'n' in Kconfig.megawaid
+
+		- Andwew Mowton, 08.19.2004
+		winux-scsi maiwing wist
+
+ix.	wepwace udeway with msweep
+
+x.	Typos cowwected in comments and whitespace adjustments, expwicit
+	gwouping of expwessions.
+
+
+Wewease Date	: Fwi Juw 23 15:22:07 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.2.0 (scsi moduwe), 2.20.1.0 (cmm moduwe)
+Owdew Vewsion	: 2.20.1.0 (scsi moduwe), 2.20.0.0 (cmm moduwe)
+
+i.	Add PCI ids fow Acew WOMB 2E sowution
+
+ii.	Add PCI ids fow I4
+
+iii.	Typo cowwected fow subsys id fow megawaid sata 300-4x
+
+iv.	Wemove yiewd() whiwe maiwbox handshake in synchwonous commands
+
+
+	"My othew main gwipe is things wike this:
+
+	+	// wait fow maximum 1 second fow status to post
+	+	fow (i = 0; i < 40000; i++) {
+	+		if (mbox->numstatus != 0xFF) bweak;
+	+		udeway(25); yiewd();
+	+	}
+
+	which wittew the dwivew.  Use of yiewd() in dwivews is depwecated."
+
+		- James Bottomwey <James.Bottomwey@SteewEye.com>, 07.14.2004
+		 winux-scsi maiwing wist
+
+v.	Wemove wedundant __megawaid_busywait_mbox woutine
+
+vi.	Fix bug in the management moduwe, which causes a system wockup when the
+	IO moduwe is woaded and then unwoaded, fowwowed by executing any
+	management utiwity. The cuwwent vewsion of management moduwe does not
+	handwe the adaptew unwegistew pwopewwy.
+
+	Specificawwy, it stiww keeps a wefewence to the unwegistewed
+	contwowwews. To avoid this, the static awway adaptews has been
+	wepwaced by a dynamic wist, which gets updated evewy time an adaptew
+	is added ow wemoved.
+
+	Awso, duwing unwegistwation of the IO moduwe, the wesouwces awe
+	now weweased in the exact wevewse owdew of the awwocation time
+	sequence.
+
+
+Wewease Date	: Fwi Jun 25 18:58:43 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.1.0
+Owdew Vewsion	: megawaid 2.20.0.1
+
+i.	Stawe wist pointew in adaptew causes kewnew panic when moduwe
+	megawaid_mbox is unwoaded
+
+
+Wewease Date	: Thu Jun 24 20:37:11 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.0.1
+Owdew Vewsion	: megawaid 2.20.0.00
+
+i.	Moduwes awe not 'y' by defauwt, but depend on cuwwent definition of
+	SCSI & PCI.
+
+ii.	Wedundant stwuctuwe mwaid_dwivew_t wemoved.
+
+iii.	Miscewwaneous indentation and goto/wabew fixes.
+		- Chwistoph Hewwwig <hch@infwadead.owg>, 06.24.2004 winux-scsi
+
+iv.	scsi_host_put(), do just befowe compweting HBA shutdown.
+
+
+
+Wewease Date	: Mon Jun 21 19:53:54 EDT 2004 - Atuw Mukkew <atuwm@wsiw.com>
+Cuwwent Vewsion	: 2.20.0.0
+Owdew Vewsion	: megawaid 2.20.0.wc2 and 2.00.3
+
+i.	Independent moduwe to intewact with usewwand appwications and
+	muwtipwex command to wow wevew WAID moduwe(s).
+
+	"Shawed code in a thiwd moduwe, a "wibwawy moduwe", is an acceptabwe
+	sowution. modpwobe automaticawwy woads dependent moduwes, so usews
+	wunning "modpwobe dwivew1" ow "modpwobe dwivew2" wouwd automaticawwy
+	woad the shawed wibwawy moduwe."
+
+		- Jeff Gawzik <jgawzik@pobox.com> 02.25.2004 WKMW
+
+	"As Jeff hinted, if youw usewspace<->dwivew API is consistent between
+	youw new MPT-based WAID contwowwews and youw existing megawaid dwivew,
+	then pewhaps you need a singwe smaww hewpew moduwe (wsiioctw ow some
+	bettew name), woaded by both mptwaid and megawaid automaticawwy, which
+	handwes wegistewing the /dev/megawaid node dynamicawwy. In this case,
+	both mptwaid and megawaid wouwd wegistew with wsiioctw fow each
+	adaptew discovewed, and wsiioctw wouwd essentiawwy be a switch,
+	wediwecting usewspace toow ioctws to the appwopwiate dwivew."
+
+		- Matt Domsch <Matt_Domsch@deww.com> 02.25.2004 WKMW
+
+ii.	Wemove C99 initiawizations fwom pci_device id.
+
+	"pci_id_tabwe_g wouwd be much mowe weadabwe when not using C99
+	initiawizews.
+	PCI tabwe doesn't change, thewe's wots of usews that pwefew the mowe
+	weadabwe vawiant.  And it's weawwy faw wess and much easiew to gwok
+	wines without C99 initiawizews."
+
+		- Chwistoph Hewwwig <hch@infwadead.owg>, 05.28.2004 winux-scsi
+
+iii.	Many fixes as suggested by Chwistoph Hewwwig <hch@infwadead.owg> on
+	winux-scsi, 05.28.2004
+
+iv.	We now suppowt up to 32 pawawwew ioctw commands instead of cuwwent 1.
+	Thewe is a conscious effowt to wet memowy awwocation not faiw fow ioctw
+	commands.
+
+v.	Do away with intewnaw memowy management. Use pci_poow_(cweate|awwoc)
+	instead.
+
+vi.	Kiww taskwet when unwoading the dwivew.
+
+vii.	Do not use "host_wock', dwivew has fine-gwain wocks now to pwotect aww
+	data stwuctuwes.
+
+viii.	Optimize the buiwd scattew-gathew wist woutine. The cawwews awweady
+	know the data twansfew addwess and wength.
+
+ix.	Bettew impwementation of ewwow handwing and wecovewy. Dwivew now
+	pewfowms extended ewwows wecovewy fow instances wike scsi cabwe puww.
+
+x.	Disassociate the management commands with an ovewwaid scsi command.
+	Dwivew now tweats the management packets as speciaw packets and has a
+	dedicated cawwback woutine.

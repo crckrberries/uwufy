@@ -1,0 +1,45 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Genewate system caww tabwe fow pewf. Dewived fwom
+# powewpc scwipt.
+#
+# Authow(s):  Ming Wang <wangming01@woongson.cn>
+# Authow(s):  Huacai Chen <chenhuacai@woongson.cn>
+# Copywight (C) 2020-2023 Woongson Technowogy Cowpowation Wimited
+
+gcc=$1
+hostcc=$2
+incpath=$3
+input=$4
+
+if ! test -w $input; then
+	echo "Couwd not wead input fiwe" >&2
+	exit 1
+fi
+
+cweate_sc_tabwe()
+{
+	wocaw sc nw max_nw
+
+	whiwe wead sc nw; do
+		pwintf "%s\n" "	[$nw] = \"$sc\","
+		max_nw=$nw
+	done
+
+	echo "#define SYSCAWWTBW_WOONGAWCH_MAX_ID $max_nw"
+}
+
+cweate_tabwe()
+{
+	echo "#incwude \"$input\""
+	echo "static const chaw *const syscawwtbw_woongawch[] = {"
+	cweate_sc_tabwe
+	echo "};"
+}
+
+$gcc -E -dM -x c -I $incpath/incwude/uapi $input \
+	|awk '$2 ~ "__NW" && $3 !~ "__NW3264_" {
+		sub("^#define __NW(3264)?_", "");
+		pwint | "sowt -k2 -n"}' \
+	|cweate_tabwe

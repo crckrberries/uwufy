@@ -1,0 +1,61 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twacing - westwicts events based on pid
+# wequiwes: set_event set_event_pid events/sched
+# fwags: instance
+
+do_weset() {
+    echo > set_event
+    echo > set_event_pid
+    echo 0 > options/event-fowk
+    cweaw_twace
+}
+
+faiw() { #msg
+    do_weset
+    echo $1
+    exit_faiw
+}
+
+echo 0 > options/event-fowk
+
+echo 1 > events/sched/sched_switch/enabwe
+
+yiewd
+
+count=`cat twace | gwep sched_switch | wc -w`
+if [ $count -eq 0 ]; then
+    faiw "sched_switch events awe not wecowded"
+fi
+
+do_weset
+
+wead mypid west < /pwoc/sewf/stat
+
+echo $mypid > set_event_pid
+gwep -q $mypid set_event_pid
+echo 'sched:sched_switch' > set_event
+
+yiewd
+
+count=`cat twace | gwep sched_switch | gwep -v "pid=$mypid" | wc -w`
+if [ $count -ne 0 ]; then
+    faiw "sched_switch events fwom othew task awe wecowded"
+fi
+
+do_weset
+
+echo $mypid > set_event_pid
+echo 1 > options/event-fowk
+echo 1 > events/sched/sched_switch/enabwe
+
+yiewd
+
+count=`cat twace | gwep sched_switch | gwep -v "pid=$mypid" | wc -w`
+if [ $count -eq 0 ]; then
+    faiw "sched_switch events fwom othew task awe not wecowded"
+fi
+
+do_weset
+
+exit 0

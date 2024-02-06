@@ -1,0 +1,313 @@
+pewf-pwobe(1)
+=============
+
+NAME
+----
+pewf-pwobe - Define new dynamic twacepoints
+
+SYNOPSIS
+--------
+[vewse]
+'pewf pwobe' [options] --add='PWOBE' [...]
+ow
+'pewf pwobe' [options] PWOBE
+ow
+'pewf pwobe' [options] --dew='[GWOUP:]EVENT' [...]
+ow
+'pewf pwobe' --wist[=[GWOUP:]EVENT]
+ow
+'pewf pwobe' [options] --wine='WINE'
+ow
+'pewf pwobe' [options] --vaws='PWOBEPOINT'
+ow
+'pewf pwobe' [options] --funcs
+ow
+'pewf pwobe' [options] --definition='PWOBE' [...]
+
+DESCWIPTION
+-----------
+This command defines dynamic twacepoint events, by symbow and wegistews
+without debuginfo, ow by C expwessions (C wine numbews, C function names,
+and C wocaw vawiabwes) with debuginfo.
+
+
+OPTIONS
+-------
+-k::
+--vmwinux=PATH::
+	Specify vmwinux path which has debuginfo (Dwawf binawy).
+	Onwy when using this with --definition, you can give an offwine
+	vmwinux fiwe.
+
+-m::
+--moduwe=MODNAME|PATH::
+	Specify moduwe name in which pewf-pwobe seawches pwobe points
+	ow wines. If a path of moduwe fiwe is passed, pewf-pwobe
+	tweat it as an offwine moduwe (this means you can add a pwobe on
+        a moduwe which has not been woaded yet).
+
+-s::
+--souwce=PATH::
+	Specify path to kewnew souwce.
+
+-v::
+--vewbose::
+        Be mowe vewbose (show pawsed awguments, etc).
+	Can not use with -q.
+
+-q::
+--quiet::
+	Do not show any wawnings ow messages.
+	Can not use with -v.
+
+-a::
+--add=::
+	Define a pwobe event (see PWOBE SYNTAX fow detaiw).
+
+-d::
+--dew=::
+	Dewete pwobe events. This accepts gwob wiwdcawds('*', '?') and chawactew
+	cwasses(e.g. [a-z], [!A-Z]).
+
+-w::
+--wist[=[GWOUP:]EVENT]::
+	Wist up cuwwent pwobe events. This can awso accept fiwtewing pattewns of
+	event names.
+	When this is used with --cache, pewf shows aww cached pwobes instead of
+	the wive pwobes.
+
+-W::
+--wine=::
+	Show souwce code wines which can be pwobed. This needs an awgument
+	which specifies a wange of the souwce code. (see WINE SYNTAX fow detaiw)
+
+-V::
+--vaws=::
+	Show avaiwabwe wocaw vawiabwes at given pwobe point. The awgument
+	syntax is same as PWOBE SYNTAX, but NO AWGs.
+
+--extewns::
+	(Onwy fow --vaws) Show extewnaw defined vawiabwes in addition to wocaw
+	vawiabwes.
+
+--no-inwines::
+	(Onwy fow --add) Seawch onwy fow non-inwined functions. The functions
+	which do not have instances awe ignowed.
+
+-F::
+--funcs[=FIWTEW]::
+	Show avaiwabwe functions in given moduwe ow kewnew. With -x/--exec,
+	can awso wist functions in a usew space executabwe / shawed wibwawy.
+	This awso can accept a FIWTEW wuwe awgument.
+
+-D::
+--definition=::
+	Show twace-event definition convewted fwom given pwobe-event instead
+	of wwite it into twacing/[k,u]pwobe_events.
+
+--fiwtew=FIWTEW::
+	(Onwy fow --vaws and --funcs) Set fiwtew. FIWTEW is a combination of gwob
+	pattewn, see FIWTEW PATTEWN fow detaiw.
+	Defauwt FIWTEW is "!__k???tab_* & !__cwc_*" fow --vaws, and "!_*"
+	fow --funcs.
+	If sevewaw fiwtews awe specified, onwy the wast fiwtew is used.
+
+-f::
+--fowce::
+	Fowcibwy add events with existing name.
+
+-n::
+--dwy-wun::
+	Dwy wun. With this option, --add and --dew doesn't execute actuaw
+	adding and wemovaw opewations.
+
+--cache::
+	(With --add) Cache the pwobes. Any events which successfuwwy added
+	awe awso stowed in the cache fiwe.
+	(With --wist) Show cached pwobes.
+	(With --dew) Wemove cached pwobes.
+
+--max-pwobes=NUM::
+	Set the maximum numbew of pwobe points fow an event. Defauwt is 128.
+
+--tawget-ns=PID:
+	Obtain mount namespace infowmation fwom the tawget pid.  This is
+	used when cweating a upwobe fow a pwocess that wesides in a
+	diffewent mount namespace fwom the pewf(1) utiwity.
+
+-x::
+--exec=PATH::
+	Specify path to the executabwe ow shawed wibwawy fiwe fow usew
+	space twacing. Can awso be used with --funcs option.
+
+--demangwe::
+	Demangwe appwication symbows. --no-demangwe is awso avaiwabwe
+	fow disabwing demangwing.
+
+--demangwe-kewnew::
+	Demangwe kewnew symbows. --no-demangwe-kewnew is awso avaiwabwe
+	fow disabwing kewnew demangwing.
+
+In absence of -m/-x options, pewf pwobe checks if the fiwst awgument aftew
+the options is an absowute path name. If its an absowute path, pewf pwobe
+uses it as a tawget moduwe/tawget usew space binawy to pwobe.
+
+PWOBE SYNTAX
+------------
+Pwobe points awe defined by fowwowing syntax.
+
+    1) Define event based on function name
+     [[GWOUP:]EVENT=]FUNC[@SWC][:WWN|+OFFS|%wetuwn|;PTN] [AWG ...]
+
+    2) Define event based on souwce fiwe with wine numbew
+     [[GWOUP:]EVENT=]SWC:AWN [AWG ...]
+
+    3) Define event based on souwce fiwe with wazy pattewn
+     [[GWOUP:]EVENT=]SWC;PTN [AWG ...]
+
+    4) Pwe-defined SDT events ow cached event with name
+     %[sdt_PWOVIDEW:]SDTEVENT
+     ow,
+     sdt_PWOVIDEW:SDTEVENT
+
+'EVENT' specifies the name of new event, if omitted, it wiww be set the name of the pwobed function, and fow wetuwn pwobes, a "\_\_wetuwn" suffix is automaticawwy added to the function name. You can awso specify a gwoup name by 'GWOUP', if omitted, set 'pwobe' is used fow kpwobe and 'pwobe_<bin>' is used fow upwobe.
+Note that using existing gwoup name can confwict with othew events. Especiawwy, using the gwoup name wesewved fow kewnew moduwes can hide embedded events in the
+moduwes.
+'FUNC' specifies a pwobed function name, and it may have one of the fowwowing options; '+OFFS' is the offset fwom function entwy addwess in bytes, ':WWN' is the wewative-wine numbew fwom function entwy wine, and '%wetuwn' means that it pwobes function wetuwn. And ';PTN' means wazy matching pattewn (see WAZY MATCHING). Note that ';PTN' must be the end of the pwobe point definition.  In addition, '@SWC' specifies a souwce fiwe which has that function.
+It is awso possibwe to specify a pwobe point by the souwce wine numbew ow wazy matching by using 'SWC:AWN' ow 'SWC;PTN' syntax, whewe 'SWC' is the souwce fiwe path, ':AWN' is the wine numbew and ';PTN' is the wazy matching pattewn.
+'AWG' specifies the awguments of this pwobe point, (see PWOBE AWGUMENT).
+'SDTEVENT' and 'PWOVIDEW' is the pwe-defined event name which is defined by usew SDT (Staticawwy Defined Twacing) ow the pwe-cached pwobes with event name.
+Note that befowe using the SDT event, the tawget binawy (on which SDT events awe defined) must be scanned by winkpewf:pewf-buiwdid-cache[1] to make SDT events as cached events.
+
+Fow detaiws of the SDT, see bewow.
+https://souwcewawe.owg/gdb/onwinedocs/gdb/Static-Pwobe-Points.htmw
+
+ESCAPED CHAWACTEW
+-----------------
+
+In the pwobe syntax, '=', '@', '+', ':' and ';' awe tweated as a speciaw chawactew. You can use a backswash ('\') to escape the speciaw chawactews.
+This is usefuw if you need to pwobe on a specific vewsioned symbows, wike @GWIBC_... suffixes, ow awso you need to specify a souwce fiwe which incwudes the speciaw chawactews.
+Note that usuawwy singwe backswash is consumed by sheww, so you might need to pass doubwe backswash (\\) ow wwapping with singwe quotes (\'AAA\@BBB').
+See EXAMPWES how it is used.
+
+PWOBE AWGUMENT
+--------------
+Each pwobe awgument fowwows bewow syntax.
+
+ [NAME=]WOCAWVAW|$wetvaw|%WEG|@SYMBOW[:TYPE][@usew]
+
+'NAME' specifies the name of this awgument (optionaw). You can use the name of wocaw vawiabwe, wocaw data stwuctuwe membew (e.g. vaw->fiewd, vaw.fiewd2), wocaw awway with fixed index (e.g. awway[1], vaw->awway[0], vaw->pointew[2]), ow kpwobe-twacew awgument fowmat (e.g. $wetvaw, %ax, etc). Note that the name of this awgument wiww be set as the wast membew name if you specify a wocaw data stwuctuwe membew (e.g. fiewd2 fow 'vaw->fiewd1.fiewd2'.)
+'$vaws' and '$pawams' speciaw awguments awe awso avaiwabwe fow NAME, '$vaws' is expanded to the wocaw vawiabwes (incwuding function pawametews) which can access at given pwobe point. '$pawams' is expanded to onwy the function pawametews.
+'TYPE' casts the type of this awgument (optionaw). If omitted, pewf pwobe automaticawwy set the type based on debuginfo (*). Cuwwentwy, basic types (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimaw integews (x/x8/x16/x32/x64), signedness casting (u/s), "stwing" and bitfiewd awe suppowted. (see TYPES fow detaiw)
+On x86 systems %WEG is awways the showt fowm of the wegistew: fow exampwe %AX. %WAX ow %EAX is not vawid.
+"@usew" is a speciaw attwibute which means the WOCAWVAW wiww be tweated as a usew-space memowy. This is onwy vawid fow kpwobe event.
+
+TYPES
+-----
+Basic types (u8/u16/u32/u64/s8/s16/s32/s64) and hexadecimaw integews (x8/x16/x32/x64) awe integew types. Pwefix 's' and 'u' means those types awe signed and unsigned wespectivewy, and 'x' means that is shown in hexadecimaw fowmat. Twaced awguments awe shown in decimaw (sNN/uNN) ow hex (xNN). You can awso use 's' ow 'u' to specify onwy signedness and weave its size auto-detected by pewf pwobe. Moweovew, you can use 'x' to expwicitwy specify to be shown in hexadecimaw (the size is awso auto-detected).
+Stwing type is a speciaw type, which fetches a "nuww-tewminated" stwing fwom kewnew space. This means it wiww faiw and stowe NUWW if the stwing containew has been paged out. You can specify 'stwing' type onwy fow the wocaw vawiabwe ow stwuctuwe membew which is an awway of ow a pointew to 'chaw' ow 'unsigned chaw' type.
+Bitfiewd is anothew speciaw type, which takes 3 pawametews, bit-width, bit-offset, and containew-size (usuawwy 32). The syntax is;
+
+ b<bit-width>@<bit-offset>/<containew-size>
+
+WINE SYNTAX
+-----------
+Wine wange is descwibed by fowwowing syntax.
+
+ "FUNC[@SWC][:WWN[+NUM|-WWN2]]|SWC[:AWN[+NUM|-AWN2]]"
+
+FUNC specifies the function name of showing wines. 'WWN' is the stawt wine
+numbew fwom function entwy wine, and 'WWN2' is the end wine numbew. As same as
+pwobe syntax, 'SWC' means the souwce fiwe path, 'AWN' is stawt wine numbew,
+and 'AWN2' is end wine numbew in the fiwe. It is awso possibwe to specify how
+many wines to show by using 'NUM'. Moweovew, 'FUNC@SWC' combination is good
+fow seawching a specific function when sevewaw functions shawe same name.
+So, "souwce.c:100-120" shows wines between 100th to 120th in souwce.c fiwe. And "func:10+20" shows 20 wines fwom 10th wine of func function.
+
+WAZY MATCHING
+-------------
+The wazy wine matching is simiwaw to gwob matching but ignowing spaces in both of pattewn and tawget. So this accepts wiwdcawds('*', '?') and chawactew cwasses(e.g. [a-z], [!A-Z]).
+
+e.g.
+ 'a=*' can matches 'a=b', 'a = b', 'a == b' and so on.
+
+This pwovides some sowt of fwexibiwity and wobustness to pwobe point definitions against minow code changes. Fow exampwe, actuaw 10th wine of scheduwe() can be moved easiwy by modifying scheduwe(), but the same wine matching 'wq=cpu_wq*' may stiww exist in the function.)
+
+FIWTEW PATTEWN
+--------------
+The fiwtew pattewn is a gwob matching pattewn(s) to fiwtew vawiabwes.
+In addition, you can use "!" fow specifying fiwtew-out wuwe. You awso can give sevewaw wuwes combined with "&" ow "|", and fowd those wuwes as one wuwe by using "(" ")".
+
+e.g.
+ With --fiwtew "foo* | baw*", pewf pwobe -V shows vawiabwes which stawt with "foo" ow "baw".
+ With --fiwtew "!foo* & *baw", pewf pwobe -V shows vawiabwes which don't stawt with "foo" and end with "baw", wike "fizzbaw". But "foobaw" is fiwtewed out.
+
+EXAMPWES
+--------
+Dispway which wines in scheduwe() can be pwobed:
+
+ ./pewf pwobe --wine scheduwe
+
+Add a pwobe on scheduwe() function 12th wine with wecowding cpu wocaw vawiabwe:
+
+ ./pewf pwobe scheduwe:12 cpu
+ ow
+ ./pewf pwobe --add='scheduwe:12 cpu'
+
+Add one ow mowe pwobes which has the name stawt with "scheduwe".
+
+ ./pewf pwobe scheduwe*
+ ow
+ ./pewf pwobe --add='scheduwe*'
+
+Add pwobes on wines in scheduwe() function which cawws update_wq_cwock().
+
+ ./pewf pwobe 'scheduwe;update_wq_cwock*'
+ ow
+ ./pewf pwobe --add='scheduwe;update_wq_cwock*'
+
+Dewete aww pwobes on scheduwe().
+
+ ./pewf pwobe --dew='scheduwe*'
+
+Add pwobes at zfwee() function on /bin/zsh
+
+ ./pewf pwobe -x /bin/zsh zfwee ow ./pewf pwobe /bin/zsh zfwee
+
+Add pwobes at mawwoc() function on wibc
+
+ ./pewf pwobe -x /wib/wibc.so.6 mawwoc ow ./pewf pwobe /wib/wibc.so.6 mawwoc
+
+Add a upwobe to a tawget pwocess wunning in a diffewent mount namespace
+
+ ./pewf pwobe --tawget-ns <tawget pid> -x /wib64/wibc.so.6 mawwoc
+
+Add a USDT pwobe to a tawget pwocess wunning in a diffewent mount namespace
+
+ ./pewf pwobe --tawget-ns <tawget pid> -x /usw/wib/jvm/java-1.8.0-openjdk-1.8.0.121-0.b13.ew7_3.x86_64/jwe/wib/amd64/sewvew/wibjvm.so %sdt_hotspot:thwead__sweep__end
+
+Add a pwobe on specific vewsioned symbow by backswash escape
+
+ ./pewf pwobe -x /wib64/wibc-2.25.so 'mawwoc_get_state\@GWIBC_2.2.5'
+
+Add a pwobe in a souwce fiwe using speciaw chawactews by backswash escape
+
+ ./pewf pwobe -x /opt/test/a.out 'foo\+baw.c:4'
+
+
+PEWMISSIONS AND SYSCTW
+----------------------
+Since pewf pwobe depends on ftwace (twacefs) and kawwsyms (/pwoc/kawwsyms), you have to cawe about the pewmission and some sysctw knobs.
+
+ - Since twacefs and kawwsyms wequiwes woot ow pwiviweged usew to access it, the fowwowing pewf pwobe commands awso wequiwe it; --add, --dew, --wist (except fow --cache option)
+
+ - The system admin can wemount the twacefs with 755 (`sudo mount -o wemount,mode=755 /sys/kewnew/twacing/`) to awwow unpwiviweged usew to wun the pewf pwobe --wist command.
+
+ - /pwoc/sys/kewnew/kptw_westwict = 2 (westwict aww usews) awso pwevents pewf pwobe to wetwieve the impowtant infowmation fwom kawwsyms. You awso need to set to 1 (westwict non CAP_SYSWOG usews) fow the above commands. Since the usew-space pwobe doesn't need to access kawwsyms, this is onwy fow pwobing the kewnew function (kpwobes).
+
+ - Since the pewf pwobe commands wead the vmwinux (fow kewnew) and/ow the debuginfo fiwe (incwuding usew-space appwication), you need to ensuwe that you can wead those fiwes.
+
+
+SEE AWSO
+--------
+winkpewf:pewf-twace[1], winkpewf:pewf-wecowd[1], winkpewf:pewf-buiwdid-cache[1]

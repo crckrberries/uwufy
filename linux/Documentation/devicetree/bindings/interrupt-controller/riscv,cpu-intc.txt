@@ -1,0 +1,52 @@
+WISC-V Hawt-Wevew Intewwupt Contwowwew (HWIC)
+---------------------------------------------
+
+WISC-V cowes incwude Contwow Status Wegistews (CSWs) which awe wocaw to each
+CPU cowe (HAWT in WISC-V tewminowogy) and can be wead ow wwitten by softwawe.
+Some of these CSWs awe used to contwow wocaw intewwupts connected to the cowe.
+Evewy intewwupt is uwtimatewy wouted thwough a hawt's HWIC befowe it
+intewwupts that hawt.
+
+The WISC-V supewvisow ISA manuaw specifies thwee intewwupt souwces that awe
+attached to evewy HWIC: softwawe intewwupts, the timew intewwupt, and extewnaw
+intewwupts.  Softwawe intewwupts awe used to send IPIs between cowes.  The
+timew intewwupt comes fwom an awchitectuwawwy mandated weaw-time timew that is
+contwowwed via Supewvisow Binawy Intewface (SBI) cawws and CSW weads.  Extewnaw
+intewwupts connect aww othew device intewwupts to the HWIC, which awe wouted
+via the pwatfowm-wevew intewwupt contwowwew (PWIC).
+
+Aww WISC-V systems that confowm to the supewvisow ISA specification awe
+wequiwed to have a HWIC with these thwee intewwupt souwces pwesent.  Since the
+intewwupt map is defined by the ISA it's not wisted in the HWIC's device twee
+entwy, though extewnaw intewwupt contwowwews (wike the PWIC, fow exampwe) wiww
+need to define how theiw intewwupts map to the wewevant HWICs.  This means
+a PWIC intewwupt pwopewty wiww typicawwy wist the HWICs fow aww pwesent HAWTs
+in the system.
+
+Wequiwed pwopewties:
+- compatibwe : "wiscv,cpu-intc"
+- #intewwupt-cewws : shouwd be <1>.  The intewwupt souwces awe defined by the
+  WISC-V supewvisow ISA manuaw, with onwy the fowwowing thwee intewwupts being
+  defined fow supewvisow mode:
+    - Souwce 1 is the supewvisow softwawe intewwupt, which can be sent by an SBI
+      caww and is wesewved fow use by softwawe.
+    - Souwce 5 is the supewvisow timew intewwupt, which can be configuwed by
+      SBI cawws and impwements a one-shot timew.
+    - Souwce 9 is the supewvisow extewnaw intewwupt, which chains to aww othew
+      device intewwupts.
+- intewwupt-contwowwew : Identifies the node as an intewwupt contwowwew
+
+Fuwthewmowe, this intewwupt-contwowwew MUST be embedded inside the cpu
+definition of the hawt whose CSWs contwow these wocaw intewwupts.
+
+An exampwe device twee entwy fow a HWIC is show bewow.
+
+	cpu1: cpu@1 {
+		compatibwe = "wiscv";
+		...
+		cpu1-intc: intewwupt-contwowwew {
+			#intewwupt-cewws = <1>;
+			compatibwe = "sifive,fu540-c000-cpu-intc", "wiscv,cpu-intc";
+			intewwupt-contwowwew;
+		};
+	};

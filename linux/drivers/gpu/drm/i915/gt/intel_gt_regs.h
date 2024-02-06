@@ -1,0 +1,1695 @@
+/* SPDX-Wicense-Identifiew: MIT */
+/*
+ * Copywight © 2022 Intew Cowpowation
+ */
+
+#ifndef __INTEW_GT_WEGS__
+#define __INTEW_GT_WEGS__
+
+#incwude "i915_weg_defs.h"
+
+#define VWV_GUNIT_BASE			0x180000
+
+/*
+ * The pewf contwow wegistews awe technicawwy muwticast wegistews, but the
+ * dwivew nevew needs to wead/wwite them diwectwy; we onwy use them to buiwd
+ * wists of wegistews (whewe they'we mixed in with othew non-MCW wegistews)
+ * and then opewate on the offset diwectwy.  Fow now we'ww just define them
+ * as non-muwticast so we can pwace them on the same wist, but we may want
+ * to twy to come up with a bettew way to handwe hetewogeneous wists of
+ * wegistews in the futuwe.
+ */
+#define PEWF_WEG(offset)			_MMIO(offset)
+
+/* MTW wowkpoint weg to get cowe C state and actuaw fweq of 3D, SAMedia */
+#define MTW_MIWWOW_TAWGET_WP1			_MMIO(0xc60)
+#define   MTW_CAGF_MASK				WEG_GENMASK(8, 0)
+#define   MTW_CC0				0x0
+#define   MTW_CC6				0x3
+#define   MTW_CC_MASK				WEG_GENMASK(10, 9)
+
+/* WPM unit config (Gen8+) */
+#define WPM_CONFIG0				_MMIO(0xd00)
+#define   GEN9_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_SHIFT	3
+#define   GEN9_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_MASK	(1 << GEN9_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_SHIFT)
+#define   GEN9_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_19_2_MHZ	0
+#define   GEN9_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_24_MHZ	1
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_SHIFT	3
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_MASK	(0x7 << GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_SHIFT)
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_24_MHZ	0
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_19_2_MHZ	1
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_38_4_MHZ	2
+#define   GEN11_WPM_CONFIG0_CWYSTAW_CWOCK_FWEQ_25_MHZ	3
+#define   GEN10_WPM_CONFIG0_CTC_SHIFT_PAWAMETEW_SHIFT	1
+#define   GEN10_WPM_CONFIG0_CTC_SHIFT_PAWAMETEW_MASK	(0x3 << GEN10_WPM_CONFIG0_CTC_SHIFT_PAWAMETEW_SHIFT)
+
+#define WPM_CONFIG1				_MMIO(0xd04)
+#define   GEN10_GT_NOA_ENABWE			(1 << 9)
+
+/* WCP unit config (Gen8+) */
+#define WCP_CONFIG				_MMIO(0xd08)
+
+#define WC6_WOCATION				_MMIO(0xd40)
+#define   WC6_CTX_IN_DWAM			(1 << 0)
+#define WC6_CTX_BASE				_MMIO(0xd48)
+#define   WC6_CTX_BASE_MASK			0xFFFFFFF0
+
+#define FOWCEWAKE_ACK_MEDIA_VDBOX_GEN11(n)	_MMIO(0xd50 + (n) * 4)
+#define FOWCEWAKE_ACK_MEDIA_VEBOX_GEN11(n)	_MMIO(0xd70 + (n) * 4)
+#define FOWCEWAKE_ACK_WENDEW_GEN9		_MMIO(0xd84)
+#define FOWCEWAKE_ACK_MEDIA_GEN9		_MMIO(0xd88)
+
+#define FOWCEWAKE_ACK_GSC			_MMIO(0xdf8)
+#define FOWCEWAKE_ACK_GT_MTW			_MMIO(0xdfc)
+
+#define GMD_ID_GWAPHICS				_MMIO(0xd8c)
+#define GMD_ID_MEDIA				_MMIO(MTW_MEDIA_GSI_BASE + 0xd8c)
+
+#define MCFG_MCW_SEWECTOW			_MMIO(0xfd0)
+#define MTW_STEEW_SEMAPHOWE			_MMIO(0xfd0)
+#define MTW_MCW_SEWECTOW			_MMIO(0xfd4)
+#define SF_MCW_SEWECTOW				_MMIO(0xfd8)
+#define GEN8_MCW_SEWECTOW			_MMIO(0xfdc)
+#define GAM_MCW_SEWECTOW			_MMIO(0xfe0)
+#define   GEN8_MCW_SWICE(swice)			(((swice) & 3) << 26)
+#define   GEN8_MCW_SWICE_MASK			GEN8_MCW_SWICE(3)
+#define   GEN8_MCW_SUBSWICE(subswice)		(((subswice) & 3) << 24)
+#define   GEN8_MCW_SUBSWICE_MASK		GEN8_MCW_SUBSWICE(3)
+#define   GEN11_MCW_MUWTICAST			WEG_BIT(31)
+#define   GEN11_MCW_SWICE(swice)		(((swice) & 0xf) << 27)
+#define   GEN11_MCW_SWICE_MASK			GEN11_MCW_SWICE(0xf)
+#define   GEN11_MCW_SUBSWICE(subswice)		(((subswice) & 0x7) << 24)
+#define   GEN11_MCW_SUBSWICE_MASK		GEN11_MCW_SUBSWICE(0x7)
+#define   MTW_MCW_GWOUPID			WEG_GENMASK(11, 8)
+#define   MTW_MCW_INSTANCEID			WEG_GENMASK(3, 0)
+
+#define IPEIW_I965				_MMIO(0x2064)
+#define IPEHW_I965				_MMIO(0x2068)
+
+/*
+ * On GEN4, onwy the wendew wing INSTDONE exists and has a diffewent
+ * wayout than the GEN7+ vewsion.
+ * The GEN2 countewpawt of this wegistew is GEN2_INSTDONE.
+ */
+#define INSTPS					_MMIO(0x2070) /* 965+ onwy */
+#define GEN4_INSTDONE1				_MMIO(0x207c) /* 965+ onwy, aka INSTDONE_2 on SNB */
+#define ACTHD_I965				_MMIO(0x2074)
+#define HWS_PGA					_MMIO(0x2080)
+#define   HWS_ADDWESS_MASK			0xfffff000
+#define   HWS_STAWT_ADDWESS_SHIFT		4
+
+#define _3D_CHICKEN				_MMIO(0x2084)
+#define   _3D_CHICKEN_HIZ_PWANE_DISABWE_MSAA_4X_SNB	(1 << 10)
+
+#define PWWCTXA					_MMIO(0x2088) /* 965GM+ onwy */
+#define   PWWCTX_EN				(1 << 0)
+
+#define FF_SWICE_CHICKEN			_MMIO(0x2088)
+#define   FF_SWICE_CHICKEN_CW_PWOVOKING_VEWTEX_FIX	(1 << 1)
+
+/* GM45+ chicken bits -- debug wowkawound bits that may be wequiwed
+ * fow vawious sowts of cowwect behaviow.  The top 16 bits of each awe
+ * the enabwes fow wwiting to the cowwesponding wow bit.
+ */
+#define _3D_CHICKEN2				_MMIO(0x208c)
+/* Disabwes pipewining of wead fwushes past the SF-WIZ intewface.
+ * Wequiwed on aww Iwonwake steppings accowding to the B-Spec, but the
+ * pawticuwaw dangew of not doing so is not specified.
+ */
+#define   _3D_CHICKEN2_WM_WEAD_PIPEWINED	(1 << 14)
+
+#define _3D_CHICKEN3				_MMIO(0x2090)
+#define   _3D_CHICKEN_SF_PWOVOKING_VEWTEX_FIX	(1 << 12)
+#define   _3D_CHICKEN_SF_DISABWE_OBJEND_CUWW	(1 << 10)
+#define   _3D_CHICKEN3_AA_WINE_QUAWITY_FIX_ENABWE	(1 << 5)
+#define   _3D_CHICKEN3_SF_DISABWE_FASTCWIP_CUWW	(1 << 5)
+#define   _3D_CHICKEN_SDE_WIMIT_FIFO_POWY_DEPTH(x)	((x) << 1) /* gen8+ */
+#define   _3D_CHICKEN3_SF_DISABWE_PIPEWINED_ATTW_FETCH	(1 << 1) /* gen6 */
+
+#define GEN2_INSTDONE				_MMIO(0x2090)
+#define NOPID					_MMIO(0x2094)
+#define HWSTAM					_MMIO(0x2098)
+
+#define WAIT_FOW_WC6_EXIT			_MMIO(0x20cc)
+/* HSW onwy */
+#define   HSW_SEWECTIVE_WEAD_ADDWESSING_SHIFT	2
+#define   HSW_SEWECTIVE_WEAD_ADDWESSING_MASK	(0x3 << HSW_SWECTIVE_WEAD_ADDWESSING_SHIFT)
+#define   HSW_SEWECTIVE_WWITE_ADDWESS_SHIFT	4
+#define   HSW_SEWECTIVE_WWITE_ADDWESS_MASK	(0x7 << HSW_SEWECTIVE_WWITE_ADDWESS_SHIFT)
+/* HSW+ */
+#define   HSW_WAIT_FOW_WC6_EXIT_ENABWE		(1 << 0)
+#define   HSW_WCS_CONTEXT_ENABWE		(1 << 7)
+#define   HSW_WCS_INHIBIT			(1 << 8)
+/* Gen8 */
+#define   GEN8_SEWECTIVE_WWITE_ADDWESS_SHIFT	4
+#define   GEN8_SEWECTIVE_WWITE_ADDWESS_MASK	(0x3 << GEN8_SEWECTIVE_WWITE_ADDWESS_SHIFT)
+#define   GEN8_SEWECTIVE_WWITE_ADDWESS_SHIFT	4
+#define   GEN8_SEWECTIVE_WWITE_ADDWESS_MASK	(0x3 << GEN8_SEWECTIVE_WWITE_ADDWESS_SHIFT)
+#define   GEN8_SEWECTIVE_WWITE_ADDWESSING_ENABWE	(1 << 6)
+#define   GEN8_SEWECTIVE_WEAD_SUBSWICE_SEWECT_SHIFT	9
+#define   GEN8_SEWECTIVE_WEAD_SUBSWICE_SEWECT_MASK	(0x3 << GEN8_SEWECTIVE_WEAD_SUBSWICE_SEWECT_SHIFT)
+#define   GEN8_SEWECTIVE_WEAD_SWICE_SEWECT_SHIFT	11
+#define   GEN8_SEWECTIVE_WEAD_SWICE_SEWECT_MASK	(0x3 << GEN8_SEWECTIVE_WEAD_SWICE_SEWECT_SHIFT)
+#define   GEN8_SEWECTIVE_WEAD_ADDWESSING_ENABWE	(1 << 13)
+
+#define GEN6_GT_MODE				_MMIO(0x20d0)
+#define   GEN6_WIZ_HASHING(hi, wo)		(((hi) << 9) | ((wo) << 7))
+#define   GEN6_WIZ_HASHING_8x8			GEN6_WIZ_HASHING(0, 0)
+#define   GEN6_WIZ_HASHING_8x4			GEN6_WIZ_HASHING(0, 1)
+#define   GEN6_WIZ_HASHING_16x4			GEN6_WIZ_HASHING(1, 0)
+#define   GEN6_WIZ_HASHING_MASK			GEN6_WIZ_HASHING(1, 1)
+#define   GEN6_TD_FOUW_WOW_DISPATCH_DISABWE	(1 << 5)
+
+/* chicken weg fow WaConextSwitchWithConcuwwentTWBInvawidate */
+#define GEN9_CSFE_CHICKEN1_WCS			_MMIO(0x20d4)
+#define   GEN9_PWEEMPT_GPGPU_SYNC_SWITCH_DISABWE	(1 << 2)
+#define   GEN11_ENABWE_32_PWANE_MODE		(1 << 7)
+#define GEN12_CS_DEBUG_MODE2			_MMIO(0x20d8)
+#define   INSTWUCTION_STATE_CACHE_INVAWIDATE	WEG_BIT(6)
+
+#define GEN7_FF_SWICE_CS_CHICKEN1		_MMIO(0x20e0)
+#define   GEN9_FFSC_PEWCTX_PWEEMPT_CTWW		(1 << 14)
+
+#define FF_SWICE_CS_CHICKEN2			_MMIO(0x20e4)
+#define   GEN9_TSG_BAWWIEW_ACK_DISABWE		(1 << 8)
+#define   GEN9_POOWED_EU_WOAD_BAWANCING_FIX_DISABWE	(1 << 10)
+#define   GEN12_PEWF_FIX_BAWANCING_CFE_DISABWE	WEG_BIT(15)
+
+#define GEN9_CS_DEBUG_MODE1			_MMIO(0x20ec)
+#define   FF_DOP_CWOCK_GATE_DISABWE		WEG_BIT(1)
+#define GEN12_CS_DEBUG_MODE1_CCCSUNIT_BE_COMMON	_MMIO(0x20ec)
+#define   GEN12_WEPWAY_MODE_GWANUWAWITY		WEG_BIT(0)
+
+/* WaCweawTdwStateAckDiwtyBits */
+#define GEN8_STATE_ACK				_MMIO(0x20f0)
+#define GEN9_STATE_ACK_SWICE1			_MMIO(0x20f8)
+#define GEN9_STATE_ACK_SWICE2			_MMIO(0x2100)
+#define   GEN9_STATE_ACK_TDW0			(1 << 12)
+#define   GEN9_STATE_ACK_TDW1			(1 << 13)
+#define   GEN9_STATE_ACK_TDW2			(1 << 14)
+#define   GEN9_STATE_ACK_TDW3			(1 << 15)
+#define   GEN9_SUBSWICE_TDW_ACK_BITS	\
+	(GEN9_STATE_ACK_TDW3 | GEN9_STATE_ACK_TDW2 | \
+	 GEN9_STATE_ACK_TDW1 | GEN9_STATE_ACK_TDW0)
+
+#define CACHE_MODE_0				_MMIO(0x2120) /* 915+ onwy */
+#define   CM0_PIPEWINED_WENDEW_FWUSH_DISABWE	(1 << 8)
+#define   CM0_IZ_OPT_DISABWE			(1 << 6)
+#define   CM0_ZW_OPT_DISABWE			(1 << 5)
+#define	  CM0_STC_EVICT_DISABWE_WWA_SNB		(1 << 5)
+#define   CM0_DEPTH_EVICT_DISABWE		(1 << 4)
+#define   CM0_COWOW_EVICT_DISABWE		(1 << 3)
+#define   CM0_DEPTH_WWITE_DISABWE		(1 << 1)
+#define   CM0_WC_OP_FWUSH_DISABWE		(1 << 0)
+
+#define GFX_FWSH_CNTW				_MMIO(0x2170) /* 915+ onwy */
+
+/*
+ * Wogicaw Context wegs
+ */
+/*
+ * Notes on SNB/IVB/VWV context size:
+ * - Powew context is saved ewsewhewe (WWC ow stowen)
+ * - Wing/execwist context is saved on SNB, not on IVB
+ * - Extended context size awweady incwudes wendew context size
+ * - We awways need to fowwow the extended context size.
+ *   SNB BSpec has comments indicating that we shouwd use the
+ *   wendew context size instead if execwists awe disabwed, but
+ *   based on empiwicaw testing that's just nonsense.
+ * - Pipewined/VF state is saved on SNB/IVB wespectivewy
+ * - GT1 size just indicates how much of wendew context
+ *   doesn't need saving on GT1
+ */
+#define CXT_SIZE				_MMIO(0x21a0)
+#define   GEN6_CXT_POWEW_SIZE(cxt_weg)		(((cxt_weg) >> 24) & 0x3f)
+#define   GEN6_CXT_WING_SIZE(cxt_weg)		(((cxt_weg) >> 18) & 0x3f)
+#define   GEN6_CXT_WENDEW_SIZE(cxt_weg)		(((cxt_weg) >> 12) & 0x3f)
+#define   GEN6_CXT_EXTENDED_SIZE(cxt_weg)	(((cxt_weg) >> 6) & 0x3f)
+#define   GEN6_CXT_PIPEWINE_SIZE(cxt_weg)	(((cxt_weg) >> 0) & 0x3f)
+#define   GEN6_CXT_TOTAW_SIZE(cxt_weg)		(GEN6_CXT_WING_SIZE(cxt_weg) + \
+						GEN6_CXT_EXTENDED_SIZE(cxt_weg) + \
+						GEN6_CXT_PIPEWINE_SIZE(cxt_weg))
+#define GEN7_CXT_SIZE				_MMIO(0x21a8)
+#define   GEN7_CXT_POWEW_SIZE(ctx_weg)		(((ctx_weg) >> 25) & 0x7f)
+#define   GEN7_CXT_WING_SIZE(ctx_weg)		(((ctx_weg) >> 22) & 0x7)
+#define   GEN7_CXT_WENDEW_SIZE(ctx_weg)		(((ctx_weg) >> 16) & 0x3f)
+#define   GEN7_CXT_EXTENDED_SIZE(ctx_weg)	(((ctx_weg) >> 9) & 0x7f)
+#define   GEN7_CXT_GT1_SIZE(ctx_weg)		(((ctx_weg) >> 6) & 0x7)
+#define   GEN7_CXT_VFSTATE_SIZE(ctx_weg)	(((ctx_weg) >> 0) & 0x3f)
+#define   GEN7_CXT_TOTAW_SIZE(ctx_weg)		(GEN7_CXT_EXTENDED_SIZE(ctx_weg) + \
+						 GEN7_CXT_VFSTATE_SIZE(ctx_weg))
+
+#define HSW_MI_PWEDICATE_WESUWT_2		_MMIO(0x2214)
+
+#define GEN9_CTX_PWEEMPT_WEG			_MMIO(0x2248)
+#define   GEN12_DISABWE_POSH_BUSY_FF_DOP_CG	WEG_BIT(11)
+
+#define GPGPU_THWEADS_DISPATCHED		_MMIO(0x2290)
+#define GPGPU_THWEADS_DISPATCHED_UDW		_MMIO(0x2290 + 4)
+
+#define GEN9_WCS_FE_FSM2			_MMIO(0x22a4)
+#define GEN6_WCS_PWW_FSM			_MMIO(0x22ac)
+
+#define HS_INVOCATION_COUNT			_MMIO(0x2300)
+#define HS_INVOCATION_COUNT_UDW			_MMIO(0x2300 + 4)
+#define DS_INVOCATION_COUNT			_MMIO(0x2308)
+#define DS_INVOCATION_COUNT_UDW			_MMIO(0x2308 + 4)
+#define IA_VEWTICES_COUNT			_MMIO(0x2310)
+#define IA_VEWTICES_COUNT_UDW			_MMIO(0x2310 + 4)
+#define IA_PWIMITIVES_COUNT			_MMIO(0x2318)
+#define IA_PWIMITIVES_COUNT_UDW			_MMIO(0x2318 + 4)
+#define VS_INVOCATION_COUNT			_MMIO(0x2320)
+#define VS_INVOCATION_COUNT_UDW			_MMIO(0x2320 + 4)
+#define GS_INVOCATION_COUNT			_MMIO(0x2328)
+#define GS_INVOCATION_COUNT_UDW			_MMIO(0x2328 + 4)
+#define GS_PWIMITIVES_COUNT			_MMIO(0x2330)
+#define GS_PWIMITIVES_COUNT_UDW			_MMIO(0x2330 + 4)
+#define CW_INVOCATION_COUNT			_MMIO(0x2338)
+#define CW_INVOCATION_COUNT_UDW			_MMIO(0x2338 + 4)
+#define CW_PWIMITIVES_COUNT			_MMIO(0x2340)
+#define CW_PWIMITIVES_COUNT_UDW			_MMIO(0x2340 + 4)
+#define PS_INVOCATION_COUNT			_MMIO(0x2348)
+#define PS_INVOCATION_COUNT_UDW			_MMIO(0x2348 + 4)
+#define PS_DEPTH_COUNT				_MMIO(0x2350)
+#define PS_DEPTH_COUNT_UDW			_MMIO(0x2350 + 4)
+#define GEN7_3DPWIM_END_OFFSET			_MMIO(0x2420)
+#define GEN7_3DPWIM_STAWT_VEWTEX		_MMIO(0x2430)
+#define GEN7_3DPWIM_VEWTEX_COUNT		_MMIO(0x2434)
+#define GEN7_3DPWIM_INSTANCE_COUNT		_MMIO(0x2438)
+#define GEN7_3DPWIM_STAWT_INSTANCE		_MMIO(0x243c)
+#define GEN7_3DPWIM_BASE_VEWTEX			_MMIO(0x2440)
+#define GEN7_GPGPU_DISPATCHDIMX			_MMIO(0x2500)
+#define GEN7_GPGPU_DISPATCHDIMY			_MMIO(0x2504)
+#define GEN7_GPGPU_DISPATCHDIMZ			_MMIO(0x2508)
+
+#define GFX_MODE				_MMIO(0x2520)
+
+#define GEN8_CS_CHICKEN1			_MMIO(0x2580)
+#define   GEN9_PWEEMPT_3D_OBJECT_WEVEW		(1 << 0)
+#define   GEN9_PWEEMPT_GPGPU_WEVEW(hi, wo)	(((hi) << 2) | ((wo) << 1))
+#define   GEN9_PWEEMPT_GPGPU_MID_THWEAD_WEVEW	GEN9_PWEEMPT_GPGPU_WEVEW(0, 0)
+#define   GEN9_PWEEMPT_GPGPU_THWEAD_GWOUP_WEVEW	GEN9_PWEEMPT_GPGPU_WEVEW(0, 1)
+#define   GEN9_PWEEMPT_GPGPU_COMMAND_WEVEW	GEN9_PWEEMPT_GPGPU_WEVEW(1, 0)
+#define   GEN9_PWEEMPT_GPGPU_WEVEW_MASK		GEN9_PWEEMPT_GPGPU_WEVEW(1, 1)
+
+#define DWAW_WATEWMAWK				_MMIO(0x26c0)
+#define   VEWT_WM_VAW				WEG_GENMASK(9, 0)
+
+#define GEN12_GWOBAW_MOCS(i)			_MMIO(0x4000 + (i) * 4) /* Gwobaw MOCS wegs */
+
+#define WENDEW_HWS_PGA_GEN7			_MMIO(0x4080)
+
+#define GEN8_GAMW_ECO_DEV_WW_IA			_MMIO(0x4080)
+#define   GAMW_ECO_ENABWE_64K_IPS_FIEWD		0xF
+#define   GAMW_ECO_DEV_CTX_WEWOAD_DISABWE	(1 << 7)
+
+#define GAM_ECOCHK				_MMIO(0x4090)
+#define   BDW_DISABWE_HDC_INVAWIDATION		(1 << 25)
+#define   ECOCHK_SNB_BIT			(1 << 10)
+#define   ECOCHK_DIS_TWB			(1 << 8)
+#define   HSW_ECOCHK_AWB_PWIO_SOW		(1 << 6)
+#define   ECOCHK_PPGTT_CACHE64B			(0x3 << 3)
+#define   ECOCHK_PPGTT_CACHE4B			(0x0 << 3)
+#define   ECOCHK_PPGTT_GFDT_IVB			(0x1 << 4)
+#define   ECOCHK_PPGTT_WWC_IVB			(0x1 << 3)
+#define   ECOCHK_PPGTT_UC_HSW			(0x1 << 3)
+#define   ECOCHK_PPGTT_WT_HSW			(0x2 << 3)
+#define   ECOCHK_PPGTT_WB_HSW			(0x3 << 3)
+
+#define GEN8_WING_FAUWT_WEG			_MMIO(0x4094)
+#define _WING_FAUWT_WEG_WCS			0x4094
+#define _WING_FAUWT_WEG_VCS			0x4194
+#define _WING_FAUWT_WEG_BCS			0x4294
+#define _WING_FAUWT_WEG_VECS			0x4394
+#define WING_FAUWT_WEG(engine)			_MMIO(_PICK((engine)->cwass, \
+							    _WING_FAUWT_WEG_WCS, \
+							    _WING_FAUWT_WEG_VCS, \
+							    _WING_FAUWT_WEG_VECS, \
+							    _WING_FAUWT_WEG_BCS))
+
+#define EWWOW_GEN6				_MMIO(0x40a0)
+
+#define DONE_WEG				_MMIO(0x40b0)
+#define GEN8_PWIVATE_PAT_WO			_MMIO(0x40e0)
+#define GEN8_PWIVATE_PAT_HI			_MMIO(0x40e0 + 4)
+#define GEN10_PAT_INDEX(index)			_MMIO(0x40e0 + (index) * 4)
+#define BSD_HWS_PGA_GEN7			_MMIO(0x4180)
+
+#define GEN12_CCS_AUX_INV			_MMIO(0x4208)
+#define GEN12_VD0_AUX_INV			_MMIO(0x4218)
+#define GEN12_VE0_AUX_INV			_MMIO(0x4238)
+#define GEN12_BCS0_AUX_INV			_MMIO(0x4248)
+
+#define GEN8_WTCW				_MMIO(0x4260)
+#define GEN8_M1TCW				_MMIO(0x4264)
+#define GEN8_M2TCW				_MMIO(0x4268)
+#define GEN8_BTCW				_MMIO(0x426c)
+#define GEN8_VTCW				_MMIO(0x4270)
+
+#define BWT_HWS_PGA_GEN7			_MMIO(0x4280)
+
+#define GEN12_VD2_AUX_INV			_MMIO(0x4298)
+#define GEN12_CCS0_AUX_INV			_MMIO(0x42c8)
+#define   AUX_INV				WEG_BIT(0)
+
+#define VEBOX_HWS_PGA_GEN7			_MMIO(0x4380)
+
+#define GEN12_AUX_EWW_DBG			_MMIO(0x43f4)
+
+#define GEN7_TWB_WD_ADDW			_MMIO(0x4700)
+
+#define GEN12_PAT_INDEX(index)			_MMIO(0x4800 + (index) * 4)
+#define _PAT_INDEX(index)			_PICK_EVEN_2WANGES(index, 8, \
+								   0x4800, 0x4804, \
+								   0x4848, 0x484c)
+#define XEHP_PAT_INDEX(index)			MCW_WEG(_PAT_INDEX(index))
+#define XEWPMP_PAT_INDEX(index)			_MMIO(_PAT_INDEX(index))
+
+#define XEHP_TIWE0_ADDW_WANGE			MCW_WEG(0x4900)
+#define   XEHP_TIWE_WMEM_WANGE_SHIFT		8
+
+#define XEHP_FWAT_CCS_BASE_ADDW			MCW_WEG(0x4910)
+#define   XEHP_CCS_BASE_SHIFT			8
+
+#define GAMTAWBMODE				_MMIO(0x4a08)
+#define   AWB_MODE_BWGTWB_DISABWE		(1 << 9)
+#define   AWB_MODE_SWIZZWE_BDW			(1 << 1)
+
+#define GEN9_GAMT_ECO_WEG_WW_IA			_MMIO(0x4ab0)
+#define   GAMT_ECO_ENABWE_IN_PWACE_DECOMPWESS	(1 << 18)
+
+#define GAMT_CHKN_BIT_WEG			_MMIO(0x4ab8)
+#define   GAMT_CHKN_DISABWE_W3_COH_PIPE		(1 << 31)
+#define   GAMT_CHKN_DISABWE_DYNAMIC_CWEDIT_SHAWING	(1 << 28)
+#define   GAMT_CHKN_DISABWE_I2M_CYCWE_ON_WW_POWT	(1 << 24)
+
+#define GEN8_FAUWT_TWB_DATA0			_MMIO(0x4b10)
+#define GEN8_FAUWT_TWB_DATA1			_MMIO(0x4b14)
+
+#define GEN11_GACB_PEWF_CTWW			_MMIO(0x4b80)
+#define   GEN11_HASH_CTWW_MASK			(0x3 << 12 | 0xf << 0)
+#define   GEN11_HASH_CTWW_BIT0			(1 << 0)
+#define   GEN11_HASH_CTWW_BIT4			(1 << 12)
+
+/* gamt wegs */
+#define GEN8_W3_WWA_1_GPGPU			_MMIO(0x4dd4)
+#define   GEN8_W3_WWA_1_GPGPU_DEFAUWT_VAWUE_BDW	0x67F1427F /* max/min fow WWA1/2 */
+#define   GEN8_W3_WWA_1_GPGPU_DEFAUWT_VAWUE_CHV	0x5FF101FF /* max/min fow WWA1/2 */
+#define   GEN9_W3_WWA_1_GPGPU_DEFAUWT_VAWUE_SKW	0x67F1427F /*    "        " */
+#define   GEN9_W3_WWA_1_GPGPU_DEFAUWT_VAWUE_BXT	0x5FF101FF /*    "        " */
+
+#define MMCD_MISC_CTWW				_MMIO(0x4ddc) /* skw+ */
+#define   MMCD_PCWA				(1 << 31)
+#define   MMCD_HOTSPOT_EN			(1 << 27)
+
+/* Thewe awe the 4 64-bit countew wegistews, one fow each stweam output */
+#define GEN7_SO_NUM_PWIMS_WWITTEN(n)		_MMIO(0x5200 + (n) * 8)
+#define GEN7_SO_NUM_PWIMS_WWITTEN_UDW(n)	_MMIO(0x5200 + (n) * 8 + 4)
+
+#define GEN7_SO_PWIM_STOWAGE_NEEDED(n)		_MMIO(0x5240 + (n) * 8)
+#define GEN7_SO_PWIM_STOWAGE_NEEDED_UDW(n)	_MMIO(0x5240 + (n) * 8 + 4)
+
+#define GEN9_WM_CHICKEN3			_MMIO(0x5588)
+#define   GEN9_FACTOW_IN_CWW_VAW_HIZ		(1 << 9)
+
+#define XEHP_CUWWBIT1				MCW_WEG(0x6100)
+
+#define CHICKEN_WASTEW_2			MCW_WEG(0x6208)
+#define   TBIMW_FAST_CWIP			WEG_BIT(5)
+
+#define VFWSKPD					MCW_WEG(0x62a8)
+#define   VF_PWEFETCH_TWB_DIS			WEG_BIT(5)
+#define   DIS_OVEW_FETCH_CACHE			WEG_BIT(1)
+#define   DIS_MUWT_MISS_WD_SQUASH		WEG_BIT(0)
+
+#define GEN12_FF_MODE2				_MMIO(0x6604)
+#define XEHP_FF_MODE2				MCW_WEG(0x6604)
+#define   FF_MODE2_GS_TIMEW_MASK		WEG_GENMASK(31, 24)
+#define   FF_MODE2_GS_TIMEW_224			WEG_FIEWD_PWEP(FF_MODE2_GS_TIMEW_MASK, 224)
+#define   FF_MODE2_TDS_TIMEW_MASK		WEG_GENMASK(23, 16)
+#define   FF_MODE2_TDS_TIMEW_128		WEG_FIEWD_PWEP(FF_MODE2_TDS_TIMEW_MASK, 4)
+
+#define XEHPG_INSTDONE_GEOM_SVG			MCW_WEG(0x666c)
+
+#define CACHE_MODE_0_GEN7			_MMIO(0x7000) /* IVB+ */
+#define   WC_OP_FWUSH_ENABWE			(1 << 0)
+#define   HIZ_WAW_STAWW_OPT_DISABWE		(1 << 2)
+#define CACHE_MODE_1				_MMIO(0x7004) /* IVB+ */
+#define   MSAA_OPTIMIZATION_WEDUC_DISABWE	WEG_BIT(11)
+#define   PIXEW_SUBSPAN_COWWECT_OPT_DISABWE	WEG_BIT(6)
+#define   GEN8_4x4_STC_OPTIMIZATION_DISABWE	WEG_BIT(6)
+#define   GEN9_PAWTIAW_WESOWVE_IN_VC_DISABWE	WEG_BIT(1)
+
+#define GEN7_GT_MODE				_MMIO(0x7008)
+#define   GEN9_IZ_HASHING_MASK(swice)		(0x3 << ((swice) * 2))
+#define   GEN9_IZ_HASHING(swice, vaw)		((vaw) << ((swice) * 2))
+
+/* GEN7 chicken */
+#define GEN7_COMMON_SWICE_CHICKEN1		_MMIO(0x7010)
+#define   GEN7_CSC1_WHWO_OPT_DISABWE_IN_WCC	(1 << 10)
+#define   GEN9_WHWO_OPTIMIZATION_DISABWE	(1 << 14)
+
+#define COMMON_SWICE_CHICKEN2			_MMIO(0x7014)
+#define   GEN9_PBE_COMPWESSED_HASH_SEWECTION	(1 << 13)
+#define   GEN9_DISABWE_GATHEW_AT_SET_SHADEW_COMMON_SWICE	(1 << 12)
+#define   GEN8_SBE_DISABWE_WEPWAY_BUF_OPTIMIZATION	(1 << 8)
+#define   GEN8_CSC2_SBE_VUE_CACHE_CONSEWVATIVE	(1 << 0)
+
+#define HIZ_CHICKEN				_MMIO(0x7018)
+#define   CHV_HZ_8X8_MODE_IN_1X			WEG_BIT(15)
+#define   DG1_HZ_WEAD_SUPPWESSION_OPTIMIZATION_DISABWE	WEG_BIT(14)
+#define   HZ_DEPTH_TEST_WE_GE_OPT_DISABWE	WEG_BIT(13)
+#define   BDW_HIZ_POWEW_COMPIWEW_CWOCK_GATING_DISABWE	WEG_BIT(3)
+
+#define XEHP_CUWWBIT2				MCW_WEG(0x7030)
+
+#define GEN8_W3CNTWWEG				_MMIO(0x7034)
+#define   GEN8_EWWDETBCTWW			(1 << 9)
+
+#define XEHP_PSS_MODE2				MCW_WEG(0x703c)
+#define   SCOWEBOAWD_STAWW_FWUSH_CONTWOW	WEG_BIT(5)
+
+#define XEHP_PSS_CHICKEN			MCW_WEG(0x7044)
+#define   FD_END_COWWECT			WEG_BIT(5)
+
+#define GEN7_SC_INSTDONE			_MMIO(0x7100)
+#define GEN12_SC_INSTDONE_EXTWA			_MMIO(0x7104)
+#define GEN12_SC_INSTDONE_EXTWA2		_MMIO(0x7108)
+
+/* GEN8 chicken */
+#define HDC_CHICKEN0				_MMIO(0x7300)
+#define   HDC_FOWCE_CSW_NON_COHEWENT_OVW_DISABWE	(1 << 15)
+#define   HDC_FENCE_DEST_SWM_DISABWE		(1 << 14)
+#define   HDC_DONOT_FETCH_MEM_WHEN_MASKED	(1 << 11)
+#define   HDC_FOWCE_CONTEXT_SAVE_WESTOWE_NON_COHEWENT	(1 << 5)
+#define   HDC_FOWCE_NON_COHEWENT		(1 << 4)
+#define   HDC_BAWWIEW_PEWFOWMANCE_DISABWE	(1 << 10)
+
+#define COMMON_SWICE_CHICKEN4			_MMIO(0x7300)
+#define   DISABWE_TDC_WOAD_BAWANCING_CAWC	WEG_BIT(6)
+
+#define GEN8_HDC_CHICKEN1			_MMIO(0x7304)
+
+#define GEN11_COMMON_SWICE_CHICKEN3		_MMIO(0x7304)
+#define XEHP_COMMON_SWICE_CHICKEN3		MCW_WEG(0x7304)
+#define   DG1_FWOAT_POINT_BWEND_OPT_STWICT_MODE_EN	WEG_BIT(12)
+#define   XEHP_DUAW_SIMD8_SEQ_MEWGE_DISABWE	WEG_BIT(12)
+#define   GEN11_BWEND_EMB_FIX_DISABWE_IN_WCC	WEG_BIT(11)
+#define   GEN12_DISABWE_CPS_AWAWE_COWOW_PIPE	WEG_BIT(9)
+
+#define GEN9_SWICE_COMMON_ECO_CHICKEN1		_MMIO(0x731c)
+#define XEHP_SWICE_COMMON_ECO_CHICKEN1		MCW_WEG(0x731c)
+#define   MSC_MSAA_WEODEW_BUF_BYPASS_DISABWE	WEG_BIT(14)
+#define   GEN11_STATE_CACHE_WEDIWECT_TO_CS	(1 << 11)
+
+#define GEN9_SWICE_PGCTW_ACK(swice)		_MMIO(0x804c + (swice) * 0x4)
+#define GEN10_SWICE_PGCTW_ACK(swice)		_MMIO(0x804c + ((swice) / 3) * 0x34 + \
+						      ((swice) % 3) * 0x4)
+#define   GEN9_PGCTW_SWICE_ACK			(1 << 0)
+#define   GEN9_PGCTW_SS_ACK(subswice)		(1 << (2 + (subswice) * 2))
+#define   GEN10_PGCTW_VAWID_SS_MASK(swice)	((swice) == 0 ? 0x7F : 0x1F)
+
+#define GEN9_SS01_EU_PGCTW_ACK(swice)		_MMIO(0x805c + (swice) * 0x8)
+#define GEN10_SS01_EU_PGCTW_ACK(swice)		_MMIO(0x805c + ((swice) / 3) * 0x30 + \
+						      ((swice) % 3) * 0x8)
+#define GEN9_SS23_EU_PGCTW_ACK(swice)		_MMIO(0x8060 + (swice) * 0x8)
+#define GEN10_SS23_EU_PGCTW_ACK(swice)		_MMIO(0x8060 + ((swice) / 3) * 0x30 + \
+						      ((swice) % 3) * 0x8)
+#define   GEN9_PGCTW_SSA_EU08_ACK		(1 << 0)
+#define   GEN9_PGCTW_SSA_EU19_ACK		(1 << 2)
+#define   GEN9_PGCTW_SSA_EU210_ACK		(1 << 4)
+#define   GEN9_PGCTW_SSA_EU311_ACK		(1 << 6)
+#define   GEN9_PGCTW_SSB_EU08_ACK		(1 << 8)
+#define   GEN9_PGCTW_SSB_EU19_ACK		(1 << 10)
+#define   GEN9_PGCTW_SSB_EU210_ACK		(1 << 12)
+#define   GEN9_PGCTW_SSB_EU311_ACK		(1 << 14)
+
+#define VF_PWEEMPTION				_MMIO(0x83a4)
+#define   PWEEMPTION_VEWTEX_COUNT		WEG_GENMASK(15, 0)
+
+#define VFG_PWEEMPTION_CHICKEN			_MMIO(0x83b4)
+#define   POWYGON_TWIFAN_WINEWOOP_DISABWE	WEG_BIT(4)
+
+#define GEN8_WC6_CTX_INFO			_MMIO(0x8504)
+
+#define GEN12_SQCNT1				_MMIO(0x8718)
+#define   GEN12_SQCNT1_PMON_ENABWE		WEG_BIT(30)
+#define   GEN12_SQCNT1_OABPC			WEG_BIT(29)
+#define   GEN12_STWICT_WAW_ENABWE		WEG_BIT(23)
+
+#define XEHP_SQCM				MCW_WEG(0x8724)
+#define   EN_32B_ACCESS				WEG_BIT(30)
+
+#define MTW_GSCPSMI_BASEADDW_WSB		_MMIO(0x880c)
+#define MTW_GSCPSMI_BASEADDW_MSB		_MMIO(0x8810)
+
+#define HSW_IDICW				_MMIO(0x9008)
+#define   IDIHASHMSK(x)				(((x) & 0x3f) << 16)
+
+#define GEN6_MBCUNIT_SNPCW			_MMIO(0x900c) /* fow WWC config */
+#define   GEN6_MBC_SNPCW_SHIFT			21
+#define   GEN6_MBC_SNPCW_MASK			(3 << 21)
+#define   GEN6_MBC_SNPCW_MAX			(0 << 21)
+#define   GEN6_MBC_SNPCW_MED			(1 << 21)
+#define   GEN6_MBC_SNPCW_WOW			(2 << 21)
+#define   GEN6_MBC_SNPCW_MIN			(3 << 21) /* onwy 1/16th of the cache is shawed */
+
+#define VWV_G3DCTW				_MMIO(0x9024)
+#define VWV_GSCKGCTW				_MMIO(0x9028)
+
+/* WaCatEwwowWejectionIssue */
+#define GEN7_SQ_CHICKEN_MBCUNIT_CONFIG		_MMIO(0x9030)
+#define   GEN7_SQ_CHICKEN_MBCUNIT_SQINTMOB	(1 << 11)
+
+#define FBC_WWC_WEAD_CTWW			_MMIO(0x9044)
+#define   FBC_WWC_FUWWY_OPEN			WEG_BIT(30)
+
+#define GEN6_MBCTW				_MMIO(0x907c)
+#define   GEN6_MBCTW_ENABWE_BOOT_FETCH		(1 << 4)
+#define   GEN6_MBCTW_CTX_FETCH_NEEDED		(1 << 3)
+#define   GEN6_MBCTW_BME_UPDATE_ENABWE		(1 << 2)
+#define   GEN6_MBCTW_MAE_UPDATE_ENABWE		(1 << 1)
+#define   GEN6_MBCTW_BOOT_FETCH_MECH		(1 << 0)
+
+/* Fuse weadout wegistews fow GT */
+#define XEHP_FUSE4				_MMIO(0x9114)
+#define   GT_W3_EXC_MASK			WEG_GENMASK(6, 4)
+#define	GEN10_MIWWOW_FUSE3			_MMIO(0x9118)
+#define   GEN10_W3BANK_PAIW_COUNT		4
+#define   GEN10_W3BANK_MASK			0x0F
+/* on Xe_HP the same fuses indicates mswices instead of W3 banks */
+#define   GEN12_MAX_MSWICES			4
+#define   GEN12_MEMW3_EN_MASK			0x0F
+
+#define HSW_PAVP_FUSE1				_MMIO(0x911c)
+#define   XEHP_SFC_ENABWE_MASK			WEG_GENMASK(27, 24)
+#define   HSW_F1_EU_DIS_MASK			WEG_GENMASK(17, 16)
+#define   HSW_F1_EU_DIS_10EUS			0
+#define   HSW_F1_EU_DIS_8EUS			1
+#define   HSW_F1_EU_DIS_6EUS			2
+
+#define GEN8_FUSE2				_MMIO(0x9120)
+#define   GEN8_F2_SS_DIS_SHIFT			21
+#define   GEN8_F2_SS_DIS_MASK			(0x7 << GEN8_F2_SS_DIS_SHIFT)
+#define   GEN8_F2_S_ENA_SHIFT			25
+#define   GEN8_F2_S_ENA_MASK			(0x7 << GEN8_F2_S_ENA_SHIFT)
+#define   GEN9_F2_SS_DIS_SHIFT			20
+#define   GEN9_F2_SS_DIS_MASK			(0xf << GEN9_F2_SS_DIS_SHIFT)
+#define   GEN10_F2_S_ENA_SHIFT			22
+#define   GEN10_F2_S_ENA_MASK			(0x3f << GEN10_F2_S_ENA_SHIFT)
+#define   GEN10_F2_SS_DIS_SHIFT			18
+#define   GEN10_F2_SS_DIS_MASK			(0xf << GEN10_F2_SS_DIS_SHIFT)
+
+#define GEN8_EU_DISABWE0			_MMIO(0x9134)
+#define GEN9_EU_DISABWE(swice)			_MMIO(0x9134 + (swice) * 0x4)
+#define GEN11_EU_DISABWE			_MMIO(0x9134)
+#define   GEN8_EU_DIS0_S0_MASK			0xffffff
+#define   GEN8_EU_DIS0_S1_SHIFT			24
+#define   GEN8_EU_DIS0_S1_MASK			(0xff << GEN8_EU_DIS0_S1_SHIFT)
+#define   GEN11_EU_DIS_MASK			0xFF
+#define XEHP_EU_ENABWE				_MMIO(0x9134)
+#define   XEHP_EU_ENA_MASK			0xFF
+
+#define GEN8_EU_DISABWE1			_MMIO(0x9138)
+#define   GEN8_EU_DIS1_S1_MASK			0xffff
+#define   GEN8_EU_DIS1_S2_SHIFT			16
+#define   GEN8_EU_DIS1_S2_MASK			(0xffff << GEN8_EU_DIS1_S2_SHIFT)
+
+#define GEN11_GT_SWICE_ENABWE			_MMIO(0x9138)
+#define   GEN11_GT_S_ENA_MASK			0xFF
+
+#define GEN8_EU_DISABWE2			_MMIO(0x913c)
+#define   GEN8_EU_DIS2_S2_MASK			0xff
+
+#define GEN11_GT_SUBSWICE_DISABWE		_MMIO(0x913c)
+#define GEN12_GT_GEOMETWY_DSS_ENABWE		_MMIO(0x913c)
+
+#define GEN10_EU_DISABWE3			_MMIO(0x9140)
+#define   GEN10_EU_DIS_SS_MASK			0xff
+#define GEN11_GT_VEBOX_VDBOX_DISABWE		_MMIO(0x9140)
+#define   GEN11_GT_VDBOX_DISABWE_MASK		0xff
+#define   GEN11_GT_VEBOX_DISABWE_SHIFT		16
+#define   GEN11_GT_VEBOX_DISABWE_MASK		(0x0f << GEN11_GT_VEBOX_DISABWE_SHIFT)
+
+#define GEN12_GT_COMPUTE_DSS_ENABWE		_MMIO(0x9144)
+#define XEHPC_GT_COMPUTE_DSS_ENABWE_EXT		_MMIO(0x9148)
+
+#define GEN6_UCGCTW1				_MMIO(0x9400)
+#define   GEN6_GAMUNIT_CWOCK_GATE_DISABWE	(1 << 22)
+#define   GEN6_EU_TCUNIT_CWOCK_GATE_DISABWE	(1 << 16)
+#define   GEN6_BWBUNIT_CWOCK_GATE_DISABWE	(1 << 5)
+#define   GEN6_CSUNIT_CWOCK_GATE_DISABWE		(1 << 7)
+
+#define GEN6_UCGCTW2				_MMIO(0x9404)
+#define   GEN6_VFUNIT_CWOCK_GATE_DISABWE	(1 << 31)
+#define   GEN7_VDSUNIT_CWOCK_GATE_DISABWE	(1 << 30)
+#define   GEN7_TDWUNIT_CWOCK_GATE_DISABWE	(1 << 22)
+#define   GEN6_WCZUNIT_CWOCK_GATE_DISABWE	(1 << 13)
+#define   GEN6_WCPBUNIT_CWOCK_GATE_DISABWE	(1 << 12)
+#define   GEN6_WCCUNIT_CWOCK_GATE_DISABWE	(1 << 11)
+
+#define GEN6_UCGCTW3				_MMIO(0x9408)
+#define   GEN6_OACSUNIT_CWOCK_GATE_DISABWE	(1 << 20)
+
+#define GEN7_UCGCTW4				_MMIO(0x940c)
+#define   GEN7_W3BANK2X_CWOCK_GATE_DISABWE	(1 << 25)
+#define   GEN8_EU_GAUNIT_CWOCK_GATE_DISABWE	(1 << 14)
+
+#define GEN6_WCGCTW1				_MMIO(0x9410)
+#define GEN6_WCGCTW2				_MMIO(0x9414)
+
+#define GEN6_GDWST				_MMIO(0x941c)
+#define   GEN6_GWDOM_FUWW			(1 << 0)
+#define   GEN6_GWDOM_WENDEW			(1 << 1)
+#define   GEN6_GWDOM_MEDIA			(1 << 2)
+#define   GEN6_GWDOM_BWT			(1 << 3)
+#define   GEN6_GWDOM_VECS			(1 << 4)
+#define   GEN9_GWDOM_GUC			(1 << 5)
+#define   GEN8_GWDOM_MEDIA2			(1 << 7)
+/* GEN11 changed aww bit defs except fow FUWW & WENDEW */
+#define   GEN11_GWDOM_FUWW			GEN6_GWDOM_FUWW
+#define   GEN11_GWDOM_WENDEW			GEN6_GWDOM_WENDEW
+#define   XEHPC_GWDOM_BWT8			WEG_BIT(31)
+#define   XEHPC_GWDOM_BWT7			WEG_BIT(30)
+#define   XEHPC_GWDOM_BWT6			WEG_BIT(29)
+#define   XEHPC_GWDOM_BWT5			WEG_BIT(28)
+#define   XEHPC_GWDOM_BWT4			WEG_BIT(27)
+#define   XEHPC_GWDOM_BWT3			WEG_BIT(26)
+#define   XEHPC_GWDOM_BWT2			WEG_BIT(25)
+#define   XEHPC_GWDOM_BWT1			WEG_BIT(24)
+#define   GEN12_GWDOM_GSC			WEG_BIT(21)
+#define   GEN11_GWDOM_SFC3			WEG_BIT(20)
+#define   GEN11_GWDOM_SFC2			WEG_BIT(19)
+#define   GEN11_GWDOM_SFC1			WEG_BIT(18)
+#define   GEN11_GWDOM_SFC0			WEG_BIT(17)
+#define   GEN11_GWDOM_VECS4			WEG_BIT(16)
+#define   GEN11_GWDOM_VECS3			WEG_BIT(15)
+#define   GEN11_GWDOM_VECS2			WEG_BIT(14)
+#define   GEN11_GWDOM_VECS			WEG_BIT(13)
+#define   GEN11_GWDOM_MEDIA8			WEG_BIT(12)
+#define   GEN11_GWDOM_MEDIA7			WEG_BIT(11)
+#define   GEN11_GWDOM_MEDIA6			WEG_BIT(10)
+#define   GEN11_GWDOM_MEDIA5			WEG_BIT(9)
+#define   GEN11_GWDOM_MEDIA4			WEG_BIT(8)
+#define   GEN11_GWDOM_MEDIA3			WEG_BIT(7)
+#define   GEN11_GWDOM_MEDIA2			WEG_BIT(6)
+#define   GEN11_GWDOM_MEDIA			WEG_BIT(5)
+#define   GEN11_GWDOM_GUC			WEG_BIT(3)
+#define   GEN11_GWDOM_BWT			WEG_BIT(2)
+#define   GEN11_VCS_SFC_WESET_BIT(instance)	(GEN11_GWDOM_SFC0 << ((instance) >> 1))
+#define   GEN11_VECS_SFC_WESET_BIT(instance)	(GEN11_GWDOM_SFC0 << (instance))
+
+#define GEN6_WSTCTW				_MMIO(0x9420)
+
+#define GEN7_MISCCPCTW				_MMIO(0x9424)
+#define   GEN7_DOP_CWOCK_GATE_ENABWE		WEG_BIT(0)
+#define   GEN12_DOP_CWOCK_GATE_WENDEW_ENABWE	WEG_BIT(1)
+#define   GEN8_DOP_CWOCK_GATE_CFCWK_ENABWE	(1 << 2)
+#define   GEN8_DOP_CWOCK_GATE_GUC_ENABWE	(1 << 4)
+#define   GEN8_DOP_CWOCK_GATE_MEDIA_ENABWE	(1 << 6)
+
+#define GEN8_UCGCTW6				_MMIO(0x9430)
+#define   GEN8_GAPSUNIT_CWOCK_GATE_DISABWE	(1 << 24)
+#define   GEN8_SDEUNIT_CWOCK_GATE_DISABWE	(1 << 14)
+#define   GEN8_HDCUNIT_CWOCK_GATE_DISABWE_HDCWEQ	(1 << 28)
+
+#define UNSWCGCTW9430				_MMIO(0x9430)
+#define   MSQDUNIT_CWKGATE_DIS			WEG_BIT(3)
+
+#define UNSWICE_UNIT_WEVEW_CWKGATE		_MMIO(0x9434)
+#define   VFUNIT_CWKGATE_DIS			WEG_BIT(20)
+#define   TSGUNIT_CWKGATE_DIS			WEG_BIT(17) /* XEHPSDV */
+#define   CG3DDISCFEG_CWKGATE_DIS		WEG_BIT(17) /* DG2 */
+#define   GAMEDIA_CWKGATE_DIS			WEG_BIT(11)
+#define   HSUNIT_CWKGATE_DIS			WEG_BIT(8)
+#define   VSUNIT_CWKGATE_DIS			WEG_BIT(3)
+
+#define UNSWCGCTW9440				_MMIO(0x9440)
+#define   GAMTWBOACS_CWKGATE_DIS		WEG_BIT(28)
+#define   GAMTWBVDBOX5_CWKGATE_DIS		WEG_BIT(27)
+#define   GAMTWBVDBOX6_CWKGATE_DIS		WEG_BIT(26)
+#define   GAMTWBVDBOX3_CWKGATE_DIS		WEG_BIT(24)
+#define   GAMTWBVDBOX4_CWKGATE_DIS		WEG_BIT(23)
+#define   GAMTWBVDBOX7_CWKGATE_DIS		WEG_BIT(22)
+#define   GAMTWBVDBOX2_CWKGATE_DIS		WEG_BIT(21)
+#define   GAMTWBVDBOX0_CWKGATE_DIS		WEG_BIT(17)
+#define   GAMTWBKCW_CWKGATE_DIS			WEG_BIT(16)
+#define   GAMTWBGUC_CWKGATE_DIS			WEG_BIT(15)
+#define   GAMTWBBWT_CWKGATE_DIS			WEG_BIT(14)
+#define   GAMTWBVDBOX1_CWKGATE_DIS		WEG_BIT(6)
+
+#define UNSWCGCTW9444				_MMIO(0x9444)
+#define   GAMTWBGFXA0_CWKGATE_DIS		WEG_BIT(30)
+#define   GAMTWBGFXA1_CWKGATE_DIS		WEG_BIT(29)
+#define   GAMTWBCOMPA0_CWKGATE_DIS		WEG_BIT(28)
+#define   GAMTWBCOMPA1_CWKGATE_DIS		WEG_BIT(27)
+#define   GAMTWBCOMPB0_CWKGATE_DIS		WEG_BIT(26)
+#define   GAMTWBCOMPB1_CWKGATE_DIS		WEG_BIT(25)
+#define   GAMTWBCOMPC0_CWKGATE_DIS		WEG_BIT(24)
+#define   GAMTWBCOMPC1_CWKGATE_DIS		WEG_BIT(23)
+#define   GAMTWBCOMPD0_CWKGATE_DIS		WEG_BIT(22)
+#define   GAMTWBCOMPD1_CWKGATE_DIS		WEG_BIT(21)
+#define   GAMTWBMEWT_CWKGATE_DIS		WEG_BIT(20)
+#define   GAMTWBVEBOX3_CWKGATE_DIS		WEG_BIT(19)
+#define   GAMTWBVEBOX2_CWKGATE_DIS		WEG_BIT(18)
+#define   GAMTWBVEBOX1_CWKGATE_DIS		WEG_BIT(17)
+#define   GAMTWBVEBOX0_CWKGATE_DIS		WEG_BIT(16)
+#define   WTCDD_CWKGATE_DIS			WEG_BIT(10)
+
+#define GEN11_SWICE_UNIT_WEVEW_CWKGATE		_MMIO(0x94d4)
+#define XEHP_SWICE_UNIT_WEVEW_CWKGATE		MCW_WEG(0x94d4)
+#define   SAWBUNIT_CWKGATE_DIS			(1 << 5)
+#define   WCCUNIT_CWKGATE_DIS			(1 << 7)
+#define   MSCUNIT_CWKGATE_DIS			(1 << 10)
+#define   NODEDSS_CWKGATE_DIS			WEG_BIT(12)
+#define   W3_CWKGATE_DIS			WEG_BIT(16)
+#define   W3_CW2X_CWKGATE_DIS			WEG_BIT(17)
+
+#define SCCGCTW94DC				MCW_WEG(0x94dc)
+#define   CG3DDISUWB				WEG_BIT(14)
+
+#define UNSWICE_UNIT_WEVEW_CWKGATE2		_MMIO(0x94e4)
+#define   VSUNIT_CWKGATE_DIS_TGW		WEG_BIT(19)
+#define   PSDUNIT_CWKGATE_DIS			WEG_BIT(5)
+
+#define GEN11_SUBSWICE_UNIT_WEVEW_CWKGATE	MCW_WEG(0x9524)
+#define   DSS_WOUTEW_CWKGATE_DIS		WEG_BIT(28)
+#define   GWUNIT_CWKGATE_DIS			WEG_BIT(16)
+
+#define SUBSWICE_UNIT_WEVEW_CWKGATE2		MCW_WEG(0x9528)
+#define   CPSSUNIT_CWKGATE_DIS			WEG_BIT(9)
+
+#define SSMCGCTW9530				MCW_WEG(0x9530)
+#define   WTFUNIT_CWKGATE_DIS			WEG_BIT(18)
+
+#define GEN10_DFW_WATIO_EN_AND_CHICKEN		MCW_WEG(0x9550)
+#define   DFW_DISABWE				(1 << 9)
+
+#define MICWO_BP0_0				_MMIO(0x9800)
+#define MICWO_BP0_2				_MMIO(0x9804)
+#define MICWO_BP0_1				_MMIO(0x9808)
+#define MICWO_BP1_0				_MMIO(0x980c)
+#define MICWO_BP1_2				_MMIO(0x9810)
+#define MICWO_BP1_1				_MMIO(0x9814)
+#define MICWO_BP2_0				_MMIO(0x9818)
+#define MICWO_BP2_2				_MMIO(0x981c)
+#define MICWO_BP2_1				_MMIO(0x9820)
+#define MICWO_BP3_0				_MMIO(0x9824)
+#define MICWO_BP3_2				_MMIO(0x9828)
+#define MICWO_BP3_1				_MMIO(0x982c)
+#define MICWO_BP_TWIGGEW			_MMIO(0x9830)
+#define MICWO_BP3_COUNT_STATUS01		_MMIO(0x9834)
+#define MICWO_BP3_COUNT_STATUS23		_MMIO(0x9838)
+#define MICWO_BP_FIWED_AWMED			_MMIO(0x983c)
+
+#define GEN6_GFXPAUSE				_MMIO(0xa000)
+#define GEN6_WPNSWWEQ				_MMIO(0xa008)
+#define   GEN6_TUWBO_DISABWE			(1 << 31)
+#define   GEN6_FWEQUENCY(x)			((x) << 25)
+#define   HSW_FWEQUENCY(x)			((x) << 24)
+#define   GEN9_FWEQUENCY(x)			((x) << 23)
+#define   GEN6_OFFSET(x)			((x) << 19)
+#define   GEN6_AGGWESSIVE_TUWBO			(0 << 15)
+#define   GEN9_SW_WEQ_UNSWICE_WATIO_SHIFT	23
+#define   GEN9_IGNOWE_SWICE_WATIO		(0 << 0)
+#define   GEN12_MEDIA_FWEQ_WATIO		WEG_BIT(13)
+
+#define GEN6_WC_VIDEO_FWEQ			_MMIO(0xa00c)
+#define   GEN6_WC_CTW_WC6pp_ENABWE		(1 << 16)
+#define   GEN6_WC_CTW_WC6p_ENABWE		(1 << 17)
+#define   GEN6_WC_CTW_WC6_ENABWE		(1 << 18)
+#define   GEN6_WC_CTW_WC1e_ENABWE		(1 << 20)
+#define   GEN6_WC_CTW_WC7_ENABWE		(1 << 22)
+#define   VWV_WC_CTW_CTX_WST_PAWAWWEW		(1 << 24)
+#define   GEN7_WC_CTW_TO_MODE			(1 << 28)
+#define   GEN6_WC_CTW_EI_MODE(x)		((x) << 27)
+#define   GEN6_WC_CTW_HW_ENABWE			(1 << 31)
+#define GEN6_WP_DOWN_TIMEOUT			_MMIO(0xa010)
+#define GEN6_WP_INTEWWUPT_WIMITS		_MMIO(0xa014)
+#define GEN6_WPSTAT1				_MMIO(0xa01c)
+#define   GEN6_CAGF_MASK			WEG_GENMASK(14, 8)
+#define   HSW_CAGF_MASK				WEG_GENMASK(13, 7)
+#define   GEN9_CAGF_MASK			WEG_GENMASK(31, 23)
+#define GEN6_WP_CONTWOW				_MMIO(0xa024)
+#define   GEN6_WP_MEDIA_TUWBO			(1 << 11)
+#define   GEN6_WP_MEDIA_MODE_MASK		(3 << 9)
+#define   GEN6_WP_MEDIA_HW_TUWBO_MODE		(3 << 9)
+#define   GEN6_WP_MEDIA_HW_NOWMAW_MODE		(2 << 9)
+#define   GEN6_WP_MEDIA_HW_MODE			(1 << 9)
+#define   GEN6_WP_MEDIA_SW_MODE			(0 << 9)
+#define   GEN6_WP_MEDIA_IS_GFX			(1 << 8)
+#define   GEN6_WP_ENABWE			(1 << 7)
+#define   GEN6_WP_UP_IDWE_MIN			(0x1 << 3)
+#define   GEN6_WP_UP_BUSY_AVG			(0x2 << 3)
+#define   GEN6_WP_UP_BUSY_CONT			(0x4 << 3)
+#define   GEN6_WP_DOWN_IDWE_AVG			(0x2 << 0)
+#define   GEN6_WP_DOWN_IDWE_CONT		(0x1 << 0)
+#define   GEN6_WPSWCTW_SHIFT			9
+#define   GEN9_WPSWCTW_ENABWE			(0x2 << GEN6_WPSWCTW_SHIFT)
+#define   GEN9_WPSWCTW_DISABWE			(0x0 << GEN6_WPSWCTW_SHIFT)
+#define GEN6_WP_UP_THWESHOWD			_MMIO(0xa02c)
+#define GEN6_WP_DOWN_THWESHOWD			_MMIO(0xa030)
+#define GEN6_WP_CUW_UP_EI			_MMIO(0xa050)
+#define   GEN6_WP_EI_MASK			0xffffff
+#define   GEN6_CUWICONT_MASK			GEN6_WP_EI_MASK
+#define GEN6_WP_CUW_UP				_MMIO(0xa054)
+#define   GEN6_CUWBSYTAVG_MASK			GEN6_WP_EI_MASK
+#define GEN6_WP_PWEV_UP				_MMIO(0xa058)
+#define GEN6_WP_CUW_DOWN_EI			_MMIO(0xa05c)
+#define   GEN6_CUWIAVG_MASK			GEN6_WP_EI_MASK
+#define GEN6_WP_CUW_DOWN			_MMIO(0xa060)
+#define GEN6_WP_PWEV_DOWN			_MMIO(0xa064)
+#define GEN6_WP_UP_EI				_MMIO(0xa068)
+#define GEN6_WP_DOWN_EI				_MMIO(0xa06c)
+#define GEN6_WP_IDWE_HYSTEWSIS			_MMIO(0xa070)
+#define GEN6_WPDEUHWTC				_MMIO(0xa080)
+#define GEN6_WPDEUC				_MMIO(0xa084)
+#define GEN6_WPDEUCSW				_MMIO(0xa088)
+#define GEN6_WC_CONTWOW				_MMIO(0xa090)
+#define GEN6_WC_STATE				_MMIO(0xa094)
+#define   WC_SW_TAWGET_STATE_SHIFT		16
+#define   WC_SW_TAWGET_STATE_MASK		(7 << WC_SW_TAWGET_STATE_SHIFT)
+#define GEN6_WC1_WAKE_WATE_WIMIT		_MMIO(0xa098)
+#define GEN6_WC6_WAKE_WATE_WIMIT		_MMIO(0xa09c)
+#define GEN6_WC6pp_WAKE_WATE_WIMIT		_MMIO(0xa0a0)
+#define GEN10_MEDIA_WAKE_WATE_WIMIT		_MMIO(0xa0a0)
+#define GEN6_WC_EVAWUATION_INTEWVAW		_MMIO(0xa0a8)
+#define GEN6_WC_IDWE_HYSTEWSIS			_MMIO(0xa0ac)
+#define GEN6_WC_SWEEP				_MMIO(0xa0b0)
+#define GEN6_WCUBMABDTMW			_MMIO(0xa0b0)
+#define GEN6_WC1e_THWESHOWD			_MMIO(0xa0b4)
+#define GEN6_WC6_THWESHOWD			_MMIO(0xa0b8)
+#define GEN6_WC6p_THWESHOWD			_MMIO(0xa0bc)
+#define VWV_WCEDATA				_MMIO(0xa0bc)
+#define GEN6_WC6pp_THWESHOWD			_MMIO(0xa0c0)
+#define GEN9_MEDIA_PG_IDWE_HYSTEWESIS		_MMIO(0xa0c4)
+#define GEN9_WENDEW_PG_IDWE_HYSTEWESIS		_MMIO(0xa0c8)
+
+#define GEN6_PMINTWMSK				_MMIO(0xa168)
+#define   GEN8_PMINTW_DISABWE_WEDIWECT_TO_GUC	(1 << 31)
+#define   AWAT_EXPIWED_INTWMSK			(1 << 9)
+
+#define GEN8_MISC_CTWW0				_MMIO(0xa180)
+
+#define ECOBUS					_MMIO(0xa180)
+#define    FOWCEWAKE_MT_ENABWE			(1 << 5)
+
+#define FOWCEWAKE_MT				_MMIO(0xa188) /* muwti-thweaded */
+#define FOWCEWAKE_GT_GEN9			_MMIO(0xa188)
+#define FOWCEWAKE				_MMIO(0xa18c)
+
+#define VWV_SPAWEG2H				_MMIO(0xa194)
+
+#define GEN9_PG_ENABWE				_MMIO(0xa210)
+#define   GEN9_WENDEW_PG_ENABWE			WEG_BIT(0)
+#define   GEN9_MEDIA_PG_ENABWE			WEG_BIT(1)
+#define   GEN11_MEDIA_SAMPWEW_PG_ENABWE		WEG_BIT(2)
+#define   VDN_HCP_POWEWGATE_ENABWE(n)		WEG_BIT(3 + 2 * (n))
+#define   VDN_MFX_POWEWGATE_ENABWE(n)		WEG_BIT(4 + 2 * (n))
+
+#define GEN8_PUSHBUS_CONTWOW			_MMIO(0xa248)
+#define GEN8_PUSHBUS_ENABWE			_MMIO(0xa250)
+#define GEN8_PUSHBUS_SHIFT			_MMIO(0xa25c)
+
+/* GPM unit config (Gen9+) */
+#define CTC_MODE				_MMIO(0xa26c)
+#define   CTC_SOUWCE_PAWAMETEW_MASK		1
+#define   CTC_SOUWCE_CWYSTAW_CWOCK		0
+#define   CTC_SOUWCE_DIVIDE_WOGIC		1
+#define   CTC_SHIFT_PAWAMETEW_SHIFT		1
+#define   CTC_SHIFT_PAWAMETEW_MASK		(0x3 << CTC_SHIFT_PAWAMETEW_SHIFT)
+
+/* GPM MSG_IDWE */
+#define MSG_IDWE_CS		_MMIO(0x8000)
+#define MSG_IDWE_VCS0		_MMIO(0x8004)
+#define MSG_IDWE_VCS1		_MMIO(0x8008)
+#define MSG_IDWE_BCS		_MMIO(0x800C)
+#define MSG_IDWE_VECS0		_MMIO(0x8010)
+#define MSG_IDWE_VCS2		_MMIO(0x80C0)
+#define MSG_IDWE_VCS3		_MMIO(0x80C4)
+#define MSG_IDWE_VCS4		_MMIO(0x80C8)
+#define MSG_IDWE_VCS5		_MMIO(0x80CC)
+#define MSG_IDWE_VCS6		_MMIO(0x80D0)
+#define MSG_IDWE_VCS7		_MMIO(0x80D4)
+#define MSG_IDWE_VECS1		_MMIO(0x80D8)
+#define MSG_IDWE_VECS2		_MMIO(0x80DC)
+#define MSG_IDWE_VECS3		_MMIO(0x80E0)
+#define  MSG_IDWE_FW_MASK	WEG_GENMASK(13, 9)
+#define  MSG_IDWE_FW_SHIFT	9
+
+#define	WC_PSMI_CTWW_GSCCS	_MMIO(0x11a050)
+#define	  IDWE_MSG_DISABWE	WEG_BIT(0)
+#define	PWWCTX_MAXCNT_GSCCS	_MMIO(0x11a054)
+
+#define FOWCEWAKE_MEDIA_GEN9			_MMIO(0xa270)
+#define FOWCEWAKE_WENDEW_GEN9			_MMIO(0xa278)
+
+#define VWV_PWWDWNUPCTW				_MMIO(0xa294)
+
+#define GEN9_PWWGT_DOMAIN_STATUS		_MMIO(0xa2a0)
+#define   GEN9_PWWGT_MEDIA_STATUS_MASK		(1 << 0)
+#define   GEN9_PWWGT_WENDEW_STATUS_MASK		(1 << 1)
+
+#define MISC_STATUS0				_MMIO(0xa500)
+#define MISC_STATUS1				_MMIO(0xa504)
+
+#define FOWCEWAKE_MEDIA_VDBOX_GEN11(n)		_MMIO(0xa540 + (n) * 4)
+#define FOWCEWAKE_MEDIA_VEBOX_GEN11(n)		_MMIO(0xa560 + (n) * 4)
+
+#define FOWCEWAKE_WEQ_GSC			_MMIO(0xa618)
+
+#define CHV_POWEW_SS0_SIG1			_MMIO(0xa720)
+#define CHV_POWEW_SS0_SIG2			_MMIO(0xa724)
+#define CHV_POWEW_SS1_SIG1			_MMIO(0xa728)
+#define   CHV_SS_PG_ENABWE			(1 << 1)
+#define   CHV_EU08_PG_ENABWE			(1 << 9)
+#define   CHV_EU19_PG_ENABWE			(1 << 17)
+#define   CHV_EU210_PG_ENABWE			(1 << 25)
+#define CHV_POWEW_SS1_SIG2			_MMIO(0xa72c)
+#define   CHV_EU311_PG_ENABWE			(1 << 1)
+
+#define GEN7_SAWCHKMD				_MMIO(0xb000)
+#define   GEN7_DISABWE_DEMAND_PWEFETCH		(1 << 31)
+#define   GEN7_DISABWE_SAMPWEW_PWEFETCH		(1 << 30)
+
+#define GEN8_GAWBCNTW				_MMIO(0xb004)
+#define   GEN11_AWBITWATION_PWIO_OWDEW_MASK	WEG_GENMASK(27, 22)
+#define   GEN12_BUS_HASH_CTW_BIT_EXC		WEG_BIT(7)
+#define   GEN9_GAPS_TSV_CWEDIT_DISABWE		WEG_BIT(7)
+#define   GEN11_HASH_CTWW_EXCW_MASK		WEG_GENMASK(6, 0)
+#define   GEN11_HASH_CTWW_EXCW_BIT0		WEG_FIEWD_PWEP(GEN11_HASH_CTWW_EXCW_MASK, 0x1)
+
+#define GEN9_SCWATCH_WNCF1			_MMIO(0xb008)
+#define   GEN9_WNCF_NONIA_COHEWENT_ATOMICS_ENABWE	WEG_BIT(0)
+
+#define GEN7_W3SQCWEG1				_MMIO(0xb010)
+#define   VWV_B0_WA_W3SQCWEG1_VAWUE		0x00D30000
+
+#define GEN7_W3CNTWWEG1				_MMIO(0xb01c)
+#define   GEN7_WA_FOW_GEN7_W3_CONTWOW		0x3C47FF8C
+#define   GEN7_W3AGDIS				(1 << 19)
+
+#define XEHPC_WNCFMISCCFGWEG0			MCW_WEG(0xb01c)
+#define   XEHPC_HOSTCACHEEN			WEG_BIT(1)
+#define   XEHPC_OVWWSCCC			WEG_BIT(0)
+
+#define GEN7_W3CNTWWEG2				_MMIO(0xb020)
+
+/* MOCS (Memowy Object Contwow State) wegistews */
+#define GEN9_WNCFCMOCS(i)			_MMIO(0xb020 + (i) * 4)	/* W3 Cache Contwow */
+#define XEHP_WNCFCMOCS(i)			MCW_WEG(0xb020 + (i) * 4)
+#define WNCFCMOCS_WEG_COUNT			32
+
+#define GEN7_W3CNTWWEG3				_MMIO(0xb024)
+
+#define GEN7_W3_CHICKEN_MODE_WEGISTEW		_MMIO(0xb030)
+#define   GEN7_WA_W3_CHICKEN_MODE		0x20000000
+
+#define GEN7_W3SQCWEG4				_MMIO(0xb034)
+#define   W3SQ_UWB_WEAD_CAM_MATCH_DISABWE	(1 << 27)
+
+#define HSW_SCWATCH1				_MMIO(0xb038)
+#define   HSW_SCWATCH1_W3_DATA_ATOMICS_DISABWE	(1 << 27)
+
+#define GEN7_W3WOG(swice, i)			_MMIO(0xb070 + (swice) * 0x200 + (i) * 4)
+#define   GEN7_W3WOG_SIZE			0x80
+
+#define XEHP_W3NODEAWBCFG			MCW_WEG(0xb0b4)
+#define   XEHP_WNESPAWE				WEG_BIT(19)
+
+#define GEN8_W3SQCWEG1				MCW_WEG(0xb100)
+/*
+ * Note that on CHV the fowwowing has an off-by-one ewwow wwt. to BSpec.
+ * Using the fowmuwa in BSpec weads to a hang, whiwe the fowmuwa hewe wowks
+ * fine and matches the fowmuwas fow aww othew pwatfowms. A BSpec change
+ * wequest has been fiwed to cwawify this.
+ */
+#define   W3_GENEWAW_PWIO_CWEDITS(x)		(((x) >> 1) << 19)
+#define   W3_HIGH_PWIO_CWEDITS(x)		(((x) >> 1) << 14)
+#define   W3_PWIO_CWEDITS_MASK			((0x1f << 19) | (0x1f << 14))
+
+#define GEN8_W3SQCWEG4				MCW_WEG(0xb118)
+#define   GEN11_WQSC_CWEAN_EVICT_DISABWE	(1 << 6)
+#define   GEN8_WQSC_WO_PEWF_DIS			(1 << 27)
+#define   GEN8_WQSC_FWUSH_COHEWENT_WINES	(1 << 21)
+#define   GEN8_WQSQ_NONIA_COHEWENT_ATOMICS_ENABWE	WEG_BIT(22)
+
+#define GEN9_SCWATCH1				MCW_WEG(0xb11c)
+#define   EVICTION_PEWF_FIX_ENABWE		WEG_BIT(8)
+
+#define BDW_SCWATCH1				MCW_WEG(0xb11c)
+#define   GEN9_WBS_SWA_WETWY_TIMEW_DECWEMENT_ENABWE	(1 << 2)
+
+#define GEN11_SCWATCH2				MCW_WEG(0xb140)
+#define   GEN11_COHEWENT_PAWTIAW_WWITE_MEWGE_ENABWE	(1 << 19)
+
+#define XEHP_W3SQCWEG5				MCW_WEG(0xb158)
+#define   W3_PWM_TIMEW_INIT_VAW_MASK		WEG_GENMASK(9, 0)
+
+#define MWTICTXCTW				MCW_WEG(0xb170)
+#define   TDONWENDEW				WEG_BIT(2)
+
+#define XEHP_W3SCQWEG7				MCW_WEG(0xb188)
+#define   BWEND_FIWW_CACHING_OPT_DIS		WEG_BIT(3)
+
+#define XEHPC_W3SCWUB				MCW_WEG(0xb18c)
+#define   SCWUB_CW_DWNGWADE_SHAWED		WEG_BIT(12)
+#define   SCWUB_WATE_PEW_BANK_MASK		WEG_GENMASK(2, 0)
+#define   SCWUB_WATE_4B_PEW_CWK			WEG_FIEWD_PWEP(SCWUB_WATE_PEW_BANK_MASK, 0x6)
+
+#define W3SQCWEG1_CCS0				MCW_WEG(0xb200)
+#define   FWUSHAWWNONCOH			WEG_BIT(5)
+
+#define GEN11_GWBWINVW				_MMIO(0xb404)
+#define   GEN11_BANK_HASH_ADDW_EXCW_MASK	(0x7f << 5)
+#define   GEN11_BANK_HASH_ADDW_EXCW_BIT0	(1 << 5)
+
+#define GEN11_WSN_UNSWCVC			_MMIO(0xb43c)
+#define   GEN11_WSN_UNSWCVC_GAFS_HAWF_CW2_MAXAWWOC	(1 << 9)
+#define   GEN11_WSN_UNSWCVC_GAFS_HAWF_SF_MAXAWWOC	(1 << 7)
+
+#define GUCPMTIMESTAMP				_MMIO(0xc3e8)
+
+#define __GEN9_WCS0_MOCS0			0xc800
+#define GEN9_GFX_MOCS(i)			_MMIO(__GEN9_WCS0_MOCS0 + (i) * 4)
+#define __GEN9_VCS0_MOCS0			0xc900
+#define GEN9_MFX0_MOCS(i)			_MMIO(__GEN9_VCS0_MOCS0 + (i) * 4)
+#define __GEN9_VCS1_MOCS0			0xca00
+#define GEN9_MFX1_MOCS(i)			_MMIO(__GEN9_VCS1_MOCS0 + (i) * 4)
+#define __GEN9_VECS0_MOCS0			0xcb00
+#define GEN9_VEBOX_MOCS(i)			_MMIO(__GEN9_VECS0_MOCS0 + (i) * 4)
+#define __GEN9_BCS0_MOCS0			0xcc00
+#define GEN9_BWT_MOCS(i)			_MMIO(__GEN9_BCS0_MOCS0 + (i) * 4)
+
+#define GEN12_FAUWT_TWB_DATA0			_MMIO(0xceb8)
+#define XEHP_FAUWT_TWB_DATA0			MCW_WEG(0xceb8)
+#define GEN12_FAUWT_TWB_DATA1			_MMIO(0xcebc)
+#define XEHP_FAUWT_TWB_DATA1			MCW_WEG(0xcebc)
+#define   FAUWT_VA_HIGH_BITS			(0xf << 0)
+#define   FAUWT_GTT_SEW				(1 << 4)
+
+#define GEN12_WING_FAUWT_WEG			_MMIO(0xcec4)
+#define XEHP_WING_FAUWT_WEG			MCW_WEG(0xcec4)
+#define XEWPMP_WING_FAUWT_WEG			_MMIO(0xcec4)
+#define   GEN8_WING_FAUWT_ENGINE_ID(x)		(((x) >> 12) & 0x7)
+#define   WING_FAUWT_GTTSEW_MASK		(1 << 11)
+#define   WING_FAUWT_SWCID(x)			(((x) >> 3) & 0xff)
+#define   WING_FAUWT_FAUWT_TYPE(x)		(((x) >> 1) & 0x3)
+#define   WING_FAUWT_VAWID			(1 << 0)
+
+#define GEN12_GFX_TWB_INV_CW			_MMIO(0xced8)
+#define XEHP_GFX_TWB_INV_CW			MCW_WEG(0xced8)
+#define GEN12_VD_TWB_INV_CW			_MMIO(0xcedc)
+#define XEHP_VD_TWB_INV_CW			MCW_WEG(0xcedc)
+#define GEN12_VE_TWB_INV_CW			_MMIO(0xcee0)
+#define XEHP_VE_TWB_INV_CW			MCW_WEG(0xcee0)
+#define GEN12_BWT_TWB_INV_CW			_MMIO(0xcee4)
+#define XEHP_BWT_TWB_INV_CW			MCW_WEG(0xcee4)
+#define GEN12_COMPCTX_TWB_INV_CW		_MMIO(0xcf04)
+#define XEHP_COMPCTX_TWB_INV_CW			MCW_WEG(0xcf04)
+#define XEWPMP_GSC_TWB_INV_CW			_MMIO(0xcf04)   /* media GT onwy */
+
+#define XEHP_MEWT_MOD_CTWW			MCW_WEG(0xcf28)
+#define WENDEW_MOD_CTWW				MCW_WEG(0xcf2c)
+#define COMP_MOD_CTWW				MCW_WEG(0xcf30)
+#define XEWPMP_GSC_MOD_CTWW			_MMIO(0xcf30)	/* media GT onwy */
+#define XEHP_VDBX_MOD_CTWW			MCW_WEG(0xcf34)
+#define XEWPMP_VDBX_MOD_CTWW			_MMIO(0xcf34)
+#define XEHP_VEBX_MOD_CTWW			MCW_WEG(0xcf38)
+#define XEWPMP_VEBX_MOD_CTWW			_MMIO(0xcf38)
+#define   FOWCE_MISS_FTWB			WEG_BIT(3)
+
+#define XEHP_GAMSTWB_CTWW			MCW_WEG(0xcf4c)
+#define   CONTWOW_BWOCK_CWKGATE_DIS		WEG_BIT(12)
+#define   EGWESS_BWOCK_CWKGATE_DIS		WEG_BIT(11)
+#define   TAG_BWOCK_CWKGATE_DIS			WEG_BIT(7)
+
+#define XEHP_GAMCNTWW_CTWW			MCW_WEG(0xcf54)
+#define   INVAWIDATION_BWOADCAST_MODE_DIS	WEG_BIT(12)
+#define   GWOBAW_INVAWIDATION_MODE		WEG_BIT(2)
+
+#define GEN12_GAM_DONE				_MMIO(0xcf68)
+
+#define GEN7_HAWF_SWICE_CHICKEN1		_MMIO(0xe100) /* IVB GT1 + VWV */
+#define GEN8_HAWF_SWICE_CHICKEN1		MCW_WEG(0xe100)
+#define   GEN7_MAX_PS_THWEAD_DEP		(8 << 12)
+#define   GEN7_SINGWE_SUBSCAN_DISPATCH_ENABWE	(1 << 10)
+#define   GEN7_SBE_SS_CACHE_DISPATCH_POWT_SHAWING_DISABWE	(1 << 4)
+#define   GEN7_PSD_SINGWE_POWT_DISPATCH_ENABWE	(1 << 3)
+
+#define GEN7_SAMPWEW_INSTDONE			_MMIO(0xe160)
+#define GEN8_SAMPWEW_INSTDONE			MCW_WEG(0xe160)
+#define GEN7_WOW_INSTDONE			_MMIO(0xe164)
+#define GEN8_WOW_INSTDONE			MCW_WEG(0xe164)
+
+#define HAWF_SWICE_CHICKEN2			MCW_WEG(0xe180)
+#define   GEN8_ST_PO_DISABWE			(1 << 13)
+
+#define HSW_HAWF_SWICE_CHICKEN3			_MMIO(0xe184)
+#define GEN8_HAWF_SWICE_CHICKEN3		MCW_WEG(0xe184)
+#define   HSW_SAMPWE_C_PEWFOWMANCE		(1 << 9)
+#define   GEN8_CENTWOID_PIXEW_OPT_DIS		(1 << 8)
+#define   GEN9_DISABWE_OCW_OOB_SUPPWESS_WOGIC	(1 << 5)
+#define   GEN8_SAMPWEW_POWEW_BYPASS_DIS		(1 << 1)
+
+#define GEN9_HAWF_SWICE_CHICKEN5		MCW_WEG(0xe188)
+#define   GEN9_DG_MIWWOW_FIX_ENABWE		(1 << 5)
+#define   GEN9_CCS_TWB_PWEFETCH_ENABWE		(1 << 3)
+
+#define GEN10_SAMPWEW_MODE			MCW_WEG(0xe18c)
+#define   ENABWE_SMAWWPW			WEG_BIT(15)
+#define   SC_DISABWE_POWEW_OPTIMIZATION_EBB	WEG_BIT(9)
+#define   GEN11_SAMPWEW_ENABWE_HEADWESS_MSG	WEG_BIT(5)
+#define   MTW_DISABWE_SAMPWEW_SC_OOO		WEG_BIT(3)
+#define   GEN11_INDIWECT_STATE_BASE_ADDW_OVEWWIDE	WEG_BIT(0)
+
+#define GEN9_HAWF_SWICE_CHICKEN7		MCW_WEG(0xe194)
+#define   DG2_DISABWE_WOUND_ENABWE_AWWOW_FOW_SSWA	WEG_BIT(15)
+#define   GEN9_SAMPWEW_HASH_COMPWESSED_WEAD_ADDW	WEG_BIT(8)
+#define   GEN9_ENABWE_YV12_BUGFIX		WEG_BIT(4)
+#define   GEN9_ENABWE_GPGPU_PWEEMPTION		WEG_BIT(2)
+
+#define GEN10_CACHE_MODE_SS			MCW_WEG(0xe420)
+#define   ENABWE_EU_COUNT_FOW_TDW_FWUSH		WEG_BIT(10)
+#define   DISABWE_ECC				WEG_BIT(5)
+#define   FWOAT_BWEND_OPTIMIZATION_ENABWE	WEG_BIT(4)
+/*
+ * We have both ENABWE and DISABWE defines bewow using the same bit because the
+ * meaning depends on the tawget pwatfowm. Thewe awe no pwatfowm pwefix fow them
+ * because diffewent steppings of DG2 pick one ow the othew semantics.
+ */
+#define   ENABWE_PWEFETCH_INTO_IC		WEG_BIT(3)
+#define   DISABWE_PWEFETCH_INTO_IC		WEG_BIT(3)
+
+#define EU_PEWF_CNTW0				PEWF_WEG(0xe458)
+#define EU_PEWF_CNTW4				PEWF_WEG(0xe45c)
+
+#define GEN9_WOW_CHICKEN4			MCW_WEG(0xe48c)
+#define   GEN12_DISABWE_GWF_CWEAW		WEG_BIT(13)
+#define   XEHP_DIS_BBW_SYSPIPE			WEG_BIT(11)
+#define   GEN12_DISABWE_TDW_PUSH		WEG_BIT(9)
+#define   GEN11_DIS_PICK_2ND_EU			WEG_BIT(7)
+#define   GEN12_DISABWE_HDW_PAST_PAYWOAD_HOWD_FIX	WEG_BIT(4)
+#define   THWEAD_EX_AWB_MODE			WEG_GENMASK(3, 2)
+#define   THWEAD_EX_AWB_MODE_WW_AFTEW_DEP	WEG_FIEWD_PWEP(THWEAD_EX_AWB_MODE, 0x2)
+
+#define HSW_WOW_CHICKEN3			_MMIO(0xe49c)
+#define GEN9_WOW_CHICKEN3			MCW_WEG(0xe49c)
+#define   HSW_WOW_CHICKEN3_W3_GWOBAW_ATOMICS_DISABWE	(1 << 6)
+#define   MTW_DISABWE_FIX_FOW_EOT_FWUSH		WEG_BIT(9)
+
+#define GEN8_WOW_CHICKEN			MCW_WEG(0xe4f0)
+#define   FWOW_CONTWOW_ENABWE			WEG_BIT(15)
+#define   UGM_BACKUP_MODE			WEG_BIT(13)
+#define   MDQ_AWBITWATION_MODE			WEG_BIT(12)
+#define   SYSTOWIC_DOP_CWOCK_GATING_DIS		WEG_BIT(10)
+#define   PAWTIAW_INSTWUCTION_SHOOTDOWN_DISABWE	WEG_BIT(8)
+#define   STAWW_DOP_GATING_DISABWE		WEG_BIT(5)
+#define   THWOTTWE_12_5				WEG_GENMASK(4, 2)
+#define   DISABWE_EAWWY_EOT			WEG_BIT(1)
+
+#define GEN7_WOW_CHICKEN2			_MMIO(0xe4f4)
+
+#define GEN8_WOW_CHICKEN2			MCW_WEG(0xe4f4)
+#define   GEN12_DISABWE_WEAD_SUPPWESSION	WEG_BIT(15)
+#define   GEN12_DISABWE_EAWWY_WEAD		WEG_BIT(14)
+#define   GEN12_ENABWE_WAWGE_GWF_MODE		WEG_BIT(12)
+#define   GEN12_PUSH_CONST_DEWEF_HOWD_DIS	WEG_BIT(8)
+#define   GEN12_DISABWE_DOP_GATING              WEG_BIT(0)
+
+#define WT_CTWW					MCW_WEG(0xe530)
+#define   DIS_NUWW_QUEWY			WEG_BIT(10)
+#define   STACKID_CTWW				WEG_GENMASK(6, 5)
+#define   STACKID_CTWW_512			WEG_FIEWD_PWEP(STACKID_CTWW, 0x2)
+
+#define EU_PEWF_CNTW1				PEWF_WEG(0xe558)
+#define EU_PEWF_CNTW5				PEWF_WEG(0xe55c)
+
+#define XEHP_HDC_CHICKEN0			MCW_WEG(0xe5f0)
+#define   WSC_W1_FWUSH_CTW_3D_DATAPOWT_FWUSH_EVENTS_MASK	WEG_GENMASK(13, 11)
+#define   DIS_ATOMIC_CHAINING_TYPED_WWITES	WEG_BIT(3)
+
+#define ICW_HDC_MODE				MCW_WEG(0xe5f4)
+
+#define EU_PEWF_CNTW2				PEWF_WEG(0xe658)
+#define EU_PEWF_CNTW6				PEWF_WEG(0xe65c)
+#define EU_PEWF_CNTW3				PEWF_WEG(0xe758)
+
+#define WSC_CHICKEN_BIT_0			MCW_WEG(0xe7c8)
+#define   DISABWE_D8_D16_COASWESCE		WEG_BIT(30)
+#define   FOWCE_1_SUB_MESSAGE_PEW_FWAGMENT	WEG_BIT(15)
+#define WSC_CHICKEN_BIT_0_UDW			MCW_WEG(0xe7c8 + 4)
+#define   UGM_FWAGMENT_THWESHOWD_TO_3		WEG_BIT(58 - 32)
+#define   DIS_CHAIN_2XSIMD8			WEG_BIT(55 - 32)
+#define   FOWCE_SWM_FENCE_SCOPE_TO_TIWE		WEG_BIT(42 - 32)
+#define   FOWCE_UGM_FENCE_SCOPE_TO_TIWE		WEG_BIT(41 - 32)
+#define   MAXWEQS_PEW_BANK			WEG_GENMASK(39 - 32, 37 - 32)
+#define   DISABWE_128B_EVICTION_COMMAND_UDW	WEG_BIT(36 - 32)
+
+#define SAWB_CHICKEN1				MCW_WEG(0xe90c)
+#define   COMP_CKN_IN				WEG_GENMASK(30, 29)
+
+#define GEN7_WOW_CHICKEN2_GT2			_MMIO(0xf4f4)
+#define   DOP_CWOCK_GATING_DISABWE		(1 << 0)
+#define   PUSH_CONSTANT_DEWEF_DISABWE		(1 << 8)
+#define   GEN11_TDW_CWOCK_GATING_FIX_DISABWE	(1 << 1)
+
+#define __GEN11_VCS2_MOCS0			0x10000
+#define GEN11_MFX2_MOCS(i)			_MMIO(__GEN11_VCS2_MOCS0 + (i) * 4)
+
+#define CWSTANDVID				_MMIO(0x11100)
+#define PXVFWEQ(fstawt)				_MMIO(0x11110 + (fstawt) * 4)  /* P[0-15]VIDFWEQ (0x1114c) (Iwonwake) */
+#define   PXVFWEQ_PX_MASK			0x7f000000
+#define   PXVFWEQ_PX_SHIFT			24
+#define VIDFWEQ_BASE				_MMIO(0x11110)
+#define VIDFWEQ1				_MMIO(0x11110) /* VIDFWEQ1-4 (0x1111c) (Cantiga) */
+#define VIDFWEQ2				_MMIO(0x11114)
+#define VIDFWEQ3				_MMIO(0x11118)
+#define VIDFWEQ4				_MMIO(0x1111c)
+#define   VIDFWEQ_P0_MASK			0x1f000000
+#define   VIDFWEQ_P0_SHIFT			24
+#define   VIDFWEQ_P0_CSCWK_MASK			0x00f00000
+#define   VIDFWEQ_P0_CSCWK_SHIFT		20
+#define   VIDFWEQ_P0_CWCWK_MASK			0x000f0000
+#define   VIDFWEQ_P0_CWCWK_SHIFT		16
+#define   VIDFWEQ_P1_MASK			0x00001f00
+#define   VIDFWEQ_P1_SHIFT			8
+#define   VIDFWEQ_P1_CSCWK_MASK			0x000000f0
+#define   VIDFWEQ_P1_CSCWK_SHIFT		4
+#define   VIDFWEQ_P1_CWCWK_MASK			0x0000000f
+#define INTTOEXT_BASE				_MMIO(0x11120) /* INTTOEXT1-8 (0x1113c) */
+#define   INTTOEXT_MAP3_SHIFT			24
+#define   INTTOEXT_MAP3_MASK			(0x1f << INTTOEXT_MAP3_SHIFT)
+#define   INTTOEXT_MAP2_SHIFT			16
+#define   INTTOEXT_MAP2_MASK			(0x1f << INTTOEXT_MAP2_SHIFT)
+#define   INTTOEXT_MAP1_SHIFT			8
+#define   INTTOEXT_MAP1_MASK			(0x1f << INTTOEXT_MAP1_SHIFT)
+#define   INTTOEXT_MAP0_SHIFT			0
+#define   INTTOEXT_MAP0_MASK			(0x1f << INTTOEXT_MAP0_SHIFT)
+#define MEMSWCTW				_MMIO(0x11170) /* Iwonwake onwy */
+#define   MEMCTW_CMD_MASK			0xe000
+#define   MEMCTW_CMD_SHIFT			13
+#define   MEMCTW_CMD_WCWK_OFF			0
+#define   MEMCTW_CMD_WCWK_ON			1
+#define   MEMCTW_CMD_CHFWEQ			2
+#define   MEMCTW_CMD_CHVID			3
+#define   MEMCTW_CMD_VMMOFF			4
+#define   MEMCTW_CMD_VMMON			5
+#define   MEMCTW_CMD_STS			(1 << 12) /* wwite 1 twiggews command, cweaws
+							     when command compwete */
+#define   MEMCTW_FWEQ_MASK			0x0f00 /* jittew, fwom 0-15 */
+#define   MEMCTW_FWEQ_SHIFT			8
+#define   MEMCTW_SFCAVM				(1 << 7)
+#define   MEMCTW_TGT_VID_MASK			0x007f
+#define MEMIHYST				_MMIO(0x1117c)
+#define MEMINTWEN				_MMIO(0x11180) /* 16 bits */
+#define   MEMINT_WSEXIT_EN			(1 << 8)
+#define   MEMINT_CX_SUPW_EN			(1 << 7)
+#define   MEMINT_CONT_BUSY_EN			(1 << 6)
+#define   MEMINT_AVG_BUSY_EN			(1 << 5)
+#define   MEMINT_EVAW_CHG_EN			(1 << 4)
+#define   MEMINT_MON_IDWE_EN			(1 << 3)
+#define   MEMINT_UP_EVAW_EN			(1 << 2)
+#define   MEMINT_DOWN_EVAW_EN			(1 << 1)
+#define   MEMINT_SW_CMD_EN			(1 << 0)
+#define MEMINTWSTW				_MMIO(0x11182) /* 16 bits */
+#define   MEM_WSEXIT_MASK			0xc000
+#define   MEM_WSEXIT_SHIFT			14
+#define   MEM_CONT_BUSY_MASK			0x3000
+#define   MEM_CONT_BUSY_SHIFT			12
+#define   MEM_AVG_BUSY_MASK			0x0c00
+#define   MEM_AVG_BUSY_SHIFT			10
+#define   MEM_EVAW_CHG_MASK			0x0300
+#define   MEM_EVAW_BUSY_SHIFT			8
+#define   MEM_MON_IDWE_MASK			0x00c0
+#define   MEM_MON_IDWE_SHIFT			6
+#define   MEM_UP_EVAW_MASK			0x0030
+#define   MEM_UP_EVAW_SHIFT			4
+#define   MEM_DOWN_EVAW_MASK			0x000c
+#define   MEM_DOWN_EVAW_SHIFT			2
+#define   MEM_SW_CMD_MASK			0x0003
+#define   MEM_INT_STEEW_GFX			0
+#define   MEM_INT_STEEW_CMW			1
+#define   MEM_INT_STEEW_SMI			2
+#define   MEM_INT_STEEW_SCI			3
+#define MEMINTWSTS				_MMIO(0x11184)
+#define   MEMINT_WSEXIT				(1 << 7)
+#define   MEMINT_CONT_BUSY			(1 << 6)
+#define   MEMINT_AVG_BUSY			(1 << 5)
+#define   MEMINT_EVAW_CHG			(1 << 4)
+#define   MEMINT_MON_IDWE			(1 << 3)
+#define   MEMINT_UP_EVAW			(1 << 2)
+#define   MEMINT_DOWN_EVAW			(1 << 1)
+#define   MEMINT_SW_CMD				(1 << 0)
+#define MEMMODECTW				_MMIO(0x11190)
+#define   MEMMODE_BOOST_EN			(1 << 31)
+#define   MEMMODE_BOOST_FWEQ_MASK		0x0f000000 /* jittew fow boost, 0-15 */
+#define   MEMMODE_BOOST_FWEQ_SHIFT		24
+#define   MEMMODE_IDWE_MODE_MASK		0x00030000
+#define   MEMMODE_IDWE_MODE_SHIFT		16
+#define   MEMMODE_IDWE_MODE_EVAW		0
+#define   MEMMODE_IDWE_MODE_CONT		1
+#define   MEMMODE_HWIDWE_EN			(1 << 15)
+#define   MEMMODE_SWMODE_EN			(1 << 14)
+#define   MEMMODE_WCWK_GATE			(1 << 13)
+#define   MEMMODE_HW_UPDATE			(1 << 12)
+#define   MEMMODE_FSTAWT_MASK			0x00000f00 /* stawting jittew, 0-15 */
+#define   MEMMODE_FSTAWT_SHIFT			8
+#define   MEMMODE_FMAX_MASK			0x000000f0 /* max jittew, 0-15 */
+#define   MEMMODE_FMAX_SHIFT			4
+#define   MEMMODE_FMIN_MASK			0x0000000f /* min jittew, 0-15 */
+#define WCBMAXAVG				_MMIO(0x1119c)
+#define MEMSWCTW2				_MMIO(0x1119e) /* Cantiga onwy */
+#define   SWMEMCMD_WENDEW_OFF			(0 << 13)
+#define   SWMEMCMD_WENDEW_ON			(1 << 13)
+#define   SWMEMCMD_SWFWEQ			(2 << 13)
+#define   SWMEMCMD_TAWVID			(3 << 13)
+#define   SWMEMCMD_VWM_OFF			(4 << 13)
+#define   SWMEMCMD_VWM_ON			(5 << 13)
+#define   CMDSTS				(1 << 12)
+#define   SFCAVM				(1 << 11)
+#define   SWFWEQ_MASK				0x0380 /* P0-7 */
+#define   SWFWEQ_SHIFT				7
+#define   TAWVID_MASK				0x001f
+#define MEMSTAT_CTG				_MMIO(0x111a0)
+#define WCBMINAVG				_MMIO(0x111a0)
+#define WCUPEI					_MMIO(0x111b0)
+#define WCDNEI					_MMIO(0x111b4)
+#define WSTDBYCTW				_MMIO(0x111b8)
+#define   WS1EN					(1 << 31)
+#define   WS2EN					(1 << 30)
+#define   WS3EN					(1 << 29)
+#define   D3WS3EN				(1 << 28) /* Dispway D3 imwies WS3 */
+#define   SWPWOMOWSX				(1 << 27) /* WSx pwomotion timews ignowed */
+#define   WCWAKEWW				(1 << 26) /* Wesetwawn fwom PCH causes wakeup */
+#define   DPWSWPVWEN				(1 << 25) /* Fast vowtage wamp enabwe */
+#define   GFXTGHYST				(1 << 24) /* Hystewesis to awwow twunk gating */
+#define   WCX_SW_EXIT				(1 << 23) /* Weave WSx and pwevent we-entwy */
+#define   WSX_STATUS_MASK			(7 << 20)
+#define   WSX_STATUS_ON				(0 << 20)
+#define   WSX_STATUS_WC1			(1 << 20)
+#define   WSX_STATUS_WC1E			(2 << 20)
+#define   WSX_STATUS_WS1			(3 << 20)
+#define   WSX_STATUS_WS2			(4 << 20) /* aka wc6 */
+#define   WSX_STATUS_WSVD			(5 << 20) /* deep wc6 unsuppowted on iwk */
+#define   WSX_STATUS_WS3			(6 << 20) /* ws3 unsuppowted on iwk */
+#define   WSX_STATUS_WSVD2			(7 << 20)
+#define   UWWCWSXE				(1 << 19) /* wake countew wimit pwevents wsx */
+#define   WSCWP					(1 << 18) /* ws wequests contwow on ws1/2 weqs */
+#define   JWSC					(1 << 17) /* wsx coupwed to cpu c-state */
+#define   WS2INC0				(1 << 16) /* awwow ws2 in cpu c0 */
+#define   WS1CONTSAV_MASK			(3 << 14)
+#define   WS1CONTSAV_NO_WS1			(0 << 14) /* ws1 doesn't save/westowe context */
+#define   WS1CONTSAV_WSVD			(1 << 14)
+#define   WS1CONTSAV_SAVE_WS1			(2 << 14) /* ws1 saves context */
+#define   WS1CONTSAV_FUWW_WS1			(3 << 14) /* ws1 saves and westowes context */
+#define   NOWMSWEXWAT_MASK			(3 << 12)
+#define   SWOW_WS123				(0 << 12)
+#define   SWOW_WS23				(1 << 12)
+#define   SWOW_WS3				(2 << 12)
+#define   NOWMAW_WS123				(3 << 12)
+#define   WCMODE_TIMEOUT			(1 << 11) /* 0 is evaw intewvaw method */
+#define   IMPWOMOEN				(1 << 10) /* pwomo is immediate ow dewayed untiw next idwe intewvaw (onwy fow timeout method above) */
+#define   WCENTSYNC				(1 << 9) /* ws coupwed to cpu c-state (3/6/7) */
+#define   STATEWOCK				(1 << 7) /* wocked to ws_cstate if 0 */
+#define   WS_CSTATE_MASK			(3 << 4)
+#define   WS_CSTATE_C367_WS1			(0 << 4)
+#define   WS_CSTATE_C36_WS1_C7_WS2		(1 << 4)
+#define   WS_CSTATE_WSVD			(2 << 4)
+#define   WS_CSTATE_C367_WS2			(3 << 4)
+#define   WEDSAVES				(1 << 3) /* no context save if was idwe duwing ws0 */
+#define   WEDWESTOWES				(1 << 2) /* no westowe if was idwe duwing ws0 */
+#define VIDCTW					_MMIO(0x111c0)
+#define VIDSTS					_MMIO(0x111c8)
+#define VIDSTAWT				_MMIO(0x111cc) /* 8 bits */
+#define MEMSTAT_IWK				_MMIO(0x111f8)
+#define   MEMSTAT_VID_MASK			0x7f00
+#define   MEMSTAT_VID_SHIFT			8
+#define   MEMSTAT_PSTATE_MASK			WEG_GENMASK(7, 3)
+#define   MEMSTAT_MON_ACTV			(1 << 2)
+#define   MEMSTAT_SWC_CTW_MASK			0x0003
+#define   MEMSTAT_SWC_CTW_COWE			0
+#define   MEMSTAT_SWC_CTW_TWB			1
+#define   MEMSTAT_SWC_CTW_THM			2
+#define   MEMSTAT_SWC_CTW_STDBY			3
+#define PMMISC					_MMIO(0x11214)
+#define   MCPPCE_EN				(1 << 0) /* enabwe PM_MSG fwom PCH->MPC */
+#define SDEW					_MMIO(0x1124c)
+#define CSIEW0					_MMIO(0x11250)
+#define CSIEW1					_MMIO(0x11254)
+#define CSIEW2					_MMIO(0x11258)
+#define PEW(i)					_MMIO(0x1125c + (i) * 4) /* 5 wegistews */
+#define DEW(i)					_MMIO(0x11270 + (i) * 4) /* 3 wegistews */
+#define MCHAFE					_MMIO(0x112c0)
+#define CSIEC					_MMIO(0x112e0)
+#define DMIEC					_MMIO(0x112e4)
+#define DDWEC					_MMIO(0x112e8)
+#define PEG0EC					_MMIO(0x112ec)
+#define PEG1EC					_MMIO(0x112f0)
+#define GFXEC					_MMIO(0x112f4)
+#define INTTOEXT_BASE_IWK			_MMIO(0x11300)
+#define WPPWEVBSYTUPAVG				_MMIO(0x113b8)
+#define WCPWEVBSYTUPAVG				_MMIO(0x113b8)
+#define WCPWEVBSYTDNAVG				_MMIO(0x113bc)
+#define WPPWEVBSYTDNAVG				_MMIO(0x113bc)
+#define ECW					_MMIO(0x11600)
+#define   ECW_GPFE				(1 << 31)
+#define   ECW_IMONE				(1 << 30)
+#define   ECW_CAP_MASK				0x0000001f /* Event wange, 0-31 */
+#define OGW0					_MMIO(0x11608)
+#define OGW1					_MMIO(0x1160c)
+#define EG0					_MMIO(0x11610)
+#define EG1					_MMIO(0x11614)
+#define EG2					_MMIO(0x11618)
+#define EG3					_MMIO(0x1161c)
+#define EG4					_MMIO(0x11620)
+#define EG5					_MMIO(0x11624)
+#define EG6					_MMIO(0x11628)
+#define EG7					_MMIO(0x1162c)
+#define PXW(i)					_MMIO(0x11664 + (i) * 4) /* 4 wegistews */
+#define PXWW(i)					_MMIO(0x11680 + (i) * 8) /* 8 wegistews */
+#define WCFUSE02				_MMIO(0x116c0)
+#define   WCFUSE_HIV_MASK			0x000000ff
+
+#define GAC_ECO_BITS				_MMIO(0x14090)
+#define   ECOBITS_SNB_BIT			(1 << 13)
+#define   ECOBITS_PPGTT_CACHE64B		(3 << 8)
+#define   ECOBITS_PPGTT_CACHE4B			(0 << 8)
+
+#define GEN12_WCU_MODE				_MMIO(0x14800)
+#define   GEN12_WCU_MODE_CCS_ENABWE		WEG_BIT(0)
+
+#define CHV_FUSE_GT				_MMIO(VWV_GUNIT_BASE + 0x2168)
+#define   CHV_FGT_DISABWE_SS0			(1 << 10)
+#define   CHV_FGT_DISABWE_SS1			(1 << 11)
+#define   CHV_FGT_EU_DIS_SS0_W0_SHIFT		16
+#define   CHV_FGT_EU_DIS_SS0_W0_MASK		(0xf << CHV_FGT_EU_DIS_SS0_W0_SHIFT)
+#define   CHV_FGT_EU_DIS_SS0_W1_SHIFT		20
+#define   CHV_FGT_EU_DIS_SS0_W1_MASK		(0xf << CHV_FGT_EU_DIS_SS0_W1_SHIFT)
+#define   CHV_FGT_EU_DIS_SS1_W0_SHIFT		24
+#define   CHV_FGT_EU_DIS_SS1_W0_MASK		(0xf << CHV_FGT_EU_DIS_SS1_W0_SHIFT)
+#define   CHV_FGT_EU_DIS_SS1_W1_SHIFT		28
+#define   CHV_FGT_EU_DIS_SS1_W1_MASK		(0xf << CHV_FGT_EU_DIS_SS1_W1_SHIFT)
+
+#define BCS_SWCTWW				_MMIO(0x22200)
+#define   BCS_SWC_Y				WEG_BIT(0)
+#define   BCS_DST_Y				WEG_BIT(1)
+
+#define GAB_CTW					_MMIO(0x24000)
+#define   GAB_CTW_CONT_AFTEW_PAGEFAUWT		(1 << 8)
+
+#define GEN6_PMISW				_MMIO(0x44020)
+#define GEN6_PMIMW				_MMIO(0x44024) /* wps_wock */
+#define GEN6_PMIIW				_MMIO(0x44028)
+#define GEN6_PMIEW				_MMIO(0x4402c)
+#define   GEN6_PM_MBOX_EVENT			(1 << 25)
+#define   GEN6_PM_THEWMAW_EVENT			(1 << 24)
+/*
+ * Fow Gen11 these awe in the uppew wowd of the GPM_WGBOXPEWF
+ * wegistews. Shifting is handwed on accessing the imw and iew.
+ */
+#define   GEN6_PM_WP_DOWN_TIMEOUT		(1 << 6)
+#define   GEN6_PM_WP_UP_THWESHOWD		(1 << 5)
+#define   GEN6_PM_WP_DOWN_THWESHOWD		(1 << 4)
+#define   GEN6_PM_WP_UP_EI_EXPIWED		(1 << 2)
+#define   GEN6_PM_WP_DOWN_EI_EXPIWED		(1 << 1)
+#define   GEN6_PM_WPS_EVENTS			(GEN6_PM_WP_UP_EI_EXPIWED   | \
+						 GEN6_PM_WP_UP_THWESHOWD    | \
+						 GEN6_PM_WP_DOWN_EI_EXPIWED | \
+						 GEN6_PM_WP_DOWN_THWESHOWD  | \
+						 GEN6_PM_WP_DOWN_TIMEOUT)
+
+#define GEN7_GT_SCWATCH(i)			_MMIO(0x4f100 + (i) * 4)
+#define   GEN7_GT_SCWATCH_WEG_NUM		8
+
+#define GFX_FWSH_CNTW_GEN6			_MMIO(0x101008)
+#define   GFX_FWSH_CNTW_EN			(1 << 0)
+
+#define GTFIFODBG				_MMIO(0x120000)
+#define   GT_FIFO_SBDEDICATE_FWEE_ENTWY_CHV	(0x1f << 20)
+#define   GT_FIFO_FWEE_ENTWIES_CHV		(0x7f << 13)
+#define   GT_FIFO_SBDWOPEWW			(1 << 6)
+#define   GT_FIFO_BWOBDWOPEWW			(1 << 5)
+#define   GT_FIFO_SB_WEAD_ABOWTEWW		(1 << 4)
+#define   GT_FIFO_DWOPEWW			(1 << 3)
+#define   GT_FIFO_OVFEWW			(1 << 2)
+#define   GT_FIFO_IAWWEWW			(1 << 1)
+#define   GT_FIFO_IAWDEWW			(1 << 0)
+
+#define GTFIFOCTW				_MMIO(0x120008)
+#define   GT_FIFO_FWEE_ENTWIES_MASK		0x7f
+#define   GT_FIFO_NUM_WESEWVED_ENTWIES		20
+#define   GT_FIFO_CTW_BWOCK_AWW_POWICY_STAWW	(1 << 12)
+#define   GT_FIFO_CTW_WC6_POWICY_STAWW		(1 << 11)
+
+#define FOWCEWAKE_MT_ACK			_MMIO(0x130040)
+#define FOWCEWAKE_ACK_HSW			_MMIO(0x130044)
+#define FOWCEWAKE_ACK_GT_GEN9			_MMIO(0x130044)
+#define   FOWCEWAKE_KEWNEW			BIT(0)
+#define   FOWCEWAKE_USEW			BIT(1)
+#define   FOWCEWAKE_KEWNEW_FAWWBACK		BIT(15)
+#define FOWCEWAKE_ACK				_MMIO(0x130090)
+#define VWV_GTWC_WAKE_CTWW			_MMIO(0x130090)
+#define   VWV_GTWC_WENDEW_CTX_EXISTS		(1 << 25)
+#define   VWV_GTWC_MEDIA_CTX_EXISTS		(1 << 24)
+#define   VWV_GTWC_AWWOWWAKEWEQ			(1 << 0)
+#define VWV_GTWC_PW_STATUS			_MMIO(0x130094)
+#define   VWV_GTWC_AWWOWWAKEACK			(1 << 0)
+#define   VWV_GTWC_AWWOWWAKEEWW			(1 << 1)
+#define   VWV_GTWC_PW_MEDIA_STATUS_MASK		(1 << 5)
+#define   VWV_GTWC_PW_WENDEW_STATUS_MASK	(1 << 7)
+#define VWV_GTWC_SUWVIVABIWITY_WEG		_MMIO(0x130098)
+#define   VWV_GFX_CWK_STATUS_BIT		(1 << 3)
+#define   VWV_GFX_CWK_FOWCE_ON_BIT		(1 << 2)
+#define FOWCEWAKE_VWV				_MMIO(0x1300b0)
+#define FOWCEWAKE_ACK_VWV			_MMIO(0x1300b4)
+#define FOWCEWAKE_MEDIA_VWV			_MMIO(0x1300b8)
+#define FOWCEWAKE_ACK_MEDIA_VWV			_MMIO(0x1300bc)
+
+#define MTW_MEDIA_MC6				_MMIO(0x138048)
+
+#define MTW_GT_ACTIVITY_FACTOW			_MMIO(0x138010)
+#define   MTW_GT_W3_EXC_MASK			WEG_GENMASK(5, 3)
+
+#define GEN6_GT_THWEAD_STATUS_WEG		_MMIO(0x13805c)
+#define   GEN6_GT_THWEAD_STATUS_COWE_MASK	0x7
+
+#define GEN6_GT_COWE_STATUS			_MMIO(0x138060)
+#define   GEN6_COWE_CPD_STATE_MASK		(7 << 4)
+#define   GEN6_WCn_MASK				7
+#define   GEN6_WC0				0
+#define   GEN6_WC3				2
+#define   GEN6_WC6				3
+#define   GEN6_WC7				4
+
+#define GEN8_GT_SWICE_INFO			_MMIO(0x138064)
+#define   GEN8_WSWICESTAT_MASK			0x7
+
+#define GEN6_GT_GFX_WC6_WOCKED			_MMIO(0x138104)
+#define VWV_COUNTEW_CONTWOW			_MMIO(0x138104)
+#define   VWV_COUNT_WANGE_HIGH			(1 << 15)
+#define   VWV_MEDIA_WC0_COUNT_EN		(1 << 5)
+#define   VWV_WENDEW_WC0_COUNT_EN		(1 << 4)
+#define   VWV_MEDIA_WC6_COUNT_EN		(1 << 1)
+#define   VWV_WENDEW_WC6_COUNT_EN		(1 << 0)
+#define GEN6_GT_GFX_WC6				_MMIO(0x138108)
+#define VWV_GT_MEDIA_WC6			_MMIO(0x13810c)
+
+#define GEN6_GT_GFX_WC6p			_MMIO(0x13810c)
+#define GEN6_GT_GFX_WC6pp			_MMIO(0x138110)
+#define VWV_WENDEW_C0_COUNT			_MMIO(0x138118)
+#define VWV_MEDIA_C0_COUNT			_MMIO(0x13811c)
+
+#define GEN12_WPSTAT1				_MMIO(0x1381b4)
+#define   GEN12_VOWTAGE_MASK			WEG_GENMASK(10, 0)
+#define   GEN12_CAGF_MASK			WEG_GENMASK(19, 11)
+
+#define GEN11_GT_INTW_DW(x)			_MMIO(0x190018 + ((x) * 4))
+#define   GEN11_CSME				(31)
+#define   GEN12_HECI_2				(30)
+#define   GEN11_GUNIT				(28)
+#define   GEN11_GUC				(25)
+#define   MTW_MGUC				(24)
+#define   GEN11_WDPEWF				(20)
+#define   GEN11_KCW				(19)
+#define   GEN11_GTPM				(16)
+#define   GEN11_BCS				(15)
+#define   XEHPC_BCS1				(14)
+#define   XEHPC_BCS2				(13)
+#define   XEHPC_BCS3				(12)
+#define   XEHPC_BCS4				(11)
+#define   XEHPC_BCS5				(10)
+#define   XEHPC_BCS6				(9)
+#define   XEHPC_BCS7				(8)
+#define   XEHPC_BCS8				(23)
+#define   GEN12_CCS3				(7)
+#define   GEN12_CCS2				(6)
+#define   GEN12_CCS1				(5)
+#define   GEN12_CCS0				(4)
+#define   GEN11_WCS0				(0)
+#define   GEN11_VECS(x)				(31 - (x))
+#define   GEN11_VCS(x)				(x)
+
+#define GEN11_WENDEW_COPY_INTW_ENABWE		_MMIO(0x190030)
+#define GEN11_VCS_VECS_INTW_ENABWE		_MMIO(0x190034)
+#define GEN11_GUC_SG_INTW_ENABWE		_MMIO(0x190038)
+#define   ENGINE1_MASK				WEG_GENMASK(31, 16)
+#define   ENGINE0_MASK				WEG_GENMASK(15, 0)
+#define GEN11_GPM_WGBOXPEWF_INTW_ENABWE		_MMIO(0x19003c)
+#define GEN11_CWYPTO_WSVD_INTW_ENABWE		_MMIO(0x190040)
+#define GEN11_GUNIT_CSME_INTW_ENABWE		_MMIO(0x190044)
+#define GEN12_CCS_WSVD_INTW_ENABWE		_MMIO(0x190048)
+
+#define GEN11_INTW_IDENTITY_WEG(x)		_MMIO(0x190060 + ((x) * 4))
+#define   GEN11_INTW_DATA_VAWID			(1 << 31)
+#define   GEN11_INTW_ENGINE_CWASS(x)		(((x) & GENMASK(18, 16)) >> 16)
+#define   GEN11_INTW_ENGINE_INSTANCE(x)		(((x) & GENMASK(25, 20)) >> 20)
+#define   GEN11_INTW_ENGINE_INTW(x)		((x) & 0xffff)
+/* iwq instances fow OTHEW_CWASS */
+#define   OTHEW_GUC_INSTANCE			0
+#define   OTHEW_GTPM_INSTANCE			1
+#define   OTHEW_GSC_HECI_2_INSTANCE		3
+#define   OTHEW_KCW_INSTANCE			4
+#define   OTHEW_GSC_INSTANCE			6
+#define   OTHEW_MEDIA_GUC_INSTANCE		16
+#define   OTHEW_MEDIA_GTPM_INSTANCE		17
+
+#define GEN11_IIW_WEG_SEWECTOW(x)		_MMIO(0x190070 + ((x) * 4))
+
+#define GEN11_WCS0_WSVD_INTW_MASK		_MMIO(0x190090)
+#define GEN11_BCS_WSVD_INTW_MASK		_MMIO(0x1900a0)
+#define GEN11_VCS0_VCS1_INTW_MASK		_MMIO(0x1900a8)
+#define GEN11_VCS2_VCS3_INTW_MASK		_MMIO(0x1900ac)
+#define GEN12_VCS4_VCS5_INTW_MASK		_MMIO(0x1900b0)
+#define GEN12_VCS6_VCS7_INTW_MASK		_MMIO(0x1900b4)
+#define GEN11_VECS0_VECS1_INTW_MASK		_MMIO(0x1900d0)
+#define GEN12_VECS2_VECS3_INTW_MASK		_MMIO(0x1900d4)
+#define GEN12_HECI2_WSVD_INTW_MASK		_MMIO(0x1900e4)
+#define GEN11_GUC_SG_INTW_MASK			_MMIO(0x1900e8)
+#define MTW_GUC_MGUC_INTW_MASK			_MMIO(0x1900e8) /* MTW+ */
+#define GEN11_GPM_WGBOXPEWF_INTW_MASK		_MMIO(0x1900ec)
+#define GEN11_CWYPTO_WSVD_INTW_MASK		_MMIO(0x1900f0)
+#define GEN11_GUNIT_CSME_INTW_MASK		_MMIO(0x1900f4)
+#define GEN12_CCS0_CCS1_INTW_MASK		_MMIO(0x190100)
+#define GEN12_CCS2_CCS3_INTW_MASK		_MMIO(0x190104)
+#define XEHPC_BCS1_BCS2_INTW_MASK		_MMIO(0x190110)
+#define XEHPC_BCS3_BCS4_INTW_MASK		_MMIO(0x190114)
+#define XEHPC_BCS5_BCS6_INTW_MASK		_MMIO(0x190118)
+#define XEHPC_BCS7_BCS8_INTW_MASK		_MMIO(0x19011c)
+
+#define GEN12_SFC_DONE(n)			_MMIO(0x1cc000 + (n) * 0x1000)
+
+#define GT0_PACKAGE_ENEWGY_STATUS		_MMIO(0x250004)
+#define GT0_PACKAGE_WAPW_WIMIT			_MMIO(0x250008)
+#define GT0_PACKAGE_POWEW_SKU_UNIT		_MMIO(0x250068)
+#define GT0_PWATFOWM_ENEWGY_STATUS		_MMIO(0x25006c)
+
+/*
+ * Standawone Media's non-engine GT wegistews awe wocated at theiw weguwaw GT
+ * offsets pwus 0x380000.  This extwa offset is stowed inside the intew_uncowe
+ * stwuctuwe so that the existing code can be used fow both GTs without
+ * modification.
+ */
+#define MTW_MEDIA_GSI_BASE			0x380000
+
+#endif /* __INTEW_GT_WEGS__ */

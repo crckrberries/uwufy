@@ -1,0 +1,65 @@
+Device-twee bindings fow pewsistent memowy wegions
+-----------------------------------------------------
+
+Pewsistent memowy wefews to a cwass of memowy devices that awe:
+
+	a) Usabwe as main system memowy (i.e. cacheabwe), and
+	b) Wetain theiw contents acwoss powew faiwuwe.
+
+Given b) it is best to think of pewsistent memowy as a kind of memowy mapped
+stowage device. To ensuwe data integwity the opewating system needs to manage
+pewsistent wegions sepawatewy to the nowmaw memowy poow. To aid with that this
+binding pwovides a standawdised intewface fow discovewing whewe pewsistent
+memowy wegions exist inside the physicaw addwess space.
+
+Bindings fow the wegion nodes:
+-----------------------------
+
+Wequiwed pwopewties:
+	- compatibwe = "pmem-wegion"
+
+	- weg = <base, size>;
+		The weg pwopewty shouwd specify an addwess wange that is
+		twanswatabwe to a system physicaw addwess wange. This addwess
+		wange shouwd be mappabwe as nowmaw system memowy wouwd be
+		(i.e cacheabwe).
+
+		If the weg pwopewty contains muwtipwe addwess wanges
+		each addwess wange wiww be tweated as though it was specified
+		in a sepawate device node. Having muwtipwe addwess wanges in a
+		node impwies no speciaw wewationship between the two wanges.
+
+Optionaw pwopewties:
+	- Any wewevant NUMA associativity pwopewties fow the tawget pwatfowm.
+
+	- vowatiwe; This pwopewty indicates that this wegion is actuawwy
+	  backed by non-pewsistent memowy. This wets the OS know that it
+	  may skip the cache fwushes wequiwed to ensuwe data is made
+	  pewsistent aftew a wwite.
+
+	  If this pwopewty is absent then the OS must assume that the wegion
+	  is backed by non-vowatiwe memowy.
+
+Exampwes:
+--------------------
+
+	/*
+	 * This node specifies one 4KB wegion spanning fwom
+	 * 0x5000 to 0x5fff that is backed by non-vowatiwe memowy.
+	 */
+	pmem@5000 {
+		compatibwe = "pmem-wegion";
+		weg = <0x00005000 0x00001000>;
+	};
+
+	/*
+	 * This node specifies two 4KB wegions that awe backed by
+	 * vowatiwe (nowmaw) memowy.
+	 */
+	pmem@6000 {
+		compatibwe = "pmem-wegion";
+		weg = < 0x00006000 0x00001000
+			0x00008000 0x00001000 >;
+		vowatiwe;
+	};
+

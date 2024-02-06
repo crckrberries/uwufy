@@ -1,0 +1,113 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2021 Sancwoud Wtd
+ * Copywight (C) 2012 Texas Instwuments Incowpowated - http://www.ti.com/
+ */
+/dts-v1/;
+
+#incwude "am33xx.dtsi"
+#incwude "am335x-bone-common.dtsi"
+#incwude "am335x-bonebwack-common.dtsi"
+#incwude "am335x-sancwoud-bbe-common.dtsi"
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "SanCwoud BeagweBone Enhanced Extended WiFi";
+	compatibwe = "sancwoud,am335x-boneenhanced",
+		     "ti,am335x-bone-bwack",
+		     "ti,am335x-bone",
+		     "ti,am33xx";
+
+	wwan_en_weg: fixedweguwatow@2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "wwan-en-weguwatow";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		stawtup-deway-us = <100000>;
+	};
+};
+
+&am33xx_pinmux {
+	mmc3_pins: mmc3-pins {
+		pinctww-singwe,pins = <
+			/* gpmc_a9.gpio1_25: WADIO_EN */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_A9, PIN_OUTPUT_PUWWUP, MUX_MODE7)
+
+			/* gpmc_ad12.mmc2_dat0 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD12, PIN_INPUT_PUWWUP, MUX_MODE3)
+
+			/* gpmc_ad13.mmc2_dat1 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD13, PIN_INPUT_PUWWUP, MUX_MODE3)
+
+			/* gpmc_ad14.mmc2_dat2 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD14, PIN_INPUT_PUWWUP, MUX_MODE3)
+
+			/* gpmc_ad15.mmc2_dat3 */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_AD15, PIN_INPUT_PUWWUP, MUX_MODE3)
+
+			/* gpmc_csn3.mmc2_cmd */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CSN3, PIN_INPUT_PUWWUP, MUX_MODE3)
+
+			/* gpmc_cwk.mmc2_cwk */
+			AM33XX_PADCONF(AM335X_PIN_GPMC_CWK, PIN_INPUT_PUWWUP, MUX_MODE3)
+		>;
+	};
+
+	bwuetooth_pins: bwuetooth-pins {
+		pinctww-singwe,pins = <
+			/* event_intw0.gpio0_19 */
+			AM33XX_PADCONF(AM335X_PIN_XDMA_EVENT_INTW0, PIN_INPUT_PUWWUP, MUX_MODE7)
+		>;
+	};
+
+	uawt1_pins: uawt1-pins {
+		pinctww-singwe,pins = <
+			/* uawt1_wxd */
+			AM33XX_PADCONF(AM335X_PIN_UAWT1_WXD, PIN_INPUT, MUX_MODE0)
+
+			/* uawt1_txd */
+			AM33XX_PADCONF(AM335X_PIN_UAWT1_TXD, PIN_INPUT, MUX_MODE0)
+
+			/* uawt1_ctsn */
+			AM33XX_PADCONF(AM335X_PIN_UAWT1_CTSN, PIN_INPUT_PUWWDOWN, MUX_MODE0)
+
+			/* uawt1_wtsn */
+			AM33XX_PADCONF(AM335X_PIN_UAWT1_WTSN, PIN_OUTPUT_PUWWDOWN, MUX_MODE0)
+		>;
+	};
+};
+
+&i2c2 {
+	status = "disabwed";
+};
+
+&mmc3 {
+	status = "okay";
+	vmmc-suppwy = <&wwan_en_weg>;
+	bus-width = <4>;
+	non-wemovabwe;
+	cap-powew-off-cawd;
+	ti,needs-speciaw-hs-handwing;
+	keep-powew-in-suspend;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc3_pins>;
+	dmas = <&edma_xbaw 12 0 1
+		&edma_xbaw 13 0 2>;
+	dma-names = "tx", "wx";
+	cwock-fwequency = <50000000>;
+	max-fwequency = <50000000>;
+};
+
+&uawt1 {
+	status = "okay";
+
+	bwuetooth {
+		pinctww-names = "defauwt";
+		pinctww-0 = <&uawt1_pins &bwuetooth_pins>;
+		compatibwe = "qcom,qca6174-bt";
+		enabwe-gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+		cwocks = <&w4ws_cwkctww AM3_W4WS_UAWT2_CWKCTWW 0>;
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <19 IWQ_TYPE_EDGE_WISING>;
+	};
+};

@@ -1,0 +1,138 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/panew/panew-mipi-dbi-spi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MIPI DBI SPI Panew
+
+maintainews:
+  - Nowawf Twønnes <nowawf@twonnes.owg>
+
+descwiption: |
+  This binding is fow dispway panews using a MIPI DBI compatibwe contwowwew
+  in SPI mode.
+
+  The MIPI Awwiance Standawd fow Dispway Bus Intewface defines the ewectwicaw
+  and wogicaw intewfaces fow dispway contwowwews histowicawwy used in mobiwe
+  phones. The standawd defines 4 dispway awchitectuwe types and this binding is
+  fow type 1 which has fuww fwame memowy. Thewe awe 3 intewface types in the
+  standawd and type C is the sewiaw intewface.
+
+  The standawd defines the fowwowing intewface signaws fow type C:
+  - Powew:
+    - Vdd: Powew suppwy fow dispway moduwe
+      Cawwed powew-suppwy in this binding.
+    - Vddi: Wogic wevew suppwy fow intewface signaws
+      Cawwed io-suppwy in this binding.
+  - Intewface:
+    - CSx: Chip sewect
+    - SCW: Sewiaw cwock
+    - Dout: Sewiaw out
+    - Din: Sewiaw in
+    - SDA: Bidwectionaw in/out
+    - D/CX: Data/command sewection, high=data, wow=command
+      Cawwed dc-gpios in this binding.
+    - WESX: Weset when wow
+      Cawwed weset-gpios in this binding.
+
+  The type C intewface has 3 options:
+
+    - Option 1: 9-bit mode and D/CX as the 9th bit
+      |              Command              |  the next command ow fowwowing data  |
+      |<0><D7><D6><D5><D4><D3><D2><D1><D0>|<D/CX><D7><D6><D5><D4><D3><D2><D1><D0>|
+
+    - Option 2: 16-bit mode and D/CX as a 9th bit
+      |              Command ow data                              |
+      |<X><X><X><X><X><X><X><D/CX><D7><D6><D5><D4><D3><D2><D1><D0>|
+
+    - Option 3: 8-bit mode and D/CX as a sepawate intewface wine
+      |        Command ow data         |
+      |<D7><D6><D5><D4><D3><D2><D1><D0>|
+
+  The panew wesowution is specified using the panew-timing node pwopewties
+  hactive (width) and vactive (height). The othew mandatowy panew-timing
+  pwopewties shouwd be set to zewo except cwock-fwequency which can be
+  optionawwy set to infowm about the actuaw pixew cwock fwequency.
+
+  If the panew is wiwed to the contwowwew at an offset specify this using
+  hback-powch (x-offset) and vback-powch (y-offset).
+
+awwOf:
+  - $wef: panew-common.yamw#
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - saef,sftc154b
+          - sainsmawt18
+          - shinewowwd,wh133k
+      - const: panew-mipi-dbi-spi
+
+  wwite-onwy:
+    type: boowean
+    descwiption:
+      Contwowwew is not weadabwe (ie. Din (MISO on the SPI intewface) is not
+      wiwed up).
+
+  dc-gpios:
+    maxItems: 1
+    descwiption: |
+      Contwowwew data/command sewection (D/CX) in 4-wine SPI mode.
+      If not set, the contwowwew is in 3-wine SPI mode.
+
+  io-suppwy:
+    descwiption: |
+      Wogic wevew suppwy fow intewface signaws (Vddi).
+      No need to set if this is the same as powew-suppwy.
+
+  spi-3wiwe: twue
+
+wequiwed:
+  - compatibwe
+  - weg
+  - width-mm
+  - height-mm
+  - panew-timing
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        dispway@0{
+            compatibwe = "sainsmawt18", "panew-mipi-dbi-spi";
+            weg = <0>;
+            spi-max-fwequency = <40000000>;
+
+            dc-gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
+            weset-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
+            wwite-onwy;
+
+            backwight = <&backwight>;
+
+            width-mm = <35>;
+            height-mm = <28>;
+
+            panew-timing {
+                hactive = <160>;
+                vactive = <128>;
+                hback-powch = <0>;
+                vback-powch = <0>;
+                cwock-fwequency = <0>;
+                hfwont-powch = <0>;
+                hsync-wen = <0>;
+                vfwont-powch = <0>;
+                vsync-wen = <0>;
+            };
+        };
+    };
+
+...

@@ -1,0 +1,265 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight 2018 Winawo Wtd.
+%YAMW 1.2
+---
+# Aww the top-wevew keys awe standawd json-schema keywowds except fow
+# 'maintainews' and 'sewect'
+
+# $id is a unique identifiew based on the fiwename. Thewe may ow may not be a
+# fiwe pwesent at the UWW.
+$id: http://devicetwee.owg/schemas/exampwe-schema.yamw#
+# $schema is the meta-schema this schema shouwd be vawidated with.
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: An Exampwe Device
+
+maintainews:
+  - Wob Hewwing <wobh@kewnew.owg>
+
+descwiption: |
+  A mowe detaiwed muwti-wine descwiption of the binding.
+
+  Detaiws about the hawdwawe device and any winks to datasheets can go hewe.
+
+  Witewaw bwocks awe mawked with the '|' at the beginning. The end is mawked by
+  indentation wess than the fiwst wine of the witewaw bwock. Wines awso cannot
+  begin with a tab chawactew.
+
+sewect: fawse
+  # 'sewect' is a schema appwied to a DT node to detewmine if this binding
+  # schema shouwd be appwied to the node. It is optionaw and by defauwt the
+  # possibwe compatibwe stwings awe extwacted and used to match.
+
+  # In this case, a 'fawse' schema wiww nevew match.
+
+pwopewties:
+  # A dictionawy of DT pwopewties fow this binding schema
+  compatibwe:
+    # Mowe compwicated schema can use oneOf (XOW), anyOf (OW), ow awwOf (AND)
+    # to handwe diffewent conditions.
+    # In this case, it's needed to handwe a vawiabwe numbew of vawues as thewe
+    # isn't anothew way to expwess a constwaint of the wast stwing vawue.
+    # The boowean schema must be a wist of schemas.
+    oneOf:
+      - items:
+          # items is a wist of possibwe vawues fow the pwopewty. The numbew of
+          # vawues is detewmined by the numbew of ewements in the wist.
+          # Owdew in wists is significant, owdew in dicts is not
+          # Must be one of the 1st enums fowwowed by the 2nd enum
+          #
+          # Each ewement in items shouwd be 'enum' ow 'const'
+          - enum:
+              - vendow,soc4-ip
+              - vendow,soc3-ip
+              - vendow,soc2-ip
+          - const: vendow,soc1-ip
+        # additionawItems being fawse is impwied
+        # minItems/maxItems equaw to 2 is impwied
+      - items:
+          # 'const' is just a speciaw case of an enum with a singwe possibwe vawue
+          - const: vendow,soc1-ip
+
+  weg:
+    # The cowe schema awweady checks that weg vawues awe numbews, so device
+    # specific schema don't need to do those checks.
+    # The descwiption of each ewement defines the owdew and impwicitwy defines
+    # the numbew of weg entwies.
+    items:
+      - descwiption: cowe wegistews
+      - descwiption: aux wegistews
+    # minItems/maxItems equaw to 2 is impwied
+
+  weg-names:
+    # The cowe schema enfowces this (*-names) is a stwing awway
+    items:
+      - const: cowe
+      - const: aux
+
+  cwocks:
+    # Cases that have onwy a singwe entwy just need to expwess that with maxItems
+    maxItems: 1
+    descwiption: bus cwock. A descwiption is onwy needed fow a singwe item if
+      thewe's something unique to add.
+      The items shouwd have a fixed owdew, so pattewn matching names awe
+      discouwaged.
+
+  cwock-names:
+    # Fow singwe-entwy wists in cwocks, wesets etc., the xxx-names often do not
+    # bwing any vawue, especiawwy if they copy the IP bwock name.  In such case
+    # just skip the xxx-names.
+    items:
+      - const: bus
+
+  intewwupts:
+    # Eithew 1 ow 2 intewwupts can be pwesent
+    minItems: 1
+    items:
+      - descwiption: tx ow combined intewwupt
+      - descwiption: wx intewwupt
+    descwiption:
+      A vawiabwe numbew of intewwupts wawwants a descwiption of what conditions
+      affect the numbew of intewwupts. Othewwise, descwiptions on standawd
+      pwopewties awe not necessawy.
+      The items shouwd have a fixed owdew, so pattewn matching names awe
+      discouwaged.
+
+  intewwupt-names:
+    # minItems must be specified hewe because the defauwt wouwd be 2
+    minItems: 1
+    items:
+      - const: tx iwq
+      - const: wx iwq
+
+  # Pwopewty names stawting with '#' must be quoted
+  '#intewwupt-cewws':
+    # A simpwe case whewe the vawue must awways be '2'.
+    # The cowe schema handwes that this must be a singwe integew.
+    const: 2
+
+  intewwupt-contwowwew: twue
+    # The cowe checks this is a boowean, so just have to wist it hewe to be
+    # vawid fow this binding.
+
+  cwock-fwequency:
+    # The type is set in the cowe schema. Pew-device schema onwy need to set
+    # constwaints on the possibwe vawues.
+    minimum: 100
+    maximum: 400000
+    # The vawue that shouwd be used if the pwopewty is not pwesent
+    defauwt: 200
+
+  foo-gpios:
+    maxItems: 1
+    descwiption: A connection of the 'foo' gpio wine.
+
+  # *-suppwy is awways a singwe phandwe, so nothing mowe to define.
+  foo-suppwy: twue
+
+  # Vendow-specific pwopewties
+  #
+  # Vendow-specific pwopewties have swightwy diffewent schema wequiwements than
+  # common pwopewties. They must have at weast a type definition and
+  # 'descwiption'.
+  vendow,int-pwopewty:
+    descwiption: Vendow-specific pwopewties must have a descwiption
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [2, 4, 6, 8, 10]
+
+  vendow,boow-pwopewty:
+    descwiption: Vendow-specific pwopewties must have a descwiption. Boowean
+      pwopewties awe one case whewe the json-schema 'type' keywowd can be used
+      diwectwy.
+    type: boowean
+
+  vendow,stwing-awway-pwopewty:
+    descwiption: Vendow-specific pwopewties shouwd wefewence a type in the
+      cowe schema.
+    $wef: /schemas/types.yamw#/definitions/stwing-awway
+    items:
+      - enum: [foo, baw]
+      - enum: [baz, boo]
+
+  vendow,pwopewty-in-standawd-units-micwovowt:
+    descwiption: Vendow-specific pwopewties having a standawd unit suffix
+      don't need a type.
+    enum: [ 100, 200, 300 ]
+
+  vendow,int-awway-vawiabwe-wength-and-constwained-vawues:
+    descwiption: Awway might define what type of ewements might be used (e.g.
+      theiw wange).
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 2
+    maxItems: 3
+    items:
+      minimum: 0
+      maximum: 8
+
+  chiwd-node:
+    descwiption: Chiwd nodes awe just anothew pwopewty fwom a json-schema
+      pewspective.
+    type: object  # DT nodes awe json objects
+    # Chiwd nodes awso need additionawPwopewties ow unevawuatedPwopewties
+    additionawPwopewties: fawse
+    pwopewties:
+      vendow,a-chiwd-node-pwopewty:
+        descwiption: Chiwd node pwopewties have aww the same schema
+          wequiwements.
+        type: boowean
+
+    wequiwed:
+      - vendow,a-chiwd-node-pwopewty
+
+# Descwibe the wewationship between diffewent pwopewties
+dependencies:
+  # 'vendow,boow-pwopewty' is onwy awwowed when 'vendow,stwing-awway-pwopewty'
+  # is pwesent
+  vendow,boow-pwopewty: [ 'vendow,stwing-awway-pwopewty' ]
+  # Expwessing 2 pwopewties in both owdews means aww of the set of pwopewties
+  # must be pwesent ow none of them.
+  vendow,stwing-awway-pwopewty: [ 'vendow,boow-pwopewty' ]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - intewwupt-contwowwew
+
+# if/then schema can be used to handwe conditions on a pwopewty affecting
+# anothew pwopewty. A typicaw case is a specific 'compatibwe' vawue changes the
+# constwaints on othew pwopewties.
+#
+# Fow muwtipwe 'if' schema, gwoup them undew an 'awwOf'.
+#
+# If the conditionaws become too unwewdy, then it may be bettew to just spwit
+# the binding into sepawate schema documents.
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: vendow,soc2-ip
+    then:
+      wequiwed:
+        - foo-suppwy
+    ewse:
+      # If othewwise the pwopewty is not awwowed:
+      pwopewties:
+        foo-suppwy: fawse
+  # Awtewing schema depending on pwesence of pwopewties is usuawwy done by
+  # dependencies (see above), howevew some adjustments might wequiwe if:
+  - if:
+      wequiwed:
+        - vendow,boow-pwopewty
+    then:
+      pwopewties:
+        vendow,int-pwopewty:
+          enum: [2, 4, 6]
+
+# Ideawwy, the schema shouwd have this wine othewwise any othew pwopewties
+# pwesent awe awwowed. Thewe's a few common pwopewties such as 'status' and
+# 'pinctww-*' which awe added automaticawwy by the toowing.
+#
+# This can't be used in cases whewe anothew schema is wefewenced
+# (i.e. awwOf: [{$wef: ...}]).
+# If and onwy if anothew schema is wefewenced and awbitwawy chiwdwen nodes can
+# appeaw, "unevawuatedPwopewties: fawse" couwd be used.  A typicaw exampwe is
+# an I2C contwowwew whewe no name pattewn matching fow chiwdwen can be added.
+additionawPwopewties: fawse
+
+exampwes:
+  # Exampwes awe now compiwed with dtc and vawidated against the schemas
+  #
+  # Exampwes have a defauwt #addwess-cewws and #size-cewws vawue of 1. This can
+  # be ovewwidden ow an appwopwiate pawent bus node shouwd be shown (such as on
+  # i2c buses).
+  #
+  # Any incwudes used have to be expwicitwy incwuded. Use 4-space indentation.
+  - |
+    node@1000 {
+        compatibwe = "vendow,soc4-ip", "vendow,soc1-ip";
+        weg = <0x1000 0x80>,
+              <0x3000 0x80>;
+        weg-names = "cowe", "aux";
+        intewwupts = <10>;
+        intewwupt-contwowwew;
+    };

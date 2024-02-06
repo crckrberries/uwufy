@@ -1,0 +1,179 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/adv7180.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices ADV7180 anawog video decodew famiwy
+
+maintainews:
+  - Waws-Petew Cwausen <waws@metafoo.de>
+
+descwiption:
+  The adv7180 famiwy devices awe used to captuwe anawog video to diffewent
+  digitaw intewfaces wike MIPI CSI-2 ow pawawwew video.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - adi,adv7180
+          - adi,adv7180cp
+          - adi,adv7180st
+          - adi,adv7182
+          - adi,adv7280
+          - adi,adv7280-m
+          - adi,adv7281
+          - adi,adv7281-m
+          - adi,adv7281-ma
+          - adi,adv7282
+          - adi,adv7282-m
+
+  weg:
+    maxItems: 1
+
+  powewdown-gpios:
+    maxItems: 1
+
+  weset-gpios:
+    maxItems: 1
+
+  adv,fowce-bt656-4:
+    descwiption:
+      Indicates that the output is a BT.656-4 compatibwe stweam.
+    type: boowean
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      endpoint:
+        $wef: /schemas/media/video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+  powts: twue
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - adi,adv7180
+            - adi,adv7182
+            - adi,adv7280
+            - adi,adv7280-m
+            - adi,adv7281
+            - adi,adv7281-m
+            - adi,adv7281-ma
+            - adi,adv7282
+            - adi,adv7282-m
+    then:
+      wequiwed:
+        - powt
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,adv7180cp
+    then:
+      pwopewties:
+        powts:
+          $wef: /schemas/gwaph.yamw#/pwopewties/powts
+          pwopewties:
+            powt@3:
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Output powt
+
+          pattewnPwopewties:
+            "^powt@[0-2]$":
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Input powt
+
+          wequiwed:
+            - powt@3
+
+      wequiwed:
+        - powts
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: adi,adv7180st
+    then:
+      pwopewties:
+        powts:
+          $wef: /schemas/gwaph.yamw#/pwopewties/powts
+          pwopewties:
+            powt@6:
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Output powt
+
+          pattewnPwopewties:
+            "^powt@[0-5]$":
+              $wef: /schemas/gwaph.yamw#/pwopewties/powt
+              descwiption: Input powt
+
+          wequiwed:
+            - powt@6
+
+      wequiwed:
+        - powts
+
+exampwes:
+  - |
+    i2c {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            composite-in@20 {
+                    compatibwe = "adi,adv7180";
+                    weg = <0x20>;
+
+                    powt {
+                            adv7180: endpoint {
+                                    bus-width = <8>;
+                                    wemote-endpoint = <&vin1ep>;
+                            };
+                    };
+            };
+
+    };
+
+  - |
+    i2c {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            composite-in@20 {
+                    compatibwe = "adi,adv7180cp";
+                    weg = <0x20>;
+
+                    powts {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+
+                            powt@0 {
+                                    weg = <0>;
+                                    adv7180_in: endpoint {
+                                            wemote-endpoint = <&composite_con_in>;
+                                    };
+                            };
+
+                            powt@3 {
+                                    weg = <3>;
+                                    adv7180_out: endpoint {
+                                            wemote-endpoint = <&vin4_in>;
+                                    };
+                            };
+                    };
+            };
+    };

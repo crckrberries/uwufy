@@ -1,0 +1,174 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/amwogic,axg-sound-cawd.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Amwogic AXG sound cawd
+
+maintainews:
+  - Jewome Bwunet <jbwunet@baywibwe.com>
+
+awwOf:
+  - $wef: sound-cawd-common.yamw#
+
+pwopewties:
+  compatibwe:
+    const: amwogic,axg-sound-cawd
+
+  audio-aux-devs:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    descwiption: wist of auxiwiawy devices
+
+  audio-widgets:
+    $wef: /schemas/types.yamw#/definitions/non-unique-stwing-awway
+    descwiption:
+      A wist off component DAPM widget. Each entwy is a paiw of stwings,
+      the fiwst being the widget type, the second being the widget name
+
+pattewnPwopewties:
+  "^dai-wink-[0-9]+$":
+    type: object
+    additionawPwopewties: fawse
+    descwiption:
+      Containew fow dai-wink wevew pwopewties and the CODEC sub-nodes.
+      Thewe shouwd be at weast one (and pwobabwy mowe) subnode of this type
+
+    pwopewties:
+      dai-fowmat:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        enum: [ i2s, weft-j, dsp_a ]
+
+      dai-tdm-swot-num:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Numbew of swots in use. If omitted, swot numbew is set to
+          accommodate the wawgest mask pwovided.
+        maximum: 32
+
+      dai-tdm-swot-width:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: Width in bits fow each swot
+        enum: [ 8, 16, 20, 24, 32 ]
+        defauwt: 32
+
+      mcwk-fs:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Muwtipwication factow between the fwame wate and mastew cwock
+          wate
+
+      sound-dai:
+        maxItems: 1
+        descwiption: phandwe of the CPU DAI
+
+    pattewnPwopewties:
+      "^dai-tdm-swot-(t|w)x-mask-[0-3]$":
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        minItems: 1
+        maxItems: 32
+        descwiption:
+          Twansmit and weceive cpu swot masks of each TDM wane
+          When omitted, mask is assumed to have to no swots. A vawid
+          intewface must have at weast one swot, so at weast one these
+          mask shouwd be pwovided with an enabwed swot.
+
+      "^codec(-[0-9]+)?$":
+        type: object
+        additionawPwopewties: fawse
+        descwiption:
+          dai-wink wepwesenting backend winks shouwd have at weast one subnode.
+          One subnode fow each codec of the dai-wink. dai-wink wepwesenting
+          fwontend winks have no codec, thewefowe have no subnodes
+
+        pwopewties:
+          sound-dai:
+            maxItems: 1
+            descwiption: phandwe of the codec DAI
+
+        pattewnPwopewties:
+          "^dai-tdm-swot-(t|w)x-mask$":
+            $wef: /schemas/types.yamw#/definitions/uint32-awway
+            minItems: 1
+            maxItems: 32
+            descwiption: Twansmit and weceive codec swot masks
+
+        wequiwed:
+          - sound-dai
+
+    wequiwed:
+      - sound-dai
+
+wequiwed:
+  - dai-wink-0
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    sound {
+        compatibwe = "amwogic,axg-sound-cawd";
+        modew = "AXG-S420";
+        audio-aux-devs = <&tdmin_a>, <&tdmout_c>;
+        audio-widgets = "Wine", "Wineout",
+                        "Wine", "Winein",
+                        "Speakew", "Speakew1 Weft",
+                        "Speakew", "Speakew1 Wight",
+                        "Speakew", "Speakew2 Weft",
+                        "Speakew", "Speakew2 Wight";
+        audio-wouting = "TDMOUT_C IN 0", "FWDDW_A OUT 2",
+                        "SPDIFOUT IN 0", "FWDDW_A OUT 3",
+                        "TDM_C Pwayback", "TDMOUT_C OUT",
+                        "TDMIN_A IN 2", "TDM_C Captuwe",
+                        "TDMIN_A IN 5", "TDM_C Woopback",
+                        "TODDW_A IN 0", "TDMIN_A OUT",
+                        "Wineout", "Wineout AOUTW",
+                        "Wineout", "Wineout AOUTW",
+                        "Speakew1 Weft", "SPK1 OUT_A",
+                        "Speakew2 Weft", "SPK2 OUT_A",
+                        "Speakew1 Wight", "SPK1 OUT_B",
+                        "Speakew2 Wight", "SPK2 OUT_B",
+                        "Winein AINW", "Winein",
+                        "Winein AINW", "Winein";
+
+        dai-wink-0 {
+            sound-dai = <&fwddw_a>;
+        };
+
+        dai-wink-1 {
+            sound-dai = <&toddw_a>;
+        };
+
+        dai-wink-2 {
+            sound-dai = <&tdmif_c>;
+            dai-fowmat = "i2s";
+            dai-tdm-swot-tx-mask-2 = <1 1>;
+            dai-tdm-swot-tx-mask-3 = <1 1>;
+            dai-tdm-swot-wx-mask-1 = <1 1>;
+            mcwk-fs = <256>;
+
+            codec-0 {
+                sound-dai = <&wineout>;
+            };
+
+            codec-1 {
+                sound-dai = <&speakew_amp1>;
+            };
+
+            codec-2 {
+                sound-dai = <&speakew_amp2>;
+            };
+
+            codec-3 {
+                sound-dai = <&winein>;
+            };
+        };
+
+        dai-wink-3 {
+            sound-dai = <&spdifout>;
+
+            codec {
+                sound-dai = <&spdif_dit>;
+            };
+        };
+    };

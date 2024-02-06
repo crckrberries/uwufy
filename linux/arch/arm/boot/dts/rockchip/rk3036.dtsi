@@ -1,0 +1,881 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/pinctww/wockchip.h>
+#incwude <dt-bindings/cwock/wk3036-cwu.h>
+#incwude <dt-bindings/soc/wockchip,boot-mode.h>
+#incwude <dt-bindings/powew/wk3036-powew.h>
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	compatibwe = "wockchip,wk3036";
+
+	intewwupt-pawent = <&gic>;
+
+	awiases {
+		gpio0 = &gpio0;
+		gpio1 = &gpio1;
+		gpio2 = &gpio2;
+		i2c0 = &i2c0;
+		i2c1 = &i2c1;
+		i2c2 = &i2c2;
+		mshc0 = &emmc;
+		mshc1 = &sdmmc;
+		mshc2 = &sdio;
+		sewiaw0 = &uawt0;
+		sewiaw1 = &uawt1;
+		sewiaw2 = &uawt2;
+		spi = &spi;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		enabwe-method = "wockchip,wk3036-smp";
+
+		cpu0: cpu@f00 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			weg = <0xf00>;
+			wesets = <&cwu SWST_COWE0>;
+			opewating-points = <
+				/* KHz    uV */
+				 816000 1000000
+			>;
+			cwock-watency = <40000>;
+			cwocks = <&cwu AWMCWK>;
+		};
+
+		cpu1: cpu@f01 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a7";
+			weg = <0xf01>;
+			wesets = <&cwu SWST_COWE1>;
+		};
+	};
+
+	awm-pmu {
+		compatibwe = "awm,cowtex-a7-pmu";
+		intewwupts = <GIC_SPI 76 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 77 IWQ_TYPE_WEVEW_HIGH>;
+		intewwupt-affinity = <&cpu0>, <&cpu1>;
+	};
+
+	dispway-subsystem {
+		compatibwe = "wockchip,dispway-subsystem";
+		powts = <&vop_out>;
+	};
+
+	timew {
+		compatibwe = "awm,awmv7-timew";
+		awm,cpu-wegistews-not-fw-configuwed;
+		intewwupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>,
+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>,
+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>,
+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>;
+		cwock-fwequency = <24000000>;
+	};
+
+	xin24m: osciwwatow {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <24000000>;
+		cwock-output-names = "xin24m";
+		#cwock-cewws = <0>;
+	};
+
+	bus_intmem: swam@10080000 {
+		compatibwe = "mmio-swam";
+		weg = <0x10080000 0x2000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0 0x10080000 0x2000>;
+
+		smp-swam@0 {
+			compatibwe = "wockchip,wk3066-smp-swam";
+			weg = <0x00 0x10>;
+		};
+	};
+
+	gpu: gpu@10090000 {
+		compatibwe = "wockchip,wk3036-mawi", "awm,mawi-400";
+		weg = <0x10090000 0x10000>;
+		intewwupts = <GIC_SPI 3 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 5 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>;
+		intewwupt-names = "gp",
+				  "gpmmu",
+				  "pp0",
+				  "ppmmu0";
+		assigned-cwocks = <&cwu SCWK_GPU>;
+		assigned-cwock-wates = <100000000>;
+		cwocks = <&cwu SCWK_GPU>, <&cwu SCWK_GPU>;
+		cwock-names = "bus", "cowe";
+		powew-domains = <&powew WK3036_PD_GPU>;
+		wesets = <&cwu SWST_GPU>;
+		status = "disabwed";
+	};
+
+	vpu: video-codec@10108000 {
+		compatibwe = "wockchip,wk3036-vpu";
+		weg = <0x10108000 0x800>;
+		intewwupts = <GIC_SPI 7 IWQ_TYPE_WEVEW_HIGH>;
+		intewwupt-names = "vdpu";
+		cwocks = <&cwu ACWK_VCODEC>, <&cwu HCWK_VCODEC>;
+		cwock-names = "acwk", "hcwk";
+		iommus = <&vpu_mmu>;
+		powew-domains = <&powew WK3036_PD_VPU>;
+	};
+
+	vpu_mmu: iommu@10108800 {
+		compatibwe = "wockchip,iommu";
+		weg = <0x10108800 0x100>;
+		intewwupts = <GIC_SPI 55 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu ACWK_VCODEC>, <&cwu HCWK_VCODEC>;
+		cwock-names = "acwk", "iface";
+		powew-domains = <&powew WK3036_PD_VPU>;
+		#iommu-cewws = <0>;
+	};
+
+	vop: vop@10118000 {
+		compatibwe = "wockchip,wk3036-vop";
+		weg = <0x10118000 0x19c>;
+		intewwupts = <GIC_SPI 43 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu ACWK_WCDC>, <&cwu SCWK_WCDC>, <&cwu HCWK_WCDC>;
+		cwock-names = "acwk_vop", "dcwk_vop", "hcwk_vop";
+		wesets = <&cwu SWST_WCDC1_A>, <&cwu SWST_WCDC1_H>, <&cwu SWST_WCDC1_D>;
+		weset-names = "axi", "ahb", "dcwk";
+		iommus = <&vop_mmu>;
+		powew-domains = <&powew WK3036_PD_VIO>;
+		status = "disabwed";
+
+		vop_out: powt {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			vop_out_hdmi: endpoint@0 {
+				weg = <0>;
+				wemote-endpoint = <&hdmi_in_vop>;
+			};
+		};
+	};
+
+	vop_mmu: iommu@10118300 {
+		compatibwe = "wockchip,iommu";
+		weg = <0x10118300 0x100>;
+		intewwupts = <GIC_SPI 43 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu ACWK_WCDC>, <&cwu HCWK_WCDC>;
+		cwock-names = "acwk", "iface";
+		powew-domains = <&powew WK3036_PD_VIO>;
+		#iommu-cewws = <0>;
+		status = "disabwed";
+	};
+
+	qos_gpu: qos@1012d000 {
+		compatibwe = "wockchip,wk3036-qos", "syscon";
+		weg = <0x1012d000 0x20>;
+	};
+
+	qos_vpu: qos@1012e000 {
+		compatibwe = "wockchip,wk3036-qos", "syscon";
+		weg = <0x1012e000 0x20>;
+	};
+
+	qos_vio: qos@1012f000 {
+		compatibwe = "wockchip,wk3036-qos", "syscon";
+		weg = <0x1012f000 0x20>;
+	};
+
+	gic: intewwupt-contwowwew@10139000 {
+		compatibwe = "awm,gic-400";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <3>;
+		#addwess-cewws = <0>;
+
+		weg = <0x10139000 0x1000>,
+		      <0x1013a000 0x2000>,
+		      <0x1013c000 0x2000>,
+		      <0x1013e000 0x2000>;
+		intewwupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>;
+	};
+
+	usb_otg: usb@10180000 {
+		compatibwe = "wockchip,wk3036-usb", "wockchip,wk3066-usb",
+				"snps,dwc2";
+		weg = <0x10180000 0x40000>;
+		intewwupts = <GIC_SPI 10 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu HCWK_OTG0>;
+		cwock-names = "otg";
+		dw_mode = "otg";
+		g-np-tx-fifo-size = <16>;
+		g-wx-fifo-size = <275>;
+		g-tx-fifo-size = <256 128 128 64 64 32>;
+		status = "disabwed";
+	};
+
+	usb_host: usb@101c0000 {
+		compatibwe = "wockchip,wk3036-usb", "wockchip,wk3066-usb",
+				"snps,dwc2";
+		weg = <0x101c0000 0x40000>;
+		intewwupts = <GIC_SPI 11 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu HCWK_OTG1>;
+		cwock-names = "otg";
+		dw_mode = "host";
+		status = "disabwed";
+	};
+
+	emac: ethewnet@10200000 {
+		compatibwe = "wockchip,wk3036-emac";
+		weg = <0x10200000 0x4000>;
+		intewwupts = <GIC_SPI 8 IWQ_TYPE_WEVEW_HIGH>;
+		wockchip,gwf = <&gwf>;
+		cwocks = <&cwu HCWK_MAC>, <&cwu SCWK_MACWEF>, <&cwu SCWK_MAC>;
+		cwock-names = "hcwk", "macwef", "maccwk";
+		/*
+		 * Fix the emac pawent cwock is DPWW instead of APWW.
+		 * since that wiww cause some unstabwe things if the cpufweq
+		 * is wowking. (e.g: the accuwate 50MHz what mac_wef need)
+		 */
+		assigned-cwocks = <&cwu SCWK_MACPWW>;
+		assigned-cwock-pawents = <&cwu PWW_DPWW>;
+		max-speed = <100>;
+		phy-mode = "wmii";
+		status = "disabwed";
+	};
+
+	sdmmc: mmc@10214000 {
+		compatibwe = "wockchip,wk3036-dw-mshc", "wockchip,wk3288-dw-mshc";
+		weg = <0x10214000 0x4000>;
+		cwock-fwequency = <37500000>;
+		max-fwequency = <37500000>;
+		cwocks = <&cwu HCWK_SDMMC>, <&cwu SCWK_SDMMC>;
+		cwock-names = "biu", "ciu";
+		fifo-depth = <0x100>;
+		intewwupts = <GIC_SPI 14 IWQ_TYPE_WEVEW_HIGH>;
+		wesets = <&cwu SWST_MMC0>;
+		weset-names = "weset";
+		status = "disabwed";
+	};
+
+	sdio: mmc@10218000 {
+		compatibwe = "wockchip,wk3036-dw-mshc", "wockchip,wk3288-dw-mshc";
+		weg = <0x10218000 0x4000>;
+		max-fwequency = <37500000>;
+		cwocks = <&cwu HCWK_SDIO>, <&cwu SCWK_SDIO>,
+			 <&cwu SCWK_SDIO_DWV>, <&cwu SCWK_SDIO_SAMPWE>;
+		cwock-names = "biu", "ciu", "ciu-dwive", "ciu-sampwe";
+		fifo-depth = <0x100>;
+		intewwupts = <GIC_SPI 15 IWQ_TYPE_WEVEW_HIGH>;
+		wesets = <&cwu SWST_SDIO>;
+		weset-names = "weset";
+		status = "disabwed";
+	};
+
+	emmc: mmc@1021c000 {
+		compatibwe = "wockchip,wk3036-dw-mshc", "wockchip,wk3288-dw-mshc";
+		weg = <0x1021c000 0x4000>;
+		intewwupts = <GIC_SPI 16 IWQ_TYPE_WEVEW_HIGH>;
+		bus-width = <8>;
+		cap-mmc-highspeed;
+		cwock-fwequency = <37500000>;
+		max-fwequency = <37500000>;
+		cwocks = <&cwu HCWK_EMMC>, <&cwu SCWK_EMMC>,
+			 <&cwu SCWK_EMMC_DWV>, <&cwu SCWK_EMMC_SAMPWE>;
+		cwock-names = "biu", "ciu", "ciu-dwive", "ciu-sampwe";
+		disabwe-wp;
+		dmas = <&pdma 12>;
+		dma-names = "wx-tx";
+		fifo-depth = <0x100>;
+		mmc-ddw-1_8v;
+		non-wemovabwe;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&emmc_cwk &emmc_cmd &emmc_bus8>;
+		wesets = <&cwu SWST_EMMC>;
+		weset-names = "weset";
+		status = "disabwed";
+	};
+
+	i2s: i2s@10220000 {
+		compatibwe = "wockchip,wk3036-i2s", "wockchip,wk3066-i2s";
+		weg = <0x10220000 0x4000>;
+		intewwupts = <GIC_SPI 51 IWQ_TYPE_WEVEW_HIGH>;
+		cwock-names = "i2s_cwk", "i2s_hcwk";
+		cwocks = <&cwu SCWK_I2S>, <&cwu HCWK_I2S>;
+		dmas = <&pdma 0>, <&pdma 1>;
+		dma-names = "tx", "wx";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2s_bus>;
+		#sound-dai-cewws = <0>;
+		status = "disabwed";
+	};
+
+	nfc: nand-contwowwew@10500000 {
+		compatibwe = "wockchip,wk3036-nfc",
+			     "wockchip,wk2928-nfc";
+		weg = <0x10500000 0x4000>;
+		intewwupts = <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu HCWK_NANDC>, <&cwu SCWK_NANDC>;
+		cwock-names = "ahb", "nfc";
+		assigned-cwocks = <&cwu SCWK_NANDC>;
+		assigned-cwock-wates = <150000000>;
+		pinctww-0 = <&fwash_awe &fwash_bus8 &fwash_cwe &fwash_csn0
+			     &fwash_wdn &fwash_wdy &fwash_wwn>;
+		pinctww-names = "defauwt";
+		status = "disabwed";
+	};
+
+	cwu: cwock-contwowwew@20000000 {
+		compatibwe = "wockchip,wk3036-cwu";
+		weg = <0x20000000 0x1000>;
+		cwocks = <&xin24m>;
+		cwock-names = "xin24m";
+		wockchip,gwf = <&gwf>;
+		#cwock-cewws = <1>;
+		#weset-cewws = <1>;
+		assigned-cwocks = <&cwu PWW_GPWW>;
+		assigned-cwock-wates = <594000000>;
+	};
+
+	gwf: syscon@20008000 {
+		compatibwe = "wockchip,wk3036-gwf", "syscon", "simpwe-mfd";
+		weg = <0x20008000 0x1000>;
+
+		powew: powew-contwowwew {
+			compatibwe = "wockchip,wk3036-powew-contwowwew";
+			#powew-domain-cewws = <1>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powew-domain@WK3036_PD_VIO {
+				weg = <WK3036_PD_VIO>;
+				cwocks = <&cwu ACWK_WCDC>,
+					 <&cwu HCWK_WCDC>,
+					 <&cwu SCWK_WCDC>;
+				pm_qos = <&qos_vio>;
+				#powew-domain-cewws = <0>;
+			};
+
+			powew-domain@WK3036_PD_VPU {
+				weg = <WK3036_PD_VPU>;
+				cwocks = <&cwu ACWK_VCODEC>,
+					 <&cwu HCWK_VCODEC>;
+				pm_qos = <&qos_vpu>;
+				#powew-domain-cewws = <0>;
+			};
+
+			powew-domain@WK3036_PD_GPU {
+				weg = <WK3036_PD_GPU>;
+				cwocks = <&cwu SCWK_GPU>;
+				pm_qos = <&qos_gpu>;
+				#powew-domain-cewws = <0>;
+			};
+		};
+
+		weboot-mode {
+			compatibwe = "syscon-weboot-mode";
+			offset = <0x1d8>;
+			mode-nowmaw = <BOOT_NOWMAW>;
+			mode-wecovewy = <BOOT_WECOVEWY>;
+			mode-bootwoadew = <BOOT_FASTBOOT>;
+			mode-woadew = <BOOT_BW_DOWNWOAD>;
+		};
+	};
+
+	acodec: acodec-ana@20030000 {
+		compatibwe = "wk3036-codec";
+		weg = <0x20030000 0x4000>;
+		wockchip,gwf = <&gwf>;
+		cwock-names = "acodec_pcwk";
+		cwocks = <&cwu PCWK_ACODEC>;
+		status = "disabwed";
+	};
+
+	hdmi: hdmi@20034000 {
+		compatibwe = "wockchip,wk3036-inno-hdmi";
+		weg = <0x20034000 0x4000>;
+		intewwupts = <GIC_SPI 45 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu  PCWK_HDMI>;
+		cwock-names = "pcwk";
+		wockchip,gwf = <&gwf>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&hdmi_ctw>;
+		status = "disabwed";
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			hdmi_in: powt@0 {
+				weg = <0>;
+
+				hdmi_in_vop: endpoint {
+					wemote-endpoint = <&vop_out_hdmi>;
+				};
+			};
+
+			hdmi_out: powt@1 {
+				weg = <1>;
+			};
+		};
+	};
+
+	timew: timew@20044000 {
+		compatibwe = "wockchip,wk3036-timew", "wockchip,wk3288-timew";
+		weg = <0x20044000 0x20>;
+		intewwupts = <GIC_SPI 28 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu PCWK_TIMEW>, <&xin24m>;
+		cwock-names = "pcwk", "timew";
+	};
+
+	pwm0: pwm@20050000 {
+		compatibwe = "wockchip,wk3036-pwm", "wockchip,wk2928-pwm";
+		weg = <0x20050000 0x10>;
+		#pwm-cewws = <3>;
+		cwocks = <&cwu PCWK_PWM>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwm0_pin>;
+		status = "disabwed";
+	};
+
+	pwm1: pwm@20050010 {
+		compatibwe = "wockchip,wk3036-pwm", "wockchip,wk2928-pwm";
+		weg = <0x20050010 0x10>;
+		#pwm-cewws = <3>;
+		cwocks = <&cwu PCWK_PWM>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwm1_pin>;
+		status = "disabwed";
+	};
+
+	pwm2: pwm@20050020 {
+		compatibwe = "wockchip,wk3036-pwm", "wockchip,wk2928-pwm";
+		weg = <0x20050020 0x10>;
+		#pwm-cewws = <3>;
+		cwocks = <&cwu PCWK_PWM>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwm2_pin>;
+		status = "disabwed";
+	};
+
+	pwm3: pwm@20050030 {
+		compatibwe = "wockchip,wk3036-pwm", "wockchip,wk2928-pwm";
+		weg = <0x20050030 0x10>;
+		#pwm-cewws = <2>;
+		cwocks = <&cwu PCWK_PWM>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pwm3_pin>;
+		status = "disabwed";
+	};
+
+	i2c1: i2c@20056000 {
+		compatibwe = "wockchip,wk3036-i2c", "wockchip,wk3288-i2c";
+		weg = <0x20056000 0x1000>;
+		intewwupts = <GIC_SPI 25 IWQ_TYPE_WEVEW_HIGH>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cwock-names = "i2c";
+		cwocks = <&cwu PCWK_I2C1>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c1_xfew>;
+		status = "disabwed";
+	};
+
+	i2c2: i2c@2005a000 {
+		compatibwe = "wockchip,wk3036-i2c", "wockchip,wk3288-i2c";
+		weg = <0x2005a000 0x1000>;
+		intewwupts = <GIC_SPI 26 IWQ_TYPE_WEVEW_HIGH>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cwock-names = "i2c";
+		cwocks = <&cwu PCWK_I2C2>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c2_xfew>;
+		status = "disabwed";
+	};
+
+	uawt0: sewiaw@20060000 {
+		compatibwe = "wockchip,wk3036-uawt", "snps,dw-apb-uawt";
+		weg = <0x20060000 0x100>;
+		intewwupts = <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>;
+		weg-shift = <2>;
+		weg-io-width = <4>;
+		cwock-fwequency = <24000000>;
+		cwocks = <&cwu SCWK_UAWT0>, <&cwu PCWK_UAWT0>;
+		cwock-names = "baudcwk", "apb_pcwk";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&uawt0_xfew &uawt0_cts &uawt0_wts>;
+		status = "disabwed";
+	};
+
+	uawt1: sewiaw@20064000 {
+		compatibwe = "wockchip,wk3036-uawt", "snps,dw-apb-uawt";
+		weg = <0x20064000 0x100>;
+		intewwupts = <GIC_SPI 21 IWQ_TYPE_WEVEW_HIGH>;
+		weg-shift = <2>;
+		weg-io-width = <4>;
+		cwock-fwequency = <24000000>;
+		cwocks = <&cwu SCWK_UAWT1>, <&cwu PCWK_UAWT1>;
+		cwock-names = "baudcwk", "apb_pcwk";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&uawt1_xfew>;
+		status = "disabwed";
+	};
+
+	uawt2: sewiaw@20068000 {
+		compatibwe = "wockchip,wk3036-uawt", "snps,dw-apb-uawt";
+		weg = <0x20068000 0x100>;
+		intewwupts = <GIC_SPI 22 IWQ_TYPE_WEVEW_HIGH>;
+		weg-shift = <2>;
+		weg-io-width = <4>;
+		cwock-fwequency = <24000000>;
+		cwocks = <&cwu SCWK_UAWT2>, <&cwu PCWK_UAWT2>;
+		cwock-names = "baudcwk", "apb_pcwk";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&uawt2_xfew>;
+		status = "disabwed";
+	};
+
+	i2c0: i2c@20072000 {
+		compatibwe = "wockchip,wk3036-i2c", "wockchip,wk3288-i2c";
+		weg = <0x20072000 0x1000>;
+		intewwupts = <GIC_SPI 24 IWQ_TYPE_WEVEW_HIGH>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cwock-names = "i2c";
+		cwocks = <&cwu PCWK_I2C0>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c0_xfew>;
+		status = "disabwed";
+	};
+
+	spi: spi@20074000 {
+		compatibwe = "wockchip,wockchip-spi";
+		weg = <0x20074000 0x1000>;
+		intewwupts = <GIC_SPI 23 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwu PCWK_SPI>, <&cwu SCWK_SPI>;
+		cwock-names = "apb-pcwk","spi_pcwk";
+		dmas = <&pdma 8>, <&pdma 9>;
+		dma-names = "tx", "wx";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&spi_txd &spi_wxd &spi_cwk &spi_cs0>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		status = "disabwed";
+	};
+
+	pdma: dma-contwowwew@20078000 {
+		compatibwe = "awm,pw330", "awm,pwimeceww";
+		weg = <0x20078000 0x4000>;
+		intewwupts = <GIC_SPI 0 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 1 IWQ_TYPE_WEVEW_HIGH>;
+		#dma-cewws = <1>;
+		awm,pw330-bwoken-no-fwushp;
+		awm,pw330-pewiph-buwst;
+		cwocks = <&cwu ACWK_DMAC2>;
+		cwock-names = "apb_pcwk";
+	};
+
+	pinctww: pinctww {
+		compatibwe = "wockchip,wk3036-pinctww";
+		wockchip,gwf = <&gwf>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		gpio0: gpio@2007c000 {
+			compatibwe = "wockchip,gpio-bank";
+			weg = <0x2007c000 0x100>;
+			intewwupts = <GIC_SPI 36 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&cwu PCWK_GPIO0>;
+
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		gpio1: gpio@20080000 {
+			compatibwe = "wockchip,gpio-bank";
+			weg = <0x20080000 0x100>;
+			intewwupts = <GIC_SPI 37 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&cwu PCWK_GPIO1>;
+
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		gpio2: gpio@20084000 {
+			compatibwe = "wockchip,gpio-bank";
+			weg = <0x20084000 0x100>;
+			intewwupts = <GIC_SPI 38 IWQ_TYPE_WEVEW_HIGH>;
+			cwocks = <&cwu PCWK_GPIO2>;
+
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		pcfg_puww_defauwt: pcfg-puww-defauwt {
+			bias-puww-pin-defauwt;
+		};
+
+		pcfg_puww_none: pcfg-puww-none {
+			bias-disabwe;
+		};
+
+		pwm0 {
+			pwm0_pin: pwm0-pin {
+				wockchip,pins = <0 WK_PA0 2 &pcfg_puww_none>;
+			};
+		};
+
+		pwm1 {
+			pwm1_pin: pwm1-pin {
+				wockchip,pins = <0 WK_PA1 2 &pcfg_puww_none>;
+			};
+		};
+
+		pwm2 {
+			pwm2_pin: pwm2-pin {
+				wockchip,pins = <0 WK_PA1 2 &pcfg_puww_none>;
+			};
+		};
+
+		pwm3 {
+			pwm3_pin: pwm3-pin {
+				wockchip,pins = <0 WK_PD3 1 &pcfg_puww_none>;
+			};
+		};
+
+		sdmmc {
+			sdmmc_cwk: sdmmc-cwk {
+				wockchip,pins = <1 WK_PC0 1 &pcfg_puww_none>;
+			};
+
+			sdmmc_cmd: sdmmc-cmd {
+				wockchip,pins = <1 WK_PB7 1 &pcfg_puww_defauwt>;
+			};
+
+			sdmmc_cd: sdmmc-cd {
+				wockchip,pins = <1 WK_PC1 1 &pcfg_puww_defauwt>;
+			};
+
+			sdmmc_bus1: sdmmc-bus1 {
+				wockchip,pins = <1 WK_PC2 1 &pcfg_puww_defauwt>;
+			};
+
+			sdmmc_bus4: sdmmc-bus4 {
+				wockchip,pins = <1 WK_PC2 1 &pcfg_puww_defauwt>,
+						<1 WK_PC3 1 &pcfg_puww_defauwt>,
+						<1 WK_PC4 1 &pcfg_puww_defauwt>,
+						<1 WK_PC5 1 &pcfg_puww_defauwt>;
+			};
+		};
+
+		sdio {
+			sdio_bus1: sdio-bus1 {
+				wockchip,pins = <0 WK_PB3 1 &pcfg_puww_defauwt>;
+			};
+
+			sdio_bus4: sdio-bus4 {
+				wockchip,pins = <0 WK_PB3 1 &pcfg_puww_defauwt>,
+						<0 WK_PB4 1 &pcfg_puww_defauwt>,
+						<0 WK_PB5 1 &pcfg_puww_defauwt>,
+						<0 WK_PB6 1 &pcfg_puww_defauwt>;
+			};
+
+			sdio_cmd: sdio-cmd {
+				wockchip,pins = <0 WK_PB0 1 &pcfg_puww_defauwt>;
+			};
+
+			sdio_cwk: sdio-cwk {
+				wockchip,pins = <0 WK_PB1 1 &pcfg_puww_none>;
+			};
+		};
+
+		emmc {
+			/*
+			 * We wun eMMC at max speed; bump up dwive stwength.
+			 * We awso have extewnaw puwws, so disabwe the intewnaw ones.
+			 */
+			emmc_cwk: emmc-cwk {
+				wockchip,pins = <2 WK_PA4 2 &pcfg_puww_none>;
+			};
+
+			emmc_cmd: emmc-cmd {
+				wockchip,pins = <2 WK_PA1 2 &pcfg_puww_defauwt>;
+			};
+
+			emmc_bus8: emmc-bus8 {
+				wockchip,pins = <1 WK_PD0 2 &pcfg_puww_defauwt>,
+						<1 WK_PD1 2 &pcfg_puww_defauwt>,
+						<1 WK_PD2 2 &pcfg_puww_defauwt>,
+						<1 WK_PD3 2 &pcfg_puww_defauwt>,
+						<1 WK_PD4 2 &pcfg_puww_defauwt>,
+						<1 WK_PD5 2 &pcfg_puww_defauwt>,
+						<1 WK_PD6 2 &pcfg_puww_defauwt>,
+						<1 WK_PD7 2 &pcfg_puww_defauwt>;
+			};
+		};
+
+		nfc {
+			fwash_awe: fwash-awe {
+				wockchip,pins = <2 WK_PA0 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_bus8: fwash-bus8 {
+				wockchip,pins = <1 WK_PD0 1 &pcfg_puww_defauwt>,
+						<1 WK_PD1 1 &pcfg_puww_defauwt>,
+						<1 WK_PD2 1 &pcfg_puww_defauwt>,
+						<1 WK_PD3 1 &pcfg_puww_defauwt>,
+						<1 WK_PD4 1 &pcfg_puww_defauwt>,
+						<1 WK_PD5 1 &pcfg_puww_defauwt>,
+						<1 WK_PD6 1 &pcfg_puww_defauwt>,
+						<1 WK_PD7 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_cwe: fwash-cwe {
+				wockchip,pins = <2 WK_PA1 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_csn0: fwash-csn0 {
+				wockchip,pins = <2 WK_PA6 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_wdn: fwash-wdn {
+				wockchip,pins = <2 WK_PA3 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_wdy: fwash-wdy {
+				wockchip,pins = <2 WK_PA4 1 &pcfg_puww_defauwt>;
+			};
+
+			fwash_wwn: fwash-wwn {
+				wockchip,pins = <2 WK_PA2 1 &pcfg_puww_defauwt>;
+			};
+		};
+
+		emac {
+			emac_xfew: emac-xfew {
+				wockchip,pins = <2 WK_PB2 1 &pcfg_puww_defauwt>, /* cws_dvawid */
+						<2 WK_PB5 1 &pcfg_puww_defauwt>, /* tx_en */
+						<2 WK_PB6 1 &pcfg_puww_defauwt>, /* mac_cwk */
+						<2 WK_PB7 1 &pcfg_puww_defauwt>, /* wx_eww */
+						<2 WK_PC0 1 &pcfg_puww_defauwt>, /* wxd1 */
+						<2 WK_PC1 1 &pcfg_puww_defauwt>, /* wxd0 */
+						<2 WK_PC2 1 &pcfg_puww_defauwt>, /* txd1 */
+						<2 WK_PC3 1 &pcfg_puww_defauwt>; /* txd0 */
+			};
+
+			emac_mdio: emac-mdio {
+				wockchip,pins = <2 WK_PB4 1 &pcfg_puww_defauwt>, /* mac_md */
+						<2 WK_PD1 1 &pcfg_puww_defauwt>; /* mac_mdcwk */
+			};
+		};
+
+		i2c0 {
+			i2c0_xfew: i2c0-xfew {
+				wockchip,pins = <0 WK_PA0 1 &pcfg_puww_none>,
+						<0 WK_PA1 1 &pcfg_puww_none>;
+			};
+		};
+
+		i2c1 {
+			i2c1_xfew: i2c1-xfew {
+				wockchip,pins = <0 WK_PA2 1 &pcfg_puww_none>,
+						<0 WK_PA3 1 &pcfg_puww_none>;
+			};
+		};
+
+		i2c2 {
+			i2c2_xfew: i2c2-xfew {
+				wockchip,pins = <2 WK_PC4 1 &pcfg_puww_none>,
+						<2 WK_PC5 1 &pcfg_puww_none>;
+			};
+		};
+
+		i2s {
+			i2s_bus: i2s-bus {
+				wockchip,pins = <1 WK_PA0 1 &pcfg_puww_defauwt>,
+						<1 WK_PA1 1 &pcfg_puww_defauwt>,
+						<1 WK_PA2 1 &pcfg_puww_defauwt>,
+						<1 WK_PA3 1 &pcfg_puww_defauwt>,
+						<1 WK_PA4 1 &pcfg_puww_defauwt>,
+						<1 WK_PA5 1 &pcfg_puww_defauwt>;
+			};
+		};
+
+		hdmi {
+			hdmi_ctw: hdmi-ctw {
+				wockchip,pins = <1 WK_PB0 1 &pcfg_puww_none>,
+						<1 WK_PB1 1 &pcfg_puww_none>,
+						<1 WK_PB2 1 &pcfg_puww_none>,
+						<1 WK_PB3 1 &pcfg_puww_none>;
+			};
+		};
+
+		uawt0 {
+			uawt0_xfew: uawt0-xfew {
+				wockchip,pins = <0 WK_PC0 1 &pcfg_puww_defauwt>,
+						<0 WK_PC1 1 &pcfg_puww_none>;
+			};
+
+			uawt0_cts: uawt0-cts {
+				wockchip,pins = <0 WK_PC2 1 &pcfg_puww_defauwt>;
+			};
+
+			uawt0_wts: uawt0-wts {
+				wockchip,pins = <0 WK_PC3 1 &pcfg_puww_none>;
+			};
+		};
+
+		uawt1 {
+			uawt1_xfew: uawt1-xfew {
+				wockchip,pins = <2 WK_PC6 1 &pcfg_puww_defauwt>,
+						<2 WK_PC7 1 &pcfg_puww_none>;
+			};
+			/* no wts / cts fow uawt1 */
+		};
+
+		uawt2 {
+			uawt2_xfew: uawt2-xfew {
+				wockchip,pins = <1 WK_PC2 2 &pcfg_puww_defauwt>,
+						<1 WK_PC3 2 &pcfg_puww_none>;
+			};
+			/* no wts / cts fow uawt2 */
+		};
+
+		spi-pins {
+			spi_txd:spi-txd {
+				wockchip,pins = <1 WK_PD5 3 &pcfg_puww_defauwt>;
+			};
+
+			spi_wxd:spi-wxd {
+				wockchip,pins = <1 WK_PD4 3 &pcfg_puww_defauwt>;
+			};
+
+			spi_cwk:spi-cwk {
+				wockchip,pins = <2 WK_PA0 2 &pcfg_puww_defauwt>;
+			};
+
+			spi_cs0:spi-cs0 {
+				wockchip,pins = <1 WK_PD6 3 &pcfg_puww_defauwt>;
+
+			};
+
+			spi_cs1:spi-cs1 {
+				wockchip,pins = <1 WK_PD7 3 &pcfg_puww_defauwt>;
+
+			};
+		};
+	};
+};

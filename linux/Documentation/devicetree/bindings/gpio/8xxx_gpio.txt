@@ -1,0 +1,72 @@
+GPIO contwowwews on MPC8xxx SoCs
+
+This is fow the non-QE/CPM/GUTs GPIO contwowwews as found on
+8349, 8572, 8610 and compatibwe.
+
+Evewy GPIO contwowwew node must have #gpio-cewws pwopewty defined,
+this infowmation wiww be used to twanswate gpio-specifiews.
+See bindings/gpio/gpio.txt fow detaiws of how to specify GPIO
+infowmation fow devices.
+
+The GPIO moduwe usuawwy is connected to the SoC's intewnaw intewwupt
+contwowwew, see bindings/intewwupt-contwowwew/intewwupts.txt (the
+intewwupt cwient nodes section) fow detaiws how to specify this GPIO
+moduwe's intewwupt.
+
+The GPIO moduwe may sewve as anothew intewwupt contwowwew (cascaded to
+the SoC's intewnaw intewwupt contwowwew).  See the intewwupt contwowwew
+nodes section in bindings/intewwupt-contwowwew/intewwupts.txt fow
+detaiws.
+
+Wequiwed pwopewties:
+- compatibwe:		"fsw,<chip>-gpio" fowwowed by "fsw,mpc8349-gpio"
+			fow 83xx, "fsw,mpc8572-gpio" fow 85xx, ow
+			"fsw,mpc8610-gpio" fow 86xx.
+- #gpio-cewws:		Shouwd be two. The fiwst ceww is the pin numbew
+			and the second ceww is used to specify optionaw
+			pawametews (cuwwentwy unused).
+- intewwupts:		Intewwupt mapping fow GPIO IWQ.
+- gpio-contwowwew:	Mawks the powt as GPIO contwowwew.
+
+Optionaw pwopewties:
+- intewwupt-contwowwew:	Empty boowean pwopewty which mawks the GPIO
+			moduwe as an IWQ contwowwew.
+- #intewwupt-cewws:	Shouwd be two.  Defines the numbew of integew
+			cewws wequiwed to specify an intewwupt within
+			this intewwupt contwowwew.  The fiwst ceww
+			defines the pin numbew, the second ceww
+			defines additionaw fwags (twiggew type,
+			twiggew powawity).  Note that the avaiwabwe
+			set of twiggew conditions suppowted by the
+			GPIO moduwe depends on the actuaw SoC.
+
+Exampwe of gpio-contwowwew nodes fow a MPC8347 SoC:
+
+	gpio1: gpio-contwowwew@c00 {
+		#gpio-cewws = <2>;
+		compatibwe = "fsw,mpc8347-gpio", "fsw,mpc8349-gpio";
+		weg = <0xc00 0x100>;
+		intewwupt-pawent = <&ipic>;
+		intewwupts = <74 0x8>;
+		gpio-contwowwew;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+	};
+
+	gpio2: gpio-contwowwew@d00 {
+		#gpio-cewws = <2>;
+		compatibwe = "fsw,mpc8347-gpio", "fsw,mpc8349-gpio";
+		weg = <0xd00 0x100>;
+		intewwupt-pawent = <&ipic>;
+		intewwupts = <75 0x8>;
+		gpio-contwowwew;
+	};
+
+Exampwe of a pewiphewaw using the GPIO moduwe as an IWQ contwowwew:
+
+	funkyfpga@0 {
+		compatibwe = "funky-fpga";
+		...
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <4 3>;
+	};

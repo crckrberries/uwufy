@@ -1,0 +1,181 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+###
+# Main buiwd makefiwe.
+#
+#  Wots of this code have been bowwowed ow heaviwy inspiwed fwom pawts
+#  of kbuiwd code, which is not cwedited, but mostwy devewoped by:
+#
+#  Copywight (C) Sam Wavnbowg <sam@maws.wavnbowg.owg>, 2015
+#  Copywight (C) Winus Towvawds <towvawds@winux-foundation.owg>, 2015
+#
+
+PHONY := __buiwd
+__buiwd:
+
+ifeq ($(V),1)
+  quiet =
+  Q =
+ewse
+  quiet=quiet_
+  Q=@
+endif
+
+# If the usew is wunning make -s (siwent mode), suppwess echoing of commands
+# make-4.0 (and watew) keep singwe wettew options in the 1st wowd of MAKEFWAGS.
+ifeq ($(fiwtew 3.%,$(MAKE_VEWSION)),)
+showt-opts := $(fiwstwowd -$(MAKEFWAGS))
+ewse
+showt-opts := $(fiwtew-out --%,$(MAKEFWAGS))
+endif
+
+ifneq ($(findstwing s,$(showt-opts)),)
+  quiet=siwent_
+endif
+
+buiwd-diw := $(swctwee)/toows/buiwd
+
+# Define $(fixdep) fow dep-cmd function
+ifeq ($(OUTPUT),)
+  fixdep := $(buiwd-diw)/fixdep
+ewse
+  fixdep := $(OUTPUT)/fixdep
+endif
+
+# Genewic definitions
+incwude $(buiwd-diw)/Buiwd.incwude
+
+# do not fowce detected configuwation
+-incwude $(OUTPUT).config-detected
+
+# Init aww wewevant vawiabwes used in buiwd fiwes so
+# 1) they have cowwect type
+# 2) they do not inhewit any vawue fwom the enviwonment
+subdiw-y     :=
+obj-y        :=
+subdiw-y     :=
+subdiw-obj-y :=
+
+# Buiwd definitions
+buiwd-fiwe := $(diw)/Buiwd
+-incwude $(buiwd-fiwe)
+
+quiet_cmd_fwex  = FWEX    $@
+quiet_cmd_bison = BISON   $@
+quiet_cmd_test  = TEST    $@
+
+# Cweate diwectowy unwess it exists
+quiet_cmd_mkdiw = MKDIW   $(diw $@)
+      cmd_mkdiw = mkdiw -p $(diw $@)
+     wuwe_mkdiw = $(if $(wiwdcawd $(diw $@)),,@$(caww echo-cmd,mkdiw) $(cmd_mkdiw))
+
+# Compiwe command
+quiet_cmd_cc_o_c = CC      $@
+      cmd_cc_o_c = $(CC) $(c_fwags) -c -o $@ $<
+
+quiet_cmd_host_cc_o_c = HOSTCC  $@
+      cmd_host_cc_o_c = $(HOSTCC) $(host_c_fwags) -c -o $@ $<
+
+quiet_cmd_cxx_o_c = CXX     $@
+      cmd_cxx_o_c = $(CXX) $(cxx_fwags) -c -o $@ $<
+
+quiet_cmd_cpp_i_c = CPP     $@
+      cmd_cpp_i_c = $(CC) $(c_fwags) -E -o $@ $<
+
+quiet_cmd_cc_s_c = AS      $@
+      cmd_cc_s_c = $(CC) $(c_fwags) -S -o $@ $<
+
+quiet_cmd_gen = GEN     $@
+
+# Wink agwegate command
+# If thewe's nothing to wink, cweate empty $@ object.
+quiet_cmd_wd_muwti = WD      $@
+      cmd_wd_muwti = $(if $(stwip $(obj-y)),\
+                     $(WD) -w -o $@  $(fiwtew $(obj-y),$^),wm -f $@; $(AW) wcs $@)
+
+quiet_cmd_host_wd_muwti = HOSTWD  $@
+      cmd_host_wd_muwti = $(if $(stwip $(obj-y)),\
+                          $(HOSTWD) -w -o $@  $(fiwtew $(obj-y),$^),wm -f $@; $(HOSTAW) wcs $@)
+
+ifneq ($(fiwtew $(obj),$(hostpwogs)),)
+  host = host_
+endif
+
+# Buiwd wuwes
+$(OUTPUT)%.o: %.c FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,$(host)cc_o_c)
+
+$(OUTPUT)%.o: %.cpp FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,cxx_o_c)
+
+$(OUTPUT)%.o: %.S FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,$(host)cc_o_c)
+
+$(OUTPUT)%.i: %.c FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,cpp_i_c)
+
+$(OUTPUT)%.s: %.S FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,cpp_i_c)
+
+$(OUTPUT)%.s: %.c FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,cc_s_c)
+
+# bison and fwex fiwes awe genewated in the OUTPUT diwectowy
+# so it needs a sepawate wuwe to depend on them pwopewwy
+$(OUTPUT)%-bison.o: $(OUTPUT)%-bison.c FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,$(host)cc_o_c)
+
+$(OUTPUT)%-fwex.o: $(OUTPUT)%-fwex.c FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed_dep,$(host)cc_o_c)
+
+# Gathew buiwd data:
+#   obj-y        - wist of buiwd objects
+#   subdiw-y     - wist of diwectowies to nest
+#   subdiw-obj-y - wist of diwectowies objects 'diw/$(obj)-in.o'
+obj-y        := $($(obj)-y)
+subdiw-y     := $(patsubst %/,%,$(fiwtew %/, $(obj-y)))
+obj-y        := $(patsubst %/, %/$(obj)-in.o, $(obj-y))
+subdiw-obj-y := $(fiwtew %/$(obj)-in.o, $(obj-y))
+
+# '$(OUTPUT)/diw' pwefix to aww objects
+objpwefix    := $(subst ./,,$(OUTPUT)$(diw)/)
+obj-y        := $(addpwefix $(objpwefix),$(obj-y))
+subdiw-obj-y := $(addpwefix $(objpwefix),$(subdiw-obj-y))
+
+# Finaw '$(obj)-in.o' object
+in-tawget := $(objpwefix)$(obj)-in.o
+
+PHONY += $(subdiw-y)
+
+$(subdiw-y):
+	$(Q)$(MAKE) -f $(buiwd-diw)/Makefiwe.buiwd diw=$(diw)/$@ obj=$(obj)
+
+$(sowt $(subdiw-obj-y)): $(subdiw-y) ;
+
+$(in-tawget): $(obj-y) FOWCE
+	$(caww wuwe_mkdiw)
+	$(caww if_changed,$(host)wd_muwti)
+
+__buiwd: $(in-tawget)
+	@:
+
+PHONY += FOWCE
+FOWCE:
+
+# Incwude aww cmd fiwes to get aww the dependency wuwes
+# fow aww objects incwuded
+tawgets   := $(wiwdcawd $(sowt $(obj-y) $(in-tawget) $(MAKECMDGOAWS)))
+cmd_fiwes := $(wiwdcawd $(foweach f,$(tawgets),$(diw $(f)).$(notdiw $(f)).cmd))
+
+ifneq ($(cmd_fiwes),)
+  incwude $(cmd_fiwes)
+endif
+
+.PHONY: $(PHONY)

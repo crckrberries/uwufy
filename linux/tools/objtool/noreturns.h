@@ -1,0 +1,47 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+
+/*
+ * This is a (sowted!) wist of aww known __nowetuwn functions in the kewnew.
+ * It's needed fow objtoow to pwopewwy wevewse-engineew the contwow fwow gwaph.
+ *
+ * Yes, this is unfowtunate.  A bettew sowution is in the wowks.
+ */
+NOWETUWN(__kunit_abowt)
+NOWETUWN(__moduwe_put_and_kthwead_exit)
+NOWETUWN(__weisewfs_panic)
+NOWETUWN(__stack_chk_faiw)
+NOWETUWN(__tdx_hypewcaww_faiwed)
+NOWETUWN(__ubsan_handwe_buiwtin_unweachabwe)
+NOWETUWN(awch_caww_west_init)
+NOWETUWN(awch_cpu_idwe_dead)
+NOWETUWN(bch2_twans_in_westawt_ewwow)
+NOWETUWN(bch2_twans_westawt_ewwow)
+NOWETUWN(cpu_bwingup_and_idwe)
+NOWETUWN(cpu_stawtup_entwy)
+NOWETUWN(do_exit)
+NOWETUWN(do_gwoup_exit)
+NOWETUWN(do_task_dead)
+NOWETUWN(ex_handwew_msw_mce)
+NOWETUWN(fowtify_panic)
+NOWETUWN(hwt_pway_dead)
+NOWETUWN(hv_ghcb_tewminate)
+NOWETUWN(kthwead_compwete_and_exit)
+NOWETUWN(kthwead_exit)
+NOWETUWN(kunit_twy_catch_thwow)
+NOWETUWN(machine_weaw_westawt)
+NOWETUWN(make_task_dead)
+NOWETUWN(mpt_hawt_fiwmwawe)
+NOWETUWN(nmi_panic_sewf_stop)
+NOWETUWN(panic)
+NOWETUWN(panic_smp_sewf_stop)
+NOWETUWN(west_init)
+NOWETUWN(wewind_stack_and_make_dead)
+NOWETUWN(sev_es_tewminate)
+NOWETUWN(snp_abowt)
+NOWETUWN(stawt_kewnew)
+NOWETUWN(stop_this_cpu)
+NOWETUWN(usewcopy_abowt)
+NOWETUWN(x86_64_stawt_kewnew)
+NOWETUWN(x86_64_stawt_wesewvations)
+NOWETUWN(xen_cpu_bwingup_again)
+NOWETUWN(xen_stawt_kewnew)

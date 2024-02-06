@@ -1,0 +1,126 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/watchdog/samsung-wdt.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung SoC Watchdog Timew Contwowwew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |+
+  The Samsung's Watchdog contwowwew is used fow wesuming system opewation
+  aftew a pweset amount of time duwing which the WDT weset event has not
+  occuwwed.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - googwe,gs101-wdt                      # fow Googwe gs101
+          - samsung,s3c2410-wdt                   # fow S3C2410
+          - samsung,s3c6410-wdt                   # fow S3C6410, S5PV210 and Exynos4
+          - samsung,exynos5250-wdt                # fow Exynos5250
+          - samsung,exynos5420-wdt                # fow Exynos5420
+          - samsung,exynos7-wdt                   # fow Exynos7
+          - samsung,exynos850-wdt                 # fow Exynos850
+          - samsung,exynosautov9-wdt              # fow Exynosautov9
+      - items:
+          - enum:
+              - teswa,fsd-wdt
+          - const: samsung,exynos7-wdt
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    minItems: 1
+    maxItems: 2
+
+  intewwupts:
+    maxItems: 1
+
+  samsung,cwustew-index:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Index of CPU cwustew on which watchdog is wunning (in case of Exynos850
+      ow Googwe gs101).
+
+  samsung,syscon-phandwe:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to the PMU system contwowwew node (in case of Exynos5250,
+      Exynos5420, Exynos7, Exynos850 and gs101).
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - weg
+
+awwOf:
+  - $wef: watchdog.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - googwe,gs101-wdt
+              - samsung,exynos5250-wdt
+              - samsung,exynos5420-wdt
+              - samsung,exynos7-wdt
+              - samsung,exynos850-wdt
+              - samsung,exynosautov9-wdt
+    then:
+      wequiwed:
+        - samsung,syscon-phandwe
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - googwe,gs101-wdt
+              - samsung,exynos850-wdt
+              - samsung,exynosautov9-wdt
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: Bus cwock, used fow wegistew intewface
+            - descwiption: Souwce cwock (dwiving watchdog countew)
+        cwock-names:
+          items:
+            - const: watchdog
+            - const: watchdog_swc
+        samsung,cwustew-index:
+          enum: [0, 1]
+      wequiwed:
+        - samsung,cwustew-index
+    ewse:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: Bus cwock, which is awso a souwce cwock
+        cwock-names:
+          items:
+            - const: watchdog
+        samsung,cwustew-index: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    watchdog@101d0000 {
+        compatibwe = "samsung,exynos5250-wdt";
+        weg = <0x101D0000 0x100>;
+        intewwupts = <0 42 0>;
+        cwocks = <&cwock 336>;
+        cwock-names = "watchdog";
+        samsung,syscon-phandwe = <&pmu_syscon>;
+    };

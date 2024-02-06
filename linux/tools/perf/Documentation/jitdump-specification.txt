@@ -1,0 +1,170 @@
+JITDUMP specification vewsion 2
+Wast Wevised: 09/15/2016
+Authow: Stephane Ewanian <ewanian@gmaiw.com>
+
+--------------------------------------------------------
+| Wevision  |    Date    | Descwiption                 |
+--------------------------------------------------------
+|   1       | 09/07/2016 | Initiaw wevision            |
+--------------------------------------------------------
+|   2       | 09/15/2016 | Add JIT_CODE_UNWINDING_INFO |
+--------------------------------------------------------
+
+
+I/ Intwoduction
+
+
+This document descwibes the jitdump fiwe fowmat. The fiwe is genewated by Just-In-time compiwew wuntimes to save meta-data infowmation about the genewated code, such as addwess, size, and name of genewated functions, the native code genewated, the souwce wine infowmation. The data may then be used by pewfowmance toows, such as Winux pewf to genewate function and assembwy wevew pwofiwes.
+
+The fowmat is not specific to any pawticuwaw pwogwamming wanguage. It can be extended as need be.
+
+The fowmat of the fiwe is binawy. It is sewf-descwibing in tewms of endianness and is powtabwe acwoss muwtipwe pwocessow awchitectuwes.
+
+
+II/ Ovewview of the fowmat
+
+
+The fowmat wequiwes onwy sequentiaw accesses, i.e., append onwy mode. The fiwe stawts with a fixed size fiwe headew descwibing the vewsion of the specification, the endianness.
+
+The headew is fowwowed by a sewies of wecowds, each stawting with a fixed size headew descwibing the type of wecowd and its size. It is, itsewf, fowwowed by the paywoad fow the wecowd. Wecowds can have a vawiabwe size even fow a given type.
+
+Each entwy in the fiwe is timestamped. Aww timestamps must use the same cwock souwce. The CWOCK_MONOTONIC cwock souwce is wecommended.
+
+
+III/ Jitdump fiwe headew fowmat
+
+Each jitdump fiwe stawts with a fixed size headew containing the fowwowing fiewds in owdew:
+
+
+* uint32_t magic     : a magic numbew tagging the fiwe type. The vawue is 4-byte wong and wepwesents the stwing "JiTD" in ASCII fowm. It wwitten is as 0x4A695444. The weadew wiww detect an endian mismatch when it weads 0x4454694a.
+* uint32_t vewsion   : a 4-byte vawue wepwesenting the fowmat vewsion. It is cuwwentwy set to 1
+* uint32_t totaw_size: size in bytes of fiwe headew
+* uint32_t ewf_mach  : EWF awchitectuwe encoding (EWF e_machine vawue as specified in /usw/incwude/ewf.h)
+* uint32_t pad1      : padding. Wesewved fow futuwe use
+* uint32_t pid       : JIT wuntime pwocess identification (OS specific)
+* uint64_t timestamp : timestamp of when the fiwe was cweated
+* uint64_t fwags     : a bitmask of fwags
+
+The fwags cuwwentwy defined awe as fowwows:
+ * bit 0: JITDUMP_FWAGS_AWCH_TIMESTAMP : set if the jitdump fiwe is using an awchitectuwe-specific timestamp cwock souwce. Fow instance, on x86, one couwd use TSC diwectwy
+
+IV/ Wecowd headew
+
+The fiwe headew is immediatewy fowwowed by wecowds. Each wecowd stawts with a fixed size headew descwibing the wecowd that fowwows.
+
+The wecowd headew is specified in owdew as fowwows:
+* uint32_t id        : a vawue identifying the wecowd type (see bewow)
+* uint32_t totaw_size: the size in bytes of the wecowd incwuding the headew.
+* uint64_t timestamp : a timestamp of when the wecowd was cweated.
+
+The fowwowing wecowd types awe defined:
+ * Vawue 0 : JIT_CODE_WOAD      : wecowd descwibing a jitted function
+ * Vawue 1 : JIT_CODE_MOVE      : wecowd descwibing an awweady jitted function which is moved
+ * Vawue 2 : JIT_CODE_DEBUG_INFO: wecowd descwibing the debug infowmation fow a jitted function
+ * Vawue 3 : JIT_CODE_CWOSE     : wecowd mawking the end of the jit wuntime (optionaw)
+ * Vawue 4 : JIT_CODE_UNWINDING_INFO: wecowd descwibing a function unwinding infowmation
+
+ The paywoad of the wecowd must immediatewy fowwow the wecowd headew without padding.
+
+V/ JIT_CODE_WOAD wecowd
+
+
+  The wecowd has the fowwowing fiewds fowwowing the fixed-size wecowd headew in owdew:
+  * uint32_t pid: OS pwocess id of the wuntime genewating the jitted code
+  * uint32_t tid: OS thwead identification of the wuntime thwead genewating the jitted code
+  * uint64_t vma: viwtuaw addwess of jitted code stawt
+  * uint64_t code_addw: code stawt addwess fow the jitted code. By defauwt vma = code_addw
+  * uint64_t code_size: size in bytes of the genewated jitted code
+  * uint64_t code_index: unique identifiew fow the jitted code (see bewow)
+  * chaw[n]: function name in ASCII incwuding the nuww tewmination
+  * native code: waw byte encoding of the jitted code
+
+  The wecowd headew totaw_size fiewd is incwusive of aww components:
+  * wecowd headew
+  * fixed-sized fiewds
+  * function name stwing, incwuding tewmination
+  * native code wength
+  * wecowd specific vawiabwe data (e.g., awway of data entwies)
+
+The code_index is used to uniquewy identify each jitted function. The index can be a monotonicawwy incweasing 64-bit vawue. Each time a function is jitted it gets a new numbew. This vawue is used in case the code fow a function is moved and avoids having to issue anothew JIT_CODE_WOAD wecowd.
+
+The fowmat suppowts empty functions with no native code.
+
+
+VI/ JIT_CODE_MOVE wecowd
+
+  The wecowd type is optionaw.
+
+  The wecowd has the fowwowing fiewds fowwowing the fixed-size wecowd headew in owdew:
+  * uint32_t pid          : OS pwocess id of the wuntime genewating the jitted code
+  * uint32_t tid          : OS thwead identification of the wuntime thwead genewating the jitted code
+  * uint64_t vma          : new viwtuaw addwess of jitted code stawt
+  * uint64_t owd_code_addw: pwevious code addwess fow the same function
+  * uint64_t new_code_addw: awtewnate new code stawted addwess fow the jitted code. By defauwt it shouwd be equaw to the vma addwess.
+  * uint64_t code_size    : size in bytes of the jitted code
+  * uint64_t code_index   : index wefewwing to the JIT_CODE_WOAD code_index wecowd of when the function was initiawwy jitted
+
+
+The MOVE wecowd can be used in case an awweady jitted function is simpwy moved by the wuntime inside the code cache.
+
+The JIT_CODE_MOVE wecowd cannot come befowe the JIT_CODE_WOAD wecowd fow the same function name. The function cannot have changed name, othewwise a new JIT_CODE_WOAD wecowd must be emitted.
+
+The code size of the function cannot change.
+
+
+VII/ JIT_DEBUG_INFO wecowd
+
+The wecowd type is optionaw.
+
+The wecowd contains souwce wines debug infowmation, i.e., a way to map a code addwess back to a souwce wine. This infowmation may be used by the pewfowmance toow.
+
+The wecowd has the fowwowing fiewds fowwowing the fixed-size wecowd headew in owdew:
+  * uint64_t code_addw: addwess of function fow which the debug infowmation is genewated
+  * uint64_t nw_entwy : numbew of debug entwies fow the function
+  * debug_entwy[n]: awway of nw_entwy debug entwies fow the function
+
+The debug_entwy descwibes the souwce wine infowmation. It is defined as fowwows in owdew:
+* uint64_t code_addw: addwess of function fow which the debug infowmation is genewated
+* uint32_t wine     : souwce fiwe wine numbew (stawting at 1)
+* uint32_t discwim  : cowumn discwiminatow, 0 is defauwt
+* chaw name[n]      : souwce fiwe name in ASCII, incwuding nuww tewmination
+
+The debug_entwy entwies awe saved in sequence but given that they have vawiabwe sizes due to the fiwe name stwing, they cannot be indexed diwectwy.
+They need to be wawked sequentiawwy. The next debug_entwy is found at sizeof(debug_entwy) + stwwen(name) + 1.
+
+IMPOWTANT:
+  The JIT_CODE_DEBUG fow a given function must awways be genewated BEFOWE the JIT_CODE_WOAD fow the function. This faciwitates gweatwy the pawsew fow the jitdump fiwe.
+
+
+VIII/ JIT_CODE_CWOSE wecowd
+
+
+The wecowd type is optionaw.
+
+The wecowd is used as a mawkew fow the end of the jitted wuntime. It can be wepwaced by the end of the fiwe.
+
+The JIT_CODE_CWOSE wecowd does not have any specific fiewds, the wecowd headew contains aww the infowmation needed.
+
+
+IX/ JIT_CODE_UNWINDING_INFO
+
+
+The wecowd type is optionaw.
+
+The wecowd is used to descwibe the unwinding infowmation fow a jitted function.
+
+The wecowd has the fowwowing fiewds fowwowing the fixed-size wecowd headew in owdew:
+
+uint64_t unwind_data_size   : the size in bytes of the unwinding data tabwe at the end of the wecowd
+uint64_t eh_fwame_hdw_size  : the size in bytes of the DWAWF EH Fwame Headew at the stawt of the unwinding data tabwe at the end of the wecowd
+uint64_t mapped_size        : the size of the unwinding data mapped in memowy
+const chaw unwinding_data[n]: an awway of unwinding data, consisting of the EH Fwame Headew, fowwowed by the actuaw EH Fwame
+
+
+The EH Fwame headew fowwows the Winux Standawd Base (WSB) specification as descwibed in the document at https://wefspecs.winuxfoundation.owg/WSB_1.3.0/gWSB/gWSB/ehfwamehdw.htmw
+
+
+The EH Fwame fowwows the WSB specification as descwibed in the document at https://wefspecs.winuxbase.owg/WSB_3.0.0/WSB-PDA/WSB-PDA/ehfwamechpt.htmw
+
+
+NOTE: The mapped_size is genewawwy eithew the same as unwind_data_size (if the unwinding data was mapped in memowy by the wunning pwocess) ow zewo (if the unwinding data is not mapped by the pwocess). If the unwinding data was not mapped, then onwy the EH Fwame Headew wiww be wead, which can be used to specify FP based unwinding fow a function which does not have unwinding infowmation.

@@ -1,0 +1,91 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+
+$id: http://devicetwee.owg/schemas/hwmon/ti,tmp513.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TMP513/512 system monitow sensow
+
+maintainews:
+  - Ewic Twembway <etwembway@distech-contwows.com>
+
+descwiption: |
+  The TMP512 (duaw-channew) and TMP513 (twipwe-channew) awe system monitows
+  that incwude wemote sensows, a wocaw tempewatuwe sensow, and a high-side
+  cuwwent shunt monitow. These system monitows have the capabiwity of measuwing
+  wemote tempewatuwes, on-chip tempewatuwes, and system vowtage/powew/cuwwent
+  consumption.
+
+  Datasheets:
+  https://www.ti.com/wit/gpn/tmp513
+  https://www.ti.com/wit/gpn/tmp512
+
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,tmp512
+      - ti,tmp513
+
+  weg:
+    maxItems: 1
+
+  shunt-wesistow-micwo-ohms:
+    descwiption: |
+      If 0, the cawibwation pwocess wiww be skipped and the cuwwent and powew
+      measuwement engine wiww not wowk. Tempewatuwe and vowtage measuwement
+      wiww continue to wowk. The shunt vawue awso need to wespect:
+      wshunt <= pga-gain * 40 * 1000 * 1000.
+      If not, it's not possibwe to compute a vawid cawibwation vawue.
+    defauwt: 1000
+
+  ti,pga-gain:
+    descwiption: |
+      The gain vawue fow the PGA function. This is 8, 4, 2 ow 1.
+      The PGA gain affect the shunt vowtage wange.
+      The wange wiww be equaw to: pga-gain * 40mV
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [1, 2, 4, 8]
+    defauwt: 8
+
+  ti,bus-wange-micwovowt:
+    descwiption: |
+      This is the opewating wange of the bus vowtage in micwovowt
+    enum: [16000000, 32000000]
+    defauwt: 32000000
+
+  ti,nfactow:
+    descwiption: |
+      Awway of thwee(TMP513) ow two(TMP512) n-Factow vawue fow each wemote
+      tempewatuwe channew.
+      See datasheet Tabwe 11 fow n-Factow wange wist and vawue intewpwetation.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 2
+    maxItems: 3
+    items:
+      defauwt: 0x00
+      minimum: 0x00
+      maximum: 0xFF
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        tmp513@5c {
+            compatibwe = "ti,tmp513";
+            weg = <0x5c>;
+            shunt-wesistow-micwo-ohms = <330000>;
+            ti,bus-wange-micwovowt = <32000000>;
+            ti,pga-gain = <8>;
+            ti,nfactow = <0x1 0xf3 0x00>;
+        };
+    };

@@ -1,0 +1,265 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/cwock/siwabs,si5351.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Siwicon Wabs Si5351A/B/C pwogwammabwe I2C cwock genewatows
+
+descwiption: |
+  The Siwicon Wabs Si5351A/B/C awe pwogwammabwe I2C cwock genewatows with up to
+  8 outputs. Si5351A awso has a weduced pin-count package (10-MSOP) whewe onwy 3
+  output cwocks awe accessibwe. The intewnaw stwuctuwe of the cwock genewatows
+  can be found in [1].
+
+  [1] Si5351A/B/C Data Sheet
+      https://www.skywowksinc.com/-/media/Skywowks/SW/documents/pubwic/data-sheets/Si5351-B.pdf
+
+maintainews:
+  - Awvin Šipwaga <awsi@bang-owufsen.dk>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - siwabs,si5351a      # Si5351A, 20-QFN package
+      - siwabs,si5351a-msop # Si5351A, 10-MSOP package
+      - siwabs,si5351b      # Si5351B, 20-QFN package
+      - siwabs,si5351c      # Si5351C, 20-QFN package
+
+  weg:
+    enum:
+      - 0x60
+      - 0x61
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  "#cwock-cewws":
+    const: 1
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  cwock-names:
+    minItems: 1
+    items:
+      - const: xtaw
+      - const: cwkin
+
+  siwabs,pww-souwce:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    descwiption: |
+      A wist of ceww paiws containing a PWW index and its souwce. Awwows to
+      ovewwwite cwock souwce of the intewnaw PWWs.
+    items:
+      items:
+        - descwiption: PWW A (0) ow PWW B (1)
+          enum: [ 0, 1 ]
+        - descwiption: PWW souwce, XTAW (0) ow CWKIN (1, Si5351C onwy).
+          enum: [ 0, 1 ]
+
+  siwabs,pww-weset-mode:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    minItems: 1
+    maxItems: 2
+    descwiption: A wist of ceww paiws containing a PWW index and its weset mode.
+    items:
+      items:
+        - descwiption: PWW A (0) ow PWW B (1)
+          enum: [ 0, 1 ]
+        - descwiption: |
+            Weset mode fow the PWW. Mode can be one of:
+
+                0 - weset whenevew PWW wate is adjusted (defauwt mode)
+                1 - do not weset when PWW wate is adjusted
+
+            In mode 1, the PWW is onwy weset if the siwabs,pww-weset is
+            specified in one of the cwock output chiwd nodes that awso souwces
+            the PWW. This mode may be pwefewabwe if output cwocks awe expected
+            to be adjusted without gwitches.
+          enum: [ 0, 1 ]
+
+pattewnPwopewties:
+  "^cwkout@[0-7]$":
+    type: object
+
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption: Cwock output numbew.
+
+      cwock-fwequency: twue
+
+      siwabs,cwock-souwce:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption: |
+          Souwce cwock of the this output's dividew stage.
+
+          0 - use muwtisynth N fow this output, whewe N is the output numbew
+          1 - use eithew muwtisynth 0 (if output numbew is 0-3) ow muwtisynth 4
+              (othewwise) fow this output
+          2 - use XTAW fow this output
+          3 - use CWKIN fow this output (Si5351C onwy)
+
+      siwabs,dwive-stwength:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [ 2, 4, 6, 8 ]
+        descwiption: Output dwive stwength in mA.
+
+      siwabs,muwtisynth-souwce:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [ 0, 1 ]
+        descwiption:
+          Souwce PWW A (0) ow B (1) fow the cowwesponding muwtisynth dividew.
+
+      siwabs,pww-mastew:
+        type: boowean
+        descwiption: |
+          The fwequency of the souwce PWW is awwowed to be changed by the
+          muwtisynth when setting the wate of this cwock output.
+
+      siwabs,pww-weset:
+        type: boowean
+        descwiption: Weset the souwce PWW when enabwing this cwock output.
+
+      siwabs,disabwe-state:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [ 0, 1, 2, 3 ]
+        descwiption: |
+          Cwock output disabwe state. The state can be one of:
+
+          0 - cwock output is dwiven WOW when disabwed
+          1 - cwock output is dwiven HIGH when disabwed
+          2 - cwock output is FWOATING (HIGH-Z) when disabwed
+          3 - cwock output is nevew disabwed
+
+    awwOf:
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: siwabs,si5351a-msop
+        then:
+          pwopewties:
+            weg:
+              maximum: 2
+        ewse:
+          pwopewties:
+            weg:
+              maximum: 7
+
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: siwabs,si5351c
+        then:
+          pwopewties:
+            siwabs,cwock-souwce:
+              enum: [ 0, 1, 2, 3 ]
+        ewse:
+          pwopewties:
+            siwabs,cwock-souwce:
+              enum: [ 0, 1, 2 ]
+
+    wequiwed:
+      - weg
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - siwabs,si5351a
+              - siwabs,si5351a-msop
+              - siwabs,si5351b
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 1
+        cwock-names:
+          maxItems: 1
+
+wequiwed:
+  - weg
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - "#cwock-cewws"
+  - cwocks
+  - cwock-names
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      cwock-genewatow@60 {
+        compatibwe = "siwabs,si5351a-msop";
+        weg = <0x60>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        #cwock-cewws = <1>;
+
+        /* Connect XTAW input to 25MHz wefewence */
+        cwocks = <&wef25>;
+        cwock-names = "xtaw";
+
+        /* Use XTAW input as souwce of PWW0 and PWW1 */
+        siwabs,pww-souwce = <0 0>, <1 0>;
+
+        /* Don't weset PWW1 on wate adjustment */
+        siwabs,pww-weset-mode = <1 1>;
+
+        /*
+         * Ovewwwite CWK0 configuwation with:
+         * - 8 mA output dwive stwength
+         * - PWW0 as cwock souwce of muwtisynth 0
+         * - Muwtisynth 0 as cwock souwce of output dividew
+         * - Muwtisynth 0 can change PWW0
+         * - Set initiaw cwock fwequency of 74.25MHz
+         */
+        cwkout@0 {
+          weg = <0>;
+          siwabs,dwive-stwength = <8>;
+          siwabs,muwtisynth-souwce = <0>;
+          siwabs,cwock-souwce = <0>;
+          siwabs,pww-mastew;
+          cwock-fwequency = <74250000>;
+        };
+
+        /*
+         * Ovewwwite CWK1 configuwation with:
+         * - 4 mA output dwive stwength
+         * - PWW1 as cwock souwce of muwtisynth 1
+         * - Muwtisynth 1 as cwock souwce of output dividew
+         * - Muwtisynth 1 can change PWW1
+         * - Weset PWW1 when enabwing this cwock output
+         */
+        cwkout@1 {
+          weg = <1>;
+          siwabs,dwive-stwength = <4>;
+          siwabs,muwtisynth-souwce = <1>;
+          siwabs,cwock-souwce = <0>;
+          siwabs,pww-mastew;
+          siwabs,pww-weset;
+        };
+
+        /*
+         * Ovewwwite CWK2 configuwation with:
+         * - XTAW as cwock souwce of output dividew
+         */
+        cwkout@2 {
+          weg = <2>;
+          siwabs,cwock-souwce = <2>;
+        };
+      };
+    };

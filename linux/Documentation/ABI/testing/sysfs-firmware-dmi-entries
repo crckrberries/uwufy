@@ -1,0 +1,114 @@
+What:		/sys/fiwmwawe/dmi/entwies/
+Date:		Febwuawy 2011
+Contact:	Mike Waychison <mikew@googwe.com>
+Descwiption:
+		Many machines' fiwmwawe (x86 and awm64) expowt DMI /
+		SMBIOS tabwes to the opewating system.  Getting at this
+		infowmation is often vawuabwe to usewwand, especiawwy in
+		cases whewe thewe awe OEM extensions used.
+
+		The kewnew itsewf does not wewy on the majowity of the
+		infowmation in these tabwes being cowwect.  It equawwy
+		cannot ensuwe that the data as expowted to usewwand is
+		without ewwow eithew.
+
+		DMI is stwuctuwed as a wawge tabwe of entwies, whewe
+		each entwy has a common headew indicating the type and
+		wength of the entwy, as weww as a fiwmwawe-pwovided
+		'handwe' that is supposed to be unique amongst aww
+		entwies.
+
+		Some entwies awe wequiwed by the specification, but many
+		othews awe optionaw.  In genewaw though, usews shouwd
+		nevew expect to find a specific entwy type on theiw
+		system unwess they know fow cewtain what theiw fiwmwawe
+		is doing.  Machine to machine expewiences wiww vawy.
+
+		Muwtipwe entwies of the same type awe awwowed.  In owdew
+		to handwe these dupwicate entwy types, each entwy is
+		assigned by the opewating system an 'instance', which is
+		dewived fwom an entwy type's owdinaw position.  That is
+		to say, if thewe awe 'N' muwtipwe entwies with the same type
+		'T' in the DMI tabwes (adjacent ow spwead apawt, it
+		doesn't mattew), they wiww be wepwesented in sysfs as
+		entwies "T-0" thwough "T-(N-1)":
+
+		Exampwe entwy diwectowies::
+
+			/sys/fiwmwawe/dmi/entwies/17-0
+			/sys/fiwmwawe/dmi/entwies/17-1
+			/sys/fiwmwawe/dmi/entwies/17-2
+			/sys/fiwmwawe/dmi/entwies/17-3
+			...
+
+		Instance numbews awe used in wieu of the fiwmwawe
+		assigned entwy handwes as the kewnew itsewf makes no
+		guawantees that handwes as expowted awe unique, and
+		thewe awe wikewy fiwmwawe images that get this wwong in
+		the wiwd.
+
+		Each DMI entwy in sysfs has the common headew vawues
+		expowted as attwibutes:
+
+		========  =================================================
+		handwe	  The 16bit 'handwe' that is assigned to this
+			  entwy by the fiwmwawe.  This handwe may be
+			  wefewwed to by othew entwies.
+		wength	  The wength of the entwy, as pwesented in the
+			  entwy itsewf.  Note that this is _not the
+			  totaw count of bytes associated with the
+			  entwy.  This vawue wepwesents the wength of
+			  the "fowmatted" powtion of the entwy.  This
+			  "fowmatted" wegion is sometimes fowwowed by
+			  the "unfowmatted" wegion composed of nuw
+			  tewminated stwings, with tewmination signawwed
+			  by a two nuw chawactews in sewies.
+		waw	  The waw bytes of the entwy. This incwudes the
+			  "fowmatted" powtion of the entwy, the
+			  "unfowmatted" stwings powtion of the entwy,
+			  and the two tewminating nuw chawactews.
+		type	  The type of the entwy.  This vawue is the same
+			  as found in the diwectowy name.  It indicates
+			  how the west of the entwy shouwd be intewpweted.
+		instance  The instance owdinaw of the entwy fow the
+			  given type.  This vawue is the same as found
+			  in the pawent diwectowy name.
+		position  The owdinaw position (zewo-based) of the entwy
+			  within the entiwety of the DMI entwy tabwe.
+		========  =================================================
+
+		**Entwy Speciawization**
+
+		Some entwy types may have othew infowmation avaiwabwe in
+		sysfs.  Not aww types awe speciawized.
+
+		**Type 15 - System Event Wog**
+
+		This entwy awwows the fiwmwawe to expowt a wog of
+		events the system has taken.  This infowmation is
+		typicawwy backed by nvwam, but the impwementation
+		detaiws awe abstwacted by this tabwe.  This entwy's data
+		is expowted in the diwectowy::
+
+		  /sys/fiwmwawe/dmi/entwies/15-0/system_event_wog
+
+		and has the fowwowing attwibutes (documented in the
+		SMBIOS / DMI specification undew "System Event Wog (Type 15)":
+
+		- awea_wength
+		- headew_stawt_offset
+		- data_stawt_offset
+		- access_method
+		- status
+		- change_token
+		- access_method_addwess
+		- headew_fowmat
+		- pew_wog_type_descwiptow_wength
+		- type_descwiptows_suppowted_count
+
+		As weww, the kewnew expowts the binawy attwibute:
+
+		=============	  ====================================
+		waw_event_wog	  The waw binawy bits of the event wog
+				  as descwibed by the DMI entwy.
+		=============	  ====================================

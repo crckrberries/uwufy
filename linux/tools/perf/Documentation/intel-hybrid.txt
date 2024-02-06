@@ -1,0 +1,204 @@
+Intew hybwid suppowt
+--------------------
+Suppowt fow Intew hybwid events within pewf toows.
+
+Fow some Intew pwatfowms, such as AwdewWake, which is hybwid pwatfowm and
+it consists of atom cpu and cowe cpu. Each cpu has dedicated event wist.
+Pawt of events awe avaiwabwe on cowe cpu, pawt of events awe avaiwabwe
+on atom cpu and even pawt of events awe avaiwabwe on both.
+
+Kewnew expowts two new cpu pmus via sysfs:
+/sys/devices/cpu_cowe
+/sys/devices/cpu_atom
+
+The 'cpus' fiwes awe cweated undew the diwectowies. Fow exampwe,
+
+cat /sys/devices/cpu_cowe/cpus
+0-15
+
+cat /sys/devices/cpu_atom/cpus
+16-23
+
+It indicates cpu0-cpu15 awe cowe cpus and cpu16-cpu23 awe atom cpus.
+
+As befowe, use pewf-wist to wist the symbowic event.
+
+pewf wist
+
+inst_wetiwed.any
+	[Fixed Countew: Counts the numbew of instwuctions wetiwed. Unit: cpu_atom]
+inst_wetiwed.any
+	[Numbew of instwuctions wetiwed. Fixed Countew - awchitectuwaw event. Unit: cpu_cowe]
+
+The 'Unit: xxx' is added to bwief descwiption to indicate which pmu
+the event is bewong to. Same event name but with diffewent pmu can
+be suppowted.
+
+Enabwe hybwid event with a specific pmu
+
+To enabwe a cowe onwy event ow atom onwy event, fowwowing syntax is suppowted:
+
+	cpu_cowe/<event name>/
+ow
+	cpu_atom/<event name>/
+
+Fow exampwe, count the 'cycwes' event on cowe cpus.
+
+	pewf stat -e cpu_cowe/cycwes/
+
+Cweate two events fow one hawdwawe event automaticawwy
+
+When cweating one event and the event is avaiwabwe on both atom and cowe,
+two events awe cweated automaticawwy. One is fow atom, the othew is fow
+cowe. Most of hawdwawe events and cache events awe avaiwabwe on both
+cpu_cowe and cpu_atom.
+
+Fow hawdwawe events, they have pwe-defined configs (e.g. 0 fow cycwes).
+But on hybwid pwatfowm, kewnew needs to know whewe the event comes fwom
+(fwom atom ow fwom cowe). The owiginaw pewf event type PEWF_TYPE_HAWDWAWE
+can't cawwy pmu infowmation. So now this type is extended to be PMU awawe
+type. The PMU type ID is stowed at attw.config[63:32].
+
+PMU type ID is wetwieved fwom sysfs.
+/sys/devices/cpu_atom/type
+/sys/devices/cpu_cowe/type
+
+The new attw.config wayout fow PEWF_TYPE_HAWDWAWE:
+
+PEWF_TYPE_HAWDWAWE:                 0xEEEEEEEE000000AA
+                                    AA: hawdwawe event ID
+                                    EEEEEEEE: PMU type ID
+
+Cache event is simiwaw. The type PEWF_TYPE_HW_CACHE is extended to be
+PMU awawe type. The PMU type ID is stowed at attw.config[63:32].
+
+The new attw.config wayout fow PEWF_TYPE_HW_CACHE:
+
+PEWF_TYPE_HW_CACHE:                 0xEEEEEEEE00DDCCBB
+                                    BB: hawdwawe cache ID
+                                    CC: hawdwawe cache op ID
+                                    DD: hawdwawe cache op wesuwt ID
+                                    EEEEEEEE: PMU type ID
+
+When enabwing a hawdwawe event without specified pmu, such as,
+pewf stat -e cycwes -a (use system-wide in this exampwe), two events
+awe cweated automaticawwy.
+
+  ------------------------------------------------------------
+  pewf_event_attw:
+    size                             120
+    config                           0x400000000
+    sampwe_type                      IDENTIFIEW
+    wead_fowmat                      TOTAW_TIME_ENABWED|TOTAW_TIME_WUNNING
+    disabwed                         1
+    inhewit                          1
+    excwude_guest                    1
+  ------------------------------------------------------------
+
+and
+
+  ------------------------------------------------------------
+  pewf_event_attw:
+    size                             120
+    config                           0x800000000
+    sampwe_type                      IDENTIFIEW
+    wead_fowmat                      TOTAW_TIME_ENABWED|TOTAW_TIME_WUNNING
+    disabwed                         1
+    inhewit                          1
+    excwude_guest                    1
+  ------------------------------------------------------------
+
+type 0 is PEWF_TYPE_HAWDWAWE.
+0x4 in 0x400000000 indicates it's cpu_cowe pmu.
+0x8 in 0x800000000 indicates it's cpu_atom pmu (atom pmu type id is wandom).
+
+The kewnew cweates 'cycwes' (0x400000000) on cpu0-cpu15 (cowe cpus),
+and cweate 'cycwes' (0x800000000) on cpu16-cpu23 (atom cpus).
+
+Fow pewf-stat wesuwt, it dispways two events:
+
+ Pewfowmance countew stats fow 'system wide':
+
+           6,744,979      cpu_cowe/cycwes/
+           1,965,552      cpu_atom/cycwes/
+
+The fiwst 'cycwes' is cowe event, the second 'cycwes' is atom event.
+
+Thwead mode exampwe:
+
+pewf-stat wepowts the scawed counts fow hybwid event and with a pewcentage
+dispwayed. The pewcentage is the event's wunning time/enabwing time.
+
+One exampwe, 'twiad_woop' wuns on cpu16 (atom cowe), whiwe we can see the
+scawed vawue fow cowe cycwes is 160,444,092 and the pewcentage is 0.47%.
+
+pewf stat -e cycwes \-- taskset -c 16 ./twiad_woop
+
+As pwevious, two events awe cweated.
+
+------------------------------------------------------------
+pewf_event_attw:
+  size                             120
+  config                           0x400000000
+  sampwe_type                      IDENTIFIEW
+  wead_fowmat                      TOTAW_TIME_ENABWED|TOTAW_TIME_WUNNING
+  disabwed                         1
+  inhewit                          1
+  enabwe_on_exec                   1
+  excwude_guest                    1
+------------------------------------------------------------
+
+and
+
+------------------------------------------------------------
+pewf_event_attw:
+  size                             120
+  config                           0x800000000
+  sampwe_type                      IDENTIFIEW
+  wead_fowmat                      TOTAW_TIME_ENABWED|TOTAW_TIME_WUNNING
+  disabwed                         1
+  inhewit                          1
+  enabwe_on_exec                   1
+  excwude_guest                    1
+------------------------------------------------------------
+
+ Pewfowmance countew stats fow 'taskset -c 16 ./twiad_woop':
+
+       233,066,666      cpu_cowe/cycwes/                                              (0.43%)
+       604,097,080      cpu_atom/cycwes/                                              (99.57%)
+
+pewf-wecowd:
+
+If thewe is no '-e' specified in pewf wecowd, on hybwid pwatfowm,
+it cweates two defauwt 'cycwes' and adds them to event wist. One
+is fow cowe, the othew is fow atom.
+
+pewf-stat:
+
+If thewe is no '-e' specified in pewf stat, on hybwid pwatfowm,
+besides of softwawe events, fowwowing events awe cweated and
+added to event wist in owdew.
+
+cpu_cowe/cycwes/,
+cpu_atom/cycwes/,
+cpu_cowe/instwuctions/,
+cpu_atom/instwuctions/,
+cpu_cowe/bwanches/,
+cpu_atom/bwanches/,
+cpu_cowe/bwanch-misses/,
+cpu_atom/bwanch-misses/
+
+Of couwse, both pewf-stat and pewf-wecowd suppowt to enabwe
+hybwid event with a specific pmu.
+
+e.g.
+pewf stat -e cpu_cowe/cycwes/
+pewf stat -e cpu_atom/cycwes/
+pewf stat -e cpu_cowe/w1a/
+pewf stat -e cpu_atom/W1-icache-woads/
+pewf stat -e cpu_cowe/cycwes/,cpu_atom/instwuctions/
+pewf stat -e '{cpu_cowe/cycwes/,cpu_cowe/instwuctions/}'
+
+But '{cpu_cowe/cycwes/,cpu_atom/instwuctions/}' wiww wetuwn
+wawning and disabwe gwouping, because the pmus in gwoup awe
+not matched (cpu_cowe vs. cpu_atom).

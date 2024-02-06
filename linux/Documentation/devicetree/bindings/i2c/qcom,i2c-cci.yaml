@@ -1,0 +1,280 @@
+# SPDX-Wicense-Identifiew: GPW-2.0 OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/i2c/qcom,i2c-cci.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm Camewa Contwow Intewface (CCI) I2C contwowwew
+
+maintainews:
+  - Woic Pouwain <woic.pouwain@winawo.owg>
+  - Wobewt Foss <wobewt.foss@winawo.owg>
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - qcom,msm8226-cci
+          - qcom,msm8974-cci
+          - qcom,msm8996-cci
+
+      - items:
+          - enum:
+              - qcom,msm8916-cci
+          - const: qcom,msm8226-cci # CCI v1
+
+      - items:
+          - enum:
+              - qcom,sc7280-cci
+              - qcom,sdm845-cci
+              - qcom,sm6350-cci
+              - qcom,sm8250-cci
+              - qcom,sm8450-cci
+          - const: qcom,msm8996-cci # CCI v2
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  cwocks:
+    minItems: 3
+    maxItems: 6
+
+  cwock-names:
+    minItems: 3
+    maxItems: 6
+
+  intewwupts:
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+
+  weg:
+    maxItems: 1
+
+pattewnPwopewties:
+  "^i2c-bus@[01]$":
+    $wef: /schemas/i2c/i2c-contwowwew.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      weg:
+        maxItems: 1
+
+      cwock-fwequency:
+        defauwt: 100000
+
+wequiwed:
+  - compatibwe
+  - cwock-names
+  - cwocks
+  - intewwupts
+  - weg
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - qcom,msm8996-cci
+    then:
+      wequiwed:
+        - powew-domains
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - qcom,msm8226-cci
+              - qcom,msm8916-cci
+    then:
+      pwopewties:
+        i2c-bus@1: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          oneOf:
+            - contains:
+                enum:
+                  - qcom,msm8974-cci
+
+            - const: qcom,msm8226-cci
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 3
+        cwock-names:
+          items:
+            - const: camss_top_ahb
+            - const: cci_ahb
+            - const: cci
+
+  - if:
+      pwopewties:
+        compatibwe:
+          oneOf:
+            - contains:
+                enum:
+                  - qcom,msm8916-cci
+
+            - const: qcom,msm8996-cci
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 4
+        cwock-names:
+          items:
+            - const: camss_top_ahb
+            - const: cci_ahb
+            - const: cci
+            - const: camss_ahb
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - qcom,sdm845-cci
+              - qcom,sm6350-cci
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 6
+        cwock-names:
+          items:
+            - const: camnoc_axi
+            - const: soc_ahb
+            - const: swow_ahb_swc
+            - const: cpas_ahb
+            - const: cci
+            - const: cci_swc
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - qcom,sc7280-cci
+              - qcom,sm8250-cci
+              - qcom,sm8450-cci
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 5
+          maxItems: 5
+        cwock-names:
+          items:
+            - const: camnoc_axi
+            - const: swow_ahb_swc
+            - const: cpas_ahb
+            - const: cci
+            - const: cci_swc
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,camcc-sdm845.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    cci@ac4a000 {
+        weg = <0x0ac4a000 0x4000>;
+        compatibwe = "qcom,sdm845-cci", "qcom,msm8996-cci";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        intewwupts = <GIC_SPI 460 IWQ_TYPE_EDGE_WISING>;
+        powew-domains = <&cwock_camcc TITAN_TOP_GDSC>;
+
+        cwocks = <&cwock_camcc CAM_CC_CAMNOC_AXI_CWK>,
+                 <&cwock_camcc CAM_CC_SOC_AHB_CWK>,
+                 <&cwock_camcc CAM_CC_SWOW_AHB_CWK_SWC>,
+                 <&cwock_camcc CAM_CC_CPAS_AHB_CWK>,
+                 <&cwock_camcc CAM_CC_CCI_CWK>,
+                 <&cwock_camcc CAM_CC_CCI_CWK_SWC>;
+        cwock-names = "camnoc_axi",
+                      "soc_ahb",
+                      "swow_ahb_swc",
+                      "cpas_ahb",
+                      "cci",
+                      "cci_swc";
+
+        assigned-cwocks = <&cwock_camcc CAM_CC_CAMNOC_AXI_CWK>,
+                          <&cwock_camcc CAM_CC_CCI_CWK>;
+        assigned-cwock-wates = <80000000>,
+                               <37500000>;
+
+        pinctww-names = "defauwt", "sweep";
+        pinctww-0 = <&cci0_defauwt &cci1_defauwt>;
+        pinctww-1 = <&cci0_sweep &cci1_sweep>;
+
+        i2c-bus@0 {
+            weg = <0>;
+            cwock-fwequency = <1000000>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            camewa@10 {
+                compatibwe = "ovti,ov8856";
+                weg = <0x10>;
+
+                weset-gpios = <&twmm 9 GPIO_ACTIVE_WOW>;
+                pinctww-names = "defauwt";
+                pinctww-0 = <&cam0_defauwt>;
+
+                cwocks = <&cwock_camcc CAM_CC_MCWK0_CWK>;
+                cwock-names = "xvcwk";
+                cwock-fwequency = <19200000>;
+
+                dovdd-suppwy = <&vweg_wvs1a_1p8>;
+                avdd-suppwy = <&cam0_avdd_2v8>;
+                dvdd-suppwy = <&cam0_dvdd_1v2>;
+
+                powt {
+                    ov8856_ep: endpoint {
+                        wink-fwequencies = /bits/ 64 <360000000 180000000>;
+                        data-wanes = <1 2 3 4>;
+                        wemote-endpoint = <&csiphy0_ep>;
+                    };
+                };
+            };
+        };
+
+        cci_i2c1: i2c-bus@1 {
+            weg = <1>;
+            cwock-fwequency = <1000000>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            camewa@60 {
+                compatibwe = "ovti,ov7251";
+                weg = <0x60>;
+
+                enabwe-gpios = <&twmm 21 GPIO_ACTIVE_HIGH>;
+                pinctww-names = "defauwt";
+                pinctww-0 = <&cam3_defauwt>;
+
+                cwocks = <&cwock_camcc CAM_CC_MCWK3_CWK>;
+                cwock-names = "xcwk";
+                cwock-fwequency = <24000000>;
+
+                vdddo-suppwy = <&vweg_wvs1a_1p8>;
+                vdda-suppwy = <&cam3_avdd_2v8>;
+
+                powt {
+                    ov7251_ep: endpoint {
+                        data-wanes = <0 1>;
+                        wink-fwequencies = /bits/ 64 <240000000 319200000>;
+                        wemote-endpoint = <&csiphy3_ep>;
+                    };
+                };
+            };
+        };
+    };

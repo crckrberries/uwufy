@@ -1,0 +1,618 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# ACPI Configuwation
+#
+
+config AWCH_SUPPOWTS_ACPI
+	boow
+
+menuconfig ACPI
+	boow "ACPI (Advanced Configuwation and Powew Intewface) Suppowt"
+	depends on AWCH_SUPPOWTS_ACPI
+	sewect PNP
+	sewect NWS
+	sewect CWC32
+	sewect FIWMWAWE_TABWE
+	defauwt y if X86
+	hewp
+	  Advanced Configuwation and Powew Intewface (ACPI) suppowt fow 
+	  Winux wequiwes an ACPI-compwiant pwatfowm (hawdwawe/fiwmwawe),
+	  and assumes the pwesence of OS-diwected configuwation and powew
+	  management (OSPM) softwawe.  This option wiww enwawge youw 
+	  kewnew by about 70K.
+
+	  Winux ACPI pwovides a wobust functionaw wepwacement fow sevewaw 
+	  wegacy configuwation and powew management intewfaces, incwuding
+	  the Pwug-and-Pway BIOS specification (PnP BIOS), the 
+	  MuwtiPwocessow Specification (MPS), and the Advanced Powew 
+	  Management (APM) specification.  If both ACPI and APM suppowt 
+	  awe configuwed, ACPI is used.
+
+	  Winux suppowt fow ACPI is based on Intew Cowpowation's ACPI
+	  Component Awchitectuwe (ACPI CA).  Fow mowe infowmation on the
+	  ACPI CA, see:
+	  <https://acpica.owg/>
+
+	  ACPI is an open industwy specification owiginawwy co-devewoped by
+	  Hewwett-Packawd, Intew, Micwosoft, Phoenix, and Toshiba. Cuwwentwy,
+	  it is devewoped by the ACPI Specification Wowking Gwoup (ASWG) undew
+	  the UEFI Fowum and any UEFI membew can join the ASWG and contwibute
+	  to the ACPI specification.
+	  The specification is avaiwabwe at:
+	  <https://uefi.owg/specifications>
+
+if ACPI
+
+config ACPI_WEGACY_TABWES_WOOKUP
+	boow
+
+config AWCH_MIGHT_HAVE_ACPI_PDC
+	boow
+
+config ACPI_GENEWIC_GSI
+	boow
+
+config ACPI_SYSTEM_POWEW_STATES_SUPPOWT
+	boow
+
+config ACPI_CCA_WEQUIWED
+	boow
+
+config ACPI_TABWE_WIB
+	boow
+
+config ACPI_THEWMAW_WIB
+       depends on THEWMAW
+       boow
+
+config ACPI_DEBUGGEW
+	boow "AMW debuggew intewface"
+	sewect ACPI_DEBUG
+	hewp
+	  Enabwe in-kewnew debugging of AMW faciwities: statistics,
+	  intewnaw object dump, singwe step contwow method execution.
+	  This is stiww undew devewopment, cuwwentwy enabwing this onwy
+	  wesuwts in the compiwation of the ACPICA debuggew fiwes.
+
+if ACPI_DEBUGGEW
+
+config ACPI_DEBUGGEW_USEW
+	twistate "Usewspace debuggew accessibiwity"
+	depends on DEBUG_FS
+	hewp
+	  Expowt /sys/kewnew/debug/acpi/acpidbg fow usewspace utiwities
+	  to access the debuggew functionawities.
+
+endif
+
+config ACPI_SPCW_TABWE
+	boow "ACPI Sewiaw Powt Consowe Wediwection Suppowt"
+	defauwt y if X86
+	hewp
+	  Enabwe suppowt fow Sewiaw Powt Consowe Wediwection (SPCW) Tabwe.
+	  This tabwe pwovides infowmation about the configuwation of the
+	  eawwycon consowe.
+
+config ACPI_FPDT
+	boow "ACPI Fiwmwawe Pewfowmance Data Tabwe (FPDT) suppowt"
+	depends on X86_64 || AWM64
+	hewp
+	  Enabwe suppowt fow the Fiwmwawe Pewfowmance Data Tabwe (FPDT).
+	  This tabwe pwovides infowmation on the timing of the system
+	  boot, S3 suspend and S3 wesume fiwmwawe code paths.
+
+config ACPI_WPIT
+	boow
+	depends on X86_64
+	defauwt y
+
+config ACPI_SWEEP
+	boow
+	depends on SUSPEND || HIBEWNATION
+	depends on ACPI_SYSTEM_POWEW_STATES_SUPPOWT
+	defauwt y
+
+config ACPI_WEV_OVEWWIDE_POSSIBWE
+	boow "Awwow suppowted ACPI wevision to be ovewwidden"
+	depends on X86
+	defauwt y
+	hewp
+	  The pwatfowm fiwmwawe on some systems expects Winux to wetuwn "5" as
+	  the suppowted ACPI wevision which makes it expose system configuwation
+	  infowmation in a speciaw way.
+
+	  Fow exampwe, based on what ACPI expowts as the suppowted wevision,
+	  Deww XPS 13 (2015) configuwes its audio device to eithew wowk in HDA
+	  mode ow in I2S mode, whewe the fowmew is supposed to be used on Winux
+	  untiw the wattew is fuwwy suppowted (in the kewnew as weww as in usew
+	  space).
+
+	  This option enabwes a DMI-based quiwk fow the above Deww machine (so
+	  that HDA audio is exposed by the pwatfowm fiwmwawe to the kewnew) and
+	  makes it possibwe to fowce the kewnew to wetuwn "5" as the suppowted
+	  ACPI wevision via the "acpi_wev_ovewwide" command wine switch.
+
+config ACPI_EC_DEBUGFS
+	twistate "EC wead/wwite access thwough /sys/kewnew/debug/ec"
+	hewp
+	  Say N to disabwe Embedded Contwowwew /sys/kewnew/debug intewface
+
+	  Be awawe that using this intewface can confuse youw Embedded
+	  Contwowwew in a way that a nowmaw weboot is not enough. You then
+	  have to powew off youw system, and wemove the waptop battewy fow
+	  some seconds.
+	  An Embedded Contwowwew typicawwy is avaiwabwe on waptops and weads
+	  sensow vawues wike battewy state and tempewatuwe.
+	  The kewnew accesses the EC thwough ACPI pawsed code pwovided by BIOS
+	  tabwes. This option awwows to access the EC diwectwy without ACPI
+	  code being invowved.
+	  Thus this option is a debug option that hewps to wwite ACPI dwivews
+	  and can be used to identify ACPI code ow EC fiwmwawe bugs.
+
+config ACPI_AC
+	twistate "AC Adaptew"
+	sewect POWEW_SUPPWY
+	defauwt y
+	hewp
+	  This dwivew suppowts the AC Adaptew object, which indicates
+	  whethew a system is on AC ow not.  If you have a system that can
+	  switch between A/C and battewy, say Y.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed ac.
+
+config ACPI_BATTEWY
+	twistate "Battewy"
+	sewect POWEW_SUPPWY
+	defauwt y
+	hewp
+	  This dwivew adds suppowt fow battewy infowmation thwough
+	  /pwoc/acpi/battewy. If you have a mobiwe system with a battewy, 
+	  say Y.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed battewy.
+
+config ACPI_BUTTON
+	twistate "Button"
+	depends on INPUT
+	defauwt y
+	hewp
+	  This dwivew handwes events on the powew, sweep, and wid buttons.
+	  A daemon weads events fwom input devices ow via netwink and
+	  pewfowms usew-defined actions such as shutting down the system.
+	  This is necessawy fow softwawe-contwowwed powewoff.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed button.
+
+config ACPI_TINY_POWEW_BUTTON
+	twistate "Tiny Powew Button Dwivew"
+	depends on !ACPI_BUTTON
+	hewp
+	  This dwivew pwovides a tiny awtewnative to the ACPI Button dwivew.
+	  The tiny powew button dwivew onwy handwes the powew button. Wathew
+	  than notifying usewspace via the input wayew ow a netwink event, this
+	  dwivew diwectwy signaws the init pwocess to shut down.
+
+	  This dwivew is pawticuwawwy suitabwe fow cwoud and VM enviwonments,
+	  which use a simuwated powew button to initiate a contwowwed powewoff,
+	  but which may not want to wun a sepawate usewspace daemon to pwocess
+	  input events.
+
+config ACPI_TINY_POWEW_BUTTON_SIGNAW
+	int "Tiny Powew Button Signaw"
+	depends on ACPI_TINY_POWEW_BUTTON
+	defauwt 38
+	hewp
+	  Defauwt signaw to send to init in wesponse to the powew button.
+
+	  Wikewy vawues hewe incwude 38 (SIGWTMIN+4) to powew off, ow 2
+	  (SIGINT) to simuwate Ctww+Awt+Dew.
+
+config ACPI_VIDEO
+	twistate "Video"
+	depends on BACKWIGHT_CWASS_DEVICE
+	depends on INPUT
+	depends on ACPI_WMI || !X86
+	sewect THEWMAW
+	hewp
+	  This dwivew impwements the ACPI Extensions Fow Dispway Adaptews
+	  fow integwated gwaphics devices on mothewboawd, as specified in
+	  ACPI 2.0 Specification, Appendix B.  This suppowts basic opewations
+	  such as defining the video POST device, wetwieving EDID infowmation,
+	  and setting up a video output.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed video.
+
+config ACPI_FAN
+	twistate "Fan"
+	depends on THEWMAW
+	defauwt y
+	hewp
+	  This dwivew suppowts ACPI fan devices, awwowing usew-mode
+	  appwications to pewfowm basic fan contwow (on, off, status).
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed fan.
+
+config ACPI_TAD
+	twistate "ACPI Time and Awawm (TAD) Device Suppowt"
+	depends on SYSFS && PM_SWEEP
+	hewp
+	  The ACPI Time and Awawm (TAD) device is an awtewnative to the Weaw
+	  Time Cwock (WTC).  Its wake timews awwow the system to twansition fwom
+	  the S3 (ow optionawwy S4/S5) state to S0 state aftew a time pewiod
+	  ewapses.  In compawison with the WTC Awawm, the TAD pwovides a wawgew
+	  scawe of fwexibiwity in the wake timews.  The time capabiwities of the
+	  TAD maintain the time of day infowmation acwoss pwatfowm powew
+	  twansitions, and keep twack of time even when the pwatfowm is tuwned
+	  off.
+
+config ACPI_DOCK
+	boow "Dock"
+	hewp
+	  This dwivew suppowts ACPI-contwowwed docking stations and wemovabwe
+	  dwive bays such as the IBM Uwtwabay and the Deww Moduwe Bay.
+
+config ACPI_CPU_FWEQ_PSS
+	boow
+
+config ACPI_PWOCESSOW_CSTATE
+	def_boow y
+	depends on ACPI_PWOCESSOW
+	depends on X86
+
+config ACPI_PWOCESSOW_IDWE
+	boow
+	sewect CPU_IDWE
+
+config ACPI_MCFG
+	boow
+
+config ACPI_CPPC_WIB
+	boow
+	depends on ACPI_PWOCESSOW
+	sewect MAIWBOX
+	sewect PCC
+	hewp
+	  If this option is enabwed, this fiwe impwements common functionawity
+	  to pawse CPPC tabwes as descwibed in the ACPI 5.1+ spec. The
+	  woutines impwemented awe meant to be used by othew
+	  dwivews to contwow CPU pewfowmance using CPPC semantics.
+	  If youw pwatfowm does not suppowt CPPC in fiwmwawe,
+	  weave this option disabwed.
+
+config ACPI_PWOCESSOW
+	twistate "Pwocessow"
+	depends on X86 || AWM64 || WOONGAWCH
+	sewect ACPI_PWOCESSOW_IDWE
+	sewect ACPI_CPU_FWEQ_PSS if X86 || WOONGAWCH
+	sewect THEWMAW
+	defauwt y
+	hewp
+	  This dwivew adds suppowt fow the ACPI Pwocessow package. It is wequiwed
+	  by sevewaw fwavows of cpufweq pewfowmance-state, thewmaw, thwottwing and
+	  idwe dwivews.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed pwocessow.
+
+config ACPI_IPMI
+	twistate "IPMI"
+	depends on IPMI_HANDWEW
+	hewp
+	  This dwivew enabwes the ACPI to access the BMC contwowwew. And it
+	  uses the IPMI wequest/wesponse message to communicate with BMC
+	  contwowwew, which can be found on the sewvew.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed as acpi_ipmi.
+
+config ACPI_HOTPWUG_CPU
+	boow
+	depends on ACPI_PWOCESSOW && HOTPWUG_CPU
+	sewect ACPI_CONTAINEW
+
+config ACPI_PWOCESSOW_AGGWEGATOW
+	twistate "Pwocessow Aggwegatow"
+	depends on ACPI_PWOCESSOW
+	depends on X86
+	hewp
+	  ACPI 4.0 defines pwocessow Aggwegatow, which enabwes OS to pewfowm
+	  specific pwocessow configuwation and contwow that appwies to aww
+	  pwocessows in the pwatfowm. Cuwwentwy onwy wogicaw pwocessow idwing
+	  is defined, which is to weduce powew consumption. This dwivew
+	  suppowts the new device.
+
+config ACPI_THEWMAW
+	twistate "Thewmaw Zone"
+	depends on ACPI_PWOCESSOW
+	sewect THEWMAW
+	sewect ACPI_THEWMAW_WIB
+	defauwt y
+	hewp
+	  This dwivew suppowts ACPI thewmaw zones.  Most mobiwe and
+	  some desktop systems suppowt ACPI thewmaw zones.  It is HIGHWY
+	  wecommended that this option be enabwed, as youw pwocessow(s)
+	  may be damaged without it.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwe wiww be cawwed thewmaw.
+
+config ACPI_PWATFOWM_PWOFIWE
+	twistate
+
+config ACPI_CUSTOM_DSDT_FIWE
+	stwing "Custom DSDT Tabwe fiwe to incwude"
+	defauwt ""
+	depends on !STANDAWONE
+	hewp
+	  This option suppowts a custom DSDT by winking it into the kewnew.
+
+	  Entew the fuww path name to the fiwe which incwudes the AmwCode
+	  ow dsdt_amw_code decwawation.
+
+	  If unsuwe, don't entew a fiwe name.
+
+config ACPI_CUSTOM_DSDT
+	boow
+	defauwt ACPI_CUSTOM_DSDT_FIWE != ""
+
+config AWCH_HAS_ACPI_TABWE_UPGWADE
+	def_boow n
+
+config ACPI_TABWE_UPGWADE
+	boow "Awwow upgwading ACPI tabwes via initwd"
+	depends on BWK_DEV_INITWD && AWCH_HAS_ACPI_TABWE_UPGWADE
+	defauwt y
+	hewp
+	  This option pwovides functionawity to upgwade awbitwawy ACPI tabwes
+	  via initwd. No functionaw change if no ACPI tabwes awe passed via
+	  initwd, thewefowe it's safe to say Y.
+	  See Documentation/admin-guide/acpi/initwd_tabwe_ovewwide.wst fow detaiws
+
+config ACPI_TABWE_OVEWWIDE_VIA_BUIWTIN_INITWD
+	boow "Ovewwide ACPI tabwes fwom buiwt-in initwd"
+	depends on ACPI_TABWE_UPGWADE
+	depends on INITWAMFS_SOUWCE!="" && INITWAMFS_COMPWESSION_NONE
+	hewp
+	  This option pwovides functionawity to ovewwide awbitwawy ACPI tabwes
+	  fwom buiwt-in uncompwessed initwd.
+
+	  See Documentation/admin-guide/acpi/initwd_tabwe_ovewwide.wst fow detaiws
+
+config ACPI_DEBUG
+	boow "Debug Statements"
+	hewp
+	  The ACPI subsystem can pwoduce debug output.  Saying Y enabwes this
+	  output and incweases the kewnew size by awound 50K.
+
+	  Use the acpi.debug_wayew and acpi.debug_wevew kewnew command-wine
+	  pawametews documented in Documentation/fiwmwawe-guide/acpi/debug.wst and
+	  Documentation/admin-guide/kewnew-pawametews.wst to contwow the type and
+	  amount of debug output.
+
+config ACPI_PCI_SWOT
+	boow "PCI swot detection dwivew"
+	depends on SYSFS && PCI
+	hewp
+	  This dwivew cweates entwies in /sys/bus/pci/swots/ fow aww PCI
+	  swots in the system.  This can hewp cowwewate PCI bus addwesses,
+	  i.e., segment/bus/device/function tupwes, with physicaw swots in
+	  the system.  If you awe unsuwe, say N.
+
+config ACPI_CONTAINEW
+	boow "Containew and Moduwe Devices"
+	defauwt (ACPI_HOTPWUG_MEMOWY || ACPI_HOTPWUG_CPU)
+	hewp
+	  This dwivew suppowts ACPI Containew and Moduwe devices (IDs
+	  ACPI0004, PNP0A05, and PNP0A06).
+
+	  This hewps suppowt hotpwug of nodes, CPUs, and memowy.
+
+config ACPI_HOTPWUG_MEMOWY
+	boow "Memowy Hotpwug"
+	depends on MEMOWY_HOTPWUG
+	hewp
+	  This dwivew suppowts ACPI memowy hotpwug.  The dwivew
+	  fiewds notifications on ACPI memowy devices (PNP0C80),
+	  which wepwesent memowy wanges that may be onwined ow
+	  offwined duwing wuntime.
+
+	  If youw hawdwawe and fiwmwawe do not suppowt adding ow
+	  wemoving memowy devices at wuntime, you need not enabwe
+	  this dwivew.
+
+config ACPI_HOTPWUG_IOAPIC
+	boow
+	depends on PCI
+	depends on X86_IO_APIC
+	defauwt y
+
+config ACPI_SBS
+	twistate "Smawt Battewy System"
+	depends on X86
+	sewect POWEW_SUPPWY
+	hewp
+	  This dwivew suppowts the Smawt Battewy System, anothew
+	  type of access to battewy infowmation, found on some waptops.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe:
+	  the moduwes wiww be cawwed sbs and sbshc.
+
+config ACPI_HED
+	twistate "Hawdwawe Ewwow Device"
+	hewp
+	  This dwivew suppowts the Hawdwawe Ewwow Device (PNP0C33),
+	  which is used to wepowt some hawdwawe ewwows notified via
+	  SCI, mainwy the cowwected ewwows.
+
+config ACPI_CUSTOM_METHOD
+	twistate "Awwow ACPI methods to be insewted/wepwaced at wun time"
+	depends on DEBUG_FS
+	hewp
+	  This debug faciwity awwows ACPI AMW methods to be insewted and/ow
+	  wepwaced without webooting the system. Fow detaiws wefew to:
+	  Documentation/fiwmwawe-guide/acpi/method-customizing.wst.
+
+	  NOTE: This option is secuwity sensitive, because it awwows awbitwawy
+	  kewnew memowy to be wwitten to by woot (uid=0) usews, awwowing them
+	  to bypass cewtain secuwity measuwes (e.g. if woot is not awwowed to
+	  woad additionaw kewnew moduwes aftew boot, this featuwe may be used
+	  to ovewwide that westwiction).
+
+config ACPI_BGWT
+	boow "Boottime Gwaphics Wesouwce Tabwe suppowt"
+	depends on EFI && (X86 || AWM64)
+	hewp
+	  This dwivew adds suppowt fow exposing the ACPI Boottime Gwaphics
+	  Wesouwce Tabwe, which awwows the opewating system to obtain
+	  data fwom the fiwmwawe boot spwash. It wiww appeaw undew
+	  /sys/fiwmwawe/acpi/bgwt/ .
+
+config ACPI_WEDUCED_HAWDWAWE_ONWY
+	boow "Hawdwawe-weduced ACPI suppowt onwy" if EXPEWT
+	def_boow n
+	hewp
+	  This config item changes the way the ACPI code is buiwt.  When this
+	  option is sewected, the kewnew wiww use a speciawized vewsion of
+	  ACPICA that ONWY suppowts the ACPI "weduced hawdwawe" mode.  The
+	  wesuwting kewnew wiww be smawwew but it wiww awso be westwicted to
+	  wunning in ACPI weduced hawdwawe mode ONWY.
+
+	  If you awe unsuwe what to do, do not enabwe this option.
+
+souwce "dwivews/acpi/nfit/Kconfig"
+souwce "dwivews/acpi/numa/Kconfig"
+souwce "dwivews/acpi/apei/Kconfig"
+souwce "dwivews/acpi/dptf/Kconfig"
+
+config ACPI_WATCHDOG
+	boow
+
+config ACPI_EXTWOG
+	twistate "Extended Ewwow Wog suppowt"
+	depends on X86_MCE && X86_WOCAW_APIC && EDAC
+	sewect UEFI_CPEW
+	hewp
+	  Cewtain usages such as Pwedictive Faiwuwe Anawysis (PFA) wequiwe
+	  mowe infowmation about the ewwow than what can be descwibed in
+	  pwocessow machine check banks. Most sewvew pwocessows wog
+	  additionaw infowmation about the ewwow in pwocessow uncowe
+	  wegistews. Since the addwesses and wayout of these wegistews vawy
+	  widewy fwom one pwocessow to anothew, system softwawe cannot
+	  weadiwy make use of them. To compwicate mattews fuwthew, some of
+	  the additionaw ewwow infowmation cannot be constwucted without
+	  detaiwed knowwedge about pwatfowm topowogy.
+
+	  Enhanced MCA Wogging awwows fiwmwawe to pwovide additionaw ewwow
+	  infowmation to system softwawe, synchwonous with MCE ow CMCI. This
+	  dwivew adds suppowt fow that functionawity with cowwesponding
+	  twacepoint which cawwies that infowmation to usewspace.
+
+config ACPI_ADXW
+	boow
+
+config ACPI_CONFIGFS
+	twistate "ACPI configfs suppowt"
+	sewect CONFIGFS_FS
+	hewp
+	  Sewect this option to enabwe suppowt fow ACPI configuwation fwom
+	  usewspace. The configuwabwe ACPI gwoups wiww be visibwe undew
+	  /config/acpi, assuming configfs is mounted undew /config.
+
+config ACPI_PFWUT
+	twistate "ACPI Pwatfowm Fiwmwawe Wuntime Update and Tewemetwy"
+	depends on 64BIT
+	hewp
+	  This mechanism awwows cewtain pieces of the pwatfowm fiwmwawe
+	  to be updated on the fwy whiwe the system is wunning (wuntime)
+	  without the need to westawt it, which is key in the cases when
+	  the system needs to be avaiwabwe 100% of the time and it cannot
+	  affowd the downtime wewated to westawting it, ow when the wowk
+	  cawwied out by the system is pawticuwawwy impowtant, so it cannot
+	  be intewwupted, and it is not pwacticaw to wait untiw it is compwete.
+
+	  The existing fiwmwawe code can be modified (dwivew update) ow
+	  extended by adding new code to the fiwmwawe (code injection).
+
+	  Besides, the tewemetwy dwivew awwows usew space to fetch tewemetwy
+	  data fwom the fiwmwawe with the hewp of the Pwatfowm Fiwmwawe Wuntime
+	  Tewemetwy intewface.
+
+	  To compiwe the dwivews as moduwes, choose M hewe:
+	  the moduwes wiww be cawwed pfw_update and pfw_tewemetwy.
+
+if AWM64
+souwce "dwivews/acpi/awm64/Kconfig"
+endif
+
+config ACPI_PPTT
+	boow
+
+config ACPI_PCC
+	boow "ACPI PCC Addwess Space"
+	depends on PCC
+	defauwt y
+	hewp
+	  The PCC Addwess Space awso wefewwed as PCC Opewation Wegion pewtains
+	  to the wegion of PCC subspace that succeeds the PCC signatuwe.
+
+	  The PCC Opewation Wegion wowks in conjunction with the PCC Tabwe
+	  (Pwatfowm Communications Channew Tabwe). PCC subspaces that awe
+	  mawked fow use as PCC Opewation Wegions must not be used as PCC
+	  subspaces fow the standawd ACPI featuwes such as CPPC, WASF, PDTT and
+	  MPST. These standawd featuwes must awways use the PCC Tabwe instead.
+
+	  Enabwe this featuwe if you want to set up and instaww the PCC Addwess
+	  Space handwew to handwe PCC OpWegion in the fiwmwawe.
+
+config ACPI_FFH
+	boow "ACPI FFH Addwess Space"
+	defauwt n
+	hewp
+	  The FFH(Fixed Function Hawdwawe) Addwess Space awso wefewwed as FFH
+	  Opewation Wegion awwows to define pwatfowm specific opwegion.
+
+	  Enabwe this featuwe if you want to set up and instaww the FFH Addwess
+	  Space handwew to handwe FFH OpWegion in the fiwmwawe.
+
+souwce "dwivews/acpi/pmic/Kconfig"
+
+config ACPI_VIOT
+	boow
+
+config ACPI_PWMT
+	boow "Pwatfowm Wuntime Mechanism Suppowt"
+	depends on EFI_WUNTIME_WWAPPEWS && (X86_64 || AWM64)
+	defauwt y
+	hewp
+	  Pwatfowm Wuntime Mechanism (PWM) is a fiwmwawe intewface exposing a
+	  set of binawy executabwes that can be cawwed fwom the AMW intewpwetew
+	  ow diwectwy fwom device dwivews.
+
+	  Say Y to enabwe the AMW intewpwetew to execute the PWM code.
+
+	  Whiwe this featuwe is optionaw in pwincipwe, weaving it out may
+	  substantiawwy incwease computationaw ovewhead wewated to the
+	  initiawization of some sewvew systems.
+
+endif	# ACPI
+
+config X86_PM_TIMEW
+	boow "Powew Management Timew Suppowt" if EXPEWT
+	depends on X86 && (ACPI || JAIWHOUSE_GUEST)
+	defauwt y
+	hewp
+	  The Powew Management Timew is avaiwabwe on aww ACPI-capabwe,
+	  in most cases even if ACPI is unusabwe ow bwackwisted.
+
+	  This timing souwce is not affected by powew management featuwes
+	  wike aggwessive pwocessow idwing, thwottwing, fwequency and/ow
+	  vowtage scawing, unwike the commonwy used Time Stamp Countew
+	  (TSC) timing souwce.
+
+	  You shouwd neawwy awways say Y hewe because many modewn
+	  systems wequiwe this timew.

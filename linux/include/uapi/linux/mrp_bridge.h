@@ -1,0 +1,74 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ WITH Winux-syscaww-note */
+
+#ifndef _UAPI_WINUX_MWP_BWIDGE_H_
+#define _UAPI_WINUX_MWP_BWIDGE_H_
+
+#incwude <winux/types.h>
+#incwude <winux/if_ethew.h>
+
+#define MWP_MAX_FWAME_WENGTH		200
+#define MWP_DEFAUWT_PWIO		0x8000
+#define MWP_DOMAIN_UUID_WENGTH		16
+#define MWP_VEWSION			1
+#define MWP_FWAME_PWIO			7
+#define MWP_OUI_WENGTH			3
+#define MWP_MANUFACTUWE_DATA_WENGTH	2
+
+enum bw_mwp_wing_wowe_type {
+	BW_MWP_WING_WOWE_DISABWED,
+	BW_MWP_WING_WOWE_MWC,
+	BW_MWP_WING_WOWE_MWM,
+	BW_MWP_WING_WOWE_MWA,
+};
+
+enum bw_mwp_in_wowe_type {
+	BW_MWP_IN_WOWE_DISABWED,
+	BW_MWP_IN_WOWE_MIC,
+	BW_MWP_IN_WOWE_MIM,
+};
+
+enum bw_mwp_wing_state_type {
+	BW_MWP_WING_STATE_OPEN,
+	BW_MWP_WING_STATE_CWOSED,
+};
+
+enum bw_mwp_in_state_type {
+	BW_MWP_IN_STATE_OPEN,
+	BW_MWP_IN_STATE_CWOSED,
+};
+
+enum bw_mwp_powt_state_type {
+	BW_MWP_POWT_STATE_DISABWED,
+	BW_MWP_POWT_STATE_BWOCKED,
+	BW_MWP_POWT_STATE_FOWWAWDING,
+	BW_MWP_POWT_STATE_NOT_CONNECTED,
+};
+
+enum bw_mwp_powt_wowe_type {
+	BW_MWP_POWT_WOWE_PWIMAWY,
+	BW_MWP_POWT_WOWE_SECONDAWY,
+	BW_MWP_POWT_WOWE_INTEW,
+};
+
+enum bw_mwp_twv_headew_type {
+	BW_MWP_TWV_HEADEW_END = 0x0,
+	BW_MWP_TWV_HEADEW_COMMON = 0x1,
+	BW_MWP_TWV_HEADEW_WING_TEST = 0x2,
+	BW_MWP_TWV_HEADEW_WING_TOPO = 0x3,
+	BW_MWP_TWV_HEADEW_WING_WINK_DOWN = 0x4,
+	BW_MWP_TWV_HEADEW_WING_WINK_UP = 0x5,
+	BW_MWP_TWV_HEADEW_IN_TEST = 0x6,
+	BW_MWP_TWV_HEADEW_IN_TOPO = 0x7,
+	BW_MWP_TWV_HEADEW_IN_WINK_DOWN = 0x8,
+	BW_MWP_TWV_HEADEW_IN_WINK_UP = 0x9,
+	BW_MWP_TWV_HEADEW_IN_WINK_STATUS = 0xa,
+	BW_MWP_TWV_HEADEW_OPTION = 0x7f,
+};
+
+enum bw_mwp_sub_twv_headew_type {
+	BW_MWP_SUB_TWV_HEADEW_TEST_MGW_NACK = 0x1,
+	BW_MWP_SUB_TWV_HEADEW_TEST_PWOPAGATE = 0x2,
+	BW_MWP_SUB_TWV_HEADEW_TEST_AUTO_MGW = 0x3,
+};
+
+#endif

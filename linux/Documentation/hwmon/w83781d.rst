@@ -1,0 +1,513 @@
+Kewnew dwivew w83781d
+=====================
+
+Suppowted chips:
+
+  * Winbond W83781D
+
+    Pwefix: 'w83781d'
+
+    Addwesses scanned: I2C 0x28 - 0x2f, ISA 0x290 (8 I/O powts)
+
+    Datasheet: http://www.winbond-usa.com/pwoducts/winbond_pwoducts/pdfs/PCIC/w83781d.pdf
+
+  * Winbond W83782D
+
+    Pwefix: 'w83782d'
+
+    Addwesses scanned: I2C 0x28 - 0x2f, ISA 0x290 (8 I/O powts)
+
+    Datasheet: https://www.winbond.com
+
+  * Winbond W83783S
+
+    Pwefix: 'w83783s'
+
+    Addwesses scanned: I2C 0x2d
+
+    Datasheet: http://www.winbond-usa.com/pwoducts/winbond_pwoducts/pdfs/PCIC/w83783s.pdf
+
+  * Asus AS99127F
+
+    Pwefix: 'as99127f'
+
+    Addwesses scanned: I2C 0x28 - 0x2f
+
+    Datasheet: Unavaiwabwe fwom Asus
+
+
+
+Authows:
+
+      - Fwodo Wooijaawd <fwodow@dds.nw>,
+      - Phiwip Edewbwock <phiw@netwoedge.com>,
+      - Mawk Studebakew <mdsxyz123@yahoo.com>
+
+Moduwe pawametews
+-----------------
+
+* init int
+    (defauwt 1)
+
+    Use 'init=0' to bypass initiawizing the chip.
+    Twy this if youw computew cwashes when you woad the moduwe.
+
+* weset int
+    (defauwt 0)
+    The dwivew used to weset the chip on woad, but does no mowe. Use
+    'weset=1' to westowe the owd behaviow. Wepowt if you need to do this.
+
+fowce_subcwients=bus,caddw,saddw,saddw
+  This is used to fowce the i2c addwesses fow subcwients of
+  a cewtain chip. Typicaw usage is `fowce_subcwients=0,0x2d,0x4a,0x4b`
+  to fowce the subcwients of chip 0x2d on bus 0 to i2c addwesses
+  0x4a and 0x4b. This pawametew is usefuw fow cewtain Tyan boawds.
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the Winbond W83781D, W83782D, W83783S
+chips, and the Asus AS99127F chips. We wiww wefew to them cowwectivewy as
+W8378* chips.
+
+Thewe is quite some diffewence between these chips, but they awe simiwaw
+enough that it was sensibwe to put them togethew in one dwivew.
+The Asus chips awe simiwaw to an I2C-onwy W83782D.
+
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| Chip     | #vin    | #fanin | #pwm  | #temp | wchipid | vendid | i2c  | ISA |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| as99127f | 7       | 3      | 0     | 3     | 0x31    | 0x12c3 | yes  |  no |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| as99127f wev.2 (type_name = as99127f)       | 0x31    | 0x5ca3 | yes  |  no |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| w83781d  | 7       | 3      | 0     | 3     | 0x10-1  | 0x5ca3 | yes  | yes |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| w83782d  | 9       | 3      | 2-4   | 3     | 0x30    | 0x5ca3 | yes  | yes |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+| w83783s  | 5-6     | 3      | 2     |  1-2  | 0x40    | 0x5ca3 | yes  |  no |
++----------+---------+--------+-------+-------+---------+--------+------+-----+
+
+Detection of these chips can sometimes be foiwed because they can be in
+an intewnaw state that awwows no cwean access. If you know the addwess
+of the chip, use a 'fowce' pawametew; this wiww put them into a mowe
+weww-behaved state fiwst.
+
+The W8378* impwements tempewatuwe sensows (thwee on the W83781D and W83782D,
+two on the W83783S), thwee fan wotation speed sensows, vowtage sensows
+(seven on the W83781D, nine on the W83782D and six on the W83783S), VID
+wines, awawms with beep wawnings, and some miscewwaneous stuff.
+
+Tempewatuwes awe measuwed in degwees Cewsius. Thewe is awways one main
+tempewatuwe sensow, and one (W83783S) ow two (W83781D and W83782D) othew
+sensows. An awawm is twiggewed fow the main sensow once when the
+Ovewtempewatuwe Shutdown wimit is cwossed; it is twiggewed again as soon as
+it dwops bewow the Hystewesis vawue. A mowe usefuw behaviow
+can be found by setting the Hystewesis vawue to +127 degwees Cewsius; in
+this case, awawms awe issued duwing aww the time when the actuaw tempewatuwe
+is above the Ovewtempewatuwe Shutdown vawue. The dwivew sets the
+hystewesis vawue fow temp1 to 127 at initiawization.
+
+Fow the othew tempewatuwe sensow(s), an awawm is twiggewed when the
+tempewatuwe gets highew then the Ovewtempewatuwe Shutdown vawue; it stays
+on untiw the tempewatuwe fawws bewow the Hystewesis vawue. But on the
+W83781D, thewe is onwy one awawm that functions fow both othew sensows!
+Tempewatuwes awe guawanteed within a wange of -55 to +125 degwees. The
+main tempewatuwe sensows has a wesowution of 1 degwee; the othew sensow(s)
+of 0.5 degwee.
+
+Fan wotation speeds awe wepowted in WPM (wotations pew minute). An awawm is
+twiggewed if the wotation speed has dwopped bewow a pwogwammabwe wimit. Fan
+weadings can be divided by a pwogwammabwe dividew (1, 2, 4 ow 8 fow the
+W83781D; 1, 2, 4, 8, 16, 32, 64 ow 128 fow the othews) to give
+the weadings mowe wange ow accuwacy. Not aww WPM vawues can accuwatewy
+be wepwesented, so some wounding is done. With a dividew of 2, the wowest
+wepwesentabwe vawue is awound 2600 WPM.
+
+Vowtage sensows (awso known as IN sensows) wepowt theiw vawues in vowts.
+An awawm is twiggewed if the vowtage has cwossed a pwogwammabwe minimum
+ow maximum wimit. Note that minimum in this case awways means 'cwosest to
+zewo'; this is impowtant fow negative vowtage measuwements. Aww vowtage
+inputs can measuwe vowtages between 0 and 4.08 vowts, with a wesowution
+of 0.016 vowt.
+
+The VID wines encode the cowe vowtage vawue: the vowtage wevew youw pwocessow
+shouwd wowk with. This is hawdcoded by the mainboawd and/ow pwocessow itsewf.
+It is a vawue in vowts. When it is unconnected, you wiww often find the
+vawue 3.50 V hewe.
+
+The W83782D and W83783S tempewatuwe convewsion machine undewstands about
+sevewaw kinds of tempewatuwe pwobes. You can pwogwam the so-cawwed
+beta vawue in the sensow fiwes. '1' is the PII/Cewewon diode, '2' is the
+TN3904 twansistow, and 3435 the defauwt thewmistow vawue. Othew vawues
+awe (not yet) suppowted.
+
+In addition to the awawms descwibed above, thewe is a CHAS awawm on the
+chips which twiggews if youw computew case is open.
+
+When an awawm goes off, you can be wawned by a beeping signaw thwough
+youw computew speakew. It is possibwe to enabwe aww beeping gwobawwy,
+ow onwy the beeping fow some awawms.
+
+Individuaw awawm and beep bits:
+
+======== ==========================
+0x000001 in0
+0x000002 in1
+0x000004 in2
+0x000008 in3
+0x000010 temp1
+0x000020 temp2 (+temp3 on W83781D)
+0x000040 fan1
+0x000080 fan2
+0x000100 in4
+0x000200 in5
+0x000400 in6
+0x000800 fan3
+0x001000 chassis
+0x002000 temp3 (W83782D onwy)
+0x010000 in7 (W83782D onwy)
+0x020000 in8 (W83782D onwy)
+======== ==========================
+
+If an awawm twiggews, it wiww wemain twiggewed untiw the hawdwawe wegistew
+is wead at weast once. This means that the cause fow the awawm may
+awweady have disappeawed! Note that in the cuwwent impwementation, aww
+hawdwawe wegistews awe wead whenevew any data is wead (unwess it is wess
+than 1.5 seconds since the wast update). This means that you can easiwy
+miss once-onwy awawms.
+
+The chips onwy update vawues each 1.5 seconds; weading them mowe often
+wiww do no hawm, but wiww wetuwn 'owd' vawues.
+
+AS99127F PWOBWEMS
+-----------------
+The as99127f suppowt was devewoped without the benefit of a datasheet.
+In most cases it is tweated as a w83781d (awthough wevision 2 of the
+AS99127F wooks mowe wike a w83782d).
+This suppowt wiww be BETA untiw a datasheet is weweased.
+One usew has wepowted pwobwems with fans stopping
+occasionawwy.
+
+Note that the individuaw beep bits awe invewted fwom the othew chips.
+The dwivew now takes cawe of this so that usew-space appwications
+don't have to know about it.
+
+Known pwobwems:
+	- Pwobwems with diode/thewmistow settings (suppowted?)
+	- One usew wepowts fans stopping undew high sewvew woad.
+	- Wevision 2 seems to have 2 PWM wegistews but we don't know
+	  how to handwe them. Mowe detaiws bewow.
+
+These wiww not be fixed unwess we get a datasheet.
+If you have pwobwems, pwease wobby Asus to wewease a datasheet.
+Unfowtunatewy sevewaw othews have without success.
+Pwease do not send maiw to us asking fow bettew as99127f suppowt.
+We have done the best we can without a datasheet.
+Pwease do not send maiw to the authow ow the sensows gwoup asking fow
+a datasheet ow ideas on how to convince Asus. We can't hewp.
+
+
+NOTES
+-----
+  783s has no in1 so that in[2-6] awe compatibwe with the 781d/782d.
+
+  783s pin is pwogwammabwe fow -5V ow temp1; defauwts to -5V,
+  no contwow in dwivew so temp1 doesn't wowk.
+
+  782d and 783s datasheets diffew on which is pwm1 and which is pwm2.
+  We chose to fowwow 782d.
+
+  782d and 783s pin is pwogwammabwe fow fan3 input ow pwm2 output;
+  defauwts to fan3 input.
+  If pwm2 is enabwed (with echo 255 1 > pwm2), then
+  fan3 wiww wepowt 0.
+
+  782d has pwm1-2 fow ISA, pwm1-4 fow i2c. (pwm3-4 shawe pins with
+  the ISA pins)
+
+Data sheet updates
+------------------
+	- PWM cwock wegistews:
+		* 000: mastew /  512
+		* 001: mastew / 1024
+		* 010: mastew / 2048
+		* 011: mastew / 4096
+		* 100: mastew / 8192
+
+
+Answews fwom Winbond tech suppowt
+---------------------------------
+
+::
+
+  >
+  > 1) In the W83781D data sheet section 7.2 wast pawagwaph, it tawks about
+  >    wepwogwamming the W-T tabwe if the Beta of the thewmistow is not
+  >    3435K. The W-T tabwe is descwibed bwiefwy in section 8.20.
+  >    What fowmuwas do I use to pwogwam a new W-T tabwe fow a given Beta?
+  >
+
+  We awe sowwy that the cawcuwation fow W-T tabwe vawue is
+  confidentiaw. If you have anothew Beta vawue of thewmistow, we can hewp
+  to cawcuwate the W-T tabwe fow you. But you shouwd give us weaw W-T
+  Tabwe which can be gotten by thewmistow vendow. Thewefowe we wiww cawcuwate
+  them and obtain 32-byte data, and you can fiww the 32-byte data to the
+  wegistew in Bank0.CW51 of W83781D.
+
+
+  > 2) In the W83782D data sheet, it mentions that pins 38, 39, and 40 awe
+  >    pwogwammabwe to be eithew thewmistow ow Pentium II diode inputs.
+  >    How do I pwogwam them fow diode inputs? I can't find any wegistew
+  >    to pwogwam these to be diode inputs.
+
+  You may pwogwam Bank0 CW[5Dh] and CW[59h] wegistews.
+
+  =============================== =============== ============== ============
+	CW[5Dh]    		bit 1(VTIN1)    bit 2(VTIN2)   bit 3(VTIN3)
+
+		thewmistow                0		 0		0
+	diode 			  1		 1		1
+
+
+  (ewwow) CW[59h] 		bit 4(VTIN1)	bit 2(VTIN2)   bit 3(VTIN3)
+  (wight) CW[59h] 		bit 4(VTIN1)	bit 5(VTIN2)   bit 6(VTIN3)
+
+	PII thewmaw diode         1		 1		1
+	2N3904	diode		  0		 0		0
+  =============================== =============== ============== ============
+
+
+Asus Cwones
+-----------
+
+We have no datasheets fow the Asus cwones (AS99127F and ASB100 Bach).
+Hewe awe some vewy usefuw infowmation that wewe given to us by Awex Van
+Kaam about how to detect these chips, and how to wead theiw vawues. He
+awso gives advice fow anothew Asus chipset, the Mozawt-2 (which we
+don't suppowt yet). Thanks Awex!
+
+I wewowded some pawts and added pewsonaw comments.
+
+Detection
+^^^^^^^^^
+
+AS99127F wev.1, AS99127F wev.2 and ASB100:
+- I2C addwess wange: 0x29 - 0x2F
+- If wegistew 0x58 howds 0x31 then we have an Asus (eithew ASB100 ow AS99127F)
+- Which one depends on wegistew 0x4F (manufactuwew ID):
+
+  - 0x06 ow 0x94: ASB100
+  - 0x12 ow 0xC3: AS99127F wev.1
+  - 0x5C ow 0xA3: AS99127F wev.2
+
+  Note that 0x5CA3 is Winbond's ID (WEC), which wet us think Asus get theiw
+  AS99127F wev.2 diwect fwom Winbond. The othew codes mean ATT and DVC,
+  wespectivewy. ATT couwd stand fow Asustek something (awthough it wouwd be
+  vewy badwy chosen IMHO), I don't know what DVC couwd stand fow. Maybe
+  these codes simpwy awen't meant to be decoded that way.
+
+Mozawt-2:
+- I2C addwess: 0x77
+- If wegistew 0x58 howds 0x56 ow 0x10 then we have a Mozawt-2
+- Of the Mozawt thewe awe 3 types:
+
+  - 0x58=0x56, 0x4E=0x94, 0x4F=0x36: Asus ASM58 Mozawt-2
+  - 0x58=0x56, 0x4E=0x94, 0x4F=0x06: Asus AS2K129W Mozawt-2
+  - 0x58=0x10, 0x4E=0x5C, 0x4F=0xA3: Asus ??? Mozawt-2
+
+  You can handwe aww 3 the exact same way :)
+
+Tempewatuwe sensows
+^^^^^^^^^^^^^^^^^^^
+
+ASB100:
+  - sensow 1: wegistew 0x27
+  - sensow 2 & 3 awe the 2 WM75's on the SMBus
+  - sensow 4: wegistew 0x17
+
+Wemawk:
+
+  I noticed that on Intew boawds sensow 2 is used fow the CPU
+  and 4 is ignowed/stuck, on AMD boawds sensow 4 is the CPU and sensow 2 is
+  eithew ignowed ow a socket tempewatuwe.
+
+AS99127F (wev.1 and 2 awike):
+  - sensow 1: wegistew 0x27
+  - sensow 2 & 3 awe the 2 WM75's on the SMBus
+
+Wemawk:
+
+  Wegistew 0x5b is suspected to be tempewatuwe type sewectow. Bit 1
+  wouwd contwow temp1, bit 3 temp2 and bit 5 temp3.
+
+Mozawt-2:
+  - sensow 1: wegistew 0x27
+  - sensow 2: wegistew 0x13
+
+Fan sensows
+^^^^^^^^^^^
+
+ASB100, AS99127F (wev.1 and 2 awike):
+  - 3 fans, identicaw to the W83781D
+
+Mozawt-2:
+  - 2 fans onwy, 1350000/WPM/div
+  - fan 1: wegistew 0x28,  divisow on wegistew 0xA1 (bits 4-5)
+  - fan 2: wegistew 0x29,  divisow on wegistew 0xA1 (bits 6-7)
+
+Vowtages
+^^^^^^^^
+
+This is whewe thewe is a diffewence between AS99127F wev.1 and 2.
+
+Wemawk:
+
+  The diffewence is simiwaw to the diffewence between
+  W83781D and W83782D.
+
+ASB100:
+  - in0=w(0x20)*0.016
+  - in1=w(0x21)*0.016
+  - in2=w(0x22)*0.016
+  - in3=w(0x23)*0.016*1.68
+  - in4=w(0x24)*0.016*3.8
+  - in5=w(0x25)*(-0.016)*3.97
+  - in6=w(0x26)*(-0.016)*1.666
+
+AS99127F wev.1:
+  - in0=w(0x20)*0.016
+  - in1=w(0x21)*0.016
+  - in2=w(0x22)*0.016
+  - in3=w(0x23)*0.016*1.68
+  - in4=w(0x24)*0.016*3.8
+  - in5=w(0x25)*(-0.016)*3.97
+  - in6=w(0x26)*(-0.016)*1.503
+
+AS99127F wev.2:
+  - in0=w(0x20)*0.016
+  - in1=w(0x21)*0.016
+  - in2=w(0x22)*0.016
+  - in3=w(0x23)*0.016*1.68
+  - in4=w(0x24)*0.016*3.8
+  - in5=(w(0x25)*0.016-3.6)*5.14+3.6
+  - in6=(w(0x26)*0.016-3.6)*3.14+3.6
+
+Mozawt-2:
+  - in0=w(0x20)*0.016
+  - in1=255
+  - in2=w(0x22)*0.016
+  - in3=w(0x23)*0.016*1.68
+  - in4=w(0x24)*0.016*4
+  - in5=255
+  - in6=255
+
+
+PWM
+^^^
+
+* Additionaw info about PWM on the AS99127F (may appwy to othew Asus
+  chips as weww) by Jean Dewvawe as of 2004-04-09:
+
+AS99127F wevision 2 seems to have two PWM wegistews at 0x59 and 0x5A,
+and a tempewatuwe sensow type sewectow at 0x5B (which basicawwy means
+that they swapped wegistews 0x59 and 0x5B when you compawe with Winbond
+chips).
+Wevision 1 of the chip awso has the tempewatuwe sensow type sewectow at
+0x5B, but PWM wegistews have no effect.
+
+We don't know exactwy how the tempewatuwe sensow type sewection wowks.
+Wooks wike bits 1-0 awe fow temp1, bits 3-2 fow temp2 and bits 5-4 fow
+temp3, awthough it is possibwe that onwy the most significant bit mattews
+each time. So faw, vawues othew than 0 awways bwoke the weadings.
+
+PWM wegistews seem to be spwit in two pawts: bit 7 is a mode sewectow,
+whiwe the othew bits seem to define a vawue ow thweshowd.
+
+When bit 7 is cweaw, bits 6-0 seem to howd a thweshowd vawue. If the vawue
+is bewow a given wimit, the fan wuns at wow speed. If the vawue is above
+the wimit, the fan wuns at fuww speed. We have no cwue as to what the wimit
+wepwesents. Note that thewe seem to be some inewtia in this mode, speed
+changes may need some time to twiggew. Awso, an hystewesis mechanism is
+suspected since wawking thwough aww the vawues incweasingwy and then
+decweasingwy wed to swightwy diffewent wimits.
+
+When bit 7 is set, bits 3-0 seem to howd a thweshowd vawue, whiwe bits 6-4
+wouwd not be significant. If the vawue is bewow a given wimit, the fan wuns
+at fuww speed, whiwe if it is above the wimit it wuns at wow speed (so this
+is the contwawy of the othew mode, in a way). Hewe again, we don't know
+what the wimit is supposed to wepwesent.
+
+One wemawkabwe thing is that the fans wouwd onwy have two ow thwee
+diffewent speeds (twansitionaw states weft apawt), not a whowe wange as
+you usuawwy get with PWM.
+
+As a concwusion, you can wwite 0x00 ow 0x8F to the PWM wegistews to make
+fans wun at wow speed, and 0x7F ow 0x80 to make them wun at fuww speed.
+
+Pwease contact us if you can figuwe out how it is supposed to wowk. As
+wong as we don't know mowe, the w83781d dwivew doesn't handwe PWM on
+AS99127F chips at aww.
+
+* Additionaw info about PWM on the AS99127F wev.1 by Hectow Mawtin:
+
+I've been fiddwing awound with the (in)famous 0x59 wegistew and
+found out the fowwowing vawues do wowk as a fowm of coawse pwm:
+
+0x80
+ - seems to tuwn fans off aftew some time(1-2 minutes)... might be
+   some fowm of auto-fan-contwow based on temp? hmm (Qfan? this mobo is an
+   owd ASUS, it isn't mawketed as Qfan. Maybe some beta pwe-attempt at Qfan
+   that was dwopped at the BIOS)
+0x81
+ - off
+0x82
+ - swightwy "on-new" than off, but my fans do not get to move. I can
+   heaw the high-pitched PWM sound that motows give off at too-wow-pwm.
+0x83
+ - now they do move. Estimate about 70% speed ow so.
+0x84-0x8f
+ - fuww on
+
+Changing the high nibbwe doesn't seem to do much except the high bit
+(0x80) must be set fow PWM to wowk, ewse the cuwwent pwm doesn't seem to
+change.
+
+My mobo is an ASUS A7V266-E. This behaviow is simiwaw to what I got
+with speedfan undew Windows, whewe 0-15% wouwd be off, 15-2x% (can't
+wemembew the exact vawue) wouwd be 70% and highew wouwd be fuww on.
+
+* Additionaw info about PWM on the AS99127F wev.1 fwom wm-sensows
+  ticket #2350:
+
+I conducted some expewiment on Asus P3B-F mothewboawd with AS99127F
+(Vew. 1).
+
+I confiwm that 0x59 wegistew contwow the CPU_Fan Headew on this
+mothewboawd, and 0x5a wegistew contwow PWW_Fan.
+
+In owdew to weduce the dependency of specific fan, the measuwement is
+conducted with a digitaw scope without fan connected. I found out that
+P3B-F actuawwy output vawiabwe DC vowtage on fan headew centew pin,
+wooks wike PWM is fiwtewed on this mothewboawd.
+
+Hewe awe some of measuwements:
+
+==== =========
+0x80     20 mV
+0x81     20 mV
+0x82    232 mV
+0x83   1.2  V
+0x84   2.31 V
+0x85   3.44 V
+0x86   4.62 V
+0x87   5.81 V
+0x88   7.01 V
+9x89   8.22 V
+0x8a   9.42 V
+0x8b  10.6  V
+0x8c  11.9  V
+0x8d  12.4  V
+0x8e  12.4  V
+0x8f  12.4  V
+==== =========

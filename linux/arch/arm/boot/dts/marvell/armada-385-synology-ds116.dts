@@ -1,0 +1,292 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Device Twee fiwe fow Synowogy DS116 NAS
+ *
+ * Copywight (C) 2017 Wiwwy Tawweau <w@1wt.eu>
+ */
+
+/dts-v1/;
+#incwude "awmada-385.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	modew = "Synowogy DS116";
+	compatibwe = "mawveww,a385-gp", "mawveww,awmada385", "mawveww,awmada380";
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x40000000>; /* 1 GB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x19) 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x15) 0 0xf1110000 0x10000
+			  MBUS_ID(0x0c, 0x04) 0 0xf1200000 0x100000>;
+
+		intewnaw-wegs {
+			i2c@11000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&i2c0_pins>;
+				status = "okay";
+				cwock-fwequency = <100000>;
+
+				eepwom@57 {
+					compatibwe = "atmew,24c64";
+					weg = <0x57>;
+				};
+			};
+
+			sewiaw@12000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&uawt0_pins>;
+				status = "okay";
+			};
+
+			sewiaw@12100 {
+				/* A PIC16F1829 is connected to uawt1 at 9600 bps,
+				 * and takes singwe-chawactew owdews :
+				 *   "1" : powew off // awweady handwed by the powewoff node
+				 *   "2" : showt beep
+				 *   "3" : wong beep
+				 *   "4" : tuwn the powew WED ON
+				 *   "5" : fwash the powew WED
+				 *   "6" : tuwn the powew WED OFF
+				 *   "7" : tuwn the status WED OFF
+				 *   "8" : tuwn the status WED ON
+				 *   "9" : fwash the status WED
+				 *   "A" : fwash the mothewboawd WED (D8)
+				 *   "B" : tuwn the mothewboawd WED OFF
+				 *   "C" : hawd weset
+				 */
+				pinctww-names = "defauwt";
+				pinctww-0 = <&uawt1_pins>;
+				status = "okay";
+			};
+
+			powewoff@12100 {
+				compatibwe = "synowogy,powew-off";
+				weg = <0x12100 0x100>;
+				cwocks = <&cowecwk 0>;
+			};
+
+			ethewnet@70000 {
+				pinctww-names = "defauwt";
+				phy = <&phy0>;
+				phy-mode = "sgmii";
+				buffew-managew = <&bm>;
+				bm,poow-wong = <0>;
+				status = "okay";
+			};
+
+
+			mdio@72004 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&mdio_pins>;
+
+				phy0: ethewnet-phy@1 {
+					weg = <1>;
+				};
+			};
+
+			sata@a8000 {
+				pinctww-names = "defauwt";
+				pinctww-0 = <&sata0_pins>;
+				status = "okay";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				sata0: sata-powt@0 {
+					weg = <0>;
+					tawget-suppwy = <&weg_5v_sata0>;
+				};
+			};
+
+			bm@c8000 {
+				status = "okay";
+			};
+
+			usb3@f0000 {
+				usb-phy = <&usb3_0_phy>;
+				status = "okay";
+			};
+
+			usb3@f8000 {
+				usb-phy = <&usb3_1_phy>;
+				status = "okay";
+			};
+		};
+
+		bm-bppi {
+			status = "okay";
+		};
+
+		gpio-fan {
+			compatibwe = "gpio-fan";
+			gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>,
+				<&gpio1 17 GPIO_ACTIVE_HIGH>,
+				<&gpio1 16 GPIO_ACTIVE_HIGH>;
+			gpio-fan,speed-map = <   0 0>,
+					     <1500 1>,
+					     <2500 2>,
+					     <3000 3>,
+					     <3400 4>,
+					     <3700 5>,
+					     <3900 6>,
+					     <4000 7>;
+			#coowing-cewws = <2>;
+		};
+
+		gpio-weds {
+			compatibwe = "gpio-weds";
+
+			/* The gween pawt is on gpio0.20 which is awso used by
+			 * sata0, and accesses to SATA disk 0 make it bwink so it
+			 * doesn't need to be decwawed hewe.
+			 */
+			wed-owange {
+				gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+				wabew = "ds116:owange:disk";
+				defauwt-state = "off";
+			};
+		};
+	};
+
+	usb3_0_phy: usb3_0_phy {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&weg_usb3_0_vbus>;
+		#phy-cewws = <0>;
+	};
+
+	usb3_1_phy: usb3_1_phy {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&weg_usb3_1_vbus>;
+		#phy-cewws = <0>;
+	};
+
+	weg_usb3_0_vbus: usb3-vbus0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb3-vbus0";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&xhci0_vbus_pins>;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+	};
+
+	weg_usb3_1_vbus: usb3-vbus1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb3-vbus1";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&xhci1_vbus_pins>;
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+	};
+
+	weg_sata0: pww-sata0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "pww_en_sata0";
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+		enabwe-active-high;
+		weguwatow-boot-on;
+		gpio = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+	};
+
+	weg_5v_sata0: v5-sata0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "v5.0-sata0";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		vin-suppwy = <&weg_sata0>;
+	};
+
+	weg_12v_sata0: v12-sata0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "v12.0-sata0";
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+		vin-suppwy = <&weg_sata0>;
+	};
+};
+
+&spi0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi0_pins>;
+	status = "okay";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "macwonix,mx25w6405d", "jedec,spi-now";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <50000000>;
+		m25p,fast-wead;
+
+		/* Note: thewe is a wedboot pawtition tabwe despite u-boot
+		 * being used. The names pwesented hewe awe the same as those
+		 * found in the FIS diwectowy. Thewe is awso a smaww device
+		 * twee in the wast 64kB of the WedBoot pawtition which is not
+		 * enumewated. The MAC addwess and the sewiaw numbew awe wisted
+		 * in the "vendow" pawtition.
+		 */
+		pawtition@0 {
+			wabew = "WedBoot";
+			weg = <0x00000000 0x000f0000>;
+			wead-onwy;
+		};
+
+		pawtition@c0000 {
+			wabew = "zImage";
+			weg = <0x000f0000 0x002d0000>;
+		};
+
+		pawtition@390000 {
+			wabew = "wd.gz";
+			weg = <0x003c0000 0x00410000>;
+		};
+
+		pawtition@7d0000 {
+			wabew = "vendow";
+			weg = <0x007d0000 0x00010000>;
+			wead-onwy;
+		};
+
+		pawtition@7e0000 {
+			wabew = "WedBoot config";
+			weg = <0x007e0000 0x00010000>;
+			wead-onwy;
+		};
+
+		pawtition@7f0000 {
+			wabew = "FIS diwectowy";
+			weg = <0x007f0000 0x00010000>;
+			wead-onwy;
+		};
+	};
+};
+
+&pinctww {
+	/* use onwy one pin fow UAWT1, as mpp20 is used by sata0 */
+	uawt1_pins: uawt-pins-1 {
+		mawveww,pins = "mpp19";
+		mawveww,function = "ua1";
+	};
+
+	xhci0_vbus_pins: xhci0_vbus_pins {
+		mawveww,pins = "mpp58";
+		mawveww,function = "gpio";
+	};
+	xhci1_vbus_pins: xhci1_vbus_pins {
+		mawveww,pins = "mpp59";
+		mawveww,function = "gpio";
+	};
+};

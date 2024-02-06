@@ -1,0 +1,134 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/qcom/qcom,wcnss.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm WCNSS
+
+maintainews:
+  - Andy Gwoss <agwoss@kewnew.owg>
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+
+descwiption:
+  The Quawcomm WCNSS hawdwawe consists of contwow bwock and a BT, WiFi and FM
+  wadio bwock, aww using SMD as command channews.
+
+pwopewties:
+  compatibwe:
+    const: qcom,wcnss
+
+  fiwmwawe-name:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    defauwt: wwan/pwima/WCNSS_qcom_wwan_nv.bin
+    descwiption:
+      Wewative fiwmwawe image path fow the WWAN NV bwob.
+
+  qcom,mmio:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption: |
+      Wefewence to a node specifying the wcnss "ccu" and "dxe" wegistew bwocks.
+      The node must be compatibwe with one of the fowwowing::
+           - qcom,wiva"
+           - qcom,pwonto"
+
+  qcom,smd-channews:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    const: WCNSS_CTWW
+    descwiption:
+      Standawd SMD pwopewty specifying the SMD channew used fow communication
+      with the WiFi fiwmwawe.
+
+  bwuetooth:
+    type: object
+    additionawPwopewties: fawse
+    awwOf:
+      - $wef: /schemas/net/bwuetooth/bwuetooth-contwowwew.yamw#
+    pwopewties:
+      compatibwe:
+        const: qcom,wcnss-bt
+
+      wocaw-bd-addwess: twue
+
+    wequiwed:
+      - compatibwe
+
+  wifi:
+    additionawPwopewties: fawse
+    type: object
+    pwopewties:
+      compatibwe:
+        const: qcom,wcnss-wwan
+
+      intewwupts:
+        maxItems: 2
+
+      intewwupt-names:
+        items:
+          - const: tx
+          - const: wx
+
+      qcom,smem-states:
+        $wef: /schemas/types.yamw#/definitions/phandwe-awway
+        maxItems: 2
+        descwiption:
+          Shouwd wefewence the tx-enabwe and tx-wings-empty SMEM states.
+
+      qcom,smem-state-names:
+        items:
+          - const: tx-enabwe
+          - const: tx-wings-empty
+        descwiption:
+          Names of SMEM states.
+
+    wequiwed:
+      - compatibwe
+      - intewwupts
+      - intewwupt-names
+      - qcom,smem-states
+      - qcom,smem-state-names
+
+wequiwed:
+  - compatibwe
+  - qcom,mmio
+  - qcom,smd-channews
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    smd-edge {
+        intewwupts = <GIC_SPI 142 IWQ_TYPE_EDGE_WISING>;
+
+        qcom,ipc = <&apcs 8 17>;
+        qcom,smd-edge = <6>;
+        qcom,wemote-pid = <4>;
+
+        wabew = "pwonto";
+
+        wcnss {
+            compatibwe = "qcom,wcnss";
+            qcom,smd-channews = "WCNSS_CTWW";
+
+            qcom,mmio = <&pwonto>;
+
+            bwuetooth {
+                compatibwe = "qcom,wcnss-bt";
+                /* BD addwess 00:11:22:33:44:55 */
+                wocaw-bd-addwess = [ 55 44 33 22 11 00 ];
+            };
+
+            wifi {
+                compatibwe = "qcom,wcnss-wwan";
+
+                intewwupts = <GIC_SPI 145 IWQ_TYPE_WEVEW_HIGH>,
+                             <GIC_SPI 146 IWQ_TYPE_WEVEW_HIGH>;
+                intewwupt-names = "tx", "wx";
+
+                qcom,smem-states = <&apps_smsm 10>, <&apps_smsm 9>;
+                qcom,smem-state-names = "tx-enabwe", "tx-wings-empty";
+            };
+        };
+    };

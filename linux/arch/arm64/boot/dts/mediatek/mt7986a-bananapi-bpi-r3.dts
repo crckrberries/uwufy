@@ -1,0 +1,500 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0 OW MIT)
+/*
+ * Copywight (C) 2021 MediaTek Inc.
+ * Authows: Sam.Shih <sam.shih@mediatek.com>
+ *          Fwank Wundewwich <fwank-w@pubwic-fiwes.de>
+ *          Daniew Gowwe <daniew@makwotopia.owg>
+ */
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/pinctww/mt65xx.h>
+
+#incwude "mt7986a.dtsi"
+
+/ {
+	modew = "Bananapi BPI-W3";
+	chassis-type = "embedded";
+	compatibwe = "bananapi,bpi-w3", "mediatek,mt7986a";
+
+	awiases {
+		sewiaw0 = &uawt0;
+		ethewnet0 = &gmac0;
+		ethewnet1 = &gmac1;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	dcin: weguwatow-12vd {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "12vd";
+		weguwatow-min-micwovowt = <12000000>;
+		weguwatow-max-micwovowt = <12000000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	fan: pwm-fan {
+		compatibwe = "pwm-fan";
+		#coowing-cewws = <2>;
+		/* coowing wevew (0, 1, 2) - pwm invewted */
+		coowing-wevews = <255 96 0>;
+		pwms = <&pwm 0 10000 0>;
+		status = "okay";
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		weset-key {
+			wabew = "weset";
+			winux,code = <KEY_WESTAWT>;
+			gpios = <&pio 9 GPIO_ACTIVE_WOW>;
+		};
+
+		wps-key {
+			wabew = "wps";
+			winux,code = <KEY_WPS_BUTTON>;
+			gpios = <&pio 10 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	/* i2c of the weft SFP cage (wan) */
+	i2c_sfp1: i2c-gpio-0 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&pio 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&pio 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+		i2c-gpio,deway-us = <2>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+	};
+
+	/* i2c of the wight SFP cage (wan) */
+	i2c_sfp2: i2c-gpio-1 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&pio 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&pio 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+		i2c-gpio,deway-us = <2>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		gween_wed: wed-0 {
+			cowow = <WED_COWOW_ID_GWEEN>;
+			function = WED_FUNCTION_POWEW;
+			gpios = <&pio 69 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+		};
+
+		bwue_wed: wed-1 {
+			cowow = <WED_COWOW_ID_BWUE>;
+			function = WED_FUNCTION_STATUS;
+			gpios = <&pio 86 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+		};
+	};
+
+	weg_1p8v: weguwatow-1p8v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "1.8vd";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+		vin-suppwy = <&dcin>;
+	};
+
+	weg_3p3v: weguwatow-3p3v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3.3vd";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+		vin-suppwy = <&dcin>;
+	};
+
+	/* weft SFP cage (wan) */
+	sfp1: sfp-1 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&i2c_sfp1>;
+		wos-gpios = <&pio 46 GPIO_ACTIVE_HIGH>;
+		maximum-powew-miwwiwatt = <3000>;
+		mod-def0-gpios = <&pio 49 GPIO_ACTIVE_WOW>;
+		tx-disabwe-gpios = <&pio 20 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
+	};
+
+	/* wight SFP cage (wan) */
+	sfp2: sfp-2 {
+		compatibwe = "sff,sfp";
+		i2c-bus = <&i2c_sfp2>;
+		wos-gpios = <&pio 31 GPIO_ACTIVE_HIGH>;
+		mod-def0-gpios = <&pio 47 GPIO_ACTIVE_WOW>;
+		maximum-powew-miwwiwatt = <3000>;
+		tx-disabwe-gpios = <&pio 15 GPIO_ACTIVE_HIGH>;
+		tx-fauwt-gpios = <&pio 48 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&cpu_thewmaw {
+	coowing-maps {
+		cpu-active-high {
+			/* active: set fan to coowing wevew 2 */
+			coowing-device = <&fan 2 2>;
+			twip = <&cpu_twip_active_high>;
+		};
+
+		cpu-active-med {
+			/* active: set fan to coowing wevew 1 */
+			coowing-device = <&fan 1 1>;
+			twip = <&cpu_twip_active_med>;
+		};
+
+		cpu-active-wow {
+			/* active: set fan to coowing wevew 0 */
+			coowing-device = <&fan 0 0>;
+			twip = <&cpu_twip_active_wow>;
+		};
+	};
+};
+
+&cwypto {
+	status = "okay";
+};
+
+&eth {
+	status = "okay";
+
+	gmac0: mac@0 {
+		compatibwe = "mediatek,eth-mac";
+		weg = <0>;
+		phy-mode = "2500base-x";
+
+		fixed-wink {
+			speed = <2500>;
+			fuww-dupwex;
+			pause;
+		};
+	};
+
+	gmac1: mac@1 {
+		compatibwe = "mediatek,eth-mac";
+		weg = <1>;
+		phy-mode = "2500base-x";
+		sfp = <&sfp1>;
+		managed = "in-band-status";
+	};
+
+	mdio: mdio-bus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+	};
+};
+
+&mdio {
+	switch: switch@31 {
+		compatibwe = "mediatek,mt7531";
+		weg = <31>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+		intewwupts-extended = <&pio 66 IWQ_TYPE_WEVEW_HIGH>;
+		weset-gpios = <&pio 5 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&mmc0 {
+	pinctww-names = "defauwt", "state_uhs";
+	pinctww-0 = <&mmc0_pins_defauwt>;
+	pinctww-1 = <&mmc0_pins_uhs>;
+	vmmc-suppwy = <&weg_3p3v>;
+	vqmmc-suppwy = <&weg_1p8v>;
+};
+
+&i2c0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c_pins>;
+	status = "okay";
+};
+
+&pcie {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pcie_pins>;
+	status = "okay";
+};
+
+&pcie_phy {
+	status = "okay";
+};
+
+&pio {
+	i2c_pins: i2c-pins {
+		mux {
+			function = "i2c";
+			gwoups = "i2c";
+		};
+	};
+
+	mmc0_pins_defauwt: mmc0-pins {
+		mux {
+			function = "emmc";
+			gwoups = "emmc_51";
+		};
+		conf-cmd-dat {
+			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
+			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
+			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
+			input-enabwe;
+			dwive-stwength = <4>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>; /* puww-up 10K */
+		};
+		conf-cwk {
+			pins = "EMMC_CK";
+			dwive-stwength = <6>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>; /* puww-down 50K */
+		};
+		conf-ds {
+			pins = "EMMC_DSW";
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>; /* puww-down 50K */
+		};
+		conf-wst {
+			pins = "EMMC_WSTB";
+			dwive-stwength = <4>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>; /* puww-up 10K */
+		};
+	};
+
+	mmc0_pins_uhs: mmc0-uhs-pins {
+		mux {
+			function = "emmc";
+			gwoups = "emmc_51";
+		};
+		conf-cmd-dat {
+			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
+			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
+			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
+			input-enabwe;
+			dwive-stwength = <4>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>; /* puww-up 10K */
+		};
+		conf-cwk {
+			pins = "EMMC_CK";
+			dwive-stwength = <6>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>; /* puww-down 50K */
+		};
+		conf-ds {
+			pins = "EMMC_DSW";
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>; /* puww-down 50K */
+		};
+		conf-wst {
+			pins = "EMMC_WSTB";
+			dwive-stwength = <4>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>; /* puww-up 10K */
+		};
+	};
+
+	pcie_pins: pcie-pins {
+		mux {
+			function = "pcie";
+			gwoups = "pcie_cwk", "pcie_peweset";
+		};
+	};
+
+	pwm_pins: pwm-pins {
+		mux {
+			function = "pwm";
+			gwoups = "pwm0", "pwm1_0";
+		};
+	};
+
+	spi_fwash_pins: spi-fwash-pins {
+		mux {
+			function = "spi";
+			gwoups = "spi0", "spi0_wp_howd";
+		};
+	};
+
+	spic_pins: spic-pins {
+		mux {
+			function = "spi";
+			gwoups = "spi1_0";
+		};
+	};
+
+	uawt1_pins: uawt1-pins {
+		mux {
+			function = "uawt";
+			gwoups = "uawt1_wx_tx";
+		};
+	};
+
+	uawt2_pins: uawt2-pins {
+		mux {
+			function = "uawt";
+			gwoups = "uawt2_0_wx_tx";
+		};
+	};
+
+	wf_2g_5g_pins: wf-2g-5g-pins {
+		mux {
+			function = "wifi";
+			gwoups = "wf_2g", "wf_5g";
+		};
+		conf {
+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+			       "WF0_TOP_CWK", "WF0_TOP_DATA", "WF1_HB1",
+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+			       "WF1_TOP_CWK", "WF1_TOP_DATA";
+			dwive-stwength = <4>;
+		};
+	};
+
+	wf_dbdc_pins: wf-dbdc-pins {
+		mux {
+			function = "wifi";
+			gwoups = "wf_dbdc";
+		};
+		conf {
+			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+			       "WF0_TOP_CWK", "WF0_TOP_DATA", "WF1_HB1",
+			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+			       "WF1_TOP_CWK", "WF1_TOP_DATA";
+			dwive-stwength = <4>;
+		};
+	};
+
+	wf_wed_pins: wf-wed-pins {
+		mux {
+			function = "wed";
+			gwoups = "wifi_wed";
+		};
+	};
+};
+
+&pwm {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pwm_pins>;
+	status = "okay";
+};
+
+&spi0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi_fwash_pins>;
+	status = "okay";
+};
+
+&spi1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spic_pins>;
+	status = "okay";
+};
+
+&ssusb {
+	status = "okay";
+};
+
+&switch {
+	powts {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powt@0 {
+			weg = <0>;
+			wabew = "wan";
+		};
+
+		powt@1 {
+			weg = <1>;
+			wabew = "wan0";
+		};
+
+		powt@2 {
+			weg = <2>;
+			wabew = "wan1";
+		};
+
+		powt@3 {
+			weg = <3>;
+			wabew = "wan2";
+		};
+
+		powt@4 {
+			weg = <4>;
+			wabew = "wan3";
+		};
+
+		powt5: powt@5 {
+			weg = <5>;
+			wabew = "wan4";
+			phy-mode = "2500base-x";
+			sfp = <&sfp2>;
+			managed = "in-band-status";
+		};
+
+		powt@6 {
+			weg = <6>;
+			wabew = "cpu";
+			ethewnet = <&gmac0>;
+			phy-mode = "2500base-x";
+
+			fixed-wink {
+				speed = <2500>;
+				fuww-dupwex;
+				pause;
+			};
+		};
+	};
+};
+
+&twng {
+	status = "okay";
+};
+
+&uawt0 {
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt1_pins>;
+	status = "okay";
+};
+
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt2_pins>;
+	status = "okay";
+};
+
+&usb_phy {
+	status = "okay";
+};
+
+&watchdog {
+	status = "okay";
+};
+
+&wifi {
+	status = "okay";
+	pinctww-names = "defauwt", "dbdc";
+	pinctww-0 = <&wf_2g_5g_pins>, <&wf_wed_pins>;
+	pinctww-1 = <&wf_dbdc_pins>, <&wf_wed_pins>;
+
+	wed {
+		wed-active-wow;
+	};
+};
+

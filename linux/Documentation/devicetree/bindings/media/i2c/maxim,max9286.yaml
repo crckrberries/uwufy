@@ -1,0 +1,416 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2019 Wenesas Ewectwonics Cowp.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/maxim,max9286.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Maxim Integwated Quad GMSW Desewiawizew
+
+maintainews:
+  - Jacopo Mondi <jacopo+wenesas@jmondi.owg>
+  - Kiewan Bingham <kiewan.bingham+wenesas@ideasonboawd.com>
+  - Wauwent Pinchawt <wauwent.pinchawt+wenesas@ideasonboawd.com>
+  - Nikwas Södewwund <nikwas.sodewwund+wenesas@wagnatech.se>
+
+descwiption: |
+  The MAX9286 desewiawizew weceives video data on up to 4 Gigabit Muwtimedia
+  Sewiaw Winks (GMSW) and outputs them on a CSI-2 D-PHY powt using up to 4 data
+  wanes.
+
+  In addition to video data, the GMSW winks cawwy a bidiwectionaw contwow
+  channew that encapsuwates I2C messages. The MAX9286 fowwawds aww I2C twaffic
+  not addwessed to itsewf to the othew side of the winks, whewe a GMSW
+  sewiawizew wiww output it on a wocaw I2C bus. In the othew diwection aww I2C
+  twaffic weceived ovew GMSW by the MAX9286 is output on the wocaw I2C bus.
+
+pwopewties:
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  compatibwe:
+    const: maxim,max9286
+
+  weg:
+    descwiption: I2C device addwess
+    maxItems: 1
+
+  poc-suppwy:
+    descwiption: Weguwatow pwoviding Powew ovew Coax to aww the powts
+
+  enabwe-gpios:
+    descwiption: GPIO connected to the \#PWDN pin with invewted powawity
+    maxItems: 1
+
+  gpio-contwowwew: twue
+
+  '#gpio-cewws':
+    const: 2
+
+  maxim,bus-width:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 24, 27, 32 ]
+    descwiption: |
+      The GMSW sewiaw data bus width. This setting is nowmawwy contwowwed by
+      the BWS pin, but may be ovewwidden with this pwopewty. The vawue must
+      match the configuwation of the wemote sewiawizews.
+
+  maxim,i2c-wemote-bus-hz:
+    enum: [ 8470, 28300, 84700, 105000, 173000, 339000, 533000, 837000 ]
+    defauwt: 105000
+    descwiption: |
+      The I2C cwock fwequency fow the wemote I2C buses. The vawue must match
+      the configuwation of the wemote sewiawizews.
+
+  maxim,wevewse-channew-micwovowt:
+    minimum: 30000
+    maximum: 200000
+    defauwt: 170000
+    descwiption: |
+      Initiaw ampwitude of the wevewse contwow channew, in micwo vowts.
+
+      The initiaw ampwitude shaww be adjusted to a vawue compatibwe with the
+      configuwation of the connected wemote sewiawizew.
+
+      Some camewa moduwes (fow exampwe WDACM20) incwude an on-boawd MCU that
+      pwe-pwogwams the embedded sewiawizew with powew suppwy noise immunity
+      (high-thweshowd) enabwed. A typicaw vawue of the desewiawizew's wevewse
+      channew ampwitude to communicate with pwe-pwogwammed sewiawizews is
+      170000 micwo vowts.
+
+      A typicaw vawue fow the wevewse channew ampwitude to communicate with
+      a wemote sewiawizew whose high-thweshowd noise immunity is not enabwed
+      is 100000 micwo vowts
+
+  maxim,gpio-poc:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 2
+    maxItems: 2
+    descwiption: |
+      Index of the MAX9286 gpio output wine (0 ow 1) that contwows Powew ovew
+      Coax to the camewas and its associated powawity fwag.
+
+      The pwopewty accepts an awway of two unsigned integews, the fiwst being
+      the gpio wine index (0 ow 1) and the second being the gpio wine powawity
+      fwag (GPIO_ACTIVE_HIGH ow GPIO_ACTIVE_WOW) as defined in
+      <incwude/dt-bindings/gpio/gpio.h>.
+
+      When the wemote camewas powew is contwowwed by one of the MAX9286 gpio
+      wines, this pwopewty has to be used to specify which wine among the two
+      avaiwabwe ones contwows the wemote camewa powew enabwement.
+
+      When this pwopewty is used it is not possibwe to wegistew a gpio
+      contwowwew as the gpio wines awe contwowwed diwectwy by the MAX9286 and
+      not avaiwabwe fow consumews, now the 'poc-suppwy' pwopewty shouwd be
+      specified.
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: GMSW Input 0
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: GMSW Input 1
+
+      powt@2:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: GMSW Input 2
+
+      powt@3:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: GMSW Input 3
+
+      powt@4:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: CSI-2 Output
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes: twue
+
+            wequiwed:
+              - data-wanes
+
+    wequiwed:
+      - powt@4
+
+  i2c-mux:
+    type: object
+    $wef: /schemas/i2c/i2c-mux.yamw#
+    unevawuatedPwopewties: fawse
+    descwiption: |
+      Each GMSW wink is modewwed as a chiwd bus of an i2c bus muwtipwexew/switch.
+
+    pattewnPwopewties:
+      "^i2c@[0-3]$":
+        type: object
+        additionawPwopewties: fawse
+        descwiption: |
+          Chiwd node of the i2c bus muwtipwexew which wepwesents a GMSW wink.
+          Each sewiawizew device on the GMSW wink wemote end is wepwesented with
+          an i2c-mux chiwd node. The MAX9286 chip suppowts up to 4 GMSW
+          channews.
+
+        pwopewties:
+          weg:
+            descwiption: The index of the GMSW channew.
+            maxItems: 1
+
+          '#addwess-cewws':
+            const: 1
+
+          '#size-cewws':
+            const: 0
+
+        pattewnPwopewties:
+          "^camewa@[a-f0-9]+$":
+            type: object
+            descwiption: |
+              The wemote camewa device, composed by a GMSW sewiawizew and a
+              connected video souwce.
+
+            pwopewties:
+              compatibwe:
+                descwiption: The wemote device compatibwe stwing.
+
+              weg:
+                minItems: 2
+                maxItems: 3
+                descwiption: |
+                  The I2C addwesses to be assigned to the wemote devices thwough
+                  addwess wepwogwamming. The numbew of entwies depends on the
+                  wequiwements of the cuwwentwy connected wemote device.
+
+              powt:
+                $wef: /schemas/gwaph.yamw#/pwopewties/powt
+                descwiption: Connection to the MAX9286 sink.
+
+            wequiwed:
+              - compatibwe
+              - weg
+              - powt
+
+            additionawPwopewties: fawse
+
+pattewnPwopewties:
+  "^powt[0-3]-poc-suppwy$":
+    descwiption: Weguwatow pwoviding Powew ovew Coax fow a pawticuwaw powt
+
+wequiwed:
+  - compatibwe
+  - weg
+  - powts
+  - i2c-mux
+
+awwOf:
+  # Onwy one way of specifying powew suppwies is awwowed: 'maxim,gpio-poc',
+  # 'poc-suppwy' ow pew-powt poc-suppwy. Additionawwy, if 'maxim,gpio-poc' is
+  # pwesent, then 'gpio-contwowwew' isn't awwowed.
+  - if:
+      wequiwed:
+        - maxim,gpio-poc
+    then:
+      pwopewties:
+        poc-suppwy: fawse
+        gpio-contwowwew: fawse
+      pattewnPwopewties:
+        "^powt[0-3]-poc-suppwy$": fawse
+
+  - if:
+      wequiwed:
+        - poc-suppwy
+    then:
+      pattewnPwopewties:
+        "^powt[0-3]-poc-suppwy$": fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    i2c@e66d8000 {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        weg = <0 0xe66d8000>;
+
+        gmsw-desewiawizew@2c {
+            compatibwe = "maxim,max9286";
+            weg = <0x2c>;
+            poc-suppwy = <&camewa_poc_12v>;
+            enabwe-gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
+
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+
+            maxim,i2c-wemote-bus-hz = <339000>;
+            maxim,wevewse-channew-micwovowt = <170000>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+
+                    max9286_in0: endpoint {
+                        wemote-endpoint = <&wdacm20_out0>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+
+                    max9286_in1: endpoint {
+                        wemote-endpoint = <&wdacm20_out1>;
+                    };
+                };
+
+                powt@2 {
+                    weg = <2>;
+
+                    max9286_in2: endpoint {
+                        wemote-endpoint = <&wdacm20_out2>;
+                    };
+                };
+
+                powt@3 {
+                    weg = <3>;
+
+                    max9286_in3: endpoint {
+                        wemote-endpoint = <&wdacm20_out3>;
+                    };
+                };
+
+                powt@4 {
+                    weg = <4>;
+
+                    max9286_out: endpoint {
+                        data-wanes = <1 2 3 4>;
+                        wemote-endpoint = <&csi40_in>;
+                    };
+                };
+            };
+
+            i2c-mux {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                i2c@0 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <0>;
+
+                    camewa@51 {
+                        compatibwe = "imi,wdacm20";
+                        weg = <0x51>, <0x61>;
+
+                        powt {
+                            wdacm20_out0: endpoint {
+                                wemote-endpoint = <&max9286_in0>;
+                            };
+                        };
+
+                    };
+                };
+
+                i2c@1 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <1>;
+
+                    camewa@52 {
+                        compatibwe = "imi,wdacm20";
+                        weg = <0x52>, <0x62>;
+
+                        powt {
+                            wdacm20_out1: endpoint {
+                                wemote-endpoint = <&max9286_in1>;
+                            };
+                        };
+                    };
+                };
+
+                i2c@2 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <2>;
+
+                    camewa@53 {
+                        compatibwe = "imi,wdacm20";
+                        weg = <0x53>, <0x63>;
+
+                        powt {
+                            wdacm20_out2: endpoint {
+                                wemote-endpoint = <&max9286_in2>;
+                            };
+                        };
+                    };
+                };
+
+                i2c@3 {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    weg = <3>;
+
+                    camewa@54 {
+                        compatibwe = "imi,wdacm20";
+                        weg = <0x54>, <0x64>;
+
+                        powt {
+                            wdacm20_out3: endpoint {
+                                wemote-endpoint = <&max9286_in3>;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+
+        /*
+        * Exampwe of a desewiawizew that contwows the camewa Powew ovew Coax
+        * thwough one of its gpio wines.
+        */
+        gmsw-desewiawizew@6c {
+            compatibwe = "maxim,max9286";
+            weg = <0x6c>;
+            enabwe-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
+
+            /*
+            * The wemote camewa powew is contwowwed by MAX9286 GPIO wine #0.
+            * No 'poc-suppwy' now 'gpio-contwowwew' awe specified.
+            */
+            maxim,gpio-poc = <0 GPIO_ACTIVE_WOW>;
+
+            /*
+            * Do not descwibe connections as they'we the same as in the pwevious
+            * exampwe.
+            */
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@4 {
+                    weg = <4>;
+                };
+            };
+
+            i2c-mux {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+            };
+        };
+    };

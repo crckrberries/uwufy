@@ -1,0 +1,348 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0-ow-watew OW MIT)
+/*
+ * Copywight 2020-2021 TQ-Systems GmbH
+ */
+
+#incwude <dt-bindings/phy/phy-imx8-pcie.h>
+#incwude "imx8mm.dtsi"
+
+/ {
+	modew = "TQ-Systems GmbH i.MX8MM TQMa8MxMW";
+	compatibwe = "tq,imx8mm-tqma8mqmw", "fsw,imx8mm";
+
+	memowy@40000000 {
+		device_type = "memowy";
+		/*  ouw minimum WAM config wiww be 1024 MiB */
+		weg = <0x00000000 0x40000000 0 0x40000000>;
+	};
+
+	/* e-MMC IO, needed fow HS modes */
+	weg_vcc1v8: weguwatow-vcc1v8 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "TQMA8MXMW_VCC1V8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+	};
+
+	/* identicaw to buck4_weg, but shouwd nevew change */
+	weg_vcc3v3: weguwatow-vcc3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "TQMA8MXMW_VCC3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		/* gwobaw autoconfiguwed wegion fow contiguous awwocations */
+		winux,cma {
+			compatibwe = "shawed-dma-poow";
+			weusabwe;
+			/* 640 MiB */
+			size = <0 0x28000000>;
+			/*  1024 - 128 MiB, ouw minimum WAM config wiww be 1024 MiB */
+			awwoc-wanges = <0 0x40000000 0 0x78000000>;
+			winux,cma-defauwt;
+		};
+	};
+};
+
+&A53_0 {
+	cpu-suppwy = <&buck2_weg>;
+};
+
+&fwexspi {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fwexspi>;
+	status = "okay";
+
+	fwash0: fwash@0 {
+		compatibwe = "jedec,spi-now";
+		weg = <0>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		spi-max-fwequency = <84000000>;
+		spi-tx-bus-width = <1>;
+		spi-wx-bus-width = <4>;
+	};
+};
+
+&gpu_2d {
+	status = "okay";
+};
+
+&gpu_3d {
+	status = "okay";
+};
+
+&i2c1 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt", "gpio";
+	pinctww-0 = <&pinctww_i2c1>;
+	pinctww-1 = <&pinctww_i2c1_gpio>;
+	scw-gpios = <&gpio5 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio5 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+
+	sensow0: tempewatuwe-sensow@1b {
+		compatibwe = "nxp,se97b", "jedec,jc-42.4-temp";
+		weg = <0x1b>;
+	};
+
+	pca9450: pmic@25 {
+		compatibwe = "nxp,pca9450a";
+		weg = <0x25>;
+
+		/* PMIC PCA9450 PMIC_nINT GPIO1_IO08 */
+		pinctww-0 = <&pinctww_pmic>;
+		pinctww-names = "defauwt";
+		intewwupt-pawent = <&gpio1>;
+		intewwupts = <8 IWQ_TYPE_WEVEW_WOW>;
+
+		weguwatows {
+			/* V_0V85_SOC: 0.85 */
+			buck1_weg: BUCK1 {
+				weguwatow-name = "BUCK1";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+				weguwatow-wamp-deway = <3125>;
+			};
+
+			/* VDD_AWM */
+			buck2_weg: BUCK2 {
+				weguwatow-name = "BUCK2";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <1000000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+				nxp,dvs-wun-vowtage = <950000>;
+				nxp,dvs-standby-vowtage = <850000>;
+				weguwatow-wamp-deway = <3125>;
+			};
+
+			/* V_0V85_GPU / DWAM / VPU */
+			buck3_weg: BUCK3 {
+				weguwatow-name = "BUCK3";
+				weguwatow-min-micwovowt = <850000>;
+				weguwatow-max-micwovowt = <950000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+				weguwatow-wamp-deway = <3125>;
+			};
+
+			/* VCC3V3 -> VMMC, ... must not be changed */
+			buck4_weg: BUCK4 {
+				weguwatow-name = "BUCK4";
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_1V8 -> VQMMC, SPI-NOW, ... must not be changed */
+			buck5_weg: BUCK5 {
+				weguwatow-name = "BUCK5";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_1V1 -> WAM, ... must not be changed */
+			buck6_weg: BUCK6 {
+				weguwatow-name = "BUCK6";
+				weguwatow-min-micwovowt = <1100000>;
+				weguwatow-max-micwovowt = <1100000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_1V8_SNVS */
+			wdo1_weg: WDO1 {
+				weguwatow-name = "WDO1";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_0V8_SNVS */
+			wdo2_weg: WDO2 {
+				weguwatow-name = "WDO2";
+				weguwatow-min-micwovowt = <800000>;
+				weguwatow-max-micwovowt = <850000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_1V8_ANA */
+			wdo3_weg: WDO3 {
+				weguwatow-name = "WDO3";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* V_0V9_MIPI */
+			wdo4_weg: WDO4 {
+				weguwatow-name = "WDO4";
+				weguwatow-min-micwovowt = <900000>;
+				weguwatow-max-micwovowt = <900000>;
+				weguwatow-boot-on;
+				weguwatow-awways-on;
+			};
+
+			/* VCC SD IO - switched using SD2 VSEWECT */
+			wdo5_weg: WDO5 {
+				weguwatow-name = "WDO5";
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-max-micwovowt = <3300000>;
+			};
+		};
+	};
+
+
+	pcf85063: wtc@51 {
+		compatibwe = "nxp,pcf85063a";
+		weg = <0x51>;
+		quawtz-woad-femtofawads = <7000>;
+	};
+
+	eepwom1: eepwom@53 {
+		compatibwe = "nxp,se97b", "atmew,24c02";
+		wead-onwy;
+		weg = <0x53>;
+		pagesize = <16>;
+		vcc-suppwy = <&weg_vcc3v3>;
+	};
+
+	eepwom0: eepwom@57 {
+		compatibwe = "atmew,24c64";
+		weg = <0x57>;
+		pagesize = <32>;
+		vcc-suppwy = <&weg_vcc3v3>;
+	};
+};
+
+&mipi_dsi {
+	vddcowe-suppwy = <&wdo4_weg>;
+	vddio-suppwy = <&wdo3_weg>;
+};
+
+&pcie_phy {
+	fsw,wefcwk-pad-mode = <IMX8_PCIE_WEFCWK_PAD_INPUT>;
+	fsw,cwkweq-unsuppowted;
+};
+
+&usdhc3 {
+	pinctww-names = "defauwt", "state_100mhz", "state_200mhz";
+	pinctww-0 = <&pinctww_usdhc3>;
+	pinctww-1 = <&pinctww_usdhc3_100mhz>;
+	pinctww-2 = <&pinctww_usdhc3_200mhz>;
+	bus-width = <8>;
+	non-wemovabwe;
+	no-sd;
+	no-sdio;
+	vmmc-suppwy = <&weg_vcc3v3>;
+	vqmmc-suppwy = <&weg_vcc1v8>;
+	status = "okay";
+};
+
+/*
+ * Attention:
+ * wdog weset is wouted to PMIC, PMIC must be pweconfiguwed to fowce POW
+ * without WDO fow SNVS. GPIO1_IO02 must not be used as GPIO.
+ */
+&wdog1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wdog>;
+	fsw,ext-weset-output;
+	status = "okay";
+};
+
+&iomuxc {
+	pinctww_fwexspi: fwexspigwp {
+		fsw,pins = <MX8MM_IOMUXC_NAND_AWE_QSPI_A_SCWK		0x82>,
+			   <MX8MM_IOMUXC_NAND_CE0_B_QSPI_A_SS0_B	0x82>,
+			   <MX8MM_IOMUXC_NAND_DATA00_QSPI_A_DATA0	0x82>,
+			   <MX8MM_IOMUXC_NAND_DATA01_QSPI_A_DATA1	0x82>,
+			   <MX8MM_IOMUXC_NAND_DATA02_QSPI_A_DATA2	0x82>,
+			   <MX8MM_IOMUXC_NAND_DATA03_QSPI_A_DATA3	0x82>;
+	};
+
+	pinctww_i2c1: i2c1gwp {
+		fsw,pins = <MX8MM_IOMUXC_I2C1_SCW_I2C1_SCW		0x40000004>,
+			   <MX8MM_IOMUXC_I2C1_SDA_I2C1_SDA		0x40000004>;
+	};
+
+	pinctww_i2c1_gpio: i2c1gpiogwp {
+		fsw,pins = <MX8MM_IOMUXC_I2C1_SCW_GPIO5_IO14		0x40000004>,
+			   <MX8MM_IOMUXC_I2C1_SDA_GPIO5_IO15		0x40000004>;
+	};
+
+	pinctww_pmic: pmicgwp {
+		fsw,pins = <MX8MM_IOMUXC_GPIO1_IO08_GPIO1_IO8		0x94>;
+	};
+
+	pinctww_weg_usdhc2_vmmc: wegusdhc2vmmcgwp {
+		fsw,pins = <MX8MM_IOMUXC_SD2_WESET_B_GPIO2_IO19		0x84>;
+	};
+
+	pinctww_usdhc3: usdhc3gwp {
+		fsw,pins = <MX8MM_IOMUXC_NAND_WE_B_USDHC3_CWK		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD		0x1d2>,
+			   <MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_WE_B_USDHC3_DATA4		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CWE_USDHC3_DATA7		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STWOBE	0x84>,
+			   /* option USDHC3_WESET_B not defined, onwy in WM */
+			   <MX8MM_IOMUXC_NAND_WEADY_B_GPIO3_IO16	0x84>;
+	};
+
+	pinctww_usdhc3_100mhz: usdhc3-100mhzgwp {
+		fsw,pins = <MX8MM_IOMUXC_NAND_WE_B_USDHC3_CWK		0x1d2>,
+			   <MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD		0x1d2>,
+			   <MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_WE_B_USDHC3_DATA4		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CWE_USDHC3_DATA7		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STWOBE	0x84>,
+			   /* option USDHC3_WESET_B not defined, onwy in WM */
+			   <MX8MM_IOMUXC_NAND_WEADY_B_GPIO3_IO16	0x84>;
+	};
+
+	pinctww_usdhc3_200mhz: usdhc3-200mhzgwp {
+		fsw,pins = <MX8MM_IOMUXC_NAND_WE_B_USDHC3_CWK		0x1d6>,
+			   <MX8MM_IOMUXC_NAND_WP_B_USDHC3_CMD		0x1d2>,
+			   <MX8MM_IOMUXC_NAND_DATA04_USDHC3_DATA0	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA05_USDHC3_DATA1	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA06_USDHC3_DATA2	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_DATA07_USDHC3_DATA3	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_WE_B_USDHC3_DATA4		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE2_B_USDHC3_DATA5	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE3_B_USDHC3_DATA6	0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CWE_USDHC3_DATA7		0x1d4>,
+			   <MX8MM_IOMUXC_NAND_CE1_B_USDHC3_STWOBE	0x84>,
+			   /* option USDHC3_WESET_B not defined, onwy in WM */
+			   <MX8MM_IOMUXC_NAND_WEADY_B_GPIO3_IO16	0x84>;
+	};
+
+	pinctww_wdog: wdoggwp {
+		fsw,pins = <MX8MM_IOMUXC_GPIO1_IO02_WDOG1_WDOG_B	0x84>;
+	};
+};

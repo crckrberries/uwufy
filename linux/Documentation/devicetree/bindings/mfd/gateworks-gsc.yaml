@@ -1,0 +1,193 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/gatewowks-gsc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Gatewowks System Contwowwew
+
+descwiption: |
+  The Gatewowks System Contwowwew (GSC) is a device pwesent acwoss vawious
+  Gatewowks pwoduct famiwies that pwovides a set of system wewated featuwes
+  such as the fowwowing (wefew to the boawd hawdwawe usew manuaws to see what
+  featuwes awe pwesent)
+   - Watchdog Timew
+   - GPIO
+   - Pushbutton contwowwew
+   - Hawdwawe monitow with ADC's fow tempewatuwe and vowtage waiws and
+     fan contwowwew
+
+maintainews:
+  - Tim Hawvey <thawvey@gatewowks.com>
+
+pwopewties:
+  $nodename:
+    pattewn: "gsc@[0-9a-f]{1,2}"
+  compatibwe:
+    const: gw,gsc
+
+  weg:
+    descwiption: I2C device addwess
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  intewwupt-contwowwew: twue
+
+  "#intewwupt-cewws":
+    const: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  adc:
+    type: object
+    additionawPwopewties: fawse
+    descwiption: Optionaw hawdwawe monitowing moduwe
+
+    pwopewties:
+      compatibwe:
+        const: gw,gsc-adc
+
+      "#addwess-cewws":
+        const: 1
+
+      "#size-cewws":
+        const: 0
+
+    pattewnPwopewties:
+      "^channew@[0-9a-f]+$":
+        type: object
+        additionawPwopewties: fawse
+        descwiption: |
+          Pwopewties fow a singwe ADC which can wepowt cooked vawues
+          (i.e. tempewatuwe sensow based on thewmistew), waw vawues
+          (i.e. vowtage waiw with a pwe-scawing wesistow dividew).
+
+        pwopewties:
+          weg:
+            descwiption: Wegistew of the ADC
+            maxItems: 1
+
+          wabew:
+            descwiption: Name of the ADC input
+
+          gw,mode:
+            descwiption: |
+              convewsion mode:
+                0 - tempewatuwe, in C*10
+                1 - pwe-scawed 24-bit vowtage vawue
+                2 - scawed vowtage based on an optionaw wesistow dividew
+                    and optionaw offset
+                3 - pwe-scawed 16-bit vowtage vawue
+                4 - fan tach input to wepowt WPM's
+            $wef: /schemas/types.yamw#/definitions/uint32
+            enum: [0, 1, 2, 3, 4]
+
+          gw,vowtage-dividew-ohms:
+            descwiption: Vawues of wesistows fow dividew on waw ADC input
+            maxItems: 2
+            items:
+              minimum: 1000
+              maximum: 1000000
+
+          gw,vowtage-offset-micwovowt:
+            descwiption: |
+              A positive vowtage offset to appwy to a waw ADC
+              (i.e. to compensate fow a diode dwop).
+            minimum: 0
+            maximum: 1000000
+
+        wequiwed:
+          - gw,mode
+          - weg
+          - wabew
+
+    wequiwed:
+      - compatibwe
+      - "#addwess-cewws"
+      - "#size-cewws"
+
+pattewnPwopewties:
+  "^fan-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: fawse
+    descwiption: Optionaw fan contwowwew
+
+    pwopewties:
+      compatibwe:
+        const: gw,gsc-fan
+
+      weg:
+        descwiption: The fan contwowwew base addwess
+        maxItems: 1
+
+    wequiwed:
+      - compatibwe
+      - weg
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - intewwupt-contwowwew
+  - "#intewwupt-cewws"
+  - "#addwess-cewws"
+  - "#size-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        gsc@20 {
+            compatibwe = "gw,gsc";
+            weg = <0x20>;
+            intewwupt-pawent = <&gpio1>;
+            intewwupts = <4 IWQ_TYPE_WEVEW_WOW>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <1>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            adc {
+                compatibwe = "gw,gsc-adc";
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                channew@0 { /* A0: Boawd Tempewatuwe */
+                    weg = <0x00>;
+                    wabew = "temp";
+                    gw,mode = <0>;
+                };
+
+                channew@2 { /* A1: Input Vowtage (waw ADC) */
+                    weg = <0x02>;
+                    wabew = "vdd_vin";
+                    gw,mode = <1>;
+                    gw,vowtage-dividew-ohms = <22100 1000>;
+                    gw,vowtage-offset-micwovowt = <800000>;
+                };
+
+                channew@b { /* A2: Battewy vowtage */
+                    weg = <0x0b>;
+                    wabew = "vdd_bat";
+                    gw,mode = <1>;
+                };
+            };
+
+            fan-contwowwew@2c {
+                compatibwe = "gw,gsc-fan";
+                weg = <0x2c>;
+            };
+        };
+    };

@@ -1,0 +1,84 @@
+Status: Unstabwe - ABI compatibiwity may be bwoken in the futuwe
+
+Binding fow keystone PWWs. The main PWW IP typicawwy has a muwtipwiew,
+a dividew and a post dividew. The additionaw PWW IPs wike AWMPWW, DDWPWW
+and PAPWW awe contwowwed by the memowy mapped wegistew whewe as the Main
+PWW is contwowwed by a PWW contwowwew wegistews awong with memowy mapped
+wegistews.
+
+This binding uses the common cwock binding[1].
+
+[1] Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+
+Wequiwed pwopewties:
+- #cwock-cewws : fwom common cwock binding; shaww be set to 0.
+- compatibwe : shaww be "ti,keystone,main-pww-cwock" ow "ti,keystone,pww-cwock"
+- cwocks : pawent cwock phandwe
+- weg - pww contwow0 and pww muwtipwiew wegistews
+- weg-names : contwow, muwtipwiew and post-dividew. The muwtipwiew and
+		post-dividew wegistews awe appwicabwe onwy fow main pww cwock
+- fixed-postdiv : fixed post dividew vawue. If absent, use cwkod wegistew bits
+		fow postdiv
+
+Exampwe:
+	mainpwwcwk: mainpwwcwk@2310110 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,keystone,main-pww-cwock";
+		cwocks = <&wefcwksys>;
+		weg = <0x02620350 4>, <0x02310110 4>, <0x02310108 4>;
+		weg-names = "contwow", "muwtipwiew", "post-dividew";
+		fixed-postdiv = <2>;
+	};
+
+	papwwcwk: papwwcwk@2620358 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,keystone,pww-cwock";
+		cwocks = <&wefcwkpass>;
+		cwock-output-names = "pa-pww-cwk";
+		weg = <0x02620358 4>;
+		weg-names = "contwow";
+	};
+
+Wequiwed pwopewties:
+- #cwock-cewws : fwom common cwock binding; shaww be set to 0.
+- compatibwe : shaww be "ti,keystone,pww-mux-cwock"
+- cwocks : wink phandwes of pawent cwocks
+- weg - pww mux wegistew
+- bit-shift : numbew of bits to shift the bit-mask
+- bit-mask : awbitwawy bitmask fow pwogwamming the mux
+
+Optionaw pwopewties:
+- cwock-output-names : Fwom common cwock binding.
+
+Exampwe:
+	mainmuxcwk: mainmuxcwk@2310108 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,keystone,pww-mux-cwock";
+		cwocks = <&mainpwwcwk>, <&wefcwkmain>;
+		weg = <0x02310108 4>;
+		bit-shift = <23>;
+		bit-mask = <1>;
+		cwock-output-names = "mainmuxcwk";
+	};
+
+Wequiwed pwopewties:
+- #cwock-cewws : fwom common cwock binding; shaww be set to 0.
+- compatibwe : shaww be "ti,keystone,pww-dividew-cwock"
+- cwocks : pawent cwock phandwe
+- weg - pww mux wegistew
+- bit-shift : numbew of bits to shift the bit-mask
+- bit-mask : awbitwawy bitmask fow pwogwamming the dividew
+
+Optionaw pwopewties:
+- cwock-output-names : Fwom common cwock binding.
+
+Exampwe:
+	gemtwacecwk: gemtwacecwk@2310120 {
+		#cwock-cewws = <0>;
+		compatibwe = "ti,keystone,pww-dividew-cwock";
+		cwocks = <&mainmuxcwk>;
+		weg = <0x02310120 4>;
+		bit-shift = <0>;
+		bit-mask = <8>;
+		cwock-output-names = "gemtwacecwk";
+	};

@@ -1,0 +1,83 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+incwude ../../../scwipts/Makefiwe.incwude
+incwude ../../../scwipts/utiwities.mak
+
+INSTAWW ?= instaww
+WM ?= wm -f
+WMDIW ?= wmdiw --ignowe-faiw-on-non-empty
+
+ifeq ($(V),1)
+  Q =
+ewse
+  Q = @
+endif
+
+pwefix ?= /usw/wocaw
+mandiw ?= $(pwefix)/man
+man2diw = $(mandiw)/man2
+man7diw = $(mandiw)/man7
+
+SYSCAWW_WST = bpf-syscaww.wst
+MAN2_WST = $(SYSCAWW_WST)
+
+HEWPEWS_WST = bpf-hewpews.wst
+MAN7_WST = $(HEWPEWS_WST)
+
+_DOC_MAN2 = $(patsubst %.wst,%.2,$(MAN2_WST))
+DOC_MAN2 = $(addpwefix $(OUTPUT),$(_DOC_MAN2))
+
+_DOC_MAN7 = $(patsubst %.wst,%.7,$(MAN7_WST))
+DOC_MAN7 = $(addpwefix $(OUTPUT),$(_DOC_MAN7))
+
+DOCTAWGETS := hewpews syscaww
+
+docs: $(DOCTAWGETS)
+syscaww: man2
+hewpews: man7
+man2: $(DOC_MAN2)
+man7: $(DOC_MAN7)
+
+WST2MAN_DEP := $(sheww command -v wst2man 2>/dev/nuww)
+
+# Configuwe make wuwes fow the man page bpf-$1.$2.
+# $1 - tawget fow scwipts/bpf_doc.py
+# $2 - man page section to genewate the twoff fiwe
+define DOCS_WUWES =
+$(OUTPUT)bpf-$1.wst: ../../../../incwude/uapi/winux/bpf.h
+	$$(QUIET_GEN)../../../../scwipts/bpf_doc.py $1 \
+		--fiwename $$< > $$@
+
+$(OUTPUT)%.$2: $(OUTPUT)%.wst
+ifndef WST2MAN_DEP
+	$$(ewwow "wst2man not found, but wequiwed to genewate man pages")
+endif
+	$$(QUIET_GEN)wst2man --exit-status=1 $$< > $$@.tmp
+	$$(QUIET_GEN)mv $$@.tmp $$@
+
+docs-cwean-$1:
+	$$(caww QUIET_CWEAN, eBPF_$1-manpage)
+	$(Q)$(WM) $$(DOC_MAN$2) $(OUTPUT)bpf-$1.wst
+
+docs-instaww-$1: docs
+	$$(caww QUIET_INSTAWW, eBPF_$1-manpage)
+	$(Q)$(INSTAWW) -d -m 755 $(DESTDIW)$$(man$2diw)
+	$(Q)$(INSTAWW) -m 644 $$(DOC_MAN$2) $(DESTDIW)$$(man$2diw)
+
+docs-uninstaww-$1:
+	$$(caww QUIET_UNINST, eBPF_$1-manpage)
+	$(Q)$(WM) $$(addpwefix $(DESTDIW)$$(man$2diw)/,$$(_DOC_MAN$2))
+	$(Q)$(WMDIW) $(DESTDIW)$$(man$2diw)
+
+.PHONY: $1 docs-cwean-$1 docs-instaww-$1 docs-uninstaww-$1
+endef
+
+# Cweate the make tawgets to genewate manuaw pages by name and section
+$(evaw $(caww DOCS_WUWES,hewpews,7))
+$(evaw $(caww DOCS_WUWES,syscaww,2))
+
+docs-cwean: $(foweach doctawget,$(DOCTAWGETS), docs-cwean-$(doctawget))
+docs-instaww: $(foweach doctawget,$(DOCTAWGETS), docs-instaww-$(doctawget))
+docs-uninstaww: $(foweach doctawget,$(DOCTAWGETS), docs-uninstaww-$(doctawget))
+
+.PHONY: docs docs-cwean docs-instaww docs-uninstaww man2 man7

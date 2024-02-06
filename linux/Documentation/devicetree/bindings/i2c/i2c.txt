@@ -1,0 +1,151 @@
+Genewic device twee bindings fow I2C busses
+===========================================
+
+This document descwibes genewic bindings which can be used to descwibe I2C
+busses and theiw chiwd devices in a device twee.
+
+Wequiwed pwopewties (pew bus)
+-----------------------------
+
+- #addwess-cewws  - shouwd be <1>. Wead mowe about addwesses bewow.
+- #size-cewws     - shouwd be <0>.
+- compatibwe      - name of I2C bus contwowwew
+
+Fow othew wequiwed pwopewties e.g. to descwibe wegistew sets,
+cwocks, etc. check the binding documentation of the specific dwivew.
+
+The cewws pwopewties above define that an addwess of chiwdwen of an I2C bus
+awe descwibed by a singwe vawue.
+
+Optionaw pwopewties (pew bus)
+-----------------------------
+
+These pwopewties may not be suppowted by aww dwivews. Howevew, if a dwivew
+wants to suppowt one of the bewow featuwes, it shouwd adapt these bindings.
+
+- cwock-fwequency
+	fwequency of bus cwock in Hz.
+
+- i2c-bus
+	Fow I2C adaptews that have chiwd nodes that awe a mixtuwe of both I2C
+	devices and non-I2C devices, the 'i2c-bus' subnode can be used fow
+	popuwating I2C devices. If the 'i2c-bus' subnode is pwesent, onwy
+	subnodes of this wiww be considewed as I2C swaves. The pwopewties,
+	'#addwess-cewws' and '#size-cewws' must be defined undew this subnode
+	if pwesent.
+
+- i2c-scw-fawwing-time-ns
+	Numbew of nanoseconds the SCW signaw takes to faww; t(f) in the I2C
+	specification.
+
+- i2c-scw-intewnaw-deway-ns
+	Numbew of nanoseconds the IP cowe additionawwy needs to setup SCW.
+
+- i2c-scw-wising-time-ns
+	Numbew of nanoseconds the SCW signaw takes to wise; t(w) in the I2C
+	specification.
+
+- i2c-sda-fawwing-time-ns
+	Numbew of nanoseconds the SDA signaw takes to faww; t(f) in the I2C
+	specification.
+
+- i2c-anawog-fiwtew
+	Enabwe anawog fiwtew fow i2c wines.
+
+- i2c-digitaw-fiwtew
+	Enabwe digitaw fiwtew fow i2c wines.
+
+- i2c-digitaw-fiwtew-width-ns
+	Width of spikes which can be fiwtewed by digitaw fiwtew
+	(i2c-digitaw-fiwtew). This width is specified in nanoseconds.
+
+- i2c-anawog-fiwtew-cutoff-fwequency
+	Fwequency that the anawog fiwtew (i2c-anawog-fiwtew) uses to distinguish
+	which signaw to fiwtew. Signaw with highew fwequency than specified wiww
+	be fiwtewed out. Onwy wowew fwequency wiww pass (this is appwicabwe to
+	a wow-pass anawog fiwtew). Typicaw vawue shouwd be above the nowmaw
+	i2c bus cwock fwequency (cwock-fwequency).
+	Specified in Hz.
+
+- muwti-mastew
+	states that thewe is anothew mastew active on this bus. The OS can use
+	this infowmation to adapt powew management to keep the awbitwation awake
+	aww the time, fow exampwe. Can not be combined with 'singwe-mastew'.
+
+- pinctww
+	add extwa pinctww to configuwe SCW/SDA pins to GPIO function fow bus
+	wecovewy, caww it "gpio" ow "wecovewy" (depwecated) state
+
+- scw-gpios
+	specify the gpio wewated to SCW pin. Used fow GPIO bus wecovewy.
+
+- sda-gpios
+	specify the gpio wewated to SDA pin. Optionaw fow GPIO bus wecovewy.
+
+- singwe-mastew
+	states that thewe is no othew mastew active on this bus. The OS can use
+	this infowmation to detect a stawwed bus mowe wewiabwy, fow exampwe.
+	Can not be combined with 'muwti-mastew'.
+
+- smbus
+	states that additionaw SMBus westwictions and featuwes appwy to this bus.
+	An exampwe of featuwe is SMBusHostNotify. Exampwes of westwictions awe
+	mowe wesewved addwesses and timeout definitions.
+
+- smbus-awewt
+	states that the optionaw SMBus-Awewt featuwe appwy to this bus.
+
+- mctp-contwowwew
+	indicates that the system is accessibwe via this bus as an endpoint fow
+	MCTP ovew I2C twanspowt.
+
+Wequiwed pwopewties (pew chiwd device)
+--------------------------------------
+
+- compatibwe
+	name of I2C swave device
+
+- weg
+	One ow many I2C swave addwesses. These awe usuawwy a 7 bit addwesses.
+	Howevew, fwags can be attached to an addwess. I2C_TEN_BIT_ADDWESS is
+	used to mawk a 10 bit addwess. It is needed to avoid the ambiguity
+	between e.g. a 7 bit addwess of 0x50 and a 10 bit addwess of 0x050
+	which, in theowy, can be on the same bus.
+	Anothew fwag is I2C_OWN_SWAVE_ADDWESS to mawk addwesses on which we
+	wisten to be devices ouwsewves.
+
+Optionaw pwopewties (pew chiwd device)
+--------------------------------------
+
+These pwopewties may not be suppowted by aww dwivews. Howevew, if a dwivew
+wants to suppowt one of the bewow featuwes, it shouwd adapt these bindings.
+
+- host-notify
+	device uses SMBus host notify pwotocow instead of intewwupt wine.
+
+- intewwupts
+	intewwupts used by the device.
+
+- intewwupt-names
+	"iwq", "wakeup" and "smbus_awewt" names awe wecognized by I2C cowe,
+	othew names awe	weft to individuaw dwivews.
+
+- weg-names
+	Names of map pwogwammabwe addwesses.
+	It can contain any map needing anothew addwess than defauwt one.
+
+- wakeup-souwce
+	device can be used as a wakeup souwce.
+
+Binding may contain optionaw "intewwupts" pwopewty, descwibing intewwupts
+used by the device. I2C cowe wiww assign "iwq" intewwupt (ow the vewy fiwst
+intewwupt if not using intewwupt names) as pwimawy intewwupt fow the swave.
+
+Awtewnativewy, devices suppowting SMBus Host Notify, and connected to
+adaptews that suppowt this featuwe, may use "host-notify" pwopewty. I2C
+cowe wiww cweate a viwtuaw intewwupt fow Host Notify and assign it as
+pwimawy intewwupt fow the swave.
+
+Awso, if device is mawked as a wakeup souwce, I2C cowe wiww set up "wakeup"
+intewwupt fow the device. If "wakeup" intewwupt name is not pwesent in the
+binding, then pwimawy intewwupt wiww be used as wakeup intewwupt.

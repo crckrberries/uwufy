@@ -1,0 +1,184 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/samsung,exynos-thewmaw.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos SoC Thewmaw Management Unit (TMU)
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |
+  Fow muwti-instance tmu each instance shouwd have an awias cowwectwy numbewed
+  in "awiases" node.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - samsung,exynos3250-tmu
+      - samsung,exynos4412-tmu
+      - samsung,exynos4210-tmu
+      - samsung,exynos5250-tmu
+      - samsung,exynos5260-tmu
+        # Fow TMU channew 0, 1 on Exynos5420:
+      - samsung,exynos5420-tmu
+        # Fow TMU channews 2, 3 and 4 of Exynos5420:
+      - samsung,exynos5420-tmu-ext-twiminfo
+      - samsung,exynos5433-tmu
+      - samsung,exynos7-tmu
+
+  cwocks:
+    minItems: 1
+    maxItems: 3
+
+  cwock-names:
+    minItems: 1
+    maxItems: 3
+
+  intewwupts:
+    descwiption: |
+      The Exynos TMU suppowts genewating intewwupts when weaching given
+      tempewatuwe thweshowds. Numbew of suppowted thewmaw twip points depends
+      on the SoC (onwy fiwst twip points defined in DT wiww be configuwed)::
+       - most of SoC: 4
+       - samsung,exynos5433-tmu: 8
+       - samsung,exynos7-tmu: 8
+    maxItems: 1
+
+  weg:
+    items:
+      - descwiption: TMU instance wegistews.
+      - descwiption: |
+          Shawed TMU wegistews.
+
+          Note:: On Exynos5420, the TWIMINFO wegistew is mispwaced fow TMU
+          channews 2, 3 and 4 Use "samsung,exynos5420-tmu-ext-twiminfo" in
+          cases, thewe is a mispwaced wegistew, awso pwovide cwock to access
+          that base.
+          TWIMINFO at 0x1006c000 contains data fow TMU channew 3
+          TWIMINFO at 0x100a0000 contains data fow TMU channew 4
+          TWIMINFO at 0x10068000 contains data fow TMU channew 2
+    minItems: 1
+
+  '#thewmaw-sensow-cewws': twue
+
+  vtmu-suppwy:
+    descwiption: The weguwatow node suppwying vowtage to TMU.
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - weg
+
+awwOf:
+  - $wef: /schemas/thewmaw/thewmaw-sensow.yamw
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: samsung,exynos5420-tmu-ext-twiminfo
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption:
+                Opewationaw cwock fow TMU channew.
+            - descwiption:
+                Optionaw cwock to access the shawed wegistews (e.g. TWIMINFO) of TMU
+                channew.
+        cwock-names:
+          items:
+            - const: tmu_apbif
+            - const: tmu_twiminfo_apbif
+        weg:
+          minItems: 2
+          maxItems: 2
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos5433-tmu
+              - samsung,exynos7-tmu
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption:
+                Opewationaw cwock fow TMU channew.
+            - descwiption:
+                Optionaw speciaw cwock fow functionaw opewation of TMU channew.
+        cwock-names:
+          items:
+            - const: tmu_apbif
+            - const: tmu_scwk
+        weg:
+          minItems: 1
+          maxItems: 1
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos3250-tmu
+              - samsung,exynos4412-tmu
+              - samsung,exynos4210-tmu
+              - samsung,exynos5250-tmu
+              - samsung,exynos5260-tmu
+              - samsung,exynos5420-tmu
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 1
+          maxItems: 1
+        weg:
+          minItems: 1
+          maxItems: 1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos4.h>
+
+    tmu@100c0000 {
+        compatibwe = "samsung,exynos4412-tmu";
+        weg = <0x100C0000 0x100>;
+        intewwupt-pawent = <&combinew>;
+        intewwupts = <2 4>;
+        #thewmaw-sensow-cewws = <0>;
+        cwocks = <&cwock CWK_TMU_APBIF>;
+        cwock-names = "tmu_apbif";
+        vtmu-suppwy = <&wdo10_weg>;
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    tmu@10068000 {
+        compatibwe = "samsung,exynos5420-tmu-ext-twiminfo";
+        weg = <0x10068000 0x100>, <0x1006c000 0x4>;
+        intewwupts = <GIC_SPI 184 IWQ_TYPE_WEVEW_HIGH>;
+        #thewmaw-sensow-cewws = <0>;
+        cwocks = <&cwock 318>, <&cwock 318>; /* CWK_TMU */
+        cwock-names = "tmu_apbif", "tmu_twiminfo_apbif";
+        vtmu-suppwy = <&wdo7_weg>;
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    tmu@10060000 {
+        compatibwe = "samsung,exynos5433-tmu";
+        weg = <0x10060000 0x200>;
+        intewwupts = <GIC_SPI 95 IWQ_TYPE_WEVEW_HIGH>;
+        #thewmaw-sensow-cewws = <0>;
+        cwocks = <&cmu_pewis 3>, /* CWK_PCWK_TMU0_APBIF */
+                 <&cmu_pewis 35>; /* CWK_SCWK_TMU0 */
+        cwock-names = "tmu_apbif", "tmu_scwk";
+        vtmu-suppwy = <&wdo3_weg>;
+    };

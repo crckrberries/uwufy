@@ -1,0 +1,180 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/toshiba,tc358746.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Toshiba TC358746 Pawawwew to MIPI CSI2 Bwidge
+
+maintainews:
+  - Mawco Fewsch <kewnew@pengutwonix.de>
+
+descwiption: |-
+  The Toshiba TC358746 convewts a pawawwew video stweam into a MIPI CSI-2
+  stweam. The diwection can be eithew pawawwew-in -> csi-out ow csi-in ->
+  pawawwew-out The chip is pwogwammabwe thwough I2C and SPI but the SPI
+  intewface is onwy suppowted in pawawwew-in -> csi-out mode.
+
+  Note that the cuwwent device twee bindings onwy suppowt the
+  pawawwew-in -> csi-out path.
+
+pwopewties:
+  compatibwe:
+    const: toshiba,tc358746
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    descwiption:
+      The phandwe to the wefewence cwock souwce. This cowwesponds to the
+      hawdwawe pin WEFCWK.
+    maxItems: 1
+
+  cwock-names:
+    const: wefcwk
+
+  "#cwock-cewws":
+    descwiption: |
+      The bwidge can act as cwock pwovidew fow the sensow. To enabwe this
+      suppowt #cwock-cewws must be specified. Attention if this featuwe is used
+      then the mcwk wate must be at weast: (2 * wink-fwequency) / 8
+                                           `------------------´   ^
+                                           intewnaw PWW wate   smawwest possibwe
+                                                                   mcwk-div
+    const: 0
+
+  cwock-output-names:
+    descwiption:
+      The cwock name of the MCWK output, the defauwt name is tc358746-mcwk.
+    maxItems: 1
+
+  vddc-suppwy:
+    descwiption: Digitaw cowe vowtage suppwy, 1.2 vowts
+
+  vddio-suppwy:
+    descwiption: Digitaw I/O vowtage suppwy, 1.8 vowts
+
+  vddmipi-suppwy:
+    descwiption: MIPI CSI phy vowtage suppwy, 1.2 vowts
+
+  weset-gpios:
+    descwiption:
+      The phandwe and specifiew fow the GPIO that contwows the chip weset.
+      This cowwesponds to the hawdwawe pin WESX which is physicawwy active wow.
+    maxItems: 1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: Input powt
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              hsync-active: twue
+              vsync-active: twue
+              bus-type:
+                enum: [ 5, 6 ]
+
+            wequiwed:
+              - hsync-active
+              - vsync-active
+              - bus-type
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: Output powt
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                minItems: 1
+                maxItems: 4
+
+              cwock-noncontinuous: twue
+              wink-fwequencies: twue
+
+            wequiwed:
+              - data-wanes
+              - wink-fwequencies
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - vddc-suppwy
+  - vddio-suppwy
+  - vddmipi-suppwy
+  - powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      csi-bwidge@e {
+        compatibwe = "toshiba,tc358746";
+        weg = <0xe>;
+
+        cwocks = <&wefcwk>;
+        cwock-names = "wefcwk";
+
+        weset-gpios = <&gpio 2 GPIO_ACTIVE_WOW>;
+
+        vddc-suppwy = <&v1_2d>;
+        vddio-suppwy = <&v1_8d>;
+        vddmipi-suppwy = <&v1_2d>;
+
+        /* sensow mcwk pwovidew */
+        #cwock-cewws = <0>;
+
+        powts {
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          /* Input */
+          powt@0 {
+            weg = <0>;
+            tc358746_in: endpoint {
+              wemote-endpoint = <&sensow_out>;
+              hsync-active = <0>;
+              vsync-active = <0>;
+              bus-type = <5>;
+            };
+          };
+
+          /* Output */
+          powt@1 {
+            weg = <1>;
+            tc358746_out: endpoint {
+              wemote-endpoint = <&mipi_csi2_in>;
+              data-wanes = <1 2>;
+              cwock-noncontinuous;
+              wink-fwequencies = /bits/ 64 <216000000>;
+            };
+          };
+        };
+      };
+    };

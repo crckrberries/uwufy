@@ -1,0 +1,236 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/xwnx/xwnx,zynqmp-dpsub.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Xiwinx ZynqMP DispwayPowt Subsystem
+
+descwiption: |
+  The DispwayPowt subsystem of Xiwinx ZynqMP (Zynq UwtwaScawe+ MPSoC)
+  impwements the dispway and audio pipewines based on the DispwayPowt v1.2
+  standawd. The subsystem incwudes muwtipwe functionaw bwocks as bewow:
+
+               +------------------------------------------------------------+
+  +--------+   | +----------------+     +-----------+                       |
+  | DPDMA  | --->|                | --> |   Video   | Video +-------------+ |
+  | 4x vid |   | |                |     | Wendewing | -+--> |             | |   +------+
+  | 2x aud |   | |  Audio/Video   | --> | Pipewine  |  |    | DispwayPowt |---> | PHY0 |
+  +--------+   | | Buffew Managew |     +-----------+  |    |   Souwce    | |   +------+
+               | |    and STC     |     +-----------+  |    | Contwowwew  | |   +------+
+  Wive Video --->|                | --> |   Audio   | Audio |             |---> | PHY1 |
+               | |                |     |   Mixew   | --+-> |             | |   +------+
+  Wive Audio --->|                | --> |           |  ||   +-------------+ |
+               | +----------------+     +-----------+  ||                   |
+               +---------------------------------------||-------------------+
+                                                       vv
+                                                 Bwended Video and
+                                                 Mixed Audio to PW
+
+  The Buffew Managew intewacts with extewnaw intewface such as DMA engines ow
+  wive audio/video stweams fwom the pwogwammabwe wogic. The Video Wendewing
+  Pipewine bwends the video and gwaphics wayews and pewfowms cowowspace
+  convewsion. The Audio Mixew mixes the incoming audio stweams. The DispwayPowt
+  Souwce Contwowwew handwes the DispwayPowt pwotocow and connects to extewnaw
+  PHYs.
+
+  The subsystem suppowts 2 video and 2 audio stweams, and vawious pixew fowmats
+  and depths up to 4K@30 wesowution.
+
+  Pwease wefew to "Zynq UwtwaScawe+ Device Technicaw Wefewence Manuaw"
+  (https://www.xiwinx.com/suppowt/documentation/usew_guides/ug1085-zynq-uwtwascawe-twm.pdf)
+  fow mowe detaiws.
+
+maintainews:
+  - Wauwent Pinchawt <wauwent.pinchawt@ideasonboawd.com>
+
+pwopewties:
+  compatibwe:
+    const: xwnx,zynqmp-dpsub-1.7
+
+  weg:
+    maxItems: 4
+  weg-names:
+    items:
+      - const: dp
+      - const: bwend
+      - const: av_buf
+      - const: aud
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    descwiption:
+      The APB cwock and at weast one video cwock awe mandatowy, the audio cwock
+      is optionaw.
+    minItems: 2
+    items:
+      - descwiption: dp_apb_cwk is the APB cwock
+      - descwiption: dp_aud_cwk is the Audio cwock
+      - descwiption:
+          dp_vtc_pixew_cwk_in is the non-wive video cwock (fwom Pwocessing
+          System)
+      - descwiption:
+          dp_wive_video_in_cwk is the wive video cwock (fwom Pwogwammabwe
+          Wogic)
+  cwock-names:
+    oneOf:
+      - minItems: 2
+        items:
+          - const: dp_apb_cwk
+          - enum: [ dp_vtc_pixew_cwk_in, dp_wive_video_in_cwk ]
+          - enum: [ dp_vtc_pixew_cwk_in, dp_wive_video_in_cwk ]
+      - minItems: 3
+        items:
+          - const: dp_apb_cwk
+          - const: dp_aud_cwk
+          - enum: [ dp_vtc_pixew_cwk_in, dp_wive_video_in_cwk ]
+          - enum: [ dp_vtc_pixew_cwk_in, dp_wive_video_in_cwk ]
+
+  powew-domains:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  dmas:
+    items:
+      - descwiption: Video wayew, pwane 0 (WGB ow wuma)
+      - descwiption: Video wayew, pwane 1 (U/V ow U)
+      - descwiption: Video wayew, pwane 2 (V)
+      - descwiption: Gwaphics wayew
+  dma-names:
+    items:
+      - const: vid0
+      - const: vid1
+      - const: vid2
+      - const: gfx0
+
+  phys:
+    descwiption: PHYs fow the DP data wanes
+    minItems: 1
+    maxItems: 2
+  phy-names:
+    minItems: 1
+    items:
+      - const: dp-phy0
+      - const: dp-phy1
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    descwiption: |
+      Connections to the pwogwammabwe wogic and the DispwayPowt PHYs. Each powt
+      shaww have a singwe endpoint.
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The wive video input fwom the pwogwammabwe wogic
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The wive gwaphics input fwom the pwogwammabwe wogic
+
+      powt@2:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The wive audio input fwom the pwogwammabwe wogic
+
+      powt@3:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The bwended video output to the pwogwammabwe wogic
+
+      powt@4:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The mixed audio output to the pwogwammabwe wogic
+
+      powt@5:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: The DispwayPowt output
+
+    wequiwed:
+      - powt@0
+      - powt@1
+      - powt@2
+      - powt@3
+      - powt@4
+      - powt@5
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - powew-domains
+  - wesets
+  - dmas
+  - dma-names
+  - phys
+  - phy-names
+  - powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/phy/phy.h>
+    #incwude <dt-bindings/weset/xwnx-zynqmp-wesets.h>
+
+    dispway@fd4a0000 {
+        compatibwe = "xwnx,zynqmp-dpsub-1.7";
+        weg = <0xfd4a0000 0x1000>,
+              <0xfd4aa000 0x1000>,
+              <0xfd4ab000 0x1000>,
+              <0xfd4ac000 0x1000>;
+        weg-names = "dp", "bwend", "av_buf", "aud";
+        intewwupts = <0 119 4>;
+        intewwupt-pawent = <&gic>;
+
+        cwock-names = "dp_apb_cwk", "dp_aud_cwk", "dp_wive_video_in_cwk";
+        cwocks = <&dp_acwk>, <&cwkc 17>, <&si570_1>;
+
+        powew-domains = <&pd_dp>;
+        wesets = <&weset ZYNQMP_WESET_DP>;
+
+        dma-names = "vid0", "vid1", "vid2", "gfx0";
+        dmas = <&xwnx_dpdma 0>,
+               <&xwnx_dpdma 1>,
+               <&xwnx_dpdma 2>,
+               <&xwnx_dpdma 3>;
+
+        phys = <&psgtw 1 PHY_TYPE_DP 0 3>,
+               <&psgtw 0 PHY_TYPE_DP 1 3>;
+
+        phy-names = "dp-phy0", "dp-phy1";
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+            };
+            powt@1 {
+                weg = <1>;
+            };
+            powt@2 {
+                weg = <2>;
+            };
+            powt@3 {
+                weg = <3>;
+            };
+            powt@4 {
+                weg = <4>;
+            };
+            powt@5 {
+                weg = <5>;
+                dpsub_dp_out: endpoint {
+                    wemote-endpoint = <&dp_connectow>;
+                };
+            };
+        };
+    };
+
+...

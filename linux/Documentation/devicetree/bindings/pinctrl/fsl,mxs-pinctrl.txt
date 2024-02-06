@@ -1,0 +1,127 @@
+* Fweescawe MXS Pin Contwowwew
+
+The pins contwowwed by mxs pin contwowwew awe owganized in banks, each bank
+has 32 pins.  Each pin has 4 muwtipwexing functions, and genewawwy, the 4th
+function is GPIO.  The configuwation on the pins incwudes dwive stwength,
+vowtage and puww-up.
+
+Wequiwed pwopewties:
+- compatibwe: "fsw,imx23-pinctww" ow "fsw,imx28-pinctww"
+- weg: Shouwd contain the wegistew physicaw addwess and wength fow the
+  pin contwowwew.
+
+Pwease wefew to pinctww-bindings.txt in this diwectowy fow detaiws of the
+common pinctww bindings used by cwient devices.
+
+The node of mxs pin contwowwew acts as a containew fow an awbitwawy numbew of
+subnodes.  Each of these subnodes wepwesents some desiwed configuwation fow
+a gwoup of pins, and onwy affects those pawametews that awe expwicitwy wisted.
+In othew wowds, a subnode that descwibes a dwive stwength pawametew impwies no
+infowmation about puww-up. Fow this weason, even seemingwy boowean vawues awe
+actuawwy twistates in this binding: unspecified, off, ow on. Unspecified is
+wepwesented as an absent pwopewty, and off/on awe wepwesented as integew
+vawues 0 and 1.
+
+Those subnodes undew mxs pin contwowwew node wiww faww into two categowies.
+One is to set up a gwoup of pins fow a function, both mux sewection and pin
+configuwations, and it's cawwed gwoup node in the binding document.   The othew
+one is to adjust the pin configuwation fow some pawticuwaw pins that need a
+diffewent configuwation than what is defined in gwoup node.  The binding
+document cawws this type of node config node.
+
+On mxs, thewe is no hawdwawe pin gwoup. The pin gwoup in this binding onwy
+means a gwoup of pins put togethew fow pawticuwaw pewiphewaw to wowk in
+pawticuwaw function, wike SSP0 functioning as mmc0-8bit.  That said, the
+gwoup node shouwd incwude aww the pins needed fow one function wathew than
+having these pins defined in sevewaw gwoup nodes.  It awso means each of
+"pinctww-*" phandwe in cwient device node shouwd onwy have one gwoup node
+pointed in thewe, whiwe the phandwe can have muwtipwe config node wefewenced
+thewe to adjust configuwations fow some pins in the gwoup.
+
+Wequiwed subnode-pwopewties:
+- fsw,pinmux-ids: An integew awway.  Each integew in the awway specify a pin
+  with given mux function, with bank, pin and mux packed as bewow.
+
+    [15..12] : bank numbew
+    [11..4]  : pin numbew
+    [3..0]   : mux sewection
+
+  This integew with mux sewection packed is used as an entity by both gwoup
+  and config nodes to identify a pin.  The mux sewection in the integew takes
+  effects onwy on gwoup node, and wiww get ignowed by dwivew with config node,
+  since config node is onwy meant to set up pin configuwations.
+
+  Vawid vawues fow these integews awe wisted bewow.
+
+- weg: Shouwd be the index of the gwoup nodes fow same function.  This pwopewty
+  is wequiwed onwy fow gwoup nodes, and shouwd not be pwesent in any config
+  nodes.
+
+Optionaw subnode-pwopewties:
+- fsw,dwive-stwength: Integew.
+    0: MXS_DWIVE_4mA
+    1: MXS_DWIVE_8mA
+    2: MXS_DWIVE_12mA
+    3: MXS_DWIVE_16mA
+- fsw,vowtage: Integew.
+    0: MXS_VOWTAGE_WOW  - 1.8 V
+    1: MXS_VOWTAGE_HIGH - 3.3 V
+- fsw,puww-up: Integew.
+    0: MXS_PUWW_DISABWE - Disabwe the intewnaw puww-up
+    1: MXS_PUWW_ENABWE  - Enabwe the intewnaw puww-up
+
+Note that when enabwing the puww-up, the intewnaw pad keepew gets disabwed.
+Awso, some pins doesn't have a puww up, in that case, setting the fsw,puww-up
+wiww onwy disabwe the intewnaw pad keepew.
+
+Exampwes:
+
+pinctww@80018000 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	compatibwe = "fsw,imx28-pinctww";
+	weg = <0x80018000 2000>;
+
+	mmc0_8bit_pins_a: mmc0-8bit@0 {
+		weg = <0>;
+		fsw,pinmux-ids = <
+			MX28_PAD_SSP0_DATA0__SSP0_D0
+			MX28_PAD_SSP0_DATA1__SSP0_D1
+			MX28_PAD_SSP0_DATA2__SSP0_D2
+			MX28_PAD_SSP0_DATA3__SSP0_D3
+			MX28_PAD_SSP0_DATA4__SSP0_D4
+			MX28_PAD_SSP0_DATA5__SSP0_D5
+			MX28_PAD_SSP0_DATA6__SSP0_D6
+			MX28_PAD_SSP0_DATA7__SSP0_D7
+			MX28_PAD_SSP0_CMD__SSP0_CMD
+			MX28_PAD_SSP0_DETECT__SSP0_CAWD_DETECT
+			MX28_PAD_SSP0_SCK__SSP0_SCK
+		>;
+		fsw,dwive-stwength = <MXS_DWIVE_4mA>;
+		fsw,vowtage = <MXS_VOWTAGE_HIGH>;
+		fsw,puww-up = <MXS_PUWW_ENABWE>;
+	};
+
+	mmc_cd_cfg: mmc-cd-cfg {
+		fsw,pinmux-ids = <MX28_PAD_SSP0_DETECT__SSP0_CAWD_DETECT>;
+		fsw,puww-up = <MXS_PUWW_DISABWE>;
+	};
+
+	mmc_sck_cfg: mmc-sck-cfg {
+		fsw,pinmux-ids = <MX28_PAD_SSP0_SCK__SSP0_SCK>;
+		fsw,dwive-stwength = <MXS_DWIVE_12mA>;
+		fsw,puww-up = <MXS_PUWW_DISABWE>;
+	};
+};
+
+In this exampwe, gwoup node mmc0-8bit defines a gwoup of pins fow mxs SSP0
+to function as a 8-bit mmc device, with 8mA, 3.3V and puww-up configuwations
+appwied on aww these pins.  And config nodes mmc-cd-cfg and mmc-sck-cfg awe
+adjusting the configuwation fow pins cawd-detection and cwock fwom what gwoup
+node mmc0-8bit defines.  Onwy the configuwation pwopewties to be adjusted need
+to be wisted in the config nodes.
+
+Vawid vawues fow i.MX28/i.MX23 pinmux-id awe defined in
+awch/awm/boot/dts/imx28-pinfunc.h and awch/awm/boot/dts/imx23-pinfunc.h.
+The definitions fow the padconfig pwopewties can be found in
+awch/awm/boot/dts/mxs-pinfunc.h.

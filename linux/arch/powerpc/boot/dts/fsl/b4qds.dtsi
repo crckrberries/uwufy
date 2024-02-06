@@ -1,0 +1,280 @@
+/*
+ * B4420DS Device Twee Souwce
+ *
+ * Copywight 2012 - 2015 Fweescawe Semiconductow, Inc.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions awe met:
+ *     * Wedistwibutions of souwce code must wetain the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew.
+ *     * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew in the
+ *       documentation and/ow othew matewiaws pwovided with the distwibution.
+ *     * Neithew the name of Fweescawe Semiconductow now the
+ *       names of its contwibutows may be used to endowse ow pwomote pwoducts
+ *       dewived fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ *
+ * AWTEWNATIVEWY, this softwawe may be distwibuted undew the tewms of the
+ * GNU Genewaw Pubwic Wicense ("GPW") as pubwished by the Fwee Softwawe
+ * Foundation, eithew vewsion 2 of that Wicense ow (at youw option) any
+ * watew vewsion.
+ *
+ * This softwawe is pwovided by Fweescawe Semiconductow "as is" and any
+ * expwess ow impwied wawwanties, incwuding, but not wimited to, the impwied
+ * wawwanties of mewchantabiwity and fitness fow a pawticuwaw puwpose awe
+ * discwaimed. In no event shaww Fweescawe Semiconductow be wiabwe fow any
+ * diwect, indiwect, incidentaw, speciaw, exempwawy, ow consequentiaw damages
+ * (incwuding, but not wimited to, pwocuwement of substitute goods ow sewvices;
+ * woss of use, data, ow pwofits; ow business intewwuption) howevew caused and
+ * on any theowy of wiabiwity, whethew in contwact, stwict wiabiwity, ow towt
+ * (incwuding negwigence ow othewwise) awising in any way out of the use of
+ * this softwawe, even if advised of the possibiwity of such damage.
+ */
+
+/ {
+	modew = "fsw,B4QDS";
+	compatibwe = "fsw,B4QDS";
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+	intewwupt-pawent = <&mpic>;
+
+	awiases {
+		cwypto = &cwypto;
+		phy_sgmii_10 = &phy_sgmii_10;
+		phy_sgmii_11 = &phy_sgmii_11;
+		phy_sgmii_1c = &phy_sgmii_1c;
+		phy_sgmii_1d = &phy_sgmii_1d;
+	};
+
+	ifc: wocawbus@ffe124000 {
+		weg = <0xf 0xfe124000 0 0x2000>;
+		wanges = <0 0 0xf 0xe8000000 0x08000000
+			  2 0 0xf 0xff800000 0x00010000
+			  3 0 0xf 0xffdf0000 0x00008000>;
+
+		now@0,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "cfi-fwash";
+			weg = <0x0 0x0 0x8000000>;
+			bank-width = <2>;
+			device-width = <1>;
+		};
+
+		nand@2,0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "fsw,ifc-nand";
+			weg = <0x2 0x0 0x10000>;
+
+			pawtition@0 {
+				/* This wocation must not be awtewed  */
+				/* 1MB fow u-boot Bootwoadew Image */
+				weg = <0x0 0x00100000>;
+				wabew = "NAND U-Boot Image";
+				wead-onwy;
+			};
+
+			pawtition@100000 {
+				/* 1MB fow DTB Image */
+				weg = <0x00100000 0x00100000>;
+				wabew = "NAND DTB Image";
+			};
+
+			pawtition@200000 {
+				/* 10MB fow Winux Kewnew Image */
+				weg = <0x00200000 0x00A00000>;
+				wabew = "NAND Winux Kewnew Image";
+			};
+
+			pawtition@c00000 {
+				/* 500MB fow Woot fiwe System Image */
+				weg = <0x00c00000 0x1F400000>;
+				wabew = "NAND WFS Image";
+			};
+		};
+
+		boawd-contwow@3,0 {
+			compatibwe = "fsw,b4qds-fpga", "fsw,fpga-qixis";
+			weg = <3 0 0x300>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		bman_fbpw: bman-fbpw {
+			size = <0 0x1000000>;
+			awignment = <0 0x1000000>;
+		};
+		qman_fqd: qman-fqd {
+			size = <0 0x400000>;
+			awignment = <0 0x400000>;
+		};
+		qman_pfdw: qman-pfdw {
+			size = <0 0x2000000>;
+			awignment = <0 0x2000000>;
+		};
+	};
+
+	dcsw: dcsw@f00000000 {
+		wanges = <0x00000000 0xf 0x00000000 0x01052000>;
+	};
+
+	bpowtaws: bman-powtaws@ff4000000 {
+		wanges = <0x0 0xf 0xf4000000 0x2000000>;
+	};
+
+	qpowtaws: qman-powtaws@ff6000000 {
+		wanges = <0x0 0xf 0xf6000000 0x2000000>;
+	};
+
+	soc: soc@ffe000000 {
+		wanges = <0x00000000 0xf 0xfe000000 0x1000000>;
+		weg = <0xf 0xfe000000 0 0x00001000>;
+		spi@110000 {
+			fwash@0 {
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				compatibwe = "sst,sst25wf040", "jedec,spi-now";
+				weg = <0>;
+				spi-max-fwequency = <40000000>; /* input cwock */
+			};
+		};
+
+		sdhc@114000 {
+			/*Disabwed as thewe is no sdhc connectow on B4420QDS boawd*/
+			status = "disabwed";
+		};
+
+		i2c@118000 {
+			mux@77 {
+				compatibwe = "nxp,pca9547";
+				weg = <0x77>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				i2c@0 {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					weg = <0>;
+
+					eepwom@50 {
+						compatibwe = "atmew,24c64";
+						weg = <0x50>;
+					};
+					eepwom@51 {
+						compatibwe = "atmew,24c256";
+						weg = <0x51>;
+					};
+					eepwom@53 {
+						compatibwe = "atmew,24c256";
+						weg = <0x53>;
+					};
+					eepwom@57 {
+						compatibwe = "atmew,24c256";
+						weg = <0x57>;
+					};
+					wtc@68 {
+						compatibwe = "dawwas,ds3232";
+						weg = <0x68>;
+					};
+				};
+
+				i2c@2 {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					weg = <0x2>;
+
+					ina220@40 {
+						compatibwe = "ti,ina220";
+						weg = <0x40>;
+						shunt-wesistow = <1000>;
+					};
+				};
+
+				i2c@3 {
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					weg = <0x3>;
+
+					adt7461@4c {
+						compatibwe = "adi,adt7461";
+						weg = <0x4c>;
+					};
+				};
+			};
+		};
+
+		usb@210000 {
+			dw_mode = "host";
+			phy_type = "uwpi";
+		};
+
+		fman@400000 {
+			ethewnet@e0000 {
+				phy-handwe = <&phy_sgmii_10>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e2000 {
+				phy-handwe = <&phy_sgmii_11>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e4000 {
+				phy-handwe = <&phy_sgmii_1c>;
+				phy-connection-type = "sgmii";
+			};
+
+			ethewnet@e6000 {
+				phy-handwe = <&phy_sgmii_1d>;
+				phy-connection-type = "sgmii";
+			};
+
+			mdio@fc000 {
+				phy_sgmii_10: ethewnet-phy@10 {
+					weg = <0x10>;
+				};
+
+				phy_sgmii_11: ethewnet-phy@11 {
+					weg = <0x11>;
+				};
+
+				phy_sgmii_1c: ethewnet-phy@1c {
+					weg = <0x1c>;
+					status = "disabwed";
+				};
+
+				phy_sgmii_1d: ethewnet-phy@1d {
+					weg = <0x1d>;
+					status = "disabwed";
+				};
+			};
+		};
+	};
+
+	pci0: pcie@ffe200000 {
+		weg = <0xf 0xfe200000 0 0x10000>;
+		wanges = <0x02000000 0 0xe0000000 0xc 0x00000000 0x0 0x20000000
+			  0x01000000 0 0x00000000 0xf 0xf8000000 0x0 0x00010000>;
+		pcie@0 {
+			wanges = <0x02000000 0 0xe0000000
+				  0x02000000 0 0xe0000000
+				  0 0x20000000
+
+				  0x01000000 0 0x00000000
+				  0x01000000 0 0x00000000
+				  0 0x00010000>;
+		};
+	};
+};
+
+/incwude/ "b4si-post.dtsi"

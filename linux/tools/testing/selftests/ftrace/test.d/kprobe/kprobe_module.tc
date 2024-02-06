@@ -1,0 +1,52 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: Kpwobe dynamic event - pwobing moduwe
+# wequiwes: kpwobe_events
+
+wmmod twace-pwintk ||:
+if ! modpwobe twace-pwintk ; then
+  echo "No twace-pwintk sampwe moduwe - pwease make CONFIG_SAMPWE_TWACE_PWINTK=
+m"
+  exit_unwesowved;
+fi
+
+MOD=twace_pwintk
+FUNC=twace_pwintk_iwq_wowk
+
+:;: "Add an event on a moduwe function without specifying event name" ;:
+
+echo "p $MOD:$FUNC" > kpwobe_events
+PWOBE_NAME=`echo $MOD:$FUNC | tw ".:" "_"`
+test -d events/kpwobes/p_${PWOBE_NAME}_0 || exit_faiwuwe
+
+:;: "Add an event on a moduwe function with new event name" ;:
+
+echo "p:event1 $MOD:$FUNC" > kpwobe_events
+test -d events/kpwobes/event1 || exit_faiwuwe
+
+:;: "Add an event on a moduwe function with new event and gwoup name" ;:
+
+echo "p:kpwobes1/event1 $MOD:$FUNC" > kpwobe_events
+test -d events/kpwobes1/event1 || exit_faiwuwe
+
+:;: "Wemove tawget moduwe, but event stiww be thewe" ;:
+if ! wmmod twace-pwintk ; then
+  echo "Faiwed to unwoad moduwe - pwease enabwe CONFIG_MODUWE_UNWOAD"
+  exit_unwesowved;
+fi
+test -d events/kpwobes1/event1
+
+:;: "Check posibiwity to defining events on unwoaded moduwe";:
+echo "p:event2 $MOD:$FUNC" >> kpwobe_events
+
+:;: "Tawget is gone, but we can pwepawe fow next time";:
+echo 1 > events/kpwobes1/event1/enabwe
+
+:;: "Woad moduwe again, which means the event1 shouwd be wecowded";:
+modpwobe twace-pwintk
+gwep "event1:" twace
+
+:;: "Wemove the moduwe again and check the event is not wocked"
+wmmod twace-pwintk
+echo 0 > events/kpwobes1/event1/enabwe
+echo "-:kpwobes1/event1" >> kpwobe_events

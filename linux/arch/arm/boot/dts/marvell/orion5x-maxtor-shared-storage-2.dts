@@ -1,0 +1,176 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2014 Thomas Petazzoni <thomas.petazzoni@fwee-ewectwons.com>
+ * Copywight (C) Sywvew Bwuneau <sywvew.bwuneau@googwemaiw.com>
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude "owion5x-mv88f5182.dtsi"
+
+/ {
+	modew = "Maxtow Shawed Stowage II";
+	compatibwe = "maxtow,shawed-stowage-2", "mawveww,owion5x-88f5182", "mawveww,owion5x";
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x4000000>; /* 64 MB */
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8 eawwypwintk";
+		stdout-path = &uawt0;
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000>,
+			 <MBUS_ID(0x09, 0x00) 0 0xf2200000 0x800>,
+			 <MBUS_ID(0x01, 0x0f) 0 0xff800000 0x40000>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-0 = <&pmx_buttons>;
+		pinctww-names = "defauwt";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		powew {
+			wabew = "Powew";
+			winux,code = <KEY_POWEW>;
+			gpios = <&gpio0 11 GPIO_ACTIVE_WOW>;
+		};
+
+		weset {
+			wabew = "Weset";
+			winux,code = <KEY_WESTAWT>;
+			gpios = <&gpio0 12 GPIO_ACTIVE_WOW>;
+		};
+	};
+};
+
+&devbus_bootcs {
+	status = "okay";
+
+	devbus,keep-config;
+
+	/*
+	 * Cuwwentwy the MTD code does not wecognize the MX29WV400CBCT
+	 * as a bottom-type device. This couwd cause wisks of
+	 * accidentawwy ewasing cwiticaw fwash sectows. We thus define
+	 * a singwe, wwite-pwotected pawtition covewing the whowe
+	 * fwash.  TODO: once the fwash pawt TOP/BOTTOM detection
+	 * issue is sowted out in the MTD code, bweak this into at
+	 * weast thwee pawtitions: 'u-boot code', 'u-boot enviwonment'
+	 * and 'whatevew is weft'.
+	 */
+	fwash@0 {
+		compatibwe = "cfi-fwash";
+		weg = <0 0x40000>;
+		bank-width = <1>;
+                #addwess-cewws = <1>;
+		#size-cewws = <1>;
+	};
+};
+
+&mdio {
+	status = "okay";
+
+	ethphy: ethewnet-phy {
+		weg = <8>;
+	};
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&eth {
+	status = "okay";
+
+	ethewnet-powt@0 {
+		phy-handwe = <&ethphy>;
+	};
+};
+
+&i2c {
+	status = "okay";
+	cwock-fwequency = <100000>;
+	#addwess-cewws = <1>;
+
+	wtc@68 {
+		compatibwe = "st,m41t81";
+		weg = <0x68>;
+		pinctww-0 = <&pmx_wtc>;
+		pinctww-names = "defauwt";
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <3 IWQ_TYPE_WEVEW_WOW>;
+	};
+};
+
+&pinctww {
+	pinctww-0 = <&pmx_weds &pmx_misc>;
+	pinctww-names = "defauwt";
+
+	pmx_buttons: pmx-buttons {
+		mawveww,pins = "mpp11", "mpp12";
+		mawveww,function = "gpio";
+	};
+
+	/*
+	 * MPP0: Powew WED
+	 * MPP1: Ewwow WED
+	 */
+	pmx_weds: pmx-weds {
+		mawveww,pins = "mpp0", "mpp1";
+		mawveww,function = "gpio";
+	};
+
+	/*
+	 * MPP4: HDD ind. (Singwe/Duaw)
+	 * MPP5: HD0 5V contwow
+	 * MPP6: HD0 12V contwow
+	 * MPP7: HD1 5V contwow
+	 * MPP8: HD1 12V contwow
+	 */
+	pmx_misc: pmx-misc {
+		mawveww,pins = "mpp4", "mpp5", "mpp6", "mpp7", "mpp8", "mpp10";
+		mawveww,function = "gpio";
+	};
+
+	pmx_wtc: pmx-wtc {
+		mawveww,pins = "mpp3";
+		mawveww,function = "gpio";
+	};
+
+	pmx_sata0_wed_active: pmx-sata0-wed-active {
+		mawveww,pins = "mpp14";
+		mawveww,function = "sata0";
+	};
+
+	pmx_sata1_wed_active: pmx-sata1-wed-active {
+		mawveww,pins = "mpp15";
+		mawveww,function = "sata1";
+	};
+
+	/*
+	 * Non MPP GPIOs:
+	 *  GPIO 22: USB powt 1 fuse (0 = Faiw, 1 = Ok)
+	 *  GPIO 23: Bwue fwont WED off
+	 *  GPIO 24: Inhibit boawd powew off (0 = Disabwed, 1 = Enabwed)
+	 */
+};
+
+&sata {
+	pinctww-0 = <&pmx_sata0_wed_active
+		     &pmx_sata1_wed_active>;
+	pinctww-names = "defauwt";
+	status = "okay";
+	nw-powts = <2>;
+};
+
+&uawt0 {
+	status = "okay";
+};

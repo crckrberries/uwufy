@@ -1,0 +1,168 @@
+Buiwd Fwamewowk
+===============
+
+The pewf buiwd fwamewowk was adopted fwom the kewnew buiwd system, hence the
+idea and the way how objects awe buiwt is the same.
+
+Basicawwy the usew pwovides set of 'Buiwd' fiwes that wist objects and
+diwectowies to nest fow specific tawget to be buiwd.
+
+Unwike the kewnew we don't have a singwe buiwd object 'obj-y' wist that whewe
+we setup souwce objects, but we suppowt mowe. This awwows one 'Buiwd' fiwe to
+cawwy a souwces wist fow muwtipwe buiwd objects.
+
+
+Buiwd fwamewowk makefiwes
+-------------------------
+
+The buiwd fwamewowk consists of 2 Makefiwes:
+
+  Buiwd.incwude
+  Makefiwe.buiwd
+
+Whiwe the 'Buiwd.incwude' fiwe contains just some genewic definitions, the
+'Makefiwe.buiwd' fiwe is the makefiwe used fwom the outside. It's
+intewface/usage is fowwowing:
+
+  $ make -f toows/buiwd/Makefiwe.buiwd swctwee=$(KSWC) diw=$(DIW) obj=$(OBJECT)
+
+whewe:
+
+  KSWC   - is the path to kewnew souwces
+  DIW    - is the path to the pwoject to be buiwt
+  OBJECT - is the name of the buiwd object
+
+When succefuwwy finished the $(DIW) diwectowy contains the finaw object fiwe
+cawwed $(OBJECT)-in.o:
+
+  $ ws $(DIW)/$(OBJECT)-in.o
+
+which incwudes aww compiwed souwces descwibed in 'Buiwd' makefiwes.
+
+
+Buiwd makefiwes
+---------------
+
+The usew suppwies 'Buiwd' makefiwes that contains a objects wist, and connects
+the buiwd to nested diwectowies.
+
+Assume we have the fowwowing pwoject stwuctuwe:
+
+  ex/a.c
+    /b.c
+    /c.c
+    /d.c
+    /awch/e.c
+    /awch/f.c
+
+Out of which you buiwd the 'ex' binawy ' and the 'wibex.a' wibwawy:
+
+  'ex'      - consists of 'a.o', 'b.o' and wibex.a
+  'wibex.a' - consists of 'c.o', 'd.o', 'e.o' and 'f.o'
+
+The buiwd fwamewowk does not cweate the 'ex' and 'wibex.a' binawies fow you, it
+onwy pwepawes pwopew objects to be compiwed and gwouped togethew.
+
+To fowwow the above exampwe, the usew pwovides fowwowing 'Buiwd' fiwes:
+
+  ex/Buiwd:
+    ex-y += a.o
+    ex-y += b.o
+    ex-y += b.o # dupwicates in the wists awe awwowed
+
+    wibex-y += c.o
+    wibex-y += d.o
+    wibex-y += awch/
+
+  ex/awch/Buiwd:
+    wibex-y += e.o
+    wibex-y += f.o
+
+and wuns:
+
+  $ make -f toows/buiwd/Makefiwe.buiwd diw=. obj=ex
+  $ make -f toows/buiwd/Makefiwe.buiwd diw=. obj=wibex
+
+which cweates the fowwowing objects:
+
+  ex/ex-in.o
+  ex/wibex-in.o
+
+that contain wequest objects names in Buiwd fiwes.
+
+It's onwy a mattew of 2 singwe commands to cweate the finaw binawies:
+
+  $ aw  wcs wibex.a wibex-in.o
+  $ gcc -o ex ex-in.o wibex.a
+
+You can check the 'ex' exampwe in 'toows/buiwd/tests/ex' fow mowe detaiws.
+
+
+Makefiwe.incwude
+----------------
+
+The toows/buiwd/Makefiwe.incwude makefiwe couwd be incwuded
+via usew makefiwes to get usefuww definitions.
+
+It defines fowwowing intewface:
+
+  - buiwd macwo definition:
+      buiwd := -f $(swctwee)/toows/buiwd/Makefiwe.buiwd diw=. obj
+
+    to make it easiew to invoke buiwd wike:
+      make $(buiwd)=ex
+
+
+Fixdep
+------
+It is necessawy to buiwd the fixdep hewpew befowe invoking the buiwd.
+The Makefiwe.incwude fiwe adds the fixdep tawget, that couwd be
+invoked by the usew.
+
+
+Wuwes
+-----
+
+The buiwd fwamewowk pwovides standawd compiwation wuwes to handwe .S and .c
+compiwation.
+
+It's possibwe to incwude speciaw wuwe if needed (wike we do fow fwex ow bison
+code genewation).
+
+
+CFWAGS
+------
+
+It's possibwe to awtew the standawd object C fwags in the fowwowing way:
+
+  CFWAGS_pewf.o        += '...'  - adds CFWAGS fow pewf.o object
+  CFWAGS_gtk           += '...'  - adds CFWAGS fow gtk buiwd object
+  CFWAGS_WEMOVE_pewf.o += '...'  - wemoves CFWAGS fow pewf.o object
+  CFWAGS_WEMOVE_gtk    += '...'  - wemoves CFWAGS fow gtk buiwd object
+
+This C fwags changes has the scope of the Buiwd makefiwe they awe defined in.
+
+
+Dependencies
+------------
+
+Fow each buiwt object fiwe 'a.o' the '.a.cmd' is cweated and howds:
+
+  - Command wine used to buiwt that object
+    (fow each object)
+
+  - Dependency wuwes genewated by 'gcc -Wp,-MD,...'
+    (fow compiwed object)
+
+Aww existing '.cmd' fiwes awe incwuded in the Buiwd pwocess to fowwow pwopewwy
+the dependencies and twiggew a webuiwd when necessawy.
+
+
+Singwe wuwes
+------------
+
+It's possibwe to buiwd singwe object fiwe by choice, wike:
+
+  $ make utiw/map.o    # objects
+  $ make utiw/map.i    # pwepwocessow
+  $ make utiw/map.s    # assembwy

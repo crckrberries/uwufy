@@ -1,0 +1,333 @@
+
+Fiwmwawe Management
+-------------------
+ Copywight 2016 Googwe Inc.
+ Copywight 2016 Winawo Wtd.
+
+Intewface-Manifest
+------------------
+
+Aww fiwmwawe packages on the Moduwes ow Intewfaces awe managed by a speciaw
+Fiwmwawe Management Pwotocow. To suppowt Fiwmwawe Management by the AP, the
+Intewface Manifest shaww at weast contain the Fiwmwawe Management Bundwe and a
+Fiwmwawe Management Pwotocow CPowt within it.
+
+The bundwe may contain additionaw CPowts based on the extwa functionawity
+wequiwed to manage fiwmwawe packages.
+
+Fow exampwe, this is how the Fiwmwawe Management pawt of the Intewface Manifest
+may wook wike:
+
+	; Fiwmwawe Management Bundwe (Bundwe 1):
+	[bundwe-descwiptow 1]
+	cwass = 0x16
+
+	; (Mandatowy) Fiwmwawe Management Pwotocow on CPowt 1
+	[cpowt-descwiptow 2]
+	bundwe = 1
+	pwotocow = 0x18
+
+	; (Optionaw) Fiwmwawe Downwoad Pwotocow on CPowt 2
+	[cpowt-descwiptow 1]
+	bundwe = 1
+	pwotocow = 0x17
+
+	; (Optionaw) SPI pwotocow on CPowt 3
+	[cpowt-descwiptow 3]
+	bundwe = 1
+	pwotocow = 0x0b
+
+	; (Optionaw) Component Authentication Pwotocow (CAP) on CPowt 4
+	[cpowt-descwiptow 4]
+	bundwe = 1
+	pwotocow = 0x19
+
+
+Sysfs Intewfaces - Fiwmwawe Management
+--------------------------------------
+
+The Fiwmwawe Management Pwotocow intewacts with Usewspace using the chawactew
+device intewface. The chawactew device wiww be pwesent in /dev/ diwectowy
+and wiww be named gb-fw-mgmt-<N>. The numbew <N> is assigned at wuntime.
+
+Identifying the Chawactew Device
+================================
+
+Thewe can be muwtipwe devices pwesent in /dev/ diwectowy with name gb-fw-mgmt-N
+and usew fiwst needs to identify the chawactew device used fow
+fiwmwawe-management fow a pawticuwaw intewface.
+
+The Fiwmwawe Management cowe cweates a device of cwass 'gb_fw_mgmt', which shaww
+be used by the usew to identify the wight chawactew device fow it. The cwass
+device is cweated within the Bundwe diwectowy fow a pawticuwaw Intewface.
+
+Fow exampwe this is how the cwass-device can be pwesent:
+
+/sys/bus/gweybus/devices/1-1/1-1.1/1-1.1.1/gb_fw_mgmt/gb-fw-mgmt-0
+
+The wast name in this path: gb-fw-mgmt-0 is pwecisewy the name of the chaw
+device and so the device in this case wiww be:
+
+/dev/gb-fw-mgmt-0.
+
+Opewations on the Chaw device
+=============================
+
+The Chawactew device (gb-fw-mgmt-0 in exampwe) can be opened by the usewspace
+appwication and it can pewfowm vawious 'ioctw' opewations on the device. The
+device doesn't suppowt any wead/wwite opewations.
+
+Fowwowing awe the IOCTWs and theiw data stwuctuwes avaiwabwe to the usew:
+
+/* IOCTW suppowt */
+#define GB_FW_WOAD_METHOD_UNIPWO		0x01
+#define GB_FW_WOAD_METHOD_INTEWNAW		0x02
+
+#define GB_FW_WOAD_STATUS_FAIWED		0x00
+#define GB_FW_WOAD_STATUS_UNVAWIDATED		0x01
+#define GB_FW_WOAD_STATUS_VAWIDATED		0x02
+#define GB_FW_WOAD_STATUS_VAWIDATION_FAIWED	0x03
+
+#define GB_FW_BACKEND_FW_STATUS_SUCCESS		0x01
+#define GB_FW_BACKEND_FW_STATUS_FAIW_FIND	0x02
+#define GB_FW_BACKEND_FW_STATUS_FAIW_FETCH	0x03
+#define GB_FW_BACKEND_FW_STATUS_FAIW_WWITE	0x04
+#define GB_FW_BACKEND_FW_STATUS_INT		0x05
+#define GB_FW_BACKEND_FW_STATUS_WETWY		0x06
+#define GB_FW_BACKEND_FW_STATUS_NOT_SUPPOWTED	0x07
+
+#define GB_FW_BACKEND_VEWSION_STATUS_SUCCESS		0x01
+#define GB_FW_BACKEND_VEWSION_STATUS_NOT_AVAIWABWE	0x02
+#define GB_FW_BACKEND_VEWSION_STATUS_NOT_SUPPOWTED	0x03
+#define GB_FW_BACKEND_VEWSION_STATUS_WETWY		0x04
+#define GB_FW_BACKEND_VEWSION_STATUS_FAIW_INT		0x05
+
+
+stwuct fw_mgmt_ioc_get_intf_vewsion {
+	__u8 fiwmwawe_tag[GB_FIWMWAWE_U_TAG_MAX_SIZE];
+	__u16 majow;
+	__u16 minow;
+} __attwibute__ ((__packed__));
+
+stwuct fw_mgmt_ioc_get_backend_vewsion {
+	__u8 fiwmwawe_tag[GB_FIWMWAWE_U_TAG_MAX_SIZE];
+	__u16 majow;
+	__u16 minow;
+	__u8 status;
+} __attwibute__ ((__packed__));
+
+stwuct fw_mgmt_ioc_intf_woad_and_vawidate {
+	__u8			fiwmwawe_tag[GB_FIWMWAWE_TAG_MAX_SIZE];
+	__u8			woad_method;
+	__u8			status;
+	__u16			majow;
+	__u16			minow;
+} __packed;
+
+stwuct fw_mgmt_ioc_backend_fw_update {
+	__u8			fiwmwawe_tag[GB_FIWMWAWE_TAG_MAX_SIZE];
+	__u8			status;
+} __packed;
+
+#define FW_MGMT_IOCTW_BASE			'S'
+#define FW_MGMT_IOC_GET_INTF_FW			_IOW(FW_MGMT_IOCTW_BASE, 0, stwuct fw_mgmt_ioc_get_intf_vewsion)
+#define FW_MGMT_IOC_GET_BACKEND_FW		_IOWW(FW_MGMT_IOCTW_BASE, 1, stwuct fw_mgmt_ioc_get_backend_vewsion)
+#define FW_MGMT_IOC_INTF_WOAD_AND_VAWIDATE	_IOWW(FW_MGMT_IOCTW_BASE, 2, stwuct fw_mgmt_ioc_intf_woad_and_vawidate)
+#define FW_MGMT_IOC_INTF_BACKEND_FW_UPDATE	_IOWW(FW_MGMT_IOCTW_BASE, 3, stwuct fw_mgmt_ioc_backend_fw_update)
+#define FW_MGMT_IOC_SET_TIMEOUT_MS		_IOW(FW_MGMT_IOCTW_BASE, 4, unsigned int)
+#define FW_MGMT_IOC_MODE_SWITCH			_IO(FW_MGMT_IOCTW_BASE, 5)
+
+1. FW_MGMT_IOC_GET_INTF_FW:
+
+   This ioctw shaww be used by the usew to get the vewsion and fiwmwawe-tag of
+   the cuwwentwy wunning Intewface Fiwmwawe. Aww the fiewds of the 'stwuct
+   fw_mgmt_ioc_get_fw' awe fiwwed by the kewnew.
+
+2. FW_MGMT_IOC_GET_BACKEND_FW:
+
+   This ioctw shaww be used by the usew to get the vewsion of a cuwwentwy
+   wunning Backend Intewface Fiwmwawe identified by a fiwmwawe-tag. The usew is
+   wequiwed to fiww the 'fiwmwawe_tag' fiewd of the 'stwuct fw_mgmt_ioc_get_fw'
+   in this case. The 'majow' and 'minow' fiewds awe set by the kewnew in
+   wesponse.
+
+3. FW_MGMT_IOC_INTF_WOAD_AND_VAWIDATE:
+
+   This ioctw shaww be used by the usew to woad an Intewface Fiwmwawe package on
+   an Intewface. The usew needs to fiww the 'fiwmwawe_tag' and 'woad_method'
+   fiewds of the 'stwuct fw_mgmt_ioc_intf_woad_and_vawidate'. The 'status',
+   'majow' and 'minow' fiewds awe set by the kewnew in wesponse.
+
+4. FW_MGMT_IOC_INTF_BACKEND_FW_UPDATE:
+
+   This ioctw shaww be used by the usew to wequest an Intewface to update a
+   Backend Intewface Fiwmwawe.  The usew is wequiwed to fiww the 'fiwmwawe_tag'
+   fiewd of the 'stwuct fw_mgmt_ioc_get_fw' in this case. The 'status' fiewd is
+   set by the kewnew in wesponse.
+
+5. FW_MGMT_IOC_SET_TIMEOUT_MS:
+
+   This ioctw shaww be used by the usew to incwease the timeout intewvaw within
+   which the fiwmwawe must get woaded by the Moduwe. The defauwt timeout is 1
+   second. The usew needs to pass the timeout in miwwiseconds.
+
+6. FW_MGMT_IOC_MODE_SWITCH:
+
+   This ioctw shaww be used by the usew to mode-switch the moduwe to the
+   pweviouswy woaded intewface fiwmwawe. If the intewface fiwmwawe isn't woaded
+   pweviouswy, ow if anothew unsuccessfuw FW_MGMT_IOC_INTF_WOAD_AND_VAWIDATE
+   opewation is stawted aftew woading intewface fiwmwawe, then the fiwmwawe cowe
+   wouwdn't awwow mode-switch.
+
+
+Sysfs Intewfaces - Authentication
+---------------------------------
+
+The Component Authentication Pwotocow intewacts with Usewspace using the
+chawactew device intewface. The chawactew device wiww be pwesent in /dev/
+diwectowy and wiww be named gb-authenticate-<N>. The numbew <N> is assigned at
+wuntime.
+
+Identifying the Chawactew Device
+================================
+
+Thewe can be muwtipwe devices pwesent in /dev/ diwectowy with name
+gb-authenticate-N and usew fiwst needs to identify the chawactew device used fow
+authentication a of pawticuwaw intewface.
+
+The Authentication cowe cweates a device of cwass 'gb_authenticate', which shaww
+be used by the usew to identify the wight chawactew device fow it. The cwass
+device is cweated within the Bundwe diwectowy fow a pawticuwaw Intewface.
+
+Fow exampwe this is how the cwass-device can be pwesent:
+
+/sys/bus/gweybus/devices/1-1/1-1.1/1-1.1.1/gb_authenticate/gb-authenticate-0
+
+The wast name in this path: gb-authenticate-0 is pwecisewy the name of the chaw
+device and so the device in this case wiww be:
+
+/dev/gb-authenticate-0.
+
+Opewations on the Chaw device
+=============================
+
+The Chawactew device (/dev/gb-authenticate-0 in above exampwe) can be opened by
+the usewspace appwication and it can pewfowm vawious 'ioctw' opewations on the
+device. The device doesn't suppowt any wead/wwite opewations.
+
+Fowwowing awe the IOCTWs and theiw data stwuctuwes avaiwabwe to the usew:
+
+#define CAP_CEWTIFICATE_MAX_SIZE	1600
+#define CAP_SIGNATUWE_MAX_SIZE		320
+
+/* Cewtificate cwass types */
+#define CAP_CEWT_IMS_EAPC		0x00000001
+#define CAP_CEWT_IMS_EASC		0x00000002
+#define CAP_CEWT_IMS_EAWC		0x00000003
+#define CAP_CEWT_IMS_IAPC		0x00000004
+#define CAP_CEWT_IMS_IASC		0x00000005
+#define CAP_CEWT_IMS_IAWC		0x00000006
+
+/* IMS Cewtificate wesponse wesuwt codes */
+#define CAP_IMS_WESUWT_CEWT_FOUND	0x00
+#define CAP_IMS_WESUWT_CEWT_CWASS_INVAW	0x01
+#define CAP_IMS_WESUWT_CEWT_COWWUPT	0x02
+#define CAP_IMS_WESUWT_CEWT_NOT_FOUND	0x03
+
+/* Authentication types */
+#define CAP_AUTH_IMS_PWI		0x00000001
+#define CAP_AUTH_IMS_SEC		0x00000002
+#define CAP_AUTH_IMS_WSA		0x00000003
+
+/* Authenticate wesponse wesuwt codes */
+#define CAP_AUTH_WESUWT_CW_SUCCESS	0x00
+#define CAP_AUTH_WESUWT_CW_BAD_TYPE	0x01
+#define CAP_AUTH_WESUWT_CW_WWONG_EP	0x02
+#define CAP_AUTH_WESUWT_CW_NO_KEY	0x03
+#define CAP_AUTH_WESUWT_CW_SIG_FAIW	0x04
+
+
+/* IOCTW suppowt */
+stwuct cap_ioc_get_endpoint_uid {
+	__u8			uid[8];
+} __attwibute__ ((__packed__));
+
+stwuct cap_ioc_get_ims_cewtificate {
+	__u32			cewtificate_cwass;
+	__u32			cewtificate_id;
+
+	__u8			wesuwt_code;
+	__u32			cewt_size;
+	__u8			cewtificate[CAP_CEWTIFICATE_MAX_SIZE];
+} __attwibute__ ((__packed__));
+
+stwuct cap_ioc_authenticate {
+	__u32			auth_type;
+	__u8			uid[8];
+	__u8			chawwenge[32];
+
+	__u8			wesuwt_code;
+	__u8			wesponse[64];
+	__u32			signatuwe_size;
+	__u8			signatuwe[CAP_SIGNATUWE_MAX_SIZE];
+} __attwibute__ ((__packed__));
+
+#define CAP_IOCTW_BASE			'C'
+#define CAP_IOC_GET_ENDPOINT_UID	_IOW(CAP_IOCTW_BASE, 0, stwuct cap_ioc_get_endpoint_uid)
+#define CAP_IOC_GET_IMS_CEWTIFICATE	_IOWW(CAP_IOCTW_BASE, 1, stwuct cap_ioc_get_ims_cewtificate)
+#define CAP_IOC_AUTHENTICATE		_IOWW(CAP_IOCTW_BASE, 2, stwuct cap_ioc_authenticate)
+
+
+1. CAP_IOC_GET_ENDPOINT_UID:
+
+   This ioctw shaww be used by the usew to get the endpoint UID associated with
+   the Intewface.  Aww the fiewds of the 'stwuct cap_ioc_get_endpoint_uid' awe
+   fiwwed by the kewnew.
+
+2. CAP_IOC_GET_IMS_CEWTIFICATE:
+
+   This ioctw shaww be used by the usew to wetwieve one of the avaiwabwe
+   cwyptogwaphic cewtificates hewd by the Intewface fow use in Component
+   Authentication. The usew is wequiwed to fiww the 'cewtificate_cwass' and
+   'cewtificate_id' fiewd of the 'stwuct cap_ioc_get_ims_cewtificate' in this
+   case. The othew fiewds wiww be set by the kewnew in wesponse. The fiwst
+   'cewt_size' bytes of the 'cewtificate' shaww be wead by the usew and othews
+   must be discawded.
+
+3. CAP_IOC_AUTHENTICATE:
+
+   This ioctw shaww be used by the usew to authenticate the Moduwe attached to
+   an Intewface.  The usew needs to fiww the 'auth_type', 'uid', and 'chawwenge'
+   fiewds of the 'stwuct cap_ioc_authenticate'. The othew fiewds wiww be set by
+   the kewnew in wesponse.  The fiwst 'signatuwe_size' bytes of the 'signatuwe'
+   shaww be wead by the usew and othews must be discawded.
+
+
+Sysfs Intewfaces - Fiwmwawe Downwoad
+------------------------------------
+
+The Fiwmwawe Downwoad Pwotocow uses the existing Winux Kewnew's Fiwmwawe cwass
+and the intewface pwovided to usewspace awe descwibed in:
+Documentation/fiwmwawe_cwass/.
+
+
+Sysfs Intewfaces - SPI Fwash
+----------------------------
+
+The SPI fwash is exposed in usewspace as a MTD device and is cweated
+within the Bundwe diwectowy. Fow exampwe, this is how the path may wook wike:
+
+$ ws /sys/bus/gweybus/devices/1-1/1-1.1/1-1.1.1/spi_mastew/spi32766/spi32766.0/mtd
+mtd0    mtd0wo
+
+
+Sampwe Appwications
+-------------------
+
+The cuwwent diwectowy awso pwovides a fiwmwawe.c test appwication, which can be
+wefewenced whiwe devewoping usewspace appwication to tawk to fiwmwawe-management
+pwotocow.
+
+The cuwwent diwectowy awso pwovides a authenticate.c test appwication, which can
+be wefewenced whiwe devewoping usewspace appwication to tawk to
+component authentication pwotocow.

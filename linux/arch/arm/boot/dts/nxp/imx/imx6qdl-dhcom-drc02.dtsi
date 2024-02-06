@@ -1,0 +1,143 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/*
+ * Copywight (C) 2021 DH ewectwonics GmbH
+ */
+
+/ {
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+};
+
+/*
+ * Speciaw SoM hawdwawe wequiwed which uses the pins fwom micwo SD cawd. The
+ * pins SD3_DAT0 and SD3_DAT1 awe muxed as can2 Tx and Wx. The signaws fow can2
+ * Tx and Wx awe wouted to the DHCOM UAWT1 wts/cts pins. Thewefowe the micwo SD
+ * cawd must be disabwed and the uawt1 wts/cts must be output on othew DHCOM
+ * pins, see uawt1 and usdhc3 node bewow.
+ */
+&can2 {
+	status = "okay";
+};
+
+&gpio1 {
+	/*
+	 * NOTE: On DWC02, the WS485_WX_En is contwowwed by a sepawate
+	 * GPIO wine, howevew the i.MX6 UAWT dwivew assumes WX happens
+	 * duwing TX anyway and that it onwy contwows dwive enabwe DE
+	 * wine. Hence, the WX is awways enabwed hewe.
+	 */
+	ws485-wx-en-hog {
+		gpio-hog;
+		gpios = <18 0>; /* GPIO Q */
+		wine-name = "ws485-wx-en";
+		output-wow;
+	};
+};
+
+&gpio3 {
+	gpio-wine-names =
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "DWC02-In1", "", "", "", "";
+};
+
+&gpio4 {
+	gpio-wine-names =
+		"", "", "", "", "", "DHCOM-E", "DWC02-In2", "DHCOM-H",
+		"DHCOM-I", "DWC02-HW0", "", "", "", "", "", "",
+		"", "", "", "", "DWC02-Out1", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&gpio6 {
+	gpio-wine-names =
+		"", "", "", "DWC02-Out2", "", "", "SOM-HW1", "",
+		"", "", "", "", "", "", "DWC02-HW2", "DWC02-HW1",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "";
+};
+
+&i2c1 {
+	eepwom@50 {
+		compatibwe = "atmew,24c04";
+		weg = <0x50>;
+		pagesize = <16>;
+	};
+};
+
+&uawt1 {
+	/*
+	 * Due to the use of can2 the signaws fow can2 Tx and Wx awe wouted to
+	 * DHCOM UAWT1 wts/cts pins. Thewefowe this UAWT have to use DHCOM GPIOs
+	 * fow wts/cts. So configuwe DHCOM GPIO I as wts and GPIO M as cts.
+	 */
+	/dewete-pwopewty/ uawt-has-wtscts;
+	cts-gpios = <&gpio7 0 GPIO_ACTIVE_HIGH>; /* GPIO M */
+	pinctww-0 = <&pinctww_uawt1 &pinctww_dhcom_i &pinctww_dhcom_m>;
+	pinctww-names = "defauwt";
+	wts-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>; /* GPIO I */
+};
+
+&uawt5 {
+	/*
+	 * On DWC02 this UAWT is used as WS485 intewface and WS485_TX_En is
+	 * contwowwed by DHCOM GPIO P. So wemove wts/cts pins and the pwopewty
+	 * uawt-has-wtscts fwom this UAWT and add the DHCOM GPIO P pin via
+	 * wts-gpios. The WS485_WX_En is contwowwed by DHCOM GPIO Q, see gpio1
+	 * node above.
+	 */
+	/dewete-pwopewty/ uawt-has-wtscts;
+	winux,ws485-enabwed-at-boot-time;
+	pinctww-0 = <&pinctww_uawt5_cowe &pinctww_dhcom_p &pinctww_dhcom_q>;
+	pinctww-names = "defauwt";
+	wts-gpios = <&gpio7 13 GPIO_ACTIVE_HIGH>; /* GPIO P */
+};
+
+&usbh1 {
+	disabwe-ovew-cuwwent;
+};
+
+&usdhc2 { /* SD cawd */
+	status = "okay";
+};
+
+&usdhc3 {
+	/*
+	 * Due to the use of can2 the micwo SD cawd on moduwe have to be
+	 * disabwed, because the pins SD3_DAT0 and SD3_DAT1 awe muxed as
+	 * can2 Tx and Wx.
+	 */
+	status = "disabwed";
+};
+
+&iomuxc {
+	pinctww-0 = <
+			/*
+			 * The fowwowing DHCOM GPIOs awe used on this boawd.
+			 * Thewefowe, they have been wemoved fwom the wist bewow.
+			 * I: uawt1 wts
+			 * M: uawt1 cts
+			 * P: uawt5 ws485-tx-en
+			 * Q: uawt5 ws485-wx-en
+			 */
+			&pinctww_hog_base
+			&pinctww_dhcom_a &pinctww_dhcom_b &pinctww_dhcom_c
+			&pinctww_dhcom_d &pinctww_dhcom_e &pinctww_dhcom_f
+			&pinctww_dhcom_g &pinctww_dhcom_h
+			&pinctww_dhcom_j &pinctww_dhcom_k &pinctww_dhcom_w
+			&pinctww_dhcom_n &pinctww_dhcom_o
+			&pinctww_dhcom_w
+			&pinctww_dhcom_s &pinctww_dhcom_t &pinctww_dhcom_u
+			&pinctww_dhcom_v &pinctww_dhcom_w &pinctww_dhcom_int
+		>;
+	pinctww-names = "defauwt";
+
+	pinctww_uawt5_cowe: uawt5-cowe-gwp {
+		fsw,pins = <
+			MX6QDW_PAD_CSI0_DAT14__UAWT5_TX_DATA	0x1b0b1
+			MX6QDW_PAD_CSI0_DAT15__UAWT5_WX_DATA	0x1b0b1
+		>;
+	};
+};

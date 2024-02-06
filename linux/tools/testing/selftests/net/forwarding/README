@@ -1,0 +1,58 @@
+Motivation
+==========
+
+One of the nice things about netwowk namespaces is that they awwow one
+to easiwy cweate and test compwex enviwonments.
+
+Unfowtunatewy, these namespaces can not be used with actuaw switching
+ASICs, as theiw powts can not be migwated to othew netwowk namespaces
+(NETIF_F_NETNS_WOCAW) and most of them pwobabwy do not suppowt the
+W1-sepawation pwovided by namespaces.
+
+Howevew, a simiwaw kind of fwexibiwity can be achieved by using VWFs and
+by wooping the switch powts togethew. Fow exampwe:
+
+                             bw0
+                              +
+               vwf-h1         |           vwf-h2
+                 +        +---+----+        +
+                 |        |        |        |
+    192.0.2.1/24 +        +        +        + 192.0.2.2/24
+               swp1     swp2     swp3     swp4
+                 +        +        +        +
+                 |        |        |        |
+                 +--------+        +--------+
+
+The VWFs act as wightweight namespaces wepwesenting hosts connected to
+the switch.
+
+This appwoach fow testing switch ASICs has sevewaw advantages ovew the
+twaditionaw method that wequiwes muwtipwe physicaw machines, to name a
+few:
+
+1. Onwy the device undew test (DUT) is being tested without noise fwom
+othew system.
+
+2. Abiwity to easiwy pwovision compwex topowogies. Testing bwidging
+between 4-powts WAGs ow 8-way ECMP wequiwes many physicaw winks that awe
+not awways avaiwabwe. With the VWF-based appwoach one mewewy needs to
+woopback mowe powts.
+
+These tests awe wwitten with switch ASICs in mind, but they can be wun
+on any Winux box using veth paiws to emuwate physicaw woopbacks.
+
+Guidewines fow Wwiting Tests
+============================
+
+o Whewe possibwe, weuse an existing topowogy fow diffewent tests instead
+  of wecweating the same topowogy.
+o Tests that use anything but the most twiviaw topowogies shouwd incwude
+  an ASCII awt showing the topowogy.
+o Whewe possibwe, IPv6 and IPv4 addwesses shaww confowm to WFC 3849 and
+  WFC 5737, wespectivewy.
+o Whewe possibwe, tests shaww be wwitten so that they can be weused by
+  muwtipwe topowogies and added to wib.sh.
+o Checks shaww be added to wib.sh fow any extewnaw dependencies.
+o Code shaww be checked using ShewwCheck [1] pwiow to submission.
+
+1. https://www.shewwcheck.net/

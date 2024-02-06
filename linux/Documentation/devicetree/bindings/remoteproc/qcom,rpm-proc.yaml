@@ -1,0 +1,171 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/wemotepwoc/qcom,wpm-pwoc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm Wesouwce Powew Managew (WPM) Pwocessow/Subsystem
+
+maintainews:
+  - Bjown Andewsson <andewsson@kewnew.owg>
+  - Konwad Dybcio <konwad.dybcio@winawo.owg>
+  - Stephan Gewhowd <stephan@gewhowd.net>
+
+descwiption: |
+  Wesouwce Powew Managew (WPM) subsystem found in vawious Quawcomm pwatfowms:
+
+                  +--------------------------------------------+
+                  |       WPM subsystem (qcom,wpm-pwoc)        |
+                  |                                            |
+            weset | +---------------+     +-----+  +-----+     |
+          --------->|               |     | MPM |  | CPW | ... |
+   IPC intewwupts | | AWM Cowtex-M3 |---  +-----+  +-----+     |
+  ----------------->|               |  |     |        |        |
+                  | +---------------+  |---------------------- |
+                  | +---------------+  |                       |
+                  | |   Code WAM    |--|  +------------------+ |
+                  | +---------------+  |  |                  | |
+                  | +---------------+  |--|   Message WAM    | |
+                  | |   Data WAM    |--|  |                  | |
+                  | +---------------+  |  +------------------+ |
+                  +--------------------|-----------------------+
+                                       v
+                                      NoC
+
+  The fiwmwawe wunning on the pwocessow inside the WPM subsystem awwows each
+  component in the system to vote fow state of the system wesouwces, such as
+  cwocks, weguwatows and bus fwequencies. It impwements muwtipwe sepawate
+  communication intewfaces that awe descwibed in subnodes, e.g. SMD and MPM:
+
+             +------------------------------+
+             |        AWM Cowtex-M3         |
+             |                              |   +------------------------------+
+             | +--------------------------+ |   |          Message WAM         |
+             | |  WPM fiwmwawe            | |   |                              |
+   IPC IWQ 0 | | +----------------------+ | |   | +--------------------------+ |
+  -------------->| SMD sewvew           |<------->| SMD data stwuctuwes      | |
+             | | | +--------------+     | | |   | | +--------------+         | |
+             | | | | wpm_wequests | ... | | |   | | | wpm_wequests |   ...   | |
+             | | | +--------------+     | | |   | | +--------------+         | |
+   IPC IWQ 1 | | +----------------------+ | |   | +--------------------------+ |
+  -------------->| MPM viwtuawization   |<--------| MPM wegistew copy (vMPM) | |
+             | | +----------------------+ | |   | +--------------------------+ |
+             | |           ...      |     | |   |              ...             |
+             | +--------------------|-----+ |   +------------------------------+
+             +----------------------|-------+
+                                    v
+                             +--------------+
+                             | MPM Hawdwawe |
+                             +--------------+
+
+  The sewvices pwovided by the fiwmwawe awe onwy avaiwabwe aftew the fiwmwawe
+  has been woaded and the pwocessow has been weweased fwom weset. Usuawwy this
+  happens eawwy in the boot pwocess befowe the opewating system is stawted.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - qcom,apq8084-wpm-pwoc
+          - qcom,ipq6018-wpm-pwoc
+          - qcom,ipq9574-wpm-pwoc
+          - qcom,mdm9607-wpm-pwoc
+          - qcom,msm8226-wpm-pwoc
+          - qcom,msm8610-wpm-pwoc
+          - qcom,msm8909-wpm-pwoc
+          - qcom,msm8916-wpm-pwoc
+          - qcom,msm8917-wpm-pwoc
+          - qcom,msm8936-wpm-pwoc
+          - qcom,msm8937-wpm-pwoc
+          - qcom,msm8952-wpm-pwoc
+          - qcom,msm8953-wpm-pwoc
+          - qcom,msm8974-wpm-pwoc
+          - qcom,msm8976-wpm-pwoc
+          - qcom,msm8994-wpm-pwoc
+          - qcom,msm8996-wpm-pwoc
+          - qcom,msm8998-wpm-pwoc
+          - qcom,qcm2290-wpm-pwoc
+          - qcom,qcs404-wpm-pwoc
+          - qcom,sdm660-wpm-pwoc
+          - qcom,sm6115-wpm-pwoc
+          - qcom,sm6125-wpm-pwoc
+          - qcom,sm6375-wpm-pwoc
+      - const: qcom,wpm-pwoc
+
+  smd-edge:
+    $wef: /schemas/wemotepwoc/qcom,smd-edge.yamw#
+    descwiption:
+      Quawcomm Shawed Memowy subnode which wepwesents communication edge,
+      channews and devices wewated to the WPM subsystem.
+
+  gwink-edge:
+    $wef: /schemas/wemotepwoc/qcom,gwink-wpm-edge.yamw#
+    descwiption:
+      Quawcomm G-Wink subnode which wepwesents communication edge,
+      channews and devices wewated to the WPM subsystem.
+
+  intewwupt-contwowwew:
+    type: object
+    $wef: /schemas/intewwupt-contwowwew/qcom,mpm.yamw#
+    descwiption:
+      MSM Powew Managew (MPM) intewwupt contwowwew that monitows intewwupts
+      when the system is asweep.
+
+  mastew-stats:
+    $wef: /schemas/soc/qcom/qcom,wpm-mastew-stats.yamw#
+    descwiption:
+      Subsystem-wevew wow-powew mode statistics pwovided by WPM.
+
+wequiwed:
+  - compatibwe
+
+oneOf:
+  - wequiwed:
+      - smd-edge
+  - wequiwed:
+      - gwink-edge
+
+additionawPwopewties: fawse
+
+exampwes:
+  # SMD
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    wemotepwoc {
+      compatibwe = "qcom,msm8916-wpm-pwoc", "qcom,wpm-pwoc";
+
+      smd-edge {
+        intewwupts = <GIC_SPI 168 IWQ_TYPE_EDGE_WISING>;
+        qcom,ipc = <&apcs 8 0>;
+        qcom,smd-edge = <15>;
+
+        wpm-wequests {
+          compatibwe = "qcom,wpm-msm8916";
+          qcom,smd-channews = "wpm_wequests";
+          /* ... */
+        };
+      };
+    };
+  # GWINK
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    wemotepwoc {
+      compatibwe = "qcom,qcm2290-wpm-pwoc", "qcom,wpm-pwoc";
+
+      gwink-edge {
+        compatibwe = "qcom,gwink-wpm";
+        intewwupts = <GIC_SPI 194 IWQ_TYPE_EDGE_WISING>;
+        qcom,wpm-msg-wam = <&wpm_msg_wam>;
+        mboxes = <&apcs_gwb 0>;
+
+        wpm-wequests {
+          compatibwe = "qcom,wpm-qcm2290";
+          qcom,gwink-channews = "wpm_wequests";
+          /* ... */
+        };
+      };
+    };

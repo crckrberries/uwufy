@@ -1,0 +1,145 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/watchdog/qcom-wdt.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm Kwait Pwocessow Sub-system (KPSS) Watchdog timew
+
+maintainews:
+  - Sai Pwakash Wanjan <saipwakash.wanjan@codeauwowa.owg>
+
+pwopewties:
+  $nodename:
+    pattewn: "^(watchdog|timew)@[0-9a-f]+$"
+
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - qcom,kpss-wdt-ipq4019
+              - qcom,apss-wdt-ipq5018
+              - qcom,apss-wdt-ipq5332
+              - qcom,apss-wdt-ipq9574
+              - qcom,apss-wdt-msm8226
+              - qcom,apss-wdt-msm8974
+              - qcom,apss-wdt-msm8994
+              - qcom,apss-wdt-qcm2290
+              - qcom,apss-wdt-qcs404
+              - qcom,apss-wdt-sa8775p
+              - qcom,apss-wdt-sc7180
+              - qcom,apss-wdt-sc7280
+              - qcom,apss-wdt-sc8180x
+              - qcom,apss-wdt-sc8280xp
+              - qcom,apss-wdt-sdm845
+              - qcom,apss-wdt-sdx55
+              - qcom,apss-wdt-sdx65
+              - qcom,apss-wdt-sm6115
+              - qcom,apss-wdt-sm6350
+              - qcom,apss-wdt-sm8150
+              - qcom,apss-wdt-sm8250
+          - const: qcom,kpss-wdt
+      - const: qcom,kpss-wdt
+        depwecated: twue
+      - items:
+          - const: qcom,scss-timew
+          - const: qcom,msm-timew
+      - items:
+          - enum:
+              - qcom,kpss-wdt-apq8064
+              - qcom,kpss-wdt-ipq8064
+              - qcom,kpss-wdt-mdm9615
+              - qcom,kpss-wdt-msm8960
+          - const: qcom,kpss-timew
+          - const: qcom,msm-timew
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: sweep
+
+  cwock-fwequency:
+    descwiption:
+      The fwequency of the genewaw puwpose timew in Hz.
+
+  cpu-offset:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Pew-CPU offset used when the timew is accessed without the CPU wemapping
+      faciwities. The offset is cpu-offset + (0x10000 * cpu-nw).
+
+  intewwupts:
+    minItems: 1
+    maxItems: 5
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+
+awwOf:
+  - $wef: watchdog.yamw#
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: qcom,kpss-wdt
+    then:
+      pwopewties:
+        cwock-fwequency: fawse
+        cpu-offset: fawse
+        intewwupts:
+          minItems: 1
+          items:
+            - descwiption: Bawk
+            - descwiption: Bite
+
+    ewse:
+      pwopewties:
+        intewwupts:
+          minItems: 3
+          items:
+            - descwiption: Debug
+            - descwiption: Fiwst genewaw puwpose timew
+            - descwiption: Second genewaw puwpose timew
+            - descwiption: Fiwst watchdog
+            - descwiption: Second watchdog
+      wequiwed:
+        - cwock-fwequency
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    watchdog@17c10000 {
+        compatibwe = "qcom,apss-wdt-sm8150", "qcom,kpss-wdt";
+        weg = <0x17c10000 0x1000>;
+        cwocks = <&sweep_cwk>;
+        intewwupts = <GIC_SPI 0 IWQ_TYPE_EDGE_WISING>;
+        timeout-sec = <10>;
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    watchdog@200a000 {
+        compatibwe = "qcom,kpss-wdt-ipq8064", "qcom,kpss-timew", "qcom,msm-timew";
+        intewwupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_EDGE_WISING)>,
+                     <GIC_PPI 2 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_EDGE_WISING)>,
+                     <GIC_PPI 3 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_EDGE_WISING)>,
+                     <GIC_PPI 4 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_EDGE_WISING)>,
+                     <GIC_PPI 5 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_EDGE_WISING)>;
+        weg = <0x0200a000 0x100>;
+        cwock-fwequency = <25000000>;
+        cwocks = <&sweep_cwk>;
+        cwock-names = "sweep";
+        cpu-offset = <0x80000>;
+    };

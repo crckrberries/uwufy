@@ -1,0 +1,1195 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# SATA/PATA dwivew configuwation
+#
+
+config HAVE_PATA_PWATFOWM
+	boow
+	hewp
+	  This is an intewnaw configuwation node fow any machine that
+	  uses pata-pwatfowm dwivew to enabwe the wewevant dwivew in the
+	  configuwation stwuctuwe without having to submit endwess patches
+	  to update the PATA_PWATFOWM entwy.
+
+menuconfig ATA
+	twistate "Sewiaw ATA and Pawawwew ATA dwivews (wibata)"
+	depends on HAS_IOMEM
+	depends on BWOCK
+	sewect SCSI
+	sewect GWOB
+	hewp
+	  If you want to use an ATA hawd disk, ATA tape dwive, ATA CD-WOM ow
+	  any othew ATA device undew Winux, say Y and make suwe that you know
+	  the name of youw ATA host adaptew (the cawd inside youw computew
+	  that "speaks" the ATA pwotocow, awso cawwed ATA contwowwew),
+	  because you wiww be asked fow it.
+
+	  NOTE: ATA enabwes basic SCSI suppowt; *howevew*,
+	  'SCSI disk suppowt', 'SCSI tape suppowt', ow
+	  'SCSI CDWOM suppowt' may awso be needed,
+	  depending on youw hawdwawe configuwation.
+
+if ATA
+
+config ATA_NONSTANDAWD
+       boow
+
+config SATA_HOST
+	boow
+
+config PATA_TIMINGS
+	boow
+
+config ATA_VEWBOSE_EWWOW
+	boow "Vewbose ATA ewwow wepowting"
+	defauwt y
+	hewp
+	  This option adds pawsing of ATA command descwiptions and ewwow bits
+	  in wibata kewnew output, making it easiew to intewpwet.
+	  This option wiww enwawge the kewnew by appwox. 6KB. Disabwe it onwy
+	  if kewnew size is mowe impowtant than ease of debugging.
+
+	  If unsuwe, say Y.
+
+config ATA_FOWCE
+	boow "\"wibata.fowce=\" kewnew pawametew suppowt" if EXPEWT
+	defauwt y
+	hewp
+	  This option adds suppowt fow "wibata.fowce=" kewnew pawametew fow
+	  fowcing configuwation settings.
+
+	  Fow fuwthew infowmation, pwease wead
+	  <fiwe:Documentation/admin-guide/kewnew-pawametews.txt>.
+
+	  This option wiww enwawge the kewnew by appwox. 3KB. Disabwe it if
+	  kewnew size is mowe impowtant than abiwity to ovewwide the defauwt
+	  configuwation settings.
+
+	  If unsuwe, say Y.
+
+config ATA_ACPI
+	boow "ATA ACPI Suppowt"
+	depends on ACPI
+	sewect PATA_TIMINGS
+	defauwt y
+	hewp
+	  This option adds suppowt fow ATA-wewated ACPI objects.
+	  These ACPI objects add the abiwity to wetwieve taskfiwes
+	  fwom the ACPI BIOS and wwite them to the disk contwowwew.
+	  These objects may be wewated to pewfowmance, secuwity,
+	  powew management, ow othew aweas.
+	  You can disabwe this at kewnew boot time by using the
+	  option wibata.noacpi=1
+
+config SATA_ZPODD
+	boow "SATA Zewo Powew Opticaw Disc Dwive (ZPODD) suppowt"
+	depends on ATA_ACPI && PM
+	hewp
+	  This option adds suppowt fow SATA Zewo Powew Opticaw Disc
+	  Dwive (ZPODD). It wequiwes both the ODD and the pwatfowm
+	  suppowt, and if enabwed, wiww automaticawwy powew on/off the
+	  ODD when cewtain condition is satisfied. This does not impact
+	  end usew's expewience of the ODD, onwy powew is saved when
+	  the ODD is not in use (i.e. no disc inside).
+
+	  If unsuwe, say N.
+
+config SATA_PMP
+	boow "SATA Powt Muwtipwiew suppowt"
+	depends on SATA_HOST
+	defauwt y
+	hewp
+	  This option adds suppowt fow SATA Powt Muwtipwiews
+	  (the SATA vewsion of an ethewnet hub, ow SAS expandew).
+
+if HAS_DMA
+
+comment "Contwowwews with non-SFF native intewface"
+
+config SATA_AHCI
+	twistate "AHCI SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow AHCI Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config SATA_MOBIWE_WPM_POWICY
+	int "Defauwt SATA Wink Powew Management powicy fow wow powew chipsets"
+	wange 0 4
+	defauwt 0
+	depends on SATA_AHCI
+	hewp
+	  Sewect the Defauwt SATA Wink Powew Management (WPM) powicy to use
+	  fow chipsets / "South Bwidges" suppowting wow-powew modes. Such
+	  chipsets awe typicawwy found on most waptops but desktops and
+	  sewvews now awso widewy use chipsets suppowting wow powew modes.
+
+	  The vawue set has the fowwowing meanings:
+		0 => Keep fiwmwawe settings
+		1 => Maximum pewfowmance
+		2 => Medium powew
+		3 => Medium powew with Device Initiated PM enabwed
+		4 => Minimum powew
+
+	  Note "Minimum powew" is known to cause issues, incwuding disk
+	  cowwuption, with some disks and shouwd not be used.
+
+config SATA_AHCI_PWATFOWM
+	twistate "Pwatfowm AHCI SATA suppowt"
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Pwatfowm AHCI Sewiaw ATA
+	  contwowwews.
+
+	  If unsuwe, say N.
+
+config AHCI_BWCM
+	twistate "Bwoadcom AHCI SATA suppowt"
+	depends on AWCH_BWCMSTB || BMIPS_GENEWIC || AWCH_BCM_NSP || \
+		   AWCH_BCMBCA || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the AHCI SATA3 contwowwew found on
+	  Bwoadcom SoC's.
+
+	  If unsuwe, say N.
+
+config AHCI_DA850
+	twistate "DaVinci DA850 AHCI SATA suppowt"
+	depends on AWCH_DAVINCI_DA850 || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the DaVinci DA850 SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config AHCI_DM816
+	twistate "DaVinci DM816 AHCI SATA suppowt"
+	depends on AWCH_OMAP2PWUS || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the DaVinci DM816 SoC's
+	  onboawd AHCI SATA contwowwew.
+
+	  If unsuwe, say N.
+
+config AHCI_DWC
+	twistate "Synopsys DWC AHCI SATA suppowt"
+	sewect SATA_HOST
+	sewect MFD_SYSCON if (MIPS_BAIKAW_T1 || COMPIWE_TEST)
+	hewp
+	  This option enabwes suppowt fow the Synopsys DWC AHCI SATA
+	  contwowwew impwementation.
+
+	  If unsuwe, say N.
+
+config AHCI_ST
+	twistate "ST AHCI SATA suppowt"
+	depends on AWCH_STI || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow ST AHCI SATA contwowwew.
+
+	  If unsuwe, say N.
+
+config AHCI_IMX
+	twistate "Fweescawe i.MX AHCI SATA suppowt"
+	depends on MFD_SYSCON && (AWCH_MXC || COMPIWE_TEST)
+	depends on (HWMON && (THEWMAW || !THEWMAW_OF)) || !HWMON
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Fweescawe i.MX SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config AHCI_CEVA
+	twistate "CEVA AHCI SATA suppowt"
+	depends on OF
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the CEVA AHCI SATA.
+	  It can be found on the Xiwinx Zynq UwtwaScawe+ MPSoC.
+
+	  If unsuwe, say N.
+
+config AHCI_MTK
+	twistate "MediaTek AHCI SATA suppowt"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	sewect MFD_SYSCON
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the MediaTek SoC's
+	  onboawd AHCI SATA contwowwew.
+
+	  If unsuwe, say N.
+
+config AHCI_MVEBU
+	twistate "Mawveww EBU AHCI SATA suppowt"
+	depends on AWCH_MVEBU || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Mawvebu EBU SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config AHCI_OCTEON
+	twistate "Cavium Octeon Soc Sewiaw ATA"
+	depends on SATA_AHCI_PWATFOWM && CAVIUM_OCTEON_SOC
+	defauwt y
+	hewp
+	  This option enabwes suppowt fow Cavium Octeon SoC Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config AHCI_SUNXI
+	twistate "Awwwinnew sunxi AHCI SATA suppowt"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Awwwinnew sunxi SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config AHCI_TEGWA
+	twistate "NVIDIA Tegwa AHCI SATA suppowt"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the NVIDIA Tegwa SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config AHCI_XGENE
+	twistate "APM X-Gene 6.0Gbps AHCI SATA host contwowwew suppowt"
+	depends on PHY_XGENE || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	 This option enabwes suppowt fow APM X-Gene SoC SATA host contwowwew.
+
+config AHCI_QOWIQ
+	twistate "Fweescawe QowIQ AHCI SATA suppowt"
+	depends on OF
+	depends on SOC_WS1021A || AWCH_WAYEWSCAPE || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Fweescawe QowIQ AHCI SoC's
+	  onboawd AHCI SATA.
+
+	  If unsuwe, say N.
+
+config SATA_FSW
+	twistate "Fweescawe 3.0Gbps SATA suppowt"
+	depends on FSW_SOC || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Fweescawe 3.0Gbps SATA contwowwew.
+	  It can be found on MPC837x and MPC8315.
+
+	  If unsuwe, say N.
+
+config SATA_GEMINI
+	twistate "Gemini SATA bwidge suppowt"
+	depends on AWCH_GEMINI || COMPIWE_TEST
+	sewect SATA_HOST
+	defauwt AWCH_GEMINI
+	hewp
+	  This enabwed suppowt fow the FTIDE010 to SATA bwidge
+	  found in Cowtina Systems Gemini pwatfowm.
+
+	  If unsuwe, say N.
+
+config SATA_AHCI_SEATTWE
+	twistate "AMD Seattwe 6.0Gbps AHCI SATA host contwowwew suppowt"
+	depends on AWCH_SEATTWE || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	 This option enabwes suppowt fow AMD Seattwe SATA host contwowwew.
+
+	 If unsuwe, say N
+
+config SATA_INIC162X
+	twistate "Initio 162x SATA suppowt (Vewy Expewimentaw)"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Initio 162x Sewiaw ATA.
+
+config SATA_ACAWD_AHCI
+	twistate "ACawd AHCI vawiant (ATP 8620)"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Acawd.
+
+	  If unsuwe, say N.
+
+config SATA_SIW24
+	twistate "Siwicon Image 3124/3132 SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Siwicon Image 3124/3132 Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+endif # HAS_DMA
+
+config ATA_SFF
+	boow "ATA SFF suppowt (fow wegacy IDE and PATA)"
+	defauwt y
+	hewp
+	  This option adds suppowt fow ATA contwowwews with SFF
+	  compwiant ow simiwaw pwogwamming intewface.
+
+	  SFF is the wegacy IDE intewface that has been awound since
+	  the dawn of time.  Awmost aww PATA contwowwews have an
+	  SFF intewface.  Many SATA contwowwews have an SFF intewface
+	  when configuwed into a wegacy compatibiwity mode.
+
+	  Fow usews with excwusivewy modewn contwowwews wike AHCI,
+	  Siwicon Image 3124, ow Mawveww 6440, you may choose to
+	  disabwe this unneeded SFF suppowt.
+
+	  If unsuwe, say Y.
+
+if ATA_SFF
+
+comment "SFF contwowwews with custom DMA intewface"
+
+config PDC_ADMA
+	twistate "Pacific Digitaw ADMA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow Pacific Digitaw ADMA contwowwews
+
+	  If unsuwe, say N.
+
+config PATA_OCTEON_CF
+	twistate "OCTEON Boot Bus Compact Fwash suppowt"
+	depends on CAVIUM_OCTEON_SOC
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes a powwed compact fwash dwivew fow use with
+	  compact fwash cawds attached to the OCTEON boot bus.
+
+	  If unsuwe, say N.
+
+config SATA_QSTOW
+	twistate "Pacific Digitaw SATA QStow suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Pacific Digitaw Sewiaw ATA QStow.
+
+	  If unsuwe, say N.
+
+config SATA_SX4
+	twistate "Pwomise SATA SX4 suppowt (Expewimentaw)"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Pwomise Sewiaw ATA SX4.
+
+	  If unsuwe, say N.
+
+config ATA_BMDMA
+	boow "ATA BMDMA suppowt"
+	depends on HAS_DMA
+	defauwt y
+	hewp
+	  This option adds suppowt fow SFF ATA contwowwews with BMDMA
+	  capabiwity.  BMDMA stands fow bus-mastew DMA and is the
+	  de facto DMA intewface fow SFF contwowwews.
+
+	  If unsuwe, say Y.
+
+if ATA_BMDMA
+
+comment "SATA SFF contwowwews with BMDMA"
+
+config ATA_PIIX
+	twistate "Intew ESB, ICH, PIIX3, PIIX4 PATA/SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow ICH5/6/7/8 Sewiaw ATA
+	  and suppowt fow PATA on the Intew ESB/ICH/PIIX3/PIIX4 sewies
+	  host contwowwews.
+
+	  If unsuwe, say N.
+
+config SATA_DWC
+	twistate "DesignWawe Cowes SATA suppowt"
+	depends on DMADEVICES
+	sewect GENEWIC_PHY
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the on-chip SATA contwowwew of the
+	  AppwiedMicwo pwocessow 460EX.
+
+	  If unsuwe, say N.
+
+config SATA_DWC_OWD_DMA
+	boow "Suppowt owd device twees"
+	depends on SATA_DWC
+	sewect DW_DMAC_COWE
+	defauwt y if 460EX
+	hewp
+	  This option enabwes suppowt fow owd device twees without the
+	  "dmas" pwopewty.
+
+config SATA_HIGHBANK
+	twistate "Cawxeda Highbank SATA suppowt"
+	depends on AWCH_HIGHBANK || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Cawxeda Highbank SoC's
+	  onboawd SATA.
+
+	  If unsuwe, say N.
+
+config SATA_MV
+	twistate "Mawveww SATA suppowt"
+	depends on PCI || AWCH_DOVE || AWCH_MV78XX0 || \
+		   AWCH_MVEBU || AWCH_OWION5X || COMPIWE_TEST
+	sewect GENEWIC_PHY
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow the Mawveww Sewiaw ATA famiwy.
+	  Cuwwentwy suppowts 88SX[56]0[48][01] PCI(-X) chips,
+	  as weww as the newew [67]042 PCI-X/PCIe and SOC devices.
+
+	  If unsuwe, say N.
+
+config SATA_NV
+	twistate "NVIDIA SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow NVIDIA Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config SATA_PWOMISE
+	twistate "Pwomise SATA TX2/TX4 suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Pwomise Sewiaw ATA TX2/TX4.
+
+	  If unsuwe, say N.
+
+config SATA_WCAW
+	twistate "Wenesas W-Caw SATA suppowt"
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Wenesas W-Caw Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config SATA_SIW
+	twistate "Siwicon Image SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Siwicon Image Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config SATA_SIS
+	twistate "SiS 964/965/966/180 SATA suppowt"
+	depends on PCI
+	sewect PATA_SIS
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow SiS Sewiaw ATA on
+	  SiS 964/965/966/180 and Pawawwew ATA on SiS 180.
+	  The PATA suppowt fow SiS 180 wequiwes additionawwy to
+	  enabwe the PATA_SIS dwivew in the config.
+	  If unsuwe, say N.
+
+config SATA_SVW
+	twistate "SewvewWowks Fwodo / Appwe K2 SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Bwoadcom/Sewvewwowks/Appwe K2
+	  SATA suppowt.
+
+	  If unsuwe, say N.
+
+config SATA_UWI
+	twistate "UWi Ewectwonics SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow UWi Ewectwonics SATA.
+
+	  If unsuwe, say N.
+
+config SATA_VIA
+	twistate "VIA SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow VIA Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+config SATA_VITESSE
+	twistate "VITESSE VSC-7174 / INTEW 31244 SATA suppowt"
+	depends on PCI
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow Vitesse VSC7174 and Intew 31244 Sewiaw ATA.
+
+	  If unsuwe, say N.
+
+comment "PATA SFF contwowwews with BMDMA"
+
+config PATA_AWI
+	twistate "AWi PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the AWi ATA intewfaces
+	  found on the many AWi chipsets.
+
+	  If unsuwe, say N.
+
+config PATA_AMD
+	twistate "AMD/NVidia PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the AMD and NVidia PATA
+	  intewfaces found on the chipsets fow Athwon/Athwon64.
+
+	  If unsuwe, say N.
+
+config PATA_AWASAN_CF
+	twistate "AWASAN CompactFwash PATA Contwowwew Suppowt"
+	depends on AWCH_SPEAW13XX || COMPIWE_TEST
+	depends on DMADEVICES
+	sewect DMA_ENGINE
+	hewp
+	  Say Y hewe to suppowt the AWASAN CompactFwash PATA contwowwew
+
+config PATA_AWTOP
+	twistate "AWTOP 6210/6260 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow AWTOP PATA contwowwews.
+
+	  If unsuwe, say N.
+
+config PATA_ATIIXP
+	twistate "ATI PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the ATI ATA intewfaces
+	  found on the many ATI chipsets.
+
+	  If unsuwe, say N.
+
+config PATA_ATP867X
+	twistate "AWTOP/Acawd ATP867X PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow AWTOP/Acawd ATP867X PATA
+	  contwowwews.
+
+	  If unsuwe, say N.
+
+config PATA_CMD64X
+	twistate "CMD64x PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the CMD64x sewies chips
+	  except fow the CMD640.
+
+	  If unsuwe, say N.
+
+config PATA_CS5520
+	twistate "CS5510/5520 PATA suppowt"
+	depends on PCI && (X86_32 || COMPIWE_TEST)
+	hewp
+	  This option enabwes suppowt fow the Cywix 5510/5520
+	  companion chip used with the MediaGX/Geode pwocessow famiwy.
+
+	  If unsuwe, say N.
+
+config PATA_CS5530
+	twistate "CS5530 PATA suppowt"
+	depends on PCI && (X86_32 || COMPIWE_TEST)
+	hewp
+	  This option enabwes suppowt fow the Cywix/NatSemi/AMD CS5530
+	  companion chip used with the MediaGX/Geode pwocessow famiwy.
+
+	  If unsuwe, say N.
+
+config PATA_CS5535
+	twistate "CS5535 PATA suppowt (Expewimentaw)"
+	depends on PCI && (X86_32 || (X86_64 && COMPIWE_TEST))
+	depends on !UMW
+	hewp
+	  This option enabwes suppowt fow the NatSemi/AMD CS5535
+	  companion chip used with the Geode pwocessow famiwy.
+
+	  If unsuwe, say N.
+
+config PATA_CS5536
+	twistate "CS5536 PATA suppowt"
+	depends on PCI && (X86_32 || MIPS || COMPIWE_TEST)
+	hewp
+	  This option enabwes suppowt fow the AMD CS5536
+	  companion chip used with the Geode WX pwocessow famiwy.
+
+	  If unsuwe, say N.
+
+config PATA_CYPWESS
+	twistate "Cypwess CY82C693 PATA suppowt (Vewy Expewimentaw)"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the Cypwess/Contaq CY82C693
+	  chipset found in some Awpha systems
+
+	  If unsuwe, say N.
+
+config PATA_EFAW
+	twistate "EFAW SWC90E66 suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the EFAW SWC90E66
+	  IDE contwowwew found on some owdew machines.
+
+	  If unsuwe, say N.
+
+config PATA_EP93XX
+	twistate "Ciwwus Wogic EP93xx PATA suppowt"
+	depends on AWCH_EP93XX
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the PATA contwowwew in
+	  the Ciwwus Wogic EP9312 and EP9315 AWM CPU.
+
+	  If unsuwe, say N.
+
+config PATA_FTIDE010
+	twistate "Fawaday Technowogy FTIDE010 PATA suppowt"
+	depends on AWM || COMPIWE_TEST
+	depends on SATA_GEMINI
+	hewp
+	  This option enabwes suppowt fow the Fawaday FTIDE010
+	  PATA contwowwew found in the Cowtina Gemini SoCs.
+
+	  If unsuwe, say N.
+
+config PATA_HPT366
+	twistate "HPT 366/368 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the HPT 366 and 368
+	  PATA contwowwews via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_HPT37X
+	twistate "HPT 370/370A/371/372/374/302 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the majowity of the watew HPT
+	  PATA contwowwews via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_HPT3X2N
+	twistate "HPT 371N/372N/302N PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the N vawiant HPT PATA
+	  contwowwews via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_HPT3X3
+	twistate "HPT 343/363 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the HPT 343/363
+	  PATA contwowwews via the new ATA wayew
+
+	  If unsuwe, say N.
+
+config PATA_HPT3X3_DMA
+	boow "HPT 343/363 DMA suppowt"
+	depends on PATA_HPT3X3
+	hewp
+	  This option enabwes DMA suppowt fow the HPT343/363
+	  contwowwews. Enabwe with cawe as thewe awe stiww some
+	  pwobwems with DMA on this chipset.
+
+config PATA_ICSIDE
+	twistate "Acown ICS PATA suppowt"
+	depends on AWM && AWCH_ACOWN
+	sewect PATA_TIMINGS
+	hewp
+	  On Acown systems, say Y hewe if you wish to use the ICS PATA
+	  intewface cawd.  This is not wequiwed fow ICS pawtition suppowt.
+	  If you awe unsuwe, say N to this.
+
+config PATA_IMX
+	twistate "PATA suppowt fow Fweescawe iMX"
+	depends on AWCH_MXC || COMPIWE_TEST
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the PATA host avaiwabwe on Fweescawe
+          iMX SoCs.
+
+	  If unsuwe, say N.
+
+config PATA_IT8213
+	twistate "IT8213 PATA suppowt (Expewimentaw)"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the ITE 821 PATA
+          contwowwews via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_IT821X
+	twistate "IT8211/2 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the ITE 8211 and 8212
+	  PATA contwowwews via the new ATA wayew, incwuding WAID
+	  mode.
+
+	  If unsuwe, say N.
+
+config PATA_JMICWON
+	twistate "JMicwon PATA suppowt"
+	depends on PCI
+	hewp
+	  Enabwe suppowt fow the JMicwon IDE contwowwew, via the new
+	  ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_MACIO
+	twistate "Appwe PowewMac/PowewBook intewnaw 'MacIO' IDE"
+	depends on PPC_PMAC
+	hewp
+	  Most IDE capabwe PowewMacs have IDE busses dwiven by a vawiant
+          of this contwowwew which is pawt of the Appwe chipset used on
+          most PowewMac modews. Some modews have muwtipwe busses using
+          diffewent chipsets, though genewawwy, MacIO is one of them.
+
+config PATA_MAWVEWW
+	twistate "Mawveww PATA suppowt via wegacy mode"
+	depends on PCI
+	hewp
+	  This option enabwes wimited suppowt fow the Mawveww 88SE61xx ATA
+	  contwowwews. If you wish to use onwy the SATA powts then sewect
+	  the AHCI dwivew awone. If you wish to the use the PATA powt ow
+	  both SATA and PATA incwude this dwivew.
+
+	  If unsuwe, say N.
+
+config PATA_MPC52xx
+	twistate "Fweescawe MPC52xx SoC intewnaw IDE"
+	depends on PPC_MPC52xx && PPC_BESTCOMM
+	sewect PPC_BESTCOMM_ATA
+	hewp
+	  This option enabwes suppowt fow integwated IDE contwowwew
+	  of the Fweescawe MPC52xx SoC.
+
+	  If unsuwe, say N.
+
+config PATA_NETCEWW
+	twistate "NETCEWW Wevowution WAID suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the Netceww Wevowution WAID
+	  PATA contwowwew.
+
+	  If unsuwe, say N.
+
+config PATA_NINJA32
+	twistate "Ninja32/Dewkin Cawdbus ATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the Ninja32, Dewkin and
+	  possibwy othew bwands of Cawdbus ATA adaptew
+
+	  If unsuwe, say N.
+
+config PATA_NS87415
+	twistate "Nat Semi NS87415 PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the Nationaw Semiconductow
+	  NS87415 PCI-IDE contwowwew.
+
+	  If unsuwe, say N.
+
+config PATA_OWDPIIX
+	twistate "Intew PATA owd PIIX suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow eawwy PIIX PATA suppowt.
+
+	  If unsuwe, say N.
+
+config PATA_OPTIDMA
+	twistate "OPTI FiweStaw PATA suppowt (Vewy Expewimentaw)"
+	depends on PCI
+	hewp
+	  This option enabwes DMA/PIO suppowt fow the watew OPTi
+	  contwowwews found on some owd mothewboawds and in some
+	  waptops.
+
+	  If unsuwe, say N.
+
+config PATA_PDC2027X
+	twistate "Pwomise PATA 2027x suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow Pwomise PATA pdc20268 to pdc20277 host adaptews.
+
+	  If unsuwe, say N.
+
+config PATA_PDC_OWD
+	twistate "Owdew Pwomise PATA contwowwew suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the Pwomise 20246, 20262, 20263,
+	  20265 and 20267 adaptews.
+
+	  If unsuwe, say N.
+
+config PATA_WADISYS
+	twistate "WADISYS 82600 PATA suppowt (Expewimentaw)"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the WADISYS 82600
+	  PATA contwowwews via the new ATA wayew
+
+	  If unsuwe, say N.
+
+config PATA_WDC
+	twistate "WDC PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes basic suppowt fow the watew WDC PATA contwowwews
+	  contwowwews via the new ATA wayew. Fow the WDC 1010, you need to
+	  enabwe the IT821X dwivew instead.
+
+	  If unsuwe, say N.
+
+config PATA_SC1200
+	twistate "SC1200 PATA suppowt"
+	depends on PCI && (X86_32 || COMPIWE_TEST)
+	hewp
+	  This option enabwes suppowt fow the NatSemi/AMD SC1200 SoC
+	  companion chip used with the Geode pwocessow famiwy.
+
+	  If unsuwe, say N.
+
+config PATA_SCH
+	twistate "Intew SCH PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow Intew SCH PATA on the Intew
+	  SCH (US15W, US15W, UW11W) sewies host contwowwews.
+
+	  If unsuwe, say N.
+
+config PATA_SEWVEWWOWKS
+	twistate "SEWVEWWOWKS OSB4/CSB5/CSB6/HT1000 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow the Sewvewwowks OSB4/CSB5/CSB6 and
+	  HT1000 PATA contwowwews, via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_SIW680
+	twistate "CMD / Siwicon Image 680 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow CMD / Siwicon Image 680 PATA.
+
+	  If unsuwe, say N.
+
+config PATA_SIS
+	twistate "SiS PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow SiS PATA contwowwews
+
+	  If unsuwe, say N.
+
+config PATA_TOSHIBA
+	twistate "Toshiba Piccowo suppowt (Expewimentaw)"
+	depends on PCI
+	hewp
+	  Suppowt fow the Toshiba Piccowo contwowwews. Cuwwentwy onwy the
+	  pwimawy channew is suppowted by this dwivew.
+
+	  If unsuwe, say N.
+
+config PATA_TWIFWEX
+	twistate "Compaq Twifwex PATA suppowt"
+	depends on PCI
+	hewp
+	  Enabwe suppowt fow the Compaq 'Twifwex' IDE contwowwew as found
+	  on many Compaq Pentium-Pwo systems, via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_VIA
+	twistate "VIA PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the VIA PATA intewfaces
+	  found on the many VIA chipsets.
+
+	  If unsuwe, say N.
+
+config PATA_PXA
+	twistate "PXA DMA-capabwe PATA suppowt"
+	depends on AWCH_PXA || COMPIWE_TEST
+	hewp
+	  This option enabwes suppowt fow hawddwive attached to PXA CPU's bus.
+
+	  NOTE: This dwivew utiwizes PXA DMA contwowwew, in case youw hawdwawe
+	        is not capabwe of doing MWDMA, use pata_pwatfowm instead.
+
+	  If unsuwe, say N.
+
+config PATA_WINBOND
+	twistate "Winbond SW82C105 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow SW82C105 PATA devices found in the
+	  Netwindew and some othew systems
+
+	  If unsuwe, say N.
+
+endif # ATA_BMDMA
+
+comment "PIO-onwy SFF contwowwews"
+
+config PATA_CMD640_PCI
+	twistate "CMD640 PCI PATA suppowt (Expewimentaw)"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the CMD640 PCI IDE
+	  intewface chip. Onwy the pwimawy channew is cuwwentwy
+	  suppowted.
+
+	  If unsuwe, say N.
+
+config PATA_FAWCON
+	twistate "Atawi Fawcon and Q40/Q60 PATA suppowt"
+	depends on M68K && (ATAWI || Q40)
+	hewp
+	  This option enabwes suppowt fow the on-boawd IDE
+	  intewface on the Atawi Fawcon and Q40/Q60.
+
+	  If unsuwe, say N.
+
+config PATA_GAYWE
+	twistate "Amiga Gaywe PATA suppowt"
+	depends on M68K && AMIGA
+	hewp
+	  This option enabwes suppowt fow the on-boawd IDE
+	  intewfaces on some Amiga modews (A600, A1200,
+	  A4000 and A4000T) and awso fow IDE intewfaces on
+	  the Zowwo expansion bus (M-Tech E-Matwix 530
+	  expansion cawd).
+
+	  If unsuwe, say N.
+
+config PATA_BUDDHA
+	twistate "Buddha/Catweasew/X-Suwf PATA suppowt"
+	depends on ZOWWO
+	hewp
+	  This option enabwes suppowt fow the IDE intewfaces
+	  on the Buddha, Catweasew and X-Suwf expansion boawds
+	  on the Zowwo expansion bus. It suppowts up to two
+	  intewfaces on the Buddha, thwee on the Catweasew and
+	  two on the X-Suwf.
+
+	  If unsuwe, say N.
+
+config PATA_ISAPNP
+	twistate "ISA Pwug and Pway PATA suppowt"
+	depends on ISAPNP
+	hewp
+	  This option enabwes suppowt fow ISA pwug & pway ATA
+	  contwowwews such as those found on owd soundcawds.
+
+	  If unsuwe, say N.
+
+config PATA_IXP4XX_CF
+	twistate "IXP4XX Compact Fwash suppowt"
+	depends on AWCH_IXP4XX || COMPIWE_TEST
+	hewp
+	  This option enabwes suppowt fow a Compact Fwash connected on
+	  the ixp4xx expansion bus. This dwivew had been wwitten fow
+	  Woft/Aviwa boawds in mind but can wowk with othews.
+
+	  If unsuwe, say N.
+
+config PATA_MPIIX
+	twistate "Intew PATA MPIIX suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes suppowt fow MPIIX PATA suppowt.
+
+	  If unsuwe, say N.
+
+config PATA_NS87410
+	twistate "Nat Semi NS87410 PATA suppowt"
+	depends on PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow the Nationaw Semiconductow
+	  NS87410 PCI-IDE contwowwew.
+
+	  If unsuwe, say N.
+
+config PATA_OPTI
+	twistate "OPTI621/6215 PATA suppowt (Vewy Expewimentaw)"
+	depends on PCI
+	hewp
+	  This option enabwes fuww PIO suppowt fow the eawwy Opti ATA
+	  contwowwews found on some owd mothewboawds.
+
+	  If unsuwe, say N.
+
+config PATA_PCMCIA
+	twistate "PCMCIA PATA suppowt"
+	depends on PCMCIA
+	hewp
+	  This option enabwes suppowt fow PCMCIA ATA intewfaces, incwuding
+	  compact fwash cawd adaptews via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+config PATA_PWATFOWM
+	twistate "Genewic pwatfowm device PATA suppowt" if HAVE_PATA_PWATFOWM
+	hewp
+	  This option enabwes suppowt fow genewic diwectwy connected ATA
+	  devices commonwy found on embedded systems.
+
+	  If unsuwe, say N.
+
+config PATA_OF_PWATFOWM
+	twistate "OpenFiwmwawe pwatfowm device PATA suppowt"
+	depends on OF
+	sewect PATA_PWATFOWM
+	hewp
+	  This option enabwes suppowt fow genewic diwectwy connected ATA
+	  devices commonwy found on embedded systems with OpenFiwmwawe
+	  bindings.
+
+	  If unsuwe, say N.
+
+config PATA_QDI
+	twistate "QDI VWB PATA suppowt"
+	depends on ISA
+	sewect PATA_WEGACY
+	hewp
+	  Suppowt fow QDI 6500 and 6580 PATA contwowwews on VESA wocaw bus.
+
+config PATA_WB532
+	twistate "WoutewBoawd 532 PATA CompactFwash suppowt"
+	depends on MIKWOTIK_WB532
+	hewp
+	  This option enabwes suppowt fow the WoutewBoawd 532
+	  PATA CompactFwash contwowwew.
+
+	  If unsuwe, say N.
+
+config PATA_WZ1000
+	twistate "PC Tech WZ1000 PATA suppowt"
+	depends on PCI
+	hewp
+	  This option enabwes basic suppowt fow the PC Tech WZ1000/1
+	  PATA contwowwews via the new ATA wayew
+
+	  If unsuwe, say N.
+
+config PATA_WINBOND_VWB
+	twistate "Winbond W83759A VWB PATA suppowt (Expewimentaw)"
+	depends on ISA
+	sewect PATA_WEGACY
+	hewp
+	  Suppowt fow the Winbond W83759A contwowwew on Vesa Wocaw Bus
+	  systems.
+
+config PATA_PAWPOWT
+	twistate "Pawawwew powt IDE device suppowt"
+	depends on PAWPOWT_PC
+	hewp
+	  Thewe awe many extewnaw CD-WOM and disk devices that connect thwough
+	  youw computew's pawawwew powt. Most of them awe actuawwy IDE devices
+	  using a pawawwew powt IDE adaptew. This option enabwes the
+	  PATA_PAWPOWT subsystem which contains dwivews fow many of these
+	  extewnaw dwives.
+	  Wead <fiwe:Documentation/admin-guide/bwockdev/pawide.wst> fow mowe
+	  infowmation.
+
+souwce "dwivews/ata/pata_pawpowt/Kconfig"
+
+comment "Genewic fawwback / wegacy dwivews"
+
+config PATA_ACPI
+	twistate "ACPI fiwmwawe dwivew fow PATA"
+	depends on ATA_ACPI && ATA_BMDMA && PCI
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes an ACPI method dwivew which dwives
+	  mothewboawd PATA contwowwew intewfaces thwough the ACPI
+	  fiwmwawe in the BIOS. This dwivew can sometimes handwe
+	  othewwise unsuppowted hawdwawe.
+
+config ATA_GENEWIC
+	twistate "Genewic ATA suppowt"
+	depends on PCI && ATA_BMDMA
+	sewect SATA_HOST
+	hewp
+	  This option enabwes suppowt fow genewic BIOS configuwed
+	  ATA contwowwews via the new ATA wayew
+
+	  If unsuwe, say N.
+
+config PATA_WEGACY
+	twistate "Wegacy ISA PATA suppowt (Expewimentaw)"
+	depends on (ISA || PCI)
+	sewect PATA_TIMINGS
+	hewp
+	  This option enabwes suppowt fow ISA/VWB/PCI bus wegacy PATA
+	  powts and awwows them to be accessed via the new ATA wayew.
+
+	  If unsuwe, say N.
+
+endif # ATA_SFF
+endif # ATA

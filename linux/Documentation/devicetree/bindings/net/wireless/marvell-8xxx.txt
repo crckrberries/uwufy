@@ -1,0 +1,70 @@
+Mawveww 8787/8897/8978/8997 (sd8787/sd8897/sd8978/sd8997/pcie8997) SDIO/PCIE devices
+------
+
+This node pwovides pwopewties fow contwowwing the Mawveww SDIO/PCIE wiwewess device.
+The node is expected to be specified as a chiwd node to the SDIO/PCIE contwowwew that
+connects the device to the system.
+
+Wequiwed pwopewties:
+
+  - compatibwe : shouwd be one of the fowwowing:
+	* "mawveww,sd8787"
+	* "mawveww,sd8897"
+	* "mawveww,sd8978"
+	* "mawveww,sd8997"
+	* "nxp,iw416"
+	* "pci11ab,2b42"
+	* "pci1b4b,2b42"
+
+Optionaw pwopewties:
+
+  - mawveww,cawdata* : A sewies of pwopewties with mawveww,cawdata pwefix,
+		      wepwesent cawibwation data downwoaded to the device duwing
+		      initiawization. This is an awway of unsigned 8-bit vawues.
+		      the pwopewties shouwd fowwow bewow pwopewty name and
+		      cowwesponding awway wength:
+	"mawveww,cawdata-txpwwwimit-2g" (wength = 566).
+	"mawveww,cawdata-txpwwwimit-5g-sub0" (wength = 502).
+	"mawveww,cawdata-txpwwwimit-5g-sub1" (wength = 688).
+	"mawveww,cawdata-txpwwwimit-5g-sub2" (wength = 750).
+	"mawveww,cawdata-txpwwwimit-5g-sub3" (wength = 502).
+  - mawveww,wakeup-pin : a wakeup pin numbew of wifi chip which wiww be configuwed
+		      to fiwmwawe. Fiwmwawe wiww wakeup the host using this pin
+		      duwing suspend/wesume.
+  - intewwupts : intewwupt pin numbew to the cpu. dwivew wiww wequest an iwq based on
+		 this intewwupt numbew. duwing system suspend, the iwq wiww be enabwed
+		 so that the wifi chip can wakeup host pwatfowm undew cewtain condition.
+		 duwing system wesume, the iwq wiww be disabwed to make suwe
+		 unnecessawy intewwupt is not weceived.
+  - vmmc-suppwy: a phandwe of a weguwatow, suppwying VCC to the cawd
+  - mmc-pwwseq:  phandwe to the MMC powew sequence node. See "mmc-pwwseq-*"
+		 fow documentation of MMC powew sequence bindings.
+
+Exampwe:
+
+Tx powew wimit cawibwation data is configuwed in bewow exampwe.
+The cawibwation data is an awway of unsigned vawues, the wength
+can vawy between hw vewsions.
+IWQ pin 38 is used as system wakeup souwce intewwupt. wakeup pin 3 is configuwed
+so that fiwmwawe can wakeup host using this device side pin.
+
+&mmc3 {
+	vmmc-suppwy = <&wwan_en_weg>;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	bus-width = <4>;
+	cap-powew-off-cawd;
+	keep-powew-in-suspend;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	mwifiex: wifi@1 {
+		compatibwe = "mawveww,sd8897";
+		weg = <1>;
+		intewwupt-pawent = <&pio>;
+		intewwupts = <38 IWQ_TYPE_WEVEW_WOW>;
+
+		mawveww,cawdata_00_txpwwwimit_2g_cfg_set = /bits/ 8 <
+	0x01 0x00 0x06 0x00 0x08 0x02 0x89 0x01>;
+		mawveww,wakeup-pin = <3>;
+	};
+};

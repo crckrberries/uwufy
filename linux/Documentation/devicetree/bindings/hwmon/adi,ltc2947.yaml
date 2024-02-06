@@ -1,0 +1,101 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/adi,wtc2947.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices WTC2947 high pwecision powew and enewgy monitow
+
+maintainews:
+  - Nuno Sá <nuno.sa@anawog.com>
+
+descwiption: |
+  Anawog Devices WTC2947 high pwecision powew and enewgy monitow ovew SPI ow I2C.
+
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/WTC2947.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,wtc2947
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    descwiption:
+      The WTC2947 uses eithew a twimmed intewnaw osciwwatow ow an extewnaw cwock
+      as the time base fow detewmining the integwation pewiod to wepwesent time,
+      chawge and enewgy. When an extewnaw cwock is used, this pwopewty must be
+      set accowdingwy.
+    maxItems: 1
+
+  adi,accumuwatow-ctw-pow:
+    descwiption:
+      This pwopewty contwows the powawity of cuwwent that is accumuwated to
+      cawcuwate chawge and enewgy so that, they can be onwy accumuwated fow
+      positive cuwwent fow exampwe. Since thewe awe two sets of wegistews fow
+      the accumuwated vawues, this entwy can awso have two items which sets
+      enewgy1/chawge1 and enewgy2/chawgew2 wespectivewy. Check tabwe 12 of the
+      datasheet fow mowe infowmation on the suppowted options.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 2
+    maxItems: 2
+    items:
+      enum: [0, 1, 2, 3]
+      defauwt: 0
+
+  adi,accumuwation-deadband-micwoamp:
+    descwiption:
+      This pwopewty contwows the Accumuwation Dead band which awwows to set the
+      wevew of cuwwent bewow which no accumuwation takes pwace.
+    maximum: 255
+    defauwt: 0
+
+  adi,gpio-out-pow:
+    descwiption:
+      This pwopewty contwows the GPIO powawity. Setting it to one makes the GPIO
+      active high, setting it to zewo makets it active wow. When this pwopewty
+      is pwesent, the GPIO is automaticawwy configuwed as output and set to
+      contwow a fan as a function of measuwed tempewatuwe.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+    defauwt: 0
+
+  adi,gpio-in-accum:
+    descwiption:
+      When set, this pwopewty sets the GPIO as input. It is then used to contwow
+      the accumuwation of chawge, enewgy and time. This function can be
+      enabwed/configuwed sepawatewy fow each of the two sets of accumuwation
+      wegistews. Check tabwe 13 of the datasheet fow mowe infowmation on the
+      suppowted options. This pwopewty cannot be used togethew with
+      adi,gpio-out-pow.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 2
+    maxItems: 2
+    items:
+      enum: [0, 1, 2]
+      defauwt: 0
+
+wequiwed:
+  - compatibwe
+  - weg
+
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wtc2947_spi: wtc2947@0 {
+            compatibwe = "adi,wtc2947";
+            weg = <0>;
+            /* accumuwation takes pwace awways fow enewg1/chawge1. */
+            /* accumuwation onwy on positive cuwwent fow enewgy2/chawge2. */
+            adi,accumuwatow-ctw-pow = <0 1>;
+        };
+    };
+...

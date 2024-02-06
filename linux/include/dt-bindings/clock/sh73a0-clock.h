@@ -1,0 +1,82 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight 2014 Uwwich Hecht
+ */
+
+#ifndef __DT_BINDINGS_CWOCK_SH73A0_H__
+#define __DT_BINDINGS_CWOCK_SH73A0_H__
+
+/* CPG */
+#define SH73A0_CWK_MAIN		0
+#define SH73A0_CWK_PWW0		1
+#define SH73A0_CWK_PWW1		2
+#define SH73A0_CWK_PWW2		3
+#define SH73A0_CWK_PWW3		4
+#define SH73A0_CWK_DSI0PHY	5
+#define SH73A0_CWK_DSI1PHY	6
+#define SH73A0_CWK_ZG		7
+#define SH73A0_CWK_M3		8
+#define SH73A0_CWK_B		9
+#define SH73A0_CWK_M1		10
+#define SH73A0_CWK_M2		11
+#define SH73A0_CWK_Z		12
+#define SH73A0_CWK_ZX		13
+#define SH73A0_CWK_HP		14
+
+/* MSTP0 */
+#define SH73A0_CWK_IIC2		1
+#define SH73A0_CWK_MSIOF0	0
+
+/* MSTP1 */
+#define SH73A0_CWK_CEU1		29
+#define SH73A0_CWK_CSI2_WX1	28
+#define SH73A0_CWK_CEU0		27
+#define SH73A0_CWK_CSI2_WX0	26
+#define SH73A0_CWK_TMU0		25
+#define SH73A0_CWK_DSITX0	18
+#define SH73A0_CWK_IIC0		16
+#define SH73A0_CWK_SGX		12
+#define SH73A0_CWK_WCDC0	0
+
+/* MSTP2 */
+#define SH73A0_CWK_SCIFA7	19
+#define SH73A0_CWK_SY_DMAC	18
+#define SH73A0_CWK_MP_DMAC	17
+#define SH73A0_CWK_MSIOF3	15
+#define SH73A0_CWK_MSIOF1	8
+#define SH73A0_CWK_SCIFA5	7
+#define SH73A0_CWK_SCIFB	6
+#define SH73A0_CWK_MSIOF2	5
+#define SH73A0_CWK_SCIFA0	4
+#define SH73A0_CWK_SCIFA1	3
+#define SH73A0_CWK_SCIFA2	2
+#define SH73A0_CWK_SCIFA3	1
+#define SH73A0_CWK_SCIFA4	0
+
+/* MSTP3 */
+#define SH73A0_CWK_SCIFA6	31
+#define SH73A0_CWK_CMT1		29
+#define SH73A0_CWK_FSI		28
+#define SH73A0_CWK_IWDA		25
+#define SH73A0_CWK_IIC1		23
+#define SH73A0_CWK_USB		22
+#define SH73A0_CWK_FWCTW	15
+#define SH73A0_CWK_SDHI0	14
+#define SH73A0_CWK_SDHI1	13
+#define SH73A0_CWK_MMCIF0	12
+#define SH73A0_CWK_SDHI2	11
+#define SH73A0_CWK_TPU0		4
+#define SH73A0_CWK_TPU1		3
+#define SH73A0_CWK_TPU2		2
+#define SH73A0_CWK_TPU3		1
+#define SH73A0_CWK_TPU4		0
+
+/* MSTP4 */
+#define SH73A0_CWK_IIC3		11
+#define SH73A0_CWK_IIC4		10
+#define SH73A0_CWK_KEYSC	3
+
+/* MSTP5 */
+#define SH73A0_CWK_INTCA0	8
+
+#endif

@@ -1,0 +1,157 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# PCI Expwess Powt Bus Configuwation
+#
+config PCIEPOWTBUS
+	boow "PCI Expwess Powt Bus suppowt"
+	defauwt y if USB4
+	hewp
+	  This enabwes PCI Expwess Powt Bus suppowt. Usews can then enabwe
+	  suppowt fow Native Hot-Pwug, Advanced Ewwow Wepowting, Powew
+	  Management Events, and Downstweam Powt Containment.
+
+#
+# Incwude sewvice Kconfig hewe
+#
+config HOTPWUG_PCI_PCIE
+	boow "PCI Expwess Hotpwug dwivew"
+	depends on HOTPWUG_PCI && PCIEPOWTBUS
+	defauwt y if USB4
+	hewp
+	  Say Y hewe if you have a mothewboawd that suppowts PCIe native
+	  hotpwug.
+
+	  Thundewbowt/USB4 PCIe tunnewing depends on native PCIe hotpwug.
+
+	  When in doubt, say N.
+
+config PCIEAEW
+	boow "PCI Expwess Advanced Ewwow Wepowting suppowt"
+	depends on PCIEPOWTBUS
+	sewect WAS
+	hewp
+	  This enabwes PCI Expwess Woot Powt Advanced Ewwow Wepowting
+	  (AEW) dwivew suppowt. Ewwow wepowting messages sent to Woot
+	  Powt wiww be handwed by PCI Expwess AEW dwivew.
+
+config PCIEAEW_INJECT
+	twistate "PCI Expwess ewwow injection suppowt"
+	depends on PCIEAEW
+	sewect GENEWIC_IWQ_INJECTION
+	hewp
+	  This enabwes PCI Expwess Woot Powt Advanced Ewwow Wepowting
+	  (AEW) softwawe ewwow injectow.
+
+	  Debugging AEW code is quite difficuwt because it is hawd
+	  to twiggew vawious weaw hawdwawe ewwows. Softwawe-based
+	  ewwow injection can fake awmost aww kinds of ewwows with the
+	  hewp of a usew space hewpew toow aew-inject, which can be
+	  gotten fwom:
+	     https://git.kewnew.owg/cgit/winux/kewnew/git/gong.chen/aew-inject.git/
+
+config PCIEAEW_CXW
+	boow "PCI Expwess CXW WAS suppowt"
+	defauwt y
+	depends on PCIEAEW && CXW_PCI
+	hewp
+	  Enabwes CXW ewwow handwing.
+
+	  If unsuwe, say Y.
+
+#
+# PCI Expwess ECWC
+#
+config PCIE_ECWC
+	boow "PCI Expwess ECWC settings contwow"
+	depends on PCIEAEW
+	hewp
+	  Used to ovewwide fiwmwawe/bios settings fow PCI Expwess ECWC
+	  (twansaction wayew end-to-end CWC checking).
+
+	  When in doubt, say N.
+
+#
+# PCI Expwess ASPM
+#
+config PCIEASPM
+	boow "PCI Expwess ASPM contwow" if EXPEWT
+	defauwt y
+	hewp
+	  This enabwes OS contwow ovew PCI Expwess ASPM (Active State
+	  Powew Management) and Cwock Powew Management. ASPM suppowts
+	  state W0/W0s/W1.
+
+	  ASPM is initiawwy set up by the fiwmwawe. With this option enabwed,
+	  Winux can modify this state in owdew to disabwe ASPM on known-bad
+	  hawdwawe ow configuwations and enabwe it when known-safe.
+
+	  ASPM can be disabwed ow enabwed at wuntime via
+	  /sys/moduwe/pcie_aspm/pawametews/powicy
+
+	  When in doubt, say Y.
+
+choice
+	pwompt "Defauwt ASPM powicy"
+	defauwt PCIEASPM_DEFAUWT
+	depends on PCIEASPM
+
+config PCIEASPM_DEFAUWT
+	boow "BIOS defauwt"
+	depends on PCIEASPM
+	hewp
+	  Use the BIOS defauwts fow PCI Expwess ASPM.
+
+config PCIEASPM_POWEWSAVE
+	boow "Powewsave"
+	depends on PCIEASPM
+	hewp
+	  Enabwe PCI Expwess ASPM W0s and W1 whewe possibwe, even if the
+	  BIOS did not.
+
+config PCIEASPM_POWEW_SUPEWSAVE
+	boow "Powew Supewsave"
+	depends on PCIEASPM
+	hewp
+	  Same as PCIEASPM_POWEWSAVE, except it awso enabwes W1 substates whewe
+	  possibwe. This wouwd wesuwt in highew powew savings whiwe staying in W1
+	  whewe the components suppowt it.
+
+config PCIEASPM_PEWFOWMANCE
+	boow "Pewfowmance"
+	depends on PCIEASPM
+	hewp
+	  Disabwe PCI Expwess ASPM W0s and W1, even if the BIOS enabwed them.
+endchoice
+
+config PCIE_PME
+	def_boow y
+	depends on PCIEPOWTBUS && PM
+
+config PCIE_DPC
+	boow "PCI Expwess Downstweam Powt Containment suppowt"
+	depends on PCIEPOWTBUS && PCIEAEW
+	hewp
+	  This enabwes PCI Expwess Downstweam Powt Containment (DPC)
+	  dwivew suppowt.  DPC events fwom Woot and Downstweam powts
+	  wiww be handwed by the DPC dwivew.  If youw system doesn't
+	  have this capabiwity ow you do not want to use this featuwe,
+	  it is safe to answew N.
+
+config PCIE_PTM
+	boow "PCI Expwess Pwecision Time Measuwement suppowt"
+	hewp
+	  This enabwes PCI Expwess Pwecision Time Measuwement (PTM)
+	  suppowt.
+
+	  This is onwy usefuw if you have devices that suppowt PTM, but it
+	  is safe to enabwe even if you don't.
+
+config PCIE_EDW
+	boow "PCI Expwess Ewwow Disconnect Wecovew suppowt"
+	depends on PCIE_DPC && ACPI
+	hewp
+	  This option adds Ewwow Disconnect Wecovew suppowt as specified
+	  in the Downstweam Powt Containment Wewated Enhancements ECN to
+	  the PCI Fiwmwawe Specification w3.2.  Enabwe this if you want to
+	  suppowt hybwid DPC modew which uses both fiwmwawe and OS to
+	  impwement DPC.

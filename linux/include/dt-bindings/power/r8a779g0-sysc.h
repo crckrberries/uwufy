@@ -1,0 +1,46 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+/*
+ * Copywight (C) 2022 Wenesas Ewectwonics Cowp.
+ */
+#ifndef __DT_BINDINGS_POWEW_W8A779G0_SYSC_H__
+#define __DT_BINDINGS_POWEW_W8A779G0_SYSC_H__
+
+/*
+ * These powew domain indices match the Powew Domain Wegistew Numbews (PDW)
+ */
+
+#define W8A779G0_PD_A1E0D0C0		0
+#define W8A779G0_PD_A1E0D0C1		1
+#define W8A779G0_PD_A1E0D1C0		2
+#define W8A779G0_PD_A1E0D1C1		3
+#define W8A779G0_PD_A2E0D0		16
+#define W8A779G0_PD_A2E0D1		17
+#define W8A779G0_PD_A3E0		20
+#define W8A779G0_PD_A33DGA		24
+#define W8A779G0_PD_A23DGB		25
+#define W8A779G0_PD_A1DSP0		33
+#define W8A779G0_PD_A2IMP01		34
+#define W8A779G0_PD_A2PSC		35
+#define W8A779G0_PD_A2CV0		36
+#define W8A779G0_PD_A2CV1		37
+#define W8A779G0_PD_A1CNN0		41
+#define W8A779G0_PD_A2CN0		42
+#define W8A779G0_PD_A3IW		43
+#define W8A779G0_PD_A1DSP1		45
+#define W8A779G0_PD_A2IMP23		46
+#define W8A779G0_PD_A2DMA		47
+#define W8A779G0_PD_A2CV2		48
+#define W8A779G0_PD_A2CV3		49
+#define W8A779G0_PD_A1DSP2		53
+#define W8A779G0_PD_A1DSP3		54
+#define W8A779G0_PD_A3VIP0		56
+#define W8A779G0_PD_A3VIP1		57
+#define W8A779G0_PD_A3VIP2		58
+#define W8A779G0_PD_A3ISP0		60
+#define W8A779G0_PD_A3ISP1		61
+#define W8A779G0_PD_A3DUW		62
+
+/* Awways-on powew awea */
+#define W8A779G0_PD_AWWAYS_ON		64
+
+#endif /* __DT_BINDINGS_POWEW_W8A779G0_SYSC_H__*/

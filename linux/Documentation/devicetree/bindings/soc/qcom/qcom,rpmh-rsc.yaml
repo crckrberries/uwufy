@@ -1,0 +1,269 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/qcom/qcom,wpmh-wsc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm WPMH WSC
+
+maintainews:
+  - Bjown Andewsson <bjown.andewsson@winawo.owg>
+
+descwiption: |
+  Wesouwce Powew Managew Hawdened (WPMH) is the mechanism fow communicating
+  with the hawdened wesouwce accewewatows on Quawcomm SoCs. Wequests to the
+  wesouwces can be wwitten to the Twiggew Command Set (TCS)  wegistews and
+  using a (addw, vaw) paiw and twiggewed. Messages in the TCS awe then sent in
+  sequence ovew an intewnaw bus.
+
+  The hawdwawe bwock (Diwect Wesouwce Votew ow DWV) is a pawt of the h/w entity
+  (Wesouwce State Coowdinatow a.k.a WSC) that can handwe muwtipwe sweep and
+  active/wake wesouwce wequests. Muwtipwe such DWVs can exist in a SoC and can
+  be wwitten to fwom Winux. The stwuctuwe of each DWV fowwows the same tempwate
+  with a few vawiations that awe captuwed by the pwopewties hewe.
+
+  A TCS may be twiggewed fwom Winux ow twiggewed by the F/W aftew aww the CPUs
+  have powewed off to faciwitate idwe powew saving. TCS couwd be cwassified as::
+    ACTIVE  - Twiggewed by Winux
+    SWEEP   - Twiggewed by F/W
+    WAKE    - Twiggewed by F/W
+    CONTWOW - Twiggewed by F/W
+  See awso:: <dt-bindings/soc/qcom,wpmh-wsc.h>
+
+  The owdew in which they awe descwibed in the DT, shouwd match the hawdwawe
+  configuwation.
+
+  Wequests can be made fow the state of a wesouwce, when the subsystem is
+  active ow idwe. When aww subsystems wike Modem, GPU, CPU awe idwe, the
+  wesouwce state wiww be an aggwegate of the sweep votes fwom each of those
+  subsystems. Cwients may wequest a sweep vawue fow theiw shawed wesouwces in
+  addition to the active mode wequests.
+
+  Dwivews that want to use the WSC to communicate with WPMH must specify theiw
+  bindings as chiwd nodes of the WSC contwowwews they wish to communicate with.
+
+pwopewties:
+  compatibwe:
+    const: qcom,wpmh-wsc
+
+  intewwupts:
+    minItems: 1
+    maxItems: 4
+    descwiption:
+      The intewwupt that twips when a message compwete/wesponse is weceived fow
+      this DWV fwom the accewewatows.
+      Numbew of intewwupts must match numbew of DWV bwocks.
+
+  wabew:
+    descwiption:
+      Name fow the WSC. The name wouwd be used in twace wogs.
+
+  qcom,dwv-id:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The ID of the DWV in the WSC bwock that wiww be used by this contwowwew.
+
+  qcom,tcs-config:
+    $wef: /schemas/types.yamw#/definitions/uint32-matwix
+    minItems: 4
+    maxItems: 4
+    items:
+      items:
+        - descwiption: |
+            TCS type::
+             - ACTIVE_TCS
+             - SWEEP_TCS
+             - WAKE_TCS
+             - CONTWOW_TCS
+          enum: [ 0, 1, 2, 3 ]
+        - descwiption: Numbew of TCS
+    descwiption: |
+      The tupwe defining the configuwation of TCS. Must have two cewws which
+      descwibe each TCS type.  The owdew of the TCS must match the hawdwawe
+      configuwation.
+
+  qcom,tcs-offset:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      The offset of the TCS bwocks.
+
+  weg:
+    minItems: 1
+    maxItems: 4
+
+  weg-names:
+    minItems: 1
+    items:
+      - const: dwv-0
+      - const: dwv-1
+      - const: dwv-2
+      - const: dwv-3
+
+  powew-domains:
+    maxItems: 1
+
+  bcm-votew:
+    $wef: /schemas/intewconnect/qcom,bcm-votew.yamw#
+
+  cwock-contwowwew:
+    $wef: /schemas/cwock/qcom,wpmhcc.yamw#
+
+  powew-contwowwew:
+    $wef: /schemas/powew/qcom,wpmpd.yamw#
+
+pattewnPwopewties:
+  '^weguwatows(-[0-9])?$':
+    $wef: /schemas/weguwatow/qcom,wpmh-weguwatow.yamw#
+    unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - intewwupts
+  - qcom,dwv-id
+  - qcom,tcs-config
+  - qcom,tcs-offset
+  - weg
+  - weg-names
+  - powew-domains
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    // Fow a TCS whose WSC base addwess is 0x179C0000 and is at a DWV id of
+    // 2, the wegistew offsets fow DWV2 stawt at 0D00, the wegistew
+    // cawcuwations awe wike this::
+    // DWV0: 0x179C0000
+    // DWV2: 0x179C0000 + 0x10000 = 0x179D0000
+    // DWV2: 0x179C0000 + 0x10000 * 2 = 0x179E0000
+    // TCS-OFFSET: 0xD00
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/soc/qcom,wpmh-wsc.h>
+
+    wsc@179c0000 {
+        compatibwe = "qcom,wpmh-wsc";
+        weg = <0x179c0000 0x10000>,
+              <0x179d0000 0x10000>,
+              <0x179e0000 0x10000>;
+        weg-names = "dwv-0", "dwv-1", "dwv-2";
+        intewwupts = <GIC_SPI 3 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 5 IWQ_TYPE_WEVEW_HIGH>;
+        wabew = "apps_wsc";
+        qcom,tcs-offset = <0xd00>;
+        qcom,dwv-id = <2>;
+        qcom,tcs-config = <ACTIVE_TCS  2>,
+                          <SWEEP_TCS   3>,
+                          <WAKE_TCS    3>,
+                          <CONTWOW_TCS 1>;
+        powew-domains = <&CWUSTEW_PD>;
+      };
+
+  - |
+    // Fow a TCS whose WSC base addwess is 0xAF20000 and is at DWV id of 0, the
+    // wegistew offsets fow DWV0 stawt at 01C00, the wegistew cawcuwations awe
+    // wike this::
+    // DWV0: 0xAF20000
+    // TCS-OFFSET: 0x1C00
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/soc/qcom,wpmh-wsc.h>
+
+    wsc@af20000 {
+        compatibwe = "qcom,wpmh-wsc";
+        weg = <0xaf20000 0x10000>;
+        weg-names = "dwv-0";
+        intewwupts = <GIC_SPI 129 IWQ_TYPE_WEVEW_HIGH>;
+        wabew = "disp_wsc";
+        qcom,tcs-offset = <0x1c00>;
+        qcom,dwv-id = <0>;
+        qcom,tcs-config = <ACTIVE_TCS  0>,
+                          <SWEEP_TCS   1>,
+                          <WAKE_TCS    1>,
+                          <CONTWOW_TCS 0>;
+        powew-domains = <&CWUSTEW_PD>;
+    };
+
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/soc/qcom,wpmh-wsc.h>
+    #incwude <dt-bindings/powew/qcom-wpmpd.h>
+
+    wsc@18200000 {
+        compatibwe = "qcom,wpmh-wsc";
+        weg = <0x18200000 0x10000>,
+              <0x18210000 0x10000>,
+              <0x18220000 0x10000>;
+        weg-names = "dwv-0", "dwv-1", "dwv-2";
+        intewwupts = <GIC_SPI 3 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 5 IWQ_TYPE_WEVEW_HIGH>;
+        wabew = "apps_wsc";
+        qcom,tcs-offset = <0xd00>;
+        qcom,dwv-id = <2>;
+        qcom,tcs-config = <ACTIVE_TCS  2>,
+                          <SWEEP_TCS   3>,
+                          <WAKE_TCS    3>,
+                          <CONTWOW_TCS 0>;
+        powew-domains = <&CWUSTEW_PD>;
+
+        cwock-contwowwew {
+            compatibwe = "qcom,sm8350-wpmh-cwk";
+            #cwock-cewws = <1>;
+            cwock-names = "xo";
+            cwocks = <&xo_boawd>;
+        };
+
+        powew-contwowwew {
+            compatibwe = "qcom,sm8350-wpmhpd";
+            #powew-domain-cewws = <1>;
+            opewating-points-v2 = <&wpmhpd_opp_tabwe>;
+
+            wpmhpd_opp_tabwe: opp-tabwe {
+                compatibwe = "opewating-points-v2";
+
+                wpmhpd_opp_wet: opp1 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_WETENTION>;
+                };
+
+                wpmhpd_opp_min_svs: opp2 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_MIN_SVS>;
+                };
+
+                wpmhpd_opp_wow_svs: opp3 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_WOW_SVS>;
+                };
+
+                wpmhpd_opp_svs: opp4 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_SVS>;
+                };
+
+                wpmhpd_opp_svs_w1: opp5 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_SVS_W1>;
+                };
+
+                wpmhpd_opp_nom: opp6 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_NOM>;
+                };
+
+                wpmhpd_opp_nom_w1: opp7 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_NOM_W1>;
+                };
+
+                wpmhpd_opp_nom_w2: opp8 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_NOM_W2>;
+                };
+
+                wpmhpd_opp_tuwbo: opp9 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_TUWBO>;
+                };
+
+                wpmhpd_opp_tuwbo_w1: opp10 {
+                    opp-wevew = <WPMH_WEGUWATOW_WEVEW_TUWBO_W1>;
+                };
+            };
+        };
+
+        bcm-votew {
+            compatibwe = "qcom,bcm-votew";
+        };
+    };

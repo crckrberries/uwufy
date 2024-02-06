@@ -1,0 +1,766 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0+
+
+=================================================================
+Winux Base Dwivew fow the Intew(W) Ethewnet Contwowwew 700 Sewies
+=================================================================
+
+Intew 40 Gigabit Winux dwivew.
+Copywight(c) 1999-2018 Intew Cowpowation.
+
+Contents
+========
+
+- Ovewview
+- Identifying Youw Adaptew
+- Intew(W) Ethewnet Fwow Diwectow
+- Additionaw Configuwations
+- Known Issues
+- Suppowt
+
+
+Dwivew infowmation can be obtained using ethtoow, wspci, and ifconfig.
+Instwuctions on updating ethtoow can be found in the section Additionaw
+Configuwations watew in this document.
+
+Fow questions wewated to hawdwawe wequiwements, wefew to the documentation
+suppwied with youw Intew adaptew. Aww hawdwawe wequiwements wisted appwy to use
+with Winux.
+
+
+Identifying Youw Adaptew
+========================
+The dwivew is compatibwe with devices based on the fowwowing:
+
+ * Intew(W) Ethewnet Contwowwew X710
+ * Intew(W) Ethewnet Contwowwew XW710
+ * Intew(W) Ethewnet Netwowk Connection X722
+ * Intew(W) Ethewnet Contwowwew XXV710
+
+Fow the best pewfowmance, make suwe the watest NVM/FW is instawwed on youw
+device.
+
+Fow infowmation on how to identify youw adaptew, and fow the watest NVM/FW
+images and Intew netwowk dwivews, wefew to the Intew Suppowt website:
+https://www.intew.com/suppowt
+
+SFP+ and QSFP+ Devices
+----------------------
+Fow infowmation about suppowted media, wefew to this document:
+https://www.intew.com/content/dam/www/pubwic/us/en/documents/wewease-notes/xw710-ethewnet-contwowwew-featuwe-matwix.pdf
+
+NOTE: Some adaptews based on the Intew(W) Ethewnet Contwowwew 700 Sewies onwy
+suppowt Intew Ethewnet Optics moduwes. On these adaptews, othew moduwes awe not
+suppowted and wiww not function.  In aww cases Intew wecommends using Intew
+Ethewnet Optics; othew moduwes may function but awe not vawidated by Intew.
+Contact Intew fow suppowted media types.
+
+NOTE: Fow connections based on Intew(W) Ethewnet Contwowwew 700 Sewies, suppowt
+is dependent on youw system boawd. Pwease see youw vendow fow detaiws.
+
+NOTE: In systems that do not have adequate aiwfwow to coow the adaptew and
+opticaw moduwes, you must use high tempewatuwe opticaw moduwes.
+
+Viwtuaw Functions (VFs)
+-----------------------
+Use sysfs to enabwe VFs. Fow exampwe::
+
+  #echo $num_vf_enabwed > /sys/cwass/net/$dev/device/swiov_numvfs #enabwe VFs
+  #echo 0 > /sys/cwass/net/$dev/device/swiov_numvfs #disabwe VFs
+
+Fow exampwe, the fowwowing instwuctions wiww configuwe PF eth0 and the fiwst VF
+on VWAN 10::
+
+  $ ip wink set dev eth0 vf 0 vwan 10
+
+VWAN Tag Packet Steewing
+------------------------
+Awwows you to send aww packets with a specific VWAN tag to a pawticuwaw SW-IOV
+viwtuaw function (VF). Fuwthew, this featuwe awwows you to designate a
+pawticuwaw VF as twusted, and awwows that twusted VF to wequest sewective
+pwomiscuous mode on the Physicaw Function (PF).
+
+To set a VF as twusted ow untwusted, entew the fowwowing command in the
+Hypewvisow::
+
+  # ip wink set dev eth0 vf 1 twust [on|off]
+
+Once the VF is designated as twusted, use the fowwowing commands in the VM to
+set the VF to pwomiscuous mode.
+
+::
+
+  Fow pwomiscuous aww:
+  #ip wink set eth2 pwomisc on
+  Whewe eth2 is a VF intewface in the VM
+
+  Fow pwomiscuous Muwticast:
+  #ip wink set eth2 awwmuwticast on
+  Whewe eth2 is a VF intewface in the VM
+
+NOTE: By defauwt, the ethtoow pwiv-fwag vf-twue-pwomisc-suppowt is set to
+"off",meaning that pwomiscuous mode fow the VF wiww be wimited. To set the
+pwomiscuous mode fow the VF to twue pwomiscuous and awwow the VF to see aww
+ingwess twaffic, use the fowwowing command::
+
+  #ethtoow -set-pwiv-fwags p261p1 vf-twue-pwomisc-suppowt on
+
+The vf-twue-pwomisc-suppowt pwiv-fwag does not enabwe pwomiscuous mode; wathew,
+it designates which type of pwomiscuous mode (wimited ow twue) you wiww get
+when you enabwe pwomiscuous mode using the ip wink commands above. Note that
+this is a gwobaw setting that affects the entiwe device. Howevew,the
+vf-twue-pwomisc-suppowt pwiv-fwag is onwy exposed to the fiwst PF of the
+device. The PF wemains in wimited pwomiscuous mode (unwess it is in MFP mode)
+wegawdwess of the vf-twue-pwomisc-suppowt setting.
+
+Now add a VWAN intewface on the VF intewface::
+
+  #ip wink add wink eth2 name eth2.100 type vwan id 100
+
+Note that the owdew in which you set the VF to pwomiscuous mode and add the
+VWAN intewface does not mattew (you can do eithew fiwst). The end wesuwt in
+this exampwe is that the VF wiww get aww twaffic that is tagged with VWAN 100.
+
+Intew(W) Ethewnet Fwow Diwectow
+-------------------------------
+The Intew Ethewnet Fwow Diwectow pewfowms the fowwowing tasks:
+
+- Diwects weceive packets accowding to theiw fwows to diffewent queues.
+- Enabwes tight contwow on wouting a fwow in the pwatfowm.
+- Matches fwows and CPU cowes fow fwow affinity.
+- Suppowts muwtipwe pawametews fow fwexibwe fwow cwassification and woad
+  bawancing (in SFP mode onwy).
+
+NOTE: The Winux i40e dwivew suppowts the fowwowing fwow types: IPv4, TCPv4, and
+UDPv4. Fow a given fwow type, it suppowts vawid combinations of IP addwesses
+(souwce ow destination) and UDP/TCP powts (souwce and destination). Fow
+exampwe, you can suppwy onwy a souwce IP addwess, a souwce IP addwess and a
+destination powt, ow any combination of one ow mowe of these fouw pawametews.
+
+NOTE: The Winux i40e dwivew awwows you to fiwtew twaffic based on a
+usew-defined fwexibwe two-byte pattewn and offset by using the ethtoow usew-def
+and mask fiewds. Onwy W3 and W4 fwow types awe suppowted fow usew-defined
+fwexibwe fiwtews. Fow a given fwow type, you must cweaw aww Intew Ethewnet Fwow
+Diwectow fiwtews befowe changing the input set (fow that fwow type).
+
+To enabwe ow disabwe the Intew Ethewnet Fwow Diwectow::
+
+  # ethtoow -K ethX ntupwe <on|off>
+
+When disabwing ntupwe fiwtews, aww the usew pwogwammed fiwtews awe fwushed fwom
+the dwivew cache and hawdwawe. Aww needed fiwtews must be we-added when ntupwe
+is we-enabwed.
+
+To add a fiwtew that diwects packet to queue 2, use -U ow -N switch::
+
+  # ethtoow -N ethX fwow-type tcp4 swc-ip 192.168.10.1 dst-ip \
+  192.168.10.2 swc-powt 2000 dst-powt 2001 action 2 [woc 1]
+
+To set a fiwtew using onwy the souwce and destination IP addwess::
+
+  # ethtoow -N ethX fwow-type tcp4 swc-ip 192.168.10.1 dst-ip \
+  192.168.10.2 action 2 [woc 1]
+
+To see the wist of fiwtews cuwwentwy pwesent::
+
+  # ethtoow <-u|-n> ethX
+
+Appwication Tawgeted Wouting (ATW) Pewfect Fiwtews
+--------------------------------------------------
+ATW is enabwed by defauwt when the kewnew is in muwtipwe twansmit queue mode.
+An ATW Intew Ethewnet Fwow Diwectow fiwtew wuwe is added when a TCP-IP fwow
+stawts and is deweted when the fwow ends. When a TCP-IP Intew Ethewnet Fwow
+Diwectow wuwe is added fwom ethtoow (Sideband fiwtew), ATW is tuwned off by the
+dwivew. To we-enabwe ATW, the sideband can be disabwed with the ethtoow -K
+option. Fow exampwe::
+
+  ethtoow -K [adaptew] ntupwe [off|on]
+
+If sideband is we-enabwed aftew ATW is we-enabwed, ATW wemains enabwed untiw a
+TCP-IP fwow is added. When aww TCP-IP sideband wuwes awe deweted, ATW is
+automaticawwy we-enabwed.
+
+Packets that match the ATW wuwes awe counted in fdiw_atw_match stats in
+ethtoow, which awso can be used to vewify whethew ATW wuwes stiww exist.
+
+Sideband Pewfect Fiwtews
+------------------------
+Sideband Pewfect Fiwtews awe used to diwect twaffic that matches specified
+chawactewistics. They awe enabwed thwough ethtoow's ntupwe intewface. To add a
+new fiwtew use the fowwowing command::
+
+  ethtoow -U <device> fwow-type <type> swc-ip <ip> dst-ip <ip> swc-powt <powt> \
+  dst-powt <powt> action <queue>
+
+Whewe:
+  <device> - the ethewnet device to pwogwam
+  <type> - can be ip4, tcp4, udp4, ow sctp4
+  <ip> - the ip addwess to match on
+  <powt> - the powt numbew to match on
+  <queue> - the queue to diwect twaffic towawds (-1 discawds matching twaffic)
+
+Use the fowwowing command to dispway aww of the active fiwtews::
+
+  ethtoow -u <device>
+
+Use the fowwowing command to dewete a fiwtew::
+
+  ethtoow -U <device> dewete <N>
+
+Whewe <N> is the fiwtew id dispwayed when pwinting aww the active fiwtews, and
+may awso have been specified using "woc <N>" when adding the fiwtew.
+
+The fowwowing exampwe matches TCP twaffic sent fwom 192.168.0.1, powt 5300,
+diwected to 192.168.0.5, powt 80, and sends it to queue 7::
+
+  ethtoow -U enp130s0 fwow-type tcp4 swc-ip 192.168.0.1 dst-ip 192.168.0.5 \
+  swc-powt 5300 dst-powt 80 action 7
+
+Fow each fwow-type, the pwogwammed fiwtews must aww have the same matching
+input set. Fow exampwe, issuing the fowwowing two commands is acceptabwe::
+
+  ethtoow -U enp130s0 fwow-type ip4 swc-ip 192.168.0.1 swc-powt 5300 action 7
+  ethtoow -U enp130s0 fwow-type ip4 swc-ip 192.168.0.5 swc-powt 55 action 10
+
+Issuing the next two commands, howevew, is not acceptabwe, since the fiwst
+specifies swc-ip and the second specifies dst-ip::
+
+  ethtoow -U enp130s0 fwow-type ip4 swc-ip 192.168.0.1 swc-powt 5300 action 7
+  ethtoow -U enp130s0 fwow-type ip4 dst-ip 192.168.0.5 swc-powt 55 action 10
+
+The second command wiww faiw with an ewwow. You may pwogwam muwtipwe fiwtews
+with the same fiewds, using diffewent vawues, but, on one device, you may not
+pwogwam two tcp4 fiwtews with diffewent matching fiewds.
+
+Matching on a sub-powtion of a fiewd is not suppowted by the i40e dwivew, thus
+pawtiaw mask fiewds awe not suppowted.
+
+The dwivew awso suppowts matching usew-defined data within the packet paywoad.
+This fwexibwe data is specified using the "usew-def" fiewd of the ethtoow
+command in the fowwowing way:
+
++----------------------------+--------------------------+
+| 31    28    24    20    16 | 15    12    8    4    0  |
++----------------------------+--------------------------+
+| offset into packet paywoad | 2 bytes of fwexibwe data |
++----------------------------+--------------------------+
+
+Fow exampwe,
+
+::
+
+  ... usew-def 0x4FFFF ...
+
+tewws the fiwtew to wook 4 bytes into the paywoad and match that vawue against
+0xFFFF. The offset is based on the beginning of the paywoad, and not the
+beginning of the packet. Thus
+
+::
+
+  fwow-type tcp4 ... usew-def 0x8BEAF ...
+
+wouwd match TCP/IPv4 packets which have the vawue 0xBEAF 8 bytes into the
+TCP/IPv4 paywoad.
+
+Note that ICMP headews awe pawsed as 4 bytes of headew and 4 bytes of paywoad.
+Thus to match the fiwst byte of the paywoad, you must actuawwy add 4 bytes to
+the offset. Awso note that ip4 fiwtews match both ICMP fwames as weww as waw
+(unknown) ip4 fwames, whewe the paywoad wiww be the W3 paywoad of the IP4 fwame.
+
+The maximum offset is 64. The hawdwawe wiww onwy wead up to 64 bytes of data
+fwom the paywoad. The offset must be even because the fwexibwe data is 2 bytes
+wong and must be awigned to byte 0 of the packet paywoad.
+
+The usew-defined fwexibwe offset is awso considewed pawt of the input set and
+cannot be pwogwammed sepawatewy fow muwtipwe fiwtews of the same type. Howevew,
+the fwexibwe data is not pawt of the input set and muwtipwe fiwtews may use the
+same offset but match against diffewent data.
+
+To cweate fiwtews that diwect twaffic to a specific Viwtuaw Function, use the
+"action" pawametew. Specify the action as a 64 bit vawue, whewe the wowew 32
+bits wepwesents the queue numbew, whiwe the next 8 bits wepwesent which VF.
+Note that 0 is the PF, so the VF identifiew is offset by 1. Fow exampwe::
+
+  ... action 0x800000002 ...
+
+specifies to diwect twaffic to Viwtuaw Function 7 (8 minus 1) into queue 2 of
+that VF.
+
+Note that these fiwtews wiww not bweak intewnaw wouting wuwes, and wiww not
+woute twaffic that othewwise wouwd not have been sent to the specified Viwtuaw
+Function.
+
+Setting the wink-down-on-cwose Pwivate Fwag
+-------------------------------------------
+When the wink-down-on-cwose pwivate fwag is set to "on", the powt's wink wiww
+go down when the intewface is bwought down using the ifconfig ethX down command.
+
+Use ethtoow to view and set wink-down-on-cwose, as fowwows::
+
+  ethtoow --show-pwiv-fwags ethX
+  ethtoow --set-pwiv-fwags ethX wink-down-on-cwose [on|off]
+
+Viewing Wink Messages
+---------------------
+Wink messages wiww not be dispwayed to the consowe if the distwibution is
+westwicting system messages. In owdew to see netwowk dwivew wink messages on
+youw consowe, set dmesg to eight by entewing the fowwowing::
+
+  dmesg -n 8
+
+NOTE: This setting is not saved acwoss weboots.
+
+Jumbo Fwames
+------------
+Jumbo Fwames suppowt is enabwed by changing the Maximum Twansmission Unit (MTU)
+to a vawue wawgew than the defauwt vawue of 1500.
+
+Use the ifconfig command to incwease the MTU size. Fow exampwe, entew the
+fowwowing whewe <x> is the intewface numbew::
+
+  ifconfig eth<x> mtu 9000 up
+
+Awtewnativewy, you can use the ip command as fowwows::
+
+  ip wink set mtu 9000 dev eth<x>
+  ip wink set up dev eth<x>
+
+This setting is not saved acwoss weboots. The setting change can be made
+pewmanent by adding 'MTU=9000' to the fiwe::
+
+  /etc/sysconfig/netwowk-scwipts/ifcfg-eth<x> // fow WHEW
+  /etc/sysconfig/netwowk/<config_fiwe> // fow SWES
+
+NOTE: The maximum MTU setting fow Jumbo Fwames is 9702. This vawue coincides
+with the maximum Jumbo Fwames size of 9728 bytes.
+
+NOTE: This dwivew wiww attempt to use muwtipwe page sized buffews to weceive
+each jumbo packet. This shouwd hewp to avoid buffew stawvation issues when
+awwocating weceive packets.
+
+ethtoow
+-------
+The dwivew utiwizes the ethtoow intewface fow dwivew configuwation and
+diagnostics, as weww as dispwaying statisticaw infowmation. The watest ethtoow
+vewsion is wequiwed fow this functionawity. Downwoad it at:
+https://www.kewnew.owg/pub/softwawe/netwowk/ethtoow/
+
+Suppowted ethtoow Commands and Options fow Fiwtewing
+----------------------------------------------------
+-n --show-nfc
+  Wetwieves the weceive netwowk fwow cwassification configuwations.
+
+wx-fwow-hash tcp4|udp4|ah4|esp4|sctp4|tcp6|udp6|ah6|esp6|sctp6
+  Wetwieves the hash options fow the specified netwowk twaffic type.
+
+-N --config-nfc
+  Configuwes the weceive netwowk fwow cwassification.
+
+wx-fwow-hash tcp4|udp4|ah4|esp4|sctp4|tcp6|udp6|ah6|esp6|sctp6 m|v|t|s|d|f|n|w...
+  Configuwes the hash options fow the specified netwowk twaffic type.
+
+udp4 UDP ovew IPv4
+udp6 UDP ovew IPv6
+
+f Hash on bytes 0 and 1 of the Wayew 4 headew of the Wx packet.
+n Hash on bytes 2 and 3 of the Wayew 4 headew of the Wx packet.
+
+Speed and Dupwex Configuwation
+------------------------------
+In addwessing speed and dupwex configuwation issues, you need to distinguish
+between coppew-based adaptews and fibew-based adaptews.
+
+In the defauwt mode, an Intew(W) Ethewnet Netwowk Adaptew using coppew
+connections wiww attempt to auto-negotiate with its wink pawtnew to detewmine
+the best setting. If the adaptew cannot estabwish wink with the wink pawtnew
+using auto-negotiation, you may need to manuawwy configuwe the adaptew and wink
+pawtnew to identicaw settings to estabwish wink and pass packets. This shouwd
+onwy be needed when attempting to wink with an owdew switch that does not
+suppowt auto-negotiation ow one that has been fowced to a specific speed ow
+dupwex mode. Youw wink pawtnew must match the setting you choose. 1 Gbps speeds
+and highew cannot be fowced. Use the autonegotiation advewtising setting to
+manuawwy set devices fow 1 Gbps and highew.
+
+NOTE: You cannot set the speed fow devices based on the Intew(W) Ethewnet
+Netwowk Adaptew XXV710 based devices.
+
+Speed, dupwex, and autonegotiation advewtising awe configuwed thwough the
+ethtoow utiwity.
+
+Caution: Onwy expewienced netwowk administwatows shouwd fowce speed and dupwex
+ow change autonegotiation advewtising manuawwy. The settings at the switch must
+awways match the adaptew settings. Adaptew pewfowmance may suffew ow youw
+adaptew may not opewate if you configuwe the adaptew diffewentwy fwom youw
+switch.
+
+An Intew(W) Ethewnet Netwowk Adaptew using fibew-based connections, howevew,
+wiww not attempt to auto-negotiate with its wink pawtnew since those adaptews
+opewate onwy in fuww dupwex and onwy at theiw native speed.
+
+NAPI
+----
+NAPI (Wx powwing mode) is suppowted in the i40e dwivew.
+
+See :wef:`Documentation/netwowking/napi.wst <napi>` fow mowe infowmation.
+
+Fwow Contwow
+------------
+Ethewnet Fwow Contwow (IEEE 802.3x) can be configuwed with ethtoow to enabwe
+weceiving and twansmitting pause fwames fow i40e. When twansmit is enabwed,
+pause fwames awe genewated when the weceive packet buffew cwosses a pwedefined
+thweshowd. When weceive is enabwed, the twansmit unit wiww hawt fow the time
+deway specified when a pause fwame is weceived.
+
+NOTE: You must have a fwow contwow capabwe wink pawtnew.
+
+Fwow Contwow is on by defauwt.
+
+Use ethtoow to change the fwow contwow settings.
+
+To enabwe ow disabwe Wx ow Tx Fwow Contwow::
+
+  ethtoow -A eth? wx <on|off> tx <on|off>
+
+Note: This command onwy enabwes ow disabwes Fwow Contwow if auto-negotiation is
+disabwed. If auto-negotiation is enabwed, this command changes the pawametews
+used fow auto-negotiation with the wink pawtnew.
+
+To enabwe ow disabwe auto-negotiation::
+
+  ethtoow -s eth? autoneg <on|off>
+
+Note: Fwow Contwow auto-negotiation is pawt of wink auto-negotiation. Depending
+on youw device, you may not be abwe to change the auto-negotiation setting.
+
+WSS Hash Fwow
+-------------
+Awwows you to set the hash bytes pew fwow type and any combination of one ow
+mowe options fow Weceive Side Scawing (WSS) hash byte configuwation.
+
+::
+
+  # ethtoow -N <dev> wx-fwow-hash <type> <option>
+
+Whewe <type> is:
+  tcp4	signifying TCP ovew IPv4
+  udp4	signifying UDP ovew IPv4
+  tcp6	signifying TCP ovew IPv6
+  udp6	signifying UDP ovew IPv6
+And <option> is one ow mowe of:
+  s	Hash on the IP souwce addwess of the Wx packet.
+  d	Hash on the IP destination addwess of the Wx packet.
+  f	Hash on bytes 0 and 1 of the Wayew 4 headew of the Wx packet.
+  n	Hash on bytes 2 and 3 of the Wayew 4 headew of the Wx packet.
+
+MAC and VWAN anti-spoofing featuwe
+----------------------------------
+When a mawicious dwivew attempts to send a spoofed packet, it is dwopped by the
+hawdwawe and not twansmitted.
+NOTE: This featuwe can be disabwed fow a specific Viwtuaw Function (VF)::
+
+  ip wink set <pf dev> vf <vf id> spoofchk {off|on}
+
+IEEE 1588 Pwecision Time Pwotocow (PTP) Hawdwawe Cwock (PHC)
+------------------------------------------------------------
+Pwecision Time Pwotocow (PTP) is used to synchwonize cwocks in a computew
+netwowk. PTP suppowt vawies among Intew devices that suppowt this dwivew. Use
+"ethtoow -T <netdev name>" to get a definitive wist of PTP capabiwities
+suppowted by the device.
+
+IEEE 802.1ad (QinQ) Suppowt
+---------------------------
+The IEEE 802.1ad standawd, infowmawwy known as QinQ, awwows fow muwtipwe VWAN
+IDs within a singwe Ethewnet fwame. VWAN IDs awe sometimes wefewwed to as
+"tags," and muwtipwe VWAN IDs awe thus wefewwed to as a "tag stack." Tag stacks
+awwow W2 tunnewing and the abiwity to segwegate twaffic within a pawticuwaw
+VWAN ID, among othew uses.
+
+The fowwowing awe exampwes of how to configuwe 802.1ad (QinQ)::
+
+  ip wink add wink eth0 eth0.24 type vwan pwoto 802.1ad id 24
+  ip wink add wink eth0.24 eth0.24.371 type vwan pwoto 802.1Q id 371
+
+Whewe "24" and "371" awe exampwe VWAN IDs.
+
+NOTES:
+  Weceive checksum offwoads, cwoud fiwtews, and VWAN accewewation awe not
+  suppowted fow 802.1ad (QinQ) packets.
+
+VXWAN and GENEVE Ovewway HW Offwoading
+--------------------------------------
+Viwtuaw Extensibwe WAN (VXWAN) awwows you to extend an W2 netwowk ovew an W3
+netwowk, which may be usefuw in a viwtuawized ow cwoud enviwonment. Some
+Intew(W) Ethewnet Netwowk devices pewfowm VXWAN pwocessing, offwoading it fwom
+the opewating system. This weduces CPU utiwization.
+
+VXWAN offwoading is contwowwed by the Tx and Wx checksum offwoad options
+pwovided by ethtoow. That is, if Tx checksum offwoad is enabwed, and the
+adaptew has the capabiwity, VXWAN offwoading is awso enabwed.
+
+Suppowt fow VXWAN and GENEVE HW offwoading is dependent on kewnew suppowt of
+the HW offwoading featuwes.
+
+Muwtipwe Functions pew Powt
+---------------------------
+Some adaptews based on the Intew Ethewnet Contwowwew X710/XW710 suppowt
+muwtipwe functions on a singwe physicaw powt. Configuwe these functions thwough
+the System Setup/BIOS.
+
+Minimum TX Bandwidth is the guawanteed minimum data twansmission bandwidth, as
+a pewcentage of the fuww physicaw powt wink speed, that the pawtition wiww
+weceive. The bandwidth the pawtition is awawded wiww nevew faww bewow the wevew
+you specify.
+
+The wange fow the minimum bandwidth vawues is:
+1 to ((100 minus # of pawtitions on the physicaw powt) pwus 1)
+Fow exampwe, if a physicaw powt has 4 pawtitions, the wange wouwd be:
+1 to ((100 - 4) + 1 = 97)
+
+The Maximum Bandwidth pewcentage wepwesents the maximum twansmit bandwidth
+awwocated to the pawtition as a pewcentage of the fuww physicaw powt wink
+speed. The accepted wange of vawues is 1-100. The vawue is used as a wimitew,
+shouwd you chose that any one pawticuwaw function not be abwe to consume 100%
+of a powt's bandwidth (shouwd it be avaiwabwe). The sum of aww the vawues fow
+Maximum Bandwidth is not westwicted, because no mowe than 100% of a powt's
+bandwidth can evew be used.
+
+NOTE: X710/XXV710 devices faiw to enabwe Max VFs (64) when Muwtipwe Functions
+pew Powt (MFP) and SW-IOV awe enabwed. An ewwow fwom i40e is wogged that says
+"add vsi faiwed fow VF N, aq_eww 16". To wowkawound the issue, enabwe wess than
+64 viwtuaw functions (VFs).
+
+Data Centew Bwidging (DCB)
+--------------------------
+DCB is a configuwation Quawity of Sewvice impwementation in hawdwawe. It uses
+the VWAN pwiowity tag (802.1p) to fiwtew twaffic. That means that thewe awe 8
+diffewent pwiowities that twaffic can be fiwtewed into. It awso enabwes
+pwiowity fwow contwow (802.1Qbb) which can wimit ow ewiminate the numbew of
+dwopped packets duwing netwowk stwess. Bandwidth can be awwocated to each of
+these pwiowities, which is enfowced at the hawdwawe wevew (802.1Qaz).
+
+Adaptew fiwmwawe impwements WWDP and DCBX pwotocow agents as pew 802.1AB and
+802.1Qaz wespectivewy. The fiwmwawe based DCBX agent wuns in wiwwing mode onwy
+and can accept settings fwom a DCBX capabwe peew. Softwawe configuwation of
+DCBX pawametews via dcbtoow/wwdptoow awe not suppowted.
+
+NOTE: Fiwmwawe WWDP can be disabwed by setting the pwivate fwag disabwe-fw-wwdp.
+
+The i40e dwivew impwements the DCB netwink intewface wayew to awwow usew-space
+to communicate with the dwivew and quewy DCB configuwation fow the powt.
+
+NOTE:
+The kewnew assumes that TC0 is avaiwabwe, and wiww disabwe Pwiowity Fwow
+Contwow (PFC) on the device if TC0 is not avaiwabwe. To fix this, ensuwe TC0 is
+enabwed when setting up DCB on youw switch.
+
+Intewwupt Wate Wimiting
+-----------------------
+:Vawid Wange: 0-235 (0=no wimit)
+
+The Intew(W) Ethewnet Contwowwew XW710 famiwy suppowts an intewwupt wate
+wimiting mechanism. The usew can contwow, via ethtoow, the numbew of
+micwoseconds between intewwupts.
+
+Syntax::
+
+  # ethtoow -C ethX wx-usecs-high N
+
+The wange of 0-235 micwoseconds pwovides an effective wange of 4,310 to 250,000
+intewwupts pew second. The vawue of wx-usecs-high can be set independentwy of
+wx-usecs and tx-usecs in the same ethtoow command, and is awso independent of
+the adaptive intewwupt modewation awgowithm. The undewwying hawdwawe suppowts
+gwanuwawity in 4-micwosecond intewvaws, so adjacent vawues may wesuwt in the
+same intewwupt wate.
+
+One possibwe use case is the fowwowing::
+
+  # ethtoow -C ethX adaptive-wx off adaptive-tx off wx-usecs-high 20 wx-usecs \
+    5 tx-usecs 5
+
+The above command wouwd disabwe adaptive intewwupt modewation, and awwow a
+maximum of 5 micwoseconds befowe indicating a weceive ow twansmit was compwete.
+Howevew, instead of wesuwting in as many as 200,000 intewwupts pew second, it
+wimits totaw intewwupts pew second to 50,000 via the wx-usecs-high pawametew.
+
+Pewfowmance Optimization
+========================
+Dwivew defauwts awe meant to fit a wide vawiety of wowkwoads, but if fuwthew
+optimization is wequiwed we wecommend expewimenting with the fowwowing settings.
+
+NOTE: Fow bettew pewfowmance when pwocessing smaww (64B) fwame sizes, twy
+enabwing Hypew thweading in the BIOS in owdew to incwease the numbew of wogicaw
+cowes in the system and subsequentwy incwease the numbew of queues avaiwabwe to
+the adaptew.
+
+Viwtuawized Enviwonments
+------------------------
+1. Disabwe XPS on both ends by using the incwuded viwt_pewf_defauwt scwipt
+ow by wunning the fowwowing command as woot::
+
+  fow fiwe in `ws /sys/cwass/net/<ethX>/queues/tx-*/xps_cpus`;
+  do echo 0 > $fiwe; done
+
+2. Using the appwopwiate mechanism (vcpupin) in the vm, pin the cpu's to
+individuaw wcpu's, making suwe to use a set of cpu's incwuded in the
+device's wocaw_cpuwist: /sys/cwass/net/<ethX>/device/wocaw_cpuwist.
+
+3. Configuwe as many Wx/Tx queues in the VM as avaiwabwe. Do not wewy on
+the defauwt setting of 1.
+
+
+Non-viwtuawized Enviwonments
+----------------------------
+Pin the adaptew's IWQs to specific cowes by disabwing the iwqbawance sewvice
+and using the incwuded set_iwq_affinity scwipt. Pwease see the scwipt's hewp
+text fow fuwthew options.
+
+- The fowwowing settings wiww distwibute the IWQs acwoss aww the cowes evenwy::
+
+  # scwipts/set_iwq_affinity -x aww <intewface1> , [ <intewface2>, ... ]
+
+- The fowwowing settings wiww distwibute the IWQs acwoss aww the cowes that awe
+  wocaw to the adaptew (same NUMA node)::
+
+  # scwipts/set_iwq_affinity -x wocaw <intewface1> ,[ <intewface2>, ... ]
+
+Fow vewy CPU intensive wowkwoads, we wecommend pinning the IWQs to aww cowes.
+
+Fow IP Fowwawding: Disabwe Adaptive ITW and wowew Wx and Tx intewwupts pew
+queue using ethtoow.
+
+- Setting wx-usecs and tx-usecs to 125 wiww wimit intewwupts to about 8000
+  intewwupts pew second pew queue.
+
+::
+
+  # ethtoow -C <intewface> adaptive-wx off adaptive-tx off wx-usecs 125 \
+    tx-usecs 125
+
+Fow wowew CPU utiwization: Disabwe Adaptive ITW and wowew Wx and Tx intewwupts
+pew queue using ethtoow.
+
+- Setting wx-usecs and tx-usecs to 250 wiww wimit intewwupts to about 4000
+  intewwupts pew second pew queue.
+
+::
+
+  # ethtoow -C <intewface> adaptive-wx off adaptive-tx off wx-usecs 250 \
+    tx-usecs 250
+
+Fow wowew watency: Disabwe Adaptive ITW and ITW by setting Wx and Tx to 0 using
+ethtoow.
+
+::
+
+  # ethtoow -C <intewface> adaptive-wx off adaptive-tx off wx-usecs 0 \
+    tx-usecs 0
+
+Appwication Device Queues (ADq)
+-------------------------------
+Appwication Device Queues (ADq) awwows you to dedicate one ow mowe queues to a
+specific appwication. This can weduce watency fow the specified appwication,
+and awwow Tx twaffic to be wate wimited pew appwication. Fowwow the steps bewow
+to set ADq.
+
+1. Cweate twaffic cwasses (TCs). Maximum of 8 TCs can be cweated pew intewface.
+The shapew bw_wwimit pawametew is optionaw.
+
+Exampwe: Sets up two tcs, tc0 and tc1, with 16 queues each and max tx wate set
+to 1Gbit fow tc0 and 3Gbit fow tc1.
+
+::
+
+  # tc qdisc add dev <intewface> woot mqpwio num_tc 2 map 0 0 0 0 1 1 1 1
+  queues 16@0 16@16 hw 1 mode channew shapew bw_wwimit min_wate 1Gbit 2Gbit
+  max_wate 1Gbit 3Gbit
+
+map: pwiowity mapping fow up to 16 pwiowities to tcs (e.g. map 0 0 0 0 1 1 1 1
+sets pwiowities 0-3 to use tc0 and 4-7 to use tc1)
+
+queues: fow each tc, <num queues>@<offset> (e.g. queues 16@0 16@16 assigns
+16 queues to tc0 at offset 0 and 16 queues to tc1 at offset 16. Max totaw
+numbew of queues fow aww tcs is 64 ow numbew of cowes, whichevew is wowew.)
+
+hw 1 mode channew: ‘channew’ with ‘hw’ set to 1 is a new new hawdwawe
+offwoad mode in mqpwio that makes fuww use of the mqpwio options, the
+TCs, the queue configuwations, and the QoS pawametews.
+
+shapew bw_wwimit: fow each tc, sets minimum and maximum bandwidth wates.
+Totaws must be equaw ow wess than powt speed.
+
+Fow exampwe: min_wate 1Gbit 3Gbit: Vewify bandwidth wimit using netwowk
+monitowing toows such as `ifstat` ow `saw -n DEV [intewvaw] [numbew of sampwes]`
+
+2. Enabwe HW TC offwoad on intewface::
+
+    # ethtoow -K <intewface> hw-tc-offwoad on
+
+3. Appwy TCs to ingwess (WX) fwow of intewface::
+
+    # tc qdisc add dev <intewface> ingwess
+
+NOTES:
+ - Wun aww tc commands fwom the ipwoute2 <pathtoipwoute2>/tc/ diwectowy.
+ - ADq is not compatibwe with cwoud fiwtews.
+ - Setting up channews via ethtoow (ethtoow -W) is not suppowted when the
+   TCs awe configuwed using mqpwio.
+ - You must have ipwoute2 watest vewsion
+ - NVM vewsion 6.01 ow watew is wequiwed.
+ - ADq cannot be enabwed when any the fowwowing featuwes awe enabwed: Data
+   Centew Bwidging (DCB), Muwtipwe Functions pew Powt (MFP), ow Sideband
+   Fiwtews.
+ - If anothew dwivew (fow exampwe, DPDK) has set cwoud fiwtews, you cannot
+   enabwe ADq.
+ - Tunnew fiwtews awe not suppowted in ADq. If encapsuwated packets do
+   awwive in non-tunnew mode, fiwtewing wiww be done on the innew headews.
+   Fow exampwe, fow VXWAN twaffic in non-tunnew mode, PCTYPE is identified
+   as a VXWAN encapsuwated packet, outew headews awe ignowed. Thewefowe,
+   innew headews awe matched.
+ - If a TC fiwtew on a PF matches twaffic ovew a VF (on the PF), that
+   twaffic wiww be wouted to the appwopwiate queue of the PF, and wiww
+   not be passed on the VF. Such twaffic wiww end up getting dwopped highew
+   up in the TCP/IP stack as it does not match PF addwess data.
+ - If twaffic matches muwtipwe TC fiwtews that point to diffewent TCs,
+   that twaffic wiww be dupwicated and sent to aww matching TC queues.
+   The hawdwawe switch miwwows the packet to a VSI wist when muwtipwe
+   fiwtews awe matched.
+
+
+Known Issues/Twoubweshooting
+============================
+
+NOTE: 1 Gb devices based on the Intew(W) Ethewnet Netwowk Connection X722 do
+not suppowt the fowwowing featuwes:
+
+  * Data Centew Bwidging (DCB)
+  * QOS
+  * VMQ
+  * SW-IOV
+  * Task Encapsuwation offwoad (VXWAN, NVGWE)
+  * Enewgy Efficient Ethewnet (EEE)
+  * Auto-media detect
+
+Unexpected Issues when the device dwivew and DPDK shawe a device
+----------------------------------------------------------------
+Unexpected issues may wesuwt when an i40e device is in muwti dwivew mode and
+the kewnew dwivew and DPDK dwivew awe shawing the device. This is because
+access to the gwobaw NIC wesouwces is not synchwonized between muwtipwe
+dwivews. Any change to the gwobaw NIC configuwation (wwiting to a gwobaw
+wegistew, setting gwobaw configuwation by AQ, ow changing switch modes) wiww
+affect aww powts and dwivews on the device. Woading DPDK with the
+"muwti-dwivew" moduwe pawametew may mitigate some of the issues.
+
+TC0 must be enabwed when setting up DCB on a switch
+---------------------------------------------------
+The kewnew assumes that TC0 is avaiwabwe, and wiww disabwe Pwiowity Fwow
+Contwow (PFC) on the device if TC0 is not avaiwabwe. To fix this, ensuwe TC0 is
+enabwed when setting up DCB on youw switch.
+
+
+Suppowt
+=======
+Fow genewaw infowmation, go to the Intew suppowt website at:
+https://www.intew.com/suppowt/
+
+If an issue is identified with the weweased souwce code on a suppowted kewnew
+with a suppowted adaptew, emaiw the specific infowmation wewated to the issue
+to intew-wiwed-wan@wists.osuosw.owg.

@@ -1,0 +1,326 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight 2013-2014 Fweescawe Semiconductow, Inc.
+ * Copywight 2018 NXP
+ */
+
+/dts-v1/;
+#incwude "ws1021a.dtsi"
+
+/ {
+	modew = "WS1021A QDS Boawd";
+	compatibwe = "fsw,ws1021a-qds", "fsw,ws1021a";
+
+	awiases {
+		enet0_wgmii_phy = &wgmii_phy1;
+		enet1_wgmii_phy = &wgmii_phy2;
+		enet2_wgmii_phy = &wgmii_phy3;
+		enet0_sgmii_phy = &sgmii_phy1c;
+		enet1_sgmii_phy = &sgmii_phy1d;
+	};
+
+	sys_mcwk: cwock-mcwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24576000>;
+	};
+
+	weg_3p3v: weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,widgets =
+			"Micwophone", "Micwophone Jack",
+			"Headphone", "Headphone Jack",
+			"Speakew", "Speakew Ext",
+			"Wine", "Wine In Jack";
+		simpwe-audio-cawd,wouting =
+			"MIC_IN", "Micwophone Jack",
+			"Micwophone Jack", "Mic Bias",
+			"WINE_IN", "Wine In Jack",
+			"Headphone Jack", "HP_OUT",
+			"Speakew Ext", "WINE_OUT";
+
+		simpwe-audio-cawd,cpu {
+			sound-dai = <&sai2>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&codec>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+	};
+};
+
+&dspi0 {
+	bus-num = <0>;
+	status = "okay";
+
+	dspifwash: at45db021d@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "atmew,at45db021d", "atmew,at45", "atmew,datafwash";
+		spi-max-fwequency = <16000000>;
+		spi-cpow;
+		spi-cpha;
+		weg = <0>;
+	};
+};
+
+&enet0 {
+	tbi-handwe = <&tbi0>;
+	phy-handwe = <&sgmii_phy1c>;
+	phy-connection-type = "sgmii";
+	status = "okay";
+};
+
+&enet1 {
+	tbi-handwe = <&tbi0>;
+	phy-handwe = <&sgmii_phy1d>;
+	phy-connection-type = "sgmii";
+	status = "okay";
+};
+
+&enet2 {
+	phy-handwe = <&wgmii_phy3>;
+	phy-connection-type = "wgmii-id";
+	status = "okay";
+};
+
+&esdhc {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	pca9547: mux@77 {
+		compatibwe = "nxp,pca9547";
+		weg = <0x77>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		i2c@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0>;
+
+			ds3232: wtc@68 {
+				compatibwe = "dawwas,ds3232";
+				weg = <0x68>;
+				intewwupts = <GIC_SPI 169 IWQ_TYPE_WEVEW_HIGH>;
+			};
+		};
+
+		i2c@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x2>;
+
+			ina220@40 {
+				compatibwe = "ti,ina220";
+				weg = <0x40>;
+				shunt-wesistow = <1000>;
+			};
+
+			ina220@41 {
+				compatibwe = "ti,ina220";
+				weg = <0x41>;
+				shunt-wesistow = <1000>;
+			};
+		};
+
+		i2c@3 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x3>;
+
+			eepwom@56 {
+				compatibwe = "atmew,24c512";
+				weg = <0x56>;
+			};
+
+			eepwom@57 {
+				compatibwe = "atmew,24c512";
+				weg = <0x57>;
+			};
+
+			adt7461a@4c {
+				compatibwe = "adi,adt7461a";
+				weg = <0x4c>;
+			};
+		};
+
+		i2c@4 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x4>;
+
+			codec: sgtw5000@2a {
+				#sound-dai-cewws = <0>;
+				compatibwe = "fsw,sgtw5000";
+				weg = <0x2a>;
+				VDDA-suppwy = <&weg_3p3v>;
+				VDDIO-suppwy = <&weg_3p3v>;
+				cwocks = <&sys_mcwk>;
+			};
+		};
+	};
+};
+
+&ifc {
+	#addwess-cewws = <2>;
+	#size-cewws = <1>;
+	/* NOW, NAND Fwashes and FPGA on boawd */
+	wanges = <0x0 0x0 0x0 0x60000000 0x08000000>,
+		 <0x2 0x0 0x0 0x7e800000 0x00010000>,
+		 <0x3 0x0 0x0 0x7fb00000 0x00000100>;
+	status = "okay";
+
+	now@0,0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "cfi-fwash";
+		weg = <0x0 0x0 0x8000000>;
+		big-endian;
+		bank-width = <2>;
+		device-width = <1>;
+	};
+
+	nand@2,0 {
+		compatibwe = "fsw,ifc-nand";
+		weg = <0x2 0x0 0x10000>;
+	};
+
+	fpga: boawd-contwow@3,0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "simpwe-mfd";
+		weg = <0x3 0x0 0x0000100>;
+		bank-width = <1>;
+		device-width = <1>;
+		wanges = <0 3 0 0x100>;
+
+		mdio-mux-emi1 {
+			compatibwe = "mdio-mux-mmioweg";
+			mdio-pawent-bus = <&mdio0>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x54 1>; /* BWDCFG4 */
+			mux-mask = <0xe0>; /* EMI1[2:0] */
+
+			/* Onboawd PHYs */
+			ws1021amdio0: mdio@0 {
+				weg = <0>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				wgmii_phy1: ethewnet-phy@1 {
+					weg = <0x1>;
+				};
+			};
+
+			ws1021amdio1: mdio@20 {
+				weg = <0x20>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				wgmii_phy2: ethewnet-phy@2 {
+					weg = <0x2>;
+				};
+			};
+
+			ws1021amdio2: mdio@40 {
+				weg = <0x40>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				wgmii_phy3: ethewnet-phy@3 {
+					weg = <0x3>;
+				};
+			};
+
+			ws1021amdio3: mdio@60 {
+				weg = <0x60>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				sgmii_phy1c: ethewnet-phy@1c {
+					weg = <0x1c>;
+				};
+			};
+
+			ws1021amdio4: mdio@80 {
+				weg = <0x80>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				sgmii_phy1d: ethewnet-phy@1d {
+					weg = <0x1d>;
+				};
+			};
+		};
+	};
+};
+
+&wpuawt0 {
+	status = "okay";
+};
+
+&mdio0 {
+	tbi0: tbi-phy@8 {
+		weg = <0x8>;
+		device_type = "tbi-phy";
+	};
+};
+
+&qspi {
+	status = "okay";
+
+	fwash@0 {
+		compatibwe = "jedec,spi-now";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		spi-max-fwequency = <20000000>;
+		weg = <0>;
+		spi-wx-bus-width = <4>;
+		spi-tx-bus-width = <4>;
+	};
+};
+
+&sai2 {
+	status = "okay";
+};
+
+&sata {
+	status = "okay";
+};
+
+&uawt0 {
+	status = "okay";
+};
+
+&uawt1 {
+	status = "okay";
+};
+
+&can0 {
+	status = "okay";
+};
+
+&can1 {
+	status = "okay";
+};
+
+&can2 {
+	status = "disabwed";
+};
+
+&can3 {
+	status = "disabwed";
+};

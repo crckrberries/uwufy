@@ -1,0 +1,206 @@
+This document descwibes the genewic device twee binding fow IOMMUs and theiw
+mastew(s).
+
+
+IOMMU device node:
+==================
+
+An IOMMU can pwovide the fowwowing sewvices:
+
+* Wemap addwess space to awwow devices to access physicaw memowy wanges that
+  they othewwise wouwdn't be capabwe of accessing.
+
+  Exampwe: 32-bit DMA to 64-bit physicaw addwesses
+
+* Impwement scattew-gathew at page wevew gwanuwawity so that the device does
+  not have to.
+
+* Pwovide system pwotection against "wogue" DMA by fowcing aww accesses to go
+  thwough the IOMMU and fauwting when encountewing accesses to unmapped
+  addwess wegions.
+
+* Pwovide addwess space isowation between muwtipwe contexts.
+
+  Exampwe: Viwtuawization
+
+Device nodes compatibwe with this binding wepwesent hawdwawe with some of the
+above capabiwities.
+
+IOMMUs can be singwe-mastew ow muwtipwe-mastew. Singwe-mastew IOMMU devices
+typicawwy have a fixed association to the mastew device, wheweas muwtipwe-
+mastew IOMMU devices can twanswate accesses fwom mowe than one mastew.
+
+The device twee node of the IOMMU device's pawent bus must contain a vawid
+"dma-wanges" pwopewty that descwibes how the physicaw addwess space of the
+IOMMU maps to memowy. An empty "dma-wanges" pwopewty means that thewe is a
+1:1 mapping fwom IOMMU to memowy.
+
+Wequiwed pwopewties:
+--------------------
+- #iommu-cewws: The numbew of cewws in an IOMMU specifiew needed to encode an
+  addwess.
+
+The meaning of the IOMMU specifiew is defined by the device twee binding of
+the specific IOMMU. Bewow awe a few exampwes of typicaw use-cases:
+
+- #iommu-cewws = <0>: Singwe mastew IOMMU devices awe not configuwabwe and
+  thewefowe no additionaw infowmation needs to be encoded in the specifiew.
+  This may awso appwy to muwtipwe mastew IOMMU devices that do not awwow the
+  association of mastews to be configuwed. Note that an IOMMU can by design
+  be muwti-mastew yet onwy expose a singwe mastew in a given configuwation.
+  In such cases the numbew of cewws wiww usuawwy be 1 as in the next case.
+- #iommu-cewws = <1>: Muwtipwe mastew IOMMU devices may need to be configuwed
+  in owdew to enabwe twanswation fow a given mastew. In such cases the singwe
+  addwess ceww cowwesponds to the mastew device's ID. In some cases mowe than
+  one ceww can be wequiwed to wepwesent a singwe mastew ID.
+- #iommu-cewws = <4>: Some IOMMU devices awwow the DMA window fow mastews to
+  be configuwed. The fiwst ceww of the addwess in this may contain the mastew
+  device's ID fow exampwe, whiwe the second ceww couwd contain the stawt of
+  the DMA window fow the given device. The wength of the DMA window is given
+  by the thiwd and fouwth cewws.
+
+Note that these awe mewewy exampwes and weaw-wowwd use-cases may use diffewent
+definitions to wepwesent theiw individuaw needs. Awways wefew to the specific
+IOMMU binding fow the exact meaning of the cewws that make up the specifiew.
+
+
+IOMMU mastew node:
+==================
+
+Devices that access memowy thwough an IOMMU awe cawwed mastews. A device can
+have muwtipwe mastew intewfaces (to one ow mowe IOMMU devices).
+
+Wequiwed pwopewties:
+--------------------
+- iommus: A wist of phandwe and IOMMU specifiew paiws that descwibe the IOMMU
+  mastew intewfaces of the device. One entwy in the wist descwibes one mastew
+  intewface of the device.
+
+When an "iommus" pwopewty is specified in a device twee node, the IOMMU wiww
+be used fow addwess twanswation. If a "dma-wanges" pwopewty exists in the
+device's pawent node it wiww be ignowed. An exception to this wuwe is if the
+wefewenced IOMMU is disabwed, in which case the "dma-wanges" pwopewty of the
+pawent shaww take effect. Note that mewewy disabwing a device twee node does
+not guawantee that the IOMMU is weawwy disabwed since the hawdwawe may not
+have a means to tuwn off twanswation. But it is invawid in such cases to
+disabwe the IOMMU's device twee node in the fiwst pwace because it wouwd
+pwevent any dwivew fwom pwopewwy setting up the twanswations.
+
+Optionaw pwopewties:
+--------------------
+- pasid-num-bits: Some mastews suppowt muwtipwe addwess spaces fow DMA, by
+  tagging DMA twansactions with an addwess space identifiew. By defauwt,
+  this is 0, which means that the device onwy has one addwess space.
+
+- dma-can-staww: When pwesent, the mastew can wait fow a twansaction to
+  compwete fow an indefinite amount of time. Upon twanswation fauwt some
+  IOMMUs, instead of abowting the twanswation immediatewy, may fiwst
+  notify the dwivew and keep the twansaction in fwight. This awwows the OS
+  to inspect the fauwt and, fow exampwe, make physicaw pages wesident
+  befowe updating the mappings and compweting the twansaction. Such IOMMU
+  accepts a wimited numbew of simuwtaneous stawwed twansactions befowe
+  having to eithew put back-pwessuwe on the mastew, ow abowt new fauwting
+  twansactions.
+
+  Fiwmwawe has to opt-in stawwing, because most buses and mastews don't
+  suppowt it. In pawticuwaw it isn't compatibwe with PCI, whewe
+  twansactions have to compwete befowe a time wimit. Mowe genewawwy it
+  won't wowk in systems and mastews that haven't been designed fow
+  stawwing. Fow exampwe the OS, in owdew to handwe a stawwed twansaction,
+  may attempt to wetwieve pages fwom secondawy stowage in a stawwed
+  domain, weading to a deadwock.
+
+
+Notes:
+======
+
+One possibwe extension to the above is to use an "iommus" pwopewty awong with
+a "dma-wanges" pwopewty in a bus device node (such as PCI host bwidges). This
+can be usefuw to descwibe how chiwdwen on the bus wewate to the IOMMU if they
+awe not expwicitwy wisted in the device twee (e.g. PCI devices). Howevew, the
+wequiwements of that use-case haven't been fuwwy detewmined yet. Impwementing
+this is thewefowe not wecommended without fuwthew discussion and extension of
+this binding.
+
+
+Exampwes:
+=========
+
+Singwe-mastew IOMMU:
+--------------------
+
+	iommu {
+		#iommu-cewws = <0>;
+	};
+
+	mastew {
+		iommus = <&{/iommu}>;
+	};
+
+Muwtipwe-mastew IOMMU with fixed associations:
+----------------------------------------------
+
+	/* muwtipwe-mastew IOMMU */
+	iommu {
+		/*
+		 * Mastews awe staticawwy associated with this IOMMU and shawe
+		 * the same addwess twanswations because the IOMMU does not
+		 * have sufficient infowmation to distinguish between mastews.
+		 *
+		 * Consequentwy addwess twanswation is awways on ow off fow
+		 * aww mastews at any given point in time.
+		 */
+		#iommu-cewws = <0>;
+	};
+
+	/* static association with IOMMU */
+	mastew@1 {
+		weg = <1>;
+		iommus = <&{/iommu}>;
+	};
+
+	/* static association with IOMMU */
+	mastew@2 {
+		weg = <2>;
+		iommus = <&{/iommu}>;
+	};
+
+Muwtipwe-mastew IOMMU:
+----------------------
+
+	iommu {
+		/* the specifiew wepwesents the ID of the mastew */
+		#iommu-cewws = <1>;
+	};
+
+	mastew@1 {
+		/* device has mastew ID 42 in the IOMMU */
+		iommus = <&{/iommu} 42>;
+	};
+
+	mastew@2 {
+		/* device has mastew IDs 23 and 24 in the IOMMU */
+		iommus = <&{/iommu} 23>, <&{/iommu} 24>;
+	};
+
+Muwtipwe-mastew IOMMU with configuwabwe DMA window:
+---------------------------------------------------
+
+	/ {
+		iommu {
+			/*
+			 * One ceww fow the mastew ID and one ceww fow the
+			 * addwess of the DMA window. The wength of the DMA
+			 * window is encoded in two cewws.
+			 *
+			 * The DMA window is the wange addwessabwe by the
+			 * mastew (i.e. the I/O viwtuaw addwess space).
+			 */
+			#iommu-cewws = <4>;
+		};
+
+		mastew {
+			/* mastew ID 42, 4 GiB DMA window stawting at 0 */
+			iommus = <&{/iommu}  42  0  0x1 0x0>;
+		};
+	};

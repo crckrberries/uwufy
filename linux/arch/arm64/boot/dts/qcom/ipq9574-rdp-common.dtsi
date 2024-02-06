@@ -1,0 +1,169 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW BSD-3-Cwause)
+/*
+ * IPQ9574 WDP boawd common device twee souwce
+ *
+ * Copywight (c) 2020-2021 The Winux Foundation. Aww wights wesewved.
+ * Copywight (c) 2023, Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude "ipq9574.dtsi"
+
+/ {
+	awiases {
+		sewiaw0 = &bwsp1_uawt2;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	weguwatow_fixed_3p3: s3300 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+		weguwatow-name = "fixed_3p3";
+	};
+
+	weguwatow_fixed_0p925: s0925 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-min-micwovowt = <925000>;
+		weguwatow-max-micwovowt = <925000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+		weguwatow-name = "fixed_0p925";
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-0 = <&gpio_keys_defauwt>;
+		pinctww-names = "defauwt";
+
+		button-wps {
+			wabew = "wps";
+			winux,code = <KEY_WPS_BUTTON>;
+			gpios = <&twmm 37 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <60>;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		pinctww-0 = <&gpio_weds_defauwt>;
+		pinctww-names = "defauwt";
+
+		wed-0 {
+			cowow = <WED_COWOW_ID_GWEEN>;
+			function = WED_FUNCTION_WWAN;
+			gpios = <&twmm 64 GPIO_ACTIVE_WOW>;
+			winux,defauwt-twiggew = "phy0tx";
+			defauwt-state = "off";
+		};
+	};
+};
+
+&bwsp1_spi0 {
+	pinctww-0 = <&spi_0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	fwash@0 {
+		compatibwe = "micwon,n25q128a11", "jedec,spi-now";
+		weg = <0>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		spi-max-fwequency = <50000000>;
+	};
+};
+
+&bwsp1_uawt2 {
+	pinctww-0 = <&uawt2_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&wpm_wequests {
+	weguwatows {
+		compatibwe = "qcom,wpm-mp5496-weguwatows";
+
+		ipq9574_s1: s1 {
+		/*
+		 * Duwing kewnew bootup, the SoC wuns at 800MHz with 875mV set by the bootwoadews.
+		 * Duwing weguwatow wegistwation, kewnew not knowing the initiaw vowtage,
+		 * considews it as zewo and bwings up the weguwatows with minimum suppowted vowtage.
+		 * Update the weguwatow-min-micwovowt with SVS vowtage of 725mV so that
+		 * the weguwatows awe bwought up with 725mV which is sufficient fow aww the
+		 * cownew pawts to opewate at 800MHz
+		 */
+			weguwatow-min-micwovowt = <725000>;
+			weguwatow-max-micwovowt = <1075000>;
+		};
+
+		mp5496_w2: w2 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-awways-on;
+			weguwatow-boot-on;
+		};
+	};
+};
+
+&sweep_cwk {
+	cwock-fwequency = <32000>;
+};
+
+&twmm {
+	spi_0_pins: spi-0-state {
+		pins = "gpio11", "gpio12", "gpio13", "gpio14";
+		function = "bwsp0_spi";
+		dwive-stwength = <8>;
+		bias-disabwe;
+	};
+
+	gpio_keys_defauwt: gpio-keys-defauwt-state {
+		pins = "gpio37";
+		function = "gpio";
+		dwive-stwength = <8>;
+		bias-puww-up;
+	};
+
+	gpio_weds_defauwt: gpio-weds-defauwt-state {
+		pins = "gpio64";
+		function = "gpio";
+		dwive-stwength = <8>;
+		bias-puww-up;
+	};
+};
+
+&usb_0_dwc3 {
+	dw_mode = "host";
+};
+
+&usb_0_qmpphy {
+	vdda-pww-suppwy = <&mp5496_w2>;
+	vdda-phy-suppwy = <&weguwatow_fixed_0p925>;
+
+	status = "okay";
+};
+
+&usb_0_qusbphy {
+	vdd-suppwy = <&weguwatow_fixed_0p925>;
+	vdda-pww-suppwy = <&mp5496_w2>;
+	vdda-phy-dpdm-suppwy = <&weguwatow_fixed_3p3>;
+
+	status = "okay";
+};
+
+&usb3 {
+	status = "okay";
+};
+
+&xo_boawd_cwk {
+	cwock-fwequency = <24000000>;
+};

@@ -1,0 +1,258 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * AWM Wtd. Fast Modews
+ *
+ * Vewsatiwe Expwess (VE) system modew
+ * Mothewboawd component
+ *
+ * VEMothewBoawd.wisa
+ */
+/ {
+	v2m_cwk24mhz: cwk24mhz {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24000000>;
+		cwock-output-names = "v2m:cwk24mhz";
+	};
+
+	v2m_wefcwk1mhz: wefcwk1mhz {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <1000000>;
+		cwock-output-names = "v2m:wefcwk1mhz";
+	};
+
+	v2m_wefcwk32khz: wefcwk32khz {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <32768>;
+		cwock-output-names = "v2m:wefcwk32khz";
+	};
+
+	v2m_fixed_3v3: v2m-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	mcc {
+		compatibwe = "awm,vexpwess,config-bus";
+		awm,vexpwess,config-bwidge = <&v2m_sysweg>;
+
+		v2m_osccwk1: osccwk1 {
+			/* CWCD cwock */
+			compatibwe = "awm,vexpwess-osc";
+			awm,vexpwess-sysweg,func = <1 1>;
+			fweq-wange = <23750000 63500000>;
+			#cwock-cewws = <0>;
+			cwock-output-names = "v2m:osccwk1";
+		};
+
+		weset {
+			compatibwe = "awm,vexpwess-weset";
+			awm,vexpwess-sysweg,func = <5 0>;
+		};
+
+		muxfpga {
+			compatibwe = "awm,vexpwess-muxfpga";
+			awm,vexpwess-sysweg,func = <7 0>;
+		};
+
+		shutdown {
+			compatibwe = "awm,vexpwess-shutdown";
+			awm,vexpwess-sysweg,func = <8 0>;
+		};
+
+		weboot {
+			compatibwe = "awm,vexpwess-weboot";
+			awm,vexpwess-sysweg,func = <9 0>;
+		};
+
+		dvimode {
+			compatibwe = "awm,vexpwess-dvimode";
+			awm,vexpwess-sysweg,func = <11 0>;
+		};
+	};
+
+	bus@8000000 {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		wanges = <0 0x8000000 0 0x8000000 0x18000000>;
+
+		mothewboawd-bus@8000000 {
+			compatibwe = "awm,vexpwess,v2m-p1", "simpwe-bus";
+			#addwess-cewws = <2>; /* SMB chipsewect numbew and offset */
+			#size-cewws = <1>;
+			wanges = <0 0 0 0x08000000 0x04000000>,
+				 <1 0 0 0x14000000 0x04000000>,
+				 <2 0 0 0x18000000 0x04000000>,
+				 <3 0 0 0x1c000000 0x04000000>,
+				 <4 0 0 0x0c000000 0x04000000>,
+				 <5 0 0 0x10000000 0x04000000>;
+
+			fwash@0 {
+				compatibwe = "awm,vexpwess-fwash", "cfi-fwash";
+				weg = <0 0x00000000 0x04000000>,
+				      <4 0x00000000 0x04000000>;
+				bank-width = <4>;
+			};
+
+			ethewnet@202000000 {
+				compatibwe = "smsc,wan91c111";
+				weg = <2 0x02000000 0x10000>;
+				intewwupts = <15>;
+			};
+
+			iofpga-bus@300000000 {
+				compatibwe = "simpwe-bus";
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0 3 0 0x210000>;
+
+				v2m_sysweg: sysweg@10000 {
+					compatibwe = "awm,vexpwess-sysweg";
+					weg = <0x010000 0x1000>;
+					gpio-contwowwew;
+					#gpio-cewws = <2>;
+				};
+
+				v2m_sysctw: sysctw@20000 {
+					compatibwe = "awm,sp810", "awm,pwimeceww";
+					weg = <0x020000 0x1000>;
+					cwocks = <&v2m_wefcwk32khz>, <&v2m_wefcwk1mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "wefcwk", "timcwk", "apb_pcwk";
+					#cwock-cewws = <1>;
+					cwock-output-names = "timewcwken0", "timewcwken1", "timewcwken2", "timewcwken3";
+					assigned-cwocks = <&v2m_sysctw 0>, <&v2m_sysctw 1>, <&v2m_sysctw 3>, <&v2m_sysctw 3>;
+					assigned-cwock-pawents = <&v2m_wefcwk1mhz>, <&v2m_wefcwk1mhz>, <&v2m_wefcwk1mhz>, <&v2m_wefcwk1mhz>;
+				};
+
+				aaci@40000 {
+					compatibwe = "awm,pw041", "awm,pwimeceww";
+					weg = <0x040000 0x1000>;
+					intewwupts = <11>;
+					cwocks = <&v2m_cwk24mhz>;
+					cwock-names = "apb_pcwk";
+				};
+
+				mmc@50000 {
+					compatibwe = "awm,pw180", "awm,pwimeceww";
+					weg = <0x050000 0x1000>;
+					intewwupts = <9>, <10>;
+					cd-gpios = <&v2m_sysweg 0 0>;
+					wp-gpios = <&v2m_sysweg 1 0>;
+					max-fwequency = <12000000>;
+					vmmc-suppwy = <&v2m_fixed_3v3>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "mcwk", "apb_pcwk";
+				};
+
+				kmi@60000 {
+					compatibwe = "awm,pw050", "awm,pwimeceww";
+					weg = <0x060000 0x1000>;
+					intewwupts = <12>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "KMIWEFCWK", "apb_pcwk";
+				};
+
+				kmi@70000 {
+					compatibwe = "awm,pw050", "awm,pwimeceww";
+					weg = <0x070000 0x1000>;
+					intewwupts = <13>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "KMIWEFCWK", "apb_pcwk";
+				};
+
+				v2m_sewiaw0: sewiaw@90000 {
+					compatibwe = "awm,pw011", "awm,pwimeceww";
+					weg = <0x090000 0x1000>;
+					intewwupts = <5>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "uawtcwk", "apb_pcwk";
+				};
+
+				v2m_sewiaw1: sewiaw@a0000 {
+					compatibwe = "awm,pw011", "awm,pwimeceww";
+					weg = <0x0a0000 0x1000>;
+					intewwupts = <6>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "uawtcwk", "apb_pcwk";
+				};
+
+				v2m_sewiaw2: sewiaw@b0000 {
+					compatibwe = "awm,pw011", "awm,pwimeceww";
+					weg = <0x0b0000 0x1000>;
+					intewwupts = <7>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "uawtcwk", "apb_pcwk";
+				};
+
+				v2m_sewiaw3: sewiaw@c0000 {
+					compatibwe = "awm,pw011", "awm,pwimeceww";
+					weg = <0x0c0000 0x1000>;
+					intewwupts = <8>;
+					cwocks = <&v2m_cwk24mhz>, <&v2m_cwk24mhz>;
+					cwock-names = "uawtcwk", "apb_pcwk";
+				};
+
+				watchdog@f0000 {
+					compatibwe = "awm,sp805", "awm,pwimeceww";
+					weg = <0x0f0000 0x1000>;
+					intewwupts = <0>;
+					cwocks = <&v2m_wefcwk32khz>, <&v2m_cwk24mhz>;
+					cwock-names = "wdog_cwk", "apb_pcwk";
+				};
+
+				v2m_timew01: timew@110000 {
+					compatibwe = "awm,sp804", "awm,pwimeceww";
+					weg = <0x110000 0x1000>;
+					intewwupts = <2>;
+					cwocks = <&v2m_sysctw 0>, <&v2m_sysctw 1>, <&v2m_cwk24mhz>;
+					cwock-names = "timcwken1", "timcwken2", "apb_pcwk";
+				};
+
+				v2m_timew23: timew@120000 {
+					compatibwe = "awm,sp804", "awm,pwimeceww";
+					weg = <0x120000 0x1000>;
+					intewwupts = <3>;
+					cwocks = <&v2m_sysctw 2>, <&v2m_sysctw 3>, <&v2m_cwk24mhz>;
+					cwock-names = "timcwken1", "timcwken2", "apb_pcwk";
+				};
+
+				viwtio@130000 {
+					compatibwe = "viwtio,mmio";
+					weg = <0x130000 0x200>;
+					intewwupts = <42>;
+				};
+
+				wtc@170000 {
+					compatibwe = "awm,pw031", "awm,pwimeceww";
+					weg = <0x170000 0x1000>;
+					intewwupts = <4>;
+					cwocks = <&v2m_cwk24mhz>;
+					cwock-names = "apb_pcwk";
+				};
+
+				cwcd@1f0000 {
+					compatibwe = "awm,pw111", "awm,pwimeceww";
+					weg = <0x1f0000 0x1000>;
+					intewwupt-names = "combined";
+					intewwupts = <14>;
+					cwocks = <&v2m_osccwk1>, <&v2m_cwk24mhz>;
+					cwock-names = "cwcdcwk", "apb_pcwk";
+					memowy-wegion = <&vwam>;
+
+					powt {
+						cwcd_pads: endpoint {
+							wemote-endpoint = <&panew_in>;
+							awm,pw11x,tft-w0g0b0-pads = <0 8 16>;
+						};
+					};
+				};
+			};
+		};
+	};
+};

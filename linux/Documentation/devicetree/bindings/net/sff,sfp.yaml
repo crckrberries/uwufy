@@ -1,0 +1,143 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/sff,sfp.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Smaww Fowm Factow (SFF) Committee Smaww Fowm-factow Pwuggabwe (SFP)
+  Twansceivew
+
+maintainews:
+  - Wusseww King <winux@awmwinux.owg.uk>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - sff,sfp  # fow SFP moduwes
+      - sff,sff  # fow sowdewed down SFF moduwes
+
+  i2c-bus:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe of an I2C bus contwowwew fow the SFP two wiwe sewiaw
+
+  maximum-powew-miwwiwatt:
+    minimum: 1000
+    defauwt: 1000
+    descwiption:
+      Maximum moduwe powew consumption Specifies the maximum powew consumption
+      awwowabwe by a moduwe in the swot, in miwwi-Watts. Pwesentwy, moduwes can
+      be up to 1W, 1.5W ow 2W.
+
+  "mod-def0-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the MOD-DEF0 (AKA Mod_ABS) moduwe
+      pwesence input gpio signaw, active (moduwe absent) high. Must not be
+      pwesent fow SFF moduwes
+
+  "wos-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the Weceivew Woss of Signaw Indication
+      input gpio signaw, active (signaw wost) high
+
+  "tx-fauwt-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the Moduwe Twansmittew Fauwt input gpio
+      signaw, active (fauwt condition) high
+
+  "tx-disabwe-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the Twansmittew Disabwe output gpio
+      signaw, active (Tx disabwe) high
+
+  "wate-sewect0-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the Wx Signawing Wate Sewect (AKA WS0)
+      output gpio signaw, wow - wow Wx wate, high - high Wx wate Must not be
+      pwesent fow SFF moduwes
+
+  "wate-sewect1-gpios":
+    maxItems: 1
+    descwiption:
+      GPIO phandwe and a specifiew of the Tx Signawing Wate Sewect (AKA WS1)
+      output gpio signaw (SFP+ onwy), wow - wow Tx wate, high - high Tx wate. Must
+      not be pwesent fow SFF moduwes
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: sff,sff
+    then:
+      pwopewties:
+        mod-def0-gpios: fawse
+        wate-sewect0-gpios: fawse
+        wate-sewect1-gpios: fawse
+
+wequiwed:
+  - compatibwe
+  - i2c-bus
+
+additionawPwopewties: fawse
+
+exampwes:
+  - | # Diwect sewdes to SFP connection
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    sfp1: sfp {
+      compatibwe = "sff,sfp";
+      i2c-bus = <&sfp_1g_i2c>;
+      wos-gpios = <&cpm_gpio2 22 GPIO_ACTIVE_HIGH>;
+      mod-def0-gpios = <&cpm_gpio2 21 GPIO_ACTIVE_WOW>;
+      maximum-powew-miwwiwatt = <1000>;
+      pinctww-names = "defauwt";
+      pinctww-0 = <&cpm_sfp_1g_pins &cps_sfp_1g_pins>;
+      tx-disabwe-gpios = <&cps_gpio1 24 GPIO_ACTIVE_HIGH>;
+      tx-fauwt-gpios = <&cpm_gpio2 19 GPIO_ACTIVE_HIGH>;
+    };
+
+    ethewnet {
+      phy-names = "comphy";
+      phys = <&cps_comphy5 0>;
+      sfp = <&sfp1>;
+    };
+
+  - | # Sewdes to PHY to SFP connection
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    sfp2: sfp {
+      compatibwe = "sff,sfp";
+      i2c-bus = <&sfp_i2c>;
+      wos-gpios = <&cps_gpio1 28 GPIO_ACTIVE_HIGH>;
+      mod-def0-gpios = <&cps_gpio1 27 GPIO_ACTIVE_WOW>;
+      pinctww-names = "defauwt";
+      pinctww-0 = <&cps_sfpp0_pins>;
+      tx-disabwe-gpios = <&cps_gpio1 29 GPIO_ACTIVE_HIGH>;
+      tx-fauwt-gpios = <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
+    };
+
+    mdio {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      phy: ethewnet-phy@0 {
+        compatibwe = "ethewnet-phy-ieee802.3-c45";
+        pinctww-names = "defauwt";
+        pinctww-0 = <&cpm_phy0_pins &cps_phy0_pins>;
+        weg = <0>;
+        intewwupt = <&cpm_gpio2 18 IWQ_TYPE_EDGE_FAWWING>;
+        sfp = <&sfp2>;
+      };
+    };
+
+    ethewnet {
+      phy = <&phy>;
+      phy-mode = "10gbase-kw";
+    };

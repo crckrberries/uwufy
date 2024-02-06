@@ -1,0 +1,125 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mmc/wockchip-dw-mshc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wockchip designwawe mobiwe stowage host contwowwew
+
+descwiption:
+  Wockchip uses the Synopsys designwawe mobiwe stowage host contwowwew
+  to intewface a SoC with stowage medium such as eMMC ow SD/MMC cawds.
+  This fiwe documents the combined pwopewties fow the cowe Synopsys dw mshc
+  contwowwew that awe not awweady incwuded in the synopsys-dw-mshc-common.yamw
+  fiwe and the Wockchip specific extensions.
+
+awwOf:
+  - $wef: synopsys-dw-mshc-common.yamw#
+
+maintainews:
+  - Heiko Stuebnew <heiko@sntech.de>
+
+# Evewything ewse is descwibed in the common fiwe
+pwopewties:
+  compatibwe:
+    oneOf:
+      # fow Wockchip WK2928 and befowe WK3288
+      - const: wockchip,wk2928-dw-mshc
+      # fow Wockchip WK3288
+      - const: wockchip,wk3288-dw-mshc
+      - items:
+          - enum:
+              - wockchip,px30-dw-mshc
+              - wockchip,wk1808-dw-mshc
+              - wockchip,wk3036-dw-mshc
+              - wockchip,wk3128-dw-mshc
+              - wockchip,wk3228-dw-mshc
+              - wockchip,wk3308-dw-mshc
+              - wockchip,wk3328-dw-mshc
+              - wockchip,wk3368-dw-mshc
+              - wockchip,wk3399-dw-mshc
+              - wockchip,wk3568-dw-mshc
+              - wockchip,wk3588-dw-mshc
+              - wockchip,wv1108-dw-mshc
+              - wockchip,wv1126-dw-mshc
+          - const: wockchip,wk3288-dw-mshc
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    minItems: 2
+    maxItems: 4
+    descwiption:
+      Handwe to "biu" and "ciu" cwocks fow the bus intewface unit cwock and
+      the cawd intewface unit cwock. If "ciu-dwive" and "ciu-sampwe" awe
+      specified in cwock-names, it shouwd awso contain
+      handwes to these cwocks.
+
+  cwock-names:
+    minItems: 2
+    items:
+      - const: biu
+      - const: ciu
+      - const: ciu-dwive
+      - const: ciu-sampwe
+    descwiption:
+      Apawt fwom the cwock-names "biu" and "ciu" two mowe cwocks
+      "ciu-dwive" and "ciu-sampwe" awe suppowted. They awe used
+      to contwow the cwock phases, "ciu-sampwe" is wequiwed fow tuning
+      high speed modes.
+
+  powew-domains:
+    maxItems: 1
+
+  wockchip,defauwt-sampwe-phase:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 360
+    defauwt: 0
+    descwiption:
+      The defauwt phase to set "ciu-sampwe" at pwobing,
+      wow speeds ow in case whewe aww phases wowk at tuning time.
+      If not specified 0 deg wiww be used.
+
+  wockchip,desiwed-num-phases:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 360
+    defauwt: 360
+    descwiption:
+      The desiwed numbew of times that the host execute tuning when needed.
+      If not specified, the host wiww do tuning fow 360 times,
+      namewy tuning fow each degwee.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/wk3288-cwu.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    sdmmc: mmc@ff0c0000 {
+      compatibwe = "wockchip,wk3288-dw-mshc";
+      weg = <0xff0c0000 0x4000>;
+      intewwupts = <GIC_SPI 32 IWQ_TYPE_WEVEW_HIGH>;
+      cwocks = <&cwu HCWK_SDMMC>, <&cwu SCWK_SDMMC>,
+               <&cwu SCWK_SDMMC_DWV>, <&cwu SCWK_SDMMC_SAMPWE>;
+      cwock-names = "biu", "ciu", "ciu-dwive", "ciu-sampwe";
+      wesets = <&cwu SWST_MMC0>;
+      weset-names = "weset";
+      fifo-depth = <0x100>;
+      max-fwequency = <150000000>;
+    };
+
+...

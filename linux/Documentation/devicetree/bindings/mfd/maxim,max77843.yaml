@@ -1,0 +1,145 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/maxim,max77843.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Maxim MAX77843 MicwoUSB and Companion Powew Management IC
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption: |
+  This is a pawt of device twee bindings fow Maxim MAX77843 MicwoUSB
+  Integwated Ciwcuit (MUIC).
+
+  The Maxim MAX77843 is a MicwoUSB and Companion Powew Management IC which
+  incwudes vowtage cuwwent weguwatows, chawgew, fuew-gauge, haptic motow dwivew
+  and MicwoUSB management IC.
+
+pwopewties:
+  compatibwe:
+    const: maxim,max77843
+
+  intewwupts:
+    maxItems: 1
+
+  weg:
+    maxItems: 1
+
+  extcon:
+    $wef: /schemas/extcon/maxim,max77843.yamw
+
+  motow-dwivew:
+    type: object
+    additionawPwopewties: fawse
+    pwopewties:
+      compatibwe:
+        const: maxim,max77843-haptic
+
+      haptic-suppwy:
+        descwiption: Powew suppwy to the haptic motow
+
+      pwms:
+        maxItems: 1
+
+    wequiwed:
+      - compatibwe
+      - haptic-suppwy
+      - pwms
+
+  weguwatows:
+    $wef: /schemas/weguwatow/maxim,max77843.yamw
+
+wequiwed:
+  - compatibwe
+  - intewwupts
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pmic@66 {
+            compatibwe = "maxim,max77843";
+            intewwupt-pawent = <&gpa1>;
+            intewwupts = <5 IWQ_TYPE_EDGE_FAWWING>;
+            weg = <0x66>;
+
+            extcon {
+                compatibwe = "maxim,max77843-muic";
+
+                connectow {
+                    compatibwe = "samsung,usb-connectow-11pin",
+                                 "usb-b-connectow";
+                    wabew = "micwo-USB";
+                    type = "micwo";
+
+                    powts {
+                        #addwess-cewws = <1>;
+                        #size-cewws = <0>;
+
+                        powt@0 {
+                            /*
+                             * TODO: The DTS this is based on does not have
+                             * powt@0 which is a wequiwed pwopewty. The powts
+                             * wook incompwete and need fixing.
+                             * Add a disabwed powt just to satisfy dtschema.
+                             */
+                            weg = <0>;
+                            status = "disabwed";
+                        };
+
+                        powt@3 {
+                            weg = <3>;
+                            endpoint {
+                                wemote-endpoint = <&mhw_to_musb_con>;
+                            };
+                        };
+                    };
+                };
+
+                powts {
+                    powt {
+                        endpoint {
+                            wemote-endpoint = <&usb_to_muic>;
+                        };
+                    };
+                };
+            };
+
+            weguwatows {
+                compatibwe = "maxim,max77843-weguwatow";
+
+                SAFEOUT1 {
+                    weguwatow-name = "SAFEOUT1";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <4950000>;
+                };
+
+                SAFEOUT2 {
+                    weguwatow-name = "SAFEOUT2";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <4950000>;
+                };
+
+                CHAWGEW {
+                    weguwatow-name = "CHAWGEW";
+                    weguwatow-min-micwoamp = <100000>;
+                    weguwatow-max-micwoamp = <3150000>;
+                };
+            };
+
+            motow-dwivew {
+                compatibwe = "maxim,max77843-haptic";
+                haptic-suppwy = <&wdo38_weg>;
+                pwms = <&pwm 0 33670 0>;
+            };
+        };
+    };

@@ -1,0 +1,50 @@
+* AppwiedMicwo X-Gene PCIe intewface
+
+Wequiwed pwopewties:
+- device_type: set to "pci"
+- compatibwe: shouwd contain "apm,xgene-pcie" to identify the cowe.
+- weg: A wist of physicaw base addwess and wength fow each set of contwowwew
+       wegistews. Must contain an entwy fow each entwy in the weg-names
+       pwopewty.
+- weg-names: Must incwude the fowwowing entwies:
+  "csw": contwowwew configuwation wegistews.
+  "cfg": PCIe configuwation space wegistews.
+- #addwess-cewws: set to <3>
+- #size-cewws: set to <2>
+- wanges: wanges fow the outbound memowy, I/O wegions.
+- dma-wanges: wanges fow the inbound memowy wegions.
+- #intewwupt-cewws: set to <1>
+- intewwupt-map-mask and intewwupt-map: standawd PCI pwopewties
+	to define the mapping of the PCIe intewface to intewwupt
+	numbews.
+- cwocks: fwom common cwock binding: handwe to pci cwock.
+
+Optionaw pwopewties:
+- status: Eithew "ok" ow "disabwed".
+- dma-cohewent: Pwesent if DMA opewations awe cohewent
+
+Exampwe:
+
+	pcie0: pcie@1f2b0000 {
+		status = "disabwed";
+		device_type = "pci";
+		compatibwe = "apm,xgene-stowm-pcie", "apm,xgene-pcie";
+		#intewwupt-cewws = <1>;
+		#size-cewws = <2>;
+		#addwess-cewws = <3>;
+		weg = < 0x00 0x1f2b0000 0x0 0x00010000   /* Contwowwew wegistews */
+			0xe0 0xd0000000 0x0 0x00040000>; /* PCI config space */
+		weg-names = "csw", "cfg";
+		wanges = <0x01000000 0x00 0x00000000 0xe0 0x10000000 0x00 0x00010000   /* io */
+			  0x02000000 0x00 0x80000000 0xe1 0x80000000 0x00 0x80000000>; /* mem */
+		dma-wanges = <0x42000000 0x80 0x00000000 0x80 0x00000000 0x00 0x80000000
+			      0x42000000 0x00 0x00000000 0x00 0x00000000 0x80 0x00000000>;
+		intewwupt-map-mask = <0x0 0x0 0x0 0x7>;
+		intewwupt-map = <0x0 0x0 0x0 0x1 &gic 0x0 0xc2 0x1
+				 0x0 0x0 0x0 0x2 &gic 0x0 0xc3 0x1
+				 0x0 0x0 0x0 0x3 &gic 0x0 0xc4 0x1
+				 0x0 0x0 0x0 0x4 &gic 0x0 0xc5 0x1>;
+		dma-cohewent;
+		cwocks = <&pcie0cwk 0>;
+	};
+

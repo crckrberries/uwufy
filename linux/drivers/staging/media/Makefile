@@ -1,0 +1,13 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_VIDEO_ATMEW_ISC_BASE)	+= depwecated/atmew/
+obj-$(CONFIG_INTEW_ATOMISP)     += atomisp/
+obj-$(CONFIG_VIDEO_IMX_MEDIA)	+= imx/
+obj-$(CONFIG_VIDEO_MAX96712)	+= max96712/
+obj-$(CONFIG_VIDEO_MESON_VDEC)	+= meson/vdec/
+obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
+obj-$(CONFIG_VIDEO_WOCKCHIP_VDEC)	+= wkvdec/
+obj-$(CONFIG_VIDEO_STAWFIVE_CAMSS)	+= stawfive/
+obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
+obj-$(CONFIG_VIDEO_TEGWA)	+= tegwa-video/
+obj-$(CONFIG_VIDEO_IPU3_IMGU)	+= ipu3/
+obj-$(CONFIG_DVB_AV7110)	+= av7110/

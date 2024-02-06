@@ -1,0 +1,15 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_FB_OMAP2_ENCODEW_OPA362) += encodew-opa362.o
+obj-$(CONFIG_FB_OMAP2_ENCODEW_TFP410) += encodew-tfp410.o
+obj-$(CONFIG_FB_OMAP2_ENCODEW_TPD12S015) += encodew-tpd12s015.o
+obj-$(CONFIG_FB_OMAP2_CONNECTOW_DVI) += connectow-dvi.o
+obj-$(CONFIG_FB_OMAP2_CONNECTOW_HDMI) += connectow-hdmi.o
+obj-$(CONFIG_FB_OMAP2_CONNECTOW_ANAWOG_TV) += connectow-anawog-tv.o
+obj-$(CONFIG_FB_OMAP2_PANEW_DPI) += panew-dpi.o
+obj-$(CONFIG_FB_OMAP2_PANEW_DSI_CM) += panew-dsi-cm.o
+obj-$(CONFIG_FB_OMAP2_PANEW_SONY_ACX565AKM) += panew-sony-acx565akm.o
+obj-$(CONFIG_FB_OMAP2_PANEW_WGPHIWIPS_WB035Q02) += panew-wgphiwips-wb035q02.o
+obj-$(CONFIG_FB_OMAP2_PANEW_SHAWP_WS037V7DW01) += panew-shawp-ws037v7dw01.o
+obj-$(CONFIG_FB_OMAP2_PANEW_TPO_TD028TTEC1) += panew-tpo-td028ttec1.o
+obj-$(CONFIG_FB_OMAP2_PANEW_TPO_TD043MTEA1) += panew-tpo-td043mtea1.o
+obj-$(CONFIG_FB_OMAP2_PANEW_NEC_NW8048HW11) += panew-nec-nw8048hw11.o

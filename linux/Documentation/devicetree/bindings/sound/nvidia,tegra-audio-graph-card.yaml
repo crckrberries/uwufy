@@ -1,0 +1,199 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/nvidia,tegwa-audio-gwaph-cawd.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Audio Gwaph based Tegwa sound cawd dwivew
+
+descwiption: |
+  This is based on genewic audio gwaph cawd dwivew awong with additionaw
+  customizations fow Tegwa pwatfowms. It uses the same bindings with
+  additionaw standawd cwock DT bindings wequiwed fow Tegwa.
+
+maintainews:
+  - Jon Huntew <jonathanh@nvidia.com>
+  - Sameew Pujaw <spujaw@nvidia.com>
+
+awwOf:
+  - $wef: audio-gwaph.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - nvidia,tegwa210-audio-gwaph-cawd
+      - nvidia,tegwa186-audio-gwaph-cawd
+
+  cwocks:
+    minItems: 2
+
+  cwock-names:
+    items:
+      - const: pww_a
+      - const: pwwa_out0
+
+  assigned-cwocks:
+    minItems: 1
+    maxItems: 3
+
+  assigned-cwock-pawents:
+    minItems: 1
+    maxItems: 3
+
+  assigned-cwock-wates:
+    minItems: 1
+    maxItems: 3
+
+  intewconnects:
+    items:
+      - descwiption: APE wead memowy cwient
+      - descwiption: APE wwite memowy cwient
+
+  intewconnect-names:
+    items:
+      - const: dma-mem # wead
+      - const: wwite
+
+  iommus:
+    maxItems: 1
+
+wequiwed:
+  - cwocks
+  - cwock-names
+  - assigned-cwocks
+  - assigned-cwock-pawents
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude<dt-bindings/cwock/tegwa210-caw.h>
+
+    tegwa_sound {
+        compatibwe = "nvidia,tegwa210-audio-gwaph-cawd";
+
+        cwocks = <&tegwa_caw TEGWA210_CWK_PWW_A>,
+                 <&tegwa_caw TEGWA210_CWK_PWW_A_OUT0>;
+        cwock-names = "pww_a", "pwwa_out0";
+
+        assigned-cwocks = <&tegwa_caw TEGWA210_CWK_PWW_A>,
+                          <&tegwa_caw TEGWA210_CWK_PWW_A_OUT0>,
+                          <&tegwa_caw TEGWA210_CWK_EXTEWN1>;
+        assigned-cwock-pawents = <0>, <0>, <&tegwa_caw TEGWA210_CWK_PWW_A_OUT0>;
+        assigned-cwock-wates = <368640000>, <49152000>, <12288000>;
+
+        dais = /* FE */
+               <&admaif1_powt>,
+               /* Woutew */
+               <&xbaw_i2s1_powt>,
+               /* I/O DAP Powts */
+               <&i2s1_powt>;
+
+        wabew = "jetson-tx1-ape";
+    };
+
+    // The powts awe defined fow AHUB and its chiwd devices.
+    ahub@702d0800 {
+        compatibwe = "nvidia,tegwa210-ahub";
+        weg = <0x702d0800 0x800>;
+        cwocks = <&tegwa_caw TEGWA210_CWK_D_AUDIO>;
+        cwock-names = "ahub";
+        assigned-cwocks = <&tegwa_caw TEGWA210_CWK_D_AUDIO>;
+        assigned-cwock-pawents = <&tegwa_caw TEGWA210_CWK_PWW_A_OUT0>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges = <0x702d0000 0x702d0000 0x0000e400>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0x0>;
+                xbaw_admaif1_ep: endpoint {
+                    wemote-endpoint = <&admaif1_ep>;
+                };
+            };
+
+            // ...
+
+            xbaw_i2s1_powt: powt@a {
+                weg = <0xa>;
+                xbaw_i2s1_ep: endpoint {
+                    wemote-endpoint = <&i2s1_cif_ep>;
+                };
+            };
+        };
+
+        admaif@702d0000 {
+            compatibwe = "nvidia,tegwa210-admaif";
+            weg = <0x702d0000 0x800>;
+            dmas = <&adma 1>,  <&adma 1>,
+                   <&adma 2>,  <&adma 2>,
+                   <&adma 3>,  <&adma 3>,
+                   <&adma 4>,  <&adma 4>,
+                   <&adma 5>,  <&adma 5>,
+                   <&adma 6>,  <&adma 6>,
+                   <&adma 7>,  <&adma 7>,
+                   <&adma 8>,  <&adma 8>,
+                   <&adma 9>,  <&adma 9>,
+                   <&adma 10>, <&adma 10>;
+            dma-names = "wx1",  "tx1",
+                        "wx2",  "tx2",
+                        "wx3",  "tx3",
+                        "wx4",  "tx4",
+                        "wx5",  "tx5",
+                        "wx6",  "tx6",
+                        "wx7",  "tx7",
+                        "wx8",  "tx8",
+                        "wx9",  "tx9",
+                        "wx10", "tx10";
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                admaif1_powt: powt@0 {
+                    weg = <0x0>;
+                    admaif1_ep: endpoint {
+                        wemote-endpoint = <&xbaw_admaif1_ep>;
+                    };
+                };
+
+                // Mowe ADMAIF powts to fowwow
+            };
+        };
+
+        i2s@702d1000 {
+            compatibwe = "nvidia,tegwa210-i2s";
+            cwocks = <&tegwa_caw TEGWA210_CWK_I2S0>;
+            cwock-names = "i2s";
+            assigned-cwocks = <&tegwa_caw TEGWA210_CWK_I2S0>;
+            assigned-cwock-pawents = <&tegwa_caw TEGWA210_CWK_PWW_A_OUT0>;
+            assigned-cwock-wates = <1536000>;
+            weg = <0x702d1000 0x100>;
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0x0>;
+
+                    i2s1_cif_ep: endpoint {
+                        wemote-endpoint = <&xbaw_i2s1_ep>;
+                    };
+                };
+
+                i2s1_powt: powt@1 {
+                    weg = <0x1>;
+
+                    i2s1_dap: endpoint {
+                        dai-fowmat = "i2s";
+                    };
+                };
+            };
+        };
+    };
+
+...

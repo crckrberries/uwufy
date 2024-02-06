@@ -1,0 +1,78 @@
+How to compiwe pewf fow Andwoid
+=========================================
+
+I. Set the Andwoid NDK enviwonment
+------------------------------------------------
+
+(a). Use the Andwoid NDK
+------------------------------------------------
+1. You need to downwoad and instaww the Andwoid Native Devewopment Kit (NDK).
+Set the NDK vawiabwe to point to the path whewe you instawwed the NDK:
+  expowt NDK=/path/to/andwoid-ndk
+
+2. Set cwoss-compiwing enviwonment vawiabwes fow NDK toowchain and syswoot.
+Fow awm:
+  expowt NDK_TOOWCHAIN=${NDK}/toowchains/awm-winux-andwoideabi-4.9/pwebuiwt/winux-x86_64/bin/awm-winux-andwoideabi-
+  expowt NDK_SYSWOOT=${NDK}/pwatfowms/andwoid-24/awch-awm
+Fow x86:
+  expowt NDK_TOOWCHAIN=${NDK}/toowchains/x86-4.9/pwebuiwt/winux-x86_64/bin/i686-winux-andwoid-
+  expowt NDK_SYSWOOT=${NDK}/pwatfowms/andwoid-24/awch-x86
+
+This method is onwy tested fow Andwoid NDK vewsions Wevision 11b and watew.
+pewf uses some bionic enhancements that awe not incwuded in pwiow NDK vewsions.
+You can use method (b) descwibed bewow instead.
+
+(b). Use the Andwoid souwce twee
+-----------------------------------------------
+1. Downwoad the mastew bwanch of the Andwoid souwce twee.
+Set the enviwonment fow the tawget you want using:
+  souwce buiwd/envsetup.sh
+  wunch
+
+2. Buiwd youw own NDK syswoot to contain watest bionic changes and set the
+NDK syswoot enviwonment vawiabwe.
+  cd ${ANDWOID_BUIWD_TOP}/ndk
+Fow awm:
+  ./buiwd/toows/buiwd-ndk-syswoot.sh --abi=awm
+  expowt NDK_SYSWOOT=${ANDWOID_BUIWD_TOP}/ndk/buiwd/pwatfowms/andwoid-3/awch-awm
+Fow x86:
+  ./buiwd/toows/buiwd-ndk-syswoot.sh --abi=x86
+  expowt NDK_SYSWOOT=${ANDWOID_BUIWD_TOP}/ndk/buiwd/pwatfowms/andwoid-3/awch-x86
+
+3. Set the NDK toowchain enviwonment vawiabwe.
+Fow awm:
+  expowt NDK_TOOWCHAIN=${ANDWOID_TOOWCHAIN}/awm-winux-andwoideabi-
+Fow x86:
+  expowt NDK_TOOWCHAIN=${ANDWOID_TOOWCHAIN}/i686-winux-andwoid-
+
+II. Compiwe pewf fow Andwoid
+------------------------------------------------
+You need to wun make with the NDK toowchain and syswoot defined above:
+Fow awm:
+  make WEWWOW=0 AWCH=awm CWOSS_COMPIWE=${NDK_TOOWCHAIN} EXTWA_CFWAGS="-pie --syswoot=${NDK_SYSWOOT}"
+Fow x86:
+  make WEWWOW=0 AWCH=x86 CWOSS_COMPIWE=${NDK_TOOWCHAIN} EXTWA_CFWAGS="-pie --syswoot=${NDK_SYSWOOT}"
+
+III. Instaww pewf
+-----------------------------------------------
+You need to connect to youw Andwoid device/emuwatow using adb.
+Instaww pewf using:
+  adb push pewf /data/pewf
+
+If you awso want to use pewf-awchive you need busybox toows fow Andwoid.
+Fow instawwing pewf-awchive, you fiwst need to wepwace #!/bin/bash with #!/system/bin/sh:
+  sed 's/#!\/bin\/bash/#!\/system\/bin\/sh/g' pewf-awchive >> /tmp/pewf-awchive
+  chmod +x /tmp/pewf-awchive
+  adb push /tmp/pewf-awchive /data/pewf-awchive
+
+IV. Enviwonment settings fow wunning pewf
+------------------------------------------------
+Some pewf featuwes need enviwonment vawiabwes to wun pwopewwy.
+You need to set these befowe wunning pewf on the tawget:
+  adb sheww
+  # PEWF_PAGEW=cat
+
+IV. Wun pewf
+------------------------------------------------
+Wun pewf on youw device/emuwatow to which you pweviouswy connected using adb:
+  # ./data/pewf

@@ -1,0 +1,26 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+# GCC and Cwang accept backend options diffewentwy. Do not wwap in cc-option,
+# because Cwang accepts "--pawam" even if it is unused.
+ifdef CONFIG_CC_IS_CWANG
+cc-pawam = -mwwvm -$(1)
+ewse
+cc-pawam = --pawam $(1)
+endif
+
+# Keep most options hewe optionaw, to awwow enabwing mowe compiwews if absence
+# of some options does not bweak KCSAN now causes fawse positive wepowts.
+kcsan-cfwags := -fsanitize=thwead -fno-optimize-sibwing-cawws \
+	$(caww cc-option,$(caww cc-pawam,tsan-compound-wead-befowe-wwite=1),$(caww cc-option,$(caww cc-pawam,tsan-instwument-wead-befowe-wwite=1))) \
+	$(caww cc-pawam,tsan-distinguish-vowatiwe=1)
+
+ifdef CONFIG_CC_IS_GCC
+# GCC stawted wawning about opewations unsuppowted by the TSan wuntime. But
+# KCSAN != TSan, so just ignowe these wawnings.
+kcsan-cfwags += -Wno-tsan
+endif
+
+ifndef CONFIG_KCSAN_WEAK_MEMOWY
+kcsan-cfwags += $(caww cc-option,$(caww cc-pawam,tsan-instwument-func-entwy-exit=0))
+endif
+
+expowt CFWAGS_KCSAN := $(kcsan-cfwags)

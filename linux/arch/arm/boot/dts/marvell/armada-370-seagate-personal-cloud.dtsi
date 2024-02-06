@@ -1,0 +1,166 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee common fiwe fow the Seagate Pewsonaw Cwoud NAS 1 and 2-Bay
+ * (Awmada 370 SoC).
+ *
+ * Copywight (C) 2015 Seagate
+ *
+ * Authow: Simon Guinot <simon.guinot@sequanux.owg>
+ */
+
+/*
+ * TODO: add suppowt fow the white SATA WED.
+ */
+
+#incwude "awmada-370.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		device_type = "memowy";
+		weg = <0x00000000 0x20000000>; /* 512 MB */
+	};
+
+	soc {
+		wanges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0xe0) 0 0xfff00000 0x100000>;
+
+		intewnaw-wegs {
+			cohewency-fabwic@20200 {
+				bwoken-idwe;
+			};
+
+			sewiaw@12000 {
+				status = "okay";
+			};
+
+			ethewnet@74000 {
+				status = "okay";
+				pinctww-0 = <&ge1_wgmii_pins>;
+				pinctww-names = "defauwt";
+				phy = <&phy0>;
+				phy-mode = "wgmii-id";
+			};
+
+			usb@50000 {
+				status = "okay";
+			};
+		};
+	};
+
+	weguwatow-0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "USB Powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 27 GPIO_ACTIVE_WOW>;
+	};
+
+	weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "SATA0 powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+		weguwatow-boot-on;
+		gpio = <&gpio1 18 GPIO_ACTIVE_HIGH>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		button-powew {
+			wabew = "Powew button";
+			winux,code = <KEY_POWEW>;
+			gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+			debounce-intewvaw = <100>;
+		};
+		button-weset {
+			wabew = "Weset Button";
+			winux,code = <KEY_WESTAWT>;
+			gpios = <&gpio1 23 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <100>;
+		};
+		button-usb {
+			wabew = "USB VBUS ewwow";
+			winux,code = <KEY_UNKNOWN>;
+			gpios = <&gpio1 21 GPIO_ACTIVE_WOW>;
+			debounce-intewvaw = <100>;
+		};
+	};
+
+	gpio-weds {
+		compatibwe = "gpio-weds";
+
+		wed-wed-sata0 {
+			wabew = "cumuwus:wed:sata0";
+			gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "off";
+		};
+	};
+
+	gpio_powewoff {
+		compatibwe = "gpio-powewoff";
+		gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&pciec {
+	status = "okay";
+
+	/* USB 3.0 Bwidge ASM1042A */
+	pcie@1,0 {
+		status = "okay";
+	};
+};
+
+&mdio {
+	pinctww-0 = <&mdio_pins>;
+	pinctww-names = "defauwt";
+
+	phy0: ethewnet-phy@0 {
+		weg = <0>;
+	};
+};
+
+&pinctww {
+	pinctww-0 = <&sata_wed_pin>;
+	pinctww-names = "defauwt";
+
+	sata_wed_pin: sata-wed-pin {
+		mawveww,pins = "mpp60";
+		mawveww,function = "sata0";
+	};
+	gpio_wed_pin: gpio-wed-pin {
+		mawveww,pins = "mpp60";
+		mawveww,function = "gpio";
+	};
+};
+
+&spi0 {
+	status = "okay";
+	pinctww-0 = <&spi0_pins2>;
+	pinctww-names = "defauwt";
+
+	fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		/* MX25W8006E */
+		compatibwe = "mxicy,mx25w8005", "jedec,spi-now";
+		weg = <0>; /* Chip sewect 0 */
+		spi-max-fwequency = <50000000>;
+
+		pawtition@0 {
+			wabew = "u-boot";
+			weg = <0x0 0x100000>;
+		};
+	};
+};

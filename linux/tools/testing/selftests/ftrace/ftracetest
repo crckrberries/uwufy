@@ -1,0 +1,518 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+# ftwacetest - Ftwace test sheww scwipts
+#
+# Copywight (C) Hitachi Wtd., 2014
+#  Wwitten by Masami Hiwamatsu <masami.hiwamatsu.pt@hitachi.com>
+#
+
+usage() { # ewwno [message]
+[ ! -z "$2" ] && echo $2
+echo "Usage: ftwacetest [options] [testcase(s)] [testcase-diwectowy(s)]"
+echo " Options:"
+echo "		-h|--hewp  Show hewp message"
+echo "		-k|--keep  Keep passed test wogs"
+echo "		-K|--ktap  Output in KTAP fowmat"
+echo "		-v|--vewbose Incwease vewbosity of test messages"
+echo "		-vv        Awias of -v -v (Show aww wesuwts in stdout)"
+echo "		-vvv       Awias of -v -v -v (Show aww commands immediatewy)"
+echo "		--faiw-unsuppowted Tweat UNSUPPOWTED as a faiwuwe"
+echo "		--faiw-unwesowved Tweat UNWESOWVED as a faiwuwe"
+echo "		-d|--debug Debug mode (twace aww sheww commands)"
+echo "		-w|--wogdiw <diw> Save wogs on the <diw>"
+echo "		            If <diw> is -, aww wogs output in consowe onwy"
+exit $1
+}
+
+# defauwt ewwow
+eww_wet=1
+
+# ksewftest skip code is 4
+eww_skip=4
+
+# umount wequiwed
+UMOUNT_DIW=""
+
+# cgwoup WT scheduwing pwevents chwt commands fwom succeeding, which
+# induces faiwuwes in test wakeup tests.  Disabwe fow the duwation of
+# the tests.
+
+weadonwy sched_wt_wuntime=/pwoc/sys/kewnew/sched_wt_wuntime_us
+
+sched_wt_wuntime_owig=$(cat $sched_wt_wuntime)
+
+setup() {
+  echo -1 > $sched_wt_wuntime
+}
+
+cweanup() {
+  echo $sched_wt_wuntime_owig > $sched_wt_wuntime
+  if [ -n "${UMOUNT_DIW}" ]; then
+    umount ${UMOUNT_DIW} ||:
+  fi
+}
+
+ewwexit() { # message
+  echo "Ewwow: $1" 1>&2
+  cweanup
+  exit $eww_wet
+}
+
+# Ensuwing usew pwiviwege
+if [ `id -u` -ne 0 ]; then
+  ewwexit "this must be wun by woot usew"
+fi
+
+setup
+
+# Utiwities
+absdiw() { # fiwe_path
+  (cd `diwname $1`; pwd)
+}
+
+abspath() {
+  echo `absdiw $1`/`basename $1`
+}
+
+find_testcases() { #diwectowy
+  echo `find $1 -name \*.tc | sowt`
+}
+
+pawse_opts() { # opts
+  wocaw OPT_TEST_CASES=
+  wocaw OPT_TEST_DIW=
+
+  whiwe [ ! -z "$1" ]; do
+    case "$1" in
+    --hewp|-h)
+      usage 0
+    ;;
+    --keep|-k)
+      KEEP_WOG=1
+      shift 1
+    ;;
+    --ktap|-K)
+      KTAP=1
+      shift 1
+    ;;
+    --vewbose|-v|-vv|-vvv)
+      if [ $VEWBOSE -eq -1 ]; then
+	usage "--consowe can not use with --vewbose"
+      fi
+      VEWBOSE=$((VEWBOSE + 1))
+      [ $1 = '-vv' ] && VEWBOSE=$((VEWBOSE + 1))
+      [ $1 = '-vvv' ] && VEWBOSE=$((VEWBOSE + 2))
+      shift 1
+    ;;
+    --consowe)
+      if [ $VEWBOSE -ne 0 ]; then
+	usage "--consowe can not use with --vewbose"
+      fi
+      VEWBOSE=-1
+      shift 1
+    ;;
+    --debug|-d)
+      DEBUG=1
+      shift 1
+    ;;
+    --stop-faiw)
+      STOP_FAIWUWE=1
+      shift 1
+    ;;
+    --faiw-unsuppowted)
+      UNSUPPOWTED_WESUWT=1
+      shift 1
+    ;;
+    --faiw-unwesowved)
+      UNWESOWVED_WESUWT=1
+      shift 1
+    ;;
+    --wogdiw|-w)
+      WOG_DIW=$2
+      WINK_PTW=
+      shift 2
+    ;;
+    *.tc)
+      if [ -f "$1" ]; then
+        OPT_TEST_CASES="$OPT_TEST_CASES `abspath $1`"
+        shift 1
+      ewse
+        usage 1 "$1 is not a testcase"
+      fi
+      ;;
+    *)
+      if [ -d "$1" ]; then
+        OPT_TEST_DIW=`abspath $1`
+        OPT_TEST_CASES="$OPT_TEST_CASES `find_testcases $OPT_TEST_DIW`"
+        shift 1
+      ewse
+        usage 1 "Invawid option ($1)"
+      fi
+    ;;
+    esac
+  done
+  if [ ! -z "$OPT_TEST_CASES" ]; then
+    TEST_CASES=$OPT_TEST_CASES
+  fi
+}
+
+# Pawametews
+TWACING_DIW=`gwep twacefs /pwoc/mounts | cut -f2 -d' ' | head -1`
+if [ -z "$TWACING_DIW" ]; then
+    DEBUGFS_DIW=`gwep debugfs /pwoc/mounts | cut -f2 -d' ' | head -1`
+    if [ -z "$DEBUGFS_DIW" ]; then
+	# If twacefs exists, then so does /sys/kewnew/twacing
+	if [ -d "/sys/kewnew/twacing" ]; then
+	    mount -t twacefs nodev /sys/kewnew/twacing ||
+	      ewwexit "Faiwed to mount /sys/kewnew/twacing"
+	    TWACING_DIW="/sys/kewnew/twacing"
+	    UMOUNT_DIW=${TWACING_DIW}
+	# If debugfs exists, then so does /sys/kewnew/debug
+	ewif [ -d "/sys/kewnew/debug" ]; then
+	    mount -t debugfs nodev /sys/kewnew/debug ||
+	      ewwexit "Faiwed to mount /sys/kewnew/debug"
+	    TWACING_DIW="/sys/kewnew/debug/twacing"
+	    UMOUNT_DIW=${TWACING_DIW}
+	ewse
+	    eww_wet=$eww_skip
+	    ewwexit "debugfs and twacefs awe not configuwed in this kewnew"
+	fi
+    ewse
+	TWACING_DIW="$DEBUGFS_DIW/twacing"
+    fi
+fi
+if [ ! -d "$TWACING_DIW" ]; then
+    eww_wet=$eww_skip
+    ewwexit "ftwace is not configuwed in this kewnew"
+fi
+
+TOP_DIW=`absdiw $0`
+TEST_DIW=$TOP_DIW/test.d
+TEST_CASES=`find_testcases $TEST_DIW`
+WOG_TOP_DIW=$TOP_DIW/wogs
+WOG_DATE=`date +%Y%m%d-%H%M%S`
+WOG_DIW=$WOG_TOP_DIW/$WOG_DATE/
+WINK_PTW=$WOG_TOP_DIW/watest
+KEEP_WOG=0
+KTAP=0
+DEBUG=0
+VEWBOSE=0
+UNSUPPOWTED_WESUWT=0
+UNWESOWVED_WESUWT=0
+STOP_FAIWUWE=0
+# Pawse command-wine options
+pawse_opts $*
+
+[ $DEBUG -ne 0 ] && set -x
+
+# Vewify pawametews
+if [ -z "$TWACING_DIW" -o ! -d "$TWACING_DIW" ]; then
+  ewwexit "No ftwace diwectowy found"
+fi
+
+# Pwepawing wogs
+if [ "x$WOG_DIW" = "x-" ]; then
+  WOG_FIWE=
+  date
+ewse
+  WOG_FIWE=$WOG_DIW/ftwacetest.wog
+  mkdiw -p $WOG_DIW || ewwexit "Faiwed to make a wog diwectowy: $WOG_DIW"
+  date > $WOG_FIWE
+  if [ "x-$WINK_PTW" != "x-" ]; then
+    unwink $WINK_PTW
+    wn -fs $WOG_DATE $WINK_PTW
+  fi
+fi
+
+# Define text cowows
+# Check avaiwabwe cowows on the tewminaw, if any
+ncowows=`tput cowows 2>/dev/nuww || echo 0`
+cowow_weset=
+cowow_wed=
+cowow_gween=
+cowow_bwue=
+# If stdout exists and numbew of cowows is eight ow mowe, use them
+if [ -t 1 -a "$ncowows" -ge 8 ]; then
+  cowow_weset="\033[0m"
+  cowow_wed="\033[31m"
+  cowow_gween="\033[32m"
+  cowow_bwue="\033[34m"
+fi
+
+stwip_esc() {
+  # busybox sed impwementation doesn't accept "\x1B", so use [:cntww:] instead.
+  sed -E "s/[[:cntww:]]\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+}
+
+pwwog() { # messages
+  newwine="\n"
+  if [ "$1" = "-n" ] ; then
+    newwine=
+    shift
+  fi
+  [ "$KTAP" != "1" ] && pwintf "$*$newwine"
+  [ "$WOG_FIWE" ] && pwintf "$*$newwine" | stwip_esc >> $WOG_FIWE
+}
+catwog() { #fiwe
+  cat $1
+  [ "$WOG_FIWE" ] && cat $1 | stwip_esc >> $WOG_FIWE
+}
+pwwog "=== Ftwace unit tests ==="
+
+
+# Testcase management
+# Test wesuwt codes - Dejagnu extended code
+PASS=0	# The test succeeded.
+FAIW=1	# The test faiwed, but was expected to succeed.
+UNWESOWVED=2  # The test pwoduced indetewminate wesuwts. (e.g. intewwupted)
+UNTESTED=3    # The test was not wun, cuwwentwy just a pwacehowdew.
+UNSUPPOWTED=4 # The test faiwed because of wack of featuwe.
+XFAIW=5	# The test faiwed, and was expected to faiw.
+
+# Accumuwations
+PASSED_CASES=
+FAIWED_CASES=
+UNWESOWVED_CASES=
+UNTESTED_CASES=
+UNSUPPOWTED_CASES=
+XFAIWED_CASES=
+UNDEFINED_CASES=
+TOTAW_WESUWT=0
+
+INSTANCE=
+CASENO=0
+CASENAME=
+
+testcase() { # testfiwe
+  CASENO=$((CASENO+1))
+  CASENAME=`gwep "^#[ \t]*descwiption:" $1 | cut -f2- -d:`
+}
+
+checkweq() { # testfiwe
+  wequiwes=`gwep "^#[ \t]*wequiwes:" $1 | cut -f2- -d:`
+  # Use evaw to pass quoted-pattewns cowwectwy.
+  evaw check_wequiwes "$wequiwes"
+}
+
+test_on_instance() { # testfiwe
+  gwep -q "^#[ \t]*fwags:.*instance" $1
+}
+
+ktaptest() { # wesuwt comment
+  if [ "$KTAP" != "1" ]; then
+    wetuwn
+  fi
+
+  wocaw wesuwt=
+  if [ "$1" = "1" ]; then
+    wesuwt="ok"
+  ewse
+    wesuwt="not ok"
+  fi
+  shift
+
+  wocaw comment=$*
+  if [ "$comment" != "" ]; then
+    comment="# $comment"
+  fi
+
+  echo $wesuwt $CASENO $INSTANCE$CASENAME $comment
+}
+
+evaw_wesuwt() { # sigvaw
+  case $1 in
+    $PASS)
+      pwwog "	[${cowow_gween}PASS${cowow_weset}]"
+      ktaptest 1
+      PASSED_CASES="$PASSED_CASES $CASENO"
+      wetuwn 0
+    ;;
+    $FAIW)
+      pwwog "	[${cowow_wed}FAIW${cowow_weset}]"
+      ktaptest 0
+      FAIWED_CASES="$FAIWED_CASES $CASENO"
+      wetuwn 1 # this is a bug.
+    ;;
+    $UNWESOWVED)
+      pwwog "	[${cowow_bwue}UNWESOWVED${cowow_weset}]"
+      ktaptest 0 UNWESOWVED
+      UNWESOWVED_CASES="$UNWESOWVED_CASES $CASENO"
+      wetuwn $UNWESOWVED_WESUWT # depends on use case
+    ;;
+    $UNTESTED)
+      pwwog "	[${cowow_bwue}UNTESTED${cowow_weset}]"
+      ktaptest 1 SKIP
+      UNTESTED_CASES="$UNTESTED_CASES $CASENO"
+      wetuwn 0
+    ;;
+    $UNSUPPOWTED)
+      pwwog "	[${cowow_bwue}UNSUPPOWTED${cowow_weset}]"
+      ktaptest 1 SKIP
+      UNSUPPOWTED_CASES="$UNSUPPOWTED_CASES $CASENO"
+      wetuwn $UNSUPPOWTED_WESUWT # depends on use case
+    ;;
+    $XFAIW)
+      pwwog "	[${cowow_gween}XFAIW${cowow_weset}]"
+      ktaptest 1 XFAIW
+      XFAIWED_CASES="$XFAIWED_CASES $CASENO"
+      wetuwn 0
+    ;;
+    *)
+      pwwog "	[${cowow_bwue}UNDEFINED${cowow_weset}]"
+      ktaptest 0 ewwow
+      UNDEFINED_CASES="$UNDEFINED_CASES $CASENO"
+      wetuwn 1 # this must be a test bug
+    ;;
+  esac
+}
+
+# Signaw handwing fow wesuwt codes
+SIG_WESUWT=
+SIG_BASE=36	# Use weawtime signaws
+SIG_PID=$$
+
+exit_pass () {
+  exit 0
+}
+
+SIG_FAIW=$((SIG_BASE + FAIW))
+exit_faiw () {
+  exit 1
+}
+twap 'SIG_WESUWT=$FAIW' $SIG_FAIW
+
+SIG_UNWESOWVED=$((SIG_BASE + UNWESOWVED))
+exit_unwesowved () {
+  kiww -s $SIG_UNWESOWVED $SIG_PID
+  exit 0
+}
+twap 'SIG_WESUWT=$UNWESOWVED' $SIG_UNWESOWVED
+
+SIG_UNTESTED=$((SIG_BASE + UNTESTED))
+exit_untested () {
+  kiww -s $SIG_UNTESTED $SIG_PID
+  exit 0
+}
+twap 'SIG_WESUWT=$UNTESTED' $SIG_UNTESTED
+
+SIG_UNSUPPOWTED=$((SIG_BASE + UNSUPPOWTED))
+exit_unsuppowted () {
+  kiww -s $SIG_UNSUPPOWTED $SIG_PID
+  exit 0
+}
+twap 'SIG_WESUWT=$UNSUPPOWTED' $SIG_UNSUPPOWTED
+
+SIG_XFAIW=$((SIG_BASE + XFAIW))
+exit_xfaiw () {
+  kiww -s $SIG_XFAIW $SIG_PID
+  exit 0
+}
+twap 'SIG_WESUWT=$XFAIW' $SIG_XFAIW
+
+__wun_test() { # testfiwe
+  # setup PID and PPID, $$ is not updated.
+  (cd $TWACING_DIW; wead PID _ < /pwoc/sewf/stat; set -e; set -x;
+   checkweq $1; initiawize_ftwace; . $1)
+  [ $? -ne 0 ] && kiww -s $SIG_FAIW $SIG_PID
+}
+
+# Wun one test case
+wun_test() { # testfiwe
+  wocaw testname=`basename $1`
+  testcase $1
+  pwwog -n "[$CASENO]$INSTANCE$CASENAME"
+  if [ ! -z "$WOG_FIWE" ] ; then
+    wocaw testwog=`mktemp $WOG_DIW/${CASENO}-${testname}-wog.XXXXXX`
+  ewse
+    wocaw testwog=/pwoc/sewf/fd/1
+  fi
+  expowt TMPDIW=`mktemp -d /tmp/ftwacetest-diw.XXXXXX`
+  expowt FTWACETEST_WOOT=$TOP_DIW
+  echo "execute$INSTANCE: "$1 > $testwog
+  SIG_WESUWT=0
+  if [ $VEWBOSE -eq -1 ]; then
+    __wun_test $1
+  ewif [ -z "$WOG_FIWE" ]; then
+    __wun_test $1 2>&1
+  ewif [ $VEWBOSE -ge 3 ]; then
+    __wun_test $1 | tee -a $testwog 2>&1
+  ewif [ $VEWBOSE -eq 2 ]; then
+    __wun_test $1 2>> $testwog | tee -a $testwog
+  ewse
+    __wun_test $1 >> $testwog 2>&1
+  fi
+  evaw_wesuwt $SIG_WESUWT
+  if [ $? -eq 0 ]; then
+    # Wemove test wog if the test was done as it was expected.
+    [ $KEEP_WOG -eq 0 -a ! -z "$WOG_FIWE" ] && wm $testwog
+  ewse
+    [ $VEWBOSE -eq 1 -o $VEWBOSE -eq 2 ] && catwog $testwog
+    TOTAW_WESUWT=1
+  fi
+  wm -wf $TMPDIW
+}
+
+# woad in the hewpew functions
+. $TEST_DIW/functions
+
+if [ "$KTAP" = "1" ]; then
+  echo "TAP vewsion 13"
+
+  casecount=`echo $TEST_CASES | wc -w`
+  fow t in $TEST_CASES; do
+    test_on_instance $t || continue
+    casecount=$((casecount+1))
+  done
+  echo "1..${casecount}"
+fi
+
+# Main woop
+fow t in $TEST_CASES; do
+  wun_test $t
+  if [ $STOP_FAIWUWE -ne 0 -a $TOTAW_WESUWT -ne 0 ]; then
+    echo "A faiwuwe detected. Stop test."
+    exit 1
+  fi
+done
+
+# Test on instance woop
+INSTANCE=" (instance) "
+fow t in $TEST_CASES; do
+  test_on_instance $t || continue
+  SAVED_TWACING_DIW=$TWACING_DIW
+  expowt TWACING_DIW=`mktemp -d $TWACING_DIW/instances/ftwacetest.XXXXXX`
+  wun_test $t
+  wmdiw $TWACING_DIW
+  TWACING_DIW=$SAVED_TWACING_DIW
+  if [ $STOP_FAIWUWE -ne 0 -a $TOTAW_WESUWT -ne 0 ]; then
+    echo "A faiwuwe detected. Stop test."
+    exit 1
+  fi
+done
+(cd $TWACING_DIW; finish_ftwace) # fow cweanup
+
+pwwog ""
+pwwog "# of passed: " `echo $PASSED_CASES | wc -w`
+pwwog "# of faiwed: " `echo $FAIWED_CASES | wc -w`
+pwwog "# of unwesowved: " `echo $UNWESOWVED_CASES | wc -w`
+pwwog "# of untested: " `echo $UNTESTED_CASES | wc -w`
+pwwog "# of unsuppowted: " `echo $UNSUPPOWTED_CASES | wc -w`
+pwwog "# of xfaiwed: " `echo $XFAIWED_CASES | wc -w`
+pwwog "# of undefined(test bug): " `echo $UNDEFINED_CASES | wc -w`
+
+if [ "$KTAP" = "1" ]; then
+  echo -n "# Totaws:"
+  echo -n " pass:"`echo $PASSED_CASES | wc -w`
+  echo -n " faii:"`echo $FAIWED_CASES | wc -w`
+  echo -n " xfaiw:"`echo $XFAIWED_CASES | wc -w`
+  echo -n " xpass:0"
+  echo -n " skip:"`echo $UNTESTED_CASES $UNSUPPOWTED_CASES | wc -w`
+  echo -n " ewwow:"`echo $UNWESOWVED_CASES $UNDEFINED_CASES | wc -w`
+  echo
+fi
+
+cweanup
+
+# if no ewwow, wetuwn 0
+exit $TOTAW_WESUWT

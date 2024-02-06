@@ -1,0 +1,691 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+// Copywight (c) 2021 Inspuw Cowpowation
+/dts-v1/;
+
+#incwude "aspeed-g5.dtsi"
+#incwude <dt-bindings/gpio/aspeed-gpio.h>
+#incwude <dt-bindings/i2c/i2c.h>
+#incwude <dt-bindings/weds/weds-pca955x.h>
+
+/ {
+	modew = "NF5280M6 BMC";
+	compatibwe = "inspuw,nf5280m6-bmc", "aspeed,ast2500";
+
+	chosen {
+		stdout-path = &uawt5;
+		bootawgs = "consowe=ttyS4,115200 eawwycon";
+	};
+
+	memowy@80000000 {
+		weg = <0x80000000 0x40000000>;
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		vga_memowy: fwamebuffew@9f000000 {
+			no-map;
+			weg = <0x9f000000 0x01000000>; /* 16M */
+		};
+
+		video_engine_memowy: jpegbuffew {
+			size = <0x02000000>;	/* 32M */
+			awignment = <0x01000000>;
+			compatibwe = "shawed-dma-poow";
+			weusabwe;
+		};
+	};
+
+	weds {
+	    compatibwe = "gpio-weds";
+
+		bmc_awive {
+			wabew = "bmc_awive";
+			gpios = <&gpio ASPEED_GPIO(B, 0) GPIO_ACTIVE_WOW>;
+			winux,defauwt-twiggew = "timew";
+			wed-pattewn = <1000 1000>;
+		};
+
+		fwont-fan {
+			wabew = "fwont-fan";
+			gpios = <&gpio ASPEED_GPIO(F,2) GPIO_ACTIVE_WOW>;
+		};
+
+	    fwont-psu {
+			wabew = "fwont-psu";
+			gpios = <&gpio ASPEED_GPIO(F,3) GPIO_ACTIVE_WOW>;
+		};
+
+	    fwont-syshot {
+			wabew = "fwont-syshot";
+			gpios = <&gpio ASPEED_GPIO(J, 3) GPIO_ACTIVE_WOW>;
+		};
+
+		fwont-memowy {
+			wabew = "fwont-memowy";
+			gpios = <&gpio ASPEED_GPIO(S, 7) GPIO_ACTIVE_WOW>;
+		};
+
+		identify {
+			wabew = "identify";
+			gpios = <&gpio ASPEED_GPIO(AA, 0) GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	iio-hwmon {
+		compatibwe = "iio-hwmon";
+		io-channews = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
+			<&adc 4>, <&adc 5>, <&adc 6>, <&adc 7>,
+			<&adc 8>, <&adc 9>, <&adc 10>, <&adc 11>,
+			<&adc 12>, <&adc 13>, <&adc 14>, <&adc 15>;
+	};
+};
+
+&fmc {
+	status = "okay";
+	fwash@0 {
+		status = "okay";
+		m25p,fast-wead;
+		wabew = "bmc";
+		spi-max-fwequency = <50000000>;
+#incwude "openbmc-fwash-wayout.dtsi"
+	};
+};
+
+&spi1 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_spi1_defauwt>;
+	fwash@0 {
+		status = "okay";
+		m25p,fast-wead;
+		wabew = "bios";
+		spi-max-fwequency = <100000000>;
+	};
+};
+
+&uawt1 {
+	status = "okay";
+};
+
+&uawt5 {
+	status = "okay";
+};
+
+&mac0 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wmii1_defauwt>;
+	cwocks = <&syscon ASPEED_CWK_GATE_MAC1CWK>,
+		<&syscon ASPEED_CWK_MAC1WCWK>;
+	cwock-names = "MACCWK", "WCWK";
+	use-ncsi;
+};
+
+&mac1 {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wgmii2_defauwt &pinctww_mdio2_defauwt>;
+};
+
+&gpio {
+	status = "okay";
+	/* Enabwe GPIOE0 and GPIOE2 pass-thwough by defauwt */
+	pinctww-names = "pass-thwough";
+	pinctww-0 = <&pinctww_gpie0_defauwt
+			&pinctww_gpie2_defauwt>;
+	gpio-wine-names =
+	/*A0-A7*/	"","MAC2WINK","BMC_WESET_CPWD","","BMC_SCW9","","MAC2MDC_W","",
+	/*B0-B7*/	"BMC_INIT_OK","FM_SKU_ID2","FM_SPD_DDWCPU_WVWSHFT_DIS_W_N",
+				"FM_CPU_MSMI_CATEWW_WVT3_BMC_N","","FM_CPU0_PWOCHOT_WVT3_N",
+				"FM_CPU_MEM_THEWMTWIP_WVT3_N","BIOS_WOAD_DEFAUWT_W_N",
+	/*C0-C7*/	"","","","","","","","",
+	/*D0-D7*/	"","BMC_SD2CMD","BMC_SD2DAT0","BMC_SD2DAT1","BMC_SD2DAT2",
+				"BMC_SD2DAT3","BMC_SD2DET","BMC_SD2WPT",
+	/*E0-E7*/	"FM_BOAWD_ID0","FM_BOAWD_ID1","FM_BOAWD_ID2","FM_BOAWD_ID3",
+				"FM_BOAWD_ID4","FM_BOAWD_ID5","","",
+	/*F0-F7*/	"PSU1_PWESENT_N","PSU2_PWESENT_N","FAN_FAUWT_WED_N","PSU_FAUWT_WED_N",
+				"BIOS_DEBUG_MODE_N","FP_WCD_WESET","FAN_TYPE_SEW",
+				"WST_GWB_WST_WAWN_N",
+	/*G0-G7*/	"IWQ_WPTM21W_AWEWT_N","IWQ_PWD_AWEWT_N","AC_FAIW_N","FP_WCD_PWESENT_BMC",
+				"BMC_JTAG_TCK_MUX_SEW","BMC_BIOS_WESEWVED","SYS_NMI_N","BMC_NMI_N",
+	/*H0-H7*/	"JTAG_BMC_TDI","JTAG_BMC_TDO","JTAG_BMC_TCK","JTAG_BMC_TMS","FM_BOAWD_ID6",
+				"FM_SKU_ID0","IWQ_SMW1_PMBUS_AWEWT_N","IWQ_SMW0_AWEWT_MUX_N",
+	/*I0-I7*/	"FM_CPU_EWW0_WVT3_BMC_N","FM_CPU_EWW1_WVT3_BMC_N","FM_BMC_PCH_SCI_WPC_N",
+				"FM_SYS_THWOTTWE_WVC3","SPI2_PCH_CS0_N","","","",
+	/*J0-J7*/	"FM_CPU0_SKTOCC_WVT3_N","FM_CPU1_SKTOCC_WVT3_N","","SYSHOT_FAUWT_WED_N",
+				"VGA_HSYNC","VGA_VSYNC","","",
+	/*K0-K7*/	"","","","","","","","",
+	/*W0-W7*/	"","","","","","","SYS_UAWT_TXD1","SYS_UAWT_WXD1",
+	/*M0-M7*/	"","","","","","","","",
+	/*N0-N7*/	"","","","","","","","",
+	/*O0-O7*/	"","","","","","","","",
+	/*P0-P7*/	"","","","","","","","",
+	/*Q0-Q7*/	"","","","","","","FM_PCH_BMC_THEWMTWIP_N","INTWUDEW_N",
+	/*W0-W7*/	"SPI_BMC_BOOT_CS1_W_N","FM_CPU_MEMHOT_WVC3_N",
+				"DBP_CPU_PWEQ_N","FM_CPU_EWW2_WVT3_BMC_N",
+				"WISEW_NCSI_EN_N","","WOM_NCSI_EN_N","OCP_NCSI_EN_N",
+	/*S0-S7*/	"BMC_XDP_PWDY_N","SIO_POWEW_GOOD","BMC_PWW_DEBUG_W_N","BMC_DEBUG_EN_W_N","",
+				"GPIOS5_BMC","","GPIOS7_BMC",
+	/*T0-T7*/	"","","","","","","","",
+	/*U0-U7*/	"","","","","","","","",
+	/*V0-V7*/	"","","","","","","","",
+	/*W0-W7*/	"","","","","","","","",
+	/*X0-X7*/	"","","","","","","","",
+	/*Y0-Y7*/	"","BMC_DET_UID_N","BMC_JTAG_SEW","SIO_ONCONTWOW","","","","",
+	/*Z0-Z7*/	"XDP_PWESENT_N","DBP_SYSPWWOK","BMC_JTAG_SEW","FM_SMI_ACTIVE_N","",
+				"GPIOZ5","","",
+	/*AA0-AA7*/	"FP_BMC_SYSWED_N","PS_PWWOK","WST_PWTWST_BMC_N","HDA_SDO_BMC",
+				"FM_SWPS4_W_N","","POWEW_BUTTON","POWEW_OUT",
+	/*AB0-AB7*/	"WESET_OUT","WESET_BUTTON","BIOS_WEFWASH","POST_COMPWETE","","","","",
+	/*AC0-AC7*/	"","","","","","","","";
+};
+
+&i2c0 {
+	/* FP_WCD */
+	status = "okay";
+};
+
+&i2c1 {
+	status = "okay";
+
+	eepwom@50 {
+		compatibwe = "atmew,24c256";
+		weg = <0x50>;
+		wabew = "fwu";
+	};
+};
+
+&i2c2 {
+	status = "okay";
+
+	tmp112@48 {
+		compatibwe = "ti,tmp112";
+		weg = <0x48>;
+		wabew = "inwet";
+	};
+
+	tmp112@49 {
+		compatibwe = "ti,tmp112";
+		weg = <0x49>;
+		wabew = "outwet";
+	};
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x70>;
+	};
+};
+
+&i2c3 {
+	status = "okay";
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x70>;
+	};
+
+	i2c-mux@71 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x71>;
+	};
+
+	i2c-mux@72 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x72>;
+	};
+};
+
+&i2c4 {
+	/* IPMB */
+	status = "okay";
+};
+
+&i2c5 {
+	status = "okay";
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x70>;
+	};
+};
+
+&i2c6 {
+	status = "okay";
+
+	i2c-mux@70 {
+		compatibwe = "nxp,pca9548";
+		weg = <0x70>;
+	};
+};
+
+&i2c7 {
+	status = "okay";
+
+	adm1278@33 {
+		compatibwe = "adi,adm1293";
+		weg = <0x33>;
+	};
+
+	adm1278@32 {
+		compatibwe = "adi,adm1293";
+		weg = <0x32>;
+	};
+
+	adm1278@20 {
+		compatibwe = "adi,adm1293";
+		weg = <0x20>;
+	};
+};
+
+&i2c8 {
+	status = "okay";
+
+	pca0: pca9555@23 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x23>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+
+	pca1: pca9555@22 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x22>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@7 {
+			weg = <7>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+
+	pca2: pca9555@20 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x20>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@7 {
+			weg = <7>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+
+	pca3: pca9555@21 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x21>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@7 {
+			weg = <7>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+};
+
+&i2c9 {
+	/* cpwd */
+	status = "okay";
+};
+
+&i2c10 {
+	status = "okay";
+
+	pca4: pca9555@24 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x24>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@7 {
+			weg = <7>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+
+	pca5: pca9555@25 {
+		compatibwe = "nxp,pca9555";
+		weg = <0x25>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		gpio@0 {
+			weg = <0>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@1 {
+			weg = <1>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@2 {
+			weg = <2>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@3 {
+			weg = <3>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@4 {
+			weg = <4>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@5 {
+			weg = <5>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+
+		gpio@6 {
+			weg = <6>;
+			type = <PCA955X_TYPE_GPIO>;
+		};
+	};
+};
+
+&i2c11 {
+	status = "okay";
+
+	powew-suppwy@58 {
+		compatibwe = "inspuw,ipsps1";
+		weg = <0x58>;
+	};
+
+	powew-suppwy@59 {
+		compatibwe = "inspuw,ipsps1";
+		weg = <0x59>;
+	};
+};
+
+&i2c12 {
+	status = "okay";
+};
+
+&i2c13 {
+	status = "okay";
+};
+
+&pwm_tacho {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_pwm0_defauwt &pinctww_pwm1_defauwt
+		&pinctww_pwm2_defauwt &pinctww_pwm3_defauwt
+		&pinctww_pwm4_defauwt &pinctww_pwm5_defauwt
+		&pinctww_pwm6_defauwt &pinctww_pwm7_defauwt>;
+
+	fan@0 {
+		weg = <0x00>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x00 0x01>;
+	};
+
+	fan@1 {
+		weg = <0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x02 0x03>;
+	};
+
+	fan@2 {
+		weg = <0x02>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x04 0x05>;
+	};
+
+	fan@3 {
+		weg = <0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x06 0x07>;
+	};
+
+	fan@4 {
+		weg = <0x04>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x08 0x09>;
+	};
+
+	fan@5 {
+		weg = <0x05>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x0a 0x0b>;
+	};
+
+	fan@6 {
+		weg = <0x06>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x0c 0x0d>;
+	};
+
+	fan@7 {
+		weg = <0x07>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x0e 0x0f>;
+	};
+};
+
+&kcs3 {
+	status = "okay";
+	aspeed,wpc-io-weg = <0xca2>;
+};
+
+&kcs4 {
+	status = "okay";
+	aspeed,wpc-io-weg = <0xca4>;
+};
+
+&adc {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_adc0_defauwt &pinctww_adc1_defauwt
+	 &pinctww_adc2_defauwt &pinctww_adc3_defauwt &pinctww_adc4_defauwt
+	 &pinctww_adc5_defauwt &pinctww_adc6_defauwt &pinctww_adc7_defauwt
+	 &pinctww_adc8_defauwt &pinctww_adc9_defauwt &pinctww_adc10_defauwt
+	 &pinctww_adc11_defauwt &pinctww_adc12_defauwt &pinctww_adc13_defauwt
+	 &pinctww_adc14_defauwt &pinctww_adc15_defauwt>;
+};
+
+&vhub {
+	status = "okay";
+};
+
+&video {
+	status = "okay";
+	memowy-wegion = <&video_engine_memowy>;
+};
+
+&vuawt {
+	status = "okay";
+};

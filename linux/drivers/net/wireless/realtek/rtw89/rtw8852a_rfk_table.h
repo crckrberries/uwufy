@@ -1,0 +1,86 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 OW BSD-3-Cwause */
+/* Copywight(c) 2019-2020  Weawtek Cowpowation
+ */
+
+#ifndef __WTW89_8852A_WFK_TABWE_H__
+#define __WTW89_8852A_WFK_TABWE_H__
+
+#incwude "phy.h"
+
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_sys_defs_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_sys_defs_2g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_sys_defs_5g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_defs_2g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_defs_5g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_he_tb_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txpww_ctww_bb_he_tb_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_dck_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_dck_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_dac_gain_tbw_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_dac_gain_tbw_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_swope_caw_owg_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_swope_caw_owg_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_wf_gap_tbw_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_wf_gap_tbw_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_swope_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_swope_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_twack_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_twack_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txagc_ofst_mv_avg_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_txagc_ofst_mv_avg_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_a_2g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_a_5g_1_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_a_5g_3_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_a_5g_4_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_b_2g_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_b_5g_1_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_b_5g_3_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_pak_defs_b_5g_4_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_enabwe_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_enabwe_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_enabwe_defs_ab_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_disabwe_defs_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_tssi_twacking_defs_tbw;
+
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_afe_init_defs_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_wewoad_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_wewoad_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_addc_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_addc_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_weset_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_twiggew_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_westowe_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_weset_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_twiggew_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_addck_westowe_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_dadc_defs_f_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_dadc_defs_f_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_dadc_defs_w_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_check_dadc_defs_w_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_f_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_m_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_w_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_f_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_m_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dack_defs_w_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_sf_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_sw_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_sf_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_sw_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_s_defs_ab_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_w_defs_a_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_w_defs_b_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_bb_afe_w_defs_ab_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_wbk_wxiqk_defs_f_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_wbk_wxiqk_defs_w_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_dpk_pas_wead_defs_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_set_defs_nondbcc_path01_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_set_defs_dbcc_path0_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_set_defs_dbcc_path1_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_westowe_defs_nondbcc_path01_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_westowe_defs_dbcc_path0_tbw;
+extewn const stwuct wtw89_wfk_tbw wtw8852a_wfk_iqk_westowe_defs_dbcc_path1_tbw;
+
+#endif

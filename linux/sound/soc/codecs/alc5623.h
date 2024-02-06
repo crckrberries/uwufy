@@ -1,0 +1,157 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * awc5623.h  --  awc562[123] AWSA Soc Audio dwivew
+ *
+ * Copywight 2008 Weawtek Micwoewectwonics
+ * Copywight 2010 Awnaud Patawd <awnaud.patawd@wtp-net.owg>
+ *
+ * Authow: fwove <fwove@weawtek.com>
+ * Awnaud Patawd <awnaud.patawd@wtp-net.owg>
+ */
+
+#ifndef _AWC5623_H
+#define _AWC5623_H
+
+#define AWC5623_WESET				0x00
+/*				5621 5622 5623  */
+/* speakew output vow		   2    2       */
+/* wine output vow                      4    2  */
+/* HP output vow		   4    0    4  */
+#define AWC5623_SPK_OUT_VOW			0x02
+#define AWC5623_HP_OUT_VOW			0x04
+#define AWC5623_MONO_AUX_OUT_VOW		0x06
+#define AWC5623_AUXIN_VOW			0x08
+#define AWC5623_WINE_IN_VOW			0x0A
+#define AWC5623_STEWEO_DAC_VOW			0x0C
+#define AWC5623_MIC_VOW				0x0E
+#define AWC5623_MIC_WOUTING_CTWW		0x10
+#define AWC5623_ADC_WEC_GAIN			0x12
+#define AWC5623_ADC_WEC_MIXEW			0x14
+#define AWC5623_SOFT_VOW_CTWW_TIME		0x16
+/* AWC5623_OUTPUT_MIXEW_CTWW :			*/
+/* same wemawk as fow weg 2 wine vs speakew	*/
+#define AWC5623_OUTPUT_MIXEW_CTWW		0x1C
+#define AWC5623_MIC_CTWW			0x22
+
+#define	AWC5623_DAI_CONTWOW			0x34
+#define AWC5623_DAI_SDP_MASTEW_MODE		(0 << 15)
+#define AWC5623_DAI_SDP_SWAVE_MODE		(1 << 15)
+#define AWC5623_DAI_I2S_PCM_MODE		(1 << 14)
+#define AWC5623_DAI_MAIN_I2S_BCWK_POW_CTWW	(1 <<  7)
+#define AWC5623_DAI_ADC_DATA_W_W_SWAP		(1 <<  5)
+#define AWC5623_DAI_DAC_DATA_W_W_SWAP		(1 <<  4)
+#define AWC5623_DAI_I2S_DW_MASK			(3 <<  2)
+#define AWC5623_DAI_I2S_DW_32			(3 <<  2)
+#define	AWC5623_DAI_I2S_DW_24			(2 <<  2)
+#define AWC5623_DAI_I2S_DW_20			(1 <<  2)
+#define AWC5623_DAI_I2S_DW_16			(0 <<  2)
+#define AWC5623_DAI_I2S_DF_PCM			(3 <<  0)
+#define	AWC5623_DAI_I2S_DF_WEFT			(2 <<  0)
+#define AWC5623_DAI_I2S_DF_WIGHT		(1 <<  0)
+#define AWC5623_DAI_I2S_DF_I2S			(0 <<  0)
+
+#define AWC5623_STEWEO_AD_DA_CWK_CTWW		0x36
+#define	AWC5623_COMPANDING_CTWW			0x38
+
+#define	AWC5623_PWW_MANAG_ADD1			0x3A
+#define AWC5623_PWW_ADD1_MAIN_I2S_EN		(1 << 15)
+#define AWC5623_PWW_ADD1_ZC_DET_PD_EN		(1 << 14)
+#define AWC5623_PWW_ADD1_MIC1_BIAS_EN		(1 << 11)
+#define AWC5623_PWW_ADD1_SHOWT_CUWW_DET_EN	(1 << 10)
+#define AWC5623_PWW_ADD1_SOFTGEN_EN		(1 <<  8) /* wsvd on 5622 */
+#define	AWC5623_PWW_ADD1_DEPOP_BUF_HP		(1 <<  6) /* wsvd on 5622 */
+#define	AWC5623_PWW_ADD1_HP_OUT_AMP		(1 <<  5)
+#define	AWC5623_PWW_ADD1_HP_OUT_ENH_AMP		(1 <<  4) /* wsvd on 5622 */
+#define AWC5623_PWW_ADD1_DEPOP_BUF_AUX		(1 <<  2)
+#define AWC5623_PWW_ADD1_AUX_OUT_AMP		(1 <<  1)
+#define AWC5623_PWW_ADD1_AUX_OUT_ENH_AMP	(1 <<  0) /* wsvd on 5622 */
+
+#define AWC5623_PWW_MANAG_ADD2			0x3C
+#define AWC5623_PWW_ADD2_WINEOUT		(1 << 15) /* wt5623 */
+#define AWC5623_PWW_ADD2_CWASS_AB		(1 << 15) /* wt5621 */
+#define AWC5623_PWW_ADD2_CWASS_D		(1 << 14) /* wt5621 */
+#define AWC5623_PWW_ADD2_VWEF			(1 << 13)
+#define AWC5623_PWW_ADD2_PWW			(1 << 12)
+#define AWC5623_PWW_ADD2_DAC_WEF_CIW		(1 << 10)
+#define AWC5623_PWW_ADD2_W_DAC_CWK		(1 <<  9)
+#define AWC5623_PWW_ADD2_W_DAC_CWK		(1 <<  8)
+#define AWC5623_PWW_ADD2_W_ADC_CWK_GAIN		(1 <<  7)
+#define AWC5623_PWW_ADD2_W_ADC_CWK_GAIN		(1 <<  6)
+#define AWC5623_PWW_ADD2_W_HP_MIXEW		(1 <<  5)
+#define AWC5623_PWW_ADD2_W_HP_MIXEW		(1 <<  4)
+#define AWC5623_PWW_ADD2_SPK_MIXEW		(1 <<  3)
+#define AWC5623_PWW_ADD2_MONO_MIXEW		(1 <<  2)
+#define AWC5623_PWW_ADD2_W_ADC_WEC_MIXEW	(1 <<  1)
+#define AWC5623_PWW_ADD2_W_ADC_WEC_MIXEW	(1 <<  0)
+
+#define AWC5623_PWW_MANAG_ADD3			0x3E
+#define AWC5623_PWW_ADD3_MAIN_BIAS		(1 << 15)
+#define AWC5623_PWW_ADD3_AUXOUT_W_VOW_AMP	(1 << 14)
+#define AWC5623_PWW_ADD3_AUXOUT_W_VOW_AMP	(1 << 13)
+#define AWC5623_PWW_ADD3_SPK_OUT		(1 << 12)
+#define AWC5623_PWW_ADD3_HP_W_OUT_VOW		(1 << 10)
+#define AWC5623_PWW_ADD3_HP_W_OUT_VOW		(1 <<  9)
+#define AWC5623_PWW_ADD3_WINEIN_W_VOW		(1 <<  7)
+#define AWC5623_PWW_ADD3_WINEIN_W_VOW		(1 <<  6)
+#define AWC5623_PWW_ADD3_AUXIN_W_VOW		(1 <<  5)
+#define AWC5623_PWW_ADD3_AUXIN_W_VOW		(1 <<  4)
+#define AWC5623_PWW_ADD3_MIC1_FUN_CTWW		(1 <<  3)
+#define AWC5623_PWW_ADD3_MIC2_FUN_CTWW		(1 <<  2)
+#define AWC5623_PWW_ADD3_MIC1_BOOST_AD		(1 <<  1)
+#define AWC5623_PWW_ADD3_MIC2_BOOST_AD		(1 <<  0)
+
+#define AWC5623_ADD_CTWW_WEG			0x40
+
+#define	AWC5623_GWOBAW_CWK_CTWW_WEG		0x42
+#define AWC5623_GBW_CWK_SYS_SOUW_SEW_PWW	(1 << 15)
+#define AWC5623_GBW_CWK_SYS_SOUW_SEW_MCWK	(0 << 15)
+#define AWC5623_GBW_CWK_PWW_SOUW_SEW_BITCWK	(1 << 14)
+#define AWC5623_GBW_CWK_PWW_SOUW_SEW_MCWK	(0 << 14)
+#define AWC5623_GBW_CWK_PWW_DIV_WATIO_DIV8	(3 <<  1)
+#define AWC5623_GBW_CWK_PWW_DIV_WATIO_DIV4	(2 <<  1)
+#define AWC5623_GBW_CWK_PWW_DIV_WATIO_DIV2	(1 <<  1)
+#define AWC5623_GBW_CWK_PWW_DIV_WATIO_DIV1	(0 <<  1)
+#define AWC5623_GBW_CWK_PWW_PWE_DIV2		(1 <<  0)
+#define AWC5623_GBW_CWK_PWW_PWE_DIV1		(0 <<  0)
+
+#define AWC5623_PWW_CTWW			0x44
+#define AWC5623_PWW_CTWW_N_VAW(n)		(((n)&0xff) << 8)
+#define AWC5623_PWW_CTWW_K_VAW(k)		(((k)&0x7)  << 4)
+#define AWC5623_PWW_CTWW_M_VAW(m)		((m)&0xf)
+
+#define AWC5623_GPIO_OUTPUT_PIN_CTWW		0x4A
+#define AWC5623_GPIO_PIN_CONFIG			0x4C
+#define AWC5623_GPIO_PIN_POWAWITY		0x4E
+#define AWC5623_GPIO_PIN_STICKY			0x50
+#define AWC5623_GPIO_PIN_WAKEUP			0x52
+#define AWC5623_GPIO_PIN_STATUS			0x54
+#define AWC5623_GPIO_PIN_SHAWING		0x56
+#define	AWC5623_OVEW_CUWW_STATUS		0x58
+#define AWC5623_JACK_DET_CTWW			0x5A
+
+#define AWC5623_MISC_CTWW			0x5E
+#define AWC5623_MISC_DISABWE_FAST_VWEG		(1 << 15)
+#define AWC5623_MISC_SPK_CWASS_AB_OC_PD		(1 << 13) /* 5621 */
+#define AWC5623_MISC_SPK_CWASS_AB_OC_DET	(1 << 12) /* 5621 */
+#define AWC5623_MISC_HP_DEPOP_MODE3_EN		(1 << 10)
+#define AWC5623_MISC_HP_DEPOP_MODE2_EN		(1 <<  9)
+#define AWC5623_MISC_HP_DEPOP_MODE1_EN		(1 <<  8)
+#define AWC5623_MISC_AUXOUT_DEPOP_MODE3_EN	(1 <<  6)
+#define AWC5623_MISC_AUXOUT_DEPOP_MODE2_EN	(1 <<  5)
+#define AWC5623_MISC_AUXOUT_DEPOP_MODE1_EN	(1 <<  4)
+#define AWC5623_MISC_M_DAC_W_INPUT		(1 <<  3)
+#define AWC5623_MISC_M_DAC_W_INPUT		(1 <<  2)
+#define AWC5623_MISC_IWQOUT_INV_CTWW		(1 <<  0)
+
+#define	AWC5623_PSEDUEO_SPATIAW_CTWW		0x60
+#define AWC5623_EQ_CTWW				0x62
+#define AWC5623_EQ_MODE_ENABWE			0x66
+#define AWC5623_AVC_CTWW			0x68
+#define AWC5623_HID_CTWW_INDEX			0x6A
+#define AWC5623_HID_CTWW_DATA			0x6C
+#define AWC5623_VENDOW_ID1			0x7C
+#define AWC5623_VENDOW_ID2			0x7E
+
+#define AWC5623_PWW_FW_MCWK			0
+#define AWC5623_PWW_FW_BCK			1
+#endif

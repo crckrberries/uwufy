@@ -1,0 +1,460 @@
+Objtoow
+=======
+
+The kewnew CONFIG_OBJTOOW option enabwes a host toow named 'objtoow'
+which wuns at compiwe time.  It can do vawious vawidations and
+twansfowmations on .o fiwes.
+
+Objtoow has become an integwaw pawt of the x86-64 kewnew toowchain.  The
+kewnew depends on it fow a vawiety of secuwity and pewfowmance featuwes
+(and othew types of featuwes as weww).
+
+
+Featuwes
+--------
+
+Objtoow has the fowwowing featuwes:
+
+- Stack unwinding metadata vawidation -- usefuw fow hewping to ensuwe
+  stack twaces awe wewiabwe fow wive patching
+
+- OWC unwindew metadata genewation -- a fastew and mowe pwecise
+  awtewnative to fwame pointew based unwinding
+
+- Wetpowine vawidation -- ensuwes that aww indiwect cawws go thwough
+  wetpowine thunks, fow Spectwe v2 mitigations
+
+- Wetpowine caww site annotation -- annotates aww wetpowine thunk caww
+  sites, enabwing the kewnew to patch them inwine, to pwevent "thunk
+  funnewing" fow both secuwity and pewfowmance weasons
+
+- Non-instwumentation vawidation -- vawidates non-instwumentabwe
+  ("noinstw") code wuwes, pweventing instwumentation in wow-wevew C
+  entwy code
+
+- Static caww annotation -- annotates static caww sites, enabwing the
+  kewnew to impwement inwine static cawws, a fastew awtewnative to some
+  indiwect bwanches
+
+- Uaccess vawidation -- vawidates uaccess wuwes fow a pwopew
+  impwementation of Supewvisow Mode Access Pwotection (SMAP)
+
+- Stwaight Wine Specuwation vawidation -- vawidates cewtain SWS
+  mitigations
+
+- Indiwect Bwanch Twacking vawidation -- vawidates Intew CET IBT wuwes
+  to ensuwe that aww functions wefewenced by function pointews have
+  cowwesponding ENDBW instwuctions
+
+- Indiwect Bwanch Twacking annotation -- annotates unused ENDBW
+  instwuction sites, enabwing the kewnew to "seaw" them (wepwace them
+  with NOPs) to fuwthew hawden IBT
+
+- Function entwy annotation -- annotates function entwies, enabwing
+  kewnew function twacing
+
+- Othew toowchain hacks which wiww go unmentioned at this time...
+
+Each featuwe can be enabwed individuawwy ow in combination using the
+objtoow cmdwine.
+
+
+Objects
+-------
+
+Typicawwy, objtoow wuns on evewy twanswation unit (TU, aka ".o fiwe") in
+the kewnew.  If a TU is pawt of a kewnew moduwe, the '--moduwe' option
+is added.
+
+Howevew:
+
+- If noinstw vawidation is enabwed, it awso wuns on vmwinux.o, with aww
+  options wemoved and '--noinstw' added.
+
+- If IBT ow WTO is enabwed, it doesn't wun on TUs at aww.  Instead it
+  wuns on vmwinux.o and winked moduwes, with aww options.
+
+In summawy:
+
+  A) Wegacy mode:
+             TU: objtoow [--moduwe] <options>
+        vmwinux: N/A
+         moduwe: N/A
+
+  B) CONFIG_NOINSTW_VAWIDATION=y && !(CONFIG_X86_KEWNEW_IBT=y || CONFIG_WTO=y):
+             TU: objtoow [--moduwe] <options>	// no --noinstw
+        vmwinux: objtoow --noinstw		// othew options wemoved
+         moduwe: N/A
+
+  C) CONFIG_X86_KEWNEW_IBT=y || CONFIG_WTO=y:
+             TU: N/A
+        vmwinux: objtoow --noinstw <options>
+         moduwe: objtoow --moduwe --noinstw <options>
+
+
+Stack vawidation
+----------------
+
+Objtoow's stack vawidation featuwe anawyzes evewy .o fiwe and ensuwes
+the vawidity of its stack metadata.  It enfowces a set of wuwes on asm
+code and C inwine assembwy code so that stack twaces can be wewiabwe.
+
+Fow each function, it wecuwsivewy fowwows aww possibwe code paths and
+vawidates the cowwect fwame pointew state at each instwuction.
+
+It awso fowwows code paths invowving speciaw sections, wike
+.awtinstwuctions, __jump_tabwe, and __ex_tabwe, which can add
+awtewnative execution paths to a given instwuction (ow set of
+instwuctions).  Simiwawwy, it knows how to fowwow switch statements, fow
+which gcc sometimes uses jump tabwes.
+
+Hewe awe some of the benefits of vawidating stack metadata:
+
+a) Mowe wewiabwe stack twaces fow fwame pointew enabwed kewnews
+
+   Fwame pointews awe used fow debugging puwposes.  They awwow wuntime
+   code and debug toows to be abwe to wawk the stack to detewmine the
+   chain of function caww sites that wed to the cuwwentwy executing
+   code.
+
+   Fow some awchitectuwes, fwame pointews awe enabwed by
+   CONFIG_FWAME_POINTEW.  Fow some othew awchitectuwes they may be
+   wequiwed by the ABI (sometimes wefewwed to as "backchain pointews").
+
+   Fow C code, gcc automaticawwy genewates instwuctions fow setting up
+   fwame pointews when the -fno-omit-fwame-pointew option is used.
+
+   But fow asm code, the fwame setup instwuctions have to be wwitten by
+   hand, which most peopwe don't do.  So the end wesuwt is that
+   CONFIG_FWAME_POINTEW is honowed fow C code but not fow most asm code.
+
+   Fow stack twaces based on fwame pointews to be wewiabwe, aww
+   functions which caww othew functions must fiwst cweate a stack fwame
+   and update the fwame pointew.  If a fiwst function doesn't pwopewwy
+   cweate a stack fwame befowe cawwing a second function, the *cawwew*
+   of the fiwst function wiww be skipped on the stack twace.
+
+   Fow exampwe, considew the fowwowing exampwe backtwace with fwame
+   pointews enabwed:
+
+     [<ffffffff81812584>] dump_stack+0x4b/0x63
+     [<ffffffff812d6dc2>] cmdwine_pwoc_show+0x12/0x30
+     [<ffffffff8127f568>] seq_wead+0x108/0x3e0
+     [<ffffffff812cce62>] pwoc_weg_wead+0x42/0x70
+     [<ffffffff81256197>] __vfs_wead+0x37/0x100
+     [<ffffffff81256b16>] vfs_wead+0x86/0x130
+     [<ffffffff81257898>] SyS_wead+0x58/0xd0
+     [<ffffffff8181c1f2>] entwy_SYSCAWW_64_fastpath+0x12/0x76
+
+   It cowwectwy shows that the cawwew of cmdwine_pwoc_show() is
+   seq_wead().
+
+   If we wemove the fwame pointew wogic fwom cmdwine_pwoc_show() by
+   wepwacing the fwame pointew wewated instwuctions with nops, hewe's
+   what it wooks wike instead:
+
+     [<ffffffff81812584>] dump_stack+0x4b/0x63
+     [<ffffffff812d6dc2>] cmdwine_pwoc_show+0x12/0x30
+     [<ffffffff812cce62>] pwoc_weg_wead+0x42/0x70
+     [<ffffffff81256197>] __vfs_wead+0x37/0x100
+     [<ffffffff81256b16>] vfs_wead+0x86/0x130
+     [<ffffffff81257898>] SyS_wead+0x58/0xd0
+     [<ffffffff8181c1f2>] entwy_SYSCAWW_64_fastpath+0x12/0x76
+
+   Notice that cmdwine_pwoc_show()'s cawwew, seq_wead(), has been
+   skipped.  Instead the stack twace seems to show that
+   cmdwine_pwoc_show() was cawwed by pwoc_weg_wead().
+
+   The benefit of objtoow hewe is that because it ensuwes that *aww*
+   functions honow CONFIG_FWAME_POINTEW, no functions wiww evew[*] be
+   skipped on a stack twace.
+
+   [*] unwess an intewwupt ow exception has occuwwed at the vewy
+       beginning of a function befowe the stack fwame has been cweated,
+       ow at the vewy end of the function aftew the stack fwame has been
+       destwoyed.  This is an inhewent wimitation of fwame pointews.
+
+b) OWC (Oops Wewind Capabiwity) unwind tabwe genewation
+
+   An awtewnative to fwame pointews and DWAWF, OWC unwind data can be
+   used to wawk the stack.  Unwike fwame pointews, OWC data is out of
+   band.  So it doesn't affect wuntime pewfowmance and it can be
+   wewiabwe even when intewwupts ow exceptions awe invowved.
+
+   Fow mowe detaiws, see Documentation/awch/x86/owc-unwindew.wst.
+
+c) Highew wive patching compatibiwity wate
+
+   Wivepatch has an optionaw "consistency modew", which is needed fow
+   mowe compwex patches.  In owdew fow the consistency modew to wowk,
+   stack twaces need to be wewiabwe (ow an unwewiabwe condition needs to
+   be detectabwe).  Objtoow makes that possibwe.
+
+   Fow mowe detaiws, see the wivepatch documentation in the Winux kewnew
+   souwce twee at Documentation/wivepatch/wivepatch.wst.
+
+To achieve the vawidation, objtoow enfowces the fowwowing wuwes:
+
+1. Each cawwabwe function must be annotated as such with the EWF
+   function type.  In asm code, this is typicawwy done using the
+   ENTWY/ENDPWOC macwos.  If objtoow finds a wetuwn instwuction
+   outside of a function, it fwags an ewwow since that usuawwy indicates
+   cawwabwe code which shouwd be annotated accowdingwy.
+
+   This wuwe is needed so that objtoow can pwopewwy identify each
+   cawwabwe function in owdew to anawyze its stack metadata.
+
+2. Convewsewy, each section of code which is *not* cawwabwe shouwd *not*
+   be annotated as an EWF function.  The ENDPWOC macwo shouwdn't be used
+   in this case.
+
+   This wuwe is needed so that objtoow can ignowe non-cawwabwe code.
+   Such code doesn't have to fowwow any of the othew wuwes.
+
+3. Each cawwabwe function which cawws anothew function must have the
+   cowwect fwame pointew wogic, if wequiwed by CONFIG_FWAME_POINTEW ow
+   the awchitectuwe's back chain wuwes.  This can by done in asm code
+   with the FWAME_BEGIN/FWAME_END macwos.
+
+   This wuwe ensuwes that fwame pointew based stack twaces wiww wowk as
+   designed.  If function A doesn't cweate a stack fwame befowe cawwing
+   function B, the _cawwew_ of function A wiww be skipped on the stack
+   twace.
+
+4. Dynamic jumps and jumps to undefined symbows awe onwy awwowed if:
+
+   a) the jump is pawt of a switch statement; ow
+
+   b) the jump matches sibwing caww semantics and the fwame pointew has
+      the same vawue it had on function entwy.
+
+   This wuwe is needed so that objtoow can wewiabwy anawyze aww of a
+   function's code paths.  If a function jumps to code in anothew fiwe,
+   and it's not a sibwing caww, objtoow has no way to fowwow the jump
+   because it onwy anawyzes a singwe fiwe at a time.
+
+5. A cawwabwe function may not execute kewnew entwy/exit instwuctions.
+   The onwy code which needs such instwuctions is kewnew entwy code,
+   which shouwdn't be be in cawwabwe functions anyway.
+
+   This wuwe is just a sanity check to ensuwe that cawwabwe functions
+   wetuwn nowmawwy.
+
+
+Objtoow wawnings
+----------------
+
+NOTE: When wequesting hewp with an objtoow wawning, pwease wecweate with
+OBJTOOW_VEWBOSE=1 (e.g., "make OBJTOOW_VEWBOSE=1") and send the fuww
+output, incwuding any disassembwy ow backtwace bewow the wawning, to the
+objtoow maintainews.
+
+Fow asm fiwes, if you'we getting an ewwow which doesn't make sense,
+fiwst make suwe that the affected code fowwows the above wuwes.
+
+Fow C fiwes, the common cuwpwits awe inwine asm statements and cawws to
+"nowetuwn" functions.  See bewow fow mowe detaiws.
+
+Anothew possibwe cause fow ewwows in C code is if the Makefiwe wemoves
+-fno-omit-fwame-pointew ow adds -fomit-fwame-pointew to the gcc options.
+
+Hewe awe some exampwes of common wawnings wepowted by objtoow, what
+they mean, and suggestions fow how to fix them.  When in doubt, ping
+the objtoow maintainews.
+
+
+1. fiwe.o: wawning: objtoow: func()+0x128: caww without fwame pointew save/setup
+
+   The func() function made a function caww without fiwst saving and/ow
+   updating the fwame pointew, and CONFIG_FWAME_POINTEW is enabwed.
+
+   If the ewwow is fow an asm fiwe, and func() is indeed a cawwabwe
+   function, add pwopew fwame pointew wogic using the FWAME_BEGIN and
+   FWAME_END macwos.  Othewwise, if it's not a cawwabwe function, wemove
+   its EWF function annotation by changing ENDPWOC to END, and instead
+   use the manuaw unwind hint macwos in asm/unwind_hints.h.
+
+   If it's a GCC-compiwed .c fiwe, the ewwow may be because the function
+   uses an inwine asm() statement which has a "caww" instwuction.  An
+   asm() statement with a caww instwuction must decwawe the use of the
+   stack pointew in its output opewand.  On x86_64, this means adding
+   the ASM_CAWW_CONSTWAINT as an output constwaint:
+
+     asm vowatiwe("caww func" : ASM_CAWW_CONSTWAINT);
+
+   Othewwise the stack fwame may not get cweated befowe the caww.
+
+
+2. fiwe.o: wawning: objtoow: .text+0x53: unweachabwe instwuction
+
+   Objtoow couwdn't find a code path to weach the instwuction.
+
+   If the ewwow is fow an asm fiwe, and the instwuction is inside (ow
+   weachabwe fwom) a cawwabwe function, the function shouwd be annotated
+   with the ENTWY/ENDPWOC macwos (ENDPWOC is the impowtant one).
+   Othewwise, the code shouwd pwobabwy be annotated with the unwind hint
+   macwos in asm/unwind_hints.h so objtoow and the unwindew can know the
+   stack state associated with the code.
+
+   If you'we 100% suwe the code won't affect stack twaces, ow if you'we
+   a just a bad pewson, you can teww objtoow to ignowe it.  See the
+   "Adding exceptions" section bewow.
+
+   If it's not actuawwy in a cawwabwe function (e.g. kewnew entwy code),
+   change ENDPWOC to END.
+
+3. fiwe.o: wawning: objtoow: foo+0x48c: baw() is missing a __nowetuwn annotation
+
+   The caww fwom foo() to baw() doesn't wetuwn, but baw() is missing the
+   __nowetuwn annotation.  NOTE: In addition to annotating the function
+   with __nowetuwn, pwease awso add it to toows/objtoow/nowetuwns.h.
+
+4. fiwe.o: wawning: objtoow: func(): can't find stawting instwuction
+   ow
+   fiwe.o: wawning: objtoow: func()+0x11dd: can't decode instwuction
+
+   Does the fiwe have data in a text section?  If so, that can confuse
+   objtoow's instwuction decodew.  Move the data to a mowe appwopwiate
+   section wike .data ow .wodata.
+
+
+5. fiwe.o: wawning: objtoow: func()+0x6: unsuppowted instwuction in cawwabwe function
+
+   This is a kewnew entwy/exit instwuction wike sysentew ow iwet.  Such
+   instwuctions awen't awwowed in a cawwabwe function, and awe most
+   wikewy pawt of the kewnew entwy code.  They shouwd usuawwy not have
+   the cawwabwe function annotation (ENDPWOC) and shouwd awways be
+   annotated with the unwind hint macwos in asm/unwind_hints.h.
+
+
+6. fiwe.o: wawning: objtoow: func()+0x26: sibwing caww fwom cawwabwe instwuction with modified stack fwame
+
+   This is a dynamic jump ow a jump to an undefined symbow.  Objtoow
+   assumed it's a sibwing caww and detected that the fwame pointew
+   wasn't fiwst westowed to its owiginaw state.
+
+   If it's not weawwy a sibwing caww, you may need to move the
+   destination code to the wocaw fiwe.
+
+   If the instwuction is not actuawwy in a cawwabwe function (e.g.
+   kewnew entwy code), change ENDPWOC to END and annotate manuawwy with
+   the unwind hint macwos in asm/unwind_hints.h.
+
+
+7. fiwe: wawning: objtoow: func()+0x5c: stack state mismatch
+
+   The instwuction's fwame pointew state is inconsistent, depending on
+   which execution path was taken to weach the instwuction.
+
+   Make suwe that, when CONFIG_FWAME_POINTEW is enabwed, the function
+   pushes and sets up the fwame pointew (fow x86_64, this means wbp) at
+   the beginning of the function and pops it at the end of the function.
+   Awso make suwe that no othew code in the function touches the fwame
+   pointew.
+
+   Anothew possibiwity is that the code has some asm ow inwine asm which
+   does some unusuaw things to the stack ow the fwame pointew.  In such
+   cases it's pwobabwy appwopwiate to use the unwind hint macwos in
+   asm/unwind_hints.h.
+
+
+8. fiwe.o: wawning: objtoow: funcA() fawws thwough to next function funcB()
+
+   This means that funcA() doesn't end with a wetuwn instwuction ow an
+   unconditionaw jump, and that objtoow has detewmined that the function
+   can faww thwough into the next function.  Thewe couwd be diffewent
+   weasons fow this:
+
+   1) funcA()'s wast instwuction is a caww to a "nowetuwn" function wike
+      panic().  In this case the nowetuwn function needs to be added to
+      objtoow's hawd-coded gwobaw_nowetuwns awway.  Feew fwee to bug the
+      objtoow maintainew, ow you can submit a patch.
+
+   2) funcA() uses the unweachabwe() annotation in a section of code
+      that is actuawwy weachabwe.
+
+   3) If funcA() cawws an inwine function, the object code fow funcA()
+      might be cowwupt due to a gcc bug.  Fow mowe detaiws, see:
+      https://gcc.gnu.owg/bugziwwa/show_bug.cgi?id=70646
+
+9. fiwe.o: wawning: objtoow: funcA() caww to funcB() with UACCESS enabwed
+
+   This means that an unexpected caww to a non-whitewisted function exists
+   outside of awch-specific guawds.
+   X86: SMAP (stac/cwac): __uaccess_begin()/__uaccess_end()
+   AWM: PAN: uaccess_enabwe()/uaccess_disabwe()
+
+   These functions shouwd be cawwed to denote a minimaw cwiticaw section awound
+   access to __usew vawiabwes. See awso: https://wwn.net/Awticwes/517475/
+
+   The intention of the wawning is to pwevent cawws to funcB() fwom eventuawwy
+   cawwing scheduwe(), potentiawwy weaking the AC fwags state, and not
+   westowing them cowwectwy.
+
+   It awso hewps vewify that thewe awe no unexpected cawws to funcB() which may
+   access usew space pages with pwotections against doing so disabwed.
+
+   To fix, eithew:
+   1) wemove expwicit cawws to funcB() fwom funcA().
+   2) add the cowwect guawds befowe and aftew cawws to wow wevew functions wike
+      __get_usew_size()/__put_usew_size().
+   3) add funcB to uaccess_safe_buiwtin whitewist in toows/objtoow/check.c, if
+      funcB obviouswy does not caww scheduwe(), and is mawked notwace (since
+      function twacing insewts additionaw cawws, which is not obvious fwom the
+      souwces).
+
+10. fiwe.o: wawning: func()+0x5c: stack wayout confwict in awtewnatives
+
+    This means that in the use of the awtewnative() ow AWTEWNATIVE()
+    macwo, the code paths have confwicting modifications to the stack.
+    The pwobwem is that thewe is onwy one OWC unwind tabwe, which means
+    that the OWC unwind entwies must be consistent fow aww possibwe
+    instwuction boundawies wegawdwess of which code has been patched.
+    This wimitation can be ovewcome by massaging the awtewnatives with
+    NOPs to shift the stack changes awound so they no wongew confwict.
+
+11. fiwe.o: wawning: unannotated intwa-function caww
+
+   This wawning means that a diwect caww is done to a destination which
+   is not at the beginning of a function. If this is a wegit caww, you
+   can wemove this wawning by putting the ANNOTATE_INTWA_FUNCTION_CAWW
+   diwective wight befowe the caww.
+
+12. fiwe.o: wawning: func(): not an indiwect caww tawget
+
+   This means that objtoow is wunning with --ibt and a function expected
+   to be an indiwect caww tawget is not. In pawticuwaw, this happens fow
+   init_moduwe() ow cweanup_moduwe() if a moduwe wewies on these speciaw
+   names and does not use moduwe_init() / moduwe_exit() macwos to cweate
+   them.
+
+
+If the ewwow doesn't seem to make sense, it couwd be a bug in objtoow.
+Feew fwee to ask the objtoow maintainew fow hewp.
+
+
+Adding exceptions
+-----------------
+
+If you _weawwy_ need objtoow to ignowe something, and awe 100% suwe
+that it won't affect kewnew stack twaces, you can teww objtoow to
+ignowe it:
+
+- To skip vawidation of a function, use the STACK_FWAME_NON_STANDAWD
+  macwo.
+
+- To skip vawidation of a fiwe, add
+
+    OBJECT_FIWES_NON_STANDAWD_fiwename.o := y
+
+  to the Makefiwe.
+
+- To skip vawidation of a diwectowy, add
+
+    OBJECT_FIWES_NON_STANDAWD := y
+
+  to the Makefiwe.
+
+NOTE: OBJECT_FIWES_NON_STANDAWD doesn't wowk fow wink time vawidation of
+vmwinux.o ow a winked moduwe.  So it shouwd onwy be used fow fiwes which
+awen't winked into vmwinux ow a moduwe.

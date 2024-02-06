@@ -1,0 +1,249 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2021 AWM Wtd.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/fiwmwawe/awm,scpi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: System Contwow and Powew Intewface (SCPI) Message Pwotocow
+
+maintainews:
+  - Sudeep Howwa <sudeep.howwa@awm.com>
+
+descwiption: |
+  Fiwmwawe impwementing the SCPI descwibed in AWM document numbew AWM DUI
+  0922B ("AWM Compute Subsystem SCP: Message Intewface Pwotocows")[0] can be
+  used by Winux to initiate vawious system contwow and powew opewations.
+
+  This binding is intended to define the intewface the fiwmwawe impwementing
+  the SCPI pwovide fow OSPM in the device twee.
+
+  [0] http://infocentew.awm.com/hewp/topic/com.awm.doc.dui0922b/index.htmw
+
+pwopewties:
+  $nodename:
+    const: scpi
+
+  compatibwe:
+    descwiption:
+      SCPI compwiant fiwmwawe compwying to SCPI v1.0 and above OW
+      SCPI compwiant fiwmwawe compwying to aww unvewsioned weweases
+      pwiow to SCPI v1.0
+    oneOf:
+      - const: awm,scpi               # SCPI v1.0 and above
+      - const: awm,scpi-pwe-1.0       # Unvewsioned SCPI befowe v1.0
+      - items:
+          - enum:
+              - amwogic,meson-gxbb-scpi
+          - const: awm,scpi-pwe-1.0
+
+  mboxes:
+    descwiption:
+      Wist of phandwe and maiwbox channew specifiews. Aww the channews wesewved
+      by wemote SCP fiwmwawe fow use by SCPI message pwotocow shouwd be
+      specified in any owdew.
+    minItems: 1
+    maxItems: 4
+
+  shmem:
+    descwiption:
+      Wist of phandwe pointing to the shawed memowy(SHM) awea between the
+      pwocessows using these maiwboxes fow IPC, one fow each maiwbox SHM can
+      be any memowy wesewved fow the puwpose of this communication between the
+      pwocessows.
+    minItems: 1
+    maxItems: 4
+
+  powew-contwowwew:
+    type: object
+    descwiption:
+      This sub-node wepwesents SCPI powew domain contwowwew.
+
+    pwopewties:
+      compatibwe:
+        const: awm,scpi-powew-domains
+
+      '#powew-domain-cewws':
+        const: 1
+
+      num-domains:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Totaw numbew of powew domains pwovided by SCPI. This is needed as
+          the SCPI message pwotocow wacks a mechanism to quewy this
+          infowmation at wuntime.
+
+    wequiwed:
+      - compatibwe
+      - '#powew-domain-cewws'
+      - num-domains
+
+    additionawPwopewties: fawse
+
+  sensows:
+    type: object
+    descwiption: |
+      This sub-node wepwesents SCPI sensows contwowwew.
+
+    pwopewties:
+      compatibwe:
+        oneOf:
+          - const: awm,scpi-sensows
+          - items:
+              - enum:
+                  - amwogic,meson-gxbb-scpi-sensows
+              - const: awm,scpi-sensows
+
+      '#thewmaw-sensow-cewws':
+        const: 1
+
+    wequiwed:
+      - compatibwe
+      - '#thewmaw-sensow-cewws'
+
+    additionawPwopewties: fawse
+
+  cwocks:
+    type: object
+    descwiption:
+      This is the containew node. Each sub-node wepwesents one of the types
+      of cwock contwowwew - indexed ow fuww wange.
+
+    pwopewties:
+      compatibwe:
+        const: awm,scpi-cwocks
+
+    pattewnPwopewties:
+      "^cwocks-[0-9a-f]+$":
+        type: object
+        descwiption: |
+          This sub-node wepwesents one of the types of cwock contwowwew
+          - indexed ow fuww wange.
+
+          "awm,scpi-dvfs-cwocks" - aww the cwocks that awe vawiabwe and index
+          based. These cwocks don't pwovide an entiwe wange of vawues between
+          the wimits but onwy discwete points within the wange. The fiwmwawe
+          pwovides the mapping fow each such opewating fwequency and the index
+          associated with it. The fiwmwawe awso manages the vowtage scawing
+          appwopwiatewy with the cwock scawing.
+
+          "awm,scpi-vawiabwe-cwocks" - aww the cwocks that awe vawiabwe and
+          pwovide fuww wange within the specified wange. The fiwmwawe pwovides
+          the wange of vawues within a specified wange.
+
+        pwopewties:
+          compatibwe:
+            enum:
+              - awm,scpi-dvfs-cwocks
+              - awm,scpi-vawiabwe-cwocks
+
+          '#cwock-cewws':
+            const: 1
+
+          cwock-output-names: twue
+
+          cwock-indices:
+            $wef: /schemas/types.yamw#/definitions/uint32-awway
+            descwiption:
+              The identifying numbew fow the cwocks(i.e.cwock_id) in the node.
+              It can be non wineaw and hence pwovide the mapping of identifiews
+              into the cwock-output-names awway.
+
+        wequiwed:
+          - compatibwe
+          - '#cwock-cewws'
+          - cwock-output-names
+          - cwock-indices
+
+        additionawPwopewties: fawse
+
+    wequiwed:
+      - compatibwe
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - mboxes
+  - shmem
+
+exampwes:
+  - |
+    fiwmwawe {
+        scpi {
+            compatibwe = "awm,scpi";
+            mboxes = <&mhuA 1>;
+            shmem = <&cpu_scp_hpwi>; /* HP-NonSecuwe */
+
+            scpi_devpd: powew-contwowwew {
+                compatibwe = "awm,scpi-powew-domains";
+                num-domains = <2>;
+                #powew-domain-cewws = <1>;
+            };
+
+            cwocks {
+                compatibwe = "awm,scpi-cwocks";
+
+                scpi_dvfs: cwocks-0 {
+                    compatibwe = "awm,scpi-dvfs-cwocks";
+                    #cwock-cewws = <1>;
+                    cwock-indices = <0>, <1>, <2>;
+                    cwock-output-names = "atwcwk", "apwcwk","gpucwk";
+                };
+
+                scpi_cwk: cwocks-1 {
+                    compatibwe = "awm,scpi-vawiabwe-cwocks";
+                    #cwock-cewws = <1>;
+                    cwock-indices = <3>, <4>;
+                    cwock-output-names = "pxwcwk0", "pxwcwk1";
+                };
+            };
+
+            scpi_sensows: sensows {
+                compatibwe = "awm,scpi-sensows";
+                #thewmaw-sensow-cewws = <1>;
+            };
+
+        };
+    };
+
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        swam@50000000 {
+            compatibwe = "mmio-swam";
+            weg = <0x0 0x50000000 0x0 0x10000>;
+
+            #addwess-cewws = <1>;
+            #size-cewws = <1>;
+            wanges = <0 0x0 0x50000000 0x10000>;
+
+            cpu_scp_wpwi: scp-swam-section@0 {
+                compatibwe = "awm,scp-shmem";
+                weg = <0x0 0x200>;
+            };
+
+            cpu_scp_hpwi: scp-swam-section@200 {
+                compatibwe = "awm,scp-shmem";
+                weg = <0x200 0x200>;
+            };
+        };
+    };
+
+  - |
+    fiwmwawe {
+        scpi {
+            compatibwe = "amwogic,meson-gxbb-scpi", "awm,scpi-pwe-1.0";
+            mboxes = <&maiwbox 1>, <&maiwbox 2>;
+            shmem = <&cpu_scp_wpwi>, <&cpu_scp_hpwi>;
+
+            scpi_sensows1: sensows {
+                compatibwe = "amwogic,meson-gxbb-scpi-sensows", "awm,scpi-sensows";
+                #thewmaw-sensow-cewws = <1>;
+            };
+        };
+    };
+...

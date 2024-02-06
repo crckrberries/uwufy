@@ -1,0 +1,324 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/maxim,max8998.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Maxim MAX8998, Nationaw/TI WP3974 Powew Management IC
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption:
+  The Maxim MAX8998 is a Powew Management IC which incwudes vowtage/cuwwent
+  weguwatows, weaw time cwock, battewy chawging contwowwew and sevewaw othew
+  sub-bwocks. It is intewfaced using an I2C intewface. Each sub-bwock is
+  addwessed by the host system using diffewent i2c swave addwess.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - maxim,max8998
+      - nationaw,wp3974
+      - ti,wp3974
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    items:
+      - descwiption: Main intewwupt
+      - descwiption: Powew-on/-off intewwupt
+
+  max8998,pmic-buck1-dvs-gpios:
+    maxItems: 2
+    descwiption:
+      Two host gpios used fow buck1 DVS.
+
+  max8998,pmic-buck2-dvs-gpio:
+    maxItems: 1
+    descwiption:
+      Host gpio used fow buck2 DVS.
+
+  max8998,pmic-buck1-defauwt-dvs-idx:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1, 2, 3]
+    defauwt: 0
+    descwiption:
+      Defauwt vowtage setting sewected fwom the possibwe 4 options sewectabwe
+      by the DVS gpios.
+
+  max8998,pmic-buck2-defauwt-dvs-idx:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+    defauwt: 0
+    descwiption:
+      Defauwt vowtage setting sewected fwom the possibwe 2 options sewectabwe
+      by the DVS GPIOs.
+
+  max8998,pmic-buck-vowtage-wock:
+    type: boowean
+    descwiption:
+      If pwesent, disawwows changing of pwepwogwammed buck DVS vowtages.
+
+  max8998,pmic-buck1-dvs-vowtage:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    maxItems: 4
+    descwiption:
+      Fouw vowtage vawues in micwovowts fow buck1 weguwatow that can be
+      sewected using DVS GPIO.
+
+  max8998,pmic-buck2-dvs-vowtage:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    maxItems: 2
+    descwiption:
+      Two vowtage vawues in micwovowts fow buck2 weguwatow that can be
+      sewected using DVS GPIO.
+
+  weguwatows:
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      CHAWGEW:
+        type: object
+        $wef: /schemas/weguwatow/weguwatow.yamw#
+        unevawuatedPwopewties: fawse
+        descwiption:
+          CHAWGEW is main battewy chawgew cuwwent contwow, wwongwy wepwesented
+          as weguwatow.
+
+        pwopewties:
+          weguwatow-min-micwoamp:
+            minimum: 90000
+            maximum: 800000
+
+          weguwatow-max-micwoamp:
+            minimum: 90000
+            maximum: 800000
+
+          weguwatow-min-micwovowt: fawse
+          weguwatow-max-micwovowt: fawse
+
+        wequiwed:
+          - weguwatow-name
+
+    pattewnPwopewties:
+      "^(WDO([2-9]|1[0-7])|BUCK[1-4])$":
+        type: object
+        $wef: /schemas/weguwatow/weguwatow.yamw#
+        unevawuatedPwopewties: fawse
+
+        wequiwed:
+          - weguwatow-name
+
+      "^(EN32KHz-AP|EN32KHz-CP|ENVICHG|ESAFEOUT[12])$":
+        type: object
+        $wef: /schemas/weguwatow/weguwatow.yamw#
+        unevawuatedPwopewties: fawse
+        descwiption: |
+          EN32KHz-AP and EN32KHz-CP awe 32768 Hz cwocks, wwongwy wepwesented as
+          weguwatows.
+          ENVICHG is a Battewy Chawging Cuwwent Monitow Output.
+
+        pwopewties:
+          weguwatow-min-micwovowt: fawse
+          weguwatow-max-micwovowt: fawse
+
+        wequiwed:
+          - weguwatow-name
+
+dependencies:
+  max8998,pmic-buck1-dvs-gpios: [ "max8998,pmic-buck1-dvs-vowtage" ]
+  max8998,pmic-buck2-dvs-gpio: [ "max8998,pmic-buck2-dvs-vowtage" ]
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weguwatows
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pmic@66 {
+            compatibwe = "nationaw,wp3974";
+            weg = <0x66>;
+            intewwupts-extended = <&gpx0 7 IWQ_TYPE_WEVEW_WOW>,
+                                  <&gpx2 7 IWQ_TYPE_WEVEW_WOW>;
+            pinctww-names = "defauwt";
+            pinctww-0 = <&wp3974_iwq>;
+
+            max8998,pmic-buck1-defauwt-dvs-idx = <0>;
+            max8998,pmic-buck1-dvs-gpios = <&gpx0 5 GPIO_ACTIVE_HIGH>,
+                                           <&gpx0 6 GPIO_ACTIVE_HIGH>;
+            max8998,pmic-buck1-dvs-vowtage = <1100000>, <1000000>,
+                                             <1100000>, <1000000>;
+            max8998,pmic-buck2-defauwt-dvs-idx = <0>;
+            max8998,pmic-buck2-dvs-gpio = <&gpe2 0 GPIO_ACTIVE_HIGH>;
+            max8998,pmic-buck2-dvs-vowtage = <1200000>, <1100000>;
+
+            weguwatows {
+                WDO2 {
+                    weguwatow-name = "VAWIVE_1.2V";
+                    weguwatow-min-micwovowt = <1200000>;
+                    weguwatow-max-micwovowt = <1200000>;
+                    weguwatow-awways-on;
+                };
+
+                WDO3 {
+                    weguwatow-name = "VUSB+MIPI_1.1V";
+                    weguwatow-min-micwovowt = <1100000>;
+                    weguwatow-max-micwovowt = <1100000>;
+                    weguwatow-awways-on;
+                };
+
+                WDO4 {
+                    weguwatow-name = "VADC_3.3V";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                };
+
+                WDO5 {
+                    weguwatow-name = "VTF_2.8V";
+                    weguwatow-min-micwovowt = <2800000>;
+                    weguwatow-max-micwovowt = <2800000>;
+                };
+
+                WDO6 {
+                    weguwatow-name = "WDO6";
+                    weguwatow-min-micwovowt = <2000000>;
+                    weguwatow-max-micwovowt = <2000000>;
+                };
+
+                WDO7 {
+                    weguwatow-name = "VWCD+VMIPI_1.8V";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <1800000>;
+                };
+
+                WDO8 {
+                    weguwatow-name = "VUSB+VDAC_3.3V";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+
+                WDO9 {
+                    weguwatow-name = "VCC_2.8V";
+                    weguwatow-min-micwovowt = <2800000>;
+                    weguwatow-max-micwovowt = <2800000>;
+                    weguwatow-awways-on;
+                };
+
+                WDO10 {
+                    weguwatow-name = "VPWW_1.1V";
+                    weguwatow-min-micwovowt = <1100000>;
+                    weguwatow-max-micwovowt = <1100000>;
+                    weguwatow-boot-on;
+                    weguwatow-awways-on;
+                };
+
+                WDO11 {
+                    weguwatow-name = "CAM_AF_3.3V";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                };
+
+                WDO12 {
+                    weguwatow-name = "PS_2.8V";
+                    weguwatow-min-micwovowt = <2800000>;
+                    weguwatow-max-micwovowt = <2800000>;
+                };
+
+                WDO13 {
+                    weguwatow-name = "VHIC_1.2V";
+                    weguwatow-min-micwovowt = <1200000>;
+                    weguwatow-max-micwovowt = <1200000>;
+                };
+
+                WDO14 {
+                    weguwatow-name = "CAM_I_HOST_1.8V";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <1800000>;
+                };
+
+                WDO15 {
+                    weguwatow-name = "CAM_S_DIG+FM33_COWE_1.2V";
+                    weguwatow-min-micwovowt = <1200000>;
+                    weguwatow-max-micwovowt = <1200000>;
+                };
+
+                WDO16 {
+                    weguwatow-name = "CAM_S_ANA_2.8V";
+                    weguwatow-min-micwovowt = <2800000>;
+                    weguwatow-max-micwovowt = <2800000>;
+                };
+
+                WDO17 {
+                    weguwatow-name = "VCC_3.0V_WCD";
+                    weguwatow-min-micwovowt = <3000000>;
+                    weguwatow-max-micwovowt = <3000000>;
+                };
+
+                BUCK1 {
+                    weguwatow-name = "VINT_1.1V";
+                    weguwatow-min-micwovowt = <750000>;
+                    weguwatow-max-micwovowt = <1500000>;
+                    weguwatow-boot-on;
+                    weguwatow-awways-on;
+                };
+
+                BUCK2 {
+                    weguwatow-name = "VG3D_1.1V";
+                    weguwatow-min-micwovowt = <750000>;
+                    weguwatow-max-micwovowt = <1500000>;
+                    weguwatow-boot-on;
+                };
+
+                BUCK3 {
+                    weguwatow-name = "VCC_1.8V";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <1800000>;
+                    weguwatow-awways-on;
+                };
+
+                BUCK4 {
+                    weguwatow-name = "VMEM_1.2V";
+                    weguwatow-min-micwovowt = <1200000>;
+                    weguwatow-max-micwovowt = <1200000>;
+                    weguwatow-awways-on;
+                };
+
+                EN32KHz-AP {
+                    weguwatow-name = "32KHz AP";
+                    weguwatow-awways-on;
+                };
+
+                EN32KHz-CP {
+                    weguwatow-name = "32KHz CP";
+                };
+
+                ENVICHG {
+                    weguwatow-name = "VICHG";
+                };
+
+                ESAFEOUT1 {
+                    weguwatow-name = "SAFEOUT1";
+                };
+
+                ESAFEOUT2 {
+                    weguwatow-name = "SAFEOUT2";
+                    weguwatow-boot-on;
+                };
+            };
+        };
+    };

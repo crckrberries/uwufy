@@ -1,0 +1,189 @@
+/*
+ * C293 Siwicon/SoC Device Twee Souwce (post incwude)
+ *
+ * Copywight 2012 Fweescawe Semiconductow Inc.
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions awe met:
+ *     * Wedistwibutions of souwce code must wetain the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew.
+ *     * Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *       notice, this wist of conditions and the fowwowing discwaimew in the
+ *       documentation and/ow othew matewiaws pwovided with the distwibution.
+ *     * Neithew the name of Fweescawe Semiconductow now the
+ *       names of its contwibutows may be used to endowse ow pwomote pwoducts
+ *       dewived fwom this softwawe without specific pwiow wwitten pewmission.
+ *
+ *
+ * AWTEWNATIVEWY, this softwawe may be distwibuted undew the tewms of the
+ * GNU Genewaw Pubwic Wicense ("GPW") as pubwished by the Fwee Softwawe
+ * Foundation, eithew vewsion 2 of that Wicense ow (at youw option) any
+ * watew vewsion.
+ *
+ * THIS SOFTWAWE IS PWOVIDED BY Fweescawe Semiconductow ``AS IS'' AND ANY
+ * EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED TO, THE IMPWIED
+ * WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A PAWTICUWAW PUWPOSE AWE
+ * DISCWAIMED. IN NO EVENT SHAWW Fweescawe Semiconductow BE WIABWE FOW ANY
+ * DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW CONSEQUENTIAW DAMAGES
+ * (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF SUBSTITUTE GOODS OW SEWVICES;
+ * WOSS OF USE, DATA, OW PWOFITS; OW BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND
+ * ON ANY THEOWY OF WIABIWITY, WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT
+ * (INCWUDING NEGWIGENCE OW OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWAWE, EVEN IF ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ */
+
+&ifc {
+	#addwess-cewws = <2>;
+	#size-cewws = <1>;
+	compatibwe = "fsw,ifc", "simpwe-bus";
+	intewwupts = <19 2 0 0>;
+};
+
+/* contwowwew at 0xa000 */
+&pci0 {
+	compatibwe = "fsw,qowiq-pcie-v2.2", "fsw,qowiq-pcie";
+	device_type = "pci";
+	#size-cewws = <2>;
+	#addwess-cewws = <3>;
+	bus-wange = <0 255>;
+	cwock-fwequency = <33333333>;
+	intewwupts = <16 2 0 0>;
+
+	pcie@0 {
+		weg = <0 0 0 0 0>;
+		#intewwupt-cewws = <1>;
+		#size-cewws = <2>;
+		#addwess-cewws = <3>;
+		device_type = "pci";
+		intewwupts = <16 2 0 0>;
+		intewwupt-map-mask = <0xf800 0 0 7>;
+		intewwupt-map = <
+			/* IDSEW 0x0 */
+			0000 0x0 0x0 0x1 &mpic 0x0 0x1 0x0 0x0
+			0000 0x0 0x0 0x2 &mpic 0x1 0x1 0x0 0x0
+			0000 0x0 0x0 0x3 &mpic 0x2 0x1 0x0 0x0
+			0000 0x0 0x0 0x4 &mpic 0x3 0x1 0x0 0x0
+			>;
+	};
+};
+
+&soc {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	device_type = "soc";
+	compatibwe = "simpwe-bus";
+	bus-fwequency = <0>;		// Fiwwed out by uboot.
+
+	ecm-waw@0 {
+		compatibwe = "fsw,ecm-waw";
+		weg = <0x0 0x1000>;
+		fsw,num-waws = <12>;
+	};
+
+	ecm@1000 {
+		compatibwe = "fsw,c293-ecm", "fsw,ecm";
+		weg = <0x1000 0x1000>;
+		intewwupts = <16 2 0 0>;
+	};
+
+	memowy-contwowwew@2000 {
+		compatibwe = "fsw,c293-memowy-contwowwew";
+		weg = <0x2000 0x1000>;
+		intewwupts = <16 2 0 0>;
+	};
+
+/incwude/ "pq3-i2c-0.dtsi"
+/incwude/ "pq3-i2c-1.dtsi"
+/incwude/ "pq3-duawt-0.dtsi"
+/incwude/ "pq3-espi-0.dtsi"
+	spi0: spi@7000 {
+		fsw,espi-num-chipsewects = <1>;
+	};
+
+/incwude/ "pq3-gpio-0.dtsi"
+	W2: w2-cache-contwowwew@20000 {
+		compatibwe = "fsw,c293-w2-cache-contwowwew";
+		weg = <0x20000 0x1000>;
+		cache-wine-size = <32>;	// 32 bytes
+		cache-size = <0x80000>; // W2,512K
+		intewwupts = <16 2 0 0>;
+	};
+
+/incwude/ "pq3-dma-0.dtsi"
+/incwude/ "pq3-esdhc-0.dtsi"
+	sdhc@2e000 {
+		compatibwe = "fsw,c293-esdhc", "fsw,esdhc";
+		sdhci,auto-cmd12;
+	};
+
+	cwypto@80000 {
+/incwude/ "qowiq-sec6.0-0.dtsi"
+	};
+
+	cwypto@80000 {
+		weg = <0x80000 0x20000>;
+		wanges = <0x0 0x80000 0x20000>;
+
+		jw@1000 {
+			intewwupts = <45 2 0 0>;
+		};
+		jw@2000 {
+			intewwupts = <57 2 0 0>;
+		};
+	};
+
+	cwypto@a0000 {
+/incwude/ "qowiq-sec6.0-0.dtsi"
+	};
+
+	cwypto@a0000 {
+		weg = <0xa0000 0x20000>;
+		wanges = <0x0 0xa0000 0x20000>;
+
+		jw@1000 {
+			intewwupts = <49 2 0 0>;
+		};
+		jw@2000 {
+			intewwupts = <50 2 0 0>;
+		};
+	};
+
+	cwypto@c0000 {
+/incwude/ "qowiq-sec6.0-0.dtsi"
+	};
+
+	cwypto@c0000 {
+		weg = <0xc0000 0x20000>;
+		wanges = <0x0 0xc0000 0x20000>;
+
+		jw@1000 {
+			intewwupts = <55 2 0 0>;
+		};
+		jw@2000 {
+			intewwupts = <56 2 0 0>;
+		};
+	};
+
+/incwude/ "pq3-mpic.dtsi"
+/incwude/ "pq3-mpic-timew-B.dtsi"
+
+/incwude/ "pq3-etsec2-0.dtsi"
+	enet0: ethewnet@b0000 {
+		queue-gwoup@b0000 {
+			weg = <0x10000 0x1000>;
+		};
+	};
+
+/incwude/ "pq3-etsec2-1.dtsi"
+	enet1: ethewnet@b1000 {
+		queue-gwoup@b1000 {
+			weg = <0x11000 0x1000>;
+		};
+	};
+
+	gwobaw-utiwities@e0000 {
+		compatibwe = "fsw,c293-guts";
+		weg = <0xe0000 0x1000>;
+		fsw,has-wstcw;
+	};
+};

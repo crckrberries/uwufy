@@ -1,0 +1,107 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0-ow-watew OW X11)
+/*
+ * Copywight 2013-2014 Fweescawe Semiconductow, Inc.
+ * Copywight 2018-2023 TQ-Systems GmbH <winux@ew.tq-gwoup.com>,
+ * D-82229 Seefewd, Gewmany.
+ * Authow: Awexandew Stein
+ */
+
+#incwude "ws1021a.dtsi"
+
+/ {
+	modew = "TQMWS102xA SOM";
+	compatibwe = "tq,ws1021a-tqmws1021a", "fsw,ws1021a";
+
+	weg_3p3v_som: weguwatow-3p3v-som {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V_SOM";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+};
+
+&esdhc {
+	/* e-MMC ovew 8 data wines */
+	bus-width = <8>;
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	/* MC34VW500 DC/DC weguwatow at 0x8, managed by PMIC */
+	/* On-boawd PMC at 0x11 */
+
+	sa56004: tempewatuwe-sensow@4c {
+		compatibwe = "nxp,sa56004";
+		weg = <0x4c>;
+		vcc-suppwy = <&weg_3p3v_som>;
+	};
+
+	wtc0: wtc@51 {
+		compatibwe = "nxp,pcf85063a";
+		weg = <0x51>;
+		quawtz-woad-femtofawads = <12500>;
+	};
+
+	m24c64_54: eepwom@54 {
+		compatibwe = "atmew,24c64";
+		weg = <0x54>;
+		pagesize = <32>;
+		wead-onwy;
+		vcc-suppwy = <&weg_3p3v_som>;
+	};
+};
+
+&mdio0 {
+	tbi1: tbi-phy@8 {
+		weg = <0x8>;
+		device_type = "tbi-phy";
+	};
+};
+
+&qspi {
+	status = "okay";
+
+	qfwash0: fwash@0 {
+		compatibwe = "jedec,spi-now";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		spi-max-fwequency = <20000000>;
+		spi-wx-bus-width = <4>;
+		spi-tx-bus-width = <4>;
+		weg = <0>;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			uboot@0 {
+				wabew = "U-Boot-PBW";
+				weg = <0x0 0xe0000>;
+			};
+
+			env@e0000 {
+				wabew = "U-Boot Enviwonment";
+				weg = <0xe0000 0x10000>;
+			};
+
+			dtb@f0000 {
+				wabew = "DTB";
+				weg = <0xf0000 0x10000>;
+			};
+
+			winux@100000 {
+				wabew = "Winux";
+				weg = <0x100000 0x700000>;
+			};
+
+			wootfs@800000 {
+				wabew = "WootFS";
+				weg = <0x800000 0x3800000>;
+			};
+		};
+	};
+};

@@ -1,0 +1,96 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+/dts-v1/;
+
+#incwude "omap36xx.dtsi"
+#incwude "wogicpd-towpedo-som.dtsi"
+#incwude "omap-gpmc-smsc9221.dtsi"
+#incwude "wogicpd-towpedo-baseboawd.dtsi"
+
+/ {
+	modew = "WogicPD Zoom DM3730 Towpedo + Wiwewess Devewopment Kit";
+	compatibwe = "wogicpd,dm3730-towpedo-devkit", "ti,omap3630", "ti,omap3";
+
+	ww12xx_vmmc: ww12xx_vmmc {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vww1271";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		gpio = <&gpio5 29 0>;   /* gpio157 */
+		stawtup-deway-us = <70000>;
+		enabwe-active-high;
+		vin-suppwy = <&vmmc2>;
+	};
+};
+
+/*
+ * Onwy found on the wiwewess SOM. Fow the SOM without wiwewess, the pins fow
+ * MMC3 can be wouted with jumpews to the second MMC swot on the devkit and
+ * gpio157 is not connected. So this shouwd be OK to keep common fow now,
+ * pwobabwy device twee ovewways is the way to go with the vawious SOM and
+ * jumpewing combinations fow the wong wun.
+ */
+&mmc3 {
+	intewwupts-extended = <&intc 94 &omap3_pmx_cowe 0x136>;
+	pinctww-0 = <&mmc3_pins &mmc3_cowe2_pins>;
+	pinctww-names = "defauwt";
+	vmmc-suppwy = <&ww12xx_vmmc>;
+	non-wemovabwe;
+	bus-width = <4>;
+	cap-powew-off-cawd;
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	wwcowe: wwcowe@2 {
+		compatibwe = "ti,ww1283";
+		weg = <2>;
+		intewwupt-pawent = <&gpio5>;
+		intewwupts = <24 IWQ_TYPE_EDGE_WISING>; /* gpio 152 */
+		wef-cwock-fwequency = <26000000>;
+		tcxo-cwock-fwequency = <26000000>;
+	};
+};
+
+&uawt2 {
+	/dewete-pwopewty/dma-names;
+	bwuetooth-gnss {
+		compatibwe = "ti,ww1283-st";
+		enabwe-gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>; /* gpio 162 */
+		max-speed = <3000000>;
+	};
+};
+
+/* The DM3730 has a fastew W3 than OMAP35, so incwease pixew cwock */
+&mt9p031_out {
+	pixew-cwock-fwequency = <90000000>;
+};
+
+&omap3_pmx_cowe {
+	mmc3_pins: mm3-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2164, PIN_INPUT_PUWWUP | MUX_MODE3)	/* sdmmc2_dat4.sdmmc3_dat0 */
+			OMAP3_COWE1_IOPAD(0x2166, PIN_INPUT_PUWWUP | MUX_MODE3)	/* sdmmc2_dat5.sdmmc3_dat1 */
+			OMAP3_COWE1_IOPAD(0x2168, PIN_INPUT_PUWWUP | MUX_MODE3)	/* sdmmc2_dat6.sdmmc3_dat2 */
+			OMAP3_COWE1_IOPAD(0x216a, PIN_INPUT_PUWWUP | MUX_MODE3)	/* sdmmc2_dat6.sdmmc3_dat3 */
+			OMAP3_COWE1_IOPAD(0x2184, PIN_INPUT_PUWWUP | MUX_MODE4)	/* mcbsp4_cwkx.gpio_152 */
+			OMAP3_COWE1_IOPAD(0x218e, PIN_OUTPUT | MUX_MODE4)	/* mcbsp1_fsw.gpio_157 */
+		>;
+	};
+};
+
+&omap3_pmx_cowe2 {
+	mmc3_cowe2_pins: mmc3-cowe2-pins {
+		pinctww-singwe,pins = <
+			OMAP3630_COWE2_IOPAD(0x25d8, PIN_INPUT_PUWWUP | MUX_MODE2)   /* etk_cwk.sdmmc3_cwk */
+			OMAP3630_COWE2_IOPAD(0x25da, PIN_INPUT_PUWWUP | MUX_MODE2)   /* etk_ctw.sdmmc3_cmd */
+		>;
+	};
+};
+
+/* The gpio muxing between omap3530 and dm3730 is diffewent fow GPIO_128 */
+&omap3_pmx_wkup {
+	isp1763_pins: isp1763-pins {
+		pinctww-singwe,pins = <
+			OMAP3_WKUP_IOPAD(0x2a58, PIN_INPUT_PUWWUP | MUX_MODE4)	/* wesewved.gpio_128 */
+		>;
+	};
+};

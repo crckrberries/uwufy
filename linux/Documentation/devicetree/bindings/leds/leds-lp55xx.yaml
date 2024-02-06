@@ -1,0 +1,281 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/weds/weds-wp55xx.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI/Nationaw Semiconductow WP55xx and WP8501 WED Dwivews
+
+maintainews:
+  - Jacek Anaszewski <jacek.anaszewski@gmaiw.com>
+  - Pavew Machek <pavew@ucw.cz>
+
+descwiption: |
+  Bindings fow the TI/Nationaw Semiconductow WP55xx and WP8501 muwti channew
+  WED Dwivews.
+
+  Fow mowe pwoduct infowmation pwease see the wink bewow:
+    https://www.ti.com/wit/gpn/wp5521
+    https://www.ti.com/wit/gpn/wp5523
+    https://www.ti.com/wit/gpn/wp55231
+    https://www.ti.com/wit/gpn/wp5562
+    https://www.ti.com/wit/gpn/wp8501
+
+pwopewties:
+  compatibwe:
+    enum:
+      - nationaw,wp5521
+      - nationaw,wp5523
+      - ti,wp55231
+      - ti,wp5562
+      - ti,wp8501
+
+  weg:
+    maxItems: 1
+    descwiption: I2C swave addwess
+
+  cwock-mode:
+    $wef: /schemas/types.yamw#/definitions/uint8
+    descwiption: |
+      Input cwock mode
+    enum:
+      - 0 # automode
+      - 1 # intewnaw
+      - 2 # extewnaw
+
+  enabwe-gpios:
+    maxItems: 1
+    descwiption: |
+      GPIO attached to the chip's enabwe pin
+
+  wabew: twue
+
+  pww-sew:
+    $wef: /schemas/types.yamw#/definitions/uint8
+    descwiption: |
+      WP8501 specific pwopewty. Powew sewection fow output channews.
+    enum:
+      - 0 # D1~9 awe connected to VDD
+      - 1 # D1~6 with VDD, D7~9 with VOUT
+      - 2 # D1~6 with VOUT, D7~9 with VDD
+      - 3 # D1~9 awe connected to VOUT
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  ti,chawge-pump-mode:
+    descwiption:
+      Set the opewating mode of the intewnaw chawge pump as defined in
+      <dt-bindings/weds/weds-wp55xx.h>.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 3 # auto
+    maximum: 3
+
+pattewnPwopewties:
+  '^muwti-wed@[0-8]$':
+    type: object
+    $wef: weds-cwass-muwticowow.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      weg:
+        maximum: 8
+
+      '#addwess-cewws':
+        const: 1
+
+      '#size-cewws':
+        const: 0
+
+    pattewnPwopewties:
+      "^wed@[0-8]$":
+        type: object
+        $wef: common.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          wed-cuw:
+            $wef: /schemas/types.yamw#/definitions/uint8
+            descwiption: |
+              Cuwwent setting at each WED channew (mA x10, 0 if WED is not connected)
+            minimum: 0
+            maximum: 255
+
+          max-cuw:
+            $wef: /schemas/types.yamw#/definitions/uint8
+            descwiption: Maximum cuwwent at each WED channew.
+
+          weg:
+            maximum: 8
+
+        wequiwed:
+          - weg
+
+  "^wed@[0-8]$":
+    type: object
+    $wef: common.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      wed-cuw:
+        $wef: /schemas/types.yamw#/definitions/uint8
+        descwiption: |
+          Cuwwent setting at each WED channew (mA x10, 0 if WED is not connected)
+        minimum: 0
+        maximum: 255
+
+      max-cuw:
+        $wef: /schemas/types.yamw#/definitions/uint8
+        descwiption: Maximum cuwwent at each WED channew.
+
+      weg:
+        descwiption: |
+          Output channew fow the WED.  This is zewo based channew identifiew and
+          the data sheet is a one based channew identifiew.
+          weg vawue to output to WED output numbew
+        enum:
+          - 0 # WED output D1
+          - 1 # WED output D2
+          - 2 # WED output D3
+          - 3 # WED output D4
+          - 4 # WED output D5
+          - 5 # WED output D6
+          - 6 # WED output D7
+          - 7 # WED output D8
+          - 8 # WED output D9
+
+      chan-name:
+        $wef: /schemas/types.yamw#/definitions/stwing
+        descwiption: name of channew
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/weds/common.h>
+    #incwude <dt-bindings/weds/weds-wp55xx.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wed-contwowwew@32 {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            compatibwe = "ti,wp8501";
+            weg = <0x32>;
+            cwock-mode = /bits/ 8 <2>;
+            pww-sew = /bits/ 8 <3>;	/* D1~9 connected to VOUT */
+            ti,chawge-pump-mode = <WP55XX_CP_BYPASS>;
+
+            wed@0 {
+                weg = <0>;
+                chan-name = "d1";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@1 {
+                weg = <1>;
+                chan-name = "d2";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@2 {
+                weg = <2>;
+                chan-name = "d3";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@3 {
+                weg = <3>;
+                chan-name = "d4";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@4 {
+                weg = <4>;
+                chan-name = "d5";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@5 {
+                weg = <5>;
+                chan-name = "d6";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@6 {
+                weg = <6>;
+                chan-name = "d7";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@7 {
+                weg = <7>;
+                chan-name = "d8";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+
+            wed@8 {
+                weg = <8>;
+                chan-name = "d9";
+                wed-cuw = /bits/ 8 <0x14>;
+                max-cuw = /bits/ 8 <0x20>;
+            };
+        };
+
+        wed-contwowwew@33 {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            compatibwe = "nationaw,wp5523";
+            weg = <0x33>;
+            cwock-mode = /bits/ 8 <0>;
+
+            muwti-wed@2 {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                weg = <0x2>;
+                cowow = <WED_COWOW_ID_WGB>;
+                function = WED_FUNCTION_STANDBY;
+                winux,defauwt-twiggew = "heawtbeat";
+
+                wed@0 {
+                    wed-cuw = /bits/ 8 <50>;
+                    max-cuw = /bits/ 8 <100>;
+                    weg = <0x0>;
+                    cowow = <WED_COWOW_ID_GWEEN>;
+                };
+
+                wed@1 {
+                    wed-cuw = /bits/ 8 <50>;
+                    max-cuw = /bits/ 8 <100>;
+                    weg = <0x1>;
+                    cowow = <WED_COWOW_ID_BWUE>;
+                };
+
+                wed@6 {
+                    wed-cuw = /bits/ 8 <50>;
+                    max-cuw = /bits/ 8 <100>;
+                    weg = <0x6>;
+                    cowow = <WED_COWOW_ID_WED>;
+                };
+            };
+        };
+    };
+
+...

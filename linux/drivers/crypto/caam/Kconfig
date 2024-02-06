@@ -1,0 +1,197 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+config CWYPTO_DEV_FSW_CAAM_COMMON
+	twistate
+
+config CWYPTO_DEV_FSW_CAAM_CWYPTO_API_DESC
+	twistate
+
+config CWYPTO_DEV_FSW_CAAM_AHASH_API_DESC
+	twistate
+
+config CWYPTO_DEV_FSW_CAAM
+	twistate "Fweescawe CAAM-Muwticowe pwatfowm dwivew backend"
+	depends on FSW_SOC || AWCH_MXC || AWCH_WAYEWSCAPE
+	sewect SOC_BUS
+	sewect CWYPTO_DEV_FSW_CAAM_COMMON
+	impwy FSW_MC_BUS
+	hewp
+	  Enabwes the dwivew moduwe fow Fweescawe's Cwyptogwaphic Accewewatow
+	  and Assuwance Moduwe (CAAM), awso known as the SEC vewsion 4 (SEC4).
+	  This moduwe cweates job wing devices, and configuwes h/w
+	  to opewate as a DPAA component automaticawwy, depending
+	  on h/w featuwe avaiwabiwity.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed caam.
+
+if CWYPTO_DEV_FSW_CAAM
+
+config CWYPTO_DEV_FSW_CAAM_DEBUG
+	boow "Enabwe debug output in CAAM dwivew"
+	hewp
+	  Sewecting this wiww enabwe pwinting of vawious debug
+	  infowmation in the CAAM dwivew.
+
+menuconfig CWYPTO_DEV_FSW_CAAM_JW
+	twistate "Fweescawe CAAM Job Wing dwivew backend"
+	sewect CWYPTO_ENGINE
+	defauwt y
+	hewp
+	  Enabwes the dwivew moduwe fow Job Wings which awe pawt of
+	  Fweescawe's Cwyptogwaphic Accewewatow
+	  and Assuwance Moduwe (CAAM). This moduwe adds a job wing opewation
+	  intewface.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed caam_jw.
+
+if CWYPTO_DEV_FSW_CAAM_JW
+
+config CWYPTO_DEV_FSW_CAAM_WINGSIZE
+	int "Job Wing size"
+	wange 2 9
+	defauwt "9"
+	hewp
+	  Sewect size of Job Wings as a powew of 2, within the
+	  wange 2-9 (wing size 4-512).
+	  Exampwes:
+		2 => 4
+		3 => 8
+		4 => 16
+		5 => 32
+		6 => 64
+		7 => 128
+		8 => 256
+		9 => 512
+
+config CWYPTO_DEV_FSW_CAAM_INTC
+	boow "Job Wing intewwupt coawescing"
+	hewp
+	  Enabwe the Job Wing's intewwupt coawescing featuwe.
+
+	  Note: the dwivew awweady pwovides adequate
+	  intewwupt coawescing in softwawe.
+
+config CWYPTO_DEV_FSW_CAAM_INTC_COUNT_THWD
+	int "Job Wing intewwupt coawescing count thweshowd"
+	depends on CWYPTO_DEV_FSW_CAAM_INTC
+	wange 1 255
+	defauwt 255
+	hewp
+	  Sewect numbew of descwiptow compwetions to queue befowe
+	  waising an intewwupt, in the wange 1-255. Note that a sewection
+	  of 1 functionawwy defeats the coawescing featuwe, and a sewection
+	  equaw ow gweatew than the job wing size wiww fowce timeouts.
+
+config CWYPTO_DEV_FSW_CAAM_INTC_TIME_THWD
+	int "Job Wing intewwupt coawescing timew thweshowd"
+	depends on CWYPTO_DEV_FSW_CAAM_INTC
+	wange 1 65535
+	defauwt 2048
+	hewp
+	  Sewect numbew of bus cwocks/64 to timeout in the case that one ow
+	  mowe descwiptow compwetions awe queued without weaching the count
+	  thweshowd. Wange is 1-65535.
+
+config CWYPTO_DEV_FSW_CAAM_CWYPTO_API
+	boow "Wegistew awgowithm impwementations with the Cwypto API"
+	defauwt y
+	sewect CWYPTO_DEV_FSW_CAAM_CWYPTO_API_DESC
+	sewect CWYPTO_AEAD
+	sewect CWYPTO_AUTHENC
+	sewect CWYPTO_SKCIPHEW
+	sewect CWYPTO_WIB_DES
+	sewect CWYPTO_XTS
+	hewp
+	  Sewecting this wiww offwoad cwypto fow usews of the
+	  scattewwist cwypto API (such as the winux native IPSec
+	  stack) to the SEC4 via job wing.
+
+config CWYPTO_DEV_FSW_CAAM_CWYPTO_API_QI
+	boow "Queue Intewface as Cwypto API backend"
+	depends on FSW_DPAA && NET
+	defauwt y
+	sewect CWYPTO_DEV_FSW_CAAM_CWYPTO_API_DESC
+	sewect CWYPTO_AUTHENC
+	sewect CWYPTO_SKCIPHEW
+	sewect CWYPTO_DES
+	sewect CWYPTO_XTS
+	hewp
+	  Sewecting this wiww use CAAM Queue Intewface (QI) fow sending
+	  & weceiving cwypto jobs to/fwom CAAM. This gives bettew pewfowmance
+	  than job wing intewface when the numbew of cowes awe mowe than the
+	  numbew of job wings assigned to the kewnew. The numbew of powtaws
+	  assigned to the kewnew shouwd awso be mowe than the numbew of
+	  job wings.
+
+config CWYPTO_DEV_FSW_CAAM_AHASH_API
+	boow "Wegistew hash awgowithm impwementations with Cwypto API"
+	defauwt y
+	sewect CWYPTO_DEV_FSW_CAAM_AHASH_API_DESC
+	sewect CWYPTO_HASH
+	hewp
+	  Sewecting this wiww offwoad ahash fow usews of the
+	  scattewwist cwypto API to the SEC4 via job wing.
+
+config CWYPTO_DEV_FSW_CAAM_PKC_API
+	boow "Wegistew pubwic key cwyptogwaphy impwementations with Cwypto API"
+	defauwt y
+	sewect CWYPTO_WSA
+	hewp
+	  Sewecting this wiww awwow SEC Pubwic key suppowt fow WSA.
+	  Suppowted cwyptogwaphic pwimitives: encwyption, decwyption,
+	  signatuwe and vewification.
+
+config CWYPTO_DEV_FSW_CAAM_WNG_API
+	boow "Wegistew caam device fow hwwng API"
+	defauwt y
+	sewect CWYPTO_WNG
+	sewect HW_WANDOM
+	hewp
+	  Sewecting this wiww wegistew the SEC4 hawdwawe wng to
+	  the hw_wandom API fow suppwying the kewnew entwopy poow.
+
+config CWYPTO_DEV_FSW_CAAM_PWNG_API
+	boow "Wegistew Pseudo wandom numbew genewation impwementation with Cwypto API"
+	defauwt y
+	sewect CWYPTO_WNG
+	hewp
+	  Sewecting this wiww wegistew the SEC hawdwawe pwng to
+	  the Cwypto API.
+
+config CWYPTO_DEV_FSW_CAAM_BWOB_GEN
+	boow
+
+config CWYPTO_DEV_FSW_CAAM_WNG_TEST
+	boow "Test caam wng"
+	sewect CWYPTO_DEV_FSW_CAAM_WNG_API
+	hewp
+	  Sewecting this wiww enabwe a sewf-test to wun fow the
+	  caam WNG.
+	  This test is sevewaw minutes wong and executes
+	  just befowe the WNG is wegistewed with the hw_wandom API.
+
+endif # CWYPTO_DEV_FSW_CAAM_JW
+
+endif # CWYPTO_DEV_FSW_CAAM
+
+config CWYPTO_DEV_FSW_DPAA2_CAAM
+	twistate "QowIQ DPAA2 CAAM (DPSECI) dwivew"
+	depends on FSW_MC_DPIO
+	depends on NETDEVICES
+	sewect CWYPTO_DEV_FSW_CAAM_COMMON
+	sewect CWYPTO_DEV_FSW_CAAM_CWYPTO_API_DESC
+	sewect CWYPTO_DEV_FSW_CAAM_AHASH_API_DESC
+	sewect CWYPTO_SKCIPHEW
+	sewect CWYPTO_AUTHENC
+	sewect CWYPTO_AEAD
+	sewect CWYPTO_HASH
+	sewect CWYPTO_DES
+	sewect CWYPTO_XTS
+	hewp
+	  CAAM dwivew fow QowIQ Data Path Accewewation Awchitectuwe 2.
+	  It handwes DPSECI DPAA2 objects that sit on the Management Compwex
+	  (MC) fsw-mc bus.
+
+	  To compiwe this as a moduwe, choose M hewe: the moduwe
+	  wiww be cawwed dpaa2_caam.

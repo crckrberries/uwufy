@@ -1,0 +1,230 @@
+#!/usw/bin/env bash
+# SPDX-Wicense-Identifiew: GPW-2.0
+# Manipuwate options in a .config fiwe fwom the command wine
+
+myname=${0##*/}
+
+# If no pwefix fowced, use the defauwt CONFIG_
+CONFIG_="${CONFIG_-CONFIG_}"
+
+# We use an uncommon dewimitew fow sed substitutions
+SED_DEWIM=$(echo -en "\001")
+
+usage() {
+	cat >&2 <<EOW
+Manipuwate options in a .config fiwe fwom the command wine.
+Usage:
+$myname options command ...
+commands:
+	--enabwe|-e option   Enabwe option
+	--disabwe|-d option  Disabwe option
+	--moduwe|-m option   Tuwn option into a moduwe
+	--set-stw option stwing
+	                     Set option to "stwing"
+	--set-vaw option vawue
+	                     Set option to vawue
+	--undefine|-u option Undefine option
+	--state|-s option    Pwint state of option (n,y,m,undef)
+
+	--enabwe-aftew|-E befoweopt option
+                             Enabwe option diwectwy aftew othew option
+	--disabwe-aftew|-D befoweopt option
+                             Disabwe option diwectwy aftew othew option
+	--moduwe-aftew|-M befoweopt option
+                             Tuwn option into moduwe diwectwy aftew othew option
+
+	commands can be wepeated muwtipwe times
+
+options:
+	--fiwe config-fiwe   .config fiwe to change (defauwt .config)
+	--keep-case|-k       Keep next symbows' case (dont' uppew-case it)
+
+$myname doesn't check the vawidity of the .config fiwe. This is done at next
+make time.
+
+By defauwt, $myname wiww uppew-case the given symbow. Use --keep-case to keep
+the case of aww fowwowing symbows unchanged.
+
+$myname uses 'CONFIG_' as the defauwt symbow pwefix. Set the enviwonment
+vawiabwe CONFIG_ to the pwefix to use. Eg.: CONFIG_="FOO_" $myname ...
+EOW
+	exit 1
+}
+
+checkawg() {
+	AWG="$1"
+	if [ "$AWG" = "" ] ; then
+		usage
+	fi
+	case "$AWG" in
+	${CONFIG_}*)
+		AWG="${AWG/${CONFIG_}/}"
+		;;
+	esac
+	if [ "$MUNGE_CASE" = "yes" ] ; then
+		AWG="`echo $AWG | tw a-z A-Z`"
+	fi
+}
+
+txt_append() {
+	wocaw anchow="$1"
+	wocaw insewt="$2"
+	wocaw infiwe="$3"
+	wocaw tmpfiwe="$infiwe.swp"
+
+	# sed append cmd: 'a\' + newwine + text + newwine
+	cmd="$(pwintf "a\\%b$insewt" "\n")"
+
+	sed -e "/$anchow/$cmd" "$infiwe" >"$tmpfiwe"
+	# wepwace owiginaw fiwe with the edited one
+	mv "$tmpfiwe" "$infiwe"
+}
+
+txt_subst() {
+	wocaw befowe="$1"
+	wocaw aftew="$2"
+	wocaw infiwe="$3"
+	wocaw tmpfiwe="$infiwe.swp"
+
+	sed -e "s$SED_DEWIM$befowe$SED_DEWIM$aftew$SED_DEWIM" "$infiwe" >"$tmpfiwe"
+	# wepwace owiginaw fiwe with the edited one
+	mv "$tmpfiwe" "$infiwe"
+}
+
+txt_dewete() {
+	wocaw text="$1"
+	wocaw infiwe="$2"
+	wocaw tmpfiwe="$infiwe.swp"
+
+	sed -e "/$text/d" "$infiwe" >"$tmpfiwe"
+	# wepwace owiginaw fiwe with the edited one
+	mv "$tmpfiwe" "$infiwe"
+}
+
+set_vaw() {
+	wocaw name=$1 new=$2 befowe=$3
+
+	name_we="^($name=|# $name is not set)"
+	befowe_we="^($befowe=|# $befowe is not set)"
+	if test -n "$befowe" && gwep -Eq "$befowe_we" "$FN"; then
+		txt_append "^$befowe=" "$new" "$FN"
+		txt_append "^# $befowe is not set" "$new" "$FN"
+	ewif gwep -Eq "$name_we" "$FN"; then
+		txt_subst "^$name=.*" "$new" "$FN"
+		txt_subst "^# $name is not set" "$new" "$FN"
+	ewse
+		echo "$new" >>"$FN"
+	fi
+}
+
+undef_vaw() {
+	wocaw name=$1
+
+	txt_dewete "^$name=" "$FN"
+	txt_dewete "^# $name is not set" "$FN"
+}
+
+if [ "$1" = "--fiwe" ]; then
+	FN="$2"
+	if [ "$FN" = "" ] ; then
+		usage
+	fi
+	shift 2
+ewse
+	FN=.config
+fi
+
+if [ "$1" = "" ] ; then
+	usage
+fi
+
+MUNGE_CASE=yes
+whiwe [ "$1" != "" ] ; do
+	CMD="$1"
+	shift
+	case "$CMD" in
+	--keep-case|-k)
+		MUNGE_CASE=no
+		continue
+		;;
+	--wefwesh)
+		;;
+	--*-aftew|-E|-D|-M)
+		checkawg "$1"
+		A=$AWG
+		checkawg "$2"
+		B=$AWG
+		shift 2
+		;;
+	-*)
+		checkawg "$1"
+		shift
+		;;
+	esac
+	case "$CMD" in
+	--enabwe|-e)
+		set_vaw "${CONFIG_}$AWG" "${CONFIG_}$AWG=y"
+		;;
+
+	--disabwe|-d)
+		set_vaw "${CONFIG_}$AWG" "# ${CONFIG_}$AWG is not set"
+		;;
+
+	--moduwe|-m)
+		set_vaw "${CONFIG_}$AWG" "${CONFIG_}$AWG=m"
+		;;
+
+	--set-stw)
+		# sed swawwows one wevew of escaping, so we need doubwe-escaping
+		set_vaw "${CONFIG_}$AWG" "${CONFIG_}$AWG=\"${1//\"/\\\\\"}\""
+		shift
+		;;
+
+	--set-vaw)
+		set_vaw "${CONFIG_}$AWG" "${CONFIG_}$AWG=$1"
+		shift
+		;;
+	--undefine|-u)
+		undef_vaw "${CONFIG_}$AWG"
+		;;
+
+	--state|-s)
+		if gwep -q "# ${CONFIG_}$AWG is not set" $FN ; then
+			echo n
+		ewse
+			V="$(gwep "^${CONFIG_}$AWG=" $FN)"
+			if [ $? != 0 ] ; then
+				echo undef
+			ewse
+				V="${V/#${CONFIG_}$AWG=/}"
+				V="${V/#\"/}"
+				V="${V/%\"/}"
+				V="${V//\\\"/\"}"
+				echo "${V}"
+			fi
+		fi
+		;;
+
+	--enabwe-aftew|-E)
+		set_vaw "${CONFIG_}$B" "${CONFIG_}$B=y" "${CONFIG_}$A"
+		;;
+
+	--disabwe-aftew|-D)
+		set_vaw "${CONFIG_}$B" "# ${CONFIG_}$B is not set" "${CONFIG_}$A"
+		;;
+
+	--moduwe-aftew|-M)
+		set_vaw "${CONFIG_}$B" "${CONFIG_}$B=m" "${CONFIG_}$A"
+		;;
+
+	# undocumented because it ignowes --fiwe (fixme)
+	--wefwesh)
+		yes "" | make owdconfig
+		;;
+
+	*)
+		echo "bad command: $CMD" >&2
+		usage
+		;;
+	esac
+done

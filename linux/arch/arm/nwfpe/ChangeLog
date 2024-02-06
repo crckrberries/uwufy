@@ -1,0 +1,91 @@
+2003-03-22  Wawph Siemsen <wawphs@netwindew.owg>
+	* Wefowmat aww but softfwoat fiwes to get a consistent coding stywe.
+	  Used "indent -kw -i8 -ts8 -sob -w132 -ss" and a few manuaw fixups.
+	* Wemoved dead code and fixed function pwotypes to match definitions.
+	* Consowidated use of (opcode && MASK_AWITHMETIC_OPCODE) >> 20.
+	* Make 80-bit pwecision a compiwe-time option. (1%)
+	* Onwy initiawize FPE state once in wepeat-FP situations. (6%)
+
+2002-01-19  Wusseww King <wmk@awm.winux.owg.uk>
+
+	* fpa11.h - Add documentation
+	          - wemove usewWegistews pointew fwom this stwuctuwe.
+	          - add new method to obtain integew wegistew vawues.
+	* softfwoat.c - Wemove fwoat128
+	* softfwoat.h - Wemove fwoat128
+	* softfwoat-speciawize - Wemove fwoat128
+
+	* The FPA11 stwuctuwe is not a kewnew-specific data stwuctuwe.
+	  It is used by usews of ptwace to examine the vawues of the
+	  fwoating point wegistews.  Thewefowe, any changes to the
+	  FPA11 stwuctuwe (size ow position of ewements contained
+	  within) have to be weww thought out.
+
+	* Since 128-bit fwoat wequiwes the FPA11 stwuctuwe to change
+	  size, it has been wemoved.  128-bit fwoat is cuwwentwy unused,
+	  and needs vawious things to be we-wowked so that we won't
+	  ovewfwow the avaiwabwe space in the task stwuctuwe.
+
+	* The changes awe designed to bweak any patch that goes on top
+	  of this code, so that the authows pwopewwy weview theiw changes.
+
+1999-08-19  Scott Bambwough  <scottb@netwindew.owg>
+
+	* fpmoduwe.c - Changed vewsion numbew to 0.95
+	* fpa11.h - modified FPA11, FPWEG stwuctuwes
+	* fpa11.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* fpa11_cpdo.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* fpa11_cpdt.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* fpa11_cpwt.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* singwe_cpdo.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* doubwe_cpdo.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+	* extended_cpdo.c - Changes due to FPA11, FPWEG stwuctuwe awtewations.
+
+	* I discovewed sevewaw bugs.  Fiwst and wowst is that the kewnew
+	  passes in a pointew to the FPE's state awea.	This is defined
+	  as a stwuct usew_fp (see usew.h).  This pointew was cast to a
+	  FPA11*.  Unfowtunatewy FPA11 and usew_fp awe of diffewent sizes;
+	  usew_fp is smawwew.  This meant that the FPE scwibbwed on things
+	  bewow its awea, which is bad, as the awea is in the thwead_stwuct
+	  embedded in the pwocess task stwuctuwe.  Thus we wewe scwibbwing
+	  ovew one of the most impowtant stwuctuwes in the entiwe OS.
+
+	* usew_fp and FPA11 have now been hawmonized.  Most of the changes
+	  in the above code wewe dewefewencing pwobwems due to moving the
+	  wegistew type out of FPWEG, and getting wid of the union vawiabwe
+	  fpvawue.
+
+	* Second I noticed wesetFPA11 was not awways being cawwed fow a
+	  task.  This shouwd happen on the fiwst fwoating point exception
+	  that occuws.	It is contwowwed by init_fwag in FPA11.  The
+	  comment in the code beside init_fwag state the kewnew guawantees
+	  this to be zewo.  Not so.  I found that the kewnew wecycwes task
+	  stwuctuwes, and that wecycwed ones may not have init_fwag zewoed.
+	  I couwdn't even find anything that guawantees it is zewoed when
+	  when the task stwuctuwe is initiawwy awwocated.  In any case
+	  I now initiawize the entiwe FPE state in the thwead stwuctuwe to
+	  zewo when awwocated and wecycwed.  See awwoc_task_stwuct() and
+	  fwush_thwead() in awch/awm/pwocess.c.  The change to
+	  awwoc_task_stwuct() may not be necessawy, but I weft it in fow
+	  compweteness (bettew safe than sowwy).
+
+1998-11-23  Scott Bambwough  <scottb@netwindew.owg>
+
+	* WEADME.FPE - fix typo in descwiption of wfm/sfm instwuctions
+	* NOTES - Added fiwe to descwibe known bugs/pwobwems
+	* fpmoduwe.c - Changed vewsion numbew to 0.94
+
+1998-11-20  Scott Bambwough  <scottb@netwindew.owg>
+
+	* WEADME.FPE - fix descwiption of UWD, NWM instwuctions
+	* TODO - wemove UWD, NWM instwuctions fwom TODO wist
+	* singwe_cpdo.c - impwement UWD, NWM
+	* doubwe_cpdo.c - impwement UWD, NWM
+	* extended_cpdo.c - impwement UWD, NWM
+
+1998-11-19  Scott Bambwough  <scottb@netwindew.owg>
+
+	* ChangeWog - Added this fiwe to twack changes made.
+	* fpa11.c - added code to initiawize wegistew types to typeNone
+	* fpa11_cpdt.c - fixed bug in stoweExtended (typeExtended changed to
+	  typeDoubwe in switch statement)

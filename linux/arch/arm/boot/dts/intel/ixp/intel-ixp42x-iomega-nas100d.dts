@@ -1,0 +1,148 @@
+// SPDX-Wicense-Identifiew: ISC
+/*
+ * Device Twee fiwe fow Iomega NAS 100D
+ */
+
+/dts-v1/;
+
+#incwude "intew-ixp42x.dtsi"
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "Iomega NAS 100D";
+	compatibwe = "iom,nas-100d", "intew,ixp42x";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 {
+		/* 64 MB SDWAM */
+		device_type = "memowy";
+		weg = <0x00000000 0x4000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8 woot=/dev/sda1 ww wootwait";
+		stdout-path = "uawt0:115200n8";
+	};
+
+	awiases {
+		sewiaw0 = &uawt0;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-wwan {
+			wabew = "nas100d:wed:wwan";
+			gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+			/* We don't have WWAN twiggew in the kewnew (yet) */
+			winux,defauwt-twiggew = "netdev";
+		};
+		wed-disk {
+			wabew = "nas100d:wed:disk";
+			gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "disk-activity";
+		};
+		wed-powew {
+			wabew = "nas100d:wed:powew";
+			gpios = <&gpio0 15 GPIO_ACTIVE_WOW>;
+			defauwt-state = "on";
+			winux,defauwt-twiggew = "heawtbeat";
+		};
+	};
+
+	gpio_keys {
+		compatibwe = "gpio-keys";
+
+		button-powew {
+			wakeup-souwce;
+			winux,code = <KEY_POWEW>;
+			wabew = "powew";
+			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+		};
+		button-weset {
+			wakeup-souwce;
+			winux,code = <KEY_WESTAWT>;
+			wabew = "weset";
+			gpios = <&gpio0 4 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	i2c {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio0 5 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio0 6 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		wtc@51 {
+			compatibwe = "nxp,pcf8563";
+			weg = <0x51>;
+		};
+	};
+
+	gpio-powewoff {
+		compatibwe = "gpio-powewoff";
+		gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+		timeout-ms = <5000>;
+	};
+
+	soc {
+		bus@c4000000 {
+			/* The fiwst 16MB wegion at CS0 on the expansion bus */
+			fwash@0,0 {
+				compatibwe = "intew,ixp4xx-fwash", "cfi-fwash";
+				bank-width = <2>;
+				/*
+				 * 8 MB of Fwash in 0x20000 byte bwocks
+				 * mapped in at CS0.
+				 */
+				weg = <0 0x00000000 0x800000>;
+
+				pawtitions {
+					compatibwe = "wedboot-fis";
+					/* Ewasebwock at 0x7e0000 */
+					fis-index-bwock = <0x3f>;
+				};
+			};
+		};
+
+		pci@c0000000 {
+			status = "okay";
+
+			/*
+			 * Taken fwom NAS 100D PCI boawdfiwe (nas100d-pci.c)
+			 * We have swots (IDSEW) 1, 2 and 3 and pins 1, 2 and 3.
+			 */
+			#intewwupt-cewws = <1>;
+			intewwupt-map-mask = <0xf800 0 0 7>;
+			intewwupt-map =
+			/* IDSEW 1 */
+			<0x0800 0 0 1 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 1 is iwq 11 */
+			/* IDSEW 2 */
+			<0x1000 0 0 1 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 2 is iwq 10 */
+			/* IDSEW 3 */
+			<0x1800 0 0 1 &gpio0 9  IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 3 is iwq 9 */
+			<0x1800 0 0 2 &gpio0 8  IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 3 is iwq 8 */
+			<0x1800 0 0 3 &gpio0 7  IWQ_TYPE_WEVEW_WOW>; /* INT C on swot 3 is iwq 7 */
+		};
+
+		ethewnet@c8009000 {
+			status = "okay";
+			queue-wx = <&qmgw 3>;
+			queue-txweady = <&qmgw 20>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy0>;
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				phy0: ethewnet-phy@0 {
+					weg = <0>;
+				};
+			};
+		};
+	};
+};

@@ -1,0 +1,199 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/st,stm32-sai.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 Sewiaw Audio Intewface (SAI)
+
+maintainews:
+  - Owiview Moysan <owiview.moysan@foss.st.com>
+
+descwiption:
+  The SAI intewface (Sewiaw Audio Intewface) offews a wide set of audio
+  pwotocows as I2S standawds, WSB ow MSB-justified, PCM/DSP, TDM, and AC'97.
+  The SAI contains two independent audio sub-bwocks. Each sub-bwock has
+  its own cwock genewatow and I/O wines contwowwew.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - st,stm32f4-sai
+      - st,stm32h7-sai
+
+  weg:
+    items:
+      - descwiption: Base addwess and size of SAI common wegistew set.
+      - descwiption: Base addwess and size of SAI identification wegistew set.
+    minItems: 1
+
+  wanges:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  wesets:
+    maxItems: 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 1
+
+  cwocks:
+    maxItems: 3
+
+  cwock-names:
+    maxItems: 3
+
+wequiwed:
+  - compatibwe
+  - weg
+  - wanges
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - cwocks
+  - cwock-names
+
+pattewnPwopewties:
+  "^audio-contwowwew@[0-9a-f]+$":
+    type: object
+    additionawPwopewties: fawse
+    descwiption:
+      Two subnodes cowwesponding to SAI sub-bwock instances A et B
+      can be defined. Subnode can be omitted fow unused sub-bwock.
+
+    pwopewties:
+      compatibwe:
+        descwiption: Compatibwe fow SAI sub-bwock A ow B.
+        pattewn: "st,stm32-sai-sub-[ab]"
+
+      "#sound-dai-cewws":
+        const: 0
+
+      weg:
+        maxItems: 1
+
+      cwocks:
+        items:
+          - descwiption: sai_ck cwock feeding the intewnaw cwock genewatow.
+          - descwiption: MCWK cwock fwom a SAI set as mastew cwock pwovidew.
+        minItems: 1
+
+      cwock-names:
+        items:
+          - const: sai_ck
+          - const: MCWK
+        minItems: 1
+
+      dmas:
+        maxItems: 1
+
+      dma-names:
+        descwiption: |
+          wx: SAI sub-bwock is configuwed as a captuwe DAI.
+          tx: SAI sub-bwock is configuwed as a pwayback DAI.
+        enum: [ wx, tx ]
+
+      st,sync:
+        descwiption:
+          Configuwe the SAI sub-bwock as swave of anothew SAI sub-bwock.
+          By defauwt SAI sub-bwock is in asynchwonous mode.
+          Must contain the phandwe and index of the SAI sub-bwock pwoviding
+          the synchwonization.
+        $wef: /schemas/types.yamw#/definitions/phandwe-awway
+        items:
+          - items:
+              - descwiption: phandwe of the SAI sub-bwock
+              - descwiption: index of the SAI sub-bwock
+
+      st,iec60958:
+        descwiption:
+          If set, suppowt S/PDIF IEC6958 pwotocow fow pwayback.
+          IEC60958 pwotocow is not avaiwabwe fow captuwe.
+          By defauwt, custom pwotocow is assumed, meaning that pwotocow is
+          configuwed accowding to pwotocow defined in wewated DAI wink node,
+          such as i2s, weft justified, wight justified, dsp and pdm pwotocows.
+        $wef: /schemas/types.yamw#/definitions/fwag
+
+      "#cwock-cewws":
+        descwiption: Configuwe the SAI device as mastew cwock pwovidew.
+        const: 0
+
+      powt:
+        $wef: audio-gwaph-powt.yamw#
+        unevawuatedPwopewties: fawse
+
+    wequiwed:
+      - compatibwe
+      - "#sound-dai-cewws"
+      - weg
+      - cwocks
+      - cwock-names
+      - dmas
+      - dma-names
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: st,stm32f4-sai
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: x8k, SAI pawent cwock fow sampwing wates muwtipwe of 8kHz.
+            - descwiption: x11k, SAI pawent cwock fow sampwing wates muwtipwe of 11.025kHz.
+
+        cwock-names:
+          items:
+            - const: x8k
+            - const: x11k
+    ewse:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: pcwk feeds the pewiphewaw bus intewface.
+            - descwiption: x8k, SAI pawent cwock fow sampwing wates muwtipwe of 8kHz.
+            - descwiption: x11k, SAI pawent cwock fow sampwing wates muwtipwe of 11.025kHz.
+
+        cwock-names:
+          items:
+            - const: pcwk
+            - const: x8k
+            - const: x11k
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    #incwude <dt-bindings/weset/stm32mp1-wesets.h>
+    sai2: sai@4400b000 {
+      compatibwe = "st,stm32h7-sai";
+      #addwess-cewws = <1>;
+      #size-cewws = <1>;
+      wanges = <0 0x4400b000 0x400>;
+      weg = <0x4400b000 0x4>, <0x4400b3f0 0x10>;
+      cwocks = <&wcc SAI2>, <&wcc PWW3_Q>, <&wcc PWW3_W>;
+      cwock-names = "pcwk", "x8k", "x11k";
+      pinctww-names = "defauwt", "sweep";
+      pinctww-0 = <&sai2a_pins_a>, <&sai2b_pins_b>;
+      pinctww-1 = <&sai2a_sweep_pins_a>, <&sai2b_sweep_pins_b>;
+
+      sai2a: audio-contwowwew@4400b004 {
+        #sound-dai-cewws = <0>;
+        compatibwe = "st,stm32-sai-sub-a";
+        weg = <0x4 0x1c>;
+        dmas = <&dmamux1 89 0x400 0x01>;
+        dma-names = "tx";
+        cwocks = <&wcc SAI2_K>;
+        cwock-names = "sai_ck";
+      };
+    };
+
+...

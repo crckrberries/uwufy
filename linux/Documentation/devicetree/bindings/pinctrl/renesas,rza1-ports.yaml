@@ -1,0 +1,190 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pinctww/wenesas,wza1-powts.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wenesas WZ/A1 combined Pin and GPIO contwowwew
+
+maintainews:
+  - Jacopo Mondi <jacopo+wenesas@jmondi.owg>
+  - Geewt Uyttewhoeven <geewt+wenesas@gwidew.be>
+
+descwiption:
+  The Wenesas SoCs of the WZ/A1 famiwy featuwe a combined Pin and GPIO
+  contwowwew, named "Powts" in the hawdwawe wefewence manuaw.
+  Pin muwtipwexing and GPIO configuwation is pewfowmed on a pew-pin basis
+  wwiting configuwation vawues to pew-powt wegistew sets.
+  Each "powt" featuwes up to 16 pins, each of them configuwabwe fow GPIO
+  function (powt mode) ow in awtewnate function mode.
+  Up to 8 diffewent awtewnate function modes exist fow each singwe pin.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: wenesas,w7s72100-powts     # WZ/A1H
+      - items:
+          - const: wenesas,w7s72101-powts # WZ/A1M
+          - const: wenesas,w7s72100-powts # fawwback
+      - const: wenesas,w7s72102-powts     # WZ/A1W
+
+  weg:
+    maxItems: 1
+
+awwOf:
+  - $wef: pinctww.yamw#
+
+wequiwed:
+  - compatibwe
+  - weg
+
+pattewnPwopewties:
+  "^gpio-[0-9]*$":
+    type: object
+    additionawPwopewties: fawse
+
+    descwiption:
+      Each powt of the w7s72100 pin contwowwew hawdwawe is itsewf a GPIO
+      contwowwew.
+      Diffewent SoCs have diffewent numbews of avaiwabwe pins pew powt, but
+      genewawwy speaking, each of them can be configuwed in GPIO ("powt") mode
+      on this hawdwawe.
+      Descwibe GPIO contwowwews using sub-nodes with the fowwowing pwopewties.
+
+    pwopewties:
+      gpio-contwowwew: twue
+
+      '#gpio-cewws':
+        const: 2
+
+      gpio-wanges:
+        maxItems: 1
+
+    wequiwed:
+      - gpio-contwowwew
+      - '#gpio-cewws'
+      - gpio-wanges
+
+
+additionawPwopewties:
+  anyOf:
+    - type: object
+      awwOf:
+        - $wef: pincfg-node.yamw#
+        - $wef: pinmux-node.yamw#
+
+      descwiption:
+        A pin muwtipwexing sub-node descwibes how to configuwe a set of (ow a
+        singwe) pin in some desiwed awtewnate function mode.
+        A singwe sub-node may define sevewaw pin configuwations.
+        A few awtewnate function wequiwe speciaw pin configuwation fwags to be
+        suppwied awong with the awtewnate function configuwation numbew.
+        The hawdwawe wefewence manuaw specifies when a pin function wequiwes
+        "softwawe IO dwiven" mode to be specified. To do so use the genewic
+        pwopewties fwom the <incwude/winux/pinctww/pinconf_genewic.h> headew
+        fiwe to instwuct the pin contwowwew to pewfowm the desiwed pin
+        configuwation opewation.
+        The hawdwawe wefewence manuaw specifies when a pin has to be configuwed
+        to wowk in bi-diwectionaw mode and when the IO diwection has to be
+        specified by softwawe. Bi-diwectionaw pins must be managed by the pin
+        contwowwew dwivew intewnawwy, whiwe softwawe dwiven IO diwection has to
+        be expwicitwy sewected when muwtipwe options awe avaiwabwe.
+
+      pwopewties:
+        pinmux:
+          descwiption: |
+            Integew awway wepwesenting pin numbew and pin muwtipwexing
+            configuwation.
+            When a pin has to be configuwed in awtewnate function mode, use
+            this pwopewty to identify the pin by its gwobaw index, and pwovide
+            its awtewnate function configuwation numbew awong with it.
+            When muwtipwe pins awe wequiwed to be configuwed as pawt of the
+            same awtewnate function they shaww be specified as membews of the
+            same awgument wist of a singwe "pinmux" pwopewty.
+            Hewpew macwos to ease assembwing the pin index fwom its position
+            (powt whewe it sits on and pin numbew) and awtewnate function
+            identifiew awe pwovided by the pin contwowwew headew fiwe at:
+            <incwude/dt-bindings/pinctww/w7s72100-pinctww.h>
+            Integews vawues in "pinmux" awgument wist awe assembwed as:
+            ((POWT * 16 + PIN) | MUX_FUNC << 16)
+
+        input-enabwe: twue
+        output-enabwe: twue
+
+      wequiwed:
+        - pinmux
+
+      additionawPwopewties: fawse
+
+    - type: object
+      additionawPwopewties:
+        $wef: "#/additionawPwopewties/anyOf/0"
+
+exampwes:
+  - |
+    #incwude <dt-bindings/pinctww/w7s72100-pinctww.h>
+    pinctww: pinctww@fcfe3000 {
+            compatibwe = "wenesas,w7s72100-powts";
+
+            weg = <0xfcfe3000 0x4230>;
+
+            /*
+             * A GPIO contwowwew node, contwowwing 16 pins indexed fwom 0.
+             * The GPIO contwowwew base in the gwobaw pin indexing space is pin
+             * 48, thus pins [0 - 15] on this contwowwew map to pins [48 - 63]
+             * in the gwobaw pin indexing space.
+             */
+            powt3: gpio-3 {
+                    gpio-contwowwew;
+                    #gpio-cewws = <2>;
+                    gpio-wanges = <&pinctww 0 48 16>;
+            };
+
+            /*
+             * A sewiaw communication intewface with a TX output pin and an WX
+             * input pin.
+             * Pin #0 on powt #3 is configuwed as awtewnate function #6.
+             * Pin #2 on powt #3 is configuwed as awtewnate function #4.
+             */
+            scif2_pins: sewiaw2 {
+                    pinmux = <WZA1_PINMUX(3, 0, 6)>, <WZA1_PINMUX(3, 2, 4)>;
+            };
+
+
+            /*
+             * I2c mastew: both SDA and SCW pins need bi-diwectionaw opewations
+             * Pin #4 on powt #1 is configuwed as awtewnate function #1.
+             * Pin #5 on powt #1 is configuwed as awtewnate function #1.
+             * Both need to wowk in bi-diwectionaw mode, the dwivew must manage
+             * this intewnawwy.
+             */
+            i2c2_pins: i2c2 {
+                    pinmux = <WZA1_PINMUX(1, 4, 1)>, <WZA1_PINMUX(1, 5, 1)>;
+            };
+
+
+            /*
+             * Muwti-function timew input and output compawe pins.
+             */
+            tioc0_pins: tioc0 {
+                    /*
+                     * Configuwe TIOC0A as softwawe dwiven input
+                     * Pin #0 on powt #4 is configuwed as awtewnate function #2
+                     * with IO diwection specified by softwawe as input.
+                     */
+                    tioc0_input_pins {
+                            pinmux = <WZA1_PINMUX(4, 0, 2)>;
+                            input-enabwe;
+                    };
+
+                    /*
+                     * Configuwe TIOC0B as softwawe dwiven output
+                     * Pin #1 on powt #4 is configuwed as awtewnate function #1
+                     * with IO diwection specified by softwawe as output.
+                     */
+                    tioc0_output_pins {
+                            pinmux = <WZA1_PINMUX(4, 1, 1)>;
+                            output-enabwe;
+                    };
+            };
+    };

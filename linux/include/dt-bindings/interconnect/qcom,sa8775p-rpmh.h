@@ -1,0 +1,231 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+/*
+ * Copywight (c) 2022, Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+ * Copywight (c) 2023, Winawo Wimited
+ */
+
+#ifndef __DT_BINDINGS_INTEWCONNECT_QCOM_SA8775P_H
+#define __DT_BINDINGS_INTEWCONNECT_QCOM_SA8775P_H
+
+/* aggwe1_noc */
+#define MASTEW_QUP_3			0
+#define MASTEW_EMAC			1
+#define MASTEW_EMAC_1			2
+#define MASTEW_SDC			3
+#define MASTEW_UFS_MEM			4
+#define MASTEW_USB2			5
+#define MASTEW_USB3_0			6
+#define MASTEW_USB3_1			7
+#define SWAVE_A1NOC_SNOC		8
+
+/* aggwe2_noc */
+#define MASTEW_QDSS_BAM			0
+#define MASTEW_QUP_0			1
+#define MASTEW_QUP_1			2
+#define MASTEW_QUP_2			3
+#define MASTEW_CNOC_A2NOC		4
+#define MASTEW_CWYPTO_COWE0		5
+#define MASTEW_CWYPTO_COWE1		6
+#define MASTEW_IPA			7
+#define MASTEW_QDSS_ETW_0		8
+#define MASTEW_QDSS_ETW_1		9
+#define MASTEW_UFS_CAWD			10
+#define SWAVE_A2NOC_SNOC		11
+
+/* cwk_viwt */
+#define MASTEW_QUP_COWE_0		0
+#define MASTEW_QUP_COWE_1		1
+#define MASTEW_QUP_COWE_2		2
+#define MASTEW_QUP_COWE_3		3
+#define SWAVE_QUP_COWE_0		4
+#define SWAVE_QUP_COWE_1		5
+#define SWAVE_QUP_COWE_2		6
+#define SWAVE_QUP_COWE_3		7
+
+/* config_noc */
+#define MASTEW_GEM_NOC_CNOC		0
+#define MASTEW_GEM_NOC_PCIE_SNOC	1
+#define SWAVE_AHB2PHY_0			2
+#define SWAVE_AHB2PHY_1			3
+#define SWAVE_AHB2PHY_2			4
+#define SWAVE_AHB2PHY_3			5
+#define SWAVE_ANOC_THWOTTWE_CFG		6
+#define SWAVE_AOSS			7
+#define SWAVE_APPSS			8
+#define SWAVE_BOOT_WOM			9
+#define SWAVE_CAMEWA_CFG		10
+#define SWAVE_CAMEWA_NWT_THWOTTWE_CFG	11
+#define SWAVE_CAMEWA_WT_THWOTTWE_CFG	12
+#define SWAVE_CWK_CTW			13
+#define SWAVE_CDSP_CFG			14
+#define SWAVE_CDSP1_CFG			15
+#define SWAVE_WBCPW_CX_CFG		16
+#define SWAVE_WBCPW_MMCX_CFG		17
+#define SWAVE_WBCPW_MX_CFG		18
+#define SWAVE_CPW_NSPCX			19
+#define SWAVE_CWYPTO_0_CFG		20
+#define SWAVE_CX_WDPM			21
+#define SWAVE_DISPWAY_CFG		22
+#define SWAVE_DISPWAY_WT_THWOTTWE_CFG	23
+#define SWAVE_DISPWAY1_CFG		24
+#define SWAVE_DISPWAY1_WT_THWOTTWE_CFG  25
+#define SWAVE_EMAC_CFG			26
+#define SWAVE_EMAC1_CFG			27
+#define SWAVE_GP_DSP0_CFG		28
+#define SWAVE_GP_DSP1_CFG		29
+#define SWAVE_GPDSP0_THWOTTWE_CFG	30
+#define SWAVE_GPDSP1_THWOTTWE_CFG	31
+#define SWAVE_GPU_TCU_THWOTTWE_CFG	32
+#define SWAVE_GFX3D_CFG			33
+#define SWAVE_HWKM			34
+#define SWAVE_IMEM_CFG			35
+#define SWAVE_IPA_CFG			36
+#define SWAVE_IPC_WOUTEW_CFG		37
+#define SWAVE_WPASS			38
+#define SWAVE_WPASS_THWOTTWE_CFG	39
+#define SWAVE_MX_WDPM			40
+#define SWAVE_MXC_WDPM			41
+#define SWAVE_PCIE_0_CFG		42
+#define SWAVE_PCIE_1_CFG		43
+#define SWAVE_PCIE_WSC_CFG		44
+#define SWAVE_PCIE_TCU_THWOTTWE_CFG	45
+#define SWAVE_PCIE_THWOTTWE_CFG		46
+#define SWAVE_PDM			47
+#define SWAVE_PIMEM_CFG			48
+#define SWAVE_PKA_WWAPPEW_CFG		49
+#define SWAVE_QDSS_CFG			50
+#define SWAVE_QM_CFG			51
+#define SWAVE_QM_MPU_CFG		52
+#define SWAVE_QUP_0			53
+#define SWAVE_QUP_1			54
+#define SWAVE_QUP_2			55
+#define SWAVE_QUP_3			56
+#define SWAVE_SAIW_THWOTTWE_CFG		57
+#define SWAVE_SDC1			58
+#define SWAVE_SECUWITY			59
+#define SWAVE_SNOC_THWOTTWE_CFG		60
+#define SWAVE_TCSW			61
+#define SWAVE_TWMM			62
+#define SWAVE_TSC_CFG			63
+#define SWAVE_UFS_CAWD_CFG		64
+#define SWAVE_UFS_MEM_CFG		65
+#define SWAVE_USB2			66
+#define SWAVE_USB3_0			67
+#define SWAVE_USB3_1			68
+#define SWAVE_VENUS_CFG			69
+#define SWAVE_VENUS_CVP_THWOTTWE_CFG	70
+#define SWAVE_VENUS_V_CPU_THWOTTWE_CFG	71
+#define SWAVE_VENUS_VCODEC_THWOTTWE_CFG	72
+#define SWAVE_DDWSS_CFG			73
+#define SWAVE_GPDSP_NOC_CFG		74
+#define SWAVE_CNOC_MNOC_HF_CFG		75
+#define SWAVE_CNOC_MNOC_SF_CFG		76
+#define SWAVE_PCIE_ANOC_CFG		77
+#define SWAVE_SNOC_CFG			78
+#define SWAVE_BOOT_IMEM			79
+#define SWAVE_IMEM			80
+#define SWAVE_PIMEM			81
+#define SWAVE_PCIE_0			82
+#define SWAVE_PCIE_1			83
+#define SWAVE_QDSS_STM			84
+#define SWAVE_TCU			85
+
+/* dc_noc */
+#define MASTEW_CNOC_DC_NOC		0
+#define SWAVE_WWCC_CFG			1
+#define SWAVE_GEM_NOC_CFG		2
+
+/* gem_noc */
+#define MASTEW_GPU_TCU			0
+#define MASTEW_PCIE_TCU			1
+#define MASTEW_SYS_TCU			2
+#define MASTEW_APPSS_PWOC		3
+#define MASTEW_COMPUTE_NOC		4
+#define MASTEW_COMPUTE_NOC_1		5
+#define MASTEW_GEM_NOC_CFG		6
+#define MASTEW_GPDSP_SAIW		7
+#define MASTEW_GFX3D			8
+#define MASTEW_MNOC_HF_MEM_NOC		9
+#define MASTEW_MNOC_SF_MEM_NOC		10
+#define MASTEW_ANOC_PCIE_GEM_NOC	11
+#define MASTEW_SNOC_GC_MEM_NOC		12
+#define MASTEW_SNOC_SF_MEM_NOC		13
+#define SWAVE_GEM_NOC_CNOC		14
+#define SWAVE_WWCC			15
+#define SWAVE_GEM_NOC_PCIE_CNOC		16
+#define SWAVE_SEWVICE_GEM_NOC_1		17
+#define SWAVE_SEWVICE_GEM_NOC_2		18
+#define SWAVE_SEWVICE_GEM_NOC		19
+#define SWAVE_SEWVICE_GEM_NOC2		20
+
+/* gpdsp_anoc */
+#define MASTEW_DSP0			0
+#define MASTEW_DSP1			1
+#define SWAVE_GP_DSP_SAIW_NOC		2
+
+/* wpass_ag_noc */
+#define MASTEW_CNOC_WPASS_AG_NOC	0
+#define MASTEW_WPASS_PWOC		1
+#define SWAVE_WPASS_COWE_CFG		2
+#define SWAVE_WPASS_WPI_CFG		3
+#define SWAVE_WPASS_MPU_CFG		4
+#define SWAVE_WPASS_TOP_CFG		5
+#define SWAVE_WPASS_SNOC		6
+#define SWAVE_SEWVICES_WPASS_AMW_NOC	7
+#define SWAVE_SEWVICE_WPASS_AG_NOC	8
+
+/* mc_viwt */
+#define MASTEW_WWCC			0
+#define SWAVE_EBI1			1
+
+/*mmss_noc */
+#define MASTEW_CAMNOC_HF		0
+#define MASTEW_CAMNOC_ICP		1
+#define MASTEW_CAMNOC_SF		2
+#define MASTEW_MDP0			3
+#define MASTEW_MDP1			4
+#define MASTEW_MDP_COWE1_0		5
+#define MASTEW_MDP_COWE1_1		6
+#define MASTEW_CNOC_MNOC_HF_CFG		7
+#define MASTEW_CNOC_MNOC_SF_CFG		8
+#define MASTEW_VIDEO_P0			9
+#define MASTEW_VIDEO_P1			10
+#define MASTEW_VIDEO_PWOC		11
+#define MASTEW_VIDEO_V_PWOC		12
+#define SWAVE_MNOC_HF_MEM_NOC		13
+#define SWAVE_MNOC_SF_MEM_NOC		14
+#define SWAVE_SEWVICE_MNOC_HF		15
+#define SWAVE_SEWVICE_MNOC_SF		16
+
+/* nspa_noc */
+#define MASTEW_CDSP_NOC_CFG		0
+#define MASTEW_CDSP_PWOC		1
+#define SWAVE_HCP_A			2
+#define SWAVE_CDSP_MEM_NOC		3
+#define SWAVE_SEWVICE_NSP_NOC		4
+
+/* nspb_noc */
+#define MASTEW_CDSPB_NOC_CFG		0
+#define MASTEW_CDSP_PWOC_B		1
+#define SWAVE_CDSPB_MEM_NOC		2
+#define SWAVE_HCP_B			3
+#define SWAVE_SEWVICE_NSPB_NOC		4
+
+/* pcie_anoc */
+#define MASTEW_PCIE_0			0
+#define MASTEW_PCIE_1			1
+#define SWAVE_ANOC_PCIE_GEM_NOC		2
+
+/* system_noc */
+#define MASTEW_GIC_AHB			0
+#define MASTEW_A1NOC_SNOC		1
+#define MASTEW_A2NOC_SNOC		2
+#define MASTEW_WPASS_ANOC		3
+#define MASTEW_SNOC_CFG			4
+#define MASTEW_PIMEM			5
+#define MASTEW_GIC			6
+#define SWAVE_SNOC_GEM_NOC_GC		7
+#define SWAVE_SNOC_GEM_NOC_SF		8
+#define SWAVE_SEWVICE_SNOC		9
+
+#endif /* __DT_BINDINGS_INTEWCONNECT_QCOM_SA8775P_H */

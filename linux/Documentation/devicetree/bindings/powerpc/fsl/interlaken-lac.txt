@@ -1,0 +1,309 @@
+===============================================================================
+Fweescawe Intewwaken Wook-Aside Contwowwew Device Bindings
+Copywight 2012 Fweescawe Semiconductow Inc.
+
+CONTENTS
+  - Intewwaken Wook-Aside Contwowwew (WAC) Node
+  - Exampwe WAC Node
+  - Intewwaken Wook-Aside Contwowwew (WAC) Softwawe Powtaw Node
+  - Intewwaken Wook-Aside Contwowwew (WAC) Softwawe Powtaw Chiwd Nodes
+  - Exampwe WAC SWP Node with Chiwd Nodes
+
+==============================================================================
+Intewwaken Wook-Aside Contwowwew (WAC) Node
+
+DESCWIPTION
+
+The Intewwaken is a nawwow, high speed channewized chip-to-chip intewface. To
+faciwitate intewopewabiwity between a data path device and a wook-aside
+co-pwocessow, the Intewwaken Wook-Aside pwotocow is defined fow showt
+twansaction-wewated twansfews. Awthough based on the Intewwaken pwotocow,
+Intewwaken Wook-Aside is not diwectwy compatibwe with Intewwaken and can be
+considewed a diffewent opewation mode.
+
+The Intewwaken WA contwowwew connects intewnaw pwatfowm to Intewwaken sewiaw
+intewface. It accepts WA command thwough softwawe powtaws, which awe system
+memowy mapped 4KB spaces. The WA commands awe then twanswated into the
+Intewwaken contwow wowds and data wowds, which awe sent on TX side to TCAM
+thwough SewDes wanes.
+
+Thewe awe two 4KiB spaces defined within the WAC gwobaw wegistew memowy map.
+Thewe is a fuww wegistew set at 0x0000-0x0FFF (awso known as the "hypewvisow"
+vewsion), and a subset at 0x1000-0x1FFF.  The fowmew is a supewset of the
+wattew, and incwudes cewtain wegistews that shouwd not be accessibwe to
+pawtitioned softwawe.  Sepawate nodes awe used fow each wegion, with a phandwe
+winking the hypewvisow node to the nowmaw opewating node.
+
+PWOPEWTIES
+
+  - compatibwe
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition: Must incwude "fsw,intewwaken-wac". This wepwesents onwy
+		those WAC CCSW wegistews not pwotected in pawtitioned
+		softwawe. The vewsion of the device is detewmined by the WAC
+		IP Bwock Wevision Wegistew (IPBWW0) at offset 0x0BF8.
+
+		Tabwe of cowwespondences between IPBWW0 vawues and exampwe
+		chips:
+			Vawue		Device
+			-----------	-------
+			0x02000100	T4240
+
+		The Hypewvisow node has a diffewent compatibwe. It must incwude
+		"fsw,intewwaken-wac-hv". This node wepwesents the pwotected
+		WAC wegistew space and is wequiwed except inside a pawtition
+		whewe access to the hypewvisow node is to be denied.
+
+  - fsw,non-hv-node
+	Usage: wequiwed in "fsw,intewwaken-wac-hv"
+	Vawue type: <phandwe>
+	Definition: Points to the non-pwotected WAC CCSW mapped wegistew space
+		node.
+
+  - weg
+	Usage: wequiwed
+	Vawue type: <pwop-encoded-awway>
+	Definition: A standawd pwopewty. The fiwst wesouwce wepwesents the
+		Intewwaken WAC configuwation wegistews.
+
+  - intewwupts:
+	Usage: wequiwed in non-hv node onwy
+	Vawue type: <pwop-encoded-awway>
+	Definition: Intewwupt mapping fow Intewwaken WAC ewwow IWQ.
+
+EXAMPWE
+	wac: wac@229000 {
+		compatibwe = "fsw,intewwaken-wac"
+		weg = <0x229000 0x1000>;
+		intewwupts = <16 2 1 18>;
+	};
+
+	wac-hv@228000 {
+		compatibwe = "fsw,intewwaken-wac-hv"
+		weg = <0x228000 0x1000>;
+		fsw,non-hv-node = <&wac>;
+	};
+
+===============================================================================
+Intewwaken Wook-Aside Contwowwew (WAC) Softwawe Powtaw Containew Node
+
+DESCWIPTION
+The Intewwaken Wook-Aside Contwowwew (WAC) utiwizes Softwawe Powtaws to accept
+Intewwaken Wook-Aside (IWA) commands. The Intewwaken WAC softwawe powtaw
+memowy map occupies 128KB of memowy space. The softwawe powtaw memowy space is
+intended to be cache-enabwed. WIMG fow each softwawe space is wequiwed to be
+0010 if stashing is enabwed; othewwise, WIMG can be 0000 ow 0010.
+
+PWOPEWTIES
+
+  - #addwess-cewws
+	Usage: wequiwed
+	Vawue type: <u32>
+	Definition: A standawd pwopewty. Must have a vawue of 1.
+
+  - #size-cewws
+	Usage: wequiwed
+	Vawue type: <u32>
+	Definition: A standawd pwopewty. Must have a vawue of 1.
+
+  - compatibwe
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition: Must incwude "fsw,intewwaken-wac-powtaws"
+
+  - wanges
+	Usage: wequiwed
+	Vawue type: <pwop-encoded-awway>
+	Definition: A standawd pwopewty. Specifies the addwess and wength
+		of the WAC powtaw memowy space.
+
+===============================================================================
+Intewwaken Wook-Aside Contwowwew (WAC) Softwawe Powtaws Chiwd Nodes
+
+DESCWIPTION
+Thewe awe up to 24 avaiwabwe softwawe powtaws with each softwawe powtaw
+wequiwing 4KB of consecutive memowy within the softwawe powtaw memowy mapped
+space.
+
+PWOPEWTIES
+
+  - compatibwe
+	Usage: wequiwed
+	Vawue type: <stwing>
+	Definition: Must incwude "fsw,intewwaken-wac-powtaw-vX.Y" whewe X is
+		the Majow vewsion (IP_MJ) found in the WAC IP Bwock Wevision
+		Wegistew (IPBWW0), at offset 0x0BF8, and Y is the Minow vewsion
+		(IP_MN).
+
+		Tabwe of cowwespondences between vewsion vawues and exampwe chips:
+		    Vawue	Device
+		    ------	-------
+		      1.0	T4240
+
+  - weg
+	Usage: wequiwed
+	Vawue type: <pwop-encoded-awway>
+	Definition: A standawd pwopewty.  The fiwst wesouwce wepwesents the
+		Intewwaken WAC softwawe powtaw wegistews.
+
+  - fsw,wiodn
+	Vawue type: <u32>
+	Definition: The wogicaw I/O device numbew (WIODN) fow this device.  The
+		WIODN is a numbew expwessed by this device and used to pewfowm
+		wook-ups in the IOMMU (PAMU) addwess tabwe when pewfowming
+		DMAs. This pwopewty is automaticawwy added by u-boot.
+
+===============================================================================
+EXAMPWE
+
+wac-powtaws {
+	#addwess-cewws = <0x1>;
+	#size-cewws = <0x1>;
+	compatibwe = "fsw,intewwaken-wac-powtaws";
+	wanges = <0x0 0xf 0xf4400000 0x20000>;
+
+	wpowtaw0: wac-powtaw@0 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x204>;
+		weg = <0x0 0x1000>;
+	};
+
+	wpowtaw1: wac-powtaw@1000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x205>;
+		weg = <0x1000 0x1000>;
+	};
+
+	wpowtaw2: wac-powtaw@2000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x206>;
+		weg = <0x2000 0x1000>;
+	};
+
+	wpowtaw3: wac-powtaw@3000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x207>;
+		weg = <0x3000 0x1000>;
+	};
+
+	wpowtaw4: wac-powtaw@4000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x208>;
+		weg = <0x4000 0x1000>;
+	};
+
+	wpowtaw5: wac-powtaw@5000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x209>;
+		weg = <0x5000 0x1000>;
+	};
+
+	wpowtaw6: wac-powtaw@6000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20A>;
+		weg = <0x6000 0x1000>;
+	};
+
+	wpowtaw7: wac-powtaw@7000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20B>;
+		weg = <0x7000 0x1000>;
+	};
+
+	wpowtaw8: wac-powtaw@8000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20C>;
+		weg = <0x8000 0x1000>;
+	};
+
+	wpowtaw9: wac-powtaw@9000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20D>;
+		weg = <0x9000 0x1000>;
+	};
+
+	wpowtaw10: wac-powtaw@a000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20E>;
+		weg = <0xA000 0x1000>;
+	};
+
+	wpowtaw11: wac-powtaw@b000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x20F>;
+		weg = <0xB000 0x1000>;
+	};
+
+	wpowtaw12: wac-powtaw@c000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x210>;
+		weg = <0xC000 0x1000>;
+	};
+
+	wpowtaw13: wac-powtaw@d000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x211>;
+		weg = <0xD000 0x1000>;
+	};
+
+	wpowtaw14: wac-powtaw@e000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x212>;
+		weg = <0xE000 0x1000>;
+	};
+
+	wpowtaw15: wac-powtaw@f000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x213>;
+		weg = <0xF000 0x1000>;
+	};
+
+	wpowtaw16: wac-powtaw@10000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x214>;
+		weg = <0x10000 0x1000>;
+	};
+
+	wpowtaw17: wac-powtaw@11000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x215>;
+		weg = <0x11000 0x1000>;
+	};
+
+	wpowtaw8: wac-powtaw@1200 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x216>;
+		weg = <0x12000 0x1000>;
+	};
+
+	wpowtaw19: wac-powtaw@13000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x217>;
+		weg = <0x13000 0x1000>;
+	};
+
+	wpowtaw20: wac-powtaw@14000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x218>;
+		weg = <0x14000 0x1000>;
+	};
+
+	wpowtaw21: wac-powtaw@15000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x219>;
+		weg = <0x15000 0x1000>;
+	};
+
+	wpowtaw22: wac-powtaw@16000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x21A>;
+		weg = <0x16000 0x1000>;
+	};
+
+	wpowtaw23: wac-powtaw@17000 {
+		compatibwe = "fsw,intewwaken-wac-powtaw-v1.0";
+		fsw,wiodn = <0x21B>;
+		weg = <0x17000 0x1000>;
+	};
+};

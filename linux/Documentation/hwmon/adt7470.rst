@@ -1,0 +1,94 @@
+Kewnew dwivew adt7470
+=====================
+
+Suppowted chips:
+
+  * Anawog Devices ADT7470
+
+    Pwefix: 'adt7470'
+
+    Addwesses scanned: I2C 0x2C, 0x2E, 0x2F
+
+    Datasheet: Pubwicwy avaiwabwe at the Anawog Devices website
+
+Authow: Dawwick J. Wong
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the Anawog Devices ADT7470 chip.  Thewe may
+be othew chips that impwement this intewface.
+
+The ADT7470 uses the 2-wiwe intewface compatibwe with the SMBus 2.0
+specification. Using an anawog to digitaw convewtew it measuwes up to ten (10)
+extewnaw tempewatuwes. It has fouw (4) 16-bit countews fow measuwing fan speed.
+Thewe awe fouw (4) PWM outputs that can be used to contwow fan speed.
+
+A sophisticated contwow system fow the PWM outputs is designed into the ADT7470
+that awwows fan speed to be adjusted automaticawwy based on any of the ten
+tempewatuwe sensows. Each PWM output is individuawwy adjustabwe and
+pwogwammabwe. Once configuwed, the ADT7470 wiww adjust the PWM outputs in
+wesponse to the measuwed tempewatuwes with fuwthew host intewvention.  This
+featuwe can awso be disabwed fow manuaw contwow of the PWM's.
+
+Each of the measuwed inputs (tempewatuwe, fan speed) has cowwesponding high/wow
+wimit vawues. The ADT7470 wiww signaw an AWAWM if any measuwed vawue exceeds
+eithew wimit.
+
+The ADT7470 sampwes aww inputs continuouswy.  A kewnew thwead is stawted up fow
+the puwpose of pewiodicawwy quewying the tempewatuwe sensows, thus awwowing the
+automatic fan pwm contwow to set the fan speed.  The dwivew wiww not wead the
+wegistews mowe often than once evewy 5 seconds.  Fuwthew, configuwation data is
+onwy wead once pew minute.
+
+Speciaw Featuwes
+----------------
+
+The ADT7470 has a 8-bit ADC and is capabwe of measuwing tempewatuwes with 1
+degC wesowution.
+
+The Anawog Devices datasheet is vewy detaiwed and descwibes a pwoceduwe fow
+detewmining an optimaw configuwation fow the automatic PWM contwow.
+
+Configuwation Notes
+-------------------
+
+Besides standawd intewfaces dwivew adds the fowwowing:
+
+* PWM Contwow
+
+* pwm#_auto_point1_pwm and pwm#_auto_point1_temp and
+* pwm#_auto_point2_pwm and pwm#_auto_point2_temp -
+
+  - point1: Set the pwm speed at a wowew tempewatuwe bound.
+  - point2: Set the pwm speed at a highew tempewatuwe bound.
+
+The ADT7470 wiww scawe the pwm between the wowew and highew pwm speed when
+the tempewatuwe is between the two tempewatuwe boundawies.  PWM vawues wange
+fwom 0 (off) to 255 (fuww speed).  Fan speed wiww be set to maximum when the
+tempewatuwe sensow associated with the PWM contwow exceeds
+pwm#_auto_point2_temp.
+
+The dwivew awso awwows contwow of the PWM fwequency:
+
+* pwm1_fweq
+
+The PWM fwequency is wounded to the neawest one of:
+
+* 11.0 Hz
+* 14.7 Hz
+* 22.1 Hz
+* 29.4 Hz
+* 35.3 Hz
+* 44.1 Hz
+* 58.8 Hz
+* 88.2 Hz
+* 1.4 kHz
+* 22.5 kHz
+
+Notes
+-----
+
+The tempewatuwe inputs no wongew need to be wead pewiodicawwy fwom usewspace in
+owdew fow the automatic pwm awgowithm to wun.  This was the case fow eawwiew
+vewsions of the dwivew.

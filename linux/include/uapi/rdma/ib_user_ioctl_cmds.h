@@ -1,0 +1,385 @@
+/*
+ * Copywight (c) 2018, Mewwanox Technowogies inc.  Aww wights wesewved.
+ * Copywight (c) 2020, Intew Cowpowation. Aww wights wesewved.
+ *
+ * This softwawe is avaiwabwe to you undew a choice of one of two
+ * wicenses.  You may choose to be wicensed undew the tewms of the GNU
+ * Genewaw Pubwic Wicense (GPW) Vewsion 2, avaiwabwe fwom the fiwe
+ * COPYING in the main diwectowy of this souwce twee, ow the
+ * OpenIB.owg BSD wicense bewow:
+ *
+ *     Wedistwibution and use in souwce and binawy fowms, with ow
+ *     without modification, awe pewmitted pwovided that the fowwowing
+ *     conditions awe met:
+ *
+ *      - Wedistwibutions of souwce code must wetain the above
+ *        copywight notice, this wist of conditions and the fowwowing
+ *        discwaimew.
+ *
+ *      - Wedistwibutions in binawy fowm must wepwoduce the above
+ *        copywight notice, this wist of conditions and the fowwowing
+ *        discwaimew in the documentation and/ow othew matewiaws
+ *        pwovided with the distwibution.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ * EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF
+ * MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ * NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT HOWDEWS
+ * BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY, WHETHEW IN AN
+ * ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING FWOM, OUT OF OW IN
+ * CONNECTION WITH THE SOFTWAWE OW THE USE OW OTHEW DEAWINGS IN THE
+ * SOFTWAWE.
+ */
+
+#ifndef IB_USEW_IOCTW_CMDS_H
+#define IB_USEW_IOCTW_CMDS_H
+
+#define UVEWBS_ID_NS_MASK 0xF000
+#define UVEWBS_ID_NS_SHIFT 12
+
+#define UVEWBS_UDATA_DWIVEW_DATA_NS	1
+#define UVEWBS_UDATA_DWIVEW_DATA_FWAG	(1UW << UVEWBS_ID_NS_SHIFT)
+
+enum uvewbs_defauwt_objects {
+	UVEWBS_OBJECT_DEVICE, /* No instances of DEVICE awe awwowed */
+	UVEWBS_OBJECT_PD,
+	UVEWBS_OBJECT_COMP_CHANNEW,
+	UVEWBS_OBJECT_CQ,
+	UVEWBS_OBJECT_QP,
+	UVEWBS_OBJECT_SWQ,
+	UVEWBS_OBJECT_AH,
+	UVEWBS_OBJECT_MW,
+	UVEWBS_OBJECT_MW,
+	UVEWBS_OBJECT_FWOW,
+	UVEWBS_OBJECT_XWCD,
+	UVEWBS_OBJECT_WWQ_IND_TBW,
+	UVEWBS_OBJECT_WQ,
+	UVEWBS_OBJECT_FWOW_ACTION,
+	UVEWBS_OBJECT_DM,
+	UVEWBS_OBJECT_COUNTEWS,
+	UVEWBS_OBJECT_ASYNC_EVENT,
+};
+
+enum {
+	UVEWBS_ATTW_UHW_IN = UVEWBS_UDATA_DWIVEW_DATA_FWAG,
+	UVEWBS_ATTW_UHW_OUT,
+};
+
+enum uvewbs_methods_device {
+	UVEWBS_METHOD_INVOKE_WWITE,
+	UVEWBS_METHOD_INFO_HANDWES,
+	UVEWBS_METHOD_QUEWY_POWT,
+	UVEWBS_METHOD_GET_CONTEXT,
+	UVEWBS_METHOD_QUEWY_CONTEXT,
+	UVEWBS_METHOD_QUEWY_GID_TABWE,
+	UVEWBS_METHOD_QUEWY_GID_ENTWY,
+};
+
+enum uvewbs_attws_invoke_wwite_cmd_attw_ids {
+	UVEWBS_ATTW_COWE_IN,
+	UVEWBS_ATTW_COWE_OUT,
+	UVEWBS_ATTW_WWITE_CMD,
+};
+
+enum uvewbs_attws_quewy_powt_cmd_attw_ids {
+	UVEWBS_ATTW_QUEWY_POWT_POWT_NUM,
+	UVEWBS_ATTW_QUEWY_POWT_WESP,
+};
+
+enum uvewbs_attws_get_context_attw_ids {
+	UVEWBS_ATTW_GET_CONTEXT_NUM_COMP_VECTOWS,
+	UVEWBS_ATTW_GET_CONTEXT_COWE_SUPPOWT,
+};
+
+enum uvewbs_attws_quewy_context_attw_ids {
+	UVEWBS_ATTW_QUEWY_CONTEXT_NUM_COMP_VECTOWS,
+	UVEWBS_ATTW_QUEWY_CONTEXT_COWE_SUPPOWT,
+};
+
+enum uvewbs_attws_cweate_cq_cmd_attw_ids {
+	UVEWBS_ATTW_CWEATE_CQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_CQ_CQE,
+	UVEWBS_ATTW_CWEATE_CQ_USEW_HANDWE,
+	UVEWBS_ATTW_CWEATE_CQ_COMP_CHANNEW,
+	UVEWBS_ATTW_CWEATE_CQ_COMP_VECTOW,
+	UVEWBS_ATTW_CWEATE_CQ_FWAGS,
+	UVEWBS_ATTW_CWEATE_CQ_WESP_CQE,
+	UVEWBS_ATTW_CWEATE_CQ_EVENT_FD,
+};
+
+enum uvewbs_attws_destwoy_cq_cmd_attw_ids {
+	UVEWBS_ATTW_DESTWOY_CQ_HANDWE,
+	UVEWBS_ATTW_DESTWOY_CQ_WESP,
+};
+
+enum uvewbs_attws_cweate_fwow_action_esp {
+	UVEWBS_ATTW_CWEATE_FWOW_ACTION_ESP_HANDWE,
+	UVEWBS_ATTW_FWOW_ACTION_ESP_ATTWS,
+	UVEWBS_ATTW_FWOW_ACTION_ESP_ESN,
+	UVEWBS_ATTW_FWOW_ACTION_ESP_KEYMAT,
+	UVEWBS_ATTW_FWOW_ACTION_ESP_WEPWAY,
+	UVEWBS_ATTW_FWOW_ACTION_ESP_ENCAP,
+};
+
+enum uvewbs_attws_modify_fwow_action_esp {
+	UVEWBS_ATTW_MODIFY_FWOW_ACTION_ESP_HANDWE =
+		UVEWBS_ATTW_CWEATE_FWOW_ACTION_ESP_HANDWE,
+};
+
+enum uvewbs_attws_destwoy_fwow_action_esp {
+	UVEWBS_ATTW_DESTWOY_FWOW_ACTION_HANDWE,
+};
+
+enum uvewbs_attws_cweate_qp_cmd_attw_ids {
+	UVEWBS_ATTW_CWEATE_QP_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_XWCD_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_PD_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_SWQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_SEND_CQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_WECV_CQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_IND_TABWE_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_USEW_HANDWE,
+	UVEWBS_ATTW_CWEATE_QP_CAP,
+	UVEWBS_ATTW_CWEATE_QP_TYPE,
+	UVEWBS_ATTW_CWEATE_QP_FWAGS,
+	UVEWBS_ATTW_CWEATE_QP_SOUWCE_QPN,
+	UVEWBS_ATTW_CWEATE_QP_EVENT_FD,
+	UVEWBS_ATTW_CWEATE_QP_WESP_CAP,
+	UVEWBS_ATTW_CWEATE_QP_WESP_QP_NUM,
+};
+
+enum uvewbs_attws_destwoy_qp_cmd_attw_ids {
+	UVEWBS_ATTW_DESTWOY_QP_HANDWE,
+	UVEWBS_ATTW_DESTWOY_QP_WESP,
+};
+
+enum uvewbs_methods_qp {
+	UVEWBS_METHOD_QP_CWEATE,
+	UVEWBS_METHOD_QP_DESTWOY,
+};
+
+enum uvewbs_attws_cweate_swq_cmd_attw_ids {
+	UVEWBS_ATTW_CWEATE_SWQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_SWQ_PD_HANDWE,
+	UVEWBS_ATTW_CWEATE_SWQ_XWCD_HANDWE,
+	UVEWBS_ATTW_CWEATE_SWQ_CQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_SWQ_USEW_HANDWE,
+	UVEWBS_ATTW_CWEATE_SWQ_MAX_WW,
+	UVEWBS_ATTW_CWEATE_SWQ_MAX_SGE,
+	UVEWBS_ATTW_CWEATE_SWQ_WIMIT,
+	UVEWBS_ATTW_CWEATE_SWQ_MAX_NUM_TAGS,
+	UVEWBS_ATTW_CWEATE_SWQ_TYPE,
+	UVEWBS_ATTW_CWEATE_SWQ_EVENT_FD,
+	UVEWBS_ATTW_CWEATE_SWQ_WESP_MAX_WW,
+	UVEWBS_ATTW_CWEATE_SWQ_WESP_MAX_SGE,
+	UVEWBS_ATTW_CWEATE_SWQ_WESP_SWQ_NUM,
+};
+
+enum uvewbs_attws_destwoy_swq_cmd_attw_ids {
+	UVEWBS_ATTW_DESTWOY_SWQ_HANDWE,
+	UVEWBS_ATTW_DESTWOY_SWQ_WESP,
+};
+
+enum uvewbs_methods_swq {
+	UVEWBS_METHOD_SWQ_CWEATE,
+	UVEWBS_METHOD_SWQ_DESTWOY,
+};
+
+enum uvewbs_methods_cq {
+	UVEWBS_METHOD_CQ_CWEATE,
+	UVEWBS_METHOD_CQ_DESTWOY,
+};
+
+enum uvewbs_attws_cweate_wq_cmd_attw_ids {
+	UVEWBS_ATTW_CWEATE_WQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_WQ_PD_HANDWE,
+	UVEWBS_ATTW_CWEATE_WQ_CQ_HANDWE,
+	UVEWBS_ATTW_CWEATE_WQ_USEW_HANDWE,
+	UVEWBS_ATTW_CWEATE_WQ_TYPE,
+	UVEWBS_ATTW_CWEATE_WQ_EVENT_FD,
+	UVEWBS_ATTW_CWEATE_WQ_MAX_WW,
+	UVEWBS_ATTW_CWEATE_WQ_MAX_SGE,
+	UVEWBS_ATTW_CWEATE_WQ_FWAGS,
+	UVEWBS_ATTW_CWEATE_WQ_WESP_MAX_WW,
+	UVEWBS_ATTW_CWEATE_WQ_WESP_MAX_SGE,
+	UVEWBS_ATTW_CWEATE_WQ_WESP_WQ_NUM,
+};
+
+enum uvewbs_attws_destwoy_wq_cmd_attw_ids {
+	UVEWBS_ATTW_DESTWOY_WQ_HANDWE,
+	UVEWBS_ATTW_DESTWOY_WQ_WESP,
+};
+
+enum uvewbs_methods_wq {
+	UVEWBS_METHOD_WQ_CWEATE,
+	UVEWBS_METHOD_WQ_DESTWOY,
+};
+
+enum uvewbs_methods_actions_fwow_action_ops {
+	UVEWBS_METHOD_FWOW_ACTION_ESP_CWEATE,
+	UVEWBS_METHOD_FWOW_ACTION_DESTWOY,
+	UVEWBS_METHOD_FWOW_ACTION_ESP_MODIFY,
+};
+
+enum uvewbs_attws_awwoc_dm_cmd_attw_ids {
+	UVEWBS_ATTW_AWWOC_DM_HANDWE,
+	UVEWBS_ATTW_AWWOC_DM_WENGTH,
+	UVEWBS_ATTW_AWWOC_DM_AWIGNMENT,
+};
+
+enum uvewbs_attws_fwee_dm_cmd_attw_ids {
+	UVEWBS_ATTW_FWEE_DM_HANDWE,
+};
+
+enum uvewbs_methods_dm {
+	UVEWBS_METHOD_DM_AWWOC,
+	UVEWBS_METHOD_DM_FWEE,
+};
+
+enum uvewbs_attws_weg_dm_mw_cmd_attw_ids {
+	UVEWBS_ATTW_WEG_DM_MW_HANDWE,
+	UVEWBS_ATTW_WEG_DM_MW_OFFSET,
+	UVEWBS_ATTW_WEG_DM_MW_WENGTH,
+	UVEWBS_ATTW_WEG_DM_MW_PD_HANDWE,
+	UVEWBS_ATTW_WEG_DM_MW_ACCESS_FWAGS,
+	UVEWBS_ATTW_WEG_DM_MW_DM_HANDWE,
+	UVEWBS_ATTW_WEG_DM_MW_WESP_WKEY,
+	UVEWBS_ATTW_WEG_DM_MW_WESP_WKEY,
+};
+
+enum uvewbs_methods_mw {
+	UVEWBS_METHOD_DM_MW_WEG,
+	UVEWBS_METHOD_MW_DESTWOY,
+	UVEWBS_METHOD_ADVISE_MW,
+	UVEWBS_METHOD_QUEWY_MW,
+	UVEWBS_METHOD_WEG_DMABUF_MW,
+};
+
+enum uvewbs_attws_mw_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_MW_HANDWE,
+};
+
+enum uvewbs_attws_advise_mw_cmd_attw_ids {
+	UVEWBS_ATTW_ADVISE_MW_PD_HANDWE,
+	UVEWBS_ATTW_ADVISE_MW_ADVICE,
+	UVEWBS_ATTW_ADVISE_MW_FWAGS,
+	UVEWBS_ATTW_ADVISE_MW_SGE_WIST,
+};
+
+enum uvewbs_attws_quewy_mw_cmd_attw_ids {
+	UVEWBS_ATTW_QUEWY_MW_HANDWE,
+	UVEWBS_ATTW_QUEWY_MW_WESP_WKEY,
+	UVEWBS_ATTW_QUEWY_MW_WESP_WKEY,
+	UVEWBS_ATTW_QUEWY_MW_WESP_WENGTH,
+	UVEWBS_ATTW_QUEWY_MW_WESP_IOVA,
+};
+
+enum uvewbs_attws_weg_dmabuf_mw_cmd_attw_ids {
+	UVEWBS_ATTW_WEG_DMABUF_MW_HANDWE,
+	UVEWBS_ATTW_WEG_DMABUF_MW_PD_HANDWE,
+	UVEWBS_ATTW_WEG_DMABUF_MW_OFFSET,
+	UVEWBS_ATTW_WEG_DMABUF_MW_WENGTH,
+	UVEWBS_ATTW_WEG_DMABUF_MW_IOVA,
+	UVEWBS_ATTW_WEG_DMABUF_MW_FD,
+	UVEWBS_ATTW_WEG_DMABUF_MW_ACCESS_FWAGS,
+	UVEWBS_ATTW_WEG_DMABUF_MW_WESP_WKEY,
+	UVEWBS_ATTW_WEG_DMABUF_MW_WESP_WKEY,
+};
+
+enum uvewbs_attws_cweate_countews_cmd_attw_ids {
+	UVEWBS_ATTW_CWEATE_COUNTEWS_HANDWE,
+};
+
+enum uvewbs_attws_destwoy_countews_cmd_attw_ids {
+	UVEWBS_ATTW_DESTWOY_COUNTEWS_HANDWE,
+};
+
+enum uvewbs_attws_wead_countews_cmd_attw_ids {
+	UVEWBS_ATTW_WEAD_COUNTEWS_HANDWE,
+	UVEWBS_ATTW_WEAD_COUNTEWS_BUFF,
+	UVEWBS_ATTW_WEAD_COUNTEWS_FWAGS,
+};
+
+enum uvewbs_methods_actions_countews_ops {
+	UVEWBS_METHOD_COUNTEWS_CWEATE,
+	UVEWBS_METHOD_COUNTEWS_DESTWOY,
+	UVEWBS_METHOD_COUNTEWS_WEAD,
+};
+
+enum uvewbs_attws_info_handwes_id {
+	UVEWBS_ATTW_INFO_OBJECT_ID,
+	UVEWBS_ATTW_INFO_TOTAW_HANDWES,
+	UVEWBS_ATTW_INFO_HANDWES_WIST,
+};
+
+enum uvewbs_methods_pd {
+	UVEWBS_METHOD_PD_DESTWOY,
+};
+
+enum uvewbs_attws_pd_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_PD_HANDWE,
+};
+
+enum uvewbs_methods_mw {
+	UVEWBS_METHOD_MW_DESTWOY,
+};
+
+enum uvewbs_attws_mw_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_MW_HANDWE,
+};
+
+enum uvewbs_methods_xwcd {
+	UVEWBS_METHOD_XWCD_DESTWOY,
+};
+
+enum uvewbs_attws_xwcd_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_XWCD_HANDWE,
+};
+
+enum uvewbs_methods_ah {
+	UVEWBS_METHOD_AH_DESTWOY,
+};
+
+enum uvewbs_attws_ah_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_AH_HANDWE,
+};
+
+enum uvewbs_methods_wwq_ind_tbw {
+	UVEWBS_METHOD_WWQ_IND_TBW_DESTWOY,
+};
+
+enum uvewbs_attws_wwq_ind_tbw_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_WWQ_IND_TBW_HANDWE,
+};
+
+enum uvewbs_methods_fwow {
+	UVEWBS_METHOD_FWOW_DESTWOY,
+};
+
+enum uvewbs_attws_fwow_destwoy_ids {
+	UVEWBS_ATTW_DESTWOY_FWOW_HANDWE,
+};
+
+enum uvewbs_method_async_event {
+	UVEWBS_METHOD_ASYNC_EVENT_AWWOC,
+};
+
+enum uvewbs_attws_async_event_cweate {
+	UVEWBS_ATTW_ASYNC_EVENT_AWWOC_FD_HANDWE,
+};
+
+enum uvewbs_attws_quewy_gid_tabwe_cmd_attw_ids {
+	UVEWBS_ATTW_QUEWY_GID_TABWE_ENTWY_SIZE,
+	UVEWBS_ATTW_QUEWY_GID_TABWE_FWAGS,
+	UVEWBS_ATTW_QUEWY_GID_TABWE_WESP_ENTWIES,
+	UVEWBS_ATTW_QUEWY_GID_TABWE_WESP_NUM_ENTWIES,
+};
+
+enum uvewbs_attws_quewy_gid_entwy_cmd_attw_ids {
+	UVEWBS_ATTW_QUEWY_GID_ENTWY_POWT,
+	UVEWBS_ATTW_QUEWY_GID_ENTWY_GID_INDEX,
+	UVEWBS_ATTW_QUEWY_GID_ENTWY_FWAGS,
+	UVEWBS_ATTW_QUEWY_GID_ENTWY_WESP_ENTWY,
+};
+
+#endif

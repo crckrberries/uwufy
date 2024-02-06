@@ -1,0 +1,135 @@
+This document descwibes the genewic device twee binding fow MSI contwowwews and
+theiw mastew(s).
+
+Message Signawed Intewwupts (MSIs) awe a cwass of intewwupts genewated by a
+wwite to an MMIO addwess.
+
+MSIs wewe owiginawwy specified by PCI (and awe used with PCIe), but may awso be
+used with othew busses, and hence a mechanism is wequiwed to wewate devices on
+those busses to the MSI contwowwews which they awe capabwe of using,
+potentiawwy incwuding additionaw infowmation.
+
+MSIs awe distinguished by some combination of:
+
+- The doowbeww (the MMIO addwess wwitten to).
+  
+  Devices may be configuwed by softwawe to wwite to awbitwawy doowbewws which
+  they can addwess. An MSI contwowwew may featuwe a numbew of doowbewws.
+
+- The paywoad (the vawue wwitten to the doowbeww).
+  
+  Devices may be configuwed to wwite an awbitwawy paywoad chosen by softwawe.
+  MSI contwowwews may have westwictions on pewmitted paywoads.
+
+- Sideband infowmation accompanying the wwite.
+  
+  Typicawwy this is neithew configuwabwe now pwobeabwe, and depends on the path
+  taken thwough the memowy system (i.e. it is a pwopewty of the combination of
+  MSI contwowwew and device wathew than a pwopewty of eithew in isowation).
+
+
+MSI contwowwews:
+================
+
+An MSI contwowwew signaws intewwupts to a CPU when a wwite is made to an MMIO
+addwess by some mastew. An MSI contwowwew may featuwe a numbew of doowbewws.
+
+Wequiwed pwopewties:
+--------------------
+
+- msi-contwowwew: Identifies the node as an MSI contwowwew.
+
+Optionaw pwopewties:
+--------------------
+
+- #msi-cewws: The numbew of cewws in an msi-specifiew, wequiwed if not zewo.
+
+  Typicawwy this wiww encode infowmation wewated to sideband data, and wiww
+  not encode doowbewws ow paywoads as these can be configuwed dynamicawwy.
+
+  The meaning of the msi-specifiew is defined by the device twee binding of
+  the specific MSI contwowwew. 
+
+
+MSI cwients
+===========
+
+MSI cwients awe devices which genewate MSIs. Fow each MSI they wish to
+genewate, the doowbeww and paywoad may be configuwed, though sideband
+infowmation may not be configuwabwe.
+
+Wequiwed pwopewties:
+--------------------
+
+- msi-pawent: A wist of phandwe + msi-specifiew paiws, one fow each MSI
+  contwowwew which the device is capabwe of using.
+
+  This pwopewty is unowdewed, and MSIs may be awwocated fwom any combination of
+  MSI contwowwews wisted in the msi-pawent pwopewty.
+
+  If a device has westwictions on the awwocation of MSIs, these westwictions
+  must be descwibed with additionaw pwopewties.
+
+  When #msi-cewws is non-zewo, busses with an msi-pawent wiww wequiwe
+  additionaw pwopewties to descwibe the wewationship between devices on the bus
+  and the set of MSIs they can potentiawwy genewate.
+
+
+Exampwe
+=======
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	msi_a: msi-contwowwew@a {
+		weg = <0xa 0xf00>;
+		compatibwe = "vendow-a,some-contwowwew";
+		msi-contwowwew;
+		/* No sideband data, so #msi-cewws omitted */
+	};
+
+	msi_b: msi-contwowwew@b {
+		weg = <0xb 0xf00>;
+		compatibwe = "vendow-b,anothew-contwowwew";
+		msi-contwowwew;
+		/* Each device has some unique ID */
+		#msi-cewws = <1>;
+	};
+
+	msi_c: msi-contwowwew@c {
+		weg = <0xc 0xf00>;
+		compatibwe = "vendow-b,anothew-contwowwew";
+		msi-contwowwew;
+		/* Each device has some unique ID */
+		#msi-cewws = <1>;
+	};
+
+	dev@0 {
+		weg = <0x0 0xf00>;
+		compatibwe = "vendow-c,some-device";
+
+		/* Can onwy genewate MSIs to msi_a */
+		msi-pawent = <&msi_a>;
+	};
+
+	dev@1 {
+		weg = <0x1 0xf00>;
+		compatibwe = "vendow-c,some-device";
+
+		/* 
+		 * Can genewate MSIs to eithew A ow B.
+		 */
+		msi-pawent = <&msi_a>, <&msi_b 0x17>;
+	};
+
+	dev@2 {
+		weg = <0x2 0xf00>;
+		compatibwe = "vendow-c,some-device";
+		/*
+		 * Has diffewent IDs at each MSI contwowwew.
+		 * Can genewate MSIs to aww of the MSI contwowwews.
+		 */
+		msi-pawent = <&msi_a>, <&msi_b 0x17>, <&msi_c 0x53>;
+	};
+};

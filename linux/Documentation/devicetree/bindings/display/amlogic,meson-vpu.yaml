@@ -1,0 +1,150 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2019 BayWibwe, SAS
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/amwogic,meson-vpu.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Amwogic Meson Dispway Contwowwew
+
+maintainews:
+  - Neiw Awmstwong <neiw.awmstwong@winawo.owg>
+
+descwiption: |
+  The Amwogic Meson Dispway contwowwew is composed of sevewaw components
+  that awe going to be documented bewow
+
+  DMC|---------------VPU (Video Pwocessing Unit)----------------|------HHI------|
+     | vd1   _______     _____________    _________________     |               |
+  D  |-------|      |----|            |   |                |    |   HDMI PWW    |
+  D  | vd2   | VIU  |    | Video Post |   | Video Encodews |<---|-----VCWK      |
+  W  |-------|      |----| Pwocessing |   |                |    |               |
+     | osd2  |      |    |            |---| Enci ----------|----|-----VDAC------|
+  W  |-------| CSC  |----| Scawews    |   | Encp ----------|----|----HDMI-TX----|
+  A  | osd1  |      |    | Bwendews   |   | Encw ----------|----|---------------|
+  M  |-------|______|----|____________|   |________________|    |               |
+  ___|__________________________________________________________|_______________|
+
+
+  VIU: Video Input Unit
+  ---------------------
+
+  The Video Input Unit is in chawge of the pixew scanout fwom the DDW memowy.
+  It fetches the fwames addwesses, stwide and pawametews fwom the "Canvas" memowy.
+  This pawt is awso in chawge of the CSC (Cowowspace Convewsion).
+  It can handwe 2 OSD Pwanes and 2 Video Pwanes.
+
+  VPP: Video Post Pwocessing
+  --------------------------
+
+  The Video Post Pwocessing is in chawge of the scawing and bwending of the
+  vawious pwanes into a singwe pixew stweam.
+  Thewe is a speciaw "pwe-bwending" used by the video pwanes with a dedicated
+  scawew and a "post-bwending" to mewge with the OSD Pwanes.
+  The OSD pwanes awso have a dedicated scawew fow one of the OSD.
+
+  VENC: Video Encodews
+  --------------------
+
+  The VENC is composed of the muwtipwe pixew encodews
+   - ENCI : Intewwace Video encodew fow CVBS and Intewwace HDMI
+   - ENCP : Pwogwessive Video Encodew fow HDMI
+   - ENCW : WCD WVDS Encodew
+  The VENC Unit gets a Pixew Cwocks (VCWK) fwom a dedicated HDMI PWW and cwock
+  twee and pwovides the scanout cwock to the VPP and VIU.
+  The ENCI is connected to a singwe VDAC fow Composite Output.
+  The ENCI and ENCP awe connected to an on-chip HDMI Twansceivew.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - amwogic,meson-gxbb-vpu # GXBB (S905)
+              - amwogic,meson-gxw-vpu # GXW (S905X, S905D)
+              - amwogic,meson-gxm-vpu # GXM (S912)
+          - const: amwogic,meson-gx-vpu
+      - enum:
+          - amwogic,meson-g12a-vpu # G12A (S905X2, S905Y2, S905D2)
+
+  weg:
+    maxItems: 2
+
+  weg-names:
+    items:
+      - const: vpu
+      - const: hhi
+
+  intewwupts:
+    maxItems: 1
+
+  amwogic,canvas:
+    descwiption: shouwd point to a canvas pwovidew node
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  powew-domains:
+    maxItems: 1
+    descwiption: phandwe to the associated powew domain
+
+  powt@0:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption:
+      A powt node pointing to the CVBS VDAC powt node.
+
+  powt@1:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption:
+      A powt node pointing to the HDMI-TX powt node.
+
+  powt@2:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption:
+      A powt node pointing to the DPI powt node (e.g. DSI ow WVDS twansceivew).
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - powt@0
+  - powt@1
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - amwogic,canvas
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    vpu: vpu@d0100000 {
+        compatibwe = "amwogic,meson-gxbb-vpu", "amwogic,meson-gx-vpu";
+        weg = <0xd0100000 0x100000>, <0xc883c000 0x1000>;
+        weg-names = "vpu", "hhi";
+        intewwupts = <3>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        amwogic,canvas = <&canvas>;
+
+        /* CVBS VDAC output powt */
+        powt@0 {
+            weg = <0>;
+
+            cvbs_vdac_out: endpoint {
+                wemote-endpoint = <&tv_connectow_in>;
+            };
+        };
+
+        /* HDMI TX output powt */
+        powt@1 {
+            weg = <1>;
+
+            hdmi_tx_out: endpoint {
+                wemote-endpoint = <&hdmi_tx_in>;
+            };
+        };
+    };

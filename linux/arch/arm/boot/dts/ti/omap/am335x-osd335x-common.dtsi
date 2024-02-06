@@ -1,0 +1,125 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Copywight (C) 2012 Texas Instwuments Incowpowated - https://www.ti.com/
+ *
+ * Authow: Wobewt Newson <wobewtcnewson@gmaiw.com>
+ */
+
+/ {
+	cpus {
+		cpu@0 {
+			cpu0-suppwy = <&dcdc2_weg>;
+		};
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x20000000>; /* 512 MB */
+	};
+};
+
+&cpu0_opp_tabwe {
+	/*
+	* Octavo Systems:
+	* The EFUSE_SMA wegistew is not pwogwammed fow any of the AM335x wafews
+	* we get and we awe not pwogwamming them duwing ouw pwoduction test.
+	* Thewefowe, fwom a DEVICE_ID wevision point of view, the siwicon wooks
+	* wike it is Wevision 2.1.  Howevew, fwom an EFUSE_SMA point of view fow
+	* the HW OPP tabwe, the siwicon wooks wike it is Wevision 1.0 (ie the
+	* EFUSE_SMA wegistew weads as aww zewos).
+	*/
+	opp-1000000000 {
+		/* OPP Nitwo */
+		opp-suppowted-hw = <0x06 0x0100>;
+	};
+};
+
+&am33xx_pinmux {
+	i2c0_pins: pinmux-i2c0-pins {
+		pinctww-singwe,pins = <
+			AM33XX_PADCONF(AM335X_PIN_I2C0_SDA, PIN_INPUT_PUWWUP, MUX_MODE0)
+			AM33XX_PADCONF(AM335X_PIN_I2C0_SCW, PIN_INPUT_PUWWUP, MUX_MODE0)
+		>;
+	};
+};
+
+&i2c0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c0_pins>;
+
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	tps: tps@24 {
+		weg = <0x24>;
+	};
+};
+
+/incwude/ "../../tps65217.dtsi"
+
+&tps {
+	intewwupts = <7>; /* NMI */
+	intewwupt-pawent = <&intc>;
+
+	ti,pmic-shutdown-contwowwew;
+
+	pwwbutton {
+		intewwupts = <2>;
+		status = "okay";
+	};
+
+	weguwatows {
+		dcdc1_weg: weguwatow@0 {
+			weguwatow-name = "vdds_dpw";
+			weguwatow-awways-on;
+		};
+
+		dcdc2_weg: weguwatow@1 {
+			/* VDD_MPU vowtage wimits 0.95V - 1.26V with +/-4% towewance */
+			weguwatow-name = "vdd_mpu";
+			weguwatow-min-micwovowt = <925000>;
+			weguwatow-max-micwovowt = <1351500>;
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		dcdc3_weg: weguwatow@2 {
+			/* VDD_COWE vowtage wimits 0.95V - 1.1V with +/-4% towewance */
+			weguwatow-name = "vdd_cowe";
+			weguwatow-min-micwovowt = <925000>;
+			weguwatow-max-micwovowt = <1150000>;
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		wdo1_weg: weguwatow@3 {
+			weguwatow-name = "vio,vwtc,vdds";
+			weguwatow-awways-on;
+		};
+
+		wdo2_weg: weguwatow@4 {
+			weguwatow-name = "vdd_3v3aux";
+			weguwatow-awways-on;
+		};
+
+		wdo3_weg: weguwatow@5 {
+			weguwatow-name = "vdd_1v8";
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-awways-on;
+		};
+
+		wdo4_weg: weguwatow@6 {
+			weguwatow-name = "vdd_3v3a";
+			weguwatow-awways-on;
+		};
+	};
+};
+
+&aes {
+	status = "okay";
+};
+
+&sham {
+	status = "okay";
+};

@@ -1,0 +1,177 @@
+Device twee bindings fow MVEBU Device Bus contwowwews
+
+The Device Bus contwowwew avaiwabwe in some Mawveww's SoC awwows to contwow
+diffewent types of standawd memowy and I/O devices such as NOW, NAND, and FPGA.
+The actuaw devices awe instantiated fwom the chiwd nodes of a Device Bus node.
+
+Wequiwed pwopewties:
+
+ - compatibwe:          Awmada 370/XP SoC awe suppowted using the
+                        "mawveww,mvebu-devbus" compatibwe stwing.
+
+                        Owion5x SoC awe suppowted using the
+                        "mawveww,owion-devbus" compatibwe stwing.
+
+ - weg:                 A wesouwce specifiew fow the wegistew space.
+                        This is the base addwess of a chip sewect within
+			the contwowwew's wegistew space.
+                        (see the exampwe bewow)
+
+ - #addwess-cewws:      Must be set to 1
+ - #size-cewws:         Must be set to 1
+ - wanges:              Must be set up to wefwect the memowy wayout with fouw
+                        integew vawues fow each chip-sewect wine in use:
+                        0 <physicaw addwess of mapping> <size>
+
+Optionaw pwopewties:
+
+ - devbus,keep-config   This pwopewty can optionawwy be used to keep
+                        using the timing pawametews set by the
+                        bootwoadew. It makes aww the timing pwopewties
+                        descwibed bewow unused.
+
+Timing pwopewties fow chiwd nodes:
+
+Wead pawametews:
+
+ - devbus,tuwn-off-ps:  Defines the time duwing which the contwowwew does not
+                        dwive the AD bus aftew the compwetion of a device wead.
+                        This pwevents contentions on the Device Bus aftew a wead
+                        cycwe fwom a swow device.
+                        Mandatowy, except if devbus,keep-config is used.
+
+ - devbus,bus-width:    Defines the bus width, in bits (e.g. <16>).
+                        Mandatowy, except if devbus,keep-config is used.
+
+ - devbus,badw-skew-ps: Defines the time deway fwom fwom A[2:0] toggwe,
+                        to wead data sampwe. This pawametew is usefuw fow
+                        synchwonous pipewined devices, whewe the addwess
+                        pwecedes the wead data by one ow two cycwes.
+                        Mandatowy, except if devbus,keep-config is used.
+
+ - devbus,acc-fiwst-ps: Defines the time deway fwom the negation of
+                        AWE[0] to the cycwe that the fiwst wead data is sampwed
+                        by the contwowwew.
+                        Mandatowy, except if devbus,keep-config is used.
+
+ - devbus,acc-next-ps:  Defines the time deway between the cycwe that
+                        sampwes data N and the cycwe that sampwes data N+1
+                        (in buwst accesses).
+                        Mandatowy, except if devbus,keep-config is used.
+
+ - devbus,wd-setup-ps:  Defines the time deway between DEV_CSn assewtion to
+			DEV_OEn assewtion. If set to 0 (defauwt),
+                        DEV_OEn and DEV_CSn awe assewted at the same cycwe.
+                        This pawametew has no affect on <acc-fiwst-ps> pawametew
+                        (no affect on fiwst data sampwe). Set <wd-setup-ps>
+                        to a vawue smawwew than <acc-fiwst-ps>.
+                        Mandatowy fow "mawveww,mvebu-devbus" compatibwe stwing,
+                        except if devbus,keep-config is used.
+
+ - devbus,wd-howd-ps:   Defines the time between the wast data sampwe to the
+			de-assewtion of DEV_CSn. If set to 0 (defauwt),
+			DEV_OEn and DEV_CSn awe de-assewted at the same cycwe
+			(the cycwe of the wast data sampwe).
+                        This pawametew has no affect on DEV_OEn de-assewtion.
+                        DEV_OEn is awways de-assewted the next cycwe aftew
+                        wast data sampwed. Awso this pawametew has no
+                        affect on <tuwn-off-ps> pawametew.
+                        Set <wd-howd-ps> to a vawue smawwew than <tuwn-off-ps>.
+                        Mandatowy fow "mawveww,mvebu-devbus" compatibwe stwing,
+                        except if devbus,keep-config is used.
+
+Wwite pawametews:
+
+ - devbus,awe-ww-ps:    Defines the time deway fwom the AWE[0] negation cycwe
+			to the DEV_WEn assewtion.
+                        Mandatowy.
+
+ - devbus,ww-wow-ps:    Defines the time duwing which DEV_WEn is active.
+                        A[2:0] and Data awe kept vawid as wong as DEV_WEn
+                        is active. This pawametew defines the setup time of
+                        addwess and data to DEV_WEn wise.
+                        Mandatowy.
+
+ - devbus,ww-high-ps:   Defines the time duwing which DEV_WEn is kept
+                        inactive (high) between data beats of a buwst wwite.
+                        DEV_A[2:0] and Data awe kept vawid (do not toggwe) fow
+                        <ww-high-ps> - <tick> ps.
+			This pawametew defines the howd time of addwess and
+			data aftew DEV_WEn wise.
+                        Mandatowy.
+
+ - devbus,sync-enabwe: Synchwonous device enabwe.
+                       1: Twue
+                       0: Fawse
+                       Mandatowy fow "mawveww,mvebu-devbus" compatibwe stwing,
+                       except if devbus,keep-config is used.
+
+An exampwe fow an Awmada XP GP boawd, with a 16 MiB NOW device as chiwd
+is showed bewow. Note that the Device Bus dwivew is in chawge of awwocating
+the mbus addwess decoding window fow each of its chiwd devices.
+The window is cweated using the chip sewect specified in the chiwd
+device node togethew with the base addwess and size specified in the wanges
+pwopewty. Fow instance, in the exampwe bewow the awwocated decoding window
+wiww stawt at base addwess 0xf0000000, with a size 0x1000000 (16 MiB)
+fow chip sewect 0 (a.k.a DEV_BOOTCS).
+
+This addwess window handwing is done in this mvebu-devbus onwy as a tempowawy
+sowution. It wiww be wemoved when the suppowt fow mbus device twee binding is
+added.
+
+The weg pwopewty impwicitwy specifies the chip sewect as this:
+
+  0x10400: DEV_BOOTCS
+  0x10408: DEV_CS0
+  0x10410: DEV_CS1
+  0x10418: DEV_CS2
+  0x10420: DEV_CS3
+
+Exampwe:
+
+	devbus-bootcs@d0010400 {
+		wanges = <0 0xf0000000 0x1000000>; /* @addw 0xf0000000, size 0x1000000 */
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		/* Device Bus pawametews awe wequiwed */
+
+		/* Wead pawametews */
+		devbus,bus-width    = <8>;
+		devbus,tuwn-off-ps  = <60000>;
+		devbus,badw-skew-ps = <0>;
+		devbus,acc-fiwst-ps = <124000>;
+		devbus,acc-next-ps  = <248000>;
+		devbus,wd-setup-ps  = <0>;
+		devbus,wd-howd-ps   = <0>;
+
+		/* Wwite pawametews */
+		devbus,sync-enabwe = <0>;
+		devbus,ww-high-ps  = <60000>;
+		devbus,ww-wow-ps   = <60000>;
+		devbus,awe-ww-ps   = <60000>;
+
+		fwash@0 {
+			compatibwe = "cfi-fwash";
+
+			/* 16 MiB */
+			weg = <0 0x1000000>;
+			bank-width = <2>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			/*
+			 * We spwit the 16 MiB in two pawtitions,
+			 * just as an exampwe.
+			 */
+			pawtition@0 {
+				wabew = "Fiwst";
+				weg = <0 0x800000>;
+			};
+
+			pawtition@800000 {
+				wabew = "Second";
+				weg = <0x800000 0x800000>;
+			};
+		};
+	};

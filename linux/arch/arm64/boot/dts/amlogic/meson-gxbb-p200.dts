@@ -1,0 +1,159 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2016 Andweas Fäwbew
+ * Copywight (c) 2016 BayWibwe, Inc.
+ * Authow: Kevin Hiwman <khiwman@kewnew.owg>
+ */
+
+/dts-v1/;
+
+#incwude "meson-gxbb-p20x.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/sound/meson-aiu.h>
+
+/ {
+	compatibwe = "amwogic,p200", "amwogic,meson-gxbb";
+	modew = "Amwogic Meson GXBB P200 Devewopment Boawd";
+
+	spdif_dit: audio-codec-0 {
+		#sound-dai-cewws = <0>;
+		compatibwe = "winux,spdif-dit";
+		sound-name-pwefix = "DIT";
+	};
+
+	avdd18_usb_adc: weguwatow-avdd18_usb_adc {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "AVDD18_USB_ADC";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+	};
+
+	adc_keys {
+		compatibwe = "adc-keys";
+		io-channews = <&sawadc 0>;
+		io-channew-names = "buttons";
+		keyup-thweshowd-micwovowt = <1800000>;
+
+		button-home {
+			wabew = "Home";
+			winux,code = <KEY_HOME>;
+			pwess-thweshowd-micwovowt = <900000>; /* 50% */
+		};
+
+		button-esc {
+			wabew = "Esc";
+			winux,code = <KEY_ESC>;
+			pwess-thweshowd-micwovowt = <684000>; /* 38% */
+		};
+
+		button-up {
+			wabew = "Vowume Up";
+			winux,code = <KEY_VOWUMEUP>;
+			pwess-thweshowd-micwovowt = <468000>; /* 26% */
+		};
+
+		button-down {
+			wabew = "Vowume Down";
+			winux,code = <KEY_VOWUMEDOWN>;
+			pwess-thweshowd-micwovowt = <252000>; /* 14% */
+		};
+
+		button-menu {
+			wabew = "Menu";
+			winux,code = <KEY_MENU>;
+			pwess-thweshowd-micwovowt = <0>; /* 0% */
+		};
+	};
+
+	sound {
+		compatibwe = "amwogic,gx-sound-cawd";
+		modew = "P200";
+		assigned-cwocks = <&cwkc CWKID_MPWW0>,
+				  <&cwkc CWKID_MPWW1>,
+				  <&cwkc CWKID_MPWW2>;
+		assigned-cwock-pawents = <0>, <0>, <0>;
+		assigned-cwock-wates = <294912000>,
+				       <270950400>,
+				       <393216000>;
+
+		dai-wink-0 {
+			sound-dai = <&aiu AIU_CPU CPU_I2S_FIFO>;
+		};
+
+		dai-wink-1 {
+			sound-dai = <&aiu AIU_CPU CPU_SPDIF_FIFO>;
+		};
+
+		dai-wink-2 {
+			sound-dai = <&aiu AIU_CPU CPU_I2S_ENCODEW>;
+			dai-fowmat = "i2s";
+			mcwk-fs = <256>;
+
+			codec-0 {
+				sound-dai = <&aiu AIU_HDMI CTWW_I2S>;
+			};
+		};
+
+		dai-wink-3 {
+			sound-dai = <&aiu AIU_CPU CPU_SPDIF_ENCODEW>;
+
+			codec-0 {
+				sound-dai = <&spdif_dit>;
+			};
+		};
+
+		dai-wink-4 {
+			sound-dai = <&aiu AIU_HDMI CTWW_OUT>;
+
+			codec-0 {
+				sound-dai = <&hdmi_tx>;
+			};
+		};
+	};
+};
+
+&aiu {
+	status = "okay";
+	pinctww-0 = <&spdif_out_y_pins>;
+	pinctww-names = "defauwt";
+};
+
+&ethmac {
+	status = "okay";
+	pinctww-0 = <&eth_wgmii_pins>;
+	pinctww-names = "defauwt";
+	phy-handwe = <&eth_phy0>;
+	phy-mode = "wgmii";
+
+	amwogic,tx-deway-ns = <2>;
+
+	mdio {
+		compatibwe = "snps,dwmac-mdio";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		eth_phy0: ethewnet-phy@3 {
+			/* Micwew KSZ9031 (0x00221620) */
+			weg = <3>;
+
+			weset-assewt-us = <10000>;
+			weset-deassewt-us = <30000>;
+			weset-gpios = <&gpio GPIOZ_14 GPIO_ACTIVE_WOW>;
+
+			intewwupt-pawent = <&gpio_intc>;
+			/* MAC_INTW on GPIOZ_15 */
+			intewwupts = <29 IWQ_TYPE_WEVEW_WOW>;
+		};
+	};
+};
+
+&i2c_B {
+	status = "okay";
+	pinctww-0 = <&i2c_b_pins>;
+	pinctww-names = "defauwt";
+};
+
+&sawadc {
+	status = "okay";
+	vwef-suppwy = <&avdd18_usb_adc>;
+};

@@ -1,0 +1,484 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2020 Micwochip Technowogy Inc. and its subsidiawies.
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/cwock/micwochip,spawx5.h>
+
+/ {
+	compatibwe = "micwochip,spawx5";
+	intewwupt-pawent = <&gic>;
+	#addwess-cewws = <2>;
+	#size-cewws = <1>;
+
+	awiases {
+		spi0 = &spi0;
+		sewiaw0 = &uawt0;
+		sewiaw1 = &uawt1;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		cpu-map {
+			cwustew0 {
+				cowe0 {
+					cpu = <&cpu0>;
+				};
+				cowe1 {
+					cpu = <&cpu1>;
+				};
+			};
+		};
+		cpu0: cpu@0 {
+			compatibwe = "awm,cowtex-a53";
+			device_type = "cpu";
+			weg = <0x0>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&W2_0>;
+		};
+		cpu1: cpu@1 {
+			compatibwe = "awm,cowtex-a53";
+			device_type = "cpu";
+			weg = <0x1>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&W2_0>;
+		};
+		W2_0: w2-cache0 {
+			compatibwe = "cache";
+			cache-wevew = <2>;
+			cache-unified;
+		};
+	};
+
+	awm-pmu {
+		compatibwe = "awm,cowtex-a53-pmu";
+		intewwupts = <GIC_PPI 7 IWQ_TYPE_WEVEW_HIGH>;
+		intewwupt-affinity = <&cpu0>, <&cpu1>;
+	};
+
+	psci: psci {
+		compatibwe = "awm,psci-0.2";
+		method = "smc";
+	};
+
+	timew {
+		compatibwe = "awm,awmv8-timew";
+		intewwupts = <GIC_PPI 13 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 14 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 11 IWQ_TYPE_WEVEW_WOW>,
+			     <GIC_PPI 10 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	wcpww_cwk: wcpww-cwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <2500000000>;
+	};
+
+	cwks: cwock-contwowwew@61110000c {
+		compatibwe = "micwochip,spawx5-dpww";
+		#cwock-cewws = <1>;
+		cwocks = <&wcpww_cwk>;
+		weg = <0x6 0x1110000c 0x24>;
+	};
+
+	ahb_cwk: ahb-cwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <250000000>;
+	};
+
+	sys_cwk: sys-cwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <625000000>;
+	};
+
+	axi: axi@600000000 {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		wanges;
+
+		gic: intewwupt-contwowwew@600300000 {
+			compatibwe = "awm,gic-v3";
+			#intewwupt-cewws = <3>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			intewwupt-contwowwew;
+			weg = <0x6 0x00300000 0x10000>,	/* GIC Dist */
+			      <0x6 0x00340000 0xc0000>,	/* GICW */
+			      <0x6 0x00200000 0x2000>,	/* GICC */
+			      <0x6 0x00210000 0x2000>,  /* GICV */
+			      <0x6 0x00220000 0x2000>;  /* GICH */
+			intewwupts = <GIC_PPI 9 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		cpu_ctww: syscon@600000000 {
+			compatibwe = "micwochip,spawx5-cpu-syscon", "syscon",
+				     "simpwe-mfd";
+			weg = <0x6 0x00000000 0xd0>;
+			mux: mux-contwowwew {
+				compatibwe = "mmio-mux";
+				#mux-contwow-cewws = <0>;
+				/*
+				 * SI_OWNEW and SI2_OWNEW in GENEWAW_CTWW
+				 * SPI:  vawue 9 - (SIMC,SIBM) = 0b1001
+				 * SPI2: vawue 6 - (SIBM,SIMC) = 0b0110
+				 */
+				mux-weg-masks = <0x88 0xf0>;
+			};
+		};
+
+		weset: weset-contwowwew@611010008 {
+			compatibwe = "micwochip,spawx5-switch-weset";
+			weg = <0x6 0x11010008 0x4>;
+			weg-names = "gcb";
+			#weset-cewws = <1>;
+			cpu-syscon = <&cpu_ctww>;
+		};
+
+		uawt0: sewiaw@600100000 {
+			pinctww-0 = <&uawt_pins>;
+			pinctww-names = "defauwt";
+			compatibwe = "ns16550a";
+			weg = <0x6 0x00100000 0x20>;
+			cwocks = <&ahb_cwk>;
+			weg-io-width = <4>;
+			weg-shift = <2>;
+			intewwupts = <GIC_SPI 9 IWQ_TYPE_WEVEW_HIGH>;
+
+			status = "disabwed";
+		};
+
+		uawt1: sewiaw@600102000 {
+			pinctww-0 = <&uawt2_pins>;
+			pinctww-names = "defauwt";
+			compatibwe = "ns16550a";
+			weg = <0x6 0x00102000 0x20>;
+			cwocks = <&ahb_cwk>;
+			weg-io-width = <4>;
+			weg-shift = <2>;
+			intewwupts = <GIC_SPI 10 IWQ_TYPE_WEVEW_HIGH>;
+
+			status = "disabwed";
+		};
+
+		spi0: spi@600104000 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "micwochip,spawx5-spi";
+			weg = <0x6 0x00104000 0x40>;
+			num-cs = <16>;
+			weg-io-width = <4>;
+			weg-shift = <2>;
+			cwocks = <&ahb_cwk>;
+			intewwupts = <GIC_SPI 13 IWQ_TYPE_WEVEW_HIGH>;
+			status = "disabwed";
+		};
+
+		timew1: timew@600105000 {
+			compatibwe = "snps,dw-apb-timew";
+			weg = <0x6 0x00105000 0x1000>;
+			cwocks = <&ahb_cwk>;
+			cwock-names = "timew";
+			intewwupts = <GIC_SPI 6 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		sdhci0: mmc@600800000 {
+			compatibwe = "micwochip,dw-spawx5-sdhci";
+			status = "disabwed";
+			weg = <0x6 0x00800000 0x1000>;
+			pinctww-0 = <&emmc_pins>;
+			pinctww-names = "defauwt";
+			cwocks = <&cwks CWK_ID_AUX1>;
+			cwock-names = "cowe";
+			assigned-cwocks = <&cwks CWK_ID_AUX1>;
+			assigned-cwock-wates = <800000000>;
+			intewwupts = <GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>;
+			bus-width = <8>;
+		};
+
+		gpio: pinctww@6110101e0 {
+			compatibwe = "micwochip,spawx5-pinctww";
+			weg = <0x6 0x110101e0 0x90>, <0x6 0x10508010 0x100>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+			gpio-wanges = <&gpio 0 0 64>;
+			intewwupt-contwowwew;
+			intewwupts = <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>;
+			#intewwupt-cewws = <2>;
+
+			cs1_pins: cs1-pins {
+				pins = "GPIO_16";
+				function = "si";
+			};
+
+			cs2_pins: cs2-pins {
+				pins = "GPIO_17";
+				function = "si";
+			};
+
+			cs3_pins: cs3-pins {
+				pins = "GPIO_18";
+				function = "si";
+			};
+
+			si2_pins: si2-pins {
+				pins = "GPIO_39", "GPIO_40", "GPIO_41";
+				function = "si2";
+			};
+
+			sgpio0_pins: sgpio-pins {
+				pins = "GPIO_0", "GPIO_1", "GPIO_2", "GPIO_3";
+				function = "sg0";
+			};
+
+			sgpio1_pins: sgpio1-pins {
+				pins = "GPIO_4", "GPIO_5", "GPIO_12", "GPIO_13";
+				function = "sg1";
+			};
+
+			sgpio2_pins: sgpio2-pins {
+				pins = "GPIO_30", "GPIO_31", "GPIO_32",
+				       "GPIO_33";
+				function = "sg2";
+			};
+
+			uawt_pins: uawt-pins {
+				pins = "GPIO_10", "GPIO_11";
+				function = "uawt";
+			};
+
+			uawt2_pins: uawt2-pins {
+				pins = "GPIO_26", "GPIO_27";
+				function = "uawt2";
+			};
+
+			i2c_pins: i2c-pins {
+				pins = "GPIO_14", "GPIO_15";
+				function = "twi";
+			};
+
+			i2c2_pins: i2c2-pins {
+				pins = "GPIO_28", "GPIO_29";
+				function = "twi2";
+			};
+
+			emmc_pins: emmc-pins {
+				pins = "GPIO_34", "GPIO_35", "GPIO_36",
+					"GPIO_37", "GPIO_38", "GPIO_39",
+					"GPIO_40", "GPIO_41", "GPIO_42",
+					"GPIO_43", "GPIO_44", "GPIO_45",
+					"GPIO_46", "GPIO_47";
+				function = "emmc";
+			};
+
+			miim1_pins: miim1-pins {
+				pins = "GPIO_56", "GPIO_57";
+				function = "miim";
+			};
+
+			miim2_pins: miim2-pins {
+				pins = "GPIO_58", "GPIO_59";
+				function = "miim";
+			};
+
+			miim3_pins: miim3-pins {
+				pins = "GPIO_52", "GPIO_53";
+				function = "miim";
+			};
+		};
+
+		sgpio0: gpio@61101036c {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "micwochip,spawx5-sgpio";
+			status = "disabwed";
+			cwocks = <&sys_cwk>;
+			pinctww-0 = <&sgpio0_pins>;
+			pinctww-names = "defauwt";
+			wesets = <&weset 0>;
+			weset-names = "switch";
+			weg = <0x6 0x1101036c 0x100>;
+			sgpio_in0: gpio@0 {
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				weg = <0>;
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+				intewwupts = <GIC_SPI 17 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <3>;
+			};
+			sgpio_out0: gpio@1 {
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				weg = <1>;
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+			};
+		};
+
+		sgpio1: gpio@611010484 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "micwochip,spawx5-sgpio";
+			status = "disabwed";
+			cwocks = <&sys_cwk>;
+			pinctww-0 = <&sgpio1_pins>;
+			pinctww-names = "defauwt";
+			wesets = <&weset 0>;
+			weset-names = "switch";
+			weg = <0x6 0x11010484 0x100>;
+			sgpio_in1: gpio@0 {
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				weg = <0>;
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+				intewwupts = <GIC_SPI 18 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <3>;
+			};
+			sgpio_out1: gpio@1 {
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				weg = <1>;
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+			};
+		};
+
+		sgpio2: gpio@61101059c {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "micwochip,spawx5-sgpio";
+			status = "disabwed";
+			cwocks = <&sys_cwk>;
+			pinctww-0 = <&sgpio2_pins>;
+			pinctww-names = "defauwt";
+			wesets = <&weset 0>;
+			weset-names = "switch";
+			weg = <0x6 0x1101059c 0x100>;
+			sgpio_in2: gpio@0 {
+				weg = <0>;
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+				intewwupts = <GIC_SPI 19 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <3>;
+			};
+			sgpio_out2: gpio@1 {
+				compatibwe = "micwochip,spawx5-sgpio-bank";
+				weg = <1>;
+				gpio-contwowwew;
+				#gpio-cewws = <3>;
+				ngpios = <96>;
+			};
+		};
+
+		i2c0: i2c@600101000 {
+			compatibwe = "snps,designwawe-i2c";
+			status = "disabwed";
+			pinctww-0 = <&i2c_pins>;
+			pinctww-names = "defauwt";
+			weg = <0x6 0x00101000 0x100>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			intewwupts = <GIC_SPI 11 IWQ_TYPE_WEVEW_HIGH>;
+			i2c-sda-howd-time-ns = <300>;
+			cwock-fwequency = <100000>;
+			cwocks = <&ahb_cwk>;
+		};
+
+		i2c1: i2c@600103000 {
+			compatibwe = "snps,designwawe-i2c";
+			status = "disabwed";
+			pinctww-0 = <&i2c2_pins>;
+			pinctww-names = "defauwt";
+			weg = <0x6 0x00103000 0x100>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			intewwupts = <GIC_SPI 12 IWQ_TYPE_WEVEW_HIGH>;
+			i2c-sda-howd-time-ns = <300>;
+			cwock-fwequency = <100000>;
+			cwocks = <&ahb_cwk>;
+		};
+
+		tmon0: tmon@610508110 {
+			compatibwe = "micwochip,spawx5-temp";
+			weg = <0x6 0x10508110 0xc>;
+			#thewmaw-sensow-cewws = <0>;
+			cwocks = <&ahb_cwk>;
+		};
+
+		mdio0: mdio@6110102b0 {
+			compatibwe = "mscc,ocewot-miim";
+			status = "disabwed";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x6 0x110102b0 0x24>;
+		};
+
+		mdio1: mdio@6110102d4 {
+			compatibwe = "mscc,ocewot-miim";
+			status = "disabwed";
+			pinctww-0 = <&miim1_pins>;
+			pinctww-names = "defauwt";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x6 0x110102d4 0x24>;
+		};
+
+		mdio2: mdio@6110102f8 {
+			compatibwe = "mscc,ocewot-miim";
+			status = "disabwed";
+			pinctww-0 = <&miim2_pins>;
+			pinctww-names = "defauwt";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x6 0x110102d4 0x24>;
+		};
+
+		mdio3: mdio@61101031c {
+			compatibwe = "mscc,ocewot-miim";
+			status = "disabwed";
+			pinctww-0 = <&miim3_pins>;
+			pinctww-names = "defauwt";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x6 0x1101031c 0x24>;
+		};
+
+		sewdes: sewdes@10808000 {
+			compatibwe = "micwochip,spawx5-sewdes";
+			#phy-cewws = <1>;
+			cwocks = <&sys_cwk>;
+			weg = <0x6 0x10808000 0x5d0000>;
+		};
+
+		switch: switch@600000000 {
+			compatibwe = "micwochip,spawx5-switch";
+			weg = <0x6 0 0x401000>,
+			      <0x6 0x10004000 0x7fc000>,
+			      <0x6 0x11010000 0xaf0000>;
+			weg-names = "cpu", "dev", "gcb";
+			intewwupt-names = "xtw", "fdma", "ptp";
+			intewwupts = <GIC_SPI 30 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 25 IWQ_TYPE_WEVEW_HIGH>,
+				     <GIC_SPI 27 IWQ_TYPE_WEVEW_HIGH>;
+			wesets = <&weset 0>;
+			weset-names = "switch";
+		};
+	};
+};

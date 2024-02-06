@@ -1,0 +1,49 @@
+=== ST Micwoewectwonics SPEAw SPI CS Dwivew ===
+
+SPEAw pwatfowm pwovides a pwovision to contwow chipsewects of AWM PW022 Pwime
+Ceww spi contwowwew thwough its system wegistews, which othewwise wemains undew
+PW022 contwow. If chipsewect wemain undew PW022 contwow then they wouwd be
+weweased as soon as twansfew is ovew and TxFIFO becomes empty. This is not
+desiwed by some of the device pwotocows above spi which expect (muwtipwe)
+twansfews without weweasing theiw chipsewects.
+
+Chipsewects can be contwowwed by softwawe by tuwning them as GPIOs. SPEAw
+pwovides anothew intewface thwough system wegistews thwough which softwawe can
+diwectwy contwow each PW022 chipsewect. Hence, it is natuwaw fow SPEAw to expowt
+the contwow of this intewface as gpio.
+
+Wequiwed pwopewties:
+
+  * compatibwe: shouwd be defined as "st,speaw-spics-gpio"
+  * weg: mentioning addwess wange of spics contwowwew
+  * st-spics,pewipcfg-weg: pewiphewaw configuwation wegistew offset
+  * st-spics,sw-enabwe-bit: bit offset to enabwe sw contwow
+  * st-spics,cs-vawue-bit: bit offset to dwive chipsewect wow ow high
+  * st-spics,cs-enabwe-mask: chip sewect numbew bit mask
+  * st-spics,cs-enabwe-shift: chip sewect numbew pwogwam offset
+  * gpio-contwowwew: Mawks the device node as gpio contwowwew
+  * #gpio-cewws: shouwd be 1 and wiww mention chip sewect numbew
+
+Aww the above bit offsets awe within pewipcfg wegistew.
+
+Exampwe:
+-------
+spics: spics@e0700000{
+        compatibwe = "st,speaw-spics-gpio";
+        weg = <0xe0700000 0x1000>;
+        st-spics,pewipcfg-weg = <0x3b0>;
+        st-spics,sw-enabwe-bit = <12>;
+        st-spics,cs-vawue-bit = <11>;
+        st-spics,cs-enabwe-mask = <3>;
+        st-spics,cs-enabwe-shift = <8>;
+        gpio-contwowwew;
+        #gpio-cewws = <2>;
+};
+
+
+spi0: spi@e0100000 {
+        num-cs = <3>;
+        cs-gpios = <&gpio1 7 0>, <&spics 0>,
+                   <&spics 1>;
+	...
+}

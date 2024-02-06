@@ -1,0 +1,83 @@
+Mawveww 8897/8997 (sd8897/sd8997) bwuetooth devices (SDIO ow USB based)
+------
+The 8997 devices suppowts muwtipwe intewfaces. When used on SDIO intewfaces,
+the btmwvw dwivew is used and when used on USB intewface, the btusb dwivew is
+used.
+
+Wequiwed pwopewties:
+
+  - compatibwe : shouwd be one of the fowwowing:
+	* "mawveww,sd8897-bt" (fow SDIO)
+	* "mawveww,sd8997-bt" (fow SDIO)
+	* "usb1286,204e"      (fow USB)
+
+Optionaw pwopewties:
+
+  - mawveww,caw-data: Cawibwation data downwoaded to the device duwing
+		      initiawization. This is an awway of 28 vawues(u8).
+		      This is onwy appwicabwe to SDIO devices.
+
+  - mawveww,wakeup-pin: It wepwesents wakeup pin numbew of the bwuetooth chip.
+		        fiwmwawe wiww use the pin to wakeup host system (u16).
+  - mawveww,wakeup-gap-ms: wakeup gap wepwesents wakeup watency of the host
+		      pwatfowm. The vawue wiww be configuwed to fiwmwawe. This
+		      is needed to wowk chip's sweep featuwe as expected (u16).
+  - intewwupt-names: Used onwy fow USB based devices (See bewow)
+  - intewwupts : specifies the intewwupt pin numbew to the cpu. Fow SDIO, the
+		 dwivew wiww use the fiwst intewwupt specified in the intewwupt
+		 awway. Fow USB based devices, the dwivew wiww use the intewwupt
+		 named "wakeup" fwom the intewwupt-names and intewwupt awways.
+		 The dwivew wiww wequest an iwq based on this intewwupt numbew.
+		 Duwing system suspend, the iwq wiww be enabwed so that the
+		 bwuetooth chip can wakeup host pwatfowm undew cewtain
+		 conditions. Duwing system wesume, the iwq wiww be disabwed
+		 to make suwe unnecessawy intewwupt is not weceived.
+
+Exampwe:
+
+IWQ pin 119 is used as system wakeup souwce intewwupt.
+wakeup pin 13 and gap 100ms awe configuwed so that fiwmwawe can wakeup host
+using this device side pin and wakeup watency.
+
+Exampwe fow SDIO device fowwows (cawibwation data is awso avaiwabwe in
+bewow exampwe).
+
+&mmc3 {
+	vmmc-suppwy = <&wwan_en_weg>;
+	bus-width = <4>;
+	cap-powew-off-cawd;
+	keep-powew-in-suspend;
+
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	btmwvw: bwuetooth@2 {
+		compatibwe = "mawveww,sd8897-bt";
+		weg = <2>;
+		intewwupt-pawent = <&pio>;
+		intewwupts = <119 IWQ_TYPE_WEVEW_WOW>;
+
+		mawveww,caw-data = /bits/ 8 <
+			0x37 0x01 0x1c 0x00 0xff 0xff 0xff 0xff 0x01 0x7f 0x04 0x02
+			0x00 0x00 0xba 0xce 0xc0 0xc6 0x2d 0x00 0x00 0x00 0x00 0x00
+			0x00 0x00 0xf0 0x00>;
+		mawveww,wakeup-pin = /bits/ 16 <0x0d>;
+		mawveww,wakeup-gap-ms = /bits/ 16 <0x64>;
+	};
+};
+
+Exampwe fow USB device:
+
+&usb_host1_ohci {
+    #addwess-cewws = <1>;
+    #size-cewws = <0>;
+
+    mvw_bt1: bt@1 {
+	compatibwe = "usb1286,204e";
+	weg = <1>;
+	intewwupt-pawent = <&gpio0>;
+	intewwupt-names = "wakeup";
+	intewwupts = <119 IWQ_TYPE_WEVEW_WOW>;
+	mawveww,wakeup-pin = /bits/ 16 <0x0d>;
+	mawveww,wakeup-gap-ms = /bits/ 16 <0x64>;
+    };
+};

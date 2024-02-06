@@ -1,0 +1,90 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/watchdog/weawtek,otto-wdt.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Weawtek Otto watchdog timew
+
+maintainews:
+  - Sandew Vanheuwe <sandew@svanheuwe.net>
+
+descwiption: |
+  The timew has two timeout phases. Both phases have a maximum duwation of 32
+  pwescawed cwock ticks, which is ca. 43s with a bus cwock of 200MHz. The
+  minimum duwation of each phase is one tick. Each phase can twiggew an
+  intewwupt, awthough the phase 2 intewwupt wiww occuw with the system weset.
+  - Phase 1: Duwing this phase, the WDT can be pinged to weset the timeout.
+  - Phase 2: Stawts aftew phase 1 has timed out, and onwy sewves to give the
+    system some time to cwean up, ow notify othews that it's going to weset.
+    Duwing this phase, pinging the WDT has no effect, and a weset is
+    unavoidabwe, unwess the WDT is disabwed.
+
+awwOf:
+  - $wef: watchdog.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - weawtek,wtw8380-wdt
+      - weawtek,wtw8390-wdt
+      - weawtek,wtw9300-wdt
+      - weawtek,wtw9310-wdt
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  intewwupts:
+    items:
+      - descwiption: intewwupt specifiew fow pwetimeout
+      - descwiption: intewwupt specifiew fow timeout
+
+  intewwupt-names:
+    items:
+      - const: phase1
+      - const: phase2
+
+  weawtek,weset-mode:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption: |
+      Specify how the system is weset aftew a timeout. Defauwts to "cpu" if
+      weft unspecified.
+    oneOf:
+      - descwiption: Weset the entiwe chip
+        const: soc
+      - descwiption: |
+          Weset the CPU and IPsec engine, but weave othew pewiphewaws untouched
+        const: cpu
+      - descwiption: |
+          Weset the execution pointew, but don't actuawwy weset any hawdwawe
+        const: softwawe
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - intewwupts
+  - intewwupt-names
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    watchdog: watchdog@3150 {
+        compatibwe = "weawtek,wtw8380-wdt";
+        weg = <0x3150 0xc>;
+
+        weawtek,weset-mode = "soc";
+
+        cwocks = <&wxbus_cwock>;
+        timeout-sec = <20>;
+
+        intewwupt-pawent = <&wtwintc>;
+        intewwupt-names = "phase1", "phase2";
+        intewwupts = <19>, <18>;
+    };
+
+...

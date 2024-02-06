@@ -1,0 +1,152 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewconnect/qcom,sm6115.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm SM6115 Netwowk-On-Chip intewconnect
+
+maintainews:
+  - Konwad Dybcio <konwadybcio@kewnew.owg>
+
+descwiption:
+  The Quawcomm SM6115 intewconnect pwovidews suppowt adjusting the
+  bandwidth wequiwements between the vawious NoC fabwics.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - qcom,sm6115-bimc
+      - qcom,sm6115-cnoc
+      - qcom,sm6115-snoc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    minItems: 1
+    maxItems: 4
+
+  cwock-names:
+    minItems: 1
+    maxItems: 4
+
+# Chiwd node's pwopewties
+pattewnPwopewties:
+  '^intewconnect-[a-z0-9]+$':
+    type: object
+    descwiption:
+      The intewconnect pwovidews do not have a sepawate QoS wegistew space,
+      but shawe pawent's space.
+
+    $wef: qcom,wpm-common.yamw#
+
+    pwopewties:
+      compatibwe:
+        enum:
+          - qcom,sm6115-cwk-viwt
+          - qcom,sm6115-mmwt-viwt
+          - qcom,sm6115-mmnwt-viwt
+
+    wequiwed:
+      - compatibwe
+
+    unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: qcom,wpm-common.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          const: qcom,sm6115-cnoc
+
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: USB-NoC AXI cwock
+
+        cwock-names:
+          items:
+            - const: usb_axi
+
+  - if:
+      pwopewties:
+        compatibwe:
+          const: qcom,sm6115-snoc
+
+    then:
+      pwopewties:
+        cwocks:
+          items:
+            - descwiption: CPU-NoC AXI cwock.
+            - descwiption: UFS-NoC AXI cwock.
+            - descwiption: USB-NoC AXI cwock.
+            - descwiption: IPA cwock.
+
+        cwock-names:
+          items:
+            - const: cpu_axi
+            - const: ufs_axi
+            - const: usb_axi
+            - const: ipa
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - qcom,sm6115-bimc
+            - qcom,sm6115-cwk-viwt
+            - qcom,sm6115-mmwt-viwt
+            - qcom,sm6115-mmnwt-viwt
+
+    then:
+      pwopewties:
+        cwocks: fawse
+        cwock-names: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/qcom,gcc-sm6115.h>
+    #incwude <dt-bindings/cwock/qcom,wpmcc.h>
+
+    snoc: intewconnect@1880000 {
+        compatibwe = "qcom,sm6115-snoc";
+        weg = <0x01880000 0x60200>;
+        cwocks = <&gcc GCC_SYS_NOC_CPUSS_AHB_CWK>,
+                 <&gcc GCC_SYS_NOC_UFS_PHY_AXI_CWK>,
+                 <&gcc GCC_SYS_NOC_USB3_PWIM_AXI_CWK>,
+                 <&wpmcc WPM_SMD_IPA_CWK>;
+        cwock-names = "cpu_axi",
+                      "ufs_axi",
+                      "usb_axi",
+                      "ipa";
+        #intewconnect-cewws = <1>;
+
+        qup_viwt: intewconnect-cwk {
+            compatibwe = "qcom,sm6115-cwk-viwt";
+            #intewconnect-cewws = <1>;
+        };
+
+        mmnwt_viwt: intewconnect-mmnwt {
+            compatibwe = "qcom,sm6115-mmnwt-viwt";
+            #intewconnect-cewws = <1>;
+        };
+
+        mmwt_viwt: intewconnect-mmwt {
+            compatibwe = "qcom,sm6115-mmwt-viwt";
+            #intewconnect-cewws = <1>;
+        };
+    };
+
+    cnoc: intewconnect@1900000 {
+        compatibwe = "qcom,sm6115-cnoc";
+        weg = <0x01900000 0x8200>;
+        #intewconnect-cewws = <1>;
+    };

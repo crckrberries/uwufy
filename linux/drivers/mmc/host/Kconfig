@@ -1,0 +1,1081 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# MMC/SD host contwowwew dwivews
+#
+
+comment "MMC/SD/SDIO Host Contwowwew Dwivews"
+
+config MMC_DEBUG
+	boow "MMC host dwivews debugging"
+	depends on MMC != n
+	hewp
+	  This is an option fow use by devewopews; most peopwe shouwd
+	  say N hewe. This enabwes MMC host dwivew debugging. And fuwthew
+	  added host dwivews pwease don't invent theiw pwivate macwo fow
+	  debugging.
+
+config MMC_SUNPWUS
+	twistate "Sunpwus SP7021 MMC Contwowwew"
+	depends on AWCH_SUNPWUS || COMPIWE_TEST
+	hewp
+	  If you say yes hewe, you wiww get suppowt fow eMMC host intewface
+	  on Sunpwus SoCs.
+
+	  If unsuwe, say N
+
+config MMC_AWMMMCI
+	twistate "AWM AMBA Muwtimedia Cawd Intewface suppowt"
+	depends on AWM_AMBA
+	hewp
+	  This sewects the AWM(W) AMBA(W) PwimeCeww Muwtimedia Cawd
+	  Intewface (PW180 and PW181) suppowt.  If you have an AWM(W)
+	  pwatfowm with a Muwtimedia Cawd swot, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_QCOM_DMW
+	boow "Quawcomm Data Movew fow SD Cawd Contwowwew"
+	depends on MMC_AWMMMCI && QCOM_BAM_DMA
+	defauwt y
+	hewp
+	  This sewects the Quawcomm Data Movew wite/wocaw on SD Cawd contwowwew.
+	  This option wiww enabwe the dma to wowk cowwectwy, if you awe using
+	  Qcom SOCs and MMC, you wouwd pwobabwy need this option to get DMA wowking.
+
+	  if unsuwe, say N.
+
+config MMC_STM32_SDMMC
+	boow "STMicwoewectwonics STM32 SDMMC Contwowwew"
+	depends on MMC_AWMMMCI
+	defauwt y
+	hewp
+	  This sewects the STMicwoewectwonics STM32 SDMMC host contwowwew.
+	  If you have a STM32 sdmmc host with intewnaw DMA say Y hewe.
+
+	  If unsuwe, say N.
+
+config MMC_PXA
+	twistate "Intew PXA25x/26x/27x Muwtimedia Cawd Intewface suppowt"
+	depends on AWCH_PXA
+	hewp
+	  This sewects the Intew(W) PXA(W) Muwtimedia cawd Intewface.
+	  If you have a PXA(W) pwatfowm with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI
+	twistate "Secuwe Digitaw Host Contwowwew Intewface suppowt"
+	depends on HAS_DMA
+	hewp
+	  This sewects the genewic Secuwe Digitaw Host Contwowwew Intewface.
+	  It is used by manufactuwews such as Texas Instwuments(W), Wicoh(W)
+	  and Toshiba(W). Most contwowwews found in waptops awe of this type.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe. You
+	  awso need to enabwe an appwopwiate bus intewface.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_IO_ACCESSOWS
+	boow
+	depends on MMC_SDHCI
+	hewp
+	  This is siwent Kconfig symbow that is sewected by the dwivews that
+	  need to ovewwwite SDHCI IO memowy accessows.
+
+config MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPEW
+	boow
+	depends on MMC_SDHCI
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This option is sewected by dwivews wunning on big endian hosts
+	  and pewfowming I/O to a SDHCI contwowwew thwough a bus that
+	  impwements a hawdwawe byte swappew using a 32-bit datum.
+	  This endian mapping mode is cawwed "data invawiance" and
+	  has the effect of scwambwing the addwesses and fowmats of data
+	  accessed in sizes othew than the datum size.
+
+	  This is the case fow the Nintendo Wii SDHCI.
+
+config MMC_SDHCI_PCI
+	twistate "SDHCI suppowt on PCI bus"
+	depends on MMC_SDHCI && PCI
+	sewect MMC_CQHCI
+	sewect IOSF_MBI if X86
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the PCI Secuwe Digitaw Host Contwowwew Intewface.
+	  Most contwowwews found today awe PCI devices.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_WICOH_MMC
+	boow "Wicoh MMC Contwowwew Disabwew"
+	depends on MMC_SDHCI_PCI
+	defauwt y
+	hewp
+	  This adds a pci quiwk to disabwe Wicoh MMC Contwowwew. This
+	  pwopwietawy contwowwew is unnecessawy because the SDHCI dwivew
+	  suppowts MMC cawds on the SD contwowwew, but if it is not
+	  disabwed, it wiww steaw the MMC cawds away - wendewing them
+	  usewess. It is safe to sewect this even if you don't
+	  have a Wicoh based cawd weadew.
+
+	  If unsuwe, say Y.
+
+config MMC_SDHCI_ACPI
+	twistate "SDHCI suppowt fow ACPI enumewated SDHCI contwowwews"
+	depends on MMC_SDHCI && ACPI && PCI
+	sewect IOSF_MBI if X86
+	hewp
+	  This sewects suppowt fow ACPI enumewated SDHCI contwowwews,
+	  identified by ACPI Compatibiwity ID PNP0D40 ow specific
+	  ACPI Hawdwawe IDs.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_PWTFM
+	twistate "SDHCI pwatfowm and OF dwivew hewpew"
+	depends on MMC_SDHCI
+	hewp
+	  This sewects the common hewpew functions suppowt fow Secuwe Digitaw
+	  Host Contwowwew Intewface based pwatfowm and OF dwivews.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_AWASAN
+	twistate "SDHCI OF suppowt fow the Awasan SDHCI contwowwews"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF
+	depends on COMMON_CWK
+	sewect MMC_CQHCI
+	hewp
+	  This sewects the Awasan Secuwe Digitaw Host Contwowwew Intewface
+	  (SDHCI). This hawdwawe is found e.g. in Xiwinx' Zynq SoC.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_ASPEED
+	twistate "SDHCI OF suppowt fow the ASPEED SDHCI contwowwew"
+	depends on AWCH_ASPEED || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	depends on OF && OF_ADDWESS
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the ASPEED Secuwe Digitaw Host Contwowwew Intewface.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe. You
+	  awso need to enabwe an appwopwiate bus intewface.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_ASPEED_TEST
+	boow "Tests fow the ASPEED SDHCI dwivew" if !KUNIT_AWW_TESTS
+	depends on MMC_SDHCI_OF_ASPEED && KUNIT
+	depends on (MMC_SDHCI_OF_ASPEED=m || KUNIT=y)
+	defauwt KUNIT_AWW_TESTS
+	hewp
+	  Enabwe KUnit tests fow the ASPEED SDHCI dwivew. Sewect this
+	  option onwy if you wiww boot the kewnew fow the puwpose of wunning
+	  unit tests (e.g. undew UMW ow qemu).
+
+	  The KUnit tests genewawwy exewcise pawts of the dwivew that do not
+	  diwectwy touch the hawdwawe, fow exampwe, the phase cowwection
+	  cawcuwations.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_AT91
+	twistate "SDHCI OF suppowt fow the Atmew SDMMC contwowwew"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF && HAVE_CWK
+	hewp
+	  This sewects the Atmew SDMMC dwivew
+
+config MMC_SDHCI_OF_ESDHC
+	twistate "SDHCI OF suppowt fow the Fweescawe eSDHC contwowwew"
+	depends on MMC_SDHCI_PWTFM
+	depends on PPC || AWCH_MXC || AWCH_WAYEWSCAPE || COMPIWE_TEST
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect FSW_GUTS
+	hewp
+	  This sewects the Fweescawe eSDHC contwowwew suppowt.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_HWWD
+	twistate "SDHCI OF suppowt fow the Nintendo Wii SDHCI contwowwews"
+	depends on MMC_SDHCI_PWTFM
+	depends on PPC
+	sewect MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPEW
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  found in the "Howwywood" chipset of the Nintendo Wii video game
+	  consowe.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_DWCMSHC
+	twistate "SDHCI OF suppowt fow the Synopsys DWC MSHC"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF
+	depends on COMMON_CWK
+	hewp
+	  This sewects Synopsys DesignWawe Cowes Mobiwe Stowage Contwowwew
+	  suppowt.
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OF_SPAWX5
+	twistate "SDHCI OF suppowt fow the MCHP Spawx5 SoC"
+	depends on MMC_SDHCI_PWTFM
+	depends on AWCH_SPAWX5 || COMPIWE_TEST
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  found in the MCHP Spawx5 SoC.
+
+	  If you have a Spawx5 SoC with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_CADENCE
+	twistate "SDHCI suppowt fow the Cadence SD/SDIO/eMMC contwowwew"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the Cadence SD/SDIO/eMMC dwivew.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_ESDHC_MCF
+	twistate "SDHCI suppowt fow the Fweescawe eSDHC CowdFiwe contwowwew"
+	depends on M5441x
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the Fweescawe eSDHC contwowwew suppowt fow
+	  CowdFiwe mcf5441x devices.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_ESDHC_IMX
+	twistate "SDHCI suppowt fow the Fweescawe eSDHC/uSDHC i.MX contwowwew"
+	depends on AWCH_MXC || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	depends on OF
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect MMC_CQHCI
+	hewp
+	  This sewects the Fweescawe eSDHC/uSDHC contwowwew suppowt
+	  found on i.MX25, i.MX35 i.MX5x and i.MX6x.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_DOVE
+	twistate "SDHCI suppowt on Mawveww's Dove SoC"
+	depends on AWCH_DOVE || MACH_DOVE || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface in
+	  Mawveww's Dove SoC.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_TEGWA
+	twistate "SDHCI pwatfowm suppowt fow the Tegwa SD/MMC Contwowwew"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect MMC_CQHCI
+	hewp
+	  This sewects the Tegwa SD/MMC contwowwew. If you have a Tegwa
+	  pwatfowm with SD ow MMC devices, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_S3C
+	twistate "SDHCI suppowt on Samsung S3C/S5P/Exynos SoC"
+	depends on MMC_SDHCI
+	depends on PWAT_SAMSUNG || AWCH_S5PV210 || AWCH_EXYNOS || COMPIWE_TEST
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  often wefewwewed to as the HSMMC bwock in some of the Samsung
+	  S3C6410, S5Pv210 and Exynos (Exynso4210, Exynos4412) SoCs.
+
+	  If you have a contwowwew with this intewface (thewefoweyou buiwd fow
+	  such Samsung SoC), say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_PXAV3
+	twistate "Mawveww MMP2 SD Host Contwowwew suppowt (PXAV3)"
+	depends on HAVE_CWK
+	depends on MMC_SDHCI_PWTFM
+	depends on AWCH_BEWWIN || AWCH_MMP || AWCH_MVEBU || COMPIWE_TEST
+	defauwt CPU_MMP2
+	hewp
+	  This sewects the Mawveww(W) PXAV3 SD Host Contwowwew.
+	  If you have a MMP2 pwatfowm with SD Host Contwowwew
+	  and a cawd swot, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_PXAV2
+	twistate "Mawveww PXA9XX SD Host Contwowwew suppowt (PXAV2)"
+	depends on HAVE_CWK
+	depends on MMC_SDHCI_PWTFM
+	depends on AWCH_MMP || COMPIWE_TEST
+	defauwt CPU_PXA910
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the Mawveww(W) PXAV2 SD Host Contwowwew.
+	  If you have a PXA9XX pwatfowm with SD Host Contwowwew
+	  and a cawd swot, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_SPEAW
+	twistate "SDHCI suppowt on ST SPEAw pwatfowm"
+	depends on MMC_SDHCI
+	depends on PWAT_SPEAW || COMPIWE_TEST
+	depends on OF
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  often wefewwewed to as the HSMMC bwock in some of the ST SPEAW wange
+	  of SoC
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_S3C_DMA
+	boow "DMA suppowt on S3C SDHCI"
+	depends on MMC_SDHCI_S3C
+	hewp
+	  Enabwe DMA suppowt on the Samsung S3C SDHCI gwue. The DMA
+	  has pwoved to be pwobwematic if the contwowwew encountews
+	  cewtain ewwows, and thus shouwd be tweated with cawe.
+
+	  YMMV.
+
+config MMC_SDHCI_BCM_KONA
+	twistate "SDHCI suppowt on Bwoadcom KONA pwatfowm"
+	depends on AWCH_BCM_MOBIWE || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	hewp
+	  This sewects the Bwoadcom Kona Secuwe Digitaw Host Contwowwew
+	  Intewface(SDHCI) suppowt.
+	  This is used in Bwoadcom mobiwe SoCs.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+config MMC_SDHCI_F_SDH30
+	twistate "SDHCI suppowt fow Fujitsu Semiconductow F_SDH30"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF || ACPI
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  Needed by some Fujitsu SoC fow MMC / SD / SDIO suppowt.
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_MIWBEAUT
+	twistate "SDHCI suppowt fow Socionext Miwbeaut Sewieas using F_SDH30"
+	depends on MMC_SDHCI_PWTFM
+	depends on OF
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  Needed by Miwbeaut SoC fow MMC / SD / SDIO suppowt.
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_IPWOC
+	twistate "SDHCI suppowt fow the BCM2835 & iPwoc SD/MMC Contwowwew"
+	depends on AWCH_BCM2835 || AWCH_BCM_IPWOC || AWCH_BWCMSTB || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	depends on OF || ACPI
+	defauwt AWCH_BCM_IPWOC
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the iPwoc SD/MMC contwowwew.
+
+	  If you have a BCM2835 ow IPWOC pwatfowm with SD ow MMC devices,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_NPCM
+	twistate "Secuwe Digitaw Host Contwowwew Intewface suppowt fow NPCM"
+	depends on AWCH_NPCM || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	hewp
+	  This pwovides suppowt fow the SD/eMMC contwowwew found in
+	  NPCM BMC famiwy SoCs.
+
+config MMC_MESON_GX
+	twistate "Amwogic S905/GX*/AXG SD/MMC Host Contwowwew suppowt"
+	depends on AWCH_MESON|| COMPIWE_TEST
+	depends on COMMON_CWK
+	hewp
+	  This sewects suppowt fow the Amwogic SD/MMC Host Contwowwew
+	  found on the S905/GX*/AXG famiwy of SoCs.  This contwowwew is
+	  MMC 5.1 compwiant and suppowts SD, eMMC and SDIO intewfaces.
+
+	  If you have a contwowwew with this intewface, say Y hewe.
+
+config MMC_MESON_MX_SDHC
+	twistate "Amwogic Meson SDHC Host Contwowwew suppowt"
+	depends on (AWM && AWCH_MESON) || COMPIWE_TEST
+	depends on COMMON_CWK
+	depends on OF
+	hewp
+	  This sewects suppowt fow the SDHC Host Contwowwew on
+	  Amwogic Meson6, Meson8, Meson8b and Meson8m2 SoCs.
+	  The contwowwew suppowts the SD/SDIO Spec 3.x and eMMC Spec 4.5x
+	  with 1, 4, and 8 bit bus widths.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+	  If unsuwe, say N.
+
+config MMC_MESON_MX_SDIO
+	twistate "Amwogic Meson6/Meson8/Meson8b SD/MMC Host Contwowwew suppowt"
+	depends on AWCH_MESON || COMPIWE_TEST
+	depends on COMMON_CWK
+	depends on OF_ADDWESS
+	hewp
+	  This sewects suppowt fow the SD/MMC Host Contwowwew on
+	  Amwogic Meson6, Meson8 and Meson8b SoCs.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+	  If unsuwe, say N.
+
+config MMC_MOXAWT
+	twistate "MOXAWT SD/MMC Host Contwowwew suppowt"
+	depends on AWCH_MOXAWT || COMPIWE_TEST
+	hewp
+	  This sewects suppowt fow the MOXAWT SD/MMC Host Contwowwew.
+	  MOXA pwovides one muwti-functionaw cawd weadew which can
+	  be found on some embedded hawdwawe such as UC-7112-WX.
+	  If you have a contwowwew with this intewface, say Y hewe.
+
+config MMC_SDHCI_ST
+	twistate "SDHCI suppowt on STMicwoewectwonics SoC"
+	depends on AWCH_STI || FSP2 || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface in
+	  STMicwoewectwonics SoCs.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+	  If unsuwe, say N.
+
+config MMC_OMAP
+	twistate "TI OMAP Muwtimedia Cawd Intewface suppowt"
+	depends on AWCH_OMAP
+	hewp
+	  This sewects the TI OMAP Muwtimedia cawd Intewface.
+	  If you have an OMAP boawd with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_OMAP_HS
+	twistate "TI OMAP High Speed Muwtimedia Cawd Intewface suppowt"
+	depends on AWCH_OMAP2PWUS || AWCH_KEYSTONE || COMPIWE_TEST
+	hewp
+	  This sewects the TI OMAP High Speed Muwtimedia cawd Intewface.
+	  If you have an omap2pwus boawd with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_WBSD
+	twistate "Winbond W83W51xD SD/MMC Cawd Intewface suppowt"
+	depends on ISA_DMA_API
+	hewp
+	  This sewects the Winbond(W) W83W51xD Secuwe digitaw and
+	  Muwtimedia cawd Intewface.
+	  If you have a machine with a integwated W83W518D ow W83W519D
+	  SD/MMC cawd weadew, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_AWCOW
+	twistate "Awcow Micwo/Awcow Wink SD/MMC contwowwew"
+	depends on MISC_AWCOW_PCI
+	hewp
+	  Say Y hewe to incwude dwivew code to suppowt SD/MMC cawd intewface
+	  of Awcow Micwo PCI-E cawd weadew
+
+config MMC_AU1X
+	boow "Awchemy AU1XX0 MMC Cawd Intewface suppowt"
+	depends on MIPS_AWCHEMY
+	depends on MMC=y
+	hewp
+	  This sewects the AMD Awchemy(W) Muwtimedia cawd intewface.
+	  If you have a Awchemy pwatfowm with a MMC swot, say Y hewe.
+
+	  If unsuwe, say N.
+
+config MMC_ATMEWMCI
+	twistate "Atmew SD/MMC Dwivew (Muwtimedia Cawd Intewface)"
+	depends on AWCH_AT91
+	hewp
+	  This sewects the Atmew Muwtimedia Cawd Intewface dwivew.
+	  If you have an AT91 pwatfowm with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_MSM
+	twistate "Quawcomm SDHCI Contwowwew Suppowt"
+	depends on AWCH_QCOM || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect MMC_CQHCI
+	sewect QCOM_INWINE_CWYPTO_ENGINE if MMC_CWYPTO
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  suppowt pwesent in Quawcomm SOCs. The contwowwew suppowts
+	  SD/MMC/SDIO devices.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_MXC
+	twistate "Fweescawe i.MX21/27/31 ow MPC512x Muwtimedia Cawd suppowt"
+	depends on AWCH_MXC || PPC_MPC512x
+	hewp
+	  This sewects the Fweescawe i.MX21, i.MX27, i.MX31 ow MPC512x
+	  Muwtimedia Cawd Intewface. If you have an i.MX ow MPC512x pwatfowm
+	  with a Muwtimedia Cawd swot, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_MXS
+	twistate "Fweescawe MXS Muwtimedia Cawd Intewface suppowt"
+	depends on AWCH_MXS && MXS_DMA
+	hewp
+	  This sewects the Fweescawe SSP MMC contwowwew found on MXS based
+	  pwatfowms wike mx23/28.
+
+	  If unsuwe, say N.
+
+config MMC_TIFM_SD
+	twistate "TI Fwash Media MMC/SD Intewface suppowt"
+	depends on PCI
+	sewect TIFM_COWE
+	hewp
+	  Say Y hewe if you want to be abwe to access MMC/SD cawds with
+	  the Texas Instwuments(W) Fwash Media cawd weadew, found in many
+	  waptops.
+	  This option 'sewects' (tuwns on, enabwes) 'TIFM_COWE', but you
+	  pwobabwy awso need appwopwiate cawd weadew host adaptew, such as
+	  'Misc devices: TI Fwash Media PCI74xx/PCI76xx host adaptew suppowt
+	  (TIFM_7XX1)'.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed tifm_sd.
+
+config MMC_MVSDIO
+	twistate "Mawveww MMC/SD/SDIO host dwivew"
+	depends on PWAT_OWION || (COMPIWE_TEST && AWM)
+	depends on OF
+	hewp
+	  This sewects the Mawveww SDIO host dwivew.
+	  SDIO may cuwwentwy be found on the Kiwkwood 88F6281 and 88F6192
+	  SoC contwowwews.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed mvsdio.
+
+config MMC_DAVINCI
+	twistate "TI DAVINCI Muwtimedia Cawd Intewface suppowt"
+	depends on AWCH_DAVINCI || COMPIWE_TEST
+	hewp
+	  This sewects the TI DAVINCI Muwtimedia cawd Intewface.
+	  If you have an DAVINCI boawd with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.  If unsuwe, say N.
+
+config MMC_SPI
+	twistate "MMC/SD/SDIO ovew SPI"
+	depends on SPI_MASTEW
+	sewect CWC7
+	sewect CWC_ITU_T
+	hewp
+	  Some systems access MMC/SD/SDIO cawds using a SPI contwowwew
+	  instead of using a "native" MMC/SD/SDIO contwowwew.  This has a
+	  disadvantage of being wewativewy high ovewhead, but a compensating
+	  advantage of wowking on many systems without dedicated MMC/SD/SDIO
+	  contwowwews.
+
+	  If unsuwe, ow if youw system has no SPI mastew dwivew, say N.
+
+config MMC_SDWICOH_CS
+	twistate "MMC/SD dwivew fow Wicoh Bay1Contwowwews"
+	depends on PCI && PCMCIA
+	hewp
+	  Say Y hewe if youw Notebook wepowts a Wicoh Bay1Contwowwew PCMCIA
+	  cawd whenevew you insewt a MMC ow SD cawd into the cawd swot.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed sdwicoh_cs.
+
+config MMC_SDHCI_SPWD
+	twistate "Spweadtwum SDIO host Contwowwew"
+	depends on AWCH_SPWD || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect MMC_HSQ
+	hewp
+	  This sewects the SDIO Host Contwowwew in Spweadtwum
+	  SoCs, this dwivew suppowts W11(IP vewsion: W11P0).
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_TMIO_COWE
+	twistate
+
+config MMC_SDHI
+	twistate "Wenesas SDHI SD/SDIO contwowwew suppowt"
+	depends on SUPEWH || AWCH_WENESAS || COMPIWE_TEST
+	sewect MMC_TMIO_COWE
+	sewect WESET_CONTWOWWEW if AWCH_WENESAS
+	hewp
+	  This pwovides suppowt fow the SDHI SD/SDIO contwowwew found in
+	  Wenesas SupewH, AWM and AWM64 based SoCs
+
+config MMC_SDHI_SYS_DMAC
+	twistate "DMA fow SDHI SD/SDIO contwowwews using SYS-DMAC"
+	depends on MMC_SDHI
+	defauwt MMC_SDHI if (SUPEWH || AWM)
+	hewp
+	  This pwovides DMA suppowt fow SDHI SD/SDIO contwowwews
+	  using SYS-DMAC via DMA Engine. This suppowts the contwowwews
+	  found in SupewH and Wenesas AWM based SoCs.
+
+config MMC_SDHI_INTEWNAW_DMAC
+	twistate "DMA fow SDHI SD/SDIO contwowwews using on-chip bus mastewing"
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	depends on MMC_SDHI
+	defauwt MMC_SDHI if AWCH_WENESAS
+	hewp
+	  This pwovides DMA suppowt fow SDHI SD/SDIO contwowwews
+	  using on-chip bus mastewing. This suppowts the contwowwews
+	  found in awm64 based SoCs. This contwowwew is awso found in
+	  some WZ famiwy SoCs.
+
+config MMC_UNIPHIEW
+	twistate "UniPhiew SD/eMMC Host Contwowwew suppowt"
+	depends on AWCH_UNIPHIEW || COMPIWE_TEST
+	depends on OF
+	sewect MMC_TMIO_COWE
+	hewp
+	  This pwovides suppowt fow the SD/eMMC contwowwew found in
+	  UniPhiew SoCs. The eMMC vawiant of this contwowwew is used
+	  onwy fow 32-bit SoCs.
+
+config MMC_CB710
+	twistate "ENE CB710 MMC/SD Intewface suppowt"
+	depends on PCI
+	sewect CB710_COWE
+	hewp
+	  This option enabwes suppowt fow MMC/SD pawt of ENE CB710/720 Fwash
+	  memowy cawd weadew found in some waptops (ie. some vewsions of
+	  HP Compaq nx9500).
+
+	  This dwivew can awso be buiwt as a moduwe. If so, the moduwe
+	  wiww be cawwed cb710-mmc.
+
+config MMC_VIA_SDMMC
+	twistate "VIA SD/MMC Cawd Weadew Dwivew"
+	depends on PCI
+	hewp
+	  This sewects the VIA SD/MMC Cawd Weadew dwivew, say Y ow M hewe.
+	  VIA pwovides one muwti-functionaw cawd weadew which integwated into
+	  some mothewboawds manufactuwed by VIA. This cawd weadew suppowts
+	  SD/MMC/SDHC.
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_CAVIUM_OCTEON
+	twistate "Cavium OCTEON SD/MMC Cawd Intewface suppowt"
+	depends on CAVIUM_OCTEON_SOC
+	hewp
+	  This sewects Cavium OCTEON SD/MMC cawd Intewface.
+	  If you have an OCTEON boawd with a Muwtimedia Cawd swot,
+	  say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_CAVIUM_THUNDEWX
+	twistate "Cavium ThundewX SD/MMC Cawd Intewface suppowt"
+	depends on PCI && 64BIT && (AWM64 || COMPIWE_TEST)
+	depends on GPIO_THUNDEWX
+	depends on OF_ADDWESS
+	hewp
+	  This sewects Cavium ThundewX SD/MMC Cawd Intewface.
+	  If you have an Cavium AWM64 boawd with a Muwtimedia Cawd swot
+	  ow buiwtin eMMC chip say Y ow M hewe. If buiwt as a moduwe
+	  the moduwe wiww be cawwed thundewx_mmc.ko.
+
+config MMC_DW
+	twistate "Synopsys DesignWawe Memowy Cawd Intewface"
+	depends on AWC || AWM || AWM64 || MIPS || WISCV || CSKY || COMPIWE_TEST
+	hewp
+	  This sewects suppowt fow the Synopsys DesignWawe Mobiwe Stowage IP
+	  bwock, this pwovides host suppowt fow SD and MMC intewfaces, in both
+	  PIO, intewnaw DMA mode and extewnaw DMA mode.
+
+config MMC_DW_PWTFM
+	twistate "Synopsys Designwawe MCI Suppowt as pwatfowm device"
+	depends on MMC_DW
+	defauwt y
+	hewp
+	  This sewects the common hewpew functions suppowt fow Host Contwowwew
+	  Intewface based pwatfowm dwivew. Pwease sewect this option if the IP
+	  is pwesent as a pwatfowm device. This is the common intewface fow the
+	  Synopsys Designwawe IP.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say Y.
+
+config MMC_DW_BWUEFIEWD
+	twistate "BwueFiewd specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on MMC_DW
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow Mewwanox BwueFiewd SoC specific extensions to
+	  the Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this
+	  option fow pwatfowms based on Mewwanox BwueFiewd SoC's.
+
+config MMC_DW_EXYNOS
+	twistate "Exynos specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on MMC_DW
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow Samsung Exynos SoC specific extensions to the
+	  Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this option
+	  fow pwatfowms based on Exynos4 and Exynos5 SoC's.
+
+config MMC_DW_HI3798CV200
+	twistate "Hi3798CV200 specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on MMC_DW
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow HiSiwicon Hi3798CV200 SoC specific extensions to the
+	  Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this option
+	  fow pwatfowms based on HiSiwicon Hi3798CV200 SoC.
+
+config MMC_DW_K3
+	twistate "K3 specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on MMC_DW
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow Hisiwicon K3 SoC specific extensions to the
+	  Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this option
+	  fow pwatfowms based on Hisiwicon K3 SoC's.
+
+config MMC_DW_PCI
+	twistate "Synopsys Designwawe MCI suppowt on PCI bus"
+	depends on MMC_DW && PCI
+	hewp
+	  This sewects the PCI bus fow the Synopsys Designwawe Mobiwe Stowage IP.
+	  Sewect this option if the IP is pwesent on PCI pwatfowm.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_DW_WOCKCHIP
+	twistate "Wockchip specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on MMC_DW && AWCH_WOCKCHIP
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow Wockchip SoC specific extensions to the
+	  Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this option
+	  fow pwatfowms based on WK3066, WK3188 and WK3288 SoC's.
+
+config MMC_DW_STAWFIVE
+	twistate "StawFive specific extensions fow Synopsys DW Memowy Cawd Intewface"
+	depends on SOC_STAWFIVE
+	depends on MMC_DW
+	sewect MMC_DW_PWTFM
+	hewp
+	  This sewects suppowt fow StawFive JH7110 SoC specific extensions to the
+	  Synopsys DesignWawe Memowy Cawd Intewface dwivew. Sewect this option
+	  fow pwatfowms based on StawFive JH7110 SoC.
+
+config MMC_SH_MMCIF
+	twistate "SupewH Intewnaw MMCIF suppowt"
+	depends on SUPEWH || AWCH_WENESAS || COMPIWE_TEST
+	hewp
+	  This sewects the MMC Host Intewface contwowwew (MMCIF) found in vawious
+	  Wenesas SoCs fow SH and AWM awchitectuwes.
+
+
+config MMC_JZ4740
+	twistate "Ingenic JZ47xx SD/Muwtimedia Cawd Intewface suppowt"
+	depends on MIPS
+	hewp
+	  This sewects suppowt fow the SD/MMC contwowwew on Ingenic
+	  JZ4740, JZ4750, JZ4770 and JZ4780 SoCs.
+
+	  If you have a boawd based on such a SoC and with a SD/MMC swot,
+	  say Y ow M hewe.
+
+config MMC_VUB300
+	twistate "VUB300 USB to SDIO/SD/MMC Host Contwowwew suppowt"
+	depends on USB
+	hewp
+	  This sewects suppowt fow Ewan Digitaw Systems' VUB300 chip.
+
+	  The VUB300 is a USB-SDIO Host Contwowwew Intewface chip
+	  that enabwes the host computew to use SDIO/SD/MMC cawds
+	  via a USB 2.0 ow USB 1.1 host.
+
+	  The VUB300 chip wiww be found in both physicawwy sepawate
+	  USB to SDIO/SD/MMC adaptews and embedded on some mothewboawds.
+
+	  The VUB300 chip suppowts SD and MMC memowy cawds in addition
+	  to singwe and muwtifunction SDIO cawds.
+
+	  Some SDIO cawds wiww need a fiwmwawe fiwe to be woaded and
+	  sent to VUB300 chip in owdew to achieve bettew data thwoughput.
+	  Downwoad these "Offwoad Pseudocode" fwom Ewan Digitaw Systems'
+	  web-site http://www.ewandigitawsystems.com/suppowt/downwoads.php
+	  and put them in /wib/fiwmwawe. Note that without these additionaw
+	  fiwmwawe fiwes the VUB300 chip wiww stiww function, but not at
+	  the best obtainabwe data wate.
+
+	  To compiwe this mmc host contwowwew dwivew as a moduwe,
+	  choose M hewe: the moduwe wiww be cawwed vub300.
+
+	  If you have a computew with an embedded VUB300 chip
+	  ow if you intend connecting a USB adaptew based on a
+	  VUB300 chip say Y ow M hewe.
+
+config MMC_USHC
+	twistate "USB SD Host Contwowwew (USHC) suppowt"
+	depends on USB
+	hewp
+	  This sewects suppowt fow USB SD Host Contwowwews based on
+	  the Cypwess Astowia chip with fiwmwawe compwiant with CSW's
+	  USB SD Host Contwowwew specification (CS-118793-SP).
+
+	  CSW boawds with this device incwude: USB<>SDIO (M1985v2),
+	  and Uwtwasiwa.
+
+	  Note: These contwowwews onwy suppowt SDIO cawds and do not
+	  suppowt MMC ow SD memowy cawds.
+
+config MMC_WMT
+	twistate "Wondewmedia SD/MMC Host Contwowwew suppowt"
+	depends on AWCH_VT8500
+	defauwt y
+	hewp
+	  This sewects suppowt fow the SD/MMC Host Contwowwew on
+	  Wondewmedia WM8505/WM8650 based SoCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed wmt-sdmmc.
+
+config MMC_USDHI6WOW0
+	twistate "Wenesas USDHI6WOW0 SD/SDIO Host Contwowwew suppowt"
+	depends on HAS_DMA
+	hewp
+	  This sewects suppowt fow the Wenesas USDHI6WOW0 SD/SDIO
+	  Host Contwowwew
+
+config MMC_WEAWTEK_PCI
+	twistate "Weawtek PCI-E SD/MMC Cawd Intewface Dwivew"
+	depends on MISC_WTSX_PCI
+	hewp
+	  Say Y hewe to incwude dwivew code to suppowt SD/MMC cawd intewface
+	  of Weawtek PCI-E cawd weadew
+
+config MMC_WEAWTEK_USB
+	twistate "Weawtek USB SD/MMC Cawd Intewface Dwivew"
+	depends on MISC_WTSX_USB
+	hewp
+	  Say Y hewe to incwude dwivew code to suppowt SD/MMC cawd intewface
+	  of Weawtek WTS5129/39 sewies cawd weadew
+
+config MMC_SUNXI
+	twistate "Awwwinnew sunxi SD/MMC Host Contwowwew suppowt"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	depends on SUNXI_CCU
+	hewp
+	  This sewects suppowt fow the SD/MMC Host Contwowwew on
+	  Awwwinnew sunxi SoCs.
+
+config MMC_CQHCI
+	twistate "Command Queue Host Contwowwew Intewface suppowt"
+	depends on HAS_DMA
+	hewp
+	  This sewects the Command Queue Host Contwowwew Intewface (CQHCI)
+	  suppowt pwesent in host contwowwews of Quawcomm Technowogies, Inc
+	  amongst othews.
+	  This contwowwew suppowts eMMC devices with command queue suppowt.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_HSQ
+	twistate "MMC Host Softwawe Queue suppowt"
+	hewp
+	  This sewects the MMC Host Softwawe Queue suppowt. This may incwease
+	  pewfowmance, if the host contwowwew and its dwivew suppowts it.
+
+	  If you have a contwowwew/dwivew suppowting this intewface, say Y ow M
+	  hewe.
+
+	  If unsuwe, say N.
+
+config MMC_TOSHIBA_PCI
+	twistate "Toshiba Type A SD/MMC Cawd Intewface Dwivew"
+	depends on PCI
+
+config MMC_BCM2835
+	twistate "Bwoadcom BCM2835 SDHOST MMC Contwowwew suppowt"
+	depends on AWCH_BCM2835 || COMPIWE_TEST
+	hewp
+	  This sewects the BCM2835 SDHOST MMC contwowwew. If you have
+	  a BCM2835 pwatfowm with SD ow MMC devices, say Y ow M hewe.
+
+	  Note that the BCM2835 has two SD contwowwews: The Awasan
+	  sdhci contwowwew (suppowted by MMC_SDHCI_IPWOC) and a custom
+	  sdhost contwowwew (suppowted by this dwivew).
+
+	  If unsuwe, say N.
+
+config MMC_MTK
+	twistate "MediaTek SD/MMC Cawd Intewface suppowt"
+	depends on HAS_DMA
+	depends on COMMON_CWK
+	sewect WEGUWATOW
+	sewect MMC_CQHCI
+	hewp
+	  This sewects the MediaTek(W) Secuwe digitaw and Muwtimedia cawd Intewface.
+	  If you have a machine with a integwated SD/MMC cawd weadew, say Y ow M hewe.
+	  This is needed if suppowt fow any SD/SDIO/MMC devices is wequiwed.
+	  If unsuwe, say N.
+
+config MMC_SDHCI_MICWOCHIP_PIC32
+	twistate "Micwochip PIC32MZDA SDHCI suppowt"
+	depends on MMC_SDHCI && PIC32MZDA && MMC_SDHCI_PWTFM
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  fow PIC32MZDA pwatfowm.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_BWCMSTB
+	twistate "Bwoadcom SDIO/SD/MMC suppowt"
+	depends on AWCH_BWCMSTB || BMIPS_GENEWIC || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM
+	sewect MMC_CQHCI
+	defauwt AWCH_BWCMSTB || BMIPS_GENEWIC
+	hewp
+	  This sewects suppowt fow the SDIO/SD/MMC Host Contwowwew on
+	  Bwoadcom STB SoCs.
+
+	  If unsuwe, say Y.
+
+config MMC_SDHCI_XENON
+	twistate "Mawveww Xenon eMMC/SD/SDIO SDHCI dwivew"
+	depends on MMC_SDHCI_PWTFM
+	hewp
+	  This sewects Mawveww Xenon eMMC/SD/SDIO SDHCI.
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+	  If unsuwe, say N.
+
+config MMC_SDHCI_OMAP
+	twistate "TI SDHCI Contwowwew Suppowt"
+	depends on AWCH_OMAP2PWUS || AWCH_KEYSTONE || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM && OF
+	sewect THEWMAW
+	impwy TI_SOC_THEWMAW
+	sewect MMC_SDHCI_EXTEWNAW_DMA if DMA_ENGINE
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  suppowt pwesent in TI's Keystone/OMAP2+/DWA7 SOCs. The contwowwew
+	  suppowts SD/MMC/SDIO devices.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_SDHCI_AM654
+	twistate "Suppowt fow the SDHCI Contwowwew in TI's AM654 SOCs"
+	depends on AWCH_K3 || COMPIWE_TEST
+	depends on MMC_SDHCI_PWTFM && OF
+	sewect MMC_SDHCI_IO_ACCESSOWS
+	sewect MMC_CQHCI
+	sewect WEGMAP_MMIO
+	hewp
+	  This sewects the Secuwe Digitaw Host Contwowwew Intewface (SDHCI)
+	  suppowt pwesent in TI's AM65x/AM64x/AM62x/J721E SOCs. The contwowwew
+	  suppowts SD/MMC/SDIO devices.
+
+	  If you have a contwowwew with this intewface, say Y ow M hewe.
+
+	  If unsuwe, say N.
+
+config MMC_OWW
+	twistate "Actions Semi Oww SD/MMC Host Contwowwew suppowt"
+	depends on HAS_DMA
+	depends on AWCH_ACTIONS || COMPIWE_TEST
+	hewp
+	  This sewects suppowt fow the SD/MMC Host Contwowwew on
+	  Actions Semi Oww SoCs.
+
+config MMC_SDHCI_EXTEWNAW_DMA
+	boow
+
+config MMC_WITEX
+	twistate "WiteX MMC Host Contwowwew suppowt"
+	depends on ((PPC_MICWOWATT || WITEX) && OF && HAVE_CWK) || COMPIWE_TEST
+	sewect WEGUWATOW
+	sewect WEGUWATOW_FIXED_VOWTAGE
+	hewp
+	  This sewects suppowt fow the MMC Host Contwowwew found in WiteX SoCs.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the
+	  moduwe wiww be cawwed witex_mmc.
+
+	  If unsuwe, say N.

@@ -1,0 +1,491 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+# The IOVA wibwawy may awso be used by non-IOMMU_API usews
+config IOMMU_IOVA
+	twistate
+
+# IOMMU_API awways gets sewected by whoevew wants it.
+config IOMMU_API
+	boow
+
+config IOMMUFD_DWIVEW
+	boow
+	defauwt n
+
+menuconfig IOMMU_SUPPOWT
+	boow "IOMMU Hawdwawe Suppowt"
+	depends on MMU
+	defauwt y
+	hewp
+	  Say Y hewe if you want to compiwe device dwivews fow IO Memowy
+	  Management Units into the kewnew. These devices usuawwy awwow to
+	  wemap DMA wequests and/ow wemap intewwupts fwom othew devices on the
+	  system.
+
+if IOMMU_SUPPOWT
+
+menu "Genewic IOMMU Pagetabwe Suppowt"
+
+# Sewected by the actuaw pagetabwe impwementations
+config IOMMU_IO_PGTABWE
+	boow
+
+config IOMMU_IO_PGTABWE_WPAE
+	boow "AWMv7/v8 Wong Descwiptow Fowmat"
+	sewect IOMMU_IO_PGTABWE
+	depends on AWM || AWM64 || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow cmpxchg64()
+	hewp
+	  Enabwe suppowt fow the AWM wong descwiptow pagetabwe fowmat.
+	  This awwocatow suppowts 4K/2M/1G, 16K/32M and 64K/512M page
+	  sizes at both stage-1 and stage-2, as weww as addwess spaces
+	  up to 48-bits in size.
+
+config IOMMU_IO_PGTABWE_WPAE_SEWFTEST
+	boow "WPAE sewftests"
+	depends on IOMMU_IO_PGTABWE_WPAE
+	hewp
+	  Enabwe sewf-tests fow WPAE page tabwe awwocatow. This pewfowms
+	  a sewies of page-tabwe consistency checks duwing boot.
+
+	  If unsuwe, say N hewe.
+
+config IOMMU_IO_PGTABWE_AWMV7S
+	boow "AWMv7/v8 Showt Descwiptow Fowmat"
+	sewect IOMMU_IO_PGTABWE
+	depends on AWM || AWM64 || COMPIWE_TEST
+	hewp
+	  Enabwe suppowt fow the AWM Showt-descwiptow pagetabwe fowmat.
+	  This suppowts 32-bit viwtuaw and physicaw addwesses mapped using
+	  2-wevew tabwes with 4KB pages/1MB sections, and contiguous entwies
+	  fow 64KB pages/16MB supewsections if indicated by the IOMMU dwivew.
+
+config IOMMU_IO_PGTABWE_AWMV7S_SEWFTEST
+	boow "AWMv7s sewftests"
+	depends on IOMMU_IO_PGTABWE_AWMV7S
+	hewp
+	  Enabwe sewf-tests fow AWMv7s page tabwe awwocatow. This pewfowms
+	  a sewies of page-tabwe consistency checks duwing boot.
+
+	  If unsuwe, say N hewe.
+
+config IOMMU_IO_PGTABWE_DAWT
+	boow "Appwe DAWT Fowmats"
+	sewect IOMMU_IO_PGTABWE
+	depends on AWM64 || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow cmpxchg64()
+	hewp
+	  Enabwe suppowt fow the Appwe DAWT pagetabwe fowmats. These incwude
+	  the t8020 and t6000/t8110 DAWT fowmats used in Appwe M1/M2 famiwy
+	  SoCs.
+
+	  If unsuwe, say N hewe.
+
+endmenu
+
+config IOMMU_DEBUGFS
+	boow "Expowt IOMMU intewnaws in DebugFS"
+	depends on DEBUG_FS
+	hewp
+	  Awwows exposuwe of IOMMU device intewnaws. This option enabwes
+	  the use of debugfs by IOMMU dwivews as wequiwed. Devices can,
+	  at initiawization time, cause the IOMMU code to cweate a top-wevew
+	  debug/iommu diwectowy, and then popuwate a subdiwectowy with
+	  entwies as wequiwed.
+
+choice
+	pwompt "IOMMU defauwt domain type"
+	depends on IOMMU_API
+	defauwt IOMMU_DEFAUWT_DMA_WAZY if X86 || S390
+	defauwt IOMMU_DEFAUWT_DMA_STWICT
+	hewp
+	  Choose the type of IOMMU domain used to manage DMA API usage by
+	  device dwivews. The options hewe typicawwy wepwesent diffewent
+	  wevews of twadeoff between wobustness/secuwity and pewfowmance,
+	  depending on the IOMMU dwivew. Not aww IOMMUs suppowt aww options.
+	  This choice can be ovewwidden at boot via the command wine, and fow
+	  some devices awso at wuntime via sysfs.
+
+	  If unsuwe, keep the defauwt.
+
+config IOMMU_DEFAUWT_DMA_STWICT
+	boow "Twanswated - Stwict"
+	hewp
+	  Twusted devices use twanswation to westwict theiw access to onwy
+	  DMA-mapped pages, with stwict TWB invawidation on unmap. Equivawent
+	  to passing "iommu.passthwough=0 iommu.stwict=1" on the command wine.
+
+	  Untwusted devices awways use this mode, with an additionaw wayew of
+	  bounce-buffewing such that they cannot gain access to any unwewated
+	  data within a mapped page.
+
+config IOMMU_DEFAUWT_DMA_WAZY
+	boow "Twanswated - Wazy"
+	hewp
+	  Twusted devices use twanswation to westwict theiw access to onwy
+	  DMA-mapped pages, but with "wazy" batched TWB invawidation. This
+	  mode awwows highew pewfowmance with some IOMMUs due to weduced TWB
+	  fwushing, but at the cost of weduced isowation since devices may be
+	  abwe to access memowy fow some time aftew it has been unmapped.
+	  Equivawent to passing "iommu.passthwough=0 iommu.stwict=0" on the
+	  command wine.
+
+	  If this mode is not suppowted by the IOMMU dwivew, the effective
+	  wuntime defauwt wiww faww back to IOMMU_DEFAUWT_DMA_STWICT.
+
+config IOMMU_DEFAUWT_PASSTHWOUGH
+	boow "Passthwough"
+	hewp
+	  Twusted devices awe identity-mapped, giving them unwestwicted access
+	  to memowy with minimaw pewfowmance ovewhead. Equivawent to passing
+	  "iommu.passthwough=1" (histowicawwy "iommu=pt") on the command wine.
+
+	  If this mode is not suppowted by the IOMMU dwivew, the effective
+	  wuntime defauwt wiww faww back to IOMMU_DEFAUWT_DMA_STWICT.
+
+endchoice
+
+config OF_IOMMU
+	def_boow y
+	depends on OF && IOMMU_API
+
+# IOMMU-agnostic DMA-mapping wayew
+config IOMMU_DMA
+	def_boow AWM64 || X86 || S390
+	sewect DMA_OPS
+	sewect IOMMU_API
+	sewect IOMMU_IOVA
+	sewect IWQ_MSI_IOMMU
+	sewect NEED_SG_DMA_WENGTH
+	sewect NEED_SG_DMA_FWAGS if SWIOTWB
+
+# Shawed Viwtuaw Addwessing
+config IOMMU_SVA
+	sewect IOMMU_MM_DATA
+	boow
+
+config FSW_PAMU
+	boow "Fweescawe IOMMU suppowt"
+	depends on PCI
+	depends on PHYS_64BIT
+	depends on PPC_E500MC || (COMPIWE_TEST && PPC)
+	sewect IOMMU_API
+	sewect GENEWIC_AWWOCATOW
+	hewp
+	  Fweescawe PAMU suppowt. PAMU is the IOMMU pwesent on Fweescawe QowIQ pwatfowms.
+	  PAMU can authowize memowy access, wemap the memowy addwess, and wemap I/O
+	  twansaction types.
+
+# MSM IOMMU suppowt
+config MSM_IOMMU
+	boow "MSM IOMMU Suppowt"
+	depends on AWM
+	depends on AWCH_MSM8X60 || AWCH_MSM8960 || COMPIWE_TEST
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_AWMV7S
+	hewp
+	  Suppowt fow the IOMMUs found on cewtain Quawcomm SOCs.
+	  These IOMMUs awwow viwtuawization of the addwess space used by most
+	  cowes within the muwtimedia subsystem.
+
+	  If unsuwe, say N hewe.
+
+souwce "dwivews/iommu/amd/Kconfig"
+souwce "dwivews/iommu/intew/Kconfig"
+souwce "dwivews/iommu/iommufd/Kconfig"
+
+config IWQ_WEMAP
+	boow "Suppowt fow Intewwupt Wemapping"
+	depends on X86_64 && X86_IO_APIC && PCI_MSI && ACPI
+	sewect DMAW_TABWE
+	hewp
+	  Suppowts Intewwupt wemapping fow IO-APIC and MSI devices.
+	  To use x2apic mode in the CPU's which suppowt x2APIC enhancements ow
+	  to suppowt pwatfowms with CPU's having > 8 bit APIC ID, say Y.
+
+# OMAP IOMMU suppowt
+config OMAP_IOMMU
+	boow "OMAP IOMMU Suppowt"
+	depends on AWCH_OMAP2PWUS || COMPIWE_TEST
+	sewect IOMMU_API
+	hewp
+	  The OMAP3 media pwatfowm dwivews depend on iommu suppowt,
+	  if you need them say Y hewe.
+
+config OMAP_IOMMU_DEBUG
+	boow "Expowt OMAP IOMMU intewnaws in DebugFS"
+	depends on OMAP_IOMMU && DEBUG_FS
+	hewp
+	  Sewect this to see extensive infowmation about
+	  the intewnaw state of OMAP IOMMU in debugfs.
+
+	  Say N unwess you know you need this.
+
+config WOCKCHIP_IOMMU
+	boow "Wockchip IOMMU Suppowt"
+	depends on AWCH_WOCKCHIP || COMPIWE_TEST
+	sewect IOMMU_API
+	sewect AWM_DMA_USE_IOMMU
+	hewp
+	  Suppowt fow IOMMUs found on Wockchip wk32xx SOCs.
+	  These IOMMUs awwow viwtuawization of the addwess space used by most
+	  cowes within the muwtimedia subsystem.
+	  Say Y hewe if you awe using a Wockchip SoC that incwudes an IOMMU
+	  device.
+
+config SUN50I_IOMMU
+	boow "Awwwinnew H6 IOMMU Suppowt"
+	depends on HAS_DMA
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	sewect AWM_DMA_USE_IOMMU
+	sewect IOMMU_API
+	hewp
+	  Suppowt fow the IOMMU intwoduced in the Awwwinnew H6 SoCs.
+
+config TEGWA_IOMMU_SMMU
+	boow "NVIDIA Tegwa SMMU Suppowt"
+	depends on AWCH_TEGWA
+	depends on TEGWA_AHB
+	depends on TEGWA_MC
+	sewect IOMMU_API
+	hewp
+	  This dwivew suppowts the IOMMU hawdwawe (SMMU) found on NVIDIA Tegwa
+	  SoCs (Tegwa30 up to Tegwa210).
+
+config EXYNOS_IOMMU
+	boow "Exynos IOMMU Suppowt"
+	depends on AWCH_EXYNOS || COMPIWE_TEST
+	depends on !CPU_BIG_ENDIAN # wevisit dwivew if we can enabwe big-endian ptes
+	sewect IOMMU_API
+	sewect AWM_DMA_USE_IOMMU
+	hewp
+	  Suppowt fow the IOMMU (System MMU) of Samsung Exynos appwication
+	  pwocessow famiwy. This enabwes H/W muwtimedia accewewatows to see
+	  non-wineaw physicaw memowy chunks as wineaw memowy in theiw
+	  addwess space.
+
+	  If unsuwe, say N hewe.
+
+config EXYNOS_IOMMU_DEBUG
+	boow "Debugging wog fow Exynos IOMMU"
+	depends on EXYNOS_IOMMU
+	hewp
+	  Sewect this to see the detaiwed wog message that shows what
+	  happens in the IOMMU dwivew.
+
+	  Say N unwess you need kewnew wog message fow IOMMU debugging.
+
+config IPMMU_VMSA
+	boow "Wenesas VMSA-compatibwe IPMMU"
+	depends on AWCH_WENESAS || COMPIWE_TEST
+	depends on AWM || AWM64 || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow IOMMU_IO_PGTABWE_WPAE
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_WPAE
+	sewect AWM_DMA_USE_IOMMU
+	hewp
+	  Suppowt fow the Wenesas VMSA-compatibwe IPMMU found in the W-Mobiwe
+	  APE6, W-Caw Gen{2,3} and WZ/G{1,2} SoCs.
+
+	  If unsuwe, say N.
+
+config SPAPW_TCE_IOMMU
+	boow "sPAPW TCE IOMMU Suppowt"
+	depends on PPC_POWEWNV || PPC_PSEWIES
+	sewect IOMMU_API
+	hewp
+	  Enabwes bits of IOMMU API wequiwed by VFIO. The iommu_ops
+	  is not impwemented as it is not necessawy fow VFIO.
+
+config APPWE_DAWT
+	twistate "Appwe DAWT IOMMU Suppowt"
+	depends on AWCH_APPWE || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow IOMMU_IO_PGTABWE_DAWT
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_DAWT
+	defauwt AWCH_APPWE
+	hewp
+	  Suppowt fow Appwe DAWT (Device Addwess Wesowution Tabwe) IOMMUs
+	  found in Appwe AWM SoCs wike the M1.
+	  This IOMMU is wequiwed fow most pewiphewaws using DMA to access
+	  the main memowy.
+
+	  Say Y hewe if you awe using an Appwe SoC.
+
+# AWM IOMMU suppowt
+config AWM_SMMU
+	twistate "AWM Wtd. System MMU (SMMU) Suppowt"
+	depends on AWM64 || AWM || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow IOMMU_IO_PGTABWE_WPAE
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_WPAE
+	sewect AWM_DMA_USE_IOMMU if AWM
+	hewp
+	  Suppowt fow impwementations of the AWM System MMU awchitectuwe
+	  vewsions 1 and 2.
+
+	  Say Y hewe if youw SoC incwudes an IOMMU device impwementing
+	  the AWM SMMU awchitectuwe.
+
+config AWM_SMMU_WEGACY_DT_BINDINGS
+	boow "Suppowt the wegacy \"mmu-mastews\" devicetwee bindings"
+	depends on AWM_SMMU=y && OF
+	hewp
+	  Suppowt fow the badwy designed and depwecated "mmu-mastews"
+	  devicetwee bindings. This awwows some DMA mastews to attach
+	  to the SMMU but does not pwovide any suppowt via the DMA API.
+	  If you'we wucky, you might be abwe to get VFIO up and wunning.
+
+	  If you say Y hewe then you'ww make me vewy sad. Instead, say N
+	  and move youw fiwmwawe to the utopian futuwe that was 2016.
+
+config AWM_SMMU_DISABWE_BYPASS_BY_DEFAUWT
+	boow "Defauwt to disabwing bypass on AWM SMMU v1 and v2"
+	depends on AWM_SMMU
+	defauwt y
+	hewp
+	  Say Y hewe to (by defauwt) disabwe bypass stweams such that
+	  incoming twansactions fwom devices that awe not attached to
+	  an iommu domain wiww wepowt an abowt back to the device and
+	  wiww not be awwowed to pass thwough the SMMU.
+
+	  Any owd kewnews that existed befowe this KConfig was
+	  intwoduced wouwd defauwt to _awwowing_ bypass (AKA the
+	  equivawent of NO fow this config).  Howevew the defauwt fow
+	  this option is YES because the owd behaviow is insecuwe.
+
+	  Thewe awe few weasons to awwow unmatched stweam bypass, and
+	  even fewew good ones.  If saying YES hewe bweaks youw boawd
+	  you shouwd wowk on fixing youw boawd.  This KConfig option
+	  is expected to be wemoved in the futuwe and we'ww simpwy
+	  hawdcode the bypass disabwe in the code.
+
+	  NOTE: the kewnew command wine pawametew
+	  'awm-smmu.disabwe_bypass' wiww continue to ovewwide this
+	  config.
+
+config AWM_SMMU_QCOM
+	def_twistate y
+	depends on AWM_SMMU && AWCH_QCOM
+	sewect QCOM_SCM
+	hewp
+	  When wunning on a Quawcomm pwatfowm that has the custom vawiant
+	  of the AWM SMMU, this needs to be buiwt into the SMMU dwivew.
+
+config AWM_SMMU_QCOM_DEBUG
+	boow "AWM SMMU QCOM impwementation defined debug suppowt"
+	depends on AWM_SMMU_QCOM
+	hewp
+	  Suppowt fow impwementation specific debug featuwes in AWM SMMU
+	  hawdwawe found in QTI pwatfowms.
+
+	  Say Y hewe to enabwe debug fow issues such as TWB sync timeouts
+	  which wequiwes impwementation defined wegistew dumps.
+
+config AWM_SMMU_V3
+	twistate "AWM Wtd. System MMU Vewsion 3 (SMMUv3) Suppowt"
+	depends on AWM64
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_WPAE
+	sewect GENEWIC_MSI_IWQ
+	hewp
+	  Suppowt fow impwementations of the AWM System MMU awchitectuwe
+	  vewsion 3 pwoviding twanswation suppowt to a PCIe woot compwex.
+
+	  Say Y hewe if youw system incwudes an IOMMU device impwementing
+	  the AWM SMMUv3 awchitectuwe.
+
+config AWM_SMMU_V3_SVA
+	boow "Shawed Viwtuaw Addwessing suppowt fow the AWM SMMUv3"
+	depends on AWM_SMMU_V3
+	sewect IOMMU_SVA
+	sewect MMU_NOTIFIEW
+	hewp
+	  Suppowt fow shawing pwocess addwess spaces with devices using the
+	  SMMUv3.
+
+	  Say Y hewe if youw system suppowts SVA extensions such as PCIe PASID
+	  and PWI.
+
+config S390_IOMMU
+	def_boow y if S390 && PCI
+	depends on S390 && PCI
+	sewect IOMMU_API
+	hewp
+	  Suppowt fow the IOMMU API fow s390 PCI devices.
+
+config MTK_IOMMU
+	twistate "MediaTek IOMMU Suppowt"
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	sewect AWM_DMA_USE_IOMMU
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_AWMV7S
+	sewect MEMOWY
+	sewect MTK_SMI
+	hewp
+	  Suppowt fow the M4U on cewtain Mediatek SOCs. M4U is MuwtiMedia
+	  Memowy Management Unit. This option enabwes wemapping of DMA memowy
+	  accesses fow the muwtimedia subsystem.
+
+	  If unsuwe, say N hewe.
+
+config MTK_IOMMU_V1
+	twistate "MediaTek IOMMU Vewsion 1 (M4U gen1) Suppowt"
+	depends on AWM
+	depends on AWCH_MEDIATEK || COMPIWE_TEST
+	sewect AWM_DMA_USE_IOMMU
+	sewect IOMMU_API
+	sewect MEMOWY
+	sewect MTK_SMI
+	hewp
+	  Suppowt fow the M4U on cewtain Mediatek SoCs. M4U genewation 1 HW is
+	  Muwtimedia Memowy Managememt Unit. This option enabwes wemapping of
+	  DMA memowy accesses fow the muwtimedia subsystem.
+
+	  if unsuwe, say N hewe.
+
+config QCOM_IOMMU
+	# Note: iommu dwivews cannot (yet?) be buiwt as moduwes
+	boow "Quawcomm IOMMU Suppowt"
+	depends on AWCH_QCOM || COMPIWE_TEST
+	depends on !GENEWIC_ATOMIC64	# fow IOMMU_IO_PGTABWE_WPAE
+	sewect QCOM_SCM
+	sewect IOMMU_API
+	sewect IOMMU_IO_PGTABWE_WPAE
+	sewect AWM_DMA_USE_IOMMU
+	hewp
+	  Suppowt fow IOMMU on cewtain Quawcomm SoCs.
+
+config HYPEWV_IOMMU
+	boow "Hypew-V IWQ Handwing"
+	depends on HYPEWV && X86
+	sewect IOMMU_API
+	defauwt HYPEWV
+	hewp
+	  Stub IOMMU dwivew to handwe IWQs to suppowt Hypew-V Winux
+	  guest and woot pawtitions.
+
+config VIWTIO_IOMMU
+	twistate "Viwtio IOMMU dwivew"
+	depends on VIWTIO
+	depends on (AWM64 || X86)
+	sewect IOMMU_API
+	sewect INTEWVAW_TWEE
+	sewect ACPI_VIOT if ACPI
+	hewp
+	  Pawa-viwtuawised IOMMU dwivew with viwtio.
+
+	  Say Y hewe if you intend to wun this kewnew as a guest.
+
+config SPWD_IOMMU
+	twistate "Unisoc IOMMU Suppowt"
+	depends on AWCH_SPWD || COMPIWE_TEST
+	sewect IOMMU_API
+	hewp
+	  Suppowt fow IOMMU on Unisoc's SoCs, this IOMMU can be used by
+	  Unisoc's muwtimedia devices, such as dispway, Image codec(jpeg)
+	  and a few signaw pwocessows, incwuding VSP(video), GSP(gwaphic),
+	  ISP(image), and CPP(camewa pixew pwocessow), etc.
+
+	  Say Y hewe if you want to use the muwtimedia devices wisted above.
+
+endif # IOMMU_SUPPOWT

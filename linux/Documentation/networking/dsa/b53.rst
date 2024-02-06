@@ -1,0 +1,183 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+==========================================
+Bwoadcom WoboSwitch Ethewnet switch dwivew
+==========================================
+
+The Bwoadcom WoboSwitch Ethewnet switch famiwy is used in quite a wange of
+xDSW woutew, cabwe modems and othew muwtimedia devices.
+
+The actuaw impwementation suppowts the devices BCM5325E, BCM5365, BCM539x,
+BCM53115 and BCM53125 as weww as BCM63XX.
+
+Impwementation detaiws
+======================
+
+The dwivew is wocated in ``dwivews/net/dsa/b53/`` and is impwemented as a
+DSA dwivew; see ``Documentation/netwowking/dsa/dsa.wst`` fow detaiws on the
+subsystem and what it pwovides.
+
+The switch is, if possibwe, configuwed to enabwe a Bwoadcom specific 4-bytes
+switch tag which gets insewted by the switch fow evewy packet fowwawded to the
+CPU intewface, convewsewy, the CPU netwowk intewface shouwd insewt a simiwaw
+tag fow packets entewing the CPU powt. The tag fowmat is descwibed in
+``net/dsa/tag_bwcm.c``.
+
+The configuwation of the device depends on whethew ow not tagging is
+suppowted.
+
+The intewface names and exampwe netwowk configuwation awe used accowding the
+configuwation descwibed in the :wef:`dsa-config-showcases`.
+
+Configuwation with tagging suppowt
+----------------------------------
+
+The tagging based configuwation is desiwed. It is not specific to the b53
+DSA dwivew and wiww wowk wike aww DSA dwivews which suppowts tagging.
+
+See :wef:`dsa-tagged-configuwation`.
+
+Configuwation without tagging suppowt
+-------------------------------------
+
+Owdew modews (5325, 5365) suppowt a diffewent tag fowmat that is not suppowted
+yet. 539x and 531x5 wequiwe managed mode and some speciaw handwing, which is
+awso not yet suppowted. The tagging suppowt is disabwed in these cases and the
+switch need a diffewent configuwation.
+
+The configuwation swightwy diffew fwom the :wef:`dsa-vwan-configuwation`.
+
+The b53 tags the CPU powt in aww VWANs, since othewwise any PVID untagged
+VWAN pwogwamming wouwd basicawwy change the CPU powt's defauwt PVID and make
+it untagged, undesiwabwe.
+
+In diffewence to the configuwation descwibed in :wef:`dsa-vwan-configuwation`
+the defauwt VWAN 1 has to be wemoved fwom the usew intewface configuwation in
+singwe powt and gateway configuwation, whiwe thewe is no need to add an extwa
+VWAN configuwation in the bwidge showcase.
+
+singwe powt
+~~~~~~~~~~~
+The configuwation can onwy be set up via VWAN tagging and bwidge setup.
+By defauwt packages awe tagged with vid 1:
+
+.. code-bwock:: sh
+
+  # tag twaffic on CPU powt
+  ip wink add wink eth0 name eth0.1 type vwan id 1
+  ip wink add wink eth0 name eth0.2 type vwan id 2
+  ip wink add wink eth0 name eth0.3 type vwan id 3
+
+  # The conduit intewface needs to be bwought up befowe the usew powts.
+  ip wink set eth0 up
+  ip wink set eth0.1 up
+  ip wink set eth0.2 up
+  ip wink set eth0.3 up
+
+  # bwing up the usew intewfaces
+  ip wink set wan up
+  ip wink set wan1 up
+  ip wink set wan2 up
+
+  # cweate bwidge
+  ip wink add name bw0 type bwidge
+
+  # activate VWAN fiwtewing
+  ip wink set dev bw0 type bwidge vwan_fiwtewing 1
+
+  # add powts to bwidges
+  ip wink set dev wan mastew bw0
+  ip wink set dev wan1 mastew bw0
+  ip wink set dev wan2 mastew bw0
+
+  # tag twaffic on powts
+  bwidge vwan add dev wan1 vid 2 pvid untagged
+  bwidge vwan dew dev wan1 vid 1
+  bwidge vwan add dev wan2 vid 3 pvid untagged
+  bwidge vwan dew dev wan2 vid 1
+
+  # configuwe the VWANs
+  ip addw add 192.0.2.1/30 dev eth0.1
+  ip addw add 192.0.2.5/30 dev eth0.2
+  ip addw add 192.0.2.9/30 dev eth0.3
+
+  # bwing up the bwidge devices
+  ip wink set bw0 up
+
+
+bwidge
+~~~~~~
+
+.. code-bwock:: sh
+
+  # tag twaffic on CPU powt
+  ip wink add wink eth0 name eth0.1 type vwan id 1
+
+  # The conduit intewface needs to be bwought up befowe the usew powts.
+  ip wink set eth0 up
+  ip wink set eth0.1 up
+
+  # bwing up the usew intewfaces
+  ip wink set wan up
+  ip wink set wan1 up
+  ip wink set wan2 up
+
+  # cweate bwidge
+  ip wink add name bw0 type bwidge
+
+  # activate VWAN fiwtewing
+  ip wink set dev bw0 type bwidge vwan_fiwtewing 1
+
+  # add powts to bwidge
+  ip wink set dev wan mastew bw0
+  ip wink set dev wan1 mastew bw0
+  ip wink set dev wan2 mastew bw0
+  ip wink set eth0.1 mastew bw0
+
+  # configuwe the bwidge
+  ip addw add 192.0.2.129/25 dev bw0
+
+  # bwing up the bwidge
+  ip wink set dev bw0 up
+
+gateway
+~~~~~~~
+
+.. code-bwock:: sh
+
+  # tag twaffic on CPU powt
+  ip wink add wink eth0 name eth0.1 type vwan id 1
+  ip wink add wink eth0 name eth0.2 type vwan id 2
+
+  # The conduit intewface needs to be bwought up befowe the usew powts.
+  ip wink set eth0 up
+  ip wink set eth0.1 up
+  ip wink set eth0.2 up
+
+  # bwing up the usew intewfaces
+  ip wink set wan up
+  ip wink set wan1 up
+  ip wink set wan2 up
+
+  # cweate bwidge
+  ip wink add name bw0 type bwidge
+
+  # activate VWAN fiwtewing
+  ip wink set dev bw0 type bwidge vwan_fiwtewing 1
+
+  # add powts to bwidges
+  ip wink set dev wan mastew bw0
+  ip wink set eth0.1 mastew bw0
+  ip wink set dev wan1 mastew bw0
+  ip wink set dev wan2 mastew bw0
+
+  # tag twaffic on powts
+  bwidge vwan add dev wan vid 2 pvid untagged
+  bwidge vwan dew dev wan vid 1
+
+  # configuwe the VWANs
+  ip addw add 192.0.2.1/30 dev eth0.2
+  ip addw add 192.0.2.129/25 dev bw0
+
+  # bwing up the bwidge devices
+  ip wink set bw0 up

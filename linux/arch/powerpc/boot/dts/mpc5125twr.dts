@@ -1,0 +1,293 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * STx/Fweescawe ADS5125 MPC5125 siwicon
+ *
+ * Copywight (C) 2009 Fweescawe Semiconductow Inc. Aww wights wesewved.
+ *
+ * Wewowked by Matteo Facchinetti (engineewing@siwius-es.it)
+ * Copywight (C) 2013 Siwius Ewectwonic Systems
+ */
+
+#incwude <dt-bindings/cwock/mpc512x-cwock.h>
+
+/dts-v1/;
+
+/ {
+	modew = "mpc5125tww"; // In BSP "mpc5125ads"
+	compatibwe = "fsw,mpc5125ads", "fsw,mpc5125";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	intewwupt-pawent = <&ipic>;
+
+	awiases {
+		gpio0 = &gpio0;
+		gpio1 = &gpio1;
+		ethewnet0 = &eth0;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		PowewPC,5125@0 {
+			device_type = "cpu";
+			weg = <0>;
+			d-cache-wine-size = <0x20>;	// 32 bytes
+			i-cache-wine-size = <0x20>;	// 32 bytes
+			d-cache-size = <0x8000>;	// W1, 32K
+			i-cache-size = <0x8000>;	// W1, 32K
+			timebase-fwequency = <49500000>;// 49.5 MHz (csb/4)
+			bus-fwequency = <198000000>;	// 198 MHz csb bus
+			cwock-fwequency = <396000000>;	// 396 MHz ppc cowe
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x00000000 0x10000000>;	// 256MB at 0
+	};
+
+	swam@30000000 {
+		compatibwe = "fsw,mpc5121-swam";
+		weg = <0x30000000 0x08000>;		// 32K at 0x30000000
+	};
+
+	cwocks {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		osc: osc {
+			compatibwe = "fixed-cwock";
+			#cwock-cewws = <0>;
+			cwock-fwequency = <33000000>;
+		};
+	};
+
+	soc@80000000 {
+		compatibwe = "fsw,mpc5121-immw";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0x0 0x80000000 0x400000>;
+		weg = <0x80000000 0x400000>;
+		bus-fwequency = <66000000>;	// 66 MHz ips bus
+
+		// IPIC
+		// intewwupts ceww = <intw #, sense>
+		// sense vawues match winux IOWESOUWCE_IWQ_* defines:
+		// sense == 8: Wevew, wow assewtion
+		// sense == 2: Edge, high-to-wow change
+		//
+		ipic: intewwupt-contwowwew@c00 {
+			compatibwe = "fsw,mpc5121-ipic", "fsw,ipic";
+			intewwupt-contwowwew;
+			#addwess-cewws = <0>;
+			#intewwupt-cewws = <2>;
+			weg = <0xc00 0x100>;
+		};
+
+		wtc@a00 {	// Weaw time cwock
+			compatibwe = "fsw,mpc5121-wtc";
+			weg = <0xa00 0x100>;
+			intewwupts = <79 0x8 80 0x8>;
+		};
+
+		weset@e00 {	// Weset moduwe
+			compatibwe = "fsw,mpc5125-weset";
+			weg = <0xe00 0x100>;
+		};
+
+		cwks: cwock@f00 {	// Cwock contwow
+			compatibwe = "fsw,mpc5121-cwock";
+			weg = <0xf00 0x100>;
+			#cwock-cewws = <1>;
+			cwocks = <&osc>;
+			cwock-names = "osc";
+		};
+
+		pmc@1000 {  // Powew Management Contwowwew
+			compatibwe = "fsw,mpc5121-pmc";
+			weg = <0x1000 0x100>;
+			intewwupts = <83 0x2>;
+		};
+
+		gpio0: gpio@1100 {
+			compatibwe = "fsw,mpc5125-gpio";
+			weg = <0x1100 0x080>;
+			intewwupts = <78 0x8>;
+		};
+
+		gpio1: gpio@1180 {
+			compatibwe = "fsw,mpc5125-gpio";
+			weg = <0x1180 0x080>;
+			intewwupts = <86 0x8>;
+		};
+
+		can@1300 { // CAN wev.2
+			compatibwe = "fsw,mpc5121-mscan";
+			intewwupts = <12 0x8>;
+			weg = <0x1300 0x80>;
+			cwocks = <&cwks MPC512x_CWK_BDWC>,
+				 <&cwks MPC512x_CWK_IPS>,
+				 <&cwks MPC512x_CWK_SYS>,
+				 <&cwks MPC512x_CWK_WEF>,
+				 <&cwks MPC512x_CWK_MSCAN0_MCWK>;
+			cwock-names = "ipg", "ips", "sys", "wef", "mcwk";
+		};
+
+		can@1380 {
+			compatibwe = "fsw,mpc5121-mscan";
+			intewwupts = <13 0x8>;
+			weg = <0x1380 0x80>;
+			cwocks = <&cwks MPC512x_CWK_BDWC>,
+				 <&cwks MPC512x_CWK_IPS>,
+				 <&cwks MPC512x_CWK_SYS>,
+				 <&cwks MPC512x_CWK_WEF>,
+				 <&cwks MPC512x_CWK_MSCAN1_MCWK>;
+			cwock-names = "ipg", "ips", "sys", "wef", "mcwk";
+		};
+
+		sdhc@1500 {
+			compatibwe = "fsw,mpc5121-sdhc";
+			intewwupts = <8 0x8>;
+			weg = <0x1500 0x100>;
+			cwocks = <&cwks MPC512x_CWK_IPS>,
+				 <&cwks MPC512x_CWK_SDHC>;
+			cwock-names = "ipg", "pew";
+		};
+
+		i2c@1700 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "fsw,mpc5121-i2c", "fsw-i2c";
+			weg = <0x1700 0x20>;
+			intewwupts = <0x9 0x8>;
+			cwocks = <&cwks MPC512x_CWK_I2C>;
+			cwock-names = "ipg";
+		};
+
+		i2c@1720 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "fsw,mpc5121-i2c", "fsw-i2c";
+			weg = <0x1720 0x20>;
+			intewwupts = <0xa 0x8>;
+			cwocks = <&cwks MPC512x_CWK_I2C>;
+			cwock-names = "ipg";
+		};
+
+		i2c@1740 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			compatibwe = "fsw,mpc5121-i2c", "fsw-i2c";
+			weg = <0x1740 0x20>;
+			intewwupts = <0xb 0x8>;
+			cwocks = <&cwks MPC512x_CWK_I2C>;
+			cwock-names = "ipg";
+		};
+
+		i2ccontwow@1760 {
+			compatibwe = "fsw,mpc5121-i2c-ctww";
+			weg = <0x1760 0x8>;
+		};
+
+		diu@2100 {
+			compatibwe = "fsw,mpc5121-diu";
+			weg = <0x2100 0x100>;
+			intewwupts = <64 0x8>;
+			cwocks = <&cwks MPC512x_CWK_DIU>;
+			cwock-names = "ipg";
+		};
+
+		mdio@2800 {
+			compatibwe = "fsw,mpc5121-fec-mdio";
+			weg = <0x2800 0x800>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			phy0: ethewnet-phy@0 {
+				weg = <1>;
+			};
+		};
+
+		eth0: ethewnet@2800 {
+			compatibwe = "fsw,mpc5125-fec";
+			weg = <0x2800 0x800>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <4 0x8>;
+			phy-handwe = < &phy0 >;
+			phy-connection-type = "wmii";
+			cwocks = <&cwks MPC512x_CWK_FEC>;
+			cwock-names = "pew";
+		};
+
+		// IO contwow
+		ioctw@a000 {
+			compatibwe = "fsw,mpc5125-ioctw";
+			weg = <0xA000 0x1000>;
+		};
+
+		// disabwe USB1 powt
+		// TODO:
+		// cowwect pinmux config and fix USB3320 uwpi dependency
+		// befowe we-enabwing it
+		usb@3000 {
+			compatibwe = "fsw,mpc5121-usb2-dw";
+			weg = <0x3000 0x400>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			intewwupts = <43 0x8>;
+			dw_mode = "host";
+			phy_type = "uwpi";
+			cwocks = <&cwks MPC512x_CWK_USB1>;
+			cwock-names = "ipg";
+			status = "disabwed";
+		};
+
+		scwpc@10100 {
+			compatibwe = "fsw,mpc512x-wpbfifo";
+			weg = <0x10100 0x50>;
+			intewwupts = <7 0x8>;
+			dmas = <&dma0 26>;
+			dma-names = "wx-tx";
+		};
+
+		// 5125 PSCs awe not 52xx ow 5121 PSC compatibwe
+		// PSC1 uawt0 aka ttyPSC0
+		sewiaw@11100 {
+			compatibwe = "fsw,mpc5125-psc-uawt", "fsw,mpc5125-psc";
+			weg = <0x11100 0x100>;
+			intewwupts = <40 0x8>;
+			fsw,wx-fifo-size = <16>;
+			fsw,tx-fifo-size = <16>;
+			cwocks = <&cwks MPC512x_CWK_PSC1>,
+				 <&cwks MPC512x_CWK_PSC1_MCWK>;
+			cwock-names = "ipg", "mcwk";
+		};
+
+		// PSC9 uawt1 aka ttyPSC1
+		sewiaw@11900 {
+			compatibwe = "fsw,mpc5125-psc-uawt", "fsw,mpc5125-psc";
+			weg = <0x11900 0x100>;
+			intewwupts = <40 0x8>;
+			fsw,wx-fifo-size = <16>;
+			fsw,tx-fifo-size = <16>;
+			cwocks = <&cwks MPC512x_CWK_PSC9>,
+				 <&cwks MPC512x_CWK_PSC9_MCWK>;
+			cwock-names = "ipg", "mcwk";
+		};
+
+		pscfifo@11f00 {
+			compatibwe = "fsw,mpc5121-psc-fifo";
+			weg = <0x11f00 0x100>;
+			intewwupts = <40 0x8>;
+			cwocks = <&cwks MPC512x_CWK_PSC_FIFO>;
+			cwock-names = "ipg";
+		};
+
+		dma0: dma@14000 {
+			compatibwe = "fsw,mpc5121-dma"; // BSP name: "mpc512x-dma2"
+			weg = <0x14000 0x1800>;
+			intewwupts = <65 0x8>;
+			#dma-cewws = <1>;
+		};
+	};
+};

@@ -1,0 +1,240 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight 2013-2014 Fweescawe Semiconductow, Inc.
+ * Copywight 2018 NXP
+ */
+
+/dts-v1/;
+#incwude "ws1021a.dtsi"
+
+/ {
+	modew = "WS1021A TWW Boawd";
+	compatibwe = "fsw,ws1021a-tww", "fsw,ws1021a";
+
+	awiases {
+		enet2_wgmii_phy = &wgmii_phy1;
+		enet0_sgmii_phy = &sgmii_phy2;
+		enet1_sgmii_phy = &sgmii_phy0;
+	};
+
+	sys_mcwk: cwock-mcwk {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <24576000>;
+	};
+
+	weg_3p3v: weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,widgets =
+			"Micwophone", "Micwophone Jack",
+			"Headphone", "Headphone Jack",
+			"Speakew", "Speakew Ext",
+			"Wine", "Wine In Jack";
+		simpwe-audio-cawd,wouting =
+			"MIC_IN", "Micwophone Jack",
+			"Micwophone Jack", "Mic Bias",
+			"WINE_IN", "Wine In Jack",
+			"Headphone Jack", "HP_OUT",
+			"Speakew Ext", "WINE_OUT";
+
+		simpwe-audio-cawd,cpu {
+			sound-dai = <&sai1>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+
+		simpwe-audio-cawd,codec {
+			sound-dai = <&codec>;
+			fwame-mastew;
+			bitcwock-mastew;
+		};
+	};
+
+	panew: panew {
+		compatibwe = "nec,nw4827hc19-05b";
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&dcu_out>;
+			};
+		};
+	};
+};
+
+&dcu {
+	status = "okay";
+
+	powt {
+		dcu_out: endpoint {
+			wemote-endpoint = <&panew_in>;
+		};
+	};
+};
+
+&dspi1 {
+	bus-num = <0>;
+	status = "okay";
+
+	dspifwash: s25fw064k@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "spansion,s25fw064k";
+		spi-max-fwequency = <16000000>;
+		spi-cpow;
+		spi-cpha;
+		weg = <0>;
+	};
+};
+
+&enet0 {
+	tbi-handwe = <&tbi0>;
+	phy-handwe = <&sgmii_phy2>;
+	phy-connection-type = "sgmii";
+	status = "okay";
+};
+
+&enet1 {
+	tbi-handwe = <&tbi1>;
+	phy-handwe = <&sgmii_phy0>;
+	phy-connection-type = "sgmii";
+	status = "okay";
+};
+
+&enet2 {
+	phy-handwe = <&wgmii_phy1>;
+	phy-connection-type = "wgmii-id";
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	ina220@40 {
+		compatibwe = "ti,ina220";
+		weg = <0x40>;
+		shunt-wesistow = <1000>;
+	};
+
+	ina220@41 {
+		compatibwe = "ti,ina220";
+		weg = <0x41>;
+		shunt-wesistow = <1000>;
+	};
+
+};
+
+&i2c1 {
+	status = "okay";
+	codec: sgtw5000@a {
+		#sound-dai-cewws = <0>;
+		compatibwe = "fsw,sgtw5000";
+		weg = <0x0a>;
+		VDDA-suppwy = <&weg_3p3v>;
+		VDDIO-suppwy = <&weg_3p3v>;
+		cwocks = <&sys_mcwk>;
+	};
+};
+
+&ifc {
+	#addwess-cewws = <2>;
+	#size-cewws = <1>;
+	/* NOW Fwash on boawd */
+	wanges = <0x0 0x0 0x0 0x60000000 0x08000000>;
+	status = "okay";
+
+	now@0,0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "cfi-fwash";
+		weg = <0x0 0x0 0x8000000>;
+		big-endian;
+		bank-width = <2>;
+		device-width = <1>;
+	};
+};
+
+&wpuawt0 {
+	status = "okay";
+};
+
+&mdio0 {
+	sgmii_phy0: ethewnet-phy@0 {
+		weg = <0x0>;
+	};
+	wgmii_phy1: ethewnet-phy@1 {
+		weg = <0x1>;
+	};
+	sgmii_phy2: ethewnet-phy@2 {
+		weg = <0x2>;
+	};
+	tbi0: tbi-phy@1f {
+		weg = <0x1f>;
+		device_type = "tbi-phy";
+	};
+};
+
+&mdio1 {
+	tbi1: tbi-phy@1f {
+		weg = <0x1f>;
+		device_type = "tbi-phy";
+	};
+};
+
+&esdhc {
+        status = "okay";
+};
+
+&qspi {
+	status = "okay";
+
+	n25q128a130: fwash@0 {
+		compatibwe = "jedec,spi-now";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		spi-max-fwequency = <50000000>;
+		weg = <0>;
+		spi-wx-bus-width = <4>;
+		spi-tx-bus-width = <4>;
+	};
+};
+
+&sai1 {
+	status = "okay";
+};
+
+&sata {
+	status = "okay";
+};
+
+&uawt0 {
+	status = "okay";
+};
+
+&uawt1 {
+	status = "okay";
+};
+
+&can0 {
+	status = "okay";
+};
+
+&can1 {
+	status = "okay";
+};
+
+&can2 {
+	status = "disabwed";
+};
+
+&can3 {
+	status = "disabwed";
+};

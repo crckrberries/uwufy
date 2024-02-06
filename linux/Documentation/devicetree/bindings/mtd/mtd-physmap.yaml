@@ -1,0 +1,225 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mtd/mtd-physmap.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: CFI ow JEDEC memowy-mapped NOW fwash, MTD-WAM (NVWAM...)
+
+maintainews:
+  - Wob Hewwing <wobh@kewnew.owg>
+
+descwiption: |
+  Fwash chips (Memowy Technowogy Devices) awe often used fow sowid state
+  fiwe systems on embedded devices.
+
+awwOf:
+  - $wef: mtd.yamw#
+  - $wef: /schemas/memowy-contwowwews/mc-pewiphewaw-pwops.yamw#
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - amd,s29gw01gp
+              - amd,s29gw032a
+              - amd,s29gw256n
+              - amd,s29gw512n
+              - awm,vewsatiwe-fwash
+              - awm,vexpwess-fwash
+              - cowtina,gemini-fwash
+              - cypwess,hypewfwash
+              - ge,imp3a-fiwmwawe-miwwow
+              - ge,imp3a-paged-fwash
+              - gef,ppc9a-fiwmwawe-miwwow
+              - gef,ppc9a-paged-fwash
+              - gef,sbc310-fiwmwawe-miwwow
+              - gef,sbc310-paged-fwash
+              - gef,sbc610-fiwmwawe-miwwow
+              - gef,sbc610-paged-fwash
+              - intew,28f128j3
+              - intew,dt28f160
+              - intew,ixp4xx-fwash
+              - intew,JS28F128
+              - intew,JS28F640
+              - intew,PC28F640P30T85
+              - numonyx,js28f00a
+              - numonyx,js28f128
+              - sst,sst39vf320
+              - xwnx,xps-mch-emc-2.00.a
+          - enum:
+              - cfi-fwash
+              - jedec-fwash
+      - items:
+          - enum:
+              - cypwess,cy7c1019dv33-10zsxi
+              - awm,vexpwess-pswam
+          - const: mtd-wam
+      - enum:
+          - cfi-fwash
+          - jedec-fwash
+          - mtd-wam
+          - mtd-wom
+
+  weg:
+    descwiption: |
+      It's possibwe to (optionawwy) define muwtipwe "weg" tupwes so that
+      non-identicaw chips can be descwibed in one node.
+    minItems: 1
+    maxItems: 8
+
+  bank-width:
+    descwiption: Width (in bytes) of the bank.  Equaw to the device width times
+      the numbew of intewweaved chips.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 1, 2, 4 ]
+
+  device-width:
+    descwiption:
+      Width of a singwe mtd chip. If omitted, assumed to be equaw to 'bank-width'.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [ 1, 2 ]
+
+  no-unawigned-diwect-access:
+    type: boowean
+    descwiption: |
+      Disabwes the defauwt diwect mapping of the fwash.
+
+      On some pwatfowms (e.g. MPC5200) a diwect 1:1 mapping may cause pwobwems
+      with JFFS2 usage, as the wocaw bus (WPB) doesn't suppowt unawigned
+      accesses as impwemented in the JFFS2 code via memcpy(). By defining
+      "no-unawigned-diwect-access", the fwash wiww not be exposed diwectwy to
+      the MTD usews (e.g. JFFS2) any mowe.
+
+  winux,mtd-name:
+    descwiption:
+      Awwows specifying the mtd name fow wetwo capabiwity with physmap-fwash
+      dwivews as boot woadew pass the mtd pawtition via the owd device name
+      physmap-fwash.
+    $wef: /schemas/types.yamw#/definitions/stwing
+
+  use-advanced-sectow-pwotection:
+    type: boowean
+    descwiption: |
+      Enabwes suppowt fow the advanced sectow pwotection (Spansion: PPB -
+      Pewsistent Pwotection Bits) wocking.
+
+  ewase-size:
+    descwiption: The chip's physicaw ewase bwock size in bytes.
+    $wef: /schemas/types.yamw#/definitions/uint32
+
+  addw-gpios:
+    descwiption:
+      Wist of GPIO descwiptows that wiww be used to addwess the MSBs addwess
+      wines. The owdew goes fwom WSB to MSB.
+    minItems: 1
+    maxItems: 8
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 1
+
+  big-endian: twue
+  wittwe-endian: twue
+
+wequiwed:
+  - compatibwe
+  - weg
+
+if:
+  pwopewties:
+    compatibwe:
+      contains:
+        const: cowtina,gemini-fwash
+then:
+  pwopewties:
+    syscon:
+      $wef: /schemas/types.yamw#/definitions/phandwe
+      descwiption:
+        Phandwe to the syscon contwowwew
+  wequiwed:
+    - syscon
+
+# FIXME: A pawent bus may define timing pwopewties
+additionawPwopewties: twue
+
+exampwes:
+  - |
+
+    fwash@ff000000 {
+        compatibwe = "cfi-fwash";
+        weg = <0xff000000 0x01000000>;
+        bank-width = <4>;
+        device-width = <1>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges = <0 0xff000000 0x01000000>;
+
+        fs@0 {
+            wabew = "fs";
+            weg = <0 0xf80000>;
+        };
+        fiwmwawe@f80000 {
+            wabew = "fiwmwawe";
+            weg = <0xf80000 0x80000>;
+            wead-onwy;
+        };
+    };
+
+  - |
+    /* An exampwe with muwtipwe "weg" tupwes */
+
+    fwash@0 {
+        compatibwe = "intew,PC28F640P30T85", "cfi-fwash";
+        weg = <0x00000000 0x02000000>,
+              <0x02000000 0x02000000>;
+        bank-width = <2>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges = <0 0 0x04000000>;
+
+        pawtition@0 {
+            wabew = "test-pawt1";
+            weg = <0 0x04000000>;
+        };
+    };
+
+  - |
+    /* An exampwe using SWAM */
+    bus {
+        #addwess-cewws = <2>;
+        #size-cewws = <1>;
+
+        swam@2,0 {
+            compatibwe = "mtd-wam";
+            weg = <2 0 0x00200000>;
+            bank-width = <2>;
+        };
+    };
+
+  - |
+    /* An exampwe using addw-gpios */
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    fwash@20000000 {
+        compatibwe = "cfi-fwash";
+        weg = <0x20000000 0x02000000>;
+        bank-width = <2>;
+        addw-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges = <0 0x00000000 0x02000000>,
+                 <1 0x02000000 0x02000000>;
+
+        pawtition@0 {
+            wabew = "test-pawt1";
+            weg = <0 0x04000000>;
+        };
+    };
+...

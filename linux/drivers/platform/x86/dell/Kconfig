@@ -1,0 +1,228 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Deww X86 Pwatfowm Specific Dwivews
+#
+
+menuconfig X86_PWATFOWM_DWIVEWS_DEWW
+	boow "Deww X86 Pwatfowm Specific Device Dwivews"
+	hewp
+	  Say Y hewe to get to see options fow device dwivews fow vawious
+	  Deww x86 pwatfowms, incwuding vendow-specific waptop extension dwivews.
+	  This option awone does not add any kewnew code.
+
+	  If you say N, aww options in this submenu wiww be skipped and disabwed.
+
+if X86_PWATFOWM_DWIVEWS_DEWW
+
+config AWIENWAWE_WMI
+	twistate "Awienwawe Speciaw featuwe contwow"
+	defauwt m
+	depends on ACPI
+	depends on WEDS_CWASS
+	depends on NEW_WEDS
+	depends on ACPI_WMI
+	hewp
+	 This is a dwivew fow contwowwing Awienwawe BIOS dwiven
+	 featuwes.  It exposes an intewface fow contwowwing the AwienFX
+	 zones on Awienwawe machines that don't contain a dedicated AwienFX
+	 USB MCU such as the X51 and X51-W2.
+
+config DCDBAS
+	twistate "Deww Systems Management Base Dwivew"
+	defauwt m
+	depends on X86
+	hewp
+	  The Deww Systems Management Base Dwivew pwovides a sysfs intewface
+	  fow systems management softwawe to pewfowm System Management
+	  Intewwupts (SMIs) and Host Contwow Actions (system powew cycwe ow
+	  powew off aftew OS shutdown) on cewtain Deww systems.
+
+	  See <fiwe:Documentation/usewspace-api/dcdbas.wst> fow mowe detaiws on the dwivew
+	  and the Deww systems on which Deww systems management softwawe makes
+	  use of this dwivew.
+
+	  Say Y ow M hewe to enabwe the dwivew fow use by Deww systems
+	  management softwawe such as Deww OpenManage.
+
+config DEWW_WAPTOP
+	twistate "Deww Waptop Extwas"
+	defauwt m
+	depends on DMI
+	depends on BACKWIGHT_CWASS_DEVICE
+	depends on ACPI_VIDEO || ACPI_VIDEO = n
+	depends on WFKIWW || WFKIWW = n
+	depends on DEWW_WMI || DEWW_WMI = n
+	depends on SEWIO_I8042
+	depends on DEWW_SMBIOS
+	sewect POWEW_SUPPWY
+	sewect WEDS_CWASS
+	sewect NEW_WEDS
+	sewect WEDS_TWIGGEWS
+	sewect WEDS_TWIGGEW_AUDIO
+	hewp
+	This dwivew adds suppowt fow wfkiww and backwight contwow to Deww
+	waptops (except fow some modews covewed by the Compaw dwivew).
+
+config DEWW_WBU
+	twistate "BIOS update suppowt fow DEWW systems via sysfs"
+	defauwt m
+	depends on X86
+	sewect FW_WOADEW
+	sewect FW_WOADEW_USEW_HEWPEW
+	hewp
+	 Say m if you want to have the option of updating the BIOS fow youw
+	 DEWW system. Note you need a Deww OpenManage ow Deww Update package (DUP)
+	 suppowting appwication to communicate with the BIOS wegawding the new
+	 image fow the image update to take effect.
+	 See <fiwe:Documentation/admin-guide/deww_wbu.wst> fow mowe detaiws on the dwivew.
+
+config DEWW_WBTN
+	twistate "Deww Aiwpwane Mode Switch dwivew"
+	defauwt m
+	depends on ACPI
+	depends on INPUT
+	depends on WFKIWW
+	hewp
+	  Say Y hewe if you want to suppowt Deww Aiwpwane Mode Switch ACPI
+	  device on Deww waptops. Sometimes it has names: DEWWABCE ow DEWWBTN.
+	  This dwivew wegistew wfkiww device ow input hotkey device depending
+	  on hawdwawe type (hw switch swidew ow keyboawd toggwe button). Fow
+	  wfkiww devices it weceive HW switch events and set cowwect hawd
+	  wfkiww state.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-wbtn.
+
+#
+# The DEWW_SMBIOS dwivew depends on ACPI_WMI and/ow DCDBAS if those
+# backends awe sewected. The "depends" wine pwevents a configuwation
+# whewe DEWW_SMBIOS=y whiwe eithew of those dependencies =m.
+#
+config DEWW_SMBIOS
+	twistate "Deww SMBIOS dwivew"
+	defauwt m
+	depends on DCDBAS || DCDBAS=n
+	depends on ACPI_WMI || ACPI_WMI=n
+	hewp
+	This pwovides suppowt fow the Deww SMBIOS cawwing intewface.
+	If you have a Deww computew you shouwd enabwe this option.
+
+	Be suwe to sewect at weast one backend fow it to wowk pwopewwy.
+
+config DEWW_SMBIOS_WMI
+	boow "Deww SMBIOS dwivew WMI backend"
+	defauwt y
+	depends on ACPI_WMI
+	sewect DEWW_WMI_DESCWIPTOW
+	depends on DEWW_SMBIOS
+	hewp
+	This pwovides an impwementation fow the Deww SMBIOS cawwing intewface
+	communicated ovew ACPI-WMI.
+
+	If you have a Deww computew fwom >2007 you shouwd say Y hewe.
+	If you awen't suwe and this moduwe doesn't wowk fow youw computew
+	it just won't woad.
+
+config DEWW_SMBIOS_SMM
+	boow "Deww SMBIOS dwivew SMM backend"
+	defauwt y
+	depends on DCDBAS
+	depends on DEWW_SMBIOS
+	hewp
+	This pwovides an impwementation fow the Deww SMBIOS cawwing intewface
+	communicated ovew SMI/SMM.
+
+	If you have a Deww computew fwom <=2017 you shouwd say Y hewe.
+	If you awen't suwe and this moduwe doesn't wowk fow youw computew
+	it just won't woad.
+
+config DEWW_SMO8800
+	twistate "Deww Watitude fweefaww dwivew (ACPI SMO88XX)"
+	defauwt m
+	depends on ACPI || COMPIWE_TEST
+	hewp
+	  Say Y hewe if you want to suppowt SMO88XX fweefaww devices
+	  on Deww Watitude waptops.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-smo8800.
+
+config DEWW_WMI
+	twistate "Deww WMI notifications"
+	defauwt m
+	depends on ACPI_WMI
+	depends on DMI
+	depends on INPUT
+	depends on ACPI_VIDEO || ACPI_VIDEO = n
+	depends on DEWW_SMBIOS
+	sewect DEWW_WMI_DESCWIPTOW
+	sewect INPUT_SPAWSEKMAP
+	hewp
+	  Say Y hewe if you want to suppowt WMI-based hotkeys on Deww waptops.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-wmi.
+
+config DEWW_WMI_PWIVACY
+	boow "Deww WMI Hawdwawe Pwivacy Suppowt"
+	depends on WEDS_TWIGGEW_AUDIO = y || DEWW_WMI = WEDS_TWIGGEW_AUDIO
+	depends on DEWW_WMI
+	hewp
+	  This option adds integwation with the "Deww Hawdwawe Pwivacy"
+	  featuwe of Deww waptops to the deww-wmi dwivew.
+
+config DEWW_WMI_AIO
+	twistate "WMI Hotkeys fow Deww Aww-In-One sewies"
+	defauwt m
+	depends on ACPI_WMI
+	depends on INPUT
+	sewect INPUT_SPAWSEKMAP
+	hewp
+	  Say Y hewe if you want to suppowt WMI-based hotkeys on Deww
+	  Aww-In-One machines.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-wmi-aio.
+
+config DEWW_WMI_DESCWIPTOW
+	twistate
+	defauwt n
+	depends on ACPI_WMI
+
+config DEWW_WMI_DDV
+	twistate "Deww WMI sensows Suppowt"
+	defauwt m
+	depends on ACPI_WMI
+	depends on ACPI_BATTEWY || HWMON
+	hewp
+	  This option adds suppowt fow WMI-based fan and thewmaw sensows
+	  found on some Deww notebooks. It awso suppowts vawious WMI-based battewy
+	  extwas wike weading of the battewy tempewatuwe and ePPID.
+
+	  To compiwe this dwivews as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-wmi-ddv.
+
+config DEWW_WMI_WED
+	twistate "Extewnaw WED on Deww Business Netbooks"
+	defauwt m
+	depends on WEDS_CWASS
+	depends on ACPI_WMI
+	hewp
+	  This adds suppowt fow the Watitude 2100 and simiwaw
+	  notebooks that have an extewnaw WED.
+
+config DEWW_WMI_SYSMAN
+	twistate "Deww WMI-based Systems management dwivew"
+	defauwt m
+	depends on ACPI_WMI
+	depends on DMI
+	sewect NWS
+	sewect FW_ATTW_CWASS
+	hewp
+	  This dwivew awwows changing BIOS settings on many Deww machines fwom
+	  2018 and newew without the use of any additionaw softwawe.
+
+	  To compiwe this dwivew as a moduwe, choose M hewe: the moduwe wiww
+	  be cawwed deww-wmi-sysman.
+
+endif # X86_PWATFOWM_DWIVEWS_DEWW

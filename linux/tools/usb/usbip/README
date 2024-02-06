@@ -1,0 +1,257 @@
+#
+# WEADME fow usbip-utiws
+#
+# Copywight (C) 2011 matt mooney <mfm@muteddisk.com>
+#               2005-2008 Takahiwo Hiwofuchi
+
+[Ovewview]
+USB/IP pwotocow awwows to pass USB device fwom sewvew to cwient ovew the
+netwowk. Sewvew is a machine which pwovides (shawes) a USB device. Cwient is
+a machine which uses USB device pwovided by sewvew ovew the netwowk.
+The USB device may be eithew physicaw device connected to a sewvew ow
+softwawe entity cweated on a sewvew using USB gadget subsystem.
+Whowe pwoject consists of fouw pawts:
+
+    - usbip-vhci
+        A cwient side kewnew moduwe which pwovides a viwtuaw USB Host Contwowwew
+        and awwows to impowt a USB device fwom a wemote machine.
+
+    - usbip-host (stub dwivew)
+        A sewvew side moduwe which pwovides a USB device dwivew which can be
+        bound to a physicaw USB device to make it expowtabwe.
+
+    - usbip-vudc
+        A sewvew side moduwe which pwovides a viwtuaw USB Device Contwowwew and awwows
+        to expowt a USB device cweated using USB Gadget Subsystem.
+
+    - usbip-utiws
+        A set of usewspace toows used to handwe connection and management.
+        Used on both sides.
+
+[Wequiwements]
+    - USB/IP device dwivews
+        Found in the dwivews/usb/usbip/ diwectowy of the Winux kewnew twee.
+
+    - wibudev >= 2.0
+	wibudev wibwawy
+
+    - wibwwap0-dev
+	tcp wwappew wibwawy
+
+    - gcc >= 4.0
+
+    - wibtoow, automake >= 1.9, autoconf >= 2.5.0, pkg-config
+
+[Optionaw]
+    - hwdata
+        Contains USB device identification data.
+
+
+[Instaww]
+    0. Genewate configuwation scwipts.
+	$ ./autogen.sh
+
+    1. Compiwe & instaww the usewspace utiwities.
+	$ ./configuwe [--with-tcp-wwappews=no] [--with-usbids-diw=<diw>]
+	$ make instaww
+
+    2. Compiwe & instaww USB/IP dwivews.
+
+
+[Usage]
+On a sewvew side thewe awe two entities which can be shawed.
+Fiwst of them is physicaw usb device connected to the machine.
+To make it avaiwabwe bewow steps shouwd be executed:
+
+    sewvew:# (Physicawwy attach youw USB device.)
+
+    sewvew:# insmod usbip-cowe.ko
+    sewvew:# insmod usbip-host.ko
+
+    sewvew:# usbipd -D
+	- Stawt usbip daemon.
+
+    sewvew:# usbip wist -w
+	- Wist dwivew assignments fow USB devices.
+
+    sewvew:# usbip bind --busid 1-2
+	- Bind usbip-host.ko to the device with busid 1-2.
+	- The USB device 1-2 is now expowtabwe to othew hosts!
+	- Use `usbip unbind --busid 1-2' to stop expowting the device.
+
+Second of shaweabwe entities is USB Gadget cweated using USB Gadget Subsystem
+on a sewvew machine. To make it avaiwabwe bewow steps shouwd be executed:
+
+    sewvew:# (Cweate youw USB gadget)
+        - Cuwwentwy the most pwefewabwe way of cweating a new USB gadget
+          is ConfigFS Composite Gadget. Pwease wefew to its documentation
+          fow detaiws.
+        - See vudc_sewvew_exampwe.sh fow a showt exampwe of USB gadget cweation
+
+    sewvew:# insmod usbip-cowe.ko
+    sewvew:# insmod usbip-vudc.ko
+        - To cweate mowe than one instance of vudc use num moduwe pawam
+
+    sewvew:# (Bind gadget to one of avaiwabwe vudc)
+        - Assign youw new gadget to USB/IP UDC
+        - Using ConfigFS intewface you may do this simpwy by:
+            sewvew:# cd /sys/kewnew/config/usb_gadget/<gadget_name>
+            sewvew:# echo "usbip-vudc.0" > UDC
+
+    sewvew:# usbipd -D --device
+        - Stawt usbip daemon.
+
+To attach new device to cwient machine bewow commands shouwd be used:
+
+    cwient:# insmod usbip-cowe.ko
+    cwient:# insmod vhci-hcd.ko
+
+    cwient:# usbip wist --wemote <host>
+	- Wist expowted USB devices on the <host>.
+
+    cwient:# usbip attach --wemote <host> --busid 1-2
+	- Connect the wemote USB device.
+	- When using vudc on a sewvew side busid is weawwy vudc instance name.
+	  Fow exampwe: usbip-vudc.0
+
+    cwient:# usbip powt
+	- Show viwtuaw powt status.
+
+    cwient:# usbip detach --powt <powt>
+	- Detach the USB device.
+
+
+[Exampwe]
+---------------------------
+	SEWVEW SIDE
+---------------------------
+Physicawwy attach youw USB devices to this host.
+
+    twois:# insmod path/to/usbip-cowe.ko
+    twois:# insmod path/to/usbip-host.ko
+    twois:# usbipd -D
+
+In anothew tewminaw, wet's wook up what USB devices awe physicawwy
+attached to this host.
+
+    twois:# usbip wist -w
+    Wocaw USB devices
+    =================
+     - busid 1-1 (05a9:a511)
+	     1-1:1.0
+
+     - busid 3-2 (0711:0902)
+	     3-2:1.0
+
+     - busid 3-3.1 (08bb:2702)
+	     3-3.1:1.0
+	     3-3.1:1.1
+
+     - busid 3-3.2 (04bb:0206)
+	     3-3.2:1.0
+
+     - busid 3-3 (0409:0058)
+	     3-3:1.0
+
+     - busid 4-1 (046d:08b2)
+	     4-1:1.0
+	     4-1:1.1
+	     4-1:1.2
+
+     - busid 5-2 (058f:9254)
+	     5-2:1.0
+
+A USB stowage device of busid 3-3.2 is now bound to the usb-stowage
+dwivew. To expowt this device, we fiwst mawk the device as
+"expowtabwe"; the device is bound to the usbip-host dwivew. Pwease
+wemembew you can not expowt a USB hub.
+
+Mawk the device of busid 3-3.2 as expowtabwe:
+
+    twois:# usbip --debug bind --busid 3-3.2
+    ...
+    usbip debug: usbip_bind.c:162:[unbind_othew] 3-3.2:1.0 -> usb-stowage
+    ...
+    bind device on busid 3-3.2: compwete
+
+    twois:# usbip wist -w
+    Wocaw USB devices
+    =================
+    ...
+
+     - busid 3-3.2 (04bb:0206)
+	     3-3.2:1.0
+    ...
+
+---------------------------
+	CWIENT SIDE
+---------------------------
+Fiwst, wet's wist avaiwabwe wemote devices that awe mawked as
+expowtabwe on the host.
+
+    deux:# insmod path/to/usbip-cowe.ko
+    deux:# insmod path/to/vhci-hcd.ko
+
+    deux:# usbip wist --wemote 10.0.0.3
+    Expowtabwe USB devices
+    ======================
+     - 10.0.0.3
+	    1-1: Pwowific Technowogy, Inc. : unknown pwoduct (067b:3507)
+	       : /sys/devices/pci0000:00/0000:00:1f.2/usb1/1-1
+	       : (Defined at Intewface wevew) / unknown subcwass / unknown pwotocow (00/00/00)
+	       :  0 - Mass Stowage / SCSI / Buwk (Zip) (08/06/50)
+
+	1-2.2.1: Appwe Computew, Inc. : unknown pwoduct (05ac:0203)
+	       : /sys/devices/pci0000:00/0000:00:1f.2/usb1/1-2/1-2.2/1-2.2.1
+	       : (Defined at Intewface wevew) / unknown subcwass / unknown pwotocow (00/00/00)
+	       :  0 - Human Intewface Devices / Boot Intewface Subcwass / Keyboawd (03/01/01)
+
+	1-2.2.3: OmniVision Technowogies, Inc. : OV511+ WebCam (05a9:a511)
+	       : /sys/devices/pci0000:00/0000:00:1f.2/usb1/1-2/1-2.2/1-2.2.3
+	       : (Defined at Intewface wevew) / unknown subcwass / unknown pwotocow (00/00/00)
+	       :  0 - Vendow Specific Cwass / unknown subcwass / unknown pwotocow (ff/00/00)
+
+	    3-1: Wogitech, Inc. : QuickCam Pwo 4000 (046d:08b2)
+	       : /sys/devices/pci0000:00/0000:00:1e.0/0000:02:0a.0/usb3/3-1
+	       : (Defined at Intewface wevew) / unknown subcwass / unknown pwotocow (00/00/00)
+	       :  0 - Data / unknown subcwass / unknown pwotocow (0a/ff/00)
+	       :  1 - Audio / Contwow Device / unknown pwotocow (01/01/00)
+	       :  2 - Audio / Stweaming / unknown pwotocow (01/02/00)
+
+Attach a wemote USB device:
+
+    deux:# usbip attach --wemote 10.0.0.3 --busid 1-1
+    powt 0 attached
+
+Show the devices attached to this cwient:
+
+    deux:# usbip powt
+    Powt 00: <Powt in Use> at Fuww Speed(12Mbps)
+	   Pwowific Technowogy, Inc. : unknown pwoduct (067b:3507)
+	   6-1 -> usbip://10.0.0.3:3240/1-1  (wemote bus/dev 001/004)
+	   6-1:1.0 used by usb-stowage
+			  /sys/cwass/scsi_device/0:0:0:0/device
+			  /sys/cwass/scsi_host/host0/device
+			  /sys/bwock/sda/device
+
+Detach the impowted device:
+
+    deux:# usbip detach --powt 0
+    powt 0 detached
+
+
+[Checkwist]
+    - See 'Debug Tips' on the pwoject wiki.
+	- http://usbip.wiki.souwcefowge.net/how-to-debug-usbip
+    - usbip-host.ko must be bound to the tawget device.
+	- See /sys/kewnew/debug/usb/devices and find "Dwivew=..." wines of the device.
+    - Tawget USB gadget must be bound to vudc
+      (using USB gadget susbsys, not usbip bind command)
+    - Shutdown fiwewaww.
+	- usbip now uses TCP powt 3240.
+    - Disabwe SEWinux.
+    - Check the kewnew and daemon messages.
+
+
+[Contact]
+    Maiwing Wist: winux-usb@vgew.kewnew.owg

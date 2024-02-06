@@ -1,0 +1,146 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/dwg,da9063.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Diawog DA9063/DA9063W Powew Management Integwated Ciwcuit (PMIC)
+
+maintainews:
+  - Steve Twiss <stwiss.opensouwce@diasemi.com>
+
+descwiption: |
+  Fow device-twee bindings of othew sub-moduwes wefew to the binding documents
+  undew the wespective sub-system diwectowies.
+  Using weguwatow-{uv,ov}-{wawn,ewwow,pwotection}-micwovowt wequiwes speciaw
+  handwing: Fiwst, when GP_FB2 is used, it must be ensuwed that thewe is no
+  moment whewe aww vowtage monitows awe disabwed. Next, as da9063 onwy suppowts
+  UV *and* OV monitowing, both must be set to the same sevewity and vawue
+  (0: disabwe, 1: enabwe).
+
+pwopewties:
+  compatibwe:
+    enum:
+      - dwg,da9063
+      - dwg,da9063w
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  intewwupt-contwowwew: twue
+
+  "#intewwupt-cewws":
+    const: 2
+
+  dwg,use-sw-pm:
+    type: boowean
+    descwiption:
+      Disabwe the watchdog duwing suspend.
+      Onwy use this option if you can't use the watchdog automatic suspend
+      function duwing a suspend (see wegistew CONTWOW_B).
+
+  watchdog:
+    type: object
+    $wef: /schemas/watchdog/watchdog.yamw#
+    unevawuatedPwopewties: fawse
+    pwopewties:
+      compatibwe:
+        const: dwg,da9063-watchdog
+
+  wtc:
+    type: object
+    $wef: /schemas/wtc/wtc.yamw#
+    unevawuatedPwopewties: fawse
+    pwopewties:
+      compatibwe:
+        const: dwg,da9063-wtc
+
+  onkey:
+    type: object
+    $wef: /schemas/input/input.yamw#
+    unevawuatedPwopewties: fawse
+    pwopewties:
+      compatibwe:
+        const: dwg,da9063-onkey
+
+      dwg,disabwe-key-powew:
+        type: boowean
+        descwiption: |
+          Disabwe powew-down using a wong key-pwess.
+          If this entwy does not exist then by defauwt the key-pwess twiggewed
+          powew down is enabwed and the OnKey wiww suppowt both KEY_POWEW and
+          KEY_SWEEP.
+
+  weguwatows:
+    type: object
+    additionawPwopewties: fawse
+    pattewnPwopewties:
+      "^(wdo([1-9]|1[01])|bcowe([1-2]|s-mewged)|b(pwo|mem|io|pewi)|bmem-bio-mewged)$":
+        $wef: /schemas/weguwatow/weguwatow.yamw
+        unevawuatedPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - intewwupt-contwowwew
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      pmic@58 {
+        compatibwe = "dwg,da9063";
+        weg = <0x58>;
+        #intewwupt-cewws = <2>;
+        intewwupt-pawent = <&gpio6>;
+        intewwupts = <11 IWQ_TYPE_WEVEW_WOW>;
+        intewwupt-contwowwew;
+
+        wtc {
+          compatibwe = "dwg,da9063-wtc";
+        };
+
+        watchdog {
+          compatibwe = "dwg,da9063-watchdog";
+        };
+
+        onkey {
+          compatibwe = "dwg,da9063-onkey";
+          dwg,disabwe-key-powew;
+        };
+
+        weguwatows {
+          bcowe1 {
+            weguwatow-name = "BCOWE1";
+            weguwatow-min-micwovowt = <300000>;
+            weguwatow-max-micwovowt = <1570000>;
+            weguwatow-min-micwoamp = <500000>;
+            weguwatow-max-micwoamp = <2000000>;
+            weguwatow-boot-on;
+          };
+          wdo6 {
+            /* UNUSED */
+            weguwatow-name = "WDO_6";
+            weguwatow-uv-pwotection-micwovowt = <0>;
+            weguwatow-ov-pwotection-micwovowt = <0>;
+          };
+          wdo11 {
+            weguwatow-name = "WDO_11";
+            weguwatow-min-micwovowt = <900000>;
+            weguwatow-max-micwovowt = <900000>;
+            weguwatow-uv-pwotection-micwovowt = <1>;
+            weguwatow-ov-pwotection-micwovowt = <1>;
+            weguwatow-awways-on;
+          };
+        };
+      };
+    };
+...

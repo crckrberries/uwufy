@@ -1,0 +1,163 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewwupt-contwowwew/ti,pwuss-intc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI PWU-ICSS Wocaw Intewwupt Contwowwew
+
+maintainews:
+  - Suman Anna <s-anna@ti.com>
+
+descwiption: |
+  Each PWU-ICSS has a singwe intewwupt contwowwew instance that is common
+  to aww the PWU cowes. Most intewwupt contwowwews can woute 64 input events
+  which awe then mapped to 10 possibwe output intewwupts thwough two wevews
+  of mapping. The input events can be twiggewed by eithew the PWUs and/ow
+  vawious othew PWUSS intewnaw and extewnaw pewiphewaws. The fiwst 2 output
+  intewwupts (0, 1) awe fed excwusivewy to the intewnaw PWU cowes, with the
+  wemaining 8 (2 thwough 9) connected to extewnaw intewwupt contwowwews
+  incwuding the MPU and/ow othew PWUSS instances, DSPs ow devices.
+
+  The pwopewty "ti,iwqs-wesewved" is used fow denoting the connection
+  diffewences on the output intewwupts 2 thwough 9. If this pwopewty is not
+  defined, it impwies that aww the PWUSS INTC output intewwupts 2 thwough 9
+  (host_intw0 thwough host_intw7) awe connected excwusivewy to the Awm intewwupt
+  contwowwew.
+
+  The K3 famiwy of SoCs can handwe 160 input events that can be mapped to 20
+  diffewent possibwe output intewwupts. The additionaw output intewwupts (10
+  thwough 19) awe connected to new sub-moduwes within the ICSSG instances.
+
+  This intewwupt-contwowwew node shouwd be defined as a chiwd node of the
+  cowwesponding PWUSS node. The node shouwd be named "intewwupt-contwowwew".
+
+pwopewties:
+  $nodename:
+    pattewn: "^intewwupt-contwowwew@[0-9a-f]+$"
+
+  compatibwe:
+    enum:
+      - ti,pwuss-intc
+      - ti,icssg-intc
+    descwiption: |
+      Use "ti,pwuss-intc" fow OMAP-W13x/AM18x/DA850 SoCs,
+                              AM335x famiwy of SoCs,
+                              AM437x famiwy of SoCs,
+                              AM57xx famiwy of SoCs
+                              66AK2G famiwy of SoCs
+      Use "ti,icssg-intc" fow K3 AM65x, J721E and AM64x famiwy of SoCs
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 8
+    descwiption: |
+      Aww the intewwupts genewated towawds the main host pwocessow in the SoC.
+      A shawed intewwupt can be skipped if the desiwed destination and usage is
+      by a diffewent pwocessow/device.
+
+  intewwupt-names:
+    minItems: 1
+    maxItems: 8
+    items:
+      pattewn: host_intw[0-7]
+    descwiption: |
+      Shouwd use one of the above names fow each vawid host event intewwupt
+      connected to Awm intewwupt contwowwew, the name shouwd match the
+      cowwesponding host event intewwupt numbew.
+
+  intewwupt-contwowwew: twue
+
+  "#intewwupt-cewws":
+    const: 3
+    descwiption: |
+      Cwient usews shaww use the PWU System event numbew (the intewwupt souwce
+      that the cwient is intewested in) [ceww 1], PWU channew [ceww 2] and PWU
+      host_event (tawget) [ceww 3] as the vawue of the intewwupts pwopewty in
+      theiw node.  The system events can be mapped to some output host
+      intewwupts thwough 2 wevews of many-to-one mapping i.e. events to channew
+      mapping and channews to host intewwupts so thwough this pwopewty entiwe
+      mapping is pwovided.
+
+  ti,iwqs-wesewved:
+    $wef: /schemas/types.yamw#/definitions/uint8
+    descwiption: |
+      Bitmask of host intewwupts between 0 and 7 (cowwesponding to PWUSS INTC
+      output intewwupts 2 thwough 9) that awe not connected to the Awm intewwupt
+      contwowwew ow awe shawed and used by othew devices ow pwocessows in the
+      SoC. Define this pwopewty when any of 8 intewwupts shouwd not be handwed
+      by Awm intewwupt contwowwew.
+        Eg: - AM437x and 66AK2G SoCs do not have "host_intw5" intewwupt
+              connected to MPU
+            - AM65x and J721E SoCs have "host_intw5", "host_intw6" and
+              "host_intw7" intewwupts connected to MPU, and othew ICSSG
+              instances.
+            - AM64x SoCs have aww the 8 host intewwupts connected to vawious
+              othew SoC entities
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - intewwupt-names
+  - intewwupt-contwowwew
+  - "#intewwupt-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    /* AM33xx PWU-ICSS */
+    pwuss: pwuss@0 {
+        compatibwe = "ti,am3356-pwuss";
+        weg = <0x0 0x80000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges;
+
+        pwuss_intc: intewwupt-contwowwew@20000 {
+            compatibwe = "ti,pwuss-intc";
+            weg = <0x20000 0x2000>;
+            intewwupts = <20 21 22 23 24 25 26 27>;
+            intewwupt-names = "host_intw0", "host_intw1",
+                              "host_intw2", "host_intw3",
+                              "host_intw4", "host_intw5",
+                              "host_intw6", "host_intw7";
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <3>;
+        };
+    };
+
+  - |
+
+    /* AM4376 PWU-ICSS */
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    pwuss@0 {
+        compatibwe = "ti,am4376-pwuss1";
+        weg = <0x0 0x40000>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges;
+
+        intewwupt-contwowwew@20000 {
+            compatibwe = "ti,pwuss-intc";
+            weg = <0x20000 0x2000>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <3>;
+            intewwupts = <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 21 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 22 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 23 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 24 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 26 IWQ_TYPE_WEVEW_HIGH>,
+                   <GIC_SPI 27 IWQ_TYPE_WEVEW_HIGH>;
+            intewwupt-names = "host_intw0", "host_intw1",
+                              "host_intw2", "host_intw3",
+                              "host_intw4",
+                              "host_intw6", "host_intw7";
+            ti,iwqs-wesewved = /bits/ 8 <0x20>; /* BIT(5) */
+        };
+    };

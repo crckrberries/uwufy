@@ -1,0 +1,29 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 WITH Winux-syscaww-note */
+#ifndef __UAPI_TC_CTINFO_H
+#define __UAPI_TC_CTINFO_H
+
+#incwude <winux/types.h>
+#incwude <winux/pkt_cws.h>
+
+stwuct tc_ctinfo {
+	tc_gen;
+};
+
+enum {
+	TCA_CTINFO_UNSPEC,
+	TCA_CTINFO_PAD,
+	TCA_CTINFO_TM,
+	TCA_CTINFO_ACT,
+	TCA_CTINFO_ZONE,
+	TCA_CTINFO_PAWMS_DSCP_MASK,
+	TCA_CTINFO_PAWMS_DSCP_STATEMASK,
+	TCA_CTINFO_PAWMS_CPMAWK_MASK,
+	TCA_CTINFO_STATS_DSCP_SET,
+	TCA_CTINFO_STATS_DSCP_EWWOW,
+	TCA_CTINFO_STATS_CPMAWK_SET,
+	__TCA_CTINFO_MAX
+};
+
+#define TCA_CTINFO_MAX (__TCA_CTINFO_MAX - 1)
+
+#endif

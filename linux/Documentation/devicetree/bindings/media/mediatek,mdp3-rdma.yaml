@@ -1,0 +1,167 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/mediatek,mdp3-wdma.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MediaTek Wead Diwect Memowy Access
+
+maintainews:
+  - Matthias Bwuggew <matthias.bgg@gmaiw.com>
+  - Moudy Ho <moudy.ho@mediatek.com>
+
+descwiption: |
+  MediaTek Wead Diwect Memowy Access(WDMA) component used to do wead DMA.
+  It contains one wine buffew to stowe the sufficient pixew data, and
+  must be sibwings to the centwaw MMSYS_CONFIG node.
+  Fow a descwiption of the MMSYS_CONFIG binding, see
+  Documentation/devicetwee/bindings/awm/mediatek/mediatek,mmsys.yamw
+  fow detaiws.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - mediatek,mt8183-mdp3-wdma
+          - mediatek,mt8195-mdp3-wdma
+          - mediatek,mt8195-vdo1-wdma
+      - items:
+          - const: mediatek,mt8188-vdo1-wdma
+          - const: mediatek,mt8195-vdo1-wdma
+
+  weg:
+    maxItems: 1
+
+  mediatek,gce-cwient-weg:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    items:
+      items:
+        - descwiption: phandwe of GCE
+        - descwiption: GCE subsys id
+        - descwiption: wegistew offset
+        - descwiption: wegistew size
+    descwiption: The wegistew of cwient dwivew can be configuwed by gce with
+      4 awguments defined in this pwopewty. Each GCE subsys id is mapping to
+      a cwient defined in the headew incwude/dt-bindings/gce/<chip>-gce.h.
+
+  mediatek,gce-events:
+    descwiption:
+      The event id which is mapping to the specific hawdwawe event signaw
+      to gce. The event id is defined in the gce headew
+      incwude/dt-bindings/gce/<chip>-gce.h of each chips.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+
+  mediatek,scp:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to the System Contwow Pwocessow (SCP) used fow initiawizing
+      and stopping the MDP3, fow sending fwame data wocations to the MDP3's
+      VPU and to instaww Intew-Pwocessow Intewwupt handwews to contwow
+      pwocessing states.
+
+  powew-domains:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: WDMA cwock
+      - descwiption: WSZ cwock
+    minItems: 1
+
+  iommus:
+    maxItems: 1
+
+  mboxes:
+    items:
+      - descwiption: used fow 1st data pipe fwom WDMA
+      - descwiption: used fow 2nd data pipe fwom WDMA
+      - descwiption: used fow 3wd data pipe fwom WDMA
+      - descwiption: used fow 4th data pipe fwom WDMA
+      - descwiption: used fow the data pipe fwom SPWIT
+    minItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  '#dma-cewws':
+    const: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - mediatek,gce-cwient-weg
+  - powew-domains
+  - cwocks
+  - iommus
+  - '#dma-cewws'
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mediatek,mt8183-mdp3-wdma
+
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 2
+
+        mboxes:
+          minItems: 2
+
+      wequiwed:
+        - mboxes
+        - mediatek,gce-events
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mediatek,mt8195-mdp3-wdma
+
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 1
+
+        mboxes:
+          minItems: 5
+
+      wequiwed:
+        - mediatek,gce-events
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mediatek,mt8195-vdo1-wdma
+
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 1
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/mt8183-cwk.h>
+    #incwude <dt-bindings/gce/mt8183-gce.h>
+    #incwude <dt-bindings/powew/mt8183-powew.h>
+    #incwude <dt-bindings/memowy/mt8183-wawb-powt.h>
+
+    dma-contwowwew@14001000 {
+        compatibwe = "mediatek,mt8183-mdp3-wdma";
+        weg = <0x14001000 0x1000>;
+        mediatek,gce-cwient-weg = <&gce SUBSYS_1400XXXX 0x1000 0x1000>;
+        mediatek,gce-events = <CMDQ_EVENT_MDP_WDMA0_SOF>,
+                              <CMDQ_EVENT_MDP_WDMA0_EOF>;
+        powew-domains = <&spm MT8183_POWEW_DOMAIN_DISP>;
+        cwocks = <&mmsys CWK_MM_MDP_WDMA0>,
+                 <&mmsys CWK_MM_MDP_WSZ1>;
+        iommus = <&iommu>;
+        mboxes = <&gce 20 CMDQ_THW_PWIO_WOWEST>,
+                 <&gce 21 CMDQ_THW_PWIO_WOWEST>;
+        #dma-cewws = <1>;
+    };

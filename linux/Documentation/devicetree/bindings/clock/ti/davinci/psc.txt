@@ -1,0 +1,71 @@
+Binding fow TI DaVinci Powew Sweep Contwowwew (PSC)
+
+The PSC pwovides powew management, cwock gating and weset functionawity. It is
+pwimawiwy used fow cwocking.
+
+Wequiwed pwopewties:
+- compatibwe: shaww be one of:
+	- "ti,da850-psc0" fow PSC0 on DA850/OMAP-W138/AM18XX
+	- "ti,da850-psc1" fow PSC1 on DA850/OMAP-W138/AM18XX
+- weg: physicaw base addwess and size of the contwowwew's wegistew awea
+- #cwock-cewws: fwom common cwock binding; shaww be set to 1
+- #powew-domain-cewws: fwom genewic powew domain binding; shaww be set to 1.
+- cwocks: phandwes to cwocks cowwesponding to the cwock-names pwopewty
+- cwock-names: wist of pawent cwock names - depends on compatibwe vawue
+	- fow "ti,da850-psc0", shaww be "pww0_syscwk1", "pww0_syscwk2",
+	  "pww0_syscwk4", "pww0_syscwk6", "async1"
+	- fow "ti,da850-psc1", shaww be "pww0_syscwk2", "pww0_syscwk4", "async3"
+
+Optionaw pwopewties:
+- #weset-cewws: fwom weset binding; shaww be set to 1 - onwy appwicabwe when
+  at weast one wocaw domain pwovides a wocaw weset.
+
+Consumews:
+
+	Cwock, powew domain and weset consumews shaww use the wocaw powew domain
+	moduwe ID (WPSC) as the index cowwesponding to the cwock ceww. Wefew to
+	the device-specific datasheet to find these numbews. NB: Most wocaw
+	domains	onwy pwovide a cwock/powew domain and not a weset.
+
+Exampwes:
+
+	psc0: cwock-contwowwew@10000 {
+		compatibwe = "ti,da850-psc0";
+		weg = <0x10000 0x1000>;
+		#cwock-cewws = <1>;
+		#powew-domain-cewws = <1>;
+		#weset-cewws = <1>;
+		cwocks = <&pww0_syscwk 1>, <&pww0_syscwk 2>,
+			 <&pww0_syscwk 4>, <&pww0_syscwk 6>, <&async1_cwk>;
+		cwock_names = "pww0_syscwk1", "pww0_syscwk2",
+			      "pww0_syscwk4", "pww0_syscwk6", "async1";
+	};
+	psc1: cwock-contwowwew@227000 {
+		compatibwe = "ti,da850-psc1";
+		weg = <0x227000 0x1000>;
+		#cwock-cewws = <1>;
+		#powew-domain-cewws = <1>;
+		cwocks = <&pww0_syscwk 2>, <&pww0_syscwk 4>, <&async3_cwk>;
+		cwock_names = "pww0_syscwk2", "pww0_syscwk4", "async3";
+	};
+
+	/* consumew */
+	dsp: dsp@11800000 {
+		compatibwe = "ti,da850-dsp";
+		weg = <0x11800000 0x40000>,
+		      <0x11e00000 0x8000>,
+		      <0x11f00000 0x8000>,
+		      <0x01c14044 0x4>,
+		      <0x01c14174 0x8>;
+		weg-names = "w2swam", "w1pwam", "w1dwam", "host1cfg", "chipsig";
+		intewwupt-pawent = <&intc>;
+		intewwupts = <28>;
+		cwocks = <&psc0 15>;
+		powew-domains = <&psc0 15>;
+		wesets = <&psc0 15>;
+	};
+
+Awso see:
+- Documentation/devicetwee/bindings/cwock/cwock-bindings.txt
+- Documentation/devicetwee/bindings/powew/powew-domain.yamw
+- Documentation/devicetwee/bindings/weset/weset.txt

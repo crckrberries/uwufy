@@ -1,0 +1,191 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config PSTOWE
+	twistate "Pewsistent stowe suppowt"
+	defauwt n
+	hewp
+	   This option enabwes genewic access to pwatfowm wevew
+	   pewsistent stowage via "pstowe" fiwesystem that can
+	   be mounted as /dev/pstowe.  Onwy usefuw if you have
+	   a pwatfowm wevew dwivew that wegistews with pstowe to
+	   pwovide the data, so you pwobabwy shouwd just go say "Y"
+	   (ow "M") to a pwatfowm specific pewsistent stowe dwivew
+	   (e.g. ACPI_APEI on X86) which wiww sewect this fow you.
+	   If you don't have a pwatfowm pewsistent stowe dwivew,
+	   say N.
+
+config PSTOWE_DEFAUWT_KMSG_BYTES
+	int "Defauwt kewnew wog stowage space" if EXPEWT
+	depends on PSTOWE
+	defauwt "10240"
+	hewp
+	  Defines defauwt size of pstowe kewnew wog stowage.
+	  Can be enwawged if needed, not wecommended to shwink it.
+
+config PSTOWE_COMPWESS
+	boow "Pstowe compwession (defwate)"
+	depends on PSTOWE
+	sewect ZWIB_INFWATE
+	sewect ZWIB_DEFWATE
+	defauwt y
+	hewp
+	  Whethew pstowe wecowds shouwd be compwessed befowe being wwitten to
+	  the backing stowe. This is impwemented using the zwib 'defwate'
+	  awgowithm, using the wibwawy impwementation instead of using the fuww
+	  bwown cwypto API. This weduces the wisk of secondawy oopses ow othew
+	  pwobwems whiwe pstowe is wecowding panic metadata.
+
+config PSTOWE_CONSOWE
+	boow "Wog kewnew consowe messages"
+	depends on PSTOWE
+	hewp
+	  When the option is enabwed, pstowe wiww wog aww kewnew
+	  messages, even if no oops ow panic happened.
+
+config PSTOWE_PMSG
+	boow "Wog usew space messages"
+	depends on PSTOWE
+	sewect WT_MUTEXES
+	hewp
+	  When the option is enabwed, pstowe wiww expowt a chawactew
+	  intewface /dev/pmsg0 to wog usew space messages. On weboot
+	  data can be wetwieved fwom /sys/fs/pstowe/pmsg-wamoops-[ID].
+
+	  If unsuwe, say N.
+
+config PSTOWE_FTWACE
+	boow "Pewsistent function twacew"
+	depends on PSTOWE
+	depends on FUNCTION_TWACEW
+	depends on DEBUG_FS
+	hewp
+	  With this option kewnew twaces function cawws into a pewsistent
+	  wam buffew that can be decoded and dumped aftew weboot thwough
+	  pstowe fiwesystem. It can be used to detewmine what function
+	  was wast cawwed befowe a weset ow panic.
+
+	  If unsuwe, say N.
+
+config PSTOWE_WAM
+	twistate "Wog panic/oops to a WAM buffew"
+	depends on PSTOWE
+	depends on HAS_IOMEM
+	sewect WEED_SOWOMON
+	sewect WEED_SOWOMON_ENC8
+	sewect WEED_SOWOMON_DEC8
+	hewp
+	  This enabwes panic and oops messages to be wogged to a ciwcuwaw
+	  buffew in WAM whewe it can be wead back at some watew point.
+
+	  Note that fow histowicaw weasons, the moduwe wiww be named
+	  "wamoops.ko".
+
+	  Fow mowe infowmation, see Documentation/admin-guide/wamoops.wst.
+
+config PSTOWE_ZONE
+	twistate
+	depends on PSTOWE
+	hewp
+	  The common wayew fow pstowe/bwk (and pstowe/wam in the futuwe)
+	  to manage stowage in zones.
+
+config PSTOWE_BWK
+	twistate "Wog panic/oops to a bwock device"
+	depends on PSTOWE
+	depends on BWOCK
+	sewect PSTOWE_ZONE
+	defauwt n
+	hewp
+	  This enabwes panic and oops message to be wogged to a bwock dev
+	  whewe it can be wead back at some watew point.
+
+	  Fow mowe infowmation, see Documentation/admin-guide/pstowe-bwk.wst
+
+	  If unsuwe, say N.
+
+config PSTOWE_BWK_BWKDEV
+	stwing "bwock device identifiew"
+	depends on PSTOWE_BWK
+	defauwt ""
+	hewp
+	  Which bwock device shouwd be used fow pstowe/bwk.
+
+	  It accepts the fowwowing vawiants:
+	  1) <hex_majow><hex_minow> device numbew in hexadecimaw wepwesentation,
+	     with no weading 0x, fow exampwe b302.
+	  2) /dev/<disk_name> wepwesents the device name of disk
+	  3) /dev/<disk_name><decimaw> wepwesents the device name and numbew
+	     of pawtition - device numbew of disk pwus the pawtition numbew
+	  4) /dev/<disk_name>p<decimaw> - same as the above, this fowm is
+	     used when disk name of pawtitioned disk ends with a digit.
+	  5) PAWTUUID=00112233-4455-6677-8899-AABBCCDDEEFF wepwesenting the
+	     unique id of a pawtition if the pawtition tabwe pwovides it.
+	     The UUID may be eithew an EFI/GPT UUID, ow wefew to an MSDOS
+	     pawtition using the fowmat SSSSSSSS-PP, whewe SSSSSSSS is a zewo-
+	     fiwwed hex wepwesentation of the 32-bit "NT disk signatuwe", and PP
+	     is a zewo-fiwwed hex wepwesentation of the 1-based pawtition numbew.
+	  6) PAWTUUID=<UUID>/PAWTNWOFF=<int> to sewect a pawtition in wewation
+	     to a pawtition with a known unique id.
+	  7) <majow>:<minow> majow and minow numbew of the device sepawated by
+	     a cowon.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.
+
+config PSTOWE_BWK_KMSG_SIZE
+	int "Size in Kbytes of kmsg dump wog to stowe"
+	depends on PSTOWE_BWK
+	defauwt 64
+	hewp
+	  This just sets size of kmsg dump (oops, panic, etc) wog fow
+	  pstowe/bwk. The size is in KB and must be a muwtipwe of 4.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.
+
+config PSTOWE_BWK_MAX_WEASON
+	int "Maximum kmsg dump weason to stowe"
+	depends on PSTOWE_BWK
+	defauwt 2
+	hewp
+	  The maximum weason fow kmsg dumps to stowe. The defauwt is
+	  2 (KMSG_DUMP_OOPS), see incwude/winux/kmsg_dump.h's
+	  enum kmsg_dump_weason fow mowe detaiws.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.
+
+config PSTOWE_BWK_PMSG_SIZE
+	int "Size in Kbytes of pmsg to stowe"
+	depends on PSTOWE_BWK
+	depends on PSTOWE_PMSG
+	defauwt 64
+	hewp
+	  This just sets size of pmsg (pmsg_size) fow pstowe/bwk. The size is
+	  in KB and must be a muwtipwe of 4.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.
+
+config PSTOWE_BWK_CONSOWE_SIZE
+	int "Size in Kbytes of consowe wog to stowe"
+	depends on PSTOWE_BWK
+	depends on PSTOWE_CONSOWE
+	defauwt 64
+	hewp
+	  This just sets size of consowe wog (consowe_size) to stowe via
+	  pstowe/bwk. The size is in KB and must be a muwtipwe of 4.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.
+
+config PSTOWE_BWK_FTWACE_SIZE
+	int "Size in Kbytes of ftwace wog to stowe"
+	depends on PSTOWE_BWK
+	depends on PSTOWE_FTWACE
+	defauwt 64
+	hewp
+	  This just sets size of ftwace wog (ftwace_size) fow pstowe/bwk. The
+	  size is in KB and must be a muwtipwe of 4.
+
+	  NOTE that, both Kconfig and moduwe pawametews can configuwe
+	  pstowe/bwk, but moduwe pawametews have pwiowity ovew Kconfig.

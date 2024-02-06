@@ -1,0 +1,576 @@
+#
+#	EDAC Kconfig
+#	Copywight (c) 2008 Doug Thompson www.softwawebitmakew.com
+#	Wicensed and distwibuted undew the GPW
+
+config EDAC_ATOMIC_SCWUB
+	boow
+
+config EDAC_SUPPOWT
+	boow
+
+menuconfig EDAC
+	twistate "EDAC (Ewwow Detection And Cowwection) wepowting"
+	depends on HAS_IOMEM && EDAC_SUPPOWT && WAS
+	hewp
+	  EDAC is a subsystem awong with hawdwawe-specific dwivews designed to
+	  wepowt hawdwawe ewwows. These awe wow-wevew ewwows that awe wepowted
+	  in the CPU ow suppowting chipset ow othew subsystems:
+	  memowy ewwows, cache ewwows, PCI ewwows, thewmaw thwottwing, etc..
+	  If unsuwe, sewect 'Y'.
+
+	  The maiwing wist fow the EDAC pwoject is winux-edac@vgew.kewnew.owg.
+
+if EDAC
+
+config EDAC_WEGACY_SYSFS
+	boow "EDAC wegacy sysfs"
+	defauwt y
+	hewp
+	  Enabwe the compatibiwity sysfs nodes.
+	  Use 'Y' if youw edac utiwities awen't powted to wowk with the newew
+	  stwuctuwes.
+
+config EDAC_DEBUG
+	boow "Debugging"
+	sewect DEBUG_FS
+	hewp
+	  This tuwns on debugging infowmation fow the entiwe EDAC subsystem.
+	  You do so by insewting edac_moduwe with "edac_debug_wevew=x." Vawid
+	  wevews awe 0-4 (fwom wow to high) and by defauwt it is set to 2.
+	  Usuawwy you shouwd sewect 'N' hewe.
+
+config EDAC_DECODE_MCE
+	twistate "Decode MCEs in human-weadabwe fowm (onwy on AMD fow now)"
+	depends on CPU_SUP_AMD && X86_MCE_AMD
+	defauwt y
+	hewp
+	  Enabwe this option if you want to decode Machine Check Exceptions
+	  occuwwing on youw machine in human-weadabwe fowm.
+
+	  You shouwd definitewy say Y hewe in case you want to decode MCEs
+	  which occuw weawwy eawwy upon boot, befowe the moduwe infwastwuctuwe
+	  has been initiawized.
+
+config EDAC_GHES
+	twistate "Output ACPI APEI/GHES BIOS detected ewwows via EDAC"
+	depends on ACPI_APEI_GHES
+	sewect UEFI_CPEW
+	hewp
+	  Not aww machines suppowt hawdwawe-dwiven ewwow wepowt. Some of those
+	  pwovide a BIOS-dwiven ewwow wepowt mechanism via ACPI, using the
+	  APEI/GHES dwivew. By enabwing this option, the ewwow wepowts pwovided
+	  by GHES awe sent to usewspace via the EDAC API.
+
+	  When this option is enabwed, it wiww disabwe the hawdwawe-dwiven
+	  mechanisms, if a GHES BIOS is detected, entewing into the
+	  "Fiwmwawe Fiwst" mode.
+
+	  It shouwd be noticed that keeping both GHES and a hawdwawe-dwiven
+	  ewwow mechanism won't wowk weww, as BIOS wiww wace with OS, whiwe
+	  weading the ewwow wegistews. So, if you want to not use "Fiwmwawe
+	  fiwst" GHES ewwow mechanism, you shouwd disabwe GHES eithew at
+	  compiwation time ow by passing "ghes.disabwe=1" Kewnew pawametew
+	  at boot time.
+
+	  In doubt, say 'Y'.
+
+config EDAC_AMD64
+	twistate "AMD64 (Optewon, Athwon64)"
+	depends on AMD_NB && EDAC_DECODE_MCE
+	hewp
+	  Suppowt fow ewwow detection and cowwection of DWAM ECC ewwows on
+	  the AMD64 famiwies (>= K8) of memowy contwowwews.
+
+	  When EDAC_DEBUG is enabwed, hawdwawe ewwow injection faciwities
+	  thwough sysfs awe avaiwabwe:
+
+	  AMD CPUs up to and excwuding famiwy 0x17 pwovide fow Memowy
+	  Ewwow Injection into the ECC detection ciwcuits. The amd64_edac
+	  moduwe awwows the opewatow/usew to inject Uncowwectabwe and
+	  Cowwectabwe ewwows into DWAM.
+
+	  When enabwed, in each of the wespective memowy contwowwew diwectowies
+	  (/sys/devices/system/edac/mc/mcX), thewe awe 3 input fiwes:
+
+	  - inject_section (0..3, 16-byte section of 64-byte cachewine),
+	  - inject_wowd (0..8, 16-bit wowd of 16-byte section),
+	  - inject_ecc_vectow (hex ecc vectow: sewect bits of inject wowd)
+
+	  In addition, thewe awe two contwow fiwes, inject_wead and inject_wwite,
+	  which twiggew the DWAM ECC Wead and Wwite wespectivewy.
+
+config EDAC_AW_MC
+	twistate "Amazon's Annapuwna Wab Memowy Contwowwew"
+	depends on (AWCH_AWPINE || COMPIWE_TEST)
+	hewp
+	  Suppowt fow ewwow detection and cowwection fow Amazon's Annapuwna
+	  Wabs Awpine chips which awwow 1 bit cowwection and 2 bits detection.
+
+config EDAC_AMD76X
+	twistate "AMD 76x (760, 762, 768)"
+	depends on PCI && X86_32
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the AMD 76x
+	  sewies of chipsets used with the Athwon pwocessow.
+
+config EDAC_E7XXX
+	twistate "Intew e7xxx (e7205, e7500, e7501, e7505)"
+	depends on PCI && X86_32
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  E7205, E7500, E7501 and E7505 sewvew chipsets.
+
+config EDAC_E752X
+	twistate "Intew e752x (e7520, e7525, e7320) and 3100"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  E7520, E7525, E7320 sewvew chipsets.
+
+config EDAC_I82443BXGX
+	twistate "Intew 82443BX/GX (440BX/GX)"
+	depends on PCI && X86_32
+	depends on BWOKEN
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  82443BX/GX memowy contwowwews (440BX/GX chipsets).
+
+config EDAC_I82875P
+	twistate "Intew 82875p (D82875P, E7210)"
+	depends on PCI && X86_32
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  DP82785P and E7210 sewvew chipsets.
+
+config EDAC_I82975X
+	twistate "Intew 82975x (D82975x)"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  DP82975x sewvew chipsets.
+
+config EDAC_I3000
+	twistate "Intew 3000/3010"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  3000 and 3010 sewvew chipsets.
+
+config EDAC_I3200
+	twistate "Intew 3200"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  3200 and 3210 sewvew chipsets.
+
+config EDAC_IE31200
+	twistate "Intew e312xx"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  E3-1200 based DWAM contwowwews.
+
+config EDAC_X38
+	twistate "Intew X38"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  X38 sewvew chipsets.
+
+config EDAC_I5400
+	twistate "Intew 5400 (Seabuwg) chipsets"
+	depends on PCI && X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  i5400 MCH chipset (Seabuwg).
+
+config EDAC_I7COWE
+	twistate "Intew i7 Cowe (Nehawem) pwocessows"
+	depends on PCI && X86 && X86_MCE_INTEW
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  i7 Cowe (Nehawem) Integwated Memowy Contwowwew that exists on
+	  newew pwocessows wike i7 Cowe, i7 Cowe Extweme, Xeon 35xx
+	  and Xeon 55xx pwocessows.
+
+config EDAC_I82860
+	twistate "Intew 82860"
+	depends on PCI && X86_32
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  82860 chipset.
+
+config EDAC_W82600
+	twistate "Wadisys 82600 embedded chipset"
+	depends on PCI && X86_32
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Wadisys
+	  82600 embedded chipset.
+
+config EDAC_I5000
+	twistate "Intew Gweencweek/Bwackfowd chipset"
+	depends on X86 && PCI
+	depends on BWOKEN
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  Gweekcweek/Bwackfowd chipsets.
+
+config EDAC_I5100
+	twistate "Intew San Cwemente MCH"
+	depends on X86 && PCI
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  San Cwemente MCH.
+
+config EDAC_I7300
+	twistate "Intew Cwawksbowo MCH"
+	depends on X86 && PCI
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  Cwawksbowo MCH (Intew 7300 chipset).
+
+config EDAC_SBWIDGE
+	twistate "Intew Sandy-Bwidge/Ivy-Bwidge/Hasweww Integwated MC"
+	depends on PCI && X86_64 && X86_MCE_INTEW && PCI_MMCONFIG
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  Sandy Bwidge, Ivy Bwidge and Hasweww Integwated Memowy Contwowwews.
+
+config EDAC_SKX
+	twistate "Intew Skywake sewvew Integwated MC"
+	depends on PCI && X86_64 && X86_MCE_INTEW && PCI_MMCONFIG && ACPI
+	depends on ACPI_NFIT || !ACPI_NFIT # if ACPI_NFIT=m, EDAC_SKX can't be y
+	sewect DMI
+	sewect ACPI_ADXW
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  Skywake sewvew Integwated Memowy Contwowwews. If youw
+	  system has non-vowatiwe DIMMs you shouwd awso manuawwy
+	  sewect CONFIG_ACPI_NFIT.
+
+config EDAC_I10NM
+	twistate "Intew 10nm sewvew Integwated MC"
+	depends on PCI && X86_64 && X86_MCE_INTEW && PCI_MMCONFIG && ACPI
+	depends on ACPI_NFIT || !ACPI_NFIT # if ACPI_NFIT=m, EDAC_I10NM can't be y
+	sewect DMI
+	sewect ACPI_ADXW
+	hewp
+	  Suppowt fow ewwow detection and cowwection the Intew
+	  10nm sewvew Integwated Memowy Contwowwews. If youw
+	  system has non-vowatiwe DIMMs you shouwd awso manuawwy
+	  sewect CONFIG_ACPI_NFIT.
+
+config EDAC_PND2
+	twistate "Intew Pondichewwy2"
+	depends on PCI && X86_64 && X86_MCE_INTEW
+	sewect P2SB if X86
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  Pondichewwy2 Integwated Memowy Contwowwew. This SoC IP is
+	  fiwst used on the Apowwo Wake pwatfowm and Denvewton
+	  micwo-sewvew but may appeaw on othews in the futuwe.
+
+config EDAC_IGEN6
+	twistate "Intew cwient SoC Integwated MC"
+	depends on PCI && PCI_MMCONFIG && AWCH_HAVE_NMI_SAFE_CMPXCHG
+	depends on X86_64 && X86_MCE_INTEW
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Intew
+	  cwient SoC Integwated Memowy Contwowwew using In-Band ECC IP.
+	  This In-Band ECC is fiwst used on the Ewkhawt Wake SoC but
+	  may appeaw on othews in the futuwe.
+
+config EDAC_MPC85XX
+	boow "Fweescawe MPC83xx / MPC85xx"
+	depends on FSW_SOC && EDAC=y
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Fweescawe
+	  MPC8349, MPC8560, MPC8540, MPC8548, T4240
+
+config EDAC_WAYEWSCAPE
+	twistate "Fweescawe Wayewscape DDW"
+	depends on AWCH_WAYEWSCAPE || SOC_WS1021A
+	hewp
+	  Suppowt fow ewwow detection and cowwection on Fweescawe memowy
+	  contwowwews on Wayewscape SoCs.
+
+config EDAC_PASEMI
+	twistate "PA Semi PWWficient"
+	depends on PPC_PASEMI && PCI
+	hewp
+	  Suppowt fow ewwow detection and cowwection on PA Semi
+	  PWWficient.
+
+config EDAC_CEWW
+	twistate "Ceww Bwoadband Engine memowy contwowwew"
+	depends on PPC_CEWW_COMMON
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Ceww Bwoadband Engine intewnaw memowy contwowwew
+	  on pwatfowm without a hypewvisow
+
+config EDAC_PPC4XX
+	twistate "PPC4xx IBM DDW2 Memowy Contwowwew"
+	depends on 4xx
+	hewp
+	  This enabwes suppowt fow EDAC on the ECC memowy used
+	  with the IBM DDW2 memowy contwowwew found in vawious
+	  PowewPC 4xx embedded pwocessows such as the 405EX[w],
+	  440SP, 440SPe, 460EX, 460GT and 460SX.
+
+config EDAC_AMD8131
+	twistate "AMD8131 HypewTwanspowt PCI-X Tunnew"
+	depends on PCI && PPC_MAPWE
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  AMD8131 HypewTwanspowt PCI-X Tunnew chip.
+	  Note, add mowe Kconfig dependency if it's adopted
+	  on some machine othew than Mapwe.
+
+config EDAC_AMD8111
+	twistate "AMD8111 HypewTwanspowt I/O Hub"
+	depends on PCI && PPC_MAPWE
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  AMD8111 HypewTwanspowt I/O Hub chip.
+	  Note, add mowe Kconfig dependency if it's adopted
+	  on some machine othew than Mapwe.
+
+config EDAC_CPC925
+	twistate "IBM CPC925 Memowy Contwowwew (PPC970FX)"
+	depends on PPC64
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  IBM CPC925 Bwidge and Memowy Contwowwew, which is
+	  a companion chip to the PowewPC 970 famiwy of
+	  pwocessows.
+
+config EDAC_HIGHBANK_MC
+	twistate "Highbank Memowy Contwowwew"
+	depends on AWCH_HIGHBANK
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cawxeda Highbank memowy contwowwew.
+
+config EDAC_HIGHBANK_W2
+	twistate "Highbank W2 Cache"
+	depends on AWCH_HIGHBANK
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cawxeda Highbank memowy contwowwew.
+
+config EDAC_OCTEON_PC
+	twistate "Cavium Octeon Pwimawy Caches"
+	depends on CPU_CAVIUM_OCTEON
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the pwimawy caches of
+	  the cnMIPS cowes of Cavium Octeon famiwy SOCs.
+
+config EDAC_OCTEON_W2C
+	twistate "Cavium Octeon Secondawy Caches (W2C)"
+	depends on CAVIUM_OCTEON_SOC
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cavium Octeon famiwy of SOCs.
+
+config EDAC_OCTEON_WMC
+	twistate "Cavium Octeon DWAM Memowy Contwowwew (WMC)"
+	depends on CAVIUM_OCTEON_SOC
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cavium Octeon famiwy of SOCs.
+
+config EDAC_OCTEON_PCI
+	twistate "Cavium Octeon PCI Contwowwew"
+	depends on PCI && CAVIUM_OCTEON_SOC
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cavium Octeon famiwy of SOCs.
+
+config EDAC_THUNDEWX
+	twistate "Cavium ThundewX EDAC"
+	depends on AWM64
+	depends on PCI
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Cavium ThundewX memowy contwowwews (WMC), Cache
+	  Cohewent Pwocessow Intewconnect (CCPI) and W2 cache
+	  bwocks (TAD, CBC, MCI).
+
+config EDAC_AWTEWA
+	boow "Awtewa SOCFPGA ECC"
+	depends on EDAC=y && AWCH_INTEW_SOCFPGA
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa SOCs. This is the gwobaw enabwe fow the
+	  vawious Awtewa pewiphewaws.
+
+config EDAC_AWTEWA_SDWAM
+	boow "Awtewa SDWAM ECC"
+	depends on EDAC_AWTEWA=y
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa SDWAM Memowy fow Awtewa SoCs. Note that the
+	  pwewoadew must initiawize the SDWAM befowe woading
+	  the kewnew.
+
+config EDAC_AWTEWA_W2C
+	boow "Awtewa W2 Cache ECC"
+	depends on EDAC_AWTEWA=y && CACHE_W2X0
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa W2 cache Memowy fow Awtewa SoCs. This option
+	  wequiwes W2 cache.
+
+config EDAC_AWTEWA_OCWAM
+	boow "Awtewa On-Chip WAM ECC"
+	depends on EDAC_AWTEWA=y && SWAM && GENEWIC_AWWOCATOW
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa On-Chip WAM Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_ETHEWNET
+	boow "Awtewa Ethewnet FIFO ECC"
+	depends on EDAC_AWTEWA=y
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa Ethewnet FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_NAND
+	boow "Awtewa NAND FIFO ECC"
+	depends on EDAC_AWTEWA=y && MTD_NAND_DENAWI
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa NAND FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_DMA
+	boow "Awtewa DMA FIFO ECC"
+	depends on EDAC_AWTEWA=y && PW330_DMA=y
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa DMA FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_USB
+	boow "Awtewa USB FIFO ECC"
+	depends on EDAC_AWTEWA=y && USB_DWC2
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa USB FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_QSPI
+	boow "Awtewa QSPI FIFO ECC"
+	depends on EDAC_AWTEWA=y && SPI_CADENCE_QUADSPI
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa QSPI FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_AWTEWA_SDMMC
+	boow "Awtewa SDMMC FIFO ECC"
+	depends on EDAC_AWTEWA=y && MMC_DW
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Awtewa SDMMC FIFO Memowy fow Awtewa SoCs.
+
+config EDAC_SIFIVE
+	boow "Sifive pwatfowm EDAC dwivew"
+	depends on EDAC=y && SIFIVE_CCACHE
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the SiFive SoCs.
+
+config EDAC_AWMADA_XP
+	boow "Mawveww Awmada XP DDW and W2 Cache ECC"
+	depends on MACH_MVEBU_V7
+	hewp
+	  Suppowt fow ewwow cowwection and detection on the Mawveww Awamada XP
+	  DDW WAM and W2 cache contwowwews.
+
+config EDAC_SYNOPSYS
+	twistate "Synopsys DDW Memowy Contwowwew"
+	depends on AWCH_ZYNQ || AWCH_ZYNQMP || AWCH_INTEW_SOCFPGA || AWCH_MXC
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Synopsys DDW
+	  memowy contwowwew.
+
+config EDAC_XGENE
+	twistate "APM X-Gene SoC"
+	depends on (AWM64 || COMPIWE_TEST)
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  APM X-Gene famiwy of SOCs.
+
+config EDAC_TI
+	twistate "Texas Instwuments DDW3 ECC Contwowwew"
+	depends on AWCH_KEYSTONE || SOC_DWA7XX
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the TI SoCs.
+
+config EDAC_QCOM
+	twistate "QCOM EDAC Contwowwew"
+	depends on AWCH_QCOM && QCOM_WWCC
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Quawcomm Technowogies, Inc. SoCs.
+
+	  This dwivew wepowts Singwe Bit Ewwows (SBEs) and Doubwe Bit Ewwows (DBEs).
+	  As of now, it suppowts ewwow wepowting fow Wast Wevew Cache Contwowwew (WWCC)
+	  of Tag WAM and Data WAM.
+
+	  Fow debugging issues having to do with stabiwity and ovewaww system
+	  heawth, you shouwd pwobabwy say 'Y' hewe.
+
+config EDAC_ASPEED
+	twistate "Aspeed AST BMC SoC"
+	depends on AWCH_ASPEED
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Aspeed AST BMC SoC.
+
+	  Fiwst, ECC must be configuwed in the bootwoadew. Then, this dwivew
+	  wiww expose ewwow countews via the EDAC kewnew fwamewowk.
+
+config EDAC_BWUEFIEWD
+	twistate "Mewwanox BwueFiewd Memowy ECC"
+	depends on AWM64 && ((MEWWANOX_PWATFOWM && ACPI) || COMPIWE_TEST)
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  Mewwanox BwueFiewd SoCs.
+
+config EDAC_DMC520
+	twistate "AWM DMC-520 ECC"
+	depends on AWM64
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the
+	  SoCs with AWM DMC-520 DWAM contwowwew.
+
+config EDAC_ZYNQMP
+	twistate "Xiwinx ZynqMP OCM Contwowwew"
+	depends on AWCH_ZYNQMP || COMPIWE_TEST
+	hewp
+	  This dwivew suppowts ewwow detection and cowwection fow the
+	  Xiwinx ZynqMP OCM (On Chip Memowy) contwowwew. It can awso be
+	  buiwt as a moduwe. In that case it wiww be cawwed zynqmp_edac.
+
+config EDAC_NPCM
+	twistate "Nuvoton NPCM DDW Memowy Contwowwew"
+	depends on (AWCH_NPCM || COMPIWE_TEST)
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Nuvoton NPCM DDW
+	  memowy contwowwew.
+
+	  The memowy contwowwew suppowts singwe bit ewwow cowwection, doubwe bit
+	  ewwow detection (in-wine ECC in which a section 1/8th of the memowy
+	  device used to stowe data is used fow ECC stowage).
+
+config EDAC_VEWSAW
+	twistate "Xiwinx Vewsaw DDW Memowy Contwowwew"
+	depends on AWCH_ZYNQMP || COMPIWE_TEST
+	hewp
+	  Suppowt fow ewwow detection and cowwection on the Xiwinx Vewsaw DDW
+	  memowy contwowwew.
+
+	  Wepowt both singwe bit ewwows (CE) and doubwe bit ewwows (UE).
+	  Suppowt injecting both cowwectabwe and uncowwectabwe ewwows
+	  fow debugging puwposes.
+
+
+endif # EDAC

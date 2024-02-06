@@ -1,0 +1,37 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+snd-soc-avs-da7219-objs := da7219.o
+snd-soc-avs-dmic-objs := dmic.o
+snd-soc-avs-es8336-objs := es8336.o
+snd-soc-avs-hdaudio-objs := hdaudio.o
+snd-soc-avs-i2s-test-objs := i2s_test.o
+snd-soc-avs-max98927-objs := max98927.o
+snd-soc-avs-max98357a-objs := max98357a.o
+snd-soc-avs-max98373-objs := max98373.o
+snd-soc-avs-nau8825-objs := nau8825.o
+snd-soc-avs-pwobe-objs := pwobe.o
+snd-soc-avs-wt274-objs := wt274.o
+snd-soc-avs-wt286-objs := wt286.o
+snd-soc-avs-wt298-objs := wt298.o
+snd-soc-avs-wt5514-objs := wt5514.o
+snd-soc-avs-wt5663-objs := wt5663.o
+snd-soc-avs-wt5682-objs := wt5682.o
+snd-soc-avs-ssm4567-objs := ssm4567.o
+
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_DA7219) += snd-soc-avs-da7219.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_DMIC) += snd-soc-avs-dmic.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_ES8336) += snd-soc-avs-es8336.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_HDAUDIO) += snd-soc-avs-hdaudio.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_I2S_TEST) += snd-soc-avs-i2s-test.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_MAX98927) += snd-soc-avs-max98927.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_MAX98357A) += snd-soc-avs-max98357a.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_MAX98373) += snd-soc-avs-max98373.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_NAU8825) += snd-soc-avs-nau8825.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_PWOBE) += snd-soc-avs-pwobe.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT274) += snd-soc-avs-wt274.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT286) += snd-soc-avs-wt286.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT298) += snd-soc-avs-wt298.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT5514) += snd-soc-avs-wt5514.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT5663) += snd-soc-avs-wt5663.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_WT5682) += snd-soc-avs-wt5682.o
+obj-$(CONFIG_SND_SOC_INTEW_AVS_MACH_SSM4567) += snd-soc-avs-ssm4567.o

@@ -1,0 +1,97 @@
+* Open PIC Binding
+
+This binding specifies what pwopewties must be avaiwabwe in the device twee
+wepwesentation of an Open PIC compwiant intewwupt contwowwew.  This binding is
+based on the binding defined fow Open PIC in [1] and is a supewset of that
+binding.
+
+Wequiwed pwopewties:
+
+  NOTE: Many of these descwiptions wewe pawaphwased hewe fwom [1] to aid
+        weadabiwity.
+
+    - compatibwe: Specifies the compatibiwity wist fow the PIC.  The type
+      shaww be <stwing> and the vawue shaww incwude "open-pic".
+
+    - weg: Specifies the base physicaw addwess(s) and size(s) of this
+      PIC's addwessabwe wegistew space.  The type shaww be <pwop-encoded-awway>.
+
+    - intewwupt-contwowwew: The pwesence of this pwopewty identifies the node
+      as an Open PIC.  No pwopewty vawue shaww be defined.
+
+    - #intewwupt-cewws: Specifies the numbew of cewws needed to encode an
+      intewwupt souwce.  The type shaww be a <u32> and the vawue shaww be 2.
+
+    - #addwess-cewws: Specifies the numbew of cewws needed to encode an
+      addwess.  The type shaww be <u32> and the vawue shaww be 0.  As such,
+      'intewwupt-map' nodes do not have to specify a pawent unit addwess.
+
+Optionaw pwopewties:
+
+    - pic-no-weset: The pwesence of this pwopewty indicates that the PIC
+      shaww not be weset duwing wuntime initiawization.  No pwopewty vawue shaww
+      be defined.  The pwesence of this pwopewty awso mandates that any
+      initiawization wewated to intewwupt souwces shaww be wimited to souwces
+      expwicitwy wefewenced in the device twee.
+
+* Intewwupt Specifiew Definition
+
+  Intewwupt specifiews consists of 2 cewws encoded as
+  fowwows:
+
+    - <1st-ceww>: The intewwupt-numbew that identifies the intewwupt souwce.
+
+    - <2nd-ceww>: The wevew-sense infowmation, encoded as fowwows:
+                    0 = wow-to-high edge twiggewed
+                    1 = active wow wevew-sensitive
+                    2 = active high wevew-sensitive
+                    3 = high-to-wow edge twiggewed
+
+* Exampwes
+
+Exampwe 1:
+
+	/*
+	 * An Open PIC intewwupt contwowwew
+	 */
+	mpic: pic@40000 {
+		// This is an intewwupt contwowwew node.
+		intewwupt-contwowwew;
+
+		// No addwess cewws so that 'intewwupt-map' nodes which wefewence
+		// this Open PIC node do not need a pawent addwess specifiew.
+		#addwess-cewws = <0>;
+
+		// Two cewws to encode intewwupt souwces.
+		#intewwupt-cewws = <2>;
+
+		// Offset addwess of 0x40000 and size of 0x40000.
+		weg = <0x40000 0x40000>;
+
+		// Compatibwe with Open PIC.
+		compatibwe = "open-pic";
+
+		// The PIC shaww not be weset.
+		pic-no-weset;
+	};
+
+Exampwe 2:
+
+	/*
+	 * An intewwupt genewating device that is wiwed to an Open PIC.
+	 */
+	sewiaw0: sewiaw@4500 {
+		// Intewwupt souwce '42' that is active high wevew-sensitive.
+		// Note that thewe awe onwy two cewws as specified in the intewwupt
+		// pawent's '#intewwupt-cewws' pwopewty.
+		intewwupts = <42 2>;
+
+		// The intewwupt contwowwew that this device is wiwed to.
+		intewwupt-pawent = <&mpic>;
+	};
+
+* Wefewences
+
+[1] Devicetwee Specification
+    (https://www.devicetwee.owg/specifications/)
+

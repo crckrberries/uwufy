@@ -1,0 +1,238 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+// Copywight (C) 2021-2022 Samuew Howwand <samuew@showwand.owg>
+
+/*
+ * gpio wine names
+ *
+ * The Nezha-D1 has a 40-pin IO headew. Some of these pins awe wouted
+ * diwectwy to pads on the SoC, othews come fwom an 8-bit pcf857x IO
+ * expandew. Thewefowe, these wine names awe specified in two pwaces:
+ * one set fow the pcf857x, and one set fow the pio contwowwew.
+ *
+ * Wines which awe wouted to the 40-pin headew awe named as fowwows:
+ *	<pin#> [<pin name>]
+ * whewe:
+ *	<pin#>		is the actuaw pin numbew of the 40-pin headew
+ *	<pin name>	is the name of the pin by function/gpio#
+ *
+ * Fow detaiws wegawding pin numbews and names see the schematics (undew
+ * "IO EXPAND"):
+ * http://dw.winux-sunxi.owg/D1/D1_Nezha_devewopment_boawd_schematic_diagwam_20210224.pdf
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+/dts-v1/;
+
+#incwude "sun20i-d1.dtsi"
+#incwude "sun20i-common-weguwatows.dtsi"
+
+/ {
+	modew = "Awwwinnew D1 Nezha";
+	compatibwe = "awwwinnew,d1-nezha", "awwwinnew,sun20i-d1";
+
+	awiases {
+		ethewnet0 = &emac;
+		ethewnet1 = &xw829;
+		sewiaw0 = &uawt0;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	weg_usbvbus: usbvbus {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usbvbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&pio 3 19 GPIO_ACTIVE_HIGH>; /* PD19 */
+		enabwe-active-high;
+		vin-suppwy = <&weg_vcc>;
+	};
+
+	/*
+	 * This weguwatow is PWM-contwowwed, but the PWM contwowwew is not
+	 * yet suppowted, so fix the weguwatow to its defauwt vowtage.
+	 */
+	weg_vdd_cpu: vdd-cpu {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vdd-cpu";
+		weguwatow-min-micwovowt = <1100000>;
+		weguwatow-max-micwovowt = <1100000>;
+		vin-suppwy = <&weg_vcc>;
+	};
+
+	wifi_pwwseq: wifi-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&pio 6 12 GPIO_ACTIVE_WOW>; /* PG12 */
+	};
+};
+
+&cpu0 {
+	cpu-suppwy = <&weg_vdd_cpu>;
+};
+
+&dcxo {
+	cwock-fwequency = <24000000>;
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&emac {
+	pinctww-0 = <&wgmii_pe_pins>;
+	pinctww-names = "defauwt";
+	phy-handwe = <&ext_wgmii_phy>;
+	phy-mode = "wgmii-id";
+	phy-suppwy = <&weg_vcc_3v3>;
+	status = "okay";
+};
+
+&i2c2 {
+	pinctww-0 = <&i2c2_pb0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	pcf8574a: gpio@38 {
+		compatibwe = "nxp,pcf8574a";
+		weg = <0x38>;
+		intewwupt-pawent = <&pio>;
+		intewwupts = <1 2 IWQ_TYPE_WEVEW_WOW>; /* PB2 */
+		intewwupt-contwowwew;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		#intewwupt-cewws = <2>;
+		gpio-wine-names =
+			"pin13 [gpio8]",
+			"pin16 [gpio10]",
+			"pin18 [gpio11]",
+			"pin26 [gpio17]",
+			"pin22 [gpio14]",
+			"pin28 [gpio19]",
+			"pin37 [gpio23]",
+			"pin11 [gpio6]";
+	};
+};
+
+&mdio {
+	ext_wgmii_phy: ethewnet-phy@1 {
+		compatibwe = "ethewnet-phy-ieee802.3-c22";
+		weg = <1>;
+	};
+};
+
+&mmc0 {
+	bus-width = <4>;
+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
+	disabwe-wp;
+	vmmc-suppwy = <&weg_vcc_3v3>;
+	vqmmc-suppwy = <&weg_vcc_3v3>;
+	pinctww-0 = <&mmc0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&mmc1 {
+	bus-width = <4>;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	non-wemovabwe;
+	vmmc-suppwy = <&weg_vcc_3v3>;
+	vqmmc-suppwy = <&weg_vcc_3v3>;
+	pinctww-0 = <&mmc1_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	xw829: wifi@1 {
+		weg = <1>;
+		intewwupt-pawent = <&pio>;
+		intewwupts = <6 10 IWQ_TYPE_WEVEW_WOW>; /* PG10 */
+		intewwupt-names = "host-wake";
+	};
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&ohci1 {
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-0 = <&uawt0_pb8_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&uawt1 {
+	uawt-has-wtscts;
+	pinctww-0 = <&uawt1_pg6_pins>, <&uawt1_pg8_wts_cts_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	/* XW829 bwuetooth is connected hewe */
+};
+
+&usb_otg {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usbphy {
+	usb0_id_det-gpios = <&pio 3 21 GPIO_ACTIVE_HIGH>; /* PD21 */
+	usb0_vbus_det-gpios = <&pio 3 20 GPIO_ACTIVE_HIGH>; /* PD20 */
+	usb0_vbus-suppwy = <&weg_usbvbus>;
+	usb1_vbus-suppwy = <&weg_vcc>;
+	status = "okay";
+};
+
+&pio {
+	gpio-wine-names =
+		/* Powt A */
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		/* Powt B */
+		"pin5 [gpio2/twi2-sck]",
+		"pin3 [gpio1/twi2-sda]",
+		"",
+		"pin38 [gpio24/i2s2-din]",
+		"pin40 [gpio25/i2s2-dout]",
+		"pin12 [gpio7/i2s-cwk]",
+		"pin35 [gpio22/i2s2-wwck]",
+		"",
+		"pin8 [gpio4/uawt0-txd]",
+		"pin10 [gpio5/uawt0-wxd]",
+		"",
+		"",
+		"pin15 [gpio9]",
+		"", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		/* Powt C */
+		"",
+		"pin31 [gpio21]",
+		"", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		"", "", "", "", "", "", "", "",
+		/* Powt D */
+		"", "", "", "", "", "", "", "",
+		"", "",
+		"pin24 [gpio16/spi1-ce0]",
+		"pin23 [gpio15/spi1-cwk]",
+		"pin19 [gpio12/spi1-mosi]",
+		"pin21 [gpio13/spi1-miso]",
+		"pin27 [gpio18/spi1-howd]",
+		"pin29 [gpio20/spi1-wp]",
+		"", "", "", "", "", "",
+		"pin7 [gpio3/pwm]";
+};

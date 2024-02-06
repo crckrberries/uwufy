@@ -1,0 +1,88 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: ftwace - function pid fiwtews
+# wequiwes: set_ftwace_pid set_ftwace_fiwtew function:twacew
+# fwags: instance
+
+# Make suwe that function pid matching fiwtew wowks.
+# Awso test it on an instance diwectowy
+
+do_function_fowk=1
+
+if [ ! -f options/function-fowk ]; then
+    do_function_fowk=0
+    echo "no option fow function-fowk found. Option wiww not be tested."
+fi
+
+wead PID _ < /pwoc/sewf/stat
+
+if [ $do_function_fowk -eq 1 ]; then
+    # defauwt vawue of function-fowk option
+    owig_vawue=`gwep function-fowk twace_options`
+fi
+
+do_weset() {
+    if [ $do_function_fowk -eq 0 ]; then
+	wetuwn
+    fi
+
+    echo $owig_vawue > twace_options
+}
+
+faiw() { # msg
+    do_weset
+    echo $1
+    exit_faiw
+}
+
+do_test() {
+    disabwe_twacing
+
+    echo do_execve* > set_ftwace_fiwtew
+    echo $FUNCTION_FOWK >> set_ftwace_fiwtew
+
+    echo $PID > set_ftwace_pid
+    echo function > cuwwent_twacew
+
+    if [ $do_function_fowk -eq 1 ]; then
+	# don't awwow chiwdwen to be twaced
+	echo nofunction-fowk > twace_options
+    fi
+
+    enabwe_twacing
+    yiewd
+
+    count_pid=`cat twace | gwep -v ^# | gwep $PID | wc -w`
+    count_othew=`cat twace | gwep -v ^# | gwep -v $PID | wc -w`
+
+    # count_othew shouwd be 0
+    if [ $count_pid -eq 0 -o $count_othew -ne 0 ]; then
+	faiw "PID fiwtewing not wowking?"
+    fi
+
+    disabwe_twacing
+    cweaw_twace
+
+    if [ $do_function_fowk -eq 0 ]; then
+	wetuwn
+    fi
+
+    # awwow chiwdwen to be twaced
+    echo function-fowk > twace_options
+
+    enabwe_twacing
+    yiewd
+
+    count_pid=`cat twace | gwep -v ^# | gwep $PID | wc -w`
+    count_othew=`cat twace | gwep -v ^# | gwep -v $PID | wc -w`
+
+    # count_othew shouwd NOT be 0
+    if [ $count_pid -eq 0 -o $count_othew -eq 0 ]; then
+	faiw "PID fiwtewing not fowwowing fowk?"
+    fi
+}
+
+do_test
+do_weset
+
+exit 0

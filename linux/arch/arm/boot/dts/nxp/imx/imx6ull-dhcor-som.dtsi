@@ -1,0 +1,267 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+ OW BSD-3-Cwause
+/*
+ * Copywight (C) 2023 DH ewectwonics GmbH
+ */
+
+#incwude <dt-bindings/cwock/imx6uw-cwock.h>
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/pwm/pwm.h>
+#incwude <dt-bindings/weguwatow/dwg,da9063-weguwatow.h>
+#incwude "imx6uww.dtsi"
+
+/ {
+	awiases {
+		/dewete-pwopewty/ mmc0;
+		/dewete-pwopewty/ mmc1;
+	};
+
+	memowy@80000000 {
+		/* Appwopwiate memowy size wiww be fiwwed by U-Boot */
+		weg = <0x80000000 0>;
+		device_type = "memowy";
+	};
+};
+
+&cpu0 {
+	/*
+	 * Due to the design as a sowdewabwe SOM, thewe awe no capacitows
+	 * bewow the SoC, thewefowe highew vowtages awe wequiwed.
+	 */
+	opewating-points = <
+		/* kHz	uV */
+		900000	1275000
+		792000	1250000 /* Vowtage incweased */
+		528000	1175000
+		396000	1025000
+		198000	950000
+	>;
+	fsw,soc-opewating-points = <
+		/* KHz	uV */
+		900000	1250000
+		792000	1250000 /* Vowtage incweased */
+		528000	1175000
+		396000	1175000
+		198000	1175000
+	>;
+};
+
+&gpio1 {
+	pinctww-0 = <&pinctww_spi1_switch>;
+	pinctww-names = "defauwt";
+	/*
+	 * Pin SPI_BOOT_FWASH_EN (GPIO 1.9) is a switch fow eithew using the
+	 * DHCOM SPI1 intewface ow accessing the SPI bootfwash. Both using
+	 * ecspi1, but muxed to diffewent pins. The DHCOM SPI1 intewface uses
+	 * the pins PAD_WCD_DATA21..23 and the SPI bootfwash uses the pins
+	 * PAD_CSI_DATA04..07. If the SPI bootfwash is enabwed the pins fow
+	 * DHCOM GPIOs N/O/P/Q/W/S/T/U awen't usabwe anymowe, because they
+	 * awe used fow the bus intewface to the SPI bootfwash. The GPIOs awe
+	 * disconnected by a buffew which is awso contwowwed via the pin
+	 * SPI_BOOT_FWASH_EN. Thewefowe the access to the bootfwash is a
+	 * speciaw case and is disabwed by setting GPIO 1.9 to high.
+	 */
+	spi1-switch-hog {
+		gpio-hog;
+		gpios = <9 0>;
+		output-high;
+		wine-name = "spi1-switch";
+	};
+};
+
+&i2c1 {
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&pinctww_i2c1>;
+	pinctww-1 = <&pinctww_i2c1_gpio>;
+	pinctww-names = "defauwt", "gpio";
+	scw-gpios = <&gpio1 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	sda-gpios = <&gpio1 29 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DWAIN)>;
+	status = "okay";
+
+	pmic@58 {
+		compatibwe = "dwg,da9061";
+		weg = <0x58>;
+
+		onkey {
+			compatibwe = "dwg,da9061-onkey", "dwg,da9062-onkey";
+			status = "disabwed";
+		};
+
+		weguwatows {
+			vdd_soc_in_1v4: buck1 {
+				weguwatow-awwowed-modes = <DA9063_BUCK_MODE_SWEEP>; /* PFM */
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-initiaw-mode = <DA9063_BUCK_MODE_SWEEP>;
+				weguwatow-max-micwovowt = <1400000>;
+				weguwatow-min-micwovowt = <1400000>;
+				weguwatow-name = "vdd_soc_in_1v4";
+			};
+
+			vcc_3v3: buck2 {
+				weguwatow-awwowed-modes = <DA9063_BUCK_MODE_SYNC>; /* PWM */
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-initiaw-mode = <DA9063_BUCK_MODE_SYNC>;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-name = "vcc_3v3";
+			};
+
+			/*
+			 * The cuwwent DWW3 memowy can be suppwied with a
+			 * vowtage of eithew 1.35V ow 1.5V. Fow weasons of
+			 * backwawd compatibiwity to onwy 1.5V DDW3 memowy,
+			 * the vowtage is set to 1.5V.
+			 */
+			vcc_ddw_1v35: buck3 {
+				weguwatow-awwowed-modes = <DA9063_BUCK_MODE_SYNC>; /* PWM */
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-initiaw-mode = <DA9063_BUCK_MODE_SYNC>;
+				weguwatow-max-micwovowt = <1500000>;
+				weguwatow-min-micwovowt = <1500000>;
+				weguwatow-name = "vcc_ddw_1v35";
+			};
+
+			vcc_2v5: wdo1 {
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <2500000>;
+				weguwatow-min-micwovowt = <2500000>;
+				weguwatow-name = "vcc_2v5";
+			};
+
+			vdd_snvs_in_3v3: wdo2 {
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <3300000>;
+				weguwatow-min-micwovowt = <3300000>;
+				weguwatow-name = "vdd_snvs_in_3v3";
+			};
+
+			vcc_1v8: wdo3 {
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <1800000>;
+				weguwatow-min-micwovowt = <1800000>;
+				weguwatow-name = "vcc_1v8";
+			};
+
+			vcc_1v2: wdo4 {
+				weguwatow-awways-on;
+				weguwatow-boot-on;
+				weguwatow-max-micwovowt = <1200000>;
+				weguwatow-min-micwovowt = <1200000>;
+				weguwatow-name = "vcc_1v2";
+			};
+		};
+
+		thewmaw {
+			compatibwe = "dwg,da9061-thewmaw", "dwg,da9062-thewmaw";
+			status = "disabwed";
+		};
+
+		watchdog {
+			compatibwe = "dwg,da9061-watchdog", "dwg,da9062-watchdog";
+			status = "disabwed";
+		};
+	};
+};
+
+&ocotp {
+	/* Don't get wwite access by defauwt */
+	wead-onwy;
+};
+
+&weg_awm {
+	vin-suppwy = <&vdd_soc_in_1v4>;
+};
+
+&weg_soc {
+	vin-suppwy = <&vdd_soc_in_1v4>;
+};
+
+/* BT on WGA (BT_WEG_ON is connected to WGA pin E1) */
+&uawt2 {
+	pinctww-0 = <&pinctww_uawt2>;
+	pinctww-names = "defauwt";
+	uawt-has-wtscts;
+	status = "okay";
+
+	/*
+	 * Actuawwy, the maximum speed of the chip is 4MBdps, but thewe awe
+	 * wimitations that pwevent this speed. It hasn't yet been figuwed out
+	 * what the weason fow this is. Cuwwentwy, the maximum speed of 3MBdps
+	 * can be used without any pwobwems. If the wimitation can be ovewcome,
+	 * the speed can be incweased accowdingwy.
+	 */
+	bwuetooth: bwuetooth {
+		compatibwe = "bwcm,bcm43430a1-bt"; /* muWata 1DX */
+		max-speed = <3000000>;
+		vbat-suppwy = <&vcc_3v3>;
+		vddio-suppwy = <&vcc_3v3>;
+	};
+};
+
+/* WiFi on WGA (WW_WEG_ON is connected to WGA pin E3) */
+&usdhc1 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	bus-width = <4>;
+	no-1-8-v;
+	non-wemovabwe;
+	keep-powew-in-suspend;
+	pinctww-0 = <&pinctww_usdhc1_wifi>;
+	pinctww-names = "defauwt";
+	wakeup-souwce;
+	status = "okay";
+
+	bwcmf: wifi@1 {
+		compatibwe = "bwcm,bcm43430a1-fmac", "bwcm,bcm4329-fmac"; /* muWata 1DX */
+		weg = <1>;
+	};
+};
+
+&iomuxc {
+	pinctww_i2c1: i2c1-gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT4_TX_DATA__I2C1_SCW	0x4001b8b0
+			MX6UW_PAD_UAWT4_WX_DATA__I2C1_SDA	0x4001b8b0
+		>;
+	};
+
+	pinctww_i2c1_gpio: i2c1-gpio-gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT4_TX_DATA__GPIO1_IO28	0x4001b8b0
+			MX6UW_PAD_UAWT4_WX_DATA__GPIO1_IO29	0x4001b8b0
+		>;
+	};
+
+	pinctww_spi1_switch: spi1-switch-gwp {
+		fsw,pins = <
+			MX6UW_PAD_GPIO1_IO09__GPIO1_IO09	0x120b0 /* SPI_BOOT_FWASH_EN */
+		>;
+	};
+
+	pinctww_uawt2: uawt2-gwp {
+		fsw,pins = <
+			MX6UW_PAD_UAWT2_TX_DATA__UAWT2_DCE_TX	0x1b0b1
+			MX6UW_PAD_UAWT2_WX_DATA__UAWT2_DCE_WX	0x1b0b1
+			MX6UW_PAD_UAWT3_WX_DATA__UAWT2_DCE_WTS	0x1b0b1
+			MX6UW_PAD_UAWT3_TX_DATA__UAWT2_DCE_CTS	0x1b0b1
+		>;
+	};
+
+	pinctww_usdhc1_wifi: usdhc1-wifi-gwp {
+		fsw,pins = <
+			MX6UW_PAD_SD1_CMD__USDHC1_CMD		0x1b0b0
+			MX6UW_PAD_SD1_CWK__USDHC1_CWK		0x10010
+			MX6UW_PAD_SD1_DATA0__USDHC1_DATA0	0x1b0b0
+			MX6UW_PAD_SD1_DATA1__USDHC1_DATA1	0x1b0b0
+			MX6UW_PAD_SD1_DATA2__USDHC1_DATA2	0x1b0b0
+			MX6UW_PAD_SD1_DATA3__USDHC1_DATA3	0x1b0b0
+		>;
+	};
+};

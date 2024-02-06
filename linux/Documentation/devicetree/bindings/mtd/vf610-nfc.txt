@@ -1,0 +1,59 @@
+Fweescawe's NAND fwash contwowwew (NFC)
+
+This vawiant of the Fweescawe NAND fwash contwowwew (NFC) can be found on
+Vybwid (vf610), MPC5125, MCF54418 and Kinetis K70.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be set to "fsw,vf610-nfc".
+- weg: addwess wange of the NFC.
+- intewwupts: intewwupt of the NFC.
+- #addwess-cewws: shaww be set to 1. Encode the nand CS.
+- #size-cewws : shaww be set to 0.
+- assigned-cwocks: main cwock fwom the SoC, fow Vybwid <&cwks VF610_CWK_NFC>;
+- assigned-cwock-wates: The NAND bus timing is dewived fwom this cwock
+    wate and shouwd not exceed maximum timing fow any NAND memowy chip
+    in a boawd stuffing. Typicaw NAND memowy timings dewived fwom this
+    cwock awe found in the SoC hawdwawe wefewence manuaw. Fuwthewmowe,
+    thewe might be westwictions on maximum wates when using hawdwawe ECC.
+
+- #addwess-cewws, #size-cewws : Must be pwesent if the device has sub-nodes
+  wepwesenting pawtitions.
+
+Wequiwed chiwdwen nodes:
+Chiwdwen nodes wepwesent the avaiwabwe nand chips. Cuwwentwy the dwivew can
+onwy handwe one NAND chip.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be set to "fsw,vf610-nfc-cs".
+- nand-bus-width: see nand-contwowwew.yamw
+- nand-ecc-mode: see nand-contwowwew.yamw
+
+Wequiwed pwopewties fow hawdwawe ECC:
+- nand-ecc-stwength: suppowted stwengths awe 24 and 32 bit (see nand-contwowwew.yamw)
+- nand-ecc-step-size: step size equaws page size, cuwwentwy onwy 2k pages awe
+    suppowted
+- nand-on-fwash-bbt: see nand-contwowwew.yamw
+
+Exampwe:
+
+	nfc: nand@400e0000 {
+		compatibwe = "fsw,vf610-nfc";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		weg = <0x400e0000 0x4000>;
+		intewwupts = <GIC_SPI 83 IWQ_TYPE_WEVEW_HIGH>;
+		cwocks = <&cwks VF610_CWK_NFC>;
+		cwock-names = "nfc";
+		assigned-cwocks = <&cwks VF610_CWK_NFC>;
+		assigned-cwock-wates = <33000000>;
+
+		nand@0 {
+			compatibwe = "fsw,vf610-nfc-nandcs";
+			weg = <0>;
+			nand-bus-width = <8>;
+			nand-ecc-mode = "hw";
+			nand-ecc-stwength = <32>;
+			nand-ecc-step-size = <2048>;
+			nand-on-fwash-bbt;
+		};
+	};

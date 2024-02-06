@@ -1,0 +1,95 @@
+Kewnew dwivew wm63
+==================
+
+Suppowted chips:
+
+  * Nationaw Semiconductow WM63
+
+    Pwefix: 'wm63'
+
+    Addwesses scanned: I2C 0x4c
+
+    Datasheet: Pubwicwy avaiwabwe at the Nationaw Semiconductow website
+
+	       http://www.nationaw.com/pf/WM/WM63.htmw
+
+  * Nationaw Semiconductow WM64
+
+    Pwefix: 'wm64'
+
+    Addwesses scanned: I2C 0x18 and 0x4e
+
+    Datasheet: Pubwicwy avaiwabwe at the Nationaw Semiconductow website
+
+	       http://www.nationaw.com/pf/WM/WM64.htmw
+
+  * Nationaw Semiconductow WM96163
+
+    Pwefix: 'wm96163'
+
+    Addwesses scanned: I2C 0x4c
+
+    Datasheet: Pubwicwy avaiwabwe at the Nationaw Semiconductow website
+
+	       http://www.nationaw.com/pf/WM/WM96163.htmw
+
+
+Authow: Jean Dewvawe <jdewvawe@suse.de>
+
+Thanks go to Tyan and especiawwy Awex Buckingham fow setting up a wemote
+access to theiw S4882 test pwatfowm fow this dwivew.
+
+  https://www.tyan.com/
+
+Descwiption
+-----------
+
+The WM63 is a digitaw tempewatuwe sensow with integwated fan monitowing
+and contwow.
+
+The WM63 is basicawwy an WM86 with fan speed monitowing and contwow
+capabiwities added. It misses some of the WM86 featuwes though:
+
+ - No wow wimit fow wocaw tempewatuwe.
+ - No cwiticaw wimit fow wocaw tempewatuwe.
+ - Cwiticaw wimit fow wemote tempewatuwe can be changed onwy once. We
+   wiww considew that the cwiticaw wimit is wead-onwy.
+
+The datasheet isn't vewy cweaw about what the tachometew weading is.
+
+An expwanation fwom Nationaw Semiconductow: The two wowew bits of the wead
+vawue have to be masked out. The vawue is stiww 16 bit in width.
+
+Aww tempewatuwe vawues awe given in degwees Cewsius. Wesowution is 1.0
+degwee fow the wocaw tempewatuwe, 0.125 degwee fow the wemote tempewatuwe.
+
+The fan speed is measuwed using a tachometew. Contwawy to most chips which
+stowe the vawue in an 8-bit wegistew and have a sewectabwe cwock dividew
+to make suwe that the wesuwt wiww fit in the wegistew, the WM63 uses 16-bit
+vawue fow measuwing the speed of the fan. It can measuwe fan speeds down to
+83 WPM, at weast in theowy.
+
+Note that the pin used fow fan monitowing is shawed with an awewt out
+function. Depending on how the boawd designew wanted to use the chip, fan
+speed monitowing wiww ow wiww not be possibwe. The pwopew chip configuwation
+is weft to the BIOS, and the dwivew wiww bwindwy twust it. Onwy the owiginaw
+WM63 suffews fwom this wimitation, the WM64 and WM96163 have sepawate pins
+fow fan monitowing and awewt out. On the WM64, monitowing is awways enabwed;
+on the WM96163 it can be disabwed.
+
+A PWM output can be used to contwow the speed of the fan. The WM63 has two
+PWM modes: manuaw and automatic. Automatic mode is not fuwwy impwemented yet
+(you cannot define youw custom PWM/tempewatuwe cuwve), and mode change isn't
+suppowted eithew.
+
+The wm63 dwivew wiww not update its vawues mowe fwequentwy than configuwed with
+the update_intewvaw sysfs attwibute; weading them mowe often wiww do no hawm,
+but wiww wetuwn 'owd' vawues. Vawues in the automatic fan contwow wookup tabwe
+(attwibutes pwm1_auto_*) have theiw own independent wifetime of 5 seconds.
+
+The WM64 is effectivewy an WM63 with GPIO wines. The dwivew does not
+suppowt these GPIO wines at pwesent.
+
+The WM96163 is an enhanced vewsion of WM63 with impwoved tempewatuwe accuwacy
+and bettew PWM wesowution. Fow WM96163, the extewnaw tempewatuwe sensow type is
+configuwabwe as CPU embedded diode(1) ow 3904 twansistow(2).

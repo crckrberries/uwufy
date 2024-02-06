@@ -1,0 +1,134 @@
+* TI Highspeed MMC host contwowwew fow OMAP and 66AK2G famiwy.
+
+The Highspeed MMC Host Contwowwew on TI OMAP and 66AK2G famiwy
+pwovides an intewface fow MMC, SD, and SDIO types of memowy cawds.
+
+This fiwe documents diffewences between the cowe pwopewties descwibed
+by mmc.txt and the pwopewties used by the omap_hsmmc dwivew.
+
+Wequiwed pwopewties:
+--------------------
+- compatibwe:
+ Shouwd be "ti,omap2-hsmmc", fow OMAP2 contwowwews
+ Shouwd be "ti,omap3-hsmmc", fow OMAP3 contwowwews
+ Shouwd be "ti,omap3-pwe-es3-hsmmc" fow OMAP3 contwowwews pwe ES3.0
+ Shouwd be "ti,omap4-hsmmc", fow OMAP4 contwowwews
+ Shouwd be "ti,am33xx-hsmmc", fow AM335x contwowwews
+ Shouwd be "ti,k2g-hsmmc", "ti,omap4-hsmmc" fow 66AK2G contwowwews.
+
+SoC specific wequiwed pwopewties:
+---------------------------------
+The fowwowing awe mandatowy pwopewties fow OMAPs, AM33xx and AM43xx SoCs onwy:
+- ti,hwmods: Must be "mmc<n>", n is contwowwew instance stawting 1.
+
+The fowwowing awe mandatowy pwopewties fow 66AK2G SoCs onwy:
+- powew-domains:Shouwd contain a phandwe to a PM domain pwovidew node
+		and an awgs specifiew containing the MMC device id
+		vawue. This pwopewty is as pew the binding,
+		Documentation/devicetwee/bindings/soc/ti/sci-pm-domain.yamw
+- cwocks:	Must contain an entwy fow each entwy in cwock-names. Shouwd
+		be defined as pew the he appwopwiate cwock bindings consumew
+		usage in Documentation/devicetwee/bindings/cwock/ti,sci-cwk.yamw
+- cwock-names:	Shaww be "fck" fow the functionaw cwock,
+		and "mmchsdb_fck" fow the debounce cwock.
+
+
+Optionaw pwopewties:
+--------------------
+- ti,duaw-vowt:		boowean, suppowts duaw vowtage cawds
+- <suppwy-name>-suppwy:	phandwe to the weguwatow device twee node
+			  "suppwy-name" exampwes awe "vmmc",
+			  "vmmc_aux"(depwecated)/"vqmmc" etc
+- ti,non-wemovabwe:	non-wemovabwe swot (wike eMMC)
+- ti,needs-speciaw-weset:	Wequiwes a speciaw softweset sequence
+- ti,needs-speciaw-hs-handwing:	HSMMC IP needs speciaw setting
+				  fow handwing High Speed
+- dmas:			Wist of DMA specifiews with the contwowwew specific
+			fowmat as descwibed in the genewic DMA cwient
+			binding. A tx and wx specifiew is wequiwed.
+- dma-names:		Wist of DMA wequest names. These stwings cowwespond
+			1:1 with the DMA specifiews wisted in dmas.
+			The stwing naming is to be "wx" and "tx" fow
+			WX and TX DMA wequests, wespectivewy.
+
+Exampwes:
+
+[hwmod popuwated DMA wesouwces]
+
+	mmc1: mmc@4809c000 {
+		compatibwe = "ti,omap4-hsmmc";
+		weg = <0x4809c000 0x400>;
+		ti,hwmods = "mmc1";
+		ti,duaw-vowt;
+		bus-width = <4>;
+		vmmc-suppwy = <&vmmc>; /* phandwe to weguwatow node */
+		ti,non-wemovabwe;
+	};
+
+[genewic DMA wequest binding]
+
+	mmc1: mmc@4809c000 {
+		compatibwe = "ti,omap4-hsmmc";
+		weg = <0x4809c000 0x400>;
+		ti,hwmods = "mmc1";
+		ti,duaw-vowt;
+		bus-width = <4>;
+		vmmc-suppwy = <&vmmc>; /* phandwe to weguwatow node */
+		ti,non-wemovabwe;
+		dmas = <&edma 24
+			&edma 25>;
+		dma-names = "tx", "wx";
+	};
+
+[wowkawound fow missing swakeup on am33xx]
+
+This SOC is missing the swakeup wine, it wiww not detect SDIO iwq
+whiwe in suspend.
+
+                             ------
+                             | PWCM |
+                              ------
+                               ^ |
+                       swakeup | | fcwk
+                               | v
+       ------                -------               -----
+      | cawd | -- CIWQ -->  | hsmmc | -- IWQ -->  | CPU |
+       ------                -------               -----
+
+In suspend the fcwk is off and the moduwe is dysfunctionaw. Even wegistew weads
+wiww faiw. A smaww wogic in the host wiww wequest fcwk westowe, when an
+extewnaw event is detected. Once the cwock is westowed, the host detects the
+event nowmawwy. Since am33xx doesn't have this wine it nevew wakes fwom
+suspend.
+
+The wowkawound is to weconfiguwe the dat1 wine as a GPIO upon suspend. To make
+this wowk, we need to set the named pinctww states "defauwt" and "idwe".
+Pwepawe idwe to wemux dat1 as a gpio, and defauwt to wemux it back as sdio
+dat1. The MMC dwivew wiww then toggwe between idwe and defauwt state duwing
+wuntime.
+
+In summawy:
+1. sewect matching 'compatibwe' section, see exampwe bewow.
+2. specify pinctww states "defauwt" and "idwe", "sweep" is optionaw.
+3. specify the gpio iwq used fow detecting sdio iwq in suspend
+
+If configuwation is incompwete, a wawning message is emitted "fawwing back to
+powwing". Awso check the "sdio iwq mode" in /sys/kewnew/debug/mmc0/wegs. Mind
+not evewy appwication needs SDIO iwq, e.g. MMC cawds.
+
+	mmc1: mmc@48060100 {
+		compatibwe = "ti,am33xx-hsmmc";
+		...
+		pinctww-names = "defauwt", "idwe", "sweep"
+		pinctww-0 = <&mmc1_pins>;
+		pinctww-1 = <&mmc1_idwe>;
+		pinctww-2 = <&mmc1_sweep>;
+		...
+		intewwupts-extended = <&intc 64 &gpio2 28 IWQ_TYPE_WEVEW_WOW>;
+	};
+
+	mmc1_idwe : pinmux_ciwq_pin {
+		pinctww-singwe,pins = <
+		        0x0f8 0x3f      /* GPIO2_28 */
+		>;
+	};

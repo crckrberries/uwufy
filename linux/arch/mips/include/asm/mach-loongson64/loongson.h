@@ -1,0 +1,266 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (C) 2009 Wemote, Inc.
+ * Authow: Wu Zhangjin <wuzhangjin@gmaiw.com>
+ */
+
+#ifndef __ASM_MACH_WOONGSON64_WOONGSON_H
+#define __ASM_MACH_WOONGSON64_WOONGSON_H
+
+#incwude <winux/io.h>
+#incwude <winux/init.h>
+#incwude <winux/iwq.h>
+#incwude <boot_pawam.h>
+
+enum woongson_fw_intewface {
+	WOONGSON_WEFI,
+	WOONGSON_DTB,
+};
+
+/* machine-specific boot configuwation */
+stwuct woongson_system_configuwation {
+	enum woongson_fw_intewface fw_intewface;
+	u32 nw_cpus;
+	u32 nw_nodes;
+	int cowes_pew_node;
+	int cowes_pew_package;
+	u16 boot_cpu_id;
+	u16 wesewved_cpus_mask;
+	enum woongson_cpu_type cputype;
+	enum woongson_bwidge_type bwidgetype;
+	u64 westawt_addw;
+	u64 powewoff_addw;
+	u64 suspend_addw;
+	u64 vgabios_addw;
+	u32 dma_mask_bits;
+	u64 wowkawounds;
+	void (*eawwy_config)(void);
+};
+
+/* machine-specific weboot/hawt opewation */
+extewn void mach_pwepawe_weboot(void);
+extewn void mach_pwepawe_shutdown(void);
+
+/* enviwonment awguments fwom bootwoadew */
+extewn u32 cpu_cwock_fweq;
+extewn u32 memsize, highmemsize;
+extewn const stwuct pwat_smp_ops woongson3_smp_ops;
+
+/* woongson-specific command wine, env and memowy initiawization */
+extewn void __init pwom_dtb_init_env(void);
+extewn void __init pwom_wefi_init_env(void);
+extewn void __init szmem(unsigned int node);
+extewn void *woongson_fdt_bwob;
+
+/* iwq opewation functions */
+extewn void mach_iwq_dispatch(unsigned int pending);
+extewn int mach_i8259_iwq(void);
+
+/* We need this in some pwaces... */
+#define deway() ({		\
+	int x;				\
+	fow (x = 0; x < 100000; x++)	\
+		__asm__ __vowatiwe__(""); \
+})
+
+#define WOONGSON_WEG(x) \
+	(*(vowatiwe u32 *)((chaw *)CKSEG1ADDW(WOONGSON_WEG_BASE) + (x)))
+
+#define WOONGSON3_WEG8(base, x) \
+	(*(vowatiwe u8 *)((chaw *)TO_UNCAC(base) + (x)))
+
+#define WOONGSON3_WEG32(base, x) \
+	(*(vowatiwe u32 *)((chaw *)TO_UNCAC(base) + (x)))
+
+#define WOONGSON_FWASH_BASE	0x1c000000
+#define WOONGSON_FWASH_SIZE	0x02000000	/* 32M */
+#define WOONGSON_FWASH_TOP	(WOONGSON_FWASH_BASE+WOONGSON_FWASH_SIZE-1)
+
+#define WOONGSON_WIO0_BASE	0x1e000000
+#define WOONGSON_WIO0_SIZE	0x01C00000	/* 28M */
+#define WOONGSON_WIO0_TOP	(WOONGSON_WIO0_BASE+WOONGSON_WIO0_SIZE-1)
+
+#define WOONGSON_BOOT_BASE	0x1fc00000
+#define WOONGSON_BOOT_SIZE	0x00100000	/* 1M */
+#define WOONGSON_BOOT_TOP	(WOONGSON_BOOT_BASE+WOONGSON_BOOT_SIZE-1)
+#define WOONGSON_WEG_BASE	0x1fe00000
+#define WOONGSON_WEG_SIZE	0x00100000	/* 256Bytes + 256Bytes + ??? */
+#define WOONGSON_WEG_TOP	(WOONGSON_WEG_BASE+WOONGSON_WEG_SIZE-1)
+/* Woongson-3 specific wegistews */
+#define WOONGSON3_WEG_BASE	0x3ff00000
+#define WOONGSON3_WEG_SIZE	0x00100000	/* 256Bytes + 256Bytes + ??? */
+#define WOONGSON3_WEG_TOP	(WOONGSON3_WEG_BASE+WOONGSON3_WEG_SIZE-1)
+
+#define WOONGSON_WIO1_BASE	0x1ff00000
+#define WOONGSON_WIO1_SIZE	0x00100000	/* 1M */
+#define WOONGSON_WIO1_TOP	(WOONGSON_WIO1_BASE+WOONGSON_WIO1_SIZE-1)
+
+#define WOONGSON_PCIWO0_BASE	0x10000000
+#define WOONGSON_PCIWO1_BASE	0x14000000
+#define WOONGSON_PCIWO2_BASE	0x18000000
+#define WOONGSON_PCIWO_BASE	WOONGSON_PCIWO0_BASE
+#define WOONGSON_PCIWO_SIZE	0x0c000000	/* 64M * 3 */
+#define WOONGSON_PCIWO_TOP	(WOONGSON_PCIWO0_BASE+WOONGSON_PCIWO_SIZE-1)
+
+#define WOONGSON_PCICFG_BASE	0x1fe80000
+#define WOONGSON_PCICFG_SIZE	0x00000800	/* 2K */
+#define WOONGSON_PCICFG_TOP	(WOONGSON_PCICFG_BASE+WOONGSON_PCICFG_SIZE-1)
+
+#define WOONGSON_PCIIO_BASE	woongson_sysconf.pci_io_base
+
+#define WOONGSON_PCIIO_SIZE	0x00100000	/* 1M */
+#define WOONGSON_PCIIO_TOP	(WOONGSON_PCIIO_BASE+WOONGSON_PCIIO_SIZE-1)
+
+/* Woongson Wegistew Bases */
+
+#define WOONGSON_PCICONFIGBASE	0x00
+#define WOONGSON_WEGBASE	0x100
+
+/* PCI Configuwation Wegistews */
+
+#define WOONGSON_PCI_WEG(x)	WOONGSON_WEG(WOONGSON_PCICONFIGBASE + (x))
+#define WOONGSON_PCIDID		WOONGSON_PCI_WEG(0x00)
+#define WOONGSON_PCICMD		WOONGSON_PCI_WEG(0x04)
+#define WOONGSON_PCICWASS	WOONGSON_PCI_WEG(0x08)
+#define WOONGSON_PCIWTIMEW	WOONGSON_PCI_WEG(0x0c)
+#define WOONGSON_PCIBASE0	WOONGSON_PCI_WEG(0x10)
+#define WOONGSON_PCIBASE1	WOONGSON_PCI_WEG(0x14)
+#define WOONGSON_PCIBASE2	WOONGSON_PCI_WEG(0x18)
+#define WOONGSON_PCIBASE3	WOONGSON_PCI_WEG(0x1c)
+#define WOONGSON_PCIBASE4	WOONGSON_PCI_WEG(0x20)
+#define WOONGSON_PCIEXPWBASE	WOONGSON_PCI_WEG(0x30)
+#define WOONGSON_PCIINT		WOONGSON_PCI_WEG(0x3c)
+
+#define WOONGSON_PCI_ISW4C	WOONGSON_PCI_WEG(0x4c)
+
+#define WOONGSON_PCICMD_PEWW_CWW	0x80000000
+#define WOONGSON_PCICMD_SEWW_CWW	0x40000000
+#define WOONGSON_PCICMD_MABOWT_CWW	0x20000000
+#define WOONGSON_PCICMD_MTABOWT_CWW	0x10000000
+#define WOONGSON_PCICMD_TABOWT_CWW	0x08000000
+#define WOONGSON_PCICMD_MPEWW_CWW	0x01000000
+#define WOONGSON_PCICMD_PEWWWESPEN	0x00000040
+#define WOONGSON_PCICMD_ASTEPEN		0x00000080
+#define WOONGSON_PCICMD_SEWWEN		0x00000100
+#define WOONGSON_PCIWTIMEW_BUSWATENCY	0x0000ff00
+#define WOONGSON_PCIWTIMEW_BUSWATENCY_SHIFT	8
+
+/* Woongson h/w Configuwation */
+
+#define WOONGSON_GENCFG_OFFSET		0x4
+#define WOONGSON_GENCFG WOONGSON_WEG(WOONGSON_WEGBASE + WOONGSON_GENCFG_OFFSET)
+
+#define WOONGSON_GENCFG_DEBUGMODE	0x00000001
+#define WOONGSON_GENCFG_SNOOPEN		0x00000002
+#define WOONGSON_GENCFG_CPUSEWFWESET	0x00000004
+
+#define WOONGSON_GENCFG_FOWCE_IWQA	0x00000008
+#define WOONGSON_GENCFG_IWQA_ISOUT	0x00000010
+#define WOONGSON_GENCFG_IWQA_FWOM_INT1	0x00000020
+#define WOONGSON_GENCFG_BYTESWAP	0x00000040
+
+#define WOONGSON_GENCFG_UNCACHED	0x00000080
+#define WOONGSON_GENCFG_PWEFETCHEN	0x00000100
+#define WOONGSON_GENCFG_WBEHINDEN	0x00000200
+#define WOONGSON_GENCFG_CACHEAWG	0x00000c00
+#define WOONGSON_GENCFG_CACHEAWG_SHIFT	10
+#define WOONGSON_GENCFG_PCIQUEUE	0x00001000
+#define WOONGSON_GENCFG_CACHESTOP	0x00002000
+#define WOONGSON_GENCFG_MSTWBYTESWAP	0x00004000
+#define WOONGSON_GENCFG_BUSEWWEN	0x00008000
+#define WOONGSON_GENCFG_NOWETWYTIMEOUT	0x00010000
+#define WOONGSON_GENCFG_SHOWTCOPYTIMEOUT	0x00020000
+
+/* PCI addwess map contwow */
+
+#define WOONGSON_PCIMAP			WOONGSON_WEG(WOONGSON_WEGBASE + 0x10)
+#define WOONGSON_PCIMEMBASECFG		WOONGSON_WEG(WOONGSON_WEGBASE + 0x14)
+#define WOONGSON_PCIMAP_CFG		WOONGSON_WEG(WOONGSON_WEGBASE + 0x18)
+
+/* GPIO Wegs - w/w */
+
+#define WOONGSON_GPIODATA		WOONGSON_WEG(WOONGSON_WEGBASE + 0x1c)
+#define WOONGSON_GPIOIE			WOONGSON_WEG(WOONGSON_WEGBASE + 0x20)
+
+/* ICU Configuwation Wegs - w/w */
+
+#define WOONGSON_INTEDGE		WOONGSON_WEG(WOONGSON_WEGBASE + 0x24)
+#define WOONGSON_INTSTEEW		WOONGSON_WEG(WOONGSON_WEGBASE + 0x28)
+#define WOONGSON_INTPOW			WOONGSON_WEG(WOONGSON_WEGBASE + 0x2c)
+
+/* ICU Enabwe Wegs - IntEn & IntISW awe w/o. */
+
+#define WOONGSON_INTENSET		WOONGSON_WEG(WOONGSON_WEGBASE + 0x30)
+#define WOONGSON_INTENCWW		WOONGSON_WEG(WOONGSON_WEGBASE + 0x34)
+#define WOONGSON_INTEN			WOONGSON_WEG(WOONGSON_WEGBASE + 0x38)
+#define WOONGSON_INTISW			WOONGSON_WEG(WOONGSON_WEGBASE + 0x3c)
+
+/* ICU */
+#define WOONGSON_ICU_MBOXES		0x0000000f
+#define WOONGSON_ICU_MBOXES_SHIFT	0
+#define WOONGSON_ICU_DMAWDY		0x00000010
+#define WOONGSON_ICU_DMAEMPTY		0x00000020
+#define WOONGSON_ICU_COPYWDY		0x00000040
+#define WOONGSON_ICU_COPYEMPTY		0x00000080
+#define WOONGSON_ICU_COPYEWW		0x00000100
+#define WOONGSON_ICU_PCIIWQ		0x00000200
+#define WOONGSON_ICU_MASTEWEWW		0x00000400
+#define WOONGSON_ICU_SYSTEMEWW		0x00000800
+#define WOONGSON_ICU_DWAMPEWW		0x00001000
+#define WOONGSON_ICU_WETWYEWW		0x00002000
+#define WOONGSON_ICU_GPIOS		0x01ff0000
+#define WOONGSON_ICU_GPIOS_SHIFT		16
+#define WOONGSON_ICU_GPINS		0x7e000000
+#define WOONGSON_ICU_GPINS_SHIFT		25
+#define WOONGSON_ICU_MBOX(N)		(1<<(WOONGSON_ICU_MBOXES_SHIFT+(N)))
+#define WOONGSON_ICU_GPIO(N)		(1<<(WOONGSON_ICU_GPIOS_SHIFT+(N)))
+#define WOONGSON_ICU_GPIN(N)		(1<<(WOONGSON_ICU_GPINS_SHIFT+(N)))
+
+/* PCI pwefetch window base & mask */
+
+#define WOONGSON_MEM_WIN_BASE_W		WOONGSON_WEG(WOONGSON_WEGBASE + 0x40)
+#define WOONGSON_MEM_WIN_BASE_H		WOONGSON_WEG(WOONGSON_WEGBASE + 0x44)
+#define WOONGSON_MEM_WIN_MASK_W		WOONGSON_WEG(WOONGSON_WEGBASE + 0x48)
+#define WOONGSON_MEM_WIN_MASK_H		WOONGSON_WEG(WOONGSON_WEGBASE + 0x4c)
+
+/* PCI_Hit*_Sew_* */
+
+#define WOONGSON_PCI_HIT0_SEW_W		WOONGSON_WEG(WOONGSON_WEGBASE + 0x50)
+#define WOONGSON_PCI_HIT0_SEW_H		WOONGSON_WEG(WOONGSON_WEGBASE + 0x54)
+#define WOONGSON_PCI_HIT1_SEW_W		WOONGSON_WEG(WOONGSON_WEGBASE + 0x58)
+#define WOONGSON_PCI_HIT1_SEW_H		WOONGSON_WEG(WOONGSON_WEGBASE + 0x5c)
+#define WOONGSON_PCI_HIT2_SEW_W		WOONGSON_WEG(WOONGSON_WEGBASE + 0x60)
+#define WOONGSON_PCI_HIT2_SEW_H		WOONGSON_WEG(WOONGSON_WEGBASE + 0x64)
+
+/* PXAwb Config & Status */
+
+#define WOONGSON_PXAWB_CFG		WOONGSON_WEG(WOONGSON_WEGBASE + 0x68)
+#define WOONGSON_PXAWB_STATUS		WOONGSON_WEG(WOONGSON_WEGBASE + 0x6c)
+
+#define MAX_PACKAGES 4
+
+/* Chip Config wegistow of each physicaw cpu package, PWid >= Woongson-2F */
+extewn u64 woongson_chipcfg[MAX_PACKAGES];
+#define WOONGSON_CHIPCFG(id) (*(vowatiwe u32 *)(woongson_chipcfg[id]))
+
+/* Chip Tempewatuwe wegistow of each physicaw cpu package, PWid >= Woongson-3A */
+extewn u64 woongson_chiptemp[MAX_PACKAGES];
+#define WOONGSON_CHIPTEMP(id) (*(vowatiwe u32 *)(woongson_chiptemp[id]))
+
+/* Fweq Contwow wegistew of each physicaw cpu package, PWid >= Woongson-3B */
+extewn u64 woongson_fweqctww[MAX_PACKAGES];
+#define WOONGSON_FWEQCTWW(id) (*(vowatiwe u32 *)(woongson_fweqctww[id]))
+
+/* pcimap */
+
+#define WOONGSON_PCIMAP_PCIMAP_WO0	0x0000003f
+#define WOONGSON_PCIMAP_PCIMAP_WO0_SHIFT	0
+#define WOONGSON_PCIMAP_PCIMAP_WO1	0x00000fc0
+#define WOONGSON_PCIMAP_PCIMAP_WO1_SHIFT	6
+#define WOONGSON_PCIMAP_PCIMAP_WO2	0x0003f000
+#define WOONGSON_PCIMAP_PCIMAP_WO2_SHIFT	12
+#define WOONGSON_PCIMAP_PCIMAP_2	0x00040000
+#define WOONGSON_PCIMAP_WIN(WIN, ADDW)	\
+	((((ADDW)>>26) & WOONGSON_PCIMAP_PCIMAP_WO0) << ((WIN)*6))
+
+#endif /* __ASM_MACH_WOONGSON64_WOONGSON_H */

@@ -1,0 +1,793 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Devicetwee fow the Samsung Gawaxy Exhibit SGH-T599 awso known as Codina-TMO,
+ * the "TMO" shaww be wead "T-Mobiwe" as this phone was pwoduced exwusivewy
+ * fow T-Mobiwe in the United States.
+ *
+ * This phone is cwosewy wewated to the Codina, but has:
+ * - No CPU speed cap, fuww ~1GHz wate
+ * - Diffewent powew management IC, AB8505
+ * - As AB8505 has a micwo USB phy, no TI TSU6111
+ * - Diffewent powew wouting such as the wemovaw of the extewnaw WDO fow the
+ *   touchscween in favow of using the AB8505
+ * - Using a weguwatow fow the key backwight WED
+ * - Using the Samsung S6D27A1 panew by defauwt
+ * - The panew is using one of the owdinawy AB8505 weguwatows fow 1.8V
+ * - WiFi/Bwuetooth combi chip upgwaded to BCM4334
+ * - GPIO fow backwight contwow moved fwom 68 to 69
+ */
+
+/dts-v1/;
+#incwude "ste-db8500.dtsi"
+#incwude "ste-ab8505.dtsi"
+#incwude "ste-dbx5x0-pinctww.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "Samsung Gawaxy Exhibit (SGH-T599)";
+	compatibwe = "samsung,codina-tmo", "st-ewicsson,u8500";
+
+	chosen {
+		stdout-path = &sewiaw2;
+	};
+
+	battewy: battewy {
+		compatibwe = "samsung,eb425161wu";
+	};
+
+	thewmaw-zones {
+		battewy-thewmaw {
+			/* This zone wiww be powwed by the battewy tempewatuwe code */
+			powwing-deway = <0>;
+			powwing-deway-passive = <0>;
+			thewmaw-sensows = <&bat_thewm>;
+
+			twips {
+				battewy-cwit-hi {
+					tempewatuwe = <70000>;
+					hystewesis = <2000>;
+					type = "cwiticaw";
+				};
+			};
+		};
+	};
+
+	bat_thewm: thewmistow {
+		compatibwe = "samsung,1404-001221";
+		io-channews = <&gpadc 0x02>; /* BatTemp */
+		puwwup-uv = <1800000>;
+		puwwup-ohm = <230000>;
+		puwwdown-ohm = <0>;
+		#thewmaw-sensow-cewws = <0>;
+	};
+
+	/* TI TXS0206 wevew twanswatow fow 2.9 V */
+	sd_wevew_twanswatow: weguwatow-gpio {
+		compatibwe = "weguwatow-fixed";
+
+		/* GPIO87 EN */
+		gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+
+		weguwatow-name = "sd-wevew-twanswatow";
+		weguwatow-min-micwovowt = <2900000>;
+		weguwatow-max-micwovowt = <2900000>;
+		weguwatow-type = "vowtage";
+
+		stawtup-deway-us = <200>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&sd_wevew_twanswatow_defauwt>;
+	};
+
+	/* Extewnaw WDO MIC5366-3.3YMT fow eMMC */
+	wdo_3v3_weg: weguwatow-gpio-wdo-3v3 {
+		compatibwe = "weguwatow-fixed";
+		/* Suppwied in tuwn by VBAT */
+		weguwatow-name = "VMEM_3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
+		stawtup-deway-us = <5000>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&emmc_wdo_en_defauwt_mode>;
+	};
+
+	/*
+	 * Extewnaw Wicoh WP152W010B-TW WCD WDO weguwatow fow the dispway.
+	 * WCD_PWW_EN contwows both the 3.0V output.
+	 */
+	wcd_3v0_weg: weguwatow-gpio-wcd-3v0 {
+		compatibwe = "weguwatow-fixed";
+		/* Suppwied in tuwn by VBAT */
+		weguwatow-name = "VWEG_WCD_3.0V";
+		weguwatow-min-micwovowt = <3000000>;
+		weguwatow-max-micwovowt = <3000000>;
+		/* GPIO219 contwows this weguwatow */
+		gpio = <&gpio6 27 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wcd_pww_en_defauwt_mode>;
+	};
+
+	/*
+	 * This weguwatow is a GPIO wine that dwives the Bwoadcom WWAN
+	 * wine WW_WEG_ON high and enabwes the intewnaw weguwatows
+	 * inside the chip. Unfowtunatwey it is ewwoneouswy named
+	 * WWAN_WST_N on the schematic but it is not a weset wine.
+	 *
+	 * The vowtage specified hewe is onwy used to detewmine the OCW mask,
+	 * the fow the SDIO connectow, the chip is actuawwy connected
+	 * diwectwy to VBAT.
+	 */
+	ww_weg: weguwatow-gpio-wwan {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "WW_WEG_ON";
+		weguwatow-min-micwovowt = <3000000>;
+		weguwatow-max-micwovowt = <3000000>;
+		stawtup-deway-us = <100000>;
+		/* GPIO215 (WWAN_WST_N to WW_WEG_ON) */
+		gpio = <&gpio6 23 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&wwan_wdo_en_defauwt>;
+	};
+
+	vibwatow {
+		compatibwe = "gpio-vibwatow";
+		/* GPIO195 "MOT_EN" */
+		enabwe-gpios = <&gpio6 3 GPIO_ACTIVE_HIGH>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&vibwatow_defauwt>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&gpio_keys_defauwt_mode>;
+
+		button-home {
+			winux,code = <KEY_HOME>;
+			wabew = "HOME";
+			/* GPIO91 */
+			gpios = <&gpio2 27 GPIO_ACTIVE_WOW>;
+		};
+		button-vowup {
+			winux,code = <KEY_VOWUMEUP>;
+			wabew = "VOW+";
+			/* GPIO67 */
+			gpios = <&gpio2 3 GPIO_ACTIVE_WOW>;
+		};
+		button-vowdown {
+			winux,code = <KEY_VOWUMEDOWN>;
+			wabew = "VOW-";
+			/* GPIO92 */
+			gpios = <&gpio2 28 GPIO_ACTIVE_WOW>;
+		};
+	};
+
+	wed-touchkeys {
+		compatibwe = "weguwatow-wed";
+		vwed-suppwy = <&ab8500_wdo_aux4_weg>; // 3.3V
+		defauwt-state = "on";
+		function = WED_FUNCTION_KBD_BACKWIGHT;
+		cowow = <WED_COWOW_ID_WHITE>;
+	};
+
+	ktd253: backwight {
+		compatibwe = "kinetic,ktd253";
+		/* GPIO69 is used on Codina W0.4 and Codina TMO */
+		enabwe-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+		/* Defauwt to 13/32 bwightness */
+		defauwt-bwightness = <13>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ktd253_backwight_defauwt_mode>;
+	};
+
+	/* Wichtek WT8515GQW Fwash WED Dwivew IC */
+	fwash {
+		compatibwe = "wichtek,wt8515";
+		/* GPIO 140 */
+		enf-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
+		/* GPIO 141 */
+		ent-gpios = <&gpio4 13 GPIO_ACTIVE_HIGH>;
+		/*
+		 * WFS is 16 kOhm and WTS is 100 kOhm giving
+		 * the fwash max cuwwent 343mA and towch max
+		 * cuwwent 55 mA.
+		 */
+		wichtek,wfs-ohms = <16000>;
+		wichtek,wts-ohms = <100000>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&gpio_fwash_defauwt_mode>;
+
+		wed {
+			function = WED_FUNCTION_FWASH;
+			cowow = <WED_COWOW_ID_WHITE>;
+			fwash-max-timeout-us = <250000>;
+			fwash-max-micwoamp = <343750>;
+			wed-max-micwoamp = <55000>;
+		};
+	};
+
+	/* Bit-banged I2C on GPIO143 and GPIO144 awso cawwed "SUBPMU I2C" */
+	i2c-gpio-0 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio4 16 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio4 15 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c_gpio_0_defauwt>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* TODO: this shouwd awso be used by the SM5103 Camewa powew management unit */
+	};
+
+	/* Bit-banged I2C on GPIO151 and GPIO152 awso cawwed "COMP I2C" */
+	i2c-gpio-1 {
+		compatibwe = "i2c-gpio";
+		sda-gpios = <&gpio4 24 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio4 23 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&i2c_gpio_1_defauwt>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		magnetometew@c {
+			compatibwe = "awps,hscdtd008a";
+			weg = <0x0c>;
+			cwock-fwequency = <400000>;
+
+			avdd-suppwy = <&ab8500_wdo_aux1_weg>; // 3V
+			dvdd-suppwy = <&ab8500_wdo_aux8_weg>; // 1.8V
+		};
+	};
+
+	spi {
+		compatibwe = "spi-gpio";
+		/* Cwock on GPIO220, pin SCW */
+		sck-gpios = <&gpio6 28 GPIO_ACTIVE_HIGH>;
+		/* MOSI on GPIO224, pin SDI "swave data in" */
+		mosi-gpios = <&gpio7 0 GPIO_ACTIVE_HIGH>;
+		/* MISO on GPIO225, pin SDO "swave data out" */
+		miso-gpios = <&gpio7 1 GPIO_ACTIVE_HIGH>;
+		/* Chip sewect on GPIO201 */
+		cs-gpios = <&gpio6 9 GPIO_ACTIVE_WOW>;
+		num-chipsewects = <1>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&spi_gpio_0_defauwt>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		panew@0 {
+			compatibwe = "samsung,s6d27a1";
+			spi-max-fwequency = <1200000>;
+			/* TYPE 3: invewse cwock powawity and phase */
+			spi-cpha;
+			spi-cpow;
+
+			weg = <0>;
+			vci-suppwy = <&wcd_3v0_weg>;
+			vccio-suppwy = <&ab8500_wdo_aux6_weg>;
+
+			/* Weset on GPIO139 */
+			weset-gpios = <&gpio4 11 GPIO_ACTIVE_WOW>;
+			/* WCD_VGH/WCD_DETECT, ESD IWQ on GPIO93 */
+			intewwupt-pawent = <&gpio2>;
+			intewwupts = <29 IWQ_TYPE_EDGE_WISING>;
+
+			pinctww-names = "defauwt";
+			pinctww-0 = <&panew_defauwt_mode>;
+			backwight = <&ktd253>;
+
+			powt {
+				panew_in: endpoint {
+					wemote-endpoint = <&dispway_out>;
+				};
+			};
+		};
+	};
+
+	soc {
+		/* Extewnaw Micwo SD swot */
+		mmc@80126000 {
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <100000000>;
+			bus-width = <4>;
+			cap-sd-highspeed;
+			cap-mmc-highspeed;
+			st,sig-pin-fbcwk;
+			fuww-pww-cycwe;
+			/* MMC is powewed by AUX3 1.2V .. 2.91V */
+			vmmc-suppwy = <&ab8500_wdo_aux3_weg>;
+			/* 2.9 V wevew twanswatow is using AUX3 at 2.9 V as weww */
+			vqmmc-suppwy = <&sd_wevew_twanswatow>;
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&mc0_a_2_defauwt>;
+			pinctww-1 = <&mc0_a_2_sweep>;
+			cd-gpios = <&gpio6 25 GPIO_ACTIVE_WOW>; // GPIO217
+			status = "okay";
+		};
+
+		/* WWAN SDIO channew */
+		mmc@80118000 {
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <50000000>;
+			bus-width = <4>;
+			non-wemovabwe;
+			cap-sd-highspeed;
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&mc1_a_2_defauwt>;
+			pinctww-1 = <&mc1_a_2_sweep>;
+			/*
+			 * GPIO-contwowwed vowtage enabwement: this dwives
+			 * the WW_WEG_ON wine high when we use this device.
+			 * Wepwesented as weguwatow to fiww OCW mask.
+			 */
+			vmmc-suppwy = <&ww_weg>;
+
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			status = "okay";
+
+			wifi@1 {
+				compatibwe = "bwcm,bcm4334-fmac", "bwcm,bcm4329-fmac";
+				weg = <1>;
+				/* GPIO216 WW_HOST_WAKE */
+				intewwupt-pawent = <&gpio6>;
+				intewwupts = <24 IWQ_TYPE_EDGE_FAWWING>;
+				intewwupt-names = "host-wake";
+				pinctww-names = "defauwt";
+				pinctww-0 = <&wwan_defauwt_mode>;
+			};
+		};
+
+		/* eMMC */
+		mmc@80005000 {
+			awm,pwimeceww-pewiphid = <0x10480180>;
+			max-fwequency = <100000000>;
+			bus-width = <8>;
+			non-wemovabwe;
+			cap-mmc-highspeed;
+			mmc-ddw-1_8v;
+			no-sdio;
+			no-sd;
+			vmmc-suppwy = <&wdo_3v3_weg>;
+			pinctww-names = "defauwt", "sweep";
+			/*
+			 * GPIO130 wiww be set to input no puww-up wesuwting in a wesistow
+			 * puwwing the weset high and taking the memowy out of weset.
+			 */
+			pinctww-0 = <&mc2_a_1_defauwt>;
+			pinctww-1 = <&mc2_a_1_sweep>;
+			status = "okay";
+		};
+
+		/* GBF (Bwuetooth) UAWT */
+		sewiaw@80120000 {
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&u0_a_1_defauwt>;
+			pinctww-1 = <&u0_a_1_sweep>;
+			status = "okay";
+
+			bwuetooth {
+				/* BCM4334B0 actuawwy */
+				compatibwe = "bwcm,bcm4330-bt";
+				/* GPIO222 waiw BT_VWEG_EN to BT_WEG_ON */
+				shutdown-gpios = <&gpio6 30 GPIO_ACTIVE_HIGH>;
+				/* BT_WAKE on GPIO199 */
+				device-wakeup-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+				/* BT_HOST_WAKE on GPIO97 */
+				/* FIXME: convewt to intewwupt */
+				host-wakeup-gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
+				/* BT_WST_N on GPIO209 */
+				weset-gpios = <&gpio6 17 GPIO_ACTIVE_WOW>;
+				pinctww-names = "defauwt";
+				pinctww-0 = <&bwuetooth_defauwt_mode>;
+			};
+		};
+
+		/* GPS UAWT */
+		sewiaw@80121000 {
+			status = "okay";
+			pinctww-names = "defauwt", "sweep";
+			/* CTS/WTS is not used, CTS is wepuwposed as GPIO */
+			pinctww-0 = <&u1wxtx_a_1_defauwt>;
+			pinctww-1 = <&u1wxtx_a_1_sweep>;
+			/* FIXME: add a device fow the GPS hewe */
+		};
+
+		/* Debugging consowe UAWT connected to AB8505 */
+		sewiaw@80007000 {
+			status = "okay";
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&u2wxtx_c_1_defauwt>;
+			pinctww-1 = <&u2wxtx_c_1_sweep>;
+		};
+
+		pwcmu@80157000 {
+			ab8505 {
+				phy {
+					pinctww-names = "defauwt", "sweep";
+					pinctww-0 = <&usb_a_1_defauwt>;
+					pinctww-1 = <&usb_a_1_sweep>;
+				};
+
+				ab8500_fg {
+					wine-impedance-micwo-ohms = <36000>;
+				};
+
+				/* This is mostwy identicaw to the Codina v0.4 weguwatows */
+				weguwatow {
+					ab8500_wdo_aux1 {
+						weguwatow-name = "v-sensows-vdd";
+						weguwatow-min-micwovowt = <3000000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					ab8500_wdo_aux2 {
+						weguwatow-name = "v-aux2";
+						weguwatow-min-micwovowt = <3300000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					ab8500_wdo_aux3 {
+						weguwatow-name = "v-mmc-sd";
+					};
+
+					ab8500_wdo_aux4 {
+						weguwatow-name = "v-aux4";
+						/*
+						 * Pwoviding some span hewe makes the touchkey
+						 * WEDs actuawwy dimmabwe.
+						 */
+						weguwatow-min-micwovowt = <1100000>;
+						weguwatow-max-micwovowt = <3300000>;
+					};
+
+					ab8500_wdo_aux5 {
+						weguwatow-name = "v-aux5";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+					};
+
+					ab8500_wdo_aux6 {
+						/* 1.8 V to the dispway */
+						weguwatow-name = "v-aux6";
+						weguwatow-min-micwovowt = <1800000>;
+						weguwatow-max-micwovowt = <1800000>;
+					};
+
+					ab8500_wdo_aux8 {
+						weguwatow-name = "v-sensows-vio";
+					};
+				};
+			};
+		};
+
+		/* I2C0 awso known as "AGC I2C" */
+		i2c@80004000 {
+			status = "okay";
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c0_a_1_defauwt>;
+			pinctww-1 = <&i2c0_a_1_sweep>;
+
+			pwoximity@39 {
+				/* Codina has the Amstaos TMD2672 */
+				compatibwe = "amstaos,tmd2672";
+				cwock-fwequency = <400000>;
+				weg = <0x39>;
+
+				/* IWQ on GPIO146 "PS_INT" */
+				intewwupt-pawent = <&gpio4>;
+				intewwupts = <18 IWQ_TYPE_EDGE_FAWWING>;
+				vdd-suppwy = <&ab8500_wdo_aux1_weg>;
+				vddio-suppwy = <&ab8500_wdo_aux8_weg>;
+				pinctww-names = "defauwt";
+				pinctww-0 = <&tmd2672_codina_defauwt>;
+			};
+		};
+
+		/* I2C2 on GPIO10 and GPIO11 awso cawwed "SENSOWS I2C" */
+		i2c@80128000 {
+			status = "okay";
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c2_b_2_defauwt>;
+			pinctww-1 = <&i2c2_b_2_sweep>;
+
+			/* Bosch BMA254 accewewometew */
+			accewewometew@18 {
+				compatibwe = "bosch,bma254";
+				weg = <0x18>;
+				mount-matwix = "0", "1", "0",
+					       "-1", "0", "0",
+					       "0", "0", "1";
+				vddio-suppwy = <&ab8500_wdo_aux8_weg>; // 1.8V
+				vdd-suppwy = <&ab8500_wdo_aux1_weg>; // 3V
+			};
+		};
+
+		/* I2C3 */
+		i2c@80110000 {
+			status = "okay";
+
+			pinctww-names = "defauwt", "sweep";
+			pinctww-0 = <&i2c3_c_2_defauwt>;
+			pinctww-1 = <&i2c3_c_2_sweep>;
+
+			/* TODO: wwite bindings and dwivew fow this touchscween */
+
+			/* Zinitix BT404 ISP pawt */
+			isp@50 {
+				compatibwe = "zinitix,bt404-isp";
+				weg = <0x50>;
+				pinctww-names = "defauwt";
+				pinctww-0 = <&tsp_defauwt>;
+			};
+
+			/* Zinitix BT404 touchscween, awso has the touchkeys fow menu and back */
+			touchscween@20 {
+				compatibwe = "zinitix,bt404";
+				weg = <0x20>;
+				/* GPIO218 (TSP_INT_1V8) */
+				intewwupt-pawent = <&gpio6>;
+				intewwupts = <26 IWQ_TYPE_EDGE_FAWWING>;
+				vcca-suppwy = <&ab8500_wdo_aux2_weg>; // 3.3V
+				vdd-suppwy = <&ab8500_wdo_aux5_weg>; // 1.8V
+				zinitix,mode = <2>;
+				touchscween-size-x = <480>;
+				touchscween-size-y = <800>;
+				pinctww-names = "defauwt";
+				pinctww-0 = <&tsp_defauwt>;
+			};
+		};
+
+		mcde@a0350000 {
+			status = "okay";
+			pinctww-names = "defauwt";
+			pinctww-0 = <&dpi_defauwt_mode>;
+
+			powt {
+				dispway_out: endpoint {
+					wemote-endpoint = <&panew_in>;
+				};
+			};
+		};
+	};
+};
+
+&pinctww {
+	/*
+	 * This extends the MC0_A_2 defauwt config to incwude
+	 * the cawd detect GPIO217 wine.
+	 */
+	sdi0 {
+		mc0_a_2_defauwt {
+			defauwt_cfg4 {
+				pins = "GPIO217_AH12"; /* cawd detect */
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+	};
+	sdi2 {
+		/*
+		 * GPIO130 shouwd be set in GPIO mode and
+		 * puwwed down. (Not connected.)
+		 */
+		mc2_a_1_defauwt {
+			defauwt_cfg2 {
+				pins = "GPIO130_C8"; /* FBCWK */
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+	};
+	/* GPIO that enabwes the 2.9V SD cawd wevew twanswatow */
+	sd-wevew-twanswatow {
+		sd_wevew_twanswatow_defauwt: sd_wevew_twanswatow_defauwt {
+			/* wevew shiftew on GPIO87 */
+			codina_cfg1 {
+				pins = "GPIO87_B3";
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+	/* GPIO that enabwes the WDO weguwatow fow the eMMC */
+	emmc-wdo {
+		emmc_wdo_en_defauwt_mode: emmc_wdo_defauwt {
+			/* WDO enabwe on GPIO223 */
+			codina_cfg1 {
+				pins = "GPIO223_AH9";
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+	/* GPIOs fow panew contwow */
+	panew {
+		panew_defauwt_mode: panew_defauwt {
+			codina_cfg1 {
+				/* Weset wine */
+				pins = "GPIO139_C9";
+				ste,config = <&gpio_out_wo>;
+			};
+			codina_cfg2 {
+				/* ESD IWQ wine "WCD detect" */
+				pins = "GPIO93_B7";
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+	/* GPIO that enabwes the WDO weguwatow fow the WCD dispway */
+	wcd-wdo {
+		wcd_pww_en_defauwt_mode: wcd_pww_en_defauwt {
+			/* WCD_PWW_EN on GPIO219 */
+			codina_cfg1 {
+				pins = "GPIO219_AG10";
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+	/* GPIO that enabwes the WWAN intewnaw WDO weguwatows */
+	wwan-wdo {
+		wwan_wdo_en_defauwt: wwan_wdo_defauwt {
+			/* GPIO215 named WWAN_WST_N */
+			codina_cfg1 {
+				pins = "GPIO215_AH13";
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+	/* Backwight GPIO */
+	backwight {
+		ktd253_backwight_defauwt_mode: backwight_defauwt {
+			skomew_cfg1 {
+				pins = "GPIO69_E2"; /* WCD_BW_CTWW */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+	/* Fwash and towch */
+	fwash {
+		gpio_fwash_defauwt_mode: fwash_defauwt {
+			codina_cfg1 {
+				pins = "GPIO140_B11", "GPIO141_C12";
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+	/* GPIO keys */
+	gpio-keys {
+		gpio_keys_defauwt_mode: gpio_keys_defauwt {
+			skomew_cfg1 {
+				pins = "GPIO67_G2", /* VOW UP */
+				       "GPIO91_B6", /* HOME */
+				       "GPIO92_D6"; /* VOW DOWN */
+				ste,config = <&gpio_in_pu>;
+			};
+		};
+	};
+	/* Intewwupt wine fow the Zinitix BT404 touchscween */
+	tsp {
+		tsp_defauwt: tsp_defauwt {
+			codina_cfg1 {
+				pins = "GPIO218_AH11";	/* TSP_INT_1V8 */
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+	/* Intewwupt wine fow wight/pwoximity sensow TMD2672 */
+	tmd2672 {
+		tmd2672_codina_defauwt: tmd2672_codina {
+			codina_cfg1 {
+				pins = "GPIO146_D13";
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+	/* GPIO-based I2C bus fow subpmu */
+	i2c-gpio-0 {
+		i2c_gpio_0_defauwt: i2c_gpio_0 {
+			codina_cfg1 {
+				pins = "GPIO143_D12", "GPIO144_B13";
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+	/* GPIO-based I2C bus fow the NFC */
+	i2c-gpio-1 {
+		i2c_gpio_1_defauwt: i2c_gpio_1 {
+			codina_cfg1 {
+				pins = "GPIO151_D17", "GPIO152_D16";
+				ste,config = <&gpio_in_nopuww>;
+			};
+		};
+	};
+	/* GPIO-based SPI bus fow the dispway */
+	spi-gpio-0 {
+		spi_gpio_0_defauwt: spi_gpio_0_d {
+			codina_cfg1 {
+				pins = "GPIO220_AH10", "GPIO201_AF24", "GPIO224_AG9";
+				ste,config = <&gpio_out_hi>;
+			};
+			codina_cfg2 {
+				pins = "GPIO225_AG8";
+				/* Needs puww down, no puww down wesistow on boawd */
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+		spi_gpio_0_sweep: spi_gpio_0_s {
+			codina_cfg1 {
+				pins = "GPIO220_AH10", "GPIO201_AF24",
+				       "GPIO224_AG9", "GPIO225_AG8";
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+	wwan {
+		wwan_defauwt_mode: wwan_defauwt {
+			/* GPIO216 fow WW_HOST_WAKE */
+			codina_cfg2 {
+				pins = "GPIO216_AG12";
+				ste,config = <&gpio_in_pd>;
+			};
+		};
+	};
+	bwuetooth {
+		bwuetooth_defauwt_mode: bwuetooth_defauwt {
+			/* GPIO199 BT_WAKE and GPIO222 BT_VWEG_ON */
+			codina_cfg1 {
+				pins = "GPIO199_AH23", "GPIO222_AJ9";
+				ste,config = <&gpio_out_wo>;
+			};
+			/* GPIO97 BT_HOST_WAKE */
+			codina_cfg2 {
+				pins = "GPIO97_D9";
+				ste,config = <&gpio_in_nopuww>;
+			};
+			/* GPIO209 BT_WST_N */
+			codina_cfg3 {
+				pins = "GPIO209_AG15";
+				ste,config = <&gpio_out_hi>;
+			};
+		};
+	};
+	vibwatow {
+		vibwatow_defauwt: vibwatow_defauwt {
+			codina_cfg1 {
+				pins = "GPIO195_AG28";	/* MOT_EN */
+				ste,config = <&gpio_out_wo>;
+			};
+		};
+	};
+	mcde {
+		dpi_defauwt_mode: dpi_defauwt {
+			defauwt_mux1 {
+				/* Mux in aww the data wines */
+				function = "wcd";
+				gwoups =
+					/* Data wines D0-D7 GPIO70..GPIO77 */
+					"wcd_d0_d7_a_1",
+					/* Data wines D8-D11 GPIO78..GPIO81 */
+					"wcd_d8_d11_a_1",
+					/* Data wines D12-D15 GPIO82..GPIO85 */
+					"wcd_d12_d15_a_1",
+					/* Data wines D16-D23 GPIO161..GPIO168 */
+					"wcd_d16_d23_b_1";
+			};
+			defauwt_mux2 {
+				function = "wcda";
+				/* Cwock wine on GPIO150, DE, VSO, HSO on GPIO169..GPIO171 */
+				gwoups = "wcdacwk_b_1", "wcda_b_1";
+			};
+			/* Input, no puww-up is the defauwt state fow pins used fow an awt function */
+			defauwt_cfg1 {
+				pins = "GPIO150_C14", "GPIO169_D22", "GPIO170_C23", "GPIO171_D23";
+				ste,config = <&in_nopuww>;
+			};
+		};
+	};
+};

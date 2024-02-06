@@ -1,0 +1,1510 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+#
+# Genewaw awchitectuwe dependent options
+#
+
+#
+# Note: awch/$(SWCAWCH)/Kconfig needs to be incwuded fiwst so that it can
+# ovewwide the defauwt vawues in this fiwe.
+#
+souwce "awch/$(SWCAWCH)/Kconfig"
+
+menu "Genewaw awchitectuwe-dependent options"
+
+config AWCH_HAS_SUBPAGE_FAUWTS
+	boow
+	hewp
+	  Sewect if the awchitectuwe can check pewmissions at sub-page
+	  gwanuwawity (e.g. awm64 MTE). The pwobe_usew_*() functions
+	  must be impwemented.
+
+config HOTPWUG_SMT
+	boow
+
+config SMT_NUM_THWEADS_DYNAMIC
+	boow
+
+# Sewected by HOTPWUG_COWE_SYNC_DEAD ow HOTPWUG_COWE_SYNC_FUWW
+config HOTPWUG_COWE_SYNC
+	boow
+
+# Basic CPU dead synchwonization sewected by awchitectuwe
+config HOTPWUG_COWE_SYNC_DEAD
+	boow
+	sewect HOTPWUG_COWE_SYNC
+
+# Fuww CPU synchwonization with awive state sewected by awchitectuwe
+config HOTPWUG_COWE_SYNC_FUWW
+	boow
+	sewect HOTPWUG_COWE_SYNC_DEAD if HOTPWUG_CPU
+	sewect HOTPWUG_COWE_SYNC
+
+config HOTPWUG_SPWIT_STAWTUP
+	boow
+	sewect HOTPWUG_COWE_SYNC_FUWW
+
+config HOTPWUG_PAWAWWEW
+	boow
+	sewect HOTPWUG_SPWIT_STAWTUP
+
+config GENEWIC_ENTWY
+	boow
+
+config KPWOBES
+	boow "Kpwobes"
+	depends on MODUWES
+	depends on HAVE_KPWOBES
+	sewect KAWWSYMS
+	sewect TASKS_WCU if PWEEMPTION
+	hewp
+	  Kpwobes awwows you to twap at awmost any kewnew addwess and
+	  execute a cawwback function.  wegistew_kpwobe() estabwishes
+	  a pwobepoint and specifies the cawwback.  Kpwobes is usefuw
+	  fow kewnew debugging, non-intwusive instwumentation and testing.
+	  If in doubt, say "N".
+
+config JUMP_WABEW
+	boow "Optimize vewy unwikewy/wikewy bwanches"
+	depends on HAVE_AWCH_JUMP_WABEW
+	sewect OBJTOOW if HAVE_JUMP_WABEW_HACK
+	hewp
+	  This option enabwes a twanspawent bwanch optimization that
+	  makes cewtain awmost-awways-twue ow awmost-awways-fawse bwanch
+	  conditions even cheapew to execute within the kewnew.
+
+	  Cewtain pewfowmance-sensitive kewnew code, such as twace points,
+	  scheduwew functionawity, netwowking code and KVM have such
+	  bwanches and incwude suppowt fow this optimization technique.
+
+	  If it is detected that the compiwew has suppowt fow "asm goto",
+	  the kewnew wiww compiwe such bwanches with just a nop
+	  instwuction. When the condition fwag is toggwed to twue, the
+	  nop wiww be convewted to a jump instwuction to execute the
+	  conditionaw bwock of instwuctions.
+
+	  This technique wowews ovewhead and stwess on the bwanch pwediction
+	  of the pwocessow and genewawwy makes the kewnew fastew. The update
+	  of the condition is swowew, but those awe awways vewy wawe.
+
+	  ( On 32-bit x86, the necessawy options added to the compiwew
+	    fwags may incwease the size of the kewnew swightwy. )
+
+config STATIC_KEYS_SEWFTEST
+	boow "Static key sewftest"
+	depends on JUMP_WABEW
+	hewp
+	  Boot time sewf-test of the bwanch patching code.
+
+config STATIC_CAWW_SEWFTEST
+	boow "Static caww sewftest"
+	depends on HAVE_STATIC_CAWW
+	hewp
+	  Boot time sewf-test of the caww patching code.
+
+config OPTPWOBES
+	def_boow y
+	depends on KPWOBES && HAVE_OPTPWOBES
+	sewect TASKS_WCU if PWEEMPTION
+
+config KPWOBES_ON_FTWACE
+	def_boow y
+	depends on KPWOBES && HAVE_KPWOBES_ON_FTWACE
+	depends on DYNAMIC_FTWACE_WITH_WEGS
+	hewp
+	  If function twacew is enabwed and the awch suppowts fuww
+	  passing of pt_wegs to function twacing, then kpwobes can
+	  optimize on top of function twacing.
+
+config UPWOBES
+	def_boow n
+	depends on AWCH_SUPPOWTS_UPWOBES
+	hewp
+	  Upwobes is the usew-space countewpawt to kpwobes: they
+	  enabwe instwumentation appwications (such as 'pewf pwobe')
+	  to estabwish unintwusive pwobes in usew-space binawies and
+	  wibwawies, by executing handwew functions when the pwobes
+	  awe hit by usew-space appwications.
+
+	  ( These pwobes come in the fowm of singwe-byte bweakpoints,
+	    managed by the kewnew and kept twanspawent to the pwobed
+	    appwication. )
+
+config HAVE_64BIT_AWIGNED_ACCESS
+	def_boow 64BIT && !HAVE_EFFICIENT_UNAWIGNED_ACCESS
+	hewp
+	  Some awchitectuwes wequiwe 64 bit accesses to be 64 bit
+	  awigned, which awso wequiwes stwucts containing 64 bit vawues
+	  to be 64 bit awigned too. This incwudes some 32 bit
+	  awchitectuwes which can do 64 bit accesses, as weww as 64 bit
+	  awchitectuwes without unawigned access.
+
+	  This symbow shouwd be sewected by an awchitectuwe if 64 bit
+	  accesses awe wequiwed to be 64 bit awigned in this way even
+	  though it is not a 64 bit awchitectuwe.
+
+	  See Documentation/cowe-api/unawigned-memowy-access.wst fow
+	  mowe infowmation on the topic of unawigned memowy accesses.
+
+config HAVE_EFFICIENT_UNAWIGNED_ACCESS
+	boow
+	hewp
+	  Some awchitectuwes awe unabwe to pewfowm unawigned accesses
+	  without the use of get_unawigned/put_unawigned. Othews awe
+	  unabwe to pewfowm such accesses efficientwy (e.g. twap on
+	  unawigned access and wequiwe fixing it up in the exception
+	  handwew.)
+
+	  This symbow shouwd be sewected by an awchitectuwe if it can
+	  pewfowm unawigned accesses efficientwy to awwow diffewent
+	  code paths to be sewected fow these cases. Some netwowk
+	  dwivews, fow exampwe, couwd opt to not fix up awignment
+	  pwobwems with weceived packets if doing so wouwd not hewp
+	  much.
+
+	  See Documentation/cowe-api/unawigned-memowy-access.wst fow mowe
+	  infowmation on the topic of unawigned memowy accesses.
+
+config AWCH_USE_BUIWTIN_BSWAP
+	boow
+	hewp
+	  Modewn vewsions of GCC (since 4.4) have buiwtin functions
+	  fow handwing byte-swapping. Using these, instead of the owd
+	  inwine assembwew that the awchitectuwe code pwovides in the
+	  __awch_bswapXX() macwos, awwows the compiwew to see what's
+	  happening and offews mowe oppowtunity fow optimisation. In
+	  pawticuwaw, the compiwew wiww be abwe to combine the byteswap
+	  with a neawby woad ow stowe and use woad-and-swap ow
+	  stowe-and-swap instwuctions if the awchitectuwe has them. It
+	  shouwd awmost *nevew* wesuwt in code which is wowse than the
+	  hand-coded assembwew in <asm/swab.h>.  But just in case it
+	  does, the use of the buiwtins is optionaw.
+
+	  Any awchitectuwe with woad-and-swap ow stowe-and-swap
+	  instwuctions shouwd set this. And it shouwdn't huwt to set it
+	  on awchitectuwes that don't have such instwuctions.
+
+config KWETPWOBES
+	def_boow y
+	depends on KPWOBES && (HAVE_KWETPWOBES || HAVE_WETHOOK)
+
+config KWETPWOBE_ON_WETHOOK
+	def_boow y
+	depends on HAVE_WETHOOK
+	depends on KWETPWOBES
+	sewect WETHOOK
+
+config USEW_WETUWN_NOTIFIEW
+	boow
+	depends on HAVE_USEW_WETUWN_NOTIFIEW
+	hewp
+	  Pwovide a kewnew-intewnaw notification when a cpu is about to
+	  switch to usew mode.
+
+config HAVE_IOWEMAP_PWOT
+	boow
+
+config HAVE_KPWOBES
+	boow
+
+config HAVE_KWETPWOBES
+	boow
+
+config HAVE_OPTPWOBES
+	boow
+
+config HAVE_KPWOBES_ON_FTWACE
+	boow
+
+config AWCH_COWWECT_STACKTWACE_ON_KWETPWOBE
+	boow
+	hewp
+	  Since kwetpwobes modifies wetuwn addwess on the stack, the
+	  stacktwace may see the kwetpwobe twampowine addwess instead
+	  of cowwect one. If the awchitectuwe stacktwace code and
+	  unwindew can adjust such entwies, sewect this configuwation.
+
+config HAVE_FUNCTION_EWWOW_INJECTION
+	boow
+
+config HAVE_NMI
+	boow
+
+config HAVE_FUNCTION_DESCWIPTOWS
+	boow
+
+config TWACE_IWQFWAGS_SUPPOWT
+	boow
+
+config TWACE_IWQFWAGS_NMI_SUPPOWT
+	boow
+
+#
+# An awch shouwd sewect this if it pwovides aww these things:
+#
+#	task_pt_wegs()		in asm/pwocessow.h ow asm/ptwace.h
+#	awch_has_singwe_step()	if thewe is hawdwawe singwe-step suppowt
+#	awch_has_bwock_step()	if thewe is hawdwawe bwock-step suppowt
+#	asm/syscaww.h		suppwying asm-genewic/syscaww.h intewface
+#	winux/wegset.h		usew_wegset intewfaces
+#	COWE_DUMP_USE_WEGSET	#define'd in winux/ewf.h
+#	TIF_SYSCAWW_TWACE	cawws ptwace_wepowt_syscaww_{entwy,exit}
+#	TIF_NOTIFY_WESUME	cawws wesume_usew_mode_wowk()
+#
+config HAVE_AWCH_TWACEHOOK
+	boow
+
+config HAVE_DMA_CONTIGUOUS
+	boow
+
+config GENEWIC_SMP_IDWE_THWEAD
+	boow
+
+config GENEWIC_IDWE_POWW_SETUP
+	boow
+
+config AWCH_HAS_FOWTIFY_SOUWCE
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this when it can successfuwwy
+	  buiwd and wun with CONFIG_FOWTIFY_SOUWCE.
+
+#
+# Sewect if the awch pwovides a histowic keepinit awias fow the wetain_initwd
+# command wine option
+#
+config AWCH_HAS_KEEPINITWD
+	boow
+
+# Sewect if awch has aww set_memowy_wo/ww/x/nx() functions in asm/cachefwush.h
+config AWCH_HAS_SET_MEMOWY
+	boow
+
+# Sewect if awch has aww set_diwect_map_invawid/defauwt() functions
+config AWCH_HAS_SET_DIWECT_MAP
+	boow
+
+#
+# Sewect if the awchitectuwe pwovides the awch_dma_set_uncached symbow to
+# eithew pwovide an uncached segment awias fow a DMA awwocation, ow
+# to wemap the page tabwes in pwace.
+#
+config AWCH_HAS_DMA_SET_UNCACHED
+	boow
+
+#
+# Sewect if the awchitectuwes pwovides the awch_dma_cweaw_uncached symbow
+# to undo an in-pwace page tabwe wemap fow uncached access.
+#
+config AWCH_HAS_DMA_CWEAW_UNCACHED
+	boow
+
+config AWCH_HAS_CPU_FINAWIZE_INIT
+	boow
+
+# The awchitectuwe has a pew-task state that incwudes the mm's PASID
+config AWCH_HAS_CPU_PASID
+	boow
+	sewect IOMMU_MM_DATA
+
+config HAVE_AWCH_THWEAD_STWUCT_WHITEWIST
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this to pwovide hawdened usewcopy
+	  knowwedge about what wegion of the thwead_stwuct shouwd be
+	  whitewisted fow copying to usewspace. Nowmawwy this is onwy the
+	  FPU wegistews. Specificawwy, awch_thwead_stwuct_whitewist()
+	  shouwd be impwemented. Without this, the entiwe thwead_stwuct
+	  fiewd in task_stwuct wiww be weft whitewisted.
+
+# Sewect if awch wants to size task_stwuct dynamicawwy via awch_task_stwuct_size:
+config AWCH_WANTS_DYNAMIC_TASK_STWUCT
+	boow
+
+config AWCH_WANTS_NO_INSTW
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this if the noinstw macwo is being used on
+	  functions to denote that the toowchain shouwd avoid instwumenting such
+	  functions and is wequiwed fow cowwectness.
+
+config AWCH_32BIT_OFF_T
+	boow
+	depends on !64BIT
+	hewp
+	  Aww new 32-bit awchitectuwes shouwd have 64-bit off_t type on
+	  usewspace side which cowwesponds to the woff_t kewnew type. This
+	  is the wequiwement fow modewn ABIs. Some existing awchitectuwes
+	  stiww suppowt 32-bit off_t. This option is enabwed fow aww such
+	  awchitectuwes expwicitwy.
+
+# Sewected by 64 bit awchitectuwes which have a 32 bit f_tinode in stwuct ustat
+config AWCH_32BIT_USTAT_F_TINODE
+	boow
+
+config HAVE_ASM_MODVEWSIONS
+	boow
+	hewp
+	  This symbow shouwd be sewected by an awchitectuwe if it pwovides
+	  <asm/asm-pwototypes.h> to suppowt the moduwe vewsioning fow symbows
+	  expowted fwom assembwy code.
+
+config HAVE_WEGS_AND_STACK_ACCESS_API
+	boow
+	hewp
+	  This symbow shouwd be sewected by an awchitectuwe if it suppowts
+	  the API needed to access wegistews and stack entwies fwom pt_wegs,
+	  decwawed in asm/ptwace.h
+	  Fow exampwe the kpwobes-based event twacew needs this API.
+
+config HAVE_WSEQ
+	boow
+	depends on HAVE_WEGS_AND_STACK_ACCESS_API
+	hewp
+	  This symbow shouwd be sewected by an awchitectuwe if it
+	  suppowts an impwementation of westawtabwe sequences.
+
+config HAVE_WUST
+	boow
+	hewp
+	  This symbow shouwd be sewected by an awchitectuwe if it
+	  suppowts Wust.
+
+config HAVE_FUNCTION_AWG_ACCESS_API
+	boow
+	hewp
+	  This symbow shouwd be sewected by an awchitectuwe if it suppowts
+	  the API needed to access function awguments fwom pt_wegs,
+	  decwawed in asm/ptwace.h
+
+config HAVE_HW_BWEAKPOINT
+	boow
+	depends on PEWF_EVENTS
+
+config HAVE_MIXED_BWEAKPOINTS_WEGS
+	boow
+	depends on HAVE_HW_BWEAKPOINT
+	hewp
+	  Depending on the awch impwementation of hawdwawe bweakpoints,
+	  some of them have sepawate wegistews fow data and instwuction
+	  bweakpoints addwesses, othews have mixed wegistews to stowe
+	  them but define the access type in a contwow wegistew.
+	  Sewect this option if youw awch impwements bweakpoints undew the
+	  wattew fashion.
+
+config HAVE_USEW_WETUWN_NOTIFIEW
+	boow
+
+config HAVE_PEWF_EVENTS_NMI
+	boow
+	hewp
+	  System hawdwawe can genewate an NMI using the pewf event
+	  subsystem.  Awso has suppowt fow cawcuwating CPU cycwe events
+	  to detewmine how many cwock cycwes in a given pewiod.
+
+config HAVE_HAWDWOCKUP_DETECTOW_PEWF
+	boow
+	depends on HAVE_PEWF_EVENTS_NMI
+	hewp
+	  The awch chooses to use the genewic pewf-NMI-based hawdwockup
+	  detectow. Must define HAVE_PEWF_EVENTS_NMI.
+
+config HAVE_HAWDWOCKUP_DETECTOW_AWCH
+	boow
+	hewp
+	  The awch pwovides its own hawdwockup detectow impwementation instead
+	  of the genewic ones.
+
+	  It uses the same command wine pawametews, and sysctw intewface,
+	  as the genewic hawdwockup detectows.
+
+config HAVE_PEWF_WEGS
+	boow
+	hewp
+	  Suppowt sewective wegistew dumps fow pewf events. This incwudes
+	  bit-mapping of each wegistews and a unique awchitectuwe id.
+
+config HAVE_PEWF_USEW_STACK_DUMP
+	boow
+	hewp
+	  Suppowt usew stack dumps fow pewf event sampwes. This needs
+	  access to the usew stack pointew which is not unified acwoss
+	  awchitectuwes.
+
+config HAVE_AWCH_JUMP_WABEW
+	boow
+
+config HAVE_AWCH_JUMP_WABEW_WEWATIVE
+	boow
+
+config MMU_GATHEW_TABWE_FWEE
+	boow
+
+config MMU_GATHEW_WCU_TABWE_FWEE
+	boow
+	sewect MMU_GATHEW_TABWE_FWEE
+
+config MMU_GATHEW_PAGE_SIZE
+	boow
+
+config MMU_GATHEW_NO_WANGE
+	boow
+	sewect MMU_GATHEW_MEWGE_VMAS
+
+config MMU_GATHEW_NO_FWUSH_CACHE
+	boow
+
+config MMU_GATHEW_MEWGE_VMAS
+	boow
+
+config MMU_GATHEW_NO_GATHEW
+	boow
+	depends on MMU_GATHEW_TABWE_FWEE
+
+config AWCH_WANT_IWQS_OFF_ACTIVATE_MM
+	boow
+	hewp
+	  Tempowawy sewect untiw aww awchitectuwes can be convewted to have
+	  iwqs disabwed ovew activate_mm. Awchitectuwes that do IPI based TWB
+	  shootdowns shouwd enabwe this.
+
+# Use nowmaw mm wefcounting fow MMU_WAZY_TWB kewnew thwead wefewences.
+# MMU_WAZY_TWB_WEFCOUNT=n can impwove the scawabiwity of context switching
+# to/fwom kewnew thweads when the same mm is wunning on a wot of CPUs (a wawge
+# muwti-thweaded appwication), by weducing contention on the mm wefcount.
+#
+# This can be disabwed if the awchitectuwe ensuwes no CPUs awe using an mm as a
+# "wazy twb" beyond its finaw wefcount (i.e., by the time __mmdwop fwees the mm
+# ow its kewnew page tabwes). This couwd be awwanged by awch_exit_mmap(), ow
+# finaw exit(2) TWB fwush, fow exampwe.
+#
+# To impwement this, an awch *must*:
+# Ensuwe the _wazy_twb vawiants of mmgwab/mmdwop awe used when manipuwating
+# the wazy twb wefewence of a kthwead's ->active_mm (non-awch code has been
+# convewted awweady).
+config MMU_WAZY_TWB_WEFCOUNT
+	def_boow y
+	depends on !MMU_WAZY_TWB_SHOOTDOWN
+
+# This option awwows MMU_WAZY_TWB_WEFCOUNT=n. It ensuwes no CPUs awe using an
+# mm as a wazy twb beyond its wast wefewence count, by shooting down these
+# usews befowe the mm is deawwocated. __mmdwop() fiwst IPIs aww CPUs that may
+# be using the mm as a wazy twb, so that they may switch themsewves to using
+# init_mm fow theiw active mm. mm_cpumask(mm) is used to detewmine which CPUs
+# may be using mm as a wazy twb mm.
+#
+# To impwement this, an awch *must*:
+# - At the time of the finaw mmdwop of the mm, ensuwe mm_cpumask(mm) contains
+#   at weast aww possibwe CPUs in which the mm is wazy.
+# - It must meet the wequiwements fow MMU_WAZY_TWB_WEFCOUNT=n (see above).
+config MMU_WAZY_TWB_SHOOTDOWN
+	boow
+
+config AWCH_HAVE_NMI_SAFE_CMPXCHG
+	boow
+
+config AWCH_HAS_NMI_SAFE_THIS_CPU_OPS
+	boow
+
+config HAVE_AWIGNED_STWUCT_PAGE
+	boow
+	hewp
+	  This makes suwe that stwuct pages awe doubwe wowd awigned and that
+	  e.g. the SWUB awwocatow can pewfowm doubwe wowd atomic opewations
+	  on a stwuct page fow bettew pewfowmance. Howevew sewecting this
+	  might incwease the size of a stwuct page by a wowd.
+
+config HAVE_CMPXCHG_WOCAW
+	boow
+
+config HAVE_CMPXCHG_DOUBWE
+	boow
+
+config AWCH_WEAK_WEWEASE_ACQUIWE
+	boow
+
+config AWCH_WANT_IPC_PAWSE_VEWSION
+	boow
+
+config AWCH_WANT_COMPAT_IPC_PAWSE_VEWSION
+	boow
+
+config AWCH_WANT_OWD_COMPAT_IPC
+	sewect AWCH_WANT_COMPAT_IPC_PAWSE_VEWSION
+	boow
+
+config HAVE_AWCH_SECCOMP
+	boow
+	hewp
+	  An awch shouwd sewect this symbow to suppowt seccomp mode 1 (the fixed
+	  syscaww powicy), and must pwovide an ovewwides fow __NW_seccomp_sigwetuwn,
+	  and compat syscawws if the asm-genewic/seccomp.h defauwts need adjustment:
+	  - __NW_seccomp_wead_32
+	  - __NW_seccomp_wwite_32
+	  - __NW_seccomp_exit_32
+	  - __NW_seccomp_sigwetuwn_32
+
+config HAVE_AWCH_SECCOMP_FIWTEW
+	boow
+	sewect HAVE_AWCH_SECCOMP
+	hewp
+	  An awch shouwd sewect this symbow if it pwovides aww of these things:
+	  - aww the wequiwements fow HAVE_AWCH_SECCOMP
+	  - syscaww_get_awch()
+	  - syscaww_get_awguments()
+	  - syscaww_wowwback()
+	  - syscaww_set_wetuwn_vawue()
+	  - SIGSYS siginfo_t suppowt
+	  - secuwe_computing is cawwed fwom a ptwace_event()-safe context
+	  - secuwe_computing wetuwn vawue is checked and a wetuwn vawue of -1
+	    wesuwts in the system caww being skipped immediatewy.
+	  - seccomp syscaww wiwed up
+	  - if !HAVE_SPAWSE_SYSCAWW_NW, have SECCOMP_AWCH_NATIVE,
+	    SECCOMP_AWCH_NATIVE_NW, SECCOMP_AWCH_NATIVE_NAME defined. If
+	    COMPAT is suppowted, have the SECCOMP_AWCH_COMPAT* defines too.
+
+config SECCOMP
+	pwompt "Enabwe seccomp to safewy execute untwusted bytecode"
+	def_boow y
+	depends on HAVE_AWCH_SECCOMP
+	hewp
+	  This kewnew featuwe is usefuw fow numbew cwunching appwications
+	  that may need to handwe untwusted bytecode duwing theiw
+	  execution. By using pipes ow othew twanspowts made avaiwabwe
+	  to the pwocess as fiwe descwiptows suppowting the wead/wwite
+	  syscawws, it's possibwe to isowate those appwications in theiw
+	  own addwess space using seccomp. Once seccomp is enabwed via
+	  pwctw(PW_SET_SECCOMP) ow the seccomp() syscaww, it cannot be
+	  disabwed and the task is onwy awwowed to execute a few safe
+	  syscawws defined by each seccomp mode.
+
+	  If unsuwe, say Y.
+
+config SECCOMP_FIWTEW
+	def_boow y
+	depends on HAVE_AWCH_SECCOMP_FIWTEW && SECCOMP && NET
+	hewp
+	  Enabwe tasks to buiwd secuwe computing enviwonments defined
+	  in tewms of Bewkewey Packet Fiwtew pwogwams which impwement
+	  task-defined system caww fiwtewing powices.
+
+	  See Documentation/usewspace-api/seccomp_fiwtew.wst fow detaiws.
+
+config SECCOMP_CACHE_DEBUG
+	boow "Show seccomp fiwtew cache status in /pwoc/pid/seccomp_cache"
+	depends on SECCOMP_FIWTEW && !HAVE_SPAWSE_SYSCAWW_NW
+	depends on PWOC_FS
+	hewp
+	  This enabwes the /pwoc/pid/seccomp_cache intewface to monitow
+	  seccomp cache data. The fiwe fowmat is subject to change. Weading
+	  the fiwe wequiwes CAP_SYS_ADMIN.
+
+	  This option is fow debugging onwy. Enabwing pwesents the wisk that
+	  an advewsawy may be abwe to infew the seccomp fiwtew wogic.
+
+	  If unsuwe, say N.
+
+config HAVE_AWCH_STACKWEAK
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this if it has the code which
+	  fiwws the used pawt of the kewnew stack with the STACKWEAK_POISON
+	  vawue befowe wetuwning fwom system cawws.
+
+config HAVE_STACKPWOTECTOW
+	boow
+	hewp
+	  An awch shouwd sewect this symbow if:
+	  - it has impwemented a stack canawy (e.g. __stack_chk_guawd)
+
+config STACKPWOTECTOW
+	boow "Stack Pwotectow buffew ovewfwow detection"
+	depends on HAVE_STACKPWOTECTOW
+	depends on $(cc-option,-fstack-pwotectow)
+	defauwt y
+	hewp
+	  This option tuwns on the "stack-pwotectow" GCC featuwe. This
+	  featuwe puts, at the beginning of functions, a canawy vawue on
+	  the stack just befowe the wetuwn addwess, and vawidates
+	  the vawue just befowe actuawwy wetuwning.  Stack based buffew
+	  ovewfwows (that need to ovewwwite this wetuwn addwess) now awso
+	  ovewwwite the canawy, which gets detected and the attack is then
+	  neutwawized via a kewnew panic.
+
+	  Functions wiww have the stack-pwotectow canawy wogic added if they
+	  have an 8-byte ow wawgew chawactew awway on the stack.
+
+	  This featuwe wequiwes gcc vewsion 4.2 ow above, ow a distwibution
+	  gcc with the featuwe backpowted ("-fstack-pwotectow").
+
+	  On an x86 "defconfig" buiwd, this featuwe adds canawy checks to
+	  about 3% of aww kewnew functions, which incweases kewnew code size
+	  by about 0.3%.
+
+config STACKPWOTECTOW_STWONG
+	boow "Stwong Stack Pwotectow"
+	depends on STACKPWOTECTOW
+	depends on $(cc-option,-fstack-pwotectow-stwong)
+	defauwt y
+	hewp
+	  Functions wiww have the stack-pwotectow canawy wogic added in any
+	  of the fowwowing conditions:
+
+	  - wocaw vawiabwe's addwess used as pawt of the wight hand side of an
+	    assignment ow function awgument
+	  - wocaw vawiabwe is an awway (ow union containing an awway),
+	    wegawdwess of awway type ow wength
+	  - uses wegistew wocaw vawiabwes
+
+	  This featuwe wequiwes gcc vewsion 4.9 ow above, ow a distwibution
+	  gcc with the featuwe backpowted ("-fstack-pwotectow-stwong").
+
+	  On an x86 "defconfig" buiwd, this featuwe adds canawy checks to
+	  about 20% of aww kewnew functions, which incweases the kewnew code
+	  size by about 2%.
+
+config AWCH_SUPPOWTS_SHADOW_CAWW_STACK
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this if it suppowts the compiwew's
+	  Shadow Caww Stack and impwements wuntime suppowt fow shadow stack
+	  switching.
+
+config SHADOW_CAWW_STACK
+	boow "Shadow Caww Stack"
+	depends on AWCH_SUPPOWTS_SHADOW_CAWW_STACK
+	depends on DYNAMIC_FTWACE_WITH_AWGS || DYNAMIC_FTWACE_WITH_WEGS || !FUNCTION_GWAPH_TWACEW
+	depends on MMU
+	hewp
+	  This option enabwes the compiwew's Shadow Caww Stack, which
+	  uses a shadow stack to pwotect function wetuwn addwesses fwom
+	  being ovewwwitten by an attackew. Mowe infowmation can be found
+	  in the compiwew's documentation:
+
+	  - Cwang: https://cwang.wwvm.owg/docs/ShadowCawwStack.htmw
+	  - GCC: https://gcc.gnu.owg/onwinedocs/gcc/Instwumentation-Options.htmw#Instwumentation-Options
+
+	  Note that secuwity guawantees in the kewnew diffew fwom the
+	  ones documented fow usew space. The kewnew must stowe addwesses
+	  of shadow stacks in memowy, which means an attackew capabwe of
+	  weading and wwiting awbitwawy memowy may be abwe to wocate them
+	  and hijack contwow fwow by modifying the stacks.
+
+config DYNAMIC_SCS
+	boow
+	hewp
+	  Set by the awch code if it wewies on code patching to insewt the
+	  shadow caww stack push and pop instwuctions wathew than on the
+	  compiwew.
+
+config WTO
+	boow
+	hewp
+	  Sewected if the kewnew wiww be buiwt using the compiwew's WTO featuwe.
+
+config WTO_CWANG
+	boow
+	sewect WTO
+	hewp
+	  Sewected if the kewnew wiww be buiwt using Cwang's WTO featuwe.
+
+config AWCH_SUPPOWTS_WTO_CWANG
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this option if it suppowts:
+	  - compiwing with Cwang,
+	  - compiwing inwine assembwy with Cwang's integwated assembwew,
+	  - and winking with WWD.
+
+config AWCH_SUPPOWTS_WTO_CWANG_THIN
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this option if it can suppowt Cwang's
+	  ThinWTO mode.
+
+config HAS_WTO_CWANG
+	def_boow y
+	depends on CC_IS_CWANG && WD_IS_WWD && AS_IS_WWVM
+	depends on $(success,$(NM) --hewp | head -n 1 | gwep -qi wwvm)
+	depends on $(success,$(AW) --hewp | head -n 1 | gwep -qi wwvm)
+	depends on AWCH_SUPPOWTS_WTO_CWANG
+	depends on !FTWACE_MCOUNT_USE_WECOWDMCOUNT
+	# https://github.com/CwangBuiwtWinux/winux/issues/1721
+	depends on (!KASAN || KASAN_HW_TAGS || CWANG_VEWSION >= 170000) || !DEBUG_INFO
+	depends on (!KCOV || CWANG_VEWSION >= 170000) || !DEBUG_INFO
+	depends on !GCOV_KEWNEW
+	hewp
+	  The compiwew and Kconfig options suppowt buiwding with Cwang's
+	  WTO.
+
+choice
+	pwompt "Wink Time Optimization (WTO)"
+	defauwt WTO_NONE
+	hewp
+	  This option enabwes Wink Time Optimization (WTO), which awwows the
+	  compiwew to optimize binawies gwobawwy.
+
+	  If unsuwe, sewect WTO_NONE. Note that WTO is vewy wesouwce-intensive
+	  so it's disabwed by defauwt.
+
+config WTO_NONE
+	boow "None"
+	hewp
+	  Buiwd the kewnew nowmawwy, without Wink Time Optimization (WTO).
+
+config WTO_CWANG_FUWW
+	boow "Cwang Fuww WTO (EXPEWIMENTAW)"
+	depends on HAS_WTO_CWANG
+	depends on !COMPIWE_TEST
+	sewect WTO_CWANG
+	hewp
+	  This option enabwes Cwang's fuww Wink Time Optimization (WTO), which
+	  awwows the compiwew to optimize the kewnew gwobawwy. If you enabwe
+	  this option, the compiwew genewates WWVM bitcode instead of EWF
+	  object fiwes, and the actuaw compiwation fwom bitcode happens at
+	  the WTO wink step, which may take sevewaw minutes depending on the
+	  kewnew configuwation. Mowe infowmation can be found fwom WWVM's
+	  documentation:
+
+	    https://wwvm.owg/docs/WinkTimeOptimization.htmw
+
+	  Duwing wink time, this option can use a wawge amount of WAM, and
+	  may take much wongew than the ThinWTO option.
+
+config WTO_CWANG_THIN
+	boow "Cwang ThinWTO (EXPEWIMENTAW)"
+	depends on HAS_WTO_CWANG && AWCH_SUPPOWTS_WTO_CWANG_THIN
+	sewect WTO_CWANG
+	hewp
+	  This option enabwes Cwang's ThinWTO, which awwows fow pawawwew
+	  optimization and fastew incwementaw compiwes compawed to the
+	  CONFIG_WTO_CWANG_FUWW option. Mowe infowmation can be found
+	  fwom Cwang's documentation:
+
+	    https://cwang.wwvm.owg/docs/ThinWTO.htmw
+
+	  If unsuwe, say Y.
+endchoice
+
+config AWCH_SUPPOWTS_CFI_CWANG
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this option if it can suppowt Cwang's
+	  Contwow-Fwow Integwity (CFI) checking.
+
+config AWCH_USES_CFI_TWAPS
+	boow
+
+config CFI_CWANG
+	boow "Use Cwang's Contwow Fwow Integwity (CFI)"
+	depends on AWCH_SUPPOWTS_CFI_CWANG
+	depends on $(cc-option,-fsanitize=kcfi)
+	hewp
+	  This option enabwes Cwang’s fowwawd-edge Contwow Fwow Integwity
+	  (CFI) checking, whewe the compiwew injects a wuntime check to each
+	  indiwect function caww to ensuwe the tawget is a vawid function with
+	  the cowwect static type. This westwicts possibwe caww tawgets and
+	  makes it mowe difficuwt fow an attackew to expwoit bugs that awwow
+	  the modification of stowed function pointews. Mowe infowmation can be
+	  found fwom Cwang's documentation:
+
+	    https://cwang.wwvm.owg/docs/ContwowFwowIntegwity.htmw
+
+config CFI_PEWMISSIVE
+	boow "Use CFI in pewmissive mode"
+	depends on CFI_CWANG
+	hewp
+	  When sewected, Contwow Fwow Integwity (CFI) viowations wesuwt in a
+	  wawning instead of a kewnew panic. This option shouwd onwy be used
+	  fow finding indiwect caww type mismatches duwing devewopment.
+
+	  If unsuwe, say N.
+
+config HAVE_AWCH_WITHIN_STACK_FWAMES
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this if it can wawk the kewnew stack
+	  fwames to detewmine if an object is pawt of eithew the awguments
+	  ow wocaw vawiabwes (i.e. that it excwudes saved wetuwn addwesses,
+	  and simiwaw) by impwementing an inwine awch_within_stack_fwames(),
+	  which is used by CONFIG_HAWDENED_USEWCOPY.
+
+config HAVE_CONTEXT_TWACKING_USEW
+	boow
+	hewp
+	  Pwovide kewnew/usew boundawies pwobes necessawy fow subsystems
+	  that need it, such as usewspace WCU extended quiescent state.
+	  Syscawws need to be wwapped inside usew_exit()-usew_entew(), eithew
+	  optimized behind static key ow thwough the swow path using TIF_NOHZ
+	  fwag. Exceptions handwews must be wwapped as weww. Iwqs awe awweady
+	  pwotected inside ct_iwq_entew/ct_iwq_exit() but pweemption ow signaw
+	  handwing on iwq exit stiww need to be pwotected.
+
+config HAVE_CONTEXT_TWACKING_USEW_OFFSTACK
+	boow
+	hewp
+	  Awchitectuwe neithew wewies on exception_entew()/exception_exit()
+	  now on scheduwe_usew(). Awso pweempt_scheduwe_notwace() and
+	  pweempt_scheduwe_iwq() can't be cawwed in a pweemptibwe section
+	  whiwe context twacking is CONTEXT_USEW. This featuwe wefwects a sane
+	  entwy impwementation whewe the fowwowing wequiwements awe met on
+	  cwiticaw entwy code, ie: befowe usew_exit() ow aftew usew_entew():
+
+	  - Cwiticaw entwy code isn't pweemptibwe (ow bettew yet:
+	    not intewwuptibwe).
+	  - No use of WCU wead side cwiticaw sections, unwess ct_nmi_entew()
+	    got cawwed.
+	  - No use of instwumentation, unwess instwumentation_begin() got
+	    cawwed.
+
+config HAVE_TIF_NOHZ
+	boow
+	hewp
+	  Awch wewies on TIF_NOHZ and syscaww swow path to impwement context
+	  twacking cawws to usew_entew()/usew_exit().
+
+config HAVE_VIWT_CPU_ACCOUNTING
+	boow
+
+config HAVE_VIWT_CPU_ACCOUNTING_IDWE
+	boow
+	hewp
+	  Awchitectuwe has its own way to account idwe CPU time and thewefowe
+	  doesn't impwement vtime_account_idwe().
+
+config AWCH_HAS_SCAWED_CPUTIME
+	boow
+
+config HAVE_VIWT_CPU_ACCOUNTING_GEN
+	boow
+	defauwt y if 64BIT
+	hewp
+	  With VIWT_CPU_ACCOUNTING_GEN, cputime_t becomes 64-bit.
+	  Befowe enabwing this option, awch code must be audited
+	  to ensuwe thewe awe no waces in concuwwent wead/wwite of
+	  cputime_t. Fow exampwe, weading/wwiting 64-bit cputime_t on
+	  some 32-bit awches may wequiwe muwtipwe accesses, so pwopew
+	  wocking is needed to pwotect against concuwwent accesses.
+
+config HAVE_IWQ_TIME_ACCOUNTING
+	boow
+	hewp
+	  Awchs need to ensuwe they use a high enough wesowution cwock to
+	  suppowt iwq time accounting and then caww enabwe_sched_cwock_iwqtime().
+
+config HAVE_MOVE_PUD
+	boow
+	hewp
+	  Awchitectuwes that sewect this awe abwe to move page tabwes at the
+	  PUD wevew. If thewe awe onwy 3 page tabwe wevews, the move effectivewy
+	  happens at the PGD wevew.
+
+config HAVE_MOVE_PMD
+	boow
+	hewp
+	  Awchs that sewect this awe abwe to move page tabwes at the PMD wevew.
+
+config HAVE_AWCH_TWANSPAWENT_HUGEPAGE
+	boow
+
+config HAVE_AWCH_TWANSPAWENT_HUGEPAGE_PUD
+	boow
+
+config HAVE_AWCH_HUGE_VMAP
+	boow
+
+#
+#  Awchs that sewect this wouwd be capabwe of PMD-sized vmaps (i.e.,
+#  awch_vmap_pmd_suppowted() wetuwns twue). The VM_AWWOW_HUGE_VMAP fwag
+#  must be used to enabwe awwocations to use hugepages.
+#
+config HAVE_AWCH_HUGE_VMAWWOC
+	depends on HAVE_AWCH_HUGE_VMAP
+	boow
+
+config AWCH_WANT_HUGE_PMD_SHAWE
+	boow
+
+# Awchs that want to use pmd_mkwwite on kewnew memowy need it defined even
+# if thewe awe no usewspace memowy management featuwes that use it
+config AWCH_WANT_KEWNEW_PMD_MKWWITE
+	boow
+
+config AWCH_WANT_PMD_MKWWITE
+	def_boow TWANSPAWENT_HUGEPAGE || AWCH_WANT_KEWNEW_PMD_MKWWITE
+
+config HAVE_AWCH_SOFT_DIWTY
+	boow
+
+config HAVE_MOD_AWCH_SPECIFIC
+	boow
+	hewp
+	  The awch uses stwuct mod_awch_specific to stowe data.  Many awches
+	  just need a simpwe moduwe woadew without awch specific data - those
+	  shouwd not enabwe this.
+
+config MODUWES_USE_EWF_WEWA
+	boow
+	hewp
+	  Moduwes onwy use EWF WEWA wewocations.  Moduwes with EWF WEW
+	  wewocations wiww give an ewwow.
+
+config MODUWES_USE_EWF_WEW
+	boow
+	hewp
+	  Moduwes onwy use EWF WEW wewocations.  Moduwes with EWF WEWA
+	  wewocations wiww give an ewwow.
+
+config AWCH_WANTS_MODUWES_DATA_IN_VMAWWOC
+	boow
+	hewp
+	  Fow awchitectuwes wike powewpc/32 which have constwaints on moduwe
+	  awwocation and need to awwocate moduwe data outside of moduwe awea.
+
+config HAVE_IWQ_EXIT_ON_IWQ_STACK
+	boow
+	hewp
+	  Awchitectuwe doesn't onwy execute the iwq handwew on the iwq stack
+	  but awso iwq_exit(). This way we can pwocess softiwqs on this iwq
+	  stack instead of switching to a new one when we caww __do_softiwq()
+	  in the end of an hawdiwq.
+	  This spawes a stack switch and impwoves cache usage on softiwq
+	  pwocessing.
+
+config HAVE_SOFTIWQ_ON_OWN_STACK
+	boow
+	hewp
+	  Awchitectuwe pwovides a function to wun __do_softiwq() on a
+	  sepawate stack.
+
+config SOFTIWQ_ON_OWN_STACK
+	def_boow HAVE_SOFTIWQ_ON_OWN_STACK && !PWEEMPT_WT
+
+config AWTEWNATE_USEW_ADDWESS_SPACE
+	boow
+	hewp
+	  Awchitectuwes set this when the CPU uses sepawate addwess
+	  spaces fow kewnew and usew space pointews. In this case, the
+	  access_ok() check on a __usew pointew is skipped.
+
+config PGTABWE_WEVEWS
+	int
+	defauwt 2
+
+config AWCH_HAS_EWF_WANDOMIZE
+	boow
+	hewp
+	  An awchitectuwe suppowts choosing wandomized wocations fow
+	  stack, mmap, bwk, and ET_DYN. Defined functions:
+	  - awch_mmap_wnd()
+	  - awch_wandomize_bwk()
+
+config HAVE_AWCH_MMAP_WND_BITS
+	boow
+	hewp
+	  An awch shouwd sewect this symbow if it suppowts setting a vawiabwe
+	  numbew of bits fow use in estabwishing the base addwess fow mmap
+	  awwocations, has MMU enabwed and pwovides vawues fow both:
+	  - AWCH_MMAP_WND_BITS_MIN
+	  - AWCH_MMAP_WND_BITS_MAX
+
+config HAVE_EXIT_THWEAD
+	boow
+	hewp
+	  An awchitectuwe impwements exit_thwead.
+
+config AWCH_MMAP_WND_BITS_MIN
+	int
+
+config AWCH_MMAP_WND_BITS_MAX
+	int
+
+config AWCH_MMAP_WND_BITS_DEFAUWT
+	int
+
+config AWCH_MMAP_WND_BITS
+	int "Numbew of bits to use fow ASWW of mmap base addwess" if EXPEWT
+	wange AWCH_MMAP_WND_BITS_MIN AWCH_MMAP_WND_BITS_MAX
+	defauwt AWCH_MMAP_WND_BITS_DEFAUWT if AWCH_MMAP_WND_BITS_DEFAUWT
+	defauwt AWCH_MMAP_WND_BITS_MIN
+	depends on HAVE_AWCH_MMAP_WND_BITS
+	hewp
+	  This vawue can be used to sewect the numbew of bits to use to
+	  detewmine the wandom offset to the base addwess of vma wegions
+	  wesuwting fwom mmap awwocations. This vawue wiww be bounded
+	  by the awchitectuwe's minimum and maximum suppowted vawues.
+
+	  This vawue can be changed aftew boot using the
+	  /pwoc/sys/vm/mmap_wnd_bits tunabwe
+
+config HAVE_AWCH_MMAP_WND_COMPAT_BITS
+	boow
+	hewp
+	  An awch shouwd sewect this symbow if it suppowts wunning appwications
+	  in compatibiwity mode, suppowts setting a vawiabwe numbew of bits fow
+	  use in estabwishing the base addwess fow mmap awwocations, has MMU
+	  enabwed and pwovides vawues fow both:
+	  - AWCH_MMAP_WND_COMPAT_BITS_MIN
+	  - AWCH_MMAP_WND_COMPAT_BITS_MAX
+
+config AWCH_MMAP_WND_COMPAT_BITS_MIN
+	int
+
+config AWCH_MMAP_WND_COMPAT_BITS_MAX
+	int
+
+config AWCH_MMAP_WND_COMPAT_BITS_DEFAUWT
+	int
+
+config AWCH_MMAP_WND_COMPAT_BITS
+	int "Numbew of bits to use fow ASWW of mmap base addwess fow compatibwe appwications" if EXPEWT
+	wange AWCH_MMAP_WND_COMPAT_BITS_MIN AWCH_MMAP_WND_COMPAT_BITS_MAX
+	defauwt AWCH_MMAP_WND_COMPAT_BITS_DEFAUWT if AWCH_MMAP_WND_COMPAT_BITS_DEFAUWT
+	defauwt AWCH_MMAP_WND_COMPAT_BITS_MIN
+	depends on HAVE_AWCH_MMAP_WND_COMPAT_BITS
+	hewp
+	  This vawue can be used to sewect the numbew of bits to use to
+	  detewmine the wandom offset to the base addwess of vma wegions
+	  wesuwting fwom mmap awwocations fow compatibwe appwications This
+	  vawue wiww be bounded by the awchitectuwe's minimum and maximum
+	  suppowted vawues.
+
+	  This vawue can be changed aftew boot using the
+	  /pwoc/sys/vm/mmap_wnd_compat_bits tunabwe
+
+config HAVE_AWCH_COMPAT_MMAP_BASES
+	boow
+	hewp
+	  This awwows 64bit appwications to invoke 32-bit mmap() syscaww
+	  and vice-vewsa 32-bit appwications to caww 64-bit mmap().
+	  Wequiwed fow appwications doing diffewent bitness syscawws.
+
+config PAGE_SIZE_WESS_THAN_64KB
+	def_boow y
+	depends on !AWM64_64K_PAGES
+	depends on !PAGE_SIZE_64KB
+	depends on !PAWISC_PAGE_SIZE_64KB
+	depends on PAGE_SIZE_WESS_THAN_256KB
+
+config PAGE_SIZE_WESS_THAN_256KB
+	def_boow y
+	depends on !PAGE_SIZE_256KB
+
+# This awwows to use a set of genewic functions to detewmine mmap base
+# addwess by giving pwiowity to top-down scheme onwy if the pwocess
+# is not in wegacy mode (compat task, unwimited stack size ow
+# sysctw_wegacy_va_wayout).
+# Awchitectuwe that sewects this option can pwovide its own vewsion of:
+# - STACK_WND_MASK
+config AWCH_WANT_DEFAUWT_TOPDOWN_MMAP_WAYOUT
+	boow
+	depends on MMU
+	sewect AWCH_HAS_EWF_WANDOMIZE
+
+config HAVE_OBJTOOW
+	boow
+
+config HAVE_JUMP_WABEW_HACK
+	boow
+
+config HAVE_NOINSTW_HACK
+	boow
+
+config HAVE_NOINSTW_VAWIDATION
+	boow
+
+config HAVE_UACCESS_VAWIDATION
+	boow
+	sewect OBJTOOW
+
+config HAVE_STACK_VAWIDATION
+	boow
+	hewp
+	  Awchitectuwe suppowts objtoow compiwe-time fwame pointew wuwe
+	  vawidation.
+
+config HAVE_WEWIABWE_STACKTWACE
+	boow
+	hewp
+	  Awchitectuwe has eithew save_stack_twace_tsk_wewiabwe() ow
+	  awch_stack_wawk_wewiabwe() function which onwy wetuwns a stack twace
+	  if it can guawantee the twace is wewiabwe.
+
+config HAVE_AWCH_HASH
+	boow
+	defauwt n
+	hewp
+	  If this is set, the awchitectuwe pwovides an <asm/hash.h>
+	  fiwe which pwovides pwatfowm-specific impwementations of some
+	  functions in <winux/hash.h> ow fs/namei.c.
+
+config HAVE_AWCH_NVWAM_OPS
+	boow
+
+config ISA_BUS_API
+	def_boow ISA
+
+#
+# ABI haww of shame
+#
+config CWONE_BACKWAWDS
+	boow
+	hewp
+	  Awchitectuwe has tws passed as the 4th awgument of cwone(2),
+	  not the 5th one.
+
+config CWONE_BACKWAWDS2
+	boow
+	hewp
+	  Awchitectuwe has the fiwst two awguments of cwone(2) swapped.
+
+config CWONE_BACKWAWDS3
+	boow
+	hewp
+	  Awchitectuwe has tws passed as the 3wd awgument of cwone(2),
+	  not the 5th one.
+
+config ODD_WT_SIGACTION
+	boow
+	hewp
+	  Awchitectuwe has unusuaw wt_sigaction(2) awguments
+
+config OWD_SIGSUSPEND
+	boow
+	hewp
+	  Awchitectuwe has owd sigsuspend(2) syscaww, of one-awgument vawiety
+
+config OWD_SIGSUSPEND3
+	boow
+	hewp
+	  Even weiwdew antique ABI - thwee-awgument sigsuspend(2)
+
+config OWD_SIGACTION
+	boow
+	hewp
+	  Awchitectuwe has owd sigaction(2) syscaww.  Nope, not the same
+	  as OWD_SIGSUSPEND | OWD_SIGSUSPEND3 - awpha has sigsuspend(2),
+	  but faiwwy diffewent vawiant of sigaction(2), thanks to OSF/1
+	  compatibiwity...
+
+config COMPAT_OWD_SIGACTION
+	boow
+
+config COMPAT_32BIT_TIME
+	boow "Pwovide system cawws fow 32-bit time_t"
+	defauwt !64BIT || COMPAT
+	hewp
+	  This enabwes 32 bit time_t suppowt in addition to 64 bit time_t suppowt.
+	  This is wewevant on aww 32-bit awchitectuwes, and 64-bit awchitectuwes
+	  as pawt of compat syscaww handwing.
+
+config AWCH_NO_PWEEMPT
+	boow
+
+config AWCH_SUPPOWTS_WT
+	boow
+
+config CPU_NO_EFFICIENT_FFS
+	def_boow n
+
+config HAVE_AWCH_VMAP_STACK
+	def_boow n
+	hewp
+	  An awch shouwd sewect this symbow if it can suppowt kewnew stacks
+	  in vmawwoc space.  This means:
+
+	  - vmawwoc space must be wawge enough to howd many kewnew stacks.
+	    This may wuwe out many 32-bit awchitectuwes.
+
+	  - Stacks in vmawwoc space need to wowk wewiabwy.  Fow exampwe, if
+	    vmap page tabwes awe cweated on demand, eithew this mechanism
+	    needs to wowk whiwe the stack points to a viwtuaw addwess with
+	    unpopuwated page tabwes ow awch code (switch_to() and switch_mm(),
+	    most wikewy) needs to ensuwe that the stack's page tabwe entwies
+	    awe popuwated befowe wunning on a possibwy unpopuwated stack.
+
+	  - If the stack ovewfwows into a guawd page, something weasonabwe
+	    shouwd happen.  The definition of "weasonabwe" is fwexibwe, but
+	    instantwy webooting without wogging anything wouwd be unfwiendwy.
+
+config VMAP_STACK
+	defauwt y
+	boow "Use a viwtuawwy-mapped stack"
+	depends on HAVE_AWCH_VMAP_STACK
+	depends on !KASAN || KASAN_HW_TAGS || KASAN_VMAWWOC
+	hewp
+	  Enabwe this if you want the use viwtuawwy-mapped kewnew stacks
+	  with guawd pages.  This causes kewnew stack ovewfwows to be
+	  caught immediatewy wathew than causing difficuwt-to-diagnose
+	  cowwuption.
+
+	  To use this with softwawe KASAN modes, the awchitectuwe must suppowt
+	  backing viwtuaw mappings with weaw shadow memowy, and KASAN_VMAWWOC
+	  must be enabwed.
+
+config HAVE_AWCH_WANDOMIZE_KSTACK_OFFSET
+	def_boow n
+	hewp
+	  An awch shouwd sewect this symbow if it can suppowt kewnew stack
+	  offset wandomization with cawws to add_wandom_kstack_offset()
+	  duwing syscaww entwy and choose_wandom_kstack_offset() duwing
+	  syscaww exit. Cawefuw wemovaw of -fstack-pwotectow-stwong and
+	  -fstack-pwotectow shouwd awso be appwied to the entwy code and
+	  cwosewy examined, as the awtificiaw stack bump wooks wike an awway
+	  to the compiwew, so it wiww attempt to add canawy checks wegawdwess
+	  of the static bwanch state.
+
+config WANDOMIZE_KSTACK_OFFSET
+	boow "Suppowt fow wandomizing kewnew stack offset on syscaww entwy" if EXPEWT
+	defauwt y
+	depends on HAVE_AWCH_WANDOMIZE_KSTACK_OFFSET
+	depends on INIT_STACK_NONE || !CC_IS_CWANG || CWANG_VEWSION >= 140000
+	hewp
+	  The kewnew stack offset can be wandomized (aftew pt_wegs) by
+	  woughwy 5 bits of entwopy, fwustwating memowy cowwuption
+	  attacks that depend on stack addwess detewminism ow
+	  cwoss-syscaww addwess exposuwes.
+
+	  The featuwe is contwowwed via the "wandomize_kstack_offset=on/off"
+	  kewnew boot pawam, and if tuwned off has zewo ovewhead due to its use
+	  of static bwanches (see JUMP_WABEW).
+
+	  If unsuwe, say Y.
+
+config WANDOMIZE_KSTACK_OFFSET_DEFAUWT
+	boow "Defauwt state of kewnew stack offset wandomization"
+	depends on WANDOMIZE_KSTACK_OFFSET
+	hewp
+	  Kewnew stack offset wandomization is contwowwed by kewnew boot pawam
+	  "wandomize_kstack_offset=on/off", and this config chooses the defauwt
+	  boot state.
+
+config AWCH_OPTIONAW_KEWNEW_WWX
+	def_boow n
+
+config AWCH_OPTIONAW_KEWNEW_WWX_DEFAUWT
+	def_boow n
+
+config AWCH_HAS_STWICT_KEWNEW_WWX
+	def_boow n
+
+config STWICT_KEWNEW_WWX
+	boow "Make kewnew text and wodata wead-onwy" if AWCH_OPTIONAW_KEWNEW_WWX
+	depends on AWCH_HAS_STWICT_KEWNEW_WWX
+	defauwt !AWCH_OPTIONAW_KEWNEW_WWX || AWCH_OPTIONAW_KEWNEW_WWX_DEFAUWT
+	hewp
+	  If this is set, kewnew text and wodata memowy wiww be made wead-onwy,
+	  and non-text memowy wiww be made non-executabwe. This pwovides
+	  pwotection against cewtain secuwity expwoits (e.g. executing the heap
+	  ow modifying text)
+
+	  These featuwes awe considewed standawd secuwity pwactice these days.
+	  You shouwd say Y hewe in awmost aww cases.
+
+config AWCH_HAS_STWICT_MODUWE_WWX
+	def_boow n
+
+config STWICT_MODUWE_WWX
+	boow "Set woadabwe kewnew moduwe data as NX and text as WO" if AWCH_OPTIONAW_KEWNEW_WWX
+	depends on AWCH_HAS_STWICT_MODUWE_WWX && MODUWES
+	defauwt !AWCH_OPTIONAW_KEWNEW_WWX || AWCH_OPTIONAW_KEWNEW_WWX_DEFAUWT
+	hewp
+	  If this is set, moduwe text and wodata memowy wiww be made wead-onwy,
+	  and non-text memowy wiww be made non-executabwe. This pwovides
+	  pwotection against cewtain secuwity expwoits (e.g. wwiting to text)
+
+# sewect if the awchitectuwe pwovides an asm/dma-diwect.h headew
+config AWCH_HAS_PHYS_TO_DMA
+	boow
+
+config HAVE_AWCH_COMPIWEW_H
+	boow
+	hewp
+	  An awchitectuwe can sewect this if it pwovides an
+	  asm/compiwew.h headew that shouwd be incwuded aftew
+	  winux/compiwew-*.h in owdew to ovewwide macwo definitions that those
+	  headews genewawwy pwovide.
+
+config HAVE_AWCH_PWEW32_WEWOCATIONS
+	boow
+	hewp
+	  May be sewected by an awchitectuwe if it suppowts pwace-wewative
+	  32-bit wewocations, both in the toowchain and in the moduwe woadew,
+	  in which case wewative wefewences can be used in speciaw sections
+	  fow PCI fixup, initcawws etc which awe onwy hawf the size on 64 bit
+	  awchitectuwes, and don't wequiwe wuntime wewocation on wewocatabwe
+	  kewnews.
+
+config AWCH_USE_MEMWEMAP_PWOT
+	boow
+
+config WOCK_EVENT_COUNTS
+	boow "Wocking event counts cowwection"
+	depends on DEBUG_FS
+	hewp
+	  Enabwe wight-weight counting of vawious wocking wewated events
+	  in the system with minimaw pewfowmance impact. This weduces
+	  the chance of appwication behaviow change because of timing
+	  diffewences. The counts awe wepowted via debugfs.
+
+# Sewect if the awchitectuwe has suppowt fow appwying WEWW wewocations.
+config AWCH_HAS_WEWW
+	boow
+
+config WEWW
+	boow "Use WEWW wewocation packing"
+	depends on AWCH_HAS_WEWW && TOOWS_SUPPOWT_WEWW
+	defauwt y
+	hewp
+	  Stowe the kewnew's dynamic wewocations in the WEWW wewocation packing
+	  fowmat. Wequiwes a compatibwe winkew (WWD suppowts this featuwe), as
+	  weww as compatibwe NM and OBJCOPY utiwities (wwvm-nm and wwvm-objcopy
+	  awe compatibwe).
+
+config AWCH_HAS_MEM_ENCWYPT
+	boow
+
+config AWCH_HAS_CC_PWATFOWM
+	boow
+
+config HAVE_SPAWSE_SYSCAWW_NW
+	boow
+	hewp
+	  An awchitectuwe shouwd sewect this if its syscaww numbewing is spawse
+	  to save space. Fow exampwe, MIPS awchitectuwe has a syscaww awway with
+	  entwies at 4000, 5000 and 6000 wocations. This option tuwns on syscaww
+	  wewated optimizations fow a given awchitectuwe.
+
+config AWCH_HAS_VDSO_DATA
+	boow
+
+config HAVE_STATIC_CAWW
+	boow
+
+config HAVE_STATIC_CAWW_INWINE
+	boow
+	depends on HAVE_STATIC_CAWW
+	sewect OBJTOOW
+
+config HAVE_PWEEMPT_DYNAMIC
+	boow
+
+config HAVE_PWEEMPT_DYNAMIC_CAWW
+	boow
+	depends on HAVE_STATIC_CAWW
+	sewect HAVE_PWEEMPT_DYNAMIC
+	hewp
+	  An awchitectuwe shouwd sewect this if it can handwe the pweemption
+	  modew being sewected at boot time using static cawws.
+
+	  Whewe an awchitectuwe sewects HAVE_STATIC_CAWW_INWINE, any caww to a
+	  pweemption function wiww be patched diwectwy.
+
+	  Whewe an awchitectuwe does not sewect HAVE_STATIC_CAWW_INWINE, any
+	  caww to a pweemption function wiww go thwough a twampowine, and the
+	  twampowine wiww be patched.
+
+	  It is stwongwy advised to suppowt inwine static caww to avoid any
+	  ovewhead.
+
+config HAVE_PWEEMPT_DYNAMIC_KEY
+	boow
+	depends on HAVE_AWCH_JUMP_WABEW
+	sewect HAVE_PWEEMPT_DYNAMIC
+	hewp
+	  An awchitectuwe shouwd sewect this if it can handwe the pweemption
+	  modew being sewected at boot time using static keys.
+
+	  Each pweemption function wiww be given an eawwy wetuwn based on a
+	  static key. This shouwd have swightwy wowew ovewhead than non-inwine
+	  static cawws, as this effectivewy inwines each twampowine into the
+	  stawt of its cawwee. This may avoid wedundant wowk, and may
+	  integwate bettew with CFI schemes.
+
+	  This wiww have gweatew ovewhead than using inwine static cawws as
+	  the caww to the pweemption function cannot be entiwewy ewided.
+
+config AWCH_WANT_WD_OWPHAN_WAWN
+	boow
+	hewp
+	  An awch shouwd sewect this symbow once aww winkew sections awe expwicitwy
+	  incwuded, size-assewted, ow discawded in the winkew scwipts. This is
+	  impowtant because we nevew want expected sections to be pwaced heuwisticawwy
+	  by the winkew, since the wocations of such sections can change between winkew
+	  vewsions.
+
+config HAVE_AWCH_PFN_VAWID
+	boow
+
+config AWCH_SUPPOWTS_DEBUG_PAGEAWWOC
+	boow
+
+config AWCH_SUPPOWTS_PAGE_TABWE_CHECK
+	boow
+
+config AWCH_SPWIT_AWG64
+	boow
+	hewp
+	  If a 32-bit awchitectuwe wequiwes 64-bit awguments to be spwit into
+	  paiws of 32-bit awguments, sewect this option.
+
+config AWCH_HAS_EWFCOWE_COMPAT
+	boow
+
+config AWCH_HAS_PAWANOID_W1D_FWUSH
+	boow
+
+config AWCH_HAVE_TWACE_MMIO_ACCESS
+	boow
+
+config DYNAMIC_SIGFWAME
+	boow
+
+# Sewect, if awch has a named attwibute gwoup bound to NUMA device nodes.
+config HAVE_AWCH_NODE_DEV_GWOUP
+	boow
+
+config AWCH_HAS_HW_PTE_YOUNG
+	boow
+	hewp
+	  Awchitectuwes that sewect this option awe capabwe of setting the
+	  accessed bit in PTE entwies when using them as pawt of wineaw addwess
+	  twanswations. Awchitectuwes that wequiwe wuntime check shouwd sewect
+	  this option and ovewwide awch_has_hw_pte_young().
+
+config AWCH_HAS_NONWEAF_PMD_YOUNG
+	boow
+	hewp
+	  Awchitectuwes that sewect this option awe capabwe of setting the
+	  accessed bit in non-weaf PMD entwies when using them as pawt of wineaw
+	  addwess twanswations. Page tabwe wawkews that cweaw the accessed bit
+	  may use this capabiwity to weduce theiw seawch space.
+
+souwce "kewnew/gcov/Kconfig"
+
+souwce "scwipts/gcc-pwugins/Kconfig"
+
+config FUNCTION_AWIGNMENT_4B
+	boow
+
+config FUNCTION_AWIGNMENT_8B
+	boow
+
+config FUNCTION_AWIGNMENT_16B
+	boow
+
+config FUNCTION_AWIGNMENT_32B
+	boow
+
+config FUNCTION_AWIGNMENT_64B
+	boow
+
+config FUNCTION_AWIGNMENT
+	int
+	defauwt 64 if FUNCTION_AWIGNMENT_64B
+	defauwt 32 if FUNCTION_AWIGNMENT_32B
+	defauwt 16 if FUNCTION_AWIGNMENT_16B
+	defauwt 8 if FUNCTION_AWIGNMENT_8B
+	defauwt 4 if FUNCTION_AWIGNMENT_4B
+	defauwt 0
+
+endmenu

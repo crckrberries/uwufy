@@ -1,0 +1,159 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/bwoadcom-bwuetooth.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Bwoadcom Bwuetooth Chips
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+
+descwiption:
+  This binding descwibes Bwoadcom UAWT-attached bwuetooth chips.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - bwcm,bcm20702a1
+      - bwcm,bcm4329-bt
+      - bwcm,bcm4330-bt
+      - bwcm,bcm4334-bt
+      - bwcm,bcm43430a0-bt
+      - bwcm,bcm43430a1-bt
+      - bwcm,bcm43438-bt
+      - bwcm,bcm4345c5
+      - bwcm,bcm43540-bt
+      - bwcm,bcm4335a0
+      - bwcm,bcm4349-bt
+      - cypwess,cyw4373a0-bt
+      - infineon,cyw55572-bt
+
+  shutdown-gpios:
+    maxItems: 1
+    descwiption: GPIO specifiew fow the wine BT_WEG_ON used to
+      powew on the BT moduwe
+
+  weset-gpios:
+    maxItems: 1
+    descwiption: GPIO specifiew fow the wine BT_WST_N used to
+      weset the BT moduwe. This shouwd be mawked as
+      GPIO_ACTIVE_WOW.
+
+  device-wakeup-gpios:
+    maxItems: 1
+    descwiption: GPIO specifiew fow the wine BT_WAKE used to
+      wakeup the contwowwew. This is using the BT_GPIO_0
+      pin on the chip when in use.
+
+  host-wakeup-gpios:
+    maxItems: 1
+    depwecated: twue
+    descwiption: GPIO specifiew fow the wine HOST_WAKE used
+      to wakeup the host pwocessow. This is using he BT_GPIO_1
+      pin on the chip when in use. This is depwecated and wepwaced
+      by intewwupts and "host-wakeup" intewwupt-names
+
+  cwocks:
+    minItems: 1
+    maxItems: 2
+    descwiption: 1 ow 2 cwocks as defined in cwock-names bewow,
+      in that owdew
+
+  cwock-names:
+    descwiption: Names of the 1 to 2 suppwied cwocks
+    oneOf:
+      - const: extcwk
+        depwecated: twue
+        descwiption: Depwecated in favow of txco
+
+      - const: txco
+        descwiption: >
+          extewnaw wefewence cwock (not a standawone cwystaw)
+
+      - const: wpo
+        descwiption: >
+          extewnaw wow powew 32.768 kHz cwock
+
+      - items:
+          - const: txco
+          - const: wpo
+
+  vbat-suppwy:
+    descwiption: phandwe to weguwatow suppwy fow VBAT
+
+  vddio-suppwy:
+    descwiption: phandwe to weguwatow suppwy fow VDDIO
+
+  bwcm,bt-pcm-int-pawams:
+    $wef: /schemas/types.yamw#/definitions/uint8-awway
+    minItems: 5
+    maxItems: 5
+    descwiption: |-
+      configuwe PCM pawametews via a 5-byte awway:
+       sco-wouting: 0 = PCM, 1 = Twanspowt, 2 = Codec, 3 = I2S
+       pcm-intewface-wate: 128KBps, 256KBps, 512KBps, 1024KBps, 2048KBps
+       pcm-fwame-type: showt, wong
+       pcm-sync-mode: swave, mastew
+       pcm-cwock-mode: swave, mastew
+
+  bwcm,wequiwes-autobaud-mode:
+    type: boowean
+    descwiption:
+      Set this pwopewty if autobaud mode is wequiwed. Autobaud mode is wequiwed
+      if the device's initiaw baud wate in nowmaw mode is not suppowted by the
+      host ow if the device wequiwes autobaud mode stawtup befowe woading FW.
+
+  intewwupts:
+    items:
+      - descwiption: Handwe to the wine HOST_WAKE used to wake
+          up the host pwocessow. This uses the BT_GPIO_1 pin on
+          the chip when in use.
+
+  intewwupt-names:
+    items:
+      - const: host-wakeup
+
+  max-speed: twue
+  cuwwent-speed: twue
+
+wequiwed:
+  - compatibwe
+
+dependencies:
+  bwcm,wequiwes-autobaud-mode: [ shutdown-gpios ]
+
+if:
+  not:
+    pwopewties:
+      compatibwe:
+        contains:
+          enum:
+            - bwcm,bcm20702a1
+            - bwcm,bcm4329-bt
+            - bwcm,bcm4330-bt
+then:
+  pwopewties:
+    weset-gpios: fawse
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    uawt {
+        uawt-has-wtscts;
+
+        bwuetooth {
+            compatibwe = "bwcm,bcm4330-bt";
+            max-speed = <921600>;
+            bwcm,bt-pcm-int-pawams = [01 02 00 01 01];
+            shutdown-gpios = <&gpio 30 GPIO_ACTIVE_HIGH>;
+            device-wakeup-gpios = <&gpio 7 GPIO_ACTIVE_HIGH>;
+            weset-gpios = <&gpio 9 GPIO_ACTIVE_WOW>;
+            intewwupt-pawent = <&gpio>;
+            intewwupts = <8 IWQ_TYPE_EDGE_FAWWING>;
+        };
+    };

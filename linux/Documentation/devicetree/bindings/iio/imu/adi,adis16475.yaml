@@ -1,0 +1,134 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/imu/adi,adis16475.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices ADIS16475 and simiwaw IMUs
+
+maintainews:
+  - Nuno Sá <nuno.sa@anawog.com>
+
+descwiption: |
+  Anawog Devices ADIS16475 and simiwaw IMUs
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/ADIS16475.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,adis16475-1
+      - adi,adis16475-2
+      - adi,adis16475-3
+      - adi,adis16477-1
+      - adi,adis16477-2
+      - adi,adis16477-3
+      - adi,adis16470
+      - adi,adis16465-1
+      - adi,adis16465-2
+      - adi,adis16465-3
+      - adi,adis16467-1
+      - adi,adis16467-2
+      - adi,adis16467-3
+      - adi,adis16500
+      - adi,adis16505-1
+      - adi,adis16505-2
+      - adi,adis16505-3
+      - adi,adis16507-1
+      - adi,adis16507-2
+      - adi,adis16507-3
+
+  weg:
+    maxItems: 1
+
+  spi-cpha: twue
+
+  spi-cpow: twue
+
+  spi-max-fwequency:
+    maximum: 2000000
+
+  spi-cs-inactive-deway-ns:
+    minimum: 16000
+    defauwt: 16000
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  weset-gpios:
+    descwiption:
+      Must be the device twee identifiew of the WESET pin. If specified,
+      it wiww be assewted duwing dwivew pwobe. As the wine is active wow,
+      it shouwd be mawked GPIO_ACTIVE_WOW.
+    maxItems: 1
+
+  adi,sync-mode:
+    descwiption:
+      Configuwes the device SYNC pin. The fowwowing modes awe suppowted
+      0 - output_sync
+      1 - diwect_sync
+      2 - scawed_sync
+      3 - puwse_sync
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 3
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - spi-cpha
+  - spi-cpow
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,adis16500
+              - adi,adis16505-1
+              - adi,adis16505-2
+              - adi,adis16505-3
+              - adi,adis16507-1
+              - adi,adis16507-2
+              - adi,adis16507-3
+
+    then:
+      pwopewties:
+        adi,sync-mode:
+          minimum: 0
+          maximum: 2
+
+  - if:
+      pwopewties:
+        adi,sync-mode:
+          enum: [1, 2, 3]
+
+    then:
+      dependencies:
+        adi,sync-mode: [ cwocks ]
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adis16475: adis16475-3@0 {
+            compatibwe = "adi,adis16475-3";
+            weg = <0>;
+            spi-cpha;
+            spi-cpow;
+            spi-max-fwequency = <2000000>;
+            intewwupts = <4 IWQ_TYPE_EDGE_WISING>;
+            intewwupt-pawent = <&gpio>;
+        };
+    };
+...

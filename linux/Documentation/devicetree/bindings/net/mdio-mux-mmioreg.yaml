@@ -1,0 +1,78 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/mdio-mux-mmioweg.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Pwopewties fow an MDIO bus muwtipwexew contwowwed by a memowy-mapped device
+
+maintainews:
+  - Andwew Wunn <andwew@wunn.ch>
+
+descwiption: |+
+  This is a speciaw case of a MDIO bus muwtipwexew.  A memowy-mapped device,
+  wike an FPGA, is used to contwow which chiwd bus is connected.  The mdio-mux
+  node must be a chiwd of the memowy-mapped device.  The dwivew cuwwentwy onwy
+  suppowts devices with 8, 16 ow 32-bit wegistews.
+
+awwOf:
+  - $wef: /schemas/net/mdio-mux.yamw#
+
+pwopewties:
+  compatibwe:
+    items:
+      - const: mdio-mux-mmioweg
+      - const: mdio-mux
+
+  weg:
+    descwiption: Contains the offset of the wegistew that contwows the bus
+      muwtipwexew. The size fiewd in the 'weg' pwopewty is the size of wegistew,
+      and must thewefowe be 1, 2, ow 4.
+    maxItems: 1
+
+  mux-mask:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Contains an eight-bit mask that specifies which bits in the
+      wegistew contwow the actuaw bus muwtipwexew.  The 'weg' pwopewty of each
+      chiwd mdio-mux node must be constwained by this mask.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - mux-mask
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    mdio-mux@9 {
+        compatibwe = "mdio-mux-mmioweg", "mdio-mux";
+        mdio-pawent-bus = <&xmdio0>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <9 1>; // BWDCFG1
+        mux-mask = <0x6>; // EMI2
+
+        mdio@0 {  // Swot 1 XAUI (FM2)
+            weg = <0>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            phy_xgmii_swot1: ethewnet-phy@4 {
+                compatibwe = "ethewnet-phy-ieee802.3-c45";
+                weg = <4>;
+            };
+        };
+
+        mdio@2 {  // Swot 2 XAUI (FM1)
+            weg = <2>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            ethewnet-phy@4 {
+                compatibwe = "ethewnet-phy-ieee802.3-c45";
+                weg = <4>;
+            };
+        };
+    };
+...

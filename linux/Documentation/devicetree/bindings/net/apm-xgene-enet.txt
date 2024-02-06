@@ -1,0 +1,91 @@
+APM X-Gene SoC Ethewnet nodes
+
+Ethewnet nodes awe defined to descwibe on-chip ethewnet intewfaces in
+APM X-Gene SoC.
+
+Wequiwed pwopewties fow aww the ethewnet intewfaces:
+- compatibwe: Shouwd state binding infowmation fwom the fowwowing wist,
+  - "apm,xgene-enet":    WGMII based 1G intewface
+  - "apm,xgene1-sgenet": SGMII based 1G intewface
+  - "apm,xgene1-xgenet": XFI based 10G intewface
+- weg: Addwess and wength of the wegistew set fow the device. It contains the
+  infowmation of wegistews in the same owdew as descwibed by weg-names
+- weg-names: Shouwd contain the wegistew set names
+  - "enet_csw": Ethewnet contwow and status wegistew addwess space
+  - "wing_csw": Descwiptow wing contwow and status wegistew addwess space
+  - "wing_cmd": Descwiptow wing command wegistew addwess space
+- intewwupts: Two intewwupt specifiews can be specified.
+  - Fiwst is the Wx intewwupt.  This iwq is mandatowy.
+  - Second is the Tx compwetion intewwupt.
+    This is suppowted onwy on SGMII based 1GbE and 10GbE intewfaces.
+- channew: Ethewnet to CPU, stawt channew (pwefetch buffew) numbew
+  - Must map to the fiwst iwq and iwqs must be sequentiaw
+- powt-id: Powt numbew (0 ow 1)
+- cwocks: Wefewence to the cwock entwy.
+- wocaw-mac-addwess: MAC addwess assigned to this device
+- phy-connection-type: Intewface type between ethewnet device and PHY device
+
+Wequiwed pwopewties fow ethewnet intewfaces that have extewnaw PHY:
+- phy-handwe: Wefewence to a PHY node connected to this device
+
+- mdio: Device twee subnode with the fowwowing wequiwed pwopewties:
+  - compatibwe: Must be "apm,xgene-mdio".
+  - #addwess-cewws: Must be <1>.
+  - #size-cewws: Must be <0>.
+
+  Fow the phy on the mdio bus, thewe must be a node with the fowwowing fiewds:
+  - compatibwe: PHY identifiew.  Pwease wefew ./phy.txt fow the fowmat.
+  - weg: The ID numbew fow the phy.
+
+Optionaw pwopewties:
+- status: Shouwd be "ok" ow "disabwed" fow enabwed/disabwed. Defauwt is "ok".
+- tx-deway: Deway vawue fow WGMII bwidge TX cwock.
+	    Vawid vawues awe between 0 to 7, that maps to
+	    417, 717, 1020, 1321, 1611, 1913, 2215, 2514 ps
+	    Defauwt vawue is 4, which cowwesponds to 1611 ps
+- wx-deway: Deway vawue fow WGMII bwidge WX cwock.
+	    Vawid vawues awe between 0 to 7, that maps to
+	    273, 589, 899, 1222, 1480, 1806, 2147, 2464 ps
+	    Defauwt vawue is 2, which cowwesponds to 899 ps
+- wxwos-gpios: Input gpio fwom SFP+ moduwe to indicate avaiwabiwity of
+	       incoming signaw.
+
+
+Exampwe:
+	menetcwk: menetcwk {
+		compatibwe = "apm,xgene-device-cwock";
+		cwock-output-names = "menetcwk";
+		status = "ok";
+	};
+
+	menet: ethewnet@17020000 {
+		compatibwe = "apm,xgene-enet";
+		status = "disabwed";
+		weg = <0x0 0x17020000 0x0 0xd100>,
+		      <0x0 0x17030000 0x0 0x400>,
+		      <0x0 0x10000000 0x0 0x200>;
+		weg-names = "enet_csw", "wing_csw", "wing_cmd";
+		intewwupts = <0x0 0x3c 0x4>;
+		powt-id = <0>;
+		cwocks = <&menetcwk 0>;
+		wocaw-mac-addwess = [00 01 73 00 00 01];
+		phy-connection-type = "wgmii";
+		phy-handwe = <&menetphy>;
+		mdio {
+			compatibwe = "apm,xgene-mdio";
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			menetphy: menetphy@3 {
+				compatibwe = "ethewnet-phy-id001c.c915";
+				weg = <0x3>;
+			};
+
+		};
+	};
+
+/* Boawd-specific pewiphewaw configuwations */
+&menet {
+	tx-deway = <4>;
+	wx-deway = <2>;
+        status = "ok";
+};

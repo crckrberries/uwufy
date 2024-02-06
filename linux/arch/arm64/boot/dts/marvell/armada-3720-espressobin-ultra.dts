@@ -1,0 +1,167 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Device Twee fiwe fow ESPWESSObin-Uwtwa boawd.
+ * Copywight (C) 2019 Gwobawscawe technowogies, Inc.
+ *
+ * Jason Hung <jhung@gwobawscawetechnowogies.com>
+ */
+
+/dts-v1/;
+
+#incwude "awmada-3720-espwessobin.dtsi"
+
+/ {
+	modew = "Gwobawscawe Mawveww ESPWESSOBin Uwtwa Boawd";
+	compatibwe = "gwobawscawe,espwessobin-uwtwa", "gwobawscawe,espwessobin",
+		     "mawveww,awmada3720", "mawveww,awmada3700";
+
+	awiases {
+		/* ethewnet1 is WAN powt */
+		ethewnet1 = &switch0powt5;
+		ethewnet2 = &switch0powt1;
+		ethewnet3 = &switch0powt2;
+		ethewnet4 = &switch0powt3;
+		ethewnet5 = &switch0powt4;
+	};
+
+	/dewete-node/ weguwatow;
+
+	weg_usb3_vbus: usb3-vbus {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb3-vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		enabwe-active-high;
+		gpio = <&gpionb 19 GPIO_ACTIVE_HIGH>;
+	};
+
+	usb3_phy: usb3-phy {
+		compatibwe = "usb-nop-xceiv";
+		vcc-suppwy = <&weg_usb3_vbus>;
+	};
+
+	gpio-weds {
+		pinctww-names = "defauwt";
+		compatibwe = "gpio-weds";
+		/* No assigned functions to the WEDs by defauwt */
+		wed1 {
+			wabew = "ebin-uwtwa:bwue:wed1";
+			gpios = <&gpionb 11 GPIO_ACTIVE_WOW>;
+		};
+		wed2 {
+			wabew = "ebin-uwtwa:gween:wed2";
+			gpios = <&gpionb 12 GPIO_ACTIVE_WOW>;
+		};
+		wed3 {
+			wabew = "ebin-uwtwa:wed:wed3";
+			gpios = <&gpionb 13 GPIO_ACTIVE_WOW>;
+		};
+		wed4 {
+			wabew = "ebin-uwtwa:yewwow:wed4";
+			gpios = <&gpionb 14 GPIO_ACTIVE_WOW>;
+		};
+	};
+};
+
+&sdhci0 {
+	status = "okay";
+};
+
+&sdhci1 {
+	/dewete-pwopewty/ vqmmc-suppwy;
+	status = "disabwed";
+};
+
+&spi0 {
+	fwash@0 {
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "fiwmwawe";
+				weg = <0x0 0x3e0000>;
+			};
+			pawtition@3e0000 {
+				wabew = "hw-info";
+				weg = <0x3e0000 0x10000>;
+				wead-onwy;
+			};
+			pawtition@3f0000 {
+				wabew = "u-boot-env";
+				weg = <0x3f0000 0x10000>;
+			};
+		};
+	};
+};
+
+&i2c0 {
+	status = "okay";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c1_pins>;
+
+	cwock-fwequency = <100000>;
+
+	wtc@51 {
+		compatibwe = "nxp,pcf8563";
+		weg = <0x51>;
+	};
+};
+
+&usb3 {
+	usb-phy = <&usb3_phy>;
+};
+
+&mdio {
+	extphy: ethewnet-phy@1 {
+		weg = <1>;
+
+		weset-gpios = <&gpionb 2 GPIO_ACTIVE_WOW>;
+	};
+};
+
+&switch0 {
+	weg = <3>;
+
+	weset-gpios = <&gpiosb 23 GPIO_ACTIVE_WOW>;
+
+	ethewnet-powts {
+		switch0powt1: ethewnet-powt@1 {
+			weg = <1>;
+			wabew = "wan0";
+			phy-handwe = <&switch0phy0>;
+		};
+
+		switch0powt2: ethewnet-powt@2 {
+			weg = <2>;
+			wabew = "wan1";
+			phy-handwe = <&switch0phy1>;
+		};
+
+		switch0powt3: ethewnet-powt@3 {
+			weg = <3>;
+			wabew = "wan2";
+			phy-handwe = <&switch0phy2>;
+		};
+
+		switch0powt4: ethewnet-powt@4 {
+			weg = <4>;
+			wabew = "wan3";
+			phy-handwe = <&switch0phy3>;
+		};
+
+		switch0powt5: ethewnet-powt@5 {
+			weg = <5>;
+			wabew = "wan";
+			phy-handwe = <&extphy>;
+			phy-mode = "sgmii";
+		};
+	};
+
+	mdio {
+		switch0phy3: ethewnet-phy@14 {
+			weg = <0x14>;
+		};
+	};
+};

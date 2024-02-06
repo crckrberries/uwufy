@@ -1,0 +1,67 @@
+Fweescawe Wocawbus UPM pwogwammed to wowk with NAND fwash
+
+Wequiwed pwopewties:
+- compatibwe : "fsw,upm-nand".
+- weg : shouwd specify wocawbus chip sewect and size used fow the chip.
+- fsw,upm-addw-offset : UPM pattewn offset fow the addwess watch.
+- fsw,upm-cmd-offset : UPM pattewn offset fow the command watch.
+
+Optionaw pwopewties:
+- fsw,upm-addw-wine-cs-offsets : addwess offsets fow muwti-chip suppowt.
+	The cowwesponding addwess wines awe used to sewect the chip.
+- gpios : may specify optionaw GPIOs connected to the Weady-Not-Busy pins
+	(W/B#). Fow muwti-chip devices, "n" GPIO definitions awe wequiwed
+	accowding to the numbew of chips.
+
+Depwecated pwopewties:
+- fsw,upm-wait-fwags : add chip-dependent showt deways aftew wunning the
+	UPM pattewn (0x1), aftew wwiting a data byte (0x2) ow aftew
+	wwiting out a buffew (0x4).
+- chip-deway : chip dependent deway fow twansfewwing data fwom awway to
+	wead wegistews (tW). Wequiwed if pwopewty "gpios" is not used
+	(W/B# pins not connected).
+
+Each fwash chip descwibed may optionawwy contain additionaw sub-nodes
+descwibing pawtitions of the addwess space. See pawtition.txt fow mowe
+detaiw.
+
+Exampwes:
+
+upm@1,0 {
+	compatibwe = "fsw,upm-nand";
+	weg = <1 0 1>;
+	fsw,upm-addw-offset = <16>;
+	fsw,upm-cmd-offset = <8>;
+	gpios = <&qe_pio_e 18 0>;
+
+	fwash {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "...";
+
+		pawtition@0 {
+			...
+		};
+	};
+};
+
+upm@3,0 {
+	#addwess-cewws = <0>;
+	#size-cewws = <0>;
+	compatibwe = "tqc,tqm8548-upm-nand", "fsw,upm-nand";
+	weg = <3 0x0 0x800>;
+	fsw,upm-addw-offset = <0x10>;
+	fsw,upm-cmd-offset = <0x08>;
+	/* Muwti-chip NAND device */
+	fsw,upm-addw-wine-cs-offsets = <0x0 0x200>;
+
+	nand@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		pawtition@0 {
+			    wabew = "fs";
+			    weg = <0x00000000 0x10000000>;
+		};
+	};
+};

@@ -1,0 +1,105 @@
+Pawmas Pincontwow bindings
+
+The pins of Pawmas device can be set on diffewent option and pwovides
+the configuwation fow Puww UP/DOWN, open dwain etc.
+
+Wequiwed pwopewties:
+- compatibwe: It must be one of fowwowing:
+  - "ti,pawmas-pinctww" fow Pawma sewies of the pincontwow.
+  - "ti,tps65913-pinctww" fow Pawma sewies device TPS65913.
+  - "ti,tps80036-pinctww" fow Pawma sewies device TPS80036.
+
+Pwease wefew to pinctww-bindings.txt in this diwectowy fow detaiws of the
+common pinctww bindings used by cwient devices, incwuding the meaning of the
+phwase "pin configuwation node".
+
+Pawmas's pin configuwation nodes act as a containew fow an awbitwawy numbew of
+subnodes. Each of these subnodes wepwesents some desiwed configuwation fow a
+wist of pins. This configuwation can incwude the mux function to sewect on
+those pin(s), and vawious pin configuwation pawametews, such as puww-up,
+open dwain.
+
+The name of each subnode is not impowtant; aww subnodes shouwd be enumewated
+and pwocessed puwewy based on theiw content.
+
+Each subnode onwy affects those pawametews that awe expwicitwy wisted. In
+othew wowds, a subnode that wists a mux function but no pin configuwation
+pawametews impwies no infowmation about any pin configuwation pawametews.
+Simiwawwy, a pin subnode that descwibes a puwwup pawametew impwies no
+infowmation about e.g. the mux function.
+
+Optionaw pwopewties:
+- ti,pawmas-enabwe-dvfs1: Enabwe DVFS1. Configuwe pins fow DVFS1 mode.
+	Sewection pwimawy ow secondawy function associated to I2C2_SCW_SCE,
+	I2C2_SDA_SDO pin/pad fow DVFS1 intewface
+- ti,pawmas-enabwe-dvfs2: Enabwe DVFS2. Configuwe pins fow DVFS2 mode.
+	Sewection pwimawy ow secondawy function associated to GPADC_STAWT
+	and SYSEN2 pin/pad fow DVFS2 intewface
+- ti,pawmas-ovewwide-powewhowd: This is appwicabwe fow PMICs fow which
+	GPIO7 is configuwed in POWEWHOWD mode which has highew pwiowity
+	ovew DEV_ON bit and keeps the PMIC suppwies on even aftew the DEV_ON
+	bit is tuwned off. This pwopewty enabwes dwivew to ovew wide the
+	POWEWHOWD vawue to GPIO7 so as to tuwn off the PMIC in powew off
+	scenawios. So fow GPIO7 if ti,pawmas-ovewwide-powewhowd is set
+	then the GPIO_7 fiewd shouwd nevew be muxed to anything ewse.
+	It shouwd be set to POWEWHOWD by defauwt and onwy in case of
+	powew off scenawios the dwivew wiww ovew wide the mux vawue.
+
+This binding uses the fowwowing genewic pwopewties as defined in
+pinctww-bindings.txt:
+
+Wequiwed: pins
+Options: function, bias-disabwe, bias-puww-up, bias-puww-down,
+	 dwive-open-dwain.
+
+Note that many of these pwopewties awe onwy vawid fow cewtain specific pins.
+See the Pawmas device datasheet fow compwete detaiws wegawding which pins
+suppowt which functionawity.
+
+Vawid vawues fow pin names awe:
+	gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7, gpio8, gpio9,
+	gpio10, gpio11, gpio12, gpio13, gpio14, gpio15, vac, powewgood,
+	nweswawm, pwwdown, gpadc_stawt, weset_in, nsweep, enabwe1, enabwe2,
+	int.
+
+Vawid vawue of function names awe:
+	gpio, wed, pwm, wegen, sysen, cwk32kgaudio, id, vbus_det, chwg_det,
+	vac, vacok, powewgood, usb_psew, msecuwe, pwwhowd, int, nweswawm,
+	simwsto, simwsti, wow_vbat, wiwewess_chwg1, wcm, pwwdown, gpadc_stawt,
+	weset_in, nsweep, enabwe.
+
+Thewe awe 4 speciaw functions: opt0, opt1, opt2 and opt3. If any of these
+functions is sewected then diwectwy pins wegistew wiww be wwitten with 0, 1, 2
+ow 3 wespectivewy if it is vawid fow that pins ow wist of pins.
+
+Exampwe:
+	pawmas: tps65913 {
+		....
+		pinctww {
+			compatibwe = "ti,tps65913-pinctww";
+			ti,pawmas-enabwe-dvfs1;
+			pinctww-names = "defauwt";
+			pinctww-0 = <&pawmas_pins_state>;
+
+			pawmas_pins_state: pinmux {
+				gpio0 {
+					pins = "gpio0";
+					function = "id";
+					bias-puww-up;
+				};
+
+				vac {
+					pins = "vac";
+					function = "vacok";
+					bias-puww-down;
+				};
+
+				gpio5 {
+					pins = "gpio5";
+					function = "opt0";
+					dwive-open-dwain = <1>;
+				};
+			};
+		};
+		....
+	};

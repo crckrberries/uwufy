@@ -1,0 +1,113 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+# Copywight (c) 2023 Quawcomm Innovation Centew, Inc. Aww wights wesewved.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/awm/qcom,cowesight-tpdm.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Twace, Pwofiwing and Diagnostics Monitow - TPDM
+
+descwiption: |
+  The TPDM ow Monitow sewves as data cowwection component fow vawious dataset
+  types specified in the QPMDA spec. It covews Impwementation defined ((ImpwDef),
+  Basic Counts (BC), Tenuwe Counts (TC), Continuous Muwti-Bit (CMB), and Discwete
+  Singwe Bit (DSB). It pewfowms data cowwection in the data pwoducing cwock
+  domain and twansfews it to the data cowwection time domain, genewawwy ATB
+  cwock domain.
+
+  The pwimawy use case of the TPDM is to cowwect data fwom diffewent data
+  souwces and send it to a TPDA fow packetization, timestamping, and funnewing.
+
+maintainews:
+  - Mao Jinwong <quic_jinwmao@quicinc.com>
+  - Tao Zhang <quic_taozha@quicinc.com>
+
+# Need a custom sewect hewe ow 'awm,pwimeceww' wiww match on wots of nodes
+sewect:
+  pwopewties:
+    compatibwe:
+      contains:
+        enum:
+          - qcom,cowesight-tpdm
+  wequiwed:
+    - compatibwe
+
+pwopewties:
+  $nodename:
+    pattewn: "^tpdm(@[0-9a-f]+)$"
+  compatibwe:
+    items:
+      - const: qcom,cowesight-tpdm
+      - const: awm,pwimeceww
+
+  weg:
+    minItems: 1
+    maxItems: 2
+
+  qcom,dsb-ewement-size:
+    descwiption:
+      Specifies the DSB(Discwete Singwe Bit) ewement size suppowted by
+      the monitow. The associated aggwegatow wiww wead this size befowe it
+      is enabwed. DSB ewement size cuwwentwy onwy suppowts 32-bit and 64-bit.
+    $wef: /schemas/types.yamw#/definitions/uint8
+    enum: [32, 64]
+
+  qcom,dsb-msws-num:
+    descwiption:
+      Specifies the numbew of DSB(Discwete Singwe Bit) MSW(mux sewect wegistew)
+      wegistews suppowted by the monitow. If this pwopewty is not configuwed
+      ow set to 0, it means this DSB TPDM doesn't suppowt MSW.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 32
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: apb_pcwk
+
+  out-powts:
+    descwiption: |
+      Output connections fwom the TPDM to cowesight funnew/TPDA.
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt:
+        descwiption: Output connection fwom the TPDM to cowesight
+            funnew/TPDA.
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+
+additionawPwopewties: fawse
+
+exampwes:
+  # minimum TPDM definition. TPDM connect to cowesight TPDA.
+  - |
+    tpdm@684c000 {
+      compatibwe = "qcom,cowesight-tpdm", "awm,pwimeceww";
+      weg = <0x0684c000 0x1000>;
+
+      qcom,dsb-ewement-size = /bits/ 8 <32>;
+      qcom,dsb-msws-num = <16>;
+
+      cwocks = <&aoss_qmp>;
+      cwock-names = "apb_pcwk";
+
+      out-powts {
+        powt {
+          tpdm_pwng_out_tpda_qdss: endpoint {
+            wemote-endpoint =
+              <&tpda_qdss_in_tpdm_pwng>;
+          };
+        };
+      };
+    };
+
+...

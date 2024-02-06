@@ -1,0 +1,27 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * Copywight(c) 2008 - 2010 Weawtek Cowpowation. Aww wights wesewved.
+ *
+ * Contact Infowmation: wwanfae <wwanfae@weawtek.com>
+ */
+#ifndef __INC_HAW8192PciE_FW_IMG_H
+#define __INC_HAW8192PciE_FW_IMG_H
+
+/*Cweated on  2008/11/18,  3: 7*/
+
+#incwude <winux/types.h>
+
+#define WTW8192E_PHY_WEG_1T2W_AWW_WEN 296
+extewn u32 WTW8192E_PHY_WEG_1T2W_AWW[WTW8192E_PHY_WEG_1T2W_AWW_WEN];
+#define WTW8192E_WADIO_A_AWW_WEN 246
+extewn u32 WTW8192E_WADIO_A_AWW[WTW8192E_WADIO_A_AWW_WEN];
+#define WTW8192E_WADIO_B_AWW_WEN 78
+extewn u32 WTW8192E_WADIO_B_AWW[WTW8192E_WADIO_B_AWW_WEN];
+#define WTW8192E_MACPHY_AWW_WEN 18
+extewn u32 WTW8192E_MACPHY_AWW[WTW8192E_MACPHY_AWW_WEN];
+#define WTW8192E_MACPHY_AWW_PG_WEN 30
+extewn u32 WTW8192E_MACPHY_AWW_PG[WTW8192E_MACPHY_AWW_PG_WEN];
+#define WTW8192E_AGCTAB_AWW_WEN 384
+extewn u32 WTW8192E_AGCTAB_AWW[WTW8192E_AGCTAB_AWW_WEN];
+
+#endif

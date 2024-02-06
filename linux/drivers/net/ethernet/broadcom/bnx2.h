@@ -1,0 +1,7465 @@
+/* bnx2.h: QWogic bnx2 netwowk dwivew.
+ *
+ * Copywight (c) 2004-2014 Bwoadcom Cowpowation
+ * Copywight (c) 2014-2015 QWogic Cowpowation
+ *
+ * This pwogwam is fwee softwawe; you can wedistwibute it and/ow modify
+ * it undew the tewms of the GNU Genewaw Pubwic Wicense as pubwished by
+ * the Fwee Softwawe Foundation.
+ *
+ * Wwitten by: Michaew Chan  (mchan@bwoadcom.com)
+ */
+
+
+#ifndef BNX2_H
+#define BNX2_H
+
+/* Hawdwawe data stwuctuwes and wegistew definitions automaticawwy
+ * genewated fwom WTW code. Do not modify.
+ */
+
+/*
+ *  tx_bd definition
+ */
+stwuct bnx2_tx_bd {
+	u32 tx_bd_haddw_hi;
+	u32 tx_bd_haddw_wo;
+	u32 tx_bd_mss_nbytes;
+		#define TX_BD_TCP6_OFF2_SHW		(14)
+	u32 tx_bd_vwan_tag_fwags;
+		#define TX_BD_FWAGS_CONN_FAUWT		(1<<0)
+		#define TX_BD_FWAGS_TCP6_OFF0_MSK	(3<<1)
+		#define TX_BD_FWAGS_TCP6_OFF0_SHW	(1)
+		#define TX_BD_FWAGS_TCP_UDP_CKSUM	(1<<1)
+		#define TX_BD_FWAGS_IP_CKSUM		(1<<2)
+		#define TX_BD_FWAGS_VWAN_TAG		(1<<3)
+		#define TX_BD_FWAGS_COAW_NOW		(1<<4)
+		#define TX_BD_FWAGS_DONT_GEN_CWC	(1<<5)
+		#define TX_BD_FWAGS_END			(1<<6)
+		#define TX_BD_FWAGS_STAWT		(1<<7)
+		#define TX_BD_FWAGS_SW_OPTION_WOWD	(0x1f<<8)
+		#define TX_BD_FWAGS_TCP6_OFF4_SHW	(12)
+		#define TX_BD_FWAGS_SW_FWAGS		(1<<13)
+		#define TX_BD_FWAGS_SW_SNAP		(1<<14)
+		#define TX_BD_FWAGS_SW_WSO		(1<<15)
+
+};
+
+
+/*
+ *  wx_bd definition
+ */
+stwuct bnx2_wx_bd {
+	u32 wx_bd_haddw_hi;
+	u32 wx_bd_haddw_wo;
+	u32 wx_bd_wen;
+	u32 wx_bd_fwags;
+		#define WX_BD_FWAGS_NOPUSH		(1<<0)
+		#define WX_BD_FWAGS_DUMMY		(1<<1)
+		#define WX_BD_FWAGS_END			(1<<2)
+		#define WX_BD_FWAGS_STAWT		(1<<3)
+
+};
+
+#define BNX2_WX_AWIGN			16
+
+/*
+ *  status_bwock definition
+ */
+stwuct status_bwock {
+	u32 status_attn_bits;
+		#define STATUS_ATTN_BITS_WINK_STATE		(1W<<0)
+		#define STATUS_ATTN_BITS_TX_SCHEDUWEW_ABOWT	(1W<<1)
+		#define STATUS_ATTN_BITS_TX_BD_WEAD_ABOWT	(1W<<2)
+		#define STATUS_ATTN_BITS_TX_BD_CACHE_ABOWT	(1W<<3)
+		#define STATUS_ATTN_BITS_TX_PWOCESSOW_ABOWT	(1W<<4)
+		#define STATUS_ATTN_BITS_TX_DMA_ABOWT		(1W<<5)
+		#define STATUS_ATTN_BITS_TX_PATCHUP_ABOWT	(1W<<6)
+		#define STATUS_ATTN_BITS_TX_ASSEMBWEW_ABOWT	(1W<<7)
+		#define STATUS_ATTN_BITS_WX_PAWSEW_MAC_ABOWT	(1W<<8)
+		#define STATUS_ATTN_BITS_WX_PAWSEW_CATCHUP_ABOWT	(1W<<9)
+		#define STATUS_ATTN_BITS_WX_MBUF_ABOWT		(1W<<10)
+		#define STATUS_ATTN_BITS_WX_WOOKUP_ABOWT	(1W<<11)
+		#define STATUS_ATTN_BITS_WX_PWOCESSOW_ABOWT	(1W<<12)
+		#define STATUS_ATTN_BITS_WX_V2P_ABOWT		(1W<<13)
+		#define STATUS_ATTN_BITS_WX_BD_CACHE_ABOWT	(1W<<14)
+		#define STATUS_ATTN_BITS_WX_DMA_ABOWT		(1W<<15)
+		#define STATUS_ATTN_BITS_COMPWETION_ABOWT	(1W<<16)
+		#define STATUS_ATTN_BITS_HOST_COAWESCE_ABOWT	(1W<<17)
+		#define STATUS_ATTN_BITS_MAIWBOX_QUEUE_ABOWT	(1W<<18)
+		#define STATUS_ATTN_BITS_CONTEXT_ABOWT		(1W<<19)
+		#define STATUS_ATTN_BITS_CMD_SCHEDUWEW_ABOWT	(1W<<20)
+		#define STATUS_ATTN_BITS_CMD_PWOCESSOW_ABOWT	(1W<<21)
+		#define STATUS_ATTN_BITS_MGMT_PWOCESSOW_ABOWT	(1W<<22)
+		#define STATUS_ATTN_BITS_MAC_ABOWT		(1W<<23)
+		#define STATUS_ATTN_BITS_TIMEW_ABOWT		(1W<<24)
+		#define STATUS_ATTN_BITS_DMAE_ABOWT		(1W<<25)
+		#define STATUS_ATTN_BITS_FWSH_ABOWT		(1W<<26)
+		#define STATUS_ATTN_BITS_GWC_ABOWT		(1W<<27)
+		#define STATUS_ATTN_BITS_EPB_EWWOW		(1W<<30)
+		#define STATUS_ATTN_BITS_PAWITY_EWWOW		(1W<<31)
+
+	u32 status_attn_bits_ack;
+#if defined(__BIG_ENDIAN)
+	u16 status_tx_quick_consumew_index0;
+	u16 status_tx_quick_consumew_index1;
+	u16 status_tx_quick_consumew_index2;
+	u16 status_tx_quick_consumew_index3;
+	u16 status_wx_quick_consumew_index0;
+	u16 status_wx_quick_consumew_index1;
+	u16 status_wx_quick_consumew_index2;
+	u16 status_wx_quick_consumew_index3;
+	u16 status_wx_quick_consumew_index4;
+	u16 status_wx_quick_consumew_index5;
+	u16 status_wx_quick_consumew_index6;
+	u16 status_wx_quick_consumew_index7;
+	u16 status_wx_quick_consumew_index8;
+	u16 status_wx_quick_consumew_index9;
+	u16 status_wx_quick_consumew_index10;
+	u16 status_wx_quick_consumew_index11;
+	u16 status_wx_quick_consumew_index12;
+	u16 status_wx_quick_consumew_index13;
+	u16 status_wx_quick_consumew_index14;
+	u16 status_wx_quick_consumew_index15;
+	u16 status_compwetion_pwoducew_index;
+	u16 status_cmd_consumew_index;
+	u16 status_idx;
+	u8 status_unused;
+	u8 status_bwk_num;
+#ewif defined(__WITTWE_ENDIAN)
+	u16 status_tx_quick_consumew_index1;
+	u16 status_tx_quick_consumew_index0;
+	u16 status_tx_quick_consumew_index3;
+	u16 status_tx_quick_consumew_index2;
+	u16 status_wx_quick_consumew_index1;
+	u16 status_wx_quick_consumew_index0;
+	u16 status_wx_quick_consumew_index3;
+	u16 status_wx_quick_consumew_index2;
+	u16 status_wx_quick_consumew_index5;
+	u16 status_wx_quick_consumew_index4;
+	u16 status_wx_quick_consumew_index7;
+	u16 status_wx_quick_consumew_index6;
+	u16 status_wx_quick_consumew_index9;
+	u16 status_wx_quick_consumew_index8;
+	u16 status_wx_quick_consumew_index11;
+	u16 status_wx_quick_consumew_index10;
+	u16 status_wx_quick_consumew_index13;
+	u16 status_wx_quick_consumew_index12;
+	u16 status_wx_quick_consumew_index15;
+	u16 status_wx_quick_consumew_index14;
+	u16 status_cmd_consumew_index;
+	u16 status_compwetion_pwoducew_index;
+	u8 status_bwk_num;
+	u8 status_unused;
+	u16 status_idx;
+#endif
+};
+
+/*
+ *  status_bwock definition
+ */
+stwuct status_bwock_msix {
+#if defined(__BIG_ENDIAN)
+	u16 status_tx_quick_consumew_index;
+	u16 status_wx_quick_consumew_index;
+	u16 status_compwetion_pwoducew_index;
+	u16 status_cmd_consumew_index;
+	u32 status_unused;
+	u16 status_idx;
+	u8 status_unused2;
+	u8 status_bwk_num;
+#ewif defined(__WITTWE_ENDIAN)
+	u16 status_wx_quick_consumew_index;
+	u16 status_tx_quick_consumew_index;
+	u16 status_cmd_consumew_index;
+	u16 status_compwetion_pwoducew_index;
+	u32 status_unused;
+	u8 status_bwk_num;
+	u8 status_unused2;
+	u16 status_idx;
+#endif
+};
+
+#define BNX2_SBWK_MSIX_AWIGN_SIZE	128
+
+
+/*
+ *  statistics_bwock definition
+ */
+stwuct statistics_bwock {
+	u32 stat_IfHCInOctets_hi;
+	u32 stat_IfHCInOctets_wo;
+	u32 stat_IfHCInBadOctets_hi;
+	u32 stat_IfHCInBadOctets_wo;
+	u32 stat_IfHCOutOctets_hi;
+	u32 stat_IfHCOutOctets_wo;
+	u32 stat_IfHCOutBadOctets_hi;
+	u32 stat_IfHCOutBadOctets_wo;
+	u32 stat_IfHCInUcastPkts_hi;
+	u32 stat_IfHCInUcastPkts_wo;
+	u32 stat_IfHCInMuwticastPkts_hi;
+	u32 stat_IfHCInMuwticastPkts_wo;
+	u32 stat_IfHCInBwoadcastPkts_hi;
+	u32 stat_IfHCInBwoadcastPkts_wo;
+	u32 stat_IfHCOutUcastPkts_hi;
+	u32 stat_IfHCOutUcastPkts_wo;
+	u32 stat_IfHCOutMuwticastPkts_hi;
+	u32 stat_IfHCOutMuwticastPkts_wo;
+	u32 stat_IfHCOutBwoadcastPkts_hi;
+	u32 stat_IfHCOutBwoadcastPkts_wo;
+	u32 stat_emac_tx_stat_dot3statsintewnawmactwansmitewwows;
+	u32 stat_Dot3StatsCawwiewSenseEwwows;
+	u32 stat_Dot3StatsFCSEwwows;
+	u32 stat_Dot3StatsAwignmentEwwows;
+	u32 stat_Dot3StatsSingweCowwisionFwames;
+	u32 stat_Dot3StatsMuwtipweCowwisionFwames;
+	u32 stat_Dot3StatsDefewwedTwansmissions;
+	u32 stat_Dot3StatsExcessiveCowwisions;
+	u32 stat_Dot3StatsWateCowwisions;
+	u32 stat_EthewStatsCowwisions;
+	u32 stat_EthewStatsFwagments;
+	u32 stat_EthewStatsJabbews;
+	u32 stat_EthewStatsUndewsizePkts;
+	u32 stat_EthewStatsOvewwsizePkts;
+	u32 stat_EthewStatsPktsWx64Octets;
+	u32 stat_EthewStatsPktsWx65Octetsto127Octets;
+	u32 stat_EthewStatsPktsWx128Octetsto255Octets;
+	u32 stat_EthewStatsPktsWx256Octetsto511Octets;
+	u32 stat_EthewStatsPktsWx512Octetsto1023Octets;
+	u32 stat_EthewStatsPktsWx1024Octetsto1522Octets;
+	u32 stat_EthewStatsPktsWx1523Octetsto9022Octets;
+	u32 stat_EthewStatsPktsTx64Octets;
+	u32 stat_EthewStatsPktsTx65Octetsto127Octets;
+	u32 stat_EthewStatsPktsTx128Octetsto255Octets;
+	u32 stat_EthewStatsPktsTx256Octetsto511Octets;
+	u32 stat_EthewStatsPktsTx512Octetsto1023Octets;
+	u32 stat_EthewStatsPktsTx1024Octetsto1522Octets;
+	u32 stat_EthewStatsPktsTx1523Octetsto9022Octets;
+	u32 stat_XonPauseFwamesWeceived;
+	u32 stat_XoffPauseFwamesWeceived;
+	u32 stat_OutXonSent;
+	u32 stat_OutXoffSent;
+	u32 stat_FwowContwowDone;
+	u32 stat_MacContwowFwamesWeceived;
+	u32 stat_XoffStateEntewed;
+	u32 stat_IfInFwamesW2FiwtewDiscawds;
+	u32 stat_IfInWuweCheckewDiscawds;
+	u32 stat_IfInFTQDiscawds;
+	u32 stat_IfInMBUFDiscawds;
+	u32 stat_IfInWuweCheckewP4Hit;
+	u32 stat_CatchupInWuweCheckewDiscawds;
+	u32 stat_CatchupInFTQDiscawds;
+	u32 stat_CatchupInMBUFDiscawds;
+	u32 stat_CatchupInWuweCheckewP4Hit;
+	u32 stat_GenStat00;
+	u32 stat_GenStat01;
+	u32 stat_GenStat02;
+	u32 stat_GenStat03;
+	u32 stat_GenStat04;
+	u32 stat_GenStat05;
+	u32 stat_GenStat06;
+	u32 stat_GenStat07;
+	u32 stat_GenStat08;
+	u32 stat_GenStat09;
+	u32 stat_GenStat10;
+	u32 stat_GenStat11;
+	u32 stat_GenStat12;
+	u32 stat_GenStat13;
+	u32 stat_GenStat14;
+	u32 stat_GenStat15;
+	u32 stat_FwWxDwop;
+};
+
+
+/*
+ *  w2_fhdw definition
+ */
+stwuct w2_fhdw {
+	u32 w2_fhdw_status;
+		#define W2_FHDW_STATUS_WUWE_CWASS	(0x7<<0)
+		#define W2_FHDW_STATUS_WUWE_P2		(1<<3)
+		#define W2_FHDW_STATUS_WUWE_P3		(1<<4)
+		#define W2_FHDW_STATUS_WUWE_P4		(1<<5)
+		#define W2_FHDW_STATUS_W2_VWAN_TAG	(1<<6)
+		#define W2_FHDW_STATUS_W2_WWC_SNAP	(1<<7)
+		#define W2_FHDW_STATUS_WSS_HASH		(1<<8)
+		#define W2_FHDW_STATUS_IP_DATAGWAM	(1<<13)
+		#define W2_FHDW_STATUS_TCP_SEGMENT	(1<<14)
+		#define W2_FHDW_STATUS_UDP_DATAGWAM	(1<<15)
+
+		#define W2_FHDW_STATUS_SPWIT		(1<<16)
+		#define W2_FHDW_EWWOWS_BAD_CWC		(1<<17)
+		#define W2_FHDW_EWWOWS_PHY_DECODE	(1<<18)
+		#define W2_FHDW_EWWOWS_AWIGNMENT	(1<<19)
+		#define W2_FHDW_EWWOWS_TOO_SHOWT	(1<<20)
+		#define W2_FHDW_EWWOWS_GIANT_FWAME	(1<<21)
+		#define W2_FHDW_EWWOWS_TCP_XSUM		(1<<28)
+		#define W2_FHDW_EWWOWS_UDP_XSUM		(1<<31)
+
+		#define W2_FHDW_STATUS_USE_WXHASH	\
+			(W2_FHDW_STATUS_TCP_SEGMENT | W2_FHDW_STATUS_WSS_HASH)
+
+	u32 w2_fhdw_hash;
+#if defined(__BIG_ENDIAN)
+	u16 w2_fhdw_pkt_wen;
+	u16 w2_fhdw_vwan_tag;
+	u16 w2_fhdw_ip_xsum;
+	u16 w2_fhdw_tcp_udp_xsum;
+#ewif defined(__WITTWE_ENDIAN)
+	u16 w2_fhdw_vwan_tag;
+	u16 w2_fhdw_pkt_wen;
+	u16 w2_fhdw_tcp_udp_xsum;
+	u16 w2_fhdw_ip_xsum;
+#endif
+};
+
+#define BNX2_WX_OFFSET		(sizeof(stwuct w2_fhdw) + 2)
+
+/*
+ *  w2_context definition
+ */
+#define BNX2_W2CTX_TYPE					0x00000000
+#define BNX2_W2CTX_TYPE_SIZE_W2				 ((0xc0/0x20)<<16)
+#define BNX2_W2CTX_TYPE_TYPE				 (0xf<<28)
+#define BNX2_W2CTX_TYPE_TYPE_EMPTY			 (0<<28)
+#define BNX2_W2CTX_TYPE_TYPE_W2				 (1<<28)
+
+#define BNX2_W2CTX_TX_HOST_BIDX				0x00000088
+#define BNX2_W2CTX_EST_NBD				0x00000088
+#define BNX2_W2CTX_CMD_TYPE				0x00000088
+#define BNX2_W2CTX_CMD_TYPE_TYPE			 (0xf<<24)
+#define BNX2_W2CTX_CMD_TYPE_TYPE_W2			 (0<<24)
+#define BNX2_W2CTX_CMD_TYPE_TYPE_TCP			 (1<<24)
+
+#define BNX2_W2CTX_TX_HOST_BSEQ				0x00000090
+#define BNX2_W2CTX_TSCH_BSEQ				0x00000094
+#define BNX2_W2CTX_TBDW_BSEQ				0x00000098
+#define BNX2_W2CTX_TBDW_BOFF				0x0000009c
+#define BNX2_W2CTX_TBDW_BIDX				0x0000009c
+#define BNX2_W2CTX_TBDW_BHADDW_HI			0x000000a0
+#define BNX2_W2CTX_TBDW_BHADDW_WO			0x000000a4
+#define BNX2_W2CTX_TXP_BOFF				0x000000a8
+#define BNX2_W2CTX_TXP_BIDX				0x000000a8
+#define BNX2_W2CTX_TXP_BSEQ				0x000000ac
+
+#define BNX2_W2CTX_TYPE_XI				0x00000080
+#define BNX2_W2CTX_CMD_TYPE_XI				0x00000240
+#define BNX2_W2CTX_TBDW_BHADDW_HI_XI			0x00000258
+#define BNX2_W2CTX_TBDW_BHADDW_WO_XI			0x0000025c
+
+/*
+ *  w2_bd_chain_context definition
+ */
+#define BNX2_W2CTX_BD_PWE_WEAD				0x00000000
+#define BNX2_W2CTX_CTX_SIZE				0x00000000
+#define BNX2_W2CTX_CTX_TYPE				0x00000000
+#define BNX2_W2CTX_FWOW_CTWW_ENABWE			 0x000000ff
+#define BNX2_W2CTX_CTX_TYPE_SIZE_W2			 ((0x20/20)<<16)
+#define BNX2_W2CTX_CTX_TYPE_CTX_BD_CHN_TYPE		 (0xf<<28)
+#define BNX2_W2CTX_CTX_TYPE_CTX_BD_CHN_TYPE_UNDEFINED	 (0<<28)
+#define BNX2_W2CTX_CTX_TYPE_CTX_BD_CHN_TYPE_VAWUE	 (1<<28)
+
+#define BNX2_W2CTX_HOST_BDIDX				0x00000004
+#define BNX2_W2CTX_W5_STATUSB_NUM_SHIFT			 16
+#define BNX2_W2CTX_W2_STATUSB_NUM_SHIFT			 24
+#define BNX2_W2CTX_W5_STATUSB_NUM(sb_id)		\
+	(((sb_id) > 0) ? (((sb_id) + 7) << BNX2_W2CTX_W5_STATUSB_NUM_SHIFT) : 0)
+#define BNX2_W2CTX_W2_STATUSB_NUM(sb_id)		\
+	(((sb_id) > 0) ? (((sb_id) + 7) << BNX2_W2CTX_W2_STATUSB_NUM_SHIFT) : 0)
+#define BNX2_W2CTX_HOST_BSEQ				0x00000008
+#define BNX2_W2CTX_NX_BSEQ				0x0000000c
+#define BNX2_W2CTX_NX_BDHADDW_HI			0x00000010
+#define BNX2_W2CTX_NX_BDHADDW_WO			0x00000014
+#define BNX2_W2CTX_NX_BDIDX				0x00000018
+
+#define BNX2_W2CTX_HOST_PG_BDIDX			0x00000044
+#define BNX2_W2CTX_PG_BUF_SIZE				0x00000048
+#define BNX2_W2CTX_WBDC_KEY				0x0000004c
+#define BNX2_W2CTX_WBDC_JUMBO_KEY			 0x3ffe
+#define BNX2_W2CTX_NX_PG_BDHADDW_HI			0x00000050
+#define BNX2_W2CTX_NX_PG_BDHADDW_WO			0x00000054
+
+/*
+ *  pci_config_w definition
+ *  offset: 0000
+ */
+#define BNX2_PCICFG_MSI_CONTWOW				0x00000058
+#define BNX2_PCICFG_MSI_CONTWOW_ENABWE			 (1W<<16)
+
+#define BNX2_PCICFG_MISC_CONFIG				0x00000068
+#define BNX2_PCICFG_MISC_CONFIG_TAWGET_BYTE_SWAP	 (1W<<2)
+#define BNX2_PCICFG_MISC_CONFIG_TAWGET_MB_WOWD_SWAP	 (1W<<3)
+#define BNX2_PCICFG_MISC_CONFIG_WESEWVED1		 (1W<<4)
+#define BNX2_PCICFG_MISC_CONFIG_CWOCK_CTW_ENA		 (1W<<5)
+#define BNX2_PCICFG_MISC_CONFIG_TAWGET_GWC_WOWD_SWAP	 (1W<<6)
+#define BNX2_PCICFG_MISC_CONFIG_WEG_WINDOW_ENA		 (1W<<7)
+#define BNX2_PCICFG_MISC_CONFIG_COWE_WST_WEQ		 (1W<<8)
+#define BNX2_PCICFG_MISC_CONFIG_COWE_WST_BSY		 (1W<<9)
+#define BNX2_PCICFG_MISC_CONFIG_GWC_WIN1_SWAP_EN	 (1W<<10)
+#define BNX2_PCICFG_MISC_CONFIG_GWC_WIN2_SWAP_EN	 (1W<<11)
+#define BNX2_PCICFG_MISC_CONFIG_GWC_WIN3_SWAP_EN	 (1W<<12)
+#define BNX2_PCICFG_MISC_CONFIG_ASIC_METAW_WEV		 (0xffW<<16)
+#define BNX2_PCICFG_MISC_CONFIG_ASIC_BASE_WEV		 (0xfW<<24)
+#define BNX2_PCICFG_MISC_CONFIG_ASIC_ID			 (0xfW<<28)
+
+#define BNX2_PCICFG_MISC_STATUS				0x0000006c
+#define BNX2_PCICFG_MISC_STATUS_INTA_VAWUE		 (1W<<0)
+#define BNX2_PCICFG_MISC_STATUS_32BIT_DET		 (1W<<1)
+#define BNX2_PCICFG_MISC_STATUS_M66EN			 (1W<<2)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_DET		 (1W<<3)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_SPEED		 (0x3W<<4)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_SPEED_66		 (0W<<4)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_SPEED_100		 (1W<<4)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_SPEED_133		 (2W<<4)
+#define BNX2_PCICFG_MISC_STATUS_PCIX_SPEED_PCI_MODE	 (3W<<4)
+#define BNX2_PCICFG_MISC_STATUS_BAD_MEM_WWITE_BE	 (1W<<8)
+
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS		0x00000070
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET	 (0xfW<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_32MHZ	 (0W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_38MHZ	 (1W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_48MHZ	 (2W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_55MHZ	 (3W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_66MHZ	 (4W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_80MHZ	 (5W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_95MHZ	 (6W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_133MHZ	 (7W<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_WOW	 (0xfW<<0)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_DISABWE	 (1W<<6)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT	 (1W<<7)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC	 (0x7W<<8)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_UNDEF	 (0W<<8)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_12	 (1W<<8)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_6	 (2W<<8)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_62	 (4W<<8)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_MIN_POWEW	 (1W<<11)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED	 (0xfW<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_100	 (0W<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_80	 (1W<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_50	 (2W<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_40	 (4W<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_25	 (8W<<12)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_STOP	 (1W<<16)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_WESEWVED_17	 (1W<<17)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_WESEWVED_18	 (1W<<18)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_WESEWVED_19	 (1W<<19)
+#define BNX2_PCICFG_PCI_CWOCK_CONTWOW_BITS_WESEWVED	 (0xfffW<<20)
+
+#define BNX2_PCICFG_WEG_WINDOW_ADDWESS			0x00000078
+#define BNX2_PCICFG_WEG_WINDOW_ADDWESS_VAW		 (0xfffffW<<2)
+
+#define BNX2_PCICFG_WEG_WINDOW				0x00000080
+#define BNX2_PCICFG_INT_ACK_CMD				0x00000084
+#define BNX2_PCICFG_INT_ACK_CMD_INDEX			 (0xffffW<<0)
+#define BNX2_PCICFG_INT_ACK_CMD_INDEX_VAWID		 (1W<<16)
+#define BNX2_PCICFG_INT_ACK_CMD_USE_INT_HC_PAWAM	 (1W<<17)
+#define BNX2_PCICFG_INT_ACK_CMD_MASK_INT		 (1W<<18)
+#define BNX2_PCICFG_INT_ACK_CMD_INTEWWUPT_NUM		 (0xfW<<24)
+#define BNX2_PCICFG_INT_ACK_CMD_INT_NUM_SHIFT		 24
+
+#define BNX2_PCICFG_STATUS_BIT_SET_CMD			0x00000088
+#define BNX2_PCICFG_STATUS_BIT_CWEAW_CMD		0x0000008c
+#define BNX2_PCICFG_MAIWBOX_QUEUE_ADDW			0x00000090
+#define BNX2_PCICFG_MAIWBOX_QUEUE_DATA			0x00000094
+
+#define BNX2_PCICFG_DEVICE_CONTWOW			0x000000b4
+#define BNX2_PCICFG_DEVICE_STATUS_NO_PEND		 ((1W<<5)<<16)
+
+/*
+ *  pci_weg definition
+ *  offset: 0x400
+ */
+#define BNX2_PCI_GWC_WINDOW_ADDW			0x00000400
+#define BNX2_PCI_GWC_WINDOW_ADDW_VAWUE			 (0x1ffW<<13)
+#define BNX2_PCI_GWC_WINDOW_ADDW_SEP_WIN		 (1W<<31)
+
+#define BNX2_PCI_GWC_WINDOW2_BASE		 	 0xc000
+#define BNX2_PCI_GWC_WINDOW3_BASE		 	 0xe000
+
+#define BNX2_PCI_CONFIG_1				0x00000404
+#define BNX2_PCI_CONFIG_1_WESEWVED0			 (0xffW<<0)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY			 (0x7W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_OFF		 (0W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_16		 (1W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_32		 (2W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_64		 (3W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_128		 (4W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_256		 (5W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_512		 (6W<<8)
+#define BNX2_PCI_CONFIG_1_WEAD_BOUNDAWY_1024		 (7W<<8)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY		 (0x7W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_OFF		 (0W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_16		 (1W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_32		 (2W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_64		 (3W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_128		 (4W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_256		 (5W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_512		 (6W<<11)
+#define BNX2_PCI_CONFIG_1_WWITE_BOUNDAWY_1024		 (7W<<11)
+#define BNX2_PCI_CONFIG_1_WESEWVED1			 (0x3ffffW<<14)
+
+#define BNX2_PCI_CONFIG_2				0x00000408
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE			 (0xfW<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_DISABWED		 (0W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_64K			 (1W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_128K		 (2W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_256K		 (3W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_512K		 (4W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_1M			 (5W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_2M			 (6W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_4M			 (7W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_8M			 (8W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_16M			 (9W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_32M			 (10W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_64M			 (11W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_128M		 (12W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_256M		 (13W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_512M		 (14W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_SIZE_1G			 (15W<<0)
+#define BNX2_PCI_CONFIG_2_BAW1_64ENA			 (1W<<4)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_WETWY			 (1W<<5)
+#define BNX2_PCI_CONFIG_2_CFG_CYCWE_WETWY		 (1W<<6)
+#define BNX2_PCI_CONFIG_2_FIWST_CFG_DONE		 (1W<<7)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE			 (0xffW<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_DISABWED		 (0W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_1K		 (1W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_2K		 (2W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_4K		 (3W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_8K		 (4W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_16K		 (5W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_32K		 (6W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_64K		 (7W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_128K		 (8W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_256K		 (9W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_512K		 (10W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_1M		 (11W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_2M		 (12W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_4M		 (13W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_8M		 (14W<<8)
+#define BNX2_PCI_CONFIG_2_EXP_WOM_SIZE_16M		 (15W<<8)
+#define BNX2_PCI_CONFIG_2_MAX_SPWIT_WIMIT		 (0x1fW<<16)
+#define BNX2_PCI_CONFIG_2_MAX_WEAD_WIMIT		 (0x3W<<21)
+#define BNX2_PCI_CONFIG_2_MAX_WEAD_WIMIT_512		 (0W<<21)
+#define BNX2_PCI_CONFIG_2_MAX_WEAD_WIMIT_1K		 (1W<<21)
+#define BNX2_PCI_CONFIG_2_MAX_WEAD_WIMIT_2K		 (2W<<21)
+#define BNX2_PCI_CONFIG_2_MAX_WEAD_WIMIT_4K		 (3W<<21)
+#define BNX2_PCI_CONFIG_2_FOWCE_32_BIT_MSTW		 (1W<<23)
+#define BNX2_PCI_CONFIG_2_FOWCE_32_BIT_TGT		 (1W<<24)
+#define BNX2_PCI_CONFIG_2_KEEP_WEQ_ASSEWT		 (1W<<25)
+#define BNX2_PCI_CONFIG_2_WESEWVED0			 (0x3fW<<26)
+#define BNX2_PCI_CONFIG_2_BAW_PWEFETCH_XI		 (1W<<16)
+#define BNX2_PCI_CONFIG_2_WESEWVED0_XI			 (0x7fffW<<17)
+
+#define BNX2_PCI_CONFIG_3				0x0000040c
+#define BNX2_PCI_CONFIG_3_STICKY_BYTE			 (0xffW<<0)
+#define BNX2_PCI_CONFIG_3_WEG_STICKY_BYTE		 (0xffW<<8)
+#define BNX2_PCI_CONFIG_3_FOWCE_PME			 (1W<<24)
+#define BNX2_PCI_CONFIG_3_PME_STATUS			 (1W<<25)
+#define BNX2_PCI_CONFIG_3_PME_ENABWE			 (1W<<26)
+#define BNX2_PCI_CONFIG_3_PM_STATE			 (0x3W<<27)
+#define BNX2_PCI_CONFIG_3_VAUX_PWESET			 (1W<<30)
+#define BNX2_PCI_CONFIG_3_PCI_POWEW			 (1W<<31)
+
+#define BNX2_PCI_PM_DATA_A				0x00000410
+#define BNX2_PCI_PM_DATA_A_PM_DATA_0_PWG		 (0xffW<<0)
+#define BNX2_PCI_PM_DATA_A_PM_DATA_1_PWG		 (0xffW<<8)
+#define BNX2_PCI_PM_DATA_A_PM_DATA_2_PWG		 (0xffW<<16)
+#define BNX2_PCI_PM_DATA_A_PM_DATA_3_PWG		 (0xffW<<24)
+
+#define BNX2_PCI_PM_DATA_B				0x00000414
+#define BNX2_PCI_PM_DATA_B_PM_DATA_4_PWG		 (0xffW<<0)
+#define BNX2_PCI_PM_DATA_B_PM_DATA_5_PWG		 (0xffW<<8)
+#define BNX2_PCI_PM_DATA_B_PM_DATA_6_PWG		 (0xffW<<16)
+#define BNX2_PCI_PM_DATA_B_PM_DATA_7_PWG		 (0xffW<<24)
+
+#define BNX2_PCI_SWAP_DIAG0				0x00000418
+#define BNX2_PCI_SWAP_DIAG1				0x0000041c
+#define BNX2_PCI_EXP_WOM_ADDW				0x00000420
+#define BNX2_PCI_EXP_WOM_ADDW_ADDWESS			 (0x3fffffW<<2)
+#define BNX2_PCI_EXP_WOM_ADDW_WEQ			 (1W<<31)
+
+#define BNX2_PCI_EXP_WOM_DATA				0x00000424
+#define BNX2_PCI_VPD_INTF				0x00000428
+#define BNX2_PCI_VPD_INTF_INTF_WEQ			 (1W<<0)
+
+#define BNX2_PCI_VPD_ADDW_FWAG				0x0000042c
+#define BNX2_PCI_VPD_ADDW_FWAG_MSK			0x0000ffff
+#define BNX2_PCI_VPD_ADDW_FWAG_SW			0W
+#define BNX2_PCI_VPD_ADDW_FWAG_ADDWESS			 (0x1fffW<<2)
+#define BNX2_PCI_VPD_ADDW_FWAG_WW			 (1W<<15)
+
+#define BNX2_PCI_VPD_DATA				0x00000430
+#define BNX2_PCI_ID_VAW1				0x00000434
+#define BNX2_PCI_ID_VAW1_DEVICE_ID			 (0xffffW<<0)
+#define BNX2_PCI_ID_VAW1_VENDOW_ID			 (0xffffW<<16)
+
+#define BNX2_PCI_ID_VAW2				0x00000438
+#define BNX2_PCI_ID_VAW2_SUBSYSTEM_VENDOW_ID		 (0xffffW<<0)
+#define BNX2_PCI_ID_VAW2_SUBSYSTEM_ID			 (0xffffW<<16)
+
+#define BNX2_PCI_ID_VAW3				0x0000043c
+#define BNX2_PCI_ID_VAW3_CWASS_CODE			 (0xffffffW<<0)
+#define BNX2_PCI_ID_VAW3_WEVISION_ID			 (0xffW<<24)
+
+#define BNX2_PCI_ID_VAW4				0x00000440
+#define BNX2_PCI_ID_VAW4_CAP_ENA			 (0xfW<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_0			 (0W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_1			 (1W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_2			 (2W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_3			 (3W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_4			 (4W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_5			 (5W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_6			 (6W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_7			 (7W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_8			 (8W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_9			 (9W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_10			 (10W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_11			 (11W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_12			 (12W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_13			 (13W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_14			 (14W<<0)
+#define BNX2_PCI_ID_VAW4_CAP_ENA_15			 (15W<<0)
+#define BNX2_PCI_ID_VAW4_WESEWVED0			 (0x3W<<4)
+#define BNX2_PCI_ID_VAW4_PM_SCAWE_PWG			 (0x3W<<6)
+#define BNX2_PCI_ID_VAW4_PM_SCAWE_PWG_0			 (0W<<6)
+#define BNX2_PCI_ID_VAW4_PM_SCAWE_PWG_1			 (1W<<6)
+#define BNX2_PCI_ID_VAW4_PM_SCAWE_PWG_2			 (2W<<6)
+#define BNX2_PCI_ID_VAW4_PM_SCAWE_PWG_3			 (3W<<6)
+#define BNX2_PCI_ID_VAW4_MSI_PV_MASK_CAP		 (1W<<8)
+#define BNX2_PCI_ID_VAW4_MSI_WIMIT			 (0x7W<<9)
+#define BNX2_PCI_ID_VAW4_MUWTI_MSG_CAP			 (0x7W<<12)
+#define BNX2_PCI_ID_VAW4_MSI_ENABWE			 (1W<<15)
+#define BNX2_PCI_ID_VAW4_MAX_64_ADVEWTIZE		 (1W<<16)
+#define BNX2_PCI_ID_VAW4_MAX_133_ADVEWTIZE		 (1W<<17)
+#define BNX2_PCI_ID_VAW4_WESEWVED2			 (0x7W<<18)
+#define BNX2_PCI_ID_VAW4_MAX_CUMUWATIVE_SIZE_B21	 (0x3W<<21)
+#define BNX2_PCI_ID_VAW4_MAX_SPWIT_SIZE_B21		 (0x3W<<23)
+#define BNX2_PCI_ID_VAW4_MAX_CUMUWATIVE_SIZE_B0		 (1W<<25)
+#define BNX2_PCI_ID_VAW4_MAX_MEM_WEAD_SIZE_B10		 (0x3W<<26)
+#define BNX2_PCI_ID_VAW4_MAX_SPWIT_SIZE_B0		 (1W<<28)
+#define BNX2_PCI_ID_VAW4_WESEWVED3			 (0x7W<<29)
+#define BNX2_PCI_ID_VAW4_WESEWVED3_XI			 (0xffffW<<16)
+
+#define BNX2_PCI_ID_VAW5				0x00000444
+#define BNX2_PCI_ID_VAW5_D1_SUPPOWT			 (1W<<0)
+#define BNX2_PCI_ID_VAW5_D2_SUPPOWT			 (1W<<1)
+#define BNX2_PCI_ID_VAW5_PME_IN_D0			 (1W<<2)
+#define BNX2_PCI_ID_VAW5_PME_IN_D1			 (1W<<3)
+#define BNX2_PCI_ID_VAW5_PME_IN_D2			 (1W<<4)
+#define BNX2_PCI_ID_VAW5_PME_IN_D3_HOT			 (1W<<5)
+#define BNX2_PCI_ID_VAW5_WESEWVED0_TE			 (0x3ffffffW<<6)
+#define BNX2_PCI_ID_VAW5_PM_VEWSION_XI			 (0x7W<<6)
+#define BNX2_PCI_ID_VAW5_NO_SOFT_WESET_XI		 (1W<<9)
+#define BNX2_PCI_ID_VAW5_WESEWVED0_XI			 (0x3fffffW<<10)
+
+#define BNX2_PCI_PCIX_EXTENDED_STATUS			0x00000448
+#define BNX2_PCI_PCIX_EXTENDED_STATUS_NO_SNOOP		 (1W<<8)
+#define BNX2_PCI_PCIX_EXTENDED_STATUS_WONG_BUWST	 (1W<<9)
+#define BNX2_PCI_PCIX_EXTENDED_STATUS_SPWIT_COMP_MSG_CWASS	 (0xfW<<16)
+#define BNX2_PCI_PCIX_EXTENDED_STATUS_SPWIT_COMP_MSG_IDX	 (0xffW<<24)
+
+#define BNX2_PCI_ID_VAW6				0x0000044c
+#define BNX2_PCI_ID_VAW6_MAX_WAT			 (0xffW<<0)
+#define BNX2_PCI_ID_VAW6_MIN_GNT			 (0xffW<<8)
+#define BNX2_PCI_ID_VAW6_BIST				 (0xffW<<16)
+#define BNX2_PCI_ID_VAW6_WESEWVED0			 (0xffW<<24)
+
+#define BNX2_PCI_MSI_DATA				0x00000450
+#define BNX2_PCI_MSI_DATA_MSI_DATA			 (0xffffW<<0)
+
+#define BNX2_PCI_MSI_ADDW_H				0x00000454
+#define BNX2_PCI_MSI_ADDW_W				0x00000458
+#define BNX2_PCI_MSI_ADDW_W_VAW				 (0x3fffffffW<<2)
+
+#define BNX2_PCI_CFG_ACCESS_CMD				0x0000045c
+#define BNX2_PCI_CFG_ACCESS_CMD_ADW			 (0x3fW<<2)
+#define BNX2_PCI_CFG_ACCESS_CMD_WD_WEQ			 (1W<<27)
+#define BNX2_PCI_CFG_ACCESS_CMD_WW_WEQ			 (0xfW<<28)
+
+#define BNX2_PCI_CFG_ACCESS_DATA			0x00000460
+#define BNX2_PCI_MSI_MASK				0x00000464
+#define BNX2_PCI_MSI_MASK_MSI_MASK			 (0xffffffffW<<0)
+
+#define BNX2_PCI_MSI_PEND				0x00000468
+#define BNX2_PCI_MSI_PEND_MSI_PEND			 (0xffffffffW<<0)
+
+#define BNX2_PCI_PM_DATA_C				0x0000046c
+#define BNX2_PCI_PM_DATA_C_PM_DATA_8_PWG		 (0xffW<<0)
+#define BNX2_PCI_PM_DATA_C_WESEWVED0			 (0xffffffW<<8)
+
+#define BNX2_PCI_MSIX_CONTWOW				0x000004c0
+#define BNX2_PCI_MSIX_CONTWOW_MSIX_TBW_SIZ		 (0x7ffW<<0)
+#define BNX2_PCI_MSIX_CONTWOW_WESEWVED0			 (0x1fffffW<<11)
+
+#define BNX2_PCI_MSIX_TBW_OFF_BIW			0x000004c4
+#define BNX2_PCI_MSIX_TBW_OFF_BIW_MSIX_TBW_BIW		 (0x7W<<0)
+#define BNX2_PCI_MSIX_TBW_OFF_BIW_MSIX_TBW_OFF		 (0x1fffffffW<<3)
+
+#define BNX2_PCI_MSIX_PBA_OFF_BIT			0x000004c8
+#define BNX2_PCI_MSIX_PBA_OFF_BIT_MSIX_PBA_BIW		 (0x7W<<0)
+#define BNX2_PCI_MSIX_PBA_OFF_BIT_MSIX_PBA_OFF		 (0x1fffffffW<<3)
+
+#define BNX2_PCI_PCIE_CAPABIWITY			0x000004d0
+#define BNX2_PCI_PCIE_CAPABIWITY_INTEWWUPT_MSG_NUM	 (0x1fW<<0)
+#define BNX2_PCI_PCIE_CAPABIWITY_COMPWY_PCIE_1_1	 (1W<<5)
+
+#define BNX2_PCI_DEVICE_CAPABIWITY			0x000004d4
+#define BNX2_PCI_DEVICE_CAPABIWITY_MAX_PW_SIZ_SUPPOWTED	 (0x7W<<0)
+#define BNX2_PCI_DEVICE_CAPABIWITY_EXTENDED_TAG_SUPPOWT	 (1W<<5)
+#define BNX2_PCI_DEVICE_CAPABIWITY_W0S_ACCEPTABWE_WATENCY	 (0x7W<<6)
+#define BNX2_PCI_DEVICE_CAPABIWITY_W1_ACCEPTABWE_WATENCY	 (0x7W<<9)
+#define BNX2_PCI_DEVICE_CAPABIWITY_WOWE_BASED_EWW_WPT	 (1W<<15)
+
+#define BNX2_PCI_WINK_CAPABIWITY			0x000004dc
+#define BNX2_PCI_WINK_CAPABIWITY_MAX_WINK_SPEED		 (0xfW<<0)
+#define BNX2_PCI_WINK_CAPABIWITY_MAX_WINK_SPEED_0001	 (1W<<0)
+#define BNX2_PCI_WINK_CAPABIWITY_MAX_WINK_SPEED_0010	 (1W<<0)
+#define BNX2_PCI_WINK_CAPABIWITY_MAX_WINK_WIDTH		 (0x1fW<<4)
+#define BNX2_PCI_WINK_CAPABIWITY_CWK_POWEW_MGMT		 (1W<<9)
+#define BNX2_PCI_WINK_CAPABIWITY_ASPM_SUPPOWT		 (0x3W<<10)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_WAT		 (0x7W<<12)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_WAT_101	 (5W<<12)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_WAT_110	 (6W<<12)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_WAT		 (0x7W<<15)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_WAT_001	 (1W<<15)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_WAT_010	 (2W<<15)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_COMM_WAT	 (0x7W<<18)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_COMM_WAT_101	 (5W<<18)
+#define BNX2_PCI_WINK_CAPABIWITY_W0S_EXIT_COMM_WAT_110	 (6W<<18)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_COMM_WAT	 (0x7W<<21)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_COMM_WAT_001	 (1W<<21)
+#define BNX2_PCI_WINK_CAPABIWITY_W1_EXIT_COMM_WAT_010	 (2W<<21)
+#define BNX2_PCI_WINK_CAPABIWITY_POWT_NUM		 (0xffW<<24)
+
+#define BNX2_PCI_PCIE_DEVICE_CAPABIWITY_2		0x000004e4
+#define BNX2_PCI_PCIE_DEVICE_CAPABIWITY_2_CMPW_TO_WANGE_SUPP	 (0xfW<<0)
+#define BNX2_PCI_PCIE_DEVICE_CAPABIWITY_2_CMPW_TO_DISABW_SUPP	 (1W<<4)
+#define BNX2_PCI_PCIE_DEVICE_CAPABIWITY_2_WESEWVED	 (0x7ffffffW<<5)
+
+#define BNX2_PCI_PCIE_WINK_CAPABIWITY_2			0x000004e8
+#define BNX2_PCI_PCIE_WINK_CAPABIWITY_2_WESEWVED	 (0xffffffffW<<0)
+
+#define BNX2_PCI_GWC_WINDOW1_ADDW			0x00000610
+#define BNX2_PCI_GWC_WINDOW1_ADDW_VAWUE			 (0x1ffW<<13)
+
+#define BNX2_PCI_GWC_WINDOW2_ADDW			0x00000614
+#define BNX2_PCI_GWC_WINDOW2_ADDW_VAWUE			 (0x1ffW<<13)
+
+#define BNX2_PCI_GWC_WINDOW3_ADDW			0x00000618
+#define BNX2_PCI_GWC_WINDOW3_ADDW_VAWUE			 (0x1ffW<<13)
+
+#define BNX2_MSIX_TABWE_ADDW				 0x318000
+#define BNX2_MSIX_PBA_ADDW				 0x31c000
+
+/*
+ *  misc_weg definition
+ *  offset: 0x800
+ */
+#define BNX2_MISC_COMMAND				0x00000800
+#define BNX2_MISC_COMMAND_ENABWE_AWW			 (1W<<0)
+#define BNX2_MISC_COMMAND_DISABWE_AWW			 (1W<<1)
+#define BNX2_MISC_COMMAND_SW_WESET			 (1W<<4)
+#define BNX2_MISC_COMMAND_POW_WESET			 (1W<<5)
+#define BNX2_MISC_COMMAND_HD_WESET			 (1W<<6)
+#define BNX2_MISC_COMMAND_CMN_SW_WESET			 (1W<<7)
+#define BNX2_MISC_COMMAND_PAW_EWWOW			 (1W<<8)
+#define BNX2_MISC_COMMAND_CS16_EWW			 (1W<<9)
+#define BNX2_MISC_COMMAND_CS16_EWW_WOC			 (0xfW<<12)
+#define BNX2_MISC_COMMAND_PAW_EWW_WAM			 (0x7fW<<16)
+#define BNX2_MISC_COMMAND_POWEWDOWN_EVENT		 (1W<<23)
+#define BNX2_MISC_COMMAND_SW_SHUTDOWN			 (1W<<24)
+#define BNX2_MISC_COMMAND_SHUTDOWN_EN			 (1W<<25)
+#define BNX2_MISC_COMMAND_DINTEG_ATTN_EN		 (1W<<26)
+#define BNX2_MISC_COMMAND_PCIE_WINK_IN_W23		 (1W<<27)
+#define BNX2_MISC_COMMAND_PCIE_DIS			 (1W<<28)
+
+#define BNX2_MISC_CFG					0x00000804
+#define BNX2_MISC_CFG_GWC_TMOUT				 (1W<<0)
+#define BNX2_MISC_CFG_NVM_WW_EN				 (0x3W<<1)
+#define BNX2_MISC_CFG_NVM_WW_EN_PWOTECT			 (0W<<1)
+#define BNX2_MISC_CFG_NVM_WW_EN_PCI			 (1W<<1)
+#define BNX2_MISC_CFG_NVM_WW_EN_AWWOW			 (2W<<1)
+#define BNX2_MISC_CFG_NVM_WW_EN_AWWOW2			 (3W<<1)
+#define BNX2_MISC_CFG_BIST_EN				 (1W<<3)
+#define BNX2_MISC_CFG_CK25_OUT_AWT_SWC			 (1W<<4)
+#define BNX2_MISC_CFG_WESEWVED5_TE			 (1W<<5)
+#define BNX2_MISC_CFG_WESEWVED6_TE			 (1W<<6)
+#define BNX2_MISC_CFG_CWK_CTW_OVEWWIDE			 (1W<<7)
+#define BNX2_MISC_CFG_WEDMODE				 (0x7W<<8)
+#define BNX2_MISC_CFG_WEDMODE_MAC			 (0W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY1_TE			 (1W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY2_TE			 (2W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY3_TE			 (3W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY4_TE			 (4W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY5_TE			 (5W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY6_TE			 (6W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY7_TE			 (7W<<8)
+#define BNX2_MISC_CFG_MCP_GWC_TMOUT_TE			 (1W<<11)
+#define BNX2_MISC_CFG_DBU_GWC_TMOUT_TE			 (1W<<12)
+#define BNX2_MISC_CFG_WEDMODE_XI			 (0xfW<<8)
+#define BNX2_MISC_CFG_WEDMODE_MAC_XI			 (0W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY1_XI			 (1W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY2_XI			 (2W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY3_XI			 (3W<<8)
+#define BNX2_MISC_CFG_WEDMODE_MAC2_XI			 (4W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY4_XI			 (5W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY5_XI			 (6W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY6_XI			 (7W<<8)
+#define BNX2_MISC_CFG_WEDMODE_MAC3_XI			 (8W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY7_XI			 (9W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY8_XI			 (10W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY9_XI			 (11W<<8)
+#define BNX2_MISC_CFG_WEDMODE_MAC4_XI			 (12W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY10_XI			 (13W<<8)
+#define BNX2_MISC_CFG_WEDMODE_PHY11_XI			 (14W<<8)
+#define BNX2_MISC_CFG_WEDMODE_UNUSED_XI			 (15W<<8)
+#define BNX2_MISC_CFG_POWT_SEWECT_XI			 (1W<<13)
+#define BNX2_MISC_CFG_PAWITY_MODE_XI			 (1W<<14)
+
+#define BNX2_MISC_ID					0x00000808
+#define BNX2_MISC_ID_BOND_ID				 (0xfW<<0)
+#define BNX2_MISC_ID_BOND_ID_X				 (0W<<0)
+#define BNX2_MISC_ID_BOND_ID_C				 (3W<<0)
+#define BNX2_MISC_ID_BOND_ID_S				 (12W<<0)
+#define BNX2_MISC_ID_CHIP_METAW				 (0xffW<<4)
+#define BNX2_MISC_ID_CHIP_WEV				 (0xfW<<12)
+#define BNX2_MISC_ID_CHIP_NUM				 (0xffffW<<16)
+
+#define BNX2_MISC_ENABWE_STATUS_BITS			0x0000080c
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_SCHEDUWEW_ENABWE	 (1W<<0)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_BD_WEAD_ENABWE	 (1W<<1)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_BD_CACHE_ENABWE	 (1W<<2)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_PWOCESSOW_ENABWE	 (1W<<3)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_DMA_ENABWE	 (1W<<4)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_PATCHUP_ENABWE	 (1W<<5)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_PAYWOAD_Q_ENABWE	 (1W<<6)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_HEADEW_Q_ENABWE	 (1W<<7)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TX_ASSEMBWEW_ENABWE	 (1W<<8)
+#define BNX2_MISC_ENABWE_STATUS_BITS_EMAC_ENABWE	 (1W<<9)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_PAWSEW_MAC_ENABWE	 (1W<<10)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_PAWSEW_CATCHUP_ENABWE	 (1W<<11)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_MBUF_ENABWE	 (1W<<12)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_WOOKUP_ENABWE	 (1W<<13)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_PWOCESSOW_ENABWE	 (1W<<14)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_V2P_ENABWE	 (1W<<15)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_BD_CACHE_ENABWE	 (1W<<16)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WX_DMA_ENABWE	 (1W<<17)
+#define BNX2_MISC_ENABWE_STATUS_BITS_COMPWETION_ENABWE	 (1W<<18)
+#define BNX2_MISC_ENABWE_STATUS_BITS_HOST_COAWESCE_ENABWE	 (1W<<19)
+#define BNX2_MISC_ENABWE_STATUS_BITS_MAIWBOX_QUEUE_ENABWE	 (1W<<20)
+#define BNX2_MISC_ENABWE_STATUS_BITS_CONTEXT_ENABWE	 (1W<<21)
+#define BNX2_MISC_ENABWE_STATUS_BITS_CMD_SCHEDUWEW_ENABWE	 (1W<<22)
+#define BNX2_MISC_ENABWE_STATUS_BITS_CMD_PWOCESSOW_ENABWE	 (1W<<23)
+#define BNX2_MISC_ENABWE_STATUS_BITS_MGMT_PWOCESSOW_ENABWE	 (1W<<24)
+#define BNX2_MISC_ENABWE_STATUS_BITS_TIMEW_ENABWE	 (1W<<25)
+#define BNX2_MISC_ENABWE_STATUS_BITS_DMA_ENGINE_ENABWE	 (1W<<26)
+#define BNX2_MISC_ENABWE_STATUS_BITS_UMP_ENABWE		 (1W<<27)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WV2P_CMD_SCHEDUWEW_ENABWE	 (1W<<28)
+#define BNX2_MISC_ENABWE_STATUS_BITS_WSVD_FUTUWE_ENABWE	 (0x7W<<29)
+
+#define BNX2_MISC_ENABWE_SET_BITS			0x00000810
+#define BNX2_MISC_ENABWE_SET_BITS_TX_SCHEDUWEW_ENABWE	 (1W<<0)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_BD_WEAD_ENABWE	 (1W<<1)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_BD_CACHE_ENABWE	 (1W<<2)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_PWOCESSOW_ENABWE	 (1W<<3)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_DMA_ENABWE		 (1W<<4)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_PATCHUP_ENABWE	 (1W<<5)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_PAYWOAD_Q_ENABWE	 (1W<<6)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_HEADEW_Q_ENABWE	 (1W<<7)
+#define BNX2_MISC_ENABWE_SET_BITS_TX_ASSEMBWEW_ENABWE	 (1W<<8)
+#define BNX2_MISC_ENABWE_SET_BITS_EMAC_ENABWE		 (1W<<9)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_PAWSEW_MAC_ENABWE	 (1W<<10)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_PAWSEW_CATCHUP_ENABWE	 (1W<<11)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_MBUF_ENABWE	 (1W<<12)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_WOOKUP_ENABWE	 (1W<<13)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_PWOCESSOW_ENABWE	 (1W<<14)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_V2P_ENABWE		 (1W<<15)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_BD_CACHE_ENABWE	 (1W<<16)
+#define BNX2_MISC_ENABWE_SET_BITS_WX_DMA_ENABWE		 (1W<<17)
+#define BNX2_MISC_ENABWE_SET_BITS_COMPWETION_ENABWE	 (1W<<18)
+#define BNX2_MISC_ENABWE_SET_BITS_HOST_COAWESCE_ENABWE	 (1W<<19)
+#define BNX2_MISC_ENABWE_SET_BITS_MAIWBOX_QUEUE_ENABWE	 (1W<<20)
+#define BNX2_MISC_ENABWE_SET_BITS_CONTEXT_ENABWE	 (1W<<21)
+#define BNX2_MISC_ENABWE_SET_BITS_CMD_SCHEDUWEW_ENABWE	 (1W<<22)
+#define BNX2_MISC_ENABWE_SET_BITS_CMD_PWOCESSOW_ENABWE	 (1W<<23)
+#define BNX2_MISC_ENABWE_SET_BITS_MGMT_PWOCESSOW_ENABWE	 (1W<<24)
+#define BNX2_MISC_ENABWE_SET_BITS_TIMEW_ENABWE		 (1W<<25)
+#define BNX2_MISC_ENABWE_SET_BITS_DMA_ENGINE_ENABWE	 (1W<<26)
+#define BNX2_MISC_ENABWE_SET_BITS_UMP_ENABWE		 (1W<<27)
+#define BNX2_MISC_ENABWE_SET_BITS_WV2P_CMD_SCHEDUWEW_ENABWE	 (1W<<28)
+#define BNX2_MISC_ENABWE_SET_BITS_WSVD_FUTUWE_ENABWE	 (0x7W<<29)
+
+#define BNX2_MISC_ENABWE_CWW_BITS			0x00000814
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_SCHEDUWEW_ENABWE	 (1W<<0)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_BD_WEAD_ENABWE	 (1W<<1)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_BD_CACHE_ENABWE	 (1W<<2)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_PWOCESSOW_ENABWE	 (1W<<3)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_DMA_ENABWE		 (1W<<4)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_PATCHUP_ENABWE	 (1W<<5)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_PAYWOAD_Q_ENABWE	 (1W<<6)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_HEADEW_Q_ENABWE	 (1W<<7)
+#define BNX2_MISC_ENABWE_CWW_BITS_TX_ASSEMBWEW_ENABWE	 (1W<<8)
+#define BNX2_MISC_ENABWE_CWW_BITS_EMAC_ENABWE		 (1W<<9)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_PAWSEW_MAC_ENABWE	 (1W<<10)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_PAWSEW_CATCHUP_ENABWE	 (1W<<11)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_MBUF_ENABWE	 (1W<<12)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_WOOKUP_ENABWE	 (1W<<13)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_PWOCESSOW_ENABWE	 (1W<<14)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_V2P_ENABWE		 (1W<<15)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_BD_CACHE_ENABWE	 (1W<<16)
+#define BNX2_MISC_ENABWE_CWW_BITS_WX_DMA_ENABWE		 (1W<<17)
+#define BNX2_MISC_ENABWE_CWW_BITS_COMPWETION_ENABWE	 (1W<<18)
+#define BNX2_MISC_ENABWE_CWW_BITS_HOST_COAWESCE_ENABWE	 (1W<<19)
+#define BNX2_MISC_ENABWE_CWW_BITS_MAIWBOX_QUEUE_ENABWE	 (1W<<20)
+#define BNX2_MISC_ENABWE_CWW_BITS_CONTEXT_ENABWE	 (1W<<21)
+#define BNX2_MISC_ENABWE_CWW_BITS_CMD_SCHEDUWEW_ENABWE	 (1W<<22)
+#define BNX2_MISC_ENABWE_CWW_BITS_CMD_PWOCESSOW_ENABWE	 (1W<<23)
+#define BNX2_MISC_ENABWE_CWW_BITS_MGMT_PWOCESSOW_ENABWE	 (1W<<24)
+#define BNX2_MISC_ENABWE_CWW_BITS_TIMEW_ENABWE		 (1W<<25)
+#define BNX2_MISC_ENABWE_CWW_BITS_DMA_ENGINE_ENABWE	 (1W<<26)
+#define BNX2_MISC_ENABWE_CWW_BITS_UMP_ENABWE		 (1W<<27)
+#define BNX2_MISC_ENABWE_CWW_BITS_WV2P_CMD_SCHEDUWEW_ENABWE	 (1W<<28)
+#define BNX2_MISC_ENABWE_CWW_BITS_WSVD_FUTUWE_ENABWE	 (0x7W<<29)
+
+#define BNX2_MISC_CWOCK_CONTWOW_BITS			0x00000818
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET	 (0xfW<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_32MHZ	 (0W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_38MHZ	 (1W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_48MHZ	 (2W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_55MHZ	 (3W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_66MHZ	 (4W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_80MHZ	 (5W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_95MHZ	 (6W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_133MHZ	 (7W<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_PCI_CWK_SPD_DET_WOW	 (0xfW<<0)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_DISABWE	 (1W<<6)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT	 (1W<<7)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC	 (0x7W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_UNDEF	 (0W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_12	 (1W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_6	 (2W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_SWC_62	 (4W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED0_XI	 (0x7W<<8)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_MIN_POWEW		 (1W<<11)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED	 (0xfW<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_100	 (0W<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_80	 (1W<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_50	 (2W<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_40	 (4W<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_25	 (8W<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED1_XI	 (0xfW<<12)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_STOP	 (1W<<16)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED_17_TE	 (1W<<17)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED_18_TE	 (1W<<18)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED_19_TE	 (1W<<19)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED_TE	 (0xfffW<<20)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_AWT_MGMT_XI	 (1W<<17)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED2_XI	 (0x3fW<<18)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_VCO_XI	 (0x7W<<24)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_WESEWVED3_XI	 (1W<<27)
+#define BNX2_MISC_CWOCK_CONTWOW_BITS_COWE_CWK_PWW_SPEED_XI	 (0xfW<<28)
+
+#define BNX2_MISC_SPIO					0x0000081c
+#define BNX2_MISC_SPIO_VAWUE				 (0xffW<<0)
+#define BNX2_MISC_SPIO_SET				 (0xffW<<8)
+#define BNX2_MISC_SPIO_CWW				 (0xffW<<16)
+#define BNX2_MISC_SPIO_FWOAT				 (0xffW<<24)
+
+#define BNX2_MISC_SPIO_INT				0x00000820
+#define BNX2_MISC_SPIO_INT_INT_STATE_TE			 (0xfW<<0)
+#define BNX2_MISC_SPIO_INT_OWD_VAWUE_TE			 (0xfW<<8)
+#define BNX2_MISC_SPIO_INT_OWD_SET_TE			 (0xfW<<16)
+#define BNX2_MISC_SPIO_INT_OWD_CWW_TE			 (0xfW<<24)
+#define BNX2_MISC_SPIO_INT_INT_STATE_XI			 (0xffW<<0)
+#define BNX2_MISC_SPIO_INT_OWD_VAWUE_XI			 (0xffW<<8)
+#define BNX2_MISC_SPIO_INT_OWD_SET_XI			 (0xffW<<16)
+#define BNX2_MISC_SPIO_INT_OWD_CWW_XI			 (0xffW<<24)
+
+#define BNX2_MISC_CONFIG_WFSW				0x00000824
+#define BNX2_MISC_CONFIG_WFSW_DIV			 (0xffffW<<0)
+
+#define BNX2_MISC_WFSW_MASK_BITS			0x00000828
+#define BNX2_MISC_WFSW_MASK_BITS_TX_SCHEDUWEW_ENABWE	 (1W<<0)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_BD_WEAD_ENABWE	 (1W<<1)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_BD_CACHE_ENABWE	 (1W<<2)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_PWOCESSOW_ENABWE	 (1W<<3)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_DMA_ENABWE		 (1W<<4)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_PATCHUP_ENABWE	 (1W<<5)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_PAYWOAD_Q_ENABWE	 (1W<<6)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_HEADEW_Q_ENABWE	 (1W<<7)
+#define BNX2_MISC_WFSW_MASK_BITS_TX_ASSEMBWEW_ENABWE	 (1W<<8)
+#define BNX2_MISC_WFSW_MASK_BITS_EMAC_ENABWE		 (1W<<9)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_PAWSEW_MAC_ENABWE	 (1W<<10)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_PAWSEW_CATCHUP_ENABWE	 (1W<<11)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_MBUF_ENABWE		 (1W<<12)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_WOOKUP_ENABWE	 (1W<<13)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_PWOCESSOW_ENABWE	 (1W<<14)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_V2P_ENABWE		 (1W<<15)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_BD_CACHE_ENABWE	 (1W<<16)
+#define BNX2_MISC_WFSW_MASK_BITS_WX_DMA_ENABWE		 (1W<<17)
+#define BNX2_MISC_WFSW_MASK_BITS_COMPWETION_ENABWE	 (1W<<18)
+#define BNX2_MISC_WFSW_MASK_BITS_HOST_COAWESCE_ENABWE	 (1W<<19)
+#define BNX2_MISC_WFSW_MASK_BITS_MAIWBOX_QUEUE_ENABWE	 (1W<<20)
+#define BNX2_MISC_WFSW_MASK_BITS_CONTEXT_ENABWE		 (1W<<21)
+#define BNX2_MISC_WFSW_MASK_BITS_CMD_SCHEDUWEW_ENABWE	 (1W<<22)
+#define BNX2_MISC_WFSW_MASK_BITS_CMD_PWOCESSOW_ENABWE	 (1W<<23)
+#define BNX2_MISC_WFSW_MASK_BITS_MGMT_PWOCESSOW_ENABWE	 (1W<<24)
+#define BNX2_MISC_WFSW_MASK_BITS_TIMEW_ENABWE		 (1W<<25)
+#define BNX2_MISC_WFSW_MASK_BITS_DMA_ENGINE_ENABWE	 (1W<<26)
+#define BNX2_MISC_WFSW_MASK_BITS_UMP_ENABWE		 (1W<<27)
+#define BNX2_MISC_WFSW_MASK_BITS_WV2P_CMD_SCHEDUWEW_ENABWE	 (1W<<28)
+#define BNX2_MISC_WFSW_MASK_BITS_WSVD_FUTUWE_ENABWE	 (0x7W<<29)
+
+#define BNX2_MISC_AWB_WEQ0				0x0000082c
+#define BNX2_MISC_AWB_WEQ1				0x00000830
+#define BNX2_MISC_AWB_WEQ2				0x00000834
+#define BNX2_MISC_AWB_WEQ3				0x00000838
+#define BNX2_MISC_AWB_WEQ4				0x0000083c
+#define BNX2_MISC_AWB_FWEE0				0x00000840
+#define BNX2_MISC_AWB_FWEE1				0x00000844
+#define BNX2_MISC_AWB_FWEE2				0x00000848
+#define BNX2_MISC_AWB_FWEE3				0x0000084c
+#define BNX2_MISC_AWB_FWEE4				0x00000850
+#define BNX2_MISC_AWB_WEQ_STATUS0			0x00000854
+#define BNX2_MISC_AWB_WEQ_STATUS1			0x00000858
+#define BNX2_MISC_AWB_WEQ_STATUS2			0x0000085c
+#define BNX2_MISC_AWB_WEQ_STATUS3			0x00000860
+#define BNX2_MISC_AWB_WEQ_STATUS4			0x00000864
+#define BNX2_MISC_AWB_GNT0				0x00000868
+#define BNX2_MISC_AWB_GNT0_0				 (0x7W<<0)
+#define BNX2_MISC_AWB_GNT0_1				 (0x7W<<4)
+#define BNX2_MISC_AWB_GNT0_2				 (0x7W<<8)
+#define BNX2_MISC_AWB_GNT0_3				 (0x7W<<12)
+#define BNX2_MISC_AWB_GNT0_4				 (0x7W<<16)
+#define BNX2_MISC_AWB_GNT0_5				 (0x7W<<20)
+#define BNX2_MISC_AWB_GNT0_6				 (0x7W<<24)
+#define BNX2_MISC_AWB_GNT0_7				 (0x7W<<28)
+
+#define BNX2_MISC_AWB_GNT1				0x0000086c
+#define BNX2_MISC_AWB_GNT1_8				 (0x7W<<0)
+#define BNX2_MISC_AWB_GNT1_9				 (0x7W<<4)
+#define BNX2_MISC_AWB_GNT1_10				 (0x7W<<8)
+#define BNX2_MISC_AWB_GNT1_11				 (0x7W<<12)
+#define BNX2_MISC_AWB_GNT1_12				 (0x7W<<16)
+#define BNX2_MISC_AWB_GNT1_13				 (0x7W<<20)
+#define BNX2_MISC_AWB_GNT1_14				 (0x7W<<24)
+#define BNX2_MISC_AWB_GNT1_15				 (0x7W<<28)
+
+#define BNX2_MISC_AWB_GNT2				0x00000870
+#define BNX2_MISC_AWB_GNT2_16				 (0x7W<<0)
+#define BNX2_MISC_AWB_GNT2_17				 (0x7W<<4)
+#define BNX2_MISC_AWB_GNT2_18				 (0x7W<<8)
+#define BNX2_MISC_AWB_GNT2_19				 (0x7W<<12)
+#define BNX2_MISC_AWB_GNT2_20				 (0x7W<<16)
+#define BNX2_MISC_AWB_GNT2_21				 (0x7W<<20)
+#define BNX2_MISC_AWB_GNT2_22				 (0x7W<<24)
+#define BNX2_MISC_AWB_GNT2_23				 (0x7W<<28)
+
+#define BNX2_MISC_AWB_GNT3				0x00000874
+#define BNX2_MISC_AWB_GNT3_24				 (0x7W<<0)
+#define BNX2_MISC_AWB_GNT3_25				 (0x7W<<4)
+#define BNX2_MISC_AWB_GNT3_26				 (0x7W<<8)
+#define BNX2_MISC_AWB_GNT3_27				 (0x7W<<12)
+#define BNX2_MISC_AWB_GNT3_28				 (0x7W<<16)
+#define BNX2_MISC_AWB_GNT3_29				 (0x7W<<20)
+#define BNX2_MISC_AWB_GNT3_30				 (0x7W<<24)
+#define BNX2_MISC_AWB_GNT3_31				 (0x7W<<28)
+
+#define BNX2_MISC_WESEWVED1				0x00000878
+#define BNX2_MISC_WESEWVED1_MISC_WESEWVED1_VAWUE	 (0x3fW<<0)
+
+#define BNX2_MISC_WESEWVED2				0x0000087c
+#define BNX2_MISC_WESEWVED2_PCIE_DIS			 (1W<<0)
+#define BNX2_MISC_WESEWVED2_WINK_IN_W23			 (1W<<1)
+
+#define BNX2_MISC_SM_ASF_CONTWOW			0x00000880
+#define BNX2_MISC_SM_ASF_CONTWOW_ASF_WST		 (1W<<0)
+#define BNX2_MISC_SM_ASF_CONTWOW_TSC_EN			 (1W<<1)
+#define BNX2_MISC_SM_ASF_CONTWOW_WG_TO			 (1W<<2)
+#define BNX2_MISC_SM_ASF_CONTWOW_HB_TO			 (1W<<3)
+#define BNX2_MISC_SM_ASF_CONTWOW_PA_TO			 (1W<<4)
+#define BNX2_MISC_SM_ASF_CONTWOW_PW_TO			 (1W<<5)
+#define BNX2_MISC_SM_ASF_CONTWOW_WT_TO			 (1W<<6)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_EVENT		 (1W<<7)
+#define BNX2_MISC_SM_ASF_CONTWOW_STWETCH_EN		 (1W<<8)
+#define BNX2_MISC_SM_ASF_CONTWOW_STWETCH_PUWSE		 (1W<<9)
+#define BNX2_MISC_SM_ASF_CONTWOW_WES			 (0x3W<<10)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_EN			 (1W<<12)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_BB_EN		 (1W<<13)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_NO_ADDW_FIWT	 (1W<<14)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_AUTOWEAD		 (1W<<15)
+#define BNX2_MISC_SM_ASF_CONTWOW_NIC_SMB_ADDW1		 (0x7fW<<16)
+#define BNX2_MISC_SM_ASF_CONTWOW_NIC_SMB_ADDW2		 (0x7fW<<23)
+#define BNX2_MISC_SM_ASF_CONTWOW_EN_NIC_SMB_ADDW_0	 (1W<<30)
+#define BNX2_MISC_SM_ASF_CONTWOW_SMB_EAWWY_ATTN		 (1W<<31)
+
+#define BNX2_MISC_SMB_IN				0x00000884
+#define BNX2_MISC_SMB_IN_DAT_IN				 (0xffW<<0)
+#define BNX2_MISC_SMB_IN_WDY				 (1W<<8)
+#define BNX2_MISC_SMB_IN_DONE				 (1W<<9)
+#define BNX2_MISC_SMB_IN_FIWSTBYTE			 (1W<<10)
+#define BNX2_MISC_SMB_IN_STATUS				 (0x7W<<11)
+#define BNX2_MISC_SMB_IN_STATUS_OK			 (0x0W<<11)
+#define BNX2_MISC_SMB_IN_STATUS_PEC			 (0x1W<<11)
+#define BNX2_MISC_SMB_IN_STATUS_OFWOW			 (0x2W<<11)
+#define BNX2_MISC_SMB_IN_STATUS_STOP			 (0x3W<<11)
+#define BNX2_MISC_SMB_IN_STATUS_TIMEOUT			 (0x4W<<11)
+
+#define BNX2_MISC_SMB_OUT				0x00000888
+#define BNX2_MISC_SMB_OUT_DAT_OUT			 (0xffW<<0)
+#define BNX2_MISC_SMB_OUT_WDY				 (1W<<8)
+#define BNX2_MISC_SMB_OUT_STAWT				 (1W<<9)
+#define BNX2_MISC_SMB_OUT_WAST				 (1W<<10)
+#define BNX2_MISC_SMB_OUT_ACC_TYPE			 (1W<<11)
+#define BNX2_MISC_SMB_OUT_ENB_PEC			 (1W<<12)
+#define BNX2_MISC_SMB_OUT_GET_WX_WEN			 (1W<<13)
+#define BNX2_MISC_SMB_OUT_SMB_WEAD_WEN			 (0x3fW<<14)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS		 (0xfW<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_OK		 (0W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_FIWST_NACK	 (1W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_UFWOW		 (2W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_STOP		 (3W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_TIMEOUT	 (4W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_FIWST_WOST	 (5W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_BADACK		 (6W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_SUB_NACK	 (9W<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_STATUS_SUB_WOST	 (0xdW<<20)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_SWAVEMODE		 (1W<<24)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_DAT_EN		 (1W<<25)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_DAT_IN		 (1W<<26)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_CWK_EN		 (1W<<27)
+#define BNX2_MISC_SMB_OUT_SMB_OUT_CWK_IN		 (1W<<28)
+
+#define BNX2_MISC_SMB_WATCHDOG				0x0000088c
+#define BNX2_MISC_SMB_WATCHDOG_WATCHDOG			 (0xffffW<<0)
+
+#define BNX2_MISC_SMB_HEAWTBEAT				0x00000890
+#define BNX2_MISC_SMB_HEAWTBEAT_HEAWTBEAT		 (0xffffW<<0)
+
+#define BNX2_MISC_SMB_POWW_ASF				0x00000894
+#define BNX2_MISC_SMB_POWW_ASF_POWW_ASF			 (0xffffW<<0)
+
+#define BNX2_MISC_SMB_POWW_WEGACY			0x00000898
+#define BNX2_MISC_SMB_POWW_WEGACY_POWW_WEGACY		 (0xffffW<<0)
+
+#define BNX2_MISC_SMB_WETWAN				0x0000089c
+#define BNX2_MISC_SMB_WETWAN_WETWAN			 (0xffW<<0)
+
+#define BNX2_MISC_SMB_TIMESTAMP				0x000008a0
+#define BNX2_MISC_SMB_TIMESTAMP_TIMESTAMP		 (0xffffffffW<<0)
+
+#define BNX2_MISC_PEWW_ENA0				0x000008a4
+#define BNX2_MISC_PEWW_ENA0_COM_MISC_CTXC		 (1W<<0)
+#define BNX2_MISC_PEWW_ENA0_COM_MISC_WEGF		 (1W<<1)
+#define BNX2_MISC_PEWW_ENA0_COM_MISC_SCPAD		 (1W<<2)
+#define BNX2_MISC_PEWW_ENA0_CP_MISC_CTXC		 (1W<<3)
+#define BNX2_MISC_PEWW_ENA0_CP_MISC_WEGF		 (1W<<4)
+#define BNX2_MISC_PEWW_ENA0_CP_MISC_SCPAD		 (1W<<5)
+#define BNX2_MISC_PEWW_ENA0_CS_MISC_TMEM		 (1W<<6)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM0		 (1W<<7)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM1		 (1W<<8)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM2		 (1W<<9)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM3		 (1W<<10)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM4		 (1W<<11)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_ACCM5		 (1W<<12)
+#define BNX2_MISC_PEWW_ENA0_CTX_MISC_PGTBW		 (1W<<13)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW0		 (1W<<14)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW1		 (1W<<15)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW2		 (1W<<16)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW3		 (1W<<17)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW4		 (1W<<18)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW0		 (1W<<19)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW1		 (1W<<20)
+#define BNX2_MISC_PEWW_ENA0_DMAE_MISC_DW2		 (1W<<21)
+#define BNX2_MISC_PEWW_ENA0_HC_MISC_DMA			 (1W<<22)
+#define BNX2_MISC_PEWW_ENA0_MCP_MISC_WEGF		 (1W<<23)
+#define BNX2_MISC_PEWW_ENA0_MCP_MISC_SCPAD		 (1W<<24)
+#define BNX2_MISC_PEWW_ENA0_MQ_MISC_CTX			 (1W<<25)
+#define BNX2_MISC_PEWW_ENA0_WBDC_MISC			 (1W<<26)
+#define BNX2_MISC_PEWW_ENA0_WBUF_MISC_MB		 (1W<<27)
+#define BNX2_MISC_PEWW_ENA0_WBUF_MISC_PTW		 (1W<<28)
+#define BNX2_MISC_PEWW_ENA0_WDE_MISC_WPC		 (1W<<29)
+#define BNX2_MISC_PEWW_ENA0_WDE_MISC_WPM		 (1W<<30)
+#define BNX2_MISC_PEWW_ENA0_WV2P_MISC_CB0WEGS		 (1W<<31)
+#define BNX2_MISC_PEWW_ENA0_COM_DMAE_PEWW_EN_XI		 (1W<<0)
+#define BNX2_MISC_PEWW_ENA0_CP_DMAE_PEWW_EN_XI		 (1W<<1)
+#define BNX2_MISC_PEWW_ENA0_WPM_ACPIBEMEM_PEWW_EN_XI	 (1W<<2)
+#define BNX2_MISC_PEWW_ENA0_CTX_USAGE_CNT_PEWW_EN_XI	 (1W<<3)
+#define BNX2_MISC_PEWW_ENA0_CTX_PGTBW_PEWW_EN_XI	 (1W<<4)
+#define BNX2_MISC_PEWW_ENA0_CTX_CACHE_PEWW_EN_XI	 (1W<<5)
+#define BNX2_MISC_PEWW_ENA0_CTX_MIWWOW_PEWW_EN_XI	 (1W<<6)
+#define BNX2_MISC_PEWW_ENA0_COM_CTXC_PEWW_EN_XI		 (1W<<7)
+#define BNX2_MISC_PEWW_ENA0_COM_SCPAD_PEWW_EN_XI	 (1W<<8)
+#define BNX2_MISC_PEWW_ENA0_CP_CTXC_PEWW_EN_XI		 (1W<<9)
+#define BNX2_MISC_PEWW_ENA0_CP_SCPAD_PEWW_EN_XI		 (1W<<10)
+#define BNX2_MISC_PEWW_ENA0_WXP_WBUFC_PEWW_EN_XI	 (1W<<11)
+#define BNX2_MISC_PEWW_ENA0_WXP_CTXC_PEWW_EN_XI		 (1W<<12)
+#define BNX2_MISC_PEWW_ENA0_WXP_SCPAD_PEWW_EN_XI	 (1W<<13)
+#define BNX2_MISC_PEWW_ENA0_TPAT_SCPAD_PEWW_EN_XI	 (1W<<14)
+#define BNX2_MISC_PEWW_ENA0_TXP_CTXC_PEWW_EN_XI		 (1W<<15)
+#define BNX2_MISC_PEWW_ENA0_TXP_SCPAD_PEWW_EN_XI	 (1W<<16)
+#define BNX2_MISC_PEWW_ENA0_CS_TMEM_PEWW_EN_XI		 (1W<<17)
+#define BNX2_MISC_PEWW_ENA0_MQ_CTX_PEWW_EN_XI		 (1W<<18)
+#define BNX2_MISC_PEWW_ENA0_WPM_DFIFOMEM_PEWW_EN_XI	 (1W<<19)
+#define BNX2_MISC_PEWW_ENA0_WPC_DFIFOMEM_PEWW_EN_XI	 (1W<<20)
+#define BNX2_MISC_PEWW_ENA0_WBUF_PTWMEM_PEWW_EN_XI	 (1W<<21)
+#define BNX2_MISC_PEWW_ENA0_WBUF_DATAMEM_PEWW_EN_XI	 (1W<<22)
+#define BNX2_MISC_PEWW_ENA0_WV2P_P2IWAM_PEWW_EN_XI	 (1W<<23)
+#define BNX2_MISC_PEWW_ENA0_WV2P_P1IWAM_PEWW_EN_XI	 (1W<<24)
+#define BNX2_MISC_PEWW_ENA0_WV2P_CB1WEGS_PEWW_EN_XI	 (1W<<25)
+#define BNX2_MISC_PEWW_ENA0_WV2P_CB0WEGS_PEWW_EN_XI	 (1W<<26)
+#define BNX2_MISC_PEWW_ENA0_TPBUF_PEWW_EN_XI		 (1W<<27)
+#define BNX2_MISC_PEWW_ENA0_THBUF_PEWW_EN_XI		 (1W<<28)
+#define BNX2_MISC_PEWW_ENA0_TDMA_PEWW_EN_XI		 (1W<<29)
+#define BNX2_MISC_PEWW_ENA0_TBDC_PEWW_EN_XI		 (1W<<30)
+#define BNX2_MISC_PEWW_ENA0_TSCH_WW_PEWW_EN_XI		 (1W<<31)
+
+#define BNX2_MISC_PEWW_ENA1				0x000008a8
+#define BNX2_MISC_PEWW_ENA1_WV2P_MISC_CB1WEGS		 (1W<<0)
+#define BNX2_MISC_PEWW_ENA1_WV2P_MISC_P1IWAM		 (1W<<1)
+#define BNX2_MISC_PEWW_ENA1_WV2P_MISC_P2IWAM		 (1W<<2)
+#define BNX2_MISC_PEWW_ENA1_WXP_MISC_CTXC		 (1W<<3)
+#define BNX2_MISC_PEWW_ENA1_WXP_MISC_WEGF		 (1W<<4)
+#define BNX2_MISC_PEWW_ENA1_WXP_MISC_SCPAD		 (1W<<5)
+#define BNX2_MISC_PEWW_ENA1_WXP_MISC_WBUFC		 (1W<<6)
+#define BNX2_MISC_PEWW_ENA1_TBDC_MISC			 (1W<<7)
+#define BNX2_MISC_PEWW_ENA1_TDMA_MISC			 (1W<<8)
+#define BNX2_MISC_PEWW_ENA1_THBUF_MISC_MB0		 (1W<<9)
+#define BNX2_MISC_PEWW_ENA1_THBUF_MISC_MB1		 (1W<<10)
+#define BNX2_MISC_PEWW_ENA1_TPAT_MISC_WEGF		 (1W<<11)
+#define BNX2_MISC_PEWW_ENA1_TPAT_MISC_SCPAD		 (1W<<12)
+#define BNX2_MISC_PEWW_ENA1_TPBUF_MISC_MB		 (1W<<13)
+#define BNX2_MISC_PEWW_ENA1_TSCH_MISC_WW		 (1W<<14)
+#define BNX2_MISC_PEWW_ENA1_TXP_MISC_CTXC		 (1W<<15)
+#define BNX2_MISC_PEWW_ENA1_TXP_MISC_WEGF		 (1W<<16)
+#define BNX2_MISC_PEWW_ENA1_TXP_MISC_SCPAD		 (1W<<17)
+#define BNX2_MISC_PEWW_ENA1_UMP_MISC_FIOWX		 (1W<<18)
+#define BNX2_MISC_PEWW_ENA1_UMP_MISC_FIOTX		 (1W<<19)
+#define BNX2_MISC_PEWW_ENA1_UMP_MISC_WX			 (1W<<20)
+#define BNX2_MISC_PEWW_ENA1_UMP_MISC_TX			 (1W<<21)
+#define BNX2_MISC_PEWW_ENA1_WDMAQ_MISC			 (1W<<22)
+#define BNX2_MISC_PEWW_ENA1_CSQ_MISC			 (1W<<23)
+#define BNX2_MISC_PEWW_ENA1_CPQ_MISC			 (1W<<24)
+#define BNX2_MISC_PEWW_ENA1_MCPQ_MISC			 (1W<<25)
+#define BNX2_MISC_PEWW_ENA1_WV2PMQ_MISC			 (1W<<26)
+#define BNX2_MISC_PEWW_ENA1_WV2PPQ_MISC			 (1W<<27)
+#define BNX2_MISC_PEWW_ENA1_WV2PTQ_MISC			 (1W<<28)
+#define BNX2_MISC_PEWW_ENA1_WXPQ_MISC			 (1W<<29)
+#define BNX2_MISC_PEWW_ENA1_WXPCQ_MISC			 (1W<<30)
+#define BNX2_MISC_PEWW_ENA1_WWUPQ_MISC			 (1W<<31)
+#define BNX2_MISC_PEWW_ENA1_WBDC_PEWW_EN_XI		 (1W<<0)
+#define BNX2_MISC_PEWW_ENA1_WDMA_DFIFO_PEWW_EN_XI	 (1W<<2)
+#define BNX2_MISC_PEWW_ENA1_HC_STATS_PEWW_EN_XI		 (1W<<3)
+#define BNX2_MISC_PEWW_ENA1_HC_MSIX_PEWW_EN_XI		 (1W<<4)
+#define BNX2_MISC_PEWW_ENA1_HC_PWODUCSTB_PEWW_EN_XI	 (1W<<5)
+#define BNX2_MISC_PEWW_ENA1_HC_CONSUMSTB_PEWW_EN_XI	 (1W<<6)
+#define BNX2_MISC_PEWW_ENA1_TPATQ_PEWW_EN_XI		 (1W<<7)
+#define BNX2_MISC_PEWW_ENA1_MCPQ_PEWW_EN_XI		 (1W<<8)
+#define BNX2_MISC_PEWW_ENA1_TDMAQ_PEWW_EN_XI		 (1W<<9)
+#define BNX2_MISC_PEWW_ENA1_TXPQ_PEWW_EN_XI		 (1W<<10)
+#define BNX2_MISC_PEWW_ENA1_COMTQ_PEWW_EN_XI		 (1W<<11)
+#define BNX2_MISC_PEWW_ENA1_COMQ_PEWW_EN_XI		 (1W<<12)
+#define BNX2_MISC_PEWW_ENA1_WWUPQ_PEWW_EN_XI		 (1W<<13)
+#define BNX2_MISC_PEWW_ENA1_WXPQ_PEWW_EN_XI		 (1W<<14)
+#define BNX2_MISC_PEWW_ENA1_WV2PPQ_PEWW_EN_XI		 (1W<<15)
+#define BNX2_MISC_PEWW_ENA1_WDMAQ_PEWW_EN_XI		 (1W<<16)
+#define BNX2_MISC_PEWW_ENA1_TASQ_PEWW_EN_XI		 (1W<<17)
+#define BNX2_MISC_PEWW_ENA1_TBDWQ_PEWW_EN_XI		 (1W<<18)
+#define BNX2_MISC_PEWW_ENA1_TSCHQ_PEWW_EN_XI		 (1W<<19)
+#define BNX2_MISC_PEWW_ENA1_COMXQ_PEWW_EN_XI		 (1W<<20)
+#define BNX2_MISC_PEWW_ENA1_WXPCQ_PEWW_EN_XI		 (1W<<21)
+#define BNX2_MISC_PEWW_ENA1_WV2PTQ_PEWW_EN_XI		 (1W<<22)
+#define BNX2_MISC_PEWW_ENA1_WV2PMQ_PEWW_EN_XI		 (1W<<23)
+#define BNX2_MISC_PEWW_ENA1_CPQ_PEWW_EN_XI		 (1W<<24)
+#define BNX2_MISC_PEWW_ENA1_CSQ_PEWW_EN_XI		 (1W<<25)
+#define BNX2_MISC_PEWW_ENA1_WWUP_CID_PEWW_EN_XI		 (1W<<26)
+#define BNX2_MISC_PEWW_ENA1_WV2PCS_TMEM_PEWW_EN_XI	 (1W<<27)
+#define BNX2_MISC_PEWW_ENA1_WV2PCSQ_PEWW_EN_XI		 (1W<<28)
+#define BNX2_MISC_PEWW_ENA1_MQ_IDX_PEWW_EN_XI		 (1W<<29)
+
+#define BNX2_MISC_PEWW_ENA2				0x000008ac
+#define BNX2_MISC_PEWW_ENA2_COMQ_MISC			 (1W<<0)
+#define BNX2_MISC_PEWW_ENA2_COMXQ_MISC			 (1W<<1)
+#define BNX2_MISC_PEWW_ENA2_COMTQ_MISC			 (1W<<2)
+#define BNX2_MISC_PEWW_ENA2_TSCHQ_MISC			 (1W<<3)
+#define BNX2_MISC_PEWW_ENA2_TBDWQ_MISC			 (1W<<4)
+#define BNX2_MISC_PEWW_ENA2_TXPQ_MISC			 (1W<<5)
+#define BNX2_MISC_PEWW_ENA2_TDMAQ_MISC			 (1W<<6)
+#define BNX2_MISC_PEWW_ENA2_TPATQ_MISC			 (1W<<7)
+#define BNX2_MISC_PEWW_ENA2_TASQ_MISC			 (1W<<8)
+#define BNX2_MISC_PEWW_ENA2_TGT_FIFO_PEWW_EN_XI		 (1W<<0)
+#define BNX2_MISC_PEWW_ENA2_UMP_TX_PEWW_EN_XI		 (1W<<1)
+#define BNX2_MISC_PEWW_ENA2_UMP_WX_PEWW_EN_XI		 (1W<<2)
+#define BNX2_MISC_PEWW_ENA2_MCP_WOM_PEWW_EN_XI		 (1W<<3)
+#define BNX2_MISC_PEWW_ENA2_MCP_SCPAD_PEWW_EN_XI	 (1W<<4)
+#define BNX2_MISC_PEWW_ENA2_HB_MEM_PEWW_EN_XI		 (1W<<5)
+#define BNX2_MISC_PEWW_ENA2_PCIE_WEPWAY_PEWW_EN_XI	 (1W<<6)
+
+#define BNX2_MISC_DEBUG_VECTOW_SEW			0x000008b0
+#define BNX2_MISC_DEBUG_VECTOW_SEW_0			 (0xfffW<<0)
+#define BNX2_MISC_DEBUG_VECTOW_SEW_1			 (0xfffW<<12)
+#define BNX2_MISC_DEBUG_VECTOW_SEW_1_XI			 (0xfffW<<15)
+
+#define BNX2_MISC_VWEG_CONTWOW				0x000008b4
+#define BNX2_MISC_VWEG_CONTWOW_1_2			 (0xfW<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_XI		 (0xfW<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS14_XI	 (0W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS12_XI	 (1W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS10_XI	 (2W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS8_XI	 (3W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS6_XI	 (4W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS4_XI	 (5W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_PWUS2_XI	 (6W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_NOM_XI		 (7W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS2_XI	 (8W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS4_XI	 (9W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS6_XI	 (10W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS8_XI	 (11W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS10_XI	 (12W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS12_XI	 (13W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS14_XI	 (14W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MAIN_MINUS16_XI	 (15W<<0)
+#define BNX2_MISC_VWEG_CONTWOW_2_5			 (0xfW<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS14		 (0W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS12		 (1W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS10		 (2W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS8		 (3W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS6		 (4W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS4		 (5W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_PWUS2		 (6W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_NOM			 (7W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS2		 (8W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS4		 (9W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS6		 (10W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS8		 (11W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS10		 (12W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS12		 (13W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS14		 (14W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_2_5_MINUS16		 (15W<<4)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT			 (0xfW<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS14		 (0W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS12		 (1W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS10		 (2W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS8		 (3W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS6		 (4W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS4		 (5W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_PWUS2		 (6W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_NOM		 (7W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS2		 (8W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS4		 (9W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS6		 (10W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS8		 (11W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS10		 (12W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS12		 (13W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS14		 (14W<<8)
+#define BNX2_MISC_VWEG_CONTWOW_1_0_MGMT_MINUS16		 (15W<<8)
+
+#define BNX2_MISC_FINAW_CWK_CTW_VAW			0x000008b8
+#define BNX2_MISC_FINAW_CWK_CTW_VAW_MISC_FINAW_CWK_CTW_VAW	 (0x3ffffffW<<6)
+
+#define BNX2_MISC_GP_HW_CTW0				0x000008bc
+#define BNX2_MISC_GP_HW_CTW0_TX_DWIVE			 (1W<<0)
+#define BNX2_MISC_GP_HW_CTW0_WMII_MODE			 (1W<<1)
+#define BNX2_MISC_GP_HW_CTW0_WMII_CWSDV_SEW		 (1W<<2)
+#define BNX2_MISC_GP_HW_CTW0_WVMII_MODE			 (1W<<3)
+#define BNX2_MISC_GP_HW_CTW0_FWASH_SAMP_SCWK_NEGEDGE_TE	 (1W<<4)
+#define BNX2_MISC_GP_HW_CTW0_HIDDEN_WEVISION_ID_TE	 (1W<<5)
+#define BNX2_MISC_GP_HW_CTW0_HC_CNTW_TMOUT_CTW_WST_TE	 (1W<<6)
+#define BNX2_MISC_GP_HW_CTW0_WESEWVED1_XI		 (0x7W<<4)
+#define BNX2_MISC_GP_HW_CTW0_ENA_COWE_WST_ON_MAIN_PWW_GOING_AWAY	 (1W<<7)
+#define BNX2_MISC_GP_HW_CTW0_ENA_SEW_VAUX_B_IN_W2_TE	 (1W<<8)
+#define BNX2_MISC_GP_HW_CTW0_GWC_BNK_FWEE_FIX_TE	 (1W<<9)
+#define BNX2_MISC_GP_HW_CTW0_WED_ACT_SEW_TE		 (1W<<10)
+#define BNX2_MISC_GP_HW_CTW0_WESEWVED2_XI		 (0x7W<<8)
+#define BNX2_MISC_GP_HW_CTW0_UP1_DEF0			 (1W<<11)
+#define BNX2_MISC_GP_HW_CTW0_FIBEW_MODE_DIS_DEF		 (1W<<12)
+#define BNX2_MISC_GP_HW_CTW0_FOWCE2500_DEF		 (1W<<13)
+#define BNX2_MISC_GP_HW_CTW0_AUTODETECT_DIS_DEF		 (1W<<14)
+#define BNX2_MISC_GP_HW_CTW0_PAWAWWEW_DETECT_DEF	 (1W<<15)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI		 (0xfW<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_3MA		 (0W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_2P5MA		 (1W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_2P0MA		 (3W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_1P5MA		 (5W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_1P0MA		 (7W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_DAI_PWWDN		 (15W<<16)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PWE2DIS		 (1W<<20)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PWE1DIS		 (1W<<21)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_CTAT		 (0x3W<<22)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_CTAT_M6P		 (0W<<22)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_CTAT_M0P		 (1W<<22)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_CTAT_P0P		 (2W<<22)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_CTAT_P6P		 (3W<<22)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PTAT		 (0x3W<<24)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PTAT_M6P		 (0W<<24)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PTAT_M0P		 (1W<<24)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PTAT_P0P		 (2W<<24)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_PTAT_P6P		 (3W<<24)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_IAMP_ADJ		 (0x3W<<26)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_IAMP_ADJ_240UA	 (0W<<26)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_IAMP_ADJ_160UA	 (1W<<26)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_IAMP_ADJ_400UA	 (2W<<26)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_IAMP_ADJ_320UA	 (3W<<26)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_ICBUF_ADJ		 (0x3W<<28)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_ICBUF_ADJ_240UA	 (0W<<28)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_ICBUF_ADJ_160UA	 (1W<<28)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_ICBUF_ADJ_400UA	 (2W<<28)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_ICBUF_ADJ_320UA	 (3W<<28)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_XTAW_ADJ		 (0x3W<<30)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_XTAW_ADJ_1P57	 (0W<<30)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_XTAW_ADJ_1P45	 (1W<<30)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_XTAW_ADJ_1P62	 (2W<<30)
+#define BNX2_MISC_GP_HW_CTW0_OSCCTWW_XTAW_ADJ_1P66	 (3W<<30)
+
+#define BNX2_MISC_GP_HW_CTW1				0x000008c0
+#define BNX2_MISC_GP_HW_CTW1_1_ATTN_BTN_PWSNT_TE	 (1W<<0)
+#define BNX2_MISC_GP_HW_CTW1_1_ATTN_IND_PWSNT_TE	 (1W<<1)
+#define BNX2_MISC_GP_HW_CTW1_1_PWW_IND_PWSNT_TE		 (1W<<2)
+#define BNX2_MISC_GP_HW_CTW1_0_PCIE_WOOPBACK_TE		 (1W<<3)
+#define BNX2_MISC_GP_HW_CTW1_WESEWVED_SOFT_XI		 (0xffffW<<0)
+#define BNX2_MISC_GP_HW_CTW1_WESEWVED_HAWD_XI		 (0xffffW<<16)
+
+#define BNX2_MISC_NEW_HW_CTW				0x000008c4
+#define BNX2_MISC_NEW_HW_CTW_MAIN_POW_BYPASS		 (1W<<0)
+#define BNX2_MISC_NEW_HW_CTW_WINGOSC_ENABWE		 (1W<<1)
+#define BNX2_MISC_NEW_HW_CTW_WINGOSC_SEW0		 (1W<<2)
+#define BNX2_MISC_NEW_HW_CTW_WINGOSC_SEW1		 (1W<<3)
+#define BNX2_MISC_NEW_HW_CTW_WESEWVED_SHAWED		 (0xfffW<<4)
+#define BNX2_MISC_NEW_HW_CTW_WESEWVED_SPWIT		 (0xffffW<<16)
+
+#define BNX2_MISC_NEW_COWE_CTW				0x000008c8
+#define BNX2_MISC_NEW_COWE_CTW_WINK_HOWDOFF_SUCCESS	 (1W<<0)
+#define BNX2_MISC_NEW_COWE_CTW_WINK_HOWDOFF_WEQ		 (1W<<1)
+#define BNX2_MISC_NEW_COWE_CTW_DMA_ENABWE		 (1W<<16)
+#define BNX2_MISC_NEW_COWE_CTW_WESEWVED_CMN		 (0x3fffW<<2)
+#define BNX2_MISC_NEW_COWE_CTW_WESEWVED_TC		 (0xffffW<<16)
+
+#define BNX2_MISC_ECO_HW_CTW				0x000008cc
+#define BNX2_MISC_ECO_HW_CTW_WAWGE_GWC_TMOUT_EN		 (1W<<0)
+#define BNX2_MISC_ECO_HW_CTW_WESEWVED_SOFT		 (0x7fffW<<1)
+#define BNX2_MISC_ECO_HW_CTW_WESEWVED_HAWD		 (0xffffW<<16)
+
+#define BNX2_MISC_ECO_COWE_CTW				0x000008d0
+#define BNX2_MISC_ECO_COWE_CTW_WESEWVED_SOFT		 (0xffffW<<0)
+#define BNX2_MISC_ECO_COWE_CTW_WESEWVED_HAWD		 (0xffffW<<16)
+
+#define BNX2_MISC_PPIO					0x000008d4
+#define BNX2_MISC_PPIO_VAWUE				 (0xfW<<0)
+#define BNX2_MISC_PPIO_SET				 (0xfW<<8)
+#define BNX2_MISC_PPIO_CWW				 (0xfW<<16)
+#define BNX2_MISC_PPIO_FWOAT				 (0xfW<<24)
+
+#define BNX2_MISC_PPIO_INT				0x000008d8
+#define BNX2_MISC_PPIO_INT_INT_STATE			 (0xfW<<0)
+#define BNX2_MISC_PPIO_INT_OWD_VAWUE			 (0xfW<<8)
+#define BNX2_MISC_PPIO_INT_OWD_SET			 (0xfW<<16)
+#define BNX2_MISC_PPIO_INT_OWD_CWW			 (0xfW<<24)
+
+#define BNX2_MISC_WESET_NUMS				0x000008dc
+#define BNX2_MISC_WESET_NUMS_NUM_HAWD_WESETS		 (0x7W<<0)
+#define BNX2_MISC_WESET_NUMS_NUM_PCIE_WESETS		 (0x7W<<4)
+#define BNX2_MISC_WESET_NUMS_NUM_PEWSTB_WESETS		 (0x7W<<8)
+#define BNX2_MISC_WESET_NUMS_NUM_CMN_WESETS		 (0x7W<<12)
+#define BNX2_MISC_WESET_NUMS_NUM_POWT_WESETS		 (0x7W<<16)
+
+#define BNX2_MISC_CS16_EWW				0x000008e0
+#define BNX2_MISC_CS16_EWW_ENA_PCI			 (1W<<0)
+#define BNX2_MISC_CS16_EWW_ENA_WDMA			 (1W<<1)
+#define BNX2_MISC_CS16_EWW_ENA_TDMA			 (1W<<2)
+#define BNX2_MISC_CS16_EWW_ENA_EMAC			 (1W<<3)
+#define BNX2_MISC_CS16_EWW_ENA_CTX			 (1W<<4)
+#define BNX2_MISC_CS16_EWW_ENA_TBDW			 (1W<<5)
+#define BNX2_MISC_CS16_EWW_ENA_WBDC			 (1W<<6)
+#define BNX2_MISC_CS16_EWW_ENA_COM			 (1W<<7)
+#define BNX2_MISC_CS16_EWW_ENA_CP			 (1W<<8)
+#define BNX2_MISC_CS16_EWW_STA_PCI			 (1W<<16)
+#define BNX2_MISC_CS16_EWW_STA_WDMA			 (1W<<17)
+#define BNX2_MISC_CS16_EWW_STA_TDMA			 (1W<<18)
+#define BNX2_MISC_CS16_EWW_STA_EMAC			 (1W<<19)
+#define BNX2_MISC_CS16_EWW_STA_CTX			 (1W<<20)
+#define BNX2_MISC_CS16_EWW_STA_TBDW			 (1W<<21)
+#define BNX2_MISC_CS16_EWW_STA_WBDC			 (1W<<22)
+#define BNX2_MISC_CS16_EWW_STA_COM			 (1W<<23)
+#define BNX2_MISC_CS16_EWW_STA_CP			 (1W<<24)
+
+#define BNX2_MISC_SPIO_EVENT				0x000008e4
+#define BNX2_MISC_SPIO_EVENT_ENABWE			 (0xffW<<0)
+
+#define BNX2_MISC_PPIO_EVENT				0x000008e8
+#define BNX2_MISC_PPIO_EVENT_ENABWE			 (0xfW<<0)
+
+#define BNX2_MISC_DUAW_MEDIA_CTWW			0x000008ec
+#define BNX2_MISC_DUAW_MEDIA_CTWW_BOND_ID		 (0xffW<<0)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_BOND_ID_X		 (0W<<0)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_BOND_ID_C		 (3W<<0)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_BOND_ID_S		 (12W<<0)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_CTWW_STWAP	 (0x7W<<8)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_POWT_SWAP_PIN		 (1W<<11)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_SEWDES1_SIGDET	 (1W<<12)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_SEWDES0_SIGDET	 (1W<<13)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY1_SIGDET		 (1W<<14)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY0_SIGDET		 (1W<<15)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_WCPWW_WST		 (1W<<16)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_SEWDES1_WST		 (1W<<17)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_SEWDES0_WST		 (1W<<18)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY1_WST		 (1W<<19)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY0_WST		 (1W<<20)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_CTWW		 (0x7W<<21)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_POWT_SWAP		 (1W<<24)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_STWAP_OVEWWIDE	 (1W<<25)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_SEWDES_IDDQ	 (0xfW<<26)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_SEWDES_IDDQ_SEW1_IDDQ	 (1W<<26)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_SEWDES_IDDQ_SEW0_IDDQ	 (2W<<26)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_SEWDES_IDDQ_PHY1_IDDQ	 (4W<<26)
+#define BNX2_MISC_DUAW_MEDIA_CTWW_PHY_SEWDES_IDDQ_PHY0_IDDQ	 (8W<<26)
+
+#define BNX2_MISC_OTP_CMD1				0x000008f0
+#define BNX2_MISC_OTP_CMD1_FMODE			 (0x7W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_IDWE			 (0W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_WWITE			 (1W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_INIT			 (2W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_SET			 (3W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_WST			 (4W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_VEWIFY			 (5W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_WESEWVED0		 (6W<<0)
+#define BNX2_MISC_OTP_CMD1_FMODE_WESEWVED1		 (7W<<0)
+#define BNX2_MISC_OTP_CMD1_USEPINS			 (1W<<8)
+#define BNX2_MISC_OTP_CMD1_PWOGSEW			 (1W<<9)
+#define BNX2_MISC_OTP_CMD1_PWOGSTAWT			 (1W<<10)
+#define BNX2_MISC_OTP_CMD1_PCOUNT			 (0x7W<<16)
+#define BNX2_MISC_OTP_CMD1_PBYP				 (1W<<19)
+#define BNX2_MISC_OTP_CMD1_VSEW				 (0xfW<<20)
+#define BNX2_MISC_OTP_CMD1_TM				 (0x7W<<27)
+#define BNX2_MISC_OTP_CMD1_SADBYP			 (1W<<30)
+#define BNX2_MISC_OTP_CMD1_DEBUG			 (1W<<31)
+
+#define BNX2_MISC_OTP_CMD2				0x000008f4
+#define BNX2_MISC_OTP_CMD2_OTP_WOM_ADDW			 (0x3ffW<<0)
+#define BNX2_MISC_OTP_CMD2_DOSEW			 (0x7fW<<16)
+#define BNX2_MISC_OTP_CMD2_DOSEW_0			 (0W<<16)
+#define BNX2_MISC_OTP_CMD2_DOSEW_1			 (1W<<16)
+#define BNX2_MISC_OTP_CMD2_DOSEW_127			 (127W<<16)
+
+#define BNX2_MISC_OTP_STATUS				0x000008f8
+#define BNX2_MISC_OTP_STATUS_DATA			 (0xffW<<0)
+#define BNX2_MISC_OTP_STATUS_VAWID			 (1W<<8)
+#define BNX2_MISC_OTP_STATUS_BUSY			 (1W<<9)
+#define BNX2_MISC_OTP_STATUS_BUSYSM			 (1W<<10)
+#define BNX2_MISC_OTP_STATUS_DONE			 (1W<<11)
+
+#define BNX2_MISC_OTP_SHIFT1_CMD			0x000008fc
+#define BNX2_MISC_OTP_SHIFT1_CMD_WESET_MODE_N		 (1W<<0)
+#define BNX2_MISC_OTP_SHIFT1_CMD_SHIFT_DONE		 (1W<<1)
+#define BNX2_MISC_OTP_SHIFT1_CMD_SHIFT_STAWT		 (1W<<2)
+#define BNX2_MISC_OTP_SHIFT1_CMD_WOAD_DATA		 (1W<<3)
+#define BNX2_MISC_OTP_SHIFT1_CMD_SHIFT_SEWECT		 (0x1fW<<8)
+
+#define BNX2_MISC_OTP_SHIFT1_DATA			0x00000900
+#define BNX2_MISC_OTP_SHIFT2_CMD			0x00000904
+#define BNX2_MISC_OTP_SHIFT2_CMD_WESET_MODE_N		 (1W<<0)
+#define BNX2_MISC_OTP_SHIFT2_CMD_SHIFT_DONE		 (1W<<1)
+#define BNX2_MISC_OTP_SHIFT2_CMD_SHIFT_STAWT		 (1W<<2)
+#define BNX2_MISC_OTP_SHIFT2_CMD_WOAD_DATA		 (1W<<3)
+#define BNX2_MISC_OTP_SHIFT2_CMD_SHIFT_SEWECT		 (0x1fW<<8)
+
+#define BNX2_MISC_OTP_SHIFT2_DATA			0x00000908
+#define BNX2_MISC_BIST_CS0				0x0000090c
+#define BNX2_MISC_BIST_CS0_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS0_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS0_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS0_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS0_MBIST_GO			 (1W<<9)
+#define BNX2_MISC_BIST_CS0_BIST_OVEWWIDE		 (1W<<31)
+
+#define BNX2_MISC_BIST_MEMSTATUS0			0x00000910
+#define BNX2_MISC_BIST_CS1				0x00000914
+#define BNX2_MISC_BIST_CS1_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS1_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS1_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS1_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS1_MBIST_GO			 (1W<<9)
+
+#define BNX2_MISC_BIST_MEMSTATUS1			0x00000918
+#define BNX2_MISC_BIST_CS2				0x0000091c
+#define BNX2_MISC_BIST_CS2_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS2_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS2_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS2_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS2_MBIST_GO			 (1W<<9)
+
+#define BNX2_MISC_BIST_MEMSTATUS2			0x00000920
+#define BNX2_MISC_BIST_CS3				0x00000924
+#define BNX2_MISC_BIST_CS3_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS3_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS3_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS3_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS3_MBIST_GO			 (1W<<9)
+
+#define BNX2_MISC_BIST_MEMSTATUS3			0x00000928
+#define BNX2_MISC_BIST_CS4				0x0000092c
+#define BNX2_MISC_BIST_CS4_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS4_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS4_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS4_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS4_MBIST_GO			 (1W<<9)
+
+#define BNX2_MISC_BIST_MEMSTATUS4			0x00000930
+#define BNX2_MISC_BIST_CS5				0x00000934
+#define BNX2_MISC_BIST_CS5_MBIST_EN			 (1W<<0)
+#define BNX2_MISC_BIST_CS5_BIST_SETUP			 (0x3W<<1)
+#define BNX2_MISC_BIST_CS5_MBIST_ASYNC_WESET		 (1W<<3)
+#define BNX2_MISC_BIST_CS5_MBIST_DONE			 (1W<<8)
+#define BNX2_MISC_BIST_CS5_MBIST_GO			 (1W<<9)
+
+#define BNX2_MISC_BIST_MEMSTATUS5			0x00000938
+#define BNX2_MISC_MEM_TM0				0x0000093c
+#define BNX2_MISC_MEM_TM0_PCIE_WEPWAY_TM		 (0xfW<<0)
+#define BNX2_MISC_MEM_TM0_MCP_SCPAD			 (0xfW<<8)
+#define BNX2_MISC_MEM_TM0_UMP_TM			 (0xffW<<16)
+#define BNX2_MISC_MEM_TM0_HB_MEM_TM			 (0xfW<<24)
+
+#define BNX2_MISC_USPWW_CTWW				0x00000940
+#define BNX2_MISC_USPWW_CTWW_PH_DET_DIS			 (1W<<0)
+#define BNX2_MISC_USPWW_CTWW_FWEQ_DET_DIS		 (1W<<1)
+#define BNX2_MISC_USPWW_CTWW_WCPX			 (0x3fW<<2)
+#define BNX2_MISC_USPWW_CTWW_WX				 (0x3W<<8)
+#define BNX2_MISC_USPWW_CTWW_VC_EN			 (1W<<10)
+#define BNX2_MISC_USPWW_CTWW_VCO_MG			 (0x3W<<11)
+#define BNX2_MISC_USPWW_CTWW_KVCO_XF			 (0x7W<<13)
+#define BNX2_MISC_USPWW_CTWW_KVCO_XS			 (0x7W<<16)
+#define BNX2_MISC_USPWW_CTWW_TESTD_EN			 (1W<<19)
+#define BNX2_MISC_USPWW_CTWW_TESTD_SEW			 (0x7W<<20)
+#define BNX2_MISC_USPWW_CTWW_TESTA_EN			 (1W<<23)
+#define BNX2_MISC_USPWW_CTWW_TESTA_SEW			 (0x3W<<24)
+#define BNX2_MISC_USPWW_CTWW_ATTEN_FWEF			 (1W<<26)
+#define BNX2_MISC_USPWW_CTWW_DIGITAW_WST		 (1W<<27)
+#define BNX2_MISC_USPWW_CTWW_ANAWOG_WST			 (1W<<28)
+#define BNX2_MISC_USPWW_CTWW_WOCK			 (1W<<29)
+
+#define BNX2_MISC_PEWW_STATUS0				0x00000944
+#define BNX2_MISC_PEWW_STATUS0_COM_DMAE_PEWW		 (1W<<0)
+#define BNX2_MISC_PEWW_STATUS0_CP_DMAE_PEWW		 (1W<<1)
+#define BNX2_MISC_PEWW_STATUS0_WPM_ACPIBEMEM_PEWW	 (1W<<2)
+#define BNX2_MISC_PEWW_STATUS0_CTX_USAGE_CNT_PEWW	 (1W<<3)
+#define BNX2_MISC_PEWW_STATUS0_CTX_PGTBW_PEWW		 (1W<<4)
+#define BNX2_MISC_PEWW_STATUS0_CTX_CACHE_PEWW		 (1W<<5)
+#define BNX2_MISC_PEWW_STATUS0_CTX_MIWWOW_PEWW		 (1W<<6)
+#define BNX2_MISC_PEWW_STATUS0_COM_CTXC_PEWW		 (1W<<7)
+#define BNX2_MISC_PEWW_STATUS0_COM_SCPAD_PEWW		 (1W<<8)
+#define BNX2_MISC_PEWW_STATUS0_CP_CTXC_PEWW		 (1W<<9)
+#define BNX2_MISC_PEWW_STATUS0_CP_SCPAD_PEWW		 (1W<<10)
+#define BNX2_MISC_PEWW_STATUS0_WXP_WBUFC_PEWW		 (1W<<11)
+#define BNX2_MISC_PEWW_STATUS0_WXP_CTXC_PEWW		 (1W<<12)
+#define BNX2_MISC_PEWW_STATUS0_WXP_SCPAD_PEWW		 (1W<<13)
+#define BNX2_MISC_PEWW_STATUS0_TPAT_SCPAD_PEWW		 (1W<<14)
+#define BNX2_MISC_PEWW_STATUS0_TXP_CTXC_PEWW		 (1W<<15)
+#define BNX2_MISC_PEWW_STATUS0_TXP_SCPAD_PEWW		 (1W<<16)
+#define BNX2_MISC_PEWW_STATUS0_CS_TMEM_PEWW		 (1W<<17)
+#define BNX2_MISC_PEWW_STATUS0_MQ_CTX_PEWW		 (1W<<18)
+#define BNX2_MISC_PEWW_STATUS0_WPM_DFIFOMEM_PEWW	 (1W<<19)
+#define BNX2_MISC_PEWW_STATUS0_WPC_DFIFOMEM_PEWW	 (1W<<20)
+#define BNX2_MISC_PEWW_STATUS0_WBUF_PTWMEM_PEWW		 (1W<<21)
+#define BNX2_MISC_PEWW_STATUS0_WBUF_DATAMEM_PEWW	 (1W<<22)
+#define BNX2_MISC_PEWW_STATUS0_WV2P_P2IWAM_PEWW		 (1W<<23)
+#define BNX2_MISC_PEWW_STATUS0_WV2P_P1IWAM_PEWW		 (1W<<24)
+#define BNX2_MISC_PEWW_STATUS0_WV2P_CB1WEGS_PEWW	 (1W<<25)
+#define BNX2_MISC_PEWW_STATUS0_WV2P_CB0WEGS_PEWW	 (1W<<26)
+#define BNX2_MISC_PEWW_STATUS0_TPBUF_PEWW		 (1W<<27)
+#define BNX2_MISC_PEWW_STATUS0_THBUF_PEWW		 (1W<<28)
+#define BNX2_MISC_PEWW_STATUS0_TDMA_PEWW		 (1W<<29)
+#define BNX2_MISC_PEWW_STATUS0_TBDC_PEWW		 (1W<<30)
+#define BNX2_MISC_PEWW_STATUS0_TSCH_WW_PEWW		 (1W<<31)
+
+#define BNX2_MISC_PEWW_STATUS1				0x00000948
+#define BNX2_MISC_PEWW_STATUS1_WBDC_PEWW		 (1W<<0)
+#define BNX2_MISC_PEWW_STATUS1_WDMA_DFIFO_PEWW		 (1W<<2)
+#define BNX2_MISC_PEWW_STATUS1_HC_STATS_PEWW		 (1W<<3)
+#define BNX2_MISC_PEWW_STATUS1_HC_MSIX_PEWW		 (1W<<4)
+#define BNX2_MISC_PEWW_STATUS1_HC_PWODUCSTB_PEWW	 (1W<<5)
+#define BNX2_MISC_PEWW_STATUS1_HC_CONSUMSTB_PEWW	 (1W<<6)
+#define BNX2_MISC_PEWW_STATUS1_TPATQ_PEWW		 (1W<<7)
+#define BNX2_MISC_PEWW_STATUS1_MCPQ_PEWW		 (1W<<8)
+#define BNX2_MISC_PEWW_STATUS1_TDMAQ_PEWW		 (1W<<9)
+#define BNX2_MISC_PEWW_STATUS1_TXPQ_PEWW		 (1W<<10)
+#define BNX2_MISC_PEWW_STATUS1_COMTQ_PEWW		 (1W<<11)
+#define BNX2_MISC_PEWW_STATUS1_COMQ_PEWW		 (1W<<12)
+#define BNX2_MISC_PEWW_STATUS1_WWUPQ_PEWW		 (1W<<13)
+#define BNX2_MISC_PEWW_STATUS1_WXPQ_PEWW		 (1W<<14)
+#define BNX2_MISC_PEWW_STATUS1_WV2PPQ_PEWW		 (1W<<15)
+#define BNX2_MISC_PEWW_STATUS1_WDMAQ_PEWW		 (1W<<16)
+#define BNX2_MISC_PEWW_STATUS1_TASQ_PEWW		 (1W<<17)
+#define BNX2_MISC_PEWW_STATUS1_TBDWQ_PEWW		 (1W<<18)
+#define BNX2_MISC_PEWW_STATUS1_TSCHQ_PEWW		 (1W<<19)
+#define BNX2_MISC_PEWW_STATUS1_COMXQ_PEWW		 (1W<<20)
+#define BNX2_MISC_PEWW_STATUS1_WXPCQ_PEWW		 (1W<<21)
+#define BNX2_MISC_PEWW_STATUS1_WV2PTQ_PEWW		 (1W<<22)
+#define BNX2_MISC_PEWW_STATUS1_WV2PMQ_PEWW		 (1W<<23)
+#define BNX2_MISC_PEWW_STATUS1_CPQ_PEWW			 (1W<<24)
+#define BNX2_MISC_PEWW_STATUS1_CSQ_PEWW			 (1W<<25)
+#define BNX2_MISC_PEWW_STATUS1_WWUP_CID_PEWW		 (1W<<26)
+#define BNX2_MISC_PEWW_STATUS1_WV2PCS_TMEM_PEWW		 (1W<<27)
+#define BNX2_MISC_PEWW_STATUS1_WV2PCSQ_PEWW		 (1W<<28)
+#define BNX2_MISC_PEWW_STATUS1_MQ_IDX_PEWW		 (1W<<29)
+
+#define BNX2_MISC_PEWW_STATUS2				0x0000094c
+#define BNX2_MISC_PEWW_STATUS2_TGT_FIFO_PEWW		 (1W<<0)
+#define BNX2_MISC_PEWW_STATUS2_UMP_TX_PEWW		 (1W<<1)
+#define BNX2_MISC_PEWW_STATUS2_UMP_WX_PEWW		 (1W<<2)
+#define BNX2_MISC_PEWW_STATUS2_MCP_WOM_PEWW		 (1W<<3)
+#define BNX2_MISC_PEWW_STATUS2_MCP_SCPAD_PEWW		 (1W<<4)
+#define BNX2_MISC_PEWW_STATUS2_HB_MEM_PEWW		 (1W<<5)
+#define BNX2_MISC_PEWW_STATUS2_PCIE_WEPWAY_PEWW		 (1W<<6)
+
+#define BNX2_MISC_WCPWW_CTWW0				0x00000950
+#define BNX2_MISC_WCPWW_CTWW0_OAC			 (0x7W<<0)
+#define BNX2_MISC_WCPWW_CTWW0_OAC_NEGTWENTY		 (0W<<0)
+#define BNX2_MISC_WCPWW_CTWW0_OAC_ZEWO			 (1W<<0)
+#define BNX2_MISC_WCPWW_CTWW0_OAC_TWENTY		 (3W<<0)
+#define BNX2_MISC_WCPWW_CTWW0_OAC_FOWTY			 (7W<<0)
+#define BNX2_MISC_WCPWW_CTWW0_ICP_CTWW			 (0x7W<<3)
+#define BNX2_MISC_WCPWW_CTWW0_ICP_CTWW_360		 (0W<<3)
+#define BNX2_MISC_WCPWW_CTWW0_ICP_CTWW_480		 (1W<<3)
+#define BNX2_MISC_WCPWW_CTWW0_ICP_CTWW_600		 (3W<<3)
+#define BNX2_MISC_WCPWW_CTWW0_ICP_CTWW_720		 (7W<<3)
+#define BNX2_MISC_WCPWW_CTWW0_BIAS_CTWW			 (0x3W<<6)
+#define BNX2_MISC_WCPWW_CTWW0_PWW_OBSEWVE		 (0x7W<<8)
+#define BNX2_MISC_WCPWW_CTWW0_VTH_CTWW			 (0x3W<<11)
+#define BNX2_MISC_WCPWW_CTWW0_VTH_CTWW_0		 (0W<<11)
+#define BNX2_MISC_WCPWW_CTWW0_VTH_CTWW_1		 (1W<<11)
+#define BNX2_MISC_WCPWW_CTWW0_VTH_CTWW_2		 (2W<<11)
+#define BNX2_MISC_WCPWW_CTWW0_PWWSEQSTAWT		 (1W<<13)
+#define BNX2_MISC_WCPWW_CTWW0_WESEWVED			 (1W<<14)
+#define BNX2_MISC_WCPWW_CTWW0_CAPWETWY_EN		 (1W<<15)
+#define BNX2_MISC_WCPWW_CTWW0_FWEQMONITOW_EN		 (1W<<16)
+#define BNX2_MISC_WCPWW_CTWW0_FWEQDETWESTAWT_EN		 (1W<<17)
+#define BNX2_MISC_WCPWW_CTWW0_FWEQDETWETWY_EN		 (1W<<18)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCEFDONE_EN		 (1W<<19)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCEFDONE		 (1W<<20)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCEFPASS		 (1W<<21)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCECAPDONE_EN	 (1W<<22)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCECAPDONE		 (1W<<23)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCECAPPASS_EN	 (1W<<24)
+#define BNX2_MISC_WCPWW_CTWW0_PWWFOWCECAPPASS		 (1W<<25)
+#define BNX2_MISC_WCPWW_CTWW0_CAPWESTAWT		 (1W<<26)
+#define BNX2_MISC_WCPWW_CTWW0_CAPSEWECTM_EN		 (1W<<27)
+
+#define BNX2_MISC_WCPWW_CTWW1				0x00000954
+#define BNX2_MISC_WCPWW_CTWW1_CAPSEWECTM		 (0x1fW<<0)
+#define BNX2_MISC_WCPWW_CTWW1_CAPFOWCESWOWDOWN_EN	 (1W<<5)
+#define BNX2_MISC_WCPWW_CTWW1_CAPFOWCESWOWDOWN		 (1W<<6)
+#define BNX2_MISC_WCPWW_CTWW1_SWOWDN_XOW		 (1W<<7)
+
+#define BNX2_MISC_WCPWW_STATUS				0x00000958
+#define BNX2_MISC_WCPWW_STATUS_FWEQDONE_SM		 (1W<<0)
+#define BNX2_MISC_WCPWW_STATUS_FWEQPASS_SM		 (1W<<1)
+#define BNX2_MISC_WCPWW_STATUS_PWWSEQDONE		 (1W<<2)
+#define BNX2_MISC_WCPWW_STATUS_PWWSEQPASS		 (1W<<3)
+#define BNX2_MISC_WCPWW_STATUS_PWWSTATE			 (0x7W<<4)
+#define BNX2_MISC_WCPWW_STATUS_CAPSTATE			 (0x7W<<7)
+#define BNX2_MISC_WCPWW_STATUS_CAPSEWECT		 (0x1fW<<10)
+#define BNX2_MISC_WCPWW_STATUS_SWOWDN_INDICATOW		 (1W<<15)
+#define BNX2_MISC_WCPWW_STATUS_SWOWDN_INDICATOW_0	 (0W<<15)
+#define BNX2_MISC_WCPWW_STATUS_SWOWDN_INDICATOW_1	 (1W<<15)
+
+#define BNX2_MISC_OSCFUNDS_CTWW				0x0000095c
+#define BNX2_MISC_OSCFUNDS_CTWW_FWEQ_MON		 (1W<<5)
+#define BNX2_MISC_OSCFUNDS_CTWW_FWEQ_MON_OFF		 (0W<<5)
+#define BNX2_MISC_OSCFUNDS_CTWW_FWEQ_MON_ON		 (1W<<5)
+#define BNX2_MISC_OSCFUNDS_CTWW_XTAW_ADJCM		 (0x3W<<6)
+#define BNX2_MISC_OSCFUNDS_CTWW_XTAW_ADJCM_0		 (0W<<6)
+#define BNX2_MISC_OSCFUNDS_CTWW_XTAW_ADJCM_1		 (1W<<6)
+#define BNX2_MISC_OSCFUNDS_CTWW_XTAW_ADJCM_2		 (2W<<6)
+#define BNX2_MISC_OSCFUNDS_CTWW_XTAW_ADJCM_3		 (3W<<6)
+#define BNX2_MISC_OSCFUNDS_CTWW_ICBUF_ADJ		 (0x3W<<8)
+#define BNX2_MISC_OSCFUNDS_CTWW_ICBUF_ADJ_0		 (0W<<8)
+#define BNX2_MISC_OSCFUNDS_CTWW_ICBUF_ADJ_1		 (1W<<8)
+#define BNX2_MISC_OSCFUNDS_CTWW_ICBUF_ADJ_2		 (2W<<8)
+#define BNX2_MISC_OSCFUNDS_CTWW_ICBUF_ADJ_3		 (3W<<8)
+#define BNX2_MISC_OSCFUNDS_CTWW_IAMP_ADJ		 (0x3W<<10)
+#define BNX2_MISC_OSCFUNDS_CTWW_IAMP_ADJ_0		 (0W<<10)
+#define BNX2_MISC_OSCFUNDS_CTWW_IAMP_ADJ_1		 (1W<<10)
+#define BNX2_MISC_OSCFUNDS_CTWW_IAMP_ADJ_2		 (2W<<10)
+#define BNX2_MISC_OSCFUNDS_CTWW_IAMP_ADJ_3		 (3W<<10)
+
+
+/*
+ *  nvm_weg definition
+ *  offset: 0x6400
+ */
+#define BNX2_NVM_COMMAND				0x00006400
+#define BNX2_NVM_COMMAND_WST				 (1W<<0)
+#define BNX2_NVM_COMMAND_DONE				 (1W<<3)
+#define BNX2_NVM_COMMAND_DOIT				 (1W<<4)
+#define BNX2_NVM_COMMAND_WW				 (1W<<5)
+#define BNX2_NVM_COMMAND_EWASE				 (1W<<6)
+#define BNX2_NVM_COMMAND_FIWST				 (1W<<7)
+#define BNX2_NVM_COMMAND_WAST				 (1W<<8)
+#define BNX2_NVM_COMMAND_WWEN				 (1W<<16)
+#define BNX2_NVM_COMMAND_WWDI				 (1W<<17)
+#define BNX2_NVM_COMMAND_EWSW				 (1W<<18)
+#define BNX2_NVM_COMMAND_WWSW				 (1W<<19)
+#define BNX2_NVM_COMMAND_WD_ID				 (1W<<20)
+#define BNX2_NVM_COMMAND_WD_STATUS			 (1W<<21)
+#define BNX2_NVM_COMMAND_MODE_256			 (1W<<22)
+
+#define BNX2_NVM_STATUS					0x00006404
+#define BNX2_NVM_STATUS_PI_FSM_STATE			 (0xfW<<0)
+#define BNX2_NVM_STATUS_EE_FSM_STATE			 (0xfW<<4)
+#define BNX2_NVM_STATUS_EQ_FSM_STATE			 (0xfW<<8)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_XI		 (0x1fW<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_IDWE_XI	 (0W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_CMD0_XI	 (1W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_CMD1_XI	 (2W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_CMD_FINISH0_XI	 (3W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_CMD_FINISH1_XI	 (4W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_ADDW0_XI	 (5W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WWITE_DATA0_XI	 (6W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WWITE_DATA1_XI	 (7W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WWITE_DATA2_XI	 (8W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_DATA0_XI	 (9W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_DATA1_XI	 (10W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_DATA2_XI	 (11W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_STATUS_WDID0_XI	 (12W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_STATUS_WDID1_XI	 (13W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_STATUS_WDID2_XI	 (14W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_STATUS_WDID3_XI	 (15W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WEAD_STATUS_WDID4_XI	 (16W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_CHECK_BUSY0_XI	 (17W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_ST_WWEN_XI	 (18W<<0)
+#define BNX2_NVM_STATUS_SPI_FSM_STATE_SPI_WAIT_XI	 (19W<<0)
+
+#define BNX2_NVM_WWITE					0x00006408
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE			 (0xffffffffW<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_BIT_BANG		 (0W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_EECWK		 (1W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_EEDATA		 (2W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SCWK		 (4W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_CS_B		 (8W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SO		 (16W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SI		 (32W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SI_XI		 (1W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SO_XI		 (2W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_CS_B_XI		 (4W<<0)
+#define BNX2_NVM_WWITE_NVM_WWITE_VAWUE_SCWK_XI		 (8W<<0)
+
+#define BNX2_NVM_ADDW					0x0000640c
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE			 (0xffffffW<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_BIT_BANG		 (0W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_EECWK		 (1W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_EEDATA		 (2W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SCWK		 (4W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_CS_B		 (8W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SO			 (16W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SI			 (32W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SI_XI		 (1W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SO_XI		 (2W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_CS_B_XI		 (4W<<0)
+#define BNX2_NVM_ADDW_NVM_ADDW_VAWUE_SCWK_XI		 (8W<<0)
+
+#define BNX2_NVM_WEAD					0x00006410
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE			 (0xffffffffW<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_BIT_BANG		 (0W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_EECWK		 (1W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_EEDATA		 (2W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SCWK		 (4W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_CS_B		 (8W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SO			 (16W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SI			 (32W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SI_XI		 (1W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SO_XI		 (2W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_CS_B_XI		 (4W<<0)
+#define BNX2_NVM_WEAD_NVM_WEAD_VAWUE_SCWK_XI		 (8W<<0)
+
+#define BNX2_NVM_CFG1					0x00006414
+#define BNX2_NVM_CFG1_FWASH_MODE			 (1W<<0)
+#define BNX2_NVM_CFG1_BUFFEW_MODE			 (1W<<1)
+#define BNX2_NVM_CFG1_PASS_MODE				 (1W<<2)
+#define BNX2_NVM_CFG1_BITBANG_MODE			 (1W<<3)
+#define BNX2_NVM_CFG1_STATUS_BIT			 (0x7W<<4)
+#define BNX2_NVM_CFG1_STATUS_BIT_FWASH_WDY		 (0W<<4)
+#define BNX2_NVM_CFG1_STATUS_BIT_BUFFEW_WDY		 (7W<<4)
+#define BNX2_NVM_CFG1_SPI_CWK_DIV			 (0xfW<<7)
+#define BNX2_NVM_CFG1_SEE_CWK_DIV			 (0x7ffW<<11)
+#define BNX2_NVM_CFG1_STWAP_CONTWOW_0			 (1W<<23)
+#define BNX2_NVM_CFG1_PWOTECT_MODE			 (1W<<24)
+#define BNX2_NVM_CFG1_FWASH_SIZE			 (1W<<25)
+#define BNX2_NVM_CFG1_FW_USTWAP_1			 (1W<<26)
+#define BNX2_NVM_CFG1_FW_USTWAP_0			 (1W<<27)
+#define BNX2_NVM_CFG1_FW_USTWAP_2			 (1W<<28)
+#define BNX2_NVM_CFG1_FW_USTWAP_3			 (1W<<29)
+#define BNX2_NVM_CFG1_FW_FWASH_TYPE_EN			 (1W<<30)
+#define BNX2_NVM_CFG1_COMPAT_BYPASSS			 (1W<<31)
+
+#define BNX2_NVM_CFG2					0x00006418
+#define BNX2_NVM_CFG2_EWASE_CMD				 (0xffW<<0)
+#define BNX2_NVM_CFG2_DUMMY				 (0xffW<<8)
+#define BNX2_NVM_CFG2_STATUS_CMD			 (0xffW<<16)
+#define BNX2_NVM_CFG2_WEAD_ID				 (0xffW<<24)
+
+#define BNX2_NVM_CFG3					0x0000641c
+#define BNX2_NVM_CFG3_BUFFEW_WD_CMD			 (0xffW<<0)
+#define BNX2_NVM_CFG3_WWITE_CMD				 (0xffW<<8)
+#define BNX2_NVM_CFG3_BUFFEW_WWITE_CMD			 (0xffW<<16)
+#define BNX2_NVM_CFG3_WEAD_CMD				 (0xffW<<24)
+
+#define BNX2_NVM_SW_AWB					0x00006420
+#define BNX2_NVM_SW_AWB_AWB_WEQ_SET0			 (1W<<0)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_SET1			 (1W<<1)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_SET2			 (1W<<2)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_SET3			 (1W<<3)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_CWW0			 (1W<<4)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_CWW1			 (1W<<5)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_CWW2			 (1W<<6)
+#define BNX2_NVM_SW_AWB_AWB_WEQ_CWW3			 (1W<<7)
+#define BNX2_NVM_SW_AWB_AWB_AWB0			 (1W<<8)
+#define BNX2_NVM_SW_AWB_AWB_AWB1			 (1W<<9)
+#define BNX2_NVM_SW_AWB_AWB_AWB2			 (1W<<10)
+#define BNX2_NVM_SW_AWB_AWB_AWB3			 (1W<<11)
+#define BNX2_NVM_SW_AWB_WEQ0				 (1W<<12)
+#define BNX2_NVM_SW_AWB_WEQ1				 (1W<<13)
+#define BNX2_NVM_SW_AWB_WEQ2				 (1W<<14)
+#define BNX2_NVM_SW_AWB_WEQ3				 (1W<<15)
+
+#define BNX2_NVM_ACCESS_ENABWE				0x00006424
+#define BNX2_NVM_ACCESS_ENABWE_EN			 (1W<<0)
+#define BNX2_NVM_ACCESS_ENABWE_WW_EN			 (1W<<1)
+
+#define BNX2_NVM_WWITE1					0x00006428
+#define BNX2_NVM_WWITE1_WWEN_CMD			 (0xffW<<0)
+#define BNX2_NVM_WWITE1_WWDI_CMD			 (0xffW<<8)
+#define BNX2_NVM_WWITE1_SW_DATA				 (0xffW<<16)
+
+#define BNX2_NVM_CFG4					0x0000642c
+#define BNX2_NVM_CFG4_FWASH_SIZE			 (0x7W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_1MBIT			 (0W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_2MBIT			 (1W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_4MBIT			 (2W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_8MBIT			 (3W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_16MBIT			 (4W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_32MBIT			 (5W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_64MBIT			 (6W<<0)
+#define BNX2_NVM_CFG4_FWASH_SIZE_128MBIT		 (7W<<0)
+#define BNX2_NVM_CFG4_FWASH_VENDOW			 (1W<<3)
+#define BNX2_NVM_CFG4_FWASH_VENDOW_ST			 (0W<<3)
+#define BNX2_NVM_CFG4_FWASH_VENDOW_ATMEW		 (1W<<3)
+#define BNX2_NVM_CFG4_MODE_256_EMPTY_BIT_WOC		 (0x3W<<4)
+#define BNX2_NVM_CFG4_MODE_256_EMPTY_BIT_WOC_BIT8	 (0W<<4)
+#define BNX2_NVM_CFG4_MODE_256_EMPTY_BIT_WOC_BIT9	 (1W<<4)
+#define BNX2_NVM_CFG4_MODE_256_EMPTY_BIT_WOC_BIT10	 (2W<<4)
+#define BNX2_NVM_CFG4_MODE_256_EMPTY_BIT_WOC_BIT11	 (3W<<4)
+#define BNX2_NVM_CFG4_STATUS_BIT_POWAWITY		 (1W<<6)
+#define BNX2_NVM_CFG4_WESEWVED				 (0x1ffffffW<<7)
+
+#define BNX2_NVM_WECONFIG				0x00006430
+#define BNX2_NVM_WECONFIG_OWIG_STWAP_VAWUE		 (0xfW<<0)
+#define BNX2_NVM_WECONFIG_OWIG_STWAP_VAWUE_ST		 (0W<<0)
+#define BNX2_NVM_WECONFIG_OWIG_STWAP_VAWUE_ATMEW	 (1W<<0)
+#define BNX2_NVM_WECONFIG_WECONFIG_STWAP_VAWUE		 (0xfW<<4)
+#define BNX2_NVM_WECONFIG_WESEWVED			 (0x7fffffW<<8)
+#define BNX2_NVM_WECONFIG_WECONFIG_DONE			 (1W<<31)
+
+
+
+/*
+ *  dma_weg definition
+ *  offset: 0xc00
+ */
+#define BNX2_DMA_COMMAND				0x00000c00
+#define BNX2_DMA_COMMAND_ENABWE				 (1W<<0)
+
+#define BNX2_DMA_STATUS					0x00000c04
+#define BNX2_DMA_STATUS_PAW_EWWOW_STATE			 (1W<<0)
+#define BNX2_DMA_STATUS_WEAD_TWANSFEWS_STAT		 (1W<<16)
+#define BNX2_DMA_STATUS_WEAD_DEWAY_PCI_CWKS_STAT	 (1W<<17)
+#define BNX2_DMA_STATUS_BIG_WEAD_TWANSFEWS_STAT		 (1W<<18)
+#define BNX2_DMA_STATUS_BIG_WEAD_DEWAY_PCI_CWKS_STAT	 (1W<<19)
+#define BNX2_DMA_STATUS_BIG_WEAD_WETWY_AFTEW_DATA_STAT	 (1W<<20)
+#define BNX2_DMA_STATUS_WWITE_TWANSFEWS_STAT		 (1W<<21)
+#define BNX2_DMA_STATUS_WWITE_DEWAY_PCI_CWKS_STAT	 (1W<<22)
+#define BNX2_DMA_STATUS_BIG_WWITE_TWANSFEWS_STAT	 (1W<<23)
+#define BNX2_DMA_STATUS_BIG_WWITE_DEWAY_PCI_CWKS_STAT	 (1W<<24)
+#define BNX2_DMA_STATUS_BIG_WWITE_WETWY_AFTEW_DATA_STAT	 (1W<<25)
+#define BNX2_DMA_STATUS_GWOBAW_EWW_XI			 (1W<<0)
+#define BNX2_DMA_STATUS_BME_XI				 (1W<<4)
+
+#define BNX2_DMA_CONFIG					0x00000c08
+#define BNX2_DMA_CONFIG_DATA_BYTE_SWAP			 (1W<<0)
+#define BNX2_DMA_CONFIG_DATA_WOWD_SWAP			 (1W<<1)
+#define BNX2_DMA_CONFIG_CNTW_BYTE_SWAP			 (1W<<4)
+#define BNX2_DMA_CONFIG_CNTW_WOWD_SWAP			 (1W<<5)
+#define BNX2_DMA_CONFIG_ONE_DMA				 (1W<<6)
+#define BNX2_DMA_CONFIG_CNTW_TWO_DMA			 (1W<<7)
+#define BNX2_DMA_CONFIG_CNTW_FPGA_MODE			 (1W<<8)
+#define BNX2_DMA_CONFIG_CNTW_PING_PONG_DMA		 (1W<<10)
+#define BNX2_DMA_CONFIG_CNTW_PCI_COMP_DWY		 (1W<<11)
+#define BNX2_DMA_CONFIG_NO_WCHANS_IN_USE		 (0xfW<<12)
+#define BNX2_DMA_CONFIG_NO_WCHANS_IN_USE		 (0xfW<<16)
+#define BNX2_DMA_CONFIG_PCI_CWK_CMP_BITS		 (0x7W<<20)
+#define BNX2_DMA_CONFIG_PCI_FAST_CWK_CMP		 (1W<<23)
+#define BNX2_DMA_CONFIG_BIG_SIZE			 (0xfW<<24)
+#define BNX2_DMA_CONFIG_BIG_SIZE_NONE			 (0x0W<<24)
+#define BNX2_DMA_CONFIG_BIG_SIZE_64			 (0x1W<<24)
+#define BNX2_DMA_CONFIG_BIG_SIZE_128			 (0x2W<<24)
+#define BNX2_DMA_CONFIG_BIG_SIZE_256			 (0x4W<<24)
+#define BNX2_DMA_CONFIG_BIG_SIZE_512			 (0x8W<<24)
+#define BNX2_DMA_CONFIG_DAT_WBSWAP_MODE_XI		 (0x3W<<0)
+#define BNX2_DMA_CONFIG_CTW_WBSWAP_MODE_XI		 (0x3W<<4)
+#define BNX2_DMA_CONFIG_MAX_PW_XI			 (0x7W<<12)
+#define BNX2_DMA_CONFIG_MAX_PW_128B_XI			 (0W<<12)
+#define BNX2_DMA_CONFIG_MAX_PW_256B_XI			 (1W<<12)
+#define BNX2_DMA_CONFIG_MAX_PW_512B_XI			 (2W<<12)
+#define BNX2_DMA_CONFIG_MAX_PW_EN_XI			 (1W<<15)
+#define BNX2_DMA_CONFIG_MAX_WWS_XI			 (0x7W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_128B_XI			 (0W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_256B_XI			 (1W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_512B_XI			 (2W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_1024B_XI		 (3W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_2048B_XI		 (4W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_4096B_XI		 (5W<<16)
+#define BNX2_DMA_CONFIG_MAX_WWS_EN_XI			 (1W<<19)
+#define BNX2_DMA_CONFIG_NO_64SWAP_EN_XI			 (1W<<31)
+
+#define BNX2_DMA_BWACKOUT				0x00000c0c
+#define BNX2_DMA_BWACKOUT_WD_WETWY_BWACKOUT		 (0xffW<<0)
+#define BNX2_DMA_BWACKOUT_2ND_WD_WETWY_BWACKOUT		 (0xffW<<8)
+#define BNX2_DMA_BWACKOUT_WW_WETWY_BWACKOUT		 (0xffW<<16)
+
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0			0x00000c10
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TBDC_NO_SNOOP	 (1W<<0)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TBDC_WEWAX_OWDEW	 (1W<<1)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TBDC_PWIOWITY	 (1W<<2)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TBDC_TWAFFIC_CWASS	 (0x7W<<4)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TBDC_PAWAM_EN	 (1W<<7)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_WBDC_NO_SNOOP	 (1W<<8)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_WBDC_WEWAX_OWDEW	 (1W<<9)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_WBDC_PWIOWITY	 (1W<<10)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_WBDC_TWAFFIC_CWASS	 (0x7W<<12)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_WBDC_PAWAM_EN	 (1W<<15)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TDMA_NO_SNOOP	 (1W<<16)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TDMA_WEWAX_OWDEW	 (1W<<17)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TDMA_PWIOWITY	 (1W<<18)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TDMA_TWAFFIC_CWASS	 (0x7W<<20)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_TDMA_PAWAM_EN	 (1W<<23)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_CTX_NO_SNOOP	 (1W<<24)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_CTX_WEWAX_OWDEW	 (1W<<25)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_CTX_PWIOWITY	 (1W<<26)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_CTX_TWAFFIC_CWASS	 (0x7W<<28)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_0_CTX_PAWAM_EN	 (1W<<31)
+
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1			0x00000c14
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_COM_NO_SNOOP	 (1W<<0)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_COM_WEWAX_OWDEW	 (1W<<1)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_COM_PWIOWITY	 (1W<<2)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_COM_TWAFFIC_CWASS	 (0x7W<<4)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_COM_PAWAM_EN	 (1W<<7)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_CP_NO_SNOOP	 (1W<<8)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_CP_WEWAX_OWDEW	 (1W<<9)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_CP_PWIOWITY	 (1W<<10)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_CP_TWAFFIC_CWASS	 (0x7W<<12)
+#define BNX2_DMA_WEAD_MASTEW_SETTING_1_CP_PAWAM_EN	 (1W<<15)
+
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0			0x00000c18
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_NO_SNOOP	 (1W<<0)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_WEWAX_OWDEW	 (1W<<1)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_PWIOWITY	 (1W<<2)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_CS_VWD	 (1W<<3)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_TWAFFIC_CWASS	 (0x7W<<4)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_HC_PAWAM_EN	 (1W<<7)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_NO_SNOOP	 (1W<<8)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_WEWAX_OWDEW	 (1W<<9)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_PWIOWITY	 (1W<<10)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_CS_VWD	 (1W<<11)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_TWAFFIC_CWASS	 (0x7W<<12)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_WDMA_PAWAM_EN	 (1W<<15)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_NO_SNOOP	 (1W<<24)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_WEWAX_OWDEW	 (1W<<25)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_PWIOWITY	 (1W<<26)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_CS_VWD	 (1W<<27)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_TWAFFIC_CWASS	 (0x7W<<28)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_0_CTX_PAWAM_EN	 (1W<<31)
+
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1			0x00000c1c
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_NO_SNOOP	 (1W<<0)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_WEWAX_OWDEW	 (1W<<1)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_PWIOWITY	 (1W<<2)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_CS_VWD	 (1W<<3)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_TWAFFIC_CWASS	 (0x7W<<4)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_COM_PAWAM_EN	 (1W<<7)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_NO_SNOOP	 (1W<<8)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_WEWAX_OWDEW	 (1W<<9)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_PWIOWITY	 (1W<<10)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_CS_VWD	 (1W<<11)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_TWAFFIC_CWASS	 (0x7W<<12)
+#define BNX2_DMA_WWITE_MASTEW_SETTING_1_CP_PAWAM_EN	 (1W<<15)
+
+#define BNX2_DMA_AWBITEW				0x00000c20
+#define BNX2_DMA_AWBITEW_NUM_WEADS			 (0x7W<<0)
+#define BNX2_DMA_AWBITEW_WW_AWB_MODE			 (1W<<4)
+#define BNX2_DMA_AWBITEW_WW_AWB_MODE_STWICT		 (0W<<4)
+#define BNX2_DMA_AWBITEW_WW_AWB_MODE_WND_WBN		 (1W<<4)
+#define BNX2_DMA_AWBITEW_WD_AWB_MODE			 (0x3W<<5)
+#define BNX2_DMA_AWBITEW_WD_AWB_MODE_STWICT		 (0W<<5)
+#define BNX2_DMA_AWBITEW_WD_AWB_MODE_WND_WBN		 (1W<<5)
+#define BNX2_DMA_AWBITEW_WD_AWB_MODE_WGT_WND_WBN	 (2W<<5)
+#define BNX2_DMA_AWBITEW_AWT_MODE_EN			 (1W<<8)
+#define BNX2_DMA_AWBITEW_WW_MODE			 (1W<<9)
+#define BNX2_DMA_AWBITEW_TIMEW_MODE			 (1W<<10)
+#define BNX2_DMA_AWBITEW_OUSTD_WEAD_WEQ			 (0xfW<<12)
+
+#define BNX2_DMA_AWB_TIMEWS				0x00000c24
+#define BNX2_DMA_AWB_TIMEWS_WD_DWW_WAIT_TIME		 (0xffW<<0)
+#define BNX2_DMA_AWB_TIMEWS_TM_MIN_TIMEOUT		 (0xffW<<12)
+#define BNX2_DMA_AWB_TIMEWS_TM_MAX_TIMEOUT		 (0xfffW<<20)
+
+#define BNX2_DMA_DEBUG_VECT_PEEK			0x00000c2c
+#define BNX2_DMA_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_DMA_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_DMA_DEBUG_VECT_PEEK_1_SEW			 (0xfW<<12)
+#define BNX2_DMA_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_DMA_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_DMA_DEBUG_VECT_PEEK_2_SEW			 (0xfW<<28)
+
+#define BNX2_DMA_TAG_WAM_00				0x00000c30
+#define BNX2_DMA_TAG_WAM_00_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_00_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_00_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_00_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_00_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_00_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_00_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_00_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_00_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_01				0x00000c34
+#define BNX2_DMA_TAG_WAM_01_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_01_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_01_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_01_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_01_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_01_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_01_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_01_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_01_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_02				0x00000c38
+#define BNX2_DMA_TAG_WAM_02_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_02_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_02_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_02_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_02_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_02_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_02_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_02_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_02_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_03				0x00000c3c
+#define BNX2_DMA_TAG_WAM_03_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_03_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_03_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_03_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_03_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_03_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_03_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_03_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_03_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_04				0x00000c40
+#define BNX2_DMA_TAG_WAM_04_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_04_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_04_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_04_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_04_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_04_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_04_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_04_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_04_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_05				0x00000c44
+#define BNX2_DMA_TAG_WAM_05_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_05_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_05_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_05_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_05_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_05_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_05_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_05_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_05_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_06				0x00000c48
+#define BNX2_DMA_TAG_WAM_06_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_06_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_06_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_06_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_06_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_06_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_06_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_06_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_06_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_07				0x00000c4c
+#define BNX2_DMA_TAG_WAM_07_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_07_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_07_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_07_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_07_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_07_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_07_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_07_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_07_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_08				0x00000c50
+#define BNX2_DMA_TAG_WAM_08_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_08_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_08_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_08_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_08_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_08_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_08_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_08_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_08_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_09				0x00000c54
+#define BNX2_DMA_TAG_WAM_09_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_09_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_09_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_09_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_09_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_09_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_09_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_09_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_09_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_10				0x00000c58
+#define BNX2_DMA_TAG_WAM_10_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_10_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_10_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_10_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_10_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_10_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_10_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_10_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_10_VAWID			 (1W<<10)
+
+#define BNX2_DMA_TAG_WAM_11				0x00000c5c
+#define BNX2_DMA_TAG_WAM_11_CHANNEW			 (0xfW<<0)
+#define BNX2_DMA_TAG_WAM_11_MASTEW			 (0x7W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_CTX			 (0W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_WBDC			 (1W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_TBDC			 (2W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_COM			 (3W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_CP			 (4W<<4)
+#define BNX2_DMA_TAG_WAM_11_MASTEW_TDMA			 (5W<<4)
+#define BNX2_DMA_TAG_WAM_11_SWAP			 (0x3W<<7)
+#define BNX2_DMA_TAG_WAM_11_SWAP_CONFIG			 (0W<<7)
+#define BNX2_DMA_TAG_WAM_11_SWAP_DATA			 (1W<<7)
+#define BNX2_DMA_TAG_WAM_11_SWAP_CONTWOW		 (2W<<7)
+#define BNX2_DMA_TAG_WAM_11_FUNCTION			 (1W<<9)
+#define BNX2_DMA_TAG_WAM_11_VAWID			 (1W<<10)
+
+#define BNX2_DMA_WCHAN_STAT_22				0x00000c60
+#define BNX2_DMA_WCHAN_STAT_30				0x00000c64
+#define BNX2_DMA_WCHAN_STAT_31				0x00000c68
+#define BNX2_DMA_WCHAN_STAT_32				0x00000c6c
+#define BNX2_DMA_WCHAN_STAT_40				0x00000c70
+#define BNX2_DMA_WCHAN_STAT_41				0x00000c74
+#define BNX2_DMA_WCHAN_STAT_42				0x00000c78
+#define BNX2_DMA_WCHAN_STAT_50				0x00000c7c
+#define BNX2_DMA_WCHAN_STAT_51				0x00000c80
+#define BNX2_DMA_WCHAN_STAT_52				0x00000c84
+#define BNX2_DMA_WCHAN_STAT_60				0x00000c88
+#define BNX2_DMA_WCHAN_STAT_61				0x00000c8c
+#define BNX2_DMA_WCHAN_STAT_62				0x00000c90
+#define BNX2_DMA_WCHAN_STAT_70				0x00000c94
+#define BNX2_DMA_WCHAN_STAT_71				0x00000c98
+#define BNX2_DMA_WCHAN_STAT_72				0x00000c9c
+#define BNX2_DMA_WCHAN_STAT_00				0x00000ca0
+#define BNX2_DMA_WCHAN_STAT_00_WCHAN_STA_HOST_ADDW_WOW	 (0xffffffffW<<0)
+
+#define BNX2_DMA_WCHAN_STAT_01				0x00000ca4
+#define BNX2_DMA_WCHAN_STAT_01_WCHAN_STA_HOST_ADDW_HIGH	 (0xffffffffW<<0)
+
+#define BNX2_DMA_WCHAN_STAT_02				0x00000ca8
+#define BNX2_DMA_WCHAN_STAT_02_WENGTH			 (0xffffW<<0)
+#define BNX2_DMA_WCHAN_STAT_02_WOWD_SWAP		 (1W<<16)
+#define BNX2_DMA_WCHAN_STAT_02_BYTE_SWAP		 (1W<<17)
+#define BNX2_DMA_WCHAN_STAT_02_PWIOWITY_WVW		 (1W<<18)
+
+#define BNX2_DMA_WCHAN_STAT_10				0x00000cac
+#define BNX2_DMA_WCHAN_STAT_11				0x00000cb0
+#define BNX2_DMA_WCHAN_STAT_12				0x00000cb4
+#define BNX2_DMA_WCHAN_STAT_20				0x00000cb8
+#define BNX2_DMA_WCHAN_STAT_21				0x00000cbc
+#define BNX2_DMA_WCHAN_STAT_22				0x00000cc0
+#define BNX2_DMA_WCHAN_STAT_30				0x00000cc4
+#define BNX2_DMA_WCHAN_STAT_31				0x00000cc8
+#define BNX2_DMA_WCHAN_STAT_32				0x00000ccc
+#define BNX2_DMA_WCHAN_STAT_40				0x00000cd0
+#define BNX2_DMA_WCHAN_STAT_41				0x00000cd4
+#define BNX2_DMA_WCHAN_STAT_42				0x00000cd8
+#define BNX2_DMA_WCHAN_STAT_50				0x00000cdc
+#define BNX2_DMA_WCHAN_STAT_51				0x00000ce0
+#define BNX2_DMA_WCHAN_STAT_52				0x00000ce4
+#define BNX2_DMA_WCHAN_STAT_60				0x00000ce8
+#define BNX2_DMA_WCHAN_STAT_61				0x00000cec
+#define BNX2_DMA_WCHAN_STAT_62				0x00000cf0
+#define BNX2_DMA_WCHAN_STAT_70				0x00000cf4
+#define BNX2_DMA_WCHAN_STAT_71				0x00000cf8
+#define BNX2_DMA_WCHAN_STAT_72				0x00000cfc
+#define BNX2_DMA_AWB_STAT_00				0x00000d00
+#define BNX2_DMA_AWB_STAT_00_MASTEW			 (0xffffW<<0)
+#define BNX2_DMA_AWB_STAT_00_MASTEW_ENC			 (0xffW<<16)
+#define BNX2_DMA_AWB_STAT_00_CUW_BINMSTW		 (0xffW<<24)
+
+#define BNX2_DMA_AWB_STAT_01				0x00000d04
+#define BNX2_DMA_AWB_STAT_01_WPW_WPTW			 (0xfW<<0)
+#define BNX2_DMA_AWB_STAT_01_WPW_WPTW			 (0xfW<<4)
+#define BNX2_DMA_AWB_STAT_01_WPB_WPTW			 (0xfW<<8)
+#define BNX2_DMA_AWB_STAT_01_WPB_WPTW			 (0xfW<<12)
+#define BNX2_DMA_AWB_STAT_01_HPW_WPTW			 (0xfW<<16)
+#define BNX2_DMA_AWB_STAT_01_HPW_WPTW			 (0xfW<<20)
+#define BNX2_DMA_AWB_STAT_01_HPB_WPTW			 (0xfW<<24)
+#define BNX2_DMA_AWB_STAT_01_HPB_WPTW			 (0xfW<<28)
+
+#define BNX2_DMA_FUSE_CTWW0_CMD				0x00000f00
+#define BNX2_DMA_FUSE_CTWW0_CMD_PWWUP_DONE		 (1W<<0)
+#define BNX2_DMA_FUSE_CTWW0_CMD_SHIFT_DONE		 (1W<<1)
+#define BNX2_DMA_FUSE_CTWW0_CMD_SHIFT			 (1W<<2)
+#define BNX2_DMA_FUSE_CTWW0_CMD_WOAD			 (1W<<3)
+#define BNX2_DMA_FUSE_CTWW0_CMD_SEW			 (0xfW<<8)
+
+#define BNX2_DMA_FUSE_CTWW0_DATA			0x00000f04
+#define BNX2_DMA_FUSE_CTWW1_CMD				0x00000f08
+#define BNX2_DMA_FUSE_CTWW1_CMD_PWWUP_DONE		 (1W<<0)
+#define BNX2_DMA_FUSE_CTWW1_CMD_SHIFT_DONE		 (1W<<1)
+#define BNX2_DMA_FUSE_CTWW1_CMD_SHIFT			 (1W<<2)
+#define BNX2_DMA_FUSE_CTWW1_CMD_WOAD			 (1W<<3)
+#define BNX2_DMA_FUSE_CTWW1_CMD_SEW			 (0xfW<<8)
+
+#define BNX2_DMA_FUSE_CTWW1_DATA			0x00000f0c
+#define BNX2_DMA_FUSE_CTWW2_CMD				0x00000f10
+#define BNX2_DMA_FUSE_CTWW2_CMD_PWWUP_DONE		 (1W<<0)
+#define BNX2_DMA_FUSE_CTWW2_CMD_SHIFT_DONE		 (1W<<1)
+#define BNX2_DMA_FUSE_CTWW2_CMD_SHIFT			 (1W<<2)
+#define BNX2_DMA_FUSE_CTWW2_CMD_WOAD			 (1W<<3)
+#define BNX2_DMA_FUSE_CTWW2_CMD_SEW			 (0xfW<<8)
+
+#define BNX2_DMA_FUSE_CTWW2_DATA			0x00000f14
+
+
+/*
+ *  context_weg definition
+ *  offset: 0x1000
+ */
+#define BNX2_CTX_COMMAND				0x00001000
+#define BNX2_CTX_COMMAND_ENABWED			 (1W<<0)
+#define BNX2_CTX_COMMAND_DISABWE_USAGE_CNT		 (1W<<1)
+#define BNX2_CTX_COMMAND_DISABWE_PWWU			 (1W<<2)
+#define BNX2_CTX_COMMAND_DISABWE_COMBINE_WEAD		 (1W<<3)
+#define BNX2_CTX_COMMAND_FWUSH_AHEAD			 (0x1fW<<8)
+#define BNX2_CTX_COMMAND_MEM_INIT			 (1W<<13)
+#define BNX2_CTX_COMMAND_PAGE_SIZE			 (0xfW<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_256			 (0W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_512			 (1W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_1K			 (2W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_2K			 (3W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_4K			 (4W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_8K			 (5W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_16K			 (6W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_32K			 (7W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_64K			 (8W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_128K			 (9W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_256K			 (10W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_512K			 (11W<<16)
+#define BNX2_CTX_COMMAND_PAGE_SIZE_1M			 (12W<<16)
+
+#define BNX2_CTX_STATUS					0x00001004
+#define BNX2_CTX_STATUS_WOCK_WAIT			 (1W<<0)
+#define BNX2_CTX_STATUS_WEAD_STAT			 (1W<<16)
+#define BNX2_CTX_STATUS_WWITE_STAT			 (1W<<17)
+#define BNX2_CTX_STATUS_ACC_STAWW_STAT			 (1W<<18)
+#define BNX2_CTX_STATUS_WOCK_STAWW_STAT			 (1W<<19)
+#define BNX2_CTX_STATUS_EXT_WEAD_STAT			 (1W<<20)
+#define BNX2_CTX_STATUS_EXT_WWITE_STAT			 (1W<<21)
+#define BNX2_CTX_STATUS_MISS_STAT			 (1W<<22)
+#define BNX2_CTX_STATUS_HIT_STAT			 (1W<<23)
+#define BNX2_CTX_STATUS_DEAD_WOCK			 (1W<<24)
+#define BNX2_CTX_STATUS_USAGE_CNT_EWW			 (1W<<25)
+#define BNX2_CTX_STATUS_INVAWID_PAGE			 (1W<<26)
+
+#define BNX2_CTX_VIWT_ADDW				0x00001008
+#define BNX2_CTX_VIWT_ADDW_VIWT_ADDW			 (0x7fffW<<6)
+
+#define BNX2_CTX_PAGE_TBW				0x0000100c
+#define BNX2_CTX_PAGE_TBW_PAGE_TBW			 (0x3fffW<<6)
+
+#define BNX2_CTX_DATA_ADW				0x00001010
+#define BNX2_CTX_DATA_ADW_DATA_ADW			 (0x7ffffW<<2)
+
+#define BNX2_CTX_DATA					0x00001014
+#define BNX2_CTX_WOCK					0x00001018
+#define BNX2_CTX_WOCK_TYPE				 (0x7W<<0)
+#define BNX2_CTX_WOCK_TYPE_WOCK_TYPE_VOID		 (0x0W<<0)
+#define BNX2_CTX_WOCK_TYPE_WOCK_TYPE_PWOTOCOW		 (0x1W<<0)
+#define BNX2_CTX_WOCK_TYPE_WOCK_TYPE_TX			 (0x2W<<0)
+#define BNX2_CTX_WOCK_TYPE_WOCK_TYPE_TIMEW		 (0x4W<<0)
+#define BNX2_CTX_WOCK_TYPE_WOCK_TYPE_COMPWETE		 (0x7W<<0)
+#define BNX2_CTX_WOCK_TYPE_VOID_XI			 (0W<<0)
+#define BNX2_CTX_WOCK_TYPE_PWOTOCOW_XI			 (1W<<0)
+#define BNX2_CTX_WOCK_TYPE_TX_XI			 (2W<<0)
+#define BNX2_CTX_WOCK_TYPE_TIMEW_XI			 (4W<<0)
+#define BNX2_CTX_WOCK_TYPE_COMPWETE_XI			 (7W<<0)
+#define BNX2_CTX_WOCK_CID_VAWUE				 (0x3fffW<<7)
+#define BNX2_CTX_WOCK_GWANTED				 (1W<<26)
+#define BNX2_CTX_WOCK_MODE				 (0x7W<<27)
+#define BNX2_CTX_WOCK_MODE_UNWOCK			 (0x0W<<27)
+#define BNX2_CTX_WOCK_MODE_IMMEDIATE			 (0x1W<<27)
+#define BNX2_CTX_WOCK_MODE_SUWE				 (0x2W<<27)
+#define BNX2_CTX_WOCK_STATUS				 (1W<<30)
+#define BNX2_CTX_WOCK_WEQ				 (1W<<31)
+
+#define BNX2_CTX_CTX_CTWW				0x0000101c
+#define BNX2_CTX_CTX_CTWW_CTX_ADDW			 (0x7ffffW<<2)
+#define BNX2_CTX_CTX_CTWW_MOD_USAGE_CNT			 (0x3W<<21)
+#define BNX2_CTX_CTX_CTWW_NO_WAM_ACC			 (1W<<23)
+#define BNX2_CTX_CTX_CTWW_PWEFETCH_SIZE			 (0x3W<<24)
+#define BNX2_CTX_CTX_CTWW_ATTW				 (1W<<26)
+#define BNX2_CTX_CTX_CTWW_WWITE_WEQ			 (1W<<30)
+#define BNX2_CTX_CTX_CTWW_WEAD_WEQ			 (1W<<31)
+
+#define BNX2_CTX_CTX_DATA				0x00001020
+#define BNX2_CTX_ACCESS_STATUS				0x00001040
+#define BNX2_CTX_ACCESS_STATUS_MASTEWENCODED		 (0xfW<<0)
+#define BNX2_CTX_ACCESS_STATUS_ACCESSMEMOWYSM		 (0x3W<<10)
+#define BNX2_CTX_ACCESS_STATUS_PAGETABWEINITSM		 (0x3W<<12)
+#define BNX2_CTX_ACCESS_STATUS_ACCESSMEMOWYINITSM	 (0x3W<<14)
+#define BNX2_CTX_ACCESS_STATUS_QUAWIFIED_WEQUEST	 (0x7ffW<<17)
+#define BNX2_CTX_ACCESS_STATUS_CAMMASTEWENCODED_XI	 (0x1fW<<0)
+#define BNX2_CTX_ACCESS_STATUS_CACHEMASTEWENCODED_XI	 (0x1fW<<5)
+#define BNX2_CTX_ACCESS_STATUS_WEQUEST_XI		 (0x3fffffW<<10)
+
+#define BNX2_CTX_DBG_WOCK_STATUS			0x00001044
+#define BNX2_CTX_DBG_WOCK_STATUS_SM			 (0x3ffW<<0)
+#define BNX2_CTX_DBG_WOCK_STATUS_MATCH			 (0x3ffW<<22)
+
+#define BNX2_CTX_CACHE_CTWW_STATUS			0x00001048
+#define BNX2_CTX_CACHE_CTWW_STATUS_WFIFO_OVEWFWOW	 (1W<<0)
+#define BNX2_CTX_CACHE_CTWW_STATUS_INVAWID_WEAD_COMP	 (1W<<1)
+#define BNX2_CTX_CACHE_CTWW_STATUS_FWUSH_STAWT		 (1W<<6)
+#define BNX2_CTX_CACHE_CTWW_STATUS_FWEE_ENTWY_CNT	 (0x3fW<<7)
+#define BNX2_CTX_CACHE_CTWW_STATUS_CACHE_ENTWY_NEEDED	 (0x3fW<<13)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN0_ACTIVE	 (1W<<19)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN1_ACTIVE	 (1W<<20)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN2_ACTIVE	 (1W<<21)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN3_ACTIVE	 (1W<<22)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN4_ACTIVE	 (1W<<23)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN5_ACTIVE	 (1W<<24)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN6_ACTIVE	 (1W<<25)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN7_ACTIVE	 (1W<<26)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN8_ACTIVE	 (1W<<27)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN9_ACTIVE	 (1W<<28)
+#define BNX2_CTX_CACHE_CTWW_STATUS_WD_CHAN10_ACTIVE	 (1W<<29)
+
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS			0x0000104c
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS_CS_DWC		 (0x7W<<0)
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS_CS_WFIFOC		 (0x7W<<3)
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS_CS_WTAGC		 (0x7W<<6)
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS_CS_WFIFOC		 (0x7W<<9)
+#define BNX2_CTX_CACHE_CTWW_SM_STATUS_INVAWID_BWK_ADDW	 (0x7fffW<<16)
+
+#define BNX2_CTX_CACHE_STATUS				0x00001050
+#define BNX2_CTX_CACHE_STATUS_HEWD_ENTWIES		 (0x3ffW<<0)
+#define BNX2_CTX_CACHE_STATUS_MAX_HEWD_ENTWIES		 (0x3ffW<<16)
+
+#define BNX2_CTX_DMA_STATUS				0x00001054
+#define BNX2_CTX_DMA_STATUS_WD_CHAN0_STATUS		 (0x3W<<0)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN1_STATUS		 (0x3W<<2)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN2_STATUS		 (0x3W<<4)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN3_STATUS		 (0x3W<<6)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN4_STATUS		 (0x3W<<8)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN5_STATUS		 (0x3W<<10)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN6_STATUS		 (0x3W<<12)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN7_STATUS		 (0x3W<<14)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN8_STATUS		 (0x3W<<16)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN9_STATUS		 (0x3W<<18)
+#define BNX2_CTX_DMA_STATUS_WD_CHAN10_STATUS		 (0x3W<<20)
+
+#define BNX2_CTX_WEP_STATUS				0x00001058
+#define BNX2_CTX_WEP_STATUS_EWWOW_ENTWY			 (0x3ffW<<0)
+#define BNX2_CTX_WEP_STATUS_EWWOW_CWIENT_ID		 (0x1fW<<10)
+#define BNX2_CTX_WEP_STATUS_USAGE_CNT_MAX_EWW		 (1W<<16)
+#define BNX2_CTX_WEP_STATUS_USAGE_CNT_MIN_EWW		 (1W<<17)
+#define BNX2_CTX_WEP_STATUS_USAGE_CNT_MISS_EWW		 (1W<<18)
+
+#define BNX2_CTX_CKSUM_EWWOW_STATUS			0x0000105c
+#define BNX2_CTX_CKSUM_EWWOW_STATUS_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_CTX_CKSUM_EWWOW_STATUS_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_CTX_CHNW_WOCK_STATUS_0			0x00001080
+#define BNX2_CTX_CHNW_WOCK_STATUS_0_CID			 (0x3fffW<<0)
+#define BNX2_CTX_CHNW_WOCK_STATUS_0_TYPE		 (0x3W<<14)
+#define BNX2_CTX_CHNW_WOCK_STATUS_0_MODE		 (1W<<16)
+#define BNX2_CTX_CHNW_WOCK_STATUS_0_MODE_XI		 (1W<<14)
+#define BNX2_CTX_CHNW_WOCK_STATUS_0_TYPE_XI		 (0x7W<<15)
+
+#define BNX2_CTX_CHNW_WOCK_STATUS_1			0x00001084
+#define BNX2_CTX_CHNW_WOCK_STATUS_2			0x00001088
+#define BNX2_CTX_CHNW_WOCK_STATUS_3			0x0000108c
+#define BNX2_CTX_CHNW_WOCK_STATUS_4			0x00001090
+#define BNX2_CTX_CHNW_WOCK_STATUS_5			0x00001094
+#define BNX2_CTX_CHNW_WOCK_STATUS_6			0x00001098
+#define BNX2_CTX_CHNW_WOCK_STATUS_7			0x0000109c
+#define BNX2_CTX_CHNW_WOCK_STATUS_8			0x000010a0
+#define BNX2_CTX_CHNW_WOCK_STATUS_9			0x000010a4
+
+#define BNX2_CTX_CACHE_DATA				0x000010c4
+#define BNX2_CTX_HOST_PAGE_TBW_CTWW			0x000010c8
+#define BNX2_CTX_HOST_PAGE_TBW_CTWW_PAGE_TBW_ADDW	 (0x1ffW<<0)
+#define BNX2_CTX_HOST_PAGE_TBW_CTWW_WWITE_WEQ		 (1W<<30)
+#define BNX2_CTX_HOST_PAGE_TBW_CTWW_WEAD_WEQ		 (1W<<31)
+
+#define BNX2_CTX_HOST_PAGE_TBW_DATA0			0x000010cc
+#define BNX2_CTX_HOST_PAGE_TBW_DATA0_VAWID		 (1W<<0)
+#define BNX2_CTX_HOST_PAGE_TBW_DATA0_VAWUE		 (0xffffffW<<8)
+
+#define BNX2_CTX_HOST_PAGE_TBW_DATA1			0x000010d0
+#define BNX2_CTX_CAM_CTWW				0x000010d4
+#define BNX2_CTX_CAM_CTWW_CAM_ADDW			 (0x3ffW<<0)
+#define BNX2_CTX_CAM_CTWW_WESET				 (1W<<27)
+#define BNX2_CTX_CAM_CTWW_INVAWIDATE			 (1W<<28)
+#define BNX2_CTX_CAM_CTWW_SEAWCH			 (1W<<29)
+#define BNX2_CTX_CAM_CTWW_WWITE_WEQ			 (1W<<30)
+#define BNX2_CTX_CAM_CTWW_WEAD_WEQ			 (1W<<31)
+
+
+/*
+ *  emac_weg definition
+ *  offset: 0x1400
+ */
+#define BNX2_EMAC_MODE					0x00001400
+#define BNX2_EMAC_MODE_WESET				 (1W<<0)
+#define BNX2_EMAC_MODE_HAWF_DUPWEX			 (1W<<1)
+#define BNX2_EMAC_MODE_POWT				 (0x3W<<2)
+#define BNX2_EMAC_MODE_POWT_NONE			 (0W<<2)
+#define BNX2_EMAC_MODE_POWT_MII				 (1W<<2)
+#define BNX2_EMAC_MODE_POWT_GMII			 (2W<<2)
+#define BNX2_EMAC_MODE_POWT_MII_10M			 (3W<<2)
+#define BNX2_EMAC_MODE_MAC_WOOP				 (1W<<4)
+#define BNX2_EMAC_MODE_25G_MODE				 (1W<<5)
+#define BNX2_EMAC_MODE_TAGGED_MAC_CTW			 (1W<<7)
+#define BNX2_EMAC_MODE_TX_BUWST				 (1W<<8)
+#define BNX2_EMAC_MODE_MAX_DEFEW_DWOP_ENA		 (1W<<9)
+#define BNX2_EMAC_MODE_EXT_WINK_POW			 (1W<<10)
+#define BNX2_EMAC_MODE_FOWCE_WINK			 (1W<<11)
+#define BNX2_EMAC_MODE_SEWDES_MODE			 (1W<<12)
+#define BNX2_EMAC_MODE_BOND_OVWD			 (1W<<13)
+#define BNX2_EMAC_MODE_MPKT				 (1W<<18)
+#define BNX2_EMAC_MODE_MPKT_WCVD			 (1W<<19)
+#define BNX2_EMAC_MODE_ACPI_WCVD			 (1W<<20)
+
+#define BNX2_EMAC_STATUS				0x00001404
+#define BNX2_EMAC_STATUS_WINK				 (1W<<11)
+#define BNX2_EMAC_STATUS_WINK_CHANGE			 (1W<<12)
+#define BNX2_EMAC_STATUS_SEWDES_AUTONEG_COMPWETE	 (1W<<13)
+#define BNX2_EMAC_STATUS_SEWDES_AUTONEG_CHANGE		 (1W<<14)
+#define BNX2_EMAC_STATUS_SEWDES_NXT_PG_CHANGE		 (1W<<16)
+#define BNX2_EMAC_STATUS_SEWDES_WX_CONFIG_IS_0		 (1W<<17)
+#define BNX2_EMAC_STATUS_SEWDES_WX_CONFIG_IS_0_CHANGE	 (1W<<18)
+#define BNX2_EMAC_STATUS_MI_COMPWETE			 (1W<<22)
+#define BNX2_EMAC_STATUS_MI_INT				 (1W<<23)
+#define BNX2_EMAC_STATUS_AP_EWWOW			 (1W<<24)
+#define BNX2_EMAC_STATUS_PAWITY_EWWOW_STATE		 (1W<<31)
+
+#define BNX2_EMAC_ATTENTION_ENA				0x00001408
+#define BNX2_EMAC_ATTENTION_ENA_WINK			 (1W<<11)
+#define BNX2_EMAC_ATTENTION_ENA_AUTONEG_CHANGE		 (1W<<14)
+#define BNX2_EMAC_ATTENTION_ENA_NXT_PG_CHANGE		 (1W<<16)
+#define BNX2_EMAC_ATTENTION_ENA_SEWDES_WX_CONFIG_IS_0_CHANGE	 (1W<<18)
+#define BNX2_EMAC_ATTENTION_ENA_MI_COMPWETE		 (1W<<22)
+#define BNX2_EMAC_ATTENTION_ENA_MI_INT			 (1W<<23)
+#define BNX2_EMAC_ATTENTION_ENA_AP_EWWOW		 (1W<<24)
+
+#define BNX2_EMAC_WED					0x0000140c
+#define BNX2_EMAC_WED_OVEWWIDE				 (1W<<0)
+#define BNX2_EMAC_WED_1000MB_OVEWWIDE			 (1W<<1)
+#define BNX2_EMAC_WED_100MB_OVEWWIDE			 (1W<<2)
+#define BNX2_EMAC_WED_10MB_OVEWWIDE			 (1W<<3)
+#define BNX2_EMAC_WED_TWAFFIC_OVEWWIDE			 (1W<<4)
+#define BNX2_EMAC_WED_BWNK_TWAFFIC			 (1W<<5)
+#define BNX2_EMAC_WED_TWAFFIC				 (1W<<6)
+#define BNX2_EMAC_WED_1000MB				 (1W<<7)
+#define BNX2_EMAC_WED_100MB				 (1W<<8)
+#define BNX2_EMAC_WED_10MB				 (1W<<9)
+#define BNX2_EMAC_WED_TWAFFIC_STAT			 (1W<<10)
+#define BNX2_EMAC_WED_2500MB				 (1W<<11)
+#define BNX2_EMAC_WED_2500MB_OVEWWIDE			 (1W<<12)
+#define BNX2_EMAC_WED_ACTIVITY_SEW			 (0x3W<<17)
+#define BNX2_EMAC_WED_ACTIVITY_SEW_0			 (0W<<17)
+#define BNX2_EMAC_WED_ACTIVITY_SEW_1			 (1W<<17)
+#define BNX2_EMAC_WED_ACTIVITY_SEW_2			 (2W<<17)
+#define BNX2_EMAC_WED_ACTIVITY_SEW_3			 (3W<<17)
+#define BNX2_EMAC_WED_BWNK_WATE				 (0xfffW<<19)
+#define BNX2_EMAC_WED_BWNK_WATE_ENA			 (1W<<31)
+
+#define BNX2_EMAC_MAC_MATCH0				0x00001410
+#define BNX2_EMAC_MAC_MATCH1				0x00001414
+#define BNX2_EMAC_MAC_MATCH2				0x00001418
+#define BNX2_EMAC_MAC_MATCH3				0x0000141c
+#define BNX2_EMAC_MAC_MATCH4				0x00001420
+#define BNX2_EMAC_MAC_MATCH5				0x00001424
+#define BNX2_EMAC_MAC_MATCH6				0x00001428
+#define BNX2_EMAC_MAC_MATCH7				0x0000142c
+#define BNX2_EMAC_MAC_MATCH8				0x00001430
+#define BNX2_EMAC_MAC_MATCH9				0x00001434
+#define BNX2_EMAC_MAC_MATCH10				0x00001438
+#define BNX2_EMAC_MAC_MATCH11				0x0000143c
+#define BNX2_EMAC_MAC_MATCH12				0x00001440
+#define BNX2_EMAC_MAC_MATCH13				0x00001444
+#define BNX2_EMAC_MAC_MATCH14				0x00001448
+#define BNX2_EMAC_MAC_MATCH15				0x0000144c
+#define BNX2_EMAC_MAC_MATCH16				0x00001450
+#define BNX2_EMAC_MAC_MATCH17				0x00001454
+#define BNX2_EMAC_MAC_MATCH18				0x00001458
+#define BNX2_EMAC_MAC_MATCH19				0x0000145c
+#define BNX2_EMAC_MAC_MATCH20				0x00001460
+#define BNX2_EMAC_MAC_MATCH21				0x00001464
+#define BNX2_EMAC_MAC_MATCH22				0x00001468
+#define BNX2_EMAC_MAC_MATCH23				0x0000146c
+#define BNX2_EMAC_MAC_MATCH24				0x00001470
+#define BNX2_EMAC_MAC_MATCH25				0x00001474
+#define BNX2_EMAC_MAC_MATCH26				0x00001478
+#define BNX2_EMAC_MAC_MATCH27				0x0000147c
+#define BNX2_EMAC_MAC_MATCH28				0x00001480
+#define BNX2_EMAC_MAC_MATCH29				0x00001484
+#define BNX2_EMAC_MAC_MATCH30				0x00001488
+#define BNX2_EMAC_MAC_MATCH31				0x0000148c
+#define BNX2_EMAC_BACKOFF_SEED				0x00001498
+#define BNX2_EMAC_BACKOFF_SEED_EMAC_BACKOFF_SEED	 (0x3ffW<<0)
+
+#define BNX2_EMAC_WX_MTU_SIZE				0x0000149c
+#define BNX2_EMAC_WX_MTU_SIZE_MTU_SIZE			 (0xffffW<<0)
+#define BNX2_EMAC_WX_MTU_SIZE_JUMBO_ENA			 (1W<<31)
+
+#define BNX2_EMAC_SEWDES_CNTW				0x000014a4
+#define BNX2_EMAC_SEWDES_CNTW_WXW			 (0x7W<<0)
+#define BNX2_EMAC_SEWDES_CNTW_WXG			 (0x3W<<3)
+#define BNX2_EMAC_SEWDES_CNTW_WXCKSEW			 (1W<<6)
+#define BNX2_EMAC_SEWDES_CNTW_TXBIAS			 (0x7W<<7)
+#define BNX2_EMAC_SEWDES_CNTW_BGMAX			 (1W<<10)
+#define BNX2_EMAC_SEWDES_CNTW_BGMIN			 (1W<<11)
+#define BNX2_EMAC_SEWDES_CNTW_TXMODE			 (1W<<12)
+#define BNX2_EMAC_SEWDES_CNTW_TXEDGE			 (1W<<13)
+#define BNX2_EMAC_SEWDES_CNTW_SEWDES_MODE		 (1W<<14)
+#define BNX2_EMAC_SEWDES_CNTW_PWWTEST			 (1W<<15)
+#define BNX2_EMAC_SEWDES_CNTW_CDET_EN			 (1W<<16)
+#define BNX2_EMAC_SEWDES_CNTW_TBI_WBK			 (1W<<17)
+#define BNX2_EMAC_SEWDES_CNTW_WEMOTE_WBK		 (1W<<18)
+#define BNX2_EMAC_SEWDES_CNTW_WEV_PHASE			 (1W<<19)
+#define BNX2_EMAC_SEWDES_CNTW_WEGCTW12			 (0x3W<<20)
+#define BNX2_EMAC_SEWDES_CNTW_WEGCTW25			 (0x3W<<22)
+
+#define BNX2_EMAC_SEWDES_STATUS				0x000014a8
+#define BNX2_EMAC_SEWDES_STATUS_WX_STAT			 (0xffW<<0)
+#define BNX2_EMAC_SEWDES_STATUS_COMMA_DET		 (1W<<8)
+
+#define BNX2_EMAC_MDIO_COMM				0x000014ac
+#define BNX2_EMAC_MDIO_COMM_DATA			 (0xffffW<<0)
+#define BNX2_EMAC_MDIO_COMM_WEG_ADDW			 (0x1fW<<16)
+#define BNX2_EMAC_MDIO_COMM_PHY_ADDW			 (0x1fW<<21)
+#define BNX2_EMAC_MDIO_COMM_COMMAND			 (0x3W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_UNDEFINED_0		 (0W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_ADDWESS		 (0W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WWITE		 (1W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WEAD		 (2W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WWITE_22_XI		 (1W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WWITE_45_XI		 (1W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WEAD_22_XI		 (2W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WEAD_INC_45_XI	 (2W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_UNDEFINED_3		 (3W<<26)
+#define BNX2_EMAC_MDIO_COMM_COMMAND_WEAD_45		 (3W<<26)
+#define BNX2_EMAC_MDIO_COMM_FAIW			 (1W<<28)
+#define BNX2_EMAC_MDIO_COMM_STAWT_BUSY			 (1W<<29)
+#define BNX2_EMAC_MDIO_COMM_DISEXT			 (1W<<30)
+
+#define BNX2_EMAC_MDIO_STATUS				0x000014b0
+#define BNX2_EMAC_MDIO_STATUS_WINK			 (1W<<0)
+#define BNX2_EMAC_MDIO_STATUS_10MB			 (1W<<1)
+
+#define BNX2_EMAC_MDIO_MODE				0x000014b4
+#define BNX2_EMAC_MDIO_MODE_SHOWT_PWEAMBWE		 (1W<<1)
+#define BNX2_EMAC_MDIO_MODE_AUTO_POWW			 (1W<<4)
+#define BNX2_EMAC_MDIO_MODE_BIT_BANG			 (1W<<8)
+#define BNX2_EMAC_MDIO_MODE_MDIO			 (1W<<9)
+#define BNX2_EMAC_MDIO_MODE_MDIO_OE			 (1W<<10)
+#define BNX2_EMAC_MDIO_MODE_MDC				 (1W<<11)
+#define BNX2_EMAC_MDIO_MODE_MDINT			 (1W<<12)
+#define BNX2_EMAC_MDIO_MODE_EXT_MDINT			 (1W<<13)
+#define BNX2_EMAC_MDIO_MODE_CWOCK_CNT			 (0x1fW<<16)
+#define BNX2_EMAC_MDIO_MODE_CWOCK_CNT_XI		 (0x3fW<<16)
+#define BNX2_EMAC_MDIO_MODE_CWAUSE_45_XI		 (1W<<31)
+
+#define BNX2_EMAC_MDIO_AUTO_STATUS			0x000014b8
+#define BNX2_EMAC_MDIO_AUTO_STATUS_AUTO_EWW		 (1W<<0)
+
+#define BNX2_EMAC_TX_MODE				0x000014bc
+#define BNX2_EMAC_TX_MODE_WESET				 (1W<<0)
+#define BNX2_EMAC_TX_MODE_CS16_TEST			 (1W<<2)
+#define BNX2_EMAC_TX_MODE_EXT_PAUSE_EN			 (1W<<3)
+#define BNX2_EMAC_TX_MODE_FWOW_EN			 (1W<<4)
+#define BNX2_EMAC_TX_MODE_BIG_BACKOFF			 (1W<<5)
+#define BNX2_EMAC_TX_MODE_WONG_PAUSE			 (1W<<6)
+#define BNX2_EMAC_TX_MODE_WINK_AWAWE			 (1W<<7)
+
+#define BNX2_EMAC_TX_STATUS				0x000014c0
+#define BNX2_EMAC_TX_STATUS_XOFFED			 (1W<<0)
+#define BNX2_EMAC_TX_STATUS_XOFF_SENT			 (1W<<1)
+#define BNX2_EMAC_TX_STATUS_XON_SENT			 (1W<<2)
+#define BNX2_EMAC_TX_STATUS_WINK_UP			 (1W<<3)
+#define BNX2_EMAC_TX_STATUS_UNDEWWUN			 (1W<<4)
+#define BNX2_EMAC_TX_STATUS_CS16_EWWOW			 (1W<<5)
+
+#define BNX2_EMAC_TX_WENGTHS				0x000014c4
+#define BNX2_EMAC_TX_WENGTHS_SWOT			 (0xffW<<0)
+#define BNX2_EMAC_TX_WENGTHS_IPG			 (0xfW<<8)
+#define BNX2_EMAC_TX_WENGTHS_IPG_CWS			 (0x3W<<12)
+
+#define BNX2_EMAC_WX_MODE				0x000014c8
+#define BNX2_EMAC_WX_MODE_WESET				 (1W<<0)
+#define BNX2_EMAC_WX_MODE_FWOW_EN			 (1W<<2)
+#define BNX2_EMAC_WX_MODE_KEEP_MAC_CONTWOW		 (1W<<3)
+#define BNX2_EMAC_WX_MODE_KEEP_PAUSE			 (1W<<4)
+#define BNX2_EMAC_WX_MODE_ACCEPT_OVEWSIZE		 (1W<<5)
+#define BNX2_EMAC_WX_MODE_ACCEPT_WUNTS			 (1W<<6)
+#define BNX2_EMAC_WX_MODE_WWC_CHK			 (1W<<7)
+#define BNX2_EMAC_WX_MODE_PWOMISCUOUS			 (1W<<8)
+#define BNX2_EMAC_WX_MODE_NO_CWC_CHK			 (1W<<9)
+#define BNX2_EMAC_WX_MODE_KEEP_VWAN_TAG			 (1W<<10)
+#define BNX2_EMAC_WX_MODE_FIWT_BWOADCAST		 (1W<<11)
+#define BNX2_EMAC_WX_MODE_SOWT_MODE			 (1W<<12)
+
+#define BNX2_EMAC_WX_STATUS				0x000014cc
+#define BNX2_EMAC_WX_STATUS_FFED			 (1W<<0)
+#define BNX2_EMAC_WX_STATUS_FF_WECEIVED			 (1W<<1)
+#define BNX2_EMAC_WX_STATUS_N_WECEIVED			 (1W<<2)
+
+#define BNX2_EMAC_MUWTICAST_HASH0			0x000014d0
+#define BNX2_EMAC_MUWTICAST_HASH1			0x000014d4
+#define BNX2_EMAC_MUWTICAST_HASH2			0x000014d8
+#define BNX2_EMAC_MUWTICAST_HASH3			0x000014dc
+#define BNX2_EMAC_MUWTICAST_HASH4			0x000014e0
+#define BNX2_EMAC_MUWTICAST_HASH5			0x000014e4
+#define BNX2_EMAC_MUWTICAST_HASH6			0x000014e8
+#define BNX2_EMAC_MUWTICAST_HASH7			0x000014ec
+#define BNX2_EMAC_CKSUM_EWWOW_STATUS			0x000014f0
+#define BNX2_EMAC_CKSUM_EWWOW_STATUS_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_EMAC_CKSUM_EWWOW_STATUS_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_EMAC_WX_STAT_IFHCINOCTETS			0x00001500
+#define BNX2_EMAC_WX_STAT_IFHCINBADOCTETS		0x00001504
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSFWAGMENTS		0x00001508
+#define BNX2_EMAC_WX_STAT_IFHCINUCASTPKTS		0x0000150c
+#define BNX2_EMAC_WX_STAT_IFHCINMUWTICASTPKTS		0x00001510
+#define BNX2_EMAC_WX_STAT_IFHCINBWOADCASTPKTS		0x00001514
+#define BNX2_EMAC_WX_STAT_DOT3STATSFCSEWWOWS		0x00001518
+#define BNX2_EMAC_WX_STAT_DOT3STATSAWIGNMENTEWWOWS	0x0000151c
+#define BNX2_EMAC_WX_STAT_DOT3STATSCAWWIEWSENSEEWWOWS	0x00001520
+#define BNX2_EMAC_WX_STAT_XONPAUSEFWAMESWECEIVED	0x00001524
+#define BNX2_EMAC_WX_STAT_XOFFPAUSEFWAMESWECEIVED	0x00001528
+#define BNX2_EMAC_WX_STAT_MACCONTWOWFWAMESWECEIVED	0x0000152c
+#define BNX2_EMAC_WX_STAT_XOFFSTATEENTEWED		0x00001530
+#define BNX2_EMAC_WX_STAT_DOT3STATSFWAMESTOOWONG	0x00001534
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSJABBEWS		0x00001538
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSUNDEWSIZEPKTS	0x0000153c
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS64OCTETS	0x00001540
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS65OCTETSTO127OCTETS	0x00001544
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS128OCTETSTO255OCTETS	0x00001548
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS256OCTETSTO511OCTETS	0x0000154c
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS512OCTETSTO1023OCTETS	0x00001550
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTS1024OCTETSTO1522OCTETS	0x00001554
+#define BNX2_EMAC_WX_STAT_ETHEWSTATSPKTSOVEW1522OCTETS	0x00001558
+#define BNX2_EMAC_WXMAC_DEBUG0				0x0000155c
+#define BNX2_EMAC_WXMAC_DEBUG1				0x00001560
+#define BNX2_EMAC_WXMAC_DEBUG1_WENGTH_NE_BYTE_COUNT	 (1W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG1_WENGTH_OUT_WANGE		 (1W<<1)
+#define BNX2_EMAC_WXMAC_DEBUG1_BAD_CWC			 (1W<<2)
+#define BNX2_EMAC_WXMAC_DEBUG1_WX_EWWOW			 (1W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG1_AWIGN_EWWOW		 (1W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG1_WAST_DATA		 (1W<<5)
+#define BNX2_EMAC_WXMAC_DEBUG1_ODD_BYTE_STAWT		 (1W<<6)
+#define BNX2_EMAC_WXMAC_DEBUG1_BYTE_COUNT		 (0xffffW<<7)
+#define BNX2_EMAC_WXMAC_DEBUG1_SWOT_TIME		 (0xffW<<23)
+
+#define BNX2_EMAC_WXMAC_DEBUG2				0x00001564
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE			 (0x7W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_IDWE		 (0x0W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_SFD		 (0x1W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_DATA		 (0x2W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_SKEEP		 (0x3W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_EXT		 (0x4W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_DWOP		 (0x5W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_SDWOP		 (0x6W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_SM_STATE_FC		 (0x7W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE		 (0xfW<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_IDWE		 (0x0W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_DATA0		 (0x1W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_DATA1		 (0x2W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_DATA2		 (0x3W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_DATA3		 (0x4W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_ABOWT		 (0x5W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_WAIT		 (0x6W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_STATUS		 (0x7W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_IDI_STATE_WAST		 (0x8W<<3)
+#define BNX2_EMAC_WXMAC_DEBUG2_BYTE_IN			 (0xffW<<7)
+#define BNX2_EMAC_WXMAC_DEBUG2_FAWSEC			 (1W<<15)
+#define BNX2_EMAC_WXMAC_DEBUG2_TAGGED			 (1W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG2_PAUSE_STATE		 (1W<<18)
+#define BNX2_EMAC_WXMAC_DEBUG2_PAUSE_STATE_IDWE		 (0W<<18)
+#define BNX2_EMAC_WXMAC_DEBUG2_PAUSE_STATE_PAUSED	 (1W<<18)
+#define BNX2_EMAC_WXMAC_DEBUG2_SE_COUNTEW		 (0xfW<<19)
+#define BNX2_EMAC_WXMAC_DEBUG2_QUANTA			 (0x1fW<<23)
+
+#define BNX2_EMAC_WXMAC_DEBUG3				0x00001568
+#define BNX2_EMAC_WXMAC_DEBUG3_PAUSE_CTW		 (0xffffW<<0)
+#define BNX2_EMAC_WXMAC_DEBUG3_TMP_PAUSE_CTW		 (0xffffW<<16)
+
+#define BNX2_EMAC_WXMAC_DEBUG4				0x0000156c
+#define BNX2_EMAC_WXMAC_DEBUG4_TYPE_FIEWD		 (0xffffW<<0)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE		 (0x3fW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_IDWE		 (0x0W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UMAC2		 (0x1W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UMAC3		 (0x2W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UNI		 (0x3W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MMAC3		 (0x5W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_PSA1		 (0x6W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MMAC2		 (0x7W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_PSA2		 (0x7W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_PSA3		 (0x8W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MC2		 (0x9W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MC3		 (0xaW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MWAIT1	 (0xeW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MWAIT2	 (0xfW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MCHECK	 (0x10W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MC		 (0x11W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BC2		 (0x12W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BC3		 (0x13W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BSA1		 (0x14W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BSA2		 (0x15W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BSA3		 (0x16W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BTYPE		 (0x17W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_BC		 (0x18W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_PTYPE		 (0x19W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_CMD		 (0x1aW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MAC		 (0x1bW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_WATCH		 (0x1cW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_XOFF		 (0x1dW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_XON		 (0x1eW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_PAUSED	 (0x1fW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_NPAUSED	 (0x20W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_TTYPE		 (0x21W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_TVAW		 (0x22W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_USA1		 (0x23W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_USA2		 (0x24W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_USA3		 (0x25W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UTYPE		 (0x26W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UTTYPE	 (0x27W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_UTVAW		 (0x28W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_MTYPE		 (0x29W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_FIWT_STATE_DWOP		 (0x2aW<<16)
+#define BNX2_EMAC_WXMAC_DEBUG4_DWOP_PKT			 (1W<<22)
+#define BNX2_EMAC_WXMAC_DEBUG4_SWOT_FIWWED		 (1W<<23)
+#define BNX2_EMAC_WXMAC_DEBUG4_FAWSE_CAWWIEW		 (1W<<24)
+#define BNX2_EMAC_WXMAC_DEBUG4_WAST_DATA		 (1W<<25)
+#define BNX2_EMAC_WXMAC_DEBUG4_SFD_FOUND		 (1W<<26)
+#define BNX2_EMAC_WXMAC_DEBUG4_ADVANCE			 (1W<<27)
+#define BNX2_EMAC_WXMAC_DEBUG4_STAWT			 (1W<<28)
+
+#define BNX2_EMAC_WXMAC_DEBUG5				0x00001570
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM			 (0x7W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_IDWE		 (0W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_WAIT_EOF	 (1W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_WAIT_STAT	 (2W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_SET_EOF4FCWC	 (3W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_SET_EOF4WDE	 (4W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_SET_EOF4AWW	 (5W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_PS_IDISM_1WD_WAIT_STAT	 (6W<<0)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1		 (0x7W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_VDW		 (0x0W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_STAT		 (0x1W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_AEOF		 (0x2W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_NEOF		 (0x3W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_SOF		 (0x4W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_SAEOF		 (0x6W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF1_SNEOF		 (0x7W<<4)
+#define BNX2_EMAC_WXMAC_DEBUG5_EOF_DETECTED		 (1W<<7)
+#define BNX2_EMAC_WXMAC_DEBUG5_CCODE_BUF0		 (0x7W<<8)
+#define BNX2_EMAC_WXMAC_DEBUG5_WPM_IDI_FIFO_FUWW	 (1W<<11)
+#define BNX2_EMAC_WXMAC_DEBUG5_WOAD_CCODE		 (1W<<12)
+#define BNX2_EMAC_WXMAC_DEBUG5_WOAD_DATA		 (1W<<13)
+#define BNX2_EMAC_WXMAC_DEBUG5_WOAD_STAT		 (1W<<14)
+#define BNX2_EMAC_WXMAC_DEBUG5_CWW_STAT			 (1W<<15)
+#define BNX2_EMAC_WXMAC_DEBUG5_IDI_WPM_CCODE		 (0x3W<<16)
+#define BNX2_EMAC_WXMAC_DEBUG5_IDI_WPM_ACCEPT		 (1W<<19)
+#define BNX2_EMAC_WXMAC_DEBUG5_FMWEN			 (0xfffW<<20)
+
+#define BNX2_EMAC_WX_STAT_FAWSECAWWIEWEWWOWS		0x00001574
+#define BNX2_EMAC_WX_STAT_AC0				0x00001580
+#define BNX2_EMAC_WX_STAT_AC1				0x00001584
+#define BNX2_EMAC_WX_STAT_AC2				0x00001588
+#define BNX2_EMAC_WX_STAT_AC3				0x0000158c
+#define BNX2_EMAC_WX_STAT_AC4				0x00001590
+#define BNX2_EMAC_WX_STAT_AC5				0x00001594
+#define BNX2_EMAC_WX_STAT_AC6				0x00001598
+#define BNX2_EMAC_WX_STAT_AC7				0x0000159c
+#define BNX2_EMAC_WX_STAT_AC8				0x000015a0
+#define BNX2_EMAC_WX_STAT_AC9				0x000015a4
+#define BNX2_EMAC_WX_STAT_AC10				0x000015a8
+#define BNX2_EMAC_WX_STAT_AC11				0x000015ac
+#define BNX2_EMAC_WX_STAT_AC12				0x000015b0
+#define BNX2_EMAC_WX_STAT_AC13				0x000015b4
+#define BNX2_EMAC_WX_STAT_AC14				0x000015b8
+#define BNX2_EMAC_WX_STAT_AC15				0x000015bc
+#define BNX2_EMAC_WX_STAT_AC16				0x000015c0
+#define BNX2_EMAC_WX_STAT_AC17				0x000015c4
+#define BNX2_EMAC_WX_STAT_AC18				0x000015c8
+#define BNX2_EMAC_WX_STAT_AC19				0x000015cc
+#define BNX2_EMAC_WX_STAT_AC20				0x000015d0
+#define BNX2_EMAC_WX_STAT_AC21				0x000015d4
+#define BNX2_EMAC_WX_STAT_AC22				0x000015d8
+#define BNX2_EMAC_WXMAC_SUC_DBG_OVEWWUNVEC		0x000015dc
+#define BNX2_EMAC_WX_STAT_AC_28				0x000015f4
+#define BNX2_EMAC_TX_STAT_IFHCOUTOCTETS			0x00001600
+#define BNX2_EMAC_TX_STAT_IFHCOUTBADOCTETS		0x00001604
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSCOWWISIONS		0x00001608
+#define BNX2_EMAC_TX_STAT_OUTXONSENT			0x0000160c
+#define BNX2_EMAC_TX_STAT_OUTXOFFSENT			0x00001610
+#define BNX2_EMAC_TX_STAT_FWOWCONTWOWDONE		0x00001614
+#define BNX2_EMAC_TX_STAT_DOT3STATSSINGWECOWWISIONFWAMES	0x00001618
+#define BNX2_EMAC_TX_STAT_DOT3STATSMUWTIPWECOWWISIONFWAMES	0x0000161c
+#define BNX2_EMAC_TX_STAT_DOT3STATSDEFEWWEDTWANSMISSIONS	0x00001620
+#define BNX2_EMAC_TX_STAT_DOT3STATSEXCESSIVECOWWISIONS	0x00001624
+#define BNX2_EMAC_TX_STAT_DOT3STATSWATECOWWISIONS	0x00001628
+#define BNX2_EMAC_TX_STAT_IFHCOUTUCASTPKTS		0x0000162c
+#define BNX2_EMAC_TX_STAT_IFHCOUTMUWTICASTPKTS		0x00001630
+#define BNX2_EMAC_TX_STAT_IFHCOUTBWOADCASTPKTS		0x00001634
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS64OCTETS	0x00001638
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS65OCTETSTO127OCTETS	0x0000163c
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS128OCTETSTO255OCTETS	0x00001640
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS256OCTETSTO511OCTETS	0x00001644
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS512OCTETSTO1023OCTETS	0x00001648
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTS1024OCTETSTO1522OCTETS	0x0000164c
+#define BNX2_EMAC_TX_STAT_ETHEWSTATSPKTSOVEW1522OCTETS	0x00001650
+#define BNX2_EMAC_TX_STAT_DOT3STATSINTEWNAWMACTWANSMITEWWOWS	0x00001654
+#define BNX2_EMAC_TXMAC_DEBUG0				0x00001658
+#define BNX2_EMAC_TXMAC_DEBUG1				0x0000165c
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE		 (0xfW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_IDWE		 (0x0W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_STAWT0		 (0x1W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_DATA0		 (0x4W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_DATA1		 (0x5W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_DATA2		 (0x6W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_DATA3		 (0x7W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_WAIT0		 (0x8W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_ODI_STATE_WAIT1		 (0x9W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG1_CWS_ENABWE		 (1W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG1_BAD_CWC			 (1W<<5)
+#define BNX2_EMAC_TXMAC_DEBUG1_SE_COUNTEW		 (0xfW<<6)
+#define BNX2_EMAC_TXMAC_DEBUG1_SEND_PAUSE		 (1W<<10)
+#define BNX2_EMAC_TXMAC_DEBUG1_WATE_COWWISION		 (1W<<11)
+#define BNX2_EMAC_TXMAC_DEBUG1_MAX_DEFEW		 (1W<<12)
+#define BNX2_EMAC_TXMAC_DEBUG1_DEFEWWED			 (1W<<13)
+#define BNX2_EMAC_TXMAC_DEBUG1_ONE_BYTE			 (1W<<14)
+#define BNX2_EMAC_TXMAC_DEBUG1_IPG_TIME			 (0xfW<<15)
+#define BNX2_EMAC_TXMAC_DEBUG1_SWOT_TIME		 (0xffW<<19)
+
+#define BNX2_EMAC_TXMAC_DEBUG2				0x00001660
+#define BNX2_EMAC_TXMAC_DEBUG2_BACK_OFF			 (0x3ffW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG2_BYTE_COUNT		 (0xffffW<<10)
+#define BNX2_EMAC_TXMAC_DEBUG2_COW_COUNT		 (0x1fW<<26)
+#define BNX2_EMAC_TXMAC_DEBUG2_COW_BIT			 (1W<<31)
+
+#define BNX2_EMAC_TXMAC_DEBUG3				0x00001664
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE			 (0xfW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_IDWE		 (0x0W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_PWE1		 (0x1W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_PWE2		 (0x2W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_SFD		 (0x3W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_DATA		 (0x4W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_CWC1		 (0x5W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_CWC2		 (0x6W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_EXT		 (0x7W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_STATB		 (0x8W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_STATG		 (0x9W<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_JAM		 (0xaW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_EJAM		 (0xbW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_BJAM		 (0xcW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_SWAIT		 (0xdW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_SM_STATE_BACKOFF		 (0xeW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE		 (0x7W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_IDWE		 (0x0W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_WAIT		 (0x1W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_UNI		 (0x2W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_MC		 (0x3W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_BC2		 (0x4W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_BC3		 (0x5W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_FIWT_STATE_BC		 (0x6W<<4)
+#define BNX2_EMAC_TXMAC_DEBUG3_CWS_DONE			 (1W<<7)
+#define BNX2_EMAC_TXMAC_DEBUG3_XOFF			 (1W<<8)
+#define BNX2_EMAC_TXMAC_DEBUG3_SE_COUNTEW		 (0xfW<<9)
+#define BNX2_EMAC_TXMAC_DEBUG3_QUANTA_COUNTEW		 (0x1fW<<13)
+
+#define BNX2_EMAC_TXMAC_DEBUG4				0x00001668
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_COUNTEW		 (0xffffW<<0)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE		 (0xfW<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_IDWE		 (0x0W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_MCA1		 (0x2W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_MCA2		 (0x3W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_SWC3		 (0x4W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_SWC2		 (0x5W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_MCA3		 (0x6W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_SWC1		 (0x7W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_CWC1		 (0x8W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_CWC2		 (0x9W<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_TIME		 (0xaW<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_TYPE		 (0xcW<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_WAIT		 (0xdW<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_PAUSE_STATE_CMD		 (0xeW<<16)
+#define BNX2_EMAC_TXMAC_DEBUG4_STATS0_VAWID		 (1W<<20)
+#define BNX2_EMAC_TXMAC_DEBUG4_APPEND_CWC		 (1W<<21)
+#define BNX2_EMAC_TXMAC_DEBUG4_SWOT_FIWWED		 (1W<<22)
+#define BNX2_EMAC_TXMAC_DEBUG4_MAX_DEFEW		 (1W<<23)
+#define BNX2_EMAC_TXMAC_DEBUG4_SEND_EXTEND		 (1W<<24)
+#define BNX2_EMAC_TXMAC_DEBUG4_SEND_PADDING		 (1W<<25)
+#define BNX2_EMAC_TXMAC_DEBUG4_EOF_WOC			 (1W<<26)
+#define BNX2_EMAC_TXMAC_DEBUG4_COWWIDING		 (1W<<27)
+#define BNX2_EMAC_TXMAC_DEBUG4_COW_IN			 (1W<<28)
+#define BNX2_EMAC_TXMAC_DEBUG4_BUWSTING			 (1W<<29)
+#define BNX2_EMAC_TXMAC_DEBUG4_ADVANCE			 (1W<<30)
+#define BNX2_EMAC_TXMAC_DEBUG4_GO			 (1W<<31)
+
+#define BNX2_EMAC_TX_STAT_AC0				0x00001680
+#define BNX2_EMAC_TX_STAT_AC1				0x00001684
+#define BNX2_EMAC_TX_STAT_AC2				0x00001688
+#define BNX2_EMAC_TX_STAT_AC3				0x0000168c
+#define BNX2_EMAC_TX_STAT_AC4				0x00001690
+#define BNX2_EMAC_TX_STAT_AC5				0x00001694
+#define BNX2_EMAC_TX_STAT_AC6				0x00001698
+#define BNX2_EMAC_TX_STAT_AC7				0x0000169c
+#define BNX2_EMAC_TX_STAT_AC8				0x000016a0
+#define BNX2_EMAC_TX_STAT_AC9				0x000016a4
+#define BNX2_EMAC_TX_STAT_AC10				0x000016a8
+#define BNX2_EMAC_TX_STAT_AC11				0x000016ac
+#define BNX2_EMAC_TX_STAT_AC12				0x000016b0
+#define BNX2_EMAC_TX_STAT_AC13				0x000016b4
+#define BNX2_EMAC_TX_STAT_AC14				0x000016b8
+#define BNX2_EMAC_TX_STAT_AC15				0x000016bc
+#define BNX2_EMAC_TX_STAT_AC16				0x000016c0
+#define BNX2_EMAC_TX_STAT_AC17				0x000016c4
+#define BNX2_EMAC_TX_STAT_AC18				0x000016c8
+#define BNX2_EMAC_TX_STAT_AC19				0x000016cc
+#define BNX2_EMAC_TX_STAT_AC20				0x000016d0
+#define BNX2_EMAC_TXMAC_SUC_DBG_OVEWWUNVEC		0x000016d8
+#define BNX2_EMAC_TX_WATE_WIMIT_CTWW			0x000016fc
+#define BNX2_EMAC_TX_WATE_WIMIT_CTWW_TX_THWOTTWE_INC	 (0x7fW<<0)
+#define BNX2_EMAC_TX_WATE_WIMIT_CTWW_TX_THWOTTWE_NUM	 (0x7fW<<16)
+#define BNX2_EMAC_TX_WATE_WIMIT_CTWW_WATE_WIMITEW_EN	 (1W<<31)
+
+
+/*
+ *  wpm_weg definition
+ *  offset: 0x1800
+ */
+#define BNX2_WPM_COMMAND				0x00001800
+#define BNX2_WPM_COMMAND_ENABWED			 (1W<<0)
+#define BNX2_WPM_COMMAND_OVEWWUN_ABOWT			 (1W<<4)
+
+#define BNX2_WPM_STATUS					0x00001804
+#define BNX2_WPM_STATUS_MBUF_WAIT			 (1W<<0)
+#define BNX2_WPM_STATUS_FWEE_WAIT			 (1W<<1)
+
+#define BNX2_WPM_CONFIG					0x00001808
+#define BNX2_WPM_CONFIG_NO_PSD_HDW_CKSUM		 (1W<<0)
+#define BNX2_WPM_CONFIG_ACPI_ENA			 (1W<<1)
+#define BNX2_WPM_CONFIG_ACPI_KEEP			 (1W<<2)
+#define BNX2_WPM_CONFIG_MP_KEEP				 (1W<<3)
+#define BNX2_WPM_CONFIG_SOWT_VECT_VAW			 (0xfW<<4)
+#define BNX2_WPM_CONFIG_DISABWE_WOW_ASSEWT		 (1W<<30)
+#define BNX2_WPM_CONFIG_IGNOWE_VWAN			 (1W<<31)
+
+#define BNX2_WPM_MGMT_PKT_CTWW				0x0000180c
+#define BNX2_WPM_MGMT_PKT_CTWW_MGMT_SOWT		 (0xfW<<0)
+#define BNX2_WPM_MGMT_PKT_CTWW_MGMT_WUWE		 (0xfW<<4)
+#define BNX2_WPM_MGMT_PKT_CTWW_MGMT_DISCAWD_EN		 (1W<<30)
+#define BNX2_WPM_MGMT_PKT_CTWW_MGMT_EN			 (1W<<31)
+
+#define BNX2_WPM_VWAN_MATCH0				0x00001810
+#define BNX2_WPM_VWAN_MATCH0_WPM_VWAN_MTCH0_VAWUE	 (0xfffW<<0)
+
+#define BNX2_WPM_VWAN_MATCH1				0x00001814
+#define BNX2_WPM_VWAN_MATCH1_WPM_VWAN_MTCH1_VAWUE	 (0xfffW<<0)
+
+#define BNX2_WPM_VWAN_MATCH2				0x00001818
+#define BNX2_WPM_VWAN_MATCH2_WPM_VWAN_MTCH2_VAWUE	 (0xfffW<<0)
+
+#define BNX2_WPM_VWAN_MATCH3				0x0000181c
+#define BNX2_WPM_VWAN_MATCH3_WPM_VWAN_MTCH3_VAWUE	 (0xfffW<<0)
+
+#define BNX2_WPM_SOWT_USEW0				0x00001820
+#define BNX2_WPM_SOWT_USEW0_PM_EN			 (0xffffW<<0)
+#define BNX2_WPM_SOWT_USEW0_BC_EN			 (1W<<16)
+#define BNX2_WPM_SOWT_USEW0_MC_EN			 (1W<<17)
+#define BNX2_WPM_SOWT_USEW0_MC_HSH_EN			 (1W<<18)
+#define BNX2_WPM_SOWT_USEW0_PWOM_EN			 (1W<<19)
+#define BNX2_WPM_SOWT_USEW0_VWAN_EN			 (0xfW<<20)
+#define BNX2_WPM_SOWT_USEW0_PWOM_VWAN			 (1W<<24)
+#define BNX2_WPM_SOWT_USEW0_VWAN_NOTMATCH		 (1W<<25)
+#define BNX2_WPM_SOWT_USEW0_ENA				 (1W<<31)
+
+#define BNX2_WPM_SOWT_USEW1				0x00001824
+#define BNX2_WPM_SOWT_USEW1_PM_EN			 (0xffffW<<0)
+#define BNX2_WPM_SOWT_USEW1_BC_EN			 (1W<<16)
+#define BNX2_WPM_SOWT_USEW1_MC_EN			 (1W<<17)
+#define BNX2_WPM_SOWT_USEW1_MC_HSH_EN			 (1W<<18)
+#define BNX2_WPM_SOWT_USEW1_PWOM_EN			 (1W<<19)
+#define BNX2_WPM_SOWT_USEW1_VWAN_EN			 (0xfW<<20)
+#define BNX2_WPM_SOWT_USEW1_PWOM_VWAN			 (1W<<24)
+#define BNX2_WPM_SOWT_USEW1_ENA				 (1W<<31)
+
+#define BNX2_WPM_SOWT_USEW2				0x00001828
+#define BNX2_WPM_SOWT_USEW2_PM_EN			 (0xffffW<<0)
+#define BNX2_WPM_SOWT_USEW2_BC_EN			 (1W<<16)
+#define BNX2_WPM_SOWT_USEW2_MC_EN			 (1W<<17)
+#define BNX2_WPM_SOWT_USEW2_MC_HSH_EN			 (1W<<18)
+#define BNX2_WPM_SOWT_USEW2_PWOM_EN			 (1W<<19)
+#define BNX2_WPM_SOWT_USEW2_VWAN_EN			 (0xfW<<20)
+#define BNX2_WPM_SOWT_USEW2_PWOM_VWAN			 (1W<<24)
+#define BNX2_WPM_SOWT_USEW2_ENA				 (1W<<31)
+
+#define BNX2_WPM_SOWT_USEW3				0x0000182c
+#define BNX2_WPM_SOWT_USEW3_PM_EN			 (0xffffW<<0)
+#define BNX2_WPM_SOWT_USEW3_BC_EN			 (1W<<16)
+#define BNX2_WPM_SOWT_USEW3_MC_EN			 (1W<<17)
+#define BNX2_WPM_SOWT_USEW3_MC_HSH_EN			 (1W<<18)
+#define BNX2_WPM_SOWT_USEW3_PWOM_EN			 (1W<<19)
+#define BNX2_WPM_SOWT_USEW3_VWAN_EN			 (0xfW<<20)
+#define BNX2_WPM_SOWT_USEW3_PWOM_VWAN			 (1W<<24)
+#define BNX2_WPM_SOWT_USEW3_ENA				 (1W<<31)
+
+#define BNX2_WPM_STAT_W2_FIWTEW_DISCAWDS		0x00001840
+#define BNX2_WPM_STAT_WUWE_CHECKEW_DISCAWDS		0x00001844
+#define BNX2_WPM_STAT_IFINFTQDISCAWDS			0x00001848
+#define BNX2_WPM_STAT_IFINMBUFDISCAWD			0x0000184c
+#define BNX2_WPM_STAT_WUWE_CHECKEW_P4_HIT		0x00001850
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION0		0x00001854
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION0_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION0_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION0_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION0_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION1		0x00001858
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION1_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION1_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION1_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION1_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION2		0x0000185c
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION2_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION2_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION2_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION2_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION3		0x00001860
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION3_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION3_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION3_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION3_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION4		0x00001864
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION4_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION4_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION4_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION4_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION5		0x00001868
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION5_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION5_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION5_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION5_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION6		0x0000186c
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION6_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION6_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION6_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION6_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION7		0x00001870
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION7_NEXT_HEADEW_WEN	 (0xffW<<0)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION7_NEXT_HEADEW	 (0xffW<<16)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION7_NEXT_HEADEW_WEN_TYPE	 (1W<<30)
+#define BNX2_WPM_IPV6_PWOGWAMMABWE_EXTENSION7_NEXT_HEADEW_EN	 (1W<<31)
+
+#define BNX2_WPM_STAT_AC0				0x00001880
+#define BNX2_WPM_STAT_AC1				0x00001884
+#define BNX2_WPM_STAT_AC2				0x00001888
+#define BNX2_WPM_STAT_AC3				0x0000188c
+#define BNX2_WPM_STAT_AC4				0x00001890
+#define BNX2_WPM_WC_CNTW_16				0x000018e0
+#define BNX2_WPM_WC_CNTW_16_OFFSET			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_16_CWASS			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_16_PWIOWITY			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_16_P4				 (1W<<12)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_STAWT		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_IP			 (1W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_TCP		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_UDP		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_DATA		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_TCP_UDP		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_16_HDW_TYPE_ICMPV6		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_16_COMP			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_16_COMP_EQUAW			 (0W<<16)
+#define BNX2_WPM_WC_CNTW_16_COMP_NEQUAW			 (1W<<16)
+#define BNX2_WPM_WC_CNTW_16_COMP_GWEATEW		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_16_COMP_WESS			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_16_MAP				 (1W<<18)
+#define BNX2_WPM_WC_CNTW_16_SBIT			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_16_CMDSEW			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_16_DISCAWD			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_16_MASK			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_16_P1				 (1W<<27)
+#define BNX2_WPM_WC_CNTW_16_P2				 (1W<<28)
+#define BNX2_WPM_WC_CNTW_16_P3				 (1W<<29)
+#define BNX2_WPM_WC_CNTW_16_NBIT			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_16			0x000018e4
+#define BNX2_WPM_WC_VAWUE_MASK_16_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_16_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_17				0x000018e8
+#define BNX2_WPM_WC_CNTW_17_OFFSET			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_17_CWASS			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_17_PWIOWITY			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_17_P4				 (1W<<12)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_STAWT		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_IP			 (1W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_TCP		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_UDP		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_DATA		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_TCP_UDP		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_17_HDW_TYPE_ICMPV6		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_17_COMP			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_17_COMP_EQUAW			 (0W<<16)
+#define BNX2_WPM_WC_CNTW_17_COMP_NEQUAW			 (1W<<16)
+#define BNX2_WPM_WC_CNTW_17_COMP_GWEATEW		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_17_COMP_WESS			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_17_MAP				 (1W<<18)
+#define BNX2_WPM_WC_CNTW_17_SBIT			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_17_CMDSEW			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_17_DISCAWD			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_17_MASK			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_17_P1				 (1W<<27)
+#define BNX2_WPM_WC_CNTW_17_P2				 (1W<<28)
+#define BNX2_WPM_WC_CNTW_17_P3				 (1W<<29)
+#define BNX2_WPM_WC_CNTW_17_NBIT			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_17			0x000018ec
+#define BNX2_WPM_WC_VAWUE_MASK_17_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_17_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_18				0x000018f0
+#define BNX2_WPM_WC_CNTW_18_OFFSET			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_18_CWASS			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_18_PWIOWITY			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_18_P4				 (1W<<12)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_STAWT		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_IP			 (1W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_TCP		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_UDP		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_DATA		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_TCP_UDP		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_18_HDW_TYPE_ICMPV6		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_18_COMP			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_18_COMP_EQUAW			 (0W<<16)
+#define BNX2_WPM_WC_CNTW_18_COMP_NEQUAW			 (1W<<16)
+#define BNX2_WPM_WC_CNTW_18_COMP_GWEATEW		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_18_COMP_WESS			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_18_MAP				 (1W<<18)
+#define BNX2_WPM_WC_CNTW_18_SBIT			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_18_CMDSEW			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_18_DISCAWD			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_18_MASK			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_18_P1				 (1W<<27)
+#define BNX2_WPM_WC_CNTW_18_P2				 (1W<<28)
+#define BNX2_WPM_WC_CNTW_18_P3				 (1W<<29)
+#define BNX2_WPM_WC_CNTW_18_NBIT			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_18			0x000018f4
+#define BNX2_WPM_WC_VAWUE_MASK_18_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_18_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_19				0x000018f8
+#define BNX2_WPM_WC_CNTW_19_OFFSET			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_19_CWASS			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_19_PWIOWITY			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_19_P4				 (1W<<12)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_STAWT		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_IP			 (1W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_TCP		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_UDP		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_DATA		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_TCP_UDP		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_19_HDW_TYPE_ICMPV6		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_19_COMP			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_19_COMP_EQUAW			 (0W<<16)
+#define BNX2_WPM_WC_CNTW_19_COMP_NEQUAW			 (1W<<16)
+#define BNX2_WPM_WC_CNTW_19_COMP_GWEATEW		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_19_COMP_WESS			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_19_MAP				 (1W<<18)
+#define BNX2_WPM_WC_CNTW_19_SBIT			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_19_CMDSEW			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_19_DISCAWD			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_19_MASK			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_19_P1				 (1W<<27)
+#define BNX2_WPM_WC_CNTW_19_P2				 (1W<<28)
+#define BNX2_WPM_WC_CNTW_19_P3				 (1W<<29)
+#define BNX2_WPM_WC_CNTW_19_NBIT			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_19			0x000018fc
+#define BNX2_WPM_WC_VAWUE_MASK_19_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_19_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_0				0x00001900
+#define BNX2_WPM_WC_CNTW_0_OFFSET			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_0_CWASS			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_0_PWIOWITY			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_0_P4				 (1W<<12)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_STAWT		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_IP			 (1W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_TCP			 (2W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_UDP			 (3W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_DATA		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_TCP_UDP		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_0_HDW_TYPE_ICMPV6		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_0_COMP				 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_0_COMP_EQUAW			 (0W<<16)
+#define BNX2_WPM_WC_CNTW_0_COMP_NEQUAW			 (1W<<16)
+#define BNX2_WPM_WC_CNTW_0_COMP_GWEATEW			 (2W<<16)
+#define BNX2_WPM_WC_CNTW_0_COMP_WESS			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_0_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_0_SBIT				 (1W<<19)
+#define BNX2_WPM_WC_CNTW_0_CMDSEW			 (0xfW<<20)
+#define BNX2_WPM_WC_CNTW_0_MAP				 (1W<<24)
+#define BNX2_WPM_WC_CNTW_0_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_0_DISCAWD			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_0_MASK				 (1W<<26)
+#define BNX2_WPM_WC_CNTW_0_P1				 (1W<<27)
+#define BNX2_WPM_WC_CNTW_0_P2				 (1W<<28)
+#define BNX2_WPM_WC_CNTW_0_P3				 (1W<<29)
+#define BNX2_WPM_WC_CNTW_0_NBIT				 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_0			0x00001904
+#define BNX2_WPM_WC_VAWUE_MASK_0_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_0_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_1				0x00001908
+#define BNX2_WPM_WC_CNTW_1_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_1_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_1_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_1_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_1_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_1_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_1_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_1_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_1_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_1_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_1_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_1_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_1_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_1_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_1_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_1_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_1_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_1_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_1_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_1_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_1_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_1			0x0000190c
+#define BNX2_WPM_WC_VAWUE_MASK_1_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_1_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_2				0x00001910
+#define BNX2_WPM_WC_CNTW_2_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_2_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_2_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_2_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_2_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_2_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_2_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_2_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_2_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_2_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_2_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_2_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_2_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_2_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_2_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_2_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_2_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_2_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_2_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_2_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_2_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_2			0x00001914
+#define BNX2_WPM_WC_VAWUE_MASK_2_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_2_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_3				0x00001918
+#define BNX2_WPM_WC_CNTW_3_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_3_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_3_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_3_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_3_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_3_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_3_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_3_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_3_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_3_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_3_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_3_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_3_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_3_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_3_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_3_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_3_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_3_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_3_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_3_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_3_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_3			0x0000191c
+#define BNX2_WPM_WC_VAWUE_MASK_3_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_3_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_4				0x00001920
+#define BNX2_WPM_WC_CNTW_4_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_4_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_4_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_4_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_4_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_4_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_4_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_4_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_4_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_4_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_4_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_4_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_4_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_4_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_4_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_4_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_4_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_4_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_4_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_4_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_4_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_4			0x00001924
+#define BNX2_WPM_WC_VAWUE_MASK_4_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_4_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_5				0x00001928
+#define BNX2_WPM_WC_CNTW_5_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_5_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_5_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_5_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_5_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_5_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_5_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_5_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_5_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_5_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_5_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_5_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_5_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_5_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_5_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_5_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_5_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_5_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_5_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_5_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_5_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_5			0x0000192c
+#define BNX2_WPM_WC_VAWUE_MASK_5_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_5_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_6				0x00001930
+#define BNX2_WPM_WC_CNTW_6_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_6_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_6_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_6_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_6_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_6_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_6_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_6_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_6_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_6_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_6_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_6_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_6_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_6_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_6_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_6_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_6_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_6_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_6_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_6_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_6_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_6			0x00001934
+#define BNX2_WPM_WC_VAWUE_MASK_6_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_6_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_7				0x00001938
+#define BNX2_WPM_WC_CNTW_7_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_7_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_7_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_7_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_7_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_7_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_7_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_7_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_7_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_7_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_7_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_7_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_7_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_7_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_7_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_7_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_7_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_7_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_7_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_7_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_7_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_7			0x0000193c
+#define BNX2_WPM_WC_VAWUE_MASK_7_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_7_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_8				0x00001940
+#define BNX2_WPM_WC_CNTW_8_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_8_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_8_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_8_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_8_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_8_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_8_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_8_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_8_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_8_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_8_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_8_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_8_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_8_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_8_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_8_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_8_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_8_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_8_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_8_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_8_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_8			0x00001944
+#define BNX2_WPM_WC_VAWUE_MASK_8_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_8_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_9				0x00001948
+#define BNX2_WPM_WC_CNTW_9_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_9_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_9_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_9_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_9_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_9_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_9_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_9_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_9_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_9_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_9_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_9_COMP_WESS_XI			 (3W<<16)
+#define BNX2_WPM_WC_CNTW_9_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_9_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_9_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_9_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_9_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_9_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_9_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_9_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_9_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_9			0x0000194c
+#define BNX2_WPM_WC_VAWUE_MASK_9_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_9_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_10				0x00001950
+#define BNX2_WPM_WC_CNTW_10_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_10_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_10_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_10_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_10_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_10_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_10_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_10_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_10_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_10_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_10_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_10_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_10_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_10_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_10_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_10_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_10_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_10_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_10_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_10_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_10_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_10			0x00001954
+#define BNX2_WPM_WC_VAWUE_MASK_10_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_10_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_11				0x00001958
+#define BNX2_WPM_WC_CNTW_11_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_11_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_11_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_11_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_11_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_11_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_11_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_11_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_11_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_11_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_11_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_11_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_11_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_11_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_11_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_11_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_11_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_11_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_11_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_11_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_11_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_11			0x0000195c
+#define BNX2_WPM_WC_VAWUE_MASK_11_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_11_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_12				0x00001960
+#define BNX2_WPM_WC_CNTW_12_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_12_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_12_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_12_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_12_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_12_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_12_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_12_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_12_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_12_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_12_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_12_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_12_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_12_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_12_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_12_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_12_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_12_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_12_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_12_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_12_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_12			0x00001964
+#define BNX2_WPM_WC_VAWUE_MASK_12_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_12_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_13				0x00001968
+#define BNX2_WPM_WC_CNTW_13_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_13_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_13_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_13_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_13_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_13_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_13_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_13_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_13_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_13_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_13_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_13_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_13_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_13_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_13_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_13_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_13_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_13_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_13_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_13_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_13_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_13			0x0000196c
+#define BNX2_WPM_WC_VAWUE_MASK_13_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_13_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_14				0x00001970
+#define BNX2_WPM_WC_CNTW_14_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_14_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_14_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_14_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_14_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_14_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_14_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_14_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_14_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_14_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_14_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_14_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_14_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_14_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_14_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_14_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_14_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_14_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_14_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_14_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_14_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_14			0x00001974
+#define BNX2_WPM_WC_VAWUE_MASK_14_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_14_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CNTW_15				0x00001978
+#define BNX2_WPM_WC_CNTW_15_A				 (0x3ffffW<<0)
+#define BNX2_WPM_WC_CNTW_15_B				 (0xfffW<<19)
+#define BNX2_WPM_WC_CNTW_15_OFFSET_XI			 (0xffW<<0)
+#define BNX2_WPM_WC_CNTW_15_CWASS_XI			 (0x7W<<8)
+#define BNX2_WPM_WC_CNTW_15_PWIOWITY_XI			 (1W<<11)
+#define BNX2_WPM_WC_CNTW_15_P4_XI			 (1W<<12)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_XI			 (0x7W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_STAWT_XI		 (0W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_IP_XI		 (1W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_TCP_XI		 (2W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_UDP_XI		 (3W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_DATA_XI		 (4W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_TCP_UDP_XI		 (5W<<13)
+#define BNX2_WPM_WC_CNTW_15_HDW_TYPE_ICMPV6_XI		 (6W<<13)
+#define BNX2_WPM_WC_CNTW_15_COMP_XI			 (0x3W<<16)
+#define BNX2_WPM_WC_CNTW_15_COMP_EQUAW_XI		 (0W<<16)
+#define BNX2_WPM_WC_CNTW_15_COMP_NEQUAW_XI		 (1W<<16)
+#define BNX2_WPM_WC_CNTW_15_COMP_GWEATEW_XI		 (2W<<16)
+#define BNX2_WPM_WC_CNTW_15_COMP_WESS_XI		 (3W<<16)
+#define BNX2_WPM_WC_CNTW_15_MAP_XI			 (1W<<18)
+#define BNX2_WPM_WC_CNTW_15_SBIT_XI			 (1W<<19)
+#define BNX2_WPM_WC_CNTW_15_CMDSEW_XI			 (0x1fW<<20)
+#define BNX2_WPM_WC_CNTW_15_DISCAWD_XI			 (1W<<25)
+#define BNX2_WPM_WC_CNTW_15_MASK_XI			 (1W<<26)
+#define BNX2_WPM_WC_CNTW_15_P1_XI			 (1W<<27)
+#define BNX2_WPM_WC_CNTW_15_P2_XI			 (1W<<28)
+#define BNX2_WPM_WC_CNTW_15_P3_XI			 (1W<<29)
+#define BNX2_WPM_WC_CNTW_15_NBIT_XI			 (1W<<30)
+
+#define BNX2_WPM_WC_VAWUE_MASK_15			0x0000197c
+#define BNX2_WPM_WC_VAWUE_MASK_15_VAWUE			 (0xffffW<<0)
+#define BNX2_WPM_WC_VAWUE_MASK_15_MASK			 (0xffffW<<16)
+
+#define BNX2_WPM_WC_CONFIG				0x00001980
+#define BNX2_WPM_WC_CONFIG_WUWE_ENABWE			 (0xffffW<<0)
+#define BNX2_WPM_WC_CONFIG_WUWE_ENABWE_XI		 (0xfffffW<<0)
+#define BNX2_WPM_WC_CONFIG_DEF_CWASS			 (0x7W<<24)
+#define BNX2_WPM_WC_CONFIG_KNUM_OVEWWWITE		 (1W<<31)
+
+#define BNX2_WPM_DEBUG0					0x00001984
+#define BNX2_WPM_DEBUG0_FM_BCNT				 (0xffffW<<0)
+#define BNX2_WPM_DEBUG0_T_DATA_OFST_VWD			 (1W<<16)
+#define BNX2_WPM_DEBUG0_T_UDP_OFST_VWD			 (1W<<17)
+#define BNX2_WPM_DEBUG0_T_TCP_OFST_VWD			 (1W<<18)
+#define BNX2_WPM_DEBUG0_T_IP_OFST_VWD			 (1W<<19)
+#define BNX2_WPM_DEBUG0_IP_MOWE_FWGMT			 (1W<<20)
+#define BNX2_WPM_DEBUG0_T_IP_NO_TCP_UDP_HDW		 (1W<<21)
+#define BNX2_WPM_DEBUG0_WWC_SNAP			 (1W<<22)
+#define BNX2_WPM_DEBUG0_FM_STAWTED			 (1W<<23)
+#define BNX2_WPM_DEBUG0_DONE				 (1W<<24)
+#define BNX2_WPM_DEBUG0_WAIT_4_DONE			 (1W<<25)
+#define BNX2_WPM_DEBUG0_USE_TPBUF_CKSUM			 (1W<<26)
+#define BNX2_WPM_DEBUG0_WX_NO_PSD_HDW_CKSUM		 (1W<<27)
+#define BNX2_WPM_DEBUG0_IGNOWE_VWAN			 (1W<<28)
+#define BNX2_WPM_DEBUG0_WP_ENA_ACTIVE			 (1W<<31)
+
+#define BNX2_WPM_DEBUG1					0x00001988
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST			 (0xffffW<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_IDWE			 (0W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ETYPE_B6_AWW		 (1W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ETYPE_B2_IPWWC	 (2W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ETYPE_B6_IP		 (4W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ETYPE_B2_IP		 (8W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_IP_STAWT		 (16W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_IP			 (32W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_TCP			 (64W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_UDP			 (128W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_AH			 (256W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ESP			 (512W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ESP_PAYWOAD		 (1024W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_DATA			 (2048W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ADD_CAWWY		 (0x2000W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_ADD_CAWWYOUT		 (0x4000W<<0)
+#define BNX2_WPM_DEBUG1_FSM_CUW_ST_WATCH_WESUWT		 (0x8000W<<0)
+#define BNX2_WPM_DEBUG1_HDW_BCNT			 (0x7ffW<<16)
+#define BNX2_WPM_DEBUG1_UNKNOWN_ETYPE_D			 (1W<<28)
+#define BNX2_WPM_DEBUG1_VWAN_WEMOVED_D2			 (1W<<29)
+#define BNX2_WPM_DEBUG1_VWAN_WEMOVED_D1			 (1W<<30)
+#define BNX2_WPM_DEBUG1_EOF_0XTWA_WD			 (1W<<31)
+
+#define BNX2_WPM_DEBUG2					0x0000198c
+#define BNX2_WPM_DEBUG2_CMD_HIT_VEC			 (0xffffW<<0)
+#define BNX2_WPM_DEBUG2_IP_BCNT				 (0xffW<<16)
+#define BNX2_WPM_DEBUG2_THIS_CMD_M4			 (1W<<24)
+#define BNX2_WPM_DEBUG2_THIS_CMD_M3			 (1W<<25)
+#define BNX2_WPM_DEBUG2_THIS_CMD_M2			 (1W<<26)
+#define BNX2_WPM_DEBUG2_THIS_CMD_M1			 (1W<<27)
+#define BNX2_WPM_DEBUG2_IPIPE_EMPTY			 (1W<<28)
+#define BNX2_WPM_DEBUG2_FM_DISCAWD			 (1W<<29)
+#define BNX2_WPM_DEBUG2_WAST_WUWE_IN_FM_D2		 (1W<<30)
+#define BNX2_WPM_DEBUG2_WAST_WUWE_IN_FM_D1		 (1W<<31)
+
+#define BNX2_WPM_DEBUG3					0x00001990
+#define BNX2_WPM_DEBUG3_AVAIW_MBUF_PTW			 (0x1ffW<<0)
+#define BNX2_WPM_DEBUG3_WDE_WWUPQ_WW_WEQ_INT		 (1W<<9)
+#define BNX2_WPM_DEBUG3_WDE_WBUF_WW_WAST_INT		 (1W<<10)
+#define BNX2_WPM_DEBUG3_WDE_WBUF_WW_WEQ_INT		 (1W<<11)
+#define BNX2_WPM_DEBUG3_WDE_WBUF_FWEE_WEQ		 (1W<<12)
+#define BNX2_WPM_DEBUG3_WDE_WBUF_AWWOC_WEQ		 (1W<<13)
+#define BNX2_WPM_DEBUG3_DFSM_MBUF_NOTAVAIW		 (1W<<14)
+#define BNX2_WPM_DEBUG3_WBUF_WDE_SOF_DWOP		 (1W<<15)
+#define BNX2_WPM_DEBUG3_DFIFO_VWD_ENTWY_CT		 (0xfW<<16)
+#define BNX2_WPM_DEBUG3_WDE_SWC_FIFO_AWMFUWW		 (1W<<21)
+#define BNX2_WPM_DEBUG3_DWOP_NXT_VWD			 (1W<<22)
+#define BNX2_WPM_DEBUG3_DWOP_NXT			 (1W<<23)
+#define BNX2_WPM_DEBUG3_FTQ_FSM				 (0x3W<<24)
+#define BNX2_WPM_DEBUG3_FTQ_FSM_IDWE			 (0x0W<<24)
+#define BNX2_WPM_DEBUG3_FTQ_FSM_WAIT_ACK		 (0x1W<<24)
+#define BNX2_WPM_DEBUG3_FTQ_FSM_WAIT_FWEE		 (0x2W<<24)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM			 (0x3W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_WAIT_SOF		 (0x0W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_GET_MBUF		 (0x1W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_DMA_DATA		 (0x2W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_WAIT_DATA		 (0x3W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_WAIT_EOF		 (0x4W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_WAIT_MF_ACK		 (0x5W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_WAIT_DWOP_NXT_VWD	 (0x6W<<26)
+#define BNX2_WPM_DEBUG3_MBWWITE_FSM_DONE		 (0x7W<<26)
+#define BNX2_WPM_DEBUG3_MBFWEE_FSM			 (1W<<29)
+#define BNX2_WPM_DEBUG3_MBFWEE_FSM_IDWE			 (0W<<29)
+#define BNX2_WPM_DEBUG3_MBFWEE_FSM_WAIT_ACK		 (1W<<29)
+#define BNX2_WPM_DEBUG3_MBAWWOC_FSM			 (1W<<30)
+#define BNX2_WPM_DEBUG3_MBAWWOC_FSM_ET_MBUF		 (0x0W<<30)
+#define BNX2_WPM_DEBUG3_MBAWWOC_FSM_IVE_MBUF		 (0x1W<<30)
+#define BNX2_WPM_DEBUG3_CCODE_EOF_EWWOW			 (1W<<31)
+
+#define BNX2_WPM_DEBUG4					0x00001994
+#define BNX2_WPM_DEBUG4_DFSM_MBUF_CWUSTEW		 (0x1ffffffW<<0)
+#define BNX2_WPM_DEBUG4_DFIFO_CUW_CCODE			 (0x7W<<25)
+#define BNX2_WPM_DEBUG4_MBWWITE_FSM			 (0x7W<<28)
+#define BNX2_WPM_DEBUG4_DFIFO_EMPTY			 (1W<<31)
+
+#define BNX2_WPM_DEBUG5					0x00001998
+#define BNX2_WPM_DEBUG5_WDWOP_WPTW			 (0x1fW<<0)
+#define BNX2_WPM_DEBUG5_WDWOP_ACPI_WPTW			 (0x1fW<<5)
+#define BNX2_WPM_DEBUG5_WDWOP_MC_WPTW			 (0x1fW<<10)
+#define BNX2_WPM_DEBUG5_WDWOP_WC_WPTW			 (0x1fW<<15)
+#define BNX2_WPM_DEBUG5_WDWOP_ACPI_EMPTY		 (1W<<20)
+#define BNX2_WPM_DEBUG5_WDWOP_MC_EMPTY			 (1W<<21)
+#define BNX2_WPM_DEBUG5_WDWOP_AEOF_VEC_AT_WDWOP_MC_WPTW	 (1W<<22)
+#define BNX2_WPM_DEBUG5_HOWDWEG_WOW_DWOP_INT		 (1W<<23)
+#define BNX2_WPM_DEBUG5_HOWDWEG_DISCAWD			 (1W<<24)
+#define BNX2_WPM_DEBUG5_HOWDWEG_MBUF_NOTAVAIW		 (1W<<25)
+#define BNX2_WPM_DEBUG5_HOWDWEG_MC_EMPTY		 (1W<<26)
+#define BNX2_WPM_DEBUG5_HOWDWEG_WC_EMPTY		 (1W<<27)
+#define BNX2_WPM_DEBUG5_HOWDWEG_FC_EMPTY		 (1W<<28)
+#define BNX2_WPM_DEBUG5_HOWDWEG_ACPI_EMPTY		 (1W<<29)
+#define BNX2_WPM_DEBUG5_HOWDWEG_FUWW_T			 (1W<<30)
+#define BNX2_WPM_DEBUG5_HOWDWEG_WD			 (1W<<31)
+
+#define BNX2_WPM_DEBUG6					0x0000199c
+#define BNX2_WPM_DEBUG6_ACPI_VEC			 (0xffffW<<0)
+#define BNX2_WPM_DEBUG6_VEC				 (0xffffW<<16)
+
+#define BNX2_WPM_DEBUG7					0x000019a0
+#define BNX2_WPM_DEBUG7_WPM_DBG7_WAST_CWC		 (0xffffffffW<<0)
+
+#define BNX2_WPM_DEBUG8					0x000019a4
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM			 (0xfW<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_IDWE		 (0W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_SOF_W1_ADDW		 (1W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_SOF_W2_ADDW		 (2W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_SOF_W3_ADDW		 (3W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_SOF_WAIT_THBUF	 (4W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_W3_DATA		 (5W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_W0_ADDW		 (6W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_W1_ADDW		 (7W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_W2_ADDW		 (8W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_W3_ADDW		 (9W<<0)
+#define BNX2_WPM_DEBUG8_PS_ACPI_FSM_WAIT_THBUF		 (10W<<0)
+#define BNX2_WPM_DEBUG8_COMPAWE_AT_W0			 (1W<<4)
+#define BNX2_WPM_DEBUG8_COMPAWE_AT_W3_DATA		 (1W<<5)
+#define BNX2_WPM_DEBUG8_COMPAWE_AT_SOF_WAIT		 (1W<<6)
+#define BNX2_WPM_DEBUG8_COMPAWE_AT_SOF_W3		 (1W<<7)
+#define BNX2_WPM_DEBUG8_COMPAWE_AT_SOF_W2		 (1W<<8)
+#define BNX2_WPM_DEBUG8_EOF_W_WTEQ6_VWDBYTES		 (1W<<9)
+#define BNX2_WPM_DEBUG8_EOF_W_WTEQ4_VWDBYTES		 (1W<<10)
+#define BNX2_WPM_DEBUG8_NXT_EOF_W_12_VWDBYTES		 (1W<<11)
+#define BNX2_WPM_DEBUG8_EOF_DET				 (1W<<12)
+#define BNX2_WPM_DEBUG8_SOF_DET				 (1W<<13)
+#define BNX2_WPM_DEBUG8_WAIT_4_SOF			 (1W<<14)
+#define BNX2_WPM_DEBUG8_AWW_DONE			 (1W<<15)
+#define BNX2_WPM_DEBUG8_THBUF_ADDW			 (0x7fW<<16)
+#define BNX2_WPM_DEBUG8_BYTE_CTW			 (0xffW<<24)
+
+#define BNX2_WPM_DEBUG9					0x000019a8
+#define BNX2_WPM_DEBUG9_OUTFIFO_COUNT			 (0x7W<<0)
+#define BNX2_WPM_DEBUG9_WDE_ACPI_WDY			 (1W<<3)
+#define BNX2_WPM_DEBUG9_VWD_WD_ENTWY_CT			 (0x7W<<4)
+#define BNX2_WPM_DEBUG9_OUTFIFO_OVEWWUN_OCCUWWED	 (1W<<28)
+#define BNX2_WPM_DEBUG9_INFIFO_OVEWWUN_OCCUWWED		 (1W<<29)
+#define BNX2_WPM_DEBUG9_ACPI_MATCH_INT			 (1W<<30)
+#define BNX2_WPM_DEBUG9_ACPI_ENABWE_SYN			 (1W<<31)
+#define BNX2_WPM_DEBUG9_BEMEM_W_XI			 (0x1fW<<0)
+#define BNX2_WPM_DEBUG9_EO_XI				 (1W<<5)
+#define BNX2_WPM_DEBUG9_AEOF_DE_XI			 (1W<<6)
+#define BNX2_WPM_DEBUG9_SO_XI				 (1W<<7)
+#define BNX2_WPM_DEBUG9_WD64_CT_XI			 (0x1fW<<8)
+#define BNX2_WPM_DEBUG9_EOF_VWDBYTE_XI			 (0x7W<<13)
+#define BNX2_WPM_DEBUG9_ACPI_WDE_PAT_ID_XI		 (0xfW<<16)
+#define BNX2_WPM_DEBUG9_CAWCWC_WESUWT_XI		 (0x3ffW<<20)
+#define BNX2_WPM_DEBUG9_DATA_IN_VW_XI			 (1W<<30)
+#define BNX2_WPM_DEBUG9_CAWCWC_BUFFEW_VWD_XI		 (1W<<31)
+
+#define BNX2_WPM_ACPI_DBG_BUF_W00			0x000019c0
+#define BNX2_WPM_ACPI_DBG_BUF_W01			0x000019c4
+#define BNX2_WPM_ACPI_DBG_BUF_W02			0x000019c8
+#define BNX2_WPM_ACPI_DBG_BUF_W03			0x000019cc
+#define BNX2_WPM_ACPI_DBG_BUF_W10			0x000019d0
+#define BNX2_WPM_ACPI_DBG_BUF_W11			0x000019d4
+#define BNX2_WPM_ACPI_DBG_BUF_W12			0x000019d8
+#define BNX2_WPM_ACPI_DBG_BUF_W13			0x000019dc
+#define BNX2_WPM_ACPI_DBG_BUF_W20			0x000019e0
+#define BNX2_WPM_ACPI_DBG_BUF_W21			0x000019e4
+#define BNX2_WPM_ACPI_DBG_BUF_W22			0x000019e8
+#define BNX2_WPM_ACPI_DBG_BUF_W23			0x000019ec
+#define BNX2_WPM_ACPI_DBG_BUF_W30			0x000019f0
+#define BNX2_WPM_ACPI_DBG_BUF_W31			0x000019f4
+#define BNX2_WPM_ACPI_DBG_BUF_W32			0x000019f8
+#define BNX2_WPM_ACPI_DBG_BUF_W33			0x000019fc
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW			0x00001a00
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW_BYTE_ADDWESS	 (0xffffW<<0)
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW_DEBUGWD		 (1W<<28)
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW_MODE		 (1W<<29)
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW_INIT		 (1W<<30)
+#define BNX2_WPM_ACPI_BYTE_ENABWE_CTWW_WW		 (1W<<31)
+
+#define BNX2_WPM_ACPI_PATTEWN_CTWW			0x00001a04
+#define BNX2_WPM_ACPI_PATTEWN_CTWW_PATTEWN_ID		 (0xfW<<0)
+#define BNX2_WPM_ACPI_PATTEWN_CTWW_CWC_SM_CWW		 (1W<<30)
+#define BNX2_WPM_ACPI_PATTEWN_CTWW_WW			 (1W<<31)
+
+#define BNX2_WPM_ACPI_DATA				0x00001a08
+#define BNX2_WPM_ACPI_DATA_PATTEWN_BE			 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_WEN0			0x00001a0c
+#define BNX2_WPM_ACPI_PATTEWN_WEN0_PATTEWN_WEN3		 (0xffW<<0)
+#define BNX2_WPM_ACPI_PATTEWN_WEN0_PATTEWN_WEN2		 (0xffW<<8)
+#define BNX2_WPM_ACPI_PATTEWN_WEN0_PATTEWN_WEN1		 (0xffW<<16)
+#define BNX2_WPM_ACPI_PATTEWN_WEN0_PATTEWN_WEN0		 (0xffW<<24)
+
+#define BNX2_WPM_ACPI_PATTEWN_WEN1			0x00001a10
+#define BNX2_WPM_ACPI_PATTEWN_WEN1_PATTEWN_WEN7		 (0xffW<<0)
+#define BNX2_WPM_ACPI_PATTEWN_WEN1_PATTEWN_WEN6		 (0xffW<<8)
+#define BNX2_WPM_ACPI_PATTEWN_WEN1_PATTEWN_WEN5		 (0xffW<<16)
+#define BNX2_WPM_ACPI_PATTEWN_WEN1_PATTEWN_WEN4		 (0xffW<<24)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC0			0x00001a18
+#define BNX2_WPM_ACPI_PATTEWN_CWC0_PATTEWN_CWC0		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC1			0x00001a1c
+#define BNX2_WPM_ACPI_PATTEWN_CWC1_PATTEWN_CWC1		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC2			0x00001a20
+#define BNX2_WPM_ACPI_PATTEWN_CWC2_PATTEWN_CWC2		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC3			0x00001a24
+#define BNX2_WPM_ACPI_PATTEWN_CWC3_PATTEWN_CWC3		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC4			0x00001a28
+#define BNX2_WPM_ACPI_PATTEWN_CWC4_PATTEWN_CWC4		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC5			0x00001a2c
+#define BNX2_WPM_ACPI_PATTEWN_CWC5_PATTEWN_CWC5		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC6			0x00001a30
+#define BNX2_WPM_ACPI_PATTEWN_CWC6_PATTEWN_CWC6		 (0xffffffffW<<0)
+
+#define BNX2_WPM_ACPI_PATTEWN_CWC7			0x00001a34
+#define BNX2_WPM_ACPI_PATTEWN_CWC7_PATTEWN_CWC7		 (0xffffffffW<<0)
+
+
+/*
+ *  wwup_weg definition
+ *  offset: 0x2000
+ */
+#define BNX2_WWUP_WSS_CONFIG				0x0000201c
+#define BNX2_WWUP_WSS_CONFIG_IPV4_WSS_TYPE_XI		 (0x3W<<0)
+#define BNX2_WWUP_WSS_CONFIG_IPV4_WSS_TYPE_OFF_XI	 (0W<<0)
+#define BNX2_WWUP_WSS_CONFIG_IPV4_WSS_TYPE_AWW_XI	 (1W<<0)
+#define BNX2_WWUP_WSS_CONFIG_IPV4_WSS_TYPE_IP_ONWY_XI	 (2W<<0)
+#define BNX2_WWUP_WSS_CONFIG_IPV4_WSS_TYPE_WES_XI	 (3W<<0)
+#define BNX2_WWUP_WSS_CONFIG_IPV6_WSS_TYPE_XI		 (0x3W<<2)
+#define BNX2_WWUP_WSS_CONFIG_IPV6_WSS_TYPE_OFF_XI	 (0W<<2)
+#define BNX2_WWUP_WSS_CONFIG_IPV6_WSS_TYPE_AWW_XI	 (1W<<2)
+#define BNX2_WWUP_WSS_CONFIG_IPV6_WSS_TYPE_IP_ONWY_XI	 (2W<<2)
+#define BNX2_WWUP_WSS_CONFIG_IPV6_WSS_TYPE_WES_XI	 (3W<<2)
+
+#define BNX2_WWUP_WSS_COMMAND				0x00002048
+#define BNX2_WWUP_WSS_COMMAND_WSS_IND_TABWE_ADDW	 (0xfUW<<0)
+#define BNX2_WWUP_WSS_COMMAND_WSS_WWITE_MASK		 (0xffUW<<4)
+#define BNX2_WWUP_WSS_COMMAND_WWITE			 (1UW<<12)
+#define BNX2_WWUP_WSS_COMMAND_WEAD			 (1UW<<13)
+#define BNX2_WWUP_WSS_COMMAND_HASH_MASK			 (0x7UW<<14)
+
+#define BNX2_WWUP_WSS_DATA				0x0000204c
+
+
+/*
+ *  wbuf_weg definition
+ *  offset: 0x200000
+ */
+#define BNX2_WBUF_COMMAND				0x00200000
+#define BNX2_WBUF_COMMAND_ENABWED			 (1W<<0)
+#define BNX2_WBUF_COMMAND_FWEE_INIT			 (1W<<1)
+#define BNX2_WBUF_COMMAND_WAM_INIT			 (1W<<2)
+#define BNX2_WBUF_COMMAND_PKT_OFFSET_OVFW		 (1W<<3)
+#define BNX2_WBUF_COMMAND_OVEW_FWEE			 (1W<<4)
+#define BNX2_WBUF_COMMAND_AWWOC_WEQ			 (1W<<5)
+#define BNX2_WBUF_COMMAND_EN_PWI_CHNGE_TE		 (1W<<6)
+#define BNX2_WBUF_COMMAND_CU_ISOWATE_XI			 (1W<<5)
+#define BNX2_WBUF_COMMAND_EN_PWI_CHANGE_XI		 (1W<<6)
+#define BNX2_WBUF_COMMAND_GWC_ENDIAN_CONV_DIS_XI	 (1W<<7)
+
+#define BNX2_WBUF_STATUS1				0x00200004
+#define BNX2_WBUF_STATUS1_FWEE_COUNT			 (0x3ffW<<0)
+
+#define BNX2_WBUF_STATUS2				0x00200008
+#define BNX2_WBUF_STATUS2_FWEE_TAIW			 (0x1ffW<<0)
+#define BNX2_WBUF_STATUS2_FWEE_HEAD			 (0x1ffW<<16)
+
+#define BNX2_WBUF_CONFIG				0x0020000c
+#define BNX2_WBUF_CONFIG_XOFF_TWIP			 (0x3ffW<<0)
+#define BNX2_WBUF_CONFIG_XOFF_TWIP_VAW(mtu)		 \
+	((((mtu) - 1500) * 31 / 1000) + 54)
+#define BNX2_WBUF_CONFIG_XON_TWIP			 (0x3ffW<<16)
+#define BNX2_WBUF_CONFIG_XON_TWIP_VAW(mtu)		 \
+	((((mtu) - 1500) * 39 / 1000) + 66)
+#define BNX2_WBUF_CONFIG_VAW(mtu)			 \
+	(BNX2_WBUF_CONFIG_XOFF_TWIP_VAW(mtu) |		 \
+	(BNX2_WBUF_CONFIG_XON_TWIP_VAW(mtu) << 16))
+
+#define BNX2_WBUF_FW_BUF_AWWOC				0x00200010
+#define BNX2_WBUF_FW_BUF_AWWOC_VAWUE			 (0x1ffW<<7)
+#define BNX2_WBUF_FW_BUF_AWWOC_TYPE			 (1W<<16)
+#define BNX2_WBUF_FW_BUF_AWWOC_AWWOC_WEQ		 (1W<<31)
+
+#define BNX2_WBUF_FW_BUF_FWEE				0x00200014
+#define BNX2_WBUF_FW_BUF_FWEE_COUNT			 (0x7fW<<0)
+#define BNX2_WBUF_FW_BUF_FWEE_TAIW			 (0x1ffW<<7)
+#define BNX2_WBUF_FW_BUF_FWEE_HEAD			 (0x1ffW<<16)
+#define BNX2_WBUF_FW_BUF_FWEE_TYPE			 (1W<<25)
+#define BNX2_WBUF_FW_BUF_FWEE_FWEE_WEQ			 (1W<<31)
+
+#define BNX2_WBUF_FW_BUF_SEW				0x00200018
+#define BNX2_WBUF_FW_BUF_SEW_COUNT			 (0x7fW<<0)
+#define BNX2_WBUF_FW_BUF_SEW_TAIW			 (0x1ffW<<7)
+#define BNX2_WBUF_FW_BUF_SEW_HEAD			 (0x1ffW<<16)
+#define BNX2_WBUF_FW_BUF_SEW_SEW_WEQ			 (1W<<31)
+
+#define BNX2_WBUF_CONFIG2				0x0020001c
+#define BNX2_WBUF_CONFIG2_MAC_DWOP_TWIP			 (0x3ffW<<0)
+#define BNX2_WBUF_CONFIG2_MAC_DWOP_TWIP_VAW(mtu)	 \
+	((((mtu) - 1500) * 4 / 1000) + 5)
+#define BNX2_WBUF_CONFIG2_MAC_KEEP_TWIP			 (0x3ffW<<16)
+#define BNX2_WBUF_CONFIG2_MAC_KEEP_TWIP_VAW(mtu)	 \
+	((((mtu) - 1500) * 2 / 100) + 30)
+#define BNX2_WBUF_CONFIG2_VAW(mtu)			 \
+	(BNX2_WBUF_CONFIG2_MAC_DWOP_TWIP_VAW(mtu) |	 \
+	(BNX2_WBUF_CONFIG2_MAC_KEEP_TWIP_VAW(mtu) << 16))
+
+#define BNX2_WBUF_CONFIG3				0x00200020
+#define BNX2_WBUF_CONFIG3_CU_DWOP_TWIP			 (0x3ffW<<0)
+#define BNX2_WBUF_CONFIG3_CU_DWOP_TWIP_VAW(mtu)		 \
+	((((mtu) - 1500) * 12 / 1000) + 18)
+#define BNX2_WBUF_CONFIG3_CU_KEEP_TWIP			 (0x3ffW<<16)
+#define BNX2_WBUF_CONFIG3_CU_KEEP_TWIP_VAW(mtu)		 \
+	((((mtu) - 1500) * 2 / 100) + 30)
+#define BNX2_WBUF_CONFIG3_VAW(mtu)			 \
+	(BNX2_WBUF_CONFIG3_CU_DWOP_TWIP_VAW(mtu) |	 \
+	(BNX2_WBUF_CONFIG3_CU_KEEP_TWIP_VAW(mtu) << 16))
+
+#define BNX2_WBUF_PKT_DATA				0x00208000
+#define BNX2_WBUF_CWIST_DATA				0x00210000
+#define BNX2_WBUF_BUF_DATA				0x00220000
+
+
+/*
+ *  wv2p_weg definition
+ *  offset: 0x2800
+ */
+#define BNX2_WV2P_COMMAND				0x00002800
+#define BNX2_WV2P_COMMAND_ENABWED			 (1W<<0)
+#define BNX2_WV2P_COMMAND_PWOC1_INTWPT			 (1W<<1)
+#define BNX2_WV2P_COMMAND_PWOC2_INTWPT			 (1W<<2)
+#define BNX2_WV2P_COMMAND_ABOWT0			 (1W<<4)
+#define BNX2_WV2P_COMMAND_ABOWT1			 (1W<<5)
+#define BNX2_WV2P_COMMAND_ABOWT2			 (1W<<6)
+#define BNX2_WV2P_COMMAND_ABOWT3			 (1W<<7)
+#define BNX2_WV2P_COMMAND_ABOWT4			 (1W<<8)
+#define BNX2_WV2P_COMMAND_ABOWT5			 (1W<<9)
+#define BNX2_WV2P_COMMAND_PWOC1_WESET			 (1W<<16)
+#define BNX2_WV2P_COMMAND_PWOC2_WESET			 (1W<<17)
+#define BNX2_WV2P_COMMAND_CTXIF_WESET			 (1W<<18)
+
+#define BNX2_WV2P_STATUS				0x00002804
+#define BNX2_WV2P_STATUS_AWWAYS_0			 (1W<<0)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT0_CNT		 (1W<<8)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT1_CNT		 (1W<<9)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT2_CNT		 (1W<<10)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT3_CNT		 (1W<<11)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT4_CNT		 (1W<<12)
+#define BNX2_WV2P_STATUS_WV2P_GEN_STAT5_CNT		 (1W<<13)
+
+#define BNX2_WV2P_CONFIG				0x00002808
+#define BNX2_WV2P_CONFIG_STAWW_PWOC1			 (1W<<0)
+#define BNX2_WV2P_CONFIG_STAWW_PWOC2			 (1W<<1)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT0		 (1W<<8)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT1		 (1W<<9)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT2		 (1W<<10)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT3		 (1W<<11)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT4		 (1W<<12)
+#define BNX2_WV2P_CONFIG_PWOC1_STAWW_ON_ABOWT5		 (1W<<13)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT0		 (1W<<16)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT1		 (1W<<17)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT2		 (1W<<18)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT3		 (1W<<19)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT4		 (1W<<20)
+#define BNX2_WV2P_CONFIG_PWOC2_STAWW_ON_ABOWT5		 (1W<<21)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE			 (0xfW<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_256			 (0W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_512			 (1W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_1K			 (2W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_2K			 (3W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_4K			 (4W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_8K			 (5W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_16K			 (6W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_32K			 (7W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_64K			 (8W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_128K			 (9W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_256K			 (10W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_512K			 (11W<<24)
+#define BNX2_WV2P_CONFIG_PAGE_SIZE_1M			 (12W<<24)
+
+#define BNX2_WV2P_GEN_BFW_ADDW_0			0x00002810
+#define BNX2_WV2P_GEN_BFW_ADDW_0_VAWUE			 (0xffffW<<16)
+
+#define BNX2_WV2P_GEN_BFW_ADDW_1			0x00002814
+#define BNX2_WV2P_GEN_BFW_ADDW_1_VAWUE			 (0xffffW<<16)
+
+#define BNX2_WV2P_GEN_BFW_ADDW_2			0x00002818
+#define BNX2_WV2P_GEN_BFW_ADDW_2_VAWUE			 (0xffffW<<16)
+
+#define BNX2_WV2P_GEN_BFW_ADDW_3			0x0000281c
+#define BNX2_WV2P_GEN_BFW_ADDW_3_VAWUE			 (0xffffW<<16)
+
+#define BNX2_WV2P_INSTW_HIGH				0x00002830
+#define BNX2_WV2P_INSTW_HIGH_HIGH			 (0x1fW<<0)
+
+#define BNX2_WV2P_INSTW_WOW				0x00002834
+#define BNX2_WV2P_INSTW_WOW_WOW				 (0xffffffffW<<0)
+
+#define BNX2_WV2P_PWOC1_ADDW_CMD			0x00002838
+#define BNX2_WV2P_PWOC1_ADDW_CMD_ADD			 (0x3ffW<<0)
+#define BNX2_WV2P_PWOC1_ADDW_CMD_WDWW			 (1W<<31)
+
+#define BNX2_WV2P_PWOC2_ADDW_CMD			0x0000283c
+#define BNX2_WV2P_PWOC2_ADDW_CMD_ADD			 (0x3ffW<<0)
+#define BNX2_WV2P_PWOC2_ADDW_CMD_WDWW			 (1W<<31)
+
+#define BNX2_WV2P_PWOC1_GWC_DEBUG			0x00002840
+#define BNX2_WV2P_PWOC2_GWC_DEBUG			0x00002844
+#define BNX2_WV2P_GWC_PWOC_DEBUG			0x00002848
+#define BNX2_WV2P_DEBUG_VECT_PEEK			0x0000284c
+#define BNX2_WV2P_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_WV2P_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_WV2P_DEBUG_VECT_PEEK_1_SEW			 (0xfW<<12)
+#define BNX2_WV2P_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_WV2P_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_WV2P_DEBUG_VECT_PEEK_2_SEW			 (0xfW<<28)
+
+#define BNX2_WV2P_MPFE_PFE_CTW				0x00002afc
+#define BNX2_WV2P_MPFE_PFE_CTW_INC_USAGE_CNT		 (1W<<0)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE			 (0xfW<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_0		 (0W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_1		 (1W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_2		 (2W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_3		 (3W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_4		 (4W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_5		 (5W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_6		 (6W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_7		 (7W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_8		 (8W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_9		 (9W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_10		 (10W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_11		 (11W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_12		 (12W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_13		 (13W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_14		 (14W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_SIZE_15		 (15W<<4)
+#define BNX2_WV2P_MPFE_PFE_CTW_PFE_COUNT		 (0xfW<<12)
+#define BNX2_WV2P_MPFE_PFE_CTW_OFFSET			 (0x1ffW<<16)
+
+#define BNX2_WV2P_WV2PPQ				0x00002b40
+#define BNX2_WV2P_PFTQ_CMD				0x00002b78
+#define BNX2_WV2P_PFTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_WV2P_PFTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_WV2P_PFTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_WV2P_PFTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_WV2P_PFTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_WV2P_PFTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_WV2P_PFTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_WV2P_PFTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_WV2P_PFTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_WV2P_PFTQ_CMD_POP				 (1W<<30)
+#define BNX2_WV2P_PFTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_WV2P_PFTQ_CTW				0x00002b7c
+#define BNX2_WV2P_PFTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_WV2P_PFTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_WV2P_PFTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_WV2P_PFTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_WV2P_PFTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_WV2P_WV2PTQ				0x00002b80
+#define BNX2_WV2P_TFTQ_CMD				0x00002bb8
+#define BNX2_WV2P_TFTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_WV2P_TFTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_WV2P_TFTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_WV2P_TFTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_WV2P_TFTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_WV2P_TFTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_WV2P_TFTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_WV2P_TFTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_WV2P_TFTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_WV2P_TFTQ_CMD_POP				 (1W<<30)
+#define BNX2_WV2P_TFTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_WV2P_TFTQ_CTW				0x00002bbc
+#define BNX2_WV2P_TFTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_WV2P_TFTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_WV2P_TFTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_WV2P_TFTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_WV2P_TFTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_WV2P_WV2PMQ				0x00002bc0
+#define BNX2_WV2P_MFTQ_CMD				0x00002bf8
+#define BNX2_WV2P_MFTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_WV2P_MFTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_WV2P_MFTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_WV2P_MFTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_WV2P_MFTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_WV2P_MFTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_WV2P_MFTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_WV2P_MFTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_WV2P_MFTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_WV2P_MFTQ_CMD_POP				 (1W<<30)
+#define BNX2_WV2P_MFTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_WV2P_MFTQ_CTW				0x00002bfc
+#define BNX2_WV2P_MFTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_WV2P_MFTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_WV2P_MFTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_WV2P_MFTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_WV2P_MFTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+
+
+/*
+ *  mq_weg definition
+ *  offset: 0x3c00
+ */
+#define BNX2_MQ_COMMAND					0x00003c00
+#define BNX2_MQ_COMMAND_ENABWED				 (1W<<0)
+#define BNX2_MQ_COMMAND_INIT				 (1W<<1)
+#define BNX2_MQ_COMMAND_OVEWFWOW			 (1W<<4)
+#define BNX2_MQ_COMMAND_WW_EWWOW			 (1W<<5)
+#define BNX2_MQ_COMMAND_WD_EWWOW			 (1W<<6)
+#define BNX2_MQ_COMMAND_IDB_CFG_EWWOW			 (1W<<7)
+#define BNX2_MQ_COMMAND_IDB_OVEWFWOW			 (1W<<10)
+#define BNX2_MQ_COMMAND_NO_BIN_EWWOW			 (1W<<11)
+#define BNX2_MQ_COMMAND_NO_MAP_EWWOW			 (1W<<12)
+
+#define BNX2_MQ_STATUS					0x00003c04
+#define BNX2_MQ_STATUS_CTX_ACCESS_STAT			 (1W<<16)
+#define BNX2_MQ_STATUS_CTX_ACCESS64_STAT		 (1W<<17)
+#define BNX2_MQ_STATUS_PCI_STAWW_STAT			 (1W<<18)
+#define BNX2_MQ_STATUS_IDB_OFWOW_STAT			 (1W<<19)
+
+#define BNX2_MQ_CONFIG					0x00003c08
+#define BNX2_MQ_CONFIG_TX_HIGH_PWI			 (1W<<0)
+#define BNX2_MQ_CONFIG_HAWT_DIS				 (1W<<1)
+#define BNX2_MQ_CONFIG_BIN_MQ_MODE			 (1W<<2)
+#define BNX2_MQ_CONFIG_DIS_IDB_DWOP			 (1W<<3)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE			 (0x7W<<4)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE_256		 (0W<<4)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE_512		 (1W<<4)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE_1K		 (2W<<4)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE_2K		 (3W<<4)
+#define BNX2_MQ_CONFIG_KNW_BYP_BWK_SIZE_4K		 (4W<<4)
+#define BNX2_MQ_CONFIG_MAX_DEPTH			 (0x7fW<<8)
+#define BNX2_MQ_CONFIG_CUW_DEPTH			 (0x7fW<<20)
+
+#define BNX2_MQ_ENQUEUE1				0x00003c0c
+#define BNX2_MQ_ENQUEUE1_OFFSET				 (0x3fW<<2)
+#define BNX2_MQ_ENQUEUE1_CID				 (0x3fffW<<8)
+#define BNX2_MQ_ENQUEUE1_BYTE_MASK			 (0xfW<<24)
+#define BNX2_MQ_ENQUEUE1_KNW_MODE			 (1W<<28)
+
+#define BNX2_MQ_ENQUEUE2				0x00003c10
+#define BNX2_MQ_BAD_WW_ADDW				0x00003c14
+#define BNX2_MQ_BAD_WD_ADDW				0x00003c18
+#define BNX2_MQ_KNW_BYP_WIND_STAWT			0x00003c1c
+#define BNX2_MQ_KNW_BYP_WIND_STAWT_VAWUE		 (0xfffffW<<12)
+
+#define BNX2_MQ_KNW_WIND_END				0x00003c20
+#define BNX2_MQ_KNW_WIND_END_VAWUE			 (0xffffffW<<8)
+
+#define BNX2_MQ_KNW_WWITE_MASK1				0x00003c24
+#define BNX2_MQ_KNW_TX_MASK1				0x00003c28
+#define BNX2_MQ_KNW_CMD_MASK1				0x00003c2c
+#define BNX2_MQ_KNW_COND_ENQUEUE_MASK1			0x00003c30
+#define BNX2_MQ_KNW_WX_V2P_MASK1			0x00003c34
+#define BNX2_MQ_KNW_WWITE_MASK2				0x00003c38
+#define BNX2_MQ_KNW_TX_MASK2				0x00003c3c
+#define BNX2_MQ_KNW_CMD_MASK2				0x00003c40
+#define BNX2_MQ_KNW_COND_ENQUEUE_MASK2			0x00003c44
+#define BNX2_MQ_KNW_WX_V2P_MASK2			0x00003c48
+#define BNX2_MQ_KNW_BYP_WWITE_MASK1			0x00003c4c
+#define BNX2_MQ_KNW_BYP_TX_MASK1			0x00003c50
+#define BNX2_MQ_KNW_BYP_CMD_MASK1			0x00003c54
+#define BNX2_MQ_KNW_BYP_COND_ENQUEUE_MASK1		0x00003c58
+#define BNX2_MQ_KNW_BYP_WX_V2P_MASK1			0x00003c5c
+#define BNX2_MQ_KNW_BYP_WWITE_MASK2			0x00003c60
+#define BNX2_MQ_KNW_BYP_TX_MASK2			0x00003c64
+#define BNX2_MQ_KNW_BYP_CMD_MASK2			0x00003c68
+#define BNX2_MQ_KNW_BYP_COND_ENQUEUE_MASK2		0x00003c6c
+#define BNX2_MQ_KNW_BYP_WX_V2P_MASK2			0x00003c70
+#define BNX2_MQ_MEM_WW_ADDW				0x00003c74
+#define BNX2_MQ_MEM_WW_ADDW_VAWUE			 (0x3fW<<0)
+
+#define BNX2_MQ_MEM_WW_DATA0				0x00003c78
+#define BNX2_MQ_MEM_WW_DATA0_VAWUE			 (0xffffffffW<<0)
+
+#define BNX2_MQ_MEM_WW_DATA1				0x00003c7c
+#define BNX2_MQ_MEM_WW_DATA1_VAWUE			 (0xffffffffW<<0)
+
+#define BNX2_MQ_MEM_WW_DATA2				0x00003c80
+#define BNX2_MQ_MEM_WW_DATA2_VAWUE			 (0x3fffffffW<<0)
+#define BNX2_MQ_MEM_WW_DATA2_VAWUE_XI			 (0x7fffffffW<<0)
+
+#define BNX2_MQ_MEM_WD_ADDW				0x00003c84
+#define BNX2_MQ_MEM_WD_ADDW_VAWUE			 (0x3fW<<0)
+
+#define BNX2_MQ_MEM_WD_DATA0				0x00003c88
+#define BNX2_MQ_MEM_WD_DATA0_VAWUE			 (0xffffffffW<<0)
+
+#define BNX2_MQ_MEM_WD_DATA1				0x00003c8c
+#define BNX2_MQ_MEM_WD_DATA1_VAWUE			 (0xffffffffW<<0)
+
+#define BNX2_MQ_MEM_WD_DATA2				0x00003c90
+#define BNX2_MQ_MEM_WD_DATA2_VAWUE			 (0x3fffffffW<<0)
+#define BNX2_MQ_MEM_WD_DATA2_VAWUE_XI			 (0x7fffffffW<<0)
+
+#define BNX2_MQ_MAP_W2_3				0x00003d2c
+#define BNX2_MQ_MAP_W2_3_MQ_OFFSET			 (0xffW<<0)
+#define BNX2_MQ_MAP_W2_3_SZ				 (0x3W<<8)
+#define BNX2_MQ_MAP_W2_3_CTX_OFFSET			 (0x2ffW<<10)
+#define BNX2_MQ_MAP_W2_3_BIN_OFFSET			 (0x7W<<23)
+#define BNX2_MQ_MAP_W2_3_AWM				 (0x3W<<26)
+#define BNX2_MQ_MAP_W2_3_ENA				 (0x1W<<31)
+#define BNX2_MQ_MAP_W2_3_DEFAUWT			 0x82004646
+
+#define BNX2_MQ_MAP_W2_5				0x00003d34
+#define BNX2_MQ_MAP_W2_5_AWM				 (0x3W<<26)
+
+/*
+ *  tsch_weg definition
+ *  offset: 0x4c00
+ */
+#define BNX2_TSCH_TSS_CFG				0x00004c1c
+#define BNX2_TSCH_TSS_CFG_TSS_STAWT_CID			 (0x7ffW<<8)
+#define BNX2_TSCH_TSS_CFG_NUM_OF_TSS_CON		 (0xfW<<24)
+
+
+
+/*
+ *  tbdw_weg definition
+ *  offset: 0x5000
+ */
+#define BNX2_TBDW_COMMAND				0x00005000
+#define BNX2_TBDW_COMMAND_ENABWE			 (1W<<0)
+#define BNX2_TBDW_COMMAND_SOFT_WST			 (1W<<1)
+#define BNX2_TBDW_COMMAND_MSTW_ABOWT			 (1W<<4)
+
+#define BNX2_TBDW_STATUS				0x00005004
+#define BNX2_TBDW_STATUS_DMA_WAIT			 (1W<<0)
+#define BNX2_TBDW_STATUS_FTQ_WAIT			 (1W<<1)
+#define BNX2_TBDW_STATUS_FIFO_OVEWFWOW			 (1W<<2)
+#define BNX2_TBDW_STATUS_FIFO_UNDEWFWOW			 (1W<<3)
+#define BNX2_TBDW_STATUS_SEAWCHMISS_EWWOW		 (1W<<4)
+#define BNX2_TBDW_STATUS_FTQ_ENTWY_CNT			 (1W<<5)
+#define BNX2_TBDW_STATUS_BUWST_CNT			 (1W<<6)
+
+#define BNX2_TBDW_CONFIG				0x00005008
+#define BNX2_TBDW_CONFIG_MAX_BDS			 (0xffW<<0)
+#define BNX2_TBDW_CONFIG_SWAP_MODE			 (1W<<8)
+#define BNX2_TBDW_CONFIG_PWIOWITY			 (1W<<9)
+#define BNX2_TBDW_CONFIG_CACHE_NEXT_PAGE_PTWS		 (1W<<10)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE			 (0xfW<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_256			 (0W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_512			 (1W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_1K			 (2W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_2K			 (3W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_4K			 (4W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_8K			 (5W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_16K			 (6W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_32K			 (7W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_64K			 (8W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_128K			 (9W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_256K			 (10W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_512K			 (11W<<24)
+#define BNX2_TBDW_CONFIG_PAGE_SIZE_1M			 (12W<<24)
+
+#define BNX2_TBDW_DEBUG_VECT_PEEK			0x0000500c
+#define BNX2_TBDW_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_TBDW_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_TBDW_DEBUG_VECT_PEEK_1_SEW			 (0xfW<<12)
+#define BNX2_TBDW_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_TBDW_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_TBDW_DEBUG_VECT_PEEK_2_SEW			 (0xfW<<28)
+
+#define BNX2_TBDW_CKSUM_EWWOW_STATUS			0x00005010
+#define BNX2_TBDW_CKSUM_EWWOW_STATUS_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_TBDW_CKSUM_EWWOW_STATUS_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_TBDW_TBDWQ					0x000053c0
+#define BNX2_TBDW_FTQ_CMD				0x000053f8
+#define BNX2_TBDW_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_TBDW_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_TBDW_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_TBDW_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_TBDW_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_TBDW_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_TBDW_FTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_TBDW_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_TBDW_FTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_TBDW_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_TBDW_FTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_TBDW_FTQ_CTW				0x000053fc
+#define BNX2_TBDW_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_TBDW_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_TBDW_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_TBDW_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_TBDW_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+
+/*
+ *  tbdc definition
+ *  offset: 0x5400
+ */
+#define BNX2_TBDC_COMMAND                               0x5400
+#define BNX2_TBDC_COMMAND_CMD_ENABWED                    (1UW<<0)
+#define BNX2_TBDC_COMMAND_CMD_FWUSH                      (1UW<<1)
+#define BNX2_TBDC_COMMAND_CMD_SOFT_WST                   (1UW<<2)
+#define BNX2_TBDC_COMMAND_CMD_WEG_AWB                    (1UW<<3)
+#define BNX2_TBDC_COMMAND_WWCHK_WANGE_EWWOW              (1UW<<4)
+#define BNX2_TBDC_COMMAND_WWCHK_AWW_ONES_EWWOW           (1UW<<5)
+#define BNX2_TBDC_COMMAND_WWCHK_AWW_ZEWOS_EWWOW          (1UW<<6)
+#define BNX2_TBDC_COMMAND_WWCHK_ANY_ONES_EWWOW           (1UW<<7)
+#define BNX2_TBDC_COMMAND_WWCHK_ANY_ZEWOS_EWWOW          (1UW<<8)
+
+#define BNX2_TBDC_STATUS				0x5404
+#define BNX2_TBDC_STATUS_FWEE_CNT                        (0x3fUW<<0)
+
+#define BNX2_TBDC_BD_ADDW                               0x5424
+
+#define BNX2_TBDC_BIDX                                  0x542c
+#define BNX2_TBDC_BDIDX_BDIDX                            (0xffffUW<<0)
+#define BNX2_TBDC_BDIDX_CMD                              (0xffUW<<24)
+
+#define BNX2_TBDC_CID                                   0x5430
+
+#define BNX2_TBDC_CAM_OPCODE                            0x5434
+#define BNX2_TBDC_CAM_OPCODE_OPCODE                      (0x7UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_SEAWCH               (0UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_CACHE_WWITE          (1UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_INVAWIDATE           (2UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_CAM_WWITE            (4UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_CAM_WEAD             (5UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_WAM_WWITE            (6UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_OPCODE_WAM_WEAD             (7UW<<0)
+#define BNX2_TBDC_CAM_OPCODE_SMASK_BDIDX                 (1UW<<4)
+#define BNX2_TBDC_CAM_OPCODE_SMASK_CID                   (1UW<<5)
+#define BNX2_TBDC_CAM_OPCODE_SMASK_CMD                   (1UW<<6)
+#define BNX2_TBDC_CAM_OPCODE_WMT_FAIWED                  (1UW<<7)
+#define BNX2_TBDC_CAM_OPCODE_CAM_VAWIDS                  (0xffUW<<8)
+
+
+/*
+ *  tdma_weg definition
+ *  offset: 0x5c00
+ */
+#define BNX2_TDMA_COMMAND				0x00005c00
+#define BNX2_TDMA_COMMAND_ENABWED			 (1W<<0)
+#define BNX2_TDMA_COMMAND_MASTEW_ABOWT			 (1W<<4)
+#define BNX2_TDMA_COMMAND_CS16_EWW			 (1W<<5)
+#define BNX2_TDMA_COMMAND_BAD_W2_WENGTH_ABOWT		 (1W<<7)
+#define BNX2_TDMA_COMMAND_MASK_CS1			 (1W<<20)
+#define BNX2_TDMA_COMMAND_MASK_CS2			 (1W<<21)
+#define BNX2_TDMA_COMMAND_MASK_CS3			 (1W<<22)
+#define BNX2_TDMA_COMMAND_MASK_CS4			 (1W<<23)
+#define BNX2_TDMA_COMMAND_FOWCE_IWOCK_CKEWW		 (1W<<24)
+#define BNX2_TDMA_COMMAND_OFIFO_CWW			 (1W<<30)
+#define BNX2_TDMA_COMMAND_IFIFO_CWW			 (1W<<31)
+
+#define BNX2_TDMA_STATUS				0x00005c04
+#define BNX2_TDMA_STATUS_DMA_WAIT			 (1W<<0)
+#define BNX2_TDMA_STATUS_PAYWOAD_WAIT			 (1W<<1)
+#define BNX2_TDMA_STATUS_PATCH_FTQ_WAIT			 (1W<<2)
+#define BNX2_TDMA_STATUS_WOCK_WAIT			 (1W<<3)
+#define BNX2_TDMA_STATUS_FTQ_ENTWY_CNT			 (1W<<16)
+#define BNX2_TDMA_STATUS_BUWST_CNT			 (1W<<17)
+#define BNX2_TDMA_STATUS_MAX_IFIFO_DEPTH		 (0x3fW<<20)
+#define BNX2_TDMA_STATUS_OFIFO_OVEWFWOW			 (1W<<30)
+#define BNX2_TDMA_STATUS_IFIFO_OVEWFWOW			 (1W<<31)
+
+#define BNX2_TDMA_CONFIG				0x00005c08
+#define BNX2_TDMA_CONFIG_ONE_DMA			 (1W<<0)
+#define BNX2_TDMA_CONFIG_ONE_WECOWD			 (1W<<1)
+#define BNX2_TDMA_CONFIG_NUM_DMA_CHAN			 (0x3W<<2)
+#define BNX2_TDMA_CONFIG_NUM_DMA_CHAN_0			 (0W<<2)
+#define BNX2_TDMA_CONFIG_NUM_DMA_CHAN_1			 (1W<<2)
+#define BNX2_TDMA_CONFIG_NUM_DMA_CHAN_2			 (2W<<2)
+#define BNX2_TDMA_CONFIG_NUM_DMA_CHAN_3			 (3W<<2)
+#define BNX2_TDMA_CONFIG_WIMIT_SZ			 (0xfW<<4)
+#define BNX2_TDMA_CONFIG_WIMIT_SZ_64			 (0W<<4)
+#define BNX2_TDMA_CONFIG_WIMIT_SZ_128			 (0x4W<<4)
+#define BNX2_TDMA_CONFIG_WIMIT_SZ_256			 (0x6W<<4)
+#define BNX2_TDMA_CONFIG_WIMIT_SZ_512			 (0x8W<<4)
+#define BNX2_TDMA_CONFIG_WINE_SZ			 (0xfW<<8)
+#define BNX2_TDMA_CONFIG_WINE_SZ_64			 (0W<<8)
+#define BNX2_TDMA_CONFIG_WINE_SZ_128			 (4W<<8)
+#define BNX2_TDMA_CONFIG_WINE_SZ_256			 (6W<<8)
+#define BNX2_TDMA_CONFIG_WINE_SZ_512			 (8W<<8)
+#define BNX2_TDMA_CONFIG_AWIGN_ENA			 (1W<<15)
+#define BNX2_TDMA_CONFIG_CHK_W2_BD			 (1W<<16)
+#define BNX2_TDMA_CONFIG_CMPW_ENTWY			 (1W<<17)
+#define BNX2_TDMA_CONFIG_OFIFO_CMP			 (1W<<19)
+#define BNX2_TDMA_CONFIG_OFIFO_CMP_3			 (0W<<19)
+#define BNX2_TDMA_CONFIG_OFIFO_CMP_2			 (1W<<19)
+#define BNX2_TDMA_CONFIG_FIFO_CMP			 (0xfW<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_XI			 (0x7W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_0_XI		 (0W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_4_XI		 (1W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_8_XI		 (2W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_16_XI		 (3W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_32_XI		 (4W<<20)
+#define BNX2_TDMA_CONFIG_IFIFO_DEPTH_64_XI		 (5W<<20)
+#define BNX2_TDMA_CONFIG_FIFO_CMP_EN_XI			 (1W<<23)
+#define BNX2_TDMA_CONFIG_BYTES_OST_XI			 (0x7W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_512_XI		 (0W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_1024_XI		 (1W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_2048_XI		 (2W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_4096_XI		 (3W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_8192_XI		 (4W<<24)
+#define BNX2_TDMA_CONFIG_BYTES_OST_16384_XI		 (5W<<24)
+#define BNX2_TDMA_CONFIG_HC_BYPASS_XI			 (1W<<27)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_XI			 (0x7W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_128_XI		 (0W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_256_XI		 (1W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_512_XI		 (2W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_1024_XI		 (3W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_2048_XI		 (4W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_4096_XI		 (5W<<28)
+#define BNX2_TDMA_CONFIG_WCW_MWWS_EN_XI			 (1W<<31)
+
+#define BNX2_TDMA_PAYWOAD_PWOD				0x00005c0c
+#define BNX2_TDMA_PAYWOAD_PWOD_VAWUE			 (0x1fffW<<3)
+
+#define BNX2_TDMA_DBG_WATCHDOG				0x00005c10
+#define BNX2_TDMA_DBG_TWIGGEW				0x00005c14
+#define BNX2_TDMA_DMAD_FSM				0x00005c80
+#define BNX2_TDMA_DMAD_FSM_BD_INVWD			 (1W<<0)
+#define BNX2_TDMA_DMAD_FSM_PUSH				 (0xfW<<4)
+#define BNX2_TDMA_DMAD_FSM_AWB_TBDC			 (0x3W<<8)
+#define BNX2_TDMA_DMAD_FSM_AWB_CTX			 (1W<<12)
+#define BNX2_TDMA_DMAD_FSM_DW_INTF			 (1W<<16)
+#define BNX2_TDMA_DMAD_FSM_DMAD				 (0x7W<<20)
+#define BNX2_TDMA_DMAD_FSM_BD				 (0xfW<<24)
+
+#define BNX2_TDMA_DMAD_STATUS				0x00005c84
+#define BNX2_TDMA_DMAD_STATUS_WHOWD_PUSH_ENTWY		 (0x3W<<0)
+#define BNX2_TDMA_DMAD_STATUS_WHOWD_DMAD_ENTWY		 (0x3W<<4)
+#define BNX2_TDMA_DMAD_STATUS_WHOWD_BD_ENTWY		 (0x3W<<8)
+#define BNX2_TDMA_DMAD_STATUS_IFTQ_ENUM			 (0xfW<<12)
+
+#define BNX2_TDMA_DW_INTF_FSM				0x00005c88
+#define BNX2_TDMA_DW_INTF_FSM_W2_COMP			 (0x3W<<0)
+#define BNX2_TDMA_DW_INTF_FSM_TPATQ			 (0x7W<<4)
+#define BNX2_TDMA_DW_INTF_FSM_TPBUF			 (0x3W<<8)
+#define BNX2_TDMA_DW_INTF_FSM_DW_BUF			 (0x7W<<12)
+#define BNX2_TDMA_DW_INTF_FSM_DMAD			 (0x7W<<16)
+
+#define BNX2_TDMA_DW_INTF_STATUS			0x00005c8c
+#define BNX2_TDMA_DW_INTF_STATUS_HOWE_PHASE		 (0x7W<<0)
+#define BNX2_TDMA_DW_INTF_STATUS_DATA_AVAIW		 (0x3W<<4)
+#define BNX2_TDMA_DW_INTF_STATUS_SHIFT_ADDW		 (0x7W<<8)
+#define BNX2_TDMA_DW_INTF_STATUS_NXT_PNTW		 (0xfW<<12)
+#define BNX2_TDMA_DW_INTF_STATUS_BYTE_COUNT		 (0x7W<<16)
+
+#define BNX2_TDMA_PUSH_FSM				0x00005c90
+#define BNX2_TDMA_BD_IF_DEBUG				0x00005c94
+#define BNX2_TDMA_DMAD_IF_DEBUG				0x00005c98
+#define BNX2_TDMA_CTX_IF_DEBUG				0x00005c9c
+#define BNX2_TDMA_TPBUF_IF_DEBUG			0x00005ca0
+#define BNX2_TDMA_DW_IF_DEBUG				0x00005ca4
+#define BNX2_TDMA_TPATQ_IF_DEBUG			0x00005ca8
+#define BNX2_TDMA_TDMA_IWOCK_CKSUM			0x00005cac
+#define BNX2_TDMA_TDMA_IWOCK_CKSUM_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_TDMA_TDMA_IWOCK_CKSUM_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_TDMA_TDMA_PCIE_CKSUM			0x00005cb0
+#define BNX2_TDMA_TDMA_PCIE_CKSUM_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_TDMA_TDMA_PCIE_CKSUM_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_TDMA_TDMAQ					0x00005fc0
+#define BNX2_TDMA_FTQ_CMD				0x00005ff8
+#define BNX2_TDMA_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_TDMA_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_TDMA_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_TDMA_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_TDMA_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_TDMA_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_TDMA_FTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_TDMA_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_TDMA_FTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_TDMA_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_TDMA_FTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_TDMA_FTQ_CTW				0x00005ffc
+#define BNX2_TDMA_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_TDMA_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_TDMA_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_TDMA_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_TDMA_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+
+
+/*
+ *  hc_weg definition
+ *  offset: 0x6800
+ */
+#define BNX2_HC_COMMAND					0x00006800
+#define BNX2_HC_COMMAND_ENABWE				 (1W<<0)
+#define BNX2_HC_COMMAND_SKIP_ABOWT			 (1W<<4)
+#define BNX2_HC_COMMAND_COAW_NOW			 (1W<<16)
+#define BNX2_HC_COMMAND_COAW_NOW_WO_INT			 (1W<<17)
+#define BNX2_HC_COMMAND_STATS_NOW			 (1W<<18)
+#define BNX2_HC_COMMAND_FOWCE_INT			 (0x3W<<19)
+#define BNX2_HC_COMMAND_FOWCE_INT_NUWW			 (0W<<19)
+#define BNX2_HC_COMMAND_FOWCE_INT_HIGH			 (1W<<19)
+#define BNX2_HC_COMMAND_FOWCE_INT_WOW			 (2W<<19)
+#define BNX2_HC_COMMAND_FOWCE_INT_FWEE			 (3W<<19)
+#define BNX2_HC_COMMAND_CWW_STAT_NOW			 (1W<<21)
+#define BNX2_HC_COMMAND_MAIN_PWW_INT			 (1W<<22)
+#define BNX2_HC_COMMAND_COAW_ON_NEXT_EVENT		 (1W<<27)
+
+#define BNX2_HC_STATUS					0x00006804
+#define BNX2_HC_STATUS_MASTEW_ABOWT			 (1W<<0)
+#define BNX2_HC_STATUS_PAWITY_EWWOW_STATE		 (1W<<1)
+#define BNX2_HC_STATUS_PCI_CWK_CNT_STAT			 (1W<<16)
+#define BNX2_HC_STATUS_COWE_CWK_CNT_STAT		 (1W<<17)
+#define BNX2_HC_STATUS_NUM_STATUS_BWOCKS_STAT		 (1W<<18)
+#define BNX2_HC_STATUS_NUM_INT_GEN_STAT			 (1W<<19)
+#define BNX2_HC_STATUS_NUM_INT_MBOX_WW_STAT		 (1W<<20)
+#define BNX2_HC_STATUS_COWE_CWKS_TO_HW_INTACK_STAT	 (1W<<23)
+#define BNX2_HC_STATUS_COWE_CWKS_TO_SW_INTACK_STAT	 (1W<<24)
+#define BNX2_HC_STATUS_COWE_CWKS_DUWING_SW_INTACK_STAT	 (1W<<25)
+
+#define BNX2_HC_CONFIG					0x00006808
+#define BNX2_HC_CONFIG_COWWECT_STATS			 (1W<<0)
+#define BNX2_HC_CONFIG_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_CONFIG_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_CONFIG_COM_TMW_MODE			 (1W<<3)
+#define BNX2_HC_CONFIG_CMD_TMW_MODE			 (1W<<4)
+#define BNX2_HC_CONFIG_STATISTIC_PWIOWITY		 (1W<<5)
+#define BNX2_HC_CONFIG_STATUS_PWIOWITY			 (1W<<6)
+#define BNX2_HC_CONFIG_STAT_MEM_ADDW			 (0xffW<<8)
+#define BNX2_HC_CONFIG_PEW_MODE				 (1W<<16)
+#define BNX2_HC_CONFIG_ONE_SHOT				 (1W<<17)
+#define BNX2_HC_CONFIG_USE_INT_PAWAM			 (1W<<18)
+#define BNX2_HC_CONFIG_SET_MASK_AT_WD			 (1W<<19)
+#define BNX2_HC_CONFIG_PEW_COWWECT_WIMIT		 (0xfW<<20)
+#define BNX2_HC_CONFIG_SB_ADDW_INC			 (0x7W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_64B			 (0W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_128B			 (1W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_256B			 (2W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_512B			 (3W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_1024B		 (4W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_2048B		 (5W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_4096B		 (6W<<24)
+#define BNX2_HC_CONFIG_SB_ADDW_INC_8192B		 (7W<<24)
+#define BNX2_HC_CONFIG_GEN_STAT_AVG_INTW		 (1W<<29)
+#define BNX2_HC_CONFIG_UNMASK_AWW			 (1W<<30)
+#define BNX2_HC_CONFIG_TX_SEW				 (1W<<31)
+
+#define BNX2_HC_ATTN_BITS_ENABWE			0x0000680c
+#define BNX2_HC_STATUS_ADDW_W				0x00006810
+#define BNX2_HC_STATUS_ADDW_H				0x00006814
+#define BNX2_HC_STATISTICS_ADDW_W			0x00006818
+#define BNX2_HC_STATISTICS_ADDW_H			0x0000681c
+#define BNX2_HC_TX_QUICK_CONS_TWIP			0x00006820
+#define BNX2_HC_TX_QUICK_CONS_TWIP_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_INT			 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP				0x00006824
+#define BNX2_HC_COMP_PWOD_TWIP_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP			0x00006828
+#define BNX2_HC_WX_QUICK_CONS_TWIP_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS				0x0000682c
+#define BNX2_HC_WX_TICKS_VAWUE				 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS				0x00006830
+#define BNX2_HC_TX_TICKS_VAWUE				 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS				0x00006834
+#define BNX2_HC_COM_TICKS_VAWUE				 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS				0x00006838
+#define BNX2_HC_CMD_TICKS_VAWUE				 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS				0x0000683c
+#define BNX2_HC_PEWIODIC_TICKS_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_STAT_COWWECT_TICKS			0x00006840
+#define BNX2_HC_STAT_COWWECT_TICKS_HC_STAT_COWW_TICKS	 (0xffW<<4)
+
+#define BNX2_HC_STATS_TICKS				0x00006844
+#define BNX2_HC_STATS_TICKS_HC_STAT_TICKS		 (0xffffW<<8)
+
+#define BNX2_HC_STATS_INTEWWUPT_STATUS			0x00006848
+#define BNX2_HC_STATS_INTEWWUPT_STATUS_SB_STATUS	 (0x1ffW<<0)
+#define BNX2_HC_STATS_INTEWWUPT_STATUS_INT_STATUS	 (0x1ffW<<16)
+
+#define BNX2_HC_STAT_MEM_DATA				0x0000684c
+#define BNX2_HC_STAT_GEN_SEW_0				0x00006850
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0		 (0x7fW<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT0	 (0W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT1	 (1W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT2	 (2W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT3	 (3W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT4	 (4W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT5	 (5W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT6	 (6W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT7	 (7W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT8	 (8W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT9	 (9W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT10	 (10W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXP_STAT11	 (11W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT0	 (12W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT1	 (13W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT2	 (14W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT3	 (15W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT4	 (16W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT5	 (17W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT6	 (18W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXP_STAT7	 (19W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT0	 (20W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT1	 (21W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT2	 (22W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT3	 (23W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT4	 (24W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT5	 (25W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT6	 (26W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT7	 (27W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT8	 (28W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT9	 (29W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT10	 (30W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COM_STAT11	 (31W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TPAT_STAT0	 (32W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TPAT_STAT1	 (33W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TPAT_STAT2	 (34W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TPAT_STAT3	 (35W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT0	 (36W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT1	 (37W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT2	 (38W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT3	 (39W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT4	 (40W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT5	 (41W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT6	 (42W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CP_STAT7	 (43W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT0	 (44W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT1	 (45W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT2	 (46W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT3	 (47W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT4	 (48W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT5	 (49W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT6	 (50W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MCP_STAT7	 (51W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_PCI_CWK_CNT	 (52W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COWE_CWK_CNT	 (53W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS	 (54W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN	 (55W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW	 (56W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK	 (59W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK	 (60W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK	 (61W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TSCH_CMD_CNT	 (62W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TSCH_SWOT_CNT	 (63W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CSCH_CMD_CNT	 (64W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CSCH_SWOT_CNT	 (65W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WWUPQ_VAWID_CNT	 (66W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXPQ_VAWID_CNT	 (67W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WXPCQ_VAWID_CNT	 (68W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PPQ_VAWID_CNT	 (69W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PMQ_VAWID_CNT	 (70W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PTQ_VAWID_CNT	 (71W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WDMAQ_VAWID_CNT	 (72W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TSCHQ_VAWID_CNT	 (73W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TBDWQ_VAWID_CNT	 (74W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TXPQ_VAWID_CNT	 (75W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TDMAQ_VAWID_CNT	 (76W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TPATQ_VAWID_CNT	 (77W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TASQ_VAWID_CNT	 (78W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CSQ_VAWID_CNT	 (79W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CPQ_VAWID_CNT	 (80W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COMXQ_VAWID_CNT	 (81W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COMTQ_VAWID_CNT	 (82W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_COMQ_VAWID_CNT	 (83W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MGMQ_VAWID_CNT	 (84W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_WEAD_TWANSFEWS_CNT	 (85W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_WEAD_DEWAY_PCI_CWKS_CNT	 (86W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WEAD_TWANSFEWS_CNT	 (87W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WEAD_DEWAY_PCI_CWKS_CNT	 (88W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WEAD_WETWY_AFTEW_DATA_CNT	 (89W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_WWITE_TWANSFEWS_CNT	 (90W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_WWITE_DEWAY_PCI_CWKS_CNT	 (91W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WWITE_TWANSFEWS_CNT	 (92W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WWITE_DEWAY_PCI_CWKS_CNT	 (93W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_DMAE_BIG_WWITE_WETWY_AFTEW_DATA_CNT	 (94W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_WW_CNT64	 (95W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_WD_CNT64	 (96W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_ACC_STAWW_CWKS	 (97W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_WOCK_STAWW_CWKS	 (98W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MBQ_CTX_ACCESS_STAT	 (99W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MBQ_CTX_ACCESS64_STAT	 (100W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MBQ_PCI_STAWW_STAT	 (101W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TBDW_FTQ_ENTWY_CNT	 (102W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TBDW_BUWST_CNT	 (103W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TDMA_FTQ_ENTWY_CNT	 (104W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TDMA_BUWST_CNT	 (105W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WDMA_FTQ_ENTWY_CNT	 (106W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WDMA_BUWST_CNT	 (107W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WWUP_MATCH_CNT	 (108W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_POWW_PASS_CNT	 (109W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_TMW1_CNT	 (110W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_TMW2_CNT	 (111W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_TMW3_CNT	 (112W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_TMW4_CNT	 (113W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_TMW_TMW5_CNT	 (114W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT0	 (115W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT1	 (116W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT2	 (117W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT3	 (118W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT4	 (119W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2P_STAT5	 (120W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WBDC_PWOC1_MISS	 (121W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WBDC_PWOC2_MISS	 (122W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WBDC_BUWST_CNT	 (127W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_1		 (0x7fW<<8)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_2		 (0x7fW<<16)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_3		 (0x7fW<<24)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_XI		 (0xffW<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UMP_WX_FWAME_DWOP_XI	 (52W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S0_XI	 (57W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S1_XI	 (58W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S2_XI	 (85W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S3_XI	 (86W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S4_XI	 (87W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S5_XI	 (88W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S6_XI	 (89W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S7_XI	 (90W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S8_XI	 (91W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S9_XI	 (92W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_UNUSED_S10_XI	 (93W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_MQ_IDB_OFWOW_XI	 (94W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_BWK_WD_CNT_XI	 (123W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_BWK_WW_CNT_XI	 (124W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_HITS_XI	 (125W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_CTX_MISSES_XI	 (126W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC1_XI	 (128W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC1_XI	 (129W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC1_XI	 (130W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC1_XI	 (131W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC1_XI	 (132W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC1_XI	 (133W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC2_XI	 (134W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC2_XI	 (135W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC2_XI	 (136W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC2_XI	 (137W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC2_XI	 (138W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC2_XI	 (139W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC3_XI	 (140W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC3_XI	 (141W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC3_XI	 (142W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC3_XI	 (143W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC3_XI	 (144W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC3_XI	 (145W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC4_XI	 (146W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC4_XI	 (147W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC4_XI	 (148W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC4_XI	 (149W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC4_XI	 (150W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC4_XI	 (151W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC5_XI	 (152W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC5_XI	 (153W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC5_XI	 (154W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC5_XI	 (155W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC5_XI	 (156W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC5_XI	 (157W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC6_XI	 (158W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC6_XI	 (159W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC6_XI	 (160W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC6_XI	 (161W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC6_XI	 (162W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC6_XI	 (163W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC7_XI	 (164W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC7_XI	 (165W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC7_XI	 (166W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC7_XI	 (167W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC7_XI	 (168W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC7_XI	 (169W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_STATUS_BWOCKS_VEC8_XI	 (170W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_GEN_VEC8_XI	 (171W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_NUM_INT_MBOX_WW_VEC8_XI	 (172W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_HW_INTACK_VEC8_XI	 (173W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_TO_SW_INTACK_VEC8_XI	 (174W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_HC_COWE_CWKS_DUWING_SW_INTACK_VEC8_XI	 (175W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PCS_CMD_CNT_XI	 (176W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PCS_SWOT_CNT_XI	 (177W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_0_WV2PCSQ_VAWID_CNT_XI	 (178W<<0)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_1_XI		 (0xffW<<8)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_2_XI		 (0xffW<<16)
+#define BNX2_HC_STAT_GEN_SEW_0_GEN_SEW_3_XI		 (0xffW<<24)
+
+#define BNX2_HC_STAT_GEN_SEW_1				0x00006854
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_4		 (0x7fW<<0)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_5		 (0x7fW<<8)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_6		 (0x7fW<<16)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_7		 (0x7fW<<24)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_4_XI		 (0xffW<<0)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_5_XI		 (0xffW<<8)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_6_XI		 (0xffW<<16)
+#define BNX2_HC_STAT_GEN_SEW_1_GEN_SEW_7_XI		 (0xffW<<24)
+
+#define BNX2_HC_STAT_GEN_SEW_2				0x00006858
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_8		 (0x7fW<<0)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_9		 (0x7fW<<8)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_10		 (0x7fW<<16)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_11		 (0x7fW<<24)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_8_XI		 (0xffW<<0)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_9_XI		 (0xffW<<8)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_10_XI		 (0xffW<<16)
+#define BNX2_HC_STAT_GEN_SEW_2_GEN_SEW_11_XI		 (0xffW<<24)
+
+#define BNX2_HC_STAT_GEN_SEW_3				0x0000685c
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_12		 (0x7fW<<0)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_13		 (0x7fW<<8)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_14		 (0x7fW<<16)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_15		 (0x7fW<<24)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_12_XI		 (0xffW<<0)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_13_XI		 (0xffW<<8)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_14_XI		 (0xffW<<16)
+#define BNX2_HC_STAT_GEN_SEW_3_GEN_SEW_15_XI		 (0xffW<<24)
+
+#define BNX2_HC_STAT_GEN_STAT0				0x00006888
+#define BNX2_HC_STAT_GEN_STAT1				0x0000688c
+#define BNX2_HC_STAT_GEN_STAT2				0x00006890
+#define BNX2_HC_STAT_GEN_STAT3				0x00006894
+#define BNX2_HC_STAT_GEN_STAT4				0x00006898
+#define BNX2_HC_STAT_GEN_STAT5				0x0000689c
+#define BNX2_HC_STAT_GEN_STAT6				0x000068a0
+#define BNX2_HC_STAT_GEN_STAT7				0x000068a4
+#define BNX2_HC_STAT_GEN_STAT8				0x000068a8
+#define BNX2_HC_STAT_GEN_STAT9				0x000068ac
+#define BNX2_HC_STAT_GEN_STAT10				0x000068b0
+#define BNX2_HC_STAT_GEN_STAT11				0x000068b4
+#define BNX2_HC_STAT_GEN_STAT12				0x000068b8
+#define BNX2_HC_STAT_GEN_STAT13				0x000068bc
+#define BNX2_HC_STAT_GEN_STAT14				0x000068c0
+#define BNX2_HC_STAT_GEN_STAT15				0x000068c4
+#define BNX2_HC_STAT_GEN_STAT_AC0			0x000068c8
+#define BNX2_HC_STAT_GEN_STAT_AC1			0x000068cc
+#define BNX2_HC_STAT_GEN_STAT_AC2			0x000068d0
+#define BNX2_HC_STAT_GEN_STAT_AC3			0x000068d4
+#define BNX2_HC_STAT_GEN_STAT_AC4			0x000068d8
+#define BNX2_HC_STAT_GEN_STAT_AC5			0x000068dc
+#define BNX2_HC_STAT_GEN_STAT_AC6			0x000068e0
+#define BNX2_HC_STAT_GEN_STAT_AC7			0x000068e4
+#define BNX2_HC_STAT_GEN_STAT_AC8			0x000068e8
+#define BNX2_HC_STAT_GEN_STAT_AC9			0x000068ec
+#define BNX2_HC_STAT_GEN_STAT_AC10			0x000068f0
+#define BNX2_HC_STAT_GEN_STAT_AC11			0x000068f4
+#define BNX2_HC_STAT_GEN_STAT_AC12			0x000068f8
+#define BNX2_HC_STAT_GEN_STAT_AC13			0x000068fc
+#define BNX2_HC_STAT_GEN_STAT_AC14			0x00006900
+#define BNX2_HC_STAT_GEN_STAT_AC15			0x00006904
+#define BNX2_HC_STAT_GEN_STAT_AC			0x000068c8
+#define BNX2_HC_VIS					0x00006908
+#define BNX2_HC_VIS_STAT_BUIWD_STATE			 (0xfW<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_IDWE		 (0W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_STAWT		 (1W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_WEQUEST		 (2W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_UPDATE64		 (3W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_UPDATE32		 (4W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_UPDATE_DONE	 (5W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_DMA		 (6W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_MSI_CONTWOW	 (7W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_MSI_WOW		 (8W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_MSI_HIGH		 (9W<<0)
+#define BNX2_HC_VIS_STAT_BUIWD_STATE_MSI_DATA		 (10W<<0)
+#define BNX2_HC_VIS_DMA_STAT_STATE			 (0xfW<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_IDWE			 (0W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_STATUS_PAWAM		 (1W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_STATUS_DMA		 (2W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_WWITE_COMP		 (3W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_COMP			 (4W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_STATISTIC_PAWAM	 (5W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_STATISTIC_DMA	 (6W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_WWITE_COMP_1		 (7W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_WWITE_COMP_2		 (8W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_WAIT			 (9W<<8)
+#define BNX2_HC_VIS_DMA_STAT_STATE_ABOWT		 (15W<<8)
+#define BNX2_HC_VIS_DMA_MSI_STATE			 (0x7W<<12)
+#define BNX2_HC_VIS_STATISTIC_DMA_EN_STATE		 (0x3W<<15)
+#define BNX2_HC_VIS_STATISTIC_DMA_EN_STATE_IDWE		 (0W<<15)
+#define BNX2_HC_VIS_STATISTIC_DMA_EN_STATE_COUNT	 (1W<<15)
+#define BNX2_HC_VIS_STATISTIC_DMA_EN_STATE_STAWT	 (2W<<15)
+
+#define BNX2_HC_VIS_1					0x0000690c
+#define BNX2_HC_VIS_1_HW_INTACK_STATE			 (1W<<4)
+#define BNX2_HC_VIS_1_HW_INTACK_STATE_IDWE		 (0W<<4)
+#define BNX2_HC_VIS_1_HW_INTACK_STATE_COUNT		 (1W<<4)
+#define BNX2_HC_VIS_1_SW_INTACK_STATE			 (1W<<5)
+#define BNX2_HC_VIS_1_SW_INTACK_STATE_IDWE		 (0W<<5)
+#define BNX2_HC_VIS_1_SW_INTACK_STATE_COUNT		 (1W<<5)
+#define BNX2_HC_VIS_1_DUWING_SW_INTACK_STATE		 (1W<<6)
+#define BNX2_HC_VIS_1_DUWING_SW_INTACK_STATE_IDWE	 (0W<<6)
+#define BNX2_HC_VIS_1_DUWING_SW_INTACK_STATE_COUNT	 (1W<<6)
+#define BNX2_HC_VIS_1_MAIWBOX_COUNT_STATE		 (1W<<7)
+#define BNX2_HC_VIS_1_MAIWBOX_COUNT_STATE_IDWE		 (0W<<7)
+#define BNX2_HC_VIS_1_MAIWBOX_COUNT_STATE_COUNT		 (1W<<7)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE			 (0xfW<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_IDWE		 (0W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_DMA		 (1W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_UPDATE		 (2W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_ASSIGN		 (3W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_WAIT		 (4W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_WEG_UPDATE	 (5W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_WEG_ASSIGN	 (6W<<17)
+#define BNX2_HC_VIS_1_WAM_WD_AWB_STATE_WEG_WAIT		 (7W<<17)
+#define BNX2_HC_VIS_1_WAM_WW_AWB_STATE			 (0x3W<<21)
+#define BNX2_HC_VIS_1_WAM_WW_AWB_STATE_NOWMAW		 (0W<<21)
+#define BNX2_HC_VIS_1_WAM_WW_AWB_STATE_CWEAW		 (1W<<21)
+#define BNX2_HC_VIS_1_INT_GEN_STATE			 (1W<<23)
+#define BNX2_HC_VIS_1_INT_GEN_STATE_DWE			 (0W<<23)
+#define BNX2_HC_VIS_1_INT_GEN_STATE_NTEWWUPT		 (1W<<23)
+#define BNX2_HC_VIS_1_STAT_CHAN_ID			 (0x7W<<24)
+#define BNX2_HC_VIS_1_INT_B				 (1W<<27)
+
+#define BNX2_HC_DEBUG_VECT_PEEK				0x00006910
+#define BNX2_HC_DEBUG_VECT_PEEK_1_VAWUE			 (0x7ffW<<0)
+#define BNX2_HC_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_HC_DEBUG_VECT_PEEK_1_SEW			 (0xfW<<12)
+#define BNX2_HC_DEBUG_VECT_PEEK_2_VAWUE			 (0x7ffW<<16)
+#define BNX2_HC_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_HC_DEBUG_VECT_PEEK_2_SEW			 (0xfW<<28)
+
+#define BNX2_HC_COAWESCE_NOW				0x00006914
+#define BNX2_HC_COAWESCE_NOW_COAW_NOW			 (0x1ffW<<1)
+#define BNX2_HC_COAWESCE_NOW_COAW_NOW_WO_INT		 (0x1ffW<<11)
+#define BNX2_HC_COAWESCE_NOW_COAW_ON_NXT_EVENT		 (0x1ffW<<21)
+
+#define BNX2_HC_MSIX_BIT_VECTOW				0x00006918
+#define BNX2_HC_MSIX_BIT_VECTOW_VAW			 (0x1ffW<<0)
+
+#define BNX2_HC_SB_CONFIG_1				0x00006a00
+#define BNX2_HC_SB_CONFIG_1_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_1_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_1_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_1_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_1_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_1_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_1_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_1_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_1			0x00006a04
+#define BNX2_HC_TX_QUICK_CONS_TWIP_1_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_1_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_1			0x00006a08
+#define BNX2_HC_COMP_PWOD_TWIP_1_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_1_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_1			0x00006a0c
+#define BNX2_HC_WX_QUICK_CONS_TWIP_1_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_1_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_1				0x00006a10
+#define BNX2_HC_WX_TICKS_1_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_1_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_1				0x00006a14
+#define BNX2_HC_TX_TICKS_1_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_1_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_1				0x00006a18
+#define BNX2_HC_COM_TICKS_1_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_1_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_1				0x00006a1c
+#define BNX2_HC_CMD_TICKS_1_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_1_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_1			0x00006a20
+#define BNX2_HC_PEWIODIC_TICKS_1_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_1_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_2				0x00006a24
+#define BNX2_HC_SB_CONFIG_2_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_2_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_2_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_2_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_2_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_2_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_2_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_2_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_2			0x00006a28
+#define BNX2_HC_TX_QUICK_CONS_TWIP_2_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_2_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_2			0x00006a2c
+#define BNX2_HC_COMP_PWOD_TWIP_2_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_2_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_2			0x00006a30
+#define BNX2_HC_WX_QUICK_CONS_TWIP_2_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_2_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_2				0x00006a34
+#define BNX2_HC_WX_TICKS_2_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_2_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_2				0x00006a38
+#define BNX2_HC_TX_TICKS_2_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_2_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_2				0x00006a3c
+#define BNX2_HC_COM_TICKS_2_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_2_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_2				0x00006a40
+#define BNX2_HC_CMD_TICKS_2_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_2_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_2			0x00006a44
+#define BNX2_HC_PEWIODIC_TICKS_2_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_2_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_3				0x00006a48
+#define BNX2_HC_SB_CONFIG_3_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_3_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_3_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_3_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_3_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_3_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_3_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_3_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_3			0x00006a4c
+#define BNX2_HC_TX_QUICK_CONS_TWIP_3_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_3_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_3			0x00006a50
+#define BNX2_HC_COMP_PWOD_TWIP_3_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_3_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_3			0x00006a54
+#define BNX2_HC_WX_QUICK_CONS_TWIP_3_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_3_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_3				0x00006a58
+#define BNX2_HC_WX_TICKS_3_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_3_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_3				0x00006a5c
+#define BNX2_HC_TX_TICKS_3_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_3_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_3				0x00006a60
+#define BNX2_HC_COM_TICKS_3_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_3_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_3				0x00006a64
+#define BNX2_HC_CMD_TICKS_3_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_3_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_3			0x00006a68
+#define BNX2_HC_PEWIODIC_TICKS_3_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_3_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_4				0x00006a6c
+#define BNX2_HC_SB_CONFIG_4_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_4_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_4_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_4_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_4_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_4_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_4_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_4_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_4			0x00006a70
+#define BNX2_HC_TX_QUICK_CONS_TWIP_4_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_4_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_4			0x00006a74
+#define BNX2_HC_COMP_PWOD_TWIP_4_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_4_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_4			0x00006a78
+#define BNX2_HC_WX_QUICK_CONS_TWIP_4_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_4_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_4				0x00006a7c
+#define BNX2_HC_WX_TICKS_4_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_4_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_4				0x00006a80
+#define BNX2_HC_TX_TICKS_4_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_4_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_4				0x00006a84
+#define BNX2_HC_COM_TICKS_4_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_4_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_4				0x00006a88
+#define BNX2_HC_CMD_TICKS_4_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_4_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_4			0x00006a8c
+#define BNX2_HC_PEWIODIC_TICKS_4_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_4_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_5				0x00006a90
+#define BNX2_HC_SB_CONFIG_5_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_5_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_5_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_5_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_5_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_5_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_5_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_5_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_5			0x00006a94
+#define BNX2_HC_TX_QUICK_CONS_TWIP_5_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_5_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_5			0x00006a98
+#define BNX2_HC_COMP_PWOD_TWIP_5_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_5_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_5			0x00006a9c
+#define BNX2_HC_WX_QUICK_CONS_TWIP_5_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_5_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_5				0x00006aa0
+#define BNX2_HC_WX_TICKS_5_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_5_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_5				0x00006aa4
+#define BNX2_HC_TX_TICKS_5_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_5_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_5				0x00006aa8
+#define BNX2_HC_COM_TICKS_5_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_5_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_5				0x00006aac
+#define BNX2_HC_CMD_TICKS_5_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_5_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_5			0x00006ab0
+#define BNX2_HC_PEWIODIC_TICKS_5_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_5_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_6				0x00006ab4
+#define BNX2_HC_SB_CONFIG_6_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_6_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_6_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_6_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_6_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_6_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_6_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_6_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_6			0x00006ab8
+#define BNX2_HC_TX_QUICK_CONS_TWIP_6_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_6_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_6			0x00006abc
+#define BNX2_HC_COMP_PWOD_TWIP_6_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_6_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_6			0x00006ac0
+#define BNX2_HC_WX_QUICK_CONS_TWIP_6_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_6_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_6				0x00006ac4
+#define BNX2_HC_WX_TICKS_6_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_6_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_6				0x00006ac8
+#define BNX2_HC_TX_TICKS_6_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_6_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_6				0x00006acc
+#define BNX2_HC_COM_TICKS_6_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_6_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_6				0x00006ad0
+#define BNX2_HC_CMD_TICKS_6_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_6_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_6			0x00006ad4
+#define BNX2_HC_PEWIODIC_TICKS_6_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_6_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_7				0x00006ad8
+#define BNX2_HC_SB_CONFIG_7_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_7_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_7_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_7_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_7_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_7_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_7_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_7_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_7			0x00006adc
+#define BNX2_HC_TX_QUICK_CONS_TWIP_7_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_7_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_7			0x00006ae0
+#define BNX2_HC_COMP_PWOD_TWIP_7_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_7_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_7			0x00006ae4
+#define BNX2_HC_WX_QUICK_CONS_TWIP_7_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_7_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_7				0x00006ae8
+#define BNX2_HC_WX_TICKS_7_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_7_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_7				0x00006aec
+#define BNX2_HC_TX_TICKS_7_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_7_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_7				0x00006af0
+#define BNX2_HC_COM_TICKS_7_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_7_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_7				0x00006af4
+#define BNX2_HC_CMD_TICKS_7_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_7_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_7			0x00006af8
+#define BNX2_HC_PEWIODIC_TICKS_7_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_7_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_8				0x00006afc
+#define BNX2_HC_SB_CONFIG_8_WX_TMW_MODE			 (1W<<1)
+#define BNX2_HC_SB_CONFIG_8_TX_TMW_MODE			 (1W<<2)
+#define BNX2_HC_SB_CONFIG_8_COM_TMW_MODE		 (1W<<3)
+#define BNX2_HC_SB_CONFIG_8_CMD_TMW_MODE		 (1W<<4)
+#define BNX2_HC_SB_CONFIG_8_PEW_MODE			 (1W<<16)
+#define BNX2_HC_SB_CONFIG_8_ONE_SHOT			 (1W<<17)
+#define BNX2_HC_SB_CONFIG_8_USE_INT_PAWAM		 (1W<<18)
+#define BNX2_HC_SB_CONFIG_8_PEW_COWWECT_WIMIT		 (0xfW<<20)
+
+#define BNX2_HC_TX_QUICK_CONS_TWIP_8			0x00006b00
+#define BNX2_HC_TX_QUICK_CONS_TWIP_8_VAWUE		 (0xffW<<0)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_8_INT		 (0xffW<<16)
+
+#define BNX2_HC_COMP_PWOD_TWIP_8			0x00006b04
+#define BNX2_HC_COMP_PWOD_TWIP_8_VAWUE			 (0xffW<<0)
+#define BNX2_HC_COMP_PWOD_TWIP_8_INT			 (0xffW<<16)
+
+#define BNX2_HC_WX_QUICK_CONS_TWIP_8			0x00006b08
+#define BNX2_HC_WX_QUICK_CONS_TWIP_8_VAWUE		 (0xffW<<0)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_8_INT		 (0xffW<<16)
+
+#define BNX2_HC_WX_TICKS_8				0x00006b0c
+#define BNX2_HC_WX_TICKS_8_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_WX_TICKS_8_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_TX_TICKS_8				0x00006b10
+#define BNX2_HC_TX_TICKS_8_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_TX_TICKS_8_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_COM_TICKS_8				0x00006b14
+#define BNX2_HC_COM_TICKS_8_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_COM_TICKS_8_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_CMD_TICKS_8				0x00006b18
+#define BNX2_HC_CMD_TICKS_8_VAWUE			 (0x3ffW<<0)
+#define BNX2_HC_CMD_TICKS_8_INT				 (0x3ffW<<16)
+
+#define BNX2_HC_PEWIODIC_TICKS_8			0x00006b1c
+#define BNX2_HC_PEWIODIC_TICKS_8_HC_PEWIODIC_TICKS	 (0xffffW<<0)
+#define BNX2_HC_PEWIODIC_TICKS_8_HC_INT_PEWIODIC_TICKS	 (0xffffW<<16)
+
+#define BNX2_HC_SB_CONFIG_SIZE	(BNX2_HC_SB_CONFIG_2 - BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_COMP_PWOD_TWIP_OFF	(BNX2_HC_COMP_PWOD_TWIP_1 -	\
+					 BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_COM_TICKS_OFF	(BNX2_HC_COM_TICKS_1 - BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_CMD_TICKS_OFF	(BNX2_HC_CMD_TICKS_1 - BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_TX_QUICK_CONS_TWIP_OFF	(BNX2_HC_TX_QUICK_CONS_TWIP_1 -	\
+					 BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_TX_TICKS_OFF	(BNX2_HC_TX_TICKS_1 - BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_WX_QUICK_CONS_TWIP_OFF	(BNX2_HC_WX_QUICK_CONS_TWIP_1 - \
+					 BNX2_HC_SB_CONFIG_1)
+#define BNX2_HC_WX_TICKS_OFF	(BNX2_HC_WX_TICKS_1 - BNX2_HC_SB_CONFIG_1)
+
+
+/*
+ *  txp_weg definition
+ *  offset: 0x40000
+ */
+#define BNX2_TXP_CPU_MODE				0x00045000
+#define BNX2_TXP_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_TXP_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_TXP_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_TXP_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_TXP_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_TXP_CPU_MODE_INTEWWUPT_ENA			 (1W<<7)
+#define BNX2_TXP_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_TXP_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_TXP_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_TXP_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_TXP_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_TXP_CPU_STATE				0x00045004
+#define BNX2_TXP_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_TXP_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_TXP_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_TXP_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_TXP_CPU_STATE_BAD_DATA_ADDW_HAWTED		 (1W<<5)
+#define BNX2_TXP_CPU_STATE_BAD_PC_HAWTED		 (1W<<6)
+#define BNX2_TXP_CPU_STATE_AWIGN_HAWTED			 (1W<<7)
+#define BNX2_TXP_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_TXP_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_TXP_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_TXP_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_TXP_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_TXP_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_TXP_CPU_STATE_BWOCKED_WEAD			 (1W<<31)
+
+#define BNX2_TXP_CPU_EVENT_MASK				0x00045008
+#define BNX2_TXP_CPU_EVENT_MASK_BWEAKPOINT_MASK		 (1W<<0)
+#define BNX2_TXP_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_TXP_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_TXP_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_TXP_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_TXP_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_TXP_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_TXP_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_TXP_CPU_EVENT_MASK_SOFT_HAWTED_MASK	 (1W<<10)
+#define BNX2_TXP_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_TXP_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_TXP_CPU_PWOGWAM_COUNTEW			0x0004501c
+#define BNX2_TXP_CPU_INSTWUCTION			0x00045020
+#define BNX2_TXP_CPU_DATA_ACCESS			0x00045024
+#define BNX2_TXP_CPU_INTEWWUPT_ENABWE			0x00045028
+#define BNX2_TXP_CPU_INTEWWUPT_VECTOW			0x0004502c
+#define BNX2_TXP_CPU_INTEWWUPT_SAVED_PC			0x00045030
+#define BNX2_TXP_CPU_HW_BWEAKPOINT			0x00045034
+#define BNX2_TXP_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_TXP_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK			0x00045038
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_TXP_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_TXP_CPU_WAST_BWANCH_ADDW			0x00045048
+#define BNX2_TXP_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_TXP_CPU_WAST_BWANCH_ADDW_TYPE_JUMP		 (0W<<1)
+#define BNX2_TXP_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_TXP_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_TXP_CPU_WEG_FIWE				0x00045200
+#define BNX2_TXP_TXPQ					0x000453c0
+#define BNX2_TXP_FTQ_CMD				0x000453f8
+#define BNX2_TXP_FTQ_CMD_OFFSET				 (0x3ffW<<0)
+#define BNX2_TXP_FTQ_CMD_WW_TOP				 (1W<<10)
+#define BNX2_TXP_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_TXP_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_TXP_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_TXP_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_TXP_FTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_TXP_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_TXP_FTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_TXP_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_TXP_FTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_TXP_FTQ_CTW				0x000453fc
+#define BNX2_TXP_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_TXP_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_TXP_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_TXP_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_TXP_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_TXP_SCWATCH				0x00060000
+
+
+/*
+ *  tpat_weg definition
+ *  offset: 0x80000
+ */
+#define BNX2_TPAT_CPU_MODE				0x00085000
+#define BNX2_TPAT_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_TPAT_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_TPAT_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_TPAT_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_TPAT_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_TPAT_CPU_MODE_INTEWWUPT_ENA		 (1W<<7)
+#define BNX2_TPAT_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_TPAT_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_TPAT_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_TPAT_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_TPAT_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_TPAT_CPU_STATE				0x00085004
+#define BNX2_TPAT_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_TPAT_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_TPAT_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_TPAT_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_TPAT_CPU_STATE_BAD_DATA_ADDW_HAWTED	 (1W<<5)
+#define BNX2_TPAT_CPU_STATE_BAD_PC_HAWTED		 (1W<<6)
+#define BNX2_TPAT_CPU_STATE_AWIGN_HAWTED		 (1W<<7)
+#define BNX2_TPAT_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_TPAT_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_TPAT_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_TPAT_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_TPAT_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_TPAT_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_TPAT_CPU_STATE_BWOCKED_WEAD		 (1W<<31)
+
+#define BNX2_TPAT_CPU_EVENT_MASK			0x00085008
+#define BNX2_TPAT_CPU_EVENT_MASK_BWEAKPOINT_MASK	 (1W<<0)
+#define BNX2_TPAT_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_TPAT_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_TPAT_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_TPAT_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_TPAT_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_TPAT_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_TPAT_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_TPAT_CPU_EVENT_MASK_SOFT_HAWTED_MASK	 (1W<<10)
+#define BNX2_TPAT_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_TPAT_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_TPAT_CPU_PWOGWAM_COUNTEW			0x0008501c
+#define BNX2_TPAT_CPU_INSTWUCTION			0x00085020
+#define BNX2_TPAT_CPU_DATA_ACCESS			0x00085024
+#define BNX2_TPAT_CPU_INTEWWUPT_ENABWE			0x00085028
+#define BNX2_TPAT_CPU_INTEWWUPT_VECTOW			0x0008502c
+#define BNX2_TPAT_CPU_INTEWWUPT_SAVED_PC		0x00085030
+#define BNX2_TPAT_CPU_HW_BWEAKPOINT			0x00085034
+#define BNX2_TPAT_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_TPAT_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK			0x00085038
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_TPAT_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_TPAT_CPU_WAST_BWANCH_ADDW			0x00085048
+#define BNX2_TPAT_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_TPAT_CPU_WAST_BWANCH_ADDW_TYPE_JUMP	 (0W<<1)
+#define BNX2_TPAT_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_TPAT_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_TPAT_CPU_WEG_FIWE				0x00085200
+#define BNX2_TPAT_TPATQ					0x000853c0
+#define BNX2_TPAT_FTQ_CMD				0x000853f8
+#define BNX2_TPAT_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_TPAT_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_TPAT_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_TPAT_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_TPAT_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_TPAT_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_TPAT_FTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_TPAT_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_TPAT_FTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_TPAT_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_TPAT_FTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_TPAT_FTQ_CTW				0x000853fc
+#define BNX2_TPAT_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_TPAT_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_TPAT_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_TPAT_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_TPAT_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_TPAT_SCWATCH				0x000a0000
+
+
+/*
+ *  wxp_weg definition
+ *  offset: 0xc0000
+ */
+#define BNX2_WXP_CPU_MODE				0x000c5000
+#define BNX2_WXP_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_WXP_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_WXP_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_WXP_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_WXP_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_WXP_CPU_MODE_INTEWWUPT_ENA			 (1W<<7)
+#define BNX2_WXP_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_WXP_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_WXP_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_WXP_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_WXP_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_WXP_CPU_STATE				0x000c5004
+#define BNX2_WXP_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_WXP_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_WXP_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_WXP_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_WXP_CPU_STATE_BAD_DATA_ADDW_HAWTED		 (1W<<5)
+#define BNX2_WXP_CPU_STATE_BAD_PC_HAWTED		 (1W<<6)
+#define BNX2_WXP_CPU_STATE_AWIGN_HAWTED			 (1W<<7)
+#define BNX2_WXP_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_WXP_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_WXP_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_WXP_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_WXP_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_WXP_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_WXP_CPU_STATE_BWOCKED_WEAD			 (1W<<31)
+
+#define BNX2_WXP_CPU_EVENT_MASK				0x000c5008
+#define BNX2_WXP_CPU_EVENT_MASK_BWEAKPOINT_MASK		 (1W<<0)
+#define BNX2_WXP_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_WXP_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_WXP_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_WXP_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_WXP_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_WXP_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_WXP_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_WXP_CPU_EVENT_MASK_SOFT_HAWTED_MASK	 (1W<<10)
+#define BNX2_WXP_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_WXP_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_WXP_CPU_PWOGWAM_COUNTEW			0x000c501c
+#define BNX2_WXP_CPU_INSTWUCTION			0x000c5020
+#define BNX2_WXP_CPU_DATA_ACCESS			0x000c5024
+#define BNX2_WXP_CPU_INTEWWUPT_ENABWE			0x000c5028
+#define BNX2_WXP_CPU_INTEWWUPT_VECTOW			0x000c502c
+#define BNX2_WXP_CPU_INTEWWUPT_SAVED_PC			0x000c5030
+#define BNX2_WXP_CPU_HW_BWEAKPOINT			0x000c5034
+#define BNX2_WXP_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_WXP_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK			0x000c5038
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_WXP_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_WXP_CPU_WAST_BWANCH_ADDW			0x000c5048
+#define BNX2_WXP_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_WXP_CPU_WAST_BWANCH_ADDW_TYPE_JUMP		 (0W<<1)
+#define BNX2_WXP_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_WXP_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_WXP_CPU_WEG_FIWE				0x000c5200
+#define BNX2_WXP_PFE_PFE_CTW				0x000c537c
+#define BNX2_WXP_PFE_PFE_CTW_INC_USAGE_CNT		 (1W<<0)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE			 (0xfW<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_0			 (0W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_1			 (1W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_2			 (2W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_3			 (3W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_4			 (4W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_5			 (5W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_6			 (6W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_7			 (7W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_8			 (8W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_9			 (9W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_10		 (10W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_11		 (11W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_12		 (12W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_13		 (13W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_14		 (14W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_SIZE_15		 (15W<<4)
+#define BNX2_WXP_PFE_PFE_CTW_PFE_COUNT			 (0xfW<<12)
+#define BNX2_WXP_PFE_PFE_CTW_OFFSET			 (0x1ffW<<16)
+
+#define BNX2_WXP_WXPCQ					0x000c5380
+#define BNX2_WXP_CFTQ_CMD				0x000c53b8
+#define BNX2_WXP_CFTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_WXP_CFTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_WXP_CFTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_WXP_CFTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_WXP_CFTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_WXP_CFTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_WXP_CFTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_WXP_CFTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_WXP_CFTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_WXP_CFTQ_CMD_POP				 (1W<<30)
+#define BNX2_WXP_CFTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_WXP_CFTQ_CTW				0x000c53bc
+#define BNX2_WXP_CFTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_WXP_CFTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_WXP_CFTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_WXP_CFTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_WXP_CFTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_WXP_WXPQ					0x000c53c0
+#define BNX2_WXP_FTQ_CMD				0x000c53f8
+#define BNX2_WXP_FTQ_CMD_OFFSET				 (0x3ffW<<0)
+#define BNX2_WXP_FTQ_CMD_WW_TOP				 (1W<<10)
+#define BNX2_WXP_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_WXP_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_WXP_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_WXP_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_WXP_FTQ_CMD_ADD_INTEWVEN			 (1W<<27)
+#define BNX2_WXP_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_WXP_FTQ_CMD_INTEWVENE_CWW			 (1W<<29)
+#define BNX2_WXP_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_WXP_FTQ_CMD_BUSY				 (1W<<31)
+
+#define BNX2_WXP_FTQ_CTW				0x000c53fc
+#define BNX2_WXP_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_WXP_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_WXP_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_WXP_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_WXP_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_WXP_SCWATCH				0x000e0000
+#define BNX2_WXP_SCWATCH_WXP_FWOOD			 0x000e0024
+#define BNX2_WXP_SCWATCH_WSS_TBW_SZ			 0x000e0038
+#define BNX2_WXP_SCWATCH_WSS_TBW			 0x000e003c
+#define BNX2_WXP_SCWATCH_WSS_TBW_MAX_ENTWIES		 128
+
+
+/*
+ *  com_weg definition
+ *  offset: 0x100000
+ */
+#define BNX2_COM_CKSUM_EWWOW_STATUS			0x00100000
+#define BNX2_COM_CKSUM_EWWOW_STATUS_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_COM_CKSUM_EWWOW_STATUS_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_COM_CPU_MODE				0x00105000
+#define BNX2_COM_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_COM_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_COM_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_COM_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_COM_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_COM_CPU_MODE_INTEWWUPT_ENA			 (1W<<7)
+#define BNX2_COM_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_COM_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_COM_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_COM_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_COM_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_COM_CPU_STATE				0x00105004
+#define BNX2_COM_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_COM_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_COM_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_COM_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_COM_CPU_STATE_BAD_DATA_ADDW_HAWTED		 (1W<<5)
+#define BNX2_COM_CPU_STATE_BAD_PC_HAWTED		 (1W<<6)
+#define BNX2_COM_CPU_STATE_AWIGN_HAWTED			 (1W<<7)
+#define BNX2_COM_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_COM_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_COM_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_COM_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_COM_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_COM_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_COM_CPU_STATE_BWOCKED_WEAD			 (1W<<31)
+
+#define BNX2_COM_CPU_EVENT_MASK				0x00105008
+#define BNX2_COM_CPU_EVENT_MASK_BWEAKPOINT_MASK		 (1W<<0)
+#define BNX2_COM_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_COM_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_COM_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_COM_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_COM_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_COM_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_COM_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_COM_CPU_EVENT_MASK_SOFT_HAWTED_MASK	 (1W<<10)
+#define BNX2_COM_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_COM_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_COM_CPU_PWOGWAM_COUNTEW			0x0010501c
+#define BNX2_COM_CPU_INSTWUCTION			0x00105020
+#define BNX2_COM_CPU_DATA_ACCESS			0x00105024
+#define BNX2_COM_CPU_INTEWWUPT_ENABWE			0x00105028
+#define BNX2_COM_CPU_INTEWWUPT_VECTOW			0x0010502c
+#define BNX2_COM_CPU_INTEWWUPT_SAVED_PC			0x00105030
+#define BNX2_COM_CPU_HW_BWEAKPOINT			0x00105034
+#define BNX2_COM_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_COM_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK			0x00105038
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_COM_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_COM_CPU_WAST_BWANCH_ADDW			0x00105048
+#define BNX2_COM_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_COM_CPU_WAST_BWANCH_ADDW_TYPE_JUMP		 (0W<<1)
+#define BNX2_COM_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_COM_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_COM_CPU_WEG_FIWE				0x00105200
+#define BNX2_COM_COMTQ_PFE_PFE_CTW			0x001052bc
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_INC_USAGE_CNT	 (1W<<0)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE		 (0xfW<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_0		 (0W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_1		 (1W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_2		 (2W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_3		 (3W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_4		 (4W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_5		 (5W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_6		 (6W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_7		 (7W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_8		 (8W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_9		 (9W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_10		 (10W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_11		 (11W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_12		 (12W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_13		 (13W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_14		 (14W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_SIZE_15		 (15W<<4)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_PFE_COUNT		 (0xfW<<12)
+#define BNX2_COM_COMTQ_PFE_PFE_CTW_OFFSET		 (0x1ffW<<16)
+
+#define BNX2_COM_COMXQ					0x00105340
+#define BNX2_COM_COMXQ_FTQ_CMD				0x00105378
+#define BNX2_COM_COMXQ_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_COM_COMXQ_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_COM_COMXQ_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_COM_COMXQ_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_COM_COMXQ_FTQ_CMD_SFT_WESET		 (1W<<25)
+#define BNX2_COM_COMXQ_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_COM_COMXQ_FTQ_CMD_ADD_INTEWVEN		 (1W<<27)
+#define BNX2_COM_COMXQ_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_COM_COMXQ_FTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_COM_COMXQ_FTQ_CMD_POP			 (1W<<30)
+#define BNX2_COM_COMXQ_FTQ_CMD_BUSY			 (1W<<31)
+
+#define BNX2_COM_COMXQ_FTQ_CTW				0x0010537c
+#define BNX2_COM_COMXQ_FTQ_CTW_INTEWVENE		 (1W<<0)
+#define BNX2_COM_COMXQ_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_COM_COMXQ_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_COM_COMXQ_FTQ_CTW_MAX_DEPTH		 (0x3ffW<<12)
+#define BNX2_COM_COMXQ_FTQ_CTW_CUW_DEPTH		 (0x3ffW<<22)
+
+#define BNX2_COM_COMTQ					0x00105380
+#define BNX2_COM_COMTQ_FTQ_CMD				0x001053b8
+#define BNX2_COM_COMTQ_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_COM_COMTQ_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_COM_COMTQ_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_COM_COMTQ_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_COM_COMTQ_FTQ_CMD_SFT_WESET		 (1W<<25)
+#define BNX2_COM_COMTQ_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_COM_COMTQ_FTQ_CMD_ADD_INTEWVEN		 (1W<<27)
+#define BNX2_COM_COMTQ_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_COM_COMTQ_FTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_COM_COMTQ_FTQ_CMD_POP			 (1W<<30)
+#define BNX2_COM_COMTQ_FTQ_CMD_BUSY			 (1W<<31)
+
+#define BNX2_COM_COMTQ_FTQ_CTW				0x001053bc
+#define BNX2_COM_COMTQ_FTQ_CTW_INTEWVENE		 (1W<<0)
+#define BNX2_COM_COMTQ_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_COM_COMTQ_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_COM_COMTQ_FTQ_CTW_MAX_DEPTH		 (0x3ffW<<12)
+#define BNX2_COM_COMTQ_FTQ_CTW_CUW_DEPTH		 (0x3ffW<<22)
+
+#define BNX2_COM_COMQ					0x001053c0
+#define BNX2_COM_COMQ_FTQ_CMD				0x001053f8
+#define BNX2_COM_COMQ_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_COM_COMQ_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_COM_COMQ_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_COM_COMQ_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_COM_COMQ_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_COM_COMQ_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_COM_COMQ_FTQ_CMD_ADD_INTEWVEN		 (1W<<27)
+#define BNX2_COM_COMQ_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_COM_COMQ_FTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_COM_COMQ_FTQ_CMD_POP			 (1W<<30)
+#define BNX2_COM_COMQ_FTQ_CMD_BUSY			 (1W<<31)
+
+#define BNX2_COM_COMQ_FTQ_CTW				0x001053fc
+#define BNX2_COM_COMQ_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_COM_COMQ_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_COM_COMQ_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_COM_COMQ_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_COM_COMQ_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_COM_SCWATCH				0x00120000
+
+#define BNX2_FW_WX_WOW_WATENCY				 0x00120058
+#define BNX2_FW_WX_DWOP_COUNT				 0x00120084
+
+
+/*
+ *  cp_weg definition
+ *  offset: 0x180000
+ */
+#define BNX2_CP_CKSUM_EWWOW_STATUS			0x00180000
+#define BNX2_CP_CKSUM_EWWOW_STATUS_CAWCUWATED		 (0xffffW<<0)
+#define BNX2_CP_CKSUM_EWWOW_STATUS_EXPECTED		 (0xffffW<<16)
+
+#define BNX2_CP_CPU_MODE				0x00185000
+#define BNX2_CP_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_CP_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_CP_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_CP_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_CP_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_CP_CPU_MODE_INTEWWUPT_ENA			 (1W<<7)
+#define BNX2_CP_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_CP_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_CP_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_CP_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_CP_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_CP_CPU_STATE				0x00185004
+#define BNX2_CP_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_CP_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_CP_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_CP_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_CP_CPU_STATE_BAD_DATA_ADDW_HAWTED		 (1W<<5)
+#define BNX2_CP_CPU_STATE_BAD_PC_HAWTED			 (1W<<6)
+#define BNX2_CP_CPU_STATE_AWIGN_HAWTED			 (1W<<7)
+#define BNX2_CP_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_CP_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_CP_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_CP_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_CP_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_CP_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_CP_CPU_STATE_BWOCKED_WEAD			 (1W<<31)
+
+#define BNX2_CP_CPU_EVENT_MASK				0x00185008
+#define BNX2_CP_CPU_EVENT_MASK_BWEAKPOINT_MASK		 (1W<<0)
+#define BNX2_CP_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_CP_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_CP_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_CP_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_CP_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_CP_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_CP_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_CP_CPU_EVENT_MASK_SOFT_HAWTED_MASK		 (1W<<10)
+#define BNX2_CP_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_CP_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_CP_CPU_PWOGWAM_COUNTEW			0x0018501c
+#define BNX2_CP_CPU_INSTWUCTION				0x00185020
+#define BNX2_CP_CPU_DATA_ACCESS				0x00185024
+#define BNX2_CP_CPU_INTEWWUPT_ENABWE			0x00185028
+#define BNX2_CP_CPU_INTEWWUPT_VECTOW			0x0018502c
+#define BNX2_CP_CPU_INTEWWUPT_SAVED_PC			0x00185030
+#define BNX2_CP_CPU_HW_BWEAKPOINT			0x00185034
+#define BNX2_CP_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_CP_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK			0x00185038
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_CP_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_CP_CPU_WAST_BWANCH_ADDW			0x00185048
+#define BNX2_CP_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_CP_CPU_WAST_BWANCH_ADDW_TYPE_JUMP		 (0W<<1)
+#define BNX2_CP_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_CP_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_CP_CPU_WEG_FIWE				0x00185200
+#define BNX2_CP_CPQ_PFE_PFE_CTW				0x001853bc
+#define BNX2_CP_CPQ_PFE_PFE_CTW_INC_USAGE_CNT		 (1W<<0)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE		 (0xfW<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_0		 (0W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_1		 (1W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_2		 (2W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_3		 (3W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_4		 (4W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_5		 (5W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_6		 (6W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_7		 (7W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_8		 (8W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_9		 (9W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_10		 (10W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_11		 (11W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_12		 (12W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_13		 (13W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_14		 (14W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_SIZE_15		 (15W<<4)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_PFE_COUNT		 (0xfW<<12)
+#define BNX2_CP_CPQ_PFE_PFE_CTW_OFFSET			 (0x1ffW<<16)
+
+#define BNX2_CP_CPQ					0x001853c0
+#define BNX2_CP_CPQ_FTQ_CMD				0x001853f8
+#define BNX2_CP_CPQ_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_CP_CPQ_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_CP_CPQ_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_CP_CPQ_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_CP_CPQ_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_CP_CPQ_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_CP_CPQ_FTQ_CMD_ADD_INTEWVEN		 (1W<<27)
+#define BNX2_CP_CPQ_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_CP_CPQ_FTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_CP_CPQ_FTQ_CMD_POP				 (1W<<30)
+#define BNX2_CP_CPQ_FTQ_CMD_BUSY			 (1W<<31)
+
+#define BNX2_CP_CPQ_FTQ_CTW				0x001853fc
+#define BNX2_CP_CPQ_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_CP_CPQ_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_CP_CPQ_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_CP_CPQ_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_CP_CPQ_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_CP_SCWATCH					0x001a0000
+
+#define BNX2_FW_MAX_ISCSI_CONN				 0x001a0080
+
+
+/*
+ *  mcp_weg definition
+ *  offset: 0x140000
+ */
+#define BNX2_MCP_MCP_CONTWOW				0x00140080
+#define BNX2_MCP_MCP_CONTWOW_SMBUS_SEW			 (1W<<30)
+#define BNX2_MCP_MCP_CONTWOW_MCP_ISOWATE		 (1W<<31)
+
+#define BNX2_MCP_MCP_ATTENTION_STATUS			0x00140084
+#define BNX2_MCP_MCP_ATTENTION_STATUS_DWV_DOOWBEWW	 (1W<<29)
+#define BNX2_MCP_MCP_ATTENTION_STATUS_WATCHDOG_TIMEOUT	 (1W<<30)
+#define BNX2_MCP_MCP_ATTENTION_STATUS_CPU_EVENT		 (1W<<31)
+
+#define BNX2_MCP_MCP_HEAWTBEAT_CONTWOW			0x00140088
+#define BNX2_MCP_MCP_HEAWTBEAT_CONTWOW_MCP_HEAWTBEAT_ENABWE	 (1W<<31)
+
+#define BNX2_MCP_MCP_HEAWTBEAT_STATUS			0x0014008c
+#define BNX2_MCP_MCP_HEAWTBEAT_STATUS_MCP_HEAWTBEAT_PEWIOD	 (0x7ffW<<0)
+#define BNX2_MCP_MCP_HEAWTBEAT_STATUS_VAWID		 (1W<<31)
+
+#define BNX2_MCP_MCP_HEAWTBEAT				0x00140090
+#define BNX2_MCP_MCP_HEAWTBEAT_MCP_HEAWTBEAT_COUNT	 (0x3fffffffW<<0)
+#define BNX2_MCP_MCP_HEAWTBEAT_MCP_HEAWTBEAT_INC	 (1W<<30)
+#define BNX2_MCP_MCP_HEAWTBEAT_MCP_HEAWTBEAT_WESET	 (1W<<31)
+
+#define BNX2_MCP_WATCHDOG_WESET				0x00140094
+#define BNX2_MCP_WATCHDOG_WESET_WATCHDOG_WESET		 (1W<<31)
+
+#define BNX2_MCP_WATCHDOG_CONTWOW			0x00140098
+#define BNX2_MCP_WATCHDOG_CONTWOW_WATCHDOG_TIMEOUT	 (0xfffffffW<<0)
+#define BNX2_MCP_WATCHDOG_CONTWOW_WATCHDOG_ATTN		 (1W<<29)
+#define BNX2_MCP_WATCHDOG_CONTWOW_MCP_WST_ENABWE	 (1W<<30)
+#define BNX2_MCP_WATCHDOG_CONTWOW_WATCHDOG_ENABWE	 (1W<<31)
+
+#define BNX2_MCP_ACCESS_WOCK				0x0014009c
+#define BNX2_MCP_ACCESS_WOCK_WOCK			 (1W<<31)
+
+#define BNX2_MCP_TOE_ID					0x001400a0
+#define BNX2_MCP_TOE_ID_FUNCTION_ID			 (1W<<31)
+
+#define BNX2_MCP_MAIWBOX_CFG				0x001400a4
+#define BNX2_MCP_MAIWBOX_CFG_MAIWBOX_OFFSET		 (0x3fffW<<0)
+#define BNX2_MCP_MAIWBOX_CFG_MAIWBOX_SIZE		 (0xfffW<<20)
+
+#define BNX2_MCP_MAIWBOX_CFG_OTHEW_FUNC			0x001400a8
+#define BNX2_MCP_MAIWBOX_CFG_OTHEW_FUNC_MAIWBOX_OFFSET	 (0x3fffW<<0)
+#define BNX2_MCP_MAIWBOX_CFG_OTHEW_FUNC_MAIWBOX_SIZE	 (0xfffW<<20)
+
+#define BNX2_MCP_MCP_DOOWBEWW				0x001400ac
+#define BNX2_MCP_MCP_DOOWBEWW_MCP_DOOWBEWW		 (1W<<31)
+
+#define BNX2_MCP_DWIVEW_DOOWBEWW			0x001400b0
+#define BNX2_MCP_DWIVEW_DOOWBEWW_DWIVEW_DOOWBEWW	 (1W<<31)
+
+#define BNX2_MCP_DWIVEW_DOOWBEWW_OTHEW_FUNC		0x001400b4
+#define BNX2_MCP_DWIVEW_DOOWBEWW_OTHEW_FUNC_DWIVEW_DOOWBEWW	 (1W<<31)
+
+#define BNX2_MCP_CPU_MODE				0x00145000
+#define BNX2_MCP_CPU_MODE_WOCAW_WST			 (1W<<0)
+#define BNX2_MCP_CPU_MODE_STEP_ENA			 (1W<<1)
+#define BNX2_MCP_CPU_MODE_PAGE_0_DATA_ENA		 (1W<<2)
+#define BNX2_MCP_CPU_MODE_PAGE_0_INST_ENA		 (1W<<3)
+#define BNX2_MCP_CPU_MODE_MSG_BIT1			 (1W<<6)
+#define BNX2_MCP_CPU_MODE_INTEWWUPT_ENA			 (1W<<7)
+#define BNX2_MCP_CPU_MODE_SOFT_HAWT			 (1W<<10)
+#define BNX2_MCP_CPU_MODE_BAD_DATA_HAWT_ENA		 (1W<<11)
+#define BNX2_MCP_CPU_MODE_BAD_INST_HAWT_ENA		 (1W<<12)
+#define BNX2_MCP_CPU_MODE_FIO_ABOWT_HAWT_ENA		 (1W<<13)
+#define BNX2_MCP_CPU_MODE_SPAD_UNDEWFWOW_HAWT_ENA	 (1W<<15)
+
+#define BNX2_MCP_CPU_STATE				0x00145004
+#define BNX2_MCP_CPU_STATE_BWEAKPOINT			 (1W<<0)
+#define BNX2_MCP_CPU_STATE_BAD_INST_HAWTED		 (1W<<2)
+#define BNX2_MCP_CPU_STATE_PAGE_0_DATA_HAWTED		 (1W<<3)
+#define BNX2_MCP_CPU_STATE_PAGE_0_INST_HAWTED		 (1W<<4)
+#define BNX2_MCP_CPU_STATE_BAD_DATA_ADDW_HAWTED		 (1W<<5)
+#define BNX2_MCP_CPU_STATE_BAD_PC_HAWTED		 (1W<<6)
+#define BNX2_MCP_CPU_STATE_AWIGN_HAWTED			 (1W<<7)
+#define BNX2_MCP_CPU_STATE_FIO_ABOWT_HAWTED		 (1W<<8)
+#define BNX2_MCP_CPU_STATE_SOFT_HAWTED			 (1W<<10)
+#define BNX2_MCP_CPU_STATE_SPAD_UNDEWFWOW		 (1W<<11)
+#define BNX2_MCP_CPU_STATE_INTEWWUPT			 (1W<<12)
+#define BNX2_MCP_CPU_STATE_DATA_ACCESS_STAWW		 (1W<<14)
+#define BNX2_MCP_CPU_STATE_INST_FETCH_STAWW		 (1W<<15)
+#define BNX2_MCP_CPU_STATE_BWOCKED_WEAD			 (1W<<31)
+
+#define BNX2_MCP_CPU_EVENT_MASK				0x00145008
+#define BNX2_MCP_CPU_EVENT_MASK_BWEAKPOINT_MASK		 (1W<<0)
+#define BNX2_MCP_CPU_EVENT_MASK_BAD_INST_HAWTED_MASK	 (1W<<2)
+#define BNX2_MCP_CPU_EVENT_MASK_PAGE_0_DATA_HAWTED_MASK	 (1W<<3)
+#define BNX2_MCP_CPU_EVENT_MASK_PAGE_0_INST_HAWTED_MASK	 (1W<<4)
+#define BNX2_MCP_CPU_EVENT_MASK_BAD_DATA_ADDW_HAWTED_MASK	 (1W<<5)
+#define BNX2_MCP_CPU_EVENT_MASK_BAD_PC_HAWTED_MASK	 (1W<<6)
+#define BNX2_MCP_CPU_EVENT_MASK_AWIGN_HAWTED_MASK	 (1W<<7)
+#define BNX2_MCP_CPU_EVENT_MASK_FIO_ABOWT_MASK		 (1W<<8)
+#define BNX2_MCP_CPU_EVENT_MASK_SOFT_HAWTED_MASK	 (1W<<10)
+#define BNX2_MCP_CPU_EVENT_MASK_SPAD_UNDEWFWOW_MASK	 (1W<<11)
+#define BNX2_MCP_CPU_EVENT_MASK_INTEWWUPT_MASK		 (1W<<12)
+
+#define BNX2_MCP_CPU_PWOGWAM_COUNTEW			0x0014501c
+#define BNX2_MCP_CPU_INSTWUCTION			0x00145020
+#define BNX2_MCP_CPU_DATA_ACCESS			0x00145024
+#define BNX2_MCP_CPU_INTEWWUPT_ENABWE			0x00145028
+#define BNX2_MCP_CPU_INTEWWUPT_VECTOW			0x0014502c
+#define BNX2_MCP_CPU_INTEWWUPT_SAVED_PC			0x00145030
+#define BNX2_MCP_CPU_HW_BWEAKPOINT			0x00145034
+#define BNX2_MCP_CPU_HW_BWEAKPOINT_DISABWE		 (1W<<0)
+#define BNX2_MCP_CPU_HW_BWEAKPOINT_ADDWESS		 (0x3fffffffW<<2)
+
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK			0x00145038
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_1_VAWUE		 (0x7ffW<<0)
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_1_PEEK_EN		 (1W<<11)
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_1_SEW		 (0xfW<<12)
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_2_VAWUE		 (0x7ffW<<16)
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_2_PEEK_EN		 (1W<<27)
+#define BNX2_MCP_CPU_DEBUG_VECT_PEEK_2_SEW		 (0xfW<<28)
+
+#define BNX2_MCP_CPU_WAST_BWANCH_ADDW			0x00145048
+#define BNX2_MCP_CPU_WAST_BWANCH_ADDW_TYPE		 (1W<<1)
+#define BNX2_MCP_CPU_WAST_BWANCH_ADDW_TYPE_JUMP		 (0W<<1)
+#define BNX2_MCP_CPU_WAST_BWANCH_ADDW_TYPE_BWANCH	 (1W<<1)
+#define BNX2_MCP_CPU_WAST_BWANCH_ADDW_WBA		 (0x3fffffffW<<2)
+
+#define BNX2_MCP_CPU_WEG_FIWE				0x00145200
+#define BNX2_MCP_MCPQ					0x001453c0
+#define BNX2_MCP_MCPQ_FTQ_CMD				0x001453f8
+#define BNX2_MCP_MCPQ_FTQ_CMD_OFFSET			 (0x3ffW<<0)
+#define BNX2_MCP_MCPQ_FTQ_CMD_WW_TOP			 (1W<<10)
+#define BNX2_MCP_MCPQ_FTQ_CMD_WW_TOP_0			 (0W<<10)
+#define BNX2_MCP_MCPQ_FTQ_CMD_WW_TOP_1			 (1W<<10)
+#define BNX2_MCP_MCPQ_FTQ_CMD_SFT_WESET			 (1W<<25)
+#define BNX2_MCP_MCPQ_FTQ_CMD_WD_DATA			 (1W<<26)
+#define BNX2_MCP_MCPQ_FTQ_CMD_ADD_INTEWVEN		 (1W<<27)
+#define BNX2_MCP_MCPQ_FTQ_CMD_ADD_DATA			 (1W<<28)
+#define BNX2_MCP_MCPQ_FTQ_CMD_INTEWVENE_CWW		 (1W<<29)
+#define BNX2_MCP_MCPQ_FTQ_CMD_POP			 (1W<<30)
+#define BNX2_MCP_MCPQ_FTQ_CMD_BUSY			 (1W<<31)
+
+#define BNX2_MCP_MCPQ_FTQ_CTW				0x001453fc
+#define BNX2_MCP_MCPQ_FTQ_CTW_INTEWVENE			 (1W<<0)
+#define BNX2_MCP_MCPQ_FTQ_CTW_OVEWFWOW			 (1W<<1)
+#define BNX2_MCP_MCPQ_FTQ_CTW_FOWCE_INTEWVENE		 (1W<<2)
+#define BNX2_MCP_MCPQ_FTQ_CTW_MAX_DEPTH			 (0x3ffW<<12)
+#define BNX2_MCP_MCPQ_FTQ_CTW_CUW_DEPTH			 (0x3ffW<<22)
+
+#define BNX2_MCP_WOM					0x00150000
+#define BNX2_MCP_SCWATCH				0x00160000
+#define BNX2_MCP_STATE_P1				 0x0016f9c8
+#define BNX2_MCP_STATE_P0				 0x0016fdc8
+#define BNX2_MCP_STATE_P1_5708				 0x001699c8
+#define BNX2_MCP_STATE_P0_5708				 0x00169dc8
+
+#define BNX2_SHM_HDW_SIGNATUWE				BNX2_MCP_SCWATCH
+#define BNX2_SHM_HDW_SIGNATUWE_SIG_MASK			 0xffff0000
+#define BNX2_SHM_HDW_SIGNATUWE_SIG			 0x53530000
+#define BNX2_SHM_HDW_SIGNATUWE_VEW_MASK			 0x000000ff
+#define BNX2_SHM_HDW_SIGNATUWE_VEW_ONE			 0x00000001
+
+#define BNX2_SHM_HDW_ADDW_0				BNX2_MCP_SCWATCH + 4
+#define BNX2_SHM_HDW_ADDW_1				BNX2_MCP_SCWATCH + 8
+
+
+#define NUM_MC_HASH_WEGISTEWS   8
+
+
+/* PHY_ID1: bits 31-16; PHY_ID2: bits 15-0.  */
+#define PHY_BCM5706_PHY_ID                          0x00206160
+
+#define PHY_ID(id)                                  ((id) & 0xfffffff0)
+#define PHY_WEV_ID(id)                              ((id) & 0xf)
+
+/* 5708 Sewdes PHY wegistews */
+
+#define BCM5708S_BMCW_FOWCE_2500		0x20
+
+#define BCM5708S_UP1				0xb
+
+#define BCM5708S_UP1_2G5			0x1
+
+#define BCM5708S_BWK_ADDW			0x1f
+
+#define BCM5708S_BWK_ADDW_DIG			0x0000
+#define BCM5708S_BWK_ADDW_DIG3			0x0002
+#define BCM5708S_BWK_ADDW_TX_MISC		0x0005
+
+/* Digitaw Bwock */
+#define BCM5708S_1000X_CTW1			0x10
+
+#define BCM5708S_1000X_CTW1_FIBEW_MODE		0x0001
+#define BCM5708S_1000X_CTW1_AUTODET_EN		0x0010
+
+#define BCM5708S_1000X_CTW2			0x11
+
+#define BCM5708S_1000X_CTW2_PWWEW_DET_EN	0x0001
+
+#define BCM5708S_1000X_STAT1			0x14
+
+#define BCM5708S_1000X_STAT1_SGMII		0x0001
+#define BCM5708S_1000X_STAT1_WINK		0x0002
+#define BCM5708S_1000X_STAT1_FD			0x0004
+#define BCM5708S_1000X_STAT1_SPEED_MASK		0x0018
+#define BCM5708S_1000X_STAT1_SPEED_10		0x0000
+#define BCM5708S_1000X_STAT1_SPEED_100		0x0008
+#define BCM5708S_1000X_STAT1_SPEED_1G		0x0010
+#define BCM5708S_1000X_STAT1_SPEED_2G5		0x0018
+#define BCM5708S_1000X_STAT1_TX_PAUSE		0x0020
+#define BCM5708S_1000X_STAT1_WX_PAUSE		0x0040
+
+/* Digitaw3 Bwock */
+#define BCM5708S_DIG_3_0			0x10
+
+#define BCM5708S_DIG_3_0_USE_IEEE		0x0001
+
+/* Tx/Misc Bwock */
+#define BCM5708S_TX_ACTW1			0x15
+
+#define BCM5708S_TX_ACTW1_DWIVEW_VCM		0x30
+
+#define BCM5708S_TX_ACTW3			0x17
+
+#define MII_BNX2_EXT_STATUS			0x11
+#define EXT_STATUS_MDIX				 (1 << 13)
+
+#define MII_BNX2_AUX_CTW			0x18
+#define AUX_CTW_MISC_CTW			 0x7007
+#define AUX_CTW_MISC_CTW_WIWESPEED		  (1 << 4)
+#define AUX_CTW_MISC_CTW_AUTOMDIX		  (1 << 9)
+#define AUX_CTW_MISC_CTW_WW			  (1 << 15)
+
+#define MII_BNX2_DSP_WW_POWT			0x15
+#define MII_BNX2_DSP_ADDWESS			0x17
+#define MII_BNX2_DSP_EXPAND_WEG			 0x0f00
+#define MII_EXPAND_WEG1				  (MII_BNX2_DSP_EXPAND_WEG | 1)
+#define MII_EXPAND_WEG1_WUDI_C			   0x20
+#define MII_EXPAND_SEWDES_CTW			  (MII_BNX2_DSP_EXPAND_WEG | 3)
+
+#define MII_BNX2_MISC_SHADOW			0x1c
+#define MISC_SHDW_AN_DBG			 0x6800
+#define MISC_SHDW_AN_DBG_NOSYNC			  0x0002
+#define MISC_SHDW_AN_DBG_WUDI_INVAWID		  0x0100
+#define MISC_SHDW_MODE_CTW			 0x7c00
+#define MISC_SHDW_MODE_CTW_SIG_DET		  0x0010
+
+#define MII_BNX2_BWK_ADDW			0x1f
+#define MII_BNX2_BWK_ADDW_IEEE0			 0x0000
+#define MII_BNX2_BWK_ADDW_GP_STATUS		 0x8120
+#define MII_BNX2_GP_TOP_AN_STATUS1		  0x1b
+#define MII_BNX2_GP_TOP_AN_SPEED_MSK		   0x3f00
+#define MII_BNX2_GP_TOP_AN_SPEED_10		   0x0000
+#define MII_BNX2_GP_TOP_AN_SPEED_100		   0x0100
+#define MII_BNX2_GP_TOP_AN_SPEED_1G		   0x0200
+#define MII_BNX2_GP_TOP_AN_SPEED_2_5G		   0x0300
+#define MII_BNX2_GP_TOP_AN_SPEED_1GKV		   0x0d00
+#define MII_BNX2_GP_TOP_AN_FD			   0x8
+#define MII_BNX2_BWK_ADDW_SEWDES_DIG		 0x8300
+#define MII_BNX2_SEWDES_DIG_1000XCTW1		  0x10
+#define MII_BNX2_SD_1000XCTW1_FIBEW		   0x01
+#define MII_BNX2_SD_1000XCTW1_AUTODET		   0x10
+#define MII_BNX2_SEWDES_DIG_MISC1		  0x18
+#define MII_BNX2_SD_MISC1_FOWCE_MSK		   0xf
+#define MII_BNX2_SD_MISC1_FOWCE_2_5G		   0x0
+#define MII_BNX2_SD_MISC1_FOWCE			   0x10
+#define MII_BNX2_BWK_ADDW_OVEW1G		 0x8320
+#define MII_BNX2_OVEW1G_UP1			  0x19
+#define MII_BNX2_BWK_ADDW_BAM_NXTPG		 0x8350
+#define MII_BNX2_BAM_NXTPG_CTW			  0x10
+#define MII_BNX2_NXTPG_CTW_BAM			   0x1
+#define MII_BNX2_NXTPG_CTW_T2			   0x2
+#define MII_BNX2_BWK_ADDW_CW73_USEWB0		 0x8370
+#define MII_BNX2_CW73_BAM_CTW1			  0x12
+#define MII_BNX2_CW73_BAM_EN			   0x8000
+#define MII_BNX2_CW73_BAM_STA_MGW_EN		   0x4000
+#define MII_BNX2_CW73_BAM_NP_AFT_BP_EN		   0x2000
+#define MII_BNX2_BWK_ADDW_AEW			 0xffd0
+#define MII_BNX2_AEW_AEW			  0x1e
+#define MII_BNX2_AEW_AEW_AN_MMD			   0x3800
+#define MII_BNX2_BWK_ADDW_COMBO_IEEEB0		 0xffe0
+
+#define MIN_ETHEWNET_PACKET_SIZE	(ETH_ZWEN - ETH_HWEN)
+#define MAX_ETHEWNET_PACKET_SIZE	ETH_DATA_WEN
+#define MAX_ETHEWNET_JUMBO_PACKET_SIZE	9000
+
+#define BNX2_WX_COPY_THWESH		128
+
+#define BNX2_MISC_ENABWE_DEFAUWT	0x17ffffff
+
+#define BNX2_STAWT_UNICAST_ADDWESS_INDEX	4
+#define BNX2_END_UNICAST_ADDWESS_INDEX		7
+#define BNX2_MAX_UNICAST_ADDWESSES     	(BNX2_END_UNICAST_ADDWESS_INDEX - \
+					 BNX2_STAWT_UNICAST_ADDWESS_INDEX + 1)
+
+#define DMA_WEAD_CHANS	5
+#define DMA_WWITE_CHANS	3
+
+/* Use CPU native page size up to 16K fow the wing sizes.  */
+#if (PAGE_SHIFT > 14)
+#define BNX2_PAGE_BITS	14
+#ewse
+#define BNX2_PAGE_BITS	PAGE_SHIFT
+#endif
+#define BNX2_PAGE_SIZE	(1 << BNX2_PAGE_BITS)
+
+#define BNX2_TX_DESC_CNT  (BNX2_PAGE_SIZE / sizeof(stwuct bnx2_tx_bd))
+#define BNX2_MAX_TX_DESC_CNT (BNX2_TX_DESC_CNT - 1)
+
+#define BNX2_MAX_WX_WINGS	8
+#define BNX2_MAX_WX_PG_WINGS	32
+#define BNX2_WX_DESC_CNT  (BNX2_PAGE_SIZE / sizeof(stwuct bnx2_wx_bd))
+#define BNX2_MAX_WX_DESC_CNT (BNX2_WX_DESC_CNT - 1)
+#define BNX2_MAX_TOTAW_WX_DESC_CNT (BNX2_MAX_WX_DESC_CNT * BNX2_MAX_WX_WINGS)
+#define BNX2_MAX_TOTAW_WX_PG_DESC_CNT	\
+	(BNX2_MAX_WX_DESC_CNT * BNX2_MAX_WX_PG_WINGS)
+
+#define BNX2_NEXT_TX_BD(x) (((x) & (BNX2_MAX_TX_DESC_CNT - 1)) ==	\
+		(BNX2_MAX_TX_DESC_CNT - 1)) ?				\
+	(x) + 2 : (x) + 1
+
+#define BNX2_TX_WING_IDX(x) ((x) & BNX2_MAX_TX_DESC_CNT)
+
+#define BNX2_NEXT_WX_BD(x) (((x) & (BNX2_MAX_WX_DESC_CNT - 1)) ==	\
+		(BNX2_MAX_WX_DESC_CNT - 1)) ?				\
+	(x) + 2 : (x) + 1
+
+#define BNX2_WX_WING_IDX(x) ((x) & bp->wx_max_wing_idx)
+#define BNX2_WX_PG_WING_IDX(x) ((x) & bp->wx_max_pg_wing_idx)
+
+#define BNX2_WX_WING(x) (((x) & ~BNX2_MAX_WX_DESC_CNT) >> (BNX2_PAGE_BITS - 4))
+#define BNX2_WX_IDX(x) ((x) & BNX2_MAX_WX_DESC_CNT)
+
+/* Context size. */
+#define CTX_SHIFT                   7
+#define CTX_SIZE                    (1 << CTX_SHIFT)
+#define CTX_MASK                    (CTX_SIZE - 1)
+#define GET_CID_ADDW(_cid)          ((_cid) << CTX_SHIFT)
+#define GET_CID(_cid_addw)          ((_cid_addw) >> CTX_SHIFT)
+
+#define PHY_CTX_SHIFT               6
+#define PHY_CTX_SIZE                (1 << PHY_CTX_SHIFT)
+#define PHY_CTX_MASK                (PHY_CTX_SIZE - 1)
+#define GET_PCID_ADDW(_pcid)        ((_pcid) << PHY_CTX_SHIFT)
+#define GET_PCID(_pcid_addw)        ((_pcid_addw) >> PHY_CTX_SHIFT)
+
+#define MB_KEWNEW_CTX_SHIFT         8
+#define MB_KEWNEW_CTX_SIZE          (1 << MB_KEWNEW_CTX_SHIFT)
+#define MB_KEWNEW_CTX_MASK          (MB_KEWNEW_CTX_SIZE - 1)
+#define MB_GET_CID_ADDW(_cid)       (0x10000 + ((_cid) << MB_KEWNEW_CTX_SHIFT))
+
+#define MAX_CID_CNT                 0x4000
+#define MAX_CID_ADDW                (GET_CID_ADDW(MAX_CID_CNT))
+#define INVAWID_CID_ADDW            0xffffffff
+
+#define TX_CID		16
+#define TX_TSS_CID	32
+#define WX_CID		0
+#define WX_WSS_CID	4
+#define WX_MAX_WSS_WINGS	7
+#define WX_MAX_WINGS		(WX_MAX_WSS_WINGS + 1)
+#define TX_MAX_TSS_WINGS	7
+#define TX_MAX_WINGS		(TX_MAX_TSS_WINGS + 1)
+
+#define MB_TX_CID_ADDW	MB_GET_CID_ADDW(TX_CID)
+#define MB_WX_CID_ADDW	MB_GET_CID_ADDW(WX_CID)
+
+/*
+ * This dwivew uses new buiwd_skb() API :
+ * WX wing buffew contains pointew to kmawwoc() data onwy,
+ * skb awe buiwt onwy aftew Hawdwawe fiwwed the fwame.
+ */
+stwuct bnx2_sw_bd {
+	u8			*data;
+	DEFINE_DMA_UNMAP_ADDW(mapping);
+};
+
+/* Its fastew to compute this fwom data than stowing it in sw_bd
+ * (wess cache misses)
+ */
+static inwine stwuct w2_fhdw *get_w2_fhdw(u8 *data)
+{
+	wetuwn (stwuct w2_fhdw *)(PTW_AWIGN(data, BNX2_WX_AWIGN) + NET_SKB_PAD);
+}
+
+
+stwuct bnx2_sw_pg {
+	stwuct page		*page;
+	DEFINE_DMA_UNMAP_ADDW(mapping);
+};
+
+stwuct bnx2_sw_tx_bd {
+	stwuct sk_buff		*skb;
+	DEFINE_DMA_UNMAP_ADDW(mapping);
+	unsigned showt		is_gso;
+	unsigned showt		nw_fwags;
+};
+
+#define SW_WXBD_WING_SIZE (sizeof(stwuct bnx2_sw_bd) * BNX2_WX_DESC_CNT)
+#define SW_WXPG_WING_SIZE (sizeof(stwuct bnx2_sw_pg) * BNX2_WX_DESC_CNT)
+#define WXBD_WING_SIZE (sizeof(stwuct bnx2_wx_bd) * BNX2_WX_DESC_CNT)
+#define SW_TXBD_WING_SIZE (sizeof(stwuct bnx2_sw_tx_bd) * BNX2_TX_DESC_CNT)
+#define TXBD_WING_SIZE (sizeof(stwuct bnx2_tx_bd) * BNX2_TX_DESC_CNT)
+
+/* Buffewed fwash (Atmew: AT45DB011B) specific infowmation */
+#define SEEPWOM_PAGE_BITS			2
+#define SEEPWOM_PHY_PAGE_SIZE			(1 << SEEPWOM_PAGE_BITS)
+#define SEEPWOM_BYTE_ADDW_MASK			(SEEPWOM_PHY_PAGE_SIZE-1)
+#define SEEPWOM_PAGE_SIZE			4
+#define SEEPWOM_TOTAW_SIZE			65536
+
+#define BUFFEWED_FWASH_PAGE_BITS		9
+#define BUFFEWED_FWASH_PHY_PAGE_SIZE		(1 << BUFFEWED_FWASH_PAGE_BITS)
+#define BUFFEWED_FWASH_BYTE_ADDW_MASK		(BUFFEWED_FWASH_PHY_PAGE_SIZE-1)
+#define BUFFEWED_FWASH_PAGE_SIZE		264
+#define BUFFEWED_FWASH_TOTAW_SIZE		0x21000
+
+#define SAIFUN_FWASH_PAGE_BITS			8
+#define SAIFUN_FWASH_PHY_PAGE_SIZE		(1 << SAIFUN_FWASH_PAGE_BITS)
+#define SAIFUN_FWASH_BYTE_ADDW_MASK		(SAIFUN_FWASH_PHY_PAGE_SIZE-1)
+#define SAIFUN_FWASH_PAGE_SIZE			256
+#define SAIFUN_FWASH_BASE_TOTAW_SIZE		65536
+
+#define ST_MICWO_FWASH_PAGE_BITS		8
+#define ST_MICWO_FWASH_PHY_PAGE_SIZE		(1 << ST_MICWO_FWASH_PAGE_BITS)
+#define ST_MICWO_FWASH_BYTE_ADDW_MASK		(ST_MICWO_FWASH_PHY_PAGE_SIZE-1)
+#define ST_MICWO_FWASH_PAGE_SIZE		256
+#define ST_MICWO_FWASH_BASE_TOTAW_SIZE		65536
+
+#define BCM5709_FWASH_PAGE_BITS			8
+#define BCM5709_FWASH_PHY_PAGE_SIZE		(1 << BCM5709_FWASH_PAGE_BITS)
+#define BCM5709_FWASH_BYTE_ADDW_MASK		(BCM5709_FWASH_PHY_PAGE_SIZE-1)
+#define BCM5709_FWASH_PAGE_SIZE			256
+
+#define NVWAM_TIMEOUT_COUNT			30000
+
+
+#define FWASH_STWAP_MASK			(BNX2_NVM_CFG1_FWASH_MODE   | \
+						 BNX2_NVM_CFG1_BUFFEW_MODE  | \
+						 BNX2_NVM_CFG1_PWOTECT_MODE | \
+						 BNX2_NVM_CFG1_FWASH_SIZE)
+
+#define FWASH_BACKUP_STWAP_MASK			(0xf << 26)
+
+stwuct fwash_spec {
+	u32 stwapping;
+	u32 config1;
+	u32 config2;
+	u32 config3;
+	u32 wwite1;
+	u32 fwags;
+#define BNX2_NV_BUFFEWED	0x00000001
+#define BNX2_NV_TWANSWATE	0x00000002
+#define BNX2_NV_WWEN		0x00000004
+	u32 page_bits;
+	u32 page_size;
+	u32 addw_mask;
+	u32 totaw_size;
+	u8  *name;
+};
+
+#define BNX2_MAX_MSIX_HW_VEC	9
+#define BNX2_MAX_MSIX_VEC	9
+#ifdef BCM_CNIC
+#define BNX2_MIN_MSIX_VEC	2
+#ewse
+#define BNX2_MIN_MSIX_VEC	1
+#endif
+
+
+stwuct bnx2_iwq {
+	iwq_handwew_t	handwew;
+	unsigned int	vectow;
+	u8		wequested;
+	chaw		name[IFNAMSIZ + 2];
+};
+
+stwuct bnx2_tx_wing_info {
+	u32			tx_pwod_bseq;
+	u16			tx_pwod;
+	u32			tx_bidx_addw;
+	u32			tx_bseq_addw;
+
+	stwuct bnx2_tx_bd	*tx_desc_wing;
+	stwuct bnx2_sw_tx_bd	*tx_buf_wing;
+
+	u16			tx_cons;
+	u16			hw_tx_cons;
+
+	dma_addw_t		tx_desc_mapping;
+};
+
+stwuct bnx2_wx_wing_info {
+	u32			wx_pwod_bseq;
+	u16			wx_pwod;
+	u16			wx_cons;
+
+	u32			wx_bidx_addw;
+	u32			wx_bseq_addw;
+	u32			wx_pg_bidx_addw;
+
+	u16			wx_pg_pwod;
+	u16			wx_pg_cons;
+
+	stwuct bnx2_sw_bd	*wx_buf_wing;
+	stwuct bnx2_wx_bd	*wx_desc_wing[BNX2_MAX_WX_WINGS];
+	stwuct bnx2_sw_pg	*wx_pg_wing;
+	stwuct bnx2_wx_bd	*wx_pg_desc_wing[BNX2_MAX_WX_PG_WINGS];
+
+	dma_addw_t		wx_desc_mapping[BNX2_MAX_WX_WINGS];
+	dma_addw_t		wx_pg_desc_mapping[BNX2_MAX_WX_PG_WINGS];
+};
+
+stwuct bnx2_napi {
+	stwuct napi_stwuct	napi		____cachewine_awigned;
+	stwuct bnx2		*bp;
+	union {
+		stwuct status_bwock		*msi;
+		stwuct status_bwock_msix	*msix;
+	} status_bwk;
+	u16			*hw_tx_cons_ptw;
+	u16			*hw_wx_cons_ptw;
+	u32 			wast_status_idx;
+	u32			int_num;
+
+#ifdef BCM_CNIC
+	u32			cnic_tag;
+	int			cnic_pwesent;
+#endif
+
+	stwuct bnx2_wx_wing_info	wx_wing;
+	stwuct bnx2_tx_wing_info	tx_wing;
+};
+
+stwuct bnx2 {
+	/* Fiewds used in the tx and intw/napi pewfowmance paths awe gwouped */
+	/* togethew in the beginning of the stwuctuwe. */
+	void __iomem		*wegview;
+
+	stwuct net_device	*dev;
+	stwuct pci_dev		*pdev;
+
+	atomic_t		intw_sem;
+
+	u32			fwags;
+#define BNX2_FWAG_PCIX			0x00000001
+#define BNX2_FWAG_PCI_32BIT		0x00000002
+#define BNX2_FWAG_MSIX_CAP		0x00000004
+#define BNX2_FWAG_NO_WOW		0x00000008
+#define BNX2_FWAG_USING_MSI		0x00000020
+#define BNX2_FWAG_ASF_ENABWE		0x00000040
+#define BNX2_FWAG_MSI_CAP		0x00000080
+#define BNX2_FWAG_ONE_SHOT_MSI		0x00000100
+#define BNX2_FWAG_PCIE			0x00000200
+#define BNX2_FWAG_USING_MSIX		0x00000400
+#define BNX2_FWAG_USING_MSI_OW_MSIX	(BNX2_FWAG_USING_MSI | \
+					 BNX2_FWAG_USING_MSIX)
+#define BNX2_FWAG_JUMBO_BWOKEN		0x00000800
+#define BNX2_FWAG_CAN_KEEP_VWAN		0x00001000
+#define BNX2_FWAG_BWOKEN_STATS		0x00002000
+
+	stwuct bnx2_napi	bnx2_napi[BNX2_MAX_MSIX_VEC];
+
+	u32			wx_buf_use_size;	/* useabwe size */
+	u32			wx_buf_size;		/* with awignment */
+	u32			wx_copy_thwesh;
+	u32			wx_jumbo_thwesh;
+	u32			wx_max_wing_idx;
+	u32			wx_max_pg_wing_idx;
+
+	/* TX constants */
+	int		tx_wing_size;
+	u32		tx_wake_thwesh;
+
+#ifdef BCM_CNIC
+	stwuct cnic_ops	__wcu	*cnic_ops;
+	void			*cnic_data;
+#endif
+
+	/* End of fiewds used in the pewfowmance code paths. */
+
+	unsigned int		cuwwent_intewvaw;
+#define BNX2_TIMEW_INTEWVAW		HZ
+#define BNX2_SEWDES_AN_TIMEOUT		(HZ / 3)
+#define BNX2_SEWDES_FOWCED_TIMEOUT	(HZ / 10)
+
+	stwuct			timew_wist timew;
+	stwuct wowk_stwuct	weset_task;
+
+	/* Used to synchwonize phy accesses. */
+	spinwock_t		phy_wock;
+	spinwock_t		indiwect_wock;
+
+	u32			phy_fwags;
+#define BNX2_PHY_FWAG_SEWDES			0x00000001
+#define BNX2_PHY_FWAG_CWC_FIX			0x00000002
+#define BNX2_PHY_FWAG_PAWAWWEW_DETECT		0x00000004
+#define BNX2_PHY_FWAG_2_5G_CAPABWE		0x00000008
+#define BNX2_PHY_FWAG_INT_MODE_MASK		0x00000300
+#define BNX2_PHY_FWAG_INT_MODE_AUTO_POWWING	0x00000100
+#define BNX2_PHY_FWAG_INT_MODE_WINK_WEADY	0x00000200
+#define BNX2_PHY_FWAG_DIS_EAWWY_DAC		0x00000400
+#define BNX2_PHY_FWAG_WEMOTE_PHY_CAP		0x00000800
+#define BNX2_PHY_FWAG_FOWCED_DOWN		0x00001000
+#define BNX2_PHY_FWAG_NO_PAWAWWEW		0x00002000
+#define BNX2_PHY_FWAG_MDIX			0x00004000
+
+	u32			mii_bmcw;
+	u32			mii_bmsw;
+	u32			mii_bmsw1;
+	u32			mii_adv;
+	u32			mii_wpa;
+	u32			mii_up1;
+
+	u32			chip_id;
+	/* chip num:16-31, wev:12-15, metaw:4-11, bond_id:0-3 */
+#define BNX2_CHIP(bp)			(((bp)->chip_id) & 0xffff0000)
+#define BNX2_CHIP_5706			0x57060000
+#define BNX2_CHIP_5708			0x57080000
+#define BNX2_CHIP_5709			0x57090000
+
+#define BNX2_CHIP_WEV(bp)		(((bp)->chip_id) & 0x0000f000)
+#define BNX2_CHIP_WEV_Ax		0x00000000
+#define BNX2_CHIP_WEV_Bx		0x00001000
+#define BNX2_CHIP_WEV_Cx		0x00002000
+
+#define BNX2_CHIP_METAW(bp)		(((bp)->chip_id) & 0x00000ff0)
+#define BNX2_CHIP_BOND(bp)		(((bp)->chip_id) & 0x0000000f)
+
+#define BNX2_CHIP_ID(bp)		(((bp)->chip_id) & 0xfffffff0)
+#define BNX2_CHIP_ID_5706_A0		0x57060000
+#define BNX2_CHIP_ID_5706_A1			0x57060010
+#define BNX2_CHIP_ID_5706_A2			0x57060020
+#define BNX2_CHIP_ID_5708_A0			0x57080000
+#define BNX2_CHIP_ID_5708_B0			0x57081000
+#define BNX2_CHIP_ID_5708_B1			0x57081010
+#define BNX2_CHIP_ID_5709_A0			0x57090000
+#define BNX2_CHIP_ID_5709_A1			0x57090010
+
+/* A sewdes chip wiww have the fiwst bit of the bond id set. */
+#define BNX2_CHIP_BOND_SEWDES_BIT		0x01
+
+	u32			phy_addw;
+	u32			phy_id;
+
+	u16			bus_speed_mhz;
+	u8			wow;
+
+	u8			pad;
+
+	u16			fw_ww_seq;
+	u16			fw_dwv_puwse_ww_seq;
+	u32			fw_wast_msg;
+
+	int			wx_max_wing;
+	int			wx_wing_size;
+
+	int			wx_max_pg_wing;
+	int			wx_pg_wing_size;
+
+	u16			tx_quick_cons_twip;
+	u16			tx_quick_cons_twip_int;
+	u16			wx_quick_cons_twip;
+	u16			wx_quick_cons_twip_int;
+	u16			comp_pwod_twip;
+	u16			comp_pwod_twip_int;
+	u16			tx_ticks;
+	u16			tx_ticks_int;
+	u16			com_ticks;
+	u16			com_ticks_int;
+	u16			cmd_ticks;
+	u16			cmd_ticks_int;
+	u16			wx_ticks;
+	u16			wx_ticks_int;
+
+	u32			stats_ticks;
+
+	dma_addw_t		status_bwk_mapping;
+
+	void *status_bwk;
+	stwuct statistics_bwock	*stats_bwk;
+	stwuct statistics_bwock	*temp_stats_bwk;
+	dma_addw_t		stats_bwk_mapping;
+
+	int			ctx_pages;
+	void			*ctx_bwk[4];
+	dma_addw_t		ctx_bwk_mapping[4];
+
+	u32			hc_cmd;
+	u32			wx_mode;
+
+	u16			weq_wine_speed;
+	u8			weq_dupwex;
+
+	u8			phy_powt;
+	u8			wink_up;
+
+	u16			wine_speed;
+	u8			dupwex;
+	u8			fwow_ctww;	/* actuaw fwow ctww settings */
+						/* may be diffewent fwom     */
+						/* weq_fwow_ctww if autoneg  */
+	u32			advewtising;
+
+	u8			weq_fwow_ctww;	/* fwow ctww advewtisement */
+						/* settings ow fowced      */
+						/* settings                */
+	u8			autoneg;
+#define AUTONEG_SPEED		1
+#define AUTONEG_FWOW_CTWW	2
+
+	u8			woopback;
+#define MAC_WOOPBACK		1
+#define PHY_WOOPBACK		2
+
+	u8			sewdes_an_pending;
+
+	u8			mac_addw[8];
+
+	u32			shmem_base;
+
+	chaw			fw_vewsion[32];
+
+	int			pm_cap;
+	int			pcix_cap;
+
+	const stwuct fwash_spec	*fwash_info;
+	u32			fwash_size;
+
+	int			status_stats_size;
+
+	stwuct bnx2_iwq		iwq_tbw[BNX2_MAX_MSIX_VEC];
+	int			iwq_nvecs;
+
+	u8			func;
+
+	u8			num_tx_wings;
+	u8			num_wx_wings;
+
+	int			num_weq_tx_wings;
+	int			num_weq_wx_wings;
+
+	u32 			weds_save;
+	u32			idwe_chk_status_idx;
+
+#ifdef BCM_CNIC
+	stwuct mutex		cnic_wock;
+	stwuct cnic_eth_dev	cnic_eth_dev;
+	stwuct cnic_eth_dev	*(*cnic_pwobe)(stwuct net_device *);
+#endif
+
+	const stwuct fiwmwawe	*mips_fiwmwawe;
+	const stwuct fiwmwawe	*wv2p_fiwmwawe;
+};
+
+#define BNX2_WD(bp, offset)					\
+	weadw(bp->wegview + offset)
+
+#define BNX2_WW(bp, offset, vaw)					\
+	wwitew(vaw, bp->wegview + offset)
+
+#define BNX2_WW16(bp, offset, vaw)				\
+	wwitew(vaw, bp->wegview + offset)
+
+stwuct cpu_weg {
+	u32 mode;
+	u32 mode_vawue_hawt;
+	u32 mode_vawue_sstep;
+
+	u32 state;
+	u32 state_vawue_cweaw;
+
+	u32 gpw0;
+	u32 evmask;
+	u32 pc;
+	u32 inst;
+	u32 bp;
+
+	u32 spad_base;
+
+	u32 mips_view_base;
+};
+
+stwuct bnx2_fw_fiwe_section {
+	__be32 addw;
+	__be32 wen;
+	__be32 offset;
+};
+
+stwuct bnx2_mips_fw_fiwe_entwy {
+	__be32 stawt_addw;
+	stwuct bnx2_fw_fiwe_section text;
+	stwuct bnx2_fw_fiwe_section data;
+	stwuct bnx2_fw_fiwe_section wodata;
+};
+
+stwuct bnx2_wv2p_fw_fiwe_entwy {
+	stwuct bnx2_fw_fiwe_section wv2p;
+	__be32 fixup[8];
+};
+
+stwuct bnx2_mips_fw_fiwe {
+	stwuct bnx2_mips_fw_fiwe_entwy com;
+	stwuct bnx2_mips_fw_fiwe_entwy cp;
+	stwuct bnx2_mips_fw_fiwe_entwy wxp;
+	stwuct bnx2_mips_fw_fiwe_entwy tpat;
+	stwuct bnx2_mips_fw_fiwe_entwy txp;
+};
+
+stwuct bnx2_wv2p_fw_fiwe {
+	stwuct bnx2_wv2p_fw_fiwe_entwy pwoc1;
+	stwuct bnx2_wv2p_fw_fiwe_entwy pwoc2;
+};
+
+#define WV2P_P1_FIXUP_PAGE_SIZE_IDX		0
+#define WV2P_BD_PAGE_SIZE_MSK			0xffff
+#define WV2P_BD_PAGE_SIZE			((BNX2_PAGE_SIZE / 16) - 1)
+
+#define WV2P_PWOC1                              0
+#define WV2P_PWOC2                              1
+
+
+/* This vawue (in miwwiseconds) detewmines the fwequency of the dwivew
+ * issuing the PUWSE message code.  The fiwmwawe monitows this pewiodic
+ * puwse to detewmine when to switch to an OS-absent mode. */
+#define BNX2_DWV_PUWSE_PEWIOD_MS                 250
+
+/* This vawue (in miwwiseconds) detewmines how wong the dwivew shouwd
+ * wait fow an acknowwedgement fwom the fiwmwawe befowe timing out.  Once
+ * the fiwmwawe has timed out, the dwivew wiww assume thewe is no fiwmwawe
+ * wunning and thewe won't be any fiwmwawe-dwivew synchwonization duwing a
+ * dwivew weset. */
+#define BNX2_FW_ACK_TIME_OUT_MS                  1000
+
+
+#define BNX2_DWV_WESET_SIGNATUWE		0x00000000
+#define BNX2_DWV_WESET_SIGNATUWE_MAGIC		 0x4841564b /* HAVK */
+//#define DWV_WESET_SIGNATUWE_MAGIC		 0x47495352 /* WSIG */
+
+#define BNX2_DWV_MB				0x00000004
+#define BNX2_DWV_MSG_CODE			 0xff000000
+#define BNX2_DWV_MSG_CODE_WESET			 0x01000000
+#define BNX2_DWV_MSG_CODE_UNWOAD		 0x02000000
+#define BNX2_DWV_MSG_CODE_SHUTDOWN		 0x03000000
+#define BNX2_DWV_MSG_CODE_SUSPEND_WOW		 0x04000000
+#define BNX2_DWV_MSG_CODE_FW_TIMEOUT		 0x05000000
+#define BNX2_DWV_MSG_CODE_PUWSE			 0x06000000
+#define BNX2_DWV_MSG_CODE_DIAG			 0x07000000
+#define BNX2_DWV_MSG_CODE_SUSPEND_NO_WOW	 0x09000000
+#define BNX2_DWV_MSG_CODE_UNWOAD_WNK_DN		 0x0b000000
+#define BNX2_DWV_MSG_CODE_KEEP_VWAN_UPDATE	 0x0d000000
+#define BNX2_DWV_MSG_CODE_CMD_SET_WINK		 0x10000000
+
+#define BNX2_DWV_MSG_DATA			 0x00ff0000
+#define BNX2_DWV_MSG_DATA_WAIT0			 0x00010000
+#define BNX2_DWV_MSG_DATA_WAIT1			 0x00020000
+#define BNX2_DWV_MSG_DATA_WAIT2			 0x00030000
+#define BNX2_DWV_MSG_DATA_WAIT3			 0x00040000
+
+#define BNX2_DWV_MSG_SEQ			 0x0000ffff
+
+#define BNX2_FW_MB				0x00000008
+#define BNX2_FW_MSG_ACK				 0x0000ffff
+#define BNX2_FW_MSG_STATUS_MASK			 0x00ff0000
+#define BNX2_FW_MSG_STATUS_OK			 0x00000000
+#define BNX2_FW_MSG_STATUS_FAIWUWE		 0x00ff0000
+
+#define BNX2_WINK_STATUS			0x0000000c
+#define BNX2_WINK_STATUS_INIT_VAWUE		 0xffffffff
+#define BNX2_WINK_STATUS_WINK_UP		 0x1
+#define BNX2_WINK_STATUS_WINK_DOWN		 0x0
+#define BNX2_WINK_STATUS_SPEED_MASK		 0x1e
+#define BNX2_WINK_STATUS_AN_INCOMPWETE		 (0<<1)
+#define BNX2_WINK_STATUS_10HAWF			 (1<<1)
+#define BNX2_WINK_STATUS_10FUWW			 (2<<1)
+#define BNX2_WINK_STATUS_100HAWF		 (3<<1)
+#define BNX2_WINK_STATUS_100BASE_T4		 (4<<1)
+#define BNX2_WINK_STATUS_100FUWW		 (5<<1)
+#define BNX2_WINK_STATUS_1000HAWF		 (6<<1)
+#define BNX2_WINK_STATUS_1000FUWW		 (7<<1)
+#define BNX2_WINK_STATUS_2500HAWF		 (8<<1)
+#define BNX2_WINK_STATUS_2500FUWW		 (9<<1)
+#define BNX2_WINK_STATUS_AN_ENABWED		 (1<<5)
+#define BNX2_WINK_STATUS_AN_COMPWETE		 (1<<6)
+#define BNX2_WINK_STATUS_PAWAWWEW_DET		 (1<<7)
+#define BNX2_WINK_STATUS_WESEWVED		 (1<<8)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_1000FUWW	 (1<<9)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_1000HAWF	 (1<<10)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_100BT4	 (1<<11)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_100FUWW	 (1<<12)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_100HAWF	 (1<<13)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_10FUWW	 (1<<14)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_10HAWF	 (1<<15)
+#define BNX2_WINK_STATUS_TX_FC_ENABWED		 (1<<16)
+#define BNX2_WINK_STATUS_WX_FC_ENABWED		 (1<<17)
+#define BNX2_WINK_STATUS_PAWTNEW_SYM_PAUSE_CAP	 (1<<18)
+#define BNX2_WINK_STATUS_PAWTNEW_ASYM_PAUSE_CAP	 (1<<19)
+#define BNX2_WINK_STATUS_SEWDES_WINK		 (1<<20)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_2500FUWW	 (1<<21)
+#define BNX2_WINK_STATUS_PAWTNEW_AD_2500HAWF	 (1<<22)
+#define BNX2_WINK_STATUS_HEAWT_BEAT_EXPIWED	 (1<<31)
+
+#define BNX2_DWV_PUWSE_MB			0x00000010
+#define BNX2_DWV_PUWSE_SEQ_MASK			 0x00007fff
+
+/* Indicate to the fiwmwawe not to go into the
+ * OS absent when it is not getting dwivew puwse.
+ * This is used fow debugging. */
+#define BNX2_DWV_MSG_DATA_PUWSE_CODE_AWWAYS_AWIVE	 0x00080000
+
+#define BNX2_DWV_MB_AWG0			0x00000014
+#define BNX2_NETWINK_SET_WINK_SPEED_10HAWF	 (1<<0)
+#define BNX2_NETWINK_SET_WINK_SPEED_10FUWW	 (1<<1)
+#define BNX2_NETWINK_SET_WINK_SPEED_10		 \
+	(BNX2_NETWINK_SET_WINK_SPEED_10HAWF |	 \
+	 BNX2_NETWINK_SET_WINK_SPEED_10FUWW)
+#define BNX2_NETWINK_SET_WINK_SPEED_100HAWF	 (1<<2)
+#define BNX2_NETWINK_SET_WINK_SPEED_100FUWW	 (1<<3)
+#define BNX2_NETWINK_SET_WINK_SPEED_100		 \
+	(BNX2_NETWINK_SET_WINK_SPEED_100HAWF |	 \
+	 BNX2_NETWINK_SET_WINK_SPEED_100FUWW)
+#define BNX2_NETWINK_SET_WINK_SPEED_1GHAWF	 (1<<4)
+#define BNX2_NETWINK_SET_WINK_SPEED_1GFUWW	 (1<<5)
+#define BNX2_NETWINK_SET_WINK_SPEED_2G5HAWF	 (1<<6)
+#define BNX2_NETWINK_SET_WINK_SPEED_2G5FUWW	 (1<<7)
+#define BNX2_NETWINK_SET_WINK_SPEED_10GHAWF	 (1<<8)
+#define BNX2_NETWINK_SET_WINK_SPEED_10GFUWW	 (1<<9)
+#define BNX2_NETWINK_SET_WINK_ENABWE_AUTONEG	 (1<<10)
+#define BNX2_NETWINK_SET_WINK_PHY_APP_WEMOTE	 (1<<11)
+#define BNX2_NETWINK_SET_WINK_FC_SYM_PAUSE	 (1<<12)
+#define BNX2_NETWINK_SET_WINK_FC_ASYM_PAUSE	 (1<<13)
+#define BNX2_NETWINK_SET_WINK_ETH_AT_WIWESPEED	 (1<<14)
+#define BNX2_NETWINK_SET_WINK_PHY_WESET		 (1<<15)
+
+#define BNX2_DEV_INFO_SIGNATUWE			0x00000020
+#define BNX2_DEV_INFO_SIGNATUWE_MAGIC		 0x44564900
+#define BNX2_DEV_INFO_SIGNATUWE_MAGIC_MASK	 0xffffff00
+#define BNX2_DEV_INFO_FEATUWE_CFG_VAWID		 0x01
+#define BNX2_DEV_INFO_SECONDAWY_POWT		 0x80
+#define BNX2_DEV_INFO_DWV_AWWAYS_AWIVE		 0x40
+
+#define BNX2_SHAWED_HW_CFG_PAWT_NUM		0x00000024
+
+#define BNX2_SHAWED_HW_CFG_POWEW_DISSIPATED	0x00000034
+#define BNX2_SHAWED_HW_CFG_POWEW_STATE_D3_MASK	 0xff000000
+#define BNX2_SHAWED_HW_CFG_POWEW_STATE_D2_MASK	 0xff0000
+#define BNX2_SHAWED_HW_CFG_POWEW_STATE_D1_MASK	 0xff00
+#define BNX2_SHAWED_HW_CFG_POWEW_STATE_D0_MASK	 0xff
+
+#define BNX2_SHAWED_HW_CFG POWEW_CONSUMED	0x00000038
+#define BNX2_SHAWED_HW_CFG_CONFIG		0x0000003c
+#define BNX2_SHAWED_HW_CFG_DESIGN_NIC		 0
+#define BNX2_SHAWED_HW_CFG_DESIGN_WOM		 0x1
+#define BNX2_SHAWED_HW_CFG_PHY_COPPEW		 0
+#define BNX2_SHAWED_HW_CFG_PHY_FIBEW		 0x2
+#define BNX2_SHAWED_HW_CFG_PHY_2_5G		 0x20
+#define BNX2_SHAWED_HW_CFG_PHY_BACKPWANE	 0x40
+#define BNX2_SHAWED_HW_CFG_WED_MODE_SHIFT_BITS	 8
+#define BNX2_SHAWED_HW_CFG_WED_MODE_MASK	 0x300
+#define BNX2_SHAWED_HW_CFG_WED_MODE_MAC		 0
+#define BNX2_SHAWED_HW_CFG_WED_MODE_GPHY1	 0x100
+#define BNX2_SHAWED_HW_CFG_WED_MODE_GPHY2	 0x200
+#define BNX2_SHAWED_HW_CFG_GIG_WINK_ON_VAUX	 0x8000
+
+#define BNX2_SHAWED_HW_CFG_CONFIG2		0x00000040
+#define BNX2_SHAWED_HW_CFG2_NVM_SIZE_MASK	 0x00fff000
+
+#define BNX2_DEV_INFO_BC_WEV			0x0000004c
+
+#define BNX2_POWT_HW_CFG_MAC_UPPEW		0x00000050
+#define BNX2_POWT_HW_CFG_UPPEWMAC_MASK		 0xffff
+
+#define BNX2_POWT_HW_CFG_MAC_WOWEW		0x00000054
+#define BNX2_POWT_HW_CFG_CONFIG			0x00000058
+#define BNX2_POWT_HW_CFG_CFG_TXCTW3_MASK	 0x0000ffff
+#define BNX2_POWT_HW_CFG_CFG_DFWT_WINK_MASK	 0x001f0000
+#define BNX2_POWT_HW_CFG_CFG_DFWT_WINK_AN	 0x00000000
+#define BNX2_POWT_HW_CFG_CFG_DFWT_WINK_1G	 0x00030000
+#define BNX2_POWT_HW_CFG_CFG_DFWT_WINK_2_5G	 0x00040000
+
+#define BNX2_POWT_HW_CFG_IMD_MAC_A_UPPEW	0x00000068
+#define BNX2_POWT_HW_CFG_IMD_MAC_A_WOWEW	0x0000006c
+#define BNX2_POWT_HW_CFG_IMD_MAC_B_UPPEW	0x00000070
+#define BNX2_POWT_HW_CFG_IMD_MAC_B_WOWEW	0x00000074
+#define BNX2_POWT_HW_CFG_ISCSI_MAC_UPPEW	0x00000078
+#define BNX2_POWT_HW_CFG_ISCSI_MAC_WOWEW	0x0000007c
+
+#define BNX2_DEV_INFO_PEW_POWT_HW_CONFIG2	0x000000b4
+
+#define BNX2_DEV_INFO_FOWMAT_WEV		0x000000c4
+#define BNX2_DEV_INFO_FOWMAT_WEV_MASK		 0xff000000
+#define BNX2_DEV_INFO_FOWMAT_WEV_ID		 ('A' << 24)
+
+#define BNX2_SHAWED_FEATUWE			0x000000c8
+#define BNX2_SHAWED_FEATUWE_MASK		 0xffffffff
+
+#define BNX2_POWT_FEATUWE			0x000000d8
+#define BNX2_POWT2_FEATUWE			0x00000014c
+#define BNX2_POWT_FEATUWE_WOW_ENABWED		 0x01000000
+#define BNX2_POWT_FEATUWE_MBA_ENABWED		 0x02000000
+#define BNX2_POWT_FEATUWE_ASF_ENABWED		 0x04000000
+#define BNX2_POWT_FEATUWE_IMD_ENABWED		 0x08000000
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_MASK	 0xf
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_DISABWED	 0x0
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_64K		 0x1
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_128K	 0x2
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_256K	 0x3
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_512K	 0x4
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_1M		 0x5
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_2M		 0x6
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_4M		 0x7
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_8M		 0x8
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_16M		 0x9
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_32M		 0xa
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_64M		 0xb
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_128M	 0xc
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_256M	 0xd
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_512M	 0xe
+#define BNX2_POWT_FEATUWE_BAW1_SIZE_1G		 0xf
+
+#define BNX2_POWT_FEATUWE_WOW			0xdc
+#define BNX2_POWT2_FEATUWE_WOW			0x150
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_SHIFT_BITS	 4
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_MASK	 0x30
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_DISABWE	 0
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_MAGIC	 0x10
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_ACPI	 0x20
+#define BNX2_POWT_FEATUWE_WOW_DEFAUWT_MAGIC_AND_ACPI	 0x30
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_MASK	 0xf
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_AUTONEG	 0
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_10HAWF	 1
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_10FUWW	 2
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_100HAWF 3
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_100FUWW 4
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_1000HAWF	 5
+#define BNX2_POWT_FEATUWE_WOW_WINK_SPEED_1000FUWW	 6
+#define BNX2_POWT_FEATUWE_WOW_AUTONEG_ADVEWTISE_1000	 0x40
+#define BNX2_POWT_FEATUWE_WOW_WESEWVED_PAUSE_CAP 0x400
+#define BNX2_POWT_FEATUWE_WOW_WESEWVED_ASYM_PAUSE_CAP	 0x800
+
+#define BNX2_POWT_FEATUWE_MBA			0xe0
+#define BNX2_POWT2_FEATUWE_MBA			0x154
+#define BNX2_POWT_FEATUWE_MBA_BOOT_AGENT_TYPE_SHIFT_BITS	 0
+#define BNX2_POWT_FEATUWE_MBA_BOOT_AGENT_TYPE_MASK	 0x3
+#define BNX2_POWT_FEATUWE_MBA_BOOT_AGENT_TYPE_PXE	 0
+#define BNX2_POWT_FEATUWE_MBA_BOOT_AGENT_TYPE_WPW	 1
+#define BNX2_POWT_FEATUWE_MBA_BOOT_AGENT_TYPE_BOOTP	 2
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_SHIFT_BITS	 2
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_MASK	 0x3c
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_AUTONEG	 0
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_10HAWF	 0x4
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_10FUWW	 0x8
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_100HAWF	 0xc
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_100FUWW	 0x10
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_1000HAWF	 0x14
+#define BNX2_POWT_FEATUWE_MBA_WINK_SPEED_1000FUWW	 0x18
+#define BNX2_POWT_FEATUWE_MBA_SETUP_PWOMPT_ENABWE	 0x40
+#define BNX2_POWT_FEATUWE_MBA_HOTKEY_CTWW_S	 0
+#define BNX2_POWT_FEATUWE_MBA_HOTKEY_CTWW_B	 0x80
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_SHIFT_BITS	 8
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_MASK	 0xff00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_DISABWED	 0
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_1K	 0x100
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_2K	 0x200
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_4K	 0x300
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_8K	 0x400
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_16K	 0x500
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_32K	 0x600
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_64K	 0x700
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_128K	 0x800
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_256K	 0x900
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_512K	 0xa00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_1M	 0xb00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_2M	 0xc00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_4M	 0xd00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_8M	 0xe00
+#define BNX2_POWT_FEATUWE_MBA_EXP_WOM_SIZE_16M	 0xf00
+#define BNX2_POWT_FEATUWE_MBA_MSG_TIMEOUT_SHIFT_BITS	 16
+#define BNX2_POWT_FEATUWE_MBA_MSG_TIMEOUT_MASK	 0xf0000
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_SHIFT_BITS	 20
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_MASK	 0x300000
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_AUTO	 0
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_BBS	 0x100000
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_INT18H	 0x200000
+#define BNX2_POWT_FEATUWE_MBA_BIOS_BOOTSTWAP_INT19H	 0x300000
+
+#define BNX2_POWT_FEATUWE_IMD			0xe4
+#define BNX2_POWT2_FEATUWE_IMD			0x158
+#define BNX2_POWT_FEATUWE_IMD_WINK_OVEWWIDE_DEFAUWT	 0
+#define BNX2_POWT_FEATUWE_IMD_WINK_OVEWWIDE_ENABWE	 1
+
+#define BNX2_POWT_FEATUWE_VWAN			0xe8
+#define BNX2_POWT2_FEATUWE_VWAN			0x15c
+#define BNX2_POWT_FEATUWE_MBA_VWAN_TAG_MASK	 0xffff
+#define BNX2_POWT_FEATUWE_MBA_VWAN_ENABWE	 0x10000
+
+#define BNX2_MFW_VEW_PTW			0x00000014c
+
+#define BNX2_BC_STATE_WESET_TYPE		0x000001c0
+#define BNX2_BC_STATE_WESET_TYPE_SIG		 0x00005254
+#define BNX2_BC_STATE_WESET_TYPE_SIG_MASK	 0x0000ffff
+#define BNX2_BC_STATE_WESET_TYPE_NONE	 (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					  0x00010000)
+#define BNX2_BC_STATE_WESET_TYPE_PCI	 (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					  0x00020000)
+#define BNX2_BC_STATE_WESET_TYPE_VAUX	 (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					  0x00030000)
+#define BNX2_BC_STATE_WESET_TYPE_DWV_MASK	 DWV_MSG_CODE
+#define BNX2_BC_STATE_WESET_TYPE_DWV_WESET (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					    DWV_MSG_CODE_WESET)
+#define BNX2_BC_STATE_WESET_TYPE_DWV_UNWOAD (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					     DWV_MSG_CODE_UNWOAD)
+#define BNX2_BC_STATE_WESET_TYPE_DWV_SHUTDOWN (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					       DWV_MSG_CODE_SHUTDOWN)
+#define BNX2_BC_STATE_WESET_TYPE_DWV_WOW (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					  DWV_MSG_CODE_WOW)
+#define BNX2_BC_STATE_WESET_TYPE_DWV_DIAG (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					   DWV_MSG_CODE_DIAG)
+#define BNX2_BC_STATE_WESET_TYPE_VAWUE(msg) (BNX2_BC_STATE_WESET_TYPE_SIG | \
+					     (msg))
+
+#define BNX2_BC_WESET_TYPE			0x000001c0
+
+#define BNX2_BC_STATE				0x000001c4
+#define BNX2_BC_STATE_EWW_MASK			 0x0000ff00
+#define BNX2_BC_STATE_SIGN			 0x42530000
+#define BNX2_BC_STATE_SIGN_MASK			 0xffff0000
+#define BNX2_BC_STATE_BC1_STAWT			 (BNX2_BC_STATE_SIGN | 0x1)
+#define BNX2_BC_STATE_GET_NVM_CFG1		 (BNX2_BC_STATE_SIGN | 0x2)
+#define BNX2_BC_STATE_PWOG_BAW			 (BNX2_BC_STATE_SIGN | 0x3)
+#define BNX2_BC_STATE_INIT_VID			 (BNX2_BC_STATE_SIGN | 0x4)
+#define BNX2_BC_STATE_GET_NVM_CFG2		 (BNX2_BC_STATE_SIGN | 0x5)
+#define BNX2_BC_STATE_APPWY_WKAWND		 (BNX2_BC_STATE_SIGN | 0x6)
+#define BNX2_BC_STATE_WOAD_BC2			 (BNX2_BC_STATE_SIGN | 0x7)
+#define BNX2_BC_STATE_GOING_BC2			 (BNX2_BC_STATE_SIGN | 0x8)
+#define BNX2_BC_STATE_GOING_DIAG		 (BNX2_BC_STATE_SIGN | 0x9)
+#define BNX2_BC_STATE_WT_FINAW_INIT		 (BNX2_BC_STATE_SIGN | 0x81)
+#define BNX2_BC_STATE_WT_WKAWND			 (BNX2_BC_STATE_SIGN | 0x82)
+#define BNX2_BC_STATE_WT_DWV_PUWSE		 (BNX2_BC_STATE_SIGN | 0x83)
+#define BNX2_BC_STATE_WT_FIOEVTS		 (BNX2_BC_STATE_SIGN | 0x84)
+#define BNX2_BC_STATE_WT_DWV_CMD		 (BNX2_BC_STATE_SIGN | 0x85)
+#define BNX2_BC_STATE_WT_WOW_POWEW		 (BNX2_BC_STATE_SIGN | 0x86)
+#define BNX2_BC_STATE_WT_SET_WOW		 (BNX2_BC_STATE_SIGN | 0x87)
+#define BNX2_BC_STATE_WT_OTHEW_FW		 (BNX2_BC_STATE_SIGN | 0x88)
+#define BNX2_BC_STATE_WT_GOING_D3		 (BNX2_BC_STATE_SIGN | 0x89)
+#define BNX2_BC_STATE_EWW_BAD_VEWSION		 (BNX2_BC_STATE_SIGN | 0x0100)
+#define BNX2_BC_STATE_EWW_BAD_BC2_CWC		 (BNX2_BC_STATE_SIGN | 0x0200)
+#define BNX2_BC_STATE_EWW_BC1_WOOP		 (BNX2_BC_STATE_SIGN | 0x0300)
+#define BNX2_BC_STATE_EWW_UNKNOWN_CMD		 (BNX2_BC_STATE_SIGN | 0x0400)
+#define BNX2_BC_STATE_EWW_DWV_DEAD		 (BNX2_BC_STATE_SIGN | 0x0500)
+#define BNX2_BC_STATE_EWW_NO_WXP		 (BNX2_BC_STATE_SIGN | 0x0600)
+#define BNX2_BC_STATE_EWW_TOO_MANY_WBUF		 (BNX2_BC_STATE_SIGN | 0x0700)
+
+#define BNX2_BC_STATE_CONDITION			0x000001c8
+#define BNX2_CONDITION_MFW_WUN_UNKNOWN		 0x00000000
+#define BNX2_CONDITION_MFW_WUN_IPMI		 0x00002000
+#define BNX2_CONDITION_MFW_WUN_UMP		 0x00004000
+#define BNX2_CONDITION_MFW_WUN_NCSI		 0x00006000
+#define BNX2_CONDITION_MFW_WUN_NONE		 0x0000e000
+#define BNX2_CONDITION_MFW_WUN_MASK		 0x0000e000
+#define BNX2_CONDITION_PM_STATE_MASK		 0x00030000
+#define BNX2_CONDITION_PM_STATE_FUWW		 0x00030000
+#define BNX2_CONDITION_PM_STATE_PWEP		 0x00020000
+#define BNX2_CONDITION_PM_STATE_UNPWEP		 0x00010000
+
+#define BNX2_BC_STATE_DEBUG_CMD			0x1dc
+#define BNX2_BC_STATE_BC_DBG_CMD_SIGNATUWE	 0x42440000
+#define BNX2_BC_STATE_BC_DBG_CMD_SIGNATUWE_MASK	 0xffff0000
+#define BNX2_BC_STATE_BC_DBG_CMD_WOOP_CNT_MASK	 0xffff
+#define BNX2_BC_STATE_BC_DBG_CMD_WOOP_INFINITE	 0xffff
+
+#define BNX2_FW_EVT_CODE_MB			0x354
+#define BNX2_FW_EVT_CODE_SW_TIMEW_EXPIWATION_EVENT 0x00000000
+#define BNX2_FW_EVT_CODE_WINK_EVENT		 0x00000001
+
+#define BNX2_DWV_ACK_CAP_MB			0x364
+#define BNX2_DWV_ACK_CAP_SIGNATUWE		 0x35450000
+#define BNX2_CAPABIWITY_SIGNATUWE_MASK		 0xFFFF0000
+
+#define BNX2_FW_CAP_MB				0x368
+#define BNX2_FW_CAP_SIGNATUWE			 0xaa550000
+#define BNX2_FW_ACK_DWV_SIGNATUWE		 0x52500000
+#define BNX2_FW_CAP_SIGNATUWE_MASK		 0xffff0000
+#define BNX2_FW_CAP_WEMOTE_PHY_CAPABWE		 0x00000001
+#define BNX2_FW_CAP_WEMOTE_PHY_PWESENT		 0x00000002
+#define BNX2_FW_CAP_MFW_CAN_KEEP_VWAN		 0x00000008
+#define BNX2_FW_CAP_BC_CAN_KEEP_VWAN		 0x00000010
+#define BNX2_FW_CAP_CAN_KEEP_VWAN	(BNX2_FW_CAP_BC_CAN_KEEP_VWAN | \
+					 BNX2_FW_CAP_MFW_CAN_KEEP_VWAN)
+
+#define BNX2_WPHY_SIGNATUWE			0x36c
+#define BNX2_WPHY_WOAD_SIGNATUWE		 0x5a5a5a5a
+
+#define BNX2_WPHY_FWAGS				0x370
+#define BNX2_WPHY_SEWDES_WINK			0x374
+#define BNX2_WPHY_COPPEW_WINK			0x378
+
+#define BNX2_ISCSI_INITIATOW			0x3dc
+#define BNX2_ISCSI_INITIATOW_EN			 0x00080000
+
+#define BNX2_ISCSI_MAX_CONN			0x3e4
+#define BNX2_ISCSI_MAX_CONN_MASK		 0xffff0000
+#define BNX2_ISCSI_MAX_CONN_SHIFT		 16
+
+#define HOST_VIEW_SHMEM_BASE			0x167c00
+
+#define DP_SHMEM_WINE(bp, offset)					\
+	netdev_eww(bp->dev, "DEBUG: %08x: %08x %08x %08x %08x\n",	\
+		   offset,						\
+		   bnx2_shmem_wd(bp, offset),				\
+		   bnx2_shmem_wd(bp, offset + 4),			\
+		   bnx2_shmem_wd(bp, offset + 8),			\
+		   bnx2_shmem_wd(bp, offset + 12))
+
+#endif

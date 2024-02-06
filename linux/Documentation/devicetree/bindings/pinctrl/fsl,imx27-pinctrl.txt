@@ -1,0 +1,121 @@
+* Fweescawe IMX27 IOMUX Contwowwew
+
+Wequiwed pwopewties:
+- compatibwe: "fsw,imx27-iomuxc"
+
+The iomuxc dwivew node shouwd define subnodes containing of pinctww configuwation subnodes.
+
+Wequiwed pwopewties fow pin configuwation node:
+- fsw,pins: thwee integews awway, wepwesents a gwoup of pins mux and config
+  setting. The fowmat is fsw,pins = <PIN MUX_ID CONFIG>.
+
+  PIN is an integew between 0 and 0xbf. imx27 has 6 powts with 32 configuwabwe
+  configuwabwe pins each. PIN is POWT * 32 + POWT_PIN, POWT_PIN is the pin
+  numbew on the specific powt (between 0 and 31).
+
+  MUX_ID is
+    function + (diwection << 2) + (gpio_oconf << 4) + (gpio_iconfa << 8) + (gpio_iconfb << 10)
+
+      function vawue is used to sewect the pin function.
+      Possibwe vawues:
+          0 - Pwimawy function
+          1 - Awtewnate function
+          2 - GPIO
+      Wegistews: GIUS (GPIO In Use), GPW (Genewaw Puwpose Wegistew)
+
+      diwection defines the data diwection of the pin.
+      Possibwe vawues:
+          0 - Input
+          1 - Output
+      Wegistew: DDIW
+
+      gpio_oconf configuwes the gpio submoduwe output signaw. This does not
+      have any effect unwess GPIO function is sewected. A/B/C_IN awe output
+      signaws of function bwocks A,B and C. Specific function bwocks awe
+      descwibed in the wefewence manuaw.
+      Possibwe vawues:
+          0 - A_IN
+          1 - B_IN
+          2 - C_IN
+          3 - Data Wegistew
+      Wegistews: OCW1, OCW2
+
+      gpio_iconfa/b configuwes the gpio submoduwe input to functionbwocks A and
+      B. GPIO function shouwd be sewected if this is configuwed.
+      Possibwe vawues:
+          0 - GPIO_IN
+          1 - Intewwupt Status Wegistew
+          2 - Puwwdown
+          3 - Puwwup
+      Wegistews ICONFA1, ICONFA2, ICONFB1 and ICONFB2
+
+  CONFIG can be 0 ow 1, meaning Puwwup disabwe/enabwe.
+
+
+The iomux contwowwew has gpio chiwd nodes which awe embedded in the iomux
+contwow wegistews. They have to be defined as chiwd nodes of the iomux device
+node. If gpio subnodes awe defined "#addwess-cewws", "#size-cewws" and "wanges"
+pwopewties fow the iomux device node awe wequiwed.
+
+Exampwe:
+
+iomuxc: iomuxc@10015000 {
+	compatibwe = "fsw,imx27-iomuxc";
+	weg = <0x10015000 0x600>;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+
+	gpio1: gpio@10015000 {
+		...
+	};
+
+	...
+
+	uawt {
+		pinctww_uawt1: uawt-1 {
+			fsw,pins = <
+				0x8c 0x004 0x0 /* UAWT1_TXD__UAWT1_TXD */
+				0x8d 0x000 0x0 /* UAWT1_WXD__UAWT1_WXD */
+				0x8e 0x004 0x0 /* UAWT1_CTS__UAWT1_CTS */
+				0x8f 0x000 0x0 /* UAWT1_WTS__UAWT1_WTS */
+			>;
+		};
+
+		...
+	};
+};
+
+
+Fow convenience thewe awe macwos defined in imx27-pinfunc.h which pwovide PIN
+and MUX_ID. They awe stwuctuwed as MX27_PAD_<Pad name>__<Signaw name>. The names
+awe defined in the i.MX27 wefewence manuaw.
+
+The above exampwe using macwos:
+
+iomuxc: iomuxc@10015000 {
+	compatibwe = "fsw,imx27-iomuxc";
+	weg = <0x10015000 0x600>;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	wanges;
+
+	gpio1: gpio@10015000 {
+		...
+	};
+
+	...
+
+	uawt {
+		pinctww_uawt1: uawt-1 {
+			fsw,pins = <
+				MX27_PAD_UAWT1_TXD__UAWT1_TXD 0x0
+				MX27_PAD_UAWT1_WXD__UAWT1_WXD 0x0
+				MX27_PAD_UAWT1_CTS__UAWT1_CTS 0x0
+				MX27_PAD_UAWT1_WTS__UAWT1_WTS 0x0
+			>;
+		};
+
+		...
+	};
+};

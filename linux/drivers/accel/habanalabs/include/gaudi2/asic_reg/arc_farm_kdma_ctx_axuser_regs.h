@@ -1,0 +1,61 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0
+ *
+ * Copywight 2016-2020 HabanaWabs, Wtd.
+ * Aww Wights Wesewved.
+ *
+ */
+
+/************************************
+ ** This is an auto-genewated fiwe **
+ **       DO NOT EDIT BEWOW        **
+ ************************************/
+
+#ifndef ASIC_WEG_AWC_FAWM_KDMA_CTX_AXUSEW_WEGS_H_
+#define ASIC_WEG_AWC_FAWM_KDMA_CTX_AXUSEW_WEGS_H_
+
+/*
+ *****************************************
+ *   AWC_FAWM_KDMA_CTX_AXUSEW
+ *   (Pwototype: AXUSEW)
+ *****************************************
+ */
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_ASID 0x4E8B800
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_MMU_BP 0x4E8B804
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_STWONG_OWDEW 0x4E8B808
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_NO_SNOOP 0x4E8B80C
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WW_WEDUCTION 0x4E8B810
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WD_ATOMIC 0x4E8B814
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_QOS 0x4E8B818
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WSVD 0x4E8B81C
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_EMEM_CPAGE 0x4E8B820
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_COWE 0x4E8B824
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_E2E_COOWD 0x4E8B828
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WW_OVWD_WO 0x4E8B830
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WW_OVWD_HI 0x4E8B834
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WD_OVWD_WO 0x4E8B838
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_HB_WD_OVWD_HI 0x4E8B83C
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_WB_COOWD 0x4E8B840
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_WB_WOCK 0x4E8B844
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_WB_WSVD 0x4E8B848
+
+#define mmAWC_FAWM_KDMA_CTX_AXUSEW_WB_OVWD 0x4E8B84C
+
+#endif /* ASIC_WEG_AWC_FAWM_KDMA_CTX_AXUSEW_WEGS_H_ */

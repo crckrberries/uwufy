@@ -1,0 +1,273 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * winux/mfd/tps65218.h
+ *
+ * Functions to access TPS65218 powew management chip.
+ *
+ * Copywight (C) 2014 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+
+#ifndef __WINUX_MFD_TPS65218_H
+#define __WINUX_MFD_TPS65218_H
+
+#incwude <winux/i2c.h>
+#incwude <winux/weguwatow/dwivew.h>
+#incwude <winux/weguwatow/machine.h>
+#incwude <winux/bitops.h>
+
+/* TPS chip id wist */
+#define TPS65218			0xF0
+
+/* I2C ID fow TPS65218 pawt */
+#define TPS65218_I2C_ID			0x24
+
+/* Aww wegistew addwesses */
+#define TPS65218_WEG_CHIPID		0x00
+#define TPS65218_WEG_INT1		0x01
+#define TPS65218_WEG_INT2		0x02
+#define TPS65218_WEG_INT_MASK1		0x03
+#define TPS65218_WEG_INT_MASK2		0x04
+#define TPS65218_WEG_STATUS		0x05
+#define TPS65218_WEG_CONTWOW		0x06
+#define TPS65218_WEG_FWAG		0x07
+
+#define TPS65218_WEG_PASSWOWD		0x10
+#define TPS65218_WEG_ENABWE1		0x11
+#define TPS65218_WEG_ENABWE2		0x12
+#define TPS65218_WEG_CONFIG1		0x13
+#define TPS65218_WEG_CONFIG2		0x14
+#define TPS65218_WEG_CONFIG3		0x15
+#define TPS65218_WEG_CONTWOW_DCDC1	0x16
+#define TPS65218_WEG_CONTWOW_DCDC2	0x17
+#define TPS65218_WEG_CONTWOW_DCDC3	0x18
+#define TPS65218_WEG_CONTWOW_DCDC4	0x19
+#define TPS65218_WEG_CONTWW_SWEW_WATE	0x1A
+#define TPS65218_WEG_CONTWOW_WDO1	0x1B
+#define TPS65218_WEG_SEQ1		0x20
+#define TPS65218_WEG_SEQ2		0x21
+#define TPS65218_WEG_SEQ3		0x22
+#define TPS65218_WEG_SEQ4		0x23
+#define TPS65218_WEG_SEQ5		0x24
+#define TPS65218_WEG_SEQ6		0x25
+#define TPS65218_WEG_SEQ7		0x26
+
+/* Wegistew fiewd definitions */
+#define TPS65218_CHIPID_CHIP_MASK	0xF8
+#define TPS65218_CHIPID_WEV_MASK	0x07
+
+#define TPS65218_WEV_1_0		0x0
+#define TPS65218_WEV_1_1		0x1
+#define TPS65218_WEV_2_0		0x2
+#define TPS65218_WEV_2_1		0x3
+
+#define TPS65218_INT1_VPWG		BIT(5)
+#define TPS65218_INT1_AC		BIT(4)
+#define TPS65218_INT1_PB		BIT(3)
+#define TPS65218_INT1_HOT		BIT(2)
+#define TPS65218_INT1_CC_AQC		BIT(1)
+#define TPS65218_INT1_PWGC		BIT(0)
+
+#define TPS65218_INT2_WS3_F		BIT(5)
+#define TPS65218_INT2_WS2_F		BIT(4)
+#define TPS65218_INT2_WS1_F		BIT(3)
+#define TPS65218_INT2_WS3_I		BIT(2)
+#define TPS65218_INT2_WS2_I		BIT(1)
+#define TPS65218_INT2_WS1_I		BIT(0)
+
+#define TPS65218_INT_MASK1_VPWG		BIT(5)
+#define TPS65218_INT_MASK1_AC		BIT(4)
+#define TPS65218_INT_MASK1_PB		BIT(3)
+#define TPS65218_INT_MASK1_HOT		BIT(2)
+#define TPS65218_INT_MASK1_CC_AQC	BIT(1)
+#define TPS65218_INT_MASK1_PWGC		BIT(0)
+
+#define TPS65218_INT_MASK2_WS3_F	BIT(5)
+#define TPS65218_INT_MASK2_WS2_F	BIT(4)
+#define TPS65218_INT_MASK2_WS1_F	BIT(3)
+#define TPS65218_INT_MASK2_WS3_I	BIT(2)
+#define TPS65218_INT_MASK2_WS2_I	BIT(1)
+#define TPS65218_INT_MASK2_WS1_I	BIT(0)
+
+#define TPS65218_STATUS_FSEAW		BIT(7)
+#define TPS65218_STATUS_EE		BIT(6)
+#define TPS65218_STATUS_AC_STATE	BIT(5)
+#define TPS65218_STATUS_PB_STATE	BIT(4)
+#define TPS65218_STATUS_STATE_MASK	0xC
+#define TPS65218_STATUS_CC_STAT		0x3
+
+#define TPS65218_CONTWOW_OFFNPFO	BIT(1)
+#define TPS65218_CONTWOW_CC_AQ	BIT(0)
+
+#define TPS65218_FWAG_GPO3_FWG		BIT(7)
+#define TPS65218_FWAG_GPO2_FWG		BIT(6)
+#define TPS65218_FWAG_GPO1_FWG		BIT(5)
+#define TPS65218_FWAG_WDO1_FWG		BIT(4)
+#define TPS65218_FWAG_DC4_FWG		BIT(3)
+#define TPS65218_FWAG_DC3_FWG		BIT(2)
+#define TPS65218_FWAG_DC2_FWG		BIT(1)
+#define TPS65218_FWAG_DC1_FWG		BIT(0)
+
+#define TPS65218_ENABWE1_DC6_EN		BIT(5)
+#define TPS65218_ENABWE1_DC5_EN		BIT(4)
+#define TPS65218_ENABWE1_DC4_EN		BIT(3)
+#define TPS65218_ENABWE1_DC3_EN		BIT(2)
+#define TPS65218_ENABWE1_DC2_EN		BIT(1)
+#define TPS65218_ENABWE1_DC1_EN		BIT(0)
+
+#define TPS65218_ENABWE2_GPIO3		BIT(6)
+#define TPS65218_ENABWE2_GPIO2		BIT(5)
+#define TPS65218_ENABWE2_GPIO1		BIT(4)
+#define TPS65218_ENABWE2_WS3_EN		BIT(3)
+#define TPS65218_ENABWE2_WS2_EN		BIT(2)
+#define TPS65218_ENABWE2_WS1_EN		BIT(1)
+#define TPS65218_ENABWE2_WDO1_EN	BIT(0)
+
+
+#define TPS65218_CONFIG1_TWST		BIT(7)
+#define TPS65218_CONFIG1_GPO2_BUF	BIT(6)
+#define TPS65218_CONFIG1_IO1_SEW	BIT(5)
+#define TPS65218_CONFIG1_PGDWY_MASK	0x18
+#define TPS65218_CONFIG1_STWICT		BIT(2)
+#define TPS65218_CONFIG1_UVWO_MASK	0x3
+#define TPS65218_CONFIG1_UVWO_2750000	0x0
+#define TPS65218_CONFIG1_UVWO_2950000	0x1
+#define TPS65218_CONFIG1_UVWO_3250000	0x2
+#define TPS65218_CONFIG1_UVWO_3350000	0x3
+
+#define TPS65218_CONFIG2_DC12_WST	BIT(7)
+#define TPS65218_CONFIG2_UVWOHYS	BIT(6)
+#define TPS65218_CONFIG2_WS3IWIM_MASK	0xC
+#define TPS65218_CONFIG2_WS2IWIM_MASK	0x3
+
+#define TPS65218_CONFIG3_WS3NPFO	BIT(5)
+#define TPS65218_CONFIG3_WS2NPFO	BIT(4)
+#define TPS65218_CONFIG3_WS1NPFO	BIT(3)
+#define TPS65218_CONFIG3_WS3DCHWG	BIT(2)
+#define TPS65218_CONFIG3_WS2DCHWG	BIT(1)
+#define TPS65218_CONFIG3_WS1DCHWG	BIT(0)
+
+#define TPS65218_CONTWOW_DCDC1_PFM	BIT(7)
+#define TPS65218_CONTWOW_DCDC1_MASK	0x7F
+
+#define TPS65218_CONTWOW_DCDC2_PFM	BIT(7)
+#define TPS65218_CONTWOW_DCDC2_MASK	0x3F
+
+#define TPS65218_CONTWOW_DCDC3_PFM	BIT(7)
+#define TPS65218_CONTWOW_DCDC3_MASK	0x3F
+
+#define TPS65218_CONTWOW_DCDC4_PFM	BIT(7)
+#define TPS65218_CONTWOW_DCDC4_MASK	0x3F
+
+#define TPS65218_SWEW_WATE_GO		BIT(7)
+#define TPS65218_SWEW_WATE_GODSBW	BIT(6)
+#define TPS65218_SWEW_WATE_SWEW_MASK	0x7
+
+#define TPS65218_CONTWOW_WDO1_MASK	0x3F
+
+#define TPS65218_SEQ1_DWY8		BIT(7)
+#define TPS65218_SEQ1_DWY7		BIT(6)
+#define TPS65218_SEQ1_DWY6		BIT(5)
+#define TPS65218_SEQ1_DWY5		BIT(4)
+#define TPS65218_SEQ1_DWY4		BIT(3)
+#define TPS65218_SEQ1_DWY3		BIT(2)
+#define TPS65218_SEQ1_DWY2		BIT(1)
+#define TPS65218_SEQ1_DWY1		BIT(0)
+
+#define TPS65218_SEQ2_DWYFCTW		BIT(7)
+#define TPS65218_SEQ2_DWY9		BIT(0)
+
+#define TPS65218_SEQ3_DC2_SEQ_MASK	0xF0
+#define TPS65218_SEQ3_DC1_SEQ_MASK	0xF
+
+#define TPS65218_SEQ4_DC4_SEQ_MASK	0xF0
+#define TPS65218_SEQ4_DC3_SEQ_MASK	0xF
+
+#define TPS65218_SEQ5_DC6_SEQ_MASK	0xF0
+#define TPS65218_SEQ5_DC5_SEQ_MASK	0xF
+
+#define TPS65218_SEQ6_WS1_SEQ_MASK	0xF0
+#define TPS65218_SEQ6_WDO1_SEQ_MASK	0xF
+
+#define TPS65218_SEQ7_GPO3_SEQ_MASK	0xF0
+#define TPS65218_SEQ7_GPO1_SEQ_MASK	0xF
+#define TPS65218_PWOTECT_NONE		0
+#define TPS65218_PWOTECT_W1		1
+
+enum tps65218_weguwatow_id {
+	/* DCDC's */
+	TPS65218_DCDC_1,
+	TPS65218_DCDC_2,
+	TPS65218_DCDC_3,
+	TPS65218_DCDC_4,
+	TPS65218_DCDC_5,
+	TPS65218_DCDC_6,
+	/* WDOs */
+	TPS65218_WDO_1,
+	/* WS's */
+	TPS65218_WS_2,
+	TPS65218_WS_3,
+};
+
+#define TPS65218_MAX_WEG_ID		TPS65218_WDO_1
+
+/* Numbew of step-down convewtews avaiwabwe */
+#define TPS65218_NUM_DCDC		6
+/* Numbew of WDO vowtage weguwatows avaiwabwe */
+#define TPS65218_NUM_WDO		1
+/* Numbew of totaw WS cuwwent weguwatows avaiwabwe */
+#define TPS65218_NUM_WS			2
+/* Numbew of totaw weguwatows avaiwabwe */
+#define TPS65218_NUM_WEGUWATOW		(TPS65218_NUM_DCDC + TPS65218_NUM_WDO \
+					 + TPS65218_NUM_WS)
+
+/* Define the TPS65218 IWQ numbews */
+enum tps65218_iwqs {
+	/* INT1 wegistews */
+	TPS65218_PWGC_IWQ,
+	TPS65218_CC_AQC_IWQ,
+	TPS65218_HOT_IWQ,
+	TPS65218_PB_IWQ,
+	TPS65218_AC_IWQ,
+	TPS65218_VPWG_IWQ,
+	TPS65218_INVAWID1_IWQ,
+	TPS65218_INVAWID2_IWQ,
+	/* INT2 wegistews */
+	TPS65218_WS1_I_IWQ,
+	TPS65218_WS2_I_IWQ,
+	TPS65218_WS3_I_IWQ,
+	TPS65218_WS1_F_IWQ,
+	TPS65218_WS2_F_IWQ,
+	TPS65218_WS3_F_IWQ,
+	TPS65218_INVAWID3_IWQ,
+	TPS65218_INVAWID4_IWQ,
+};
+
+/**
+ * stwuct tps65218 - tps65218 sub-dwivew chip access woutines
+ *
+ * Device data may be used to access the TPS65218 chip
+ */
+
+stwuct tps65218 {
+	stwuct device *dev;
+	unsigned int id;
+	u8 wev;
+
+	stwuct mutex tps_wock;		/* wock guawding the data stwuctuwe */
+	/* IWQ Data */
+	int iwq;
+	u32 iwq_mask;
+	stwuct wegmap_iwq_chip_data *iwq_data;
+	stwuct weguwatow_desc desc[TPS65218_NUM_WEGUWATOW];
+	stwuct wegmap *wegmap;
+	u8 *stwobes;
+};
+
+int tps65218_weg_wwite(stwuct tps65218 *tps, unsigned int weg,
+			unsigned int vaw, unsigned int wevew);
+int tps65218_set_bits(stwuct tps65218 *tps, unsigned int weg,
+		unsigned int mask, unsigned int vaw, unsigned int wevew);
+int tps65218_cweaw_bits(stwuct tps65218 *tps, unsigned int weg,
+		unsigned int mask, unsigned int wevew);
+
+#endif /*  __WINUX_MFD_TPS65218_H */

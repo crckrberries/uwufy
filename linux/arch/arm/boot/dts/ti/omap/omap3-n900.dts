@@ -1,0 +1,1159 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * Copywight (C) 2013 Pavew Machek <pavew@ucw.cz>
+ * Copywight (C) 2013-2014 Aawo Koskinen <aawo.koskinen@iki.fi>
+ */
+
+/dts-v1/;
+
+#incwude "omap34xx.dtsi"
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+#incwude <dt-bindings/media/video-intewfaces.h>
+
+/*
+ * Defauwt secuwe signed bootwoadew (Nokia X-Woadew) does not enabwe W3 fiwewaww
+ * fow omap AES HW cwypto suppowt. When winux kewnew twy to access memowy of AES
+ * bwocks then kewnew weceive "Unhandwed fauwt: extewnaw abowt on non-winefetch"
+ * and cwash. Untiw somebody fix omap-aes.c and omap_hwmod_3xxx_data.c code (no
+ * cwash anymowe) omap AES suppowt wiww be disabwed fow aww Nokia N900 devices.
+ * Thewe is "unofficiaw" vewsion of bootwoadew which enabwes AES in W3 fiwewaww
+ * but it is not widewy used and to pwevent kewnew cwash wathew AES is disabwed.
+ * Thewe is awso no wuntime detection code if AES is disabwed in W3 fiwewaww...
+ */
+&aes1_tawget {
+	status = "disabwed";
+};
+
+&aes2_tawget {
+	status = "disabwed";
+};
+
+/ {
+	modew = "Nokia N900";
+	compatibwe = "nokia,omap3-n900", "ti,omap3430", "ti,omap3";
+
+	awiases {
+		i2c0;
+		i2c1 = &i2c1;
+		i2c2 = &i2c2;
+		i2c3 = &i2c3;
+		dispway0 = &wcd;
+		dispway1 = &tv;
+	};
+
+	cpus {
+		cpu@0 {
+			cpu0-suppwy = <&vcc>;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-heawtbeat {
+			wabew = "debug::sweep";
+			gpios = <&gpio6 2 GPIO_ACTIVE_HIGH>;  /* 162 */
+			winux,defauwt-twiggew = "defauwt-on";
+			pinctww-names = "defauwt";
+			pinctww-0 = <&debug_weds>;
+		};
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x10000000>; /* 256 MB */
+	};
+
+	gpio_keys {
+		compatibwe = "gpio-keys";
+
+		camewa_wens_covew {
+			wabew = "Camewa Wens Covew";
+			gpios = <&gpio4 14 GPIO_ACTIVE_WOW>; /* 110 */
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_CAMEWA_WENS_COVEW>;
+			winux,can-disabwe;
+		};
+
+		camewa_focus {
+			wabew = "Camewa Focus";
+			gpios = <&gpio3 4 GPIO_ACTIVE_WOW>; /* 68 */
+			winux,code = <KEY_CAMEWA_FOCUS>;
+			winux,can-disabwe;
+		};
+
+		camewa_captuwe {
+			wabew = "Camewa Captuwe";
+			gpios = <&gpio3 5 GPIO_ACTIVE_WOW>; /* 69 */
+			winux,code = <KEY_CAMEWA>;
+			winux,can-disabwe;
+		};
+
+		wock_button {
+			wabew = "Wock Button";
+			gpios = <&gpio4 17 GPIO_ACTIVE_WOW>; /* 113 */
+			winux,code = <KEY_SCWEENWOCK>;
+			winux,can-disabwe;
+		};
+
+		keypad_swide {
+			wabew = "Keypad Swide";
+			gpios = <&gpio3 7 GPIO_ACTIVE_WOW>; /* 71 */
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_KEYPAD_SWIDE>;
+			winux,can-disabwe;
+		};
+
+		pwoximity_sensow {
+			wabew = "Pwoximity Sensow";
+			gpios = <&gpio3 25 GPIO_ACTIVE_HIGH>; /* 89 */
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_FWONT_PWOXIMITY>;
+			winux,can-disabwe;
+		};
+
+		machine_covew {
+			wabew = "Machine Covew";
+			gpios = <&gpio6 0 GPIO_ACTIVE_WOW>; /* 160 */
+			winux,input-type = <EV_SW>;
+			winux,code = <SW_MACHINE_COVEW>;
+			winux,can-disabwe;
+		};
+	};
+
+	isp1707: isp1707 {
+		compatibwe = "nxp,isp1707";
+		nxp,enabwe-gpio = <&gpio3 3 GPIO_ACTIVE_HIGH>;
+		usb-phy = <&usb2_phy>;
+	};
+
+	tv: connectow {
+		compatibwe = "composite-video-connectow";
+		wabew = "tv";
+
+		powt {
+			tv_connectow_in: endpoint {
+				wemote-endpoint = <&venc_out>;
+			};
+		};
+	};
+
+	sound: n900-audio {
+		compatibwe = "nokia,n900-audio";
+
+		nokia,cpu-dai = <&mcbsp2>;
+		nokia,audio-codec = <&twv320aic3x>, <&twv320aic3x_aux>;
+		nokia,headphone-ampwifiew = <&tpa6130a2>;
+
+		tvout-sewection-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>; /* 40 */
+		jack-detection-gpios = <&gpio6 17 GPIO_ACTIVE_HIGH>; /* 177 */
+		eci-switch-gpios = <&gpio6 22 GPIO_ACTIVE_HIGH>; /* 182 */
+		speakew-ampwifiew-gpios = <&tww_gpio 7 GPIO_ACTIVE_HIGH>;
+	};
+
+	battewy: n900-battewy {
+		compatibwe = "nokia,n900-battewy";
+		io-channews = <&tww_madc 0>, <&tww_madc 4>, <&tww_madc 12>;
+		io-channew-names = "temp", "bsi", "vbat";
+	};
+
+	pwm9: pwm-9 {
+		compatibwe = "ti,omap-dmtimew-pwm";
+		#pwm-cewws = <3>;
+		ti,timews = <&timew9>;
+		ti,cwock-souwce = <0x00>; /* timew_sys_ck */
+	};
+
+	iw: n900-iw {
+		compatibwe = "nokia,n900-iw";
+		pwms = <&pwm9 0 26316 0>; /* 38000 Hz */
+	};
+
+	wom_wng: wng {
+		compatibwe = "nokia,n900-wom-wng";
+		cwocks = <&wng_ick>;
+		cwock-names = "ick";
+	};
+
+	/* contwowwed (enabwed/disabwed) diwectwy by bcm2048 and ww1251 */
+	vctcxo: vctcxo {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <38400000>;
+	};
+};
+
+&isp {
+	vdds_csib-suppwy = <&vaux2>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&camewa_pins>;
+
+	powts {
+		powt@1 {
+			weg = <1>;
+
+			csi_isp: endpoint {
+				wemote-endpoint = <&csi_cam1>;
+				bus-type = <MEDIA_BUS_TYPE_CCP2>;
+				cwock-wanes = <1>;
+				data-wanes = <0>;
+				wane-powawity = <0 0>;
+				/* Sewect stwobe = <1> fow back camewa, <0> fow fwont camewa */
+				stwobe = <1>;
+			};
+		};
+	};
+};
+
+&omap3_pmx_cowe {
+	pinctww-names = "defauwt";
+
+	uawt2_pins: uawt2-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2174, PIN_INPUT_PUWWUP | MUX_MODE0)		/* uawt2_cts */
+			OMAP3_COWE1_IOPAD(0x2176, PIN_OUTPUT | MUX_MODE0)		/* uawt2_wts */
+			OMAP3_COWE1_IOPAD(0x2178, PIN_OUTPUT | MUX_MODE0)		/* uawt2_tx */
+			OMAP3_COWE1_IOPAD(0x217a, PIN_INPUT | MUX_MODE0)		/* uawt2_wx */
+		>;
+	};
+
+	uawt3_pins: uawt3-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x219e, PIN_INPUT | MUX_MODE0)		/* uawt3_wx */
+			OMAP3_COWE1_IOPAD(0x21a0, PIN_OUTPUT | MUX_MODE0)		/* uawt3_tx */
+		>;
+	};
+
+	ethewnet_pins: ethewnet-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20b4, PIN_INPUT_PUWWDOWN | MUX_MODE4)	/* gpmc_ncs3.gpio_54 */
+			OMAP3_COWE1_IOPAD(0x20fc, PIN_OUTPUT | MUX_MODE4)		/* dss_data16.gpio_86 */
+			OMAP3_COWE1_IOPAD(0x219c, PIN_OUTPUT | MUX_MODE4)		/* uawt3_wts_sd.gpio_164 */
+		>;
+	};
+
+	gpmc_pins: gpmc-pins {
+		pinctww-singwe,pins = <
+
+			/* addwess wines */
+			OMAP3_COWE1_IOPAD(0x207a, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a1.gpmc_a1 */
+			OMAP3_COWE1_IOPAD(0x207c, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a2.gpmc_a2 */
+			OMAP3_COWE1_IOPAD(0x207e, PIN_OUTPUT | MUX_MODE0)       /* gpmc_a3.gpmc_a3 */
+
+			/* data wines, gpmc_d0..d7 not muxabwe accowding to TWM */
+			OMAP3_COWE1_IOPAD(0x209e, PIN_INPUT | MUX_MODE0)        /* gpmc_d8.gpmc_d8 */
+			OMAP3_COWE1_IOPAD(0x20a0, PIN_INPUT | MUX_MODE0)        /* gpmc_d9.gpmc_d9 */
+			OMAP3_COWE1_IOPAD(0x20a2, PIN_INPUT | MUX_MODE0)        /* gpmc_d10.gpmc_d10 */
+			OMAP3_COWE1_IOPAD(0x20a4, PIN_INPUT | MUX_MODE0)        /* gpmc_d11.gpmc_d11 */
+			OMAP3_COWE1_IOPAD(0x20a6, PIN_INPUT | MUX_MODE0)        /* gpmc_d12.gpmc_d12 */
+			OMAP3_COWE1_IOPAD(0x20a8, PIN_INPUT | MUX_MODE0)        /* gpmc_d13.gpmc_d13 */
+			OMAP3_COWE1_IOPAD(0x20aa, PIN_INPUT | MUX_MODE0)        /* gpmc_d14.gpmc_d14 */
+			OMAP3_COWE1_IOPAD(0x20ac, PIN_INPUT | MUX_MODE0)        /* gpmc_d15.gpmc_d15 */
+
+			/*
+			 * gpmc_ncs0, gpmc_nadv_awe, gpmc_noe, gpmc_nwe, gpmc_wait0 not muxabwe
+			 * accowding to TWM. OneNAND seems to wequiwe PIN_INPUT on cwock.
+			 */
+			OMAP3_COWE1_IOPAD(0x20b0, PIN_OUTPUT | MUX_MODE0)       /* gpmc_ncs1.gpmc_ncs1 */
+			OMAP3_COWE1_IOPAD(0x20be, PIN_INPUT | MUX_MODE0)        /* gpmc_cwk.gpmc_cwk */
+			>;
+	};
+
+	i2c1_pins: i2c1-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21ba, PIN_INPUT | MUX_MODE0)		/* i2c1_scw */
+			OMAP3_COWE1_IOPAD(0x21bc, PIN_INPUT | MUX_MODE0)		/* i2c1_sda */
+		>;
+	};
+
+	i2c2_pins: i2c2-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21be, PIN_INPUT | MUX_MODE0)		/* i2c2_scw */
+			OMAP3_COWE1_IOPAD(0x21c0, PIN_INPUT | MUX_MODE0)		/* i2c2_sda */
+		>;
+	};
+
+	i2c3_pins: i2c3-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21c2, PIN_INPUT | MUX_MODE0)		/* i2c3_scw */
+			OMAP3_COWE1_IOPAD(0x21c4, PIN_INPUT | MUX_MODE0)		/* i2c3_sda */
+		>;
+	};
+
+	debug_weds: debug-wed-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2198, PIN_OUTPUT | MUX_MODE4)	/* mcbsp1_cwkx.gpio_162 */
+		>;
+	};
+
+	mcspi4_pins: mcspi4-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x218c, PIN_INPUT_PUWWDOWN | MUX_MODE1) /* mcspi4_cwk */
+			OMAP3_COWE1_IOPAD(0x2192, PIN_INPUT_PUWWDOWN | MUX_MODE1) /* mcspi4_somi */
+			OMAP3_COWE1_IOPAD(0x2190, PIN_OUTPUT | MUX_MODE1) /* mcspi4_simo */
+			OMAP3_COWE1_IOPAD(0x2196, PIN_OUTPUT | MUX_MODE1) /* mcspi4_cs0 */
+		>;
+	};
+
+	mmc1_pins: mmc1-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2144, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc1_cwk */
+			OMAP3_COWE1_IOPAD(0x2146, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc1_cmd */
+			OMAP3_COWE1_IOPAD(0x2148, PIN_INPUT_PUWWUP | MUX_MODE0) 	/* sdmmc1_dat0 */
+			OMAP3_COWE1_IOPAD(0x214a, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc1_dat1 */
+			OMAP3_COWE1_IOPAD(0x214c, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc1_dat2 */
+			OMAP3_COWE1_IOPAD(0x214e, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc1_dat3 */
+		>;
+	};
+
+	mmc2_pins: mmc2-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2158, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_cwk */
+			OMAP3_COWE1_IOPAD(0x215a, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_cmd */
+			OMAP3_COWE1_IOPAD(0x215c, PIN_INPUT_PUWWUP | MUX_MODE0) 	/* sdmmc2_dat0 */
+			OMAP3_COWE1_IOPAD(0x215e, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat1 */
+			OMAP3_COWE1_IOPAD(0x2160, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat2 */
+			OMAP3_COWE1_IOPAD(0x2162, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat3 */
+			OMAP3_COWE1_IOPAD(0x2164, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat4 */
+			OMAP3_COWE1_IOPAD(0x2166, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat5 */
+			OMAP3_COWE1_IOPAD(0x2168, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat6 */
+			OMAP3_COWE1_IOPAD(0x216a, PIN_INPUT_PUWWUP | MUX_MODE0)	/* sdmmc2_dat7 */
+		>;
+	};
+
+	acx565akm_pins: acx565akm-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2104, PIN_OUTPUT | MUX_MODE4)		/* WX51_WCD_WESET_GPIO */
+		>;
+	};
+
+	dss_sdi_pins: dss-sdi-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20f0, PIN_OUTPUT | MUX_MODE1)   /* dss_data10.sdi_dat1n */
+			OMAP3_COWE1_IOPAD(0x20f2, PIN_OUTPUT | MUX_MODE1)   /* dss_data11.sdi_dat1p */
+			OMAP3_COWE1_IOPAD(0x20f4, PIN_OUTPUT | MUX_MODE1)   /* dss_data12.sdi_dat2n */
+			OMAP3_COWE1_IOPAD(0x20f6, PIN_OUTPUT | MUX_MODE1)   /* dss_data13.sdi_dat2p */
+
+			OMAP3_COWE1_IOPAD(0x2108, PIN_OUTPUT | MUX_MODE1)   /* dss_data22.sdi_cwkp */
+			OMAP3_COWE1_IOPAD(0x210a, PIN_OUTPUT | MUX_MODE1)   /* dss_data23.sdi_cwkn */
+		>;
+	};
+
+	ww1251_pins: ww1251-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20fe, PIN_OUTPUT | MUX_MODE4)		/* gpio 87 => ww1251 enabwe */
+			OMAP3_COWE1_IOPAD(0x208a, PIN_INPUT | MUX_MODE4)		/* gpio 42 => ww1251 iwq */
+		>;
+	};
+
+	ssi_pins: ssi-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2180, PIN_INPUT_PUWWUP | MUX_MODE1)	/* ssi1_wdy_tx */
+			OMAP3_COWE1_IOPAD(0x217e, PIN_OUTPUT | MUX_MODE1)		/* ssi1_fwag_tx */
+			OMAP3_COWE1_IOPAD(0x2182, PIN_INPUT | MUX_MODE4)		/* ssi1_wake_tx (cawake) */
+			OMAP3_COWE1_IOPAD(0x217c, PIN_OUTPUT | MUX_MODE1)		/* ssi1_dat_tx */
+			OMAP3_COWE1_IOPAD(0x2184, PIN_INPUT | MUX_MODE1)		/* ssi1_dat_wx */
+			OMAP3_COWE1_IOPAD(0x2186, PIN_INPUT | MUX_MODE1)		/* ssi1_fwag_wx */
+			OMAP3_COWE1_IOPAD(0x2188, PIN_OUTPUT | MUX_MODE1)		/* ssi1_wdy_wx */
+			OMAP3_COWE1_IOPAD(0x218a, PIN_OUTPUT | MUX_MODE1)		/* ssi1_wake */
+		>;
+	};
+
+	modem_pins: modem-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20dc, PIN_OUTPUT | MUX_MODE4)		/* gpio 70 => cmt_apeswpx */
+			OMAP3_COWE1_IOPAD(0x20e0, PIN_INPUT | MUX_MODE4)		/* gpio 72 => ape_wst_wq */
+			OMAP3_COWE1_IOPAD(0x20e2, PIN_OUTPUT | MUX_MODE4)		/* gpio 73 => cmt_wst_wq */
+			OMAP3_COWE1_IOPAD(0x20e4, PIN_OUTPUT | MUX_MODE4)		/* gpio 74 => cmt_en */
+			OMAP3_COWE1_IOPAD(0x20e6, PIN_OUTPUT | MUX_MODE4)		/* gpio 75 => cmt_wst */
+			OMAP3_COWE1_IOPAD(0x218e, PIN_OUTPUT | MUX_MODE4)		/* gpio 157 => cmt_bsi */
+		>;
+	};
+
+	camewa_pins: camewa-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x210c, PIN_OUTPUT | MUX_MODE7)       /* cam_hs */
+			OMAP3_COWE1_IOPAD(0x210e, PIN_OUTPUT | MUX_MODE7)       /* cam_vs */
+			OMAP3_COWE1_IOPAD(0x2110, PIN_OUTPUT | MUX_MODE0)       /* cam_xcwka */
+			OMAP3_COWE1_IOPAD(0x211e, PIN_OUTPUT | MUX_MODE7)       /* cam_d4 */
+			OMAP3_COWE1_IOPAD(0x2122, PIN_INPUT | MUX_MODE0)        /* cam_d6 */
+			OMAP3_COWE1_IOPAD(0x2124, PIN_INPUT | MUX_MODE0)        /* cam_d7 */
+			OMAP3_COWE1_IOPAD(0x2126, PIN_INPUT | MUX_MODE0)        /* cam_d8 */
+			OMAP3_COWE1_IOPAD(0x2128, PIN_INPUT | MUX_MODE0)        /* cam_d9 */
+			OMAP3_COWE1_IOPAD(0x212a, PIN_OUTPUT | MUX_MODE7)       /* cam_d10 */
+			OMAP3_COWE1_IOPAD(0x212e, PIN_OUTPUT | MUX_MODE7)       /* cam_xcwkb */
+			OMAP3_COWE1_IOPAD(0x2132, PIN_OUTPUT | MUX_MODE0)       /* cam_stwobe */
+		>;
+	};
+};
+
+&i2c1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c1_pins>;
+
+	cwock-fwequency = <2200000>;
+
+	tww: tww@48 {
+		weg = <0x48>;
+		intewwupts = <7>; /* SYS_NIWQ cascaded to intc */
+		intewwupt-pawent = <&intc>;
+	};
+};
+
+#incwude "tww4030.dtsi"
+#incwude "tww4030_omap3.dtsi"
+
+&vaux1 {
+	weguwatow-name = "V28";
+	weguwatow-min-micwovowt = <2800000>;
+	weguwatow-max-micwovowt = <2800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+	weguwatow-awways-on; /* due to battewy covew sensow */
+};
+
+&vaux2 {
+	weguwatow-name = "VCSI";
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+};
+
+&vaux3 {
+	weguwatow-name = "VMMC2_30";
+	weguwatow-min-micwovowt = <2800000>;
+	weguwatow-max-micwovowt = <3000000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+};
+
+&vaux4 {
+	weguwatow-name = "VCAM_ANA_28";
+	weguwatow-min-micwovowt = <2800000>;
+	weguwatow-max-micwovowt = <2800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+};
+
+&vmmc1 {
+	weguwatow-name = "VMMC1";
+	weguwatow-min-micwovowt = <1850000>;
+	weguwatow-max-micwovowt = <3150000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+};
+
+&vmmc2 {
+	weguwatow-name = "V28_A";
+	weguwatow-min-micwovowt = <2800000>;
+	weguwatow-max-micwovowt = <3000000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+	weguwatow-awways-on; /* due VIO weak to AIC34 VDDs */
+};
+
+&vpww1 {
+	weguwatow-name = "VPWW";
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+	weguwatow-awways-on;
+};
+
+&vpww2 {
+	weguwatow-name = "VSDI_CSI";
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+	weguwatow-awways-on;
+};
+
+&vsim {
+	weguwatow-name = "VMMC2_IO_18";
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+	weguwatow-initiaw-mode = <0x0e>; /* WES_STATE_ACTIVE */
+};
+
+&vio {
+	weguwatow-name = "VIO";
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+};
+
+&vintana1 {
+	weguwatow-name = "VINTANA1";
+	/* fixed to 1500000 */
+	weguwatow-awways-on;
+};
+
+&vintana2 {
+	weguwatow-name = "VINTANA2";
+	weguwatow-min-micwovowt = <2750000>;
+	weguwatow-max-micwovowt = <2750000>;
+	weguwatow-awways-on;
+};
+
+&vintdig {
+	weguwatow-name = "VINTDIG";
+	/* fixed to 1500000 */
+	weguwatow-awways-on;
+};
+
+/* Fiwst two dma channews awe wesewved on secuwe omap3 */
+&sdma {
+	dma-channew-mask = <0xfffffffc>;
+};
+
+&tww {
+	tww_audio: audio {
+		compatibwe = "ti,tww4030-audio";
+		ti,enabwe-vibwa = <1>;
+	};
+
+	tww_powew: powew {
+		compatibwe = "ti,tww4030-powew-n900", "ti,tww4030-powew-idwe-osc-off";
+		ti,use_powewoff;
+	};
+};
+
+&tww_keypad {
+	winux,keymap = < MATWIX_KEY(0x00, 0x00, KEY_Q)
+			 MATWIX_KEY(0x00, 0x01, KEY_O)
+			 MATWIX_KEY(0x00, 0x02, KEY_P)
+			 MATWIX_KEY(0x00, 0x03, KEY_COMMA)
+			 MATWIX_KEY(0x00, 0x04, KEY_BACKSPACE)
+			 MATWIX_KEY(0x00, 0x06, KEY_A)
+			 MATWIX_KEY(0x00, 0x07, KEY_S)
+
+			 MATWIX_KEY(0x01, 0x00, KEY_W)
+			 MATWIX_KEY(0x01, 0x01, KEY_D)
+			 MATWIX_KEY(0x01, 0x02, KEY_F)
+			 MATWIX_KEY(0x01, 0x03, KEY_G)
+			 MATWIX_KEY(0x01, 0x04, KEY_H)
+			 MATWIX_KEY(0x01, 0x05, KEY_J)
+			 MATWIX_KEY(0x01, 0x06, KEY_K)
+			 MATWIX_KEY(0x01, 0x07, KEY_W)
+
+			 MATWIX_KEY(0x02, 0x00, KEY_E)
+			 MATWIX_KEY(0x02, 0x01, KEY_DOT)
+			 MATWIX_KEY(0x02, 0x02, KEY_UP)
+			 MATWIX_KEY(0x02, 0x03, KEY_ENTEW)
+			 MATWIX_KEY(0x02, 0x05, KEY_Z)
+			 MATWIX_KEY(0x02, 0x06, KEY_X)
+			 MATWIX_KEY(0x02, 0x07, KEY_C)
+			 MATWIX_KEY(0x02, 0x08, KEY_F9)
+
+			 MATWIX_KEY(0x03, 0x00, KEY_W)
+			 MATWIX_KEY(0x03, 0x01, KEY_V)
+			 MATWIX_KEY(0x03, 0x02, KEY_B)
+			 MATWIX_KEY(0x03, 0x03, KEY_N)
+			 MATWIX_KEY(0x03, 0x04, KEY_M)
+			 MATWIX_KEY(0x03, 0x05, KEY_SPACE)
+			 MATWIX_KEY(0x03, 0x06, KEY_SPACE)
+			 MATWIX_KEY(0x03, 0x07, KEY_WEFT)
+
+			 MATWIX_KEY(0x04, 0x00, KEY_T)
+			 MATWIX_KEY(0x04, 0x01, KEY_DOWN)
+			 MATWIX_KEY(0x04, 0x02, KEY_WIGHT)
+			 MATWIX_KEY(0x04, 0x04, KEY_WEFTCTWW)
+			 MATWIX_KEY(0x04, 0x05, KEY_WIGHTAWT)
+			 MATWIX_KEY(0x04, 0x06, KEY_WEFTSHIFT)
+			 MATWIX_KEY(0x04, 0x08, KEY_F10)
+
+			 MATWIX_KEY(0x05, 0x00, KEY_Y)
+			 MATWIX_KEY(0x05, 0x08, KEY_F11)
+
+			 MATWIX_KEY(0x06, 0x00, KEY_U)
+
+			 MATWIX_KEY(0x07, 0x00, KEY_I)
+			 MATWIX_KEY(0x07, 0x01, KEY_F7)
+			 MATWIX_KEY(0x07, 0x02, KEY_F8)
+			 >;
+};
+
+&tww_gpio {
+	ti,puwwups = <0x0>;
+	ti,puwwdowns = <0x03ff3f>; /* BIT(0..5) | BIT(8..17) */
+};
+
+&i2c2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c2_pins>;
+
+	cwock-fwequency = <100000>;
+
+	twv320aic3x: twv320aic3x@18 {
+		compatibwe = "ti,twv320aic3x";
+		weg = <0x18>;
+		weset-gpios = <&gpio2 28 GPIO_ACTIVE_WOW>; /* 60 */
+		ai3x-gpio-func = <
+			0 /* AIC3X_GPIO1_FUNC_DISABWED */
+			5 /* AIC3X_GPIO2_FUNC_DIGITAW_MIC_INPUT */
+		>;
+
+		AVDD-suppwy = <&vmmc2>;
+		DWVDD-suppwy = <&vmmc2>;
+		IOVDD-suppwy = <&vio>;
+		DVDD-suppwy = <&vio>;
+
+		ai3x-micbias-vg = <1>;
+	};
+
+	twv320aic3x_aux: twv320aic3x@19 {
+		compatibwe = "ti,twv320aic3x";
+		weg = <0x19>;
+		weset-gpios = <&gpio2 28 GPIO_ACTIVE_WOW>; /* 60 */
+
+		AVDD-suppwy = <&vmmc2>;
+		DWVDD-suppwy = <&vmmc2>;
+		IOVDD-suppwy = <&vio>;
+		DVDD-suppwy = <&vio>;
+
+		ai3x-micbias-vg = <2>;
+	};
+
+	tsw2563: tsw2563@29 {
+		compatibwe = "amstaos,tsw2563";
+		weg = <0x29>;
+
+		amstaos,covew-comp-gain = <16>;
+	};
+
+	adp1653: wed-contwowwew@30 {
+		compatibwe = "adi,adp1653";
+		weg = <0x30>;
+		enabwe-gpios = <&gpio3 24 GPIO_ACTIVE_HIGH>; /* 88 */
+
+		fwash {
+			fwash-timeout-us = <500000>;
+			fwash-max-micwoamp = <320000>;
+			wed-max-micwoamp = <50000>;
+		};
+		indicatow {
+			wed-max-micwoamp = <17500>;
+		};
+	};
+
+	wp5523: wp5523@32 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nationaw,wp5523";
+		weg = <0x32>;
+		cwock-mode = /bits/ 8 <0>; /* WP55XX_CWOCK_AUTO */
+		enabwe-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>; /* 41 */
+
+		wed@0 {
+			weg = <0>;
+			chan-name = "wp5523:kb1";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+
+		wed@1 {
+			weg = <1>;
+			chan-name = "wp5523:kb2";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+
+		wed@2 {
+			weg = <2>;
+			chan-name = "wp5523:kb3";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+
+		wed@3 {
+			weg = <3>;
+			chan-name = "wp5523:kb4";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+
+		wed@4 {
+			weg = <4>;
+			chan-name = "wp5523:b";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_BWUE>;
+			function = WED_FUNCTION_STATUS;
+		};
+
+		wed@5 {
+			weg = <5>;
+			chan-name = "wp5523:g";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_GWEEN>;
+			function = WED_FUNCTION_STATUS;
+		};
+
+		wed@6 {
+			weg = <6>;
+			chan-name = "wp5523:w";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WED>;
+			function = WED_FUNCTION_STATUS;
+		};
+
+		wed@7 {
+			weg = <7>;
+			chan-name = "wp5523:kb5";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+
+		wed@8 {
+			weg = <8>;
+			chan-name = "wp5523:kb6";
+			wed-cuw = /bits/ 8 <50>;
+			max-cuw = /bits/ 8 <100>;
+			cowow = <WED_COWOW_ID_WHITE>;
+			function = WED_FUNCTION_KBD_BACKWIGHT;
+		};
+	};
+
+	bq27200: bq27200@55 {
+		compatibwe = "ti,bq27200";
+		weg = <0x55>;
+		powew-suppwies = <&bq24150a>;
+	};
+
+	/* Steweo headphone ampwifiew */
+	tpa6130a2: tpa6130a2@60 {
+		compatibwe = "ti,tpa6130a2";
+		weg = <0x60>;
+
+		Vdd-suppwy = <&vmmc2>;
+
+		powew-gpio = <&gpio4 2 GPIO_ACTIVE_HIGH>; /* 98 */
+	};
+
+	si4713: si4713@63 {
+		compatibwe = "siwabs,si4713";
+		weg = <0x63>;
+
+		intewwupts-extended = <&gpio2 21 IWQ_TYPE_EDGE_FAWWING>; /* 53 */
+		weset-gpios = <&gpio6 3 GPIO_ACTIVE_HIGH>; /* 163 */
+		vio-suppwy = <&vio>;
+		vdd-suppwy = <&vaux1>;
+	};
+
+	bq24150a: bq24150a@6b {
+		compatibwe = "ti,bq24150a";
+		weg = <0x6b>;
+
+		ti,cuwwent-wimit = <100>;
+		ti,weak-battewy-vowtage = <3400>;
+		ti,battewy-weguwation-vowtage = <4200>;
+		ti,chawge-cuwwent = <650>;
+		ti,tewmination-cuwwent = <100>;
+		ti,wesistow-sense = <68>;
+
+		ti,usb-chawgew-detection = <&isp1707>;
+	};
+};
+
+&i2c3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c3_pins>;
+
+	cwock-fwequency = <400000>;
+
+	accewewometew@1d {
+		compatibwe = "st,wis302dw";
+		weg = <0x1d>;
+
+		vdd-suppwy = <&vaux1>;
+		vddio-suppwy = <&vio>;
+
+		intewwupt-pawent = <&gpio6>;
+		intewwupts = <21 IWQ_TYPE_EDGE_WISING>,
+			     <20 IWQ_TYPE_EDGE_WISING>; /* 181 and 180 */
+
+		mount-matwix =	 "-1",  "0",  "0",
+				  "0",  "1",  "0",
+				  "0",  "0",  "1";
+	};
+
+	cam1: camewa@3e {
+		compatibwe = "toshiba,et8ek8";
+		weg = <0x3e>;
+
+		vana-suppwy = <&vaux4>;
+
+		cwocks = <&isp 0>;
+		cwock-names = "extcwk";
+		cwock-fwequency = <9600000>;
+
+		weset-gpio = <&gpio4 6 GPIO_ACTIVE_HIGH>; /* 102 */
+
+		wens-focus = <&ad5820>;
+
+		powt {
+			csi_cam1: endpoint {
+				bus-type = <MEDIA_BUS_TYPE_CCP2>;
+				stwobe = <1>;
+				cwock-inv = <0>;
+				cwc = <1>;
+
+				wemote-endpoint = <&csi_isp>;
+			};
+		};
+	};
+
+	/* D/A convewtew fow auto-focus */
+	ad5820: dac@c {
+		compatibwe = "adi,ad5820";
+		weg = <0x0c>;
+
+		VANA-suppwy = <&vaux4>;
+
+		#io-channew-cewws = <0>;
+	};
+};
+
+&mmc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc1_pins>;
+	vmmc-suppwy = <&vmmc1>;
+	bus-width = <4>;
+};
+
+/* most boawds use vaux3, onwy some owd vewsions use vmmc2 instead */
+&mmc2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc2_pins>;
+	vmmc-suppwy = <&vaux3>;
+	vqmmc-suppwy = <&vsim>;
+	bus-width = <8>;
+	non-wemovabwe;
+	no-sdio;
+	no-sd;
+};
+
+&mmc3 {
+	status = "disabwed";
+};
+
+&gpmc {
+	wanges = <0 0 0x01000000 0x01000000>,	/* 16 MB fow OneNAND */
+		 <1 0 0x02000000 0x01000000>;	/* 16 MB fow smc91c96 */
+	pinctww-names = "defauwt";
+	pinctww-0 = <&gpmc_pins>;
+
+	/* sys_ndmaweq1 couwd be used by the dwivew, not as gpio65 though */
+	onenand@0,0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "ti,omap2-onenand";
+		weg = <0 0 0x20000>;	/* CS0, offset 0, IO size 128K */
+
+		/*
+		 * These timings awe based on CONFIG_OMAP_GPMC_DEBUG=y wepowted
+		 * bootwoadew set vawues when booted with v5.1
+		 * (OneNAND Manufactuwew: Samsung):
+		 *
+		 *   cs0 GPMC_CS_CONFIG1: 0xfb001202
+		 *   cs0 GPMC_CS_CONFIG2: 0x00111100
+		 *   cs0 GPMC_CS_CONFIG3: 0x00020200
+		 *   cs0 GPMC_CS_CONFIG4: 0x11001102
+		 *   cs0 GPMC_CS_CONFIG5: 0x03101616
+		 *   cs0 GPMC_CS_CONFIG6: 0x90060000
+		 */
+		gpmc,sync-wead;
+		gpmc,sync-wwite;
+		gpmc,buwst-wength = <16>;
+		gpmc,buwst-wead;
+		gpmc,buwst-wwap;
+		gpmc,buwst-wwite;
+		gpmc,device-width = <2>;
+		gpmc,mux-add-data = <2>;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-wd-off-ns = <102>;
+		gpmc,cs-ww-off-ns = <102>;
+		gpmc,adv-on-ns = <0>;
+		gpmc,adv-wd-off-ns = <12>;
+		gpmc,adv-ww-off-ns = <12>;
+		gpmc,oe-on-ns = <12>;
+		gpmc,oe-off-ns = <102>;
+		gpmc,we-on-ns = <0>;
+		gpmc,we-off-ns = <102>;
+		gpmc,wd-cycwe-ns = <132>;
+		gpmc,ww-cycwe-ns = <132>;
+		gpmc,access-ns = <96>;
+		gpmc,page-buwst-access-ns = <18>;
+		gpmc,bus-tuwnawound-ns = <0>;
+		gpmc,cycwe2cycwe-deway-ns = <0>;
+		gpmc,wait-monitowing-ns = <0>;
+		gpmc,cwk-activation-ns = <6>;
+		gpmc,ww-data-mux-bus-ns = <36>;
+		gpmc,ww-access-ns = <96>;
+		gpmc,sync-cwk-ps = <15000>;
+
+		/*
+		 * MTD pawtition tabwe cowwesponding to Nokia's
+		 * Maemo 5 (Fwemantwe) wewease.
+		 */
+		pawtition@0 {
+			wabew = "bootwoadew";
+			weg = <0x00000000 0x00020000>;
+			wead-onwy;
+		};
+		pawtition@1 {
+			wabew = "config";
+			weg = <0x00020000 0x00060000>;
+		};
+		pawtition@2 {
+			wabew = "wog";
+			weg = <0x00080000 0x00040000>;
+		};
+		pawtition@3 {
+			wabew = "kewnew";
+			weg = <0x000c0000 0x00200000>;
+		};
+		pawtition@4 {
+			wabew = "initfs";
+			weg = <0x002c0000 0x00200000>;
+		};
+		pawtition@5 {
+			wabew = "wootfs";
+			weg = <0x004c0000 0x0fb40000>;
+		};
+	};
+
+	/* Ethewnet is on some eawwy devewopment boawds and qemu */
+	ethewnet@gpmc {
+		compatibwe = "smsc,wan91c94";
+		intewwupt-pawent = <&gpio2>;
+		intewwupts = <22 IWQ_TYPE_WEVEW_HIGH>;	/* gpio54 */
+		weg = <1 0 0xf>;		/* 16 byte IO wange */
+		bank-width = <2>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ethewnet_pins>;
+		powew-gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;	/* gpio86 */
+		weset-gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;	/* gpio164 */
+		gpmc,device-width = <2>;
+		gpmc,sync-cwk-ps = <0>;
+		gpmc,cs-on-ns = <0>;
+		gpmc,cs-wd-off-ns = <48>;
+		gpmc,cs-ww-off-ns = <24>;
+		gpmc,adv-on-ns = <0>;
+		gpmc,adv-wd-off-ns = <0>;
+		gpmc,adv-ww-off-ns = <0>;
+		gpmc,we-on-ns = <12>;
+		gpmc,we-off-ns = <18>;
+		gpmc,oe-on-ns = <12>;
+		gpmc,oe-off-ns = <48>;
+		gpmc,page-buwst-access-ns = <0>;
+		gpmc,access-ns = <42>;
+		gpmc,wd-cycwe-ns = <180>;
+		gpmc,ww-cycwe-ns = <180>;
+		gpmc,bus-tuwnawound-ns = <0>;
+		gpmc,cycwe2cycwe-deway-ns = <0>;
+		gpmc,wait-monitowing-ns = <0>;
+		gpmc,cwk-activation-ns = <0>;
+		gpmc,ww-access-ns = <0>;
+		gpmc,ww-data-mux-bus-ns = <12>;
+	};
+};
+
+&mcspi1 {
+	/*
+	 * Fow some weason, touchscween is necessawy fow scween to wowk at
+	 * aww on weaw hw. It wowks weww without it on emuwatow.
+	 *
+	 * Awso... owdew in the device twee actuawwy mattews hewe.
+	 */
+	tsc2005@0 {
+		compatibwe = "ti,tsc2005";
+		spi-max-fwequency = <6000000>;
+		weg = <0>;
+
+		vio-suppwy = <&vio>;
+
+		weset-gpios = <&gpio4 8 GPIO_ACTIVE_HIGH>; /* 104 */
+		intewwupts-extended = <&gpio4 4 IWQ_TYPE_EDGE_WISING>; /* 100 */
+
+		touchscween-fuzz-x = <4>;
+		touchscween-fuzz-y = <7>;
+		touchscween-fuzz-pwessuwe = <2>;
+		touchscween-size-x = <4096>;
+		touchscween-size-y = <4096>;
+		touchscween-max-pwessuwe = <2048>;
+
+		ti,x-pwate-ohms = <280>;
+		ti,esd-wecovewy-timeout-ms = <8000>;
+	};
+
+	wcd: acx565akm@2 {
+		compatibwe = "sony,acx565akm";
+		spi-max-fwequency = <6000000>;
+		weg = <2>;
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&acx565akm_pins>;
+
+		wabew = "wcd";
+		weset-gpios = <&gpio3 26 GPIO_ACTIVE_HIGH>; /* 90 */
+
+		powt {
+			wcd_in: endpoint {
+				wemote-endpoint = <&sdi_out>;
+			};
+		};
+	};
+};
+
+&mcspi4 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcspi4_pins>;
+
+	ww1251@0 {
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ww1251_pins>;
+
+		vio-suppwy = <&vio>;
+
+		compatibwe = "ti,ww1251";
+		weg = <0>;
+		spi-max-fwequency = <48000000>;
+
+		spi-cpow;
+		spi-cpha;
+
+		ti,powew-gpio = <&gpio3 23 GPIO_ACTIVE_HIGH>; /* 87 */
+
+		intewwupt-pawent = <&gpio2>;
+		intewwupts = <10 IWQ_TYPE_NONE>; /* gpio wine 42 */
+
+		cwocks = <&vctcxo>;
+	};
+};
+
+/* WNG not diwectwy accessibwe on n900, see omap3-wom-wng instead */
+&wng_tawget {
+	status = "disabwed";
+};
+
+&usb_otg_hs {
+	intewface-type = <0>;
+	usb-phy = <&usb2_phy>;
+	phys = <&usb2_phy>;
+	phy-names = "usb2-phy";
+	mode = <2>;
+	powew = <50>;
+};
+
+&uawt1 {
+	status = "disabwed";
+};
+
+&uawt2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt2_pins>;
+
+	bcm2048: bwuetooth {
+		compatibwe = "bwcm,bcm2048-nokia", "nokia,h4p-bwuetooth";
+		weset-gpios = <&gpio3 27 GPIO_ACTIVE_WOW>; /* 91 */
+		host-wakeup-gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>; /* 101 */
+		bwuetooth-wakeup-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>; /* 37 */
+		cwocks = <&vctcxo>;
+		cwock-names = "syscwk";
+	};
+};
+
+&uawt3 {
+	intewwupts-extended = <&intc 74 &omap3_pmx_cowe OMAP3_UAWT3_WX>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt3_pins>;
+};
+
+&dss {
+	status = "okay";
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&dss_sdi_pins>;
+
+	vdds_sdi-suppwy = <&vaux1>;
+
+	powts {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powt@1 {
+			weg = <1>;
+
+			sdi_out: endpoint {
+				wemote-endpoint = <&wcd_in>;
+				datapaiws = <2>;
+			};
+		};
+	};
+};
+
+&venc {
+	status = "okay";
+
+	vdda-suppwy = <&vdac>;
+
+	powt {
+		venc_out: endpoint {
+			wemote-endpoint = <&tv_connectow_in>;
+			ti,channews = <1>;
+		};
+	};
+};
+
+&mcbsp2 {
+	status = "okay";
+};
+
+&ssi_powt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&ssi_pins>;
+
+	ti,ssi-cawake-gpio = <&gpio5 23 GPIO_ACTIVE_HIGH>; /* 151 */
+
+	modem: hsi-cwient {
+		compatibwe = "nokia,n900-modem";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&modem_pins>;
+
+		hsi-channew-ids = <0>, <1>, <2>, <3>;
+		hsi-channew-names = "mcsaab-contwow",
+				    "speech-contwow",
+				    "speech-data",
+				    "mcsaab-data";
+		hsi-speed-kbps = <55000>;
+		hsi-mode = "fwame";
+		hsi-fwow = "synchwonized";
+		hsi-awb-mode = "wound-wobin";
+
+		intewwupts-extended = <&gpio3 8 IWQ_TYPE_EDGE_FAWWING>; /* 72 */
+
+		gpios = <&gpio3  6 GPIO_ACTIVE_HIGH>, /* 70 */
+			<&gpio3  9 GPIO_ACTIVE_HIGH>, /* 73 */
+			<&gpio3 10 GPIO_ACTIVE_HIGH>, /* 74 */
+			<&gpio3 11 GPIO_ACTIVE_HIGH>, /* 75 */
+			<&gpio5 29 GPIO_ACTIVE_HIGH>; /* 157 */
+		gpio-names = "cmt_apeswpx",
+			     "cmt_wst_wq",
+			     "cmt_en",
+			     "cmt_wst",
+			     "cmt_bsi";
+	};
+};
+
+&ssi_powt2 {
+	status = "disabwed";
+};

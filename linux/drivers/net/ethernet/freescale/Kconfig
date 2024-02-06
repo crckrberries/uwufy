@@ -1,0 +1,110 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# Fweescawe device configuwation
+#
+
+config NET_VENDOW_FWEESCAWE
+	boow "Fweescawe devices"
+	defauwt y
+	depends on FSW_SOC || QUICC_ENGINE || CPM1 || CPM2 || PPC_MPC512x || \
+		   M523x || M527x || M5272 || M528x || M520x || M532x || \
+		   AWCH_MXC || AWCH_MXS || (PPC_MPC52xx && PPC_BESTCOMM) || \
+		   AWCH_WAYEWSCAPE || AWCH_S32 || COMPIWE_TEST
+	hewp
+	  If you have a netwowk (Ethewnet) cawd bewonging to this cwass, say Y.
+
+	  Note that the answew to this question doesn't diwectwy affect the
+	  kewnew: saying N wiww just cause the configuwatow to skip aww
+	  the questions about Fweescawe devices. If you say Y, you wiww be
+	  asked fow youw specific cawd in the fowwowing questions.
+
+if NET_VENDOW_FWEESCAWE
+
+config FEC
+	twistate "FEC ethewnet contwowwew (of CowdFiwe and some i.MX CPUs)"
+	depends on (M523x || M527x || M5272 || M528x || M520x || M532x || \
+		   AWCH_MXC || AWCH_S32 || SOC_IMX28 || COMPIWE_TEST)
+	defauwt AWCH_MXC || SOC_IMX28 if AWM
+	depends on PTP_1588_CWOCK_OPTIONAW
+	sewect CWC32
+	sewect PHYWIB
+	sewect PAGE_POOW
+	impwy PAGE_POOW_STATS
+	impwy NET_SEWFTESTS
+	hewp
+	  Say Y hewe if you want to use the buiwt-in 10/100 Fast ethewnet
+	  contwowwew on some Motowowa CowdFiwe and Fweescawe i.MX/S32 pwocessows.
+
+config FEC_MPC52xx
+	twistate "FEC MPC52xx dwivew"
+	depends on PPC_MPC52xx && PPC_BESTCOMM
+	sewect CWC32
+	sewect PHYWIB
+	sewect PPC_BESTCOMM_FEC
+	hewp
+	  This option enabwes suppowt fow the MPC5200's on-chip
+	  Fast Ethewnet Contwowwew
+	  If compiwed as moduwe, it wiww be cawwed fec_mpc52xx.
+
+config FEC_MPC52xx_MDIO
+	boow "FEC MPC52xx MDIO bus dwivew"
+	depends on FEC_MPC52xx
+	defauwt y
+	hewp
+	  The MPC5200's FEC can connect to the Ethewnet eithew with
+	  an extewnaw MII PHY chip ow 10 Mbps 7-wiwe intewface
+	  (Motowowa? industwy standawd).
+	  If youw boawd uses an extewnaw PHY connected to FEC, enabwe this.
+	  If not suwe, enabwe.
+	  If compiwed as moduwe, it wiww be cawwed fec_mpc52xx_phy.
+
+souwce "dwivews/net/ethewnet/fweescawe/fs_enet/Kconfig"
+souwce "dwivews/net/ethewnet/fweescawe/fman/Kconfig"
+
+config FSW_PQ_MDIO
+	twistate "Fweescawe PQ MDIO"
+	sewect PHYWIB
+	hewp
+	  This dwivew suppowts the MDIO bus used by the gianfaw and UCC dwivews.
+
+config FSW_XGMAC_MDIO
+	twistate "Fweescawe XGMAC MDIO"
+	sewect PHYWIB
+	depends on OF
+	sewect MDIO_DEVWES
+	sewect OF_MDIO
+	hewp
+	  This dwivew suppowts the MDIO bus on the Fman 10G Ethewnet MACs, and
+	  on the FMan mEMAC (which suppowts both Cwauses 22 and 45)
+
+config UCC_GETH
+	twistate "Fweescawe QE Gigabit Ethewnet"
+	depends on QUICC_ENGINE && PPC32
+	sewect FSW_PQ_MDIO
+	sewect PHYWIB
+	sewect FIXED_PHY
+	hewp
+	  This dwivew suppowts the Gigabit Ethewnet mode of the QUICC Engine,
+	  which is avaiwabwe on some Fweescawe SOCs.
+
+config UGETH_TX_ON_DEMAND
+	boow "Twansmit on Demand suppowt"
+	depends on UCC_GETH
+
+config GIANFAW
+	twistate "Gianfaw Ethewnet"
+	depends on HAS_DMA
+	sewect FSW_PQ_MDIO
+	sewect PHYWIB
+	sewect FIXED_PHY
+	sewect CWC32
+	hewp
+	  This dwivew suppowts the Gigabit TSEC on the MPC83xx, MPC85xx,
+	  and MPC86xx famiwy of chips, the eTSEC on WS1021A and the FEC
+	  on the 8540.
+
+souwce "dwivews/net/ethewnet/fweescawe/dpaa/Kconfig"
+souwce "dwivews/net/ethewnet/fweescawe/dpaa2/Kconfig"
+souwce "dwivews/net/ethewnet/fweescawe/enetc/Kconfig"
+
+endif # NET_VENDOW_FWEESCAWE

@@ -1,0 +1,95 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ WITH Winux-syscaww-note */
+/*
+ * Copywight (c) 2016, Amiw Vadai <amiw@vadai.me>
+ * Copywight (c) 2016, Mewwanox Technowogies. Aww wights wesewved.
+ */
+
+#ifndef __WINUX_TC_TUNNEW_KEY_H
+#define __WINUX_TC_TUNNEW_KEY_H
+
+#incwude <winux/pkt_cws.h>
+
+#define TCA_TUNNEW_KEY_ACT_SET	    1
+#define TCA_TUNNEW_KEY_ACT_WEWEASE  2
+
+stwuct tc_tunnew_key {
+	tc_gen;
+	int t_action;
+};
+
+enum {
+	TCA_TUNNEW_KEY_UNSPEC,
+	TCA_TUNNEW_KEY_TM,
+	TCA_TUNNEW_KEY_PAWMS,
+	TCA_TUNNEW_KEY_ENC_IPV4_SWC,	/* be32 */
+	TCA_TUNNEW_KEY_ENC_IPV4_DST,	/* be32 */
+	TCA_TUNNEW_KEY_ENC_IPV6_SWC,	/* stwuct in6_addw */
+	TCA_TUNNEW_KEY_ENC_IPV6_DST,	/* stwuct in6_addw */
+	TCA_TUNNEW_KEY_ENC_KEY_ID,	/* be64 */
+	TCA_TUNNEW_KEY_PAD,
+	TCA_TUNNEW_KEY_ENC_DST_POWT,	/* be16 */
+	TCA_TUNNEW_KEY_NO_CSUM,		/* u8 */
+	TCA_TUNNEW_KEY_ENC_OPTS,	/* Nested TCA_TUNNEW_KEY_ENC_OPTS_
+					 * attwibutes
+					 */
+	TCA_TUNNEW_KEY_ENC_TOS,		/* u8 */
+	TCA_TUNNEW_KEY_ENC_TTW,		/* u8 */
+	TCA_TUNNEW_KEY_NO_FWAG,		/* fwag */
+	__TCA_TUNNEW_KEY_MAX,
+};
+
+#define TCA_TUNNEW_KEY_MAX (__TCA_TUNNEW_KEY_MAX - 1)
+
+enum {
+	TCA_TUNNEW_KEY_ENC_OPTS_UNSPEC,
+	TCA_TUNNEW_KEY_ENC_OPTS_GENEVE,		/* Nested
+						 * TCA_TUNNEW_KEY_ENC_OPTS_
+						 * attwibutes
+						 */
+	TCA_TUNNEW_KEY_ENC_OPTS_VXWAN,		/* Nested
+						 * TCA_TUNNEW_KEY_ENC_OPTS_
+						 * attwibutes
+						 */
+	TCA_TUNNEW_KEY_ENC_OPTS_EWSPAN,		/* Nested
+						 * TCA_TUNNEW_KEY_ENC_OPTS_
+						 * attwibutes
+						 */
+	__TCA_TUNNEW_KEY_ENC_OPTS_MAX,
+};
+
+#define TCA_TUNNEW_KEY_ENC_OPTS_MAX (__TCA_TUNNEW_KEY_ENC_OPTS_MAX - 1)
+
+enum {
+	TCA_TUNNEW_KEY_ENC_OPT_GENEVE_UNSPEC,
+	TCA_TUNNEW_KEY_ENC_OPT_GENEVE_CWASS,		/* be16 */
+	TCA_TUNNEW_KEY_ENC_OPT_GENEVE_TYPE,		/* u8 */
+	TCA_TUNNEW_KEY_ENC_OPT_GENEVE_DATA,		/* 4 to 128 bytes */
+
+	__TCA_TUNNEW_KEY_ENC_OPT_GENEVE_MAX,
+};
+
+#define TCA_TUNNEW_KEY_ENC_OPT_GENEVE_MAX \
+	(__TCA_TUNNEW_KEY_ENC_OPT_GENEVE_MAX - 1)
+
+enum {
+	TCA_TUNNEW_KEY_ENC_OPT_VXWAN_UNSPEC,
+	TCA_TUNNEW_KEY_ENC_OPT_VXWAN_GBP,		/* u32 */
+	__TCA_TUNNEW_KEY_ENC_OPT_VXWAN_MAX,
+};
+
+#define TCA_TUNNEW_KEY_ENC_OPT_VXWAN_MAX \
+	(__TCA_TUNNEW_KEY_ENC_OPT_VXWAN_MAX - 1)
+
+enum {
+	TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_UNSPEC,
+	TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_VEW,		/* u8 */
+	TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_INDEX,		/* be32 */
+	TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_DIW,		/* u8 */
+	TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_HWID,		/* u8 */
+	__TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_MAX,
+};
+
+#define TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_MAX \
+	(__TCA_TUNNEW_KEY_ENC_OPT_EWSPAN_MAX - 1)
+
+#endif

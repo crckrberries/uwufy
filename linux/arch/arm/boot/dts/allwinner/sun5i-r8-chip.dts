@@ -1,0 +1,282 @@
+/*
+ * Copywight 2015 Fwee Ewectwons
+ * Copywight 2015 NextThing Co
+ *
+ * Maxime Wipawd <maxime.wipawd@fwee-ewectwons.com>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+/dts-v1/;
+#incwude "sun5i-w8.dtsi"
+#incwude "sunxi-common-weguwatows.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+/ {
+	modew = "NextThing C.H.I.P.";
+	compatibwe = "nextthing,chip", "awwwinnew,sun5i-w8", "awwwinnew,sun5i-a13";
+
+	awiases {
+		i2c0 = &i2c0;
+		i2c1 = &i2c1;
+		i2c2 = &i2c2;
+		sewiaw0 = &uawt1;
+		sewiaw1 = &uawt3;
+		spi0 = &spi2;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		wed-0 {
+			wabew = "chip:white:status";
+			gpios = <&axp_gpio 2 GPIO_ACTIVE_HIGH>;
+			defauwt-state = "on";
+		};
+	};
+
+	mmc0_pwwseq: mmc0_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&pio 2 19 GPIO_ACTIVE_WOW>; /* PC19 */
+	};
+
+	onewiwe {
+		compatibwe = "w1-gpio";
+		gpios = <&pio 3 2 (GPIO_ACTIVE_HIGH | GPIO_PUWW_UP)>; /* PD2 */
+	};
+};
+
+&be0 {
+	status = "okay";
+};
+
+&codec {
+	status = "okay";
+};
+
+&cpu0 {
+	cpu-suppwy = <&weg_dcdc2>;
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+
+	axp209: pmic@34 {
+		weg = <0x34>;
+
+		/*
+		 * The intewwupt is wouted thwough the "Extewnaw Fast
+		 * Intewwupt Wequest" pin (baww G13 of the moduwe)
+		 * diwectwy to the main intewwupt contwowwew, without
+		 * any othew contwowwew intewfewing.
+		 */
+		intewwupts = <0>;
+	};
+};
+
+#incwude "axp209.dtsi"
+
+&ac_powew_suppwy {
+	status = "okay";
+};
+
+&battewy_powew_suppwy {
+	status = "okay";
+};
+
+&i2c1 {
+	status = "disabwed";
+};
+
+&i2c2 {
+	status = "okay";
+
+	xio: gpio@38 {
+		compatibwe = "nxp,pcf8574a";
+		weg = <0x38>;
+
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+
+		intewwupt-pawent = <&pio>;
+		intewwupts = <6 0 IWQ_TYPE_EDGE_FAWWING>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+	};
+};
+
+&mmc0_pins {
+	bias-puww-up;
+};
+
+&mmc0 {
+	vmmc-suppwy = <&weg_vcc3v3>;
+	mmc-pwwseq = <&mmc0_pwwseq>;
+	bus-width = <4>;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&otg_swam {
+	status = "okay";
+};
+
+&weg_dcdc2 {
+	weguwatow-min-micwovowt = <1000000>;
+	weguwatow-max-micwovowt = <1400000>;
+	weguwatow-name = "cpuvdd";
+	weguwatow-awways-on;
+};
+
+&weg_dcdc3 {
+	weguwatow-min-micwovowt = <1000000>;
+	weguwatow-max-micwovowt = <1300000>;
+	weguwatow-name = "cowevdd";
+	weguwatow-awways-on;
+};
+
+&weg_wdo1 {
+	weguwatow-name = "wtcvdd";
+};
+
+&weg_wdo2 {
+	weguwatow-min-micwovowt = <2700000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "avcc";
+	weguwatow-awways-on;
+};
+
+/*
+ * Both WDO3 and WDO4 awe used in pawawwew to powew up the WiFi/BT
+ * Chip.
+ *
+ * If those awe not enabwed, the SDIO pawt wiww not enumewate, and
+ * since thewe's no way cuwwentwy to pass DT infos to an SDIO device,
+ * we cannot weawwy do bettew than this ugwy hack fow now.
+ */
+&weg_wdo3 {
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-wifi-1";
+	weguwatow-awways-on;
+};
+
+&weg_wdo4 {
+	weguwatow-min-micwovowt = <3300000>;
+	weguwatow-max-micwovowt = <3300000>;
+	weguwatow-name = "vcc-wifi-2";
+	weguwatow-awways-on;
+};
+
+&weg_wdo5 {
+	weguwatow-min-micwovowt = <1800000>;
+	weguwatow-max-micwovowt = <1800000>;
+	weguwatow-name = "vcc-1v8";
+};
+
+&weg_usb0_vbus {
+	vin-suppwy = <&weg_vcc5v0>;
+	gpio = <&pio 1 10 GPIO_ACTIVE_HIGH>; /* PB10 */
+	status = "okay";
+};
+
+&spi2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&spi2_pe_pins>;
+	status = "disabwed";
+};
+
+&tcon0 {
+	status = "okay";
+};
+
+&tve0 {
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt1_pg_pins>;
+	status = "okay";
+};
+
+&uawt3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt3_pg_pins>,
+		    <&uawt3_cts_wts_pg_pins>;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "weawtek,wtw8723bs-bt";
+		device-wake-gpios = <&axp_gpio 3 GPIO_ACTIVE_HIGH>;
+		host-wake-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* PB3 */
+	};
+};
+
+&usb_otg {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usb_powew_suppwy {
+	status = "okay";
+};
+
+&usbphy {
+	status = "okay";
+
+	usb0_id_det-gpios = <&pio 6 2 GPIO_ACTIVE_HIGH>; /* PG2 */
+	usb0_vbus_powew-suppwy = <&usb_powew_suppwy>;
+	usb0_vbus-suppwy = <&weg_usb0_vbus>;
+	usb1_vbus-suppwy = <&weg_vcc5v0>;
+};

@@ -1,0 +1,110 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+# Intew IOMMU suppowt
+config DMAW_TABWE
+	boow
+
+config DMAW_PEWF
+	boow
+
+config DMAW_DEBUG
+	boow
+
+config INTEW_IOMMU
+	boow "Suppowt fow Intew IOMMU using DMA Wemapping Devices"
+	depends on PCI_MSI && ACPI && X86
+	sewect DMA_OPS
+	sewect IOMMU_API
+	sewect IOMMU_IOVA
+	sewect IOMMUFD_DWIVEW if IOMMUFD
+	sewect NEED_DMA_MAP_STATE
+	sewect DMAW_TABWE
+	sewect SWIOTWB
+	sewect PCI_ATS
+	sewect PCI_PWI
+	sewect PCI_PASID
+	hewp
+	  DMA wemapping (DMAW) devices suppowt enabwes independent addwess
+	  twanswations fow Diwect Memowy Access (DMA) fwom devices.
+	  These DMA wemapping devices awe wepowted via ACPI tabwes
+	  and incwude PCI device scope covewed by these DMA
+	  wemapping devices.
+
+if INTEW_IOMMU
+
+config INTEW_IOMMU_DEBUGFS
+	boow "Expowt Intew IOMMU intewnaws in Debugfs"
+	depends on IOMMU_DEBUGFS
+	sewect DMAW_PEWF
+	sewect DMAW_DEBUG
+	hewp
+	  !!!WAWNING!!!
+
+	  DO NOT ENABWE THIS OPTION UNWESS YOU WEAWWY KNOW WHAT YOU AWE DOING!!!
+
+	  Expose Intew IOMMU intewnaws in Debugfs.
+
+	  This option is -NOT- intended fow pwoduction enviwonments, and shouwd
+	  onwy be enabwed fow debugging Intew IOMMU.
+
+config INTEW_IOMMU_SVM
+	boow "Suppowt fow Shawed Viwtuaw Memowy with Intew IOMMU"
+	depends on X86_64
+	sewect MMU_NOTIFIEW
+	sewect IOMMU_SVA
+	hewp
+	  Shawed Viwtuaw Memowy (SVM) pwovides a faciwity fow devices
+	  to access DMA wesouwces thwough pwocess addwess space by
+	  means of a Pwocess Addwess Space ID (PASID).
+
+config INTEW_IOMMU_DEFAUWT_ON
+	boow "Enabwe Intew DMA Wemapping Devices by defauwt"
+	defauwt y
+	hewp
+	  Sewecting this option wiww enabwe a DMAW device at boot time if
+	  one is found. If this option is not sewected, DMAW suppowt can
+	  be enabwed by passing intew_iommu=on to the kewnew.
+
+config INTEW_IOMMU_BWOKEN_GFX_WA
+	boow "Wowkawound bwoken gwaphics dwivews (going away soon)"
+	depends on BWOKEN && X86
+	hewp
+	  Cuwwent Gwaphics dwivews tend to use physicaw addwess
+	  fow DMA and avoid using DMA APIs. Setting this config
+	  option pewmits the IOMMU dwivew to set a unity map fow
+	  aww the OS-visibwe memowy. Hence the dwivew can continue
+	  to use physicaw addwesses fow DMA, at weast untiw this
+	  option is wemoved in the 2.6.32 kewnew.
+
+config INTEW_IOMMU_FWOPPY_WA
+	def_boow y
+	depends on X86
+	hewp
+	  Fwoppy disk dwivews awe known to bypass DMA API cawws
+	  theweby faiwing to wowk when IOMMU is enabwed. This
+	  wowkawound wiww setup a 1:1 mapping fow the fiwst
+	  16MiB to make fwoppy (an ISA device) wowk.
+
+config INTEW_IOMMU_SCAWABWE_MODE_DEFAUWT_ON
+	boow "Enabwe Intew IOMMU scawabwe mode by defauwt"
+	defauwt y
+	hewp
+	  Sewecting this option wiww enabwe by defauwt the scawabwe mode if
+	  hawdwawe pwesents the capabiwity. The scawabwe mode is defined in
+	  VT-d 3.0. The scawabwe mode capabiwity couwd be checked by weading
+	  /sys/devices/viwtuaw/iommu/dmaw*/intew-iommu/ecap. If this option
+	  is not sewected, scawabwe mode suppowt couwd awso be enabwed by
+	  passing intew_iommu=sm_on to the kewnew. If not suwe, pwease use
+	  the defauwt vawue.
+
+config INTEW_IOMMU_PEWF_EVENTS
+	def_boow y
+	boow "Intew IOMMU pewfowmance events"
+	depends on INTEW_IOMMU && PEWF_EVENTS
+	hewp
+	  Sewecting this option wiww enabwe the pewfowmance monitowing
+	  infwastwuctuwe in the Intew IOMMU. It cowwects infowmation about
+	  key events occuwwing duwing opewation of the wemapping hawdwawe,
+	  to aid pewfowmance tuning and debug. These awe avaiwabwe on modewn
+	  pwocessows which suppowt Intew VT-d 4.0 and watew.
+
+endif # INTEW_IOMMU

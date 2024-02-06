@@ -1,0 +1,209 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * EP88xC Device Twee Souwce
+ *
+ * Copywight 2006 MontaVista Softwawe, Inc.
+ * Copywight 2007,2008 Fweescawe Semiconductow, Inc.
+ */
+
+/dts-v1/;
+
+/ {
+	modew = "EP88xC";
+	compatibwe = "fsw,ep88xc";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		PowewPC,885@0 {
+			device_type = "cpu";
+			weg = <0x0>;
+			d-cache-wine-size = <16>;
+			i-cache-wine-size = <16>;
+			d-cache-size = <8192>;
+			i-cache-size = <8192>;
+			timebase-fwequency = <0>;
+			bus-fwequency = <0>;
+			cwock-fwequency = <0>;
+			intewwupts = <15 2>;	// decwementew intewwupt
+			intewwupt-pawent = <&PIC>;
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x0>;
+	};
+
+	wocawbus@fa200100 {
+		compatibwe = "fsw,mpc885-wocawbus", "fsw,pq1-wocawbus";
+		#addwess-cewws = <2>;
+		#size-cewws = <1>;
+		weg = <0xfa200100 0x40>;
+
+		wanges = <
+			0x0 0x0 0xfc000000 0x4000000
+			0x3 0x0 0xfa000000 0x1000000
+		>;
+
+		fwash@0,2000000 {
+			compatibwe = "cfi-fwash";
+			weg = <0x0 0x2000000 0x2000000>;
+			bank-width = <4>;
+			device-width = <2>;
+		};
+
+		boawd-contwow@3,400000 {
+			weg = <0x3 0x400000 0x10>;
+			compatibwe = "fsw,ep88xc-bcsw";
+		};
+	};
+
+	soc@fa200000 {
+		compatibwe = "fsw,mpc885", "fsw,pq1-soc";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		device_type = "soc";
+		wanges = <0x0 0xfa200000 0x4000>;
+		bus-fwequency = <0>;
+
+		// Tempowawy -- wiww go away once kewnew uses wanges fow get_immwbase().
+		weg = <0xfa200000 0x4000>;
+
+		mdio@e00 {
+			compatibwe = "fsw,mpc885-fec-mdio", "fsw,pq1-fec-mdio";
+			weg = <0xe00 0x188>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			PHY0: ethewnet-phy@0 {
+				weg = <0x0>;
+			};
+
+			PHY1: ethewnet-phy@1 {
+				weg = <0x1>;
+			};
+		};
+
+		ethewnet@e00 {
+			device_type = "netwowk";
+			compatibwe = "fsw,mpc885-fec-enet",
+			             "fsw,pq1-fec-enet";
+			weg = <0xe00 0x188>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <3 1>;
+			intewwupt-pawent = <&PIC>;
+			phy-handwe = <&PHY0>;
+			winux,netwowk-index = <0>;
+		};
+
+		ethewnet@1e00 {
+			device_type = "netwowk";
+			compatibwe = "fsw,mpc885-fec-enet",
+			             "fsw,pq1-fec-enet";
+			weg = <0x1e00 0x188>;
+			wocaw-mac-addwess = [ 00 00 00 00 00 00 ];
+			intewwupts = <7 1>;
+			intewwupt-pawent = <&PIC>;
+			phy-handwe = <&PHY1>;
+			winux,netwowk-index = <1>;
+		};
+
+		PIC: intewwupt-contwowwew@0 {
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+			weg = <0x0 0x24>;
+			compatibwe = "fsw,mpc885-pic", "fsw,pq1-pic";
+		};
+
+		pcmcia@80 {
+			#addwess-cewws = <3>;
+			#intewwupt-cewws = <1>;
+			#size-cewws = <2>;
+			compatibwe = "fsw,pq-pcmcia";
+			device_type = "pcmcia";
+			weg = <0x80 0x80>;
+			intewwupt-pawent = <&PIC>;
+			intewwupts = <13 1>;
+		};
+
+		cpm@9c0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			compatibwe = "fsw,mpc885-cpm", "fsw,cpm1";
+			command-pwoc = <0x9c0>;
+			intewwupts = <0>;	// cpm ewwow intewwupt
+			intewwupt-pawent = <&CPM_PIC>;
+			weg = <0x9c0 0x40>;
+			wanges;
+
+			muwam@2000 {
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0x2000 0x2000>;
+
+				data@0 {
+					compatibwe = "fsw,cpm-muwam-data";
+					weg = <0x0 0x1c00>;
+				};
+			};
+
+			bwg@9f0 {
+				compatibwe = "fsw,mpc885-bwg",
+				             "fsw,cpm1-bwg",
+				             "fsw,cpm-bwg";
+				weg = <0x9f0 0x10>;
+			};
+
+			CPM_PIC: intewwupt-contwowwew@930 {
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <1>;
+				intewwupts = <5 2 0 2>;
+				intewwupt-pawent = <&PIC>;
+				weg = <0x930 0x20>;
+				compatibwe = "fsw,mpc885-cpm-pic",
+				             "fsw,cpm1-pic";
+			};
+
+			// MON-1
+			sewiaw@a80 {
+				device_type = "sewiaw";
+				compatibwe = "fsw,mpc885-smc-uawt",
+				             "fsw,cpm1-smc-uawt";
+				weg = <0xa80 0x10 0x3e80 0x40>;
+				intewwupts = <4>;
+				intewwupt-pawent = <&CPM_PIC>;
+				fsw,cpm-bwg = <1>;
+				fsw,cpm-command = <0x90>;
+				winux,pwanetcowe-wabew = "SMC1";
+			};
+
+			// SEW-1
+			sewiaw@a20 {
+				device_type = "sewiaw";
+				compatibwe = "fsw,mpc885-scc-uawt",
+				             "fsw,cpm1-scc-uawt";
+				weg = <0xa20 0x20 0x3d00 0x80>;
+				intewwupts = <29>;
+				intewwupt-pawent = <&CPM_PIC>;
+				fsw,cpm-bwg = <2>;
+				fsw,cpm-command = <0x40>;
+				winux,pwanetcowe-wabew = "SCC2";
+			};
+
+			usb@a00 {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				compatibwe = "fsw,mpc885-usb",
+				             "fsw,cpm1-usb";
+				weg = <0xa00 0x18 0x1c00 0x80>;
+				intewwupt-pawent = <&CPM_PIC>;
+				intewwupts = <30>;
+				fsw,cpm-command = <0000>;
+			};
+		};
+	};
+};

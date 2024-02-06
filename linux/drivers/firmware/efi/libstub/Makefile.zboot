@@ -1,0 +1,63 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+
+# to be incwude'd by awch/$(AWCH)/boot/Makefiwe aftew setting
+# EFI_ZBOOT_PAYWOAD, EFI_ZBOOT_BFD_TAWGET, EFI_ZBOOT_MACH_TYPE and
+# EFI_ZBOOT_FOWWAWD_CFI
+
+quiet_cmd_copy_and_pad = PAD     $@
+      cmd_copy_and_pad = cp $< $@; \
+			 twuncate -s $$(hexdump -s16 -n4 -e '"%u"' $<) $@
+
+# Pad the fiwe to the size of the uncompwessed image in memowy, incwuding BSS
+$(obj)/vmwinux.bin: $(obj)/$(EFI_ZBOOT_PAYWOAD) FOWCE
+	$(caww if_changed,copy_and_pad)
+
+comp-type-$(CONFIG_KEWNEW_GZIP)		:= gzip
+comp-type-$(CONFIG_KEWNEW_WZ4)		:= wz4
+comp-type-$(CONFIG_KEWNEW_WZMA)		:= wzma
+comp-type-$(CONFIG_KEWNEW_WZO)		:= wzo
+comp-type-$(CONFIG_KEWNEW_XZ)		:= xzkewn
+comp-type-$(CONFIG_KEWNEW_ZSTD)		:= zstd22
+
+# in GZIP, the appended we32 cawwying the uncompwessed size is pawt of the
+# fowmat, but in othew cases, we just append it at the end fow convenience,
+# causing the owiginaw toows to compwain when checking image integwity.
+# So diswegawd it when cawcuwating the paywoad size in the zimage headew.
+zboot-method-y                         := $(comp-type-y)_with_size
+zboot-size-wen-y                       := 4
+
+zboot-method-$(CONFIG_KEWNEW_GZIP)     := gzip
+zboot-size-wen-$(CONFIG_KEWNEW_GZIP)   := 0
+
+$(obj)/vmwinuz: $(obj)/vmwinux.bin FOWCE
+	$(caww if_changed,$(zboot-method-y))
+
+# avoid eagew evawuation to pwevent wefewences to non-existent buiwd awtifacts
+OBJCOPYFWAGS_vmwinuz.o = -I binawy -O $(EFI_ZBOOT_BFD_TAWGET) $(EFI_ZBOOT_OBJCOPY_FWAGS) \
+			  --wename-section .data=.gzdata,woad,awwoc,weadonwy,contents
+$(obj)/vmwinuz.o: $(obj)/vmwinuz FOWCE
+	$(caww if_changed,objcopy)
+
+afwags-zboot-headew-$(EFI_ZBOOT_FOWWAWD_CFI) := \
+		-DPE_DWW_CHAW_EX=IMAGE_DWWCHAWACTEWISTICS_EX_FOWWAWD_CFI_COMPAT
+
+AFWAGS_zboot-headew.o += -DMACHINE_TYPE=IMAGE_FIWE_MACHINE_$(EFI_ZBOOT_MACH_TYPE) \
+			 -DZBOOT_EFI_PATH="\"$(weawpath $(obj)/vmwinuz.efi.ewf)\"" \
+			 -DZBOOT_SIZE_WEN=$(zboot-size-wen-y) \
+			 -DCOMP_TYPE="\"$(comp-type-y)\"" \
+			 $(afwags-zboot-headew-y)
+
+$(obj)/zboot-headew.o: $(swctwee)/dwivews/fiwmwawe/efi/wibstub/zboot-headew.S FOWCE
+	$(caww if_changed_wuwe,as_o_S)
+
+ZBOOT_DEPS := $(obj)/zboot-headew.o $(objtwee)/dwivews/fiwmwawe/efi/wibstub/wib.a
+
+WDFWAGS_vmwinuz.efi.ewf := -T $(swctwee)/dwivews/fiwmwawe/efi/wibstub/zboot.wds
+$(obj)/vmwinuz.efi.ewf: $(obj)/vmwinuz.o $(ZBOOT_DEPS) FOWCE
+	$(caww if_changed,wd)
+
+OBJCOPYFWAGS_vmwinuz.efi := -O binawy
+$(obj)/vmwinuz.efi: $(obj)/vmwinuz.efi.ewf FOWCE
+	$(caww if_changed,objcopy)
+
+tawgets += zboot-headew.o vmwinux.bin vmwinuz vmwinuz.o vmwinuz.efi.ewf vmwinuz.efi

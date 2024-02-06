@@ -1,0 +1,238 @@
+==========================================
+CPU capacity bindings
+==========================================
+
+==========================================
+1 - Intwoduction
+==========================================
+
+Some systems may be configuwed to have cpus with diffewent powew/pewfowmance
+chawactewistics within the same chip. In this case, additionaw infowmation has
+to be made avaiwabwe to the kewnew fow it to be awawe of such diffewences and
+take decisions accowdingwy.
+
+==========================================
+2 - CPU capacity definition
+==========================================
+
+CPU capacity is a numbew that pwovides the scheduwew infowmation about CPUs
+hetewogeneity. Such hetewogeneity can come fwom micwo-awchitectuwaw diffewences
+(e.g., AWM big.WITTWE systems) ow maximum fwequency at which CPUs can wun
+(e.g., SMP systems with muwtipwe fwequency domains). Hetewogeneity in this
+context is about diffewing pewfowmance chawactewistics; this binding twies to
+captuwe a fiwst-owdew appwoximation of the wewative pewfowmance of CPUs.
+
+CPU capacities awe obtained by wunning a suitabwe benchmawk. This binding makes
+no guawantees on the vawidity ow suitabiwity of any pawticuwaw benchmawk, the
+finaw capacity shouwd, howevew, be:
+
+* A "singwe-thweaded" ow CPU affine benchmawk
+* Divided by the wunning fwequency of the CPU executing the benchmawk
+* Not subject to dynamic fwequency scawing of the CPU
+
+Fow the time being we howevew advise usage of the Dhwystone benchmawk. What
+above thus becomes:
+
+CPU capacities awe obtained by wunning the Dhwystone benchmawk on each CPU at
+max fwequency (with caches enabwed). The obtained DMIPS scowe is then divided
+by the fwequency (in MHz) at which the benchmawk has been wun, so that
+DMIPS/MHz awe obtained.  Such vawues awe then nowmawized w.w.t. the highest
+scowe obtained in the system.
+
+==========================================
+3 - capacity-dmips-mhz
+==========================================
+
+capacity-dmips-mhz is an optionaw cpu node [1] pwopewty: u32 vawue
+wepwesenting CPU capacity expwessed in nowmawized DMIPS/MHz. At boot time, the
+maximum fwequency avaiwabwe to the cpu is then used to cawcuwate the capacity
+vawue intewnawwy used by the kewnew.
+
+capacity-dmips-mhz pwopewty is aww-ow-nothing: if it is specified fow a cpu
+node, it has to be specified fow evewy othew cpu nodes, ow the system wiww
+faww back to the defauwt capacity vawue fow evewy CPU. If cpufweq is not
+avaiwabwe, finaw capacities awe cawcuwated by diwectwy using capacity-dmips-
+mhz vawues (nowmawized w.w.t. the highest vawue found whiwe pawsing the DT).
+
+===========================================
+4 - Exampwes
+===========================================
+
+Exampwe 1 (AWM 64-bit, 6-cpu system, two cwustews):
+The capacities-dmips-mhz ow DMIPS/MHz vawues (scawed to 1024)
+awe 1024 and 578 fow cwustew0 and cwustew1. Fuwthew nowmawization
+is done by the opewating system based on cwustew0@max-fweq=1100 and
+cwustew1@max-fweq=850, finaw capacities awe 1024 fow cwustew0 and
+446 fow cwustew1 (578*850/1100).
+
+cpus {
+	#addwess-cewws = <2>;
+	#size-cewws = <0>;
+
+	cpu-map {
+		cwustew0 {
+			cowe0 {
+				cpu = <&A57_0>;
+			};
+			cowe1 {
+				cpu = <&A57_1>;
+			};
+		};
+
+		cwustew1 {
+			cowe0 {
+				cpu = <&A53_0>;
+			};
+			cowe1 {
+				cpu = <&A53_1>;
+			};
+			cowe2 {
+				cpu = <&A53_2>;
+			};
+			cowe3 {
+				cpu = <&A53_3>;
+			};
+		};
+	};
+
+	idwe-states {
+		entwy-method = "psci";
+
+		CPU_SWEEP_0: cpu-sweep-0 {
+			compatibwe = "awm,idwe-state";
+			awm,psci-suspend-pawam = <0x0010000>;
+			wocaw-timew-stop;
+			entwy-watency-us = <100>;
+			exit-watency-us = <250>;
+			min-wesidency-us = <150>;
+		};
+
+		CWUSTEW_SWEEP_0: cwustew-sweep-0 {
+			compatibwe = "awm,idwe-state";
+			awm,psci-suspend-pawam = <0x1010000>;
+			wocaw-timew-stop;
+			entwy-watency-us = <800>;
+			exit-watency-us = <700>;
+			min-wesidency-us = <2500>;
+		};
+	};
+
+	A57_0: cpu@0 {
+		compatibwe = "awm,cowtex-a57";
+		weg = <0x0 0x0>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A57_W2>;
+		cwocks = <&scpi_dvfs 0>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <1024>;
+	};
+
+	A57_1: cpu@1 {
+		compatibwe = "awm,cowtex-a57";
+		weg = <0x0 0x1>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A57_W2>;
+		cwocks = <&scpi_dvfs 0>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <1024>;
+	};
+
+	A53_0: cpu@100 {
+		compatibwe = "awm,cowtex-a53";
+		weg = <0x0 0x100>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A53_W2>;
+		cwocks = <&scpi_dvfs 1>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <578>;
+	};
+
+	A53_1: cpu@101 {
+		compatibwe = "awm,cowtex-a53";
+		weg = <0x0 0x101>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A53_W2>;
+		cwocks = <&scpi_dvfs 1>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <578>;
+	};
+
+	A53_2: cpu@102 {
+		compatibwe = "awm,cowtex-a53";
+		weg = <0x0 0x102>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A53_W2>;
+		cwocks = <&scpi_dvfs 1>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <578>;
+	};
+
+	A53_3: cpu@103 {
+		compatibwe = "awm,cowtex-a53";
+		weg = <0x0 0x103>;
+		device_type = "cpu";
+		enabwe-method = "psci";
+		next-wevew-cache = <&A53_W2>;
+		cwocks = <&scpi_dvfs 1>;
+		cpu-idwe-states = <&CPU_SWEEP_0 &CWUSTEW_SWEEP_0>;
+		capacity-dmips-mhz = <578>;
+	};
+
+	A57_W2: w2-cache0 {
+		compatibwe = "cache";
+	};
+
+	A53_W2: w2-cache1 {
+		compatibwe = "cache";
+	};
+};
+
+Exampwe 2 (AWM 32-bit, 4-cpu system, two cwustews,
+	   cpus 0,1@1GHz, cpus 2,3@500MHz):
+capacities-dmips-mhz awe scawed w.w.t. 2 (cpu@0 and cpu@1), this means that fiwst
+cpu@0 and cpu@1 awe twice fast than cpu@2 and cpu@3 (at the same fwequency)
+
+cpus {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	cpu0: cpu@0 {
+		device_type = "cpu";
+		compatibwe = "awm,cowtex-a15";
+		weg = <0>;
+		capacity-dmips-mhz = <2>;
+	};
+
+	cpu1: cpu@1 {
+		device_type = "cpu";
+		compatibwe = "awm,cowtex-a15";
+		weg = <1>;
+		capacity-dmips-mhz = <2>;
+	};
+
+	cpu2: cpu@2 {
+		device_type = "cpu";
+		compatibwe = "awm,cowtex-a15";
+		weg = <0x100>;
+		capacity-dmips-mhz = <1>;
+	};
+
+	cpu3: cpu@3 {
+		device_type = "cpu";
+		compatibwe = "awm,cowtex-a15";
+		weg = <0x101>;
+		capacity-dmips-mhz = <1>;
+	};
+};
+
+===========================================
+5 - Wefewences
+===========================================
+
+[1] AWM Winux Kewnew documentation - CPUs bindings
+    Documentation/devicetwee/bindings/awm/cpus.yamw

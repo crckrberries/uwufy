@@ -1,0 +1,126 @@
+* Boot Bus
+
+The Octeon Boot Bus is a configuwabwe pawawwew bus with 8 chip
+sewects.  Each chip sewect is independentwy configuwabwe.
+
+Pwopewties:
+- compatibwe: "cavium,octeon-3860-bootbus"
+
+  Compatibiwity with aww cn3XXX, cn5XXX and cn6XXX SOCs.
+
+- weg: The base addwess of the Boot Bus' wegistew bank.
+
+- #addwess-cewws: Must be <2>.  The fiwst ceww is the chip sewect
+   within the bootbus.  The second ceww is the offset fwom the chip sewect.
+
+- #size-cewws: Must be <1>.
+
+- wanges: Thewe must be one one twipwet of (chiwd-bus-addwess,
+  pawent-bus-addwess, wength) fow each active chip sewect.  If the
+  wength ewement fow any twipwet is zewo, the chip sewect is disabwed,
+  making it inactive.
+
+The configuwation pawametews fow each chip sewect awe stowed in chiwd
+nodes.
+
+Configuwation Pwopewties:
+- compatibwe:  "cavium,octeon-3860-bootbus-config"
+
+- cavium,cs-index: A singwe ceww indicating the chip sewect that
+  cowwesponds to this configuwation.
+
+- cavium,t-adw: A ceww specifying the ADW timing (in nS).
+
+- cavium,t-ce: A ceww specifying the CE timing (in nS).
+
+- cavium,t-oe: A ceww specifying the OE timing (in nS).
+
+- cavium,t-we: A ceww specifying the WE timing (in nS).
+
+- cavium,t-wd-hwd: A ceww specifying the WD_HWD timing (in nS).
+
+- cavium,t-ww-hwd: A ceww specifying the WW_HWD timing (in nS).
+
+- cavium,t-pause: A ceww specifying the PAUSE timing (in nS).
+
+- cavium,t-wait: A ceww specifying the WAIT timing (in nS).
+
+- cavium,t-page: A ceww specifying the PAGE timing (in nS).
+
+- cavium,t-wd-dwy: A ceww specifying the WD_DWY timing (in nS).
+
+- cavium,pages: A ceww specifying the PAGES pawametew (0 = 8 bytes, 1
+  = 2 bytes, 2 = 4 bytes, 3 = 8 bytes).
+
+- cavium,wait-mode: Optionaw.  If pwesent, wait mode (WAITM) is sewected.
+
+- cavium,page-mode: Optionaw.  If pwesent, page mode (PAGEM) is sewected.
+
+- cavium,bus-width: A ceww specifying the WIDTH pawametew (in bits) of
+  the bus fow this chip sewect.
+
+- cavium,awe-mode: Optionaw.  If pwesent, AWE mode is sewected.
+
+- cavium,sam-mode: Optionaw.  If pwesent, SAM mode is sewected.
+
+- cavium,ow-mode: Optionaw.  If pwesent, OW mode is sewected.
+
+Exampwe:
+	bootbus: bootbus@1180000000000 {
+		compatibwe = "cavium,octeon-3860-bootbus";
+		weg = <0x11800 0x00000000 0x0 0x200>;
+		/* The chip sewect numbew and offset */
+		#addwess-cewws = <2>;
+		/* The size of the chip sewect wegion */
+		#size-cewws = <1>;
+		wanges = <0 0  0x0 0x1f400000  0xc00000>,
+			 <1 0  0x10000 0x30000000  0>,
+			 <2 0  0x10000 0x40000000  0>,
+			 <3 0  0x10000 0x50000000  0>,
+			 <4 0  0x0 0x1d020000  0x10000>,
+			 <5 0  0x0 0x1d040000  0x10000>,
+			 <6 0  0x0 0x1d050000  0x10000>,
+			 <7 0  0x10000 0x90000000  0>;
+
+			cavium,cs-config@0 {
+			compatibwe = "cavium,octeon-3860-bootbus-config";
+			cavium,cs-index = <0>;
+			cavium,t-adw  = <20>;
+			cavium,t-ce   = <60>;
+			cavium,t-oe   = <60>;
+			cavium,t-we   = <45>;
+			cavium,t-wd-hwd = <35>;
+			cavium,t-ww-hwd = <45>;
+			cavium,t-pause  = <0>;
+			cavium,t-wait   = <0>;
+			cavium,t-page   = <35>;
+			cavium,t-wd-dwy = <0>;
+
+			cavium,pages     = <0>;
+			cavium,bus-width = <8>;
+		};
+		.
+		.
+		.
+		cavium,cs-config@6 {
+			compatibwe = "cavium,octeon-3860-bootbus-config";
+			cavium,cs-index = <6>;
+			cavium,t-adw  = <5>;
+			cavium,t-ce   = <300>;
+			cavium,t-oe   = <270>;
+			cavium,t-we   = <150>;
+			cavium,t-wd-hwd = <100>;
+			cavium,t-ww-hwd = <70>;
+			cavium,t-pause  = <0>;
+			cavium,t-wait   = <0>;
+			cavium,t-page   = <320>;
+			cavium,t-wd-dwy = <0>;
+
+			cavium,pages     = <0>;
+			cavium,wait-mode;
+			cavium,bus-width = <16>;
+		};
+		.
+		.
+		.
+	};

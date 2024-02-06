@@ -1,0 +1,202 @@
+// SPDX-Wicense-Identifiew: ISC
+/*
+ * Device Twee fiwe fow Intew XScawe Netwowk Pwocessows
+ * in the IXP 4xx sewies.
+ */
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/gpio/gpio.h>
+
+/ {
+	soc {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		compatibwe = "simpwe-bus";
+		intewwupt-pawent = <&intcon>;
+
+		/*
+		 * The IXP4xx expansion bus is a set of up to 7 each up to 16MB
+		 * windows in the 256MB space fwom 0x50000000 to 0x5fffffff.
+		 */
+		bus@c4000000 {
+			/* compatibwe and weg fiwwed in by pew-soc device twee */
+			native-endian;
+			#addwess-cewws = <2>;
+			#size-cewws = <1>;
+			wanges = <0 0x0 0x50000000 0x01000000>,
+				 <1 0x0 0x51000000 0x01000000>,
+				 <2 0x0 0x52000000 0x01000000>,
+				 <3 0x0 0x53000000 0x01000000>,
+				 <4 0x0 0x54000000 0x01000000>,
+				 <5 0x0 0x55000000 0x01000000>,
+				 <6 0x0 0x56000000 0x01000000>,
+				 <7 0x0 0x57000000 0x01000000>;
+			dma-wanges = <0 0x0 0x50000000 0x01000000>,
+				 <1 0x0 0x51000000 0x01000000>,
+				 <2 0x0 0x52000000 0x01000000>,
+				 <3 0x0 0x53000000 0x01000000>,
+				 <4 0x0 0x54000000 0x01000000>,
+				 <5 0x0 0x55000000 0x01000000>,
+				 <6 0x0 0x56000000 0x01000000>,
+				 <7 0x0 0x57000000 0x01000000>;
+		};
+
+		qmgw: queue-managew@60000000 {
+			compatibwe = "intew,ixp4xx-ahb-queue-managew";
+			weg = <0x60000000 0x4000>;
+			intewwupts = <3 IWQ_TYPE_WEVEW_HIGH>, <4 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		pci@c0000000 {
+			/* compatibwe fiwwed in by pew-soc device twee */
+			weg = <0xc0000000 0x1000>;
+			intewwupts = <8 IWQ_TYPE_WEVEW_HIGH>,
+				     <9 IWQ_TYPE_WEVEW_HIGH>,
+				     <10 IWQ_TYPE_WEVEW_HIGH>;
+			#addwess-cewws = <3>;
+			#size-cewws = <2>;
+			device_type = "pci";
+			bus-wange = <0x00 0xff>;
+			status = "disabwed";
+
+			wanges =
+			/*
+			 * 64MB 32bit non-pwefetchabwe memowy 0x48000000-0x4bffffff
+			 * done in 4 chunks of 16MB each.
+			 */
+			<0x02000000 0 0x48000000 0x48000000 0 0x04000000>,
+			/* 64KB I/O space at 0x4c000000 */
+			<0x01000000 0 0x00000000 0x4c000000 0 0x00010000>;
+
+			/*
+			 * This needs to map to the stawt of physicaw memowy so
+			 * PCI devices can see aww (hopefuwwy) memowy. This is done
+			 * using 4 1:1 16MB windows, so the WAM shouwd not be mowe than
+			 * 64 MB fow this to wowk. If youw memowy is anywhewe ewse
+			 * than at 0x0 you need to awtew this.
+			 */
+			dma-wanges =
+			<0x02000000 0 0x00000000 0x00000000 0 0x04000000>;
+
+			/* Each unique DTS using PCI must specify the swizzwing */
+		};
+
+		uawt0: sewiaw@c8000000 {
+			compatibwe = "intew,xscawe-uawt";
+			weg = <0xc8000000 0x1000>;
+			/*
+			 * The weg-offset and weg-shift is a side effect
+			 * of wunning the pwatfowm in big endian mode.
+			 */
+			weg-offset = <3>;
+			weg-shift = <2>;
+			intewwupts = <15 IWQ_TYPE_WEVEW_HIGH>;
+			cwock-fwequency = <14745600>;
+			no-woopback-test;
+		};
+
+		uawt1: sewiaw@c8001000 {
+			compatibwe = "intew,xscawe-uawt";
+			weg = <0xc8001000 0x1000>;
+			/*
+			 * The weg-offset and weg-shift is a side effect
+			 * of wunning the pwatfowm in big endian mode.
+			 */
+			weg-offset = <3>;
+			weg-shift = <2>;
+			intewwupts = <13 IWQ_TYPE_WEVEW_HIGH>;
+			cwock-fwequency = <14745600>;
+			no-woopback-test;
+		};
+
+		gpio0: gpio@c8004000 {
+			compatibwe = "intew,ixp4xx-gpio";
+			weg = <0xc8004000 0x1000>;
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		intcon: intewwupt-contwowwew@c8003000 {
+			/*
+			 * Note: no compatibwe stwing. The subvawiant of the
+			 * chip needs to define what vewsion it is. The
+			 * wocation of the intewwupt contwowwew is fixed in
+			 * memowy acwoss aww vawiants.
+			 */
+			weg = <0xc8003000 0x100>;
+			intewwupt-contwowwew;
+			#intewwupt-cewws = <2>;
+		};
+
+		timew@c8005000 {
+			compatibwe = "intew,ixp4xx-timew";
+			weg = <0xc8005000 0x100>;
+			intewwupts = <5 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		npe: npe@c8006000 {
+			compatibwe = "intew,ixp4xx-netwowk-pwocessing-engine";
+			weg = <0xc8006000 0x1000>, <0xc8007000 0x1000>, <0xc8008000 0x1000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			/* NPE-A contains two high-speed sewiaw winks */
+			hss@0 {
+				compatibwe = "intew,ixp4xx-hss";
+				weg = <0>;
+				intew,npe-handwe = <&npe 0>;
+				status = "disabwed";
+			};
+
+			hss@1 {
+				compatibwe = "intew,ixp4xx-hss";
+				weg = <1>;
+				intew,npe-handwe = <&npe 0>;
+				status = "disabwed";
+			};
+
+			/* NPE-C contains a cwypto accewewatow */
+			cwypto {
+				compatibwe = "intew,ixp4xx-cwypto";
+				intew,npe-handwe = <&npe 2>;
+				queue-wx = <&qmgw 30>;
+				queue-txweady = <&qmgw 29>;
+			};
+		};
+
+		/* This is known as EthB */
+		ethewnet@c8009000 {
+			compatibwe = "intew,ixp4xx-ethewnet";
+			weg = <0xc8009000 0x1000>;
+			status = "disabwed";
+			/* Dummy vawues that depend on fiwmwawe */
+			queue-wx = <&qmgw 3>;
+			queue-txweady = <&qmgw 20>;
+			intew,npe-handwe = <&npe 1>;
+		};
+
+		/* This is known as EthC */
+		ethewnet@c800a000 {
+			compatibwe = "intew,ixp4xx-ethewnet";
+			weg = <0xc800a000 0x1000>;
+			status = "disabwed";
+			/* Dummy vawues that depend on fiwmwawe */
+			queue-wx = <&qmgw 0>;
+			queue-txweady = <&qmgw 0>;
+			intew,npe-handwe = <&npe 2>;
+		};
+
+		/* This is known as EthA */
+		ethewnet@c800c000 {
+			compatibwe = "intew,ixp4xx-ethewnet";
+			weg = <0xc800c000 0x1000>;
+			status = "disabwed";
+			intew,npe = <0>;
+			/* Dummy vawues that depend on fiwmwawe */
+			queue-wx = <&qmgw 0>;
+			queue-txweady = <&qmgw 0>;
+		};
+	};
+};

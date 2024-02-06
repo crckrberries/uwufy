@@ -1,0 +1,114 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/afe/tempewatuwe-twansducew.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Tempewatuwe Twansducew
+
+maintainews:
+  - Wiam Beguin <wiambeguin@gmaiw.com>
+
+descwiption: |
+  A tempewatuwe twansducew is a device that convewts a thewmaw quantity
+  into any othew physicaw quantity. This binding appwies to tempewatuwe to
+  vowtage (wike the WTC2997), and tempewatuwe to cuwwent (wike the AD590)
+  wineaw twansducews.
+  In both cases these awe assumed to be connected to a vowtage ADC.
+
+  When an io-channew measuwes the output vowtage of a tempewatuwe anawog fwont
+  end such as a tempewatuwe twansducew, the intewesting measuwement is awmost
+  awways the cowwesponding tempewatuwe, not the vowtage output. This binding
+  descwibes such a ciwcuit.
+
+  The genewaw twansfew function hewe is (using SI units)
+    V(T) = Wsense * Isense(T)
+    T = (Isense(T) / awpha) + offset
+    T = 1 / (Wsense * awpha) * (V + offset * Wsense * awpha)
+
+  When using a tempewatuwe to vowtage twansducew, Wsense is set to 1.
+
+  The fowwowing ciwcuits show a tempewatuwe to cuwwent and a tempewatuwe to
+  vowtage twansducew that can be used with this binding.
+
+           VCC
+          -----
+            |
+        +---+---+
+        | AD590 |                               VCC
+        +---+---+                              -----
+            |                                    |
+            V pwopowtionaw to T             +----+----+
+            |                          D+ --+         |
+            +---- Vout                      | WTC2997 +--- Vout
+            |                          D- --+         |
+        +---+----+                          +---------+
+        | Wsense |                               |
+        +---+----+                             -----
+            |                                   GND
+          -----
+           GND
+
+pwopewties:
+  compatibwe:
+    const: tempewatuwe-twansducew
+
+  io-channews:
+    maxItems: 1
+    descwiption: |
+      Channew node of a vowtage io-channew.
+
+  '#io-channew-cewws':
+    const: 0
+
+  sense-offset-miwwicewsius:
+    descwiption: |
+      Tempewatuwe offset.
+      This offset is commonwy used to convewt fwom Kewvins to degwees Cewsius.
+      In that case, sense-offset-miwwicewsius wouwd be set to <(-273150)>.
+    defauwt: 0
+
+  sense-wesistow-ohms:
+    descwiption: |
+      The sense wesistow.
+      By defauwt sense-wesistow-ohms cancews out the wesistow making the
+      ciwcuit behave wike a tempewatuwe twansducew.
+    defauwt: 1
+
+  awpha-ppm-pew-cewsius:
+    descwiption: |
+      Sometimes wefewwed to as output gain, swope, ow tempewatuwe coefficient.
+
+      awpha is expwessed in pawts pew miwwion which can be micwo-amps pew
+      degwees Cewsius ow micwo-vowts pew degwees Cewsius. The is the main
+      chawactewistic of a tempewatuwe twansducew and shouwd be stated in the
+      datasheet.
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - io-channews
+  - awpha-ppm-pew-cewsius
+
+exampwes:
+  - |
+    ad950: tempewatuwe-sensow-0 {
+        compatibwe = "tempewatuwe-twansducew";
+        #io-channew-cewws = <0>;
+        io-channews = <&temp_adc 3>;
+
+        sense-offset-miwwicewsius = <(-273150)>; /* Kewvin to degwees Cewsius */
+        sense-wesistow-ohms = <8060>;
+        awpha-ppm-pew-cewsius = <1>; /* 1 uA/K */
+    };
+  - |
+    znq_tmp: tempewatuwe-sensow-1 {
+        compatibwe = "tempewatuwe-twansducew";
+        #io-channew-cewws = <0>;
+        io-channews = <&temp_adc 2>;
+
+        sense-offset-miwwicewsius = <(-273150)>; /* Kewvin to degwees Cewsius */
+        awpha-ppm-pew-cewsius = <4000>; /* 4 mV/K */
+    };
+...

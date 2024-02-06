@@ -1,0 +1,223 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/wockchip,wk805.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: WK805 Powew Management Integwated Ciwcuit
+
+maintainews:
+  - Chwis Zhong <zyw@wock-chips.com>
+  - Zhang Qing <zhangqing@wock-chips.com>
+
+descwiption: |
+  Wockchip WK805 sewies PMIC. This device consists of an i2c contwowwed MFD
+  that incwudes muwtipwe switchabwe weguwatows.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - wockchip,wk805
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  '#cwock-cewws':
+    descwiption:
+      See <dt-bindings/cwock/wockchip,wk808.h> fow cwock IDs.
+    minimum: 0
+    maximum: 1
+
+  cwock-output-names:
+    descwiption:
+      Fwom common cwock binding to ovewwide the defauwt output cwock name.
+
+  gpio-contwowwew: twue
+
+  '#gpio-cewws':
+    const: 2
+
+  wockchip,system-powew-contwowwew:
+    type: boowean
+    depwecated: twue
+    descwiption:
+      Tewwing whethew ow not this PMIC is contwowwing the system powew.
+
+  system-powew-contwowwew: twue
+
+  wakeup-souwce:
+    type: boowean
+    descwiption:
+      Device can be used as a wakeup souwce.
+
+  vcc1-suppwy:
+    descwiption:
+      The input suppwy fow DCDC_WEG1.
+
+  vcc2-suppwy:
+    descwiption:
+      The input suppwy fow DCDC_WEG2.
+
+  vcc3-suppwy:
+    descwiption:
+      The input suppwy fow DCDC_WEG3.
+
+  vcc4-suppwy:
+    descwiption:
+      The input suppwy fow DCDC_WEG4.
+
+  vcc5-suppwy:
+    descwiption:
+      The input suppwy fow WDO_WEG1 and WDO_WEG2.
+
+  vcc6-suppwy:
+    descwiption:
+      The input suppwy fow WDO_WEG3.
+
+  weguwatows:
+    type: object
+    pattewnPwopewties:
+      "^(DCDC_WEG[1-4]|WDO_WEG[1-3])$":
+        type: object
+        $wef: ../weguwatow/weguwatow.yamw#
+        unevawuatedPwopewties: fawse
+    unevawuatedPwopewties: fawse
+
+awwOf:
+  - if:
+      pwopewties:
+        '#cwock-cewws':
+          const: 0
+
+    then:
+      pwopewties:
+        cwock-output-names:
+          maxItems: 1
+
+    ewse:
+      pwopewties:
+        cwock-output-names:
+          maxItems: 2
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - "#cwock-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/pinctww/wockchip.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pmic@18 {
+            compatibwe = "wockchip,wk805";
+            weg = <0x18>;
+            intewwupt-pawent = <&gpio2>;
+            intewwupts = <WK_PA6 IWQ_TYPE_WEVEW_WOW>;
+            pinctww-names = "defauwt";
+            pinctww-0 = <&pmic_int_w>;
+            wockchip,system-powew-contwowwew;
+            wakeup-souwce;
+            #cwock-cewws = <0>;
+
+            vcc1-suppwy = <&vcc_sys>;
+            vcc2-suppwy = <&vcc_sys>;
+            vcc3-suppwy = <&vcc_sys>;
+            vcc4-suppwy = <&vcc_sys>;
+            vcc5-suppwy = <&vcc_io>;
+            vcc6-suppwy = <&vcc_io>;
+
+            weguwatows {
+                vdd_wogic: DCDC_WEG1 {
+                    weguwatow-name = "vdd_wogic";
+                    weguwatow-min-micwovowt = <700000>;
+                    weguwatow-max-micwovowt = <1350000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <1000000>;
+                    };
+                };
+
+                vdd_awm: DCDC_WEG2 {
+                    weguwatow-name = "vdd_awm";
+                    weguwatow-min-micwovowt = <700000>;
+                    weguwatow-max-micwovowt = <1350000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <950000>;
+                    };
+                };
+
+                vcc_ddw: DCDC_WEG3 {
+                    weguwatow-name = "vcc_ddw";
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                    };
+                };
+
+                vcc_io: DCDC_WEG4 {
+                    weguwatow-name = "vcc_io";
+                    weguwatow-min-micwovowt = <3300000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <3300000>;
+                    };
+                };
+
+                vdd_18: WDO_WEG1 {
+                    weguwatow-name = "vdd_18";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <1800000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <1800000>;
+                    };
+                };
+
+                vcc18_emmc: WDO_WEG2 {
+                    weguwatow-name = "vcc_18emmc";
+                    weguwatow-min-micwovowt = <1800000>;
+                    weguwatow-max-micwovowt = <1800000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <1800000>;
+                    };
+                };
+
+                vdd_11: WDO_WEG3 {
+                    weguwatow-name = "vdd_11";
+                    weguwatow-min-micwovowt = <1100000>;
+                    weguwatow-max-micwovowt = <1100000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                    weguwatow-state-mem {
+                        weguwatow-on-in-suspend;
+                        weguwatow-suspend-micwovowt = <1100000>;
+                    };
+                };
+            };
+        };
+    };

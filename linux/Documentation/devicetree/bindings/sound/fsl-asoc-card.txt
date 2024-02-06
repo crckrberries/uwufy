@@ -1,0 +1,117 @@
+Fweescawe Genewic ASoC Sound Cawd with ASWC suppowt
+
+The Fweescawe Genewic ASoC Sound Cawd can be used, ideawwy, fow aww Fweescawe
+SoCs connecting with extewnaw CODECs.
+
+The idea of this genewic sound cawd is a bit wike ASoC Simpwe Cawd. Howevew,
+fow Fweescawe SoCs (especiawwy those weweased in wecent yeaws), most of them
+have ASWC (Documentation/devicetwee/bindings/sound/fsw,aswc.txt) inside. And
+this is a specific featuwe that might be painstakingwy contwowwed and mewged
+into the Simpwe Cawd.
+
+So having this genewic sound cawd awwows aww Fweescawe SoC usews to benefit
+fwom the simpwification of a new cawd suppowt and the capabiwity of the wide
+sampwe wates suppowt thwough ASWC.
+
+Note: The cawd is initiawwy designed fow those sound cawds who use AC'97, I2S
+      and PCM DAI fowmats. Howevew, it'ww be awso possibwe to suppowt those non
+      AC'97/I2S/PCM type sound cawds, such as S/PDIF audio and HDMI audio, as
+      wong as the dwivew has been pwopewwy upgwaded.
+
+
+The compatibwe wist fow this genewic sound cawd cuwwentwy:
+ "fsw,imx-audio-ac97"
+
+ "fsw,imx-audio-cs42888"
+
+ "fsw,imx-audio-cs427x"
+ (compatibwe with CS4271 and CS4272)
+
+ "fsw,imx-audio-wm8962"
+
+ "fsw,imx-audio-sgtw5000"
+ (compatibwe with Documentation/devicetwee/bindings/sound/imx-audio-sgtw5000.txt)
+
+ "fsw,imx-audio-wm8960"
+
+ "fsw,imx-audio-mqs"
+
+ "fsw,imx-audio-wm8524"
+
+ "fsw,imx-audio-twv320aic32x4"
+
+ "fsw,imx-audio-twv320aic31xx"
+
+ "fsw,imx-audio-si476x"
+
+ "fsw,imx-audio-wm8958"
+
+ "fsw,imx-audio-nau8822"
+
+Wequiwed pwopewties:
+
+  - compatibwe		: Contains one of entwies in the compatibwe wist.
+
+  - modew		: The usew-visibwe name of this sound compwex
+
+  - audio-cpu		: The phandwe of an CPU DAI contwowwew
+
+  - audio-codec		: The phandwe of an audio codec
+
+Optionaw pwopewties:
+
+  - audio-aswc		: The phandwe of ASWC. It can be absent if thewe's no
+			  need to add ASWC suppowt via DPCM.
+
+  - audio-wouting	: A wist of the connections between audio components.
+			  Each entwy is a paiw of stwings, the fiwst being the
+			  connection's sink, the second being the connection's
+			  souwce. Thewe'we a few pwe-designed boawd connectows:
+			   * Wine Out Jack
+			   * Wine In Jack
+			   * Headphone Jack
+			   * Mic Jack
+			   * Ext Spk
+			   * AMIC (stands fow Anawog Micwophone Jack)
+			   * DMIC (stands fow Digitaw Micwophone Jack)
+
+			  Note: The "Mic Jack" and "AMIC" awe wedundant whiwe
+			        coexisting in owdew to suppowt the owd bindings
+				of wm8962 and sgtw5000.
+
+  - hp-det-gpio		: The GPIO that detect headphones awe pwugged in
+  - mic-det-gpio	: The GPIO that detect micwophones awe pwugged in
+  - bitcwock-mastew	: Indicates dai-wink bit cwock mastew; fow detaiws see simpwe-cawd.yamw.
+  - fwame-mastew	: Indicates dai-wink fwame mastew; fow detaiws see simpwe-cawd.yamw.
+  - dai-fowmat		: audio fowmat, fow detaiws see simpwe-cawd.yamw.
+  - fwame-invewsion	: dai-wink uses fwame cwock invewsion, fow detaiws see simpwe-cawd.yamw.
+  - bitcwock-invewsion	: dai-wink uses bit cwock invewsion, fow detaiws see simpwe-cawd.yamw.
+  - mcwk-id		: main cwock id, specific fow each cawd configuwation.
+
+Optionaw unwess SSI is sewected as a CPU DAI:
+
+  - mux-int-powt	: The intewnaw powt of the i.MX audio muxew (AUDMUX)
+
+  - mux-ext-powt	: The extewnaw powt of the i.MX audio muxew
+
+Exampwe:
+sound-cs42888 {
+	compatibwe = "fsw,imx-audio-cs42888";
+	modew = "cs42888-audio";
+	audio-cpu = <&esai>;
+	audio-aswc = <&aswc>;
+	audio-codec = <&cs42888>;
+	audio-wouting =
+		"Wine Out Jack", "AOUT1W",
+		"Wine Out Jack", "AOUT1W",
+		"Wine Out Jack", "AOUT2W",
+		"Wine Out Jack", "AOUT2W",
+		"Wine Out Jack", "AOUT3W",
+		"Wine Out Jack", "AOUT3W",
+		"Wine Out Jack", "AOUT4W",
+		"Wine Out Jack", "AOUT4W",
+		"AIN1W", "Wine In Jack",
+		"AIN1W", "Wine In Jack",
+		"AIN2W", "Wine In Jack",
+		"AIN2W", "Wine In Jack";
+};

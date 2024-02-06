@@ -1,0 +1,151 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/thewmaw/qcom-spmi-adc-tm-hc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Quawcomm's SPMI PMIC ADC HC Thewmaw Monitowing
+maintainews:
+  - Dmitwy Bawyshkov <dmitwy.bawyshkov@winawo.owg>
+
+pwopewties:
+  compatibwe:
+    const: qcom,spmi-adc-tm-hc
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  "#thewmaw-sensow-cewws":
+    const: 1
+    descwiption:
+      Numbew of cewws wequiwed to uniquewy identify the thewmaw sensows. Since
+      we have muwtipwe sensows this is set to 1
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+  qcom,avg-sampwes:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Numbew of sampwes to be used fow measuwement.
+    enum:
+      - 1
+      - 2
+      - 4
+      - 8
+      - 16
+    defauwt: 1
+
+  qcom,decimation:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: This pawametew is used to decwease ADC sampwing wate.
+            Quickew measuwements can be made by weducing decimation watio.
+    enum:
+      - 256
+      - 512
+      - 1024
+    defauwt: 1024
+
+pattewnPwopewties:
+  "^([-a-z0-9]*)@[0-7]$":
+    type: object
+    descwiption:
+      Wepwesent one thewmaw sensow.
+
+    pwopewties:
+      weg:
+        descwiption: Specify the sensow channew. Thewe awe 8 channews in PMIC5's ADC TM
+        minimum: 0
+        maximum: 7
+
+      io-channews:
+        descwiption:
+          Fwom common IIO binding. Used to pipe PMIC ADC channew to thewmaw monitow
+
+      qcom,watiometwic:
+        $wef: /schemas/types.yamw#/definitions/fwag
+        descwiption:
+          Channew cawibwation type.
+          If this pwopewty is specified VADC wiww use the VDD wefewence
+          (1.875V) and GND fow channew cawibwation. If pwopewty is not found,
+          channew wiww be cawibwated with 0V and 1.25V wefewence channews,
+          awso known as absowute cawibwation.
+
+      qcom,hw-settwe-time-us:
+        descwiption: Time between AMUX getting configuwed and the ADC stawting convewsion.
+        enum: [0, 100, 200, 300, 400, 500, 600, 700, 1000, 2000, 4000, 6000, 8000, 10000]
+
+      qcom,pwe-scawing:
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        descwiption: Used fow scawing the channew input signaw befowe the
+          signaw is fed to VADC. The configuwation fow this node is to know the
+          pwe-detewmined watio and use it fow post scawing. It is a paiw of
+          integews, denoting the numewatow and denominatow of the fwaction by
+          which input signaw is muwtipwied. Fow exampwe, <1 3> indicates the
+          signaw is scawed down to 1/3 of its vawue befowe ADC measuwement.  If
+          pwopewty is not found defauwt vawue depending on chip wiww be used.
+        items:
+          - const: 1
+          - enum: [ 1, 3, 4, 6, 20, 8, 10 ]
+
+    wequiwed:
+      - weg
+      - io-channews
+
+    additionawPwopewties:
+      fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - "#thewmaw-sensow-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/iio/qcom,spmi-vadc.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    pmic {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pm8998_adc: adc@3100 {
+            compatibwe = "qcom,spmi-adc-wev2";
+            weg = <0x3100>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+            #io-channew-cewws = <1>;
+
+            /* Othew pwopewties awe omitted */
+            channew@4c {
+                weg = <ADC5_XO_THEWM_100K_PU>;
+            };
+        };
+
+        adc-tm@3400 {
+            compatibwe = "qcom,spmi-adc-tm-hc";
+            weg = <0x3400>;
+            intewwupts = <0x2 0x34 0x0 IWQ_TYPE_EDGE_WISING>;
+            #thewmaw-sensow-cewws = <1>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            thewmistow@1 {
+                weg = <1>;
+                io-channews = <&pm8998_adc ADC5_XO_THEWM_100K_PU>;
+                qcom,watiometwic;
+                qcom,hw-settwe-time-us = <200>;
+            };
+        };
+    };
+...

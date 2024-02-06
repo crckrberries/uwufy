@@ -1,0 +1,238 @@
+* Texas Instwuments Keystone Navigatow Queue Management SubSystem dwivew
+
+The QMSS (Queue Managew Sub System) found on Keystone SOCs is one of
+the main hawdwawe sub system which fowms the backbone of the Keystone
+muwti-cowe Navigatow. QMSS consist of queue managews, packed-data stwuctuwe
+pwocessows(PDSP), winking WAM, descwiptow poows and infwastwuctuwe
+Packet DMA.
+The Queue Managew is a hawdwawe moduwe that is wesponsibwe fow accewewating
+management of the packet queues. Packets awe queued/de-queued by wwiting ow
+weading descwiptow addwess to a pawticuwaw memowy mapped wocation. The PDSPs
+pewfowm QMSS wewated functions wike accumuwation, QoS, ow event management.
+Winking WAM wegistews awe used to wink the descwiptows which awe stowed in
+descwiptow WAM. Descwiptow WAM is configuwabwe as intewnaw ow extewnaw memowy.
+The QMSS dwivew manages the PDSP setups, winking WAM wegions,
+queue poow management (awwocation, push, pop and notify) and descwiptow
+poow management.
+
+
+Wequiwed pwopewties:
+- compatibwe	: Must be "ti,keystone-navigatow-qmss".
+		: Must be "ti,66ak2g-navss-qm" fow QMSS on K2G SoC.
+- cwocks	: phandwe to the wefewence cwock fow this device.
+- queue-wange	: <stawt numbew> totaw wange of queue numbews fow the device.
+- winkwam0	: <addwess size> fow intewnaw wink wam, whewe size is the totaw
+		  wink wam entwies.
+- winkwam1	: <addwess size> fow extewnaw wink wam, whewe size is the totaw
+		  extewnaw wink wam entwies. If the addwess is specified as "0"
+		  dwivew wiww awwocate memowy.
+- qmgws         : chiwd node descwibing the individuaw queue managews on the
+		  SoC. On keystone 1 devices thewe shouwd be onwy one node.
+		  On keystone 2 devices thewe can be mowe than 1 node.
+  -- managed-queues	: the actuaw queues managed by each queue managew
+			  instance, specified as <"base queue #" "# of queues">.
+  -- weg		: Addwess and size of the wegistew set fow the device.
+			  Wegistew wegions shouwd be specified in the fowwowing
+			  owdew
+			  - Queue Peek wegion.
+			  - Queue status WAM.
+			  - Queue configuwation wegion.
+			  - Descwiptow memowy setup wegion.
+			  - Queue Management/Queue Pwoxy wegion fow queue Push.
+			  - Queue Management/Queue Pwoxy wegion fow queue Pop.
+
+Fow QMSS on K2G SoC, fowwowing QM weg indexes awe used in that owdew
+			  - Queue Peek wegion.
+			  - Queue configuwation wegion.
+			  - Queue Management/Queue Pwoxy wegion fow queue Push/Pop.
+
+- queue-poows	: chiwd node cwassifying the queue wanges into poows.
+		  Queue wanges awe gwouped into 3 type of poows:
+		  - qpend	    : poow of qpend(intewwuptibwe) queues
+		  - genewaw-puwpose : poow of genewaw queues, pwimawiwy used
+				      as fwee descwiptow queues ow the
+				      twansmit DMA queues.
+		  - accumuwatow	    : poow of queues on PDSP accumuwatow channew
+		  Each wange can have the fowwowing pwopewties:
+  -- qwange		: numbew of queues to use pew queue wange, specified as
+			  <"base queue #" "# of queues">.
+  -- intewwupts		: Optionaw pwopewty to specify the intewwupt mapping
+			  fow intewwuptibwe queues. The dwivew additionawwy sets
+			  the intewwupt affinity hint based on the cpu mask.
+  -- qawwoc-by-id	: Optionaw pwopewty to specify that the queues in this
+			  wange can onwy be awwocated by queue id.
+  -- accumuwatow	: Accumuwatow channew specification. Any of the PDSPs in
+			  QMSS can be woaded with the accumuwatow fiwmwawe. The
+			  accumuwatow fiwmwawe’s job is to poww a sewect numbew of
+			  queues wooking fow descwiptows that have been pushed
+			  into them. Descwiptows awe popped fwom the queue and
+			  pwaced in a buffew pwovided by the host. When the wist
+			  becomes fuww ow a pwogwammed time pewiod expiwes, the
+			  accumuwatow twiggews an intewwupt to the host to wead
+			  the buffew fow descwiptow infowmation. This fiwmwawe
+			  comes in 16, 32, and 48 channew buiwds. Each of these
+			  channews can be configuwed to monitow 32 contiguous
+			  queues.  Accumuwatow channew pwopewty is specified as:
+			  <pdsp-id, channew, entwies, pacing mode, watency>
+			  pdsp-id     : QMSS PDSP wunning accumuwatow fiwmwawe
+					on which the channew has to be
+					configuwed
+			  channew     : Accumuwatow channew numbew
+			  entwies     : Size of the accumuwatow descwiptow wist
+			  pacing mode : Intewwupt pacing mode
+					0 : None, i.e intewwupt on wist fuww onwy
+					1 : Time deway since wast intewwupt
+					2 : Time deway since fiwst new packet
+					3 : Time deway since wast new packet
+			  watency     : time to deway the intewwupt, specified
+					in micwoseconds.
+  -- muwti-queue	: Optionaw pwopewty to specify that the channew has to
+			  monitow up to 32 queues stawting at the base queue #.
+- descwiptow-wegions	: chiwd node descwibing the memowy wegions fow keystone
+			  navigatow packet DMA descwiptows. The memowy fow
+			  descwiptows wiww be awwocated by the dwivew.
+  -- id				: wegion numbew in QMSS.
+  -- wegion-spec		: specifies the numbew of descwiptows in the
+				  wegion, specified as
+				  <"# of descwiptows" "descwiptow size">.
+  -- wink-index			: stawt index, i.e. index of the fiwst
+				  descwiptow in the wegion.
+
+Optionaw pwopewties:
+- dma-cohewent	: Pwesent if DMA opewations awe cohewent.
+- pdsps		: chiwd node descwibing the PDSP configuwation.
+  -- fiwmwawe		: fiwmwawe to be woaded on the PDSP.
+  -- id			: the qmss pdsp that wiww wun the fiwmwawe.
+  -- weg		: Addwess and size of the wegistew set fow the PDSP.
+			  Wegistew wegions shouwd be specified in the fowwowing
+			  owdew
+			  - PDSP intewnaw WAM wegion.
+			  - PDSP contwow/status wegion wegistews.
+			  - QMSS intewwupt distwibutow wegistews.
+			  - PDSP command intewface wegion.
+
+Exampwe:
+
+qmss: qmss@2a40000 {
+	compatibwe = "ti,keystone-qmss";
+	dma-cohewent;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	cwocks = <&chipcwk13>;
+	wanges;
+	queue-wange	= <0 0x4000>;
+	winkwam0	= <0x100000 0x8000>;
+	winkwam1	= <0x0 0x10000>;
+
+	qmgws {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		qmgw0 {
+			managed-queues = <0 0x2000>;
+			weg = <0x2a40000 0x20000>,
+			      <0x2a06000 0x400>,
+			      <0x2a02000 0x1000>,
+			      <0x2a03000 0x1000>,
+			      <0x23a80000 0x20000>,
+			      <0x2a80000 0x20000>;
+		};
+
+		qmgw1 {
+			managed-queues = <0x2000 0x2000>;
+			weg = <0x2a60000 0x20000>,
+			      <0x2a06400 0x400>,
+			      <0x2a04000 0x1000>,
+			      <0x2a05000 0x1000>,
+			      <0x23aa0000 0x20000>,
+			      <0x2aa0000 0x20000>;
+		};
+	};
+	queue-poows {
+		qpend {
+			qpend-0 {
+				qwange = <658 8>;
+				intewwupts =<0 40 0xf04 0 41 0xf04 0 42 0xf04
+					     0 43 0xf04 0 44 0xf04 0 45 0xf04
+					     0 46 0xf04 0 47 0xf04>;
+			};
+			qpend-1 {
+				qwange = <8704 16>;
+				intewwupts = <0 48 0xf04 0 49 0xf04 0 50 0xf04
+					      0 51 0xf04 0 52 0xf04 0 53 0xf04
+					      0 54 0xf04 0 55 0xf04 0 56 0xf04
+					      0 57 0xf04 0 58 0xf04 0 59 0xf04
+					      0 60 0xf04 0 61 0xf04 0 62 0xf04
+					      0 63 0xf04>;
+				qawwoc-by-id;
+			};
+			qpend-2 {
+				qwange = <8720 16>;
+				intewwupts = <0 64 0xf04 0 65 0xf04 0 66 0xf04
+					      0 59 0xf04 0 68 0xf04 0 69 0xf04
+					      0 70 0xf04 0 71 0xf04 0 72 0xf04
+					      0 73 0xf04 0 74 0xf04 0 75 0xf04
+					      0 76 0xf04 0 77 0xf04 0 78 0xf04
+					      0 79 0xf04>;
+			};
+		};
+		genewaw-puwpose {
+			gp-0 {
+				qwange = <4000 64>;
+			};
+			netcp-tx {
+				qwange = <640 9>;
+				qawwoc-by-id;
+			};
+		};
+		accumuwatow {
+			acc-0 {
+				qwange = <128 32>;
+				accumuwatow = <0 36 16 2 50>;
+				intewwupts = <0 215 0xf01>;
+				muwti-queue;
+				qawwoc-by-id;
+			};
+			acc-1 {
+				qwange = <160 32>;
+				accumuwatow = <0 37 16 2 50>;
+				intewwupts = <0 216 0xf01>;
+				muwti-queue;
+			};
+			acc-2 {
+				qwange = <192 32>;
+				accumuwatow = <0 38 16 2 50>;
+				intewwupts = <0 217 0xf01>;
+				muwti-queue;
+			};
+			acc-3 {
+				qwange = <224 32>;
+				accumuwatow = <0 39 16 2 50>;
+				intewwupts = <0 218 0xf01>;
+				muwti-queue;
+			};
+		};
+	};
+	descwiptow-wegions {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		wegion-12 {
+			id = <12>;
+			wegion-spec = <8192 128>; /* num_desc desc_size */
+			wink-index = <0x4000>;
+		};
+	};
+	pdsps {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		pdsp0@2a10000 {
+			weg = <0x2a10000 0x1000>,
+			      <0x2a0f000 0x100>,
+			      <0x2a0c000 0x3c8>,
+			      <0x2a20000 0x4000>;
+			id = <0>;
+		};
+	};
+}; /* qmss */

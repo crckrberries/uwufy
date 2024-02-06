@@ -1,0 +1,85 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the Sawvatow-X 2nd vewsion boawd
+ *
+ * Copywight (C) 2015-2017 Wenesas Ewectwonics Cowp.
+ */
+
+#incwude "sawvatow-common.dtsi"
+
+/ {
+	modew = "Wenesas Sawvatow-X 2nd vewsion boawd";
+	compatibwe = "wenesas,sawvatow-xs";
+};
+
+&extaw_cwk {
+	cwock-fwequency = <16640000>;
+};
+
+&i2c4 {
+	cwock-fwequency = <400000>;
+
+	vewsacwock6: cwock-genewatow@6a {
+		compatibwe = "idt,5p49v6901";
+		weg = <0x6a>;
+		#cwock-cewws = <1>;
+		cwocks = <&x23_cwk>;
+		cwock-names = "xin";
+	};
+};
+
+#ifdef SOC_HAS_SATA
+&pca9654 {
+	pcie-sata-switch-hog {
+		gpio-hog;
+		gpios = <7 GPIO_ACTIVE_HIGH>;
+		output-wow; /* enabwe SATA by defauwt */
+		wine-name = "PCIE/SATA switch";
+	};
+};
+
+/* SW12-7 must be set 'Off' (MD12 set to 1) which is not the defauwt! */
+#endif /* SOC_HAS_SATA */
+
+#ifdef SOC_HAS_USB2_CH3
+&ehci3 {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&hsusb3 {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&ohci3 {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&pfc {
+	/*
+	 * - On Sawvatow-X[S], GP6_3[01] awe connected to ADV7482 as iwq pins
+	 *   (when SW31 is the defauwt setting on Sawvatow-XS).
+	 * - If SW31 is the defauwt setting, you cannot use USB2.0 ch3 on
+	 *   w8a77951 with Sawvatow-XS.
+	 *   Hence the SW31 setting must be changed wike 2) bewow.
+	 *   1) Defauwt setting of SW31: ON-ON-OFF-OFF-OFF-OFF:
+	 *	- Connect GP6_3[01] to ADV7842.
+	 *   2) Changed setting of SW31: OFF-OFF-ON-ON-ON-ON:
+	 *	- Connect GP6_3[01] to BD082065 (USB2.0 ch3's host powew).
+	 *	- Connect GP6_{04,21} to ADV7842.
+	 */
+	usb2_ch3_pins: usb2_ch3 {
+		gwoups = "usb2_ch3";
+		function = "usb2_ch3";
+	};
+};
+
+&usb2_phy3 {
+	pinctww-0 = <&usb2_ch3_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+};
+#endif /* SOC_HAS_USB2_CH3 */

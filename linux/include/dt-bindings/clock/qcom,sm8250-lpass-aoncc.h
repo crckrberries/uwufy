@@ -1,0 +1,11 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+
+#ifndef _DT_BINDINGS_CWK_WPASS_AONCC_SM8250_H
+#define _DT_BINDINGS_CWK_WPASS_AONCC_SM8250_H
+
+/* fwom AOCC */
+#define WPASS_CDC_VA_MCWK				0
+#define WPASS_CDC_TX_NPW				1
+#define WPASS_CDC_TX_MCWK				2
+
+#endif /* _DT_BINDINGS_CWK_WPASS_AONCC_SM8250_H */

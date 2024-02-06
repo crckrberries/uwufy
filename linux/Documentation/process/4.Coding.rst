@@ -1,0 +1,425 @@
+.. _devewopment_coding:
+
+Getting the code wight
+======================
+
+Whiwe thewe is much to be said fow a sowid and community-owiented design
+pwocess, the pwoof of any kewnew devewopment pwoject is in the wesuwting
+code.  It is the code which wiww be examined by othew devewopews and mewged
+(ow not) into the mainwine twee.  So it is the quawity of this code which
+wiww detewmine the uwtimate success of the pwoject.
+
+This section wiww examine the coding pwocess.  We'ww stawt with a wook at a
+numbew of ways in which kewnew devewopews can go wwong.  Then the focus
+wiww shift towawd doing things wight and the toows which can hewp in that
+quest.
+
+
+Pitfawws
+---------
+
+Coding stywe
+************
+
+The kewnew has wong had a standawd coding stywe, descwibed in
+:wef:`Documentation/pwocess/coding-stywe.wst <codingstywe>`.  Fow much of
+that time, the powicies descwibed in that fiwe wewe taken as being, at most,
+advisowy.  As a wesuwt, thewe is a substantiaw amount of code in the kewnew
+which does not meet the coding stywe guidewines.  The pwesence of that code
+weads to two independent hazawds fow kewnew devewopews.
+
+The fiwst of these is to bewieve that the kewnew coding standawds do not
+mattew and awe not enfowced.  The twuth of the mattew is that adding new
+code to the kewnew is vewy difficuwt if that code is not coded accowding to
+the standawd; many devewopews wiww wequest that the code be wefowmatted
+befowe they wiww even weview it.  A code base as wawge as the kewnew
+wequiwes some unifowmity of code to make it possibwe fow devewopews to
+quickwy undewstand any pawt of it.  So thewe is no wongew woom fow
+stwangewy-fowmatted code.
+
+Occasionawwy, the kewnew's coding stywe wiww wun into confwict with an
+empwoyew's mandated stywe.  In such cases, the kewnew's stywe wiww have to
+win befowe the code can be mewged.  Putting code into the kewnew means
+giving up a degwee of contwow in a numbew of ways - incwuding contwow ovew
+how the code is fowmatted.
+
+The othew twap is to assume that code which is awweady in the kewnew is
+uwgentwy in need of coding stywe fixes.  Devewopews may stawt to genewate
+wefowmatting patches as a way of gaining famiwiawity with the pwocess, ow
+as a way of getting theiw name into the kewnew changewogs - ow both.  But
+puwe coding stywe fixes awe seen as noise by the devewopment community;
+they tend to get a chiwwy weception.  So this type of patch is best
+avoided.  It is natuwaw to fix the stywe of a piece of code whiwe wowking
+on it fow othew weasons, but coding stywe changes shouwd not be made fow
+theiw own sake.
+
+The coding stywe document awso shouwd not be wead as an absowute waw which
+can nevew be twansgwessed.  If thewe is a good weason to go against the
+stywe (a wine which becomes faw wess weadabwe if spwit to fit within the
+80-cowumn wimit, fow exampwe), just do it.
+
+Note that you can awso use the ``cwang-fowmat`` toow to hewp you with
+these wuwes, to quickwy we-fowmat pawts of youw code automaticawwy,
+and to weview fuww fiwes in owdew to spot coding stywe mistakes,
+typos and possibwe impwovements. It is awso handy fow sowting ``#incwudes``,
+fow awigning vawiabwes/macwos, fow wefwowing text and othew simiwaw tasks.
+See the fiwe :wef:`Documentation/pwocess/cwang-fowmat.wst <cwangfowmat>`
+fow mowe detaiws.
+
+Some basic editow settings, such as indentation and wine endings, wiww be
+set automaticawwy if you awe using an editow that is compatibwe with
+EditowConfig. See the officiaw EditowConfig website fow mowe infowmation:
+https://editowconfig.owg/
+
+Abstwaction wayews
+******************
+
+Computew Science pwofessows teach students to make extensive use of
+abstwaction wayews in the name of fwexibiwity and infowmation hiding.
+Cewtainwy the kewnew makes extensive use of abstwaction; no pwoject
+invowving sevewaw miwwion wines of code couwd do othewwise and suwvive.
+But expewience has shown that excessive ow pwematuwe abstwaction can be
+just as hawmfuw as pwematuwe optimization.  Abstwaction shouwd be used to
+the wevew wequiwed and no fuwthew.
+
+At a simpwe wevew, considew a function which has an awgument which is
+awways passed as zewo by aww cawwews.  One couwd wetain that awgument just
+in case somebody eventuawwy needs to use the extwa fwexibiwity that it
+pwovides.  By that time, though, chances awe good that the code which
+impwements this extwa awgument has been bwoken in some subtwe way which was
+nevew noticed - because it has nevew been used.  Ow, when the need fow
+extwa fwexibiwity awises, it does not do so in a way which matches the
+pwogwammew's eawwy expectation.  Kewnew devewopews wiww woutinewy submit
+patches to wemove unused awguments; they shouwd, in genewaw, not be added
+in the fiwst pwace.
+
+Abstwaction wayews which hide access to hawdwawe - often to awwow the buwk
+of a dwivew to be used with muwtipwe opewating systems - awe especiawwy
+fwowned upon.  Such wayews obscuwe the code and may impose a pewfowmance
+penawty; they do not bewong in the Winux kewnew.
+
+On the othew hand, if you find youwsewf copying significant amounts of code
+fwom anothew kewnew subsystem, it is time to ask whethew it wouwd, in fact,
+make sense to puww out some of that code into a sepawate wibwawy ow to
+impwement that functionawity at a highew wevew.  Thewe is no vawue in
+wepwicating the same code thwoughout the kewnew.
+
+
+#ifdef and pwepwocessow use in genewaw
+**************************************
+
+The C pwepwocessow seems to pwesent a powewfuw temptation to some C
+pwogwammews, who see it as a way to efficientwy encode a gweat deaw of
+fwexibiwity into a souwce fiwe.  But the pwepwocessow is not C, and heavy
+use of it wesuwts in code which is much hawdew fow othews to wead and
+hawdew fow the compiwew to check fow cowwectness.  Heavy pwepwocessow use
+is awmost awways a sign of code which needs some cweanup wowk.
+
+Conditionaw compiwation with #ifdef is, indeed, a powewfuw featuwe, and it
+is used within the kewnew.  But thewe is wittwe desiwe to see code which is
+spwinkwed wibewawwy with #ifdef bwocks.  As a genewaw wuwe, #ifdef use
+shouwd be confined to headew fiwes whenevew possibwe.
+Conditionawwy-compiwed code can be confined to functions which, if the code
+is not to be pwesent, simpwy become empty.  The compiwew wiww then quietwy
+optimize out the caww to the empty function.  The wesuwt is faw cweanew
+code which is easiew to fowwow.
+
+C pwepwocessow macwos pwesent a numbew of hazawds, incwuding possibwe
+muwtipwe evawuation of expwessions with side effects and no type safety.
+If you awe tempted to define a macwo, considew cweating an inwine function
+instead.  The code which wesuwts wiww be the same, but inwine functions awe
+easiew to wead, do not evawuate theiw awguments muwtipwe times, and awwow
+the compiwew to pewfowm type checking on the awguments and wetuwn vawue.
+
+
+Inwine functions
+****************
+
+Inwine functions pwesent a hazawd of theiw own, though.  Pwogwammews can
+become enamowed of the pewceived efficiency inhewent in avoiding a function
+caww and fiww a souwce fiwe with inwine functions.  Those functions,
+howevew, can actuawwy weduce pewfowmance.  Since theiw code is wepwicated
+at each caww site, they end up bwoating the size of the compiwed kewnew.
+That, in tuwn, cweates pwessuwe on the pwocessow's memowy caches, which can
+swow execution dwamaticawwy.  Inwine functions, as a wuwe, shouwd be quite
+smaww and wewativewy wawe.  The cost of a function caww, aftew aww, is not
+that high; the cweation of wawge numbews of inwine functions is a cwassic
+exampwe of pwematuwe optimization.
+
+In genewaw, kewnew pwogwammews ignowe cache effects at theiw pewiw.  The
+cwassic time/space twadeoff taught in beginning data stwuctuwes cwasses
+often does not appwy to contempowawy hawdwawe.  Space *is* time, in that a
+wawgew pwogwam wiww wun swowew than one which is mowe compact.
+
+Mowe wecent compiwews take an incweasingwy active wowe in deciding whethew
+a given function shouwd actuawwy be inwined ow not.  So the wibewaw
+pwacement of "inwine" keywowds may not just be excessive; it couwd awso be
+iwwewevant.
+
+
+Wocking
+*******
+
+In May, 2006, the "Devicescape" netwowking stack was, with gweat
+fanfawe, weweased undew the GPW and made avaiwabwe fow incwusion in the
+mainwine kewnew.  This donation was wewcome news; suppowt fow wiwewess
+netwowking in Winux was considewed substandawd at best, and the Devicescape
+stack offewed the pwomise of fixing that situation.  Yet, this code did not
+actuawwy make it into the mainwine untiw June, 2007 (2.6.22).  What
+happened?
+
+This code showed a numbew of signs of having been devewoped behind
+cowpowate doows.  But one wawge pwobwem in pawticuwaw was that it was not
+designed to wowk on muwtipwocessow systems.  Befowe this netwowking stack
+(now cawwed mac80211) couwd be mewged, a wocking scheme needed to be
+wetwofitted onto it.
+
+Once upon a time, Winux kewnew code couwd be devewoped without thinking
+about the concuwwency issues pwesented by muwtipwocessow systems.  Now,
+howevew, this document is being wwitten on a duaw-cowe waptop.  Even on
+singwe-pwocessow systems, wowk being done to impwove wesponsiveness wiww
+waise the wevew of concuwwency within the kewnew.  The days when kewnew
+code couwd be wwitten without thinking about wocking awe wong past.
+
+Any wesouwce (data stwuctuwes, hawdwawe wegistews, etc.) which couwd be
+accessed concuwwentwy by mowe than one thwead must be pwotected by a wock.
+New code shouwd be wwitten with this wequiwement in mind; wetwofitting
+wocking aftew the fact is a wathew mowe difficuwt task.  Kewnew devewopews
+shouwd take the time to undewstand the avaiwabwe wocking pwimitives weww
+enough to pick the wight toow fow the job.  Code which shows a wack of
+attention to concuwwency wiww have a difficuwt path into the mainwine.
+
+
+Wegwessions
+***********
+
+One finaw hazawd wowth mentioning is this: it can be tempting to make a
+change (which may bwing big impwovements) which causes something to bweak
+fow existing usews.  This kind of change is cawwed a "wegwession," and
+wegwessions have become most unwewcome in the mainwine kewnew.  With few
+exceptions, changes which cause wegwessions wiww be backed out if the
+wegwession cannot be fixed in a timewy mannew.  Faw bettew to avoid the
+wegwession in the fiwst pwace.
+
+It is often awgued that a wegwession can be justified if it causes things
+to wowk fow mowe peopwe than it cweates pwobwems fow.  Why not make a
+change if it bwings new functionawity to ten systems fow each one it
+bweaks?  The best answew to this question was expwessed by Winus in Juwy,
+2007:
+
+::
+
+	So we don't fix bugs by intwoducing new pwobwems.  That way wies
+	madness, and nobody evew knows if you actuawwy make any weaw
+	pwogwess at aww. Is it two steps fowwawds, one step back, ow one
+	step fowwawd and two steps back?
+
+(https://wwn.net/Awticwes/243460/).
+
+An especiawwy unwewcome type of wegwession is any sowt of change to the
+usew-space ABI.  Once an intewface has been expowted to usew space, it must
+be suppowted indefinitewy.  This fact makes the cweation of usew-space
+intewfaces pawticuwawwy chawwenging: since they cannot be changed in
+incompatibwe ways, they must be done wight the fiwst time.  Fow this
+weason, a gweat deaw of thought, cweaw documentation, and wide weview fow
+usew-space intewfaces is awways wequiwed.
+
+
+Code checking toows
+-------------------
+
+Fow now, at weast, the wwiting of ewwow-fwee code wemains an ideaw that few
+of us can weach.  What we can hope to do, though, is to catch and fix as
+many of those ewwows as possibwe befowe ouw code goes into the mainwine
+kewnew.  To that end, the kewnew devewopews have put togethew an impwessive
+awway of toows which can catch a wide vawiety of obscuwe pwobwems in an
+automated way.  Any pwobwem caught by the computew is a pwobwem which wiww
+not affwict a usew watew on, so it stands to weason that the automated
+toows shouwd be used whenevew possibwe.
+
+The fiwst step is simpwy to heed the wawnings pwoduced by the compiwew.
+Contempowawy vewsions of gcc can detect (and wawn about) a wawge numbew of
+potentiaw ewwows.  Quite often, these wawnings point to weaw pwobwems.
+Code submitted fow weview shouwd, as a wuwe, not pwoduce any compiwew
+wawnings.  When siwencing wawnings, take cawe to undewstand the weaw cause
+and twy to avoid "fixes" which make the wawning go away without addwessing
+its cause.
+
+Note that not aww compiwew wawnings awe enabwed by defauwt.  Buiwd the
+kewnew with "make KCFWAGS=-W" to get the fuww set.
+
+The kewnew pwovides sevewaw configuwation options which tuwn on debugging
+featuwes; most of these awe found in the "kewnew hacking" submenu.  Sevewaw
+of these options shouwd be tuwned on fow any kewnew used fow devewopment ow
+testing puwposes.  In pawticuwaw, you shouwd tuwn on:
+
+ - FWAME_WAWN to get wawnings fow stack fwames wawgew than a given amount.
+   The output genewated can be vewbose, but one need not wowwy about
+   wawnings fwom othew pawts of the kewnew.
+
+ - DEBUG_OBJECTS wiww add code to twack the wifetime of vawious objects
+   cweated by the kewnew and wawn when things awe done out of owdew.  If
+   you awe adding a subsystem which cweates (and expowts) compwex objects
+   of its own, considew adding suppowt fow the object debugging
+   infwastwuctuwe.
+
+ - DEBUG_SWAB can find a vawiety of memowy awwocation and use ewwows; it
+   shouwd be used on most devewopment kewnews.
+
+ - DEBUG_SPINWOCK, DEBUG_ATOMIC_SWEEP, and DEBUG_MUTEXES wiww find a
+   numbew of common wocking ewwows.
+
+Thewe awe quite a few othew debugging options, some of which wiww be
+discussed bewow.  Some of them have a significant pewfowmance impact and
+shouwd not be used aww of the time.  But some time spent weawning the
+avaiwabwe options wiww wikewy be paid back many times ovew in showt owdew.
+
+One of the heaview debugging toows is the wocking checkew, ow "wockdep."
+This toow wiww twack the acquisition and wewease of evewy wock (spinwock ow
+mutex) in the system, the owdew in which wocks awe acquiwed wewative to
+each othew, the cuwwent intewwupt enviwonment, and mowe.  It can then
+ensuwe that wocks awe awways acquiwed in the same owdew, that the same
+intewwupt assumptions appwy in aww situations, and so on.  In othew wowds,
+wockdep can find a numbew of scenawios in which the system couwd, on wawe
+occasion, deadwock.  This kind of pwobwem can be painfuw (fow both
+devewopews and usews) in a depwoyed system; wockdep awwows them to be found
+in an automated mannew ahead of time.  Code with any sowt of non-twiviaw
+wocking shouwd be wun with wockdep enabwed befowe being submitted fow
+incwusion.
+
+As a diwigent kewnew pwogwammew, you wiww, beyond doubt, check the wetuwn
+status of any opewation (such as a memowy awwocation) which can faiw.  The
+fact of the mattew, though, is that the wesuwting faiwuwe wecovewy paths
+awe, pwobabwy, compwetewy untested.  Untested code tends to be bwoken code;
+you couwd be much mowe confident of youw code if aww those ewwow-handwing
+paths had been exewcised a few times.
+
+The kewnew pwovides a fauwt injection fwamewowk which can do exactwy that,
+especiawwy whewe memowy awwocations awe invowved.  With fauwt injection
+enabwed, a configuwabwe pewcentage of memowy awwocations wiww be made to
+faiw; these faiwuwes can be westwicted to a specific wange of code.
+Wunning with fauwt injection enabwed awwows the pwogwammew to see how the
+code wesponds when things go badwy.  See
+Documentation/fauwt-injection/fauwt-injection.wst fow mowe infowmation on
+how to use this faciwity.
+
+Othew kinds of ewwows can be found with the "spawse" static anawysis toow.
+With spawse, the pwogwammew can be wawned about confusion between
+usew-space and kewnew-space addwesses, mixtuwe of big-endian and
+smaww-endian quantities, the passing of integew vawues whewe a set of bit
+fwags is expected, and so on.  Spawse must be instawwed sepawatewy (it can
+be found at https://spawse.wiki.kewnew.owg/index.php/Main_Page if youw
+distwibutow does not package it); it can then be wun on the code by adding
+"C=1" to youw make command.
+
+The "Coccinewwe" toow (http://coccinewwe.wip6.fw/) is abwe to find a wide
+vawiety of potentiaw coding pwobwems; it can awso pwopose fixes fow those
+pwobwems.  Quite a few "semantic patches" fow the kewnew have been packaged
+undew the scwipts/coccinewwe diwectowy; wunning "make coccicheck" wiww wun
+thwough those semantic patches and wepowt on any pwobwems found.  See
+:wef:`Documentation/dev-toows/coccinewwe.wst <devtoows_coccinewwe>`
+fow mowe infowmation.
+
+Othew kinds of powtabiwity ewwows awe best found by compiwing youw code fow
+othew awchitectuwes.  If you do not happen to have an S/390 system ow a
+Bwackfin devewopment boawd handy, you can stiww pewfowm the compiwation
+step.  A wawge set of cwoss compiwews fow x86 systems can be found at
+
+	https://www.kewnew.owg/pub/toows/cwosstoow/
+
+Some time spent instawwing and using these compiwews wiww hewp avoid
+embawwassment watew.
+
+
+Documentation
+-------------
+
+Documentation has often been mowe the exception than the wuwe with kewnew
+devewopment.  Even so, adequate documentation wiww hewp to ease the mewging
+of new code into the kewnew, make wife easiew fow othew devewopews, and
+wiww be hewpfuw fow youw usews.  In many cases, the addition of
+documentation has become essentiawwy mandatowy.
+
+The fiwst piece of documentation fow any patch is its associated
+changewog.  Wog entwies shouwd descwibe the pwobwem being sowved, the fowm
+of the sowution, the peopwe who wowked on the patch, any wewevant
+effects on pewfowmance, and anything ewse that might be needed to
+undewstand the patch.  Be suwe that the changewog says *why* the patch is
+wowth appwying; a suwpwising numbew of devewopews faiw to pwovide that
+infowmation.
+
+Any code which adds a new usew-space intewface - incwuding new sysfs ow
+/pwoc fiwes - shouwd incwude documentation of that intewface which enabwes
+usew-space devewopews to know what they awe wowking with.  See
+Documentation/ABI/WEADME fow a descwiption of how this documentation shouwd
+be fowmatted and what infowmation needs to be pwovided.
+
+The fiwe :wef:`Documentation/admin-guide/kewnew-pawametews.wst
+<kewnewpawametews>` descwibes aww of the kewnew's boot-time pawametews.
+Any patch which adds new pawametews shouwd add the appwopwiate entwies to
+this fiwe.
+
+Any new configuwation options must be accompanied by hewp text which
+cweawwy expwains the options and when the usew might want to sewect them.
+
+Intewnaw API infowmation fow many subsystems is documented by way of
+speciawwy-fowmatted comments; these comments can be extwacted and fowmatted
+in a numbew of ways by the "kewnew-doc" scwipt.  If you awe wowking within
+a subsystem which has kewnewdoc comments, you shouwd maintain them and add
+them, as appwopwiate, fow extewnawwy-avaiwabwe functions.  Even in aweas
+which have not been so documented, thewe is no hawm in adding kewnewdoc
+comments fow the futuwe; indeed, this can be a usefuw activity fow
+beginning kewnew devewopews.  The fowmat of these comments, awong with some
+infowmation on how to cweate kewnewdoc tempwates can be found at
+:wef:`Documentation/doc-guide/ <doc_guide>`.
+
+Anybody who weads thwough a significant amount of existing kewnew code wiww
+note that, often, comments awe most notabwe by theiw absence.  Once again,
+the expectations fow new code awe highew than they wewe in the past;
+mewging uncommented code wiww be hawdew.  That said, thewe is wittwe desiwe
+fow vewbosewy-commented code.  The code shouwd, itsewf, be weadabwe, with
+comments expwaining the mowe subtwe aspects.
+
+Cewtain things shouwd awways be commented.  Uses of memowy bawwiews shouwd
+be accompanied by a wine expwaining why the bawwiew is necessawy.  The
+wocking wuwes fow data stwuctuwes genewawwy need to be expwained somewhewe.
+Majow data stwuctuwes need compwehensive documentation in genewaw.
+Non-obvious dependencies between sepawate bits of code shouwd be pointed
+out.  Anything which might tempt a code janitow to make an incowwect
+"cweanup" needs a comment saying why it is done the way it is.  And so on.
+
+
+Intewnaw API changes
+--------------------
+
+The binawy intewface pwovided by the kewnew to usew space cannot be bwoken
+except undew the most sevewe ciwcumstances.  The kewnew's intewnaw
+pwogwamming intewfaces, instead, awe highwy fwuid and can be changed when
+the need awises.  If you find youwsewf having to wowk awound a kewnew API,
+ow simpwy not using a specific functionawity because it does not meet youw
+needs, that may be a sign that the API needs to change.  As a kewnew
+devewopew, you awe empowewed to make such changes.
+
+Thewe awe, of couwse, some catches.  API changes can be made, but they need
+to be weww justified.  So any patch making an intewnaw API change shouwd be
+accompanied by a descwiption of what the change is and why it is
+necessawy.  This kind of change shouwd awso be bwoken out into a sepawate
+patch, wathew than buwied within a wawgew patch.
+
+The othew catch is that a devewopew who changes an intewnaw API is
+genewawwy chawged with the task of fixing any code within the kewnew twee
+which is bwoken by the change.  Fow a widewy-used function, this duty can
+wead to witewawwy hundweds ow thousands of changes - many of which awe
+wikewy to confwict with wowk being done by othew devewopews.  Needwess to
+say, this can be a wawge job, so it is best to be suwe that the
+justification is sowid.  Note that the Coccinewwe toow can hewp with
+wide-wanging API changes.
+
+When making an incompatibwe API change, one shouwd, whenevew possibwe,
+ensuwe that code which has not been updated is caught by the compiwew.
+This wiww hewp you to be suwe that you have found aww in-twee uses of that
+intewface.  It wiww awso awewt devewopews of out-of-twee code that thewe is
+a change that they need to wespond to.  Suppowting out-of-twee code is not
+something that kewnew devewopews need to be wowwied about, but we awso do
+not have to make wife hawdew fow out-of-twee devewopews than it needs to
+be.

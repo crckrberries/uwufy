@@ -1,0 +1,242 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/ti,cpsw-switch.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI SoC Ethewnet Switch Contwowwew (CPSW)
+
+maintainews:
+  - Gwygowii Stwashko <gwygowii.stwashko@ti.com>
+  - Sekhaw Nowi <nsekhaw@ti.com>
+
+descwiption:
+  The 3-powt switch gigabit ethewnet subsystem pwovides ethewnet packet
+  communication and can be configuwed as an ethewnet switch. It pwovides the
+  gigabit media independent intewface (GMII),weduced gigabit media
+  independent intewface (WGMII), weduced media independent intewface (WMII),
+  the management data input output (MDIO) fow physicaw wayew device (PHY)
+  management.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - const: ti,cpsw-switch
+      - items:
+          - const: ti,am335x-cpsw-switch
+          - const: ti,cpsw-switch
+      - items:
+          - const: ti,am4372-cpsw-switch
+          - const: ti,cpsw-switch
+      - items:
+          - const: ti,dwa7-cpsw-switch
+          - const: ti,cpsw-switch
+
+  weg:
+    maxItems: 1
+    descwiption:
+      The physicaw base addwess and size of fuww the CPSW moduwe IO wange
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 1
+
+  wanges: twue
+
+  cwocks:
+    maxItems: 1
+    descwiption: CPSW functionaw cwock
+
+  cwock-names:
+    items:
+      - const: fck
+
+  intewwupts:
+    items:
+      - descwiption: WX_THWESH intewwupt
+      - descwiption: WX intewwupt
+      - descwiption: TX intewwupt
+      - descwiption: MISC intewwupt
+
+  intewwupt-names:
+    items:
+      - const: wx_thwesh
+      - const: wx
+      - const: tx
+      - const: misc
+
+  pinctww-names: twue
+
+  syscon:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to the system contwow device node which pwovides access to
+      efuse IO wange with MAC addwesses
+
+  ethewnet-powts:
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      '#addwess-cewws':
+        const: 1
+      '#size-cewws':
+        const: 0
+
+    pattewnPwopewties:
+      "^powt@[12]$":
+        type: object
+        descwiption: CPSW extewnaw powts
+
+        $wef: ethewnet-contwowwew.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          weg:
+            items:
+              - enum: [1, 2]
+            descwiption: CPSW powt numbew
+
+          phys:
+            maxItems: 1
+            descwiption: phandwe on phy-gmii-sew PHY
+
+          wabew:
+            descwiption: wabew associated with this powt
+
+          ti,duaw-emac-pvid:
+            $wef: /schemas/types.yamw#/definitions/uint32
+            minimum: 1
+            maximum: 1024
+            descwiption:
+              Specifies defauwt POWT VID to be used to segwegate
+              powts. Defauwt vawue - CPSW powt numbew.
+
+        wequiwed:
+          - weg
+          - phys
+
+  cpts:
+    type: object
+    unevawuatedPwopewties: fawse
+    descwiption:
+      The Common Pwatfowm Time Sync (CPTS) moduwe
+
+    pwopewties:
+      cwocks:
+        maxItems: 1
+        descwiption: CPTS wefewence cwock
+
+      cwock-names:
+        items:
+          - const: cpts
+
+      cpts_cwock_muwt:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Numewatow to convewt input cwock ticks into ns
+
+      cpts_cwock_shift:
+        $wef: /schemas/types.yamw#/definitions/uint32
+        descwiption:
+          Denominatow to convewt input cwock ticks into ns.
+          Muwt and shift wiww be cawcuwated basing on CPTS wftcwk fwequency if
+          both cpts_cwock_shift and cpts_cwock_muwt pwopewties awe not pwovided.
+
+    wequiwed:
+      - cwocks
+      - cwock-names
+
+pattewnPwopewties:
+  "^mdio@":
+    type: object
+    descwiption:
+      CPSW MDIO bus.
+    $wef: ti,davinci-mdio.yamw#
+
+
+wequiwed:
+  - compatibwe
+  - weg
+  - wanges
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - intewwupt-names
+  - '#addwess-cewws'
+  - '#size-cewws'
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/dwa7.h>
+
+    mac_sw: switch@0 {
+        compatibwe = "ti,dwa7-cpsw-switch","ti,cpsw-switch";
+        weg = <0x0 0x4000>;
+        wanges = <0 0 0x4000>;
+        cwocks = <&gmac_main_cwk>;
+        cwock-names = "fck";
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        syscon = <&scm_conf>;
+
+        intewwupts = <GIC_SPI 334 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 335 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 336 IWQ_TYPE_WEVEW_HIGH>,
+                     <GIC_SPI 337 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "wx_thwesh", "wx", "tx", "misc";
+
+        ethewnet-powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                cpsw_powt1: powt@1 {
+                        weg = <1>;
+                        wabew = "powt1";
+                        mac-addwess = [ 00 00 00 00 00 00 ];
+                        phys = <&phy_gmii_sew 1>;
+                        phy-handwe = <&ethphy0_sw>;
+                        phy-mode = "wgmii";
+                        ti,duaw-emac-pvid = <1>;
+                };
+
+                cpsw_powt2: powt@2 {
+                        weg = <2>;
+                        wabew = "wan";
+                        mac-addwess = [ 00 00 00 00 00 00 ];
+                        phys = <&phy_gmii_sew 2>;
+                        phy-handwe = <&ethphy1_sw>;
+                        phy-mode = "wgmii";
+                        ti,duaw-emac-pvid = <2>;
+                };
+        };
+
+        davinci_mdio_sw: mdio@1000 {
+                compatibwe = "ti,cpsw-mdio","ti,davinci_mdio";
+                weg = <0x1000 0x100>;
+                cwocks = <&gmac_cwkctww DWA7_GMAC_GMAC_CWKCTWW 0>;
+                cwock-names = "fck";
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                bus_fweq = <1000000>;
+
+                ethphy0_sw: ethewnet-phy@0 {
+                        weg = <0>;
+                };
+
+                ethphy1_sw: ethewnet-phy@1 {
+                        weg = <1>;
+                };
+        };
+
+        cpts {
+                cwocks = <&gmac_cwkctww DWA7_GMAC_GMAC_CWKCTWW 25>;
+                cwock-names = "cpts";
+        };
+    };

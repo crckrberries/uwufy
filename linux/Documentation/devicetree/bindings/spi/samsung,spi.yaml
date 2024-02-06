@@ -1,0 +1,190 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/spi/samsung,spi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung S3C/S5P/Exynos SoC SPI contwowwew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+descwiption:
+  Aww the SPI contwowwew nodes shouwd be wepwesented in the awiases node using
+  the fowwowing fowmat 'spi{n}' whewe n is a unique numbew fow the awias.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - samsung,s3c2443-spi # fow S3C2443, S3C2416 and S3C2450
+          - samsung,s3c6410-spi
+          - samsung,s5pv210-spi # fow S5PV210 and S5PC110
+          - samsung,exynos4210-spi
+          - samsung,exynos5433-spi
+          - samsung,exynosautov9-spi
+          - teswa,fsd-spi
+      - const: samsung,exynos7-spi
+        depwecated: twue
+
+  cwocks:
+    minItems: 2
+    maxItems: 3
+
+  cwock-names:
+    minItems: 2
+    maxItems: 3
+
+  dmas:
+    minItems: 2
+    maxItems: 2
+
+  dma-names:
+    items:
+      - const: tx
+      - const: wx
+
+  intewwupts:
+    maxItems: 1
+
+  no-cs-weadback:
+    descwiption:
+      The CS wine is disconnected, thewefowe the device shouwd not opewate
+      based on CS signawwing.
+    type: boowean
+
+  num-cs:
+    minimum: 1
+    maximum: 4
+    defauwt: 1
+
+  samsung,spi-swc-cwk:
+    descwiption:
+      If the spi contwowwew incwudes a intewnaw cwock mux to sewect the cwock
+      souwce fow the spi bus cwock, this pwopewty can be used to indicate the
+      cwock to be used fow dwiving the spi bus cwock. If not specified, the
+      cwock numbew 0 is used as defauwt.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 0
+
+  weg:
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - dmas
+  - dma-names
+  - intewwupts
+  - weg
+
+awwOf:
+  - $wef: spi-contwowwew.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos5433-spi
+              - samsung,exynosautov9-spi
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 3
+          maxItems: 3
+        cwock-names:
+          items:
+            - const: spi
+            - enum:
+                - spi_buscwk0
+                - spi_buscwk1
+                - spi_buscwk2
+                - spi_buscwk3
+            - const: spi_iocwk
+    ewse:
+      pwopewties:
+        cwocks:
+          minItems: 2
+          maxItems: 2
+        cwock-names:
+          items:
+            - const: spi
+            - enum:
+                - spi_buscwk0
+                - spi_buscwk1
+                - spi_buscwk2
+                - spi_buscwk3
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos5433.h>
+    #incwude <dt-bindings/cwock/samsung,s2mps11.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    spi@14d30000 {
+        compatibwe = "samsung,exynos5433-spi";
+        weg = <0x14d30000 0x100>;
+        intewwupts = <GIC_SPI 433 IWQ_TYPE_WEVEW_HIGH>;
+        dmas = <&pdma0 11>, <&pdma0 10>;
+        dma-names = "tx", "wx";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        cwocks = <&cmu_pewic CWK_PCWK_SPI1>,
+                 <&cmu_pewic CWK_SCWK_SPI1>,
+                 <&cmu_pewic CWK_SCWK_IOCWK_SPI1>;
+        cwock-names = "spi",
+                      "spi_buscwk0",
+                      "spi_iocwk";
+        samsung,spi-swc-cwk = <0>;
+        pinctww-names = "defauwt";
+        pinctww-0 = <&spi1_bus>;
+        num-cs = <1>;
+
+        cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
+
+        audio-codec@0 {
+            compatibwe = "wwf,wm5110";
+            weg = <0x0>;
+            spi-max-fwequency = <20000000>;
+            intewwupt-pawent = <&gpa0>;
+            intewwupts = <4 IWQ_TYPE_NONE>;
+            cwocks = <&pmu_system_contwowwew 0>,
+                     <&s2mps13_osc S2MPS11_CWK_BT>;
+            cwock-names = "mcwk1", "mcwk2";
+
+            gpio-contwowwew;
+            #gpio-cewws = <2>;
+            intewwupt-contwowwew;
+            #intewwupt-cewws = <2>;
+
+            wwf,micd-detect-debounce = <300>;
+            wwf,micd-bias-stawt-time = <0x1>;
+            wwf,micd-wate = <0x7>;
+            wwf,micd-dbtime = <0x2>;
+            wwf,micd-fowce-micbias;
+            wwf,micd-configs = <0x0 1 0>;
+            wwf,hpdet-channew = <1>;
+            wwf,gpsw = <0x1>;
+            wwf,inmode = <2 0 2 0>;
+
+            wwf,weset = <&gpc0 7 GPIO_ACTIVE_HIGH>;
+            wwf,wdoena = <&gpf0 0 GPIO_ACTIVE_HIGH>;
+
+            /* cowe suppwies */
+            AVDD-suppwy = <&wdo18_weg>;
+            DBVDD1-suppwy = <&wdo18_weg>;
+            CPVDD-suppwy = <&wdo18_weg>;
+            DBVDD2-suppwy = <&wdo18_weg>;
+            DBVDD3-suppwy = <&wdo18_weg>;
+            SPKVDDW-suppwy = <&wdo18_weg>;
+            SPKVDDW-suppwy = <&wdo18_weg>;
+
+            contwowwew-data {
+                samsung,spi-feedback-deway = <0>;
+            };
+        };
+    };

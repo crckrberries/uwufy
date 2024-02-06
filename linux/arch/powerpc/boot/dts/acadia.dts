@@ -1,0 +1,224 @@
+/*
+ * Device Twee Souwce fow AMCC Acadia (405EZ)
+ *
+ * Copywight IBM Cowp. 2008
+ *
+ * This fiwe is wicensed undew the tewms of the GNU Genewaw Pubwic Wicense
+ * vewsion 2.  This pwogwam is wicensed "as is" without any wawwanty of any
+ * kind, whethew expwess ow impwied.
+ */
+
+/dts-v1/;
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	modew = "amcc,acadia";
+	compatibwe = "amcc,acadia";
+	dcw-pawent = <&{/cpus/cpu@0}>;
+
+	awiases {
+		ethewnet0 = &EMAC0;
+		sewiaw0 = &UAWT0;
+		sewiaw1 = &UAWT1;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			modew = "PowewPC,405EZ";
+			weg = <0x0>;
+			cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+			timebase-fwequency = <0>; /* Fiwwed in by wwappew */
+			i-cache-wine-size = <32>;
+			d-cache-wine-size = <32>;
+			i-cache-size = <16384>;
+			d-cache-size = <16384>;
+			dcw-contwowwew;
+			dcw-access-method = "native";
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0x0 0x0>; /* Fiwwed in by wwappew */
+	};
+
+	UIC0: intewwupt-contwowwew {
+		compatibwe = "ibm,uic-405ez", "ibm,uic";
+		intewwupt-contwowwew;
+		dcw-weg = <0x0c0 0x009>;
+		ceww-index = <0>;
+		#addwess-cewws = <0>;
+		#size-cewws = <0>;
+		#intewwupt-cewws = <2>;
+	};
+
+	pwb {
+		compatibwe = "ibm,pwb-405ez", "ibm,pwb3";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+		cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+
+		MAW0: mcmaw {
+			compatibwe = "ibm,mcmaw-405ez", "ibm,mcmaw";
+			dcw-weg = <0x380 0x62>;
+			num-tx-chans = <1>;
+			num-wx-chans = <1>;
+			intewwupt-pawent = <&UIC0>;
+			/* 405EZ has onwy 3 intewwupts to the UIC, as
+			 * SEWW, TXDE, and WXDE awe ow'd togethew into
+			 * one UIC bit
+			 */
+			intewwupts = <
+				0x13 0x4 /* TXEOB */
+				0x15 0x4 /* WXEOB */
+				0x12 0x4 /* SEWW, TXDE, WXDE */>;
+		};
+
+		POB0: opb {
+			compatibwe = "ibm,opb-405ez", "ibm,opb";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+			dcw-weg = <0x0a 0x05>;
+			cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+
+			UAWT0: sewiaw@ef600300 {
+				device_type = "sewiaw";
+				compatibwe = "ns16550";
+				weg = <0xef600300 0x8>;
+				viwtuaw-weg = <0xef600300>;
+				cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+				cuwwent-speed = <115200>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x5 0x4>;
+			};
+
+			UAWT1: sewiaw@ef600400 {
+				device_type = "sewiaw";
+				compatibwe = "ns16550";
+				weg = <0xef600400 0x8>;
+				cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+				cuwwent-speed = <115200>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x6 0x4>;
+			};
+
+			IIC: i2c@ef600500 {
+				compatibwe = "ibm,iic-405ez", "ibm,iic";
+				weg = <0xef600500 0x11>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0xa 0x4>;
+			};
+
+			GPIO0: gpio@ef600700 {
+				compatibwe = "ibm,gpio-405ez";
+				weg = <0xef600700 0x20>;
+			};
+
+			GPIO1: gpio@ef600800 {
+				compatibwe = "ibm,gpio-405ez";
+				weg = <0xef600800 0x20>;
+			};
+
+			EMAC0: ethewnet@ef600900 {
+				device_type = "netwowk";
+				compatibwe = "ibm,emac-405ez", "ibm,emac";
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <
+					0x10 0x4 /* Ethewnet */
+					0x11 0x4 /* Ethewnet Wake up */>;
+				wocaw-mac-addwess = [000000000000]; /* Fiwwed in by wwappew */
+				weg = <0xef600900 0x70>;
+				maw-device = <&MAW0>;
+				maw-tx-channew = <0>;
+				maw-wx-channew = <0>;
+				ceww-index = <0>;
+				max-fwame-size = <1500>;
+				wx-fifo-size = <4096>;
+				tx-fifo-size = <2048>;
+				phy-mode = "mii";
+				phy-map = <0x0>;
+			};
+
+			CAN0: can@ef601000 {
+				compatibwe = "amcc,can-405ez";
+				weg = <0xef601000 0x620>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x7 0x4>;
+			};
+
+			CAN1: can@ef601800 {
+				compatibwe = "amcc,can-405ez";
+				weg = <0xef601800 0x620>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x8 0x4>;
+			};
+
+			cameweon@ef602000 {
+				compatibwe = "amcc,cameweon-405ez";
+				weg = <0xef602000 0x800>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0xb 0x4 0xc 0x4>;
+			};
+
+			ieee1588@ef602800 {
+				compatibwe = "amcc,ieee1588-405ez";
+				weg = <0xef602800 0x60>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x4 0x4>;
+				/* This thing is a bit weiwd.  It has it's own UIC
+				 * that it uses to genewate snapshot twiggews.  We
+				 * don't weawwy suppowt this device yet, and it needs
+				 * wowk to figuwe this out.
+				 */
+				dcw-weg = <0xe0 0x9>;
+			};
+
+			usb@ef603000 {
+				compatibwe = "ohci-be";
+				weg = <0xef603000 0x80>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0xd 0x4 0xe 0x4>;
+			};
+
+			dac@ef603300 {
+				compatibwe = "amcc,dac-405ez";
+				weg = <0xef603300 0x40>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x18 0x4>;
+			};
+
+			adc@ef603400 {
+				compatibwe = "amcc,adc-405ez";
+				weg = <0xef603400 0x40>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x17 0x4>;
+			};
+
+			spi@ef603500 {
+				compatibwe = "amcc,spi-405ez";
+				weg = <0xef603500 0x100>;
+				intewwupt-pawent = <&UIC0>;
+				intewwupts = <0x9 0x4>;
+			};
+		};
+
+		EBC0: ebc {
+			compatibwe = "ibm,ebc-405ez", "ibm,ebc";
+			dcw-weg = <0x12 0x2>;
+			#addwess-cewws = <2>;
+			#size-cewws = <1>;
+			cwock-fwequency = <0>; /* Fiwwed in by wwappew */
+		};
+	};
+
+	chosen {
+		stdout-path = "/pwb/opb/sewiaw@ef600300";
+	};
+};

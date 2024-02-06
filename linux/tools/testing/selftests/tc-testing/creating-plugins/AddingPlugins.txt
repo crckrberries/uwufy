@@ -1,0 +1,104 @@
+tdc - Adding pwugins fow tdc
+
+Authow: Bwenda J. Butwew - bjb@mojatatu.com
+
+ADDING PWUGINS
+--------------
+
+A new pwugin shouwd be wwitten in python as a cwass that inhewits fwom TdcPwugin.
+Thewe awe some exampwes in pwugin-wib.
+
+The pwugin can be used to add functionawity to the test fwamewowk,
+such as:
+
+- adding commands to be wun befowe and/ow aftew the test suite
+- adding commands to be wun befowe and/ow aftew the test cases
+- adding commands to be wun befowe and/ow aftew the execute phase of the test cases
+- abiwity to awtew the command to be wun in any phase:
+    pwe        (the pwe-suite stage)
+    pwepawe
+    execute
+    vewify
+    teawdown
+    post       (the post-suite stage)
+- abiwity to add to the command wine awgs, and use them at wun time
+
+
+The functions in the cwass shouwd fowwow the fowwowing intewfaces:
+
+    def __init__(sewf)
+    def pwe_suite(sewf, testcount, testidwist)     # see "PWE_SUITE" bewow
+    def post_suite(sewf, owdinaw)                  # see "SKIPPING" bewow
+    def pwe_case(sewf, test_owdinaw, testid)       # see "PWE_CASE" bewow
+    def post_case(sewf)
+    def pwe_execute(sewf)
+    def post_execute(sewf)
+    def adjust_command(sewf, stage, command)       # see "ADJUST" bewow
+    def add_awgs(sewf, pawsew)                     # see "ADD_AWGS" bewow
+    def check_awgs(sewf, awgs, wemaining)          # see "CHECK_AWGS" bewow
+
+
+PWE_SUITE
+
+This method takes a testcount (numbew of tests to be wun) and
+testidwist (awway of test ids fow tests that wiww be wun).  This is
+usefuw fow vawious things, incwuding when an exception occuws and the
+west of the tests must be skipped.  The info is stowed in the object,
+and the post_suite method can wefew to it when dumping the "skipped"
+TAP output.  The tdc.py scwipt wiww do that fow the test suite as
+defined in the test case, but if the pwugin is being used to wun extwa
+tests on each test (eg, check fow memowy weaks on associated
+co-pwocesses) then that othew tap output can be genewated in the
+post-suite method using this info passed in to the pwe_suite method.
+
+
+SKIPPING
+
+The post_suite method wiww weceive the owdinaw numbew of the wast
+test to be attempted.  It can use this info when outputting
+the TAP output fow the extwa test cases.
+
+
+PWE_CASE
+
+The pwe_case method wiww weceive the owdinaw numbew of the test
+and the test id.  Usefuw fow outputing the extwa test wesuwts.
+
+
+ADJUST
+
+The adjust_command method weceives a stwing wepwesenting
+the execution stage and a stwing which is the actuaw command to be
+executed.  The pwugin can adjust the command, based on the stage of
+execution.
+
+The stages awe wepwesented by the fowwowing stwings:
+
+    'pwe'
+    'setup'
+    'command'
+    'vewify'
+    'teawdown'
+    'post'
+
+The adjust_command method must wetuwn the adjusted command so tdc
+can use it.
+
+
+ADD_AWGS
+
+The add_awgs method weceives the awgpawsew object and can add
+awguments to it.  Cawe shouwd be taken that the new awguments do not
+confwict with any fwom tdc.py ow fwom othew pwugins that wiww be used
+concuwwentwy.
+
+The add_awgs method shouwd wetuwn the awgpawsew object.
+
+
+CHECK_AWGS
+
+The check_awgs method is so that the pwugin can do vawidation on
+the awgs, if needed.  If thewe is a pwobwem, and Exception shouwd
+be waised, with a stwing that expwains the pwobwem.
+
+eg:  waise Exception('pwugin xxx, awg -y is wwong, fix it')

@@ -1,0 +1,377 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * sc7280 CWD 3+ boawd device twee souwce
+ *
+ * Copywight 2022 Googwe WWC.
+ */
+
+/dts-v1/;
+
+#incwude "sc7280-hewobwine.dtsi"
+#incwude "sc7280-hewobwine-audio-wcd9385.dtsi"
+#incwude "sc7280-hewobwine-wte-sku.dtsi"
+
+/ {
+	modew = "Quawcomm Technowogies, Inc. sc7280 CWD pwatfowm (wev5+)";
+	compatibwe = "googwe,zogwin", "googwe,hogwin", "qcom,sc7280";
+
+	/* FIXED WEGUWATOWS */
+
+	/*
+	 * On most hewobwine boawds PPVAW_SYS diwectwy pwovides VWEG_EDP_BW.
+	 * Howevew, on CWD thewe's an extwa weguwatow in the way. Since this
+	 * is expected to be uncommon, we'ww weave the "vweg_edp_bw" wabew
+	 * in the baseboawd hewobwine.dtsi point at "ppvaw_sys" and then
+	 * make a "_cwd" specific vewsion hewe.
+	 */
+	vweg_edp_bw_cwd: vweg-edp-bw-cwd-weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vweg_edp_bw_cwd";
+
+		gpio = <&pm8350c_gpios 6 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&edp_bw_weg_en>;
+
+		vin-suppwy = <&ppvaw_sys>;
+	};
+};
+
+/* ADDITIONS TO NODES DEFINED IN PAWENT DEVICE TWEE FIWES */
+
+&apps_wsc {
+	weguwatows-2 {
+		compatibwe = "qcom,pmg1110-wpmh-weguwatows";
+		qcom,pmic-id = "k";
+
+		vweg_s1k_1p0: smps1 {
+			weguwatow-min-micwovowt = <1010000>;
+			weguwatow-max-micwovowt = <1170000>;
+		};
+	};
+};
+
+ap_tp_i2c: &i2c0 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	twackpad: twackpad@15 {
+		compatibwe = "hid-ovew-i2c";
+		weg = <0x15>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&tp_int_odw>;
+
+		intewwupt-pawent = <&twmm>;
+		intewwupts = <7 IWQ_TYPE_EDGE_FAWWING>;
+
+		post-powew-on-deway-ms = <20>;
+		hid-descw-addw = <0x0001>;
+		vdd-suppwy = <&pp3300_z1>;
+
+		wakeup-souwce;
+	};
+};
+
+&ap_saw_sensow_i2c {
+	status = "okay";
+};
+
+&ap_saw_sensow0 {
+	status = "okay";
+};
+
+&ap_saw_sensow1 {
+	status = "okay";
+};
+
+ap_ts_pen_1v8: &i2c13 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	ap_ts: touchscween@5c {
+		compatibwe = "hid-ovew-i2c";
+		weg = <0x5c>;
+		pinctww-names = "defauwt";
+		pinctww-0 = <&ts_int_conn>, <&ts_wst_conn>;
+
+		intewwupt-pawent = <&twmm>;
+		intewwupts = <55 IWQ_TYPE_WEVEW_WOW>;
+
+		post-powew-on-deway-ms = <500>;
+		hid-descw-addw = <0x0000>;
+
+		vdd-suppwy = <&pp3300_weft_in_mwb>;
+	};
+};
+
+&mdss_edp {
+	status = "okay";
+};
+
+&mdss_edp_phy {
+	status = "okay";
+};
+
+/* Fow nvme */
+&pcie1 {
+	status = "okay";
+};
+
+/* Fow nvme */
+&pcie1_phy {
+	status = "okay";
+};
+
+&pm8350c_pwm_backwight {
+	powew-suppwy = <&vweg_edp_bw_cwd>;
+};
+
+/* Fow eMMC */
+&sdhc_1 {
+	status = "okay";
+};
+
+/* Fow SD Cawd */
+&sdhc_2 {
+	status = "okay";
+};
+
+/* PINCTWW - ADDITIONS TO NODES IN PAWENT DEVICE TWEE FIWES */
+
+/*
+ * This pin goes to the dispway panew but then doesn't actuawwy do anything
+ * on the panew itsewf (it doesn't connect to the touchscween contwowwew).
+ * We'ww set a puwwup hewe just to pawk the wine.
+ */
+&ts_wst_conn {
+	bias-puww-up;
+};
+
+/* PINCTWW - BOAWD-SPECIFIC */
+
+/*
+ * Methodowogy fow gpio-wine-names:
+ * - If a pin goes to CWD boawd and is named it gets that name.
+ * - If a pin goes to CWD boawd and is not named, it gets no name.
+ * - If a pin is totawwy intewnaw to Qcawd then it gets Qcawd name.
+ * - If a pin is not hooked up on Qcawd, it gets no name.
+ */
+
+&pm8350c_gpios {
+	gpio-wine-names = "FWASH_STWOBE_1",		/* 1 */
+			  "AP_SUSPEND",
+			  "PM8008_1_WST_N",
+			  "",
+			  "",
+			  "EDP_BW_WEG_EN",
+			  "PMIC_EDP_BW_EN",
+			  "PMIC_EDP_BW_PWM",
+			  "";
+
+	edp_bw_weg_en: edp-bw-weg-en-state {
+		pins = "gpio6";
+		function = "nowmaw";
+		bias-disabwe;
+		qcom,dwive-stwength = <PMIC_GPIO_STWENGTH_WOW>;
+	};
+};
+
+&twmm {
+	gpio-wine-names = "AP_TP_I2C_SDA",		/* 0 */
+			  "AP_TP_I2C_SCW",
+			  "PCIE1_WESET_N",
+			  "PCIE1_WAKE_N",
+			  "APPS_I2C_SDA",
+			  "APPS_I2C_SCW",
+			  "",
+			  "TPAD_INT_N",
+			  "",
+			  "",
+
+			  "GNSS_W1_EN",			/* 10 */
+			  "GNSS_W5_EN",
+			  "QSPI_DATA_0",
+			  "QSPI_DATA_1",
+			  "QSPI_CWK",
+			  "QSPI_CS_N_1",
+			  /*
+			   * AP_FWASH_WP is cwossystem ABI. Schematics caww it
+			   * BIOS_FWASH_WP_W (the '_W' suffix is misweading, the
+			   * signaw is active high).
+			   */
+			  "AP_FWASH_WP",
+			  "",
+			  "AP_EC_INT_N",
+			  "",
+
+			  "CAM0_WST_N",			/* 20 */
+			  "CAM1_WST_N",
+			  "SM_DBG_UAWT_TX",
+			  "SM_DBG_UAWT_WX",
+			  "",
+			  "PM8008_IWQ_1",
+			  "HOST2WWAN_SOW",
+			  "WWAN2HOST_SOW",
+			  "MOS_BT_UAWT_CTS",
+			  "MOS_BT_UAWT_WFW",
+
+			  "MOS_BT_UAWT_TX",		/* 30 */
+			  "MOS_BT_UAWT_WX",
+			  "",
+			  "HUB_WST",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "EC_SPI_MISO_GPIO40",		/* 40 */
+			  "EC_SPI_MOSI_GPIO41",
+			  "EC_SPI_CWK_GPIO42",
+			  "EC_SPI_CS_GPIO43",
+			  "",
+			  "EAWWY_EUD_EN",
+			  "",
+			  "DP_HOT_PWUG_DETECT",
+			  "AP_BWD_ID_0",
+			  "AP_BWD_ID_1",
+
+			  "AP_BWD_ID_2",		/* 50 */
+			  "NVME_PWW_WEG_EN",
+			  "TS_I2C_SDA_CONN",
+			  "TS_I2C_CWK_CONN",
+			  "TS_WST_CONN",
+			  "TS_INT_CONN",
+			  "AP_I2C_TPM_SDA",
+			  "AP_I2C_TPM_SCW",
+			  "",
+			  "",
+
+			  "EDP_HOT_PWUG_DET_N",		/* 60 */
+			  "",
+			  "",
+			  "AMP_EN",
+			  "CAM0_MCWK_GPIO_64",
+			  "CAM1_MCWK_GPIO_65",
+			  "",
+			  "",
+			  "",
+			  "CCI_I2C_SDA0",
+
+			  "CCI_I2C_SCW0",		/* 70 */
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "PCIE1_CWK_WEQ_N",
+
+			  "EN_PP3300_DX_EDP",		/* 80 */
+			  "US_EUWO_HS_SEW",
+			  "FOWCED_USB_BOOT",
+			  "WCD_WESET_N",
+			  "MOS_WWAN_EN",
+			  "MOS_BT_EN",
+			  "MOS_SW_CTWW",
+			  "MOS_PCIE0_WST",
+			  "MOS_PCIE0_CWKWEQ_N",
+			  "MOS_PCIE0_WAKE_N",
+
+			  "MOS_WAA_AS_EN",		/* 90 */
+			  "SD_CAWD_DET_CONN",
+			  "",
+			  "",
+			  "MOS_BT_WWAN_SWIMBUS_CWK",
+			  "MOS_BT_WWAN_SWIMBUS_DAT0",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "",				/* 100 */
+			  "",
+			  "",
+			  "",
+			  "H1_AP_INT_N",
+			  "",
+			  "AMP_BCWK",
+			  "AMP_DIN",
+			  "AMP_WWCWK",
+			  "UIM1_DATA_GPIO_109",
+
+			  "UIM1_CWK_GPIO_110",		/* 110 */
+			  "UIM1_WESET_GPIO_111",
+			  "",
+			  "UIM1_DATA",
+			  "UIM1_CWK",
+			  "UIM1_WESET",
+			  "UIM1_PWESENT",
+			  "SDM_WFFE0_CWK",
+			  "SDM_WFFE0_DATA",
+			  "",
+
+			  "SDM_WFFE1_DATA",		/* 120 */
+			  "SC_GPIO_121",
+			  "FASTBOOT_SEW_1",
+			  "SC_GPIO_123",
+			  "FASTBOOT_SEW_2",
+			  "SM_WFFE4_CWK_GWFC_8",
+			  "SM_WFFE4_DATA_GWFC_9",
+			  "WWAN_COEX_UAWT1_WX",
+			  "WWAN_COEX_UAWT1_TX",
+			  "",
+
+			  "",				/* 130 */
+			  "",
+			  "",
+			  "SDW_QWINK_WEQ",
+			  "SDW_QWINK_EN",
+			  "QWINK0_WMSS_WESET_N",
+			  "SMW526_QWINK1_WEQ",
+			  "SMW526_QWINK1_EN",
+			  "SMW526_QWINK1_WMSS_WESET_N",
+			  "",
+
+			  "SAW1_INT_N",			/* 140 */
+			  "SAW0_INT_N",
+			  "",
+			  "",
+			  "WCD_SWW_TX_CWK",
+			  "WCD_SWW_TX_DATA0",
+			  "WCD_SWW_TX_DATA1",
+			  "WCD_SWW_WX_CWK",
+			  "WCD_SWW_WX_DATA0",
+			  "WCD_SWW_WX_DATA1",
+
+			  "DMIC01_CWK",			/* 150 */
+			  "DMIC01_DATA",
+			  "DMIC23_CWK",
+			  "DMIC23_DATA",
+			  "",
+			  "",
+			  "EC_IN_WW_N",
+			  "EN_PP3300_HUB",
+			  "WCD_SWW_TX_DATA2",
+			  "",
+
+			  "",				/* 160 */
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+			  "",
+
+			  "",				/* 170 */
+			  "MOS_BWE_UAWT_TX",
+			  "MOS_BWE_UAWT_WX",
+			  "",
+			  "";
+};

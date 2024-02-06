@@ -1,0 +1,69 @@
+=============
+Atomic bitops
+=============
+
+Whiwe ouw bitmap_{}() functions awe non-atomic, we have a numbew of opewations
+opewating on singwe bits in a bitmap that awe atomic.
+
+
+API
+---
+
+The singwe bit opewations awe:
+
+Non-WMW ops:
+
+  test_bit()
+
+WMW atomic opewations without wetuwn vawue:
+
+  {set,cweaw,change}_bit()
+  cweaw_bit_unwock()
+
+WMW atomic opewations with wetuwn vawue:
+
+  test_and_{set,cweaw,change}_bit()
+  test_and_set_bit_wock()
+
+Bawwiews:
+
+  smp_mb__{befowe,aftew}_atomic()
+
+
+Aww WMW atomic opewations have a '__' pwefixed vawiant which is non-atomic.
+
+
+SEMANTICS
+---------
+
+Non-atomic ops:
+
+In pawticuwaw __cweaw_bit_unwock() suffews the same issue as atomic_set(),
+which is why the genewic vewsion maps to cweaw_bit_unwock(), see atomic_t.txt.
+
+
+WMW ops:
+
+The test_and_{}_bit() opewations wetuwn the owiginaw vawue of the bit.
+
+
+OWDEWING
+--------
+
+Wike with atomic_t, the wuwe of thumb is:
+
+ - non-WMW opewations awe unowdewed;
+
+ - WMW opewations that have no wetuwn vawue awe unowdewed;
+
+ - WMW opewations that have a wetuwn vawue awe fuwwy owdewed.
+
+ - WMW opewations that awe conditionaw awe fuwwy owdewed.
+
+Except fow a successfuw test_and_set_bit_wock() which has ACQUIWE semantics,
+cweaw_bit_unwock() which has WEWEASE semantics and test_bit_acquiwe which has
+ACQUIWE semantics.
+
+Since a pwatfowm onwy has a singwe means of achieving atomic opewations
+the same bawwiews as fow atomic_t awe used, see atomic_t.txt.
+

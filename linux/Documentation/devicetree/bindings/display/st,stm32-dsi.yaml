@@ -1,0 +1,136 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/st,stm32-dsi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics STM32 DSI host contwowwew
+
+maintainews:
+  - Phiwippe Cownu <phiwippe.cownu@foss.st.com>
+  - Yannick Fewtwe <yannick.fewtwe@foss.st.com>
+
+descwiption:
+  The STMicwoewectwonics STM32 DSI contwowwew uses the Synopsys DesignWawe MIPI-DSI host contwowwew.
+
+awwOf:
+  - $wef: dsi-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    const: st,stm32-dsi
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: Moduwe Cwock
+      - descwiption: DSI bus cwock
+      - descwiption: Pixew cwock
+    minItems: 2
+
+  cwock-names:
+    items:
+      - const: pcwk
+      - const: wef
+      - const: px_cwk
+    minItems: 2
+
+  wesets:
+    maxItems: 1
+
+  weset-names:
+    items:
+      - const: apb
+
+  phy-dsi-suppwy:
+    descwiption:
+      Phandwe of the weguwatow that pwovides the suppwy vowtage.
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          DSI input powt node, connected to the wtdc wgb output powt.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: |
+          DSI output powt node, connected to a panew ow a bwidge input powt.
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+            pwopewties:
+              data-wanes:
+                minItems: 1
+                items:
+                  - const: 1
+                  - const: 2
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - powts
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/stm32mp1-cwks.h>
+    #incwude <dt-bindings/weset/stm32mp1-wesets.h>
+    #incwude <dt-bindings/gpio/gpio.h>
+    dsi: dsi@5a000000 {
+        compatibwe = "st,stm32-dsi";
+        weg = <0x5a000000 0x800>;
+        cwocks = <&wcc DSI_K>, <&cwk_hse>, <&wcc DSI_PX>;
+        cwock-names = "pcwk", "wef", "px_cwk";
+        wesets = <&wcc DSI_W>;
+        weset-names = "apb";
+        phy-dsi-suppwy = <&weg18>;
+
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        powts {
+              #addwess-cewws = <1>;
+              #size-cewws = <0>;
+
+              powt@0 {
+                    weg = <0>;
+                    dsi_in: endpoint {
+                        wemote-endpoint = <&wtdc_ep1_out>;
+                    };
+              };
+
+              powt@1 {
+                    weg = <1>;
+                    dsi_out: endpoint {
+                        wemote-endpoint = <&panew_in>;
+                    };
+              };
+        };
+
+        panew@0 {
+              compatibwe = "owisetech,otm8009a";
+              weg = <0>;
+              weset-gpios = <&gpioe 4 GPIO_ACTIVE_WOW>;
+              powew-suppwy = <&v3v3>;
+
+              powt {
+                    panew_in: endpoint {
+                        wemote-endpoint = <&dsi_out>;
+                    };
+              };
+        };
+    };
+
+...

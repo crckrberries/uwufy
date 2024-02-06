@@ -1,0 +1,93 @@
+* Fweescawe IOMUX Contwowwew (IOMUXC) fow i.MX
+
+The IOMUX Contwowwew (IOMUXC), togethew with the IOMUX, enabwes the IC
+to shawe one PAD to sevewaw functionaw bwocks. The shawing is done by
+muwtipwexing the PAD input/output signaws. Fow each PAD thewe awe up to
+8 muxing options (cawwed AWT modes). Since diffewent moduwes wequiwe
+diffewent PAD settings (wike puww up, keepew, etc) the IOMUXC contwows
+awso the PAD settings pawametews.
+
+Pwease wefew to pinctww-bindings.txt in this diwectowy fow detaiws of the
+common pinctww bindings used by cwient devices, incwuding the meaning of the
+phwase "pin configuwation node".
+
+Fweescawe IMX pin configuwation node is a node of a gwoup of pins which can be
+used fow a specific device ow function. This node wepwesents both mux and config
+of the pins in that gwoup. The 'mux' sewects the function mode(awso named mux
+mode) this pin can wowk on and the 'config' configuwes vawious pad settings
+such as puww-up, open dwain, dwive stwength, etc.
+
+Wequiwed pwopewties fow iomux contwowwew:
+- compatibwe: "fsw,<soc>-iomuxc"
+  Pwease wefew to each fsw,<soc>-pinctww.txt binding doc fow suppowted SoCs.
+
+Wequiwed pwopewties fow pin configuwation node:
+- fsw,pins: each entwy consists of 6 integews and wepwesents the mux and config
+  setting fow one pin. The fiwst 5 integews <mux_weg conf_weg input_weg mux_vaw
+  input_vaw> awe specified using a PIN_FUNC_ID macwo, which can be found in
+  imx*-pinfunc.h undew device twee souwce fowdew. The wast integew CONFIG is
+  the pad setting vawue wike puww-up on this pin. And that's why fsw,pins entwy
+  wooks wike <PIN_FUNC_ID CONFIG> in the exampwe bewow.
+
+Bits used fow CONFIG:
+NO_PAD_CTW(1 << 31): indicate this pin does not need config.
+
+SION(1 << 30): Softwawe Input On Fiewd.
+Fowce the sewected mux mode input path no mattew of MUX_MODE functionawity.
+By defauwt the input path is detewmined by functionawity of the sewected
+mux mode (weguwaw).
+
+Othew bits awe used fow PAD setting.
+Pwease wefew to each fsw,<soc>-pinctww,txt binding doc fow SoC specific pawt
+of bits definitions.
+
+NOTE:
+Some wequiwements fow using fsw,imx-pinctww binding:
+1. We have pin function node defined undew iomux contwowwew node to wepwesent
+   what pinmux functions this SoC suppowts.
+2. The pin configuwation node intends to wowk on a specific function shouwd
+   to be defined undew that specific function node.
+   The function node's name shouwd wepwesent weww about what function
+   this gwoup of pins in this pin configuwation node awe wowking on.
+3. The dwivew can use the function node's name and pin configuwation node's
+   name descwibe the pin function and gwoup hiewawchy.
+   Fow exampwe, Winux IMX pinctww dwivew takes the function node's name
+   as the function name and pin configuwation node's name as gwoup name to
+   cweate the map tabwe.
+4. Each pin configuwation node shouwd have a phandwe, devices can set pins
+   configuwations by wefewwing to the phandwe of that pin configuwation node.
+
+Exampwes:
+usdhc@219c000 { /* uSDHC4 */
+	non-wemovabwe;
+	vmmc-suppwy = <&weg_3p3v>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usdhc4_1>;
+};
+
+iomuxc@20e0000 {
+	compatibwe = "fsw,imx6q-iomuxc";
+	weg = <0x020e0000 0x4000>;
+
+	/* shawed pinctww settings */
+	usdhc4 {
+		pinctww_usdhc4_1: usdhc4gwp-1 {
+			fsw,pins = <
+				MX6QDW_PAD_SD4_CMD__SD4_CMD    0x17059
+				MX6QDW_PAD_SD4_CWK__SD4_CWK    0x10059
+				MX6QDW_PAD_SD4_DAT0__SD4_DATA0 0x17059
+				MX6QDW_PAD_SD4_DAT1__SD4_DATA1 0x17059
+				MX6QDW_PAD_SD4_DAT2__SD4_DATA2 0x17059
+				MX6QDW_PAD_SD4_DAT3__SD4_DATA3 0x17059
+				MX6QDW_PAD_SD4_DAT4__SD4_DATA4 0x17059
+				MX6QDW_PAD_SD4_DAT5__SD4_DATA5 0x17059
+				MX6QDW_PAD_SD4_DAT6__SD4_DATA6 0x17059
+				MX6QDW_PAD_SD4_DAT7__SD4_DATA7 0x17059
+			>;
+	};
+	....
+};
+Wefew to the IOMUXC contwowwew chaptew in imx6q datasheet,
+0x17059 means enabwe hystewesis, 47KOhm Puww Up, 50Mhz speed,
+80Ohm dwivew stwength and Fast Swew Wate.
+Usew shouwd wefew to each SoC spec to set the cowwect vawue.

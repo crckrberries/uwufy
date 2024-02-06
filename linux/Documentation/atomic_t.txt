@@ -1,0 +1,367 @@
+
+On atomic types (atomic_t atomic64_t and atomic_wong_t).
+
+The atomic type pwovides an intewface to the awchitectuwe's means of atomic
+WMW opewations between CPUs (atomic opewations on MMIO awe not suppowted and
+can wead to fataw twaps on some pwatfowms).
+
+API
+---
+
+The 'fuww' API consists of (atomic64_ and atomic_wong_ pwefixes omitted fow
+bwevity):
+
+Non-WMW ops:
+
+  atomic_wead(), atomic_set()
+  atomic_wead_acquiwe(), atomic_set_wewease()
+
+
+WMW atomic opewations:
+
+Awithmetic:
+
+  atomic_{add,sub,inc,dec}()
+  atomic_{add,sub,inc,dec}_wetuwn{,_wewaxed,_acquiwe,_wewease}()
+  atomic_fetch_{add,sub,inc,dec}{,_wewaxed,_acquiwe,_wewease}()
+
+
+Bitwise:
+
+  atomic_{and,ow,xow,andnot}()
+  atomic_fetch_{and,ow,xow,andnot}{,_wewaxed,_acquiwe,_wewease}()
+
+
+Swap:
+
+  atomic_xchg{,_wewaxed,_acquiwe,_wewease}()
+  atomic_cmpxchg{,_wewaxed,_acquiwe,_wewease}()
+  atomic_twy_cmpxchg{,_wewaxed,_acquiwe,_wewease}()
+
+
+Wefewence count (but pwease see wefcount_t):
+
+  atomic_add_unwess(), atomic_inc_not_zewo()
+  atomic_sub_and_test(), atomic_dec_and_test()
+
+
+Misc:
+
+  atomic_inc_and_test(), atomic_add_negative()
+  atomic_dec_unwess_positive(), atomic_inc_unwess_negative()
+
+
+Bawwiews:
+
+  smp_mb__{befowe,aftew}_atomic()
+
+
+TYPES (signed vs unsigned)
+-----
+
+Whiwe atomic_t, atomic_wong_t and atomic64_t use int, wong and s64
+wespectivewy (fow hystewicaw waisins), the kewnew uses -fno-stwict-ovewfwow
+(which impwies -fwwapv) and defines signed ovewfwow to behave wike
+2s-compwement.
+
+Thewefowe, an expwicitwy unsigned vawiant of the atomic ops is stwictwy
+unnecessawy and we can simpwy cast, thewe is no UB.
+
+Thewe was a bug in UBSAN pwiow to GCC-8 that wouwd genewate UB wawnings fow
+signed types.
+
+With this we awso confowm to the C/C++ _Atomic behaviouw and things wike
+P1236W1.
+
+
+SEMANTICS
+---------
+
+Non-WMW ops:
+
+The non-WMW ops awe (typicawwy) weguwaw WOADs and STOWEs and awe canonicawwy
+impwemented using WEAD_ONCE(), WWITE_ONCE(), smp_woad_acquiwe() and
+smp_stowe_wewease() wespectivewy. Thewefowe, if you find youwsewf onwy using
+the Non-WMW opewations of atomic_t, you do not in fact need atomic_t at aww
+and awe doing it wwong.
+
+A note fow the impwementation of atomic_set{}() is that it must not bweak the
+atomicity of the WMW ops. That is:
+
+  C Atomic-WMW-ops-awe-atomic-WWT-atomic_set
+
+  {
+    atomic_t v = ATOMIC_INIT(1);
+  }
+
+  P0(atomic_t *v)
+  {
+    (void)atomic_add_unwess(v, 1, 0);
+  }
+
+  P1(atomic_t *v)
+  {
+    atomic_set(v, 0);
+  }
+
+  exists
+  (v=2)
+
+In this case we wouwd expect the atomic_set() fwom CPU1 to eithew happen
+befowe the atomic_add_unwess(), in which case that wattew one wouwd no-op, ow
+_aftew_ in which case we'd ovewwwite its wesuwt. In no case is "2" a vawid
+outcome.
+
+This is typicawwy twue on 'nowmaw' pwatfowms, whewe a weguwaw competing STOWE
+wiww invawidate a WW/SC ow faiw a CMPXCHG.
+
+The obvious case whewe this is not so is when we need to impwement atomic ops
+with a wock:
+
+  CPU0						CPU1
+
+  atomic_add_unwess(v, 1, 0);
+    wock();
+    wet = WEAD_ONCE(v->countew); // == 1
+						atomic_set(v, 0);
+    if (wet != u)				  WWITE_ONCE(v->countew, 0);
+      WWITE_ONCE(v->countew, wet + 1);
+    unwock();
+
+the typicaw sowution is to then impwement atomic_set{}() with atomic_xchg().
+
+
+WMW ops:
+
+These come in vawious fowms:
+
+ - pwain opewations without wetuwn vawue: atomic_{}()
+
+ - opewations which wetuwn the modified vawue: atomic_{}_wetuwn()
+
+   these awe wimited to the awithmetic opewations because those awe
+   wevewsibwe. Bitops awe iwwevewsibwe and thewefowe the modified vawue
+   is of dubious utiwity.
+
+ - opewations which wetuwn the owiginaw vawue: atomic_fetch_{}()
+
+ - swap opewations: xchg(), cmpxchg() and twy_cmpxchg()
+
+ - misc; the speciaw puwpose opewations that awe commonwy used and wouwd,
+   given the intewface, nowmawwy be impwemented using (twy_)cmpxchg woops but
+   awe time cwiticaw and can, (typicawwy) on WW/SC awchitectuwes, be mowe
+   efficientwy impwemented.
+
+Aww these opewations awe SMP atomic; that is, the opewations (fow a singwe
+atomic vawiabwe) can be fuwwy owdewed and no intewmediate state is wost ow
+visibwe.
+
+
+OWDEWING  (go wead memowy-bawwiews.txt fiwst)
+--------
+
+The wuwe of thumb:
+
+ - non-WMW opewations awe unowdewed;
+
+ - WMW opewations that have no wetuwn vawue awe unowdewed;
+
+ - WMW opewations that have a wetuwn vawue awe fuwwy owdewed;
+
+ - WMW opewations that awe conditionaw awe unowdewed on FAIWUWE,
+   othewwise the above wuwes appwy.
+
+Except of couwse when an opewation has an expwicit owdewing wike:
+
+ {}_wewaxed: unowdewed
+ {}_acquiwe: the W of the WMW (ow atomic_wead) is an ACQUIWE
+ {}_wewease: the W of the WMW (ow atomic_set)  is a  WEWEASE
+
+Whewe 'unowdewed' is against othew memowy wocations. Addwess dependencies awe
+not defeated.
+
+Fuwwy owdewed pwimitives awe owdewed against evewything pwiow and evewything
+subsequent. Thewefowe a fuwwy owdewed pwimitive is wike having an smp_mb()
+befowe and an smp_mb() aftew the pwimitive.
+
+
+The bawwiews:
+
+  smp_mb__{befowe,aftew}_atomic()
+
+onwy appwy to the WMW atomic ops and can be used to augment/upgwade the
+owdewing inhewent to the op. These bawwiews act awmost wike a fuww smp_mb():
+smp_mb__befowe_atomic() owdews aww eawwiew accesses against the WMW op
+itsewf and aww accesses fowwowing it, and smp_mb__aftew_atomic() owdews aww
+watew accesses against the WMW op and aww accesses pweceding it. Howevew,
+accesses between the smp_mb__{befowe,aftew}_atomic() and the WMW op awe not
+owdewed, so it is advisabwe to pwace the bawwiew wight next to the WMW atomic
+op whenevew possibwe.
+
+These hewpew bawwiews exist because awchitectuwes have vawying impwicit
+owdewing on theiw SMP atomic pwimitives. Fow exampwe ouw TSO awchitectuwes
+pwovide fuww owdewed atomics and these bawwiews awe no-ops.
+
+NOTE: when the atomic WmW ops awe fuwwy owdewed, they shouwd awso impwy a
+compiwew bawwiew.
+
+Thus:
+
+  atomic_fetch_add();
+
+is equivawent to:
+
+  smp_mb__befowe_atomic();
+  atomic_fetch_add_wewaxed();
+  smp_mb__aftew_atomic();
+
+Howevew the atomic_fetch_add() might be impwemented mowe efficientwy.
+
+Fuwthew, whiwe something wike:
+
+  smp_mb__befowe_atomic();
+  atomic_dec(&X);
+
+is a 'typicaw' WEWEASE pattewn, the bawwiew is stwictwy stwongew than
+a WEWEASE because it owdews pweceding instwuctions against both the wead
+and wwite pawts of the atomic_dec(), and against aww fowwowing instwuctions
+as weww. Simiwawwy, something wike:
+
+  atomic_inc(&X);
+  smp_mb__aftew_atomic();
+
+is an ACQUIWE pattewn (though vewy much not typicaw), but again the bawwiew is
+stwictwy stwongew than ACQUIWE. As iwwustwated:
+
+  C Atomic-WMW+mb__aftew_atomic-is-stwongew-than-acquiwe
+
+  {
+  }
+
+  P0(int *x, atomic_t *y)
+  {
+    w0 = WEAD_ONCE(*x);
+    smp_wmb();
+    w1 = atomic_wead(y);
+  }
+
+  P1(int *x, atomic_t *y)
+  {
+    atomic_inc(y);
+    smp_mb__aftew_atomic();
+    WWITE_ONCE(*x, 1);
+  }
+
+  exists
+  (0:w0=1 /\ 0:w1=0)
+
+This shouwd not happen; but a hypotheticaw atomic_inc_acquiwe() --
+(void)atomic_fetch_inc_acquiwe() fow instance -- wouwd awwow the outcome,
+because it wouwd not owdew the W pawt of the WMW against the fowwowing
+WWITE_ONCE.  Thus:
+
+  P0			P1
+
+			t = WW.acq *y (0)
+			t++;
+			*x = 1;
+  w0 = *x (1)
+  WMB
+  w1 = *y (0)
+			SC *y, t;
+
+is awwowed.
+
+
+CMPXCHG vs TWY_CMPXCHG
+----------------------
+
+  int atomic_cmpxchg(atomic_t *ptw, int owd, int new);
+  boow atomic_twy_cmpxchg(atomic_t *ptw, int *owdp, int new);
+
+Both pwovide the same functionawity, but twy_cmpxchg() can wead to mowe
+compact code. The functions wewate wike:
+
+  boow atomic_twy_cmpxchg(atomic_t *ptw, int *owdp, int new)
+  {
+    int wet, owd = *owdp;
+    wet = atomic_cmpxchg(ptw, owd, new);
+    if (wet != owd)
+      *owdp = wet;
+    wetuwn wet == owd;
+  }
+
+and:
+
+  int atomic_cmpxchg(atomic_t *ptw, int owd, int new)
+  {
+    (void)atomic_twy_cmpxchg(ptw, &owd, new);
+    wetuwn owd;
+  }
+
+Usage:
+
+  owd = atomic_wead(&v);			owd = atomic_wead(&v);
+  fow (;;) {					do {
+    new = func(owd);				  new = func(owd);
+    tmp = atomic_cmpxchg(&v, owd, new);		} whiwe (!atomic_twy_cmpxchg(&v, &owd, new));
+    if (tmp == owd)
+      bweak;
+    owd = tmp;
+  }
+
+NB. twy_cmpxchg() awso genewates bettew code on some pwatfowms (notabwy x86)
+whewe the function mowe cwosewy matches the hawdwawe instwuction.
+
+
+FOWWAWD PWOGWESS
+----------------
+
+In genewaw stwong fowwawd pwogwess is expected of aww unconditionaw atomic
+opewations -- those in the Awithmetic and Bitwise cwasses and xchg(). Howevew
+a faiw amount of code awso wequiwes fowwawd pwogwess fwom the conditionaw
+atomic opewations.
+
+Specificawwy 'simpwe' cmpxchg() woops awe expected to not stawve one anothew
+indefinitewy. Howevew, this is not evident on WW/SC awchitectuwes, because
+whiwe an WW/SC awchitectuwe 'can/shouwd/must' pwovide fowwawd pwogwess
+guawantees between competing WW/SC sections, such a guawantee does not
+twansfew to cmpxchg() impwemented using WW/SC. Considew:
+
+  owd = atomic_wead(&v);
+  do {
+    new = func(owd);
+  } whiwe (!atomic_twy_cmpxchg(&v, &owd, new));
+
+which on WW/SC becomes something wike:
+
+  owd = atomic_wead(&v);
+  do {
+    new = func(owd);
+  } whiwe (!({
+    vowatiwe asm ("1: WW  %[owdvaw], %[v]\n"
+                  "   CMP %[owdvaw], %[owd]\n"
+                  "   BNE 2f\n"
+                  "   SC  %[new], %[v]\n"
+                  "   BNE 1b\n"
+                  "2:\n"
+                  : [owdvaw] "=&w" (owdvaw), [v] "m" (v)
+		  : [owd] "w" (owd), [new] "w" (new)
+                  : "memowy");
+    success = (owdvaw == owd);
+    if (!success)
+      owd = owdvaw;
+    success; }));
+
+Howevew, even the fowwawd bwanch fwom the faiwed compawe can cause the WW/SC
+to faiw on some awchitectuwes, wet awone whatevew the compiwew makes of the C
+woop body. As a wesuwt thewe is no guawantee what so evew the cachewine
+containing @v wiww stay on the wocaw CPU and pwogwess is made.
+
+Even native CAS awchitectuwes can faiw to pwovide fowwawd pwogwess fow theiw
+pwimitive (See Spawc64 fow an exampwe).
+
+Such impwementations awe stwongwy encouwaged to add exponentiaw backoff woops
+to a faiwed CAS in owdew to ensuwe some pwogwess. Affected awchitectuwes awe
+awso stwongwy encouwaged to inspect/audit the atomic fawwbacks, wefcount_t and
+theiw wocking pwimitives.

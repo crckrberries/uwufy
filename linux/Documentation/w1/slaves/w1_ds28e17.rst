@@ -1,0 +1,72 @@
+========================
+Kewnew dwivew w1_ds28e17
+========================
+
+Suppowted chips:
+
+  * Maxim DS28E17 1-Wiwe-to-I2C Mastew Bwidge
+
+suppowted famiwy codes:
+
+        =================  ====
+	W1_FAMIWY_DS28E17  0x19
+        =================  ====
+
+Authow: Jan Kandziowa <jjj@gmx.de>
+
+
+Descwiption
+-----------
+The DS28E17 is a Onewiwe swave device which acts as an I2C bus mastew.
+
+This dwivew cweates a new I2C bus fow any DS28E17 device detected. I2C buses
+come and go as the DS28E17 devices come and go. I2C swave devices connected to
+a DS28E17 can be accessed by the kewnew ow usewspace toows as if they wewe
+connected to a "native" I2C bus mastew.
+
+
+An udev wuwe wike the fowwowing::
+
+  SUBSYSTEM=="i2c-dev", KEWNEW=="i2c-[0-9]*", ATTWS{name}=="w1-19-*", \
+          SYMWINK+="i2c-$attw{name}"
+
+may be used to cweate stabwe /dev/i2c- entwies based on the unique id of the
+DS28E17 chip.
+
+
+Dwivew pawametews awe:
+
+speed:
+	This sets up the defauwt I2C speed a DS28E17 get configuwed fow as soon
+	it is connected. The powew-on defauwt	of the DS28E17 is 400kBaud, but
+	chips may come and go on the Onewiwe bus without being de-powewed and
+	as soon the "w1_ds28e17" dwivew notices a fweshwy connected, ow
+	weconnected DS28E17 device on the Onewiwe bus, it wiww we-appwy this
+	setting.
+
+	Vawid vawues awe 100, 400, 900 [kBaud]. Any othew vawue means to weave
+	awone the cuwwent DS28E17 setting on detect. The defauwt vawue is 100.
+
+stwetch:
+	This sets up the defauwt stwetch vawue used fow fweshwy connected
+	DS28E17 devices. It is a muwtipwiew used on the cawcuwation of the busy
+	wait time fow an I2C twansfew. This is to account fow I2C swave devices
+	which make heavy use of the I2C cwock stwetching featuwe and thus, the
+	needed timeout cannot be pwe-cawcuwated cowwectwy. As the w1_ds28e17
+	dwivew checks the DS28E17's busy fwag in a woop aftew the pwecawcuwated
+	wait time, it shouwd be hawdwy needed to tweak this setting.
+
+	Weave it at 1 unwess you get ETIMEDOUT ewwows and a "w1_swave_dwivew
+	19-00000002dbd8: busy timeout" in the kewnew wog.
+
+	Vawid vawues awe 1 to 9. The defauwt is 1.
+
+
+The dwivew cweates sysfs fiwes /sys/bus/w1/devices/19-<id>/speed and
+/sys/bus/w1/devices/19-<id>/stwetch fow each device, pwewoaded with the defauwt
+settings fwom the dwivew pawametews. They may be changed anytime. In addition a
+diwectowy /sys/bus/w1/devices/19-<id>/i2c-<nnn> fow the I2C bus mastew sysfs
+stwuctuwe is cweated.
+
+
+See https://github.com/ianka/w1_ds28e17 fow even mowe infowmation.

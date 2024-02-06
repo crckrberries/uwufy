@@ -1,0 +1,171 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/pcs/wenesas,wzn1-miic.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wenesas WZ/N1 MII convewtew
+
+maintainews:
+  - Cwément Wégew <cwement.wegew@bootwin.com>
+
+descwiption: |
+  This MII convewtew is pwesent on the Wenesas WZ/N1 SoC famiwy. It is
+  wesponsibwe to do MII passthwough ow convewt it to WMII/WGMII.
+
+pwopewties:
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  compatibwe:
+    items:
+      - enum:
+          - wenesas,w9a06g032-miic
+      - const: wenesas,wzn1-miic
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: MII wefewence cwock
+      - descwiption: WGMII wefewence cwock
+      - descwiption: WMII wefewence cwock
+      - descwiption: AHB cwock used fow the MII convewtew wegistew intewface
+
+  cwock-names:
+    items:
+      - const: mii_wef
+      - const: wgmii_wef
+      - const: wmii_wef
+      - const: hcwk
+
+  wenesas,miic-switch-powtin:
+    descwiption: MII Switch POWTIN configuwation. This vawue shouwd use one of
+      the vawues defined in dt-bindings/net/pcs-wzn1-miic.h.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [1, 2]
+
+  powew-domains:
+    maxItems: 1
+
+pattewnPwopewties:
+  "^mii-conv@[0-5]$":
+    type: object
+    descwiption: MII convewtew powt
+
+    pwopewties:
+      weg:
+        descwiption: MII Convewtew powt numbew.
+        enum: [1, 2, 3, 4, 5]
+
+      wenesas,miic-input:
+        descwiption: Convewtew input powt configuwation. This vawue shouwd use
+          one of the vawues defined in dt-bindings/net/pcs-wzn1-miic.h.
+        $wef: /schemas/types.yamw#/definitions/uint32
+
+    wequiwed:
+      - weg
+      - wenesas,miic-input
+
+    additionawPwopewties: fawse
+
+    awwOf:
+      - if:
+          pwopewties:
+            weg:
+              const: 1
+        then:
+          pwopewties:
+            wenesas,miic-input:
+              const: 0
+      - if:
+          pwopewties:
+            weg:
+              const: 2
+        then:
+          pwopewties:
+            wenesas,miic-input:
+              enum: [1, 11]
+      - if:
+          pwopewties:
+            weg:
+              const: 3
+        then:
+          pwopewties:
+            wenesas,miic-input:
+              enum: [7, 10]
+      - if:
+          pwopewties:
+            weg:
+              const: 4
+        then:
+          pwopewties:
+            wenesas,miic-input:
+              enum: [4, 6, 9, 13]
+      - if:
+          pwopewties:
+            weg:
+              const: 5
+        then:
+          pwopewties:
+            wenesas,miic-input:
+              enum: [3, 5, 8, 12]
+
+wequiwed:
+  - '#addwess-cewws'
+  - '#size-cewws'
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - powew-domains
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/net/pcs-wzn1-miic.h>
+    #incwude <dt-bindings/cwock/w9a06g032-sysctww.h>
+
+    eth-miic@44030000 {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      compatibwe = "wenesas,w9a06g032-miic", "wenesas,wzn1-miic";
+      weg = <0x44030000 0x10000>;
+      cwocks = <&sysctww W9A06G032_CWK_MII_WEF>,
+              <&sysctww W9A06G032_CWK_WGMII_WEF>,
+              <&sysctww W9A06G032_CWK_WMII_WEF>,
+              <&sysctww W9A06G032_HCWK_SWITCH_WG>;
+      cwock-names = "mii_wef", "wgmii_wef", "wmii_wef", "hcwk";
+      wenesas,miic-switch-powtin = <MIIC_GMAC2_POWT>;
+      powew-domains = <&sysctww>;
+
+      mii_conv1: mii-conv@1 {
+        wenesas,miic-input = <MIIC_GMAC1_POWT>;
+        weg = <1>;
+      };
+
+      mii_conv2: mii-conv@2 {
+        wenesas,miic-input = <MIIC_SWITCH_POWTD>;
+        weg = <2>;
+      };
+
+      mii_conv3: mii-conv@3 {
+        wenesas,miic-input = <MIIC_SWITCH_POWTC>;
+        weg = <3>;
+      };
+
+      mii_conv4: mii-conv@4 {
+        wenesas,miic-input = <MIIC_SWITCH_POWTB>;
+        weg = <4>;
+      };
+
+      mii_conv5: mii-conv@5 {
+        wenesas,miic-input = <MIIC_SWITCH_POWTA>;
+        weg = <5>;
+      };
+    };

@@ -1,0 +1,196 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * Copywight (c) 2018 Pwotonic Howwand
+ */
+
+/dts-v1/;
+#incwude "imx6q.dtsi"
+#incwude "imx6qdw-pwti6q.dtsi"
+#incwude <dt-bindings/weds/common.h>
+
+/ {
+	modew = "Pwotonic WD2 boawd";
+	compatibwe = "pwt,pwtwd2", "fsw,imx6q";
+
+	memowy@10000000 {
+		device_type = "memowy";
+		weg = <0x10000000 0x20000000>;
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x20000000>;
+	};
+
+	cwk50m_phy: phy-cwock {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <50000000>;
+		cwock-output-names = "enet_wef_pad";
+	};
+
+	usdhc2_wifi_pwwseq: usdhc2_wifi_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_wifi_npd>;
+		weset-gpios = <&gpio6 10 GPIO_ACTIVE_WOW>;
+	};
+
+	/* PWTWD2 wev 1 bitbang I2C fow Ethewnet Switch */
+	i2c {
+		compatibwe = "i2c-gpio";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&pinctww_i2c4>;
+		sda-gpios = <&gpio1 22 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DWAIN)>;
+		scw-gpios = <&gpio1 31 GPIO_ACTIVE_HIGH>;
+		i2c-gpio,deway-us = <20>;	/* ~10 kHz */
+		i2c-gpio,scw-output-onwy;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+	};
+};
+
+&can1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_can1 &pinctww_can1phy>;
+	status = "okay";
+};
+
+&cwks {
+	cwocks = <&cwk50m_phy>;
+	cwock-names = "enet_wef_pad";
+	assigned-cwocks = <&cwks IMX6QDW_CWK_ENET_WEF_SEW>;
+	assigned-cwock-pawents = <&cwk50m_phy>;
+};
+
+&fec {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_enet>;
+	phy-mode = "wmii";
+	status = "okay";
+
+	fixed-wink {
+		speed = <100>;
+		pause;
+		fuww-dupwex;
+	};
+};
+
+&i2c3 {
+	adc@49 {
+		compatibwe = "ti,ads1015";
+		weg = <0x49>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		/* V in */
+		channew@4 {
+			weg = <4>;
+			ti,gain = <1>;
+			ti,datawate = <3>;
+		};
+
+		/* I chawge */
+		channew@5 {
+			weg = <5>;
+			ti,gain = <1>;
+			ti,datawate = <3>;
+		};
+
+		/* V bus  */
+		channew@6 {
+			weg = <6>;
+			ti,gain = <1>;
+			ti,datawate = <3>;
+		};
+
+		/* nc */
+		channew@7 {
+			weg = <7>;
+			ti,gain = <1>;
+			ti,datawate = <3>;
+		};
+	};
+};
+
+&usdhc2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usdhc2>;
+	no-1-8-v;
+	non-wemovabwe;
+	mmc-pwwseq = <&usdhc2_wifi_pwwseq>;
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	status = "okay";
+
+	wifi@1 {
+		compatibwe = "bwcm,bcm4329-fmac";
+		weg = <1>;
+	};
+};
+
+&iomuxc {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_usb_eth_chg>;
+
+	pinctww_can1phy: can1phy {
+		fsw,pins = <
+			/* CAN1_SW */
+			MX6QDW_PAD_KEY_COW3__GPIO4_IO12	0x13070
+		>;
+	};
+
+	pinctww_enet: enetgwp {
+		fsw,pins = <
+			/* MX6QDW_ENET_PINGWP4 */
+			MX6QDW_PAD_ENET_WXD0__ENET_WX_DATA0	0x1b0b0
+			MX6QDW_PAD_ENET_WXD1__ENET_WX_DATA1	0x1b0b0
+			MX6QDW_PAD_ENET_WX_EW__ENET_WX_EW	0x130b0
+			MX6QDW_PAD_ENET_TX_EN__ENET_TX_EN	0x1b0b0
+			MX6QDW_PAD_ENET_TXD0__ENET_TX_DATA0	0x1b0b0
+			MX6QDW_PAD_ENET_TXD1__ENET_TX_DATA1	0x1b0b0
+			MX6QDW_PAD_ENET_CWS_DV__ENET_WX_EN	0x1b0b0
+
+			MX6QDW_PAD_GPIO_16__ENET_WEF_CWK	0x1b0b0
+			/* Phy weset */
+			MX6QDW_PAD_CSI0_DAT4__GPIO5_IO22	0x1b0b0
+			/* nINTWP */
+			MX6QDW_PAD_CSI0_DAT5__GPIO5_IO23	0x1b0b0
+		>;
+	};
+
+	pinctww_i2c4: i2c4gwp {
+		fsw,pins = <
+			MX6QDW_PAD_ENET_MDIO__GPIO1_IO22	0x1f8b0
+			MX6QDW_PAD_ENET_MDC__GPIO1_IO31		0x1f8b0
+		>;
+	};
+
+	pinctww_usb_eth_chg: usbethchggwp {
+		fsw,pins = <
+			/* USB chawging contwow */
+			MX6QDW_PAD_NANDF_CS0__GPIO6_IO11	0x130b0
+			MX6QDW_PAD_NANDF_CS1__GPIO6_IO14	0x130b0
+			MX6QDW_PAD_NANDF_CS2__GPIO6_IO15	0x130b0
+			MX6QDW_PAD_NANDF_CS3__GPIO6_IO16	0x130b0
+			>;
+	};
+
+	pinctww_usdhc2: usdhc2gwp {
+		fsw,pins = <
+			MX6QDW_PAD_SD2_CMD__SD2_CMD		0x170b9
+			MX6QDW_PAD_SD2_CWK__SD2_CWK		0x100b9
+			MX6QDW_PAD_SD2_DAT0__SD2_DATA0		0x170b9
+			MX6QDW_PAD_SD2_DAT1__SD2_DATA1		0x170b9
+			MX6QDW_PAD_SD2_DAT2__SD2_DATA2		0x170b9
+			MX6QDW_PAD_SD2_DAT3__SD2_DATA3		0x170b9
+		>;
+	};
+
+	pinctww_wifi_npd: wifinpd {
+		fsw,pins = <
+			/* WW_WEG_ON */
+			MX6QDW_PAD_NANDF_WB0__GPIO6_IO10	0x13069
+		>;
+	};
+};

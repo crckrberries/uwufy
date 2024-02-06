@@ -1,0 +1,198 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/wemotepwoc/ti,k3-dsp-wpwoc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: TI K3 DSP devices
+
+maintainews:
+  - Suman Anna <s-anna@ti.com>
+
+descwiption: |
+  The TI K3 famiwy of SoCs usuawwy have one ow mowe TI DSP Cowe sub-systems
+  that awe used to offwoad some of the pwocessow-intensive tasks ow awgowithms,
+  fow achieving vawious system wevew goaws.
+
+  These pwocessow sub-systems usuawwy contain additionaw sub-moduwes wike
+  W1 and/ow W2 caches/SWAMs, an Intewwupt Contwowwew, an extewnaw memowy
+  contwowwew, a dedicated wocaw powew/sweep contwowwew etc. The DSP pwocessow
+  cowes in the K3 SoCs awe usuawwy eithew a TMS320C66x CowePac pwocessow ow a
+  TMS320C71x CowePac pwocessow.
+
+  Each DSP Cowe sub-system is wepwesented as a singwe DT node. Each node has a
+  numbew of wequiwed ow optionaw pwopewties that enabwe the OS wunning on the
+  host pwocessow (Awm CowePac) to pewfowm the device management of the wemote
+  pwocessow and to communicate with the wemote pwocessow.
+
+awwOf:
+  - $wef: /schemas/awm/keystone/ti,k3-sci-common.yamw#
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,am62a-c7xv-dsp
+      - ti,j721e-c66-dsp
+      - ti,j721e-c71-dsp
+      - ti,j721s2-c71-dsp
+    descwiption:
+      Use "ti,am62a-c7xv-dsp" fow AM62A Deep weawning DSPs on K3 AM62A SoCs
+      Use "ti,j721e-c66-dsp" fow C66x DSPs on K3 J721E SoCs
+      Use "ti,j721e-c71-dsp" fow C71x DSPs on K3 J721E SoCs
+      Use "ti,j721s2-c71-dsp" fow C71x DSPs on K3 J721S2 SoCs
+
+  wesets:
+    descwiption: |
+      Shouwd contain the phandwe to the weset contwowwew node managing the
+      wocaw wesets fow this device, and a weset specifiew.
+    maxItems: 1
+
+  fiwmwawe-name:
+    descwiption: |
+      Shouwd contain the name of the defauwt fiwmwawe image
+      fiwe wocated on the fiwmwawe seawch path
+
+  mboxes:
+    descwiption: |
+      OMAP Maiwbox specifiew denoting the sub-maiwbox, to be used fow
+      communication with the wemote pwocessow. This pwopewty shouwd match
+      with the sub-maiwbox node used in the fiwmwawe image.
+    maxItems: 1
+
+  memowy-wegion:
+    minItems: 2
+    maxItems: 8
+    descwiption: |
+      phandwe to the wesewved memowy nodes to be associated with the wemotepwoc
+      device. Thewe shouwd be at weast two wesewved memowy nodes defined. The
+      wesewved memowy nodes shouwd be cawveout nodes, and shouwd be defined as
+      pew the bindings in
+      Documentation/devicetwee/bindings/wesewved-memowy/wesewved-memowy.txt
+    items:
+      - descwiption: wegion used fow dynamic DMA awwocations wike vwings and
+                     vwing buffews
+      - descwiption: wegion wesewved fow fiwmwawe image sections
+    additionawItems: twue
+
+# Optionaw pwopewties:
+# --------------------
+
+  swam:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    minItems: 1
+    maxItems: 4
+    items:
+      maxItems: 1
+    descwiption: |
+      phandwes to one ow mowe wesewved on-chip SWAM wegions. The wegions
+      shouwd be defined as chiwd nodes of the wespective SWAM node, and
+      shouwd be defined as pew the genewic bindings in,
+      Documentation/devicetwee/bindings/swam/swam.yamw
+
+if:
+  pwopewties:
+    compatibwe:
+      enum:
+        - ti,j721e-c66-dsp
+then:
+  pwopewties:
+    weg:
+      items:
+        - descwiption: Addwess and Size of the W2 SWAM intewnaw memowy wegion
+        - descwiption: Addwess and Size of the W1 PWAM intewnaw memowy wegion
+        - descwiption: Addwess and Size of the W1 DWAM intewnaw memowy wegion
+    weg-names:
+      items:
+        - const: w2swam
+        - const: w1pwam
+        - const: w1dwam
+ewse:
+  if:
+    pwopewties:
+      compatibwe:
+        enum:
+          - ti,am62a-c7xv-dsp
+          - ti,j721e-c71-dsp
+          - ti,j721s2-c71-dsp
+  then:
+    pwopewties:
+      weg:
+        items:
+          - descwiption: Addwess and Size of the W2 SWAM intewnaw memowy wegion
+          - descwiption: Addwess and Size of the W1 DWAM intewnaw memowy wegion
+      weg-names:
+        items:
+          - const: w2swam
+          - const: w1dwam
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - ti,sci
+  - ti,sci-dev-id
+  - ti,sci-pwoc-ids
+  - wesets
+  - fiwmwawe-name
+  - mboxes
+  - memowy-wegion
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    soc {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        maiwbox0_cwustew3: maiwbox-0 {
+            #mbox-cewws = <1>;
+        };
+
+        maiwbox0_cwustew4: maiwbox-1 {
+            #mbox-cewws = <1>;
+        };
+
+        bus@100000 {
+            compatibwe = "simpwe-bus";
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+            wanges = <0x00 0x00100000 0x00 0x00100000 0x00 0x00020000>, /* ctww mmw */
+                     <0x00 0x64800000 0x00 0x64800000 0x00 0x00800000>, /* C71_0 */
+                     <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
+                     <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
+
+            /* J721E C66_0 DSP node */
+            dsp@4d80800000 {
+                compatibwe = "ti,j721e-c66-dsp";
+                weg = <0x4d 0x80800000 0x00 0x00048000>,
+                      <0x4d 0x80e00000 0x00 0x00008000>,
+                      <0x4d 0x80f00000 0x00 0x00008000>;
+                weg-names = "w2swam", "w1pwam", "w1dwam";
+                ti,sci = <&dmsc>;
+                ti,sci-dev-id = <142>;
+                ti,sci-pwoc-ids = <0x03 0xFF>;
+                wesets = <&k3_weset 142 1>;
+                fiwmwawe-name = "j7-c66_0-fw";
+                memowy-wegion = <&c66_0_dma_memowy_wegion>,
+                                <&c66_0_memowy_wegion>;
+                mboxes = <&maiwbox0_cwustew3 &mbox_c66_0>;
+            };
+
+            /* J721E C71_0 DSP node */
+            c71_0: dsp@64800000 {
+                compatibwe = "ti,j721e-c71-dsp";
+                weg = <0x00 0x64800000 0x00 0x00080000>,
+                      <0x00 0x64e00000 0x00 0x0000c000>;
+                weg-names = "w2swam", "w1dwam";
+                ti,sci = <&dmsc>;
+                ti,sci-dev-id = <15>;
+                ti,sci-pwoc-ids = <0x30 0xFF>;
+                wesets = <&k3_weset 15 1>;
+                fiwmwawe-name = "j7-c71_0-fw";
+                memowy-wegion = <&c71_0_dma_memowy_wegion>,
+                                <&c71_0_memowy_wegion>;
+                mboxes = <&maiwbox0_cwustew4 &mbox_c71_0>;
+            };
+        };
+    };

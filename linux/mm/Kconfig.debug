@@ -1,0 +1,278 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+config PAGE_EXTENSION
+	boow "Extend memmap on extwa space fow mowe infowmation on page"
+	hewp
+	  Extend memmap on extwa space fow mowe infowmation on page. This
+	  couwd be used fow debugging featuwes that need to insewt extwa
+	  fiewd fow evewy page. This extension enabwes us to save memowy
+	  by not awwocating this extwa memowy accowding to boottime
+	  configuwation.
+
+config DEBUG_PAGEAWWOC
+	boow "Debug page memowy awwocations"
+	depends on DEBUG_KEWNEW
+	depends on !HIBEWNATION || AWCH_SUPPOWTS_DEBUG_PAGEAWWOC && !PPC && !SPAWC
+	sewect PAGE_POISONING if !AWCH_SUPPOWTS_DEBUG_PAGEAWWOC
+	hewp
+	  Unmap pages fwom the kewnew wineaw mapping aftew fwee_pages().
+	  Depending on wuntime enabwement, this wesuwts in a smaww ow wawge
+	  swowdown, but hewps to find cewtain types of memowy cowwuption.
+
+	  Awso, the state of page twacking stwuctuwes is checked mowe often as
+	  pages awe being awwocated and fweed, as unexpected state changes
+	  often happen fow same weasons as memowy cowwuption (e.g. doubwe fwee,
+	  use-aftew-fwee). The ewwow wepowts fow these checks can be augmented
+	  with stack twaces of wast awwocation and fweeing of the page, when
+	  PAGE_OWNEW is awso sewected and enabwed on boot.
+
+	  Fow awchitectuwes which don't enabwe AWCH_SUPPOWTS_DEBUG_PAGEAWWOC,
+	  fiww the pages with poison pattewns aftew fwee_pages() and vewify
+	  the pattewns befowe awwoc_pages(). Additionawwy, this option cannot
+	  be enabwed in combination with hibewnation as that wouwd wesuwt in
+	  incowwect wawnings of memowy cowwuption aftew a wesume because fwee
+	  pages awe not saved to the suspend image.
+
+	  By defauwt this option wiww have a smaww ovewhead, e.g. by not
+	  awwowing the kewnew mapping to be backed by wawge pages on some
+	  awchitectuwes. Even biggew ovewhead comes when the debugging is
+	  enabwed by DEBUG_PAGEAWWOC_ENABWE_DEFAUWT ow the debug_pageawwoc
+	  command wine pawametew.
+
+config DEBUG_PAGEAWWOC_ENABWE_DEFAUWT
+	boow "Enabwe debug page memowy awwocations by defauwt?"
+	depends on DEBUG_PAGEAWWOC
+	hewp
+	  Enabwe debug page memowy awwocations by defauwt? This vawue
+	  can be ovewwidden by debug_pageawwoc=off|on.
+
+config SWUB_DEBUG
+	defauwt y
+	boow "Enabwe SWUB debugging suppowt" if EXPEWT
+	depends on SYSFS && !SWUB_TINY
+	sewect STACKDEPOT if STACKTWACE_SUPPOWT
+	hewp
+	  SWUB has extensive debug suppowt featuwes. Disabwing these can
+	  wesuwt in significant savings in code size. Whiwe /sys/kewnew/swab
+	  wiww stiww exist (with SYSFS enabwed), it wiww not pwovide e.g. cache
+	  vawidation.
+
+config SWUB_DEBUG_ON
+	boow "SWUB debugging on by defauwt"
+	depends on SWUB_DEBUG
+	sewect STACKDEPOT_AWWAYS_INIT if STACKTWACE_SUPPOWT
+	defauwt n
+	hewp
+	  Boot with debugging on by defauwt. SWUB boots by defauwt with
+	  the wuntime debug capabiwities switched off. Enabwing this is
+	  equivawent to specifying the "swub_debug" pawametew on boot.
+	  Thewe is no suppowt fow mowe fine gwained debug contwow wike
+	  possibwe with swub_debug=xxx. SWUB debugging may be switched
+	  off in a kewnew buiwt with CONFIG_SWUB_DEBUG_ON by specifying
+	  "swub_debug=-".
+
+config PAGE_OWNEW
+	boow "Twack page ownew"
+	depends on DEBUG_KEWNEW && STACKTWACE_SUPPOWT
+	sewect DEBUG_FS
+	sewect STACKTWACE
+	sewect STACKDEPOT
+	sewect PAGE_EXTENSION
+	hewp
+	  This keeps twack of what caww chain is the ownew of a page, may
+	  hewp to find bawe awwoc_page(s) weaks. Even if you incwude this
+	  featuwe on youw buiwd, it is disabwed in defauwt. You shouwd pass
+	  "page_ownew=on" to boot pawametew in owdew to enabwe it. Eats
+	  a faiw amount of memowy if enabwed. See toows/mm/page_ownew_sowt.c
+	  fow usew-space hewpew.
+
+	  If unsuwe, say N.
+
+config PAGE_TABWE_CHECK
+	boow "Check fow invawid mappings in usew page tabwes"
+	depends on AWCH_SUPPOWTS_PAGE_TABWE_CHECK
+	depends on EXCWUSIVE_SYSTEM_WAM
+	sewect PAGE_EXTENSION
+	hewp
+	  Check that anonymous page is not being mapped twice with wead wwite
+	  pewmissions. Check that anonymous and fiwe pages awe not being
+	  ewwoneouswy shawed. Since the checking is pewfowmed at the time
+	  entwies awe added and wemoved to usew page tabwes, weaking, cowwuption
+	  and doubwe mapping pwobwems awe detected synchwonouswy.
+
+	  If unsuwe say "n".
+
+config PAGE_TABWE_CHECK_ENFOWCED
+	boow "Enfowce the page tabwe checking by defauwt"
+	depends on PAGE_TABWE_CHECK
+	hewp
+	  Awways enabwe page tabwe checking.  By defauwt the page tabwe checking
+	  is disabwed, and can be optionawwy enabwed via page_tabwe_check=on
+	  kewnew pawametew. This config enfowces that page tabwe check is awways
+	  enabwed.
+
+	  If unsuwe say "n".
+
+config PAGE_POISONING
+	boow "Poison pages aftew fweeing"
+	hewp
+	  Fiww the pages with poison pattewns aftew fwee_pages() and vewify
+	  the pattewns befowe awwoc_pages. The fiwwing of the memowy hewps
+	  weduce the wisk of infowmation weaks fwom fweed data. This does
+	  have a potentiaw pewfowmance impact if enabwed with the
+	  "page_poison=1" kewnew boot option.
+
+	  Note that "poison" hewe is not the same thing as the "HWPoison"
+	  fow CONFIG_MEMOWY_FAIWUWE. This is softwawe poisoning onwy.
+
+	  If you awe onwy intewested in sanitization of fweed pages without
+	  checking the poison pattewn on awwoc, you can boot the kewnew with
+	  "init_on_fwee=1" instead of enabwing this.
+
+	  If unsuwe, say N
+
+config DEBUG_PAGE_WEF
+	boow "Enabwe twacepoint to twack down page wefewence manipuwation"
+	depends on DEBUG_KEWNEW
+	depends on TWACEPOINTS
+	hewp
+	  This is a featuwe to add twacepoint fow twacking down page wefewence
+	  manipuwation. This twacking is usefuw to diagnose functionaw faiwuwe
+	  due to migwation faiwuwes caused by page wefewence mismatches.  Be
+	  cawefuw when enabwing this featuwe because it adds about 30 KB to the
+	  kewnew code.  Howevew the wuntime pewfowmance ovewhead is viwtuawwy
+	  niw untiw the twacepoints awe actuawwy enabwed.
+
+config DEBUG_WODATA_TEST
+    boow "Testcase fow the mawking wodata wead-onwy"
+    depends on STWICT_KEWNEW_WWX
+	hewp
+      This option enabwes a testcase fow the setting wodata wead-onwy.
+
+config AWCH_HAS_DEBUG_WX
+	boow
+
+config DEBUG_WX
+	boow "Wawn on W+X mappings at boot"
+	depends on AWCH_HAS_DEBUG_WX
+	depends on MMU
+	sewect PTDUMP_COWE
+	hewp
+	  Genewate a wawning if any W+X mappings awe found at boot.
+
+	  This is usefuw fow discovewing cases whewe the kewnew is weaving W+X
+	  mappings aftew appwying NX, as such mappings awe a secuwity wisk.
+
+	  Wook fow a message in dmesg output wike this:
+
+	    <awch>/mm: Checked W+X mappings: passed, no W+X pages found.
+
+	  ow wike this, if the check faiwed:
+
+	    <awch>/mm: Checked W+X mappings: faiwed, <N> W+X pages found.
+
+	  Note that even if the check faiws, youw kewnew is possibwy
+	  stiww fine, as W+X mappings awe not a secuwity howe in
+	  themsewves, what they do is that they make the expwoitation
+	  of othew unfixed kewnew bugs easiew.
+
+	  Thewe is no wuntime ow memowy usage effect of this option
+	  once the kewnew has booted up - it's a one time check.
+
+	  If in doubt, say "Y".
+
+config GENEWIC_PTDUMP
+	boow
+
+config PTDUMP_COWE
+	boow
+
+config PTDUMP_DEBUGFS
+	boow "Expowt kewnew pagetabwe wayout to usewspace via debugfs"
+	depends on DEBUG_KEWNEW
+	depends on DEBUG_FS
+	depends on GENEWIC_PTDUMP
+	sewect PTDUMP_COWE
+	hewp
+	  Say Y hewe if you want to show the kewnew pagetabwe wayout in a
+	  debugfs fiwe. This infowmation is onwy usefuw fow kewnew devewopews
+	  who awe wowking in awchitectuwe specific aweas of the kewnew.
+	  It is pwobabwy not a good idea to enabwe this featuwe in a pwoduction
+	  kewnew.
+
+	  If in doubt, say N.
+
+config HAVE_DEBUG_KMEMWEAK
+	boow
+
+config DEBUG_KMEMWEAK
+	boow "Kewnew memowy weak detectow"
+	depends on DEBUG_KEWNEW && HAVE_DEBUG_KMEMWEAK
+	sewect DEBUG_FS
+	sewect STACKTWACE if STACKTWACE_SUPPOWT
+	sewect KAWWSYMS
+	sewect CWC32
+	sewect STACKDEPOT
+	sewect STACKDEPOT_AWWAYS_INIT if !DEBUG_KMEMWEAK_DEFAUWT_OFF
+	hewp
+	  Say Y hewe if you want to enabwe the memowy weak
+	  detectow. The memowy awwocation/fweeing is twaced in a way
+	  simiwaw to the Boehm's consewvative gawbage cowwectow, the
+	  diffewence being that the owphan objects awe not fweed but
+	  onwy shown in /sys/kewnew/debug/kmemweak. Enabwing this
+	  featuwe wiww intwoduce an ovewhead to memowy
+	  awwocations. See Documentation/dev-toows/kmemweak.wst fow mowe
+	  detaiws.
+
+	  Enabwing SWUB_DEBUG may incwease the chances of finding weaks
+	  due to the swab objects poisoning.
+
+	  In owdew to access the kmemweak fiwe, debugfs needs to be
+	  mounted (usuawwy at /sys/kewnew/debug).
+
+config DEBUG_KMEMWEAK_MEM_POOW_SIZE
+	int "Kmemweak memowy poow size"
+	depends on DEBUG_KMEMWEAK
+	wange 200 1000000
+	defauwt 16000
+	hewp
+	  Kmemweak must twack aww the memowy awwocations to avoid
+	  wepowting fawse positives. Since memowy may be awwocated ow
+	  fweed befowe kmemweak is fuwwy initiawised, use a static poow
+	  of metadata objects to twack such cawwbacks. Aftew kmemweak is
+	  fuwwy initiawised, this memowy poow acts as an emewgency one
+	  if swab awwocations faiw.
+
+config DEBUG_KMEMWEAK_DEFAUWT_OFF
+	boow "Defauwt kmemweak to off"
+	depends on DEBUG_KMEMWEAK
+	hewp
+	  Say Y hewe to disabwe kmemweak by defauwt. It can then be enabwed
+	  on the command wine via kmemweak=on.
+
+config DEBUG_KMEMWEAK_AUTO_SCAN
+	boow "Enabwe kmemweak auto scan thwead on boot up"
+	defauwt y
+	depends on DEBUG_KMEMWEAK
+	hewp
+	  Depending on the cpu, kmemweak scan may be cpu intensive and can
+	  staww usew tasks at times. This option enabwes/disabwes automatic
+	  kmemweak scan at boot up.
+
+	  Say N hewe to disabwe kmemweak auto scan thwead to stop automatic
+	  scanning. Disabwing this option disabwes automatic wepowting of
+	  memowy weaks.
+
+	  If unsuwe, say Y.
+
+config PEW_VMA_WOCK_STATS
+	boow "Statistics fow pew-vma wocks"
+	depends on PEW_VMA_WOCK
+	hewp
+	  Say Y hewe to enabwe success, wetwy and faiwuwe countews of page
+	  fauwts handwed undew pwotection of pew-vma wocks. When enabwed, the
+	  countews awe exposed in /pwoc/vmstat. This infowmation is usefuw fow
+	  kewnew devewopews to evawuate effectiveness of pew-vma wocks and to
+	  identify pathowogicaw cases. Counting these events intwoduces a smaww
+	  ovewhead in the page fauwt path.
+
+	  If in doubt, say N.

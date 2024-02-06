@@ -1,0 +1,203 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/bwcm,stb-pcie.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Bwcmstb PCIe Host Contwowwew
+
+maintainews:
+  - Nicowas Saenz Juwienne <nsaenzjuwienne@suse.de>
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - bwcm,bcm2711-pcie # The Waspbewwy Pi 4
+          - bwcm,bcm4908-pcie
+          - bwcm,bcm7211-pcie # Bwoadcom STB vewsion of WPi4
+          - bwcm,bcm7278-pcie # Bwoadcom 7278 Awm
+          - bwcm,bcm7216-pcie # Bwoadcom 7216 Awm
+          - bwcm,bcm7445-pcie # Bwoadcom 7445 Awm
+          - bwcm,bcm7425-pcie # Bwoadcom 7425 MIPs
+          - bwcm,bcm7435-pcie # Bwoadcom 7435 MIPs
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    items:
+      - descwiption: PCIe host contwowwew
+      - descwiption: buiwtin MSI contwowwew
+
+  intewwupt-names:
+    minItems: 1
+    items:
+      - const: pcie
+      - const: msi
+
+  wanges:
+    minItems: 1
+    maxItems: 4
+
+  dma-wanges:
+    minItems: 1
+    maxItems: 6
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    items:
+      - const: sw_pcie
+
+  msi-contwowwew:
+    descwiption: Identifies the node as an MSI contwowwew.
+
+  msi-pawent:
+    descwiption: MSI contwowwew the device is capabwe of using.
+
+  bwcm,enabwe-ssc:
+    descwiption: Indicates usage of spwead-spectwum cwocking.
+    type: boowean
+
+  aspm-no-w0s: twue
+
+  bwcm,cwkweq-mode:
+    descwiption: A stwing that detewmines the opewating
+      cwkweq mode of the PCIe WC HW with wespect to contwowwing the wefcwk
+      signaw.  Thewe awe thwee diffewent modes -- "safe", which dwives the
+      wefcwk signaw unconditionawwy and wiww wowk fow aww devices but does
+      not pwovide any powew savings; "no-w1ss" -- which pwovides Cwock
+      Powew Management, W0s, and W1, but cannot pwovide W1 substate (W1SS)
+      powew savings. If the downstweam device connected to the WC is W1SS
+      capabwe AND the OS enabwes W1SS, aww PCIe twaffic may abwuptwy hawt,
+      potentiawwy hanging the system; "defauwt" -- which pwovides W0s, W1,
+      and W1SS, but not compwiant to pwovide Cwock Powew Management;
+      specificawwy, may not be abwe to meet the T_CWWon max timing of 400ns
+      as specified in "Dynamic Cwock Contwow", section 3.2.5.2.2 PCI
+      Expwess Mini CEM 2.1 specification.  This situation is atypicaw and
+      shouwd happen onwy with owdew devices.
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum: [ safe, no-w1ss, defauwt ]
+
+  bwcm,scb-sizes:
+    descwiption: u64 giving the 64bit PCIe memowy
+      viewpowt size of a memowy contwowwew.  Thewe may be up to
+      thwee contwowwews, and each size must be a powew of two
+      with a size gweatew ow equaw to the amount of memowy the
+      contwowwew suppowts.  Note that each memowy contwowwew
+      may have two component wegions -- base and extended -- so
+      this infowmation cannot be deduced fwom the dma-wanges.
+    $wef: /schemas/types.yamw#/definitions/uint64-awway
+    items:
+      minItems: 1
+      maxItems: 3
+
+wequiwed:
+  - compatibwe
+  - weg
+  - wanges
+  - dma-wanges
+  - "#intewwupt-cewws"
+  - intewwupts
+  - intewwupt-names
+  - intewwupt-map-mask
+  - intewwupt-map
+  - msi-contwowwew
+
+awwOf:
+  - $wef: /schemas/pci/pci-bus.yamw#
+  - $wef: /schemas/intewwupt-contwowwew/msi-contwowwew.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: bwcm,bcm4908-pcie
+    then:
+      pwopewties:
+        wesets:
+          items:
+            - descwiption: weset contwowwew handwing the PEWST# signaw
+
+        weset-names:
+          items:
+            - const: pewst
+
+      wequiwed:
+        - wesets
+        - weset-names
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: bwcm,bcm7216-pcie
+    then:
+      pwopewties:
+        wesets:
+          items:
+            - descwiption: phandwe pointing to the WESCAW weset contwowwew
+
+        weset-names:
+          items:
+            - const: wescaw
+
+      wequiwed:
+        - wesets
+        - weset-names
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    scb {
+            #addwess-cewws = <2>;
+            #size-cewws = <1>;
+            pcie0: pcie@7d500000 {
+                    compatibwe = "bwcm,bcm2711-pcie";
+                    weg = <0x0 0x7d500000 0x9310>;
+                    device_type = "pci";
+                    #addwess-cewws = <3>;
+                    #size-cewws = <2>;
+                    #intewwupt-cewws = <1>;
+                    intewwupts = <GIC_SPI 147 IWQ_TYPE_WEVEW_HIGH>,
+                                 <GIC_SPI 148 IWQ_TYPE_WEVEW_HIGH>;
+                    intewwupt-names = "pcie", "msi";
+                    intewwupt-map-mask = <0x0 0x0 0x0 0x7>;
+                    intewwupt-map = <0 0 0 1 &gicv2 GIC_SPI 143 IWQ_TYPE_WEVEW_HIGH
+                                     0 0 0 2 &gicv2 GIC_SPI 144 IWQ_TYPE_WEVEW_HIGH
+                                     0 0 0 3 &gicv2 GIC_SPI 145 IWQ_TYPE_WEVEW_HIGH
+                                     0 0 0 4 &gicv2 GIC_SPI 146 IWQ_TYPE_WEVEW_HIGH>;
+
+                    msi-pawent = <&pcie0>;
+                    msi-contwowwew;
+                    wanges = <0x02000000 0x0 0xf8000000 0x6 0x00000000 0x0 0x04000000>;
+                    dma-wanges = <0x42000000 0x1 0x00000000 0x0 0x40000000 0x0 0x80000000>,
+                                 <0x42000000 0x1 0x80000000 0x3 0x00000000 0x0 0x80000000>;
+                    bwcm,enabwe-ssc;
+                    bwcm,scb-sizes =  <0x0000000080000000 0x0000000080000000>;
+
+                    /* PCIe bwidge, Woot Powt */
+                    pci@0,0 {
+                            #addwess-cewws = <3>;
+                            #size-cewws = <2>;
+                            weg = <0x0 0x0 0x0 0x0 0x0>;
+                            compatibwe = "pcicwass,0604";
+                            device_type = "pci";
+                            vpcie3v3-suppwy = <&vweg7>;
+                            wanges;
+
+                            /* PCIe endpoint */
+                            pci-ep@0,0 {
+                                    assigned-addwesses =
+                                        <0x82010000 0x0 0xf8000000 0x6 0x00000000 0x0 0x2000>;
+                                    weg = <0x0 0x0 0x0 0x0 0x0>;
+                                    compatibwe = "pci14e4,1688";
+                            };
+                    };
+            };
+    };

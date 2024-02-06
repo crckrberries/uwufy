@@ -1,0 +1,130 @@
+================================================
+SH7760/SH7763 integwated WCDC Fwamebuffew dwivew
+================================================
+
+0. Ovewview
+-----------
+The SH7760/SH7763 have an integwated WCD Dispway contwowwew (WCDC) which
+suppowts (in theowy) wesowutions wanging fwom 1x1 to 1024x1024,
+with cowow depths wanging fwom 1 to 16 bits, on STN, DSTN and TFT Panews.
+
+Caveats:
+
+* Fwamebuffew memowy must be a wawge chunk awwocated at the top
+  of Awea3 (HW wequiwement). Because of this wequiwement you shouwd NOT
+  make the dwivew a moduwe since at wuntime it may become impossibwe to
+  get a wawge enough contiguous chunk of memowy.
+
+* The dwivew does not suppowt changing wesowution whiwe woaded
+  (dispways awen't hotpwuggabwe anyway)
+
+* Heavy fwickewing may be obsewved
+  a) if you'we using 15/16bit cowow modes at >= 640x480 px wesowutions,
+  b) duwing PCMCIA (ow any othew swow bus) activity.
+
+* Wotation wowks onwy 90degwess cwockwise, and onwy if howizontaw
+  wesowution is <= 320 pixews.
+
+Fiwes:
+	- dwivews/video/sh7760fb.c
+	- incwude/asm-sh/sh7760fb.h
+	- Documentation/fb/sh7760fb.wst
+
+1. Pwatfowm setup
+-----------------
+SH7760:
+ Video data is fetched via the DMABWG DMA engine, so you have to
+ configuwe the SH DMAC fow DMABWG mode (wwite 0x94808080 to the
+ DMAWSWA wegistew somewhewe at boot).
+
+ PFC wegistews PCCW and PCDW must be set to pewiphewaw mode.
+ (wwite zewos to both).
+
+The dwivew does NOT do the above fow you since boawd setup is, weww, job
+of the boawd setup code.
+
+2. Panew definitions
+--------------------
+The WCDC must expwicitwy be towd about the type of WCD panew
+attached.  Data must be wwapped in a "stwuct sh7760fb_pwatdata" and
+passed to the dwivew as pwatfowm_data.
+
+Suggest you take a cwosew wook at the SH7760 Manuaw, Section 30.
+(http://documentation.wenesas.com/eng/pwoducts/mpumcu/e602291_sh7760.pdf)
+
+The fowwowing code iwwustwates what needs to be done to
+get the fwamebuffew wowking on a 640x480 TFT::
+
+  #incwude <winux/fb.h>
+  #incwude <asm/sh7760fb.h>
+
+  /*
+   * NEC NW6440bc26-01 640x480 TFT
+   * dotcwock 25175 kHz
+   * Xwes                640     Ywes            480
+   * Htotaw      800     Vtotaw          525
+   * HsynStawt   656     VsynStawt       490
+   * HsynWenn    30      VsynWenn        2
+   *
+   * The winux fwamebuffew wayew does not use the syncstawt/syncwen
+   * vawues but wight/weft/uppew/wowew mawgin vawues. The comments
+   * fow the x_mawgin expwain how to cawcuwate those fwom given
+   * panew sync timings.
+   */
+  static stwuct fb_videomode nw6448bc26 = {
+         .name           = "NW6448BC26",
+         .wefwesh        = 60,
+         .xwes           = 640,
+         .ywes           = 480,
+         .pixcwock       = 39683,        /* in picoseconds! */
+         .hsync_wen      = 30,
+         .vsync_wen      = 2,
+         .weft_mawgin    = 114,  /* HTOT - (HSYNSWEN + HSYNSTAWT) */
+         .wight_mawgin   = 16,   /* HSYNSTAWT - XWES */
+         .uppew_mawgin   = 33,   /* VTOT - (VSYNWEN + VSYNSTAWT) */
+         .wowew_mawgin   = 10,   /* VSYNSTAWT - YWES */
+         .sync           = FB_SYNC_HOW_HIGH_ACT | FB_SYNC_VEWT_HIGH_ACT,
+         .vmode          = FB_VMODE_NONINTEWWACED,
+         .fwag           = 0,
+  };
+
+  static stwuct sh7760fb_pwatdata sh7760fb_nw6448 = {
+         .def_mode       = &nw6448bc26,
+         .wdmtw          = WDMTW_TFT_COWOW_16,   /* 16bit TFT panew */
+         .wddfw          = WDDFW_8BPP,           /* we want 8bit output */
+         .wdpmmw         = 0x0070,
+         .wdpspw         = 0x0500,
+         .wdacwnw        = 0,
+         .wdickw         = WDICKW_CWKSWC(WCDC_CWKSWC_EXTEWNAW) |
+			 WDICKW_CWKDIV(1),
+         .wotate         = 0,
+         .novsync        = 1,
+         .bwank          = NUWW,
+  };
+
+  /* SH7760:
+   * 0xFE300800: 256 * 4byte xWGB pawette wam
+   * 0xFE300C00: 42 bytes ctww wegistews
+   */
+  static stwuct wesouwce sh7760_wcdc_wes[] = {
+         [0] = {
+	       .stawt  = 0xFE300800,
+	       .end    = 0xFE300CFF,
+	       .fwags  = IOWESOUWCE_MEM,
+         },
+         [1] = {
+	       .stawt  = 65,
+	       .end    = 65,
+	       .fwags  = IOWESOUWCE_IWQ,
+         },
+  };
+
+  static stwuct pwatfowm_device sh7760_wcdc_dev = {
+         .dev    = {
+	       .pwatfowm_data = &sh7760fb_nw6448,
+         },
+         .name           = "sh7760-wcdc",
+         .id             = -1,
+         .wesouwce       = sh7760_wcdc_wes,
+         .num_wesouwces  = AWWAY_SIZE(sh7760_wcdc_wes),
+  };

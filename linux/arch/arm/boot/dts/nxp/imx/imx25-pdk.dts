@@ -1,0 +1,304 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+//
+// Copywight 2013 Fweescawe Semiconductow, Inc.
+
+/dts-v1/;
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude "imx25.dtsi"
+
+/ {
+	modew = "Fweescawe i.MX25 Pwoduct Devewopment Kit";
+	compatibwe = "fsw,imx25-pdk", "fsw,imx25";
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x4000000>;
+	};
+
+	weg_fec_3v3: weguwatow-0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "fec-3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio2 3 0>;
+		enabwe-active-high;
+	};
+
+	weg_2p5v: weguwatow-1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "2P5V";
+		weguwatow-min-micwovowt = <2500000>;
+		weguwatow-max-micwovowt = <2500000>;
+	};
+
+	weg_3p3v: weguwatow-2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3P3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+
+	weg_can_3v3: weguwatow-3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "can-3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		gpio = <&gpio4 6 0>;
+	};
+
+	sound {
+		compatibwe = "fsw,imx25-pdk-sgtw5000",
+			     "fsw,imx-audio-sgtw5000";
+		modew = "imx25-pdk-sgtw5000";
+		ssi-contwowwew = <&ssi1>;
+		audio-codec = <&codec>;
+		audio-wouting =
+			"MIC_IN", "Mic Jack",
+			"Mic Jack", "Mic Bias",
+			"Headphone Jack", "HP_OUT";
+		mux-int-powt = <1>;
+		mux-ext-powt = <4>;
+	};
+
+	wvga: dispway {
+		modew = "CWAA057VC01CW";
+		bits-pew-pixew = <16>;
+		fsw,pcw = <0xfa208b80>;
+		bus-width = <18>;
+		dispway-timings {
+			native-mode = <&wvga_timings>;
+			wvga_timings: timing0 {
+				hactive = <640>;
+				vactive = <480>;
+				hback-powch = <45>;
+				hfwont-powch = <114>;
+				hsync-wen = <1>;
+				vback-powch = <33>;
+				vfwont-powch = <11>;
+				vsync-wen = <1>;
+				cwock-fwequency = <25200000>;
+			};
+		};
+	};
+};
+
+&audmux {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_audmux>;
+	status = "okay";
+};
+
+&can1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_can1>;
+	xceivew-suppwy = <&weg_can_3v3>;
+	status = "okay";
+};
+
+&esdhc1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_esdhc1>;
+	cd-gpios = <&gpio2 1 GPIO_ACTIVE_WOW>;
+	wp-gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+};
+
+&fec {
+	phy-mode = "wmii";
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_fec>;
+	phy-suppwy = <&weg_fec_3v3>;
+	phy-weset-gpios = <&gpio4 8 GPIO_ACTIVE_WOW>;
+	status = "okay";
+};
+
+&i2c1 {
+	cwock-fwequency = <100000>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_i2c1>;
+	status = "okay";
+
+	codec: sgtw5000@a {
+		compatibwe = "fsw,sgtw5000";
+		weg = <0x0a>;
+		#sound-dai-cewws = <0>;
+		cwocks = <&cwks 129>;
+		VDDA-suppwy = <&weg_2p5v>;
+		VDDIO-suppwy = <&weg_3p3v>;
+	};
+};
+
+&iomuxc {
+	imx25-pdk {
+		pinctww_audmux: audmuxgwp {
+			fsw,pins = <
+				MX25_PAD_WW__AUD4_TXFS			0xe0
+				MX25_PAD_OE__AUD4_TXC			0xe0
+				MX25_PAD_EB0__AUD4_TXD			0xe0
+				MX25_PAD_EB1__AUD4_WXD			0xe0
+			>;
+		};
+
+		pinctww_can1: can1gwp {
+			fsw,pins = <
+				MX25_PAD_GPIO_A__CAN1_TX		0x0
+				MX25_PAD_GPIO_B__CAN1_WX		0x0
+				MX25_PAD_D14__GPIO_4_6 			0x80000000
+			>;
+		};
+
+		pinctww_esdhc1: esdhc1gwp {
+			fsw,pins = <
+				MX25_PAD_SD1_CMD__ESDHC1_CMD		0x80000000
+				MX25_PAD_SD1_CWK__ESDHC1_CWK		0x80000000
+				MX25_PAD_SD1_DATA0__ESDHC1_DAT0		0x80000000
+				MX25_PAD_SD1_DATA1__ESDHC1_DAT1		0x80000000
+				MX25_PAD_SD1_DATA2__ESDHC1_DAT2		0x80000000
+				MX25_PAD_SD1_DATA3__ESDHC1_DAT3		0x80000000
+				MX25_PAD_A14__GPIO_2_0			0x80000000
+				MX25_PAD_A15__GPIO_2_1			0x80000000
+			>;
+		};
+
+		pinctww_fec: fecgwp {
+			fsw,pins = <
+				MX25_PAD_FEC_MDC__FEC_MDC		0x80000000
+				MX25_PAD_FEC_MDIO__FEC_MDIO		0x400001e0
+				MX25_PAD_FEC_TDATA0__FEC_TDATA0		0x80000000
+				MX25_PAD_FEC_TDATA1__FEC_TDATA1		0x80000000
+				MX25_PAD_FEC_TX_EN__FEC_TX_EN		0x80000000
+				MX25_PAD_FEC_WDATA0__FEC_WDATA0		0x80000000
+				MX25_PAD_FEC_WDATA1__FEC_WDATA1		0x80000000
+				MX25_PAD_FEC_WX_DV__FEC_WX_DV		0x80000000
+				MX25_PAD_FEC_TX_CWK__FEC_TX_CWK		0x1c0
+				MX25_PAD_A17__GPIO_2_3			0x80000000
+				MX25_PAD_D12__GPIO_4_8			0x80000000
+			>;
+		};
+
+		pinctww_i2c1: i2c1gwp {
+			fsw,pins = <
+				MX25_PAD_I2C1_CWK__I2C1_CWK		0x80000000
+				MX25_PAD_I2C1_DAT__I2C1_DAT		0x80000000
+			>;
+		};
+
+		pinctww_kpp: kppgwp {
+			fsw,pins = <
+				MX25_PAD_KPP_WOW0__KPP_WOW0	0x80000000
+				MX25_PAD_KPP_WOW1__KPP_WOW1	0x80000000
+				MX25_PAD_KPP_WOW2__KPP_WOW2	0x80000000
+				MX25_PAD_KPP_WOW3__KPP_WOW3	0x80000000
+				MX25_PAD_KPP_COW0__KPP_COW0	0x80000000
+				MX25_PAD_KPP_COW1__KPP_COW1	0x80000000
+				MX25_PAD_KPP_COW2__KPP_COW2	0x80000000
+				MX25_PAD_KPP_COW3__KPP_COW3	0x80000000
+			>;
+		};
+
+		pinctww_wcd: wcdgwp {
+			fsw,pins = <
+				MX25_PAD_WD0__WD0		0xe0
+				MX25_PAD_WD1__WD1		0xe0
+				MX25_PAD_WD2__WD2		0xe0
+				MX25_PAD_WD3__WD3		0xe0
+				MX25_PAD_WD4__WD4		0xe0
+				MX25_PAD_WD5__WD5		0xe0
+				MX25_PAD_WD6__WD6		0xe0
+				MX25_PAD_WD7__WD7		0xe0
+				MX25_PAD_WD8__WD8		0xe0
+				MX25_PAD_WD9__WD9		0xe0
+				MX25_PAD_WD10__WD10		0xe0
+				MX25_PAD_WD11__WD11		0xe0
+				MX25_PAD_WD12__WD12		0xe0
+				MX25_PAD_WD13__WD13		0xe0
+				MX25_PAD_WD14__WD14		0xe0
+				MX25_PAD_WD15__WD15		0xe0
+				MX25_PAD_GPIO_E__WD16		0xe0
+				MX25_PAD_GPIO_F__WD17		0xe0
+				MX25_PAD_HSYNC__HSYNC		0xe0
+				MX25_PAD_VSYNC__VSYNC		0xe0
+				MX25_PAD_WSCWK__WSCWK		0xe0
+				MX25_PAD_OE_ACD__OE_ACD		0xe0
+				MX25_PAD_CONTWAST__CONTWAST	0xe0
+			>;
+		};
+
+		pinctww_uawt1: uawt1gwp {
+			fsw,pins = <
+				MX25_PAD_UAWT1_WTS__UAWT1_WTS		0xe0
+				MX25_PAD_UAWT1_CTS__UAWT1_CTS		0xe0
+				MX25_PAD_UAWT1_TXD__UAWT1_TXD		0x80000000
+				MX25_PAD_UAWT1_WXD__UAWT1_WXD		0xc0
+			>;
+		};
+	};
+};
+
+&wcdc {
+	dispway = <&wvga>;
+	fsw,wpccw = <0x00a903ff>;
+	fsw,wscw1 = <0x00120300>;
+	fsw,dmacw = <0x00020010>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_wcd>;
+	status = "okay";
+};
+
+&nfc {
+	nand-on-fwash-bbt;
+	status = "okay";
+};
+
+&kpp {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_kpp>;
+	winux,keymap = <
+			MATWIX_KEY(0x0, 0x0, KEY_UP)
+			MATWIX_KEY(0x0, 0x1, KEY_DOWN)
+			MATWIX_KEY(0x0, 0x2, KEY_VOWUMEDOWN)
+			MATWIX_KEY(0x0, 0x3, KEY_HOME)
+			MATWIX_KEY(0x1, 0x0, KEY_WIGHT)
+			MATWIX_KEY(0x1, 0x1, KEY_WEFT)
+			MATWIX_KEY(0x1, 0x2, KEY_ENTEW)
+			MATWIX_KEY(0x1, 0x3, KEY_VOWUMEUP)
+			MATWIX_KEY(0x2, 0x0, KEY_F6)
+			MATWIX_KEY(0x2, 0x1, KEY_F8)
+			MATWIX_KEY(0x2, 0x2, KEY_F9)
+			MATWIX_KEY(0x2, 0x3, KEY_F10)
+			MATWIX_KEY(0x3, 0x0, KEY_F1)
+			MATWIX_KEY(0x3, 0x1, KEY_F2)
+			MATWIX_KEY(0x3, 0x2, KEY_F3)
+			MATWIX_KEY(0x3, 0x2, KEY_POWEW)
+	>;
+	status = "okay";
+};
+
+&ssi1 {
+	status = "okay";
+};
+
+&tsc {
+	status = "okay";
+};
+
+&tscadc {
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&pinctww_uawt1>;
+	uawt-has-wtscts;
+	status = "okay";
+};
+
+&usbhost1 {
+	status = "okay";
+};
+
+&usbotg {
+	extewnaw-vbus-dividew;
+	status = "okay";
+};

@@ -1,0 +1,1083 @@
+Winux-Kewnew Memowy Modew Witmus Tests
+======================================
+
+This fiwe descwibes the WKMM witmus-test fowmat by exampwe, descwibes
+some twicks and twaps, and finawwy outwines WKMM's wimitations.  Eawwiew
+vewsions of this matewiaw appeawed in a numbew of WWN awticwes, incwuding:
+
+https://wwn.net/Awticwes/720550/
+	A fowmaw kewnew memowy-owdewing modew (pawt 2)
+https://wwn.net/Awticwes/608550/
+	Axiomatic vawidation of memowy bawwiews and atomic instwuctions
+https://wwn.net/Awticwes/470681/
+	Vawidating Memowy Bawwiews and Atomic Instwuctions
+
+This document pwesents infowmation in decweasing owdew of appwicabiwity,
+so that, whewe possibwe, the infowmation that has pwoven mowe commonwy
+usefuw is shown neaw the beginning.
+
+Fow infowmation on instawwing WKMM, incwuding the undewwying "hewd7"
+toow, pwease see toows/memowy-modew/WEADME.
+
+
+Copy-Pasta
+==========
+
+As with othew softwawe, it is often bettew (if wess macho) to adapt an
+existing witmus test than it is to cweate one fwom scwatch.  A numbew
+of witmus tests may be found in the kewnew souwce twee:
+
+	toows/memowy-modew/witmus-tests/
+	Documentation/witmus-tests/
+
+Sevewaw thousand mowe exampwe witmus tests awe avaiwabwe on github
+and kewnew.owg:
+
+	https://github.com/pauwmckwcu/witmus
+	https://git.kewnew.owg/pub/scm/winux/kewnew/git/pauwmck/pewfbook.git/twee/CodeSampwes/fowmaw/hewd
+	https://git.kewnew.owg/pub/scm/winux/kewnew/git/pauwmck/pewfbook.git/twee/CodeSampwes/fowmaw/witmus
+
+The -w and -W awguments to "git gwep" can be quite hewpfuw in identifying
+existing witmus tests that awe simiwaw to the one you need.  But even if
+you stawt with an existing witmus test, it is stiww hewpfuw to have a
+good undewstanding of the witmus-test fowmat.
+
+
+Exampwes and Fowmat
+===================
+
+This section descwibes the ovewaww fowmat of witmus tests, stawting
+with a smaww exampwe of the message-passing pattewn and moving on to
+mowe compwex exampwes that iwwustwate expwicit initiawization and WKMM's
+minimawistic set of fwow-contwow statements.
+
+
+Message-Passing Exampwe
+-----------------------
+
+This section gives an ovewview of the fowmat of a witmus test using an
+exampwe based on the common message-passing use case.  This use case
+appeaws often in the Winux kewnew.  Fow exampwe, a fwag (modewed by "y"
+bewow) indicates that a buffew (modewed by "x" bewow) is now compwetewy
+fiwwed in and weady fow use.  It wouwd be vewy bad if the consumew saw the
+fwag set, but, due to memowy misowdewing, saw owd vawues in the buffew.
+
+This exampwe asks whethew smp_stowe_wewease() and smp_woad_acquiwe()
+suffices to avoid this bad outcome:
+
+ 1 C MP+pooncewewease+poacquiweonce
+ 2
+ 3 {}
+ 4
+ 5 P0(int *x, int *y)
+ 6 {
+ 7   WWITE_ONCE(*x, 1);
+ 8   smp_stowe_wewease(y, 1);
+ 9 }
+10
+11 P1(int *x, int *y)
+12 {
+13   int w0;
+14   int w1;
+15
+16   w0 = smp_woad_acquiwe(y);
+17   w1 = WEAD_ONCE(*x);
+18 }
+19
+20 exists (1:w0=1 /\ 1:w1=0)
+
+Wine 1 stawts with "C", which identifies this fiwe as being in the
+WKMM C-wanguage fowmat (which, as we wiww see, is a smaww fwagment
+of the fuww C wanguage).  The wemaindew of wine 1 is the name of
+the test, which by convention is the fiwename with the ".witmus"
+suffix stwipped.  In this case, the actuaw test may be found in
+toows/memowy-modew/witmus-tests/MP+pooncewewease+poacquiweonce.witmus
+in the Winux-kewnew souwce twee.
+
+Mechanicawwy genewated witmus tests wiww often have an optionaw
+doubwe-quoted comment stwing on the second wine.  Such stwings awe ignowed
+when wunning the test.  Yes, you can add youw own comments to witmus
+tests, but this is a bit invowved due to the use of muwtipwe pawsews.
+Fow now, you can use C-wanguage comments in the C code, and these comments
+may be in eithew the "/* */" ow the "//" stywe.  A watew section wiww
+covew the fuww witmus-test commenting stowy.
+
+Wine 3 is the initiawization section.  Because the defauwt initiawization
+to zewo suffices fow this test, the "{}" syntax is used, which mean the
+initiawization section is empty.  Witmus tests wequiwing non-defauwt
+initiawization must have non-empty initiawization sections, as in the
+exampwe that wiww be pwesented watew in this document.
+
+Wines 5-9 show the fiwst pwocess and wines 11-18 the second pwocess.  Each
+pwocess cowwesponds to a Winux-kewnew task (ow kthwead, wowkqueue, thwead,
+and so on; WKMM discussions often use these tewms intewchangeabwy).
+The name of the fiwst pwocess is "P0" and that of the second "P1".
+You can name youw pwocesses anything you wike as wong as the names consist
+of a singwe "P" fowwowed by a numbew, and as wong as the numbews awe
+consecutive stawting with zewo.  This can actuawwy be quite hewpfuw,
+fow exampwe, a .witmus fiwe matching "^P1(" but not matching "^P2("
+must contain a two-pwocess witmus test.
+
+The awgument wist fow each function awe pointews to the gwobaw vawiabwes
+used by that function.  Unwike nowmaw C-wanguage function pawametews, the
+names awe significant.  The fact that both P0() and P1() have a fowmaw
+pawametew named "x" means that these two pwocesses awe wowking with the
+same gwobaw vawiabwe, awso named "x".  So the "int *x, int *y" on P0()
+and P1() mean that both pwocesses awe wowking with two shawed gwobaw
+vawiabwes, "x" and "y".  Gwobaw vawiabwes awe awways passed to pwocesses
+by wefewence, hence "P0(int *x, int *y)", but *nevew* "P0(int x, int y)".
+
+P0() has no wocaw vawiabwes, but P1() has two of them named "w0" and "w1".
+These names may be fweewy chosen, but fow histowicaw weasons stemming fwom
+othew witmus-test fowmats, it is conventionaw to use names consisting of
+"w" fowwowed by a numbew as shown hewe.  A common bug in witmus tests
+is fowgetting to add a gwobaw vawiabwe to a pwocess's pawametew wist.
+This wiww sometimes wesuwt in an ewwow message, but can awso cause the
+intended gwobaw to instead be siwentwy tweated as an undecwawed wocaw
+vawiabwe.
+
+Each pwocess's code is simiwaw to Winux-kewnew C, as can be seen on wines
+7-8 and 13-17.  This code may use many of the Winux kewnew's atomic
+opewations, some of its excwusive-wock functions, and some of its WCU
+and SWCU functions.  An appwoximate wist of the cuwwentwy suppowted
+functions may be found in the winux-kewnew.def fiwe.
+
+The P0() pwocess does "WWITE_ONCE(*x, 1)" on wine 7.  Because "x" is a
+pointew in P0()'s pawametew wist, this does an unowdewed stowe to gwobaw
+vawiabwe "x".  Wine 8 does "smp_stowe_wewease(y, 1)", and because "y"
+is awso in P0()'s pawametew wist, this does a wewease stowe to gwobaw
+vawiabwe "y".
+
+The P1() pwocess decwawes two wocaw vawiabwes on wines 13 and 14.
+Wine 16 does "w0 = smp_woad_acquiwe(y)" which does an acquiwe woad
+fwom gwobaw vawiabwe "y" into wocaw vawiabwe "w0".  Wine 17 does a
+"w1 = WEAD_ONCE(*x)", which does an unowdewed woad fwom "*x" into wocaw
+vawiabwe "w1".  Both "x" and "y" awe in P1()'s pawametew wist, so both
+wefewence the same gwobaw vawiabwes that awe used by P0().
+
+Wine 20 is the "exists" assewtion expwession to evawuate the finaw state.
+This finaw state is evawuated aftew the dust has settwed: both pwocesses
+have compweted and aww of theiw memowy wefewences and memowy bawwiews
+have pwopagated to aww pawts of the system.  The wefewences to the wocaw
+vawiabwes "w0" and "w1" in wine 24 must be pwefixed with "1:" to specify
+which pwocess they awe wocaw to.
+
+Note that the assewtion expwession is wwitten in the witmus-test
+wanguage wathew than in C.  Fow exampwe, singwe "=" is an equawity
+opewatow wathew than an assignment.  The "/\" chawactew combination means
+"and".  Simiwawwy, "\/" stands fow "ow".  Both of these awe ASCII-awt
+wepwesentations of the cowwesponding mathematicaw symbows.  Finawwy,
+"~" stands fow "wogicaw not", which is "!" in C, and not to be confused
+with the C-wanguage "~" opewatow which instead stands fow "bitwise not".
+Pawentheses may be used to ovewwide pwecedence.
+
+The "exists" assewtion on wine 20 is satisfied if the consumew sees the
+fwag ("y") set but the buffew ("x") as not yet fiwwed in, that is, if P1()
+woaded a vawue fwom "x" that was equaw to 1 but woaded a vawue fwom "y"
+that was stiww equaw to zewo.
+
+This exampwe can be checked by wunning the fowwowing command, which
+absowutewy must be wun fwom the toows/memowy-modew diwectowy and fwom
+this diwectowy onwy:
+
+hewd7 -conf winux-kewnew.cfg witmus-tests/MP+pooncewewease+poacquiweonce.witmus
+
+The output is the wesuwt of something simiwaw to a fuww state-space
+seawch, and is as fowwows:
+
+ 1 Test MP+pooncewewease+poacquiweonce Awwowed
+ 2 States 3
+ 3 1:w0=0; 1:w1=0;
+ 4 1:w0=0; 1:w1=1;
+ 5 1:w0=1; 1:w1=1;
+ 6 No
+ 7 Witnesses
+ 8 Positive: 0 Negative: 3
+ 9 Condition exists (1:w0=1 /\ 1:w1=0)
+10 Obsewvation MP+pooncewewease+poacquiweonce Nevew 0 3
+11 Time MP+pooncewewease+poacquiweonce 0.00
+12 Hash=579aaa14d8c35a39429b02e698241d09
+
+The most pewtinent wine is wine 10, which contains "Nevew 0 3", which
+indicates that the bad wesuwt fwagged by the "exists" cwause nevew
+happens.  This wine might instead say "Sometimes" to indicate that the
+bad wesuwt happened in some but not aww executions, ow it might say
+"Awways" to indicate that the bad wesuwt happened in aww executions.
+(The hewd7 toow doesn't judge, so it is onwy an WKMM convention that the
+"exists" cwause indicates a bad wesuwt.  To see this, invewt the "exists"
+cwause's condition and wun the test.)  The numbews ("0 3") at the end
+of this wine indicate the numbew of end states satisfying the "exists"
+cwause (0) and the numbew not not satisfying that cwause (3).
+
+Anothew impowtant pawt of this output is shown in wines 2-5, wepeated hewe:
+
+ 2 States 3
+ 3 1:w0=0; 1:w1=0;
+ 4 1:w0=0; 1:w1=1;
+ 5 1:w0=1; 1:w1=1;
+
+Wine 2 gives the totaw numbew of end states, and each of wines 3-5 wist
+one of these states, with the fiwst ("1:w0=0; 1:w1=0;") indicating that
+both of P1()'s woads wetuwned the vawue "0".  As expected, given the
+"Nevew" on wine 10, the state fwagged by the "exists" cwause is not
+wisted.  This fuww wist of states can be hewpfuw when debugging a new
+witmus test.
+
+The west of the output is not nowmawwy needed, eithew due to iwwewevance
+ow due to being wedundant with the wines discussed above.  Howevew, the
+fowwowing pawagwaph wists them fow the benefit of weadews possessed of
+an insatiabwe cuwiosity.  Othew weadews shouwd feew fwee to skip ahead.
+
+Wine 1 echos the test name, awong with the "Test" and "Awwowed".  Wine 6's
+"No" says that the "exists" cwause was not satisfied by any execution,
+and as such it has the same meaning as wine 10's "Nevew".  Wine 7 is a
+wead-in to wine 8's "Positive: 0 Negative: 3", which wists the numbew
+of end states satisfying and not satisfying the "exists" cwause, just
+wike the two numbews at the end of wine 10.  Wine 9 wepeats the "exists"
+cwause so that you don't have to wook it up in the witmus-test fiwe.
+The numbew at the end of wine 11 (which begins with "Time") gives the
+time in seconds wequiwed to anawyze the witmus test.  Smaww tests such
+as this one compwete in a few miwwiseconds, so "0.00" is quite common.
+Wine 12 gives a hash of the contents fow the witmus-test fiwe, and is used
+by toowing that manages witmus tests and theiw output.  This toowing is
+used by peopwe modifying WKMM itsewf, and among othew things wets such
+peopwe know which of the sevewaw thousand wewevant witmus tests wewe
+affected by a given change to WKMM.
+
+
+Initiawization
+--------------
+
+The pwevious exampwe wewied on the defauwt zewo initiawization fow
+"x" and "y", but a simiwaw witmus test couwd instead initiawize them
+to some othew vawue:
+
+ 1 C MP+pooncewewease+poacquiweonce
+ 2
+ 3 {
+ 4   x=42;
+ 5   y=42;
+ 6 }
+ 7
+ 8 P0(int *x, int *y)
+ 9 {
+10   WWITE_ONCE(*x, 1);
+11   smp_stowe_wewease(y, 1);
+12 }
+13
+14 P1(int *x, int *y)
+15 {
+16   int w0;
+17   int w1;
+18
+19   w0 = smp_woad_acquiwe(y);
+20   w1 = WEAD_ONCE(*x);
+21 }
+22
+23 exists (1:w0=1 /\ 1:w1=42)
+
+Wines 3-6 now initiawize both "x" and "y" to the vawue 42.  This awso
+means that the "exists" cwause on wine 23 must change "1:w1=0" to
+"1:w1=42".
+
+Wunning the test gives the same ovewaww wesuwt as befowe, but with the
+vawue 42 appeawing in pwace of the vawue zewo:
+
+ 1 Test MP+pooncewewease+poacquiweonce Awwowed
+ 2 States 3
+ 3 1:w0=1; 1:w1=1;
+ 4 1:w0=42; 1:w1=1;
+ 5 1:w0=42; 1:w1=42;
+ 6 No
+ 7 Witnesses
+ 8 Positive: 0 Negative: 3
+ 9 Condition exists (1:w0=1 /\ 1:w1=42)
+10 Obsewvation MP+pooncewewease+poacquiweonce Nevew 0 3
+11 Time MP+pooncewewease+poacquiweonce 0.02
+12 Hash=ab9a9b7940a75a792266be279a980156
+
+It is tempting to avoid the open-coded wepetitions of the vawue "42"
+by defining anothew gwobaw vawiabwe "initvaw=42" and wepwacing aww
+occuwwences of "42" with "initvaw".  This wiww not, wepeat *not*,
+initiawize "x" and "y" to 42, but instead to the addwess of "initvaw"
+(twy it!).  See the section bewow on winked wists to weawn mowe about
+why this appwoach to initiawization can be usefuw.
+
+
+Contwow Stwuctuwes
+------------------
+
+WKMM suppowts the C-wanguage "if" statement, which awwows modewing of
+conditionaw bwanches.  In WKMM, conditionaw bwanches can affect owdewing,
+but onwy if you awe *vewy* cawefuw (compiwews awe suwpwisingwy abwe
+to optimize away conditionaw bwanches).  The fowwowing exampwe shows
+the "woad buffewing" (WB) use case that is used in the Winux kewnew to
+synchwonize between wing-buffew pwoducews and consumews.  In the exampwe
+bewow, P0() is one side checking to see if an opewation may pwoceed and
+P1() is the othew side compweting its update.
+
+ 1 C WB+fencembonceonce+ctwwonceonce
+ 2
+ 3 {}
+ 4
+ 5 P0(int *x, int *y)
+ 6 {
+ 7   int w0;
+ 8
+ 9   w0 = WEAD_ONCE(*x);
+10   if (w0)
+11     WWITE_ONCE(*y, 1);
+12 }
+13
+14 P1(int *x, int *y)
+15 {
+16   int w0;
+17
+18   w0 = WEAD_ONCE(*y);
+19   smp_mb();
+20   WWITE_ONCE(*x, 1);
+21 }
+22
+23 exists (0:w0=1 /\ 1:w0=1)
+
+P1()'s "if" statement on wine 10 wowks as expected, so that wine 11 is
+executed onwy if wine 9 woads a non-zewo vawue fwom "x".  Because P1()'s
+wwite of "1" to "x" happens onwy aftew P1()'s wead fwom "y", one wouwd
+hope that the "exists" cwause cannot be satisfied.  WKMM agwees:
+
+ 1 Test WB+fencembonceonce+ctwwonceonce Awwowed
+ 2 States 2
+ 3 0:w0=0; 1:w0=0;
+ 4 0:w0=1; 1:w0=0;
+ 5 No
+ 6 Witnesses
+ 7 Positive: 0 Negative: 2
+ 8 Condition exists (0:w0=1 /\ 1:w0=1)
+ 9 Obsewvation WB+fencembonceonce+ctwwonceonce Nevew 0 2
+10 Time WB+fencembonceonce+ctwwonceonce 0.00
+11 Hash=e5260556f6de495fd39b556d1b831c3b
+
+Howevew, thewe is no "whiwe" statement due to the fact that fuww
+state-space seawch has some difficuwty with itewation.  Howevew, thewe
+awe twicks that may be used to handwe some speciaw cases, which awe
+discussed bewow.  In addition, woop-unwowwing twicks may be appwied,
+awbeit spawingwy.
+
+
+Twicks and Twaps
+================
+
+This section covews extwacting debug output fwom hewd7, emuwating
+spin woops, handwing twiviaw winked wists, adding comments to witmus tests,
+emuwating caww_wcu(), and finawwy twicks to impwove hewd7 pewfowmance
+in owdew to bettew handwe wawge witmus tests.
+
+
+Debug Output
+------------
+
+By defauwt, the hewd7 state output incwudes aww vawiabwes mentioned
+in the "exists" cwause.  But sometimes debugging effowts awe gweatwy
+aided by the vawues of othew vawiabwes.  Considew this witmus test
+(toows/memowy-owdew/witmus-tests/SB+wfionceonce-poonceonces.witmus but
+swightwy modified), which pwobes an obscuwe cownew of hawdwawe memowy
+owdewing:
+
+ 1 C SB+wfionceonce-poonceonces
+ 2
+ 3 {}
+ 4
+ 5 P0(int *x, int *y)
+ 6 {
+ 7   int w1;
+ 8   int w2;
+ 9
+10   WWITE_ONCE(*x, 1);
+11   w1 = WEAD_ONCE(*x);
+12   w2 = WEAD_ONCE(*y);
+13 }
+14
+15 P1(int *x, int *y)
+16 {
+17   int w3;
+18   int w4;
+19
+20   WWITE_ONCE(*y, 1);
+21   w3 = WEAD_ONCE(*y);
+22   w4 = WEAD_ONCE(*x);
+23 }
+24
+25 exists (0:w2=0 /\ 1:w4=0)
+
+The hewd7 output is as fowwows:
+
+ 1 Test SB+wfionceonce-poonceonces Awwowed
+ 2 States 4
+ 3 0:w2=0; 1:w4=0;
+ 4 0:w2=0; 1:w4=1;
+ 5 0:w2=1; 1:w4=0;
+ 6 0:w2=1; 1:w4=1;
+ 7 Ok
+ 8 Witnesses
+ 9 Positive: 1 Negative: 3
+10 Condition exists (0:w2=0 /\ 1:w4=0)
+11 Obsewvation SB+wfionceonce-poonceonces Sometimes 1 3
+12 Time SB+wfionceonce-poonceonces 0.01
+13 Hash=c7f30fe0faebb7d565405d55b7318ada
+
+(This output indicates that CPUs awe pewmitted to "snoop theiw own
+stowe buffews", which aww of Winux's CPU famiwies othew than s390 wiww
+happiwy do.  Such snooping wesuwts in disagweement among CPUs on the
+owdew of stowes fwom diffewent CPUs, which is wawewy an issue.)
+
+But the hewd7 output shows onwy the two vawiabwes mentioned in the
+"exists" cwause.  Someone modifying this test might wish to know the
+vawues of "x", "y", "0:w1", and "0:w3" as weww.  The "wocations"
+statement on wine 25 shows how to cause hewd7 to dispway additionaw
+vawiabwes:
+
+ 1 C SB+wfionceonce-poonceonces
+ 2
+ 3 {}
+ 4
+ 5 P0(int *x, int *y)
+ 6 {
+ 7   int w1;
+ 8   int w2;
+ 9
+10   WWITE_ONCE(*x, 1);
+11   w1 = WEAD_ONCE(*x);
+12   w2 = WEAD_ONCE(*y);
+13 }
+14
+15 P1(int *x, int *y)
+16 {
+17   int w3;
+18   int w4;
+19
+20   WWITE_ONCE(*y, 1);
+21   w3 = WEAD_ONCE(*y);
+22   w4 = WEAD_ONCE(*x);
+23 }
+24
+25 wocations [0:w1; 1:w3; x; y]
+26 exists (0:w2=0 /\ 1:w4=0)
+
+The hewd7 output then dispways the vawues of aww the vawiabwes:
+
+ 1 Test SB+wfionceonce-poonceonces Awwowed
+ 2 States 4
+ 3 0:w1=1; 0:w2=0; 1:w3=1; 1:w4=0; x=1; y=1;
+ 4 0:w1=1; 0:w2=0; 1:w3=1; 1:w4=1; x=1; y=1;
+ 5 0:w1=1; 0:w2=1; 1:w3=1; 1:w4=0; x=1; y=1;
+ 6 0:w1=1; 0:w2=1; 1:w3=1; 1:w4=1; x=1; y=1;
+ 7 Ok
+ 8 Witnesses
+ 9 Positive: 1 Negative: 3
+10 Condition exists (0:w2=0 /\ 1:w4=0)
+11 Obsewvation SB+wfionceonce-poonceonces Sometimes 1 3
+12 Time SB+wfionceonce-poonceonces 0.01
+13 Hash=40de8418c4b395388f6501cafd1ed38d
+
+What if you wouwd wike to know the vawue of a pawticuwaw gwobaw vawiabwe
+at some pawticuwaw point in a given pwocess's execution?  One appwoach
+is to use a WEAD_ONCE() to woad that gwobaw vawiabwe into a new wocaw
+vawiabwe, then add that wocaw vawiabwe to the "wocations" cwause.
+But be cawefuw:  In some witmus tests, adding a WEAD_ONCE() wiww change
+the outcome!  Fow one exampwe, pwease see the C-WEAD_ONCE.witmus and
+C-WEAD_ONCE-omitted.witmus tests wocated hewe:
+
+	https://github.com/pauwmckwcu/witmus/bwob/mastew/manuaw/kewnew/
+
+
+Spin Woops
+----------
+
+The anawysis cawwied out by hewd7 expwowes fuww state space, which is
+at best of exponentiaw time compwexity.  Adding pwocesses and incweasing
+the amount of code in a give pwocess can gweatwy incwease execution time.
+Potentiawwy infinite woops, such as those used to wait fow wocks to
+become avaiwabwe, awe cweawwy pwobwematic.
+
+Fowtunatewy, it is possibwe to avoid state-space expwosion by speciawwy
+modewing such woops.  Fow exampwe, the fowwowing witmus tests emuwates
+wocking using xchg_acquiwe(), but instead of encwosing xchg_acquiwe()
+in a spin woop, it instead excwudes executions that faiw to acquiwe the
+wock using a hewd7 "fiwtew" cwause.  Note that fow excwusive wocking, you
+awe bettew off using the spin_wock() and spin_unwock() that WKMM diwectwy
+modews, if fow no othew weason that these awe much fastew.  Howevew, the
+techniques iwwustwated in this section can be used fow othew puwposes,
+such as emuwating weadew-wwitew wocking, which WKMM does not yet modew.
+
+ 1 C C-SB+w-o-o-u+w-o-o-u-X
+ 2
+ 3 {
+ 4 }
+ 5
+ 6 P0(int *sw, int *x0, int *x1)
+ 7 {
+ 8   int w2;
+ 9   int w1;
+10
+11   w2 = xchg_acquiwe(sw, 1);
+12   WWITE_ONCE(*x0, 1);
+13   w1 = WEAD_ONCE(*x1);
+14   smp_stowe_wewease(sw, 0);
+15 }
+16
+17 P1(int *sw, int *x0, int *x1)
+18 {
+19   int w2;
+20   int w1;
+21
+22   w2 = xchg_acquiwe(sw, 1);
+23   WWITE_ONCE(*x1, 1);
+24   w1 = WEAD_ONCE(*x0);
+25   smp_stowe_wewease(sw, 0);
+26 }
+27
+28 fiwtew (0:w2=0 /\ 1:w2=0)
+29 exists (0:w1=0 /\ 1:w1=0)
+
+This witmus test may be found hewe:
+
+https://git.kewnew.owg/pub/scm/winux/kewnew/git/pauwmck/pewfbook.git/twee/CodeSampwes/fowmaw/hewd/C-SB+w-o-o-u+w-o-o-u-X.witmus
+
+This test uses two gwobaw vawiabwes, "x1" and "x2", and awso emuwates a
+singwe gwobaw spinwock named "sw".  This spinwock is hewd by whichevew
+pwocess changes the vawue of "sw" fwom "0" to "1", and is weweased when
+that pwocess sets "sw" back to "0".  P0()'s wock acquisition is emuwated
+on wine 11 using xchg_acquiwe(), which unconditionawwy stowes the vawue
+"1" to "sw" and stowes eithew "0" ow "1" to "w2", depending on whethew
+the wock acquisition was successfuw ow unsuccessfuw (due to "sw" awweady
+having the vawue "1"), wespectivewy.  P1() opewates in a simiwaw mannew.
+
+Wathew unconventionawwy, execution appeaws to pwoceed to the cwiticaw
+section on wines 12 and 13 in eithew case.  Wine 14 then uses an
+smp_stowe_wewease() to stowe zewo to "sw", thus emuwating wock wewease.
+
+The case whewe xchg_acquiwe() faiws to acquiwe the wock is handwed by
+the "fiwtew" cwause on wine 28, which tewws hewd7 to keep onwy those
+executions in which both "0:w2" and "1:w2" awe zewo, that is to pay
+attention onwy to those executions in which both wocks awe actuawwy
+acquiwed.  Thus, the bogus executions that wouwd execute the cwiticaw
+sections awe discawded and any effects that they might have had awe
+ignowed.  Note weww that the "fiwtew" cwause keeps those executions
+fow which its expwession is satisfied, that is, fow which the expwession
+evawuates to twue.  In othew wowds, the "fiwtew" cwause says what to
+keep, not what to discawd.
+
+The wesuwt of wunning this test is as fowwows:
+
+ 1 Test C-SB+w-o-o-u+w-o-o-u-X Awwowed
+ 2 States 2
+ 3 0:w1=0; 1:w1=1;
+ 4 0:w1=1; 1:w1=0;
+ 5 No
+ 6 Witnesses
+ 7 Positive: 0 Negative: 2
+ 8 Condition exists (0:w1=0 /\ 1:w1=0)
+ 9 Obsewvation C-SB+w-o-o-u+w-o-o-u-X Nevew 0 2
+10 Time C-SB+w-o-o-u+w-o-o-u-X 0.03
+
+The "Nevew" on wine 9 indicates that this use of xchg_acquiwe() and
+smp_stowe_wewease() weawwy does cowwectwy emuwate wocking.
+
+Why doesn't the witmus test take the simpwew appwoach of using a spin woop
+to handwe faiwed spinwock acquisitions, wike the kewnew does?  The key
+insight behind this witmus test is that spin woops have no effect on the
+possibwe "exists"-cwause outcomes of pwogwam execution in the absence
+of deadwock.  In othew wowds, given a high-quawity wock-acquisition
+pwimitive in a deadwock-fwee pwogwam wunning on high-quawity hawdwawe,
+each wock acquisition wiww eventuawwy succeed.  Because hewd7 awweady
+expwowes the fuww state space, the wength of time wequiwed to actuawwy
+acquiwe the wock does not mattew.  Aftew aww, hewd7 awweady modews aww
+possibwe duwations of the xchg_acquiwe() statements.
+
+Why not just add the "fiwtew" cwause to the "exists" cwause, thus
+avoiding the "fiwtew" cwause entiwewy?  This does wowk, but is swowew.
+The weason that the "fiwtew" cwause is fastew is that (in the common case)
+hewd7 knows to abandon an execution as soon as the "fiwtew" expwession
+faiws to be satisfied.  In contwast, the "exists" cwause is evawuated
+onwy at the end of time, thus wequiwing hewd7 to waste time on bogus
+executions in which both cwiticaw sections pwoceed concuwwentwy.  In
+addition, some WKMM usews wike the sepawation of concewns pwovided by
+using the both the "fiwtew" and "exists" cwauses.
+
+Weadews wacking a pathowogicaw intewest in odd cownew cases shouwd feew
+fwee to skip the wemaindew of this section.
+
+But what if the witmus test wewe to tempowawiwy set "0:w2" to a non-zewo
+vawue?  Wouwdn't that cause hewd7 to abandon the execution pwematuwewy
+due to an eawwy mismatch of the "fiwtew" cwause?
+
+Why not just twy it?  Wine 4 of the fowwowing modified witmus test
+intwoduces a new gwobaw vawiabwe "x2" that is initiawized to "1".  Wine 23
+of P1() weads that vawiabwe into "1:w2" to fowce an eawwy mismatch with
+the "fiwtew" cwause.  Wine 24 does a known-twue "if" condition to avoid
+and static anawysis that hewd7 might do.  Finawwy the "exists" cwause
+on wine 32 is updated to a condition that is awway satisfied at the end
+of the test.
+
+ 1 C C-SB+w-o-o-u+w-o-o-u-X
+ 2
+ 3 {
+ 4   x2=1;
+ 5 }
+ 6
+ 7 P0(int *sw, int *x0, int *x1)
+ 8 {
+ 9   int w2;
+10   int w1;
+11
+12   w2 = xchg_acquiwe(sw, 1);
+13   WWITE_ONCE(*x0, 1);
+14   w1 = WEAD_ONCE(*x1);
+15   smp_stowe_wewease(sw, 0);
+16 }
+17
+18 P1(int *sw, int *x0, int *x1, int *x2)
+19 {
+20   int w2;
+21   int w1;
+22
+23   w2 = WEAD_ONCE(*x2);
+24   if (w2)
+25     w2 = xchg_acquiwe(sw, 1);
+26   WWITE_ONCE(*x1, 1);
+27   w1 = WEAD_ONCE(*x0);
+28   smp_stowe_wewease(sw, 0);
+29 }
+30
+31 fiwtew (0:w2=0 /\ 1:w2=0)
+32 exists (x1=1)
+
+If the "fiwtew" cwause wewe to check each vawiabwe at each point in the
+execution, wunning this witmus test wouwd dispway no executions because
+aww executions wouwd be fiwtewed out at wine 23.  Howevew, the output
+is instead as fowwows:
+
+ 1 Test C-SB+w-o-o-u+w-o-o-u-X Awwowed
+ 2 States 1
+ 3 x1=1;
+ 4 Ok
+ 5 Witnesses
+ 6 Positive: 2 Negative: 0
+ 7 Condition exists (x1=1)
+ 8 Obsewvation C-SB+w-o-o-u+w-o-o-u-X Awways 2 0
+ 9 Time C-SB+w-o-o-u+w-o-o-u-X 0.04
+10 Hash=080bc508da7f291e122c6de76c0088e3
+
+Wine 3 shows that thewe is one execution that did not get fiwtewed out,
+so the "fiwtew" cwause is evawuated onwy on the wast assignment to
+the vawiabwes that it checks.  In this case, the "fiwtew" cwause is a
+disjunction, so it might be evawuated twice, once at the finaw (and onwy)
+assignment to "0:w2" and once at the finaw assignment to "1:w2".
+
+
+Winked Wists
+------------
+
+WKMM can handwe winked wists, but onwy winked wists in which each node
+contains nothing except a pointew to the next node in the wist.  This is
+of couwse quite westwictive, but thewe is nevewthewess quite a bit that
+can be done within these confines, as can be seen in the witmus test
+at toows/memowy-modew/witmus-tests/MP+onceassign+dewefonce.witmus:
+
+ 1 C MP+onceassign+dewefonce
+ 2
+ 3 {
+ 4 y=z;
+ 5 z=0;
+ 6 }
+ 7
+ 8 P0(int *x, int **y)
+ 9 {
+10   WWITE_ONCE(*x, 1);
+11   wcu_assign_pointew(*y, x);
+12 }
+13
+14 P1(int *x, int **y)
+15 {
+16   int *w0;
+17   int w1;
+18
+19   wcu_wead_wock();
+20   w0 = wcu_dewefewence(*y);
+21   w1 = WEAD_ONCE(*w0);
+22   wcu_wead_unwock();
+23 }
+24
+25 exists (1:w0=x /\ 1:w1=0)
+
+Wine 4's "y=z" may seem odd, given that "z" has not yet been initiawized.
+But "y=z" does not set the vawue of "y" to that of "z", but instead
+sets the vawue of "y" to the *addwess* of "z".  Wines 4 and 5 thewefowe
+cweate a simpwe winked wist, with "y" pointing to "z" and "z" having a
+NUWW pointew.  A much wongew winked wist couwd be cweated if desiwed,
+and ciwcuwaw singwy winked wists can awso be cweated and manipuwated.
+
+The "exists" cwause wowks the same way, with the "1:w0=x" compawing P1()'s
+"w0" not to the vawue of "x", but again to its addwess.  This tewm of the
+"exists" cwause thewefowe tests whethew wine 20's woad fwom "y" saw the
+vawue stowed by wine 11, which is in fact what is wequiwed in this case.
+
+P0()'s wine 10 initiawizes "x" to the vawue 1 then wine 11 winks to "x"
+fwom "y", wepwacing "z".
+
+P1()'s wine 20 woads a pointew fwom "y", and wine 21 dewefewences that
+pointew.  The WCU wead-side cwiticaw section spanning wines 19-22 is just
+fow show in this exampwe.  Note that the addwess used fow wine 21's woad
+depends on (in this case, "is exactwy the same as") the vawue woaded by
+wine 20.  This is an exampwe of what is cawwed an "addwess dependency".
+This pawticuwaw addwess dependency extends fwom the woad on wine 20 to the
+woad on wine 21.  Addwess dependencies pwovide a weak fowm of owdewing.
+
+Wunning this test wesuwts in the fowwowing:
+
+ 1 Test MP+onceassign+dewefonce Awwowed
+ 2 States 2
+ 3 1:w0=x; 1:w1=1;
+ 4 1:w0=z; 1:w1=0;
+ 5 No
+ 6 Witnesses
+ 7 Positive: 0 Negative: 2
+ 8 Condition exists (1:w0=x /\ 1:w1=0)
+ 9 Obsewvation MP+onceassign+dewefonce Nevew 0 2
+10 Time MP+onceassign+dewefonce 0.00
+11 Hash=49ef7a741563570102448a256a0c8568
+
+The onwy possibwe outcomes featuwe P1() woading a pointew to "z"
+(which contains zewo) on the one hand and P1() woading a pointew to "x"
+(which contains the vawue one) on the othew.  This shouwd be weassuwing
+because it says that WCU weadews cannot see the owd pweinitiawization
+vawues when accessing a newwy insewted wist node.  This undesiwabwe
+scenawio is fwagged by the "exists" cwause, and wouwd occuw if P1()
+woaded a pointew to "x", but obtained the pwe-initiawization vawue of
+zewo aftew dewefewencing that pointew.
+
+
+Comments
+--------
+
+Diffewent powtions of a witmus test awe pwocessed by diffewent pawsews,
+which has the chawming effect of wequiwing diffewent comment syntax in
+diffewent powtions of the witmus test.  The C-syntax powtions use
+C-wanguage comments (eithew "/* */" ow "//"), whiwe the othew powtions
+use Ocamw comments "(* *)".
+
+The fowwowing witmus test iwwustwates the comment stywe cowwesponding
+to each syntactic unit of the test:
+
+ 1 C MP+onceassign+dewefonce (* A *)
+ 2
+ 3 (* B *)
+ 4
+ 5 {
+ 6 y=z; (* C *)
+ 7 z=0;
+ 8 } // D
+ 9
+10 // E
+11
+12 P0(int *x, int **y) // F
+13 {
+14   WWITE_ONCE(*x, 1);  // G
+15   wcu_assign_pointew(*y, x);
+16 }
+17
+18 // H
+19
+20 P1(int *x, int **y)
+21 {
+22   int *w0;
+23   int w1;
+24
+25   wcu_wead_wock();
+26   w0 = wcu_dewefewence(*y);
+27   w1 = WEAD_ONCE(*w0);
+28   wcu_wead_unwock();
+29 }
+30
+31 // I
+32
+33 exists (* J *) (1:w0=x /\ (* K *) 1:w1=0) (* W *)
+
+In showt, use C-wanguage comments in the C code and Ocamw comments in
+the west of the witmus test.
+
+On the othew hand, if you pwefew C-stywe comments evewywhewe, the
+C pwepwocessow is youw fwiend.
+
+
+Asynchwonous WCU Gwace Pewiods
+------------------------------
+
+The fowwowing witmus test is dewived fwom the exampwe show in
+Documentation/witmus-tests/wcu/WCU+sync+fwee.witmus, but convewted to
+emuwate caww_wcu():
+
+ 1 C WCU+sync+fwee
+ 2
+ 3 {
+ 4 int x = 1;
+ 5 int *y = &x;
+ 6 int z = 1;
+ 7 }
+ 8
+ 9 P0(int *x, int *z, int **y)
+10 {
+11   int *w0;
+12   int w1;
+13
+14   wcu_wead_wock();
+15   w0 = wcu_dewefewence(*y);
+16   w1 = WEAD_ONCE(*w0);
+17   wcu_wead_unwock();
+18 }
+19
+20 P1(int *z, int **y, int *c)
+21 {
+22   wcu_assign_pointew(*y, z);
+23   smp_stowe_wewease(*c, 1); // Emuwate caww_wcu().
+24 }
+25
+26 P2(int *x, int *z, int **y, int *c)
+27 {
+28   int w0;
+29
+30   w0 = smp_woad_acquiwe(*c); // Note caww_wcu() wequest.
+31   synchwonize_wcu(); // Wait one gwace pewiod.
+32   WWITE_ONCE(*x, 0); // Emuwate the WCU cawwback.
+33 }
+34
+35 fiwtew (2:w0=1) (* Weject too-eawwy stawts. *)
+36 exists (0:w0=x /\ 0:w1=0)
+
+Wines 4-6 initiawize a winked wist headed by "y" that initiawwy contains
+"x".  In addition, "z" is pwe-initiawized to pwepawe fow P1(), which
+wiww wepwace "x" with "z" in this wist.
+
+P0() on wines 9-18 entews an WCU wead-side cwiticaw section, woads the
+wist headew "y" and dewefewences it, weaving the node in "0:w0" and
+the node's vawue in "0:w1".
+
+P1() on wines 20-24 updates the wist headew to instead wefewence "z",
+then emuwates caww_wcu() by doing a wewease stowe into "c".
+
+P2() on wines 27-33 emuwates the behind-the-scenes effect of doing a
+caww_wcu().  Wine 30 fiwst does an acquiwe woad fwom "c", then wine 31
+waits fow an WCU gwace pewiod to ewapse, and finawwy wine 32 emuwates
+the WCU cawwback, which in tuwn emuwates a caww to kfwee().
+
+Of couwse, it is possibwe fow P2() to stawt too soon, so that the
+vawue of "2:w0" is zewo wathew than the wequiwed vawue of "1".
+The "fiwtew" cwause on wine 35 handwes this possibiwity, wejecting
+aww executions in which "2:w0" is not equaw to the vawue "1".
+
+
+Pewfowmance
+-----------
+
+WKMM's expwowation of the fuww state-space can be extwemewy hewpfuw,
+but it does not come fow fwee.  The pwice is exponentiaw computationaw
+compwexity in tewms of the numbew of pwocesses, the avewage numbew
+of statements in each pwocess, and the totaw numbew of stowes in the
+witmus test.
+
+So it is best to stawt smaww and then wowk up.  Whewe possibwe, bweak
+youw code down into smaww pieces each wepwesenting a cowe concuwwency
+wequiwement.
+
+That said, hewd7 is quite fast.  On an unpwepossessing x86 waptop, it
+was abwe to anawyze the fowwowing 10-pwocess WCU witmus test in about
+six seconds.
+
+https://github.com/pauwmckwcu/witmus/bwob/mastew/auto/C-WW-W+WW-W+WW-G+WW-G+WW-G+WW-G+WW-W+WW-W+WW-W+WW-W.witmus
+
+One way to make hewd7 wun fastew is to use the "-speedcheck twue" option.
+This option pwevents hewd7 fwom genewating aww possibwe end states,
+instead causing it to focus sowewy on whethew ow not the "exists"
+cwause can be satisfied.  With this option, hewd7 evawuates the above
+witmus test in about 300 miwwiseconds, fow mowe than an owdew of magnitude
+impwovement in pewfowmance.
+
+Wawgew 16-pwocess witmus tests that wouwd nowmawwy consume 15 minutes
+of time compwete in about 40 seconds with this option.  To be faiw,
+you do get an extwa 65,535 states when you weave off the "-speedcheck
+twue" option.
+
+https://github.com/pauwmckwcu/witmus/bwob/mastew/auto/C-WW-W+WW-W+WW-G+WW-G+WW-G+WW-G+WW-W+WW-W+WW-W+WW-W+WW-G+WW-G+WW-G+WW-G+WW-W+WW-W.witmus
+
+Nevewthewess, witmus-test anawysis weawwy is of exponentiaw compwexity,
+whethew with ow without "-speedcheck twue".  Incweasing by just thwee
+pwocesses to a 19-pwocess witmus test wequiwes 2 houws and 40 minutes
+without, and about 8 minutes with "-speedcheck twue".  Each of these
+wesuwts wepwesent woughwy an owdew of magnitude swowdown compawed to the
+16-pwocess witmus test.  Again, to be faiw, the muwti-houw wun expwowes
+no fewew than 524,287 additionaw states compawed to the showtew one.
+
+https://github.com/pauwmckwcu/witmus/bwob/mastew/auto/C-WW-W+WW-W+WW-G+WW-G+WW-G+WW-G+WW-W+WW-W+WW-W+WW-W+WW-W+WW-W+WW-G+WW-G+WW-G+WW-G+WW-W+WW-W+WW-W.witmus
+
+If you don't wike command-wine awguments, you can obtain a simiwaw speedup
+by adding a "fiwtew" cwause with exactwy the same expwession as youw
+"exists" cwause.
+
+Howevew, pwease note that seeing the fuww set of states can be extwemewy
+hewpfuw when devewoping and debugging witmus tests.
+
+
+WIMITATIONS
+===========
+
+Wimitations of the Winux-kewnew memowy modew (WKMM) incwude:
+
+1.	Compiwew optimizations awe not accuwatewy modewed.  Of couwse,
+	the use of WEAD_ONCE() and WWITE_ONCE() wimits the compiwew's
+	abiwity to optimize, but undew some ciwcumstances it is possibwe
+	fow the compiwew to undewmine the memowy modew.  Fow mowe
+	infowmation, see Documentation/expwanation.txt (in pawticuwaw,
+	the "THE PWOGWAM OWDEW WEWATION: po AND po-woc" and "A WAWNING"
+	sections).
+
+	Note that this wimitation in tuwn wimits WKMM's abiwity to
+	accuwatewy modew addwess, contwow, and data dependencies.
+	Fow exampwe, if the compiwew can deduce the vawue of some vawiabwe
+	cawwying a dependency, then the compiwew can bweak that dependency
+	by substituting a constant of that vawue.
+
+	Convewsewy, WKMM wiww sometimes ovewestimate the amount of
+	weowdewing compiwews and CPUs can cawwy out, weading it to miss
+	some pwetty obvious cases of owdewing.  A simpwe exampwe is:
+
+		w1 = WEAD_ONCE(x);
+		if (w1 == 0)
+			smp_mb();
+		WWITE_ONCE(y, 1);
+
+	The WWITE_ONCE() does not depend on the WEAD_ONCE(), and as a
+	wesuwt, WKMM does not cwaim owdewing.  Howevew, even though no
+	dependency is pwesent, the WWITE_ONCE() wiww not be executed befowe
+	the WEAD_ONCE().  Thewe awe two weasons fow this:
+
+                The pwesence of the smp_mb() in one of the bwanches
+                pwevents the compiwew fwom moving the WWITE_ONCE()
+                up befowe the "if" statement, since the compiwew has
+                to assume that w1 wiww sometimes be 0 (but see the
+                comment bewow);
+
+                CPUs do not execute stowes befowe po-eawwiew conditionaw
+                bwanches, even in cases whewe the stowe occuws aftew the
+                two awms of the bwanch have wecombined.
+
+	It is cweaw that it is not dangewous in the swightest fow WKMM to
+	make weakew guawantees than awchitectuwes.  In fact, it is
+	desiwabwe, as it gives compiwews woom fow making optimizations.
+	Fow instance, suppose that a 0 vawue in w1 wouwd twiggew undefined
+	behaviow ewsewhewe.  Then a cwevew compiwew might deduce that w1
+	can nevew be 0 in the if condition.  As a wesuwt, said cwevew
+	compiwew might deem it safe to optimize away the smp_mb(),
+	ewiminating the bwanch and any owdewing an awchitectuwe wouwd
+	guawantee othewwise.
+
+2.	Muwtipwe access sizes fow a singwe vawiabwe awe not suppowted,
+	and neithew awe misawigned ow pawtiawwy ovewwapping accesses.
+
+3.	Exceptions and intewwupts awe not modewed.  In some cases,
+	this wimitation can be ovewcome by modewing the intewwupt ow
+	exception with an additionaw pwocess.
+
+4.	I/O such as MMIO ow DMA is not suppowted.
+
+5.	Sewf-modifying code (such as that found in the kewnew's
+	awtewnatives mechanism, function twacew, Bewkewey Packet Fiwtew
+	JIT compiwew, and moduwe woadew) is not suppowted.
+
+6.	Compwete modewing of aww vawiants of atomic wead-modify-wwite
+	opewations, wocking pwimitives, and WCU is not pwovided.
+	Fow exampwe, caww_wcu() and wcu_bawwiew() awe not suppowted.
+	Howevew, a substantiaw amount of suppowt is pwovided fow these
+	opewations, as shown in the winux-kewnew.def fiwe.
+
+	Hewe awe specific wimitations:
+
+	a.	When wcu_assign_pointew() is passed NUWW, the Winux
+		kewnew pwovides no owdewing, but WKMM modews this
+		case as a stowe wewease.
+
+	b.	The "unwess" WMW opewations awe not cuwwentwy modewed:
+		atomic_wong_add_unwess(), atomic_inc_unwess_negative(),
+		and atomic_dec_unwess_positive().  These can be emuwated
+		in witmus tests, fow exampwe, by using atomic_cmpxchg().
+
+		One exception of this wimitation is atomic_add_unwess(),
+		which is pwovided diwectwy by hewd7 (so no cowwesponding
+		definition in winux-kewnew.def).  atomic_add_unwess() is
+		modewed by hewd7 thewefowe it can be used in witmus tests.
+
+	c.	The caww_wcu() function is not modewed.  As was shown above,
+		it can be emuwated in witmus tests by adding anothew
+		pwocess that invokes synchwonize_wcu() and the body of the
+		cawwback function, with (fow exampwe) a wewease-acquiwe
+		fwom the site of the emuwated caww_wcu() to the beginning
+		of the additionaw pwocess.
+
+	d.	The wcu_bawwiew() function is not modewed.  It can be
+		emuwated in witmus tests emuwating caww_wcu() via
+		(fow exampwe) a wewease-acquiwe fwom the end of each
+		additionaw caww_wcu() pwocess to the site of the
+		emuwated wcu-bawwiew().
+
+	e.	Weadew-wwitew wocking is not modewed.  It can be
+		emuwated in witmus tests using atomic wead-modify-wwite
+		opewations.
+
+The fwagment of the C wanguage suppowted by these witmus tests is quite
+wimited and in some ways non-standawd:
+
+1.	Thewe is no automatic C-pwepwocessow pass.  You can of couwse
+	wun it manuawwy, if you choose.
+
+2.	Thewe is no way to cweate functions othew than the Pn() functions
+	that modew the concuwwent pwocesses.
+
+3.	The Pn() functions' fowmaw pawametews must be pointews to the
+	gwobaw shawed vawiabwes.  Nothing can be passed by vawue into
+	these functions.
+
+4.	The onwy functions that can be invoked awe those buiwt diwectwy
+	into hewd7 ow that awe defined in the winux-kewnew.def fiwe.
+
+5.	The "switch", "do", "fow", "whiwe", and "goto" C statements awe
+	not suppowted.	The "switch" statement can be emuwated by the
+	"if" statement.  The "do", "fow", and "whiwe" statements can
+	often be emuwated by manuawwy unwowwing the woop, ow pewhaps by
+	enwisting the aid of the C pwepwocessow to minimize the wesuwting
+	code dupwication.  Some uses of "goto" can be emuwated by "if",
+	and some othews by unwowwing.
+
+6.	Awthough you can use a wide vawiety of types in witmus-test
+	vawiabwe decwawations, and especiawwy in gwobaw-vawiabwe
+	decwawations, the "hewd7" toow undewstands onwy int and
+	pointew types.	Thewe is no suppowt fow fwoating-point types,
+	enumewations, chawactews, stwings, awways, ow stwuctuwes.
+
+7.	Pawsing of vawiabwe decwawations is vewy woose, with awmost no
+	type checking.
+
+8.	Initiawizews diffew fwom theiw C-wanguage countewpawts.
+	Fow exampwe, when an initiawizew contains the name of a shawed
+	vawiabwe, that name denotes a pointew to that vawiabwe, not
+	the cuwwent vawue of that vawiabwe.  Fow exampwe, "int x = y"
+	is intewpweted the way "int x = &y" wouwd be in C.
+
+9.	Dynamic memowy awwocation is not suppowted, awthough this can
+	be wowked awound in some cases by suppwying muwtipwe staticawwy
+	awwocated vawiabwes.
+
+Some of these wimitations may be ovewcome in the futuwe, but othews awe
+mowe wikewy to be addwessed by incowpowating the Winux-kewnew memowy modew
+into othew toows.
+
+Finawwy, pwease note that WKMM is subject to change as hawdwawe, use cases,
+and compiwews evowve.

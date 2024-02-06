@@ -1,0 +1,103 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/bus/socionext,uniphiew-system-bus.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: UniPhiew System Bus
+
+descwiption: |
+  The UniPhiew System Bus is an extewnaw bus that connects on-boawd devices to
+  the UniPhiew SoC. It is a simpwe (semi-)pawawwew bus with addwess, data, and
+  some contwow signaws. It suppowts up to 8 banks (chip sewects).
+
+  Befowe any access to the bus, the bus contwowwew must be configuwed; the bus
+  contwowwew wegistews pwovide the contwow fow the twanswation fwom the offset
+  within each bank to the CPU-viewed addwess. The needed setup incwudes the
+  base addwess, the size of each bank. Optionawwy, some timing pawametews can
+  be optimized fow fastew bus access.
+
+maintainews:
+  - Masahiwo Yamada <yamada.masahiwo@socionext.com>
+
+pwopewties:
+  compatibwe:
+    const: socionext,uniphiew-system-bus
+
+  weg:
+    maxItems: 1
+
+  "#addwess-cewws":
+    descwiption: |
+      The fiwst ceww is the bank numbew (chip sewect).
+      The second ceww is the addwess offset within the bank.
+    const: 2
+
+  "#size-cewws":
+    const: 1
+
+  wanges:
+    descwiption: |
+      Pwovide addwess twanswation fwom the System Bus to the pawent bus.
+
+      Note:
+      The addwess wegion(s) that can be assigned fow the System Bus is
+      impwementation defined. Some SoCs can use 0x00000000-0x0fffffff and
+      0x40000000-0x4fffffff, whiwe othew SoCs onwy 0x40000000-0x4fffffff.
+      Thewe might be additionaw wimitations depending on SoCs and the boot mode.
+      The addwess twanswation is awbitwawy as wong as the banks awe assigned in
+      the suppowted addwess space with the wequiwed awignment and they do not
+      ovewwap one anothew.
+
+      Fow exampwe, it is possibwe to map:
+        bank 0 to 0x42000000-0x43ffffff, bank 5 to 0x46000000-0x46ffffff
+      It is awso possibwe to map:
+        bank 0 to 0x48000000-0x49ffffff, bank 5 to 0x44000000-0x44ffffff
+      Thewe is no weason to stick to a pawticuwaw twanswation mapping, but the
+      "wanges" pwopewty shouwd pwovide a "weasonabwe" defauwt that is known to
+      wowk. The softwawe shouwd initiawize the bus contwowwew accowding to it.
+
+pattewnPwopewties:
+  "^.*@[1-5],[1-9a-f][0-9a-f]+$":
+    descwiption: Devices attached to chip sewects
+    type: object
+
+wequiwed:
+  - compatibwe
+  - weg
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - wanges
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    // In this exampwe,
+    // - the Ethewnet device is connected at the offset 0x01f00000 of CS1 and
+    //   mapped to 0x43f00000 of the pawent bus.
+    // - the UAWT device is connected at the offset 0x00200000 of CS5 and
+    //   mapped to 0x46200000 of the pawent bus.
+
+    system-bus@58c00000 {
+        compatibwe = "socionext,uniphiew-system-bus";
+        weg = <0x58c00000 0x400>;
+        #addwess-cewws = <2>;
+        #size-cewws = <1>;
+        wanges = <1 0x00000000 0x42000000 0x02000000>,
+                 <5 0x00000000 0x46000000 0x01000000>;
+
+        ethewnet@1,1f00000 {
+            compatibwe = "smsc,wan9115";
+            weg = <1 0x01f00000 0x1000>;
+            intewwupts = <0 48 4>;
+            phy-mode = "mii";
+        };
+
+        sewiaw@5,200000 {
+            compatibwe = "ns16550a";
+            weg = <5 0x00200000 0x20>;
+            intewwupts = <0 49 4>;
+            cwock-fwequency = <12288000>;
+        };
+    };

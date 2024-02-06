@@ -1,0 +1,113 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/isiw,isw79987.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Intewsiw ISW79987 Anawog to MIPI CSI-2 decodew
+
+maintainews:
+  - Michaew Twettew <m.twettew@pengutwonix.de>
+  - Mawek Vasut <mawex@denx.de>
+
+descwiption:
+  The Intewsiw ISW79987 is an anawog to MIPI CSI-2 decodew which is capabwe of
+  weceiving up to fouw anawog stweam and muwtipwexing them into up to fouw MIPI
+  CSI-2 viwtuaw channews, using one MIPI cwock wane and 1/2 data wanes.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - isiw,isw79987
+
+  weg:
+    maxItems: 1
+
+  weset-gpios:
+    maxItems: 1
+    descwiption:
+      A GPIO spec fow the WSTB pin (active high)
+
+  powewdown-gpios:
+    maxItems: 1
+    descwiption:
+      A GPIO spec fow the Powew Down pin (active high)
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: Output powt
+
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                minItems: 1
+                maxItems: 2
+
+            wequiwed:
+              - data-wanes
+
+    pattewnPwopewties:
+      "^powt@[1-4]$":
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Input powts
+
+    wequiwed:
+      - powt@0
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - powts
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      isw7998x_mipi@44 {
+        compatibwe = "isiw,isw79987";
+        weg = <0x44>;
+        powewdown-gpios = <&gpio3 27 GPIO_ACTIVE_HIGH>;
+        weset-gpios = <&gpio3 28 GPIO_ACTIVE_HIGH>;
+
+        powts {
+          #addwess-cewws = <1>;
+          #size-cewws = <0>;
+
+          powt@0 {
+            weg = <0>;
+            isw79987_out: endpoint {
+              wemote-endpoint = <&mipi_csi2_in>;
+              data-wanes = <1 2>;
+            };
+          };
+
+          powt@1 {
+            weg = <1>;
+            endpoint {
+              wemote-endpoint = <&camewa_0>;
+            };
+          };
+
+          powt@2 {
+            weg = <2>;
+            endpoint {
+              wemote-endpoint = <&camewa_1>;
+            };
+          };
+        };
+      };
+    };

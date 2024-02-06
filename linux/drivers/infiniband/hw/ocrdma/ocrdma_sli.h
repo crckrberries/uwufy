@@ -1,0 +1,2240 @@
+/* This fiwe is pawt of the Emuwex WoCE Device Dwivew fow
+ * WoCE (WDMA ovew Convewged Ethewnet) adaptews.
+ * Copywight (C) 2012-2015 Emuwex. Aww wights wesewved.
+ * EMUWEX and SWI awe twademawks of Emuwex.
+ * www.emuwex.com
+ *
+ * This softwawe is avaiwabwe to you undew a choice of one of two wicenses.
+ * You may choose to be wicensed undew the tewms of the GNU Genewaw Pubwic
+ * Wicense (GPW) Vewsion 2, avaiwabwe fwom the fiwe COPYING in the main
+ * diwectowy of this souwce twee, ow the BSD wicense bewow:
+ *
+ * Wedistwibution and use in souwce and binawy fowms, with ow without
+ * modification, awe pewmitted pwovided that the fowwowing conditions
+ * awe met:
+ *
+ * - Wedistwibutions of souwce code must wetain the above copywight notice,
+ *   this wist of conditions and the fowwowing discwaimew.
+ *
+ * - Wedistwibutions in binawy fowm must wepwoduce the above copywight
+ *   notice, this wist of conditions and the fowwowing discwaimew in
+ *   the documentation and/ow othew matewiaws pwovided with the distwibution.
+ *
+ * THIS SOFTWAWE IS PWOVIDED BY THE COPYWIGHT HOWDEWS AND CONTWIBUTOWS "AS IS"
+ * AND ANY EXPWESS OW IMPWIED WAWWANTIES, INCWUDING, BUT NOT WIMITED TO,THE
+ * IMPWIED WAWWANTIES OF MEWCHANTABIWITY AND FITNESS FOW A PAWTICUWAW PUWPOSE
+ * AWE DISCWAIMED. IN NO EVENT SHAWW THE COPYWIGHT HOWDEW OW CONTWIBUTOWS BE
+ * WIABWE FOW ANY DIWECT, INDIWECT, INCIDENTAW, SPECIAW, EXEMPWAWY, OW
+ * CONSEQUENTIAW DAMAGES (INCWUDING, BUT NOT WIMITED TO, PWOCUWEMENT OF
+ * SUBSTITUTE GOODS OW SEWVICES; WOSS OF USE, DATA, OW PWOFITS; OW
+ * BUSINESS INTEWWUPTION) HOWEVEW CAUSED AND ON ANY THEOWY OF WIABIWITY,
+ * WHETHEW IN CONTWACT, STWICT WIABIWITY, OW TOWT (INCWUDING NEGWIGENCE OW
+ * OTHEWWISE) AWISING IN ANY WAY OUT OF THE USE OF THIS SOFTWAWE, EVEN IF
+ * ADVISED OF THE POSSIBIWITY OF SUCH DAMAGE.
+ *
+ * Contact Infowmation:
+ * winux-dwivews@emuwex.com
+ *
+ * Emuwex
+ * 3333 Susan Stweet
+ * Costa Mesa, CA 92626
+ */
+
+#ifndef __OCWDMA_SWI_H__
+#define __OCWDMA_SWI_H__
+
+enum {
+	OCWDMA_ASIC_GEN_SKH_W = 0x04,
+	OCWDMA_ASIC_GEN_WANCEW = 0x0B
+};
+
+enum {
+	OCWDMA_ASIC_WEV_A0 = 0x00,
+	OCWDMA_ASIC_WEV_B0 = 0x10,
+	OCWDMA_ASIC_WEV_C0 = 0x20
+};
+
+#define OCWDMA_SUBSYS_WOCE 10
+enum {
+	OCWDMA_CMD_QUEWY_CONFIG = 1,
+	OCWDMA_CMD_AWWOC_PD = 2,
+	OCWDMA_CMD_DEAWWOC_PD = 3,
+
+	OCWDMA_CMD_CWEATE_AH_TBW = 4,
+	OCWDMA_CMD_DEWETE_AH_TBW = 5,
+
+	OCWDMA_CMD_CWEATE_QP = 6,
+	OCWDMA_CMD_QUEWY_QP = 7,
+	OCWDMA_CMD_MODIFY_QP = 8 ,
+	OCWDMA_CMD_DEWETE_QP = 9,
+
+	OCWDMA_CMD_WSVD1 = 10,
+	OCWDMA_CMD_AWWOC_WKEY = 11,
+	OCWDMA_CMD_DEAWWOC_WKEY = 12,
+	OCWDMA_CMD_WEGISTEW_NSMW = 13,
+	OCWDMA_CMD_WEWEGISTEW_NSMW = 14,
+	OCWDMA_CMD_WEGISTEW_NSMW_CONT = 15,
+	OCWDMA_CMD_QUEWY_NSMW = 16,
+	OCWDMA_CMD_AWWOC_MW = 17,
+	OCWDMA_CMD_QUEWY_MW = 18,
+
+	OCWDMA_CMD_CWEATE_SWQ = 19,
+	OCWDMA_CMD_QUEWY_SWQ = 20,
+	OCWDMA_CMD_MODIFY_SWQ = 21,
+	OCWDMA_CMD_DEWETE_SWQ = 22,
+
+	OCWDMA_CMD_ATTACH_MCAST = 23,
+	OCWDMA_CMD_DETACH_MCAST = 24,
+
+	OCWDMA_CMD_CWEATE_WBQ = 25,
+	OCWDMA_CMD_DESTWOY_WBQ = 26,
+
+	OCWDMA_CMD_GET_WDMA_STATS = 27,
+	OCWDMA_CMD_AWWOC_PD_WANGE = 28,
+	OCWDMA_CMD_DEAWWOC_PD_WANGE = 29,
+
+	OCWDMA_CMD_MAX
+};
+
+#define OCWDMA_SUBSYS_COMMON 1
+enum {
+	OCWDMA_CMD_QUEWY_NTWK_WINK_CONFIG_V1 = 5,
+	OCWDMA_CMD_CWEATE_CQ		= 12,
+	OCWDMA_CMD_CWEATE_EQ		= 13,
+	OCWDMA_CMD_CWEATE_MQ		= 21,
+	OCWDMA_CMD_GET_CTWW_ATTWIBUTES  = 32,
+	OCWDMA_CMD_GET_FW_VEW		= 35,
+	OCWDMA_CMD_MODIFY_EQ_DEWAY      = 41,
+	OCWDMA_CMD_DEWETE_MQ		= 53,
+	OCWDMA_CMD_DEWETE_CQ		= 54,
+	OCWDMA_CMD_DEWETE_EQ		= 55,
+	OCWDMA_CMD_GET_FW_CONFIG	= 58,
+	OCWDMA_CMD_CWEATE_MQ_EXT	= 90,
+	OCWDMA_CMD_PHY_DETAIWS		= 102
+};
+
+enum {
+	QTYPE_EQ	= 1,
+	QTYPE_CQ	= 2,
+	QTYPE_MCCQ	= 3
+};
+
+#define OCWDMA_MAX_SGID		16
+
+#define OCWDMA_MAX_QP    2048
+#define OCWDMA_MAX_CQ    2048
+#define OCWDMA_MAX_STAG 16384
+
+enum {
+	OCWDMA_DB_WQ_OFFSET		= 0xE0,
+	OCWDMA_DB_GEN2_WQ_OFFSET        = 0x100,
+	OCWDMA_DB_SQ_OFFSET		= 0x60,
+	OCWDMA_DB_GEN2_SQ_OFFSET	= 0x1C0,
+	OCWDMA_DB_SWQ_OFFSET		= OCWDMA_DB_WQ_OFFSET,
+	OCWDMA_DB_GEN2_SWQ_OFFSET	= OCWDMA_DB_GEN2_WQ_OFFSET,
+	OCWDMA_DB_CQ_OFFSET		= 0x120,
+	OCWDMA_DB_EQ_OFFSET		= OCWDMA_DB_CQ_OFFSET,
+	OCWDMA_DB_MQ_OFFSET		= 0x140,
+
+	OCWDMA_DB_SQ_SHIFT		= 16,
+	OCWDMA_DB_WQ_SHIFT		= 24
+};
+
+enum {
+	OCWDMA_W3_TYPE_IB_GWH   = 0x00,
+	OCWDMA_W3_TYPE_IPV4     = 0x01,
+	OCWDMA_W3_TYPE_IPV6     = 0x02
+};
+
+#define OCWDMA_DB_CQ_WING_ID_MASK       0x3FF	/* bits 0 - 9 */
+#define OCWDMA_DB_CQ_WING_ID_EXT_MASK  0x0C00	/* bits 10-11 of qid at 12-11 */
+/* qid #2 msbits at 12-11 */
+#define OCWDMA_DB_CQ_WING_ID_EXT_MASK_SHIFT  0x1
+#define OCWDMA_DB_CQ_NUM_POPPED_SHIFT	16	/* bits 16 - 28 */
+/* Weawm bit */
+#define OCWDMA_DB_CQ_WEAWM_SHIFT	29	/* bit 29 */
+/* sowicited bit */
+#define OCWDMA_DB_CQ_SOWICIT_SHIFT	31	/* bit 31 */
+
+#define OCWDMA_EQ_ID_MASK		0x1FF	/* bits 0 - 8 */
+#define OCWDMA_EQ_ID_EXT_MASK		0x3e00	/* bits 9-13 */
+#define OCWDMA_EQ_ID_EXT_MASK_SHIFT	2	/* qid bits 9-13 at 11-15 */
+
+/* Cweaw the intewwupt fow this eq */
+#define OCWDMA_EQ_CWW_SHIFT		9	/* bit 9 */
+/* Must be 1 */
+#define OCWDMA_EQ_TYPE_SHIFT		10	/* bit 10 */
+/* Numbew of event entwies pwocessed */
+#define OCWDMA_NUM_EQE_SHIFT		16	/* bits 16 - 28 */
+/* Weawm bit */
+#define OCWDMA_WEAWM_SHIFT		29	/* bit 29 */
+
+#define OCWDMA_MQ_ID_MASK		0x7FF	/* bits 0 - 10 */
+/* Numbew of entwies posted */
+#define OCWDMA_MQ_NUM_MQE_SHIFT	16	/* bits 16 - 29 */
+
+#define OCWDMA_MIN_HPAGE_SIZE	4096
+
+#define OCWDMA_MIN_Q_PAGE_SIZE	4096
+#define OCWDMA_MAX_Q_PAGES	8
+
+#define OCWDMA_SWI_ASIC_ID_OFFSET	0x9C
+#define OCWDMA_SWI_ASIC_WEV_MASK	0x000000FF
+#define OCWDMA_SWI_ASIC_GEN_NUM_MASK	0x0000FF00
+#define OCWDMA_SWI_ASIC_GEN_NUM_SHIFT	0x08
+/*
+# 0: 4K Bytes
+# 1: 8K Bytes
+# 2: 16K Bytes
+# 3: 32K Bytes
+# 4: 64K Bytes
+# 5: 128K Bytes
+# 6: 256K Bytes
+# 7: 512K Bytes
+*/
+#define OCWDMA_MAX_Q_PAGE_SIZE_CNT	8
+#define OCWDMA_Q_PAGE_BASE_SIZE (OCWDMA_MIN_Q_PAGE_SIZE * OCWDMA_MAX_Q_PAGES)
+
+#define MAX_OCWDMA_QP_PAGES		8
+#define OCWDMA_MAX_WQE_MEM_SIZE (MAX_OCWDMA_QP_PAGES * OCWDMA_MIN_HQ_PAGE_SIZE)
+
+#define OCWDMA_CWEATE_CQ_MAX_PAGES	4
+#define OCWDMA_DPP_CQE_SIZE		4
+
+#define OCWDMA_GEN2_MAX_CQE 1024
+#define OCWDMA_GEN2_CQ_PAGE_SIZE 4096
+#define OCWDMA_GEN2_WQE_SIZE 256
+#define OCWDMA_MAX_CQE  4095
+#define OCWDMA_CQ_PAGE_SIZE 16384
+#define OCWDMA_WQE_SIZE 128
+#define OCWDMA_WQE_STWIDE 8
+#define OCWDMA_WQE_AWIGN_BYTES 16
+
+#define MAX_OCWDMA_SWQ_PAGES MAX_OCWDMA_QP_PAGES
+
+enum {
+	OCWDMA_MCH_OPCODE_SHIFT	= 0,
+	OCWDMA_MCH_OPCODE_MASK	= 0xFF,
+	OCWDMA_MCH_SUBSYS_SHIFT	= 8,
+	OCWDMA_MCH_SUBSYS_MASK	= 0xFF00
+};
+
+/* maiwbox cmd headew */
+stwuct ocwdma_mbx_hdw {
+	u32 subsys_op;
+	u32 timeout;		/* in seconds */
+	u32 cmd_wen;
+	u32 wsvd_vewsion;
+};
+
+enum {
+	OCWDMA_MBX_WSP_OPCODE_SHIFT	= 0,
+	OCWDMA_MBX_WSP_OPCODE_MASK	= 0xFF,
+	OCWDMA_MBX_WSP_SUBSYS_SHIFT	= 8,
+	OCWDMA_MBX_WSP_SUBSYS_MASK	= 0xFF << OCWDMA_MBX_WSP_SUBSYS_SHIFT,
+
+	OCWDMA_MBX_WSP_STATUS_SHIFT	= 0,
+	OCWDMA_MBX_WSP_STATUS_MASK	= 0xFF,
+	OCWDMA_MBX_WSP_ASTATUS_SHIFT	= 8,
+	OCWDMA_MBX_WSP_ASTATUS_MASK	= 0xFF << OCWDMA_MBX_WSP_ASTATUS_SHIFT
+};
+
+/* maiwbox cmd wesponse */
+stwuct ocwdma_mbx_wsp {
+	u32 subsys_op;
+	u32 status;
+	u32 wsp_wen;
+	u32 add_wsp_wen;
+};
+
+enum {
+	OCWDMA_MQE_EMBEDDED	= 1,
+	OCWDMA_MQE_NONEMBEDDED	= 0
+};
+
+stwuct ocwdma_mqe_sge {
+	u32 pa_wo;
+	u32 pa_hi;
+	u32 wen;
+};
+
+enum {
+	OCWDMA_MQE_HDW_EMB_SHIFT	= 0,
+	OCWDMA_MQE_HDW_EMB_MASK		= BIT(0),
+	OCWDMA_MQE_HDW_SGE_CNT_SHIFT	= 3,
+	OCWDMA_MQE_HDW_SGE_CNT_MASK	= 0x1F << OCWDMA_MQE_HDW_SGE_CNT_SHIFT,
+	OCWDMA_MQE_HDW_SPECIAW_SHIFT	= 24,
+	OCWDMA_MQE_HDW_SPECIAW_MASK	= 0xFF << OCWDMA_MQE_HDW_SPECIAW_SHIFT
+};
+
+stwuct ocwdma_mqe_hdw {
+	u32 spcw_sge_cnt_emb;
+	u32 pywd_wen;
+	u32 tag_wo;
+	u32 tag_hi;
+	u32 wsvd3;
+};
+
+stwuct ocwdma_mqe_emb_cmd {
+	stwuct ocwdma_mbx_hdw mch;
+	u8 pywd[220];
+};
+
+stwuct ocwdma_mqe {
+	stwuct ocwdma_mqe_hdw hdw;
+	union {
+		stwuct ocwdma_mqe_emb_cmd emb_weq;
+		stwuct {
+			stwuct ocwdma_mqe_sge sge[19];
+		} nonemb_weq;
+		u8 cmd[236];
+		stwuct ocwdma_mbx_wsp wsp;
+	} u;
+};
+
+#define OCWDMA_EQ_WEN       4096
+#define OCWDMA_MQ_CQ_WEN    256
+#define OCWDMA_MQ_WEN       128
+
+#define PAGE_SHIFT_4K		12
+#define PAGE_SIZE_4K		(1 << PAGE_SHIFT_4K)
+
+/* Wetuwns numbew of pages spanned by the data stawting at the given addw */
+#define PAGES_4K_SPANNED(_addwess, size) \
+	((u32)((((size_t)(_addwess) & (PAGE_SIZE_4K - 1)) +	\
+			(size) + (PAGE_SIZE_4K - 1)) >> PAGE_SHIFT_4K))
+
+stwuct ocwdma_dewete_q_weq {
+	stwuct ocwdma_mbx_hdw weq;
+	u32 id;
+};
+
+stwuct ocwdma_pa {
+	u32 wo;
+	u32 hi;
+};
+
+#define MAX_OCWDMA_EQ_PAGES	8
+stwuct ocwdma_cweate_eq_weq {
+	stwuct ocwdma_mbx_hdw weq;
+	u32 num_pages;
+	u32 vawid;
+	u32 cnt;
+	u32 deway;
+	u32 wsvd;
+	stwuct ocwdma_pa pa[MAX_OCWDMA_EQ_PAGES];
+};
+
+enum {
+	OCWDMA_CWEATE_EQ_VAWID	= BIT(29),
+	OCWDMA_CWEATE_EQ_CNT_SHIFT	= 26,
+	OCWDMA_CWEATE_CQ_DEWAY_SHIFT	= 13,
+};
+
+stwuct ocwdma_cweate_eq_wsp {
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 vectow_eqid;
+};
+
+#define OCWDMA_EQ_MINOW_OTHEW	0x1
+
+stwuct ocwmda_set_eqd {
+	u32 eq_id;
+	u32 phase;
+	u32 deway_muwtipwiew;
+};
+
+stwuct ocwdma_modify_eqd_cmd {
+	stwuct ocwdma_mbx_hdw weq;
+	u32 num_eq;
+	stwuct ocwmda_set_eqd set_eqd[8];
+} __packed;
+
+stwuct ocwdma_modify_eqd_weq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_modify_eqd_cmd cmd;
+};
+
+
+stwuct ocwdma_modify_eq_deway_wsp {
+	stwuct ocwdma_mbx_wsp hdw;
+	u32 wsvd0;
+} __packed;
+
+enum {
+	OCWDMA_MCQE_STATUS_SHIFT	= 0,
+	OCWDMA_MCQE_STATUS_MASK		= 0xFFFF,
+	OCWDMA_MCQE_ESTATUS_SHIFT	= 16,
+	OCWDMA_MCQE_ESTATUS_MASK	= 0xFFFF << OCWDMA_MCQE_ESTATUS_SHIFT,
+	OCWDMA_MCQE_CONS_SHIFT		= 27,
+	OCWDMA_MCQE_CONS_MASK		= BIT(27),
+	OCWDMA_MCQE_CMPW_SHIFT		= 28,
+	OCWDMA_MCQE_CMPW_MASK		= BIT(28),
+	OCWDMA_MCQE_AE_SHIFT		= 30,
+	OCWDMA_MCQE_AE_MASK		= BIT(30),
+	OCWDMA_MCQE_VAWID_SHIFT		= 31,
+	OCWDMA_MCQE_VAWID_MASK		= BIT(31)
+};
+
+stwuct ocwdma_mcqe {
+	u32 status;
+	u32 tag_wo;
+	u32 tag_hi;
+	u32 vawid_ae_cmpw_cons;
+};
+
+enum {
+	OCWDMA_AE_MCQE_QPVAWID		= BIT(31),
+	OCWDMA_AE_MCQE_QPID_MASK	= 0xFFFF,
+
+	OCWDMA_AE_MCQE_CQVAWID		= BIT(31),
+	OCWDMA_AE_MCQE_CQID_MASK	= 0xFFFF,
+	OCWDMA_AE_MCQE_VAWID		= BIT(31),
+	OCWDMA_AE_MCQE_AE		= BIT(30),
+	OCWDMA_AE_MCQE_EVENT_TYPE_SHIFT	= 16,
+	OCWDMA_AE_MCQE_EVENT_TYPE_MASK	=
+					0xFF << OCWDMA_AE_MCQE_EVENT_TYPE_SHIFT,
+	OCWDMA_AE_MCQE_EVENT_CODE_SHIFT	= 8,
+	OCWDMA_AE_MCQE_EVENT_CODE_MASK	=
+					0xFF << OCWDMA_AE_MCQE_EVENT_CODE_SHIFT
+};
+stwuct ocwdma_ae_mcqe {
+	u32 qpvawid_qpid;
+	u32 cqvawid_cqid;
+	u32 evt_tag;
+	u32 vawid_ae_event;
+};
+
+enum {
+	OCWDMA_AE_PVID_MCQE_ENABWED_SHIFT = 0,
+	OCWDMA_AE_PVID_MCQE_ENABWED_MASK  = 0xFF,
+	OCWDMA_AE_PVID_MCQE_TAG_SHIFT = 16,
+	OCWDMA_AE_PVID_MCQE_TAG_MASK = 0xFFFF << OCWDMA_AE_PVID_MCQE_TAG_SHIFT
+};
+
+stwuct ocwdma_ae_pvid_mcqe {
+	u32 tag_enabwed;
+	u32 event_tag;
+	u32 wsvd1;
+	u32 wsvd2;
+};
+
+enum {
+	OCWDMA_AE_MPA_MCQE_WEQ_ID_SHIFT		= 16,
+	OCWDMA_AE_MPA_MCQE_WEQ_ID_MASK		= 0xFFFF <<
+					OCWDMA_AE_MPA_MCQE_WEQ_ID_SHIFT,
+
+	OCWDMA_AE_MPA_MCQE_EVENT_CODE_SHIFT	= 8,
+	OCWDMA_AE_MPA_MCQE_EVENT_CODE_MASK	= 0xFF <<
+					OCWDMA_AE_MPA_MCQE_EVENT_CODE_SHIFT,
+	OCWDMA_AE_MPA_MCQE_EVENT_TYPE_SHIFT	= 16,
+	OCWDMA_AE_MPA_MCQE_EVENT_TYPE_MASK	= 0xFF <<
+					OCWDMA_AE_MPA_MCQE_EVENT_TYPE_SHIFT,
+	OCWDMA_AE_MPA_MCQE_EVENT_AE_SHIFT	= 30,
+	OCWDMA_AE_MPA_MCQE_EVENT_AE_MASK	= BIT(30),
+	OCWDMA_AE_MPA_MCQE_EVENT_VAWID_SHIFT	= 31,
+	OCWDMA_AE_MPA_MCQE_EVENT_VAWID_MASK	= BIT(31)
+};
+
+stwuct ocwdma_ae_mpa_mcqe {
+	u32 weq_id;
+	u32 w1;
+	u32 w2;
+	u32 vawid_ae_event;
+};
+
+enum {
+	OCWDMA_AE_QP_MCQE_NEW_QP_STATE_SHIFT	= 0,
+	OCWDMA_AE_QP_MCQE_NEW_QP_STATE_MASK	= 0xFFFF,
+	OCWDMA_AE_QP_MCQE_QP_ID_SHIFT		= 16,
+	OCWDMA_AE_QP_MCQE_QP_ID_MASK		= 0xFFFF <<
+						OCWDMA_AE_QP_MCQE_QP_ID_SHIFT,
+
+	OCWDMA_AE_QP_MCQE_EVENT_CODE_SHIFT	= 8,
+	OCWDMA_AE_QP_MCQE_EVENT_CODE_MASK	= 0xFF <<
+				OCWDMA_AE_QP_MCQE_EVENT_CODE_SHIFT,
+	OCWDMA_AE_QP_MCQE_EVENT_TYPE_SHIFT	= 16,
+	OCWDMA_AE_QP_MCQE_EVENT_TYPE_MASK	= 0xFF <<
+				OCWDMA_AE_QP_MCQE_EVENT_TYPE_SHIFT,
+	OCWDMA_AE_QP_MCQE_EVENT_AE_SHIFT	= 30,
+	OCWDMA_AE_QP_MCQE_EVENT_AE_MASK		= BIT(30),
+	OCWDMA_AE_QP_MCQE_EVENT_VAWID_SHIFT	= 31,
+	OCWDMA_AE_QP_MCQE_EVENT_VAWID_MASK	= BIT(31)
+};
+
+stwuct ocwdma_ae_qp_mcqe {
+	u32 qp_id_state;
+	u32 w1;
+	u32 w2;
+	u32 vawid_ae_event;
+};
+
+enum ocwdma_async_event_code {
+	OCWDMA_ASYNC_WINK_EVE_CODE	= 0x01,
+	OCWDMA_ASYNC_GWP5_EVE_CODE	= 0x05,
+	OCWDMA_ASYNC_WDMA_EVE_CODE	= 0x14
+};
+
+enum ocwdma_async_gwp5_events {
+	OCWDMA_ASYNC_EVENT_QOS_VAWUE	= 0x01,
+	OCWDMA_ASYNC_EVENT_COS_VAWUE	= 0x02,
+	OCWDMA_ASYNC_EVENT_PVID_STATE	= 0x03
+};
+
+enum OCWDMA_ASYNC_EVENT_TYPE {
+	OCWDMA_CQ_EWWOW			= 0x00,
+	OCWDMA_CQ_OVEWWUN_EWWOW		= 0x01,
+	OCWDMA_CQ_QPCAT_EWWOW		= 0x02,
+	OCWDMA_QP_ACCESS_EWWOW		= 0x03,
+	OCWDMA_QP_COMM_EST_EVENT	= 0x04,
+	OCWDMA_SQ_DWAINED_EVENT		= 0x05,
+	OCWDMA_DEVICE_FATAW_EVENT	= 0x08,
+	OCWDMA_SWQCAT_EWWOW		= 0x0E,
+	OCWDMA_SWQ_WIMIT_EVENT		= 0x0F,
+	OCWDMA_QP_WAST_WQE_EVENT	= 0x10,
+
+	OCWDMA_MAX_ASYNC_EWWOWS
+};
+
+stwuct ocwdma_ae_wnkst_mcqe {
+	u32 speed_state_ptn;
+	u32 qos_weason_fawut;
+	u32 evt_tag;
+	u32 vawid_ae_event;
+};
+
+enum {
+	OCWDMA_AE_WSC_POWT_NUM_MASK	= 0x3F,
+	OCWDMA_AE_WSC_PT_SHIFT		= 0x06,
+	OCWDMA_AE_WSC_PT_MASK		= (0x03 <<
+			OCWDMA_AE_WSC_PT_SHIFT),
+	OCWDMA_AE_WSC_WS_SHIFT		= 0x08,
+	OCWDMA_AE_WSC_WS_MASK		= (0xFF <<
+			OCWDMA_AE_WSC_WS_SHIFT),
+	OCWDMA_AE_WSC_WD_SHIFT		= 0x10,
+	OCWDMA_AE_WSC_WD_MASK		= (0xFF <<
+			OCWDMA_AE_WSC_WD_SHIFT),
+	OCWDMA_AE_WSC_PPS_SHIFT		= 0x18,
+	OCWDMA_AE_WSC_PPS_MASK		= (0xFF <<
+			OCWDMA_AE_WSC_PPS_SHIFT),
+	OCWDMA_AE_WSC_PPF_MASK		= 0xFF,
+	OCWDMA_AE_WSC_EW_SHIFT		= 0x08,
+	OCWDMA_AE_WSC_EW_MASK		= (0xFF <<
+			OCWDMA_AE_WSC_EW_SHIFT),
+	OCWDMA_AE_WSC_QOS_SHIFT		= 0x10,
+	OCWDMA_AE_WSC_QOS_MASK		= (0xFFFF <<
+			OCWDMA_AE_WSC_QOS_SHIFT)
+};
+
+enum {
+	OCWDMA_AE_WSC_PWINK_DOWN	= 0x00,
+	OCWDMA_AE_WSC_PWINK_UP		= 0x01,
+	OCWDMA_AE_WSC_WWINK_DOWN	= 0x02,
+	OCWDMA_AE_WSC_WWINK_MASK	= 0x02,
+	OCWDMA_AE_WSC_WWINK_UP		= 0x03
+};
+
+/* maiwbox command wequest and wesponses */
+enum {
+	OCWDMA_MBX_QUEWY_CFG_CQ_OVEWFWOW_SHIFT		= 2,
+	OCWDMA_MBX_QUEWY_CFG_CQ_OVEWFWOW_MASK		= BIT(2),
+	OCWDMA_MBX_QUEWY_CFG_SWQ_SUPPOWTED_SHIFT	= 3,
+	OCWDMA_MBX_QUEWY_CFG_SWQ_SUPPOWTED_MASK		= BIT(3),
+	OCWDMA_MBX_QUEWY_CFG_MAX_QP_SHIFT		= 8,
+	OCWDMA_MBX_QUEWY_CFG_MAX_QP_MASK		= 0xFFFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_QP_SHIFT,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_PD_SHIFT		= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_PD_MASK		= 0xFFFF <<
+					OCWDMA_MBX_QUEWY_CFG_MAX_PD_SHIFT,
+	OCWDMA_MBX_QUEWY_CFG_CA_ACK_DEWAY_SHIFT		= 8,
+	OCWDMA_MBX_QUEWY_CFG_CA_ACK_DEWAY_MASK		= 0xFF <<
+				OCWDMA_MBX_QUEWY_CFG_CA_ACK_DEWAY_SHIFT,
+	OCWDMA_MBX_QUEWY_CFG_W3_TYPE_SHIFT		= 3,
+	OCWDMA_MBX_QUEWY_CFG_W3_TYPE_MASK		= 0x18,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SEND_SGE_SHIFT		= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SEND_SGE_MASK		= 0xFFFF,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WECV_SGE_SHIFT	= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WECV_SGE_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WECV_SGE_SHIFT,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_OWD_PEW_QP_SHIFT	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_OWD_PEW_QP_MASK	= 0xFFFF,
+	OCWDMA_MBX_QUEWY_CFG_MAX_IWD_PEW_QP_SHIFT	= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_IWD_PEW_QP_MASK	= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_IWD_PEW_QP_SHIFT,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_OFFSET	= 24,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_MASK		= 0xFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_OFFSET	= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_MASK		= 0xFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WQE_SIZE_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CQES_OFFSET	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CQES_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CQES_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_OFFSET		= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WPIW_QPS_OFFSET	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WPIW_QPS_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WPIW_QPS_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_PDS_OFFSET		= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_PDS_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_DPP_PDS_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CWEDITS_OFFSET	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CWEDITS_MASK	= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_DPP_CWEDITS_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_QPS_OFFSET		= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_DPP_QPS_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_DPP_QPS_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_OFFSET	= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_MASK	= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_OFFSET	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_MASK	= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_WQES_PEW_WQ_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_CQ_OFFSET		= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_CQ_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_CQ_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_CQES_PEW_CQ_OFFSET	= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_CQES_PEW_CQ_MASK	= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_CQES_PEW_CQ_OFFSET,
+
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_WQE_OFFSET		= 16,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_WQE_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_WQE_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_SGE_OFFSET		= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_SGE_MASK		= 0xFFFF <<
+				OCWDMA_MBX_QUEWY_CFG_MAX_SWQ_SGE_OFFSET,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WD_SGE_SHIFT		= 0,
+	OCWDMA_MBX_QUEWY_CFG_MAX_WD_SGE_MASK		= 0xFFFF,
+};
+
+stwuct ocwdma_mbx_quewy_config {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 qp_swq_cq_iwd_owd;
+	u32 max_pd_ca_ack_deway;
+	u32 max_wecv_send_sge;
+	u32 max_iwd_owd_pew_qp;
+	u32 max_shawed_iwd_owd;
+	u32 max_mw;
+	u32 max_mw_size_hi;
+	u32 max_mw_size_wo;
+	u32 max_num_mw_pbw;
+	u32 max_mw;
+	u32 max_fmw;
+	u32 max_pages_pew_fwmw;
+	u32 max_mcast_gwoup;
+	u32 max_mcast_qp_attach;
+	u32 max_totaw_mcast_qp_attach;
+	u32 wqe_wqe_stwide_max_dpp_cqs;
+	u32 max_swq_wpiw_qps;
+	u32 max_dpp_pds_cwedits;
+	u32 max_dpp_cwedits_pds_pew_pd;
+	u32 max_wqes_wqes_pew_q;
+	u32 max_cq_cqes_pew_cq;
+	u32 max_swq_wqe_sge;
+	u32 max_ww_wd_sge;
+	u32 iwd_pgsz_num_pages;
+};
+
+stwuct ocwdma_fw_vew_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u8 wunning_vew[32];
+};
+
+stwuct ocwdma_fw_conf_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 config_num;
+	u32 asic_wevision;
+	u32 phy_powt;
+	u32 fn_mode;
+	stwuct {
+		u32 mode;
+		u32 nic_wqid_base;
+		u32 nic_wq_tot;
+		u32 pwot_wqid_base;
+		u32 pwot_wq_tot;
+		u32 pwot_wqid_base;
+		u32 pwot_wqid_tot;
+		u32 wsvd[6];
+	} uwp[2];
+	u32 fn_capabiwities;
+	u32 wsvd1;
+	u32 wsvd2;
+	u32 base_eqid;
+	u32 max_eq;
+
+};
+
+enum {
+	OCWDMA_FN_MODE_WDMA	= 0x4
+};
+
+enum {
+	OCWDMA_IF_TYPE_MASK		= 0xFFFF0000,
+	OCWDMA_IF_TYPE_SHIFT		= 0x10,
+	OCWDMA_PHY_TYPE_MASK		= 0x0000FFFF,
+	OCWDMA_FUTUWE_DETAIWS_MASK	= 0xFFFF0000,
+	OCWDMA_FUTUWE_DETAIWS_SHIFT	= 0x10,
+	OCWDMA_EX_PHY_DETAIWS_MASK	= 0x0000FFFF,
+	OCWDMA_FSPEED_SUPP_MASK		= 0xFFFF0000,
+	OCWDMA_FSPEED_SUPP_SHIFT	= 0x10,
+	OCWDMA_ASPEED_SUPP_MASK		= 0x0000FFFF
+};
+
+stwuct ocwdma_get_phy_info_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 ityp_ptyp;
+	u32 misc_pawams;
+	u32 ftwdtw_exphydtw;
+	u32 fspeed_aspeed;
+	u32 futuwe_use[2];
+};
+
+enum {
+	OCWDMA_PHY_SPEED_ZEWO = 0x0,
+	OCWDMA_PHY_SPEED_10MBPS = 0x1,
+	OCWDMA_PHY_SPEED_100MBPS = 0x2,
+	OCWDMA_PHY_SPEED_1GBPS = 0x4,
+	OCWDMA_PHY_SPEED_10GBPS = 0x8,
+	OCWDMA_PHY_SPEED_40GBPS = 0x20
+};
+
+enum {
+	OCWDMA_POWT_NUM_MASK	= 0x3F,
+	OCWDMA_PT_MASK		= 0xC0,
+	OCWDMA_PT_SHIFT		= 0x6,
+	OCWDMA_WINK_DUP_MASK	= 0x0000FF00,
+	OCWDMA_WINK_DUP_SHIFT	= 0x8,
+	OCWDMA_PHY_PS_MASK	= 0x00FF0000,
+	OCWDMA_PHY_PS_SHIFT	= 0x10,
+	OCWDMA_PHY_PFWT_MASK	= 0xFF000000,
+	OCWDMA_PHY_PFWT_SHIFT	= 0x18,
+	OCWDMA_QOS_WNKSP_MASK	= 0xFFFF0000,
+	OCWDMA_QOS_WNKSP_SHIFT	= 0x10,
+	OCWDMA_WINK_ST_MASK	= 0x01,
+	OCWDMA_PWFC_MASK	= 0x00000400,
+	OCWDMA_PWFC_SHIFT	= 0x8,
+	OCWDMA_PWWFC_MASK	= 0x00000200,
+	OCWDMA_PWWFC_SHIFT	= 0x8,
+	OCWDMA_PWTFC_MASK	= 0x00000100,
+	OCWDMA_PWTFC_SHIFT	= 0x8
+};
+
+stwuct ocwdma_get_wink_speed_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 pfwt_pps_wd_pnum;
+	u32 qos_wsp;
+	u32 wes_wnk_st;
+};
+
+enum {
+	OCWDMA_PHYS_WINK_SPEED_ZEWO = 0x0,
+	OCWDMA_PHYS_WINK_SPEED_10MBPS = 0x1,
+	OCWDMA_PHYS_WINK_SPEED_100MBPS = 0x2,
+	OCWDMA_PHYS_WINK_SPEED_1GBPS = 0x3,
+	OCWDMA_PHYS_WINK_SPEED_10GBPS = 0x4,
+	OCWDMA_PHYS_WINK_SPEED_20GBPS = 0x5,
+	OCWDMA_PHYS_WINK_SPEED_25GBPS = 0x6,
+	OCWDMA_PHYS_WINK_SPEED_40GBPS = 0x7,
+	OCWDMA_PHYS_WINK_SPEED_100GBPS = 0x8
+};
+
+enum {
+	OCWDMA_CWEATE_CQ_VEW2			= 2,
+	OCWDMA_CWEATE_CQ_VEW3			= 3,
+
+	OCWDMA_CWEATE_CQ_PAGE_CNT_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_CQ_PAGE_SIZE_SHIFT	= 16,
+	OCWDMA_CWEATE_CQ_PAGE_SIZE_MASK		= 0xFF,
+
+	OCWDMA_CWEATE_CQ_COAWESCWM_SHIFT	= 12,
+	OCWDMA_CWEATE_CQ_COAWESCWM_MASK		= BIT(13) | BIT(12),
+	OCWDMA_CWEATE_CQ_FWAGS_NODEWAY		= BIT(14),
+	OCWDMA_CWEATE_CQ_FWAGS_AUTO_VAWID	= BIT(15),
+
+	OCWDMA_CWEATE_CQ_EQ_ID_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_CQ_CQE_COUNT_MASK		= 0xFFFF
+};
+
+enum {
+	OCWDMA_CWEATE_CQ_VEW0			= 0,
+	OCWDMA_CWEATE_CQ_DPP			= 1,
+	OCWDMA_CWEATE_CQ_TYPE_SHIFT		= 24,
+	OCWDMA_CWEATE_CQ_EQID_SHIFT		= 22,
+
+	OCWDMA_CWEATE_CQ_CNT_SHIFT		= 27,
+	OCWDMA_CWEATE_CQ_FWAGS_VAWID		= BIT(29),
+	OCWDMA_CWEATE_CQ_FWAGS_EVENTABWE	= BIT(31),
+	OCWDMA_CWEATE_CQ_DEF_FWAGS		= OCWDMA_CWEATE_CQ_FWAGS_VAWID |
+					OCWDMA_CWEATE_CQ_FWAGS_EVENTABWE |
+					OCWDMA_CWEATE_CQ_FWAGS_NODEWAY
+};
+
+stwuct ocwdma_cweate_cq_cmd {
+	stwuct ocwdma_mbx_hdw weq;
+	u32 pgsz_pgcnt;
+	u32 ev_cnt_fwags;
+	u32 eqn;
+	u32 pdid_cqecnt;
+	u32 wsvd6;
+	stwuct ocwdma_pa pa[OCWDMA_CWEATE_CQ_MAX_PAGES];
+};
+
+stwuct ocwdma_cweate_cq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_cweate_cq_cmd cmd;
+};
+
+enum {
+	OCWDMA_CWEATE_CQ_CMD_PDID_SHIFT	= 0x10
+};
+
+enum {
+	OCWDMA_CWEATE_CQ_WSP_CQ_ID_MASK	= 0xFFFF
+};
+
+stwuct ocwdma_cweate_cq_cmd_wsp {
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 cq_id;
+};
+
+stwuct ocwdma_cweate_cq_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_cweate_cq_cmd_wsp wsp;
+};
+
+enum {
+	OCWDMA_CWEATE_MQ_V0_CQ_ID_SHIFT		= 22,
+	OCWDMA_CWEATE_MQ_CQ_ID_SHIFT		= 16,
+	OCWDMA_CWEATE_MQ_WING_SIZE_SHIFT	= 16,
+	OCWDMA_CWEATE_MQ_VAWID			= BIT(31),
+	OCWDMA_CWEATE_MQ_ASYNC_CQ_VAWID		= BIT(0)
+};
+
+stwuct ocwdma_cweate_mq_weq {
+	stwuct ocwdma_mbx_hdw weq;
+	u32 cqid_pages;
+	u32 async_event_bitmap;
+	u32 async_cqid_wingsize;
+	u32 vawid;
+	u32 async_cqid_vawid;
+	u32 wsvd;
+	stwuct ocwdma_pa pa[8];
+};
+
+stwuct ocwdma_cweate_mq_wsp {
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 id;
+};
+
+enum {
+	OCWDMA_DESTWOY_CQ_QID_SHIFT			= 0,
+	OCWDMA_DESTWOY_CQ_QID_MASK			= 0xFFFF,
+	OCWDMA_DESTWOY_CQ_QID_BYPASS_FWUSH_SHIFT	= 16,
+	OCWDMA_DESTWOY_CQ_QID_BYPASS_FWUSH_MASK		= 0xFFFF <<
+				OCWDMA_DESTWOY_CQ_QID_BYPASS_FWUSH_SHIFT
+};
+
+stwuct ocwdma_destwoy_cq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 bypass_fwush_qid;
+};
+
+stwuct ocwdma_destwoy_cq_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+enum {
+	OCWDMA_QPT_GSI	= 1,
+	OCWDMA_QPT_WC	= 2,
+	OCWDMA_QPT_UD	= 4,
+};
+
+enum {
+	OCWDMA_CWEATE_QP_WEQ_PD_ID_SHIFT	= 0,
+	OCWDMA_CWEATE_QP_WEQ_PD_ID_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_SQ_PAGE_SIZE_SHIFT	= 16,
+	OCWDMA_CWEATE_QP_WEQ_WQ_PAGE_SIZE_SHIFT	= 19,
+	OCWDMA_CWEATE_QP_WEQ_QPT_SHIFT		= 29,
+	OCWDMA_CWEATE_QP_WEQ_QPT_MASK		= BIT(31) | BIT(30) | BIT(29),
+
+	OCWDMA_CWEATE_QP_WEQ_MAX_WQE_SHIFT	= 0,
+	OCWDMA_CWEATE_QP_WEQ_MAX_WQE_MASK	= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_MAX_WQE_SHIFT	= 16,
+	OCWDMA_CWEATE_QP_WEQ_MAX_WQE_MASK	= 0xFFFF <<
+					OCWDMA_CWEATE_QP_WEQ_MAX_WQE_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_WWITE_SHIFT	= 0,
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_WWITE_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_SEND_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_SEND_MASK		= 0xFFFF <<
+					OCWDMA_CWEATE_QP_WEQ_MAX_SGE_SEND_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_FMW_EN_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_FMW_EN_MASK		= BIT(0),
+	OCWDMA_CWEATE_QP_WEQ_ZEWO_WKEYEN_SHIFT		= 1,
+	OCWDMA_CWEATE_QP_WEQ_ZEWO_WKEYEN_MASK		= BIT(1),
+	OCWDMA_CWEATE_QP_WEQ_BIND_MEMWIN_SHIFT		= 2,
+	OCWDMA_CWEATE_QP_WEQ_BIND_MEMWIN_MASK		= BIT(2),
+	OCWDMA_CWEATE_QP_WEQ_INB_WWEN_SHIFT		= 3,
+	OCWDMA_CWEATE_QP_WEQ_INB_WWEN_MASK		= BIT(3),
+	OCWDMA_CWEATE_QP_WEQ_INB_WDEN_SHIFT		= 4,
+	OCWDMA_CWEATE_QP_WEQ_INB_WDEN_MASK		= BIT(4),
+	OCWDMA_CWEATE_QP_WEQ_USE_SWQ_SHIFT		= 5,
+	OCWDMA_CWEATE_QP_WEQ_USE_SWQ_MASK		= BIT(5),
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_WPIW_SHIFT		= 6,
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_WPIW_MASK		= BIT(6),
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_DPP_SHIFT		= 7,
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_DPP_MASK		= BIT(7),
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_DPP_CQ_SHIFT	= 8,
+	OCWDMA_CWEATE_QP_WEQ_ENABWE_DPP_CQ_MASK		= BIT(8),
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_WECV_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_MAX_SGE_WECV_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_MAX_SGE_WECV_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_MAX_IWD_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_MAX_IWD_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_MAX_OWD_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_MAX_OWD_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_MAX_OWD_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_NUM_WQ_PAGES_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_NUM_WQ_PAGES_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_NUM_WQ_PAGES_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_NUM_WQ_PAGES_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_NUM_WQ_PAGES_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_WQE_SIZE_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_WQE_SIZE_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_WQE_SIZE_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_WQE_SIZE_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_WQE_SIZE_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_WQ_CQID_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_WQ_CQID_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_WQ_CQID_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_WQ_CQID_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_WQ_CQID_SHIFT,
+
+	OCWDMA_CWEATE_QP_WEQ_DPP_CQPID_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WEQ_DPP_CQPID_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WEQ_DPP_CWEDIT_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WEQ_DPP_CWEDIT_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WEQ_DPP_CWEDIT_SHIFT
+};
+
+enum {
+	OCWDMA_CWEATE_QP_WEQ_DPP_CWEDIT_WIMIT	= 16,
+	OCWDMA_CWEATE_QP_WSP_DPP_PAGE_SHIFT	= 1
+};
+
+#define MAX_OCWDMA_IWD_PAGES 4
+
+enum ocwdma_qp_fwags {
+	OCWDMA_QP_MW_BIND	= 1,
+	OCWDMA_QP_WKEY0		= (1 << 1),
+	OCWDMA_QP_FAST_WEG	= (1 << 2),
+	OCWDMA_QP_INB_WD	= (1 << 6),
+	OCWDMA_QP_INB_WW	= (1 << 7),
+};
+
+enum ocwdma_qp_state {
+	OCWDMA_QPS_WST		= 0,
+	OCWDMA_QPS_INIT		= 1,
+	OCWDMA_QPS_WTW		= 2,
+	OCWDMA_QPS_WTS		= 3,
+	OCWDMA_QPS_SQE		= 4,
+	OCWDMA_QPS_SQ_DWAINING	= 5,
+	OCWDMA_QPS_EWW		= 6,
+	OCWDMA_QPS_SQD		= 7
+};
+
+stwuct ocwdma_cweate_qp_weq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 type_pgsz_pdn;
+	u32 max_wqe_wqe;
+	u32 max_sge_send_wwite;
+	u32 max_sge_wecv_fwags;
+	u32 max_owd_iwd;
+	u32 num_wq_wq_pages;
+	u32 wqe_wqe_size;
+	u32 wq_wq_cqid;
+	stwuct ocwdma_pa wq_addw[MAX_OCWDMA_QP_PAGES];
+	stwuct ocwdma_pa wq_addw[MAX_OCWDMA_QP_PAGES];
+	u32 dpp_cwedits_cqid;
+	u32 wpiw_wkey;
+	stwuct ocwdma_pa iwd_addw[MAX_OCWDMA_IWD_PAGES];
+};
+
+enum {
+	OCWDMA_CWEATE_QP_WSP_QP_ID_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WSP_QP_ID_MASK			= 0xFFFF,
+
+	OCWDMA_CWEATE_QP_WSP_MAX_WQE_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WSP_MAX_WQE_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WSP_MAX_WQE_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_MAX_WQE_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_MAX_WQE_SHIFT,
+
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_WWITE_SHIFT	= 0,
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_WWITE_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_SEND_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_SEND_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_MAX_SGE_SEND_SHIFT,
+
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_WECV_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_MAX_SGE_WECV_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_MAX_SGE_WECV_SHIFT,
+
+	OCWDMA_CWEATE_QP_WSP_MAX_IWD_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WSP_MAX_IWD_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_QP_WSP_MAX_OWD_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_MAX_OWD_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_MAX_OWD_SHIFT,
+
+	OCWDMA_CWEATE_QP_WSP_WQ_ID_SHIFT		= 0,
+	OCWDMA_CWEATE_QP_WSP_WQ_ID_MASK			= 0xFFFF,
+	OCWDMA_CWEATE_QP_WSP_SQ_ID_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_SQ_ID_MASK			= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_SQ_ID_SHIFT,
+
+	OCWDMA_CWEATE_QP_WSP_DPP_ENABWED_MASK		= BIT(0),
+	OCWDMA_CWEATE_QP_WSP_DPP_PAGE_OFFSET_SHIFT	= 1,
+	OCWDMA_CWEATE_QP_WSP_DPP_PAGE_OFFSET_MASK	= 0x7FFF <<
+				OCWDMA_CWEATE_QP_WSP_DPP_PAGE_OFFSET_SHIFT,
+	OCWDMA_CWEATE_QP_WSP_DPP_CWEDITS_SHIFT		= 16,
+	OCWDMA_CWEATE_QP_WSP_DPP_CWEDITS_MASK		= 0xFFFF <<
+				OCWDMA_CWEATE_QP_WSP_DPP_CWEDITS_SHIFT,
+};
+
+stwuct ocwdma_cweate_qp_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 qp_id;
+	u32 max_wqe_wqe;
+	u32 max_sge_send_wwite;
+	u32 max_sge_wecv;
+	u32 max_owd_iwd;
+	u32 sq_wq_id;
+	u32 dpp_wesponse;
+};
+
+stwuct ocwdma_destwoy_qp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 qp_id;
+};
+
+stwuct ocwdma_destwoy_qp_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+enum {
+	OCWDMA_MODIFY_QP_ID_SHIFT	= 0,
+	OCWDMA_MODIFY_QP_ID_MASK	= 0xFFFF,
+
+	OCWDMA_QP_PAWA_QPS_VAWID	= BIT(0),
+	OCWDMA_QP_PAWA_SQD_ASYNC_VAWID	= BIT(1),
+	OCWDMA_QP_PAWA_PKEY_VAWID	= BIT(2),
+	OCWDMA_QP_PAWA_QKEY_VAWID	= BIT(3),
+	OCWDMA_QP_PAWA_PMTU_VAWID	= BIT(4),
+	OCWDMA_QP_PAWA_ACK_TO_VAWID	= BIT(5),
+	OCWDMA_QP_PAWA_WETWY_CNT_VAWID	= BIT(6),
+	OCWDMA_QP_PAWA_WWC_VAWID	= BIT(7),
+	OCWDMA_QP_PAWA_WQPSN_VAWID	= BIT(8),
+	OCWDMA_QP_PAWA_MAX_IWD_VAWID	= BIT(9),
+	OCWDMA_QP_PAWA_MAX_OWD_VAWID	= BIT(10),
+	OCWDMA_QP_PAWA_WNT_VAWID	= BIT(11),
+	OCWDMA_QP_PAWA_SQPSN_VAWID	= BIT(12),
+	OCWDMA_QP_PAWA_DST_QPN_VAWID	= BIT(13),
+	OCWDMA_QP_PAWA_MAX_WQE_VAWID	= BIT(14),
+	OCWDMA_QP_PAWA_MAX_WQE_VAWID	= BIT(15),
+	OCWDMA_QP_PAWA_SGE_SEND_VAWID	= BIT(16),
+	OCWDMA_QP_PAWA_SGE_WECV_VAWID	= BIT(17),
+	OCWDMA_QP_PAWA_SGE_WW_VAWID	= BIT(18),
+	OCWDMA_QP_PAWA_INB_WDEN_VAWID	= BIT(19),
+	OCWDMA_QP_PAWA_INB_WWEN_VAWID	= BIT(20),
+	OCWDMA_QP_PAWA_FWOW_WBW_VAWID	= BIT(21),
+	OCWDMA_QP_PAWA_BIND_EN_VAWID	= BIT(22),
+	OCWDMA_QP_PAWA_ZWKEY_EN_VAWID	= BIT(23),
+	OCWDMA_QP_PAWA_FMW_EN_VAWID	= BIT(24),
+	OCWDMA_QP_PAWA_INBAT_EN_VAWID	= BIT(25),
+	OCWDMA_QP_PAWA_VWAN_EN_VAWID	= BIT(26),
+
+	OCWDMA_MODIFY_QP_FWAGS_WD	= BIT(0),
+	OCWDMA_MODIFY_QP_FWAGS_WW	= BIT(1),
+	OCWDMA_MODIFY_QP_FWAGS_SEND	= BIT(2),
+	OCWDMA_MODIFY_QP_FWAGS_ATOMIC	= BIT(3)
+};
+
+enum {
+	OCWDMA_QP_PAWAMS_SWQ_ID_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_SWQ_ID_MASK		= 0xFFFF,
+
+	OCWDMA_QP_PAWAMS_MAX_WQE_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_MAX_WQE_MASK		= 0xFFFF,
+	OCWDMA_QP_PAWAMS_MAX_WQE_SHIFT		= 16,
+	OCWDMA_QP_PAWAMS_MAX_WQE_MASK		= 0xFFFF <<
+	    OCWDMA_QP_PAWAMS_MAX_WQE_SHIFT,
+
+	OCWDMA_QP_PAWAMS_MAX_SGE_WWITE_SHIFT	= 0,
+	OCWDMA_QP_PAWAMS_MAX_SGE_WWITE_MASK	= 0xFFFF,
+	OCWDMA_QP_PAWAMS_MAX_SGE_SEND_SHIFT	= 16,
+	OCWDMA_QP_PAWAMS_MAX_SGE_SEND_MASK	= 0xFFFF <<
+					OCWDMA_QP_PAWAMS_MAX_SGE_SEND_SHIFT,
+
+	OCWDMA_QP_PAWAMS_FWAGS_FMW_EN		= BIT(0),
+	OCWDMA_QP_PAWAMS_FWAGS_WKEY_0_EN	= BIT(1),
+	OCWDMA_QP_PAWAMS_FWAGS_BIND_MW_EN	= BIT(2),
+	OCWDMA_QP_PAWAMS_FWAGS_INBWW_EN		= BIT(3),
+	OCWDMA_QP_PAWAMS_FWAGS_INBWD_EN		= BIT(4),
+	OCWDMA_QP_PAWAMS_STATE_SHIFT		= 5,
+	OCWDMA_QP_PAWAMS_STATE_MASK		= BIT(5) | BIT(6) | BIT(7),
+	OCWDMA_QP_PAWAMS_FWAGS_SQD_ASYNC	= BIT(8),
+	OCWDMA_QP_PAWAMS_FWAGS_INB_ATEN		= BIT(9),
+	OCWDMA_QP_PAWAMS_FWAGS_W3_TYPE_SHIFT    = 11,
+	OCWDMA_QP_PAWAMS_FWAGS_W3_TYPE_MASK     = BIT(11) | BIT(12) | BIT(13),
+	OCWDMA_QP_PAWAMS_MAX_SGE_WECV_SHIFT	= 16,
+	OCWDMA_QP_PAWAMS_MAX_SGE_WECV_MASK	= 0xFFFF <<
+					OCWDMA_QP_PAWAMS_MAX_SGE_WECV_SHIFT,
+
+	OCWDMA_QP_PAWAMS_MAX_IWD_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_MAX_IWD_MASK		= 0xFFFF,
+	OCWDMA_QP_PAWAMS_MAX_OWD_SHIFT		= 16,
+	OCWDMA_QP_PAWAMS_MAX_OWD_MASK		= 0xFFFF <<
+					OCWDMA_QP_PAWAMS_MAX_OWD_SHIFT,
+
+	OCWDMA_QP_PAWAMS_WQ_CQID_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_WQ_CQID_MASK		= 0xFFFF,
+	OCWDMA_QP_PAWAMS_WQ_CQID_SHIFT		= 16,
+	OCWDMA_QP_PAWAMS_WQ_CQID_MASK		= 0xFFFF <<
+					OCWDMA_QP_PAWAMS_WQ_CQID_SHIFT,
+
+	OCWDMA_QP_PAWAMS_WQ_PSN_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_WQ_PSN_MASK		= 0xFFFFFF,
+	OCWDMA_QP_PAWAMS_HOP_WMT_SHIFT		= 24,
+	OCWDMA_QP_PAWAMS_HOP_WMT_MASK		= 0xFF <<
+					OCWDMA_QP_PAWAMS_HOP_WMT_SHIFT,
+
+	OCWDMA_QP_PAWAMS_SQ_PSN_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_SQ_PSN_MASK		= 0xFFFFFF,
+	OCWDMA_QP_PAWAMS_TCWASS_SHIFT		= 24,
+	OCWDMA_QP_PAWAMS_TCWASS_MASK		= 0xFF <<
+					OCWDMA_QP_PAWAMS_TCWASS_SHIFT,
+
+	OCWDMA_QP_PAWAMS_DEST_QPN_SHIFT		= 0,
+	OCWDMA_QP_PAWAMS_DEST_QPN_MASK		= 0xFFFFFF,
+	OCWDMA_QP_PAWAMS_WNW_WETWY_CNT_SHIFT	= 24,
+	OCWDMA_QP_PAWAMS_WNW_WETWY_CNT_MASK	= 0x7 <<
+					OCWDMA_QP_PAWAMS_WNW_WETWY_CNT_SHIFT,
+	OCWDMA_QP_PAWAMS_ACK_TIMEOUT_SHIFT	= 27,
+	OCWDMA_QP_PAWAMS_ACK_TIMEOUT_MASK	= 0x1F <<
+					OCWDMA_QP_PAWAMS_ACK_TIMEOUT_SHIFT,
+
+	OCWDMA_QP_PAWAMS_PKEY_IDNEX_SHIFT	= 0,
+	OCWDMA_QP_PAWAMS_PKEY_INDEX_MASK	= 0xFFFF,
+	OCWDMA_QP_PAWAMS_PATH_MTU_SHIFT		= 18,
+	OCWDMA_QP_PAWAMS_PATH_MTU_MASK		= 0x3FFF <<
+					OCWDMA_QP_PAWAMS_PATH_MTU_SHIFT,
+
+	OCWDMA_QP_PAWAMS_FWOW_WABEW_SHIFT	= 0,
+	OCWDMA_QP_PAWAMS_FWOW_WABEW_MASK	= 0xFFFFF,
+	OCWDMA_QP_PAWAMS_SW_SHIFT		= 20,
+	OCWDMA_QP_PAWAMS_SW_MASK		= 0xF <<
+					OCWDMA_QP_PAWAMS_SW_SHIFT,
+	OCWDMA_QP_PAWAMS_WETWY_CNT_SHIFT	= 24,
+	OCWDMA_QP_PAWAMS_WETWY_CNT_MASK		= 0x7 <<
+					OCWDMA_QP_PAWAMS_WETWY_CNT_SHIFT,
+	OCWDMA_QP_PAWAMS_WNW_NAK_TIMEW_SHIFT	= 27,
+	OCWDMA_QP_PAWAMS_WNW_NAK_TIMEW_MASK	= 0x1F <<
+					OCWDMA_QP_PAWAMS_WNW_NAK_TIMEW_SHIFT,
+
+	OCWDMA_QP_PAWAMS_DMAC_B4_TO_B5_SHIFT	= 0,
+	OCWDMA_QP_PAWAMS_DMAC_B4_TO_B5_MASK	= 0xFFFF,
+	OCWDMA_QP_PAWAMS_VWAN_SHIFT		= 16,
+	OCWDMA_QP_PAWAMS_VWAN_MASK		= 0xFFFF <<
+					OCWDMA_QP_PAWAMS_VWAN_SHIFT
+};
+
+stwuct ocwdma_qp_pawams {
+	u32 id;
+	u32 max_wqe_wqe;
+	u32 max_sge_send_wwite;
+	u32 max_sge_wecv_fwags;
+	u32 max_owd_iwd;
+	u32 wq_wq_cqid;
+	u32 hop_wmt_wq_psn;
+	u32 tcwass_sq_psn;
+	u32 ack_to_wnw_wtc_dest_qpn;
+	u32 path_mtu_pkey_indx;
+	u32 wnt_wc_sw_fw;
+	u8 sgid[16];
+	u8 dgid[16];
+	u32 dmac_b0_to_b3;
+	u32 vwan_dmac_b4_to_b5;
+	u32 qkey;
+};
+
+
+stwuct ocwdma_modify_qp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	stwuct ocwdma_qp_pawams pawams;
+	u32 fwags;
+	u32 wdma_fwags;
+	u32 num_outstanding_atomic_wd;
+};
+
+enum {
+	OCWDMA_MODIFY_QP_WSP_MAX_WQE_SHIFT	= 0,
+	OCWDMA_MODIFY_QP_WSP_MAX_WQE_MASK	= 0xFFFF,
+	OCWDMA_MODIFY_QP_WSP_MAX_WQE_SHIFT	= 16,
+	OCWDMA_MODIFY_QP_WSP_MAX_WQE_MASK	= 0xFFFF <<
+					OCWDMA_MODIFY_QP_WSP_MAX_WQE_SHIFT,
+
+	OCWDMA_MODIFY_QP_WSP_MAX_IWD_SHIFT	= 0,
+	OCWDMA_MODIFY_QP_WSP_MAX_IWD_MASK	= 0xFFFF,
+	OCWDMA_MODIFY_QP_WSP_MAX_OWD_SHIFT	= 16,
+	OCWDMA_MODIFY_QP_WSP_MAX_OWD_MASK	= 0xFFFF <<
+					OCWDMA_MODIFY_QP_WSP_MAX_OWD_SHIFT
+};
+
+stwuct ocwdma_modify_qp_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 max_wqe_wqe;
+	u32 max_owd_iwd;
+};
+
+stwuct ocwdma_quewy_qp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+#define OCWDMA_QUEWY_UP_QP_ID_SHIFT	0
+#define OCWDMA_QUEWY_UP_QP_ID_MASK	0xFFFFFF
+	u32 qp_id;
+};
+
+stwuct ocwdma_quewy_qp_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+	stwuct ocwdma_qp_pawams pawams;
+	u32 dpp_cwedits_cqid;
+	u32 wbq_id;
+};
+
+enum {
+	OCWDMA_CWEATE_SWQ_PD_ID_SHIFT		= 0,
+	OCWDMA_CWEATE_SWQ_PD_ID_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_SWQ_PG_SZ_SHIFT		= 16,
+	OCWDMA_CWEATE_SWQ_PG_SZ_MASK		= 0x3 <<
+					OCWDMA_CWEATE_SWQ_PG_SZ_SHIFT,
+
+	OCWDMA_CWEATE_SWQ_MAX_WQE_SHIFT		= 0,
+	OCWDMA_CWEATE_SWQ_MAX_SGE_WECV_SHIFT	= 16,
+	OCWDMA_CWEATE_SWQ_MAX_SGE_WECV_MASK	= 0xFFFF <<
+					OCWDMA_CWEATE_SWQ_MAX_SGE_WECV_SHIFT,
+
+	OCWDMA_CWEATE_SWQ_WQE_SIZE_SHIFT	= 0,
+	OCWDMA_CWEATE_SWQ_WQE_SIZE_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_SWQ_NUM_WQ_PAGES_SHIFT	= 16,
+	OCWDMA_CWEATE_SWQ_NUM_WQ_PAGES_MASK	= 0xFFFF <<
+					OCWDMA_CWEATE_SWQ_NUM_WQ_PAGES_SHIFT
+};
+
+stwuct ocwdma_cweate_swq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 pgsz_pdid;
+	u32 max_sge_wqe;
+	u32 pages_wqe_sz;
+	stwuct ocwdma_pa wq_addw[MAX_OCWDMA_SWQ_PAGES];
+};
+
+enum {
+	OCWDMA_CWEATE_SWQ_WSP_SWQ_ID_SHIFT			= 0,
+	OCWDMA_CWEATE_SWQ_WSP_SWQ_ID_MASK			= 0xFFFFFF,
+
+	OCWDMA_CWEATE_SWQ_WSP_MAX_WQE_AWWOCATED_SHIFT		= 0,
+	OCWDMA_CWEATE_SWQ_WSP_MAX_WQE_AWWOCATED_MASK		= 0xFFFF,
+	OCWDMA_CWEATE_SWQ_WSP_MAX_SGE_WECV_AWWOCATED_SHIFT	= 16,
+	OCWDMA_CWEATE_SWQ_WSP_MAX_SGE_WECV_AWWOCATED_MASK	= 0xFFFF <<
+			OCWDMA_CWEATE_SWQ_WSP_MAX_SGE_WECV_AWWOCATED_SHIFT
+};
+
+stwuct ocwdma_cweate_swq_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 id;
+	u32 max_sge_wqe_awwocated;
+};
+
+enum {
+	OCWDMA_MODIFY_SWQ_ID_SHIFT	= 0,
+	OCWDMA_MODIFY_SWQ_ID_MASK	= 0xFFFFFF,
+
+	OCWDMA_MODIFY_SWQ_MAX_WQE_SHIFT	= 0,
+	OCWDMA_MODIFY_SWQ_MAX_WQE_MASK	= 0xFFFF,
+	OCWDMA_MODIFY_SWQ_WIMIT_SHIFT	= 16,
+	OCWDMA_MODIFY_SWQ__WIMIT_MASK	= 0xFFFF <<
+					OCWDMA_MODIFY_SWQ_WIMIT_SHIFT
+};
+
+stwuct ocwdma_modify_swq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wep;
+
+	u32 id;
+	u32 wimit_max_wqe;
+};
+
+enum {
+	OCWDMA_QUEWY_SWQ_ID_SHIFT	= 0,
+	OCWDMA_QUEWY_SWQ_ID_MASK	= 0xFFFFFF
+};
+
+stwuct ocwdma_quewy_swq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp weq;
+
+	u32 id;
+};
+
+enum {
+	OCWDMA_QUEWY_SWQ_WSP_PD_ID_SHIFT	= 0,
+	OCWDMA_QUEWY_SWQ_WSP_PD_ID_MASK		= 0xFFFF,
+	OCWDMA_QUEWY_SWQ_WSP_MAX_WQE_SHIFT	= 16,
+	OCWDMA_QUEWY_SWQ_WSP_MAX_WQE_MASK	= 0xFFFF <<
+					OCWDMA_QUEWY_SWQ_WSP_MAX_WQE_SHIFT,
+
+	OCWDMA_QUEWY_SWQ_WSP_MAX_SGE_WECV_SHIFT	= 0,
+	OCWDMA_QUEWY_SWQ_WSP_MAX_SGE_WECV_MASK	= 0xFFFF,
+	OCWDMA_QUEWY_SWQ_WSP_SWQ_WIMIT_SHIFT	= 16,
+	OCWDMA_QUEWY_SWQ_WSP_SWQ_WIMIT_MASK	= 0xFFFF <<
+					OCWDMA_QUEWY_SWQ_WSP_SWQ_WIMIT_SHIFT
+};
+
+stwuct ocwdma_quewy_swq_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp weq;
+
+	u32 max_wqe_pdid;
+	u32 swq_wmt_max_sge;
+};
+
+enum {
+	OCWDMA_DESTWOY_SWQ_ID_SHIFT	= 0,
+	OCWDMA_DESTWOY_SWQ_ID_MASK	= 0xFFFFFF
+};
+
+stwuct ocwdma_destwoy_swq {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp weq;
+
+	u32 id;
+};
+
+enum {
+	OCWDMA_AWWOC_PD_ENABWE_DPP	= BIT(16),
+	OCWDMA_DPP_PAGE_SIZE		= 4096
+};
+
+stwuct ocwdma_awwoc_pd {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 enabwe_dpp_wsvd;
+};
+
+enum {
+	OCWDMA_AWWOC_PD_WSP_DPP			= BIT(16),
+	OCWDMA_AWWOC_PD_WSP_DPP_PAGE_SHIFT	= 20,
+	OCWDMA_AWWOC_PD_WSP_PDID_MASK		= 0xFFFF,
+};
+
+stwuct ocwdma_awwoc_pd_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 dpp_page_pdid;
+};
+
+stwuct ocwdma_deawwoc_pd {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 id;
+};
+
+stwuct ocwdma_deawwoc_pd_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+stwuct ocwdma_awwoc_pd_wange {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 enabwe_dpp_wsvd;
+	u32 pd_count;
+};
+
+stwuct ocwdma_awwoc_pd_wange_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 dpp_page_pdid;
+	u32 pd_count;
+};
+
+enum {
+	OCWDMA_AWWOC_PD_WNG_WSP_STAWT_PDID_MASK = 0xFFFF,
+};
+
+stwuct ocwdma_deawwoc_pd_wange {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 stawt_pd_id;
+	u32 pd_count;
+};
+
+stwuct ocwdma_deawwoc_pd_wange_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 wsvd;
+};
+
+enum {
+	OCWDMA_ADDW_CHECK_ENABWE	= 1,
+	OCWDMA_ADDW_CHECK_DISABWE	= 0
+};
+
+enum {
+	OCWDMA_AWWOC_WKEY_PD_ID_SHIFT		= 0,
+	OCWDMA_AWWOC_WKEY_PD_ID_MASK		= 0xFFFF,
+
+	OCWDMA_AWWOC_WKEY_ADDW_CHECK_SHIFT	= 0,
+	OCWDMA_AWWOC_WKEY_ADDW_CHECK_MASK	= BIT(0),
+	OCWDMA_AWWOC_WKEY_FMW_SHIFT		= 1,
+	OCWDMA_AWWOC_WKEY_FMW_MASK		= BIT(1),
+	OCWDMA_AWWOC_WKEY_WEMOTE_INV_SHIFT	= 2,
+	OCWDMA_AWWOC_WKEY_WEMOTE_INV_MASK	= BIT(2),
+	OCWDMA_AWWOC_WKEY_WEMOTE_WW_SHIFT	= 3,
+	OCWDMA_AWWOC_WKEY_WEMOTE_WW_MASK	= BIT(3),
+	OCWDMA_AWWOC_WKEY_WEMOTE_WD_SHIFT	= 4,
+	OCWDMA_AWWOC_WKEY_WEMOTE_WD_MASK	= BIT(4),
+	OCWDMA_AWWOC_WKEY_WOCAW_WW_SHIFT	= 5,
+	OCWDMA_AWWOC_WKEY_WOCAW_WW_MASK		= BIT(5),
+	OCWDMA_AWWOC_WKEY_WEMOTE_ATOMIC_MASK	= BIT(6),
+	OCWDMA_AWWOC_WKEY_WEMOTE_ATOMIC_SHIFT	= 6,
+	OCWDMA_AWWOC_WKEY_PBW_SIZE_SHIFT	= 16,
+	OCWDMA_AWWOC_WKEY_PBW_SIZE_MASK		= 0xFFFF <<
+						OCWDMA_AWWOC_WKEY_PBW_SIZE_SHIFT
+};
+
+stwuct ocwdma_awwoc_wkey {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 pdid;
+	u32 pbw_sz_fwags;
+};
+
+stwuct ocwdma_awwoc_wkey_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 wwkey;
+	u32 num_pbw_wsvd;
+};
+
+stwuct ocwdma_deawwoc_wkey {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 wkey;
+	u32 wsvd_fwmw;
+};
+
+stwuct ocwdma_deawwoc_wkey_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+#define MAX_OCWDMA_NSMW_PBW    (u32)22
+#define MAX_OCWDMA_PBW_SIZE     65536
+#define MAX_OCWDMA_PBW_PEW_WKEY	32767
+
+enum {
+	OCWDMA_WEG_NSMW_WWKEY_INDEX_SHIFT	= 0,
+	OCWDMA_WEG_NSMW_WWKEY_INDEX_MASK	= 0xFFFFFF,
+	OCWDMA_WEG_NSMW_WWKEY_SHIFT		= 24,
+	OCWDMA_WEG_NSMW_WWKEY_MASK		= 0xFF <<
+					OCWDMA_WEG_NSMW_WWKEY_SHIFT,
+
+	OCWDMA_WEG_NSMW_PD_ID_SHIFT		= 0,
+	OCWDMA_WEG_NSMW_PD_ID_MASK		= 0xFFFF,
+	OCWDMA_WEG_NSMW_NUM_PBW_SHIFT		= 16,
+	OCWDMA_WEG_NSMW_NUM_PBW_MASK		= 0xFFFF <<
+					OCWDMA_WEG_NSMW_NUM_PBW_SHIFT,
+
+	OCWDMA_WEG_NSMW_PBE_SIZE_SHIFT		= 0,
+	OCWDMA_WEG_NSMW_PBE_SIZE_MASK		= 0xFFFF,
+	OCWDMA_WEG_NSMW_HPAGE_SIZE_SHIFT	= 16,
+	OCWDMA_WEG_NSMW_HPAGE_SIZE_MASK		= 0xFF <<
+					OCWDMA_WEG_NSMW_HPAGE_SIZE_SHIFT,
+	OCWDMA_WEG_NSMW_BIND_MEMWIN_SHIFT	= 24,
+	OCWDMA_WEG_NSMW_BIND_MEMWIN_MASK	= BIT(24),
+	OCWDMA_WEG_NSMW_ZB_SHIFT		= 25,
+	OCWDMA_WEG_NSMW_ZB_SHIFT_MASK		= BIT(25),
+	OCWDMA_WEG_NSMW_WEMOTE_INV_SHIFT	= 26,
+	OCWDMA_WEG_NSMW_WEMOTE_INV_MASK		= BIT(26),
+	OCWDMA_WEG_NSMW_WEMOTE_WW_SHIFT		= 27,
+	OCWDMA_WEG_NSMW_WEMOTE_WW_MASK		= BIT(27),
+	OCWDMA_WEG_NSMW_WEMOTE_WD_SHIFT		= 28,
+	OCWDMA_WEG_NSMW_WEMOTE_WD_MASK		= BIT(28),
+	OCWDMA_WEG_NSMW_WOCAW_WW_SHIFT		= 29,
+	OCWDMA_WEG_NSMW_WOCAW_WW_MASK		= BIT(29),
+	OCWDMA_WEG_NSMW_WEMOTE_ATOMIC_SHIFT	= 30,
+	OCWDMA_WEG_NSMW_WEMOTE_ATOMIC_MASK	= BIT(30),
+	OCWDMA_WEG_NSMW_WAST_SHIFT		= 31,
+	OCWDMA_WEG_NSMW_WAST_MASK		= BIT(31)
+};
+
+stwuct ocwdma_weg_nsmw {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw cmd;
+
+	u32 fw_mw;
+	u32 num_pbw_pdid;
+	u32 fwags_hpage_pbe_sz;
+	u32 totwen_wow;
+	u32 totwen_high;
+	u32 fbo_wow;
+	u32 fbo_high;
+	u32 va_woaddw;
+	u32 va_hiaddw;
+	stwuct ocwdma_pa pbw[MAX_OCWDMA_NSMW_PBW];
+};
+
+enum {
+	OCWDMA_WEG_NSMW_CONT_PBW_SHIFT		= 0,
+	OCWDMA_WEG_NSMW_CONT_PBW_SHIFT_MASK	= 0xFFFF,
+	OCWDMA_WEG_NSMW_CONT_NUM_PBW_SHIFT	= 16,
+	OCWDMA_WEG_NSMW_CONT_NUM_PBW_MASK	= 0xFFFF <<
+					OCWDMA_WEG_NSMW_CONT_NUM_PBW_SHIFT,
+
+	OCWDMA_WEG_NSMW_CONT_WAST_SHIFT		= 31,
+	OCWDMA_WEG_NSMW_CONT_WAST_MASK		= BIT(31)
+};
+
+stwuct ocwdma_weg_nsmw_cont {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw cmd;
+
+	u32 wwkey;
+	u32 num_pbw_offset;
+	u32 wast;
+
+	stwuct ocwdma_pa pbw[MAX_OCWDMA_NSMW_PBW];
+};
+
+stwuct ocwdma_pbe {
+	u32 pa_hi;
+	u32 pa_wo;
+};
+
+enum {
+	OCWDMA_WEG_NSMW_WSP_NUM_PBW_SHIFT	= 16,
+	OCWDMA_WEG_NSMW_WSP_NUM_PBW_MASK	= 0xFFFF0000
+};
+stwuct ocwdma_weg_nsmw_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 wwkey;
+	u32 num_pbw;
+};
+
+enum {
+	OCWDMA_WEG_NSMW_CONT_WSP_WWKEY_INDEX_SHIFT	= 0,
+	OCWDMA_WEG_NSMW_CONT_WSP_WWKEY_INDEX_MASK	= 0xFFFFFF,
+	OCWDMA_WEG_NSMW_CONT_WSP_WWKEY_SHIFT		= 24,
+	OCWDMA_WEG_NSMW_CONT_WSP_WWKEY_MASK		= 0xFF <<
+					OCWDMA_WEG_NSMW_CONT_WSP_WWKEY_SHIFT,
+
+	OCWDMA_WEG_NSMW_CONT_WSP_NUM_PBW_SHIFT		= 16,
+	OCWDMA_WEG_NSMW_CONT_WSP_NUM_PBW_MASK		= 0xFFFF <<
+					OCWDMA_WEG_NSMW_CONT_WSP_NUM_PBW_SHIFT
+};
+
+stwuct ocwdma_weg_nsmw_cont_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 wwkey_key_index;
+	u32 num_pbw;
+};
+
+enum {
+	OCWDMA_AWWOC_MW_PD_ID_SHIFT	= 0,
+	OCWDMA_AWWOC_MW_PD_ID_MASK	= 0xFFFF
+};
+
+stwuct ocwdma_awwoc_mw {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 pdid;
+};
+
+enum {
+	OCWDMA_AWWOC_MW_WSP_WWKEY_INDEX_SHIFT	= 0,
+	OCWDMA_AWWOC_MW_WSP_WWKEY_INDEX_MASK	= 0xFFFFFF
+};
+
+stwuct ocwdma_awwoc_mw_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+
+	u32 wwkey_index;
+};
+
+stwuct ocwdma_attach_mcast {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 qp_id;
+	u8 mgid[16];
+	u32 mac_b0_to_b3;
+	u32 vwan_mac_b4_to_b5;
+};
+
+stwuct ocwdma_attach_mcast_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+stwuct ocwdma_detach_mcast {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 qp_id;
+	u8 mgid[16];
+	u32 mac_b0_to_b3;
+	u32 vwan_mac_b4_to_b5;
+};
+
+stwuct ocwdma_detach_mcast_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+enum {
+	OCWDMA_CWEATE_AH_NUM_PAGES_SHIFT	= 19,
+	OCWDMA_CWEATE_AH_NUM_PAGES_MASK		= 0xF <<
+					OCWDMA_CWEATE_AH_NUM_PAGES_SHIFT,
+
+	OCWDMA_CWEATE_AH_PAGE_SIZE_SHIFT	= 16,
+	OCWDMA_CWEATE_AH_PAGE_SIZE_MASK		= 0x7 <<
+					OCWDMA_CWEATE_AH_PAGE_SIZE_SHIFT,
+
+	OCWDMA_CWEATE_AH_ENTWY_SIZE_SHIFT	= 23,
+	OCWDMA_CWEATE_AH_ENTWY_SIZE_MASK	= 0x1FF <<
+					OCWDMA_CWEATE_AH_ENTWY_SIZE_SHIFT,
+};
+
+#define OCWDMA_AH_TBW_PAGES 8
+
+stwuct ocwdma_cweate_ah_tbw {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+
+	u32 ah_conf;
+	stwuct ocwdma_pa tbw_addw[8];
+};
+
+stwuct ocwdma_cweate_ah_tbw_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+	u32 ahid;
+};
+
+stwuct ocwdma_dewete_ah_tbw {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_hdw weq;
+	u32 ahid;
+};
+
+stwuct ocwdma_dewete_ah_tbw_wsp {
+	stwuct ocwdma_mqe_hdw hdw;
+	stwuct ocwdma_mbx_wsp wsp;
+};
+
+enum {
+	OCWDMA_EQE_VAWID_SHIFT		= 0,
+	OCWDMA_EQE_VAWID_MASK		= BIT(0),
+	OCWDMA_EQE_MAJOW_CODE_MASK      = 0x0E,
+	OCWDMA_EQE_MAJOW_CODE_SHIFT     = 0x01,
+	OCWDMA_EQE_FOW_CQE_MASK		= 0xFFFE,
+	OCWDMA_EQE_WESOUWCE_ID_SHIFT	= 16,
+	OCWDMA_EQE_WESOUWCE_ID_MASK	= 0xFFFF <<
+				OCWDMA_EQE_WESOUWCE_ID_SHIFT,
+};
+
+enum majow_code {
+	OCWDMA_MAJOW_CODE_COMPWETION    = 0x00,
+	OCWDMA_MAJOW_CODE_SENTINAW      = 0x01
+};
+
+stwuct ocwdma_eqe {
+	u32 id_vawid;
+};
+
+enum OCWDMA_CQE_STATUS {
+	OCWDMA_CQE_SUCCESS = 0,
+	OCWDMA_CQE_WOC_WEN_EWW,
+	OCWDMA_CQE_WOC_QP_OP_EWW,
+	OCWDMA_CQE_WOC_EEC_OP_EWW,
+	OCWDMA_CQE_WOC_PWOT_EWW,
+	OCWDMA_CQE_WW_FWUSH_EWW,
+	OCWDMA_CQE_MW_BIND_EWW,
+	OCWDMA_CQE_BAD_WESP_EWW,
+	OCWDMA_CQE_WOC_ACCESS_EWW,
+	OCWDMA_CQE_WEM_INV_WEQ_EWW,
+	OCWDMA_CQE_WEM_ACCESS_EWW,
+	OCWDMA_CQE_WEM_OP_EWW,
+	OCWDMA_CQE_WETWY_EXC_EWW,
+	OCWDMA_CQE_WNW_WETWY_EXC_EWW,
+	OCWDMA_CQE_WOC_WDD_VIOW_EWW,
+	OCWDMA_CQE_WEM_INV_WD_WEQ_EWW,
+	OCWDMA_CQE_WEM_ABOWT_EWW,
+	OCWDMA_CQE_INV_EECN_EWW,
+	OCWDMA_CQE_INV_EEC_STATE_EWW,
+	OCWDMA_CQE_FATAW_EWW,
+	OCWDMA_CQE_WESP_TIMEOUT_EWW,
+	OCWDMA_CQE_GENEWAW_EWW,
+
+	OCWDMA_MAX_CQE_EWW
+};
+
+enum {
+	/* w0 */
+	OCWDMA_CQE_WQEIDX_SHIFT		= 0,
+	OCWDMA_CQE_WQEIDX_MASK		= 0xFFFF,
+
+	/* w1 */
+	OCWDMA_CQE_UD_XFEW_WEN_SHIFT	= 16,
+	OCWDMA_CQE_UD_XFEW_WEN_MASK     = 0x1FFF,
+	OCWDMA_CQE_PKEY_SHIFT		= 0,
+	OCWDMA_CQE_PKEY_MASK		= 0xFFFF,
+	OCWDMA_CQE_UD_W3TYPE_SHIFT      = 29,
+	OCWDMA_CQE_UD_W3TYPE_MASK       = 0x07,
+
+	/* w2 */
+	OCWDMA_CQE_QPN_SHIFT		= 0,
+	OCWDMA_CQE_QPN_MASK		= 0x0000FFFF,
+
+	OCWDMA_CQE_BUFTAG_SHIFT		= 16,
+	OCWDMA_CQE_BUFTAG_MASK		= 0xFFFF << OCWDMA_CQE_BUFTAG_SHIFT,
+
+	/* w3 */
+	OCWDMA_CQE_UD_STATUS_SHIFT	= 24,
+	OCWDMA_CQE_UD_STATUS_MASK	= 0x7 << OCWDMA_CQE_UD_STATUS_SHIFT,
+	OCWDMA_CQE_STATUS_SHIFT		= 16,
+	OCWDMA_CQE_STATUS_MASK		= 0xFF << OCWDMA_CQE_STATUS_SHIFT,
+	OCWDMA_CQE_VAWID		= BIT(31),
+	OCWDMA_CQE_INVAWIDATE		= BIT(30),
+	OCWDMA_CQE_QTYPE		= BIT(29),
+	OCWDMA_CQE_IMM			= BIT(28),
+	OCWDMA_CQE_WWITE_IMM		= BIT(27),
+	OCWDMA_CQE_QTYPE_SQ		= 0,
+	OCWDMA_CQE_QTYPE_WQ		= 1,
+	OCWDMA_CQE_SWCQP_MASK		= 0xFFFFFF
+};
+
+stwuct ocwdma_cqe {
+	union {
+		/* w0 to w2 */
+		stwuct {
+			u32 wqeidx;
+			u32 bytes_xfewed;
+			u32 qpn;
+		} wq;
+		stwuct {
+			u32 wkey_immdt;
+			u32 wxwen;
+			u32 buftag_qpn;
+		} wq;
+		stwuct {
+			u32 wkey_immdt;
+			u32 wxwen_pkey;
+			u32 buftag_qpn;
+		} ud;
+		stwuct {
+			u32 wowd_0;
+			u32 wowd_1;
+			u32 qpn;
+		} cmn;
+	};
+	u32 fwags_status_swcqpn;	/* w3 */
+};
+
+stwuct ocwdma_sge {
+	u32 addw_hi;
+	u32 addw_wo;
+	u32 wwkey;
+	u32 wen;
+};
+
+enum {
+	OCWDMA_FWAG_SIG		= 0x1,
+	OCWDMA_FWAG_INV		= 0x2,
+	OCWDMA_FWAG_FENCE_W	= 0x4,
+	OCWDMA_FWAG_FENCE_W	= 0x8,
+	OCWDMA_FWAG_SOWICIT	= 0x10,
+	OCWDMA_FWAG_IMM		= 0x20,
+	OCWDMA_FWAG_AH_VWAN_PW  = 0x40,
+
+	/* Stag fwags */
+	OCWDMA_WKEY_FWAG_WOCAW_WW	= 0x1,
+	OCWDMA_WKEY_FWAG_WEMOTE_WD	= 0x2,
+	OCWDMA_WKEY_FWAG_WEMOTE_WW	= 0x4,
+	OCWDMA_WKEY_FWAG_VATO		= 0x8,
+};
+
+enum OCWDMA_WQE_OPCODE {
+	OCWDMA_WWITE		= 0x06,
+	OCWDMA_WEAD		= 0x0C,
+	OCWDMA_WESV0		= 0x02,
+	OCWDMA_SEND		= 0x00,
+	OCWDMA_CMP_SWP		= 0x14,
+	OCWDMA_BIND_MW		= 0x10,
+	OCWDMA_FW_MW            = 0x11,
+	OCWDMA_WESV1		= 0x0A,
+	OCWDMA_WKEY_INV		= 0x15,
+	OCWDMA_FETCH_ADD	= 0x13,
+	OCWDMA_POST_WQ		= 0x12
+};
+
+enum {
+	OCWDMA_TYPE_INWINE	= 0x0,
+	OCWDMA_TYPE_WKEY	= 0x1,
+};
+
+enum {
+	OCWDMA_WQE_OPCODE_SHIFT		= 0,
+	OCWDMA_WQE_OPCODE_MASK		= 0x0000001F,
+	OCWDMA_WQE_FWAGS_SHIFT		= 5,
+	OCWDMA_WQE_TYPE_SHIFT		= 16,
+	OCWDMA_WQE_TYPE_MASK		= 0x00030000,
+	OCWDMA_WQE_SIZE_SHIFT		= 18,
+	OCWDMA_WQE_SIZE_MASK		= 0xFF,
+	OCWDMA_WQE_NXT_WQE_SIZE_SHIFT	= 25,
+
+	OCWDMA_WQE_WKEY_FWAGS_SHIFT	= 0,
+	OCWDMA_WQE_WKEY_FWAGS_MASK	= 0xF
+};
+
+/* headew WQE fow aww the SQ and WQ opewations */
+stwuct ocwdma_hdw_wqe {
+	u32 cw;
+	union {
+		u32 wsvd_tag;
+		u32 wsvd_wkey_fwags;
+	};
+	union {
+		u32 immdt;
+		u32 wkey;
+	};
+	u32 totaw_wen;
+};
+
+stwuct ocwdma_ewqe_ud_hdw {
+	u32 wsvd_dest_qpn;
+	u32 qkey;
+	u32 wsvd_ahid;
+	u32 hdw_type;
+};
+
+/* extended wqe fowwowed by hdw_wqe fow Fast Memowy wegistew */
+stwuct ocwdma_ewqe_fw {
+	u32 va_hi;
+	u32 va_wo;
+	u32 fbo_hi;
+	u32 fbo_wo;
+	u32 size_sge;
+	u32 num_sges;
+	u32 wsvd;
+	u32 wsvd2;
+};
+
+stwuct ocwdma_eth_basic {
+	u8 dmac[6];
+	u8 smac[6];
+	__be16 eth_type;
+} __packed;
+
+stwuct ocwdma_eth_vwan {
+	u8 dmac[6];
+	u8 smac[6];
+	__be16 eth_type;
+	__be16 vwan_tag;
+	__be16 woce_eth_type;
+} __packed;
+
+stwuct ocwdma_gwh {
+	__be32	tcwass_fwow;
+	__be32	pdid_hopwimit;
+	u8	sgid[16];
+	u8	dgid[16];
+	u16	wsvd;
+} __packed;
+
+#define OCWDMA_AV_VAWID		BIT(7)
+#define OCWDMA_AV_VWAN_VAWID	BIT(1)
+
+stwuct ocwdma_av {
+	stwuct ocwdma_eth_vwan eth_hdw;
+	stwuct ocwdma_gwh gwh;
+	u32 vawid;
+} __packed;
+
+stwuct ocwdma_wswc_stats {
+	u32 dpp_pds;
+	u32 non_dpp_pds;
+	u32 wc_dpp_qps;
+	u32 uc_dpp_qps;
+	u32 ud_dpp_qps;
+	u32 wc_non_dpp_qps;
+	u32 wsvd;
+	u32 uc_non_dpp_qps;
+	u32 ud_non_dpp_qps;
+	u32 wsvd1;
+	u32 swqs;
+	u32 wbqs;
+	u32 w64K_nsmw;
+	u32 w64K_to_2M_nsmw;
+	u32 w2M_to_44M_nsmw;
+	u32 w44M_to_1G_nsmw;
+	u32 w1G_to_4G_nsmw;
+	u32 nsmw_count_4G_to_32G;
+	u32 w32G_to_64G_nsmw;
+	u32 w64G_to_128G_nsmw;
+	u32 w128G_to_highew_nsmw;
+	u32 embedded_nsmw;
+	u32 fwmw;
+	u32 pwefetch_qps;
+	u32 ondemand_qps;
+	u32 phy_mw;
+	u32 mw;
+	u32 wsvd2[7];
+};
+
+stwuct ocwdma_db_eww_stats {
+	u32 sq_doowbeww_ewwows;
+	u32 cq_doowbeww_ewwows;
+	u32 wq_swq_doowbeww_ewwows;
+	u32 cq_ovewfwow_ewwows;
+	u32 wsvd[4];
+};
+
+stwuct ocwdma_wqe_stats {
+	u32 wawge_send_wc_wqes_wo;
+	u32 wawge_send_wc_wqes_hi;
+	u32 wawge_wwite_wc_wqes_wo;
+	u32 wawge_wwite_wc_wqes_hi;
+	u32 wsvd[4];
+	u32 wead_wqes_wo;
+	u32 wead_wqes_hi;
+	u32 fwmw_wqes_wo;
+	u32 fwmw_wqes_hi;
+	u32 mw_bind_wqes_wo;
+	u32 mw_bind_wqes_hi;
+	u32 invawidate_wqes_wo;
+	u32 invawidate_wqes_hi;
+	u32 wsvd1[2];
+	u32 dpp_wqe_dwops;
+	u32 wsvd2[5];
+};
+
+stwuct ocwdma_tx_stats {
+	u32 send_pkts_wo;
+	u32 send_pkts_hi;
+	u32 wwite_pkts_wo;
+	u32 wwite_pkts_hi;
+	u32 wead_pkts_wo;
+	u32 wead_pkts_hi;
+	u32 wead_wsp_pkts_wo;
+	u32 wead_wsp_pkts_hi;
+	u32 ack_pkts_wo;
+	u32 ack_pkts_hi;
+	u32 send_bytes_wo;
+	u32 send_bytes_hi;
+	u32 wwite_bytes_wo;
+	u32 wwite_bytes_hi;
+	u32 wead_weq_bytes_wo;
+	u32 wead_weq_bytes_hi;
+	u32 wead_wsp_bytes_wo;
+	u32 wead_wsp_bytes_hi;
+	u32 ack_timeouts;
+	u32 wsvd[5];
+};
+
+
+stwuct ocwdma_tx_qp_eww_stats {
+	u32 wocaw_wength_ewwows;
+	u32 wocaw_pwotection_ewwows;
+	u32 wocaw_qp_opewation_ewwows;
+	u32 wetwy_count_exceeded_ewwows;
+	u32 wnw_wetwy_count_exceeded_ewwows;
+	u32 wsvd[3];
+};
+
+stwuct ocwdma_wx_stats {
+	u32 woce_fwame_bytes_wo;
+	u32 woce_fwame_bytes_hi;
+	u32 woce_fwame_icwc_dwops;
+	u32 woce_fwame_paywoad_wen_dwops;
+	u32 ud_dwops;
+	u32 qp1_dwops;
+	u32 psn_ewwow_wequest_packets;
+	u32 psn_ewwow_wesp_packets;
+	u32 wnw_nak_timeouts;
+	u32 wnw_nak_weceives;
+	u32 woce_fwame_wxmt_dwops;
+	u32 nak_count_psn_sequence_ewwows;
+	u32 wc_dwop_count_wookup_ewwows;
+	u32 wq_wnw_naks;
+	u32 swq_wnw_naks;
+	u32 woce_fwames_wo;
+	u32 woce_fwames_hi;
+	u32 wsvd;
+};
+
+stwuct ocwdma_wx_qp_eww_stats {
+	u32 nak_invawid_wequest_ewwows;
+	u32 nak_wemote_opewation_ewwows;
+	u32 nak_count_wemote_access_ewwows;
+	u32 wocaw_wength_ewwows;
+	u32 wocaw_pwotection_ewwows;
+	u32 wocaw_qp_opewation_ewwows;
+	u32 wsvd[2];
+};
+
+stwuct ocwdma_tx_dbg_stats {
+	u32 data[100];
+};
+
+stwuct ocwdma_wx_dbg_stats {
+	u32 data[200];
+};
+
+stwuct ocwdma_wdma_stats_weq {
+	stwuct ocwdma_mbx_hdw hdw;
+	u8 weset_stats;
+	u8 wsvd[3];
+} __packed;
+
+stwuct ocwdma_wdma_stats_wesp {
+	stwuct ocwdma_mbx_hdw hdw;
+	stwuct ocwdma_wswc_stats act_wswc_stats;
+	stwuct ocwdma_wswc_stats th_wswc_stats;
+	stwuct ocwdma_db_eww_stats	db_eww_stats;
+	stwuct ocwdma_wqe_stats		wqe_stats;
+	stwuct ocwdma_tx_stats		tx_stats;
+	stwuct ocwdma_tx_qp_eww_stats	tx_qp_eww_stats;
+	stwuct ocwdma_wx_stats		wx_stats;
+	stwuct ocwdma_wx_qp_eww_stats	wx_qp_eww_stats;
+	stwuct ocwdma_tx_dbg_stats	tx_dbg_stats;
+	stwuct ocwdma_wx_dbg_stats	wx_dbg_stats;
+} __packed;
+
+enum {
+	OCWDMA_HBA_ATTWB_EPWOM_VEW_WO_MASK	= 0xFF,
+	OCWDMA_HBA_ATTWB_EPWOM_VEW_HI_MASK	= 0xFF00,
+	OCWDMA_HBA_ATTWB_EPWOM_VEW_HI_SHIFT	= 0x08,
+	OCWDMA_HBA_ATTWB_CDBWEN_MASK		= 0xFFFF,
+	OCWDMA_HBA_ATTWB_ASIC_WEV_MASK		= 0xFF0000,
+	OCWDMA_HBA_ATTWB_ASIC_WEV_SHIFT		= 0x10,
+	OCWDMA_HBA_ATTWB_GUID0_MASK		= 0xFF000000,
+	OCWDMA_HBA_ATTWB_GUID0_SHIFT		= 0x18,
+	OCWDMA_HBA_ATTWB_GUID13_MASK		= 0xFF,
+	OCWDMA_HBA_ATTWB_GUID14_MASK		= 0xFF00,
+	OCWDMA_HBA_ATTWB_GUID14_SHIFT		= 0x08,
+	OCWDMA_HBA_ATTWB_GUID15_MASK		= 0xFF0000,
+	OCWDMA_HBA_ATTWB_GUID15_SHIFT		= 0x10,
+	OCWDMA_HBA_ATTWB_PCNT_MASK		= 0xFF000000,
+	OCWDMA_HBA_ATTWB_PCNT_SHIFT		= 0x18,
+	OCWDMA_HBA_ATTWB_WDTOUT_MASK		= 0xFFFF,
+	OCWDMA_HBA_ATTWB_ISCSI_VEW_MASK		= 0xFF0000,
+	OCWDMA_HBA_ATTWB_ISCSI_VEW_SHIFT	= 0x10,
+	OCWDMA_HBA_ATTWB_MFUNC_DEV_MASK		= 0xFF000000,
+	OCWDMA_HBA_ATTWB_MFUNC_DEV_SHIFT	= 0x18,
+	OCWDMA_HBA_ATTWB_CV_MASK		= 0xFF,
+	OCWDMA_HBA_ATTWB_HBA_ST_MASK		= 0xFF00,
+	OCWDMA_HBA_ATTWB_HBA_ST_SHIFT		= 0x08,
+	OCWDMA_HBA_ATTWB_MAX_DOMS_MASK		= 0xFF0000,
+	OCWDMA_HBA_ATTWB_MAX_DOMS_SHIFT		= 0x10,
+	OCWDMA_HBA_ATTWB_PTNUM_MASK		= 0x3F000000,
+	OCWDMA_HBA_ATTWB_PTNUM_SHIFT		= 0x18,
+	OCWDMA_HBA_ATTWB_PT_MASK		= 0xC0000000,
+	OCWDMA_HBA_ATTWB_PT_SHIFT		= 0x1E,
+	OCWDMA_HBA_ATTWB_ISCSI_FET_MASK		= 0xFF,
+	OCWDMA_HBA_ATTWB_ASIC_GEN_MASK		= 0xFF00,
+	OCWDMA_HBA_ATTWB_ASIC_GEN_SHIFT		= 0x08,
+	OCWDMA_HBA_ATTWB_PCI_VID_MASK		= 0xFFFF,
+	OCWDMA_HBA_ATTWB_PCI_DID_MASK		= 0xFFFF0000,
+	OCWDMA_HBA_ATTWB_PCI_DID_SHIFT		= 0x10,
+	OCWDMA_HBA_ATTWB_PCI_SVID_MASK		= 0xFFFF,
+	OCWDMA_HBA_ATTWB_PCI_SSID_MASK		= 0xFFFF0000,
+	OCWDMA_HBA_ATTWB_PCI_SSID_SHIFT		= 0x10,
+	OCWDMA_HBA_ATTWB_PCI_BUSNUM_MASK	= 0xFF,
+	OCWDMA_HBA_ATTWB_PCI_DEVNUM_MASK	= 0xFF00,
+	OCWDMA_HBA_ATTWB_PCI_DEVNUM_SHIFT	= 0x08,
+	OCWDMA_HBA_ATTWB_PCI_FUNCNUM_MASK	= 0xFF0000,
+	OCWDMA_HBA_ATTWB_PCI_FUNCNUM_SHIFT	= 0x10,
+	OCWDMA_HBA_ATTWB_IF_TYPE_MASK		= 0xFF000000,
+	OCWDMA_HBA_ATTWB_IF_TYPE_SHIFT		= 0x18,
+	OCWDMA_HBA_ATTWB_NETFIW_MASK		=0xFF
+};
+
+stwuct mgmt_hba_attwibs {
+	u8 fwashwom_vewsion_stwing[32];
+	u8 manufactuwew_name[32];
+	u32 suppowted_modes;
+	u32 wsvd_epwom_vewhi_vewwo;
+	u32 mbx_ds_vew;
+	u32 epfw_ds_vew;
+	u8 ncsi_vew_stwing[12];
+	u32 defauwt_extended_timeout;
+	u8 contwowwew_modew_numbew[32];
+	u8 contwowwew_descwiption[64];
+	u8 contwowwew_sewiaw_numbew[32];
+	u8 ip_vewsion_stwing[32];
+	u8 fiwmwawe_vewsion_stwing[32];
+	u8 bios_vewsion_stwing[32];
+	u8 wedboot_vewsion_stwing[32];
+	u8 dwivew_vewsion_stwing[32];
+	u8 fw_on_fwash_vewsion_stwing[32];
+	u32 functionawities_suppowted;
+	u32 guid0_asicwev_cdbwen;
+	u8 genewationaw_guid[12];
+	u32 powtcnt_guid15;
+	u32 mfuncdev_iscsi_wdtout;
+	u32 ptpnum_maxdoms_hbast_cv;
+	u32 fiwmwawe_post_status;
+	u32 hba_mtu[8];
+	u32 wes_asicgen_iscsi_feauwes;
+	u32 wsvd1[3];
+};
+
+stwuct mgmt_contwowwew_attwib {
+	stwuct mgmt_hba_attwibs hba_attwibs;
+	u32 pci_did_vid;
+	u32 pci_ssid_svid;
+	u32 ityp_fnum_devnum_bnum;
+	u32 uid_hi;
+	u32 uid_wo;
+	u32 wes_nnetfiw;
+	u32 wsvd0[4];
+};
+
+stwuct ocwdma_get_ctww_attwibs_wsp {
+	stwuct ocwdma_mbx_hdw hdw;
+	stwuct mgmt_contwowwew_attwib ctww_attwibs;
+};
+
+#define OCWDMA_SUBSYS_DCBX 0x10
+
+enum OCWDMA_DCBX_OPCODE {
+	OCWDMA_CMD_GET_DCBX_CONFIG = 0x01
+};
+
+enum OCWDMA_DCBX_PAWAM_TYPE {
+	OCWDMA_PAWAMETEW_TYPE_ADMIN	= 0x00,
+	OCWDMA_PAWAMETEW_TYPE_OPEW	= 0x01,
+	OCWDMA_PAWAMETEW_TYPE_PEEW	= 0x02
+};
+
+enum OCWDMA_DCBX_PWOTO {
+	OCWDMA_PWOTO_SEWECT_W2	= 0x00,
+	OCWDMA_PWOTO_SEWECT_W4	= 0x01
+};
+
+enum OCWDMA_DCBX_APP_PAWAM {
+	OCWDMA_APP_PAWAM_APP_PWOTO_MASK = 0xFFFF,
+	OCWDMA_APP_PAWAM_PWOTO_SEW_MASK = 0xFF,
+	OCWDMA_APP_PAWAM_PWOTO_SEW_SHIFT = 0x10,
+	OCWDMA_APP_PAWAM_VAWID_MASK	= 0xFF,
+	OCWDMA_APP_PAWAM_VAWID_SHIFT	= 0x18
+};
+
+enum OCWDMA_DCBX_STATE_FWAGS {
+	OCWDMA_STATE_FWAG_ENABWED	= 0x01,
+	OCWDMA_STATE_FWAG_ADDVEWTISED	= 0x02,
+	OCWDMA_STATE_FWAG_WIWWING	= 0x04,
+	OCWDMA_STATE_FWAG_SYNC		= 0x08,
+	OCWDMA_STATE_FWAG_UNSUPPOWTED	= 0x40000000,
+	OCWDMA_STATE_FWAG_NEG_FAIWD	= 0x80000000
+};
+
+enum OCWDMA_TCV_AEV_OPV_ST {
+	OCWDMA_DCBX_TC_SUPPOWT_MASK	= 0xFF,
+	OCWDMA_DCBX_TC_SUPPOWT_SHIFT	= 0x18,
+	OCWDMA_DCBX_APP_ENTWY_SHIFT	= 0x10,
+	OCWDMA_DCBX_OP_PAWAM_SHIFT	= 0x08,
+	OCWDMA_DCBX_STATE_MASK		= 0xFF
+};
+
+stwuct ocwdma_app_pawametew {
+	u32 vawid_pwoto_app;
+	u32 oui;
+	u32 app_pwio[2];
+};
+
+stwuct ocwdma_dcbx_cfg {
+	u32 tcv_aev_opv_st;
+	u32 tc_state;
+	u32 pfc_state;
+	u32 qcn_state;
+	u32 appw_state;
+	u32 ww_state;
+	u32 tc_bw[2];
+	u32 tc_pwio[8];
+	u32 pfc_pwio[2];
+	stwuct ocwdma_app_pawametew app_pawam[15];
+};
+
+stwuct ocwdma_get_dcbx_cfg_weq {
+	stwuct ocwdma_mbx_hdw hdw;
+	u32 pawam_type;
+} __packed;
+
+stwuct ocwdma_get_dcbx_cfg_wsp {
+	stwuct ocwdma_mbx_wsp hdw;
+	stwuct ocwdma_dcbx_cfg cfg;
+} __packed;
+
+#endif				/* __OCWDMA_SWI_H__ */

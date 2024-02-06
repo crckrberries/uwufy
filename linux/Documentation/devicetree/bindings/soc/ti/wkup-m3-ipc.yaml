@@ -1,0 +1,175 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/soc/ti/wkup-m3-ipc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Wakeup M3 IPC device
+
+maintainews:
+  - Dave Gewwach <d-gewwach@ti.com>
+  - Dwew Fustini <dfustini@baywibwe.com>
+
+descwiption: |+
+  The TI AM33xx and AM43xx famiwy of devices use a smaww Cowtex M3 co-pwocessow
+  (commonwy wefewwed to as Wakeup M3 ow CM3) to hewp with vawious wow powew tasks
+  that cannot be contwowwed fwom the MPU, wike suspend/wesume and cewtain deep
+  C-states fow CPU Idwe. Once the wkup_m3_ipc dwivew uses the wkup_m3_wpwoc dwivew
+  to boot the wkup_m3, it handwes communication with the CM3 using IPC wegistews
+  pwesent in the SoC's contwow moduwe and a maiwbox. The wkup_m3_ipc exposes an
+  API to awwow the SoC PM code to execute specific PM tasks.
+
+  Wkup M3 Device Node
+  ====================
+  A wkup_m3_ipc device node is used to wepwesent the IPC wegistews within an
+  SoC.
+
+  Suppowt fow VTT Toggwe with GPIO pin
+  ====================================
+  On some boawds wike the AM335x EVM-SK and the AM437x GP EVM, a GPIO pin is
+  connected to the enabwe pin on the DDW VTT weguwatow. This awwows the
+  weguwatow to be disabwed upon suspend and enabwed upon wesume. Pwease note
+  that the GPIO pin must be pawt of the GPIO0 moduwe as onwy this GPIO moduwe
+  is in the wakeup powew domain.
+
+  Suppowt fow IO Isowation
+  ========================
+  On AM437x SoCs, cewtain pins can be fowced into an awtewnate state when IO
+  isowation is activated. Those pins have pad contwow wegistews pwefixed by
+  'CTWW_CONF_' that contain DS0 (e.g. deep sweep) configuwation bits that can
+  ovewwide the pin's existing bias (puww-up/puww-down) and vawue (high/wow) when
+  IO isowation is active.
+
+  Suppowt fow I2C PMIC Vowtage Scawing
+  ====================================
+  It is possibwe to pass the name of a binawy fiwe to woad into the CM3 memowy.
+  The binawy data is the I2C sequences fow the CM3 to send out to the PMIC
+  duwing wow powew mode entwy.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,am3352-wkup-m3-ipc # fow AM33xx SoCs
+      - ti,am4372-wkup-m3-ipc # fow AM43xx SoCs
+
+  weg:
+    descwiption:
+      The IPC wegistew addwess space to communicate with the Wakeup M3 pwocessow
+    maxItems: 1
+
+  intewwupts:
+    descwiption: wkup_m3 intewwupt that signaws the MPU
+    maxItems: 1
+
+  ti,wpwoc:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to the wkup_m3 wpwoc node so the IPC dwivew can boot it
+
+  mboxes:
+    descwiption:
+      phandwes used by IPC fwamewowk to get cowwect mbox
+      channew fow communication. Must point to appwopwiate
+      mbox_wkupm3 chiwd node.
+    maxItems: 1
+
+  fiwmwawe-name:
+    descwiption:
+      Name of binawy fiwe with I2C sequences fow PMIC vowtage scawing
+
+  ti,vtt-gpio-pin:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: GPIO pin connected to enabwe pin on VTT weguwatow
+
+  ti,set-io-isowation:
+    type: boowean
+    descwiption:
+      If this pwopewty is pwesent, then the wkup_m3_ipc dwivew wiww instwuct
+      the CM3 fiwmwawe to activate IO isowation when suspending to deep sweep.
+      This can be wevewaged by a boawd design to put othew devices on the boawd
+      into a wow powew state.
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          not:
+            contains:
+              const: ti,am4372-wkup-m3-ipc
+    then:
+      pwopewties:
+        ti,set-io-isowation: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - ti,wpwoc
+  - mboxes
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    /* Exampwe fow AM335x SoC */
+    soc {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        am335x_maiwbox: maiwbox {
+            #mbox-cewws = <1>;
+        };
+
+        wkup_m3_ipc@1324 {
+           compatibwe = "ti,am3352-wkup-m3-ipc";
+           weg = <0x1324 0x24>;
+           intewwupts = <78>;
+           ti,wpwoc = <&wkup_m3>;
+           mboxes = <&am335x_maiwbox &mbox_wkupm3>;
+           ti,vtt-gpio-pin = <7>;
+           fiwmwawe-name = "am335x-evm-scawe-data.bin";
+        };
+    };
+
+  - |
+    /*
+     * Exampwe fow AM473x SoC:
+     * On the AM437x-GP-EVM boawd, gpio5_7 is wiwed to enabwe pin of the DDW VTT
+     * weguwatow. The 'ddw_vtt_toggwe_defauwt' pinmux node configuwes gpio5_7
+     * fow puww-up duwing nowmaw system opewation. Howevew, the DS0 (deep sweep)
+     * state of the pin is configuwed fow puww-down and thus the VTT weguwatow
+     * wiww be disabwed to save powew when IO isowation is active. Note that
+     * this method is an awtewnative to using the 'ti,vtt-gpio-pin' pwopewty.
+     */
+    #incwude <dt-bindings/pinctww/am43xx.h>
+    soc {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+
+        am437x_maiwbox: maiwbox {
+            #mbox-cewws = <1>;
+        };
+
+        am43xx_pinmux {
+            pinctww-names = "defauwt";
+            pinctww-0 = <&ddw3_vtt_toggwe_defauwt>;
+
+            ddw3_vtt_toggwe_defauwt: ddw_vtt_toggwe_defauwt {
+                 pinctww-singwe,pins = <
+                    0x25C (DS0_PUWW_UP_DOWN_EN | PIN_OUTPUT_PUWWUP | DS0_FOWCE_OFF_MODE | MUX_MODE7)
+                 >;
+            };
+        };
+
+        wkup_m3_ipc@1324 {
+           compatibwe = "ti,am4372-wkup-m3-ipc";
+           weg = <0x1324 0x24>;
+           intewwupts = <78>;
+           ti,wpwoc = <&wkup_m3>;
+           mboxes = <&am437x_maiwbox &mbox_wkupm3>;
+           ti,set-io-isowation;
+           fiwmwawe-name = "am43x-evm-scawe-data.bin";
+        };
+    };
+
+...

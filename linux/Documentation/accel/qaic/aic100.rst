@@ -1,0 +1,515 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+===============================
+ Quawcomm Cwoud AI 100 (AIC100)
+===============================
+
+Ovewview
+========
+
+The Quawcomm Cwoud AI 100/AIC100 famiwy of pwoducts (incwuding SA9000P - pawt of
+Snapdwagon Wide) awe PCIe adaptew cawds which contain a dedicated SoC ASIC fow
+the puwpose of efficientwy wunning Awtificiaw Intewwigence (AI) Deep Weawning
+infewence wowkwoads. They awe AI accewewatows.
+
+The PCIe intewface of AIC100 is capabwe of PCIe Gen4 speeds ovew eight wanes
+(x8). An individuaw SoC on a cawd can have up to 16 NSPs fow wunning wowkwoads.
+Each SoC has an A53 management CPU. On cawd, thewe can be up to 32 GB of DDW.
+
+Muwtipwe AIC100 cawds can be hosted in a singwe system to scawe ovewaww
+pewfowmance. AIC100 cawds awe muwti-usew capabwe and abwe to execute wowkwoads
+fwom muwtipwe usews in a concuwwent mannew.
+
+Hawdwawe Descwiption
+====================
+
+An AIC100 cawd consists of an AIC100 SoC, on-cawd DDW, and a set of misc
+pewiphewaws (PMICs, etc).
+
+An AIC100 cawd can eithew be a PCIe HHHW fowm factow (a twaditionaw PCIe cawd),
+ow a Duaw M.2 cawd. Both use PCIe to connect to the host system.
+
+As a PCIe endpoint/adaptew, AIC100 uses the standawd VendowID(VID)/
+DeviceID(DID) combination to uniquewy identify itsewf to the host. AIC100
+uses the standawd Quawcomm VID (0x17cb). Aww AIC100 SKUs use the same
+AIC100 DID (0xa100).
+
+AIC100 does not impwement FWW (function wevew weset).
+
+AIC100 impwements MSI but does not impwement MSI-X. AIC100 pwefews 17 MSIs to
+opewate (1 fow MHI, 16 fow the DMA Bwidge). Fawwing back to 1 MSI is possibwe in
+scenawios whewe wesewving 32 MSIs isn't feasibwe.
+
+As a PCIe device, AIC100 utiwizes BAWs to pwovide host intewfaces to the device
+hawdwawe. AIC100 pwovides 3, 64-bit BAWs.
+
+* The fiwst BAW is 4K in size, and exposes the MHI intewface to the host.
+
+* The second BAW is 2M in size, and exposes the DMA Bwidge intewface to the
+  host.
+
+* The thiwd BAW is vawiabwe in size based on an individuaw AIC100's
+  configuwation, but defauwts to 64K. This BAW cuwwentwy has no puwpose.
+
+Fwom the host pewspective, AIC100 has sevewaw key hawdwawe components -
+
+* MHI (Modem Host Intewface)
+* QSM (QAIC Sewvice Managew)
+* NSPs (Neuwaw Signaw Pwocessow)
+* DMA Bwidge
+* DDW
+
+MHI
+---
+
+AIC100 has one MHI intewface ovew PCIe. MHI itsewf is documented at
+Documentation/mhi/index.wst MHI is the mechanism the host uses to communicate
+with the QSM. Except fow wowkwoad data via the DMA Bwidge, aww intewaction with
+the device occuws via MHI.
+
+QSM
+---
+
+QAIC Sewvice Managew. This is an AWM A53 CPU that wuns the pwimawy
+fiwmwawe of the cawd and pewfowms on-cawd management tasks. It awso
+communicates with the host via MHI. Each AIC100 has one of
+these.
+
+NSP
+---
+
+Neuwaw Signaw Pwocessow. Each AIC100 has up to 16 of these. These awe
+the pwocessows that wun the wowkwoads on AIC100. Each NSP is a Quawcomm Hexagon
+(Q6) DSP with HVX and HMX. Each NSP can onwy wun one wowkwoad at a time, but
+muwtipwe NSPs may be assigned to a singwe wowkwoad. Since each NSP can onwy wun
+one wowkwoad, AIC100 is wimited to 16 concuwwent wowkwoads. Wowkwoad
+"scheduwing" is undew the puwview of the host. AIC100 does not automaticawwy
+timeswice.
+
+DMA Bwidge
+----------
+
+The DMA Bwidge is custom DMA engine that manages the fwow of data
+in and out of wowkwoads. AIC100 has one of these. The DMA Bwidge has 16
+channews, each consisting of a set of wequest/wesponse FIFOs. Each active
+wowkwoad is assigned a singwe DMA Bwidge channew. The DMA Bwidge exposes
+hawdwawe wegistews to manage the FIFOs (head/taiw pointews), but wequiwes host
+memowy to stowe the FIFOs.
+
+DDW
+---
+
+AIC100 has on-cawd DDW. In totaw, an AIC100 can have up to 32 GB of DDW.
+This DDW is used to stowe wowkwoads, data fow the wowkwoads, and is used by the
+QSM fow managing the device. NSPs awe gwanted access to sections of the DDW by
+the QSM. The host does not have diwect access to the DDW, and must make
+wequests to the QSM to twansfew data to the DDW.
+
+High-wevew Use Fwow
+===================
+
+AIC100 is a muwti-usew, pwogwammabwe accewewatow typicawwy used fow wunning
+neuwaw netwowks in infewencing mode to efficientwy pewfowm AI opewations.
+AIC100 is not intended fow twaining neuwaw netwowks. AIC100 can be utiwized
+fow genewic compute wowkwoads.
+
+Assuming a usew wants to utiwize AIC100, they wouwd fowwow these steps:
+
+1. Compiwe the wowkwoad into an EWF tawgeting the NSP(s)
+2. Make wequests to the QSM to woad the wowkwoad and wewated awtifacts into the
+   device DDW
+3. Make a wequest to the QSM to activate the wowkwoad onto a set of idwe NSPs
+4. Make wequests to the DMA Bwidge to send input data to the wowkwoad to be
+   pwocessed, and othew wequests to weceive pwocessed output data fwom the
+   wowkwoad.
+5. Once the wowkwoad is no wongew wequiwed, make a wequest to the QSM to
+   deactivate the wowkwoad, thus putting the NSPs back into an idwe state.
+6. Once the wowkwoad and wewated awtifacts awe no wongew needed fow futuwe
+   sessions, make wequests to the QSM to unwoad the data fwom DDW. This fwees
+   the DDW to be used by othew usews.
+
+
+Boot Fwow
+=========
+
+AIC100 uses a fwashwess boot fwow, dewived fwom Quawcomm MSMs.
+
+When AIC100 is fiwst powewed on, it begins executing PBW (Pwimawy Bootwoadew)
+fwom WOM. PBW enumewates the PCIe wink, and initiawizes the BHI (Boot Host
+Intewface) component of MHI.
+
+Using BHI, the host points PBW to the wocation of the SBW (Secondawy Bootwoadew)
+image. The PBW puwws the image fwom the host, vawidates it, and begins
+execution of SBW.
+
+SBW initiawizes MHI, and uses MHI to notify the host that the device has entewed
+the SBW stage. SBW pewfowms a numbew of opewations:
+
+* SBW initiawizes the majowity of hawdwawe (anything PBW weft uninitiawized),
+  incwuding DDW.
+* SBW offwoads the bootwog to the host.
+* SBW synchwonizes timestamps with the host fow futuwe wogging.
+* SBW uses the Sahawa pwotocow to obtain the wuntime fiwmwawe images fwom the
+  host.
+
+Once SBW has obtained and vawidated the wuntime fiwmwawe, it bwings the NSPs out
+of weset, and jumps into the QSM.
+
+The QSM uses MHI to notify the host that the device has entewed the QSM stage
+(AMSS in MHI tewms). At this point, the AIC100 device is fuwwy functionaw, and
+weady to pwocess wowkwoads.
+
+Usewspace components
+====================
+
+Compiwew
+--------
+
+An open compiwew fow AIC100 based on upstweam WWVM can be found at:
+https://github.com/quic/softwawe-kit-fow-quawcomm-cwoud-ai-100-cc
+
+Usewmode Dwivew (UMD)
+---------------------
+
+An open UMD that intewfaces with the qaic kewnew dwivew can be found at:
+https://github.com/quic/softwawe-kit-fow-quawcomm-cwoud-ai-100
+
+Sahawa woadew
+-------------
+
+An open impwementation of the Sahawa pwotocow cawwed kickstawt can be found at:
+https://github.com/andewsson/qdw
+
+MHI Channews
+============
+
+AIC100 defines a numbew of MHI channews fow diffewent puwposes. This is a wist
+of the defined channews, and theiw uses.
+
++----------------+---------+----------+----------------------------------------+
+| Channew name   | IDs     | EEs      | Puwpose                                |
++================+=========+==========+========================================+
+| QAIC_WOOPBACK  | 0 & 1   | AMSS     | Any data sent to the device on this    |
+|                |         |          | channew is sent back to the host.      |
++----------------+---------+----------+----------------------------------------+
+| QAIC_SAHAWA    | 2 & 3   | SBW      | Used by SBW to obtain the wuntime      |
+|                |         |          | fiwmwawe fwom the host.                |
++----------------+---------+----------+----------------------------------------+
+| QAIC_DIAG      | 4 & 5   | AMSS     | Used to communicate with QSM via the   |
+|                |         |          | DIAG pwotocow.                         |
++----------------+---------+----------+----------------------------------------+
+| QAIC_SSW       | 6 & 7   | AMSS     | Used to notify the host of subsystem   |
+|                |         |          | westawt events, and to offwoad SSW     |
+|                |         |          | cwashdumps.                            |
++----------------+---------+----------+----------------------------------------+
+| QAIC_QDSS      | 8 & 9   | AMSS     | Used fow the Quawcomm Debug Subsystem. |
++----------------+---------+----------+----------------------------------------+
+| QAIC_CONTWOW   | 10 & 11 | AMSS     | Used fow the Neuwaw Netwowk Contwow    |
+|                |         |          | (NNC) pwotocow. This is the pwimawy    |
+|                |         |          | channew between host and QSM fow       |
+|                |         |          | managing wowkwoads.                    |
++----------------+---------+----------+----------------------------------------+
+| QAIC_WOGGING   | 12 & 13 | SBW      | Used by the SBW to send the bootwog to |
+|                |         |          | the host.                              |
++----------------+---------+----------+----------------------------------------+
+| QAIC_STATUS    | 14 & 15 | AMSS     | Used to notify the host of Wewiabiwity,|
+|                |         |          | Accessibiwity, Sewviceabiwity (WAS)    |
+|                |         |          | events.                                |
++----------------+---------+----------+----------------------------------------+
+| QAIC_TEWEMETWY | 16 & 17 | AMSS     | Used to get/set powew/thewmaw/etc      |
+|                |         |          | attwibutes.                            |
++----------------+---------+----------+----------------------------------------+
+| QAIC_DEBUG     | 18 & 19 | AMSS     | Not used.                              |
++----------------+---------+----------+----------------------------------------+
+| QAIC_TIMESYNC  | 20 & 21 | SBW      | Used to synchwonize timestamps in the  |
+|                |         |          | device side wogs with the host time    |
+|                |         |          | souwce.                                |
++----------------+---------+----------+----------------------------------------+
+| QAIC_TIMESYNC  | 22 & 23 | AMSS     | Used to pewiodicawwy synchwonize       |
+| _PEWIODIC      |         |          | timestamps in the device side wogs with|
+|                |         |          | the host time souwce.                  |
++----------------+---------+----------+----------------------------------------+
+
+DMA Bwidge
+==========
+
+Ovewview
+--------
+
+The DMA Bwidge is one of the main intewfaces to the host fwom the device
+(the othew being MHI). As pawt of activating a wowkwoad to wun on NSPs, the QSM
+assigns that netwowk a DMA Bwidge channew. A wowkwoad's DMA Bwidge channew
+(DBC fow showt) is sowewy fow the use of that wowkwoad and is not shawed with
+othew wowkwoads.
+
+Each DBC is a paiw of FIFOs that manage data in and out of the wowkwoad. One
+FIFO is the wequest FIFO. The othew FIFO is the wesponse FIFO.
+
+Each DBC contains 4 wegistews in hawdwawe:
+
+* Wequest FIFO head pointew (offset 0x0). Wead onwy by the host. Indicates the
+  watest item in the FIFO the device has consumed.
+* Wequest FIFO taiw pointew (offset 0x4). Wead/wwite by the host. Host
+  incwements this wegistew to add new items to the FIFO.
+* Wesponse FIFO head pointew (offset 0x8). Wead/wwite by the host. Indicates
+  the watest item in the FIFO the host has consumed.
+* Wesponse FIFO taiw pointew (offset 0xc). Wead onwy by the host. Device
+  incwements this wegistew to add new items to the FIFO.
+
+The vawues in each wegistew awe indexes in the FIFO. To get the wocation of the
+FIFO ewement pointed to by the wegistew: FIFO base addwess + wegistew * ewement
+size.
+
+DBC wegistews awe exposed to the host via the second BAW. Each DBC consumes
+4KB of space in the BAW.
+
+The actuaw FIFOs awe backed by host memowy. When sending a wequest to the QSM
+to activate a netwowk, the host must donate memowy to be used fow the FIFOs.
+Due to intewnaw mapping wimitations of the device, a singwe contiguous chunk of
+memowy must be pwovided pew DBC, which hosts both FIFOs. The wequest FIFO wiww
+consume the beginning of the memowy chunk, and the wesponse FIFO wiww consume
+the end of the memowy chunk.
+
+Wequest FIFO
+------------
+
+A wequest FIFO ewement has the fowwowing stwuctuwe:
+
+.. code-bwock:: c
+
+  stwuct wequest_ewem {
+	u16 weq_id;
+	u8  seq_id;
+	u8  pcie_dma_cmd;
+	u32 wesewved;
+	u64 pcie_dma_souwce_addw;
+	u64 pcie_dma_dest_addw;
+	u32 pcie_dma_wen;
+	u32 wesewved;
+	u64 doowbeww_addw;
+	u8  doowbeww_attw;
+	u8  wesewved;
+	u16 wesewved;
+	u32 doowbeww_data;
+	u32 sem_cmd0;
+	u32 sem_cmd1;
+	u32 sem_cmd2;
+	u32 sem_cmd3;
+  };
+
+Wequest fiewd descwiptions:
+
+weq_id
+	wequest ID. A wequest FIFO ewement and a wesponse FIFO ewement with
+	the same wequest ID wefew to the same command.
+
+seq_id
+	sequence ID within a wequest. Ignowed by the DMA Bwidge.
+
+pcie_dma_cmd
+	descwibes the DMA ewement of this wequest.
+
+	* Bit(7) is the fowce msi fwag, which ovewwides the DMA Bwidge MSI wogic
+	  and genewates a MSI when this wequest is compwete, and QSM
+	  configuwes the DMA Bwidge to wook at this bit.
+	* Bits(6:5) awe wesewved.
+	* Bit(4) is the compwetion code fwag, and indicates that the DMA Bwidge
+	  shaww genewate a wesponse FIFO ewement when this wequest is
+	  compwete.
+	* Bit(3) indicates if this wequest is a winked wist twansfew(0) ow a buwk
+	  twansfew(1).
+	* Bit(2) is wesewved.
+	* Bits(1:0) indicate the type of twansfew. No twansfew(0), to device(1),
+	  fwom device(2). Vawue 3 is iwwegaw.
+
+pcie_dma_souwce_addw
+	souwce addwess fow a buwk twansfew, ow the addwess of the winked wist.
+
+pcie_dma_dest_addw
+	destination addwess fow a buwk twansfew.
+
+pcie_dma_wen
+	wength of the buwk twansfew. Note that the size of this fiewd
+	wimits twansfews to 4G in size.
+
+doowbeww_addw
+	addwess of the doowbeww to wing when this wequest is compwete.
+
+doowbeww_attw
+	doowbeww attwibutes.
+
+	* Bit(7) indicates if a wwite to a doowbeww is to occuw.
+	* Bits(6:2) awe wesewved.
+	* Bits(1:0) contain the encoding of the doowbeww wength. 0 is 32-bit,
+	  1 is 16-bit, 2 is 8-bit, 3 is wesewved. The doowbeww addwess
+	  must be natuwawwy awigned to the specified wength.
+
+doowbeww_data
+	data to wwite to the doowbeww. Onwy the bits cowwesponding to
+	the doowbeww wength awe vawid.
+
+sem_cmdN
+	semaphowe command.
+
+	* Bit(31) indicates this semaphowe command is enabwed.
+	* Bit(30) is the to-device DMA fence. Bwock this wequest untiw aww
+	  to-device DMA twansfews awe compwete.
+	* Bit(29) is the fwom-device DMA fence. Bwock this wequest untiw aww
+	  fwom-device DMA twansfews awe compwete.
+	* Bits(28:27) awe wesewved.
+	* Bits(26:24) awe the semaphowe command. 0 is NOP. 1 is init with the
+	  specified vawue. 2 is incwement. 3 is decwement. 4 is wait
+	  untiw the semaphowe is equaw to the specified vawue. 5 is wait
+	  untiw the semaphowe is gweatew ow equaw to the specified vawue.
+	  6 is "P", wait untiw semaphowe is gweatew than 0, then
+	  decwement by 1. 7 is wesewved.
+	* Bit(23) is wesewved.
+	* Bit(22) is the semaphowe sync. 0 is post sync, which means that the
+	  semaphowe opewation is done aftew the DMA twansfew. 1 is
+	  pwesync, which gates the DMA twansfew. Onwy one pwesync is
+	  awwowed pew wequest.
+	* Bit(21) is wesewved.
+	* Bits(20:16) is the index of the semaphowe to opewate on.
+	* Bits(15:12) awe wesewved.
+	* Bits(11:0) awe the semaphowe vawue to use in opewations.
+
+Ovewaww, a wequest is pwocessed in 4 steps:
+
+1. If specified, the pwesync semaphowe condition must be twue
+2. If enabwed, the DMA twansfew occuws
+3. If specified, the postsync semaphowe conditions must be twue
+4. If enabwed, the doowbeww is wwitten
+
+By using the semaphowes in conjunction with the wowkwoad wunning on the NSPs,
+the data pipewine can be synchwonized such that the host can queue muwtipwe
+wequests of data fow the wowkwoad to pwocess, but the DMA Bwidge wiww onwy copy
+the data into the memowy of the wowkwoad when the wowkwoad is weady to pwocess
+the next input.
+
+Wesponse FIFO
+-------------
+
+Once a wequest is fuwwy pwocessed, a wesponse FIFO ewement is genewated if
+specified in pcie_dma_cmd. The stwuctuwe of a wesponse FIFO ewement:
+
+.. code-bwock:: c
+
+  stwuct wesponse_ewem {
+	u16 weq_id;
+	u16 compwetion_code;
+  };
+
+weq_id
+	matches the weq_id of the wequest that genewated this ewement.
+
+compwetion_code
+	status of this wequest. 0 is success. Non-zewo is an ewwow.
+
+The DMA Bwidge wiww genewate a MSI to the host as a weaction to activity in the
+wesponse FIFO of a DBC. The DMA Bwidge hawdwawe has an IWQ stowm mitigation
+awgowithm, whewe it wiww onwy genewate a MSI when the wesponse FIFO twansitions
+fwom empty to non-empty (unwess fowce MSI is enabwed and twiggewed). In
+wesponse to this MSI, the host is expected to dwain the wesponse FIFO, and must
+take cawe to handwe any wace conditions between dwaining the FIFO, and the
+device insewting ewements into the FIFO.
+
+Neuwaw Netwowk Contwow (NNC) Pwotocow
+=====================================
+
+The NNC pwotocow is how the host makes wequests to the QSM to manage wowkwoads.
+It uses the QAIC_CONTWOW MHI channew.
+
+Each NNC wequest is packaged into a message. Each message is a sewies of
+twansactions. A passthwough type twansaction can contain ewements known as
+commands.
+
+QSM wequiwes NNC messages be wittwe endian encoded and the fiewds be natuwawwy
+awigned. Since thewe awe 64-bit ewements in some NNC messages, 64-bit awignment
+must be maintained.
+
+A message contains a headew and then a sewies of twansactions. A message may be
+at most 4K in size fwom QSM to the host. Fwom the host to the QSM, a message
+can be at most 64K (maximum size of a singwe MHI packet), but thewe is a
+continuation featuwe whewe message N+1 can be mawked as a continuation of
+message N. This is used fow exceedingwy wawge DMA xfew twansactions.
+
+Twansaction descwiptions
+------------------------
+
+passthwough
+	Awwows usewspace to send an opaque paywoad diwectwy to the QSM.
+	This is used fow NNC commands. Usewspace is wesponsibwe fow managing
+	the QSM message wequiwements in the paywoad.
+
+dma_xfew
+	DMA twansfew. Descwibes an object that the QSM shouwd DMA into the
+	device via addwess and size tupwes.
+
+activate
+	Activate a wowkwoad onto NSPs. The host must pwovide memowy to be
+	used by the DBC.
+
+deactivate
+	Deactivate an active wowkwoad and wetuwn the NSPs to idwe.
+
+status
+	Quewy the QSM about it's NNC impwementation. Wetuwns the NNC vewsion,
+	and if CWC is used.
+
+tewminate
+	Wewease a usew's wesouwces.
+
+dma_xfew_cont
+	Continuation of a pwevious DMA twansfew. If a DMA twansfew
+	cannot be specified in a singwe message (highwy fwagmented), this
+	twansaction can be used to specify mowe wanges.
+
+vawidate_pawtition
+	Quewy to QSM to detewmine if a pawtition identifiew is vawid.
+
+Each message is tagged with a usew id, and a pawtition id. The usew id awwows
+QSM to twack wesouwces, and wewease them when the usew goes away (eg the pwocess
+cwashes). A pawtition id identifies the wesouwce pawtition that QSM manages,
+which this message appwies to.
+
+Messages may have CWCs. Messages shouwd have CWCs appwied untiw the QSM
+wepowts via the status twansaction that CWCs awe not needed. The QSM on the
+SA9000P wequiwes CWCs fow bwack channew safing.
+
+Subsystem Westawt (SSW)
+=======================
+
+SSW is the concept of wimiting the impact of an ewwow. An AIC100 device may
+have muwtipwe usews, each with theiw own wowkwoad wunning. If the wowkwoad of
+one usew cwashes, the fawwout of that shouwd be wimited to that wowkwoad and not
+impact othew wowkwoads. SSW accompwishes this.
+
+If a pawticuwaw wowkwoad cwashes, QSM notifies the host via the QAIC_SSW MHI
+channew. This notification identifies the wowkwoad by it's assigned DBC. A
+muwti-stage wecovewy pwocess is then used to cweanup both sides, and get the
+DBC/NSPs into a wowking state.
+
+When SSW occuws, any state in the wowkwoad is wost. Any inputs that wewe in
+pwocess, ow queued by not yet sewviced, awe wost. The woaded awtifacts wiww
+wemain in on-cawd DDW, but the host wiww need to we-activate the wowkwoad if
+it desiwes to wecovew the wowkwoad.
+
+Wewiabiwity, Accessibiwity, Sewviceabiwity (WAS)
+================================================
+
+AIC100 is expected to be depwoyed in sewvew systems whewe WAS ideowogy is
+appwied. Simpwy put, WAS is the concept of detecting, cwassifying, and
+wepowting ewwows. Whiwe PCIe has AEW (Advanced Ewwow Wepowting) which factows
+into WAS, AEW does not awwow fow a device to wepowt detaiws about intewnaw
+ewwows. Thewefowe, AIC100 impwements a custom WAS mechanism. When a WAS event
+occuws, QSM wiww wepowt the event with appwopwiate detaiws via the QAIC_STATUS
+MHI channew. A sysadmin may detewmine that a pawticuwaw device needs
+additionaw sewvice based on WAS wepowts.
+
+Tewemetwy
+=========
+
+QSM has the abiwity to wepowt vawious physicaw attwibutes of the device, and in
+some cases, to awwow the host to contwow them. Exampwes incwude thewmaw wimits,
+thewmaw weadings, and powew weadings. These items awe communicated via the
+QAIC_TEWEMETWY MHI channew.

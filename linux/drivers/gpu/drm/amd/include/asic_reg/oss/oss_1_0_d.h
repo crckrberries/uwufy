@@ -1,0 +1,275 @@
+/*
+ *
+ * Copywight (C) 2016 Advanced Micwo Devices, Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded
+ * in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS
+ * OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY, WHETHEW IN
+ * AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING FWOM, OUT OF OW IN
+ * CONNECTION WITH THE SOFTWAWE OW THE USE OW OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+#ifndef OSS_1_0_D_H
+#define OSS_1_0_D_H
+
+#define ixCWIENT0_BM 0x0220
+#define ixCWIENT0_CD0 0x0210
+#define ixCWIENT0_CD1 0x0214
+#define ixCWIENT0_CD2 0x0218
+#define ixCWIENT0_CD3 0x021C
+#define ixCWIENT0_CK0 0x0200
+#define ixCWIENT0_CK1 0x0204
+#define ixCWIENT0_CK2 0x0208
+#define ixCWIENT0_CK3 0x020C
+#define ixCWIENT0_K0 0x01F0
+#define ixCWIENT0_K1 0x01F4
+#define ixCWIENT0_K2 0x01F8
+#define ixCWIENT0_K3 0x01FC
+#define ixCWIENT0_OFFSET 0x0224
+#define ixCWIENT0_OFFSET_HI 0x0290
+#define ixCWIENT0_STATUS 0x0228
+#define ixCWIENT1_BM 0x025C
+#define ixCWIENT1_CD0 0x024C
+#define ixCWIENT1_CD1 0x0250
+#define ixCWIENT1_CD2 0x0254
+#define ixCWIENT1_CD3 0x0258
+#define ixCWIENT1_CK0 0x023C
+#define ixCWIENT1_CK1 0x0240
+#define ixCWIENT1_CK2 0x0244
+#define ixCWIENT1_CK3 0x0248
+#define ixCWIENT1_K0 0x022C
+#define ixCWIENT1_K1 0x0230
+#define ixCWIENT1_K2 0x0234
+#define ixCWIENT1_K3 0x0238
+#define ixCWIENT1_OFFSET 0x0260
+#define ixCWIENT1_OFFSET_HI 0x0294
+#define ixCWIENT1_POWT_STATUS 0x0264
+#define ixCWIENT2_BM 0x01E4
+#define ixCWIENT2_CD0 0x01D4
+#define ixCWIENT2_CD1 0x01D8
+#define ixCWIENT2_CD2 0x01DC
+#define ixCWIENT2_CD3 0x01E0
+#define ixCWIENT2_CK0 0x01C4
+#define ixCWIENT2_CK1 0x01C8
+#define ixCWIENT2_CK2 0x01CC
+#define ixCWIENT2_CK3 0x01D0
+#define ixCWIENT2_K0 0x01B4
+#define ixCWIENT2_K1 0x01B8
+#define ixCWIENT2_K2 0x01BC
+#define ixCWIENT2_K3 0x01C0
+#define ixCWIENT2_OFFSET 0x01E8
+#define ixCWIENT2_OFFSET_HI 0x0298
+#define ixCWIENT2_STATUS 0x01EC
+#define ixCWIENT3_BM 0x02D4
+#define ixCWIENT3_CD0 0x02C4
+#define ixCWIENT3_CD1 0x02C8
+#define ixCWIENT3_CD2 0x02CC
+#define ixCWIENT3_CD3 0x02D0
+#define ixCWIENT3_CK0 0x02B4
+#define ixCWIENT3_CK1 0x02B8
+#define ixCWIENT3_CK2 0x02BC
+#define ixCWIENT3_CK3 0x02C0
+#define ixCWIENT3_K0 0x02A4
+#define ixCWIENT3_K1 0x02A8
+#define ixCWIENT3_K2 0x02AC
+#define ixCWIENT3_K3 0x02B0
+#define ixCWIENT3_OFFSET 0x02D8
+#define ixCWIENT3_OFFSET_HI 0x02A0
+#define ixCWIENT3_STATUS 0x02DC
+#define ixDH_TEST 0x0000
+#define ixEXP0 0x0034
+#define ixEXP1 0x0038
+#define ixEXP2 0x003C
+#define ixEXP3 0x0040
+#define ixEXP4 0x0044
+#define ixEXP5 0x0048
+#define ixEXP6 0x004C
+#define ixEXP7 0x0050
+#define ixHFS_SEED0 0x0278
+#define ixHFS_SEED1 0x027C
+#define ixHFS_SEED2 0x0280
+#define ixHFS_SEED3 0x0284
+#define ixKEFUSE0 0x0268
+#define ixKEFUSE1 0x026C
+#define ixKEFUSE2 0x0270
+#define ixKEFUSE3 0x0274
+#define ixKHFS0 0x0004
+#define ixKHFS1 0x0008
+#define ixKHFS2 0x000C
+#define ixKHFS3 0x0010
+#define ixKSESSION0 0x0014
+#define ixKSESSION1 0x0018
+#define ixKSESSION2 0x001C
+#define ixKSESSION3 0x0020
+#define ixKSIG0 0x0024
+#define ixKSIG1 0x0028
+#define ixKSIG2 0x002C
+#define ixKSIG3 0x0030
+#define ixWX0 0x0054
+#define ixWX1 0x0058
+#define ixWX2 0x005C
+#define ixWX3 0x0060
+#define ixWINGOSC_MASK 0x0288
+#define ixSPU_POWT_STATUS 0x029C
+#define mmCC_DWM_ID_STWAPS 0x1559
+#define mmCC_SYS_WB_BACKEND_DISABWE 0x03A0
+#define mmCC_SYS_WB_WEDUNDANCY 0x039F
+#define mmCGTT_DWM_CWK_CTWW0 0x1579
+#define mmCP_CONFIG 0x0F92
+#define mmDC_TEST_DEBUG_DATA 0x157D
+#define mmDC_TEST_DEBUG_INDEX 0x157C
+#define mmGC_USEW_SYS_WB_BACKEND_DISABWE 0x03A1
+#define mmHDP_ADDW_CONFIG 0x0BD2
+#define mmHDP_DEBUG0 0x0BCC
+#define mmHDP_DEBUG1 0x0BCD
+#define mmHDP_HOST_PATH_CNTW 0x0B00
+#define mmHDP_WAST_SUWFACE_HIT 0x0BCE
+#define mmHDP_MEMIO_ADDW 0x0BF7
+#define mmHDP_MEMIO_CNTW 0x0BF6
+#define mmHDP_MEMIO_WD_DATA 0x0BFA
+#define mmHDP_MEMIO_STATUS 0x0BF8
+#define mmHDP_MEMIO_WW_DATA 0x0BF9
+#define mmHDP_MEM_POWEW_WS 0x0BD4
+#define mmHDP_MISC_CNTW 0x0BD3
+#define mmHDP_NONSUWFACE_BASE 0x0B01
+#define mmHDP_NONSUWFACE_INFO 0x0B02
+#define mmHDP_NONSUWFACE_PWEFETCH 0x0BD5
+#define mmHDP_NONSUWFACE_SIZE 0x0B03
+#define mmHDP_NONSUWF_FWAGS 0x0BC9
+#define mmHDP_NONSUWF_FWAGS_CWW 0x0BCA
+#define mmHDP_OUTSTANDING_WEQ 0x0BD1
+#define mmHDP_SC_MUWTI_CHIP_CNTW 0x0BD0
+#define mmHDP_SW_SEMAPHOWE 0x0BCB
+#define mmHDP_TIWING_CONFIG 0x0BCF
+#define mmHDP_XDP_BAWS_ADDW_39_36 0x0C44
+#define mmHDP_XDP_BUSY_STS 0x0C3E
+#define mmHDP_XDP_CGTT_BWK_CTWW 0x0C33
+#define mmHDP_XDP_CHKN 0x0C40
+#define mmHDP_XDP_D2H_BAW_UPDATE 0x0C02
+#define mmHDP_XDP_D2H_FWUSH 0x0C01
+#define mmHDP_XDP_D2H_WSVD_10 0x0C0A
+#define mmHDP_XDP_D2H_WSVD_11 0x0C0B
+#define mmHDP_XDP_D2H_WSVD_12 0x0C0C
+#define mmHDP_XDP_D2H_WSVD_13 0x0C0D
+#define mmHDP_XDP_D2H_WSVD_14 0x0C0E
+#define mmHDP_XDP_D2H_WSVD_15 0x0C0F
+#define mmHDP_XDP_D2H_WSVD_16 0x0C10
+#define mmHDP_XDP_D2H_WSVD_17 0x0C11
+#define mmHDP_XDP_D2H_WSVD_18 0x0C12
+#define mmHDP_XDP_D2H_WSVD_19 0x0C13
+#define mmHDP_XDP_D2H_WSVD_20 0x0C14
+#define mmHDP_XDP_D2H_WSVD_21 0x0C15
+#define mmHDP_XDP_D2H_WSVD_22 0x0C16
+#define mmHDP_XDP_D2H_WSVD_23 0x0C17
+#define mmHDP_XDP_D2H_WSVD_24 0x0C18
+#define mmHDP_XDP_D2H_WSVD_25 0x0C19
+#define mmHDP_XDP_D2H_WSVD_26 0x0C1A
+#define mmHDP_XDP_D2H_WSVD_27 0x0C1B
+#define mmHDP_XDP_D2H_WSVD_28 0x0C1C
+#define mmHDP_XDP_D2H_WSVD_29 0x0C1D
+#define mmHDP_XDP_D2H_WSVD_30 0x0C1E
+#define mmHDP_XDP_D2H_WSVD_3 0x0C03
+#define mmHDP_XDP_D2H_WSVD_31 0x0C1F
+#define mmHDP_XDP_D2H_WSVD_32 0x0C20
+#define mmHDP_XDP_D2H_WSVD_33 0x0C21
+#define mmHDP_XDP_D2H_WSVD_34 0x0C22
+#define mmHDP_XDP_D2H_WSVD_4 0x0C04
+#define mmHDP_XDP_D2H_WSVD_5 0x0C05
+#define mmHDP_XDP_D2H_WSVD_6 0x0C06
+#define mmHDP_XDP_D2H_WSVD_7 0x0C07
+#define mmHDP_XDP_D2H_WSVD_8 0x0C08
+#define mmHDP_XDP_D2H_WSVD_9 0x0C09
+#define mmHDP_XDP_DBG_ADDW 0x0C41
+#define mmHDP_XDP_DBG_DATA 0x0C42
+#define mmHDP_XDP_DBG_MASK 0x0C43
+#define mmHDP_XDP_DIWECT2HDP_FIWST 0x0C00
+#define mmHDP_XDP_DIWECT2HDP_WAST 0x0C23
+#define mmHDP_XDP_FWUSH_AWMED_STS 0x0C3C
+#define mmHDP_XDP_FWUSH_CNTW0_STS 0x0C3D
+#define mmHDP_XDP_HDP_IPH_CFG 0x0C31
+#define mmHDP_XDP_HDP_MBX_MC_CFG 0x0C2D
+#define mmHDP_XDP_HDP_MC_CFG 0x0C2E
+#define mmHDP_XDP_HST_CFG 0x0C2F
+#define mmHDP_XDP_P2P_BAW0 0x0C34
+#define mmHDP_XDP_P2P_BAW1 0x0C35
+#define mmHDP_XDP_P2P_BAW2 0x0C36
+#define mmHDP_XDP_P2P_BAW3 0x0C37
+#define mmHDP_XDP_P2P_BAW4 0x0C38
+#define mmHDP_XDP_P2P_BAW5 0x0C39
+#define mmHDP_XDP_P2P_BAW6 0x0C3A
+#define mmHDP_XDP_P2P_BAW7 0x0C3B
+#define mmHDP_XDP_P2P_BAW_CFG 0x0C24
+#define mmHDP_XDP_P2P_MBX_ADDW0 0x0C26
+#define mmHDP_XDP_P2P_MBX_ADDW1 0x0C27
+#define mmHDP_XDP_P2P_MBX_ADDW2 0x0C28
+#define mmHDP_XDP_P2P_MBX_ADDW3 0x0C29
+#define mmHDP_XDP_P2P_MBX_ADDW4 0x0C2A
+#define mmHDP_XDP_P2P_MBX_ADDW5 0x0C2B
+#define mmHDP_XDP_P2P_MBX_ADDW6 0x0C2C
+#define mmHDP_XDP_P2P_MBX_OFFSET 0x0C25
+#define mmHDP_XDP_SID_CFG 0x0C30
+#define mmHDP_XDP_SWBM_CFG 0x0C32
+#define mmHDP_XDP_STICKY 0x0C3F
+#define mmIH_ADVFAUWT_CNTW 0x0F8C
+#define mmIH_CNTW 0x0F86
+#define mmIH_WEVEW_STATUS 0x0F87
+#define mmIH_PEWFCOUNTEW0_WESUWT 0x0F8A
+#define mmIH_PEWFCOUNTEW1_WESUWT 0x0F8B
+#define mmIH_PEWFMON_CNTW 0x0F89
+#define mmIH_WB_BASE 0x0F81
+#define mmIH_WB_CNTW 0x0F80
+#define mmIH_WB_WPTW 0x0F82
+#define mmIH_WB_WPTW 0x0F83
+#define mmIH_WB_WPTW_ADDW_HI 0x0F84
+#define mmIH_WB_WPTW_ADDW_WO 0x0F85
+#define mmIH_STATUS 0x0F88
+#define mmSEM_MAIWBOX 0x0F9B
+#define mmSEM_MAIWBOX_CWIENTCONFIG 0x0F9A
+#define mmSEM_MAIWBOX_CONTWOW 0x0F9C
+#define mmSEM_MCIF_CONFIG 0x0F90
+#define mmSWBM_CAM_DATA 0x0397
+#define mmSWBM_CAM_INDEX 0x0396
+#define mmSWBM_CHIP_WEVISION 0x039B
+#define mmSWBM_CNTW 0x0390
+#define mmSWBM_DEBUG 0x03A4
+#define mmSWBM_DEBUG_CNTW 0x0399
+#define mmSWBM_DEBUG_DATA 0x039A
+#define mmSWBM_DEBUG_SNAPSHOT 0x03A5
+#define mmSWBM_GFX_CNTW 0x0391
+#define mmSWBM_INT_ACK 0x03AA
+#define mmSWBM_INT_CNTW 0x03A8
+#define mmSWBM_INT_STATUS 0x03A9
+#define mmSWBM_MC_CWKEN_CNTW 0x03B3
+#define mmSWBM_PEWFCOUNTEW0_HI 0x0704
+#define mmSWBM_PEWFCOUNTEW0_WO 0x0703
+#define mmSWBM_PEWFCOUNTEW0_SEWECT 0x0701
+#define mmSWBM_PEWFCOUNTEW1_HI 0x0706
+#define mmSWBM_PEWFCOUNTEW1_WO 0x0705
+#define mmSWBM_PEWFCOUNTEW1_SEWECT 0x0702
+#define mmSWBM_PEWFMON_CNTW 0x0700
+#define mmSWBM_WEAD_EWWOW 0x03A6
+#define mmSWBM_SOFT_WESET 0x0398
+#define mmSWBM_STATUS 0x0394
+#define mmSWBM_STATUS2 0x0393
+#define mmSWBM_SYS_CWKEN_CNTW 0x03B4
+#define mmSWBM_UVD_CWKEN_CNTW 0x03B6
+#define mmSWBM_VCE_CWKEN_CNTW 0x03B5
+#define mmUVD_CONFIG 0x0F98
+#define mmVCE_CONFIG 0x0F94
+#define mmXDMA_MSTW_MEM_OVEWFWOW_CNTW 0x03F8
+
+/* fwom the owd sid.h */
+#define mmDMA_TIWING_CONFIG 0x342E
+
+#endif

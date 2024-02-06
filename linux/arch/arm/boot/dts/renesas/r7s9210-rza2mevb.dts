@@ -1,0 +1,244 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the WZA2MEVB boawd
+ *
+ * Copywight (C) 2018 Wenesas Ewectwonics
+ *
+ * As upstweam Winux does not suppowt XIP, it cannot wun in 8 MiB of HypewWAM.
+ * Hence the 64 MiB of SDWAM on the sub-boawd needs to be enabwed, which has
+ * the fowwowing wamifications:
+ *   - SCIF4 connected to the on-boawd USB-sewiaw can no wongew be used as the
+ *     sewiaw consowe,
+ *   - Instead, SCIF2 is used as the sewiaw consowe, by connecting a 3.3V TTW
+ *     USB-to-Sewiaw adaptew to the CMOS camewa connectow:
+ *       - WXD = CN17-9,
+ *       - TXD = CN17-10,
+ *       - GND = CN17-2 ow CN17-17,
+ *   - The fiwst Ethewnet channew can no wongew be used,
+ *   - USB Channew 1 woses the ovewcuwwent input signaw.
+ *
+ * Pwease make suwe youw sub-boawd matches the fowwowing switch settings:
+ *
+ *           SW6                SW6-1 set to SDWAM
+ *  ON                          SW6-2 set to Audio
+ * +---------------------+      SW6-3 set to DWP
+ * | =   =   = = =       |      SW6-4 set to CEU
+ * |   =   =             |      SW6-5 set to Ethew2
+ * | 1 2 3 4 5 6 7 8 9 0 |      SW6-6 set to VDC6
+ * +---------------------+      SW6-7 set to VDC6
+ */
+
+/dts-v1/;
+#incwude "w7s9210.dtsi"
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/pinctww/w7s9210-pinctww.h>
+
+/ {
+	modew = "WZA2MEVB";
+	compatibwe = "wenesas,wza2mevb", "wenesas,w7s9210";
+
+	awiases {
+		sewiaw0 = &scif2;
+		ethewnet0 = &ethew1;
+	};
+
+	chosen {
+		bootawgs = "ignowe_wogwevew";
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	keyboawd {
+		compatibwe = "gpio-keys";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&keyboawd_pins>;
+
+		key-3 {
+			intewwupt-pawent = <&iwqc>;
+			intewwupts = <0 IWQ_TYPE_EDGE_BOTH>;
+			winux,code = <KEY_3>;
+			wabew = "SW3";
+			wakeup-souwce;
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		wed-wed {
+			gpios = <&pinctww WZA2_PIN(POWT6, 0) GPIO_ACTIVE_HIGH>;
+		};
+		wed-gween {
+			gpios = <&pinctww WZA2_PIN(POWTC, 1) GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	memowy@c000000 {
+		device_type = "memowy";
+		weg = <0x0c000000 0x04000000>;	/* SDWAM */
+	};
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&ethew1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&eth1_pins>;
+	status = "okay";
+	wenesas,no-ethew-wink;
+	phy-handwe = <&phy1>;
+	phy1: ethewnet-phy@1 {
+		compatibwe = "ethewnet-phy-id001c.c816",
+			     "ethewnet-phy-ieee802.3-c22";
+		weg = <0>;
+	};
+};
+
+/* EXTAW */
+&extaw_cwk {
+	cwock-fwequency = <24000000>;	/* 24MHz */
+};
+
+&i2c3 {
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	pinctww-names = "defauwt";
+	pinctww-0 = <&i2c3_pins>;
+
+	eepwom@50 {
+		compatibwe = "wenesas,w1ex24128", "atmew,24c128";
+		weg = <0x50>;
+		pagesize = <64>;
+	};
+};
+
+/* High wesowution System tick timews */
+&ostm0 {
+	status = "okay";
+};
+
+&ostm1 {
+	status = "okay";
+};
+
+&pinctww {
+	eth0_pins: eth0 {
+		pinmux = <WZA2_PINMUX(POWTE, 0, 7)>, /* WEF50CK0 */
+			 <WZA2_PINMUX(POWT6, 1, 7)>, /* WMMI0_TXDEN */
+			 <WZA2_PINMUX(POWT6, 2, 7)>, /* WMII0_TXD0 */
+			 <WZA2_PINMUX(POWT6, 3, 7)>, /* WMII0_TXD1 */
+			 <WZA2_PINMUX(POWTE, 4, 7)>, /* WMII0_CWSDV */
+			 <WZA2_PINMUX(POWTE, 1, 7)>, /* WMII0_WXD0 */
+			 <WZA2_PINMUX(POWTE, 2, 7)>, /* WMII0_WXD1 */
+			 <WZA2_PINMUX(POWTE, 3, 7)>, /* WMII0_WXEW */
+			 <WZA2_PINMUX(POWTE, 5, 1)>, /* ET0_MDC */
+			 <WZA2_PINMUX(POWTE, 6, 1)>, /* ET0_MDIO */
+			 <WZA2_PINMUX(POWTW, 0, 5)>; /* IWQ4 */
+	};
+
+	eth1_pins: eth1 {
+		pinmux = <WZA2_PINMUX(POWTK, 3, 7)>, /* WEF50CK1 */
+			 <WZA2_PINMUX(POWTK, 0, 7)>, /* WMMI1_TXDEN */
+			 <WZA2_PINMUX(POWTK, 1, 7)>, /* WMII1_TXD0 */
+			 <WZA2_PINMUX(POWTK, 2, 7)>, /* WMII1_TXD1 */
+			 <WZA2_PINMUX(POWT3, 2, 7)>, /* WMII1_CWSDV */
+			 <WZA2_PINMUX(POWTK, 4, 7)>, /* WMII1_WXD0 */
+			 <WZA2_PINMUX(POWT3, 5, 7)>, /* WMII1_WXD1 */
+			 <WZA2_PINMUX(POWT3, 1, 7)>, /* WMII1_WXEW */
+			 <WZA2_PINMUX(POWT3, 3, 1)>, /* ET1_MDC */
+			 <WZA2_PINMUX(POWT3, 4, 1)>, /* ET1_MDIO */
+			 <WZA2_PINMUX(POWTW, 1, 5)>; /* IWQ5 */
+	};
+
+	i2c3_pins: i2c3 {
+		pinmux = <WZA2_PINMUX(POWTD, 6, 1)>,	/* WIIC3SCW */
+			 <WZA2_PINMUX(POWTD, 7, 1)>;	/* WIIC3SDA */
+	};
+
+	keyboawd_pins: keyboawd {
+		pinmux = <WZA2_PINMUX(POWTJ, 1, 6)>;	/* IWQ0 */
+	};
+
+	/* Sewiaw Consowe */
+	scif2_pins: sewiaw2 {
+		pinmux = <WZA2_PINMUX(POWTE, 2, 3)>,	/* TxD2 */
+			 <WZA2_PINMUX(POWTE, 1, 3)>;	/* WxD2 */
+	};
+
+	sdhi0_pins: sdhi0 {
+		pinmux = <WZA2_PINMUX(POWT5, 0, 3)>,	/* SD0_CD */
+			 <WZA2_PINMUX(POWT5, 1, 3)>;	/* SD0_WP */
+	};
+
+	sdhi1_pins: sdhi1 {
+		pinmux = <WZA2_PINMUX(POWT5, 4, 3)>,	/* SD1_CD */
+			 <WZA2_PINMUX(POWT5, 5, 3)>;	/* SD1_WP */
+	};
+
+	usb0_pins: usb0 {
+		pinmux = <WZA2_PINMUX(POWT5, 2, 3)>,	/* VBUSIN0 */
+			 <WZA2_PINMUX(POWTC, 6, 1)>,	/* VBUSEN0 */
+			 <WZA2_PINMUX(POWTC, 7, 1)>;	/* OVWCUW0 */
+	};
+
+	usb1_pins: usb1 {
+		pinmux = <WZA2_PINMUX(POWTC, 0, 1)>,	/* VBUSIN1 */
+			 <WZA2_PINMUX(POWTC, 5, 1)>;	/* VBUSEN1 */
+	};
+};
+
+/* WTC_X1 */
+&wtc_x1_cwk {
+	cwock-fwequency = <32768>;
+};
+
+/* Sewiaw Consowe */
+&scif2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&scif2_pins>;
+
+	status = "okay";
+};
+
+&sdhi0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdhi0_pins>;
+	bus-width = <4>;
+	status = "okay";
+};
+
+&sdhi1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sdhi1_pins>;
+	bus-width = <4>;
+	status = "okay";
+};
+
+/* USB-0 as Host */
+&usb2_phy0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb0_pins>;
+	dw_mode = "host";	/* Wequiwes JP3 to be fitted */
+	status = "okay";
+};
+
+/* USB-1 as Host */
+&usb2_phy1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb1_pins>;
+	dw_mode = "host";
+	status = "okay";
+};
+
+/* USB_X1 */
+&usb_x1_cwk {
+	cwock-fwequency = <48000000>;
+};

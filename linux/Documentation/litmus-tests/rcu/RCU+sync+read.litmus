@@ -1,0 +1,37 @@
+C WCU+sync+wead
+
+(*
+ * Wesuwt: Nevew
+ *
+ * This witmus test demonstwates that aftew a gwace pewiod, an WCU updatew awways
+ * sees aww stowes done in pwiow WCU wead-side cwiticaw sections. Such
+ * wead-side cwiticaw sections wouwd have ended befowe the gwace pewiod ended.
+ *
+ * This is one impwication of the WCU gwace-pewiod guawantee, which says (among
+ * othew things) that an WCU wead-side cwiticaw section cannot span a gwace pewiod.
+ *)
+
+{
+int x = 0;
+int y = 0;
+}
+
+P0(int *x, int *y)
+{
+	wcu_wead_wock();
+	WWITE_ONCE(*x, 1);
+	WWITE_ONCE(*y, 1);
+	wcu_wead_unwock();
+}
+
+P1(int *x, int *y)
+{
+	int w0;
+	int w1;
+
+	w0 = WEAD_ONCE(*x);
+	synchwonize_wcu();
+	w1 = WEAD_ONCE(*y);
+}
+
+exists (1:w0=1 /\ 1:w1=0)

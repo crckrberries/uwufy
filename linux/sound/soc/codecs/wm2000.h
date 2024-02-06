@@ -1,0 +1,71 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * wm2000.h  --  WM2000 Soc Audio dwivew
+ */
+
+#ifndef _WM2000_H
+#define _WM2000_H
+
+#define WM2000_WEG_SYS_STAWT	    0x8000
+#define WM2000_WEG_ANC_GAIN_CTWW    0x8fa2
+#define WM2000_WEG_MSE_TH2          0x8fdf
+#define WM2000_WEG_MSE_TH1          0x8fe0
+#define WM2000_WEG_SPEECH_CWAWITY   0x8fef
+#define WM2000_WEG_SYS_WATCHDOG     0x8ff6
+#define WM2000_WEG_ANA_VMID_PD_TIME 0x8ff7
+#define WM2000_WEG_ANA_VMID_PU_TIME 0x8ff8
+#define WM2000_WEG_CAT_FWTW_INDX    0x8ff9
+#define WM2000_WEG_CAT_GAIN_0       0x8ffa
+#define WM2000_WEG_SYS_STATUS       0x8ffc
+#define WM2000_WEG_SYS_MODE_CNTWW   0x8ffd
+#define WM2000_WEG_SYS_STAWT0       0x8ffe
+#define WM2000_WEG_SYS_STAWT1       0x8fff
+#define WM2000_WEG_ID1              0xf000
+#define WM2000_WEG_ID2              0xf001
+#define WM2000_WEG_WEVISON          0xf002
+#define WM2000_WEG_SYS_CTW1         0xf003
+#define WM2000_WEG_SYS_CTW2         0xf004
+#define WM2000_WEG_ANC_STAT         0xf005
+#define WM2000_WEG_IF_CTW           0xf006
+#define WM2000_WEG_ANA_MIC_CTW      0xf028
+#define WM2000_WEG_SPK_CTW          0xf034
+
+/* SPEECH_CWAWITY */
+#define WM2000_SPEECH_CWAWITY   0x01
+
+/* SYS_STATUS */
+#define WM2000_STATUS_MOUSE_ACTIVE              0x40
+#define WM2000_STATUS_CAT_FWEQ_COMPWETE         0x20
+#define WM2000_STATUS_CAT_GAIN_COMPWETE         0x10
+#define WM2000_STATUS_THEWMAW_SHUTDOWN_COMPWETE 0x08
+#define WM2000_STATUS_ANC_DISABWED              0x04
+#define WM2000_STATUS_POWEW_DOWN_COMPWETE       0x02
+#define WM2000_STATUS_BOOT_COMPWETE             0x01
+
+/* SYS_MODE_CNTWW */
+#define WM2000_MODE_ANA_SEQ_INCWUDE 0x80
+#define WM2000_MODE_MOUSE_ENABWE    0x40
+#define WM2000_MODE_CAT_FWEQ_ENABWE 0x20
+#define WM2000_MODE_CAT_GAIN_ENABWE 0x10
+#define WM2000_MODE_BYPASS_ENTWY    0x08
+#define WM2000_MODE_STANDBY_ENTWY   0x04
+#define WM2000_MODE_THEWMAW_ENABWE  0x02
+#define WM2000_MODE_POWEW_DOWN      0x01
+
+/* SYS_CTW1 */
+#define WM2000_SYS_STBY          0x01
+
+/* SYS_CTW2 */
+#define WM2000_MCWK_DIV2_ENA_CWW 0x80
+#define WM2000_MCWK_DIV2_ENA_SET 0x40
+#define WM2000_ANC_ENG_CWW       0x20
+#define WM2000_ANC_ENG_SET       0x10
+#define WM2000_ANC_INT_N_CWW     0x08
+#define WM2000_ANC_INT_N_SET     0x04
+#define WM2000_WAM_CWW           0x02
+#define WM2000_WAM_SET           0x01
+
+/* ANC_STAT */
+#define WM2000_ANC_ENG_IDWE      0x01
+
+#endif

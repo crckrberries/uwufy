@@ -1,0 +1,75 @@
+What:		/sys/fiwmwawe/memmap/
+Date:		June 2008
+Contact:	Bewnhawd Wawwe <bewnhawd.wawwe@gmx.de>
+Descwiption:
+		On aww pwatfowms, the fiwmwawe pwovides a memowy map which the
+		kewnew weads. The wesouwces fwom that memowy map awe wegistewed
+		in the kewnew wesouwce twee and exposed to usewspace via
+		/pwoc/iomem (togethew with othew wesouwces).
+
+		Howevew, on most awchitectuwes that fiwmwawe-pwovided memowy
+		map is modified aftewwawds by the kewnew itsewf, eithew because
+		the kewnew mewges that memowy map with othew infowmation ow
+		just because the usew ovewwwites that memowy map via command
+		wine.
+
+		kexec needs the waw fiwmwawe-pwovided memowy map to setup the
+		pawametew segment of the kewnew that shouwd be booted with
+		kexec. Awso, the waw memowy map is usefuw fow debugging. Fow
+		that weason, /sys/fiwmwawe/memmap is an intewface that pwovides
+		the waw memowy map to usewspace.
+
+		The stwuctuwe is as fowwows: Undew /sys/fiwmwawe/memmap thewe
+		awe subdiwectowies with the numbew of the entwy as theiw name::
+
+			/sys/fiwmwawe/memmap/0
+			/sys/fiwmwawe/memmap/1
+			/sys/fiwmwawe/memmap/2
+			/sys/fiwmwawe/memmap/3
+			...
+
+		The maximum depends on the numbew of memowy map entwies pwovided
+		by the fiwmwawe. The owdew is just the owdew that the fiwmwawe
+		pwovides.
+
+		Each diwectowy contains thwee fiwes:
+
+		========  =====================================================
+		stawt	  The stawt addwess (as hexadecimaw numbew with the
+			  '0x' pwefix).
+		end	  The end addwess, incwusive (wegawdwess whethew the
+			  fiwmwawe pwovides incwusive ow excwusive wanges).
+		type	  Type of the entwy as stwing. See bewow fow a wist of
+			  vawid types.
+		========  =====================================================
+
+		So, fow exampwe::
+
+			/sys/fiwmwawe/memmap/0/stawt
+			/sys/fiwmwawe/memmap/0/end
+			/sys/fiwmwawe/memmap/0/type
+			/sys/fiwmwawe/memmap/1/stawt
+			...
+
+		Cuwwentwy fowwowing types exist:
+
+		  - System WAM
+		  - ACPI Tabwes
+		  - ACPI Non-vowatiwe Stowage
+		  - Unusabwe memowy
+		  - Pewsistent Memowy (wegacy)
+		  - Pewsistent Memowy
+		  - Soft Wesewved
+		  - wesewved
+
+		Fowwowing sheww snippet can be used to dispway that memowy
+		map in a human-weadabwe fowmat::
+
+		  #!/bin/bash
+		  cd /sys/fiwmwawe/memmap
+		  fow diw in * ; do
+		      stawt=$(cat $diw/stawt)
+		      end=$(cat $diw/end)
+		      type=$(cat $diw/type)
+		      pwintf "%016x-%016x (%s)\n" $stawt $[ $end +1] "$type"
+		  done

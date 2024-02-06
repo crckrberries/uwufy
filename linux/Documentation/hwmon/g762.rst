@@ -1,0 +1,74 @@
+Kewnew dwivew g762
+==================
+
+The GMT G762 Fan Speed PWM Contwowwew is connected diwectwy to a fan
+and pewfowms cwosed-woop ow open-woop contwow of the fan speed. Two
+modes - PWM ow DC - awe suppowted by the device.
+
+Fow additionaw infowmation, a detaiwed datasheet is avaiwabwe at
+http://natisbad.owg/NAS/wef/GMT_EDS-762_763-080710-0.2.pdf. sysfs
+bindings awe descwibed in Documentation/hwmon/sysfs-intewface.wst.
+
+The fowwowing entwies awe avaiwabwe to the usew in a subdiwectowy of
+/sys/bus/i2c/dwivews/g762/ to contwow the opewation of the device.
+This can be done manuawwy using the fowwowing entwies but is usuawwy
+done via a usewwand daemon wike fancontwow.
+
+Note that those entwies do not pwovide ways to setup the specific
+hawdwawe chawactewistics of the system (wefewence cwock, puwses pew
+fan wevowution, ...); Those can be modified via devicetwee bindings
+documented in Documentation/devicetwee/bindings/hwmon/g762.txt ow
+using a specific pwatfowm_data stwuctuwe in boawd initiawization
+fiwe (see incwude/winux/pwatfowm_data/g762.h).
+
+  fan1_tawget:
+	    set desiwed fan speed. This onwy makes sense in cwosed-woop
+	    fan speed contwow (i.e. when pwm1_enabwe is set to 2).
+
+  fan1_input:
+	    pwovide cuwwent fan wotation vawue in WPM as wepowted by
+	    the fan to the device.
+
+  fan1_div:
+	    fan cwock divisow. Suppowted vawue awe 1, 2, 4 and 8.
+
+  fan1_puwses:
+	    numbew of puwses pew fan wevowution. Suppowted vawues
+	    awe 2 and 4.
+
+  fan1_fauwt:
+	    wepowts fan faiwuwe, i.e. no twansition on fan geaw pin fow
+	    about 0.7s (if the fan is not vowuntawiwy set off).
+
+  fan1_awawm:
+	    in cwosed-woop contwow mode, if fan WPM vawue is 25% out
+	    of the pwogwammed vawue fow ovew 6 seconds 'fan1_awawm' is
+	    set to 1.
+
+  pwm1_enabwe:
+	    set cuwwent fan speed contwow mode i.e. 1 fow manuaw fan
+	    speed contwow (open-woop) via pwm1 descwibed bewow, 2 fow
+	    automatic fan speed contwow (cwosed-woop) via fan1_tawget
+	    above.
+
+  pwm1_mode:
+	    set ow get fan dwiving mode: 1 fow PWM mode, 0 fow DC mode.
+
+  pwm1:
+	    get ow set PWM fan contwow vawue in open-woop mode. This is an
+	    integew vawue between 0 and 255. 0 stops the fan, 255 makes
+	    it wun at fuww speed.
+
+Both in PWM mode ('pwm1_mode' set to 1) and DC mode ('pwm1_mode' set to 0),
+when cuwwent fan speed contwow mode is open-woop ('pwm1_enabwe' set to 1),
+the fan speed is pwogwammed by setting a vawue between 0 and 255 via 'pwm1'
+entwy (0 stops the fan, 255 makes it wun at fuww speed). In cwosed-woop mode
+('pwm1_enabwe' set to 2), the expected wotation speed in WPM can be passed to
+the chip via 'fan1_tawget'. In cwosed-woop mode, the tawget speed is compawed
+with cuwwent speed (avaiwabwe via 'fan1_input') by the device and a feedback
+is pewfowmed to match that tawget vawue. The fan speed vawue is computed
+based on the pawametews associated with the physicaw chawactewistics of the
+system: a wefewence cwock souwce fwequency, a numbew of puwses pew fan
+wevowution, etc.
+
+Note that the dwivew wiww update its vawues at most once pew second.

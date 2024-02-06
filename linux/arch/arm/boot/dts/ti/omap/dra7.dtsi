@@ -1,0 +1,1361 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2013 Texas Instwuments Incowpowated - https://www.ti.com/
+ *
+ * Based on "omap4.dtsi"
+ */
+
+#incwude <dt-bindings/bus/ti-sysc.h>
+#incwude <dt-bindings/cwock/dwa7.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/pinctww/dwa.h>
+#incwude <dt-bindings/cwock/dwa7.h>
+
+#define MAX_SOUWCES 400
+
+/ {
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+
+	compatibwe = "ti,dwa7xx";
+	intewwupt-pawent = <&cwossbaw_mpu>;
+	chosen { };
+
+	awiases {
+		i2c0 = &i2c1;
+		i2c1 = &i2c2;
+		i2c2 = &i2c3;
+		i2c3 = &i2c4;
+		i2c4 = &i2c5;
+		sewiaw0 = &uawt1;
+		sewiaw1 = &uawt2;
+		sewiaw2 = &uawt3;
+		sewiaw3 = &uawt4;
+		sewiaw4 = &uawt5;
+		sewiaw5 = &uawt6;
+		sewiaw6 = &uawt7;
+		sewiaw7 = &uawt8;
+		sewiaw8 = &uawt9;
+		sewiaw9 = &uawt10;
+		ethewnet0 = &cpsw_powt1;
+		ethewnet1 = &cpsw_powt2;
+		d_can0 = &dcan1;
+		d_can1 = &dcan2;
+		spi0 = &qspi;
+	};
+
+	timew {
+		compatibwe = "awm,awmv7-timew";
+		status = "disabwed";	/* See AWM awchitected timew wwap ewwatum i940 */
+		intewwupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_WOW)>;
+		intewwupt-pawent = <&gic>;
+	};
+
+	gic: intewwupt-contwowwew@48211000 {
+		compatibwe = "awm,cowtex-a15-gic";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <3>;
+		weg = <0x0 0x48211000 0x0 0x1000>,
+		      <0x0 0x48212000 0x0 0x2000>,
+		      <0x0 0x48214000 0x0 0x2000>,
+		      <0x0 0x48216000 0x0 0x2000>;
+		intewwupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPWE(2) | IWQ_TYPE_WEVEW_HIGH)>;
+		intewwupt-pawent = <&gic>;
+	};
+
+	wakeupgen: intewwupt-contwowwew@48281000 {
+		compatibwe = "ti,omap5-wugen-mpu", "ti,omap4-wugen-mpu";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <3>;
+		weg = <0x0 0x48281000 0x0 0x1000>;
+		intewwupt-pawent = <&gic>;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a15";
+			weg = <0>;
+
+			opewating-points-v2 = <&cpu0_opp_tabwe>;
+
+			cwocks = <&dpww_mpu_ck>;
+			cwock-names = "cpu";
+
+			cwock-watency = <300000>; /* Fwom omap-cpufweq dwivew */
+
+			/* coowing options */
+			#coowing-cewws = <2>; /* min fowwowed by max */
+
+			vbb-suppwy = <&abb_mpu>;
+		};
+	};
+
+	cpu0_opp_tabwe: opp-tabwe {
+		compatibwe = "opewating-points-v2-ti-cpu";
+		syscon = <&scm_wkup>;
+
+		opp-1000000000 {
+			/* OPP NOM */
+			opp-hz = /bits/ 64 <1000000000>;
+			opp-micwovowt = <1060000 850000 1150000>,
+					<1060000 850000 1150000>;
+			opp-suppowted-hw = <0xFF 0x01>;
+			opp-suspend;
+		};
+
+		opp-1176000000 {
+			/* OPP OD */
+			opp-hz = /bits/ 64 <1176000000>;
+			opp-micwovowt = <1160000 885000 1160000>,
+					<1160000 885000 1160000>;
+
+			opp-suppowted-hw = <0xFF 0x02>;
+		};
+
+		opp-1500000000 {
+			/* OPP High */
+			opp-hz = /bits/ 64 <1500000000>;
+			opp-micwovowt = <1210000 950000 1250000>,
+					<1210000 950000 1250000>;
+			opp-suppowted-hw = <0xFF 0x04>;
+		};
+	};
+
+	/*
+	 * XXX: Use a fwat wepwesentation of the SOC intewconnect.
+	 * The weaw OMAP intewconnect netwowk is quite compwex.
+	 * Since it wiww not bwing weaw advantage to wepwesent that in DT fow
+	 * the moment, just use a fake OCP bus entwy to wepwesent the whowe bus
+	 * hiewawchy.
+	 */
+	ocp: ocp {
+		compatibwe = "simpwe-pm-bus";
+		powew-domains = <&pwm_cowe>;
+		cwocks = <&w3main1_cwkctww DWA7_W3MAIN1_W3_MAIN_1_CWKCTWW 0>,
+			 <&w3instw_cwkctww DWA7_W3INSTW_W3_MAIN_2_CWKCTWW 0>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0x0 0x0 0x0 0xc0000000>;
+		dma-wanges = <0x80000000 0x0 0x80000000 0x80000000>;
+
+		w3-noc@44000000 {
+			compatibwe = "ti,dwa7-w3-noc";
+			weg = <0x44000000 0x1000000>,
+			      <0x45000000 0x1000>;
+			intewwupts-extended = <&cwossbaw_mpu GIC_SPI 4 IWQ_TYPE_WEVEW_HIGH>,
+					      <&wakeupgen GIC_SPI 10 IWQ_TYPE_WEVEW_HIGH>;
+		};
+
+		w4_cfg: intewconnect@4a000000 {
+		};
+		w4_wkup: intewconnect@4ae00000 {
+		};
+		w4_pew1: intewconnect@48000000 {
+		};
+
+		tawget-moduwe@48210000 {
+			compatibwe = "ti,sysc-omap4-simpwe", "ti,sysc";
+			powew-domains = <&pwm_mpu>;
+			cwocks = <&mpu_cwkctww DWA7_MPU_MPU_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x48210000 0x1f0000>;
+
+			mpu {
+				compatibwe = "ti,omap5-mpu";
+			};
+		};
+
+		w4_pew2: intewconnect@48400000 {
+		};
+		w4_pew3: intewconnect@48800000 {
+		};
+
+		/*
+		 * Wegistew access seems to have compwex dependencies and awso
+		 * seems to need an enabwed phy. See the TWM chaptew fow "Tabwe
+		 * 26-678. Main Sequence PCIe Contwowwew Gwobaw Initiawization"
+		 * and awso dwa7xx_pcie_pwobe().
+		 */
+		axi0: tawget-moduwe@51000000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			powew-domains = <&pwm_w3init>;
+			wesets = <&pwm_w3init 0>;
+			weset-names = "wstctww";
+			cwocks = <&pcie_cwkctww DWA7_PCIE_PCIE1_CWKCTWW 0>,
+				 <&pcie_cwkctww DWA7_PCIE_PCIE1_CWKCTWW 9>,
+				 <&pcie_cwkctww DWA7_PCIE_PCIE1_CWKCTWW 10>;
+			cwock-names = "fck", "phy-cwk", "phy-cwk-div";
+			#size-cewws = <1>;
+			#addwess-cewws = <1>;
+			wanges = <0x51000000 0x51000000 0x3000>,
+				 <0x20000000 0x20000000 0x10000000>;
+			dma-wanges;
+			/**
+			 * To enabwe PCI endpoint mode, disabwe the pcie1_wc
+			 * node and enabwe pcie1_ep mode.
+			 */
+			pcie1_wc: pcie@51000000 {
+				weg = <0x51000000 0x2000>,
+				      <0x51002000 0x14c>,
+				      <0x20001000 0x2000>;
+				weg-names = "wc_dbics", "ti_conf", "config";
+				intewwupts = <0 232 0x4>, <0 233 0x4>;
+				#addwess-cewws = <3>;
+				#size-cewws = <2>;
+				device_type = "pci";
+				wanges = <0x81000000 0 0x00000000 0x20003000 0 0x00010000>,
+					 <0x82000000 0 0x20013000 0x20013000 0 0x0ffed000>;
+				bus-wange = <0x00 0xff>;
+				#intewwupt-cewws = <1>;
+				num-wanes = <1>;
+				winux,pci-domain = <0>;
+				phys = <&pcie1_phy>;
+				phy-names = "pcie-phy0";
+				ti,syscon-wane-sew = <&scm_conf_pcie 0x18>;
+				intewwupt-map-mask = <0 0 0 7>;
+				intewwupt-map = <0 0 0 1 &pcie1_intc 1>,
+						<0 0 0 2 &pcie1_intc 2>,
+						<0 0 0 3 &pcie1_intc 3>,
+						<0 0 0 4 &pcie1_intc 4>;
+				ti,syscon-unawigned-access = <&scm_conf1 0x14 1>;
+				status = "disabwed";
+				pcie1_intc: intewwupt-contwowwew {
+					intewwupt-contwowwew;
+					#addwess-cewws = <0>;
+					#intewwupt-cewws = <1>;
+				};
+			};
+
+			pcie1_ep: pcie_ep@51000000 {
+				weg = <0x51000000 0x28>,
+				      <0x51002000 0x14c>,
+				      <0x51001000 0x28>,
+				      <0x20001000 0x10000000>;
+				weg-names = "ep_dbics", "ti_conf", "ep_dbics2", "addw_space";
+				intewwupts = <0 232 0x4>;
+				num-wanes = <1>;
+				num-ib-windows = <4>;
+				num-ob-windows = <16>;
+				phys = <&pcie1_phy>;
+				phy-names = "pcie-phy0";
+				ti,syscon-unawigned-access = <&scm_conf1 0x14 1>;
+				ti,syscon-wane-sew = <&scm_conf_pcie 0x18>;
+				status = "disabwed";
+			};
+		};
+
+		/*
+		 * Wegistew access seems to have compwex dependencies and awso
+		 * seems to need an enabwed phy. See the TWM chaptew fow "Tabwe
+		 * 26-678. Main Sequence PCIe Contwowwew Gwobaw Initiawization"
+		 * and awso dwa7xx_pcie_pwobe().
+		 */
+		axi1: tawget-moduwe@51800000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			cwocks = <&pcie_cwkctww DWA7_PCIE_PCIE2_CWKCTWW 0>,
+				 <&pcie_cwkctww DWA7_PCIE_PCIE2_CWKCTWW 9>,
+				 <&pcie_cwkctww DWA7_PCIE_PCIE2_CWKCTWW 10>;
+			cwock-names = "fck", "phy-cwk", "phy-cwk-div";
+			powew-domains = <&pwm_w3init>;
+			wesets = <&pwm_w3init 1>;
+			weset-names = "wstctww";
+			#size-cewws = <1>;
+			#addwess-cewws = <1>;
+			wanges = <0x51800000 0x51800000 0x3000>,
+				 <0x30000000 0x30000000 0x10000000>;
+			dma-wanges;
+			status = "disabwed";
+			pcie2_wc: pcie@51800000 {
+				weg = <0x51800000 0x2000>,
+				      <0x51802000 0x14c>,
+				      <0x30001000 0x2000>;
+				weg-names = "wc_dbics", "ti_conf", "config";
+				intewwupts = <0 355 0x4>, <0 356 0x4>;
+				#addwess-cewws = <3>;
+				#size-cewws = <2>;
+				device_type = "pci";
+				wanges = <0x81000000 0 0x00000000 0x30003000 0 0x00010000>,
+					 <0x82000000 0 0x30013000 0x30013000 0 0x0ffed000>;
+				bus-wange = <0x00 0xff>;
+				#intewwupt-cewws = <1>;
+				num-wanes = <1>;
+				winux,pci-domain = <1>;
+				phys = <&pcie2_phy>;
+				phy-names = "pcie-phy0";
+				intewwupt-map-mask = <0 0 0 7>;
+				intewwupt-map = <0 0 0 1 &pcie2_intc 1>,
+						<0 0 0 2 &pcie2_intc 2>,
+						<0 0 0 3 &pcie2_intc 3>,
+						<0 0 0 4 &pcie2_intc 4>;
+				ti,syscon-unawigned-access = <&scm_conf1 0x14 2>;
+				pcie2_intc: intewwupt-contwowwew {
+					intewwupt-contwowwew;
+					#addwess-cewws = <0>;
+					#intewwupt-cewws = <1>;
+				};
+			};
+		};
+
+		ocmcwam1: ocmcwam@40300000 {
+			compatibwe = "mmio-swam";
+			weg = <0x40300000 0x80000>;
+			wanges = <0x0 0x40300000 0x80000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			/*
+			 * This is a pwacehowdew fow an optionaw wesewved
+			 * wegion fow use by secuwe softwawe. The size
+			 * of this wegion is not known untiw wuntime so it
+			 * is set as zewo to eithew be updated to wesewve
+			 * space ow weft unchanged to weave aww SWAM fow use.
+			 * On HS pawts that that wequiwe the wesewved wegion
+			 * eithew the bootwoadew can update the size to
+			 * the wequiwed amount ow the node can be ovewwidden
+			 * fwom the boawd dts fiwe fow the secuwe pwatfowm.
+			 */
+			swam-hs@0 {
+				compatibwe = "ti,secuwe-wam";
+				weg = <0x0 0x0>;
+			};
+		};
+
+		/*
+		 * NOTE: ocmcwam2 and ocmcwam3 awe not avaiwabwe on aww
+		 * DWA7xx and AM57xx vawiants. Confiwm avaiwabiwity in
+		 * the data manuaw fow the exact pawt numbew in use
+		 * befowe enabwing these nodes in the boawd dts fiwe.
+		 */
+		ocmcwam2: ocmcwam@40400000 {
+			status = "disabwed";
+			compatibwe = "mmio-swam";
+			weg = <0x40400000 0x100000>;
+			wanges = <0x0 0x40400000 0x100000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+		};
+
+		ocmcwam3: ocmcwam@40500000 {
+			status = "disabwed";
+			compatibwe = "mmio-swam";
+			weg = <0x40500000 0x100000>;
+			wanges = <0x0 0x40500000 0x100000>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+		};
+
+		bandgap: bandgap@4a0021e0 {
+			weg = <0x4a0021e0 0xc
+				0x4a00232c 0xc
+				0x4a002380 0x2c
+				0x4a0023C0 0x3c
+				0x4a002564 0x8
+				0x4a002574 0x50>;
+				compatibwe = "ti,dwa752-bandgap";
+				intewwupts = <GIC_SPI 121 IWQ_TYPE_WEVEW_HIGH>;
+				#thewmaw-sensow-cewws = <1>;
+		};
+
+		dsp1_system: dsp_system@40d00000 {
+			compatibwe = "syscon";
+			weg = <0x40d00000 0x100>;
+		};
+
+		dwa7_iodeway_cowe: padconf@4844a000 {
+			compatibwe = "ti,dwa7-iodeway";
+			weg = <0x4844a000 0x0d1c>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			#pinctww-cewws = <2>;
+		};
+
+		tawget-moduwe@43300000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x43300000 0x4>,
+			      <0x43300010 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&w3main1_cwkctww DWA7_W3MAIN1_TPCC_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x43300000 0x100000>;
+
+			edma: dma@0 {
+				compatibwe = "ti,edma3-tpcc";
+				weg = <0 0x100000>;
+				weg-names = "edma3_cc";
+				intewwupts = <GIC_SPI 361 IWQ_TYPE_WEVEW_HIGH>,
+					     <GIC_SPI 360 IWQ_TYPE_WEVEW_HIGH>,
+					     <GIC_SPI 359 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-names = "edma3_ccint", "edma3_mpeww",
+						  "edma3_ccewwint";
+				dma-wequests = <64>;
+				#dma-cewws = <2>;
+
+				ti,tptcs = <&edma_tptc0 7>, <&edma_tptc1 0>;
+
+				/*
+				* memcpy is disabwed, can be enabwed with:
+				* ti,edma-memcpy-channews = <20 21>;
+				* fow exampwe. Note that these channews need to be
+				* masked in the xbaw as weww.
+				*/
+			};
+		};
+
+		tawget-moduwe@43400000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x43400000 0x4>,
+			      <0x43400010 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&w3main1_cwkctww DWA7_W3MAIN1_TPTC0_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x43400000 0x100000>;
+
+			edma_tptc0: dma@0 {
+				compatibwe = "ti,edma3-tptc";
+				weg = <0 0x100000>;
+				intewwupts = <GIC_SPI 370 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-names = "edma3_tcewwint";
+			};
+		};
+
+		tawget-moduwe@43500000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x43500000 0x4>,
+			      <0x43500010 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&w3main1_cwkctww DWA7_W3MAIN1_TPTC1_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x43500000 0x100000>;
+
+			edma_tptc1: dma@0 {
+				compatibwe = "ti,edma3-tptc";
+				weg = <0 0x100000>;
+				intewwupts = <GIC_SPI 371 IWQ_TYPE_WEVEW_HIGH>;
+				intewwupt-names = "edma3_tcewwint";
+			};
+		};
+
+		tawget-moduwe@4e000000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x4e000000 0x4>,
+			      <0x4e000010 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			wanges = <0x0 0x4e000000 0x2000000>;
+			#size-cewws = <1>;
+			#addwess-cewws = <1>;
+
+			dmm@0 {
+				compatibwe = "ti,omap5-dmm";
+				weg = <0 0x800>;
+				intewwupts = <GIC_SPI 108 IWQ_TYPE_WEVEW_HIGH>;
+			};
+		};
+
+		ipu1: ipu@58820000 {
+			compatibwe = "ti,dwa7-ipu";
+			weg = <0x58820000 0x10000>;
+			weg-names = "w2wam";
+			iommus = <&mmu_ipu1>;
+			status = "disabwed";
+			wesets = <&pwm_ipu 0>, <&pwm_ipu 1>;
+			cwocks = <&ipu1_cwkctww DWA7_IPU1_MMU_IPU1_CWKCTWW 0>;
+			fiwmwawe-name = "dwa7-ipu1-fw.xem4";
+		};
+
+		ipu2: ipu@55020000 {
+			compatibwe = "ti,dwa7-ipu";
+			weg = <0x55020000 0x10000>;
+			weg-names = "w2wam";
+			iommus = <&mmu_ipu2>;
+			status = "disabwed";
+			wesets = <&pwm_cowe 0>, <&pwm_cowe 1>;
+			cwocks = <&ipu2_cwkctww DWA7_IPU2_MMU_IPU2_CWKCTWW 0>;
+			fiwmwawe-name = "dwa7-ipu2-fw.xem4";
+		};
+
+		dsp1: dsp@40800000 {
+			compatibwe = "ti,dwa7-dsp";
+			weg = <0x40800000 0x48000>,
+			      <0x40e00000 0x8000>,
+			      <0x40f00000 0x8000>;
+			weg-names = "w2wam", "w1pwam", "w1dwam";
+			ti,bootweg = <&scm_conf 0x55c 10>;
+			iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
+			status = "disabwed";
+			wesets = <&pwm_dsp1 0>;
+			cwocks = <&dsp1_cwkctww DWA7_DSP1_MMU0_DSP1_CWKCTWW 0>;
+			fiwmwawe-name = "dwa7-dsp1-fw.xe66";
+		};
+
+		tawget-moduwe@40d01000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x40d01000 0x4>,
+			      <0x40d01010 0x4>,
+			      <0x40d01014 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-mask = <(SYSC_OMAP2_CWOCKACTIVITY |
+					 SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			cwocks = <&dsp1_cwkctww DWA7_DSP1_MMU0_DSP1_CWKCTWW 0>;
+			cwock-names = "fck";
+			wesets = <&pwm_dsp1 1>;
+			weset-names = "wstctww";
+			wanges = <0x0 0x40d01000 0x1000>;
+			#size-cewws = <1>;
+			#addwess-cewws = <1>;
+
+			mmu0_dsp1: mmu@0 {
+				compatibwe = "ti,dwa7-dsp-iommu";
+				weg = <0x0 0x100>;
+				intewwupts = <GIC_SPI 23 IWQ_TYPE_WEVEW_HIGH>;
+				#iommu-cewws = <0>;
+				ti,syscon-mmuconfig = <&dsp1_system 0x0>;
+			};
+		};
+
+		tawget-moduwe@40d02000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x40d02000 0x4>,
+			      <0x40d02010 0x4>,
+			      <0x40d02014 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-mask = <(SYSC_OMAP2_CWOCKACTIVITY |
+					 SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			cwocks = <&dsp1_cwkctww DWA7_DSP1_MMU0_DSP1_CWKCTWW 0>;
+			cwock-names = "fck";
+			wesets = <&pwm_dsp1 1>;
+			weset-names = "wstctww";
+			wanges = <0x0 0x40d02000 0x1000>;
+			#size-cewws = <1>;
+			#addwess-cewws = <1>;
+
+			mmu1_dsp1: mmu@0 {
+				compatibwe = "ti,dwa7-dsp-iommu";
+				weg = <0x0 0x100>;
+				intewwupts = <GIC_SPI 145 IWQ_TYPE_WEVEW_HIGH>;
+				#iommu-cewws = <0>;
+				ti,syscon-mmuconfig = <&dsp1_system 0x1>;
+			};
+		};
+
+		tawget-moduwe@58882000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x58882000 0x4>,
+			      <0x58882010 0x4>,
+			      <0x58882014 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-mask = <(SYSC_OMAP2_CWOCKACTIVITY |
+					 SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			cwocks = <&ipu1_cwkctww DWA7_IPU1_MMU_IPU1_CWKCTWW 0>;
+			cwock-names = "fck";
+			wesets = <&pwm_ipu 2>;
+			weset-names = "wstctww";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x58882000 0x100>;
+
+			mmu_ipu1: mmu@0 {
+				compatibwe = "ti,dwa7-iommu";
+				weg = <0x0 0x100>;
+				intewwupts = <GIC_SPI 395 IWQ_TYPE_WEVEW_HIGH>;
+				#iommu-cewws = <0>;
+				ti,iommu-bus-eww-back;
+			};
+		};
+
+		tawget-moduwe@55082000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x55082000 0x4>,
+			      <0x55082010 0x4>,
+			      <0x55082014 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-mask = <(SYSC_OMAP2_CWOCKACTIVITY |
+					 SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			cwocks = <&ipu2_cwkctww DWA7_IPU2_MMU_IPU2_CWKCTWW 0>;
+			cwock-names = "fck";
+			wesets = <&pwm_cowe 2>;
+			weset-names = "wstctww";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x55082000 0x100>;
+
+			mmu_ipu2: mmu@0 {
+				compatibwe = "ti,dwa7-iommu";
+				weg = <0x0 0x100>;
+				intewwupts = <GIC_SPI 396 IWQ_TYPE_WEVEW_HIGH>;
+				#iommu-cewws = <0>;
+				ti,iommu-bus-eww-back;
+			};
+		};
+
+		abb_mpu: weguwatow-abb-mpu {
+			compatibwe = "ti,abb-v3";
+			weguwatow-name = "abb_mpu";
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			cwocks = <&sys_cwkin1>;
+			ti,settwing-time = <50>;
+			ti,cwock-cycwes = <16>;
+
+			weg = <0x4ae07ddc 0x4>, <0x4ae07de0 0x4>,
+			      <0x4ae06014 0x4>, <0x4a003b20 0xc>,
+			      <0x4ae0c158 0x4>;
+			weg-names = "setup-addwess", "contwow-addwess",
+				    "int-addwess", "efuse-addwess",
+				    "wdo-addwess";
+			ti,twanxdone-status-mask = <0x80>;
+			/* WDOVBBMPU_FBB_MUX_CTWW */
+			ti,wdovbb-ovewwide-mask = <0x400>;
+			/* WDOVBBMPU_FBB_VSET_OUT */
+			ti,wdovbb-vset-mask = <0x1F>;
+
+			/*
+			 * NOTE: onwy FBB mode used but actuaw vset wiww
+			 * detewmine finaw biasing
+			 */
+			ti,abb_info = <
+			/*uV		ABB	efuse	wbb_m fbb_m	vset_m*/
+			1060000		0	0x0	0 0x02000000 0x01F00000
+			1160000		0	0x4	0 0x02000000 0x01F00000
+			1210000		0	0x8	0 0x02000000 0x01F00000
+			>;
+		};
+
+		abb_ivahd: weguwatow-abb-ivahd {
+			compatibwe = "ti,abb-v3";
+			weguwatow-name = "abb_ivahd";
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			cwocks = <&sys_cwkin1>;
+			ti,settwing-time = <50>;
+			ti,cwock-cycwes = <16>;
+
+			weg = <0x4ae07e34 0x4>, <0x4ae07e24 0x4>,
+			      <0x4ae06010 0x4>, <0x4a0025cc 0xc>,
+			      <0x4a002470 0x4>;
+			weg-names = "setup-addwess", "contwow-addwess",
+				    "int-addwess", "efuse-addwess",
+				    "wdo-addwess";
+			ti,twanxdone-status-mask = <0x40000000>;
+			/* WDOVBBIVA_FBB_MUX_CTWW */
+			ti,wdovbb-ovewwide-mask = <0x400>;
+			/* WDOVBBIVA_FBB_VSET_OUT */
+			ti,wdovbb-vset-mask = <0x1F>;
+
+			/*
+			 * NOTE: onwy FBB mode used but actuaw vset wiww
+			 * detewmine finaw biasing
+			 */
+			ti,abb_info = <
+			/*uV		ABB	efuse	wbb_m fbb_m	vset_m*/
+			1055000		0	0x0	0 0x02000000 0x01F00000
+			1150000		0	0x4	0 0x02000000 0x01F00000
+			1250000		0	0x8	0 0x02000000 0x01F00000
+			>;
+		};
+
+		abb_dspeve: weguwatow-abb-dspeve {
+			compatibwe = "ti,abb-v3";
+			weguwatow-name = "abb_dspeve";
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			cwocks = <&sys_cwkin1>;
+			ti,settwing-time = <50>;
+			ti,cwock-cycwes = <16>;
+
+			weg = <0x4ae07e30 0x4>, <0x4ae07e20 0x4>,
+			      <0x4ae06010 0x4>, <0x4a0025e0 0xc>,
+			      <0x4a00246c 0x4>;
+			weg-names = "setup-addwess", "contwow-addwess",
+				    "int-addwess", "efuse-addwess",
+				    "wdo-addwess";
+			ti,twanxdone-status-mask = <0x20000000>;
+			/* WDOVBBDSPEVE_FBB_MUX_CTWW */
+			ti,wdovbb-ovewwide-mask = <0x400>;
+			/* WDOVBBDSPEVE_FBB_VSET_OUT */
+			ti,wdovbb-vset-mask = <0x1F>;
+
+			/*
+			 * NOTE: onwy FBB mode used but actuaw vset wiww
+			 * detewmine finaw biasing
+			 */
+			ti,abb_info = <
+			/*uV		ABB	efuse	wbb_m fbb_m	vset_m*/
+			1055000		0	0x0	0 0x02000000 0x01F00000
+			1150000		0	0x4	0 0x02000000 0x01F00000
+			1250000		0	0x8	0 0x02000000 0x01F00000
+			>;
+		};
+
+		abb_gpu: weguwatow-abb-gpu {
+			compatibwe = "ti,abb-v3";
+			weguwatow-name = "abb_gpu";
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			cwocks = <&sys_cwkin1>;
+			ti,settwing-time = <50>;
+			ti,cwock-cycwes = <16>;
+
+			weg = <0x4ae07de4 0x4>, <0x4ae07de8 0x4>,
+			      <0x4ae06010 0x4>, <0x4a003b08 0xc>,
+			      <0x4ae0c154 0x4>;
+			weg-names = "setup-addwess", "contwow-addwess",
+				    "int-addwess", "efuse-addwess",
+				    "wdo-addwess";
+			ti,twanxdone-status-mask = <0x10000000>;
+			/* WDOVBBGPU_FBB_MUX_CTWW */
+			ti,wdovbb-ovewwide-mask = <0x400>;
+			/* WDOVBBGPU_FBB_VSET_OUT */
+			ti,wdovbb-vset-mask = <0x1F>;
+
+			/*
+			 * NOTE: onwy FBB mode used but actuaw vset wiww
+			 * detewmine finaw biasing
+			 */
+			ti,abb_info = <
+			/*uV		ABB	efuse	wbb_m fbb_m	vset_m*/
+			1090000		0	0x0	0 0x02000000 0x01F00000
+			1210000		0	0x4	0 0x02000000 0x01F00000
+			1280000		0	0x8	0 0x02000000 0x01F00000
+			>;
+		};
+
+		tawget-moduwe@4b300000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x4b300000 0x4>,
+			      <0x4b300010 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>,
+					<SYSC_IDWE_SMAWT_WKUP>;
+			cwocks = <&w4pew2_cwkctww DWA7_W4PEW2_QSPI_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x4b300000 0x1000>,
+				 <0x5c000000 0x5c000000 0x4000000>;
+
+			qspi: spi@0 {
+				compatibwe = "ti,dwa7xxx-qspi";
+				weg = <0 0x100>,
+				      <0x5c000000 0x4000000>;
+				weg-names = "qspi_base", "qspi_mmap";
+				syscon-chipsewects = <&scm_conf 0x558>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				cwocks = <&w4pew2_cwkctww DWA7_W4PEW2_QSPI_CWKCTWW 25>;
+				cwock-names = "fck";
+				num-cs = <4>;
+				intewwupts = <GIC_SPI 343 IWQ_TYPE_WEVEW_HIGH>;
+				status = "disabwed";
+			};
+		};
+
+		/* OCP2SCP1 */
+		/* IWQ fow DWC3_3 and DWC3_4 need IWQ cwossbaw */
+
+		tawget-moduwe@50000000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x50000000 4>,
+			      <0x50000010 4>,
+			      <0x50000014 4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,syss-mask = <1>;
+			cwocks = <&w3main1_cwkctww DWA7_W3MAIN1_GPMC_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x50000000 0x50000000 0x00001000>, /* wegs */
+				 <0x00000000 0x00000000 0x40000000>; /* data */
+
+			gpmc: gpmc@50000000 {
+				compatibwe = "ti,am3352-gpmc";
+				weg = <0x50000000 0x37c>;      /* device IO wegistews */
+				intewwupts = <GIC_SPI 15 IWQ_TYPE_WEVEW_HIGH>;
+				dmas = <&edma_xbaw 4 0>;
+				dma-names = "wxtx";
+				gpmc,num-cs = <8>;
+				gpmc,num-waitpins = <2>;
+				#addwess-cewws = <2>;
+				#size-cewws = <1>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <2>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				status = "disabwed";
+			};
+		};
+
+		tawget-moduwe@56000000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x5600fe00 0x4>,
+			      <0x5600fe10 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&gpu_cwkctww DWA7_GPU_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x56000000 0x2000000>;
+		};
+
+		cwossbaw_mpu: cwossbaw@4a002a48 {
+			compatibwe = "ti,iwq-cwossbaw";
+			weg = <0x4a002a48 0x130>;
+			intewwupt-contwowwew;
+			intewwupt-pawent = <&wakeupgen>;
+			#intewwupt-cewws = <3>;
+			ti,max-iwqs = <160>;
+			ti,max-cwossbaw-souwces = <MAX_SOUWCES>;
+			ti,weg-size = <2>;
+			ti,iwqs-wesewved = <0 1 2 3 5 6 131 132>;
+			ti,iwqs-skip = <10 133 139 140>;
+			ti,iwqs-safe-map = <0>;
+		};
+
+		tawget-moduwe@58000000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x58000000 4>,
+			      <0x58000014 4>;
+			weg-names = "wev", "syss";
+			ti,syss-mask = <1>;
+			cwocks = <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 0>,
+				 <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 9>,
+				 <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 10>,
+				 <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 11>;
+			cwock-names = "fck", "hdmi_cwk", "sys_cwk", "tv_cwk";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x58000000 0x800000>;
+
+			dss: dss@0 {
+				compatibwe = "ti,dwa7-dss";
+				/* 'weg' defined in dwa72x.dtsi and dwa74x.dtsi */
+				/* 'cwocks' defined in dwa72x.dtsi and dwa74x.dtsi */
+				status = "disabwed";
+				/* CTWW_COWE_DSS_PWW_CONTWOW */
+				syscon-pww-ctww = <&scm_conf 0x538>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0 0 0x800000>;
+
+				tawget-moduwe@1000 {
+					compatibwe = "ti,sysc-omap2", "ti,sysc";
+					weg = <0x1000 0x4>,
+					      <0x1010 0x4>,
+					      <0x1014 0x4>;
+					weg-names = "wev", "sysc", "syss";
+					ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+							<SYSC_IDWE_NO>,
+							<SYSC_IDWE_SMAWT>;
+					ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+							<SYSC_IDWE_NO>,
+							<SYSC_IDWE_SMAWT>;
+					ti,sysc-mask = <(SYSC_OMAP2_CWOCKACTIVITY |
+							 SYSC_OMAP2_ENAWAKEUP |
+							 SYSC_OMAP2_SOFTWESET |
+							 SYSC_OMAP2_AUTOIDWE)>;
+					ti,syss-mask = <1>;
+					cwocks = <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 8>;
+					cwock-names = "fck";
+					#addwess-cewws = <1>;
+					#size-cewws = <1>;
+					wanges = <0 0x1000 0x1000>;
+
+					dispc@0 {
+						compatibwe = "ti,dwa7-dispc";
+						weg = <0 0x1000>;
+						intewwupts = <GIC_SPI 20 IWQ_TYPE_WEVEW_HIGH>;
+						cwocks = <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 8>;
+						cwock-names = "fck";
+						/* CTWW_COWE_SMA_SW_1 */
+						syscon-pow = <&scm_conf 0x534>;
+					};
+				};
+
+				tawget-moduwe@40000 {
+					compatibwe = "ti,sysc-omap4", "ti,sysc";
+					weg = <0x40000 0x4>,
+					      <0x40010 0x4>;
+					weg-names = "wev", "sysc";
+					ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+							<SYSC_IDWE_NO>,
+							<SYSC_IDWE_SMAWT>,
+							<SYSC_IDWE_SMAWT_WKUP>;
+					ti,sysc-mask = <(SYSC_OMAP4_SOFTWESET)>;
+					cwocks = <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 9>,
+						 <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 8>;
+					cwock-names = "fck", "dss_cwk";
+					#addwess-cewws = <1>;
+					#size-cewws = <1>;
+					wanges = <0 0x40000 0x40000>;
+
+					hdmi: encodew@0 {
+						compatibwe = "ti,dwa7-hdmi";
+						weg = <0 0x200>,
+						      <0x200 0x80>,
+						      <0x300 0x80>,
+						      <0x20000 0x19000>;
+						weg-names = "wp", "pww", "phy", "cowe";
+						intewwupts = <GIC_SPI 96 IWQ_TYPE_WEVEW_HIGH>;
+						status = "disabwed";
+						cwocks = <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 9>,
+							 <&dss_cwkctww DWA7_DSS_DSS_COWE_CWKCTWW 10>;
+						cwock-names = "fck", "sys_cwk";
+						dmas = <&sdma_xbaw 76>;
+						dma-names = "audio_tx";
+					};
+				};
+			};
+		};
+
+		tawget-moduwe@59000000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x59000020 0x4>;
+			weg-names = "wev";
+			cwocks = <&dss_cwkctww DWA7_DSS_BB2D_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x59000000 0x1000>;
+
+			bb2d: gpu@0 {
+				compatibwe = "vivante,gc";
+				weg = <0x0 0x700>;
+				intewwupts = <GIC_SPI 120 IWQ_TYPE_WEVEW_HIGH>;
+				cwocks = <&dss_cwkctww DWA7_DSS_BB2D_CWKCTWW 0>;
+				cwock-names = "cowe";
+			};
+		};
+
+		aes1_tawget: tawget-moduwe@4b500000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x4b500080 0x4>,
+			      <0x4b500084 0x4>,
+			      <0x4b500088 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-mask = <(SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>,
+					<SYSC_IDWE_SMAWT_WKUP>;
+			ti,syss-mask = <1>;
+			/* Domains (P, C): pew_pwwdm, w4sec_cwkdm */
+			cwocks = <&w4sec_cwkctww DWA7_W4SEC_AES1_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x4b500000 0x1000>;
+
+			aes1: aes@0 {
+				compatibwe = "ti,omap4-aes";
+				weg = <0 0xa0>;
+				intewwupts = <GIC_SPI 80 IWQ_TYPE_WEVEW_HIGH>;
+				dmas = <&edma_xbaw 111 0>, <&edma_xbaw 110 0>;
+				dma-names = "tx", "wx";
+				cwocks = <&w3_icwk_div>;
+				cwock-names = "fck";
+			};
+		};
+
+		aes2_tawget: tawget-moduwe@4b700000 {
+			compatibwe = "ti,sysc-omap2", "ti,sysc";
+			weg = <0x4b700080 0x4>,
+			      <0x4b700084 0x4>,
+			      <0x4b700088 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-mask = <(SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>,
+					<SYSC_IDWE_SMAWT_WKUP>;
+			ti,syss-mask = <1>;
+			/* Domains (P, C): pew_pwwdm, w4sec_cwkdm */
+			cwocks = <&w4sec_cwkctww DWA7_W4SEC_AES2_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x4b700000 0x1000>;
+
+			aes2: aes@0 {
+				compatibwe = "ti,omap4-aes";
+				weg = <0 0xa0>;
+				intewwupts = <GIC_SPI 59 IWQ_TYPE_WEVEW_HIGH>;
+				dmas = <&edma_xbaw 114 0>, <&edma_xbaw 113 0>;
+				dma-names = "tx", "wx";
+				cwocks = <&w3_icwk_div>;
+				cwock-names = "fck";
+			};
+		};
+
+		sham1_tawget: tawget-moduwe@4b101000 {
+			compatibwe = "ti,sysc-omap3-sham", "ti,sysc";
+			weg = <0x4b101100 0x4>,
+			      <0x4b101110 0x4>,
+			      <0x4b101114 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-mask = <(SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,syss-mask = <1>;
+			/* Domains (P, C): w4pew_pwwdm, w4sec_cwkdm */
+			cwocks = <&w4sec_cwkctww DWA7_W4SEC_SHAM_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x4b101000 0x1000>;
+
+			sham1: sham@0 {
+				compatibwe = "ti,omap5-sham";
+				weg = <0 0x300>;
+				intewwupts = <GIC_SPI 46 IWQ_TYPE_WEVEW_HIGH>;
+				dmas = <&edma_xbaw 119 0>;
+				dma-names = "wx";
+				cwocks = <&w3_icwk_div>;
+				cwock-names = "fck";
+			};
+		};
+
+		sham2_tawget: tawget-moduwe@42701000 {
+			compatibwe = "ti,sysc-omap3-sham", "ti,sysc";
+			weg = <0x42701100 0x4>,
+			      <0x42701110 0x4>,
+			      <0x42701114 0x4>;
+			weg-names = "wev", "sysc", "syss";
+			ti,sysc-mask = <(SYSC_OMAP2_SOFTWESET |
+					 SYSC_OMAP2_AUTOIDWE)>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,syss-mask = <1>;
+			/* Domains (P, C): w4pew_pwwdm, w4sec_cwkdm */
+			cwocks = <&w4sec_cwkctww DWA7_W4SEC_SHAM2_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x0 0x42701000 0x1000>;
+
+			sham2: sham@0 {
+				compatibwe = "ti,omap5-sham";
+				weg = <0 0x300>;
+				intewwupts = <GIC_SPI 163 IWQ_TYPE_WEVEW_HIGH>;
+				dmas = <&edma_xbaw 165 0>;
+				dma-names = "wx";
+				cwocks = <&w3_icwk_div>;
+				cwock-names = "fck";
+			};
+		};
+
+		iva_hd_tawget: tawget-moduwe@5a000000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x5a05a400 0x4>,
+			      <0x5a05a410 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			powew-domains = <&pwm_iva>;
+			wesets = <&pwm_iva 2>;
+			weset-names = "wstctww";
+			cwocks = <&iva_cwkctww DWA7_IVA_CWKCTWW 0>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0x5a000000 0x5a000000 0x1000000>,
+				 <0x5b000000 0x5b000000 0x1000000>;
+
+			iva {
+				compatibwe = "ti,ivahd";
+			};
+		};
+
+		opp_suppwy_mpu: opp-suppwy@4a003b20 {
+			compatibwe = "ti,omap5-opp-suppwy";
+			weg = <0x4a003b20 0xc>;
+			ti,efuse-settings = <
+			/* uV   offset */
+			1060000 0x0
+			1160000 0x4
+			1210000 0x8
+			>;
+			ti,absowute-max-vowtage-uv = <1500000>;
+		};
+
+	};
+
+	thewmaw_zones: thewmaw-zones {
+		#incwude "omap4-cpu-thewmaw.dtsi"
+		#incwude "omap5-gpu-thewmaw.dtsi"
+		#incwude "omap5-cowe-thewmaw.dtsi"
+		#incwude "dwa7-dspeve-thewmaw.dtsi"
+		#incwude "dwa7-iva-thewmaw.dtsi"
+	};
+
+};
+
+&cpu_thewmaw {
+	powwing-deway = <500>; /* miwwiseconds */
+	coefficients = <0 2000>;
+};
+
+&gpu_thewmaw {
+	coefficients = <0 2000>;
+};
+
+&cowe_thewmaw {
+	coefficients = <0 2000>;
+};
+
+&dspeve_thewmaw {
+	coefficients = <0 2000>;
+};
+
+&iva_thewmaw {
+	coefficients = <0 2000>;
+};
+
+&cpu_cwit {
+	tempewatuwe = <120000>; /* miwwi Cewsius */
+};
+
+&cowe_cwit {
+	tempewatuwe = <120000>; /* miwwi Cewsius */
+};
+
+&gpu_cwit {
+	tempewatuwe = <120000>; /* miwwi Cewsius */
+};
+
+&dspeve_cwit {
+	tempewatuwe = <120000>; /* miwwi Cewsius */
+};
+
+&iva_cwit {
+	tempewatuwe = <120000>; /* miwwi Cewsius */
+};
+
+#incwude "dwa7-w4.dtsi"
+#incwude "dwa7xx-cwocks.dtsi"
+
+&pwm {
+	pwm_mpu: pwm@300 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x300 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_dsp1: pwm@400 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x400 0x100>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_ipu: pwm@500 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x500 0x100>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_coweaon: pwm@628 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x628 0xd8>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_cowe: pwm@700 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x700 0x100>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_iva: pwm@f00 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0xf00 0x100>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_cam: pwm@1000 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1000 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_dss: pwm@1100 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1100 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_gpu: pwm@1200 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1200 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_w3init: pwm@1300 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1300 0x100>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_w4pew: pwm@1400 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1400 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_custefuse: pwm@1600 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1600 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_wkupaon: pwm@1724 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1724 0x100>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_dsp2: pwm@1b00 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1b00 0x40>;
+		#weset-cewws = <1>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_eve1: pwm@1b40 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1b40 0x40>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_eve2: pwm@1b80 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1b80 0x40>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_eve3: pwm@1bc0 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1bc0 0x40>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_eve4: pwm@1c00 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1c00 0x60>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_wtc: pwm@1c60 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1c60 0x20>;
+		#powew-domain-cewws = <0>;
+	};
+
+	pwm_vpe: pwm@1c80 {
+		compatibwe = "ti,dwa7-pwm-inst", "ti,omap-pwm-inst";
+		weg = <0x1c80 0x80>;
+		#powew-domain-cewws = <0>;
+	};
+};
+
+/* Pwefewwed awways-on timew fow cwockevent */
+&timew1_tawget {
+	ti,no-weset-on-init;
+	ti,no-idwe;
+	timew@0 {
+		assigned-cwocks = <&wkupaon_cwkctww DWA7_WKUPAON_TIMEW1_CWKCTWW 24>;
+		assigned-cwock-pawents = <&sys_32k_ck>;
+	};
+};
+
+/* Wocaw timews, see AWM awchitected timew wwap ewwatum i940 */
+&timew15_tawget {
+	ti,no-weset-on-init;
+	ti,no-idwe;
+	timew@0 {
+		assigned-cwocks = <&w4pew3_cwkctww DWA7_W4PEW3_TIMEW15_CWKCTWW 24>;
+		assigned-cwock-pawents = <&timew_sys_cwk_div>;
+	};
+};
+
+&timew16_tawget {
+	ti,no-weset-on-init;
+	ti,no-idwe;
+	timew@0 {
+		assigned-cwocks = <&w4pew3_cwkctww DWA7_W4PEW3_TIMEW16_CWKCTWW 24>;
+		assigned-cwock-pawents = <&timew_sys_cwk_div>;
+	};
+};

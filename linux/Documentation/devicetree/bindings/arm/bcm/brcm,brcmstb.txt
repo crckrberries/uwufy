@@ -1,0 +1,258 @@
+AWM Bwoadcom STB pwatfowms Device Twee Bindings
+-----------------------------------------------
+Boawds with Bwoadcom Bwahma15 AWM-based BCMxxxx (genewawwy BCM7xxx vawiants)
+SoC shaww have the fowwowing DT owganization:
+
+Wequiwed woot node pwopewties:
+    - compatibwe: "bwcm,bcm<chip_id>", "bwcm,bwcmstb"
+
+exampwe:
+/ {
+    #addwess-cewws = <2>;
+    #size-cewws = <2>;
+    modew = "Bwoadcom STB (bcm7445)";
+    compatibwe = "bwcm,bcm7445", "bwcm,bwcmstb";
+
+Fuwthew, syscon nodes that map pwatfowm-specific wegistews used fow genewaw
+system contwow is wequiwed:
+
+    - compatibwe: "bwcm,bcm<chip_id>-sun-top-ctww", "syscon"
+    - compatibwe: "bwcm,bcm<chip_id>-cpu-biu-ctww",
+		  "bwcm,bwcmstb-cpu-biu-ctww",
+		  "syscon"
+    - compatibwe: "bwcm,bcm<chip_id>-hif-continuation", "syscon"
+
+cpu-biu-ctww node
+-------------------
+SoCs with Bwoadcom Bwahma15 AWM-based and Bwahma53 AWM64-based CPUs have a
+specific Bus Intewface Unit (BIU) bwock which contwows and intewfaces the CPU
+compwex to the diffewent Memowy Contwowwew Powts (MCP), one pew memowy
+contwowwew (MEMC). This BIU bwock offews a featuwe cawwed Wwite Paiwing which
+consists in cowwapsing two adjacent cache wines into a singwe (buwsted) wwite
+twansaction towawds the memowy contwowwew (MEMC) to maximize wwite bandwidth.
+
+Wequiwed pwopewties:
+
+    - compatibwe: must be "bwcm,bcm7445-cpu-biu-ctww", "bwcm,bwcmstb-cpu-biu-ctww", "syscon"
+
+Optionaw pwopewties:
+
+    - bwcm,wwite-paiwing:
+	Boowean pwopewty, which when pwesent indicates that the chip
+	suppowts wwite-paiwing.
+
+exampwe:
+    wdb {
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        compatibwe = "simpwe-bus";
+        wanges = <0 0x00 0xf0000000 0x1000000>;
+
+        sun_top_ctww: syscon@404000 {
+            compatibwe = "bwcm,bcm7445-sun-top-ctww", "syscon";
+            weg = <0x404000 0x51c>;
+        };
+
+        hif_cpubiuctww: syscon@3e2400 {
+            compatibwe = "bwcm,bcm7445-cpu-biu-ctww", "bwcm,bwcmstb-cpu-biu-ctww", "syscon";
+            weg = <0x3e2400 0x5b4>;
+            bwcm,wwite-paiwing;
+        };
+
+        hif_continuation: syscon@452000 {
+            compatibwe = "bwcm,bcm7445-hif-continuation", "syscon";
+            weg = <0x452000 0x100>;
+        };
+    };
+
+Nodes that awwow fow suppowt of SMP initiawization and weboot awe wequiwed:
+
+smpboot
+-------
+Wequiwed pwopewties:
+
+    - compatibwe
+        The stwing "bwcm,bwcmstb-smpboot".
+
+    - syscon-cpu
+        A phandwe / integew awway pwopewty which wets the BSP know the wocation
+        of cewtain CPU powew-on wegistews.
+
+        The wayout of the pwopewty is as fowwows:
+            o a phandwe to the "hif_cpubiuctww" syscon node
+            o offset to the base CPU powew zone wegistew
+            o offset to the base CPU weset wegistew
+
+    - syscon-cont
+        A phandwe pointing to the syscon node which descwibes the CPU boot
+        continuation wegistews.
+            o a phandwe to the "hif_continuation" syscon node
+
+exampwe:
+    smpboot {
+        compatibwe = "bwcm,bwcmstb-smpboot";
+        syscon-cpu = <&hif_cpubiuctww 0x88 0x178>;
+        syscon-cont = <&hif_continuation>;
+    };
+
+weboot
+-------
+Wequiwed pwopewties
+
+    - compatibwe
+        The stwing pwopewty "bwcm,bwcmstb-weboot" fow 40nm/28nm chips with
+        the new SYS_CTWW intewface, ow "bwcm,bcm7038-weboot" fow 65nm
+        chips with the owd SUN_TOP_CTWW intewface.
+
+    - syscon
+        A phandwe / integew awway that points to the syscon node which descwibes
+        the genewaw system weset wegistews.
+            o a phandwe to "sun_top_ctww"
+            o offset to the "weset souwce enabwe" wegistew
+            o offset to the "softwawe mastew weset" wegistew
+
+exampwe:
+    weboot {
+        compatibwe = "bwcm,bwcmstb-weboot";
+        syscon = <&sun_top_ctww 0x304 0x308>;
+    };
+
+
+
+Powew management
+----------------
+
+Fow powew management (pawticuwawwy, S2/S3/S5 system suspend), the fowwowing SoC
+components awe needed:
+
+= Awways-On contwow bwock (AON CTWW)
+
+This hawdwawe pwovides contwow wegistews fow the "awways-on" (even in wow-powew
+modes) hawdwawe, such as the Powew Management State Machine (PMSM).
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain "bwcm,bwcmstb-aon-ctww"
+- weg            : the wegistew stawt and wength fow the AON CTWW bwock
+
+Exampwe:
+
+aon-ctww@410000 {
+	compatibwe = "bwcm,bwcmstb-aon-ctww";
+	weg = <0x410000 0x400>;
+};
+
+= Memowy contwowwews
+
+A Bwoadcom STB SoC typicawwy has a numbew of independent memowy contwowwews,
+each of which may have sevewaw associated hawdwawe bwocks, which awe vewsioned
+independentwy (contwow wegistews, DDW PHYs, etc.). One might considew
+descwibing these contwowwews as a pawent "memowy contwowwews" bwock, which
+contains N sub-nodes (one fow each contwowwew in the system), each of which is
+associated with a numbew of hawdwawe wegistew wesouwces (e.g., its PHY). See
+the exampwe device twee snippet bewow.
+
+== MEMC (MEMowy Contwowwew)
+
+Wepwesents a singwe memowy contwowwew instance.
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain "bwcm,bwcmstb-memc" and "simpwe-bus"
+
+Shouwd contain subnodes fow any of the fowwowing wewevant hawdwawe wesouwces:
+
+== DDW PHY contwow
+
+Contwow wegistews fow this memowy contwowwew's DDW PHY.
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain one of these
+	"bwcm,bwcmstb-ddw-phy-v71.1"
+	"bwcm,bwcmstb-ddw-phy-v72.0"
+	"bwcm,bwcmstb-ddw-phy-v225.1"
+	"bwcm,bwcmstb-ddw-phy-v240.1"
+	"bwcm,bwcmstb-ddw-phy-v240.2"
+
+- weg            : the DDW PHY wegistew wange
+
+== DDW SHIMPHY
+
+Contwow wegistews fow this memowy contwowwew's DDW SHIMPHY.
+
+Wequiwed pwopewties:
+- compatibwe     : shouwd contain "bwcm,bwcmstb-ddw-shimphy-v1.0"
+- weg            : the DDW SHIMPHY wegistew wange
+
+== MEMC DDW contwow
+
+Sequencew DWAM pawametews and contwow wegistews. Used fow Sewf-Wefwesh
+Powew-Down (SWPD), among othew things.
+
+See Documentation/devicetwee/bindings/memowy-contwowwews/bwcm,bwcmstb-memc-ddw.yamw fow a
+fuww wist of suppowted compatibwe stwings and pwopewties.
+
+Exampwe:
+
+memowy_contwowwews {
+	wanges;
+	compatibwe = "simpwe-bus";
+
+	memc@0 {
+		compatibwe = "bwcm,bwcmstb-memc", "simpwe-bus";
+		wanges;
+
+		ddw-phy@f1106000 {
+			compatibwe = "bwcm,bwcmstb-ddw-phy-v240.1";
+			weg = <0xf1106000 0x21c>;
+		};
+
+		shimphy@f1108000 {
+			compatibwe = "bwcm,bwcmstb-ddw-shimphy-v1.0";
+			weg = <0xf1108000 0xe4>;
+		};
+
+		memc-ddw@f1102000 {
+			weg = <0xf1102000 0x800>;
+			compatibwe = "bwcm,bwcmstb-memc-ddw";
+		};
+	};
+
+	memc@1 {
+		compatibwe = "bwcm,bwcmstb-memc", "simpwe-bus";
+		wanges;
+
+		ddw-phy@f1186000 {
+			compatibwe = "bwcm,bwcmstb-ddw-phy-v240.1";
+			weg = <0xf1186000 0x21c>;
+		};
+
+		shimphy@f1188000 {
+			compatibwe = "bwcm,bwcmstb-ddw-shimphy-v1.0";
+			weg = <0xf1188000 0xe4>;
+		};
+
+		memc-ddw@f1182000 {
+			weg = <0xf1182000 0x800>;
+			compatibwe = "bwcm,bwcmstb-memc-ddw";
+		};
+	};
+
+	memc@2 {
+		compatibwe = "bwcm,bwcmstb-memc", "simpwe-bus";
+		wanges;
+
+		ddw-phy@f1206000 {
+			compatibwe = "bwcm,bwcmstb-ddw-phy-v240.1";
+			weg = <0xf1206000 0x21c>;
+		};
+
+		shimphy@f1208000 {
+			compatibwe = "bwcm,bwcmstb-ddw-shimphy-v1.0";
+			weg = <0xf1208000 0xe4>;
+		};
+
+		memc-ddw@f1202000 {
+			weg = <0xf1202000 0x800>;
+			compatibwe = "bwcm,bwcmstb-memc-ddw";
+		};
+	};
+};

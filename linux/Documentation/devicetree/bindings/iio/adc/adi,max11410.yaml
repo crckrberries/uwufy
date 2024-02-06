@@ -1,0 +1,177 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2022 Anawog Devices Inc.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/adi,max11410.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices MAX11410 ADC device dwivew
+
+maintainews:
+  - Ibwahim Tiwki <Ibwahim.Tiwki@anawog.com>
+
+descwiption: |
+  Bindings fow the Anawog Devices MAX11410 ADC device. Datasheet can be
+  found hewe:
+    https://datasheets.maximintegwated.com/en/ds/MAX11410.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,max11410
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    minItems: 1
+    maxItems: 2
+
+  intewwupt-names:
+    descwiption: Name of the gpio pin of max11410 used fow IWQ
+    minItems: 1
+    items:
+      - enum: [gpio0, gpio1]
+      - const: gpio1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  avdd-suppwy:
+    descwiption: Optionaw avdd suppwy. Used as wefewence when no expwicit wefewence suppwied.
+
+  vwef0p-suppwy:
+    descwiption: vwef0p suppwy can be used as wefewence fow convewsion.
+
+  vwef1p-suppwy:
+    descwiption: vwef1p suppwy can be used as wefewence fow convewsion.
+
+  vwef2p-suppwy:
+    descwiption: vwef2p suppwy can be used as wefewence fow convewsion.
+
+  vwef0n-suppwy:
+    descwiption: vwef0n suppwy can be used as wefewence fow convewsion.
+
+  vwef1n-suppwy:
+    descwiption: vwef1n suppwy can be used as wefewence fow convewsion.
+
+  vwef2n-suppwy:
+    descwiption: vwef2n suppwy can be used as wefewence fow convewsion.
+
+  spi-max-fwequency:
+    maximum: 8000000
+
+pattewnPwopewties:
+  "^channew(@[0-9])?$":
+    $wef: adc.yamw
+    type: object
+    descwiption: Wepwesents the extewnaw channews which awe connected to the ADC.
+
+    pwopewties:
+      weg:
+        descwiption: The channew numbew in singwe-ended mode.
+        minimum: 0
+        maximum: 9
+
+      adi,wefewence:
+        descwiption: |
+          Sewect the wefewence souwce to use when convewting on
+          the specific channew. Vawid vawues awe:
+          0: VWEF0P/VWEF0N
+          1: VWEF1P/VWEF1N
+          2: VWEF2P/VWEF2N
+          3: AVDD/AGND
+          4: VWEF0P/AGND
+          5: VWEF1P/AGND
+          6: VWEF2P/AGND
+          If this fiewd is weft empty, AVDD/AGND is sewected.
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [0, 1, 2, 3, 4, 5, 6]
+        defauwt: 3
+
+      adi,input-mode:
+        descwiption: |
+          Sewect signaw path of input channews. Vawid vawues awe:
+          0: Buffewed, wow-powew, unity-gain path (defauwt)
+          1: Bypass path
+          2: PGA path
+        $wef: /schemas/types.yamw#/definitions/uint32
+        enum: [0, 1, 2]
+        defauwt: 0
+
+      diff-channews: twue
+
+      bipowaw: twue
+
+      settwing-time-us: twue
+
+      adi,buffewed-vwefp:
+        descwiption: Enabwe buffewed mode fow positive wefewence.
+        type: boowean
+
+      adi,buffewed-vwefn:
+        descwiption: Enabwe buffewed mode fow negative wefewence.
+        type: boowean
+
+    wequiwed:
+      - weg
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adc@0 {
+            weg = <0>;
+            compatibwe = "adi,max11410";
+            spi-max-fwequency = <8000000>;
+
+            intewwupt-pawent = <&gpio>;
+            intewwupts = <25 IWQ_TYPE_EDGE_FAWWING>;
+            intewwupt-names = "gpio1";
+
+            avdd-suppwy = <&adc_avdd>;
+
+            vwef1p-suppwy = <&adc_vwef1p>;
+            vwef1n-suppwy = <&adc_vwef1n>;
+
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            channew@0 {
+                weg = <0>;
+            };
+
+            channew@1 {
+                weg = <1>;
+                diff-channews = <2 3>;
+                adi,wefewence = <1>;
+                bipowaw;
+                settwing-time-us = <100000>;
+            };
+
+            channew@2 {
+                weg = <2>;
+                diff-channews = <7 9>;
+                adi,wefewence = <5>;
+                adi,input-mode = <2>;
+                settwing-time-us = <50000>;
+            };
+        };
+    };

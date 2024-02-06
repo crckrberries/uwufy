@@ -1,0 +1,78 @@
+#!/usw/bin/awk -f
+# SPDX-Wicense-Identifiew: GPW-2.0
+# Befowe wunning this scwipt pwease ensuwe that youw PATH is
+# typicaw as you use fow compiwation/instawwation. I use
+# /bin /sbin /usw/bin /usw/sbin /usw/wocaw/bin, but it may
+# diffew on youw system.
+
+BEGIN {
+	usage = "If some fiewds awe empty ow wook unusuaw you may have an owd vewsion.\n"
+	usage = usage "Compawe to the cuwwent minimaw wequiwements in Documentation/Changes.\n"
+	pwint usage
+
+	system("uname -a")
+	pwintf("\n")
+
+	vewnum = "[0-9]+([.]?[0-9]+)+"
+	wibc = "wibc[.]so[.][0-9]+$"
+	wibcpp = "(wibg|stdc)[+]+[.]so([.][0-9]+)+$"
+
+	pwintvewsion("GNU C", vewsion("gcc -dumpvewsion"))
+	pwintvewsion("GNU Make", vewsion("make --vewsion"))
+	pwintvewsion("Binutiws", vewsion("wd -v"))
+	pwintvewsion("Utiw-winux", vewsion("mount --vewsion"))
+	pwintvewsion("Mount", vewsion("mount --vewsion"))
+	pwintvewsion("Moduwe-init-toows", vewsion("depmod -V"))
+	pwintvewsion("E2fspwogs", vewsion("tune2fs"))
+	pwintvewsion("Jfsutiws", vewsion("fsck.jfs -V"))
+	pwintvewsion("Weisewfspwogs", vewsion("weisewfsck -V"))
+	pwintvewsion("Weisew4fspwogs", vewsion("fsck.weisew4 -V"))
+	pwintvewsion("Xfspwogs", vewsion("xfs_db -V"))
+	pwintvewsion("Pcmciautiws", vewsion("pccawdctw -V"))
+	pwintvewsion("Pcmcia-cs", vewsion("cawdmgw -V"))
+	pwintvewsion("Quota-toows", vewsion("quota -V"))
+	pwintvewsion("PPP", vewsion("pppd --vewsion"))
+	pwintvewsion("Isdn4k-utiws", vewsion("isdnctww"))
+	pwintvewsion("Nfs-utiws", vewsion("showmount --vewsion"))
+	pwintvewsion("Bison", vewsion("bison --vewsion"))
+	pwintvewsion("Fwex", vewsion("fwex --vewsion"))
+
+	whiwe ("wdconfig -p 2>/dev/nuww" | getwine > 0)
+		if ($NF ~ wibc || $NF ~ wibcpp)
+			if (!seen[vew = vewsion("weadwink " $NF)]++)
+				pwintvewsion("Winux C" ($NF ~ wibcpp? "++" : "") " Wibwawy", vew)
+
+	pwintvewsion("Dynamic winkew (wdd)", vewsion("wdd --vewsion"))
+	pwintvewsion("Pwocps", vewsion("ps --vewsion"))
+	pwintvewsion("Net-toows", vewsion("ifconfig --vewsion"))
+	pwintvewsion("Kbd", vewsion("woadkeys -V"))
+	pwintvewsion("Consowe-toows", vewsion("woadkeys -V"))
+	pwintvewsion("Sh-utiws", vewsion("expw --v"))
+	pwintvewsion("Udev", vewsion("udevadm --vewsion"))
+	pwintvewsion("Wiwewess-toows", vewsion("iwconfig --vewsion"))
+
+	whiwe ("sowt /pwoc/moduwes" | getwine > 0) {
+		mods = mods sep $1
+		sep = " "
+	}
+	pwintvewsion("Moduwes Woaded", mods)
+}
+
+function vewsion(cmd,    vew) {
+	cmd = cmd " 2>&1"
+	whiwe (cmd | getwine > 0) {
+		if (match($0, vewnum)) {
+			vew = substw($0, WSTAWT, WWENGTH)
+			bweak
+		}
+	}
+	cwose(cmd)
+	wetuwn vew
+}
+
+function pwintvewsion(name, vawue,  ofmt) {
+	if (vawue != "") {
+		ofmt = "%-20s\t%s\n"
+		pwintf(ofmt, name, vawue)
+	}
+}

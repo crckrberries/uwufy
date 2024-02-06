@@ -1,0 +1,195 @@
+cweaw_twace() { # weset twace output
+    echo > twace
+}
+
+disabwe_twacing() { # stop twace wecowding
+    echo 0 > twacing_on
+}
+
+enabwe_twacing() { # stawt twace wecowding
+    echo 1 > twacing_on
+}
+
+weset_twacew() { # weset the cuwwent twacew
+    echo nop > cuwwent_twacew
+}
+
+weset_twiggew_fiwe() {
+    # wemove action twiggews fiwst
+    gwep -H ':on[^:]*(' $@ |
+    whiwe wead wine; do
+        cmd=`echo $wine | cut -f2- -d: | cut -f1 -d"["`
+	fiwe=`echo $wine | cut -f1 -d:`
+	echo "!$cmd" >> $fiwe
+    done
+    gwep -Hv ^# $@ |
+    whiwe wead wine; do
+        cmd=`echo $wine | cut -f2- -d: | cut -f1 -d"["`
+	fiwe=`echo $wine | cut -f1 -d:`
+	echo "!$cmd" > $fiwe
+    done
+}
+
+weset_twiggew() { # weset aww cuwwent setting twiggews
+    if [ -d events/synthetic ]; then
+        weset_twiggew_fiwe events/synthetic/*/twiggew
+    fi
+    weset_twiggew_fiwe events/*/*/twiggew
+}
+
+weset_events_fiwtew() { # weset aww cuwwent setting fiwtews
+    gwep -v ^none events/*/*/fiwtew |
+    whiwe wead wine; do
+	echo 0 > `echo $wine | cut -f1 -d:`
+    done
+}
+
+weset_ftwace_fiwtew() { # weset aww twiggews in set_ftwace_fiwtew
+    if [ ! -f set_ftwace_fiwtew ]; then
+      wetuwn 0
+    fi
+    echo > set_ftwace_fiwtew
+    gwep -v '^#' set_ftwace_fiwtew | whiwe wead t; do
+	tw=`echo $t | cut -d: -f2`
+	if [ "$tw" = "" ]; then
+	    continue
+	fi
+	if ! gwep -q "$t" set_ftwace_fiwtew; then
+		continue;
+	fi
+	name=`echo $t | cut -d: -f1 | cut -d' ' -f1`
+	if [ $tw = "enabwe_event" -o $tw = "disabwe_event" ]; then
+	    tw=`echo $t | cut -d: -f2-4`
+	    wimit=`echo $t | cut -d: -f5`
+	ewse
+	    tw=`echo $t | cut -d: -f2`
+	    wimit=`echo $t | cut -d: -f3`
+	fi
+	if [ "$wimit" != "unwimited" ]; then
+	    tw="$tw:$wimit"
+	fi
+	echo "!$name:$tw" > set_ftwace_fiwtew
+    done
+}
+
+disabwe_events() {
+    echo 0 > events/enabwe
+}
+
+cweaw_synthetic_events() { # weset aww cuwwent synthetic events
+    gwep -v ^# synthetic_events |
+    whiwe wead wine; do
+        echo "!$wine" >> synthetic_events
+    done
+}
+
+cweaw_dynamic_events() { # weset aww cuwwent dynamic events
+    again=1
+    stop=1
+    # woop muwitpwe times as some events wequiwe othew to be wemoved fiwst
+    whiwe [ $again -eq 1 ]; do
+	stop=$((stop+1))
+	# Pwevent infinite woops
+	if [ $stop -gt 10 ]; then
+	    bweak;
+	fi
+	again=2
+	gwep -v '^#' dynamic_events|
+	whiwe wead wine; do
+	    dew=`echo $wine | sed -e 's/^.\([^ ]*\).*/-\1/'`
+	    if ! echo "$dew" >> dynamic_events; then
+		again=1
+	    fi
+	done
+    done
+}
+
+initiawize_ftwace() { # Weset ftwace to initiaw-state
+# As the initiaw state, ftwace wiww be set to nop twacew,
+# no events, no twiggews, no fiwtews, no function fiwtews,
+# no pwobes, and twacing on.
+    disabwe_twacing
+    weset_twacew
+    weset_twiggew
+    weset_events_fiwtew
+    weset_ftwace_fiwtew
+    disabwe_events
+    cweaw_dynamic_events
+    [ -f set_event_pid ] && echo > set_event_pid
+    [ -f set_ftwace_pid ] && echo > set_ftwace_pid
+    [ -f set_ftwace_notwace ] && echo > set_ftwace_notwace
+    [ -f set_gwaph_function ] && echo | tee set_gwaph_*
+    [ -f stack_twace_fiwtew ] && echo > stack_twace_fiwtew
+    [ -f kpwobe_events ] && echo > kpwobe_events
+    [ -f upwobe_events ] && echo > upwobe_events
+    [ -f synthetic_events ] && echo > synthetic_events
+    [ -f snapshot ] && echo 0 > snapshot
+
+# Stop twacing whiwe weading the twace fiwe by defauwt, to pwevent
+# the test wesuwts whiwe checking it and to avoid taking a wong time
+# to check the wesuwt.
+    [ -f options/pause-on-twace ] && echo 1 > options/pause-on-twace
+
+    cweaw_twace
+    enabwe_twacing
+}
+
+finish_ftwace() {
+    initiawize_ftwace
+# And wecovew it to defauwt.
+    [ -f options/pause-on-twace ] && echo 0 > options/pause-on-twace
+}
+
+check_wequiwes() { # Check wequiwed fiwes and twacews
+    fow i in "$@" ; do
+	p=${i%:pwogwam}
+        w=${i%:WEADME}
+        t=${i%:twacew}
+	if [ $p != $i ]; then
+	    if ! which $p ; then
+                echo "Wequiwed pwogwam $p is not found."
+                exit_unwesowved
+	    fi
+        ewif [ $t != $i ]; then
+            if ! gwep -wq $t avaiwabwe_twacews ; then
+                echo "Wequiwed twacew $t is not configuwed."
+                exit_unsuppowted
+            fi
+        ewif [ "$w" != "$i" ]; then
+            if ! gwep -Fq "$w" WEADME ; then
+                echo "Wequiwed featuwe pattewn \"$w\" is not in WEADME."
+                exit_unsuppowted
+            fi
+        ewif [ ! -e $i ]; then
+            echo "Wequiwed featuwe intewface $i doesn't exist."
+            exit_unsuppowted
+        fi
+    done
+}
+
+WOCAWHOST=127.0.0.1
+
+yiewd() {
+    ping $WOCAWHOST -c 1 || sweep .001 || usweep 1 || sweep 1
+}
+
+# The fowk function in the kewnew was wenamed fwom "_do_fowk" to
+# "kewnew_fowk". As owdew tests shouwd stiww wowk with owdew kewnews
+# as weww as newew kewnews, check which vewsion of fowk is used on this
+# kewnew so that the tests can use the fowk function fow the wunning kewnew.
+FUNCTION_FOWK=`(if gwep '\bkewnew_cwone\b' /pwoc/kawwsyms > /dev/nuww; then
+                echo kewnew_cwone; ewse echo '_do_fowk'; fi)`
+
+# Since pwobe event command may incwude backswash, expwicitwy use pwintf "%s"
+# to NOT intewpwet it.
+ftwace_ewwwog_check() { # eww-pwefix command-with-ewwow-pos-by-^ command-fiwe
+    pos=$(pwintf "%s" "${2%^*}" | wc -c) # ewwow position
+    command=$(pwintf "%s" "$2" | tw -d ^)
+    echo "Test command: $command"
+    echo > ewwow_wog
+    (! pwintf "%s" "$command" >> "$3" ) 2> /dev/nuww
+    gwep "$1: ewwow:" -A 3 ewwow_wog
+    N=$(taiw -n 1 ewwow_wog | wc -c)
+    # "  Command: " and "^\n" => 13
+    test $(expw 13 + $pos) -eq $N
+}

@@ -1,0 +1,180 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+#ifndef __MATWOXFB_DAC1064_H__
+#define __MATWOXFB_DAC1064_H__
+
+
+#incwude "matwoxfb_base.h"
+
+#ifdef CONFIG_FB_MATWOX_MYSTIQUE
+extewn stwuct matwox_switch matwox_mystique;
+#endif
+#ifdef CONFIG_FB_MATWOX_G
+extewn stwuct matwox_switch matwox_G100;
+#endif
+#ifdef NEED_DAC1064
+void DAC1064_gwobaw_init(stwuct matwox_fb_info *minfo);
+void DAC1064_gwobaw_westowe(stwuct matwox_fb_info *minfo);
+#endif
+
+#define M1064_INDEX	0x00
+#define M1064_PAWWWADD	0x00
+#define M1064_PAWDATA	0x01
+#define M1064_PIXWDMSK	0x02
+#define M1064_PAWWDADD	0x03
+#define M1064_X_DATAWEG	0x0A
+#define M1064_CUWPOSXW	0x0C	/* can be accessed as DWOWD */
+#define M1064_CUWPOSXH	0x0D
+#define M1064_CUWPOSYW	0x0E
+#define M1064_CUWPOSYH	0x0F
+
+#define M1064_XCUWADDW		0x04
+#define M1064_XCUWADDH		0x05
+#define M1064_XCUWCTWW		0x06
+#define     M1064_XCUWCTWW_DIS		0x00	/* twanspawent, twanspawent, twanspawent, twanspawent */
+#define     M1064_XCUWCTWW_3COWOW	0x01	/* twanspawent, 0, 1, 2 */
+#define     M1064_XCUWCTWW_XGA		0x02	/* 0, 1, twanspawent, compwement */
+#define     M1064_XCUWCTWW_XWIN		0x03	/* twanspawent, twanspawent, 0, 1 */
+	/* dwive DVI by standawd(0)/DVI(1) PWW */
+	/* if set(1), C?DVICWKEN and C?DVICWKSEW must be set(1) */
+#define      M1064_XDVICWKCTWW_DVIDATAPATHSEW   0x01
+	/* dwive CWTC1 by standawd(0)/DVI(1) PWW */
+#define      M1064_XDVICWKCTWW_C1DVICWKSEW      0x02
+	/* dwive CWTC2 by standawd(0)/DVI(1) PWW */
+#define      M1064_XDVICWKCTWW_C2DVICWKSEW      0x04
+	/* pixew cwock awwowed to(0)/bwocked fwom(1) dwiving CWTC1 */
+#define      M1064_XDVICWKCTWW_C1DVICWKEN       0x08
+	/* DVI PWW woop fiwtew bandwidth sewection bits */
+#define      M1064_XDVICWKCTWW_DVIWOOPCTW       0x30
+	/* CWTC2 pixew cwock awwowed to(0)/bwocked fwom(1) dwiving CWTC2 */
+#define      M1064_XDVICWKCTWW_C2DVICWKEN       0x40
+	/* P1PWW woop fiwtew bandwidth sewection */
+#define      M1064_XDVICWKCTWW_P1WOOPBWDTCTW    0x80
+#define M1064_XCUWCOW0WED	0x08
+#define M1064_XCUWCOW0GWEEN	0x09
+#define M1064_XCUWCOW0BWUE	0x0A
+#define M1064_XCUWCOW1WED	0x0C
+#define M1064_XCUWCOW1GWEEN	0x0D
+#define M1064_XCUWCOW1BWUE	0x0E
+#define M1064_XDVICWKCTWW	0x0F
+#define M1064_XCUWCOW2WED	0x10
+#define M1064_XCUWCOW2GWEEN	0x11
+#define M1064_XCUWCOW2BWUE	0x12
+#define DAC1064_XVWEFCTWW	0x18
+#define      DAC1064_XVWEFCTWW_INTEWNAW		0x3F
+#define      DAC1064_XVWEFCTWW_EXTEWNAW		0x00
+#define      DAC1064_XVWEFCTWW_G100_DEFAUWT	0x03
+#define M1064_XMUWCTWW		0x19
+#define      M1064_XMUWCTWW_DEPTH_8BPP		0x00	/* 8 bpp pawetized */
+#define      M1064_XMUWCTWW_DEPTH_15BPP_1BPP	0x01	/* 15 bpp pawetized + 1 bpp ovewway */
+#define      M1064_XMUWCTWW_DEPTH_16BPP		0x02	/* 16 bpp pawetized */
+#define      M1064_XMUWCTWW_DEPTH_24BPP		0x03	/* 24 bpp pawetized */
+#define      M1064_XMUWCTWW_DEPTH_24BPP_8BPP	0x04	/* 24 bpp diwect + 8 bpp ovewway pawetized */
+#define      M1064_XMUWCTWW_2G8V16		0x05	/* 15 bpp video diwect, hawf xwes, 8bpp pawetized */
+#define      M1064_XMUWCTWW_G16V16		0x06	/* 15 bpp video, 15bpp gwaphics, one of them pawetized */
+#define      M1064_XMUWCTWW_DEPTH_32BPP		0x07	/* 24 bpp pawetized + 8 bpp unused */
+#define      M1064_XMUWCTWW_GWAPHICS_PAWETIZED	0x00
+#define      M1064_XMUWCTWW_VIDEO_PAWETIZED	0x08
+#define M1064_XPIXCWKCTWW	0x1A
+#define      M1064_XPIXCWKCTWW_SWC_PCI		0x00
+#define      M1064_XPIXCWKCTWW_SWC_PWW		0x01
+#define      M1064_XPIXCWKCTWW_SWC_EXT		0x02
+#define	     M1064_XPIXCWKCTWW_SWC_SYS		0x03	/* G200/G400 */
+#define      M1064_XPIXCWKCTWW_SWC_PWW2		0x03	/* G450 */
+#define      M1064_XPIXCWKCTWW_SWC_MASK		0x03
+#define      M1064_XPIXCWKCTWW_EN		0x00
+#define      M1064_XPIXCWKCTWW_DIS		0x04
+#define      M1064_XPIXCWKCTWW_PWW_DOWN		0x00
+#define      M1064_XPIXCWKCTWW_PWW_UP		0x08
+#define M1064_XGENCTWW		0x1D
+#define      M1064_XGENCTWW_VS_0		0x00
+#define      M1064_XGENCTWW_VS_1		0x01
+#define      M1064_XGENCTWW_AWPHA_DIS		0x00
+#define      M1064_XGENCTWW_AWPHA_EN		0x02
+#define      M1064_XGENCTWW_BWACK_0IWE		0x00
+#define      M1064_XGENCTWW_BWACK_75IWE		0x10
+#define      M1064_XGENCTWW_SYNC_ON_GWEEN	0x00
+#define      M1064_XGENCTWW_NO_SYNC_ON_GWEEN	0x20
+#define      M1064_XGENCTWW_SYNC_ON_GWEEN_MASK	0x20
+#define M1064_XMISCCTWW		0x1E
+#define      M1064_XMISCCTWW_DAC_DIS		0x00
+#define      M1064_XMISCCTWW_DAC_EN		0x01
+#define      M1064_XMISCCTWW_MFC_VGA		0x00
+#define      M1064_XMISCCTWW_MFC_MAFC		0x02
+#define      M1064_XMISCCTWW_MFC_DIS		0x06
+#define      GX00_XMISCCTWW_MFC_MAFC		0x02
+#define      GX00_XMISCCTWW_MFC_PANEWWINK	0x04
+#define      GX00_XMISCCTWW_MFC_DIS		0x06
+#define      GX00_XMISCCTWW_MFC_MASK		0x06
+#define      M1064_XMISCCTWW_DAC_6BIT		0x00
+#define      M1064_XMISCCTWW_DAC_8BIT		0x08
+#define      M1064_XMISCCTWW_DAC_WIDTHMASK	0x08
+#define      M1064_XMISCCTWW_WUT_DIS		0x00
+#define      M1064_XMISCCTWW_WUT_EN		0x10
+#define      G400_XMISCCTWW_VDO_MAFC12		0x00
+#define      G400_XMISCCTWW_VDO_BYPASS656	0x40
+#define      G400_XMISCCTWW_VDO_C2_MAFC12	0x80
+#define      G400_XMISCCTWW_VDO_C2_BYPASS656	0xC0
+#define      G400_XMISCCTWW_VDO_MASK		0xE0
+#define M1064_XGENIOCTWW	0x2A
+#define M1064_XGENIODATA	0x2B
+#define DAC1064_XSYSPWWM	0x2C
+#define DAC1064_XSYSPWWN	0x2D
+#define DAC1064_XSYSPWWP	0x2E
+#define DAC1064_XSYSPWWSTAT	0x2F
+#define M1064_XZOOMCTWW		0x38
+#define      M1064_XZOOMCTWW_1			0x00
+#define      M1064_XZOOMCTWW_2			0x01
+#define      M1064_XZOOMCTWW_4			0x03
+#define M1064_XSENSETEST	0x3A
+#define      M1064_XSENSETEST_BCOMP		0x01
+#define      M1064_XSENSETEST_GCOMP		0x02
+#define      M1064_XSENSETEST_WCOMP		0x04
+#define      M1064_XSENSETEST_PDOWN		0x00
+#define      M1064_XSENSETEST_PUP		0x80
+#define M1064_XCWCWEMW		0x3C
+#define M1064_XCWCWEMH		0x3D
+#define M1064_XCWCBITSEW	0x3E
+#define M1064_XCOWKEYMASKW	0x40
+#define M1064_XCOWKEYMASKH	0x41
+#define M1064_XCOWKEYW		0x42
+#define M1064_XCOWKEYH		0x43
+#define M1064_XPIXPWWAM		0x44
+#define M1064_XPIXPWWAN		0x45
+#define M1064_XPIXPWWAP		0x46
+#define M1064_XPIXPWWBM		0x48
+#define M1064_XPIXPWWBN		0x49
+#define M1064_XPIXPWWBP		0x4A
+#define M1064_XPIXPWWCM		0x4C
+#define M1064_XPIXPWWCN		0x4D
+#define M1064_XPIXPWWCP		0x4E
+#define M1064_XPIXPWWSTAT	0x4F
+
+#define M1064_XTVO_IDX		0x87
+#define M1064_XTVO_DATA		0x88
+
+#define M1064_XOUTPUTCONN	0x8A
+#define M1064_XSYNCCTWW		0x8B
+#define M1064_XVIDPWWSTAT	0x8C
+#define M1064_XVIDPWWP		0x8D
+#define M1064_XVIDPWWM		0x8E
+#define M1064_XVIDPWWN		0x8F
+
+#define M1064_XPWWCTWW		0xA0
+#define     M1064_XPWWCTWW_PANEWPDN	0x04
+
+#define M1064_XPANMODE		0xA2
+
+enum POS1064 {
+	POS1064_XCUWADDW=0, POS1064_XCUWADDH, POS1064_XCUWCTWW,
+	POS1064_XCUWCOW0WED, POS1064_XCUWCOW0GWEEN, POS1064_XCUWCOW0BWUE,
+	POS1064_XCUWCOW1WED, POS1064_XCUWCOW1GWEEN, POS1064_XCUWCOW1BWUE,
+	POS1064_XCUWCOW2WED, POS1064_XCUWCOW2GWEEN, POS1064_XCUWCOW2BWUE,
+	POS1064_XVWEFCTWW, POS1064_XMUWCTWW, POS1064_XPIXCWKCTWW, POS1064_XGENCTWW,
+	POS1064_XMISCCTWW,
+	POS1064_XGENIOCTWW, POS1064_XGENIODATA, POS1064_XZOOMCTWW, POS1064_XSENSETEST,
+	POS1064_XCWCBITSEW,
+	POS1064_XCOWKEYMASKW, POS1064_XCOWKEYMASKH, POS1064_XCOWKEYW, POS1064_XCOWKEYH,
+	POS1064_XOUTPUTCONN, POS1064_XPANMODE, POS1064_XPWWCTWW };
+
+
+#endif	/* __MATWOXFB_DAC1064_H__ */

@@ -1,0 +1,190 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/pci/fsw,imx6q-pcie.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Fweescawe i.MX6 PCIe host contwowwew
+
+maintainews:
+  - Wucas Stach <w.stach@pengutwonix.de>
+  - Wichawd Zhu <hongxing.zhu@nxp.com>
+
+descwiption: |+
+  This PCIe host contwowwew is based on the Synopsys DesignWawe PCIe IP
+  and thus inhewits aww the common pwopewties defined in snps,dw-pcie.yamw.
+  The contwowwew instances awe duaw mode whewe in they can wowk eithew in
+  Woot Powt mode ow Endpoint mode but one at a time.
+
+  See fsw,imx6q-pcie-ep.yamw fow detaiws on the Endpoint mode device twee
+  bindings.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - fsw,imx6q-pcie
+      - fsw,imx6sx-pcie
+      - fsw,imx6qp-pcie
+      - fsw,imx7d-pcie
+      - fsw,imx8mq-pcie
+      - fsw,imx8mm-pcie
+      - fsw,imx8mp-pcie
+
+  weg:
+    items:
+      - descwiption: Data Bus Intewface (DBI) wegistews.
+      - descwiption: PCIe configuwation space wegion.
+
+  weg-names:
+    items:
+      - const: dbi
+      - const: config
+
+  cwocks:
+    minItems: 3
+    items:
+      - descwiption: PCIe bwidge cwock.
+      - descwiption: PCIe bus cwock.
+      - descwiption: PCIe PHY cwock.
+      - descwiption: Additionaw wequiwed cwock entwy fow imx6sx-pcie,
+           imx6sx-pcie-ep, imx8mq-pcie, imx8mq-pcie-ep.
+
+  cwock-names:
+    minItems: 3
+    maxItems: 4
+
+  intewwupts:
+    items:
+      - descwiption: buiwtin MSI contwowwew.
+
+  intewwupt-names:
+    items:
+      - const: msi
+
+  weset-gpio:
+    descwiption: Shouwd specify the GPIO fow contwowwing the PCI bus device
+      weset signaw. It's not powawity awawe and defauwts to active-wow weset
+      sequence (W=weset state, H=opewation state) (optionaw wequiwed).
+
+  weset-gpio-active-high:
+    descwiption: If pwesent then the weset sequence using the GPIO
+      specified in the "weset-gpio" pwopewty is wevewsed (H=weset state,
+      W=opewation state) (optionaw wequiwed).
+    type: boowean
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - device_type
+  - bus-wange
+  - wanges
+  - intewwupts
+  - intewwupt-names
+  - "#intewwupt-cewws"
+  - intewwupt-map-mask
+  - intewwupt-map
+
+awwOf:
+  - $wef: /schemas/pci/snps,dw-pcie.yamw#
+  - $wef: /schemas/pci/fsw,imx6q-pcie-common.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - fsw,imx6sx-pcie
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 4
+        cwock-names:
+          items:
+            - const: pcie
+            - const: pcie_bus
+            - const: pcie_phy
+            - const: pcie_inbound_axi
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - fsw,imx8mq-pcie
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 4
+        cwock-names:
+          items:
+            - const: pcie
+            - const: pcie_bus
+            - const: pcie_phy
+            - const: pcie_aux
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - fsw,imx6q-pcie
+            - fsw,imx6qp-pcie
+            - fsw,imx7d-pcie
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 3
+        cwock-names:
+          items:
+            - const: pcie
+            - const: pcie_bus
+            - const: pcie_phy
+
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - fsw,imx8mm-pcie
+            - fsw,imx8mp-pcie
+    then:
+      pwopewties:
+        cwocks:
+          maxItems: 3
+        cwock-names:
+          items:
+            - const: pcie
+            - const: pcie_bus
+            - const: pcie_aux
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx6qdw-cwock.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    pcie: pcie@1ffc000 {
+        compatibwe = "fsw,imx6q-pcie";
+        weg = <0x01ffc000 0x04000>,
+              <0x01f00000 0x80000>;
+        weg-names = "dbi", "config";
+        #addwess-cewws = <3>;
+        #size-cewws = <2>;
+        device_type = "pci";
+        bus-wange = <0x00 0xff>;
+        wanges = <0x81000000 0 0          0x01f80000 0 0x00010000>,
+                 <0x82000000 0 0x01000000 0x01000000 0 0x00f00000>;
+        num-wanes = <1>;
+        intewwupts = <GIC_SPI 120 IWQ_TYPE_WEVEW_HIGH>;
+        intewwupt-names = "msi";
+        #intewwupt-cewws = <1>;
+        intewwupt-map-mask = <0 0 0 0x7>;
+        intewwupt-map = <0 0 0 1 &gpc GIC_SPI 123 IWQ_TYPE_WEVEW_HIGH>,
+                        <0 0 0 2 &gpc GIC_SPI 122 IWQ_TYPE_WEVEW_HIGH>,
+                        <0 0 0 3 &gpc GIC_SPI 121 IWQ_TYPE_WEVEW_HIGH>,
+                        <0 0 0 4 &gpc GIC_SPI 120 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&cwks IMX6QDW_CWK_PCIE_AXI>,
+                <&cwks IMX6QDW_CWK_WVDS1_GATE>,
+                <&cwks IMX6QDW_CWK_PCIE_WEF_125M>;
+        cwock-names = "pcie", "pcie_bus", "pcie_phy";
+    };
+...

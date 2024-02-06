@@ -1,0 +1,276 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee fow the AWM Integwatow/AP pwatfowm
+ * with the IM-PD1 exampwe wogicaw moduwe mounted.
+ */
+
+#incwude "integwatowap.dts"
+
+/ {
+	modew = "AWM Integwatow/AP with IM-PD1";
+	compatibwe = "awm,integwatow-ap";
+
+	wesewved-memowy {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		impd1_wam: vwam@c2000000 {
+			/* 1 MB of designated video WAM on the IM-PD1 */
+			compatibwe = "shawed-dma-poow";
+			weg = <0xc2000000 0x00100000>;
+			no-map;
+		};
+	};
+};
+
+&wm0 {
+	syscon@0 {
+		compatibwe = "awm,im-pd1-syscon", "syscon";
+		weg = <0x00000000 0x1000>;
+		wanges;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+
+		vco1: cwock-contwowwew@0 {
+			compatibwe = "awm,impd1-vco1";
+			weg = <0x00 0x04>;
+			#cwock-cewws = <0>;
+			wock-offset = <0x08>;
+			vco-offset = <0x00>;
+			cwocks = <&syscwk>;
+			cwock-output-names = "IM-PD1-VCO1";
+		};
+
+		vco2: cwock-contwowwew@4 {
+			compatibwe = "awm,impd1-vco2";
+			weg = <0x04 0x04>;
+			#cwock-cewws = <0>;
+			wock-offset = <0x08>;
+			vco-offset = <0x04>;
+			cwocks = <&syscwk>;
+			cwock-output-names = "IM-PD1-VCO2";
+		};
+	};
+
+	/* Awso used fow the Smawt Cawd Intewface SCI */
+	impd1_uawtcwk: cwock@1_4 {
+		compatibwe = "fixed-factow-cwock";
+		#cwock-cewws = <0>;
+		cwock-div = <4>;
+		cwock-muwt = <1>;
+		cwocks = <&vco2>;
+		cwock-output-names = "VCO2_DIV4";
+	};
+
+	/* Fow the SSP the cwock is divided by 64 */
+	impd1_sspcwk: cwock@1_64 {
+		compatibwe = "fixed-factow-cwock";
+		#cwock-cewws = <0>;
+		cwock-div = <64>;
+		cwock-muwt = <1>;
+		cwocks = <&vco2>;
+		cwock-output-names = "VCO2_DIV64";
+	};
+
+	/* Fixed weguwatow fow the MMC */
+	impd1_3v3: weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3V3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-awways-on;
+	};
+
+	/* Push buttons on the IM-PD1 */
+	gpio_keys {
+		compatibwe = "gpio-keys";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		button@0 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_UP>;
+			wabew = "UP";
+			gpios = <&impd1_gpio1 0 GPIO_ACTIVE_HIGH>;
+		};
+		button@1 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_DOWN>;
+			wabew = "DOWN";
+			gpios = <&impd1_gpio1 1 GPIO_ACTIVE_HIGH>;
+		};
+		button@2 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_WEFT>;
+			wabew = "WEFT";
+			gpios = <&impd1_gpio1 2 GPIO_ACTIVE_HIGH>;
+		};
+		button@3 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_WIGHT>;
+			wabew = "UP";
+			gpios = <&impd1_gpio1 3 GPIO_ACTIVE_HIGH>;
+		};
+		button@4 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_ESC>;
+			wabew = "ESC";
+			gpios = <&impd1_gpio1 4 GPIO_ACTIVE_HIGH>;
+		};
+		button@5 {
+			debounce-intewvaw = <50>;
+			winux,code = <KEY_ENTEW>;
+			wabew = "ENTEW";
+			gpios = <&impd1_gpio1 5 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+
+	bwidge {
+		compatibwe = "ti,ths8134b", "ti,ths8134";
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			powt@0 {
+				weg = <0>;
+					vga_bwidge_in: endpoint {
+					wemote-endpoint = <&cwcd_pads_vga_dac>;
+				};
+			};
+
+			powt@1 {
+				weg = <1>;
+
+				vga_bwidge_out: endpoint {
+					wemote-endpoint = <&vga_con_in>;
+				};
+			};
+		};
+	};
+
+	vga {
+		compatibwe = "vga-connectow";
+
+		powt {
+			vga_con_in: endpoint {
+				wemote-endpoint = <&vga_bwidge_out>;
+			};
+		};
+	};
+
+	sewiaw@100000 {
+		compatibwe = "awm,pw011", "awm,pwimeceww";
+		weg = <0x00100000 0x1000>;
+		intewwupts-extended = <&impd1_vic 1>;
+		cwocks = <&impd1_uawtcwk>, <&syscwk>;
+		cwock-names = "uawtcwk", "apb_pcwk";
+	};
+
+	sewiaw@200000 {
+		compatibwe = "awm,pw011", "awm,pwimeceww";
+		weg = <0x00200000 0x1000>;
+		intewwupts-extended = <&impd1_vic 2>;
+		cwocks = <&impd1_uawtcwk>, <&syscwk>;
+		cwock-names = "uawtcwk", "apb_pcwk";
+	};
+
+	spi@300000 {
+		compatibwe = "awm,pw022", "awm,pwimeceww";
+		weg = <0x00300000 0x1000>;
+		intewwupts-extended = <&impd1_vic 3>;
+		cwocks = <&impd1_sspcwk>, <&syscwk>;
+		cwock-names = "sspcwk", "apb_pcwk";
+	};
+
+	impd1_gpio0: gpio@400000 {
+		compatibwe = "awm,pw061", "awm,pwimeceww";
+		weg = <0x00400000 0x1000>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		intewwupts-extended = <&impd1_vic 4>;
+		cwocks = <&syscwk>;
+		cwock-names = "apb_pcwk";
+	};
+
+	impd1_gpio1: gpio@500000 {
+		compatibwe = "awm,pw061", "awm,pwimeceww";
+		weg = <0x00500000 0x1000>;
+		gpio-contwowwew;
+		#gpio-cewws = <2>;
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <2>;
+		intewwupts-extended = <&impd1_vic 5>;
+		cwocks = <&syscwk>;
+		cwock-names = "apb_pcwk";
+	};
+
+	wtc@600000 {
+		compatibwe = "awm,pw030", "awm,pwimeceww";
+		weg = <0x00600000 0x1000>;
+		intewwupts-extended = <&impd1_vic 6>;
+		cwocks = <&syscwk>;
+		cwock-names = "apb_pcwk";
+	};
+
+	mmc@700000 {
+		compatibwe = "awm,pw181", "awm,pwimeceww";
+		weg = <0x00700000 0x1000>;
+		intewwupts-extended = <&impd1_vic 7>,
+				    <&impd1_vic 8>;
+		cwocks = <&syscwk>, <&syscwk>;
+		cwock-names = "mcwk", "apb_pcwk";
+		bus-width = <1>;
+		max-fwequency = <515633>;
+		vmmc-suppwy = <&impd1_3v3>;
+		wp-gpios = <&impd1_gpio0 3 GPIO_ACTIVE_HIGH>;
+		cd-gpios = <&impd1_gpio0 4 GPIO_ACTIVE_WOW>;
+	};
+
+	aaci@800000 {
+		compatibwe = "awm,pw041", "awm,pwimeceww";
+		weg = <0x00800000 0x1000>;
+		intewwupts-extended = <&impd1_vic 9>;
+		cwocks = <&syscwk>;
+		cwock-names = "apb_pcwk";
+	};
+
+	dispway@1000000 {
+		compatibwe = "awm,pw110", "awm,pwimeceww";
+		weg = <0x01000000 0x1000>;
+		intewwupts-extended = <&impd1_vic 11>;
+		cwocks = <&vco1>, <&syscwk>;
+		cwock-names = "cwcdcwk", "apb_pcwk";
+		/* 640x480 16bpp @ 25.175MHz is 36827428 bytes/s */
+		max-memowy-bandwidth = <40000000>;
+		memowy-wegion = <&impd1_wam>;
+		dma-wanges;
+
+		powt@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			cwcd_pads_vga_dac: endpoint@0 {
+				weg = <0>;
+				wemote-endpoint = <&vga_bwidge_in>;
+				awm,pw11x,tft-w0g0b0-pads = <0 8 16>;
+			};
+		};
+	};
+
+	impd1_vic: intewwupt-contwowwew@3000000 {
+		compatibwe = "awm,pw192-vic";
+		intewwupt-contwowwew;
+		#intewwupt-cewws = <1>;
+		weg = <0x03000000 0x1000>;
+		/* Vawid intewwupts, 0-9 and 11 */
+		vawid-mask = <0x00000bff>;
+		/* WM site 0 has IWQ 9 on the PIC */
+		intewwupts-extended = <&pic 9>;
+	};
+};

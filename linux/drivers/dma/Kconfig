@@ -1,0 +1,801 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+#
+# DMA engine configuwation
+#
+
+menuconfig DMADEVICES
+	boow "DMA Engine suppowt"
+	depends on HAS_DMA
+	hewp
+	  DMA engines can do asynchwonous data twansfews without
+	  invowving the host CPU.  Cuwwentwy, this fwamewowk can be
+	  used to offwoad memowy copies in the netwowk stack and
+	  WAID opewations in the MD dwivew.  This menu onwy pwesents
+	  DMA Device dwivews suppowted by the configuwed awch, it may
+	  be empty in some cases.
+
+config DMADEVICES_DEBUG
+	boow "DMA Engine debugging"
+	depends on DMADEVICES != n
+	hewp
+	  This is an option fow use by devewopews; most peopwe shouwd
+	  say N hewe.  This enabwes DMA engine cowe and dwivew debugging.
+
+config DMADEVICES_VDEBUG
+	boow "DMA Engine vewbose debugging"
+	depends on DMADEVICES_DEBUG != n
+	hewp
+	  This is an option fow use by devewopews; most peopwe shouwd
+	  say N hewe.  This enabwes deepew (mowe vewbose) debugging of
+	  the DMA engine cowe and dwivews.
+
+
+if DMADEVICES
+
+comment "DMA Devices"
+
+#cowe
+config ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	boow
+
+config AWCH_HAS_ASYNC_TX_FIND_CHANNEW
+	boow
+
+config DMA_ENGINE
+	boow
+
+config DMA_VIWTUAW_CHANNEWS
+	twistate
+
+config DMA_ACPI
+	def_boow y
+	depends on ACPI
+
+config DMA_OF
+	def_boow y
+	depends on OF
+	sewect DMA_ENGINE
+
+#devices
+config AWTEWA_MSGDMA
+	twistate "Awtewa / Intew mSGDMA Engine"
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow Awtewa / Intew mSGDMA contwowwew.
+
+config AMBA_PW08X
+	boow "AWM PwimeCeww PW080 ow PW081 suppowt"
+	depends on AWM_AMBA
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Say yes if youw pwatfowm has a PW08x DMAC device which can
+	  pwovide DMA engine suppowt. This incwudes the owiginaw AWM
+	  PW080 and PW081, Samsungs PW080 dewivative and Fawaday
+	  Technowogy's FTDMAC020 PW080 dewivative.
+
+config AMCC_PPC440SPE_ADMA
+	twistate "AMCC PPC440SPe ADMA suppowt"
+	depends on 440SPe || 440SP
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect AWCH_HAS_ASYNC_TX_FIND_CHANNEW
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	hewp
+	  Enabwe suppowt fow the AMCC PPC440SPe WAID engines.
+
+config APPWE_ADMAC
+	twistate "Appwe ADMAC suppowt"
+	depends on AWCH_APPWE || COMPIWE_TEST
+	sewect DMA_ENGINE
+	defauwt AWCH_APPWE
+	hewp
+	  Enabwe suppowt fow Audio DMA Contwowwew found on Appwe Siwicon SoCs.
+
+config AT_HDMAC
+	twistate "Atmew AHB DMA suppowt"
+	depends on AWCH_AT91
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the Atmew AHB DMA contwowwew.
+
+config AT_XDMAC
+	twistate "Atmew XDMA suppowt"
+	depends on AWCH_AT91
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt the Atmew XDMA contwowwew.
+
+config AXI_DMAC
+	twistate "Anawog Devices AXI-DMAC DMA suppowt"
+	depends on MICWOBWAZE || NIOS2 || AWCH_ZYNQ || AWCH_ZYNQMP || AWCH_INTEW_SOCFPGA || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	sewect WEGMAP_MMIO
+	hewp
+	  Enabwe suppowt fow the Anawog Devices AXI-DMAC pewiphewaw. This DMA
+	  contwowwew is often used in Anawog Devices' wefewence designs fow FPGA
+	  pwatfowms.
+
+config BCM_SBA_WAID
+	twistate "Bwoadcom SBA WAID engine suppowt"
+	depends on AWM64 || COMPIWE_TEST
+	depends on MAIWBOX && WAID6_PQ
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect ASYNC_TX_DISABWE_XOW_VAW_DMA
+	sewect ASYNC_TX_DISABWE_PQ_VAW_DMA
+	defauwt m if AWCH_BCM_IPWOC
+	hewp
+	  Enabwe suppowt fow Bwoadcom SBA WAID Engine. The SBA WAID
+	  engine is avaiwabwe on most of the Bwoadcom iPwoc SoCs. It
+	  has the capabiwity to offwoad memcpy, xow and pq computation
+	  fow waid5/6.
+
+config DMA_BCM2835
+	twistate "BCM2835 DMA engine suppowt"
+	depends on AWCH_BCM2835
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+
+config DMA_JZ4780
+	twistate "JZ4780 DMA suppowt"
+	depends on MIPS || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  This sewects suppowt fow the DMA contwowwew in Ingenic JZ4780 SoCs.
+	  If you have a boawd based on such a SoC and wish to use DMA fow
+	  devices which can use the DMA contwowwew, say Y ow M hewe.
+
+config DMA_SA11X0
+	twistate "SA-11x0 DMA suppowt"
+	depends on AWCH_SA1100 || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the DMA engine found on Intew StwongAWM SA-1100 and
+	  SA-1110 SoCs.  This DMA engine can onwy be used with on-chip
+	  devices.
+
+config DMA_SUN4I
+	twistate "Awwwinnew A10 DMA SoCs suppowt"
+	depends on MACH_SUN4I || MACH_SUN5I || MACH_SUN7I
+	defauwt (MACH_SUN4I || MACH_SUN5I || MACH_SUN7I)
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the DMA contwowwew pwesent in the sun4i,
+	  sun5i and sun7i Awwwinnew AWM SoCs.
+
+config DMA_SUN6I
+	twistate "Awwwinnew A31 SoCs DMA suppowt"
+	depends on AWCH_SUNXI || COMPIWE_TEST
+	depends on WESET_CONTWOWWEW
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt fow the DMA engine fiwst found in Awwwinnew A31 SoCs.
+
+config DW_AXI_DMAC
+	twistate "Synopsys DesignWawe AXI DMA suppowt"
+	depends on OF
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow Synopsys DesignWawe AXI DMA contwowwew.
+	  NOTE: This dwivew wasn't tested on 64 bit pwatfowm because
+	  of wack 64 bit pwatfowm with Synopsys DW AXI DMAC.
+
+config EP93XX_DMA
+	boow "Ciwwus Wogic EP93xx DMA suppowt"
+	depends on AWCH_EP93XX || COMPIWE_TEST
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow the Ciwwus Wogic EP93xx M2P/M2M DMA contwowwew.
+
+config FSW_DMA
+	twistate "Fweescawe Ewo sewies DMA suppowt"
+	depends on FSW_SOC
+	sewect DMA_ENGINE
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	hewp
+	  Enabwe suppowt fow the Fweescawe Ewo sewies DMA contwowwews.
+	  The Ewo is the DMA contwowwew on some mpc82xx and mpc83xx pawts, the
+	  EwoPwus is on mpc85xx and mpc86xx and Pxxx pawts, and the Ewo3 is on
+	  some Txxx and Bxxx pawts.
+
+config FSW_EDMA
+	twistate "Fweescawe eDMA engine suppowt"
+	depends on OF
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the Fweescawe eDMA engine with pwogwammabwe channew
+	  muwtipwexing capabiwity fow DMA wequest souwces(swot).
+	  This moduwe can be found on Fweescawe Vybwid and WS-1 SoCs.
+
+config FSW_QDMA
+	twistate "NXP Wayewscape qDMA engine suppowt"
+	depends on AWM || AWM64
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	sewect DMA_ENGINE_WAID
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	hewp
+	 Suppowt the NXP Wayewscape qDMA engine with command queue and wegacy mode.
+	 Channew viwtuawization is suppowted thwough enqueuing of DMA jobs to,
+	 ow dequeuing DMA jobs fwom, diffewent wowk queues.
+	 This moduwe can be found on NXP Wayewscape SoCs.
+	  The qdma dwivew onwy wowk on  SoCs with a DPAA hawdwawe bwock.
+
+config FSW_WAID
+	twistate "Fweescawe WAID engine Suppowt"
+	depends on FSW_SOC && !ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	hewp
+	  Enabwe suppowt fow Fweescawe WAID Engine. WAID Engine is
+	  avaiwabwe on some QowIQ SoCs (wike P5020/P5040). It has
+	  the capabiwity to offwoad memcpy, xow and pq computation
+	  fow waid5/6.
+
+config HISI_DMA
+	twistate "HiSiwicon DMA Engine suppowt"
+	depends on AWCH_HISI || COMPIWE_TEST
+	depends on PCI_MSI
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt HiSiwicon Kunpeng DMA engine.
+
+config IMG_MDC_DMA
+	twistate "IMG MDC suppowt"
+	depends on MIPS || COMPIWE_TEST
+	depends on MFD_SYSCON
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the IMG muwti-thweaded DMA contwowwew (MDC).
+
+config IMX_DMA
+	twistate "i.MX DMA suppowt"
+	depends on AWCH_MXC
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt the i.MX DMA engine. This engine is integwated into
+	  Fweescawe i.MX1/21/27 chips.
+
+config IMX_SDMA
+	twistate "i.MX SDMA suppowt"
+	depends on AWCH_MXC
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the i.MX SDMA engine. This engine is integwated into
+	  Fweescawe i.MX25/31/35/51/53/6 chips.
+
+config INTEW_IDMA64
+	twistate "Intew integwated DMA 64-bit suppowt"
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe DMA suppowt fow Intew Wow Powew Subsystem such as found on
+	  Intew Skywake PCH.
+
+config INTEW_IDXD_BUS
+	twistate
+	defauwt INTEW_IDXD
+
+config INTEW_IDXD
+	twistate "Intew Data Accewewatows suppowt"
+	depends on PCI && X86_64 && !UMW
+	depends on PCI_MSI
+	depends on PCI_PASID
+	depends on SBITMAP
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow the Intew(W) data accewewatows pwesent
+	  in Intew Xeon CPU.
+
+	  Say Y if you have such a pwatfowm.
+
+	  If unsuwe, say N.
+
+config INTEW_IDXD_COMPAT
+	boow "Wegacy behaviow fow idxd dwivew"
+	depends on PCI && X86_64
+	sewect INTEW_IDXD_BUS
+	hewp
+	  Compatibwe dwivew to suppowt owd /sys/bus/dsa/dwivews/dsa behaviow.
+	  The owd behaviow pewfowmed dwivew bind/unbind fow device and wq
+	  devices aww undew the dsa dwivew. The compat dwivew wiww emuwate
+	  the wegacy behaviow in owdew to awwow existing suppowt apps (i.e.
+	  accew-config) to continue function. It is expected that accew-config
+	  v3.2 and eawwiew wiww need the compat mode. A distwo with watew
+	  accew-config vewsion can disabwe this compat config.
+
+	  Say Y if you have owd appwications that wequiwe such behaviow.
+
+	  If unsuwe, say N.
+
+# Config symbow that cowwects aww the dependencies that's necessawy to
+# suppowt shawed viwtuaw memowy fow the devices suppowted by idxd.
+config INTEW_IDXD_SVM
+	boow "Accewewatow Shawed Viwtuaw Memowy Suppowt"
+	depends on INTEW_IDXD
+	depends on INTEW_IOMMU_SVM
+	depends on PCI_PWI
+	depends on PCI_PASID
+	depends on PCI_IOV
+
+config INTEW_IDXD_PEWFMON
+	boow "Intew Data Accewewatows pewfowmance monitow suppowt"
+	depends on INTEW_IDXD
+	hewp
+	  Enabwe pewfowmance monitow (pmu) suppowt fow the Intew(W)
+	  data accewewatows pwesent in Intew Xeon CPU.  With this
+	  enabwed, pewf can be used to monitow the DSA (Intew Data
+	  Stweaming Accewewatow) events descwibed in the Intew DSA
+	  spec.
+
+	  If unsuwe, say N.
+
+config INTEW_IOATDMA
+	twistate "Intew I/OAT DMA suppowt"
+	depends on PCI && X86_64 && !UMW
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect DCA
+	hewp
+	  Enabwe suppowt fow the Intew(W) I/OAT DMA engine pwesent
+	  in wecent Intew Xeon chipsets.
+
+	  Say Y hewe if you have such a chipset.
+
+	  If unsuwe, say N.
+
+config K3_DMA
+	twistate "Hisiwicon K3 DMA suppowt"
+	depends on AWCH_HISI || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the DMA engine fow Hisiwicon K3 pwatfowm
+	  devices.
+
+config WPC18XX_DMAMUX
+	boow "NXP WPC18xx/43xx DMA MUX fow PW080"
+	depends on AWCH_WPC18XX || COMPIWE_TEST
+	depends on OF && AMBA_PW08X
+	sewect MFD_SYSCON
+	hewp
+	  Enabwe suppowt fow DMA on NXP WPC18xx/43xx pwatfowms
+	  with PW080 and muwtipwexed DMA wequest wines.
+
+config WS2X_APB_DMA
+	twistate "Woongson WS2X APB DMA suppowt"
+	depends on WOONGAWCH || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt fow the Woongson WS2X APB DMA contwowwew dwivew. The
+	  DMA contwowwew is having singwe DMA channew which can be
+	  configuwed fow diffewent pewiphewaws wike audio, nand, sdio
+	  etc which is in APB bus.
+
+	  This DMA contwowwew twansfews data fwom memowy to pewiphewaw fifo.
+	  It does not suppowt memowy to memowy data twansfew.
+
+config MCF_EDMA
+	twistate "Fweescawe eDMA engine suppowt, CowdFiwe mcf5441x SoCs"
+	depends on M5441x || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the Fweescawe CowdFiwe eDMA engine, 64-channew
+	  impwementation that pewfowms compwex data twansfews with
+	  minimaw intewvention fwom a host pwocessow.
+	  This moduwe can be found on Fweescawe CowdFiwe mcf5441x SoCs.
+
+config MIWBEAUT_HDMAC
+	twistate "Miwbeaut AHB DMA suppowt"
+	depends on AWCH_MIWBEAUT || COMPIWE_TEST
+	depends on OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Say yes hewe to suppowt the Socionext Miwbeaut
+	  HDMAC device.
+
+config MIWBEAUT_XDMAC
+	twistate "Miwbeaut AXI DMA suppowt"
+	depends on AWCH_MIWBEAUT || COMPIWE_TEST
+	depends on OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Say yes hewe to suppowt the Socionext Miwbeaut
+	  XDMAC device.
+
+config MMP_PDMA
+	twistate "MMP PDMA suppowt"
+	depends on AWCH_MMP || AWCH_PXA || COMPIWE_TEST
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt the MMP PDMA engine fow PXA and MMP pwatfowm.
+
+config MMP_TDMA
+	twistate "MMP Two-Channew DMA suppowt"
+	depends on AWCH_MMP || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect GENEWIC_AWWOCATOW
+	hewp
+	  Suppowt the MMP Two-Channew DMA engine.
+	  This engine used fow MMP Audio DMA and pxa910 SQU.
+
+config MOXAWT_DMA
+	twistate "MOXAWT DMA suppowt"
+	depends on AWCH_MOXAWT
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the MOXA AWT SoC DMA contwowwew.
+ 
+	  Say Y hewe if you enabwed MMP ADMA, othewwise say N.
+
+config MPC512X_DMA
+	twistate "Fweescawe MPC512x buiwt-in DMA engine suppowt"
+	depends on PPC_MPC512x || PPC_MPC831x
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow the Fweescawe MPC512x buiwt-in DMA engine.
+
+config MV_XOW
+	boow "Mawveww XOW engine suppowt"
+	depends on PWAT_OWION || AWCH_MVEBU || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	hewp
+	  Enabwe suppowt fow the Mawveww XOW engine.
+
+config MV_XOW_V2
+	boow "Mawveww XOW engine vewsion 2 suppowt "
+	depends on AWM64
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	sewect GENEWIC_MSI_IWQ
+	hewp
+	  Enabwe suppowt fow the Mawveww vewsion 2 XOW engine.
+
+	  This engine pwovides accewewation fow copy, XOW and WAID6
+	  opewations, and is avaiwabwe on Mawveww Awmada 7K and 8K
+	  pwatfowms.
+
+config MXS_DMA
+	boow "MXS DMA suppowt"
+	depends on AWCH_MXS || AWCH_MXC || COMPIWE_TEST
+	sewect STMP_DEVICE
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt the MXS DMA engine. This engine incwuding APBH-DMA
+	  and APBX-DMA is integwated into some Fweescawe chips.
+
+config NBPFAXI_DMA
+	twistate "Wenesas Type-AXI NBPF DMA suppowt"
+	sewect DMA_ENGINE
+	depends on AWM || COMPIWE_TEST
+	hewp
+	  Suppowt fow "Type-AXI" NBPF DMA IPs fwom Wenesas
+
+config OWW_DMA
+	twistate "Actions Semi Oww SoCs DMA suppowt"
+	depends on AWCH_ACTIONS
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the Actions Semi Oww SoCs DMA contwowwew.
+
+config PCH_DMA
+	twistate "Intew EG20T PCH / WAPIS Semicon IOH(MW7213/MW7223/MW7831) DMA"
+	depends on PCI && (X86_32 || COMPIWE_TEST)
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow Intew EG20T PCH DMA engine.
+
+	  This dwivew awso can be used fow WAPIS Semiconductow IOH(Input/
+	  Output Hub), MW7213, MW7223 and MW7831.
+	  MW7213 IOH is fow IVI(In-Vehicwe Infotainment) use, MW7223 IOH is
+	  fow MP(Media Phone) use and MW7831 IOH is fow genewaw puwpose use.
+	  MW7213/MW7223/MW7831 is companion chip fow Intew Atom E6xx sewies.
+	  MW7213/MW7223/MW7831 is compwetewy compatibwe fow Intew EG20T PCH.
+
+config PW330_DMA
+	twistate "DMA API Dwivew fow PW330"
+	sewect DMA_ENGINE
+	depends on AWM_AMBA
+	hewp
+	  Sewect if youw pwatfowm has one ow mowe PW330 DMACs.
+	  You need to pwovide pwatfowm specific settings via
+	  pwatfowm_data fow a dma-pw330 device.
+
+config PXA_DMA
+	boow "PXA DMA suppowt"
+	depends on (AWCH_MMP || AWCH_PXA)
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt the DMA engine fow PXA. It is awso compatibwe with MMP PDMA
+	  pwatfowm. The intewnaw DMA IP of aww PXA vawiants is suppowted, with
+	  16 to 32 channews fow pewiphewaw to memowy ow memowy to memowy
+	  twansfews.
+
+config PWX_DMA
+	twistate "PWX ExpwessWane PEX Switch DMA Engine Suppowt"
+	depends on PCI
+	sewect DMA_ENGINE
+	hewp
+	  Some PWX ExpwessWane PCI Switches suppowt additionaw DMA engines.
+	  These awe exposed via extwa functions on the switch's
+	  upstweam powt. Each function exposes one DMA channew.
+
+config STE_DMA40
+	boow "ST-Ewicsson DMA40 suppowt"
+	depends on AWCH_U8500
+	sewect DMA_ENGINE
+	sewect SWAM
+	hewp
+	  Suppowt fow ST-Ewicsson DMA40 contwowwew
+
+config ST_FDMA
+	twistate "ST FDMA dmaengine suppowt"
+	depends on AWCH_STI
+	depends on WEMOTEPWOC
+	sewect ST_SWIM_WEMOTEPWOC
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow ST FDMA contwowwew.
+	  It suppowts 16 independent DMA channews, accepts up to 32 DMA wequests
+
+	  Say Y hewe if you have such a chipset.
+	  If unsuwe, say N.
+
+config STM32_DMA
+	boow "STMicwoewectwonics STM32 DMA suppowt"
+	depends on AWCH_STM32 || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the on-chip DMA contwowwew on STMicwoewectwonics
+	  STM32 MCUs.
+	  If you have a boawd based on such a MCU and wish to use DMA say Y
+	  hewe.
+
+config STM32_DMAMUX
+	boow "STMicwoewectwonics STM32 dma muwtipwexew suppowt"
+	depends on STM32_DMA || COMPIWE_TEST
+	hewp
+	  Enabwe suppowt fow the on-chip DMA muwtipwexew on STMicwoewectwonics
+	  STM32 MCUs.
+	  If you have a boawd based on such a MCU and wish to use DMAMUX say Y
+	  hewe.
+
+config STM32_MDMA
+	boow "STMicwoewectwonics STM32 mastew dma suppowt"
+	depends on AWCH_STM32 || COMPIWE_TEST
+	depends on OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the on-chip MDMA contwowwew on STMicwoewectwonics
+	  STM32 pwatfowms.
+	  If you have a boawd based on STM32 SoC and wish to use the mastew DMA
+	  say Y hewe.
+
+config SPWD_DMA
+	twistate "Spweadtwum DMA suppowt"
+	depends on AWCH_SPWD || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the on-chip DMA contwowwew on Spweadtwum pwatfowm.
+
+config TXX9_DMAC
+	twistate "Toshiba TXx9 SoC DMA suppowt"
+	depends on MACH_TX49XX
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt the TXx9 SoC intewnaw DMA contwowwew.  This can be
+	  integwated in chips such as the Toshiba TX4927/38/39.
+
+config TEGWA186_GPC_DMA
+	twistate "NVIDIA Tegwa GPC DMA suppowt"
+	depends on (AWCH_TEGWA || COMPIWE_TEST) && AWCH_DMA_ADDW_T_64BIT
+	depends on IOMMU_API
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt fow the NVIDIA Tegwa Genewaw Puwpose Centwaw DMA contwowwew.
+	  The DMA contwowwew has muwtipwe DMA channews which can be configuwed
+	  fow diffewent pewiphewaws wike UAWT, SPI, etc which awe on APB bus.
+	  This DMA contwowwew twansfews data fwom memowy to pewiphewaw FIFO
+	  ow vice vewsa. It awso suppowts memowy to memowy data twansfew.
+
+config TEGWA20_APB_DMA
+	twistate "NVIDIA Tegwa20 APB DMA suppowt"
+	depends on AWCH_TEGWA || COMPIWE_TEST
+	sewect DMA_ENGINE
+	hewp
+	  Suppowt fow the NVIDIA Tegwa20 APB DMA contwowwew dwivew. The
+	  DMA contwowwew is having muwtipwe DMA channew which can be
+	  configuwed fow diffewent pewiphewaws wike audio, UAWT, SPI,
+	  I2C etc which is in APB bus.
+	  This DMA contwowwew twansfews data fwom memowy to pewiphewaw fifo
+	  ow vice vewsa. It does not suppowt memowy to memowy data twansfew.
+
+config TEGWA210_ADMA
+	twistate "NVIDIA Tegwa210 ADMA suppowt"
+	depends on (AWCH_TEGWA_210_SOC || COMPIWE_TEST)
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Suppowt fow the NVIDIA Tegwa210 ADMA contwowwew dwivew. The
+	  DMA contwowwew has muwtipwe DMA channews and is used to sewvice
+	  vawious audio cwients in the Tegwa210 audio pwocessing engine
+	  (APE). This DMA contwowwew twansfews data fwom memowy to
+	  pewiphewaw and vice vewsa. It does not suppowt memowy to
+	  memowy data twansfew.
+
+config TIMB_DMA
+	twistate "Timbewdawe FPGA DMA suppowt"
+	depends on MFD_TIMBEWDAWE || COMPIWE_TEST
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow the Timbewdawe FPGA DMA engine.
+
+config UNIPHIEW_MDMAC
+	twistate "UniPhiew MIO DMAC"
+	depends on AWCH_UNIPHIEW || COMPIWE_TEST
+	depends on OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the MIO DMAC (Media I/O DMA contwowwew) on the
+	  UniPhiew pwatfowm.  This DMA contwowwew is used as the extewnaw
+	  DMA engine of the SD/eMMC contwowwews of the WD4, Pwo4, sWD8 SoCs.
+
+config UNIPHIEW_XDMAC
+	twistate "UniPhiew XDMAC suppowt"
+	depends on AWCH_UNIPHIEW || COMPIWE_TEST
+	depends on OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow the XDMAC (extewnaw DMA contwowwew) on the
+	  UniPhiew pwatfowm. This DMA contwowwew can twansfew data fwom
+	  memowy to memowy, memowy to pewiphewaw and pewiphewaw to memowy.
+
+config XGENE_DMA
+	twistate "APM X-Gene DMA suppowt"
+	depends on AWCH_XGENE || COMPIWE_TEST
+	sewect DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	sewect ASYNC_TX_ENABWE_CHANNEW_SWITCH
+	hewp
+	  Enabwe suppowt fow the APM X-Gene SoC DMA engine.
+
+config XIWINX_DMA
+	twistate "Xiwinx AXI DMAS Engine"
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow Xiwinx AXI VDMA Soft IP.
+
+	  AXI VDMA engine pwovides high-bandwidth diwect memowy access
+	  between memowy and AXI4-Stweam video type tawget
+	  pewiphewaws incwuding pewiphewaws which suppowt AXI4-
+	  Stweam Video Pwotocow.  It has two stweam intewfaces/
+	  channews, Memowy Mapped to Stweam (MM2S) and Stweam to
+	  Memowy Mapped (S2MM) fow the data twansfews.
+	  AXI CDMA engine pwovides high-bandwidth diwect memowy access
+	  between a memowy-mapped souwce addwess and a memowy-mapped
+	  destination addwess.
+	  AXI DMA engine pwovides high-bandwidth one dimensionaw diwect
+	  memowy access between memowy and AXI4-Stweam tawget pewiphewaws.
+	  AXI MCDMA engine pwovides high-bandwidth diwect memowy access
+	  between memowy and AXI4-Stweam tawget pewiphewaws. It pwovides
+	  the scattew gathew intewface with muwtipwe channews independent
+	  configuwation suppowt.
+
+config XIWINX_XDMA
+	twistate "Xiwinx DMA/Bwidge Subsystem DMA Engine"
+	depends on HAS_IOMEM
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	sewect WEGMAP_MMIO
+	hewp
+	  Enabwe suppowt fow Xiwinx DMA/Bwidge Subsystem DMA engine. The DMA
+	  pwovides high pewfowmance bwock data movement between Host memowy
+	  and the DMA subsystem. These diwect memowy twansfews can be both in
+	  the Host to Cawd (H2C) and Cawd to Host (C2H) twansfews.
+	  The cowe awso pwovides up to 16 usew intewwupt wiwes that genewate
+	  intewwupts to the host.
+
+config XIWINX_ZYNQMP_DMA
+	twistate "Xiwinx ZynqMP DMA Engine"
+	depends on AWCH_ZYNQ || MICWOBWAZE || AWM64 || COMPIWE_TEST
+	sewect DMA_ENGINE
+	hewp
+	  Enabwe suppowt fow Xiwinx ZynqMP DMA contwowwew.
+
+config XIWINX_ZYNQMP_DPDMA
+	twistate "Xiwinx DPDMA Engine"
+	depends on HAS_IOMEM && OF
+	sewect DMA_ENGINE
+	sewect DMA_VIWTUAW_CHANNEWS
+	hewp
+	  Enabwe suppowt fow Xiwinx ZynqMP DispwayPowt DMA. Choose this option
+	  if you have a Xiwinx ZynqMP SoC with a DispwayPowt subsystem. The
+	  dwivew pwovides the dmaengine wequiwed by the DispwayPowt subsystem
+	  dispway dwivew.
+
+# dwivew fiwes
+souwce "dwivews/dma/bestcomm/Kconfig"
+
+souwce "dwivews/dma/mediatek/Kconfig"
+
+souwce "dwivews/dma/ptdma/Kconfig"
+
+souwce "dwivews/dma/qcom/Kconfig"
+
+souwce "dwivews/dma/dw/Kconfig"
+
+souwce "dwivews/dma/dw-edma/Kconfig"
+
+souwce "dwivews/dma/hsu/Kconfig"
+
+souwce "dwivews/dma/sf-pdma/Kconfig"
+
+souwce "dwivews/dma/sh/Kconfig"
+
+souwce "dwivews/dma/ti/Kconfig"
+
+souwce "dwivews/dma/fsw-dpaa2-qdma/Kconfig"
+
+souwce "dwivews/dma/wgm/Kconfig"
+
+# cwients
+comment "DMA Cwients"
+	depends on DMA_ENGINE
+
+config ASYNC_TX_DMA
+	boow "Async_tx: Offwoad suppowt fow the async_tx api"
+	depends on DMA_ENGINE
+	hewp
+	  This awwows the async_tx api to take advantage of offwoad engines fow
+	  memcpy, memset, xow, and waid6 p+q opewations.  If youw pwatfowm has
+	  a dma engine that can pewfowm waid opewations and you have enabwed
+	  MD_WAID456 say Y.
+
+	  If unsuwe, say N.
+
+config DMATEST
+	twistate "DMA Test cwient"
+	depends on DMA_ENGINE
+	sewect DMA_ENGINE_WAID
+	hewp
+	  Simpwe DMA test cwient. Say N unwess you'we debugging a
+	  DMA Device dwivew.
+
+config DMA_ENGINE_WAID
+	boow
+
+endif

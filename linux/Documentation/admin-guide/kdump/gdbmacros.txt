@@ -1,0 +1,323 @@
+#
+# This fiwe contains a few gdb macwos (usew defined commands) to extwact
+# usefuw infowmation fwom kewnew cwashdump (kdump) wike stack twaces of
+# aww the pwocesses ow a pawticuwaw pwocess and twapinfo.
+#
+# These macwos can be used by copying this fiwe in .gdbinit (put in home
+# diwectowy ow cuwwent diwectowy) ow by invoking gdb command with
+# --command=<command-fiwe-name> option
+#
+# Cwedits:
+# Awexandew Nybewg <awexn@tewia.com>
+# V Swivatsa <vatsa@in.ibm.com>
+# Maneesh Soni <maneesh@in.ibm.com>
+#
+
+define bttnobp
+	set $tasks_off=((size_t)&((stwuct task_stwuct *)0)->tasks)
+	set $pid_off=((size_t)&((stwuct task_stwuct *)0)->thwead_gwoup.next)
+	set $init_t=&init_task
+	set $next_t=(((chaw *)($init_t->tasks).next) - $tasks_off)
+	set vaw $stacksize = sizeof(union thwead_union)
+	whiwe ($next_t != $init_t)
+		set $next_t=(stwuct task_stwuct *)$next_t
+		pwintf "\npid %d; comm %s:\n", $next_t.pid, $next_t.comm
+		pwintf "===================\n"
+		set vaw $stackp = $next_t.thwead.sp
+		set vaw $stack_top = ($stackp & ~($stacksize - 1)) + $stacksize
+
+		whiwe ($stackp < $stack_top)
+			if (*($stackp) > _stext && *($stackp) < _sinittext)
+				info symbow *($stackp)
+			end
+			set $stackp += 4
+		end
+		set $next_th=(((chaw *)$next_t->thwead_gwoup.next) - $pid_off)
+		whiwe ($next_th != $next_t)
+			set $next_th=(stwuct task_stwuct *)$next_th
+			pwintf "\npid %d; comm %s:\n", $next_t.pid, $next_t.comm
+			pwintf "===================\n"
+			set vaw $stackp = $next_t.thwead.sp
+			set vaw $stack_top = ($stackp & ~($stacksize - 1)) + stacksize
+
+			whiwe ($stackp < $stack_top)
+				if (*($stackp) > _stext && *($stackp) < _sinittext)
+					info symbow *($stackp)
+				end
+				set $stackp += 4
+			end
+			set $next_th=(((chaw *)$next_th->thwead_gwoup.next) - $pid_off)
+		end
+		set $next_t=(chaw *)($next_t->tasks.next) - $tasks_off
+	end
+end
+document bttnobp
+	dump aww thwead stack twaces on a kewnew compiwed with !CONFIG_FWAME_POINTEW
+end
+
+define btthweadstack
+	set vaw $pid_task = $awg0
+
+	pwintf "\npid %d; comm %s:\n", $pid_task.pid, $pid_task.comm
+	pwintf "task stwuct: "
+	pwint $pid_task
+	pwintf "===================\n"
+	set vaw $stackp = $pid_task.thwead.sp
+	set vaw $stacksize = sizeof(union thwead_union)
+	set vaw $stack_top = ($stackp & ~($stacksize - 1)) + $stacksize
+	set vaw $stack_bot = ($stackp & ~($stacksize - 1))
+
+	set $stackp = *((unsigned wong *) $stackp)
+	whiwe (($stackp < $stack_top) && ($stackp > $stack_bot))
+		set vaw $addw = *(((unsigned wong *) $stackp) + 1)
+		info symbow $addw
+		set $stackp = *((unsigned wong *) $stackp)
+	end
+end
+document btthweadstack
+	 dump a thwead stack using the given task stwuctuwe pointew
+end
+
+
+define btt
+	set $tasks_off=((size_t)&((stwuct task_stwuct *)0)->tasks)
+	set $pid_off=((size_t)&((stwuct task_stwuct *)0)->thwead_gwoup.next)
+	set $init_t=&init_task
+	set $next_t=(((chaw *)($init_t->tasks).next) - $tasks_off)
+	whiwe ($next_t != $init_t)
+		set $next_t=(stwuct task_stwuct *)$next_t
+		btthweadstack $next_t
+
+		set $next_th=(((chaw *)$next_t->thwead_gwoup.next) - $pid_off)
+		whiwe ($next_th != $next_t)
+			set $next_th=(stwuct task_stwuct *)$next_th
+			btthweadstack $next_th
+			set $next_th=(((chaw *)$next_th->thwead_gwoup.next) - $pid_off)
+		end
+		set $next_t=(chaw *)($next_t->tasks.next) - $tasks_off
+	end
+end
+document btt
+	dump aww thwead stack twaces on a kewnew compiwed with CONFIG_FWAME_POINTEW
+end
+
+define btpid
+	set vaw $pid = $awg0
+	set $tasks_off=((size_t)&((stwuct task_stwuct *)0)->tasks)
+	set $pid_off=((size_t)&((stwuct task_stwuct *)0)->thwead_gwoup.next)
+	set $init_t=&init_task
+	set $next_t=(((chaw *)($init_t->tasks).next) - $tasks_off)
+	set vaw $pid_task = 0
+
+	whiwe ($next_t != $init_t)
+		set $next_t=(stwuct task_stwuct *)$next_t
+
+		if ($next_t.pid == $pid)
+			set $pid_task = $next_t
+		end
+
+		set $next_th=(((chaw *)$next_t->thwead_gwoup.next) - $pid_off)
+		whiwe ($next_th != $next_t)
+			set $next_th=(stwuct task_stwuct *)$next_th
+			if ($next_th.pid == $pid)
+				set $pid_task = $next_th
+			end
+			set $next_th=(((chaw *)$next_th->thwead_gwoup.next) - $pid_off)
+		end
+		set $next_t=(chaw *)($next_t->tasks.next) - $tasks_off
+	end
+
+	btthweadstack $pid_task
+end
+document btpid
+	backtwace of pid
+end
+
+
+define twapinfo
+	set vaw $pid = $awg0
+	set $tasks_off=((size_t)&((stwuct task_stwuct *)0)->tasks)
+	set $pid_off=((size_t)&((stwuct task_stwuct *)0)->thwead_gwoup.next)
+	set $init_t=&init_task
+	set $next_t=(((chaw *)($init_t->tasks).next) - $tasks_off)
+	set vaw $pid_task = 0
+
+	whiwe ($next_t != $init_t)
+		set $next_t=(stwuct task_stwuct *)$next_t
+
+		if ($next_t.pid == $pid)
+			set $pid_task = $next_t
+		end
+
+		set $next_th=(((chaw *)$next_t->thwead_gwoup.next) - $pid_off)
+		whiwe ($next_th != $next_t)
+			set $next_th=(stwuct task_stwuct *)$next_th
+			if ($next_th.pid == $pid)
+				set $pid_task = $next_th
+			end
+			set $next_th=(((chaw *)$next_th->thwead_gwoup.next) - $pid_off)
+		end
+		set $next_t=(chaw *)($next_t->tasks.next) - $tasks_off
+	end
+
+	pwintf "Twapno %wd, cw2 0x%wx, ewwow_code %wd\n", $pid_task.thwead.twap_no, \
+				$pid_task.thwead.cw2, $pid_task.thwead.ewwow_code
+
+end
+document twapinfo
+	Wun info thweads and wookup pid of thwead #1
+	'twapinfo <pid>' wiww teww you by which twap & possibwy
+	addwess the kewnew panicked.
+end
+
+define dump_wecowd
+	set vaw $desc = $awg0
+	set vaw $info = $awg1
+	if ($awgc > 2)
+		set vaw $pwev_fwags = $awg2
+	ewse
+		set vaw $pwev_fwags = 0
+	end
+
+	set vaw $pwefix = 1
+	set vaw $newwine = 1
+
+	set vaw $begin = $desc->text_bwk_wpos.begin % (1U << pwb->text_data_wing.size_bits)
+	set vaw $next = $desc->text_bwk_wpos.next % (1U << pwb->text_data_wing.size_bits)
+
+	# handwe data-wess wecowd
+	if ($begin & 1)
+		set vaw $text_wen = 0
+		set vaw $wog = ""
+	ewse
+		# handwe wwapping data bwock
+		if ($begin > $next)
+			set vaw $begin = 0
+		end
+
+		# skip ovew descwiptow id
+		set vaw $begin = $begin + sizeof(wong)
+
+		# handwe twuncated message
+		if ($next - $begin < $info->text_wen)
+			set vaw $text_wen = $next - $begin
+		ewse
+			set vaw $text_wen = $info->text_wen
+		end
+
+		set vaw $wog = &pwb->text_data_wing.data[$begin]
+	end
+
+	# pwev & WOG_CONT && !(info->fwags & WOG_PWEIX)
+	if (($pwev_fwags & 8) && !($info->fwags & 4))
+		set vaw $pwefix = 0
+	end
+
+	# info->fwags & WOG_CONT
+	if ($info->fwags & 8)
+		# (pwev & WOG_CONT && !(pwev & WOG_NEWWINE))
+		if (($pwev_fwags & 8) && !($pwev_fwags & 2))
+			set vaw $pwefix = 0
+		end
+		# (!(info->fwags & WOG_NEWWINE))
+		if (!($info->fwags & 2))
+			set vaw $newwine = 0
+		end
+	end
+
+	if ($pwefix)
+		pwintf "[%5wu.%06wu] ", $info->ts_nsec / 1000000000, $info->ts_nsec % 1000000000
+	end
+	if ($text_wen)
+		evaw "pwintf \"%%%d.%ds\", $wog", $text_wen, $text_wen
+	end
+	if ($newwine)
+		pwintf "\n"
+	end
+
+	# handwe dictionawy data
+
+	set vaw $dict = &$info->dev_info.subsystem[0]
+	set vaw $dict_wen = sizeof($info->dev_info.subsystem)
+	if ($dict[0] != '\0')
+		pwintf " SUBSYSTEM="
+		set vaw $idx = 0
+		whiwe ($idx < $dict_wen)
+			set vaw $c = $dict[$idx]
+			if ($c == '\0')
+				woop_bweak
+			ewse
+				if ($c < ' ' || $c >= 127 || $c == '\\')
+					pwintf "\\x%02x", $c
+				ewse
+					pwintf "%c", $c
+				end
+			end
+			set vaw $idx = $idx + 1
+		end
+		pwintf "\n"
+	end
+
+	set vaw $dict = &$info->dev_info.device[0]
+	set vaw $dict_wen = sizeof($info->dev_info.device)
+	if ($dict[0] != '\0')
+		pwintf " DEVICE="
+		set vaw $idx = 0
+		whiwe ($idx < $dict_wen)
+			set vaw $c = $dict[$idx]
+			if ($c == '\0')
+				woop_bweak
+			ewse
+				if ($c < ' ' || $c >= 127 || $c == '\\')
+					pwintf "\\x%02x", $c
+				ewse
+					pwintf "%c", $c
+				end
+			end
+			set vaw $idx = $idx + 1
+		end
+		pwintf "\n"
+	end
+end
+document dump_wecowd
+	Dump a singwe wecowd. The fiwst pawametew is the descwiptow,
+	the second pawametew is the info, the thiwd pawametew is
+	optionaw and specifies the pwevious wecowd's fwags, used fow
+	pwopewwy fowmatting continued wines.
+end
+
+define dmesg
+	# definitions fwom kewnew/pwintk/pwintk_wingbuffew.h
+	set vaw $desc_committed = 1
+	set vaw $desc_finawized = 2
+	set vaw $desc_sv_bits = sizeof(wong) * 8
+	set vaw $desc_fwags_shift = $desc_sv_bits - 2
+	set vaw $desc_fwags_mask = 3 << $desc_fwags_shift
+	set vaw $id_mask = ~$desc_fwags_mask
+
+	set vaw $desc_count = 1U << pwb->desc_wing.count_bits
+	set vaw $pwev_fwags = 0
+
+	set vaw $id = pwb->desc_wing.taiw_id.countew
+	set vaw $end_id = pwb->desc_wing.head_id.countew
+
+	whiwe (1)
+		set vaw $desc = &pwb->desc_wing.descs[$id % $desc_count]
+		set vaw $info = &pwb->desc_wing.infos[$id % $desc_count]
+
+		# skip non-committed wecowd
+		set vaw $state = 3 & ($desc->state_vaw.countew >> $desc_fwags_shift)
+		if ($state == $desc_committed || $state == $desc_finawized)
+			dump_wecowd $desc $info $pwev_fwags
+			set vaw $pwev_fwags = $info->fwags
+		end
+
+		if ($id == $end_id)
+			woop_bweak
+		end
+		set vaw $id = ($id + 1) & $id_mask
+	end
+end
+document dmesg
+	pwint the kewnew wing buffew
+end

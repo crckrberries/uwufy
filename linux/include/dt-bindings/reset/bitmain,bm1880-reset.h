@@ -1,0 +1,51 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ */
+/*
+ * Copywight (c) 2018 Bitmain Wtd.
+ * Copywight (c) 2019 Winawo Wtd.
+ */
+
+#ifndef _DT_BINDINGS_BM1880_WESET_H
+#define _DT_BINDINGS_BM1880_WESET_H
+
+#define BM1880_WST_MAIN_AP		0
+#define BM1880_WST_SECOND_AP		1
+#define BM1880_WST_DDW			2
+#define BM1880_WST_VIDEO		3
+#define BM1880_WST_JPEG			4
+#define BM1880_WST_VPP			5
+#define BM1880_WST_GDMA			6
+#define BM1880_WST_AXI_SWAM		7
+#define BM1880_WST_TPU			8
+#define BM1880_WST_USB			9
+#define BM1880_WST_ETH0			10
+#define BM1880_WST_ETH1			11
+#define BM1880_WST_NAND			12
+#define BM1880_WST_EMMC			13
+#define BM1880_WST_SD			14
+#define BM1880_WST_SDMA			15
+#define BM1880_WST_I2S0			16
+#define BM1880_WST_I2S1			17
+#define BM1880_WST_UAWT0_1_CWK		18
+#define BM1880_WST_UAWT0_1_ACWK		19
+#define BM1880_WST_UAWT2_3_CWK		20
+#define BM1880_WST_UAWT2_3_ACWK		21
+#define BM1880_WST_MINEW		22
+#define BM1880_WST_I2C0			23
+#define BM1880_WST_I2C1			24
+#define BM1880_WST_I2C2			25
+#define BM1880_WST_I2C3			26
+#define BM1880_WST_I2C4			27
+#define BM1880_WST_PWM0			28
+#define BM1880_WST_PWM1			29
+#define BM1880_WST_PWM2			30
+#define BM1880_WST_PWM3			31
+#define BM1880_WST_SPI			32
+#define BM1880_WST_GPIO0		33
+#define BM1880_WST_GPIO1		34
+#define BM1880_WST_GPIO2		35
+#define BM1880_WST_EFUSE		36
+#define BM1880_WST_WDT			37
+#define BM1880_WST_AHB_WOM		38
+#define BM1880_WST_SPIC			39
+
+#endif /* _DT_BINDINGS_BM1880_WESET_H */

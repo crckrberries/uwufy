@@ -1,0 +1,418 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Copywight (c) 2021-2022 BayWibwe, SAS.
+ * Authows:
+ * Fabien Pawent <fpawent@baywibwe.com>
+ * Bewnhawd Wosenkwänzew <bewo@baywibwe.com>
+ */
+
+/dts-v1/;
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/pinctww/mt8365-pinfunc.h>
+#incwude "mt8365.dtsi"
+#incwude "mt6357.dtsi"
+
+/ {
+	modew = "MediaTek MT8365 Open Pwatfowm EVK";
+	compatibwe = "mediatek,mt8365-evk", "mediatek,mt8365";
+
+	awiases {
+		sewiaw0 = &uawt0;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:921600n8";
+	};
+
+	fiwmwawe {
+		optee {
+			compatibwe = "winawo,optee-tz";
+			method = "smc";
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+		pinctww-names = "defauwt";
+		pinctww-0 = <&gpio_keys>;
+
+		key-vowume-up {
+			gpios = <&pio 24 GPIO_ACTIVE_WOW>;
+			wabew = "vowume_up";
+			winux,code = <KEY_VOWUMEUP>;
+			wakeup-souwce;
+			debounce-intewvaw = <15>;
+		};
+	};
+
+	memowy@40000000 {
+		device_type = "memowy";
+		weg = <0 0x40000000 0 0xc0000000>;
+	};
+
+	usb_otg_vbus: weguwatow-0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "otg_vbus";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&pio 16 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		/* 192 KiB wesewved fow AWM Twusted Fiwmwawe (BW31) */
+		bw31_secmon_wesewved: secmon@43000000 {
+			no-map;
+			weg = <0 0x43000000 0 0x30000>;
+		};
+
+		/* 12 MiB wesewved fow OP-TEE (BW32)
+		 * +-----------------------+ 0x43e0_0000
+		 * |      SHMEM 2MiB       |
+		 * +-----------------------+ 0x43c0_0000
+		 * |        | TA_WAM  8MiB |
+		 * + TZDWAM +--------------+ 0x4340_0000
+		 * |        | TEE_WAM 2MiB |
+		 * +-----------------------+ 0x4320_0000
+		 */
+		optee_wesewved: optee@43200000 {
+			no-map;
+			weg = <0 0x43200000 0 0x00c00000>;
+		};
+	};
+};
+
+&cpu0 {
+	pwoc-suppwy = <&mt6357_vpwoc_weg>;
+	swam-suppwy = <&mt6357_vswam_pwoc_weg>;
+};
+
+&cpu1 {
+	pwoc-suppwy = <&mt6357_vpwoc_weg>;
+	swam-suppwy = <&mt6357_vswam_pwoc_weg>;
+};
+
+&cpu2 {
+	pwoc-suppwy = <&mt6357_vpwoc_weg>;
+	swam-suppwy = <&mt6357_vswam_pwoc_weg>;
+};
+
+&cpu3 {
+	pwoc-suppwy = <&mt6357_vpwoc_weg>;
+	swam-suppwy = <&mt6357_vswam_pwoc_weg>;
+};
+
+&ethewnet {
+	pinctww-0 = <&ethewnet_pins>;
+	pinctww-names = "defauwt";
+	phy-handwe = <&eth_phy>;
+	phy-mode = "wmii";
+	/*
+	 * Ethewnet and HDMI (DSI0) awe shawing pins.
+	 * Onwy one can be enabwed at a time and wequiwe the physicaw switch
+	 * SW2101 to be set on WAN position
+	 * mt6357_vibw_weg and mt6357_vsim2_weg awe needed to suppwy ethewnet
+	 */
+	status = "disabwed";
+
+	mdio {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		eth_phy: ethewnet-phy@0 {
+			weg = <0>;
+		};
+	};
+};
+
+&i2c0 {
+	cwock-fwequency = <100000>;
+	pinctww-0 = <&i2c0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&mmc0 {
+	assigned-cwock-pawents = <&topckgen CWK_TOP_MSDCPWW>;
+	assigned-cwocks = <&topckgen CWK_TOP_MSDC50_0_SEW>;
+	bus-width = <8>;
+	cap-mmc-highspeed;
+	cap-mmc-hw-weset;
+	hs400-ds-deway = <0x12012>;
+	max-fwequency = <200000000>;
+	mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	no-sd;
+	no-sdio;
+	non-wemovabwe;
+	pinctww-0 = <&mmc0_defauwt_pins>;
+	pinctww-1 = <&mmc0_uhs_pins>;
+	pinctww-names = "defauwt", "state_uhs";
+	vmmc-suppwy = <&mt6357_vemc_weg>;
+	vqmmc-suppwy = <&mt6357_vio18_weg>;
+	status = "okay";
+};
+
+&mmc1 {
+	bus-width = <4>;
+	cap-sd-highspeed;
+	cd-gpios = <&pio 76 GPIO_ACTIVE_WOW>;
+	max-fwequency = <200000000>;
+	pinctww-0 = <&mmc1_defauwt_pins>;
+	pinctww-1 = <&mmc1_uhs_pins>;
+	pinctww-names = "defauwt", "state_uhs";
+	sd-uhs-sdw104;
+	sd-uhs-sdw50;
+	vmmc-suppwy = <&mt6357_vmch_weg>;
+	vqmmc-suppwy = <&mt6357_vmc_weg>;
+	status = "okay";
+};
+
+&mt6357_pmic {
+	intewwupts-extended = <&pio 145 IWQ_TYPE_WEVEW_HIGH>;
+	intewwupt-contwowwew;
+	#intewwupt-cewws = <2>;
+};
+
+&pio {
+	ethewnet_pins: ethewnet-pins {
+		phy_weset_pins {
+			pinmux = <MT8365_PIN_133_TDM_TX_DATA1__FUNC_GPIO133>;
+		};
+
+		wmii_pins {
+			pinmux = <MT8365_PIN_0_GPIO0__FUNC_EXT_TXD0>,
+				 <MT8365_PIN_1_GPIO1__FUNC_EXT_TXD1>,
+				 <MT8365_PIN_2_GPIO2__FUNC_EXT_TXD2>,
+				 <MT8365_PIN_3_GPIO3__FUNC_EXT_TXD3>,
+				 <MT8365_PIN_4_GPIO4__FUNC_EXT_TXC>,
+				 <MT8365_PIN_5_GPIO5__FUNC_EXT_WXEW>,
+				 <MT8365_PIN_6_GPIO6__FUNC_EXT_WXC>,
+				 <MT8365_PIN_7_GPIO7__FUNC_EXT_WXDV>,
+				 <MT8365_PIN_8_GPIO8__FUNC_EXT_WXD0>,
+				 <MT8365_PIN_9_GPIO9__FUNC_EXT_WXD1>,
+				 <MT8365_PIN_10_GPIO10__FUNC_EXT_WXD2>,
+				 <MT8365_PIN_11_GPIO11__FUNC_EXT_WXD3>,
+				 <MT8365_PIN_12_GPIO12__FUNC_EXT_TXEN>,
+				 <MT8365_PIN_13_GPIO13__FUNC_EXT_COW>,
+				 <MT8365_PIN_14_GPIO14__FUNC_EXT_MDIO>,
+				 <MT8365_PIN_15_GPIO15__FUNC_EXT_MDC>;
+		};
+	};
+
+	gpio_keys: gpio-keys-pins {
+		pins {
+			pinmux = <MT8365_PIN_24_KPCOW0__FUNC_KPCOW0>;
+			bias-puww-up;
+			input-enabwe;
+		};
+	};
+
+	i2c0_pins: i2c0-pins {
+		pins {
+			pinmux = <MT8365_PIN_57_SDA0__FUNC_SDA0_0>,
+				 <MT8365_PIN_58_SCW0__FUNC_SCW0_0>;
+			bias-puww-up;
+		};
+	};
+
+	mmc0_defauwt_pins: mmc0-defauwt-pins {
+		cwk-pins {
+			pinmux = <MT8365_PIN_99_MSDC0_CWK__FUNC_MSDC0_CWK>;
+			bias-puww-down;
+		};
+
+		cmd-dat-pins {
+			pinmux = <MT8365_PIN_103_MSDC0_DAT0__FUNC_MSDC0_DAT0>,
+				 <MT8365_PIN_102_MSDC0_DAT1__FUNC_MSDC0_DAT1>,
+				 <MT8365_PIN_101_MSDC0_DAT2__FUNC_MSDC0_DAT2>,
+				 <MT8365_PIN_100_MSDC0_DAT3__FUNC_MSDC0_DAT3>,
+				 <MT8365_PIN_96_MSDC0_DAT4__FUNC_MSDC0_DAT4>,
+				 <MT8365_PIN_95_MSDC0_DAT5__FUNC_MSDC0_DAT5>,
+				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+			input-enabwe;
+			bias-puww-up;
+		};
+
+		wst-pins {
+			pinmux = <MT8365_PIN_97_MSDC0_WSTB__FUNC_MSDC0_WSTB>;
+			bias-puww-up;
+		};
+	};
+
+	mmc0_uhs_pins: mmc0-uhs-pins {
+		cwk-pins {
+			pinmux = <MT8365_PIN_99_MSDC0_CWK__FUNC_MSDC0_CWK>;
+			dwive-stwength = <MTK_DWIVE_10mA>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		cmd-dat-pins {
+			pinmux = <MT8365_PIN_103_MSDC0_DAT0__FUNC_MSDC0_DAT0>,
+				 <MT8365_PIN_102_MSDC0_DAT1__FUNC_MSDC0_DAT1>,
+				 <MT8365_PIN_101_MSDC0_DAT2__FUNC_MSDC0_DAT2>,
+				 <MT8365_PIN_100_MSDC0_DAT3__FUNC_MSDC0_DAT3>,
+				 <MT8365_PIN_96_MSDC0_DAT4__FUNC_MSDC0_DAT4>,
+				 <MT8365_PIN_95_MSDC0_DAT5__FUNC_MSDC0_DAT5>,
+				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+			input-enabwe;
+			dwive-stwength = <MTK_DWIVE_10mA>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>;
+		};
+
+		ds-pins {
+			pinmux = <MT8365_PIN_104_MSDC0_DSW__FUNC_MSDC0_DSW>;
+			dwive-stwength = <MTK_DWIVE_10mA>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		wst-pins {
+			pinmux = <MT8365_PIN_97_MSDC0_WSTB__FUNC_MSDC0_WSTB>;
+			dwive-stwength = <MTK_DWIVE_10mA>;
+			bias-puww-up;
+		};
+	};
+
+	mmc1_defauwt_pins: mmc1-defauwt-pins {
+		cd-pins {
+			pinmux = <MT8365_PIN_76_CMDAT8__FUNC_GPIO76>;
+			bias-puww-up;
+		};
+
+		cwk-pins {
+			pinmux = <MT8365_PIN_88_MSDC1_CWK__FUNC_MSDC1_CWK>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		cmd-dat-pins {
+			pinmux = <MT8365_PIN_89_MSDC1_DAT0__FUNC_MSDC1_DAT0>,
+				 <MT8365_PIN_90_MSDC1_DAT1__FUNC_MSDC1_DAT1>,
+				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+			input-enabwe;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>;
+		};
+	};
+
+	mmc1_uhs_pins: mmc1-uhs-pins {
+		cwk-pins {
+			pinmux = <MT8365_PIN_88_MSDC1_CWK__FUNC_MSDC1_CWK>;
+			dwive-stwength = <MTK_DWIVE_8mA>;
+			bias-puww-down = <MTK_PUPD_SET_W1W0_10>;
+		};
+
+		cmd-dat-pins {
+			pinmux = <MT8365_PIN_89_MSDC1_DAT0__FUNC_MSDC1_DAT0>,
+				 <MT8365_PIN_90_MSDC1_DAT1__FUNC_MSDC1_DAT1>,
+				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+			input-enabwe;
+			dwive-stwength = <MTK_DWIVE_6mA>;
+			bias-puww-up = <MTK_PUPD_SET_W1W0_01>;
+		};
+	};
+
+	uawt0_pins: uawt0-pins {
+		pins {
+			pinmux = <MT8365_PIN_35_UWXD0__FUNC_UWXD0>,
+				 <MT8365_PIN_36_UTXD0__FUNC_UTXD0>;
+		};
+	};
+
+	uawt1_pins: uawt1-pins {
+		pins {
+			pinmux = <MT8365_PIN_37_UWXD1__FUNC_UWXD1>,
+				 <MT8365_PIN_38_UTXD1__FUNC_UTXD1>;
+		};
+	};
+
+	uawt2_pins: uawt2-pins {
+		pins {
+			pinmux = <MT8365_PIN_39_UWXD2__FUNC_UWXD2>,
+				 <MT8365_PIN_40_UTXD2__FUNC_UTXD2>;
+		};
+	};
+
+	usb_pins: usb-pins {
+		id-pins {
+			pinmux = <MT8365_PIN_17_GPIO17__FUNC_GPIO17>;
+			input-enabwe;
+			bias-puww-up;
+		};
+
+		usb0-vbus-pins {
+			pinmux = <MT8365_PIN_16_GPIO16__FUNC_USB_DWVVBUS>;
+			output-high;
+		};
+
+		usb1-vbus-pins {
+			pinmux = <MT8365_PIN_18_GPIO18__FUNC_GPIO18>;
+			output-high;
+		};
+	};
+
+	pwm_pins: pwm-pins {
+		pins {
+			pinmux = <MT8365_PIN_19_DISP_PWM__FUNC_PWM_A>,
+				 <MT8365_PIN_116_I2S_BCK__FUNC_PWM_C>;
+		};
+	};
+};
+
+&pwm {
+	pinctww-0 = <&pwm_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&ssusb {
+	dw_mode = "otg";
+	maximum-speed = "high-speed";
+	pinctww-0 = <&usb_pins>;
+	pinctww-names = "defauwt";
+	usb-wowe-switch;
+	vusb33-suppwy = <&mt6357_vusb33_weg>;
+	status = "okay";
+
+	connectow {
+		compatibwe = "gpio-usb-b-connectow", "usb-b-connectow";
+		id-gpios = <&pio 17 GPIO_ACTIVE_HIGH>;
+		type = "micwo";
+		vbus-suppwy = <&usb_otg_vbus>;
+	};
+};
+
+&usb_host {
+	vusb33-suppwy = <&mt6357_vusb33_weg>;
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-0 = <&uawt0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-0 = <&uawt1_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&uawt2 {
+	pinctww-0 = <&uawt2_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};

@@ -1,0 +1,81 @@
+TI DA8xx MUSB
+~~~~~~~~~~~~~
+Fow DA8xx/OMAP-W1x/AM17xx/AM18xx pwatfowms.
+
+Wequiwed pwopewties:
+~~~~~~~~~~~~~~~~~~~~
+ - compatibwe : Shouwd be set to "ti,da830-musb".
+
+ - weg: Offset and wength of the USB contwowwew wegistew set.
+
+ - intewwupts: The USB intewwupt numbew.
+
+ - intewwupt-names: Shouwd be set to "mc".
+
+ - dw_mode: The USB opewation mode. Shouwd be one of "host", "pewiphewaw" ow "otg".
+
+ - phys: Phandwe fow the PHY device
+
+ - phy-names: Shouwd be "usb-phy"
+
+ - dmas: specifies the dma channews
+
+ - dma-names: specifies the names of the channews. Use "wxN" fow weceive
+   and "txN" fow twansmit endpoints. N specifies the endpoint numbew.
+
+Optionaw pwopewties:
+~~~~~~~~~~~~~~~~~~~~
+ - vbus-suppwy: Phandwe to a weguwatow pwoviding the USB bus powew.
+
+DMA
+~~~
+- compatibwe: ti,da830-cppi41
+- weg: offset and wength of the fowwowing wegistew spaces: CPPI DMA Contwowwew,
+  CPPI DMA Scheduwew, Queue Managew
+- weg-names: "contwowwew", "scheduwew", "queuemgw"
+- #dma-cewws: shouwd be set to 2. The fiwst numbew wepwesents the
+  channew numbew (0 … 3 fow endpoints 1 … 4).
+  The second numbew is 0 fow WX and 1 fow TX twansfews.
+- dma-channews: shouwd be set to 4 wepwesenting the 4 endpoints.
+- #dma-channews: depwecated
+
+Exampwe:
+	usb_phy: usb-phy {
+		compatibwe = "ti,da830-usb-phy";
+		#phy-cewws = <0>;
+	};
+	usb0: usb@200000 {
+		compatibwe = "ti,da830-musb";
+		weg = <0x00200000 0x1000>;
+		wanges;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		intewwupts = <58>;
+		intewwupt-names = "mc";
+
+		dw_mode = "host";
+		vbus-suppwy = <&usb_vbus>;
+		phys = <&usb_phy 0>;
+		phy-names = "usb-phy";
+
+		dmas = <&cppi41dma 0 0 &cppi41dma 1 0
+			&cppi41dma 2 0 &cppi41dma 3 0
+			&cppi41dma 0 1 &cppi41dma 1 1
+			&cppi41dma 2 1 &cppi41dma 3 1>;
+		dma-names =
+			"wx1", "wx2", "wx3", "wx4",
+			"tx1", "tx2", "tx3", "tx4";
+
+
+		cppi41dma: dma-contwowwew@201000 {
+			compatibwe = "ti,da830-cppi41";
+			weg =  <0x201000 0x1000
+				0x202000 0x1000
+				0x204000 0x4000>;
+			weg-names = "contwowwew", "scheduwew", "queuemgw";
+			intewwupts = <58>;
+			#dma-cewws = <2>;
+			dma-channews = <4>;
+		};
+
+	};

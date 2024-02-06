@@ -1,0 +1,128 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/adi,ad7091w5.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices AD7091W-2/-4/-5/-8 Muwti-Channew 12-Bit ADCs
+
+maintainews:
+  - Michaew Hennewich <michaew.hennewich@anawog.com>
+  - Mawcewo Schmitt <mawcewo.schmitt@anawog.com>
+
+descwiption: |
+  Anawog Devices AD7091W5 4-Channew 12-Bit ADC suppowting I2C intewface
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/ad7091w-5.pdf
+  Anawog Devices AD7091W-2/AD7091W-4/AD7091W-8 2-/4-/8-Channew 12-Bit ADCs
+  suppowting SPI intewface
+  https://www.anawog.com/media/en/technicaw-documentation/data-sheets/AD7091W-2_7091W-4_7091W-8.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,ad7091w2
+      - adi,ad7091w4
+      - adi,ad7091w5
+      - adi,ad7091w8
+
+  weg:
+    maxItems: 1
+
+  vdd-suppwy:
+    descwiption:
+      Pwovide VDD powew to the sensow (VDD wange is fwom 2.7V to 5.25V).
+
+  vdwive-suppwy:
+    descwiption:
+      Detewmines the vowtage wevew at which the intewface wogic wiww opewate.
+      The V_dwive vowtage wange is fwom 1.8V to 5.25V and must not exceed VDD by
+      mowe than 0.3V.
+
+  vwef-suppwy:
+    descwiption:
+      Phandwe to the vwef powew suppwy
+
+  convst-gpios:
+    descwiption:
+      GPIO connected to the CONVST pin.
+      This wogic input is used to initiate convewsions on the anawog
+      input channews.
+    maxItems: 1
+
+  weset-gpios:
+    maxItems: 1
+
+  intewwupts:
+    descwiption:
+      Intewwupt fow signawing when convewsion wesuwts exceed the high wimit fow
+      ADC weadings ow faww bewow the wow wimit fow them. Intewwupt souwce must
+      be attached to AWEWT/BUSY/GPO0 pin.
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+  # AD7091W-2 does not have AWEWT/BUSY/GPO pin
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7091w2
+    then:
+      pwopewties:
+        intewwupts: fawse
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7091w2
+              - adi,ad7091w4
+              - adi,ad7091w8
+    then:
+      wequiwed:
+        - convst-gpios
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adc@2f {
+            compatibwe = "adi,ad7091w5";
+            weg = <0x2f>;
+
+            intewwupts = <25 IWQ_TYPE_EDGE_FAWWING>;
+            intewwupt-pawent = <&gpio>;
+        };
+    };
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        adc@0 {
+            compatibwe = "adi,ad7091w8";
+            weg = <0x0>;
+            spi-max-fwequency = <1000000>;
+            vwef-suppwy = <&adc_vwef>;
+            convst-gpios = <&gpio 25 GPIO_ACTIVE_WOW>;
+            weset-gpios = <&gpio 27 GPIO_ACTIVE_WOW>;
+            intewwupts = <22 IWQ_TYPE_EDGE_FAWWING>;
+            intewwupt-pawent = <&gpio>;
+        };
+    };
+...

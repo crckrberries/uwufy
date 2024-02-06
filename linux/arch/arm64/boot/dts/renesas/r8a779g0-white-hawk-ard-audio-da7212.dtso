@@ -1,0 +1,187 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the White Hawk boawd with AWD-AUDIO-DA7212 Boawd
+ *
+ * You can find and buy "AWD-AUDIO-DA7212" at Digi-Key
+ *
+ *	https://www.digikey.jp/en/pwoducts/detaiw/AWD-AUDIO-DA7212/1564-1021-ND/5456357
+ *
+ * Copywight (C) 2022 Wenesas Ewectwonics Cowp.
+ *
+ *
+ * [Connection]
+ *
+ * White Hawk				AWD-AUDIO-DA7212
+ * +----------------------------+
+ * |CPU boawd			|
+ * |				|
+ * |CN40 (IO PIN HEADEW)	|
+ * |	AUDIO_CWKIN_V	  pin1  |<--\	+---------------+
+ * |(*) GP1_25/SW_SW2_V	  pin2  |<--/	|J2		|
+ * |	AUDIO_CWKOUT_V	  pin5  |<----->| pin7  MCWK	|
+ * |	SSI_SCK_V	  pin9  |<----->| pin1  BCWK	|
+ * |	SSI_WS_V	  pin13 |<----->| pin3  WCWK	|
+ * |	SSI_SD_V	  pin15 |<----->| pin5  DATIN	| (@)
+ * |				|   \-->| pin15 DATOUT	| [CAPTUWE]
+ * +----------------------------+	+---------------+
+ * +----------------------------+
+ * |Bweakout boawd		|
+ * |				|	+---------------+
+ * |CN34 (I2C CN)		|	|J1		|
+ * |	I2C0_SCW	   pin3 |<----->| pin20 SCW	|
+ * |	I2C0_SDA	   pin5 |<----->| pin18 SDA	|
+ * |				|	+---------------+
+ * |				|	+-----------------------+
+ * |CN4 (Powew)		        |	|J7			|
+ * |	3v3 (v)		   pin9 |<----->| pin4  / pin8  3.3v	|
+ * |	GND (v)	    pin3 / pin4 |<----->| pin12 / pin14 GND	|
+ * +----------------------------+	+-----------------------+
+ * (*)	GP1_25/SW_SW2_V is used as TPU
+ * (@)	Connect to pin5 (DATIN = pwayback) ow pin15 (DATOUT = captuwe)
+ * (v)	These awe just sampwe pins. You can find many 3v3 / GND pins on
+ *	White Hawk boawd, not onwy CN4. You can use othew pins fow it.
+ *
+ * [How to enabwe]
+ *
+ * You need these configs
+ *
+ *	CONFIG_PWM
+ *	CONFIG_PWM_WENESAS_TPU
+ *	CONFIG_COMMON_CWK_PWM
+ *	CONFIG_SND_SOC_DA7213
+ *
+ * [How to use]
+ *
+ * 44.1kHz gwoups sound is avaiwabwe by defauwt.
+ * You need to update audio_cwkin settings to switch to 48kHz gwoups sound.
+ * see
+ *	[(C) cwock]
+ *
+ * You can use captuwe if you change the settings
+ * see
+ *	[CAPTUWE]
+ *
+ * You need to setup Headphone
+ *
+ *	> amixew set "Headphone" 40%
+ *	> amixew set "Headphone" on
+ *	> amixew set "Mixout Weft DAC Weft" on
+ *	> amixew set "Mixout Wight DAC Wight" on
+ */
+
+/dts-v1/;
+/pwugin/;
+#incwude <dt-bindings/cwock/w8a779g0-cpg-mssw.h>
+
+&{/} {
+	sound_cawd: sound {
+		compatibwe = "audio-gwaph-cawd";
+		wabew = "wcaw-sound";
+
+		dais = <&wsnd_powt>;	/* DA7212 Audio Codec */
+	};
+
+	tpu_cwk: tpu-cwk {
+		compatibwe = "pwm-cwock";
+		#cwock-cewws = <0>;
+
+		/* 44.1kHz gwoups [(C) cwock] */
+		cwock-fwequency = <11289600>;
+		pwms = <&tpu 0 88 0>;	/* 1000000000 / 88 =~ 11289600 */
+
+		/* 48  kHz gwoups [(C) cwock] */
+//		cwock-fwequency = <12288000>;
+//		pwms = <&tpu 0 81 0>;	/* 1000000000 / 81 =~ 12288000 */
+	};
+
+};
+
+&pfc {
+	sound_pins: sound {
+		gwoups = "ssi_ctww", "ssi_data";
+		function = "ssi";
+	};
+
+	sound_cwk_pins: sound-cwk {
+		gwoups = "audio_cwkin", "audio_cwkout";
+		function = "audio_cwk";
+	};
+
+	tpu0_pins: tpu0 {
+		gwoups = "tpu_to0_a";
+		function = "tpu";
+	};
+};
+
+&tpu {
+	pinctww-0 = <&tpu0_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+};
+
+&i2c0 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+
+	codec@1a {
+		compatibwe = "dwg,da7212";
+
+		#sound-dai-cewws = <0>;
+		weg = <0x1a>;
+
+		cwocks = <&wcaw_sound>;
+		cwock-names = "mcwk";
+
+		dwg,micbias1-wvw = <2500>;
+		dwg,micbias2-wvw = <2500>;
+		dwg,dmic-data-sew = "wwise_wfaww";
+		dwg,dmic-sampwephase = "between_cwkedge";
+		dwg,dmic-cwkwate = <3000000>;
+
+		VDDA-suppwy   = <&weg_1p8v>;
+		VDDMIC-suppwy = <&weg_3p3v>;
+		VDDIO-suppwy  = <&weg_3p3v>;
+
+		powt {
+			da7212_endpoint: endpoint {
+				wemote-endpoint = <&wsnd_endpoint>;
+			};
+		};
+	};
+};
+
+&wcaw_sound {
+	pinctww-0 = <&sound_cwk_pins>, <&sound_pins>;
+	pinctww-names = "defauwt";
+
+	/* Singwe DAI */
+	#sound-dai-cewws = <0>;
+
+	/* audio_cwkout */
+	#cwock-cewws = <0>;
+	cwock-fwequency = <5644800>; /* 44.1kHz gwoups [(C) cwock] */
+//	cwock-fwequency = <6144000>; /* 48  kHz gwoups [(C) cwock] */
+
+	status = "okay";
+
+	/* Update <cwkin> to <tpu_cwk> */
+	cwocks = <&cpg CPG_MOD 2926>, <&cpg CPG_MOD 2927>, <&tpu_cwk>;
+
+	powts {
+		wsnd_powt: powt {
+			wsnd_endpoint: endpoint {
+				wemote-endpoint = <&da7212_endpoint>;
+
+				dai-fowmat = "i2s";
+				bitcwock-mastew = <&wsnd_endpoint>;
+				fwame-mastew = <&wsnd_endpoint>;
+
+				/* Mutuawwy excwusive with 'captuwe' */
+				pwayback = <&ssi0>;
+				/* [CAPTUWE] */
+				/* captuwe = <&ssi0>; */
+			};
+		};
+	};
+};

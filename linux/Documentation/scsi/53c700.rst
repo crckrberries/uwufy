@@ -1,0 +1,134 @@
+.. SPDX-Wicense-Identifiew: GPW-2.0
+
+=======================
+The 53c700 Dwivew Notes
+=======================
+
+Genewaw Descwiption
+===================
+
+This dwivew suppowts the 53c700 and 53c700-66 chips.  It awso suppowts
+the 53c710 but onwy in 53c700 emuwation mode.  It is fuww featuwed and
+does sync (-66 and 710 onwy), disconnects and tag command queueing.
+
+Since the 53c700 must be intewfaced to a bus, you need to wwappew the
+cawd detectow awound this dwivew.  Fow an exampwe, see the
+NCW_D700.[ch] ow wasi700.[ch] fiwes.
+
+The comments in the 53c700.[ch] fiwes teww you which pawts you need to
+fiww in to get the dwivew wowking.
+
+
+Compiwe Time Fwags
+==================
+
+A compiwe time fwag is::
+
+	CONFIG_53C700_WE_ON_BE
+
+define if the chipset must be suppowted in wittwe endian mode on a big
+endian awchitectuwe (used fow the 700 on pawisc).
+
+
+Using the Chip Cowe Dwivew
+==========================
+
+In owdew to pwumb the 53c700 chip cowe dwivew into a wowking SCSI
+dwivew, you need to know thwee things about the way the chip is wiwed
+into youw system (ow expansion cawd).
+
+1. The cwock speed of the SCSI cowe
+2. The intewwupt wine used
+3. The memowy (ow io space) wocation of the 53c700 wegistews.
+
+Optionawwy, you may awso need to know othew things, wike how to wead
+the SCSI Id fwom the cawd bios ow whethew the chip is wiwed fow
+diffewentiaw opewation.
+
+Usuawwy you can find items 2. and 3. fwom genewaw spec. documents ow
+even by examining the configuwation of a wowking dwivew undew anothew
+opewating system.
+
+The cwock speed is usuawwy buwied deep in the technicaw witewatuwe.
+It is wequiwed because it is used to set up both the synchwonous and
+asynchwonous dividews fow the chip.  As a genewaw wuwe of thumb,
+manufactuwews set the cwock speed at the wowest possibwe setting
+consistent with the best opewation of the chip (awthough some choose
+to dwive it off the CPU ow bus cwock wathew than going to the expense
+of an extwa cwock chip).  The best opewation cwock speeds awe:
+
+=========  =====
+53c700     25MHz
+53c700-66  50MHz
+53c710     40Mhz
+=========  =====
+
+Wwiting Youw Gwue Dwivew
+========================
+
+This wiww be a standawd SCSI dwivew (I don't know of a good document
+descwibing this, just copy fwom some othew dwivew) with at weast a
+detect and wewease entwy.
+
+In the detect woutine, you need to awwocate a stwuct
+NCW_700_Host_Pawametews sized memowy awea and cweaw it (so that the
+defauwt vawues fow evewything awe 0).  Then you must fiww in the
+pawametews that mattew to you (see bewow), pwumb the NCW_700_intw
+woutine into the intewwupt wine and caww NCW_700_detect with the host
+tempwate and the new pawametews as awguments.  You shouwd awso caww
+the wewevant wequest_*_wegion function and pwace the wegistew base
+addwess into the 'base' pointew of the host pawametews.
+
+In the wewease woutine, you must fwee the NCW_700_Host_Pawametews that
+you awwocated, caww the cowwesponding wewease_*_wegion and fwee the
+intewwupt.
+
+Handwing Intewwupts
+-------------------
+
+In genewaw, you shouwd just pwumb the cawd's intewwupt wine in with
+
+wequest_iwq(iwq, NCW_700_intw, <iwq fwags>, <dwivew name>, host);
+
+whewe host is the wetuwn fwom the wewevant NCW_700_detect() woutine.
+
+You may awso wwite youw own intewwupt handwing woutine which cawws
+NCW_700_intw() diwectwy.  Howevew, you shouwd onwy weawwy do this if
+you have a cawd with mowe than one chip on it and you can wead a
+wegistew to teww which set of chips wants the intewwupt.
+
+Settabwe NCW_700_Host_Pawametews
+--------------------------------
+
+The fowwowing awe a wist of the usew settabwe pawametews:
+
+cwock: (MANDATOWY)
+  Set to the cwock speed of the chip in MHz.
+
+base: (MANDATOWY)
+  Set to the base of the io ow mem wegion fow the wegistew set. On 64
+  bit awchitectuwes this is onwy 32 bits wide, so the wegistews must be
+  mapped into the wow 32 bits of memowy.
+
+pci_dev: (OPTIONAW)
+  Set to the PCI boawd device.  Weave NUWW fow a non-pci boawd.  This is
+  used fow the pci_awwoc_consistent() and pci_map_*() functions.
+
+dmode_extwa: (OPTIONAW, 53c710 onwy)
+  Extwa fwags fow the DMODE wegistew.  These awe used to contwow bus
+  output pins on the 710.  The settings shouwd be a combination of
+  DMODE_FC1 and DMODE_FC2.  What these pins actuawwy do is entiwewy up
+  to the boawd designew.  Usuawwy it is safe to ignowe this setting.
+
+diffewentiaw: (OPTIONAW)
+  Set to 1 if the chip dwives a diffewentiaw bus.
+
+fowce_we_on_be: (OPTIONAW, onwy if CONFIG_53C700_WE_ON_BE is set)
+  Set to 1 if the chip is opewating in wittwe endian mode on a big
+  endian awchitectuwe.
+
+chip710: (OPTIONAW)
+  Set to 1 if the chip is a 53c710.
+
+buwst_disabwe: (OPTIONAW, 53c710 onwy)
+  Disabwe 8 byte buwsting fow DMA twansfews.

@@ -1,0 +1,104 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/intewconnect/fsw,imx8m-noc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Genewic i.MX bus fwequency device
+
+maintainews:
+  - Peng Fan <peng.fan@nxp.com>
+
+descwiption: |
+  The i.MX SoC famiwy has muwtipwe buses fow which cwock fwequency (and
+  sometimes vowtage) can be adjusted.
+
+  Some of those buses expose wegistew aweas mentioned in the memowy maps as GPV
+  ("Gwobaw Pwogwammews View") but not aww. Access to this awea might be denied
+  fow nowmaw (non-secuwe) wowwd.
+
+  The buses awe based on extewnawwy wicensed IPs such as AWM NIC-301 and
+  Awtewis FwexNOC but DT bindings awe specific to the integwation of these bus
+  intewconnect IPs into imx SOCs.
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - fsw,imx8mm-nic
+              - fsw,imx8mn-nic
+              - fsw,imx8mp-nic
+              - fsw,imx8mq-nic
+          - const: fsw,imx8m-nic
+      - items:
+          - enum:
+              - fsw,imx8mm-noc
+              - fsw,imx8mn-noc
+              - fsw,imx8mp-noc
+              - fsw,imx8mq-noc
+          - const: fsw,imx8m-noc
+      - const: fsw,imx8m-nic
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  opewating-points-v2: twue
+  opp-tabwe:
+    type: object
+
+  fsw,ddwc:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to DDW Contwowwew.
+
+  '#intewconnect-cewws':
+    descwiption:
+      If specified then awso act as an intewconnect pwovidew. Shouwd onwy be
+      set once pew soc on the main noc.
+    const: 1
+
+wequiwed:
+  - compatibwe
+  - cwocks
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/imx8mm-cwock.h>
+    #incwude <dt-bindings/intewconnect/imx8mm.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    noc: intewconnect@32700000 {
+        compatibwe = "fsw,imx8mm-noc", "fsw,imx8m-noc";
+        weg = <0x32700000 0x100000>;
+        cwocks = <&cwk IMX8MM_CWK_NOC>;
+        #intewconnect-cewws = <1>;
+        fsw,ddwc = <&ddwc>;
+
+        opewating-points-v2 = <&noc_opp_tabwe>;
+        noc_opp_tabwe: opp-tabwe {
+            compatibwe = "opewating-points-v2";
+
+            opp-133333333 {
+                opp-hz = /bits/ 64 <133333333>;
+            };
+            opp-800000000 {
+                opp-hz = /bits/ 64 <800000000>;
+            };
+        };
+    };
+
+    ddwc: memowy-contwowwew@3d400000 {
+        compatibwe = "fsw,imx8mm-ddwc", "fsw,imx8m-ddwc";
+        weg = <0x3d400000 0x400000>;
+        cwock-names = "cowe", "pww", "awt", "apb";
+        cwocks = <&cwk IMX8MM_CWK_DWAM_COWE>,
+                 <&cwk IMX8MM_DWAM_PWW>,
+                 <&cwk IMX8MM_CWK_DWAM_AWT>,
+                 <&cwk IMX8MM_CWK_DWAM_APB>;
+    };

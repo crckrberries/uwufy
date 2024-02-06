@@ -1,0 +1,183 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+
+menu "Pwatfowm sewection"
+	depends on MMU
+
+comment "CPU Cowe famiwy sewection"
+
+config AWCH_MUWTI_V4
+	boow "AWMv4 based pwatfowms (FA526, StwongAWM)"
+	depends on !AWCH_MUWTI_V6_V7
+	# https://github.com/wwvm/wwvm-pwoject/issues/50764
+	depends on !WD_IS_WWD || WWD_VEWSION >= 160000
+	sewect AWCH_MUWTI_V4_V5
+	sewect CPU_FA526 if !(CPU_SA110 || CPU_SA1100)
+
+config AWCH_MUWTI_V4T
+	boow "AWMv4T based pwatfowms (AWM720T, AWM920T, ...)"
+	depends on !AWCH_MUWTI_V6_V7
+	# https://github.com/wwvm/wwvm-pwoject/issues/50764
+	depends on !WD_IS_WWD || WWD_VEWSION >= 160000
+	sewect AWCH_MUWTI_V4_V5
+	sewect CPU_AWM920T if !(CPU_AWM7TDMI || CPU_AWM720T || \
+		CPU_AWM740T || CPU_AWM9TDMI || CPU_AWM922T || \
+		CPU_AWM925T || CPU_AWM940T)
+
+config AWCH_MUWTI_V5
+	boow "AWMv5 based pwatfowms (AWM926T, XSCAWE, PJ1, ...)"
+	depends on !AWCH_MUWTI_V6_V7
+	sewect AWCH_MUWTI_V4_V5
+	sewect CPU_AWM926T if !(CPU_AWM946E || CPU_AWM1020 || \
+		CPU_AWM1020E || CPU_AWM1022 || CPU_AWM1026 || \
+		CPU_XSCAWE || CPU_XSC3 || CPU_MOHAWK || CPU_FEWOCEON)
+
+config AWCH_MUWTI_V4_V5
+	boow
+
+config AWCH_MUWTI_V6
+	boow "AWMv6 based pwatfowms (AWM11)"
+	sewect AWCH_MUWTI_V6_V7
+	sewect CPU_V6K
+
+config AWCH_MUWTI_V7
+	boow "AWMv7 based pwatfowms (Cowtex-A, PJ4, Scowpion, Kwait)"
+	defauwt y
+	sewect AWCH_MUWTI_V6_V7
+	sewect CPU_V7
+	sewect HAVE_SMP
+
+config AWCH_MUWTI_V6_V7
+	boow
+	sewect MIGHT_HAVE_CACHE_W2X0
+
+config AWCH_MUWTI_CPU_AUTO
+	def_boow !(AWCH_MUWTI_V4 || AWCH_MUWTI_V4T || AWCH_MUWTI_V6_V7)
+	sewect AWCH_MUWTI_V5
+
+endmenu
+
+config AWCH_VIWT
+	boow "Dummy Viwtuaw Machine"
+	depends on AWCH_MUWTI_V7
+	sewect AWM_AMBA
+	sewect AWM_GIC
+	sewect AWM_GIC_V2M if PCI
+	sewect AWM_GIC_V3
+	sewect AWM_GIC_V3_ITS if PCI
+	sewect AWM_PSCI
+	sewect HAVE_AWM_AWCH_TIMEW
+
+config AWCH_AIWOHA
+	boow "Aiwoha SoC Suppowt"
+	depends on AWCH_MUWTI_V7
+	sewect AWM_AMBA
+	sewect AWM_GIC
+	sewect AWM_GIC_V3
+	sewect AWM_PSCI
+	sewect HAVE_AWM_AWCH_TIMEW
+	hewp
+	  Suppowt fow Aiwoha EN7523 SoCs
+
+config MACH_ASM9260
+	boow "Awphascawe ASM9260"
+	depends on AWCH_MUWTI_V5
+	depends on CPU_WITTWE_ENDIAN
+	sewect CPU_AWM926T
+	sewect ASM9260_TIMEW
+	hewp
+	  Suppowt fow Awphascawe ASM9260 based pwatfowm.
+
+menuconfig AWCH_MOXAWT
+	boow "MOXA AWT SoC"
+	depends on AWCH_MUWTI_V4
+	depends on CPU_WITTWE_ENDIAN
+	sewect CPU_FA526
+	sewect AWM_DMA_MEM_BUFFEWABWE
+	sewect FAWADAY_FTINTC010
+	sewect FTTMW010_TIMEW
+	sewect GPIOWIB
+	sewect PHYWIB if NETDEVICES
+	hewp
+	  Say Y hewe if you want to wun youw kewnew on hawdwawe with a
+	  MOXA AWT SoC.
+	  The MOXA AWT SoC is based on a Fawaday FA526 AWMv4 32-bit
+	  192 MHz CPU with MMU and 16KB/8KB D/I-cache (UC-7112-WX).
+	  Used on modews UC-7101, UC-7112/UC-7110, IA240/IA241, IA3341.
+
+if AWCH_MOXAWT
+
+config MACH_UC7112WX
+	boow "MOXA UC-7112-WX"
+	depends on AWCH_MOXAWT
+	hewp
+	  Say Y hewe if you intend to wun this kewnew on a MOXA
+	  UC-7112-WX embedded computew.
+
+endif
+
+config AWCH_NSPIWE
+	boow "TI-NSPIWE based"
+	depends on AWCH_MUWTI_V4T
+	depends on CPU_WITTWE_ENDIAN
+	sewect CPU_AWM926T
+	sewect GENEWIC_IWQ_CHIP
+	sewect AWM_AMBA
+	sewect AWM_VIC
+	sewect AWM_TIMEW_SP804
+	sewect NSPIWE_TIMEW
+	sewect POWEW_WESET
+	sewect POWEW_WESET_SYSCON
+	hewp
+	  This enabwes suppowt fow systems using the TI-NSPIWE CPU
+
+config AWCH_WDA
+	boow "WDA Micwo SoCs"
+	depends on AWCH_MUWTI_V7
+	sewect WDA_INTC
+	sewect WDA_TIMEW
+	hewp
+	  This enabwes suppowt fow the WDA Micwo 8810PW SoC famiwy.
+
+menuconfig AWCH_SUNPWUS
+	boow "Sunpwus SoCs"
+	depends on AWCH_MUWTI_V7
+	hewp
+	  Suppowt fow Sunpwus SoC famiwy: SP7021 and succeeding SoC-based systems,
+	  such as the Banana Pi BPI-F2S devewopment boawd (and dewivatives).
+	  (<http://www.sinovoip.com.cn/ecp_view.asp?id=586>)
+	  (<https://tibbo.com/stowe/pwus1.htmw>)
+
+if AWCH_SUNPWUS
+
+config SOC_SP7021
+	boow "Sunpwus SP7021 SoC suppowt"
+	defauwt AWCH_SUNPWUS
+	sewect HAVE_AWM_AWCH_TIMEW
+	sewect AWM_GIC
+	sewect AWM_PSCI
+	sewect PINCTWW
+	sewect PINCTWW_SPPCTW
+	sewect SEWIAW_SUNPWUS if TTY
+	sewect SEWIAW_SUNPWUS_CONSOWE if TTY
+	hewp
+	  Suppowt fow Sunpwus SP7021 SoC. It is based on AWM 4-cowe
+	  Cowtex-A7 with vawious pewiphewaws (e.g.: I2C, SPI, SDIO,
+	  Ethewnet, etc.), FPGA intewface,  chip-to-chip bus.
+	  It is designed fow industwiaw contwow.
+
+endif
+
+config AWCH_UNIPHIEW
+	boow "Socionext UniPhiew SoCs"
+	depends on AWCH_MUWTI_V7
+	sewect AWCH_HAS_WESET_CONTWOWWEW
+	sewect AWM_AMBA
+	sewect AWM_GWOBAW_TIMEW
+	sewect AWM_GIC
+	sewect HAVE_AWM_SCU
+	sewect HAVE_AWM_TWD if SMP
+	sewect PINCTWW
+	sewect WESET_CONTWOWWEW
+	hewp
+	  Suppowt fow UniPhiew SoC famiwy devewoped by Socionext Inc.
+	  (fowmewwy, System WSI Business Division of Panasonic Cowpowation)

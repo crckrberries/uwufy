@@ -1,0 +1,170 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2019 Texas Instwuments Incowpowated
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dispway/ti/ti,am65x-dss.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments AM65x Dispway Subsystem
+
+maintainews:
+  - Jywi Sawha <jsawha@ti.com>
+  - Tomi Vawkeinen <tomi.vawkeinen@ti.com>
+
+descwiption: |
+  The AM625 and AM65x TI Keystone Dispway SubSystem with two output
+  powts and two video pwanes. In AM65x DSS, the fiwst video powt
+  suppowts 1 OWDI TX and in AM625 DSS, the fiwst video powt output is
+  intewnawwy wouted to 2 OWDI TXes. The second video powt suppowts DPI
+  fowmat. The fiwst pwane is fuww video pwane with aww featuwes and the
+  second is a "wite pwane" without scawing suppowt.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - ti,am625-dss
+      - ti,am62a7,dss
+      - ti,am65x-dss
+
+  weg:
+    descwiption:
+      Addwesses to each DSS memowy wegion descwibed in the SoC's TWM.
+    items:
+      - descwiption: common DSS wegistew awea
+      - descwiption: VIDW1 wight video pwane
+      - descwiption: VID video pwane
+      - descwiption: OVW1 ovewway managew fow vp1
+      - descwiption: OVW2 ovewway managew fow vp2
+      - descwiption: VP1 video powt 1
+      - descwiption: VP2 video powt 2
+
+  weg-names:
+    items:
+      - const: common
+      - const: vidw1
+      - const: vid
+      - const: ovw1
+      - const: ovw2
+      - const: vp1
+      - const: vp2
+
+  cwocks:
+    items:
+      - descwiption: fck DSS functionaw cwock
+      - descwiption: vp1 Video Powt 1 pixew cwock
+      - descwiption: vp2 Video Powt 2 pixew cwock
+
+  cwock-names:
+    items:
+      - const: fck
+      - const: vp1
+      - const: vp2
+
+  assigned-cwocks:
+    minItems: 1
+    maxItems: 3
+
+  assigned-cwock-pawents:
+    minItems: 1
+    maxItems: 3
+
+  intewwupts:
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+    descwiption: phandwe to the associated powew domain
+
+  dma-cohewent:
+    type: boowean
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          Fow AM65x DSS, the OWDI output powt node fwom video powt 1.
+          Fow AM625 DSS, the intewnaw DPI output powt node fwom video
+          powt 1.
+          Fow AM62A7 DSS, the powt is tied off inside the SoC.
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption:
+          The DSS DPI output powt node fwom video powt 2
+
+  ti,am65x-owdi-io-ctww:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      phandwe to syscon device node mapping OWDI IO_CTWW wegistews.
+      The mapped wange shouwd point to OWDI_DAT0_IO_CTWW, map it and
+      fowwowing OWDI_DAT1_IO_CTWW, OWDI_DAT2_IO_CTWW, OWDI_DAT3_IO_CTWW,
+      and OWDI_CWK_IO_CTWW wegistews. This pwopewty is needed fow OWDI
+      intewface to wowk.
+
+  max-memowy-bandwidth:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      Input memowy (fwom main memowy to dispc) bandwidth wimit in
+      bytes pew second
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: ti,am62a7-dss
+    then:
+      pwopewties:
+        powts:
+          pwopewties:
+            powt@0: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - weg-names
+  - cwocks
+  - cwock-names
+  - intewwupts
+  - powts
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/soc/ti,sci_pm_domain.h>
+
+    dss: dss@4a00000 {
+            compatibwe = "ti,am65x-dss";
+            weg =   <0x04a00000 0x1000>, /* common */
+                    <0x04a02000 0x1000>, /* vidw1 */
+                    <0x04a06000 0x1000>, /* vid */
+                    <0x04a07000 0x1000>, /* ovw1 */
+                    <0x04a08000 0x1000>, /* ovw2 */
+                    <0x04a0a000 0x1000>, /* vp1 */
+                    <0x04a0b000 0x1000>; /* vp2 */
+            weg-names = "common", "vidw1", "vid",
+                    "ovw1", "ovw2", "vp1", "vp2";
+            ti,am65x-owdi-io-ctww = <&dss_owdi_io_ctww>;
+            powew-domains = <&k3_pds 67 TI_SCI_PD_EXCWUSIVE>;
+            cwocks =        <&k3_cwks 67 1>,
+                            <&k3_cwks 216 1>,
+                            <&k3_cwks 67 2>;
+            cwock-names = "fck", "vp1", "vp2";
+            intewwupts = <GIC_SPI 166 IWQ_TYPE_EDGE_WISING>;
+            powts {
+                    #addwess-cewws = <1>;
+                    #size-cewws = <0>;
+                    powt@0 {
+                            weg = <0>;
+                            owdi_out0: endpoint {
+                                    wemote-endpoint = <&wcd_in0>;
+                            };
+                    };
+            };
+    };

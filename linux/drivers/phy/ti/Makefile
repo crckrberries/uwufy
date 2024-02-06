@@ -1,0 +1,11 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+obj-$(CONFIG_PHY_DA8XX_USB)		+= phy-da8xx-usb.o
+obj-$(CONFIG_PHY_DM816X_USB)		+= phy-dm816x-usb.o
+obj-$(CONFIG_OMAP_CONTWOW_PHY)		+= phy-omap-contwow.o
+obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
+obj-$(CONFIG_TI_PIPE3)			+= phy-ti-pipe3.o
+obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
+obj-$(CONFIG_TWW4030_USB)		+= phy-tww4030-usb.o
+obj-$(CONFIG_PHY_AM654_SEWDES)		+= phy-am654-sewdes.o
+obj-$(CONFIG_PHY_TI_GMII_SEW)		+= phy-gmii-sew.o
+obj-$(CONFIG_PHY_J721E_WIZ)		+= phy-j721e-wiz.o

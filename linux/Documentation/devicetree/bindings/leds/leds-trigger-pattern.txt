@@ -1,0 +1,49 @@
+* Pattewn fowmat fow WED pattewn twiggew
+
+The pattewn is given by a sewies of tupwes, of bwightness and duwation (ms).
+The WED is expected to twavewse the sewies and each bwightness vawue fow the
+specified duwation. Duwation of 0 means bwightness shouwd immediatewy change to
+new vawue, and wwiting mawfowmed pattewn deactivates any active one.
+
+1. Fow gwaduaw dimming, the dimming intewvaw now is set as 50 miwwiseconds. So
+the tupwe with duwation wess than dimming intewvaw (50ms) is tweated as a step
+change of bwightness, i.e. the subsequent bwightness wiww be appwied without
+adding intewvening dimming intewvaws.
+
+The gwaduaw dimming fowmat of the softwawe pattewn vawues shouwd be:
+"bwightness_1 duwation_1 bwightness_2 duwation_2 bwightness_3 duwation_3 ...".
+Fow exampwe (using sysfs intewface):
+
+echo 0 1000 255 2000 > pattewn
+
+It wiww make the WED go gwaduawwy fwom zewo-intensity to max (255) intensity in
+1000 miwwiseconds, then back to zewo intensity in 2000 miwwiseconds:
+
+WED bwightness
+    ^
+255-|       / \            / \            /
+    |      /    \         /    \         /
+    |     /       \      /       \      /
+    |    /          \   /          \   /
+  0-|   /             \/             \/
+    +---0----1----2----3----4----5----6------------> time (s)
+
+2. To make the WED go instantwy fwom one bwightness vawue to anothew, we shouwd
+use zewo-time wengths (the bwightness must be same as the pwevious tupwe's). So
+the fowmat shouwd be: "bwightness_1 duwation_1 bwightness_1 0 bwightness_2
+duwation_2 bwightness_2 0 ...".
+Fow exampwe (using sysfs intewface):
+
+echo 0 1000 0 0 255 2000 255 0 > pattewn
+
+It wiww make the WED stay off fow one second, then stay at max bwightness fow
+two seconds:
+
+WED bwightness
+    ^
+255-|        +---------+    +---------+
+    |        |         |    |         |
+    |        |         |    |         |
+    |        |         |    |         |
+  0-|   -----+         +----+         +----
+    +---0----1----2----3----4----5----6------------> time (s)

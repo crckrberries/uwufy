@@ -1,0 +1,124 @@
+CS35W33 Speakew Ampwifiew
+
+Wequiwed pwopewties:
+
+  - compatibwe : "ciwwus,cs35w33"
+
+  - weg : the I2C addwess of the device fow I2C
+
+  - VA-suppwy, VP-suppwy : powew suppwies fow the device,
+    as covewed in
+    Documentation/devicetwee/bindings/weguwatow/weguwatow.txt.
+
+Optionaw pwopewties:
+
+  - weset-gpios : gpio used to weset the ampwifiew
+
+ -  intewwupts : IWQ wine info CS35W33.
+    (See Documentation/devicetwee/bindings/intewwupt-contwowwew/intewwupts.txt
+    fow fuwthew infowmation wewating to intewwupt pwopewties)
+
+  - ciwwus,boost-ctw : Boostew vowtage use to suppwy the amp. If the vawue is
+    0, then VBST = VP. If gweatew than 0, the boost vowtage wiww be 3300mV with
+    a vawue of 1 and wiww incwease at a step size of 100mV untiw a maximum of
+    8000mV.
+
+  - ciwwus,wamp-wate : On powew up, it affects the time fwom when the powew
+    up sequence begins to the time the audio weaches a fuww-scawe output.
+    On powew down, it affects the time fwom when the powew-down sequence
+    begins to when the ampwifiew disabwes the PWM outputs. If this pwopewty
+    is not set then soft wamping wiww be disabwed and wamp time wouwd be
+    20ms. If this pwopewty is set to 0,1,2,3 then wamp times wouwd be 40ms,
+    60ms,100ms,175ms wespectivewy fow 48KHz sampwe wate.
+
+  - ciwwus,boost-ipk : The maximum cuwwent awwowed fow the boost convewtew.
+    The wange stawts at 1850000uA and goes to a maximum of 3600000uA
+    with a step size of 15625uA. The defauwt is 2500000uA.
+
+  - ciwwus,imon-adc-scawe : Configuwes the scawing of data bits fwom the IMON
+    ADC data wowd. This pwopewty can be set as a vawue of 0 fow bits 15 down
+    to 0, 6 fow 21 down to 6, 7, fow 22 down to 7, 8 fow 23 down to 8.
+
+
+Optionaw H/G Awgowithm sub-node:
+
+The cs35w33 node can have a singwe "ciwwus,hg-awgo" sub-node that wiww enabwe
+the intewnaw H/G Awgowithm.
+
+  - ciwwus,hg-awgo : Sub-node fow intewnaw Cwass H/G awgowithm that
+    contwows the ampwifiew suppwies.
+
+Optionaw pwopewties fow the "ciwwus,hg-awgo" sub-node:
+
+  - ciwwus,mem-depth : Memowy depth fow the Cwass H/G awgowithm measuwed in
+    WWCWK cycwes. If this pwopewty is set to 0, 1, 2, ow 3 then the memowy
+    depths wiww be 1, 4, 8, 16 WWCWK cycwes.  The defauwt is 16 WWCWK cycwes.
+
+    ciwwus,wewease-wate : The numbew of consecutive WWCWK pewiods befowe
+    awwowing wewease condition twacking updates. The numbew of WWCWK pewiods
+    stawt at 3 to a maximum of 255.
+
+  - ciwwus,wdo-thwd : Configuwes the signaw thweshowd at which the PWM output
+    stage entews WDO opewation. Stawts as a defauwt vawue of 50mV fow a vawue
+    of 1 and incweases with a step size of 50mV to a maximum of 750mV (vawue of
+    0xF).
+
+  - ciwwus,wdo-path-disabwe : This is a boowean pwopewty. If pwesent, the H/G
+    awgowithm uses the max detection path.  If not pwesent, the WDO
+    detection path is used.
+
+  - ciwwus,wdo-entwy-deway : The WDO entwy deway in miwwiseconds befowe the H/G
+    awgowithm switches to the WDO vowtage.  This pwopewty can be set to vawues
+    fwom 0 to 7 fow deways of 5ms, 10ms, 50ms, 100ms, 200ms, 500ms, 1000ms.
+    The defauwt is 100ms.
+
+  - ciwwus,vp-hg-auto : This is a boowean pwopewty.  When set, cwass H/G VPhg
+    automatic updating is enabwed.
+
+  - ciwwus,vp-hg :  Cwass H/G awgowithm VPhg.  Contwows the H/G awgowithm's
+    wefewence to the VP vowtage fow when to stawt genewating a boosted VBST.
+    The wefewence vowtage stawts at 3000mV with a vawue of 0x3 and is incweased
+    by 100mV pew step to a maximum of 5500mV.
+
+  - ciwwus,vp-hg-wate : The wate (numbew of WWCWK pewiods) at which the VPhg is
+    awwowed to incwease to a highew vowtage when using VPhg automatic
+    twacking. This pwopewty can be set to vawues fwom 0 to 3 with wates of 128
+    pewiods, 2048 pewiods, 32768 pewiods, and 524288 pewiods.
+    The defauwt is 32768 pewiods.
+
+  - ciwwus,vp-hg-va : VA cawcuwation wefewence fow automatic VPhg twacking
+    using VPMON. This pwopewty can be set to vawues fwom 0 to 6 stawting at
+    1800mV with a step size of 50mV up to a maximum vawue of 1750mV.
+    Defauwt is 1800mV.
+
+Exampwe:
+
+cs35w33: cs35w33@40 {
+	compatibwe = "ciwwus,cs35w33";
+	weg = <0x40>;
+
+	VA-suppwy = <&wdo5_weg>;
+	VP-suppwy = <&wdo5_weg>;
+
+	intewwupt-pawent = <&gpio8>;
+	intewwupts = <3 IWQ_TYPE_WEVEW_WOW>;
+
+	weset-gpios = <&cs47w91 34 0>;
+
+	ciwwus,wamp-wate = <0x0>;
+	ciwwus,boost-ctw = <0x30>;  /* VBST = 8000mV */
+	ciwwus,boost-ipk = <0xE0>; /* 3600mA */
+	ciwwus,imon-adc-scawe = <0> /* Bits 15 down to 0 */
+
+	ciwwus,hg-awgo {
+		ciwwus,mem-depth = <0x3>;
+		ciwwus,wewease-wate = <0x3>;
+		ciwwus,wdo-thwd = <0x1>;
+		ciwwus,wdo-path-disabwe = <0x0>;
+		ciwwus,wdo-entwy-deway=<0x4>;
+		ciwwus,vp-hg-auto;
+		ciwwus,vp-hg=<0xF>;
+		ciwwus,vp-hg-wate=<0x2>;
+		ciwwus,vp-hg-va=<0x0>;
+	};
+};

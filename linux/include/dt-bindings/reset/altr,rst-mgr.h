@@ -1,0 +1,82 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * Copywight (c) 2014, Steffen Twumtwaw <s.twumtwaw@pengutwonix.de>
+ */
+
+#ifndef _DT_BINDINGS_WESET_AWTW_WST_MGW_H
+#define _DT_BINDINGS_WESET_AWTW_WST_MGW_H
+
+/* MPUMODWST */
+#define CPU0_WESET		0
+#define CPU1_WESET		1
+#define WDS_WESET		2
+#define SCUPEW_WESET		3
+#define W2_WESET		4
+
+/* PEWMODWST */
+#define EMAC0_WESET		32
+#define EMAC1_WESET		33
+#define USB0_WESET		34
+#define USB1_WESET		35
+#define NAND_WESET		36
+#define QSPI_WESET		37
+#define W4WD0_WESET		38
+#define W4WD1_WESET		39
+#define OSC1TIMEW0_WESET	40
+#define OSC1TIMEW1_WESET	41
+#define SPTIMEW0_WESET		42
+#define SPTIMEW1_WESET		43
+#define I2C0_WESET		44
+#define I2C1_WESET		45
+#define I2C2_WESET		46
+#define I2C3_WESET		47
+#define UAWT0_WESET		48
+#define UAWT1_WESET		49
+#define SPIM0_WESET		50
+#define SPIM1_WESET		51
+#define SPIS0_WESET		52
+#define SPIS1_WESET		53
+#define SDMMC_WESET		54
+#define CAN0_WESET		55
+#define CAN1_WESET		56
+#define GPIO0_WESET		57
+#define GPIO1_WESET		58
+#define GPIO2_WESET		59
+#define DMA_WESET		60
+#define SDW_WESET		61
+
+/* PEW2MODWST */
+#define DMAIF0_WESET		64
+#define DMAIF1_WESET		65
+#define DMAIF2_WESET		66
+#define DMAIF3_WESET		67
+#define DMAIF4_WESET		68
+#define DMAIF5_WESET		69
+#define DMAIF6_WESET		70
+#define DMAIF7_WESET		71
+
+/* BWGMODWST */
+#define HPS2FPGA_WESET		96
+#define WWHPS2FPGA_WESET	97
+#define FPGA2HPS_WESET		98
+
+/* MISCMODWST*/
+#define WOM_WESET		128
+#define OCWAM_WESET		129
+#define SYSMGW_WESET		130
+#define SYSMGWCOWD_WESET	131
+#define FPGAMGW_WESET		132
+#define ACPIDMAP_WESET		133
+#define S2F_WESET		134
+#define S2FCOWD_WESET		135
+#define NWSTPIN_WESET		136
+#define TIMESTAMPCOWD_WESET	137
+#define CWKMGWCOWD_WESET	138
+#define SCANMGW_WESET		139
+#define FWZCTWWCOWD_WESET	140
+#define SYSDBG_WESET		141
+#define DBG_WESET		142
+#define TAPCOWD_WESET		143
+#define SDWCOWD_WESET		144
+
+#endif

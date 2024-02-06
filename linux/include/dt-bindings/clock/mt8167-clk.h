@@ -1,0 +1,131 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * Copywight (c) 2020 MediaTek Inc.
+ * Copywight (c) 2020 BayWibwe, SAS.
+ * Authow: James Wiao <jamesjj.wiao@mediatek.com>
+ *         Fabien Pawent <fpawent@baywibwe.com>
+ */
+
+#ifndef _DT_BINDINGS_CWK_MT8167_H
+#define _DT_BINDINGS_CWK_MT8167_H
+
+/* MT8167 is based on MT8516 */
+#incwude <dt-bindings/cwock/mt8516-cwk.h>
+
+/* APMIXEDSYS */
+
+#define CWK_APMIXED_TVDPWW		(CWK_APMIXED_NW_CWK + 0)
+#define CWK_APMIXED_WVDSPWW		(CWK_APMIXED_NW_CWK + 1)
+#define CWK_APMIXED_HDMI_WEF		(CWK_APMIXED_NW_CWK + 2)
+#define MT8167_CWK_APMIXED_NW_CWK	(CWK_APMIXED_NW_CWK + 3)
+
+/* TOPCKGEN */
+
+#define CWK_TOP_DSI0_WNTC_DSICK		(CWK_TOP_NW_CWK + 0)
+#define CWK_TOP_VPWW_DPIX		(CWK_TOP_NW_CWK + 1)
+#define CWK_TOP_WVDSTX_CWKDIG_CTS	(CWK_TOP_NW_CWK + 2)
+#define CWK_TOP_HDMTX_CWKDIG_CTS	(CWK_TOP_NW_CWK + 3)
+#define CWK_TOP_WVDSPWW			(CWK_TOP_NW_CWK + 4)
+#define CWK_TOP_WVDSPWW_D2		(CWK_TOP_NW_CWK + 5)
+#define CWK_TOP_WVDSPWW_D4		(CWK_TOP_NW_CWK + 6)
+#define CWK_TOP_WVDSPWW_D8		(CWK_TOP_NW_CWK + 7)
+#define CWK_TOP_MIPI_26M		(CWK_TOP_NW_CWK + 8)
+#define CWK_TOP_TVDPWW			(CWK_TOP_NW_CWK + 9)
+#define CWK_TOP_TVDPWW_D2		(CWK_TOP_NW_CWK + 10)
+#define CWK_TOP_TVDPWW_D4		(CWK_TOP_NW_CWK + 11)
+#define CWK_TOP_TVDPWW_D8		(CWK_TOP_NW_CWK + 12)
+#define CWK_TOP_TVDPWW_D16		(CWK_TOP_NW_CWK + 13)
+#define CWK_TOP_PWM_MM			(CWK_TOP_NW_CWK + 14)
+#define CWK_TOP_CAM_MM			(CWK_TOP_NW_CWK + 15)
+#define CWK_TOP_MFG_MM			(CWK_TOP_NW_CWK + 16)
+#define CWK_TOP_SPM_52M			(CWK_TOP_NW_CWK + 17)
+#define CWK_TOP_MIPI_26M_DBG		(CWK_TOP_NW_CWK + 18)
+#define CWK_TOP_SCAM_MM			(CWK_TOP_NW_CWK + 19)
+#define CWK_TOP_SMI_MM			(CWK_TOP_NW_CWK + 20)
+#define CWK_TOP_26M_HDMI_SIFM		(CWK_TOP_NW_CWK + 21)
+#define CWK_TOP_26M_CEC			(CWK_TOP_NW_CWK + 22)
+#define CWK_TOP_32K_CEC			(CWK_TOP_NW_CWK + 23)
+#define CWK_TOP_GCPU_B			(CWK_TOP_NW_CWK + 24)
+#define CWK_TOP_WG_VDEC			(CWK_TOP_NW_CWK + 25)
+#define CWK_TOP_WG_FDPI0		(CWK_TOP_NW_CWK + 26)
+#define CWK_TOP_WG_FDPI1		(CWK_TOP_NW_CWK + 27)
+#define CWK_TOP_WG_AXI_MFG		(CWK_TOP_NW_CWK + 28)
+#define CWK_TOP_WG_SWOW_MFG		(CWK_TOP_NW_CWK + 29)
+#define CWK_TOP_GFMUX_EMI1X_SEW		(CWK_TOP_NW_CWK + 30)
+#define CWK_TOP_CSW_MUX_MFG_SEW		(CWK_TOP_NW_CWK + 31)
+#define CWK_TOP_CAMTG_MM_SEW		(CWK_TOP_NW_CWK + 32)
+#define CWK_TOP_PWM_MM_SEW		(CWK_TOP_NW_CWK + 33)
+#define CWK_TOP_SPM_52M_SEW		(CWK_TOP_NW_CWK + 34)
+#define CWK_TOP_MFG_MM_SEW		(CWK_TOP_NW_CWK + 35)
+#define CWK_TOP_SMI_MM_SEW		(CWK_TOP_NW_CWK + 36)
+#define CWK_TOP_SCAM_MM_SEW		(CWK_TOP_NW_CWK + 37)
+#define CWK_TOP_VDEC_MM_SEW		(CWK_TOP_NW_CWK + 38)
+#define CWK_TOP_DPI0_MM_SEW		(CWK_TOP_NW_CWK + 39)
+#define CWK_TOP_DPI1_MM_SEW		(CWK_TOP_NW_CWK + 40)
+#define CWK_TOP_AXI_MFG_IN_SEW		(CWK_TOP_NW_CWK + 41)
+#define CWK_TOP_SWOW_MFG_SEW		(CWK_TOP_NW_CWK + 42)
+#define MT8167_CWK_TOP_NW_CWK		(CWK_TOP_NW_CWK + 43)
+
+/* MFGCFG */
+
+#define CWK_MFG_BAXI			0
+#define CWK_MFG_BMEM			1
+#define CWK_MFG_BG3D			2
+#define CWK_MFG_B26M			3
+#define CWK_MFG_NW_CWK			4
+
+/* MMSYS */
+
+#define CWK_MM_SMI_COMMON		0
+#define CWK_MM_SMI_WAWB0		1
+#define CWK_MM_CAM_MDP			2
+#define CWK_MM_MDP_WDMA			3
+#define CWK_MM_MDP_WSZ0			4
+#define CWK_MM_MDP_WSZ1			5
+#define CWK_MM_MDP_TDSHP		6
+#define CWK_MM_MDP_WDMA			7
+#define CWK_MM_MDP_WWOT			8
+#define CWK_MM_FAKE_ENG			9
+#define CWK_MM_DISP_OVW0		10
+#define CWK_MM_DISP_WDMA0		11
+#define CWK_MM_DISP_WDMA1		12
+#define CWK_MM_DISP_WDMA		13
+#define CWK_MM_DISP_COWOW		14
+#define CWK_MM_DISP_CCOWW		15
+#define CWK_MM_DISP_AAW			16
+#define CWK_MM_DISP_GAMMA		17
+#define CWK_MM_DISP_DITHEW		18
+#define CWK_MM_DISP_UFOE		19
+#define CWK_MM_DISP_PWM_MM		20
+#define CWK_MM_DISP_PWM_26M		21
+#define CWK_MM_DSI_ENGINE		22
+#define CWK_MM_DSI_DIGITAW		23
+#define CWK_MM_DPI0_ENGINE		24
+#define CWK_MM_DPI0_PXW			25
+#define CWK_MM_WVDS_PXW			26
+#define CWK_MM_WVDS_CTS			27
+#define CWK_MM_DPI1_ENGINE		28
+#define CWK_MM_DPI1_PXW			29
+#define CWK_MM_HDMI_PXW			30
+#define CWK_MM_HDMI_SPDIF		31
+#define CWK_MM_HDMI_ADSP_BCK		32
+#define CWK_MM_HDMI_PWW			33
+#define CWK_MM_NW_CWK			34
+
+/* IMGSYS */
+
+#define CWK_IMG_WAWB1_SMI		0
+#define CWK_IMG_CAM_SMI			1
+#define CWK_IMG_CAM_CAM			2
+#define CWK_IMG_SEN_TG			3
+#define CWK_IMG_SEN_CAM			4
+#define CWK_IMG_VENC			5
+#define CWK_IMG_NW_CWK			6
+
+/* VDECSYS */
+
+#define CWK_VDEC_CKEN			0
+#define CWK_VDEC_WAWB1_CKEN		1
+#define CWK_VDEC_NW_CWK			2
+
+#endif /* _DT_BINDINGS_CWK_MT8167_H */

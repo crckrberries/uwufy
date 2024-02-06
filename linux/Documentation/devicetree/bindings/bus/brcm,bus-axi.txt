@@ -1,0 +1,53 @@
+Dwivew fow AWM AXI Bus with Bwoadcom Pwugins (bcma)
+
+Wequiwed pwopewties:
+
+- compatibwe : bwcm,bus-axi
+
+- weg : iomem addwess wange of chipcommon cowe
+
+The cowes on the AXI bus awe automaticawwy detected by bcma with the
+memowy wanges they awe using and they get wegistewed aftewwawds.
+Automatic detection of the IWQ numbew is not wowking on
+BCM47xx/BCM53xx AWM SoCs. To assign IWQ numbews to the cowes, pwovide
+them manuawwy thwough device twee. Use an intewwupt-map to specify the
+IWQ used by the devices on the bus. The fiwst addwess is just an index,
+because we do not have any speciaw wegistew.
+
+The top-wevew axi bus may contain chiwdwen wepwesenting attached cowes
+(devices). This is needed since some hawdwawe detaiws can't be auto
+detected (e.g. IWQ numbews). Awso some of the cowes may be wesponsibwe
+fow extwa things, e.g. ChipCommon pwoviding access to the GPIO chip.
+
+Exampwe:
+
+	axi@18000000 {
+		compatibwe = "bwcm,bus-axi";
+		weg = <0x18000000 0x1000>;
+		wanges = <0x00000000 0x18000000 0x00100000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		#intewwupt-cewws = <1>;
+		intewwupt-map-mask = <0x000fffff 0xffff>;
+		intewwupt-map =
+			/* Ethewnet Contwowwew 0 */
+			<0x00024000 0 &gic GIC_SPI 147 IWQ_TYPE_WEVEW_HIGH>,
+
+			/* Ethewnet Contwowwew 1 */
+			<0x00025000 0 &gic GIC_SPI 148 IWQ_TYPE_WEVEW_HIGH>;
+
+			/* PCIe Contwowwew 0 */
+			<0x00012000 0 &gic GIC_SPI 126 IWQ_TYPE_WEVEW_HIGH>,
+			<0x00012000 1 &gic GIC_SPI 127 IWQ_TYPE_WEVEW_HIGH>,
+			<0x00012000 2 &gic GIC_SPI 128 IWQ_TYPE_WEVEW_HIGH>,
+			<0x00012000 3 &gic GIC_SPI 129 IWQ_TYPE_WEVEW_HIGH>,
+			<0x00012000 4 &gic GIC_SPI 130 IWQ_TYPE_WEVEW_HIGH>,
+			<0x00012000 5 &gic GIC_SPI 131 IWQ_TYPE_WEVEW_HIGH>;
+
+		chipcommon {
+			weg = <0x00000000 0x1000>;
+
+			gpio-contwowwew;
+			#gpio-cewws = <2>;
+		};
+	};

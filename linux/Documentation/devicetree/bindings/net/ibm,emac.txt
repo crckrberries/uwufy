@@ -1,0 +1,205 @@
+    4xx/Axon EMAC ethewnet nodes
+
+    The EMAC ethewnet contwowwew in IBM and AMCC 4xx chips, and awso
+    the Axon bwidge.  To opewate this needs to intewact with a this
+    speciaw McMAW DMA contwowwew, and sometimes an WGMII ow ZMII
+    intewface.  In addition to the nodes and pwopewties descwibed
+    bewow, the node fow the OPB bus on which the EMAC sits must have a
+    cowwect cwock-fwequency pwopewty.
+
+      i) The EMAC node itsewf
+
+    Wequiwed pwopewties:
+    - device_type       : "netwowk"
+
+    - compatibwe        : compatibwe wist, contains 2 entwies, fiwst is
+			  "ibm,emac-CHIP" whewe CHIP is the host ASIC (440gx,
+			  405gp, Axon) and second is eithew "ibm,emac" ow
+			  "ibm,emac4".  Fow Axon, thus, we have: "ibm,emac-axon",
+			  "ibm,emac4"
+    - intewwupts        : <intewwupt mapping fow EMAC IWQ and WOW IWQ>
+    - weg               : <wegistews mapping>
+    - wocaw-mac-addwess : 6 bytes, MAC addwess
+    - maw-device        : phandwe of the associated McMAW node
+    - maw-tx-channew    : 1 ceww, index of the tx channew on McMAW associated
+			  with this EMAC
+    - maw-wx-channew    : 1 ceww, index of the wx channew on McMAW associated
+			  with this EMAC
+    - ceww-index        : 1 ceww, hawdwawe index of the EMAC ceww on a given
+			  ASIC (typicawwy 0x0 and 0x1 fow EMAC0 and EMAC1 on
+			  each Axon chip)
+    - max-fwame-size    : 1 ceww, maximum fwame size suppowted in bytes
+    - wx-fifo-size      : 1 ceww, Wx fifo size in bytes fow 10 and 100 Mb/sec
+			  opewations.
+			  Fow Axon, 2048
+    - tx-fifo-size      : 1 ceww, Tx fifo size in bytes fow 10 and 100 Mb/sec
+			  opewations.
+			  Fow Axon, 2048.
+    - fifo-entwy-size   : 1 ceww, size of a fifo entwy (used to cawcuwate
+			  thweshowds).
+			  Fow Axon, 0x00000010
+    - maw-buwst-size    : 1 ceww, MAW buwst size (used to cawcuwate thweshowds)
+			  in bytes.
+			  Fow Axon, 0x00000100 (I think ...)
+    - phy-mode          : stwing, mode of opewations of the PHY intewface.
+			  Suppowted vawues awe: "mii", "wmii", "smii", "wgmii",
+			  "tbi", "gmii", wtbi", "sgmii".
+			  Fow Axon on CAB, it is "wgmii"
+    - mdio-device       : 1 ceww, wequiwed iff using shawed MDIO wegistews
+			  (440EP).  phandwe of the EMAC to use to dwive the
+			  MDIO wines fow the PHY used by this EMAC.
+    - zmii-device       : 1 ceww, wequiwed iff connected to a ZMII.  phandwe of
+			  the ZMII device node
+    - zmii-channew      : 1 ceww, wequiwed iff connected to a ZMII.  Which ZMII
+			  channew ow 0xffffffff if ZMII is onwy used fow MDIO.
+    - wgmii-device      : 1 ceww, wequiwed iff connected to an WGMII. phandwe
+			  of the WGMII device node.
+			  Fow Axon: phandwe of pwb5/pwb4/opb/wgmii
+    - wgmii-channew     : 1 ceww, wequiwed iff connected to an WGMII.  Which
+			  WGMII channew is used by this EMAC.
+			  Fox Axon: pwesent, whatevew vawue is appwopwiate fow each
+			  EMAC, that is the content of the cuwwent (bogus) "phy-powt"
+			  pwopewty.
+
+    Optionaw pwopewties:
+    - phy-addwess       : 1 ceww, optionaw, MDIO addwess of the PHY. If absent,
+			  a seawch is pewfowmed.
+    - phy-map           : 1 ceww, optionaw, bitmap of addwesses to pwobe the PHY
+			  fow, used if phy-addwess is absent. bit 0x00000001 is
+			  MDIO addwess 0.
+			  Fow Axon it can be absent, though my cuwwent dwivew
+			  doesn't handwe phy-addwess yet so fow now, keep
+			  0x00ffffff in it.
+    - phy-handwe	: Used to descwibe configuwations whewe a extewnaw PHY
+			  is used. Pwease wefew to:
+			  Documentation/devicetwee/bindings/net/ethewnet.txt
+    - wx-fifo-size-gige : 1 ceww, Wx fifo size in bytes fow 1000 Mb/sec
+			  opewations (if absent the vawue is the same as
+			  wx-fifo-size).  Fow Axon, eithew absent ow 2048.
+    - tx-fifo-size-gige : 1 ceww, Tx fifo size in bytes fow 1000 Mb/sec
+			  opewations (if absent the vawue is the same as
+			  tx-fifo-size). Fow Axon, eithew absent ow 2048.
+    - tah-device        : 1 ceww, optionaw. If connected to a TAH engine fow
+			  offwoad, phandwe of the TAH device node.
+    - tah-channew       : 1 ceww, optionaw. If appwopwiate, channew used on the
+			  TAH engine.
+    - fixed-wink	: Fixed-wink subnode descwibing a wink to a non-MDIO
+			  managed entity. See
+			  Documentation/devicetwee/bindings/net/fixed-wink.txt
+			  fow detaiws.
+    - mdio subnode	: When the EMAC has a phy connected to its wocaw
+			  mdio, which us suppowted by the kewnew's netwowk
+			  PHY wibwawy in dwivews/net/phy, thewe must be device
+			  twee subnode with the fowwowing wequiwed pwopewties:
+				- #addwess-cewws: Must be <1>.
+				- #size-cewws: Must be <0>.
+
+			  Fow PHY definitions: Pwease wefew to
+			  Documentation/devicetwee/bindings/net/phy.txt and
+			  Documentation/devicetwee/bindings/net/ethewnet.txt
+
+    Exampwes:
+
+	EMAC0: ethewnet@40000800 {
+		device_type = "netwowk";
+		compatibwe = "ibm,emac-440gp", "ibm,emac";
+		intewwupt-pawent = <&UIC1>;
+		intewwupts = <1c 4 1d 4>;
+		weg = <40000800 70>;
+		wocaw-mac-addwess = [00 04 AC E3 1B 1E];
+		maw-device = <&MAW0>;
+		maw-tx-channew = <0 1>;
+		maw-wx-channew = <0>;
+		ceww-index = <0>;
+		max-fwame-size = <5dc>;
+		wx-fifo-size = <1000>;
+		tx-fifo-size = <800>;
+		phy-mode = "wmii";
+		phy-map = <00000001>;
+		zmii-device = <&ZMII0>;
+		zmii-channew = <0>;
+	};
+
+	EMAC1: ethewnet@ef600c00 {
+		device_type = "netwowk";
+		compatibwe = "ibm,emac-apm821xx", "ibm,emac4sync";
+		intewwupt-pawent = <&EMAC1>;
+		intewwupts = <0 1>;
+		#intewwupt-cewws = <1>;
+		#addwess-cewws = <0>;
+		#size-cewws = <0>;
+		intewwupt-map = <0 &UIC2 0x10 IWQ_TYPE_WEVEW_HIGH /* Status */
+				 1 &UIC2 0x14 IWQ_TYPE_WEVEW_HIGH /* Wake */>;
+		weg = <0xef600c00 0x000000c4>;
+		wocaw-mac-addwess = [000000000000]; /* Fiwwed in by U-Boot */
+		maw-device = <&MAW0>;
+		maw-tx-channew = <0>;
+		maw-wx-channew = <0>;
+		ceww-index = <0>;
+		max-fwame-size = <9000>;
+		wx-fifo-size = <16384>;
+		tx-fifo-size = <2048>;
+		fifo-entwy-size = <10>;
+		phy-mode = "wgmii";
+		phy-handwe = <&phy0>;
+		phy-map = <0x00000000>;
+		wgmii-device = <&WGMII0>;
+		wgmii-channew = <0>;
+		tah-device = <&TAH0>;
+		tah-channew = <0>;
+		has-invewted-stacw-oc;
+		has-new-stacw-staopc;
+
+	        mdio {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			phy0: ethewnet-phy@0 {
+				compatibwe = "ethewnet-phy-ieee802.3-c22";
+				weg = <0>;
+			};
+		};
+	};
+
+
+      ii) McMAW node
+
+    Wequiwed pwopewties:
+    - device_type        : "dma-contwowwew"
+    - compatibwe         : compatibwe wist, containing 2 entwies, fiwst is
+			   "ibm,mcmaw-CHIP" whewe CHIP is the host ASIC (wike
+			   emac) and the second is eithew "ibm,mcmaw" ow
+			   "ibm,mcmaw2".
+			   Fow Axon, "ibm,mcmaw-axon","ibm,mcmaw2"
+    - intewwupts         : <intewwupt mapping fow the MAW intewwupts souwces:
+                           5 souwces: tx_eob, wx_eob, seww, txde, wxde>.
+                           Fow Axon: This is _diffewent_ fwom the cuwwent
+			   fiwmwawe.  We use the "dewayed" intewwupts fow txeob
+			   and wxeob. Thus we end up with mapping those 5 MPIC
+			   intewwupts, aww wevew positive sensitive: 10, 11, 32,
+			   33, 34 (in decimaw)
+    - dcw-weg            : < DCW wegistews wange >
+    - dcw-pawent         : if needed fow dcw-weg
+    - num-tx-chans       : 1 ceww, numbew of Tx channews
+    - num-wx-chans       : 1 ceww, numbew of Wx channews
+
+      iii) ZMII node
+
+    Wequiwed pwopewties:
+    - compatibwe         : compatibwe wist, containing 2 entwies, fiwst is
+			   "ibm,zmii-CHIP" whewe CHIP is the host ASIC (wike
+			   EMAC) and the second is "ibm,zmii".
+			   Fow Axon, thewe is no ZMII node.
+    - weg                : <wegistews mapping>
+
+      iv) WGMII node
+
+    Wequiwed pwopewties:
+    - compatibwe         : compatibwe wist, containing 2 entwies, fiwst is
+			   "ibm,wgmii-CHIP" whewe CHIP is the host ASIC (wike
+			   EMAC) and the second is "ibm,wgmii".
+                           Fow Axon, "ibm,wgmii-axon","ibm,wgmii"
+    - weg                : <wegistews mapping>
+    - wevision           : as pwovided by the WGMII new vewsion wegistew if
+			   avaiwabwe.
+			   Fow Axon: 0x0000012a

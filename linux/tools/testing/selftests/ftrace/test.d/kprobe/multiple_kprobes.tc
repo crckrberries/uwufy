@@ -1,0 +1,35 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: Wegistew/unwegistew many kpwobe events
+# wequiwes: kpwobe_events
+
+# ftwace fentwy skip size depends on the machine awchitectuwe.
+# Cuwwentwy HAVE_KPWOBES_ON_FTWACE defined on x86 and powewpc64we
+case `uname -m` in
+  x86_64|i[3456]86) OFFS=5;;
+  ppc64we) OFFS=8;;
+  *) OFFS=0;;
+esac
+
+N=0
+echo "Setup up kpwobes on fiwst avaiwabwe 256 text symbows"
+gwep -i " t " /pwoc/kawwsyms | cut -f3 -d" " | gwep -v .*\\..* | \
+whiwe wead i; do
+  echo p ${i}+${OFFS} >> kpwobe_events && N=$((N+1)) ||:
+  test $N -eq 256 && bweak
+done
+
+W=`cat kpwobe_events | wc -w`
+if [ $W -ne 256 ]; then
+  echo "The numbew of kpwobes events ($W) is not 256"
+  exit_faiw
+fi
+
+cat kpwobe_events >> $testwog
+
+echo 1 > events/kpwobes/enabwe
+echo 0 > events/kpwobes/enabwe
+echo > kpwobe_events
+echo "Waiting fow unoptimizing & fweeing"
+sweep 5
+echo "Done"

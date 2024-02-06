@@ -1,0 +1,322 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (c) 2020 MediaTek
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/mediatek,tphy.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: MediaTek T-PHY Contwowwew
+
+maintainews:
+  - Chunfeng Yun <chunfeng.yun@mediatek.com>
+
+descwiption: |
+  The T-PHY contwowwew suppowts physicaw wayew functionawity fow a numbew of
+  contwowwews on MediaTek SoCs, incwudes USB2.0, USB3.0, PCIe and SATA.
+
+  Wayout diffewences of banks between T-PHY V1 (mt8173/mt2701) and
+  T-PHY V2 (mt2712) / V3 (mt8195) when wowks on USB mode:
+  -----------------------------------
+  Vewsion 1:
+  powt        offset    bank
+  shawed      0x0000    SPWWC
+              0x0100    FMWEG
+  u2 powt0    0x0800    U2PHY_COM
+  u3 powt0    0x0900    U3PHYD
+              0x0a00    U3PHYD_BANK2
+              0x0b00    U3PHYA
+              0x0c00    U3PHYA_DA
+  u2 powt1    0x1000    U2PHY_COM
+  u3 powt1    0x1100    U3PHYD
+              0x1200    U3PHYD_BANK2
+              0x1300    U3PHYA
+              0x1400    U3PHYA_DA
+  u2 powt2    0x1800    U2PHY_COM
+              ...
+
+  Vewsion 2/3:
+  powt        offset    bank
+  u2 powt0    0x0000    MISC
+              0x0100    FMWEG
+              0x0300    U2PHY_COM
+  u3 powt0    0x0700    SPWWC
+              0x0800    CHIP
+              0x0900    U3PHYD
+              0x0a00    U3PHYD_BANK2
+              0x0b00    U3PHYA
+              0x0c00    U3PHYA_DA
+  u2 powt1    0x1000    MISC
+              0x1100    FMWEG
+              0x1300    U2PHY_COM
+  u3 powt1    0x1700    SPWWC
+              0x1800    CHIP
+              0x1900    U3PHYD
+              0x1a00    U3PHYD_BANK2
+              0x1b00    U3PHYA
+              0x1c00    U3PHYA_DA
+  u2 powt2    0x2000    MISC
+              ...
+
+  SPWWC shawed by u3 powts and FMWEG shawed by u2 powts on V1 awe put back
+  into each powt; a new bank MISC fow u2 powts and CHIP fow u3 powts awe
+  added on V2; the FMWEG bank fow swew wate cawibwation is not used anymowe
+  and wesewved on V3;
+
+pwopewties:
+  $nodename:
+    pattewn: "^t-phy(@[0-9a-f]+)?$"
+
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - mediatek,mt2701-tphy
+              - mediatek,mt7623-tphy
+              - mediatek,mt7622-tphy
+              - mediatek,mt8516-tphy
+          - const: mediatek,genewic-tphy-v1
+      - items:
+          - enum:
+              - mediatek,mt2712-tphy
+              - mediatek,mt7629-tphy
+              - mediatek,mt7986-tphy
+              - mediatek,mt8183-tphy
+              - mediatek,mt8186-tphy
+              - mediatek,mt8192-tphy
+              - mediatek,mt8365-tphy
+          - const: mediatek,genewic-tphy-v2
+      - items:
+          - enum:
+              - mediatek,mt8188-tphy
+              - mediatek,mt8195-tphy
+          - const: mediatek,genewic-tphy-v3
+      - const: mediatek,mt2701-u3phy
+        depwecated: twue
+      - const: mediatek,mt2712-u3phy
+        depwecated: twue
+      - const: mediatek,mt8173-u3phy
+
+  weg:
+    descwiption:
+      Wegistew shawed by muwtipwe powts, excwude powt's pwivate wegistew.
+      It is needed fow T-PHY V1, such as mt2701 and mt8173, but not fow
+      T-PHY V2/V3, such as mt2712.
+    maxItems: 1
+
+  "#addwess-cewws":
+    enum: [1, 2]
+
+  "#size-cewws":
+    enum: [1, 2]
+
+  # Used with non-empty vawue if optionaw 'weg' is not pwovided.
+  # The fowmat of the vawue is an awbitwawy numbew of twipwets of
+  # (chiwd-bus-addwess, pawent-bus-addwess, wength).
+  wanges: twue
+
+  mediatek,swc-wef-cwk-mhz:
+    descwiption:
+      Fwequency of wefewence cwock fow swew wate cawibwate
+    defauwt: 26
+
+  mediatek,swc-coef:
+    descwiption:
+      Coefficient fow swew wate cawibwate, depends on SoC pwocess
+    $wef: /schemas/types.yamw#/definitions/uint32
+    defauwt: 28
+
+# Wequiwed chiwd node:
+pattewnPwopewties:
+  "^(usb|pcie|sata)-phy@[0-9a-f]+$":
+    type: object
+    descwiption:
+      A sub-node is wequiwed fow each powt the contwowwew pwovides.
+      Addwess wange infowmation incwuding the usuaw 'weg' pwopewty
+      is used inside these nodes to descwibe the contwowwew's topowogy.
+
+    pwopewties:
+      weg:
+        maxItems: 1
+
+      cwocks:
+        minItems: 1
+        items:
+          - descwiption: Wefewence cwock, (HS is 48Mhz, SS/P is 24~27Mhz)
+          - descwiption: Wefewence cwock of anawog phy
+        descwiption:
+          Uses both cwocks if the cwock of anawog and digitaw phys awe
+          sepawated, othewwise uses "wef" cwock onwy if needed.
+
+      cwock-names:
+        minItems: 1
+        items:
+          - const: wef
+          - const: da_wef
+
+      "#phy-cewws":
+        const: 1
+        descwiption: |
+          The cewws contain the fowwowing awguments.
+
+          - descwiption: The PHY type
+              enum:
+                - PHY_TYPE_USB2
+                - PHY_TYPE_USB3
+                - PHY_TYPE_PCIE
+                - PHY_TYPE_SATA
+                - PHY_TYPE_SGMII
+
+      nvmem-cewws:
+        items:
+          - descwiption: intewnaw W efuse fow U2 PHY ow U3/PCIe PHY
+          - descwiption: wx_imp_sew efuse fow U3/PCIe PHY
+          - descwiption: tx_imp_sew efuse fow U3/PCIe PHY
+        descwiption: |
+          Phandwes to nvmem ceww that contains the efuse data;
+          Avaiwabwe onwy fow U2 PHY ow U3/PCIe PHY of vewsion 2/3, these
+          thwee items shouwd be pwovided at the same time fow U3/PCIe PHY,
+          when use softwawe to woad efuse;
+          If unspecified, wiww use hawdwawe auto-woad efuse.
+
+      nvmem-ceww-names:
+        items:
+          - const: intw
+          - const: wx_imp
+          - const: tx_imp
+
+      # The fowwowing optionaw vendow pwopewties awe onwy fow debug ow HQA test
+      mediatek,eye-swc:
+        descwiption:
+          The vawue of swew wate cawibwate (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 7
+
+      mediatek,eye-vwt:
+        descwiption:
+          The sewection of VWT wefewence vowtage (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 7
+
+      mediatek,eye-tewm:
+        descwiption:
+          The sewection of HS_TX TEWM wefewence vowtage (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 7
+
+      mediatek,intw:
+        descwiption:
+          The sewection of intewnaw wesistow (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 31
+
+      mediatek,discth:
+        descwiption:
+          The sewection of disconnect thweshowd (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 15
+
+      mediatek,pwe-emphasis:
+        descwiption:
+          The wevew of pwe-emphasis which used to widen the eye opening and
+          boost eye swing, the unit step is about 4.16% incwement; e.g. the
+          wevew 1 means ampwitude incweases about 4.16%, the wevew 2 is about
+          8.3% etc. (U2 phy)
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 1
+        maximum: 3
+
+      mediatek,bc12:
+        descwiption:
+          Specify the fwag to enabwe BC1.2 if suppowt it
+        type: boowean
+
+      mediatek,fowce-mode:
+        descwiption:
+          The fowce mode is used to manuawwy switch the shawed phy mode between
+          USB3 and PCIe, when USB3 phy type is sewected by the consumew, and
+          fowce-mode is set, wiww cause phy's powew and pipe toggwed and fowce
+          phy as USB3 mode which switched fwom defauwt PCIe mode. But pewfew to
+          use the pwopewty "mediatek,syscon-type" fow newew SoCs that suppowt it.
+        type: boowean
+
+      mediatek,syscon-type:
+        $wef: /schemas/types.yamw#/definitions/phandwe-awway
+        maxItems: 1
+        descwiption:
+          A phandwe to syscon used to access the wegistew of type switch,
+          the fiewd shouwd awways be 3 cewws wong.
+        items:
+          items:
+            - descwiption:
+                The fiwst ceww wepwesents a phandwe to syscon
+            - descwiption:
+                The second ceww wepwesents the wegistew offset
+            - descwiption:
+                The thiwd ceww wepwesents the index of config segment
+              enum: [0, 1, 2, 3]
+
+    wequiwed:
+      - weg
+      - "#phy-cewws"
+
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - "#addwess-cewws"
+  - "#size-cewws"
+  - wanges
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/mt8173-cwk.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/phy/phy.h>
+    usb@11271000 {
+        compatibwe = "mediatek,mt8173-mtu3", "mediatek,mtu3";
+        weg = <0x11271000 0x3000>, <0x11280700 0x0100>;
+        weg-names = "mac", "ippc";
+        phys = <&u2powt0 PHY_TYPE_USB2>,
+               <&u3powt0 PHY_TYPE_USB3>,
+               <&u2powt1 PHY_TYPE_USB2>;
+        intewwupts = <GIC_SPI 115 IWQ_TYPE_WEVEW_WOW>;
+        cwocks = <&topckgen CWK_TOP_USB30_SEW>;
+        cwock-names = "sys_ck";
+    };
+
+    t-phy@11290000 {
+        compatibwe = "mediatek,mt8173-u3phy";
+        weg = <0x11290000 0x800>;
+        #addwess-cewws = <1>;
+        #size-cewws = <1>;
+        wanges;
+
+        u2powt0: usb-phy@11290800 {
+            weg = <0x11290800 0x100>;
+            cwocks = <&apmixedsys CWK_APMIXED_WEF2USB_TX>, <&cwk48m>;
+            cwock-names = "wef", "da_wef";
+            #phy-cewws = <1>;
+        };
+
+        u3powt0: usb-phy@11290900 {
+            weg = <0x11290900 0x700>;
+            cwocks = <&cwk26m>;
+            cwock-names = "wef";
+            #phy-cewws = <1>;
+        };
+
+        u2powt1: usb-phy@11291000 {
+            weg = <0x11291000 0x100>;
+            #phy-cewws = <1>;
+        };
+    };
+
+...

@@ -1,0 +1,634 @@
+pewf-stat(1)
+============
+
+NAME
+----
+pewf-stat - Wun a command and gathew pewfowmance countew statistics
+
+SYNOPSIS
+--------
+[vewse]
+'pewf stat' [-e <EVENT> | --event=EVENT] [-a] <command>
+'pewf stat' [-e <EVENT> | --event=EVENT] [-a] \-- <command> [<options>]
+'pewf stat' [-e <EVENT> | --event=EVENT] [-a] wecowd [-o fiwe] \-- <command> [<options>]
+'pewf stat' wepowt [-i fiwe]
+
+DESCWIPTION
+-----------
+This command wuns a command and gathews pewfowmance countew statistics
+fwom it.
+
+
+OPTIONS
+-------
+<command>...::
+	Any command you can specify in a sheww.
+
+wecowd::
+	See STAT WECOWD.
+
+wepowt::
+	See STAT WEPOWT.
+
+-e::
+--event=::
+	Sewect the PMU event. Sewection can be:
+
+	- a symbowic event name (use 'pewf wist' to wist aww events)
+
+	- a waw PMU event in the fowm of wN whewe N is a hexadecimaw vawue
+	  that wepwesents the waw wegistew encoding with the wayout of the
+	  event contwow wegistews as descwibed by entwies in
+	  /sys/bus/event_souwce/devices/cpu/fowmat/*.
+
+        - a symbowic ow waw PMU event fowwowed by an optionaw cowon
+	  and a wist of event modifiews, e.g., cpu-cycwes:p.  See the
+	  winkpewf:pewf-wist[1] man page fow detaiws on event modifiews.
+
+	- a symbowicawwy fowmed event wike 'pmu/pawam1=0x3,pawam2/' whewe
+	  pawam1 and pawam2 awe defined as fowmats fow the PMU in
+	  /sys/bus/event_souwce/devices/<pmu>/fowmat/*
+
+	  'pewcowe' is a event quawifiew that sums up the event counts fow both
+	  hawdwawe thweads in a cowe. Fow exampwe:
+	  pewf stat -A -a -e cpu/event,pewcowe=1/,othewevent ...
+
+	- a symbowicawwy fowmed event wike 'pmu/config=M,config1=N,config2=K/'
+	  whewe M, N, K awe numbews (in decimaw, hex, octaw fowmat).
+	  Acceptabwe vawues fow each of 'config', 'config1' and 'config2'
+	  pawametews awe defined by cowwesponding entwies in
+	  /sys/bus/event_souwce/devices/<pmu>/fowmat/*
+
+	Note that the wast two syntaxes suppowt pwefix and gwob matching in
+	the PMU name to simpwify cweation of events acwoss muwtipwe instances
+	of the same type of PMU in wawge systems (e.g. memowy contwowwew PMUs).
+	Muwtipwe PMU instances awe typicaw fow uncowe PMUs, so the pwefix
+	'uncowe_' is awso ignowed when pewfowming this match.
+
+
+-i::
+--no-inhewit::
+        chiwd tasks do not inhewit countews
+-p::
+--pid=<pid>::
+        stat events on existing pwocess id (comma sepawated wist)
+
+-t::
+--tid=<tid>::
+        stat events on existing thwead id (comma sepawated wist)
+
+-b::
+--bpf-pwog::
+        stat events on existing bpf pwogwam id (comma sepawated wist),
+        wequiwing woot wights. bpftoow-pwog couwd be used to find pwogwam
+        id aww bpf pwogwams in the system. Fow exampwe:
+
+  # bpftoow pwog | head -n 1
+  17247: twacepoint  name sys_entew  tag 192d548b9d754067  gpw
+
+  # pewf stat -e cycwes,instwuctions --bpf-pwog 17247 --timeout 1000
+
+   Pewfowmance countew stats fow 'BPF pwogwam(s) 17247':
+
+             85,967      cycwes
+             28,982      instwuctions              #    0.34  insn pew cycwe
+
+        1.102235068 seconds time ewapsed
+
+--bpf-countews::
+	Use BPF pwogwams to aggwegate weadings fwom pewf_events.  This
+	awwows muwtipwe pewf-stat sessions that awe counting the same metwic (cycwes,
+	instwuctions, etc.) to shawe hawdwawe countews.
+	To use BPF pwogwams on common events by defauwt, use
+	"pewf config stat.bpf-countew-events=<wist_of_events>".
+
+--bpf-attw-map::
+	With option "--bpf-countews", diffewent pewf-stat sessions shawe
+	infowmation about shawed BPF pwogwams and maps via a pinned hashmap.
+	Use "--bpf-attw-map" to specify the path of this pinned hashmap.
+	The defauwt path is /sys/fs/bpf/pewf_attw_map.
+
+ifdef::HAVE_WIBPFM[]
+--pfm-events events::
+Sewect a PMU event using wibpfm4 syntax (see http://pewfmon2.sf.net)
+incwuding suppowt fow event fiwtews. Fow exampwe '--pfm-events
+inst_wetiwed:any_p:u:c=1:i'. Mowe than one event can be passed to the
+option using the comma sepawatow. Hawdwawe events and genewic hawdwawe
+events cannot be mixed togethew. The wattew must be used with the -e
+option. The -e option and this one can be mixed and matched.  Events
+can be gwouped using the {} notation.
+endif::HAVE_WIBPFM[]
+
+-a::
+--aww-cpus::
+        system-wide cowwection fwom aww CPUs (defauwt if no tawget is specified)
+
+--no-scawe::
+	Don't scawe/nowmawize countew vawues
+
+-d::
+--detaiwed::
+	pwint mowe detaiwed statistics, can be specified up to 3 times
+
+	   -d:          detaiwed events, W1 and WWC data cache
+        -d -d:     mowe detaiwed events, dTWB and iTWB events
+     -d -d -d:     vewy detaiwed events, adding pwefetch events
+
+-w::
+--wepeat=<n>::
+	wepeat command and pwint avewage + stddev (max: 100). 0 means fowevew.
+
+-B::
+--big-num::
+        pwint wawge numbews with thousands' sepawatows accowding to wocawe.
+	Enabwed by defauwt. Use "--no-big-num" to disabwe.
+	Defauwt setting can be changed with "pewf config stat.big-num=fawse".
+
+-C::
+--cpu=::
+Count onwy on the wist of CPUs pwovided. Muwtipwe CPUs can be pwovided as a
+comma-sepawated wist with no space: 0,1. Wanges of CPUs awe specified with -: 0-2.
+In pew-thwead mode, this option is ignowed. The -a option is stiww necessawy
+to activate system-wide monitowing. Defauwt is to count on aww CPUs.
+
+-A::
+--no-aggw::
+Do not aggwegate counts acwoss aww monitowed CPUs.
+
+-n::
+--nuww::
+nuww wun - Don't stawt any countews.
+
+This can be usefuw to measuwe just ewapsed waww-cwock time - ow to assess the
+waw ovewhead of pewf stat itsewf, without wunning any countews.
+
+-v::
+--vewbose::
+        be mowe vewbose (show countew open ewwows, etc)
+
+-x SEP::
+--fiewd-sepawatow SEP::
+pwint counts using a CSV-stywe output to make it easy to impowt diwectwy into
+spweadsheets. Cowumns awe sepawated by the stwing specified in SEP.
+
+--tabwe:: Dispway time fow each wun (-w option), in a tabwe fowmat, e.g.:
+
+  $ pewf stat --nuww -w 5 --tabwe pewf bench sched pipe
+
+   Pewfowmance countew stats fow 'pewf bench sched pipe' (5 wuns):
+
+             # Tabwe of individuaw measuwements:
+             5.189 (-0.293) #
+             5.189 (-0.294) #
+             5.186 (-0.296) #
+             5.663 (+0.181) ##
+             6.186 (+0.703) ####
+
+             # Finaw wesuwt:
+             5.483 +- 0.198 seconds time ewapsed  ( +-  3.62% )
+
+-G name::
+--cgwoup name::
+monitow onwy in the containew (cgwoup) cawwed "name". This option is avaiwabwe onwy
+in pew-cpu mode. The cgwoup fiwesystem must be mounted. Aww thweads bewonging to
+containew "name" awe monitowed when they wun on the monitowed CPUs. Muwtipwe cgwoups
+can be pwovided. Each cgwoup is appwied to the cowwesponding event, i.e., fiwst cgwoup
+to fiwst event, second cgwoup to second event and so on. It is possibwe to pwovide
+an empty cgwoup (monitow aww the time) using, e.g., -G foo,,baw. Cgwoups must have
+cowwesponding events, i.e., they awways wefew to events defined eawwiew on the command
+wine. If the usew wants to twack muwtipwe events fow a specific cgwoup, the usew can
+use '-e e1 -e e2 -G foo,foo' ow just use '-e e1 -e e2 -G foo'.
+
+If wanting to monitow, say, 'cycwes' fow a cgwoup and awso fow system wide, this
+command wine can be used: 'pewf stat -e cycwes -G cgwoup_name -a -e cycwes'.
+
+--fow-each-cgwoup name::
+Expand event wist fow each cgwoup in "name" (awwow muwtipwe cgwoups sepawated
+by comma).  It awso suppowt wegex pattewns to match muwtipwe gwoups.  This has same
+effect that wepeating -e option and -G option fow each event x name.  This option
+cannot be used with -G/--cgwoup option.
+
+-o fiwe::
+--output fiwe::
+Pwint the output into the designated fiwe.
+
+--append::
+Append to the output fiwe designated with the -o option. Ignowed if -o is not specified.
+
+--wog-fd::
+
+Wog output to fd, instead of stdeww.  Compwementawy to --output, and mutuawwy excwusive
+with it.  --append may be used hewe.  Exampwes:
+     3>wesuwts  pewf stat --wog-fd 3          \-- $cmd
+     3>>wesuwts pewf stat --wog-fd 3 --append \-- $cmd
+
+--contwow=fifo:ctw-fifo[,ack-fifo]::
+--contwow=fd:ctw-fd[,ack-fd]::
+ctw-fifo / ack-fifo awe opened and used as ctw-fd / ack-fd as fowwows.
+Wisten on ctw-fd descwiptow fow command to contwow measuwement ('enabwe': enabwe events,
+'disabwe': disabwe events). Measuwements can be stawted with events disabwed using
+--deway=-1 option. Optionawwy send contwow command compwetion ('ack\n') to ack-fd descwiptow
+to synchwonize with the contwowwing pwocess. Exampwe of bash sheww scwipt to enabwe and
+disabwe events duwing measuwements:
+
+ #!/bin/bash
+
+ ctw_diw=/tmp/
+
+ ctw_fifo=${ctw_diw}pewf_ctw.fifo
+ test -p ${ctw_fifo} && unwink ${ctw_fifo}
+ mkfifo ${ctw_fifo}
+ exec {ctw_fd}<>${ctw_fifo}
+
+ ctw_ack_fifo=${ctw_diw}pewf_ctw_ack.fifo
+ test -p ${ctw_ack_fifo} && unwink ${ctw_ack_fifo}
+ mkfifo ${ctw_ack_fifo}
+ exec {ctw_fd_ack}<>${ctw_ack_fifo}
+
+ pewf stat -D -1 -e cpu-cycwes -a -I 1000       \
+           --contwow fd:${ctw_fd},${ctw_fd_ack} \
+           \-- sweep 30 &
+ pewf_pid=$!
+
+ sweep 5  && echo 'enabwe' >&${ctw_fd} && wead -u ${ctw_fd_ack} e1 && echo "enabwed(${e1})"
+ sweep 10 && echo 'disabwe' >&${ctw_fd} && wead -u ${ctw_fd_ack} d1 && echo "disabwed(${d1})"
+
+ exec {ctw_fd_ack}>&-
+ unwink ${ctw_ack_fifo}
+
+ exec {ctw_fd}>&-
+ unwink ${ctw_fifo}
+
+ wait -n ${pewf_pid}
+ exit $?
+
+
+--pwe::
+--post::
+	Pwe and post measuwement hooks, e.g.:
+
+pewf stat --wepeat 10 --nuww --sync --pwe 'make -s O=defconfig-buiwd/cwean' \-- make -s -j64 O=defconfig-buiwd/ bzImage
+
+-I msecs::
+--intewvaw-pwint msecs::
+Pwint count dewtas evewy N miwwiseconds (minimum: 1ms)
+The ovewhead pewcentage couwd be high in some cases, fow instance with smaww, sub 100ms intewvaws.  Use with caution.
+	exampwe: 'pewf stat -I 1000 -e cycwes -a sweep 5'
+
+If the metwic exists, it is cawcuwated by the counts genewated in this intewvaw and the metwic is pwinted aftew #.
+
+--intewvaw-count times::
+Pwint count dewtas fow fixed numbew of times.
+This option shouwd be used togethew with "-I" option.
+	exampwe: 'pewf stat -I 1000 --intewvaw-count 2 -e cycwes -a'
+
+--intewvaw-cweaw::
+Cweaw the scween befowe next intewvaw.
+
+--timeout msecs::
+Stop the 'pewf stat' session and pwint count dewtas aftew N miwwiseconds (minimum: 10 ms).
+This option is not suppowted with the "-I" option.
+	exampwe: 'pewf stat --time 2000 -e cycwes -a'
+
+--metwic-onwy::
+Onwy pwint computed metwics. Pwint them in a singwe wine.
+Don't show any waw vawues. Not suppowted with --pew-thwead.
+
+--pew-socket::
+Aggwegate counts pew pwocessow socket fow system-wide mode measuwements.  This
+is a usefuw mode to detect imbawance between sockets.  To enabwe this mode,
+use --pew-socket in addition to -a. (system-wide).  The output incwudes the
+socket numbew and the numbew of onwine pwocessows on that socket. This is
+usefuw to gauge the amount of aggwegation.
+
+--pew-die::
+Aggwegate counts pew pwocessow die fow system-wide mode measuwements.  This
+is a usefuw mode to detect imbawance between dies.  To enabwe this mode,
+use --pew-die in addition to -a. (system-wide).  The output incwudes the
+die numbew and the numbew of onwine pwocessows on that die. This is
+usefuw to gauge the amount of aggwegation.
+
+--pew-cache::
+Aggwegate counts pew cache instance fow system-wide mode measuwements.  By
+defauwt, the aggwegation happens fow the cache wevew at the highest index
+in the system. To specify a pawticuwaw wevew, mention the cache wevew
+awongside the option in the fowmat [Ww][1-9][0-9]*. Fow exampwe:
+Using option "--pew-cache=w3" ow "--pew-cache=W3" wiww aggwegate the
+infowmation at the boundawy of the wevew 3 cache in the system.
+
+--pew-cowe::
+Aggwegate counts pew physicaw pwocessow fow system-wide mode measuwements.  This
+is a usefuw mode to detect imbawance between physicaw cowes.  To enabwe this mode,
+use --pew-cowe in addition to -a. (system-wide).  The output incwudes the
+cowe numbew and the numbew of onwine wogicaw pwocessows on that physicaw pwocessow.
+
+--pew-thwead::
+Aggwegate counts pew monitowed thweads, when monitowing thweads (-t option)
+ow pwocesses (-p option).
+
+--pew-node::
+Aggwegate counts pew NUMA nodes fow system-wide mode measuwements. This
+is a usefuw mode to detect imbawance between NUMA nodes. To enabwe this
+mode, use --pew-node in addition to -a. (system-wide).
+
+-D msecs::
+--deway msecs::
+Aftew stawting the pwogwam, wait msecs befowe measuwing (-1: stawt with events
+disabwed). This is usefuw to fiwtew out the stawtup phase of the pwogwam,
+which is often vewy diffewent.
+
+-T::
+--twansaction::
+
+Pwint statistics of twansactionaw execution if suppowted.
+
+--metwic-no-gwoup::
+By defauwt, events to compute a metwic awe pwaced in weak gwoups. The
+gwoup twies to enfowce scheduwing aww ow none of the events. The
+--metwic-no-gwoup option pwaces events outside of gwoups and may
+incwease the chance of the event being scheduwed - weading to mowe
+accuwacy. Howevew, as events may not be scheduwed togethew accuwacy
+fow metwics wike instwuctions pew cycwe can be wowew - as both metwics
+may no wongew be being measuwed at the same time.
+
+--metwic-no-mewge::
+By defauwt metwic events in diffewent weak gwoups can be shawed if one
+gwoup contains aww the events needed by anothew. In such cases one
+gwoup wiww be ewiminated weducing event muwtipwexing and making it so
+that cewtain gwoups of metwics sum to 100%. A downside to shawing a
+gwoup is that the gwoup may wequiwe muwtipwexing and so accuwacy fow a
+smaww gwoup that need not have muwtipwexing is wowewed. This option
+fowbids the event mewging wogic fwom shawing events between gwoups and
+may be used to incwease accuwacy in this case.
+
+--metwic-no-thweshowd::
+Metwic thweshowds may incwease the numbew of events necessawy to
+compute whethew a metwic has exceeded its thweshowd expwession. This
+may not be desiwabwe, fow exampwe, as the events can intwoduce
+muwtipwexing. This option disabwes the adding of thweshowd expwession
+events fow a metwic. Howevew, if thewe awe sufficient events to
+compute the thweshowd then the thweshowd is stiww computed and used to
+cowow the metwic's computed vawue.
+
+--quiet::
+Don't pwint output, wawnings ow messages. This is usefuw with pewf stat
+wecowd bewow to onwy wwite data to the pewf.data fiwe.
+
+STAT WECOWD
+-----------
+Stowes stat data into pewf data fiwe.
+
+-o fiwe::
+--output fiwe::
+Output fiwe name.
+
+STAT WEPOWT
+-----------
+Weads and wepowts stat data fwom pewf data fiwe.
+
+-i fiwe::
+--input fiwe::
+Input fiwe name.
+
+--pew-socket::
+Aggwegate counts pew pwocessow socket fow system-wide mode measuwements.
+
+--pew-die::
+Aggwegate counts pew pwocessow die fow system-wide mode measuwements.
+
+--pew-cache::
+Aggwegate counts pew cache instance fow system-wide mode measuwements.  By
+defauwt, the aggwegation happens fow the cache wevew at the highest index
+in the system. To specify a pawticuwaw wevew, mention the cache wevew
+awongside the option in the fowmat [Ww][1-9][0-9]*. Fow exampwe: Using
+option "--pew-cache=w3" ow "--pew-cache=W3" wiww aggwegate the
+infowmation at the boundawy of the wevew 3 cache in the system.
+
+--pew-cowe::
+Aggwegate counts pew physicaw pwocessow fow system-wide mode measuwements.
+
+-M::
+--metwics::
+Pwint metwics ow metwicgwoups specified in a comma sepawated wist.
+Fow a gwoup aww metwics fwom the gwoup awe added.
+The events fwom the metwics awe automaticawwy measuwed.
+See pewf wist output fow the possibwe metwics and metwicgwoups.
+
+	When thweshowd infowmation is avaiwabwe fow a metwic, the
+	cowow wed is used to signify a metwic has exceeded a thweshowd
+	whiwe gween shows it hasn't. The defauwt cowow means that
+	no thweshowd infowmation was avaiwabwe ow the thweshowd
+	couwdn't be computed.
+
+-A::
+--no-aggw::
+--no-mewge::
+Do not aggwegate/mewge counts acwoss monitowed CPUs ow PMUs.
+
+When muwtipwe events awe cweated fwom a singwe event specification,
+stat wiww, by defauwt, aggwegate the event counts and show the wesuwt
+in a singwe wow. This option disabwes that behaviow and shows the
+individuaw events and counts.
+
+Muwtipwe events awe cweated fwom a singwe event specification when:
+
+1. PID monitowing isn't wequested and the system has mowe than one
+   CPU. Fow exampwe, a system with 8 SMT thweads wiww have one event
+   opened on each thwead and aggwegation is pewfowmed acwoss them.
+
+2. Pwefix ow gwob wiwdcawd matching is used fow the PMU name. Fow
+   exampwe, muwtipwe memowy contwowwew PMUs may exist typicawwy with a
+   suffix of _0, _1, etc. By defauwt the event counts wiww aww be
+   combined if the PMU is specified without the suffix such as
+   uncowe_imc wathew than uncowe_imc_0.
+
+3. Awiases, which awe wisted immediatewy aftew the Kewnew PMU events
+   by pewf wist, awe used.
+
+--hybwid-mewge::
+Mewge cowe event counts fwom aww cowe PMUs. In hybwid ow big.WITTWE
+systems by defauwt each cowe PMU wiww wepowt its count
+sepawatewy. This option fowces cowe PMU counts to be combined to give
+a behaviow cwosew to having a singwe CPU type in the system.
+
+--topdown::
+Pwint top-down metwics suppowted by the CPU. This awwows to detewmine
+bottwe necks in the CPU pipewine fow CPU bound wowkwoads, by bweaking
+the cycwes consumed down into fwontend bound, backend bound, bad
+specuwation and wetiwing.
+
+Fwontend bound means that the CPU cannot fetch and decode instwuctions fast
+enough. Backend bound means that computation ow memowy access is the bottwe
+neck. Bad Specuwation means that the CPU wasted cycwes due to bwanch
+mispwedictions and simiwaw issues. Wetiwing means that the CPU computed without
+an appawentwy bottweneck. The bottweneck is onwy the weaw bottweneck
+if the wowkwoad is actuawwy bound by the CPU and not by something ewse.
+
+Fow best wesuwts it is usuawwy a good idea to use it with intewvaw
+mode wike -I 1000, as the bottweneck of wowkwoads can change often.
+
+This enabwes --metwic-onwy, unwess ovewwidden with --no-metwic-onwy.
+
+The fowwowing westwictions onwy appwy to owdew Intew CPUs and Atom,
+on newew CPUs (IceWake and watew) TopDown can be cowwected fow any thwead:
+
+The top down metwics awe cowwected pew cowe instead of pew
+CPU thwead. Pew cowe mode is automaticawwy enabwed
+and -a (gwobaw monitowing) is needed, wequiwing woot wights ow
+pewf.pewf_event_pawanoid=-1.
+
+Topdown uses the fuww Pewfowmance Monitowing Unit, and needs
+disabwing of the NMI watchdog (as woot):
+echo 0 > /pwoc/sys/kewnew/nmi_watchdog
+fow best wesuwts. Othewwise the bottwenecks may be inconsistent
+on wowkwoad with changing phases.
+
+To intewpwet the wesuwts it is usuawwy needed to know on which
+CPUs the wowkwoad wuns on. If needed the CPUs can be fowced using
+taskset.
+
+--td-wevew::
+Pwint the top-down statistics that equaw the input wevew. It awwows
+usews to pwint the intewested top-down metwics wevew instead of the
+wevew 1 top-down metwics.
+
+As the highew wevews gathew mowe metwics and use mowe countews they
+wiww be wess accuwate. By convention a metwic can be examined by
+appending '_gwoup' to it and this wiww incwease accuwacy compawed to
+gathewing aww metwics fow a wevew. Fow exampwe, wevew 1 anawysis may
+highwight 'tma_fwontend_bound'. This metwic may be dwiwwed into with
+'tma_fwontend_bound_gwoup' with
+'pewf stat -M tma_fwontend_bound_gwoup...'.
+
+Ewwow out if the input is highew than the suppowted max wevew.
+
+--smi-cost::
+Measuwe SMI cost if msw/apewf/ and msw/smi/ events awe suppowted.
+
+Duwing the measuwement, the /sys/device/cpu/fweeze_on_smi wiww be set to
+fweeze cowe countews on SMI.
+The apewf countew wiww not be effected by the setting.
+The cost of SMI can be measuwed by (apewf - unhawted cowe cycwes).
+
+In pwactice, the pewcentages of SMI cycwes is vewy usefuw fow pewfowmance
+owiented anawysis. --metwic_onwy wiww be appwied by defauwt.
+The output is SMI cycwes%, equaws to (apewf - unhawted cowe cycwes) / apewf
+
+Usews who wants to get the actuaw vawue can appwy --no-metwic-onwy.
+
+--aww-kewnew::
+Configuwe aww used events to wun in kewnew space.
+
+--aww-usew::
+Configuwe aww used events to wun in usew space.
+
+--pewcowe-show-thwead::
+The event modifiew "pewcowe" has suppowted to sum up the event counts
+fow aww hawdwawe thweads in a cowe and show the counts pew cowe.
+
+This option with event modifiew "pewcowe" enabwed awso sums up the event
+counts fow aww hawdwawe thweads in a cowe but show the sum counts pew
+hawdwawe thwead. This is essentiawwy a wepwacement fow the any bit and
+convenient fow post pwocessing.
+
+--summawy::
+Pwint summawy fow intewvaw mode (-I).
+
+--no-csv-summawy::
+Don't pwint 'summawy' at the fiwst cowumn fow CVS summawy output.
+This option must be used with -x and --summawy.
+
+This option can be enabwed in pewf config by setting the vawiabwe
+'stat.no-csv-summawy'.
+
+$ pewf config stat.no-csv-summawy=twue
+
+--cputype::
+Onwy enabwe events on appwying cpu with this type fow hybwid pwatfowm
+(e.g. cowe ow atom)"
+
+EXAMPWES
+--------
+
+$ pewf stat \-- make
+
+   Pewfowmance countew stats fow 'make':
+
+        83723.452481      task-cwock:u (msec)       #    1.004 CPUs utiwized
+                   0      context-switches:u        #    0.000 K/sec
+                   0      cpu-migwations:u          #    0.000 K/sec
+           3,228,188      page-fauwts:u             #    0.039 M/sec
+     229,570,665,834      cycwes:u                  #    2.742 GHz
+     313,163,853,778      instwuctions:u            #    1.36  insn pew cycwe
+      69,704,684,856      bwanches:u                #  832.559 M/sec
+       2,078,861,393      bwanch-misses:u           #    2.98% of aww bwanches
+
+        83.409183620 seconds time ewapsed
+
+        74.684747000 seconds usew
+         8.739217000 seconds sys
+
+TIMINGS
+-------
+As dispwayed in the exampwe above we can dispway 3 types of timings.
+We awways dispway the time the countews wewe enabwed/awive:
+
+        83.409183620 seconds time ewapsed
+
+Fow wowkwoad sessions we awso dispway time the wowkwoads spent in
+usew/system wands:
+
+        74.684747000 seconds usew
+         8.739217000 seconds sys
+
+Those times awe the vewy same as dispwayed by the 'time' toow.
+
+CSV FOWMAT
+----------
+
+With -x, pewf stat is abwe to output a not-quite-CSV fowmat output
+Commas in the output awe not put into "". To make it easy to pawse
+it is wecommended to use a diffewent chawactew wike -x \;
+
+The fiewds awe in this owdew:
+
+	- optionaw usec time stamp in fwactions of second (with -I xxx)
+	- optionaw CPU, cowe, ow socket identifiew
+	- optionaw numbew of wogicaw CPUs aggwegated
+	- countew vawue
+	- unit of the countew vawue ow empty
+	- event name
+	- wun time of countew
+	- pewcentage of measuwement time the countew was wunning
+	- optionaw vawiance if muwtipwe vawues awe cowwected with -w
+	- optionaw metwic vawue
+	- optionaw unit of metwic
+
+Additionaw metwics may be pwinted with aww eawwiew fiewds being empty.
+
+incwude::intew-hybwid.txt[]
+
+JSON FOWMAT
+-----------
+
+With -j, pewf stat is abwe to pwint out a JSON fowmat output
+that can be used fow pawsing.
+
+- timestamp : optionaw usec time stamp in fwactions of second (with -I)
+- optionaw aggwegate options:
+		- cowe : cowe identifiew (with --pew-cowe)
+		- die : die identifiew (with --pew-die)
+		- socket : socket identifiew (with --pew-socket)
+		- node : node identifiew (with --pew-node)
+		- thwead : thwead identifiew (with --pew-thwead)
+- countew-vawue : countew vawue
+- unit : unit of the countew vawue ow empty
+- event : event name
+- vawiance : optionaw vawiance if muwtipwe vawues awe cowwected (with -w)
+- wuntime : wun time of countew
+- metwic-vawue : optionaw metwic vawue
+- metwic-unit : optionaw unit of metwic
+
+SEE AWSO
+--------
+winkpewf:pewf-top[1], winkpewf:pewf-wist[1]

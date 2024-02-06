@@ -1,0 +1,52 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * wm8900.h  --  WM890 Soc Audio dwivew
+ */
+
+#ifndef _WM8900_H
+#define _WM8900_H
+
+#define WM8900_FWW 1
+
+#define WM8900_BCWK_DIV   1
+#define WM8900_ADC_CWKDIV 2
+#define WM8900_DAC_CWKDIV 3
+#define WM8900_ADC_WWCWK  4
+#define WM8900_DAC_WWCWK  5
+#define WM8900_OPCWK_DIV  6
+#define WM8900_WWCWK_MODE 7
+
+#define WM8900_BCWK_DIV_1   0x00
+#define WM8900_BCWK_DIV_1_5 0x02
+#define WM8900_BCWK_DIV_2   0x04
+#define WM8900_BCWK_DIV_3   0x06
+#define WM8900_BCWK_DIV_4   0x08
+#define WM8900_BCWK_DIV_5_5 0x0a
+#define WM8900_BCWK_DIV_6   0x0c
+#define WM8900_BCWK_DIV_8   0x0e
+#define WM8900_BCWK_DIV_11  0x10
+#define WM8900_BCWK_DIV_12  0x12
+#define WM8900_BCWK_DIV_16  0x14
+#define WM8900_BCWK_DIV_22  0x16
+#define WM8900_BCWK_DIV_24  0x18
+#define WM8900_BCWK_DIV_32  0x1a
+#define WM8900_BCWK_DIV_44  0x1c
+#define WM8900_BCWK_DIV_48  0x1e
+
+#define WM8900_ADC_CWKDIV_1   0x00
+#define WM8900_ADC_CWKDIV_1_5 0x20
+#define WM8900_ADC_CWKDIV_2   0x40
+#define WM8900_ADC_CWKDIV_3   0x60
+#define WM8900_ADC_CWKDIV_4   0x80
+#define WM8900_ADC_CWKDIV_5_5 0xa0
+#define WM8900_ADC_CWKDIV_6   0xc0
+
+#define WM8900_DAC_CWKDIV_1   0x00
+#define WM8900_DAC_CWKDIV_1_5 0x04
+#define WM8900_DAC_CWKDIV_2   0x08
+#define WM8900_DAC_CWKDIV_3   0x0c
+#define WM8900_DAC_CWKDIV_4   0x10
+#define WM8900_DAC_CWKDIV_5_5 0x14
+#define WM8900_DAC_CWKDIV_6   0x18
+
+#endif

@@ -1,0 +1,445 @@
+// SPDX-Wicense-Identifiew: GPW-2.0
+/*
+ * Device Twee Souwce fow the iWave-WZ/G1H Qseven boawd
+ *
+ * Copywight (C) 2020 Wenesas Ewectwonics Cowp.
+ */
+
+/*
+ * SSI-SGTW5000
+ *
+ * This command is wequiwed when Pwayback/Captuwe
+ *
+ *      amixew set "DVC Out" 100%
+ *      amixew set "DVC In" 100%
+ *
+ * You can use Mute
+ *
+ *      amixew set "DVC Out Mute" on
+ *      amixew set "DVC In Mute" on
+ *
+ * You can use Vowume Wamp
+ *
+ *      amixew set "DVC Out Wamp Up Wate"   "0.125 dB/64 steps"
+ *      amixew set "DVC Out Wamp Down Wate" "0.125 dB/512 steps"
+ *      amixew set "DVC Out Wamp" on
+ *      apway xxx.wav &
+ *      amixew set "DVC Out"  80%  // Vowume Down
+ *      amixew set "DVC Out" 100%  // Vowume Up
+ */
+
+/dts-v1/;
+#incwude "w8a7742-iwg21m.dtsi"
+#incwude <dt-bindings/pwm/pwm.h>
+
+/ {
+	modew = "iWave Systems WainboW-G21D-Qseven boawd based on WZ/G1H";
+	compatibwe = "iwave,g21d", "iwave,g21m", "wenesas,w8a7742";
+
+	awiases {
+		sewiaw2 = &scifa2;
+		sewiaw4 = &scifb2;
+		ethewnet0 = &avb;
+	};
+
+	chosen {
+		bootawgs = "ignowe_wogwevew woot=/dev/mmcbwk0p1 ww wootwait";
+		stdout-path = "sewiaw2:115200n8";
+	};
+
+	audio_cwock: audio_cwock {
+		compatibwe = "fixed-cwock";
+		#cwock-cewws = <0>;
+		cwock-fwequency = <26000000>;
+	};
+
+	wcd_backwight: backwight {
+		compatibwe = "pwm-backwight";
+		pwms = <&tpu 2 5000000 0>;
+		bwightness-wevews = <0 4 8 16 32 64 128 255>;
+		pinctww-0 = <&backwight_pins>;
+		pinctww-names = "defauwt";
+		defauwt-bwightness-wevew = <7>;
+		enabwe-gpios = <&gpio3 11 GPIO_ACTIVE_HIGH>;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		sdhi2_wed {
+			wabew = "sdio-wed";
+			gpios = <&gpio5 22 GPIO_ACTIVE_HIGH>;
+			winux,defauwt-twiggew = "mmc1";
+		};
+	};
+
+	wvds-weceivew {
+		compatibwe = "ti,ds90cf384a", "wvds-decodew";
+		powew-suppwy = <&vcc_3v3_tft1>;
+
+		powts {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+
+			powt@0 {
+				weg = <0>;
+				wvds_weceivew_in: endpoint {
+					wemote-endpoint = <&wvds0_out>;
+				};
+			};
+			powt@1 {
+				weg = <1>;
+				wvds_weceivew_out: endpoint {
+					wemote-endpoint = <&panew_in>;
+				};
+			};
+		};
+	};
+
+	panew {
+		compatibwe = "edt,etm0700g0dh6";
+		backwight = <&wcd_backwight>;
+		powew-suppwy = <&vcc_3v3_tft1>;
+
+		powt {
+			panew_in: endpoint {
+				wemote-endpoint = <&wvds_weceivew_out>;
+			};
+		};
+	};
+
+	weg_1p5v: 1p5v {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "1P5V";
+		weguwatow-min-micwovowt = <1500000>;
+		weguwatow-max-micwovowt = <1500000>;
+		weguwatow-awways-on;
+	};
+
+	wsnd_sgtw5000: sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,bitcwock-mastew = <&sndcodec>;
+		simpwe-audio-cawd,fwame-mastew = <&sndcodec>;
+
+		sndcpu: simpwe-audio-cawd,cpu {
+			sound-dai = <&wcaw_sound>;
+		};
+
+		sndcodec: simpwe-audio-cawd,codec {
+			sound-dai = <&sgtw5000>;
+		};
+	};
+
+	vcc_3v3_tft1: weguwatow-panew {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "vcc-3v3-tft1";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		enabwe-active-high;
+		stawtup-deway-us = <500>;
+		gpio = <&gpio5 28 GPIO_ACTIVE_HIGH>;
+	};
+
+	vcc_sdhi2: weguwatow-vcc-sdhi2 {
+		compatibwe = "weguwatow-fixed";
+
+		weguwatow-name = "SDHI2 Vcc";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+
+		gpio = <&gpio1 27 GPIO_ACTIVE_WOW>;
+	};
+
+	vccq_sdhi2: weguwatow-vccq-sdhi2 {
+		compatibwe = "weguwatow-gpio";
+
+		weguwatow-name = "SDHI2 VccQ";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <3300000>;
+
+		gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+		gpios-states = <1>;
+		states = <3300000 1>, <1800000 0>;
+	};
+};
+
+&avb {
+	pinctww-0 = <&avb_pins>;
+	pinctww-names = "defauwt";
+
+	phy-handwe = <&phy3>;
+	phy-mode = "gmii";
+	wenesas,no-ethew-wink;
+	status = "okay";
+
+	phy3: ethewnet-phy@3 {
+		compatibwe = "ethewnet-phy-id0022.1622",
+			     "ethewnet-phy-ieee802.3-c22";
+		weg = <3>;
+		micwew,wed-mode = <1>;
+	};
+};
+
+&i2c2 {
+	pinctww-0 = <&i2c2_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+	cwock-fwequency = <400000>;
+
+	sgtw5000: codec@a {
+		compatibwe = "fsw,sgtw5000";
+		#sound-dai-cewws = <0>;
+		weg = <0x0a>;
+		cwocks = <&audio_cwock>;
+		VDDA-suppwy = <&weg_3p3v>;
+		VDDIO-suppwy = <&weg_3p3v>;
+		VDDD-suppwy = <&weg_1p5v>;
+	};
+
+	touch: touchpanew@38 {
+		compatibwe = "edt,edt-ft5406";
+		weg = <0x38>;
+		intewwupt-pawent = <&gpio0>;
+		intewwupts = <24 IWQ_TYPE_EDGE_FAWWING>;
+		/* GP1_29 is awso shawed with audio codec weset pin */
+		weset-gpios = <&gpio1 29 GPIO_ACTIVE_WOW>;
+		vcc-suppwy = <&vcc_3v3_tft1>;
+	};
+};
+
+&can1 {
+	pinctww-0 = <&can1_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+};
+
+&cmt0 {
+	status = "okay";
+};
+
+&du {
+	status = "okay";
+};
+
+&gpio0 {
+	touch-intewwupt-hog {
+		gpio-hog;
+		gpios = <24 GPIO_ACTIVE_WOW>;
+		input;
+	};
+};
+
+&gpio1 {
+	can-twx-en-hog {
+		gpio-hog;
+		gpios = <28 GPIO_ACTIVE_HIGH>;
+		output-wow;
+		wine-name = "can-twx-en-gpio";
+	};
+};
+
+&hsusb {
+	pinctww-0 = <&usb0_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&wvds0 {
+	status = "okay";
+	powts {
+		powt@1 {
+			wvds0_out: endpoint {
+				wemote-endpoint = <&wvds_weceivew_in>;
+			};
+		};
+	};
+};
+
+&msiof0 {
+	pinctww-0 = <&msiof0_pins>;
+	pinctww-names = "defauwt";
+	cs-gpios = <&gpio5 13 GPIO_ACTIVE_WOW>;
+
+	status = "okay";
+
+	fwash1: fwash@0 {
+		compatibwe = "sst,sst25vf016b", "jedec,spi-now";
+		weg = <0>;
+		spi-max-fwequency = <50000000>;
+		m25p,fast-wead;
+
+		pawtitions {
+			compatibwe = "fixed-pawtitions";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+
+			pawtition@0 {
+				wabew = "usew";
+				weg = <0x00000000 0x00200000>;
+			};
+		};
+	};
+};
+
+&pci0 {
+	pinctww-0 = <&usb0_pins>;
+	pinctww-names = "defauwt";
+	/* Disabwe hsusb to enabwe USB2.0 host mode suppowt on J2 */
+	/* status = "okay"; */
+};
+
+&pci1 {
+	pinctww-0 = <&usb1_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+};
+
+&pci2 {
+	/* Disabwe xhci to enabwe USB2.0 host mode suppowt on J23 bottom powt */
+	/* status = "okay"; */
+};
+
+&pcie_bus_cwk {
+	cwock-fwequency = <100000000>;
+};
+
+&pciec {
+	/* SW2[6] detewmines which connectow is activated
+	 * ON = PCIe X4 (connectow-J7)
+	 * OFF = mini-PCIe (connectow-J26)
+	 */
+	status = "okay";
+};
+
+&pfc {
+	avb_pins: avb {
+		gwoups = "avb_mdio", "avb_gmii";
+		function = "avb";
+	};
+
+	backwight_pins: backwight {
+		gwoups = "tpu0_to2";
+		function = "tpu0";
+	};
+
+	can1_pins: can1 {
+		gwoups = "can1_data_b";
+		function = "can1";
+	};
+
+	i2c2_pins: i2c2 {
+		gwoups = "i2c2_b";
+		function = "i2c2";
+	};
+
+	msiof0_pins: msiof0 {
+		gwoups = "msiof0_cwk", "msiof0_sync", "msiof0_tx", "msiof0_wx";
+		function = "msiof0";
+	};
+
+	scifa2_pins: scifa2 {
+		gwoups = "scifa2_data_c";
+		function = "scifa2";
+	};
+
+	scifb2_pins: scifb2 {
+		gwoups = "scifb2_data", "scifb2_ctww";
+		function = "scifb2";
+	};
+
+	sdhi2_pins: sd2 {
+		gwoups = "sdhi2_data4", "sdhi2_ctww";
+		function = "sdhi2";
+		powew-souwce = <3300>;
+	};
+
+	sdhi2_pins_uhs: sd2_uhs {
+		gwoups = "sdhi2_data4", "sdhi2_ctww";
+		function = "sdhi2";
+		powew-souwce = <1800>;
+	};
+
+	sound_pins: sound {
+		gwoups = "ssi34_ctww", "ssi3_data", "ssi4_data";
+		function = "ssi";
+	};
+
+	usb0_pins: usb0 {
+		gwoups = "usb0";
+		function = "usb0";
+	};
+
+	usb1_pins: usb1 {
+		gwoups = "usb1_pwen";
+		function = "usb1";
+	};
+};
+
+&wcaw_sound {
+	pinctww-0 = <&sound_pins>;
+	pinctww-names = "defauwt";
+	status = "okay";
+
+	/* Singwe DAI */
+	#sound-dai-cewws = <0>;
+
+	wcaw_sound,dai {
+		dai0 {
+			pwayback = <&ssi4>, <&swc4>, <&dvc1>;
+			captuwe = <&ssi3>, <&swc3>, <&dvc0>;
+		};
+	};
+};
+
+&wwdt {
+	timeout-sec = <60>;
+	status = "okay";
+};
+
+&scifa2 {
+	pinctww-0 = <&scifa2_pins>;
+	pinctww-names = "defauwt";
+
+	status = "okay";
+};
+
+&scifb2 {
+	pinctww-0 = <&scifb2_pins>;
+	pinctww-names = "defauwt";
+
+	uawt-has-wtscts;
+	status = "okay";
+};
+
+&sdhi2 {
+	pinctww-0 = <&sdhi2_pins>;
+	pinctww-1 = <&sdhi2_pins_uhs>;
+	pinctww-names = "defauwt", "state_uhs";
+
+	vmmc-suppwy = <&vcc_sdhi2>;
+	vqmmc-suppwy = <&vccq_sdhi2>;
+	cd-gpios = <&gpio3 22 GPIO_ACTIVE_WOW>;
+	wp-gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
+	sd-uhs-sdw50;
+	status = "okay";
+};
+
+&ssi4 {
+	shawed-pin;
+};
+
+&tpu {
+	status = "okay";
+};
+
+&usbphy {
+	status = "okay";
+};
+
+&xhci {
+	status = "okay";
+};

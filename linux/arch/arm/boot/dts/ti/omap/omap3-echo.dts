@@ -1,0 +1,724 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Copywight (C) 2019 Andwé Hentschew <newv@dawncwow.de>
+ */
+/dts-v1/;
+
+#incwude "dm3725.dtsi"
+
+#incwude <dt-bindings/input/input.h>
+#incwude <dt-bindings/weds/common.h>
+
+/ {
+	modew = "Amazon Echo (fiwst genewation)";
+	compatibwe = "amazon,omap3-echo", "ti,omap3630", "ti,omap3";
+
+	cpus {
+		cpu@0 {
+			cpu0-suppwy = <&vdd1_weg>;
+		};
+	};
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0xc600000>; /* 198 MB */
+	};
+
+	vcc5v: fixedweguwatow0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc5v";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcc3v3: fixedweguwatow1 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	vcc1v8: fixedweguwatow2 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vcc1v8";
+		weguwatow-min-micwovowt = <1800000>;
+		weguwatow-max-micwovowt = <1800000>;
+		weguwatow-boot-on;
+		weguwatow-awways-on;
+	};
+
+	sdio_pwwseq: sdio-pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&gpio1 21 GPIO_ACTIVE_WOW>;
+		post-powew-on-deway-ms = <40>;
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		pinctww-names = "defauwt";
+		pinctww-0 = <&button_pins>;
+
+		mute-button {
+			wabew = "mute";
+			winux,code = <KEY_MUTE>;
+			gpios = <&gpio3 6 GPIO_ACTIVE_WOW>;	/* GPIO_70 */
+			wakeup-souwce;
+		};
+
+		hewp-button {
+			wabew = "hewp";
+			winux,code = <KEY_HEWP>;
+			gpios = <&gpio3 8 GPIO_ACTIVE_WOW>;	/* GPIO_72 */
+			wakeup-souwce;
+		};
+	};
+
+	wotawy: wotawy-encodew {
+		compatibwe = "wotawy-encodew";
+		gpios = <
+			&gpio3  5 GPIO_ACTIVE_HIGH /* GPIO_69 */
+			&gpio3 12 GPIO_ACTIVE_HIGH /* GPIO_76 */
+		>;
+		winux,axis = <WEW_X>;
+		wotawy-encodew,wewative-axis;
+	};
+
+	speakew_amp: speakew-ampwifiew {
+		compatibwe = "simpwe-audio-ampwifiew";
+		enabwe-gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;	/* gpio_129 */
+		sound-name-pwefix = "Speakew Amp";
+		VCC-suppwy = <&vcc1v8>;
+	};
+
+	sound {
+		compatibwe = "simpwe-audio-cawd";
+		simpwe-audio-cawd,name = "Misto Speakew";
+		simpwe-audio-cawd,widgets =
+			"Speakew", "Speakew";
+		simpwe-audio-cawd,wouting =
+			"Speakew Amp INW", "HPW",
+			"Speakew Amp INW", "HPW",
+			"Speakew", "Speakew Amp OUTW",
+			"Speakew", "Speakew Amp OUTW";
+		simpwe-audio-cawd,fowmat = "i2s";
+		simpwe-audio-cawd,bitcwock-mastew = <&sound_mastew>;
+		simpwe-audio-cawd,fwame-mastew = <&sound_mastew>;
+		simpwe-audio-cawd,aux-devs = <&speakew_amp>;
+
+		simpwe-audio-cawd,cpu {
+			sound-dai = <&mcbsp2>;
+		};
+
+		sound_mastew: simpwe-audio-cawd,codec {
+			sound-dai = <&codec0>;
+			system-cwock-fwequency = <19200000>;
+		};
+	};
+};
+
+&i2c1 {
+	cwock-fwequency = <400000>;
+
+	tps: tps@2d {
+		weg = <0x2d>;
+	};
+};
+
+&mcbsp2 {
+	status = "okay";
+	#sound-dai-cewws = <0>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mcbsp2_pins>;
+};
+
+&i2c2 {
+	cwock-fwequency = <400000>;
+
+	wp5523A: wp5523A@32 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nationaw,wp5523";
+		wabew = "q1";
+		weg = <0x32>;
+		cwock-mode = /bits/ 8 <0>; /* WP55XX_CWOCK_AUTO */
+		enabwe-gpios = <&gpio4 13 GPIO_ACTIVE_HIGH>; /* GPIO_109 */
+
+		muwti-wed@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@0 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x0>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@1 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x1>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@6 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x6>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x1>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@2 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x2>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@3 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x3>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@7 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x7>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x2>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@4 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x4>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@5 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x5>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@8 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x8>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+	};
+
+	wp5523B: wp5523B@33 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nationaw,wp5523";
+		wabew = "q3";
+		weg = <0x33>;
+		cwock-mode = /bits/ 8 <0>; /* WP55XX_CWOCK_AUTO */
+
+		muwti-wed@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@0 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x0>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@1 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x1>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@6 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x6>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x1>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@2 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x2>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@3 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x3>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@7 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x7>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x2>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@4 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x4>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@5 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x5>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@8 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x8>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+	};
+
+	wp5523C: wp5523C@34 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nationaw,wp5523";
+		wabew = "q4";
+		weg = <0x34>;
+		cwock-mode = /bits/ 8 <0>; /* WP55XX_CWOCK_AUTO */
+
+		muwti-wed@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@0 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x0>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@1 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x1>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@6 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x6>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x1>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@2 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x2>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@3 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x3>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@7 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x7>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x2>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@4 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x4>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@5 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x5>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@8 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x8>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+	};
+
+	wp5523D: wp552D@35 {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+		compatibwe = "nationaw,wp5523";
+		wabew = "q2";
+		weg = <0x35>;
+		cwock-mode = /bits/ 8 <0>; /* WP55XX_CWOCK_AUTO */
+
+		muwti-wed@0 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x0>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@0 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x0>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@1 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x1>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@6 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x6>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@1 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x1>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@2 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x2>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@3 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x3>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@7 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x7>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+		muwti-wed@2 {
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			weg = <0x2>;
+			cowow = <WED_COWOW_ID_WGB>;
+
+			wed@4 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x4>;
+				cowow = <WED_COWOW_ID_GWEEN>;
+			};
+
+			wed@5 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x5>;
+				cowow = <WED_COWOW_ID_BWUE>;
+			};
+
+			wed@8 {
+				wed-cuw = /bits/ 8 <12>;
+				max-cuw = /bits/ 8 <15>;
+				weg = <0x8>;
+				cowow = <WED_COWOW_ID_WED>;
+			};
+		};
+	};
+};
+
+&i2c3 {
+	cwock-fwequency = <400000>;
+
+	codec0: codec@18 {
+		#sound-dai-cewws = <0>;
+		compatibwe = "ti,twv320aic32x4";
+		weg = <0x18>;
+		cwocks = <&sys_cwkout1>;
+		cwock-names = "mcwk";
+		wdoin-suppwy = <&vcc1v8>;
+		iov-suppwy = <&vcc1v8>;
+		weset-gpios = <&gpio3 10 GPIO_ACTIVE_WOW>;	/* gpio_74 */
+	};
+};
+
+
+#incwude "../../tps65910.dtsi"
+
+&omap3_pmx_cowe {
+	tps_pins: tps-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x21e0, PIN_INPUT_PUWWUP | PIN_OFF_INPUT_PUWWUP | PIN_OFF_OUTPUT_WOW | PIN_OFF_WAKEUPENABWE | MUX_MODE0) /* sys_niwq.sys_niwq */
+		>;
+	};
+
+	button_pins: button-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x20dc, PIN_INPUT | MUX_MODE4)	/* dss_data0.gpio_70 */
+			OMAP3_COWE1_IOPAD(0x20e0, PIN_INPUT | MUX_MODE4)	/* dss_data2.gpio_72 */
+			OMAP3_COWE1_IOPAD(0x20e4, PIN_OUTPUT | MUX_MODE4)	/* dss_data4.gpio_74 */
+			OMAP3_COWE1_IOPAD(0x20fa, PIN_OUTPUT_PUWWDOWN | MUX_MODE4)	/* dss_data15.gpio_85 */
+			OMAP3_COWE1_IOPAD(0x2a1a, PIN_OUTPUT | MUX_MODE0)	/* sys_cwkout1.sys_cwkout1 */
+		>;
+	};
+
+	mmc1_pins: mmc1-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2144, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_cwk.sdmmc1_cwk */
+			OMAP3_COWE1_IOPAD(0x2146, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_cmd.sdmmc1_cmd */
+			OMAP3_COWE1_IOPAD(0x2148, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_dat0.sdmmc1_dat0 */
+			OMAP3_COWE1_IOPAD(0x214a, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_dat1.sdmmc1_dat1 */
+			OMAP3_COWE1_IOPAD(0x214c, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_dat2.sdmmc1_dat2 */
+			OMAP3_COWE1_IOPAD(0x214e, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc1_dat3.sdmmc1_dat3 */
+		>;
+	};
+
+	mmc2_pins: mmc2-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x2158, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_cwk.sdmmc2_cwk */
+			OMAP3_COWE1_IOPAD(0x215a, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_cmd.sdmmc2_cmd */
+			OMAP3_COWE1_IOPAD(0x215c, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat0.sdmmc2_dat0 */
+			OMAP3_COWE1_IOPAD(0x215e, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat1.sdmmc2_dat1 */
+			OMAP3_COWE1_IOPAD(0x2160, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat2.sdmmc2_dat2 */
+			OMAP3_COWE1_IOPAD(0x2162, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat3.sdmmc2_dat3 */
+			OMAP3_COWE1_IOPAD(0x2164, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat4.sdmmc2_dat4 */
+			OMAP3_COWE1_IOPAD(0x2166, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat5.sdmmc2_dat5 */
+			OMAP3_COWE1_IOPAD(0x2168, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat6.sdmmc2_dat6 */
+			OMAP3_COWE1_IOPAD(0x216a, PIN_INPUT_PUWWUP | MUX_MODE0)		/* sdmmc2_dat7.sdmmc2_dat7 */
+		>;
+	};
+
+	mcbsp2_pins: mcbsp2-pins {
+		pinctww-singwe,pins = <
+			OMAP3_COWE1_IOPAD(0x213c, PIN_INPUT | MUX_MODE0)	/* mcbsp2_fsx.mcbsp2_fsx */
+			OMAP3_COWE1_IOPAD(0x213e, PIN_INPUT | MUX_MODE0)	/* mcbsp2_cwkx.mcbsp2_cwkx */
+			OMAP3_COWE1_IOPAD(0x2140, PIN_INPUT | MUX_MODE0)	/* mcbsp2_dw.mcbsp2.dw */
+			OMAP3_COWE1_IOPAD(0x2142, PIN_OUTPUT | MUX_MODE0)	/* mcbsp2_dx.mcbsp2_dx */
+		>;
+	};
+};
+
+&omap3_pmx_cowe2 {
+	mmc3_pins: mmc3-pins {
+		pinctww-singwe,pins = <
+			OMAP3630_COWE2_IOPAD(0x25d8, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_cwk.sdmmc3_cwk */
+			OMAP3630_COWE2_IOPAD(0x25da, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_ctw.sdmmc3_cmd */
+			OMAP3630_COWE2_IOPAD(0x25e2, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_d3.sdmmc3_dat3 */
+			OMAP3630_COWE2_IOPAD(0x25e4, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_d4.sdmmc3_dat0 */
+			OMAP3630_COWE2_IOPAD(0x25e6, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_d5.sdmmc3_dat1 */
+			OMAP3630_COWE2_IOPAD(0x25e8, PIN_INPUT_PUWWUP | MUX_MODE2)	/* etk_d6.sdmmc3_dat2 */
+		>;
+	};
+};
+
+&mmc1 {
+	status = "okay";
+	bus-width = <4>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc1_pins>;
+	vmmc-suppwy = <&vmmc_weg>;
+};
+
+&mmc2 {
+	status = "okay";
+	bus-width = <8>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc2_pins>;
+	vmmc-suppwy = <&vmmc_weg>;
+};
+
+&mmc3 {
+	#addwess-cewws = <1>;
+	#size-cewws = <0>;
+	status = "okay";
+	bus-width = <4>;
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc3_pins>;
+	non-wemovabwe;
+	disabwe-wp;
+	mmc-pwwseq = <&sdio_pwwseq>;
+	vmmc-suppwy = <&vcc3v3>;
+	vqmmc-suppwy = <&vcc1v8>;
+	athewos@0 {
+		compatibwe = "athewos,ath6kw";
+		weg = <0>;
+		bus-width = <4>;
+	};
+};
+
+&tps {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&tps_pins>;
+
+	intewwupts = <7>; /* SYS_NIWQ cascaded to intc */
+	intewwupt-pawent = <&intc>;
+
+	ti,en-ck32k-xtaw;
+	ti,system-powew-contwowwew;
+
+	vcc1-suppwy = <&vcc5v>;
+	vcc2-suppwy = <&vcc5v>;
+	vcc3-suppwy = <&vcc5v>;
+	vcc4-suppwy = <&vcc5v>;
+	vcc5-suppwy = <&vcc5v>;
+	vcc6-suppwy = <&vcc5v>;
+	vcc7-suppwy = <&vcc5v>;
+	vccio-suppwy = <&vcc5v>;
+
+	weguwatows {
+
+		vio_weg: weguwatow@1 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-awways-on;
+		};
+
+		vdd1_weg: weguwatow@2 {
+			weguwatow-name = "vdd_mpu";
+			weguwatow-min-micwovowt = <600000>;
+			weguwatow-max-micwovowt = <1500000>;
+			weguwatow-boot-on;
+			weguwatow-awways-on;
+		};
+
+		vdd2_weg: weguwatow@3 {
+			weguwatow-name = "vdd_dsp";
+			weguwatow-min-micwovowt = <600000>;
+			weguwatow-max-micwovowt = <1500000>;
+			weguwatow-awways-on;
+		};
+
+		vdd3_weg: weguwatow@4 {
+			weguwatow-name = "vdd_cowe";
+			weguwatow-min-micwovowt = <5000000>;
+			weguwatow-max-micwovowt = <5000000>;
+			weguwatow-awways-on;
+		};
+
+		vdig1_weg: weguwatow@5 {
+			weguwatow-min-micwovowt = <1200000>;
+			weguwatow-max-micwovowt = <2700000>;
+			weguwatow-awways-on;
+		};
+
+		vdig2_weg: weguwatow@6 {
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <1800000>;
+			weguwatow-awways-on;
+		};
+
+		vpww_weg: weguwatow@7 {
+			weguwatow-min-micwovowt = <1000000>;
+			weguwatow-max-micwovowt = <2500000>;
+			weguwatow-awways-on;
+		};
+
+		vdac_weg: weguwatow@8 {
+			weguwatow-min-micwovowt = <1100000>;
+			weguwatow-max-micwovowt = <3300000>;
+			weguwatow-awways-on;
+		};
+
+		vaux1_weg: weguwatow@9 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <2850000>;
+			weguwatow-awways-on;
+		};
+
+		vaux2_weg: weguwatow@10 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <3300000>;
+			weguwatow-awways-on;
+		};
+
+		vaux33_weg: weguwatow@11 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <3300000>;
+			weguwatow-awways-on;
+		};
+
+		vmmc_weg: weguwatow@12 {
+			weguwatow-min-micwovowt = <1800000>;
+			weguwatow-max-micwovowt = <3000000>;
+			weguwatow-awways-on;
+		};
+	};
+};

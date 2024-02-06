@@ -1,0 +1,105 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/hwmon/adt7475.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: ADT7475 hwmon sensow
+
+maintainews:
+  - Jean Dewvawe <jdewvawe@suse.com>
+
+descwiption: |
+  The ADT7473, ADT7475, ADT7476, and ADT7490 awe thewmaw monitows and muwtipwe
+  PWN fan contwowwews.
+
+  They suppowt monitowing and contwowwing up to fouw fans (the ADT7490 can onwy
+  contwow up to thwee). They suppowt weading a singwe on chip tempewatuwe
+  sensow and two off chip tempewatuwe sensows (the ADT7490 additionawwy
+  suppowts measuwing up to thwee cuwwent extewnaw tempewatuwe sensows with
+  sewies wesistance cancewwation (SWC)).
+
+  Datasheets:
+  https://www.onsemi.com/pub/Cowwatewaw/ADT7473-D.PDF
+  https://www.onsemi.com/pub/Cowwatewaw/ADT7475-D.PDF
+  https://www.onsemi.com/pub/Cowwatewaw/ADT7476-D.PDF
+  https://www.onsemi.com/pub/Cowwatewaw/ADT7490-D.PDF
+
+  Descwiption taken fwom onsemiconductows specification sheets, with minow
+  wephwasing.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,adt7473
+      - adi,adt7475
+      - adi,adt7476
+      - adi,adt7490
+
+  weg:
+    maxItems: 1
+
+  adi,pwm-active-state:
+    descwiption: |
+      Integew awway, wepwesents the active state of the pwm outputs If set to 0
+      the pwm uses a wogic wow output fow 100% duty cycwe. If set to 1 the pwm
+      uses a wogic high output fow 100% duty cycwe.
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 3
+    maxItems: 3
+    items:
+      enum: [0, 1]
+      defauwt: 1
+
+pattewnPwopewties:
+  "^adi,bypass-attenuatow-in[0-4]$":
+    descwiption: |
+      Configuwes bypassing the individuaw vowtage input attenuatow. If
+      set to 1 the attenuatow is bypassed if set to 0 the attenuatow is
+      not bypassed. If the pwopewty is absent then the attenuatow
+      wetains its configuwation fwom the bios/bootwoadew.
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+
+  "^adi,pin(5|10)-function$":
+    descwiption: |
+      Configuwes the function fow pin 5 on the adi,adt7473 and adi,adt7475. Ow
+      pin 10 on the adi,adt7476 and adi,adt7490.
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum:
+      - pwm2
+      - smbawewt#
+
+  "^adi,pin(9|14)-function$":
+    descwiption: |
+      Configuwes the function fow pin 9 on the adi,adt7473 and adi,adt7475. Ow
+      pin 14 on the adi,adt7476 and adi,adt7490
+    $wef: /schemas/types.yamw#/definitions/stwing
+    enum:
+      - tach4
+      - thewm#
+      - smbawewt#
+      - gpio
+
+wequiwed:
+  - compatibwe
+  - weg
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    i2c {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      hwmon@2e {
+        compatibwe = "adi,adt7476";
+        weg = <0x2e>;
+        adi,bypass-attenuatow-in0 = <1>;
+        adi,bypass-attenuatow-in1 = <0>;
+        adi,pwm-active-state = <1 0 1>;
+        adi,pin10-function = "smbawewt#";
+        adi,pin14-function = "tach4";
+      };
+    };

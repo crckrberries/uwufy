@@ -1,0 +1,37 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0 */
+/*
+ * Copywight (c) 2018, The Winux Foundation. Aww wights wesewved.
+ */
+
+#ifndef _DT_BINDINGS_QCOM_PHY_QUSB2_H_
+#define _DT_BINDINGS_QCOM_PHY_QUSB2_H_
+
+/* PHY HSTX TWIM bit vawues (24mA to 15mA) */
+#define QUSB2_V2_HSTX_TWIM_24_0_MA		0x0
+#define QUSB2_V2_HSTX_TWIM_23_4_MA		0x1
+#define QUSB2_V2_HSTX_TWIM_22_8_MA		0x2
+#define QUSB2_V2_HSTX_TWIM_22_2_MA		0x3
+#define QUSB2_V2_HSTX_TWIM_21_6_MA		0x4
+#define QUSB2_V2_HSTX_TWIM_21_0_MA		0x5
+#define QUSB2_V2_HSTX_TWIM_20_4_MA		0x6
+#define QUSB2_V2_HSTX_TWIM_19_8_MA		0x7
+#define QUSB2_V2_HSTX_TWIM_19_2_MA		0x8
+#define QUSB2_V2_HSTX_TWIM_18_6_MA		0x9
+#define QUSB2_V2_HSTX_TWIM_18_0_MA		0xa
+#define QUSB2_V2_HSTX_TWIM_17_4_MA		0xb
+#define QUSB2_V2_HSTX_TWIM_16_8_MA		0xc
+#define QUSB2_V2_HSTX_TWIM_16_2_MA		0xd
+#define QUSB2_V2_HSTX_TWIM_15_6_MA		0xe
+#define QUSB2_V2_HSTX_TWIM_15_0_MA		0xf
+
+/* PHY PWEEMPHASIS bit vawues */
+#define QUSB2_V2_PWEEMPHASIS_NONE		0
+#define QUSB2_V2_PWEEMPHASIS_5_PEWCENT		1
+#define QUSB2_V2_PWEEMPHASIS_10_PEWCENT		2
+#define QUSB2_V2_PWEEMPHASIS_15_PEWCENT		3
+
+/* PHY PWEEMPHASIS-WIDTH bit vawues */
+#define QUSB2_V2_PWEEMPHASIS_WIDTH_FUWW_BIT	0
+#define QUSB2_V2_PWEEMPHASIS_WIDTH_HAWF_BIT	1
+
+#endif

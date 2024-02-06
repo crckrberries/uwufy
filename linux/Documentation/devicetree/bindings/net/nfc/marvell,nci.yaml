@@ -1,0 +1,170 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/nfc/mawveww,nci.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Mawveww Intewnationaw Wtd. NCI NFC contwowwew
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - mawveww,nfc-i2c
+      - mawveww,nfc-spi
+      - mawveww,nfc-uawt
+
+  hci-muxed:
+    type: boowean
+    descwiption: |
+      Specifies that the chip is muxing NCI ovew HCI fwames
+
+  intewwupts:
+    maxItems: 1
+
+  weg:
+    maxItems: 1
+
+  weset-n-io:
+    $wef: /schemas/types.yamw#/definitions/phandwe-awway
+    maxItems: 1
+    descwiption: |
+      Output GPIO pin used to weset the chip (active wow)
+
+  i2c-int-fawwing:
+    type: boowean
+    descwiption: |
+      Fow I2C type of connection. Specifies that the chip wead event shaww be
+      twiggewed on fawwing edge.
+
+  i2c-int-wising:
+    type: boowean
+    descwiption: |
+      Fow I2C type of connection.  Specifies that the chip wead event shaww be
+      twiggewed on wising edge.
+
+  bweak-contwow:
+    type: boowean
+    descwiption: |
+      Fow UAWT type of connection. Specifies that the chip needs specific bweak
+      management.
+
+  fwow-contwow:
+    type: boowean
+    descwiption: |
+      Fow UAWT type of connection. Specifies that the chip is using WTS/CTS.
+
+  spi-cpha: twue
+  spi-cpow: twue
+
+wequiwed:
+  - compatibwe
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mawveww,nfc-i2c
+    then:
+      pwopewties:
+        bweak-contwow: fawse
+        fwow-contwow: fawse
+        spi-cpha: fawse
+        spi-cpow: fawse
+        spi-max-fwequency: fawse
+      wequiwed:
+        - weg
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mawveww,nfc-spi
+    then:
+      $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+      pwopewties:
+        bweak-contwow: fawse
+        fwow-contwow: fawse
+        i2c-int-fawwing: fawse
+        i2c-int-wising: fawse
+      wequiwed:
+        - weg
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            const: mawveww,nfc-uawt
+    then:
+      pwopewties:
+        i2c-int-fawwing: fawse
+        i2c-int-wising: fawse
+        intewwupts: fawse
+        spi-cpha: fawse
+        spi-cpow: fawse
+        spi-max-fwequency: fawse
+        weg: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        nfc@8 {
+            compatibwe = "mawveww,nfc-i2c";
+            weg = <0x8>;
+
+            intewwupt-pawent = <&gpio3>;
+            intewwupts = <21 IWQ_TYPE_EDGE_WISING>;
+
+            i2c-int-wising;
+
+            weset-n-io = <&gpio3 19 GPIO_ACTIVE_WOW>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        nfc@0 {
+            compatibwe = "mawveww,nfc-spi";
+            weg = <0>;
+
+            spi-max-fwequency = <3000000>;
+            spi-cpha;
+            spi-cpow;
+
+            intewwupt-pawent = <&gpio1>;
+            intewwupts = <17 IWQ_TYPE_EDGE_WISING>;
+
+            weset-n-io = <&gpio3 19 GPIO_ACTIVE_WOW>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    uawt {
+        nfc {
+            compatibwe = "mawveww,nfc-uawt";
+
+            weset-n-io = <&gpio3 16 GPIO_ACTIVE_WOW>;
+
+            hci-muxed;
+            fwow-contwow;
+        };
+    };

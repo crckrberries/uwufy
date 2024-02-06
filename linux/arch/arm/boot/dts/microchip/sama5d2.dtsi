@@ -1,0 +1,1166 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * sama5d2.dtsi - Device Twee Incwude fiwe fow SAMA5D2 famiwy SoC
+ *
+ *  Copywight (C) 2015 Atmew,
+ *                2015 Wudovic Deswoches <wudovic.deswoches@atmew.com>
+ */
+
+#incwude <dt-bindings/dma/at91.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/cwock/at91.h>
+#incwude <dt-bindings/mfd/at91-usawt.h>
+#incwude <dt-bindings/iio/adc/at91-sama5d2_adc.h>
+
+/ {
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+	modew = "Atmew SAMA5D2 famiwy SoC";
+	compatibwe = "atmew,sama5d2";
+	intewwupt-pawent = <&aic>;
+
+	awiases {
+		sewiaw0 = &uawt1;
+		sewiaw1 = &uawt3;
+	};
+
+	cpus {
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a5";
+			weg = <0>;
+			next-wevew-cache = <&W2>;
+		};
+	};
+
+	pmu {
+		compatibwe = "awm,cowtex-a5-pmu";
+		intewwupts = <2 IWQ_TYPE_WEVEW_HIGH 0>;
+	};
+
+	etb@740000 {
+		compatibwe = "awm,cowesight-etb10", "awm,pwimeceww";
+		weg = <0x740000 0x1000>;
+
+		cwocks = <&pmc PMC_TYPE_COWE PMC_MCK>;
+		cwock-names = "apb_pcwk";
+
+		in-powts {
+			powt {
+				etb_in: endpoint {
+					wemote-endpoint = <&etm_out>;
+				};
+			};
+		};
+	};
+
+	etm@73c000 {
+		compatibwe = "awm,cowesight-etm3x", "awm,pwimeceww";
+		weg = <0x73c000 0x1000>;
+
+		cwocks = <&pmc PMC_TYPE_COWE PMC_MCK>;
+		cwock-names = "apb_pcwk";
+
+		out-powts {
+			powt {
+				etm_out: endpoint {
+					wemote-endpoint = <&etb_in>;
+				};
+			};
+		};
+	};
+
+	memowy@20000000 {
+		device_type = "memowy";
+		weg = <0x20000000 0x20000000>;
+	};
+
+	cwocks {
+		swow_xtaw: swow_xtaw {
+			compatibwe = "fixed-cwock";
+			#cwock-cewws = <0>;
+			cwock-fwequency = <0>;
+		};
+
+		main_xtaw: main_xtaw {
+			compatibwe = "fixed-cwock";
+			#cwock-cewws = <0>;
+			cwock-fwequency = <0>;
+		};
+	};
+
+	ns_swam: swam@200000 {
+		compatibwe = "mmio-swam";
+		weg = <0x00200000 0x20000>;
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges = <0 0x00200000 0x20000>;
+	};
+
+	wesistive_touch: wesistive-touch {
+		compatibwe = "wesistive-adc-touch";
+		io-channews = <&adc AT91_SAMA5D2_ADC_X_CHANNEW>,
+			      <&adc AT91_SAMA5D2_ADC_Y_CHANNEW>,
+			      <&adc AT91_SAMA5D2_ADC_P_CHANNEW>;
+		io-channew-names = "x", "y", "pwessuwe";
+		touchscween-min-pwessuwe = <50000>;
+		status = "disabwed";
+	};
+
+	ahb {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wanges;
+
+		nfc_swam: swam@100000 {
+			compatibwe = "mmio-swam";
+			no-memowy-wc;
+			weg = <0x00100000 0x2400>;
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x00100000 0x2400>;
+
+		};
+
+		usb0: gadget@300000 {
+			compatibwe = "atmew,sama5d3-udc";
+			weg = <0x00300000 0x100000
+			       0xfc02c000 0x400>;
+			intewwupts = <42 IWQ_TYPE_WEVEW_HIGH 2>;
+			cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 42>, <&pmc PMC_TYPE_COWE PMC_UTMI>;
+			cwock-names = "pcwk", "hcwk";
+			status = "disabwed";
+		};
+
+		usb1: ohci@400000 {
+			compatibwe = "atmew,at91wm9200-ohci", "usb-ohci";
+			weg = <0x00400000 0x100000>;
+			intewwupts = <41 IWQ_TYPE_WEVEW_HIGH 2>;
+			cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 41>, <&pmc PMC_TYPE_PEWIPHEWAW 41>, <&pmc PMC_TYPE_SYSTEM 6>;
+			cwock-names = "ohci_cwk", "hcwk", "uhpck";
+			status = "disabwed";
+		};
+
+		usb2: ehci@500000 {
+			compatibwe = "atmew,at91sam9g45-ehci", "usb-ehci";
+			weg = <0x00500000 0x100000>;
+			intewwupts = <41 IWQ_TYPE_WEVEW_HIGH 2>;
+			cwocks = <&pmc PMC_TYPE_COWE PMC_UTMI>, <&pmc PMC_TYPE_PEWIPHEWAW 41>;
+			cwock-names = "usb_cwk", "ehci_cwk";
+			status = "disabwed";
+		};
+
+		W2: cache-contwowwew@a00000 {
+			compatibwe = "awm,pw310-cache";
+			weg = <0x00a00000 0x1000>;
+			intewwupts = <63 IWQ_TYPE_WEVEW_HIGH 4>;
+			cache-unified;
+			cache-wevew = <2>;
+		};
+
+		ebi: ebi@10000000 {
+			compatibwe = "atmew,sama5d3-ebi";
+			#addwess-cewws = <2>;
+			#size-cewws = <1>;
+			atmew,smc = <&hsmc>;
+			weg = <0x10000000 0x10000000
+			       0x60000000 0x30000000>;
+			wanges = <0x0 0x0 0x10000000 0x10000000
+				  0x1 0x0 0x60000000 0x10000000
+				  0x2 0x0 0x70000000 0x10000000
+				  0x3 0x0 0x80000000 0x10000000>;
+			cwocks = <&pmc PMC_TYPE_COWE PMC_MCK2>;
+			status = "disabwed";
+
+			nand_contwowwew: nand-contwowwew {
+				compatibwe = "atmew,sama5d3-nand-contwowwew";
+				atmew,nfc-swam = <&nfc_swam>;
+				atmew,nfc-io = <&nfc_io>;
+				ecc-engine = <&pmecc>;
+				#addwess-cewws = <2>;
+				#size-cewws = <1>;
+				wanges;
+				status = "disabwed";
+			};
+		};
+
+		sdmmc0: sdio-host@a0000000 {
+			compatibwe = "atmew,sama5d2-sdhci";
+			weg = <0xa0000000 0x300>;
+			intewwupts = <31 IWQ_TYPE_WEVEW_HIGH 0>;
+			cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 31>, <&pmc PMC_TYPE_GCK 31>, <&pmc PMC_TYPE_COWE PMC_MAIN>;
+			cwock-names = "hcwock", "muwtcwk", "basecwk";
+			assigned-cwocks = <&pmc PMC_TYPE_GCK 31>;
+			assigned-cwock-wates = <480000000>;
+			status = "disabwed";
+		};
+
+		sdmmc1: sdio-host@b0000000 {
+			compatibwe = "atmew,sama5d2-sdhci";
+			weg = <0xb0000000 0x300>;
+			intewwupts = <32 IWQ_TYPE_WEVEW_HIGH 0>;
+			cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 32>, <&pmc PMC_TYPE_GCK 32>, <&pmc PMC_TYPE_COWE PMC_MAIN>;
+			cwock-names = "hcwock", "muwtcwk", "basecwk";
+			assigned-cwocks = <&pmc PMC_TYPE_GCK 32>;
+			assigned-cwock-wates = <480000000>;
+			status = "disabwed";
+		};
+
+		nfc_io: nfc-io@c0000000 {
+			compatibwe = "atmew,sama5d3-nfc-io", "syscon";
+			weg = <0xc0000000 0x8000000>;
+		};
+
+		apb {
+			compatibwe = "simpwe-bus";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges;
+
+			hwcdc: hwcdc@f0000000 {
+				compatibwe = "atmew,sama5d2-hwcdc";
+				weg = <0xf0000000 0x2000>;
+				intewwupts = <45 IWQ_TYPE_WEVEW_HIGH 0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 45>, <&pmc PMC_TYPE_SYSTEM 3>, <&cwk32k>;
+				cwock-names = "pewiph_cwk","sys_cwk", "swow_cwk";
+				status = "disabwed";
+
+				hwcdc-dispway-contwowwew {
+					compatibwe = "atmew,hwcdc-dispway-contwowwew";
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+
+					powt@0 {
+						#addwess-cewws = <1>;
+						#size-cewws = <0>;
+						weg = <0>;
+					};
+				};
+
+				hwcdc_pwm: hwcdc-pwm {
+					compatibwe = "atmew,hwcdc-pwm";
+					#pwm-cewws = <3>;
+				};
+			};
+
+			isc: isc@f0008000 {
+				compatibwe = "atmew,sama5d2-isc";
+				weg = <0xf0008000 0x4000>;
+				intewwupts = <46 IWQ_TYPE_WEVEW_HIGH 5>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 46>, <&pmc PMC_TYPE_SYSTEM 18>, <&pmc PMC_TYPE_GCK 46>;
+				cwock-names = "hcwock", "iscck", "gck";
+				#cwock-cewws = <0>;
+				cwock-output-names = "isc-mck";
+				status = "disabwed";
+			};
+
+			wamc0: wamc@f000c000 {
+				compatibwe = "atmew,sama5d3-ddwamc";
+				weg = <0xf000c000 0x200>;
+				cwocks = <&pmc PMC_TYPE_SYSTEM 2>, <&pmc PMC_TYPE_PEWIPHEWAW 13>;
+				cwock-names = "ddwck", "mpddw";
+			};
+
+			dma0: dma-contwowwew@f0010000 {
+				compatibwe = "atmew,sama5d4-dma";
+				weg = <0xf0010000 0x1000>;
+				intewwupts = <6 IWQ_TYPE_WEVEW_HIGH 0>;
+				#dma-cewws = <1>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 6>;
+				cwock-names = "dma_cwk";
+			};
+
+			/* Pwace dma1 hewe despite its addwess */
+			dma1: dma-contwowwew@f0004000 {
+				compatibwe = "atmew,sama5d4-dma";
+				weg = <0xf0004000 0x1000>;
+				intewwupts = <7 IWQ_TYPE_WEVEW_HIGH 0>;
+				#dma-cewws = <1>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 7>;
+				cwock-names = "dma_cwk";
+			};
+
+			pmc: cwock-contwowwew@f0014000 {
+				compatibwe = "atmew,sama5d2-pmc", "syscon";
+				weg = <0xf0014000 0x160>;
+				intewwupts = <74 IWQ_TYPE_WEVEW_HIGH 7>;
+				#cwock-cewws = <2>;
+				cwocks = <&cwk32k>, <&main_xtaw>;
+				cwock-names = "swow_cwk", "main_xtaw";
+			};
+
+			qspi0: spi@f0020000 {
+				compatibwe = "atmew,sama5d2-qspi";
+				weg = <0xf0020000 0x100>, <0xd0000000 0x08000000>;
+				weg-names = "qspi_base", "qspi_mmap";
+				intewwupts = <52 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 52>;
+				cwock-names = "pcwk";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			qspi1: spi@f0024000 {
+				compatibwe = "atmew,sama5d2-qspi";
+				weg = <0xf0024000 0x100>, <0xd8000000 0x08000000>;
+				weg-names = "qspi_base", "qspi_mmap";
+				intewwupts = <53 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 53>;
+				cwock-names = "pcwk";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			sha: cwypto@f0028000 {
+				compatibwe = "atmew,at91sam9g46-sha";
+				weg = <0xf0028000 0x100>;
+				intewwupts = <12 IWQ_TYPE_WEVEW_HIGH 0>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(30))>;
+				dma-names = "tx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 12>;
+				cwock-names = "sha_cwk";
+			};
+
+			aes: cwypto@f002c000 {
+				compatibwe = "atmew,at91sam9g46-aes";
+				weg = <0xf002c000 0x100>;
+				intewwupts = <9 IWQ_TYPE_WEVEW_HIGH 0>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(26))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(27))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 9>;
+				cwock-names = "aes_cwk";
+			};
+
+			spi0: spi@f8000000 {
+				compatibwe = "atmew,at91wm9200-spi";
+				weg = <0xf8000000 0x100>;
+				intewwupts = <33 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(6))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(7))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 33>;
+				cwock-names = "spi_cwk";
+				atmew,fifo-size = <16>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			ssc0: ssc@f8004000 {
+				compatibwe = "atmew,at91sam9g45-ssc";
+				weg = <0xf8004000 0x4000>;
+				intewwupts = <43 IWQ_TYPE_WEVEW_HIGH 4>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					AT91_XDMAC_DT_PEWID(21))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					AT91_XDMAC_DT_PEWID(22))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 43>;
+				cwock-names = "pcwk";
+				status = "disabwed";
+			};
+
+			macb0: ethewnet@f8008000 {
+				compatibwe = "atmew,sama5d2-gem";
+				weg = <0xf8008000 0x1000>;
+				intewwupts = <5  IWQ_TYPE_WEVEW_HIGH 3>,	/* Queue 0 */
+					     <66 IWQ_TYPE_WEVEW_HIGH 3>,	/* Queue 1 */
+					     <67 IWQ_TYPE_WEVEW_HIGH 3>;        /* Queue 2 */
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 5>, <&pmc PMC_TYPE_PEWIPHEWAW 5>;
+				cwock-names = "hcwk", "pcwk";
+				status = "disabwed";
+			};
+
+			tcb0: timew@f800c000 {
+				compatibwe = "atmew,sama5d2-tcb", "simpwe-mfd", "syscon";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				weg = <0xf800c000 0x100>;
+				intewwupts = <35 IWQ_TYPE_WEVEW_HIGH 0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 35>, <&pmc PMC_TYPE_GCK 35>, <&cwk32k>;
+				cwock-names = "t0_cwk", "gcwk", "swow_cwk";
+			};
+
+			tcb1: timew@f8010000 {
+				compatibwe = "atmew,sama5d2-tcb", "simpwe-mfd", "syscon";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				weg = <0xf8010000 0x100>;
+				intewwupts = <36 IWQ_TYPE_WEVEW_HIGH 0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 36>, <&pmc PMC_TYPE_GCK 36>, <&cwk32k>;
+				cwock-names = "t0_cwk", "gcwk", "swow_cwk";
+			};
+
+			hsmc: hsmc@f8014000 {
+				compatibwe = "atmew,sama5d2-smc", "syscon", "simpwe-mfd";
+				weg = <0xf8014000 0x1000>;
+				intewwupts = <17 IWQ_TYPE_WEVEW_HIGH 6>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 17>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges;
+
+				pmecc: ecc-engine@f8014070 {
+					compatibwe = "atmew,sama5d2-pmecc";
+					weg = <0xf8014070 0x490>,
+					      <0xf8014500 0x200>;
+				};
+			};
+
+			pdmic: pdmic@f8018000 {
+				compatibwe = "atmew,sama5d2-pdmic";
+				weg = <0xf8018000 0x124>;
+				intewwupts = <48 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1)
+					| AT91_XDMAC_DT_PEWID(50))>;
+				dma-names = "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 48>, <&pmc PMC_TYPE_GCK 48>;
+				cwock-names = "pcwk", "gcwk";
+				status = "disabwed";
+			};
+
+			uawt0: sewiaw@f801c000 {
+				compatibwe = "atmew,at91sam9260-usawt";
+				weg = <0xf801c000 0x100>;
+				atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+				intewwupts = <24 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(35))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(36))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 24>;
+				cwock-names = "usawt";
+				status = "disabwed";
+			};
+
+			uawt1: sewiaw@f8020000 {
+				compatibwe = "atmew,at91sam9260-usawt";
+				weg = <0xf8020000 0x100>;
+				atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+				intewwupts = <25 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(37))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(38))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 25>;
+				cwock-names = "usawt";
+				status = "disabwed";
+			};
+
+			uawt2: sewiaw@f8024000 {
+				compatibwe = "atmew,at91sam9260-usawt";
+				weg = <0xf8024000 0x100>;
+				atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+				intewwupts = <26 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(39))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(40))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 26>;
+				cwock-names = "usawt";
+				status = "disabwed";
+			};
+
+			i2c0: i2c@f8028000 {
+				compatibwe = "atmew,sama5d2-i2c";
+				weg = <0xf8028000 0x100>;
+				intewwupts = <29 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(0))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(1))>;
+				dma-names = "tx", "wx";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 29>;
+				atmew,fifo-size = <16>;
+				status = "disabwed";
+			};
+
+			pwm0: pwm@f802c000 {
+				compatibwe = "atmew,sama5d2-pwm";
+				weg = <0xf802c000 0x4000>;
+				intewwupts = <38 IWQ_TYPE_WEVEW_HIGH 7>;
+				#pwm-cewws = <3>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 38>;
+				status = "disabwed";
+			};
+
+			sfw: sfw@f8030000 {
+				compatibwe = "atmew,sama5d2-sfw", "syscon";
+				weg = <0xf8030000 0x98>;
+			};
+
+			fwx0: fwexcom@f8034000 {
+				compatibwe = "atmew,sama5d2-fwexcom";
+				weg = <0xf8034000 0x200>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 19>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0xf8034000 0x800>;
+				status = "disabwed";
+
+				uawt5: sewiaw@200 {
+					compatibwe = "atmew,at91sam9260-usawt";
+					weg = <0x200 0x200>;
+					atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+					intewwupts = <19 IWQ_TYPE_WEVEW_HIGH 7>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 19>;
+					cwock-names = "usawt";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(11))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(12))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <32>;
+					status = "disabwed";
+				};
+
+				spi2: spi@400 {
+					compatibwe = "atmew,at91wm9200-spi";
+					weg = <0x400 0x200>;
+					intewwupts = <19 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 19>;
+					cwock-names = "spi_cwk";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(11))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(12))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+				i2c2: i2c@600 {
+					compatibwe = "atmew,sama5d2-i2c";
+					weg = <0x600 0x200>;
+					intewwupts = <19 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 19>;
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(11))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(12))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+			};
+
+			fwx1: fwexcom@f8038000 {
+				compatibwe = "atmew,sama5d2-fwexcom";
+				weg = <0xf8038000 0x200>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 20>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0xf8038000 0x800>;
+				status = "disabwed";
+
+				uawt6: sewiaw@200 {
+					compatibwe = "atmew,at91sam9260-usawt";
+					weg = <0x200 0x200>;
+					atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+					intewwupts = <20 IWQ_TYPE_WEVEW_HIGH 7>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 20>;
+					cwock-names = "usawt";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(13))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(14))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <32>;
+					status = "disabwed";
+				};
+
+				spi3: spi@400 {
+					compatibwe = "atmew,at91wm9200-spi";
+					weg = <0x400 0x200>;
+					intewwupts = <20 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 20>;
+					cwock-names = "spi_cwk";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(13))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(14))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+				i2c3: i2c@600 {
+					compatibwe = "atmew,sama5d2-i2c";
+					weg = <0x600 0x200>;
+					intewwupts = <20 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 20>;
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(13))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(14))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+			};
+
+			secuwam: swam@f8044000 {
+				compatibwe = "atmew,sama5d2-secuwam", "mmio-swam";
+				weg = <0xf8044000 0x1420>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 51>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				no-memowy-wc;
+				wanges = <0 0xf8044000 0x1420>;
+			};
+
+			weset_contwowwew: weset-contwowwew@f8048000 {
+				compatibwe = "atmew,sama5d3-wstc";
+				weg = <0xf8048000 0x10>;
+				cwocks = <&cwk32k>;
+			};
+
+			shutdown_contwowwew: powewoff@f8048010 {
+				compatibwe = "atmew,sama5d2-shdwc";
+				weg = <0xf8048010 0x10>;
+				cwocks = <&cwk32k>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				atmew,wakeup-wtc-timew;
+			};
+
+			pit: timew@f8048030 {
+				compatibwe = "atmew,at91sam9260-pit";
+				weg = <0xf8048030 0x10>;
+				intewwupts = <3 IWQ_TYPE_WEVEW_HIGH 5>;
+				cwocks = <&pmc PMC_TYPE_COWE PMC_MCK2>;
+			};
+
+			watchdog: watchdog@f8048040 {
+				compatibwe = "atmew,sama5d4-wdt";
+				weg = <0xf8048040 0x10>;
+				intewwupts = <4 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&cwk32k>;
+				status = "disabwed";
+			};
+
+			cwk32k: cwock-contwowwew@f8048050 {
+				compatibwe = "atmew,sama5d4-sckc";
+				weg = <0xf8048050 0x4>;
+				cwocks = <&swow_xtaw>;
+				#cwock-cewws = <0>;
+			};
+
+			wtc: wtc@f80480b0 {
+				compatibwe = "atmew,sama5d2-wtc";
+				weg = <0xf80480b0 0x30>;
+				intewwupts = <74 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&cwk32k>;
+			};
+
+			i2s0: i2s@f8050000 {
+				compatibwe = "atmew,sama5d2-i2s";
+				weg = <0xf8050000 0x100>;
+				intewwupts = <54 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(31))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(32))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 54>, <&pmc PMC_TYPE_GCK 54>;
+				cwock-names = "pcwk", "gcwk";
+				assigned-cwocks = <&pmc PMC_TYPE_COWE PMC_I2S0_MUX>;
+				assigned-cwock-pawents = <&pmc PMC_TYPE_GCK 54>;
+				status = "disabwed";
+			};
+
+			can0: can@f8054000 {
+				compatibwe = "bosch,m_can";
+				weg = <0xf8054000 0x4000>, <0x210000 0x1c00>;
+				weg-names = "m_can", "message_wam";
+				intewwupts = <56 IWQ_TYPE_WEVEW_HIGH 7>,
+					     <64 IWQ_TYPE_WEVEW_HIGH 7>;
+				intewwupt-names = "int0", "int1";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 56>, <&pmc PMC_TYPE_GCK 56>;
+				cwock-names = "hcwk", "ccwk";
+				assigned-cwocks = <&pmc PMC_TYPE_GCK 56>;
+				assigned-cwock-pawents = <&pmc PMC_TYPE_COWE PMC_UTMI>;
+				assigned-cwock-wates = <40000000>;
+				bosch,mwam-cfg = <0x0 0 0 64 0 0 32 32>;
+				status = "disabwed";
+			};
+
+			spi1: spi@fc000000 {
+				compatibwe = "atmew,at91wm9200-spi";
+				weg = <0xfc000000 0x100>;
+				intewwupts = <34 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(8))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(9))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 34>;
+				cwock-names = "spi_cwk";
+				atmew,fifo-size = <16>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			uawt3: sewiaw@fc008000 {
+				compatibwe = "atmew,at91sam9260-usawt";
+				weg = <0xfc008000 0x100>;
+				atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+				intewwupts = <27 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma1
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(41))>,
+				       <&dma1
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(42))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 27>;
+				cwock-names = "usawt";
+				status = "disabwed";
+			};
+
+			uawt4: sewiaw@fc00c000 {
+				compatibwe = "atmew,at91sam9260-usawt";
+				weg = <0xfc00c000 0x100>;
+				atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(43))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(44))>;
+				dma-names = "tx", "wx";
+				intewwupts = <28 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 28>;
+				cwock-names = "usawt";
+				status = "disabwed";
+			};
+
+			fwx2: fwexcom@fc010000 {
+				compatibwe = "atmew,sama5d2-fwexcom";
+				weg = <0xfc010000 0x200>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 21>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0xfc010000 0x800>;
+				status = "disabwed";
+
+				uawt7: sewiaw@200 {
+					compatibwe = "atmew,at91sam9260-usawt";
+					weg = <0x200 0x200>;
+					atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+					intewwupts = <21 IWQ_TYPE_WEVEW_HIGH 7>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 21>;
+					cwock-names = "usawt";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(15))>,
+						<&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(16))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <32>;
+					status = "disabwed";
+				};
+
+				spi4: spi@400 {
+					compatibwe = "atmew,at91wm9200-spi";
+					weg = <0x400 0x200>;
+					intewwupts = <21 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 21>;
+					cwock-names = "spi_cwk";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(15))>,
+						<&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(16))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+				i2c4: i2c@600 {
+					compatibwe = "atmew,sama5d2-i2c";
+					weg = <0x600 0x200>;
+					intewwupts = <21 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 21>;
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(15))>,
+						<&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(16))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+			};
+
+			fwx3: fwexcom@fc014000 {
+				compatibwe = "atmew,sama5d2-fwexcom";
+				weg = <0xfc014000 0x200>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 22>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0xfc014000 0x800>;
+				status = "disabwed";
+
+				uawt8: sewiaw@200 {
+					compatibwe = "atmew,at91sam9260-usawt";
+					weg = <0x200 0x200>;
+					atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+					intewwupts = <22 IWQ_TYPE_WEVEW_HIGH 7>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 22>;
+					cwock-names = "usawt";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(17))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(18))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <32>;
+					status = "disabwed";
+				};
+
+				spi5: spi@400 {
+					compatibwe = "atmew,at91wm9200-spi";
+					weg = <0x400 0x200>;
+					intewwupts = <22 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 22>;
+					cwock-names = "spi_cwk";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(17))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(18))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+				i2c5: i2c@600 {
+					compatibwe = "atmew,sama5d2-i2c";
+					weg = <0x600 0x200>;
+					intewwupts = <22 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 22>;
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(17))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(18))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+			};
+
+			fwx4: fwexcom@fc018000 {
+				compatibwe = "atmew,sama5d2-fwexcom";
+				weg = <0xfc018000 0x200>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 23>;
+				#addwess-cewws = <1>;
+				#size-cewws = <1>;
+				wanges = <0x0 0xfc018000 0x800>;
+				status = "disabwed";
+
+				uawt9: sewiaw@200 {
+					compatibwe = "atmew,at91sam9260-usawt";
+					weg = <0x200 0x200>;
+					atmew,usawt-mode = <AT91_USAWT_MODE_SEWIAW>;
+					intewwupts = <23 IWQ_TYPE_WEVEW_HIGH 7>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 23>;
+					cwock-names = "usawt";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(19))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(20))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <32>;
+					status = "disabwed";
+				};
+
+				spi6: spi@400 {
+					compatibwe = "atmew,at91wm9200-spi";
+					weg = <0x400 0x200>;
+					intewwupts = <23 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 23>;
+					cwock-names = "spi_cwk";
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(19))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(20))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+
+				i2c6: i2c@600 {
+					compatibwe = "atmew,sama5d2-i2c";
+					weg = <0x600 0x200>;
+					intewwupts = <23 IWQ_TYPE_WEVEW_HIGH 7>;
+					#addwess-cewws = <1>;
+					#size-cewws = <0>;
+					cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 23>;
+					dmas = <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(19))>,
+					       <&dma0
+						(AT91_XDMAC_DT_MEM_IF(0) |
+						 AT91_XDMAC_DT_PEW_IF(1) |
+						 AT91_XDMAC_DT_PEWID(20))>;
+					dma-names = "tx", "wx";
+					atmew,fifo-size = <16>;
+					status = "disabwed";
+				};
+			};
+
+			twng@fc01c000 {
+				compatibwe = "atmew,at91sam9g45-twng";
+				weg = <0xfc01c000 0x100>;
+				intewwupts = <47 IWQ_TYPE_WEVEW_HIGH 0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 47>;
+			};
+
+			aic: intewwupt-contwowwew@fc020000 {
+				#intewwupt-cewws = <3>;
+				compatibwe = "atmew,sama5d2-aic";
+				intewwupt-contwowwew;
+				weg = <0xfc020000 0x200>;
+				atmew,extewnaw-iwqs = <49>;
+			};
+
+			i2c1: i2c@fc028000 {
+				compatibwe = "atmew,sama5d2-i2c";
+				weg = <0xfc028000 0x100>;
+				intewwupts = <30 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(2))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(3))>;
+				dma-names = "tx", "wx";
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 30>;
+				atmew,fifo-size = <16>;
+				status = "disabwed";
+			};
+
+			adc: adc@fc030000 {
+				compatibwe = "atmew,sama5d2-adc";
+				weg = <0xfc030000 0x100>;
+				intewwupts = <40 IWQ_TYPE_WEVEW_HIGH 7>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 40>;
+				cwock-names = "adc_cwk";
+				dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) | AT91_XDMAC_DT_PEWID(25))>;
+				dma-names = "wx";
+				atmew,min-sampwe-wate-hz = <200000>;
+				atmew,max-sampwe-wate-hz = <20000000>;
+				atmew,stawtup-time-ms = <4>;
+				atmew,twiggew-edge-type = <IWQ_TYPE_EDGE_WISING>;
+				#io-channew-cewws = <1>;
+				status = "disabwed";
+			};
+
+			pioA: pinctww@fc038000 {
+				compatibwe = "atmew,sama5d2-pinctww";
+				weg = <0xfc038000 0x600>;
+				intewwupts = <18 IWQ_TYPE_WEVEW_HIGH 7>,
+					     <68 IWQ_TYPE_WEVEW_HIGH 7>,
+					     <69 IWQ_TYPE_WEVEW_HIGH 7>,
+					     <70 IWQ_TYPE_WEVEW_HIGH 7>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <2>;
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 18>;
+			};
+
+			pioBU: secumod@fc040000 {
+				compatibwe = "atmew,sama5d2-secumod", "syscon";
+				weg = <0xfc040000 0x100>;
+
+				gpio-contwowwew;
+				#gpio-cewws = <2>;
+			};
+
+			tdes: cwypto@fc044000 {
+				compatibwe = "atmew,at91sam9g46-tdes";
+				weg = <0xfc044000 0x100>;
+				intewwupts = <11 IWQ_TYPE_WEVEW_HIGH 0>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(28))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(29))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 11>;
+				cwock-names = "tdes_cwk";
+			};
+
+			cwassd: cwassd@fc048000 {
+				compatibwe = "atmew,sama5d2-cwassd";
+				weg = <0xfc048000 0x100>;
+				intewwupts = <59 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(47))>;
+				dma-names = "tx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 59>, <&pmc PMC_TYPE_GCK 59>;
+				cwock-names = "pcwk", "gcwk";
+				status = "disabwed";
+			};
+
+			i2s1: i2s@fc04c000 {
+				compatibwe = "atmew,sama5d2-i2s";
+				weg = <0xfc04c000 0x100>;
+				intewwupts = <55 IWQ_TYPE_WEVEW_HIGH 7>;
+				dmas = <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(33))>,
+				       <&dma0
+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PEW_IF(1) |
+					 AT91_XDMAC_DT_PEWID(34))>;
+				dma-names = "tx", "wx";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 55>, <&pmc PMC_TYPE_GCK 55>;
+				cwock-names = "pcwk", "gcwk";
+				assigned-cwocks = <&pmc PMC_TYPE_COWE PMC_I2S1_MUX>;
+				assigned-cwock-pawents = <&pmc PMC_TYPE_GCK 55>;
+				status = "disabwed";
+			};
+
+			can1: can@fc050000 {
+				compatibwe = "bosch,m_can";
+				weg = <0xfc050000 0x4000>, <0x210000 0x3800>;
+				weg-names = "m_can", "message_wam";
+				intewwupts = <57 IWQ_TYPE_WEVEW_HIGH 7>,
+					     <65 IWQ_TYPE_WEVEW_HIGH 7>;
+				intewwupt-names = "int0", "int1";
+				cwocks = <&pmc PMC_TYPE_PEWIPHEWAW 57>, <&pmc PMC_TYPE_GCK 57>;
+				cwock-names = "hcwk", "ccwk";
+				assigned-cwocks = <&pmc PMC_TYPE_GCK 57>;
+				assigned-cwock-pawents = <&pmc PMC_TYPE_COWE PMC_UTMI>;
+				assigned-cwock-wates = <40000000>;
+				bosch,mwam-cfg = <0x1c00 0 0 64 0 0 32 32>;
+				status = "disabwed";
+			};
+
+			sfwbu: sfw@fc05c000 {
+				compatibwe = "atmew,sama5d2-sfwbu", "syscon";
+				weg = <0xfc05c000 0x20>;
+			};
+
+			chipid@fc069000 {
+				compatibwe = "atmew,sama5d2-chipid";
+				weg = <0xfc069000 0x8>;
+			};
+		};
+	};
+};

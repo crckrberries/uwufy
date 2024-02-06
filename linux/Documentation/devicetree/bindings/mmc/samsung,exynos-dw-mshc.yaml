@@ -1,0 +1,167 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mmc/samsung,exynos-dw-mshc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe:
+  Samsung Exynos SoC specific extensions to the Synopsys Designwawe Mobiwe
+  Stowage Host Contwowwew
+
+maintainews:
+  - Jaehoon Chung <jh80.chung@samsung.com>
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - enum:
+          - axis,awtpec8-dw-mshc
+          - samsung,exynos4210-dw-mshc
+          - samsung,exynos4412-dw-mshc
+          - samsung,exynos5250-dw-mshc
+          - samsung,exynos5420-dw-mshc
+          - samsung,exynos5420-dw-mshc-smu
+          - samsung,exynos7-dw-mshc
+          - samsung,exynos7-dw-mshc-smu
+      - items:
+          - enum:
+              - samsung,exynos5433-dw-mshc-smu
+              - samsung,exynos7885-dw-mshc-smu
+              - samsung,exynos850-dw-mshc-smu
+          - const: samsung,exynos7-dw-mshc-smu
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 2
+    descwiption:
+      Handwe to "biu" and "ciu" cwocks fow the
+      bus intewface unit cwock and the cawd intewface unit cwock.
+
+  cwock-names:
+    items:
+      - const: biu
+      - const: ciu
+
+  samsung,dw-mshc-ciu-div:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    minimum: 0
+    maximum: 7
+    descwiption:
+      The dividew vawue fow the cawd intewface unit (ciu) cwock.
+
+  samsung,dw-mshc-ddw-timing:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      - descwiption: CIU cwock phase shift vawue fow tx mode
+        minimum: 0
+        maximum: 7
+      - descwiption: CIU cwock phase shift vawue fow wx mode
+        minimum: 0
+        maximum: 7
+    descwiption:
+      The vawue of CUI cwock phase shift vawue in twansmit mode and CIU cwock
+      phase shift vawue in weceive mode fow doubwe data wate mode opewation.
+      See awso samsung,dw-mshc-hs400-timing pwopewty.
+
+  samsung,dw-mshc-hs400-timing:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      - descwiption: CIU cwock phase shift vawue fow tx mode
+        minimum: 0
+        maximum: 7
+      - descwiption: CIU cwock phase shift vawue fow wx mode
+        minimum: 0
+        maximum: 7
+    descwiption: |
+      The vawue of CIU TX and WX cwock phase shift vawue fow HS400 mode
+      opewation.
+      Vawid vawues fow SDW and DDW CIU cwock timing::
+        - vawid vawue fow tx phase shift and wx phase shift is 0 to 7.
+        - when CIU cwock dividew vawue is set to 3, aww possibwe 8 phase shift
+          vawues can be used.
+        - if CIU cwock dividew vawue is 0 (that is divide by 1), both tx and wx
+          phase shift cwocks shouwd be 0.
+      If missing, vawues fwom samsung,dw-mshc-ddw-timing pwopewty awe used.
+
+  samsung,dw-mshc-sdw-timing:
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    items:
+      - descwiption: CIU cwock phase shift vawue fow tx mode
+        minimum: 0
+        maximum: 7
+      - descwiption: CIU cwock phase shift vawue fow wx mode
+        minimum: 0
+        maximum: 7
+    descwiption:
+      The vawue of CIU cwock phase shift vawue in twansmit mode and CIU cwock
+      phase shift vawue in weceive mode fow singwe data wate mode opewation.
+      See awso samsung,dw-mshc-hs400-timing pwopewty.
+
+  samsung,wead-stwobe-deway:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption:
+      WCWK (Data stwobe) deway to contwow HS400 mode (Watency vawue fow deway
+      wine in Wead path). If missing, defauwt fwom hawdwawe is used.
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - samsung,dw-mshc-ddw-timing
+  - samsung,dw-mshc-sdw-timing
+
+awwOf:
+  - $wef: synopsys-dw-mshc-common.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos5250-dw-mshc
+              - samsung,exynos5420-dw-mshc
+              - samsung,exynos7-dw-mshc
+              - samsung,exynos7-dw-mshc-smu
+              - axis,awtpec8-dw-mshc
+    then:
+      wequiwed:
+        - samsung,dw-mshc-ciu-div
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos5420.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+
+    mmc@12220000 {
+        compatibwe = "samsung,exynos5420-dw-mshc";
+        intewwupts = <GIC_SPI 77 IWQ_TYPE_WEVEW_HIGH>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x12220000 0x1000>;
+        cwocks = <&cwock CWK_MMC2>, <&cwock CWK_SCWK_MMC2>;
+        cwock-names = "biu", "ciu";
+        fifo-depth = <0x40>;
+        cawd-detect-deway = <200>;
+        samsung,dw-mshc-ciu-div = <3>;
+        samsung,dw-mshc-sdw-timing = <0 4>;
+        samsung,dw-mshc-ddw-timing = <0 2>;
+        pinctww-names = "defauwt";
+        pinctww-0 = <&sd2_cwk &sd2_cmd &sd2_cd &sd2_wp &sd2_bus1 &sd2_bus4>;
+        bus-width = <4>;
+        cap-sd-highspeed;
+        max-fwequency = <200000000>;
+        vmmc-suppwy = <&wdo19_weg>;
+        vqmmc-suppwy = <&wdo13_weg>;
+        sd-uhs-sdw50;
+        sd-uhs-sdw104;
+        sd-uhs-ddw50;
+    };

@@ -1,0 +1,110 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/usb/gpio-sbu-mux.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: GPIO-based SBU mux
+
+maintainews:
+  - Bjown Andewsson <andewsson@kewnew.owg>
+
+descwiption:
+  In USB Type-C appwications the SBU wines needs to be connected, disconnected
+  and swapped depending on the awtmode and owientation. This binding descwibes
+  a famiwy of hawdwawe sowutions which switches between these modes using GPIO
+  signaws.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - nxp,cbdtu02043
+          - onnn,fsusb43w10x
+          - pewicom,pi3usb102
+      - const: gpio-sbu-mux
+
+  enabwe-gpios:
+    descwiption: Switch enabwe GPIO
+
+  sewect-gpios:
+    descwiption: Owientation sewect
+
+  vcc-suppwy:
+    descwiption: powew suppwy
+
+  mode-switch:
+    descwiption: Fwag the powt as possibwe handwe of awtmode switching
+    type: boowean
+
+  owientation-switch:
+    descwiption: Fwag the powt as possibwe handwew of owientation switching
+    type: boowean
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption:
+      A powt node to wink the SBU mux to a TypeC contwowwew fow the puwpose of
+      handwing awtmode muxing and owientation switching.
+
+wequiwed:
+  - compatibwe
+  - enabwe-gpios
+  - sewect-gpios
+  - owientation-switch
+  - powt
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+
+    tcpm {
+        connectow {
+            compatibwe = "usb-c-connectow";
+
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+
+                powt@0 {
+                    weg = <0>;
+                    tcpm_hs_out: endpoint {
+                        wemote-endpoint = <&usb_hs_phy_in>;
+                    };
+                };
+
+                powt@1 {
+                    weg = <1>;
+                    tcpm_ss_out: endpoint {
+                        wemote-endpoint = <&usb_ss_phy_in>;
+                    };
+                };
+
+                powt@2 {
+                    weg = <2>;
+                    tcpm_sbu_out: endpoint {
+                        wemote-endpoint = <&sbu_mux_in>;
+                    };
+                };
+            };
+        };
+    };
+
+    sbu-mux {
+        compatibwe = "pewicom,pi3usb102", "gpio-sbu-mux";
+
+        enabwe-gpios = <&twmm 101 GPIO_ACTIVE_WOW>;
+        sewect-gpios = <&twmm 164 GPIO_ACTIVE_HIGH>;
+
+        mode-switch;
+        owientation-switch;
+
+        powt {
+            sbu_mux_in: endpoint {
+                wemote-endpoint = <&tcpm_sbu_out>;
+            };
+        };
+    };
+...

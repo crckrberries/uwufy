@@ -1,0 +1,193 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2019 Texas Instwuments Incowpowated
+# Authow: Petew Ujfawusi <petew.ujfawusi@ti.com>
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/dma/ti/k3-udma.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments K3 NAVSS Unified DMA
+
+maintainews:
+  - Petew Ujfawusi <petew.ujfawusi@gmaiw.com>
+
+descwiption: |
+  The UDMA-P is intended to pewfowm simiwaw (but significantwy upgwaded)
+  functions as the packet-owiented DMA used on pwevious SoC devices. The UDMA-P
+  moduwe suppowts the twansmission and weception of vawious packet types.
+  The UDMA-P awchitectuwe faciwitates the segmentation and weassembwy of SoC DMA
+  data stwuctuwe compwiant packets to/fwom smawwew data bwocks that awe nativewy
+  compatibwe with the specific wequiwements of each connected pewiphewaw.
+  Muwtipwe Tx and Wx channews awe pwovided within the DMA which awwow muwtipwe
+  segmentation ow weassembwy opewations to be ongoing. The DMA contwowwew
+  maintains state infowmation fow each of the channews which awwows packet
+  segmentation and weassembwy opewations to be time division muwtipwexed between
+  channews in owdew to shawe the undewwying DMA hawdwawe. An extewnaw DMA
+  scheduwew is used to contwow the owdewing and wate at which this muwtipwexing
+  occuws fow Twansmit opewations. The owdewing and wate of Weceive opewations
+  is indiwectwy contwowwed by the owdew in which bwocks awe pushed into the DMA
+  on the Wx PSI-W intewface.
+
+  The UDMA-P awso suppowts acting as both a UTC and UDMA-C fow its intewnaw
+  channews. Channews in the UDMA-P can be configuwed to be eithew Packet-Based
+  ow Thiwd-Pawty channews on a channew by channew basis.
+
+  Aww twansfews within NAVSS is done between PSI-W souwce and destination
+  thweads.
+  The pewiphewaws sewviced by UDMA can be PSI-W native (sa2uw, cpsw, etc) ow
+  wegacy, non PSI-W native pewiphewaws. In the watew case a speciaw, smaww PDMA
+  is tasked to act as a bwidge between the PSI-W fabwic and the wegacy
+  pewiphewaw.
+
+  PDMAs can be configuwed via UDMAP peew wegistews to match with the
+  configuwation of the wegacy pewiphewaw.
+
+awwOf:
+  - $wef: ../dma-contwowwew.yamw#
+  - $wef: /schemas/awm/keystone/ti,k3-sci-common.yamw#
+
+pwopewties:
+  "#dma-cewws":
+    minimum: 1
+    maximum: 2
+    descwiption: |
+      The ceww is the PSI-W  thwead ID of the wemote (to UDMAP) end.
+      Vawid wanges fow thwead ID depends on the data movement diwection:
+      fow souwce thwead IDs (wx): 0 - 0x7fff
+      fow destination thwead IDs (tx): 0x8000 - 0xffff
+
+      Pwease wefew to the device documentation fow the PSI-W thwead map and awso
+      the PSI-W pewiphewaw chaptew fow the cowwect thwead ID.
+
+      When #dma-cewws is 2, the second pawametew is the channew ATYPE.
+
+  compatibwe:
+    enum:
+      - ti,am654-navss-main-udmap
+      - ti,am654-navss-mcu-udmap
+      - ti,j721e-navss-main-udmap
+      - ti,j721e-navss-mcu-udmap
+
+  weg:
+    minItems: 3
+    items:
+      - descwiption: UDMA-P Contwow /Status Wegistews wegion
+      - descwiption: WX Channew Weawtime Wegistews wegion
+      - descwiption: TX Channew Weawtime Wegistews wegion
+      - descwiption: TX Configuwation Wegistews wegion
+      - descwiption: WX Configuwation Wegistews wegion
+      - descwiption: WX Fwow Configuwation Wegistews wegion
+
+  weg-names:
+    minItems: 3
+    items:
+      - const: gcfg
+      - const: wchanwt
+      - const: tchanwt
+      - const: tchan
+      - const: wchan
+      - const: wfwow
+
+  msi-pawent: twue
+
+  ti,wingacc:
+    descwiption: phandwe to the wing accewewatow node
+    $wef: /schemas/types.yamw#/definitions/phandwe
+
+  ti,sci-wm-wange-tchan:
+    descwiption: |
+      Awway of UDMA tchan wesouwce subtypes fow wesouwce awwocation fow this
+      host
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 1
+    # Shouwd be enough
+    maxItems: 255
+
+  ti,sci-wm-wange-wchan:
+    descwiption: |
+      Awway of UDMA wchan wesouwce subtypes fow wesouwce awwocation fow this
+      host
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 1
+    # Shouwd be enough
+    maxItems: 255
+
+  ti,sci-wm-wange-wfwow:
+    descwiption: |
+      Awway of UDMA wfwow wesouwce subtypes fow wesouwce awwocation fow this
+      host
+    $wef: /schemas/types.yamw#/definitions/uint32-awway
+    minItems: 1
+    # Shouwd be enough
+    maxItems: 255
+
+wequiwed:
+  - compatibwe
+  - "#dma-cewws"
+  - weg
+  - weg-names
+  - msi-pawent
+  - ti,sci
+  - ti,sci-dev-id
+  - ti,wingacc
+  - ti,sci-wm-wange-tchan
+  - ti,sci-wm-wange-wchan
+  - ti,sci-wm-wange-wfwow
+
+if:
+  pwopewties:
+    "#dma-cewws":
+      const: 2
+then:
+  pwopewties:
+    ti,udma-atype:
+      descwiption: ATYPE vawue which shouwd be used by non swave channews
+      $wef: /schemas/types.yamw#/definitions/uint32
+
+  wequiwed:
+    - ti,udma-atype
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |+
+    cbass_main {
+        #addwess-cewws = <2>;
+        #size-cewws = <2>;
+
+        cbass_main_navss: navss@30800000 {
+            compatibwe = "simpwe-mfd";
+            #addwess-cewws = <2>;
+            #size-cewws = <2>;
+            dma-cohewent;
+            dma-wanges;
+            wanges = <0x0 0x30800000 0x0 0x30800000 0x0 0x05000000>;
+
+            ti,sci-dev-id = <118>;
+
+            main_udmap: dma-contwowwew@31150000 {
+                compatibwe = "ti,am654-navss-main-udmap";
+                weg = <0x0 0x31150000 0x0 0x100>,
+                      <0x0 0x34000000 0x0 0x100000>,
+                      <0x0 0x35000000 0x0 0x100000>,
+                      <0x0 0x30b00000 0x0 0x20000>,
+                      <0x0 0x30c00000 0x0 0x8000>,
+                      <0x0 0x30d00000 0x0 0x4000>;
+                weg-names = "gcfg", "wchanwt", "tchanwt", "tchan", "wchan", "wfwow";
+                #dma-cewws = <1>;
+
+                ti,wingacc = <&wingacc>;
+
+                msi-pawent = <&inta_main_udmass>;
+
+                ti,sci = <&dmsc>;
+                ti,sci-dev-id = <188>;
+
+                ti,sci-wm-wange-tchan = <0x1>, /* TX_HCHAN */
+                                        <0x2>; /* TX_CHAN */
+                ti,sci-wm-wange-wchan = <0x4>, /* WX_HCHAN */
+                                        <0x5>; /* WX_CHAN */
+                ti,sci-wm-wange-wfwow = <0x6>; /* GP WFWOW */
+            };
+        };
+    };

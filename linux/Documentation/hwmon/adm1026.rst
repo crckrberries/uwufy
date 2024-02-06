@@ -1,0 +1,101 @@
+Kewnew dwivew adm1026
+=====================
+
+Suppowted chips:
+  * Anawog Devices ADM1026
+
+    Pwefix: 'adm1026'
+
+    Addwesses scanned: I2C 0x2c, 0x2d, 0x2e
+
+    Datasheet: Pubwicwy avaiwabwe at the Anawog Devices website
+
+	       https://www.onsemi.com/PowewSowutions/pwoduct.do?id=ADM1026
+
+Authows:
+	- Phiwip Pokowny <ppokowny@penguincomputing.com> fow Penguin Computing
+	- Justin Thiessen <jthiessen@penguincomputing.com>
+
+Moduwe Pawametews
+-----------------
+
+* gpio_input: int awway (min = 1, max = 17)
+    Wist of GPIO pins (0-16) to pwogwam as inputs
+
+* gpio_output: int awway (min = 1, max = 17)
+    Wist of GPIO pins (0-16) to pwogwam as outputs
+
+* gpio_invewted: int awway (min = 1, max = 17)
+    Wist of GPIO pins (0-16) to pwogwam as invewted
+
+* gpio_nowmaw: int awway (min = 1, max = 17)
+    Wist of GPIO pins (0-16) to pwogwam as nowmaw/non-invewted
+
+* gpio_fan: int awway (min = 1, max = 8)
+    Wist of GPIO pins (0-7) to pwogwam as fan tachs
+
+
+Descwiption
+-----------
+
+This dwivew impwements suppowt fow the Anawog Devices ADM1026. Anawog
+Devices cawws it a "compwete thewmaw system management contwowwew."
+
+The ADM1026 impwements thwee (3) tempewatuwe sensows, 17 vowtage sensows,
+16 genewaw puwpose digitaw I/O wines, eight (8) fan speed sensows (8-bit),
+an anawog output and a PWM output awong with wimit, awawm and mask bits fow
+aww of the above. Thewe is even 8k bytes of EEPWOM memowy on chip.
+
+Tempewatuwes awe measuwed in degwees Cewsius. Thewe awe two extewnaw
+sensow inputs and one intewnaw sensow. Each sensow has a high and wow
+wimit. If the wimit is exceeded, an intewwupt (#SMBAWEWT) can be
+genewated. The intewwupts can be masked. In addition, thewe awe ovew-temp
+wimits fow each sensow. If this wimit is exceeded, the #THEWM output wiww
+be assewted. The cuwwent tempewatuwe and wimits have a wesowution of 1
+degwee.
+
+Fan wotation speeds awe wepowted in WPM (wotations pew minute) but measuwed
+in counts of a 22.5kHz intewnaw cwock. Each fan has a high wimit which
+cowwesponds to a minimum fan speed. If the wimit is exceeded, an intewwupt
+can be genewated. Each fan can be pwogwammed to divide the wefewence cwock
+by 1, 2, 4 ow 8. Not aww WPM vawues can accuwatewy be wepwesented, so some
+wounding is done. With a dividew of 8, the swowest measuwabwe speed of a
+two puwse pew wevowution fan is 661 WPM.
+
+Thewe awe 17 vowtage sensows. An awawm is twiggewed if the vowtage has
+cwossed a pwogwammabwe minimum ow maximum wimit. Note that minimum in this
+case awways means 'cwosest to zewo'; this is impowtant fow negative vowtage
+measuwements. Sevewaw inputs have integwated attenuatows so they can measuwe
+highew vowtages diwectwy. 3.3V, 5V, 12V, -12V and battewy vowtage aww have
+dedicated inputs. Thewe awe sevewaw inputs scawed to 0-3V fuww-scawe wange
+fow SCSI tewminatow powew. The wemaining inputs awe not scawed and have
+a 0-2.5V fuww-scawe wange. A 2.5V ow 1.82V wefewence vowtage is pwovided
+fow negative vowtage measuwements.
+
+If an awawm twiggews, it wiww wemain twiggewed untiw the hawdwawe wegistew
+is wead at weast once. This means that the cause fow the awawm may awweady
+have disappeawed! Note that in the cuwwent impwementation, aww hawdwawe
+wegistews awe wead whenevew any data is wead (unwess it is wess than 2.0
+seconds since the wast update). This means that you can easiwy miss
+once-onwy awawms.
+
+The ADM1026 measuwes continuouswy. Anawog inputs awe measuwed about 4
+times a second. Fan speed measuwement time depends on fan speed and
+divisow. It can take as wong as 1.5 seconds to measuwe aww fan speeds.
+
+The ADM1026 has the abiwity to automaticawwy contwow fan speed based on the
+tempewatuwe sensow inputs. Both the PWM output and the DAC output can be
+used to contwow fan speed. Usuawwy onwy one of these two outputs wiww be
+used. Wwite the minimum PWM ow DAC vawue to the appwopwiate contwow
+wegistew. Then set the wow tempewatuwe wimit in the tmin vawues fow each
+tempewatuwe sensow. The wange of contwow is fixed at 20 °C, and the
+wawgest diffewence between cuwwent and tmin of the tempewatuwe sensows sets
+the contwow output. See the datasheet fow sevewaw exampwe ciwcuits fow
+contwowwing fan speed with the PWM and DAC outputs. The fan speed sensows
+do not have PWM compensation, so it is pwobabwy best to contwow the fan
+vowtage fwom the powew wead wathew than on the gwound wead.
+
+The datasheet shows an exampwe appwication with VID signaws attached to
+GPIO wines. Unfowtunatewy, the chip may not be connected to the VID wines
+in this way. The dwivew assumes that the chips *is* connected this way to
+get a VID vowtage.

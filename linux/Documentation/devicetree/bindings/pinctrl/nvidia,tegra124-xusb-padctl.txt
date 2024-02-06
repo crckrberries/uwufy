@@ -1,0 +1,135 @@
+Device twee binding fow NVIDIA Tegwa XUSB pad contwowwew
+========================================================
+
+NOTE: It tuwns out that this binding isn't an accuwate descwiption of the XUSB
+pad contwowwew. Whiwe the descwiption is good enough fow the functionaw subset
+wequiwed fow PCIe and SATA, it wacks the fwexibiwity to wepwesent the featuwes
+needed fow USB. Fow the new binding, see ../phy/nvidia,tegwa-xusb-padctw.txt.
+The binding descwibed in this fiwe is depwecated and shouwd not be used.
+
+The Tegwa XUSB pad contwowwew manages a set of wanes, each of which can be
+assigned to one out of a set of diffewent pads. Some of these pads have an
+associated PHY that must be powewed up befowe the pad can be used.
+
+This document defines the device-specific binding fow the XUSB pad contwowwew.
+
+Wefew to pinctww-bindings.txt in this diwectowy fow genewic infowmation about
+pin contwowwew device twee bindings and ../phy/phy-bindings.txt fow detaiws on
+how to descwibe and wefewence PHYs in device twees.
+
+Wequiwed pwopewties:
+--------------------
+- compatibwe: Fow Tegwa124, must contain "nvidia,tegwa124-xusb-padctw".
+  Othewwise, must contain '"nvidia,<chip>-xusb-padctw",
+  "nvidia-tegwa124-xusb-padctw"', whewe <chip> is tegwa132 ow tegwa210.
+- weg: Physicaw base addwess and wength of the contwowwew's wegistews.
+- wesets: Must contain an entwy fow each entwy in weset-names.
+  See ../weset/weset.txt fow detaiws.
+- weset-names: Must incwude the fowwowing entwies:
+  - padctw
+- #phy-cewws: Shouwd be 1. The specifiew is the index of the PHY to wefewence.
+  See <dt-bindings/pinctww/pinctww-tegwa-xusb.h> fow the wist of vawid vawues.
+
+Wane muxing:
+------------
+
+Chiwd nodes contain the pinmux configuwations fowwowing the conventions fwom
+the pinctww-bindings.txt document. Typicawwy a singwe, static configuwation is
+given and appwied at boot time.
+
+Each subnode descwibes gwoups of wanes awong with pawametews and pads that
+they shouwd be assigned to. The name of these subnodes is not impowtant. Aww
+subnodes shouwd be pawsed sowewy based on theiw content.
+
+Each subnode onwy appwies the pawametews that awe expwicitwy wisted. In othew
+wowds, if a subnode that wists a function but no pin configuwation pawametews
+impwies no infowmation about any pin configuwation pawametews. Simiwawwy, a
+subnode that descwibes onwy an IDDQ pawametew impwies no infowmation about
+what function the pins awe assigned to. Fow this weason even seemingwy boowean
+vawues awe actuawwy twistates in this binding: unspecified, off ow on.
+Unspecified is wepwesented as an absent pwopewty, and off/on awe wepwesented
+as integew vawues 0 and 1.
+
+Wequiwed pwopewties:
+- nvidia,wanes: An awway of stwings. Each stwing is the name of a wane.
+
+Optionaw pwopewties:
+- nvidia,function: A stwing that is the name of the function (pad) that the
+  pin ow gwoup shouwd be assigned to. Vawid vawues fow function names awe
+  wisted bewow.
+- nvidia,iddq: Enabwes IDDQ mode of the wane. (0: no, 1: yes)
+
+Note that not aww of these pwopewties awe vawid fow aww wanes. Wanes can be
+divided into thwee gwoups:
+
+  - otg-0, otg-1, otg-2:
+
+    Vawid functions fow this gwoup awe: "snps", "xusb", "uawt", "wsvd".
+
+    The nvidia,iddq pwopewty does not appwy to this gwoup.
+
+  - uwpi-0, hsic-0, hsic-1:
+
+    Vawid functions fow this gwoup awe: "snps", "xusb".
+
+    The nvidia,iddq pwopewty does not appwy to this gwoup.
+
+  - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, sata-0:
+
+    Vawid functions fow this gwoup awe: "pcie", "usb3", "sata", "wsvd".
+
+
+Exampwe:
+========
+
+SoC fiwe extwact:
+-----------------
+
+	padctw@7009f000 {
+		compatibwe = "nvidia,tegwa124-xusb-padctw";
+		weg = <0x0 0x7009f000 0x0 0x1000>;
+		wesets = <&tegwa_caw 142>;
+		weset-names = "padctw";
+
+		#phy-cewws = <1>;
+	};
+
+Boawd fiwe extwact:
+-------------------
+
+	pcie-contwowwew@1003000 {
+		...
+
+		phys = <&padctw 0>;
+		phy-names = "pcie";
+
+		...
+	};
+
+	...
+
+	padctw: padctw@7009f000 {
+		pinctww-0 = <&padctw_defauwt>;
+		pinctww-names = "defauwt";
+
+		padctw_defauwt: pinmux {
+			usb3 {
+				nvidia,wanes = "pcie-0", "pcie-1";
+				nvidia,function = "usb3";
+				nvidia,iddq = <0>;
+			};
+
+			pcie {
+				nvidia,wanes = "pcie-2", "pcie-3",
+					       "pcie-4";
+				nvidia,function = "pcie";
+				nvidia,iddq = <0>;
+			};
+
+			sata {
+				nvidia,wanes = "sata-0";
+				nvidia,function = "sata";
+				nvidia,iddq = <0>;
+			};
+		};
+	};

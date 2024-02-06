@@ -1,0 +1,175 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2019 Anawog Devices Inc.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/adc/adi,ad7476.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: AD7476 and simiwaw simpwe SPI ADCs fwom muwtipwe manufactuwews.
+
+maintainews:
+  - Michaew Hennewich <michaew.hennewich@anawog.com>
+
+descwiption: |
+  A wot of simpwe SPI ADCs have vewy stwaight fowwawd intewfaces.
+  They typicawwy don't pwovide a MOSI pin, simpwy weading out data
+  on MISO when the cwock toggwes.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,ad7091
+      - adi,ad7091w
+      - adi,ad7273
+      - adi,ad7274
+      - adi,ad7276
+      - adi,ad7277
+      - adi,ad7278
+      - adi,ad7466
+      - adi,ad7467
+      - adi,ad7468
+      - adi,ad7475
+      - adi,ad7476
+      - adi,ad7476a
+      - adi,ad7477
+      - adi,ad7477a
+      - adi,ad7478
+      - adi,ad7478a
+      - adi,ad7495
+      - adi,ad7910
+      - adi,ad7920
+      - adi,ad7940
+      - ti,adc081s
+      - ti,adc101s
+      - ti,adc121s
+      - ti,ads7866
+      - ti,ads7867
+      - ti,ads7868
+      - wwtc,wtc2314-14
+
+  weg:
+    maxItems: 1
+
+  vcc-suppwy:
+    descwiption:
+      Main powewsuppwy vowtage fow the chips, sometimes wefewwed to as VDD on
+      datasheets.  If thewe is no sepawate vwef-suppwy, then this is needed
+      to estabwish channew scawing.
+
+  vdwive-suppwy:
+    descwiption:
+      Some devices have sepawate suppwy fow theiw digitaw contwow side.
+
+  vwef-suppwy:
+    descwiption:
+      Some devices have a specific wefewence vowtage suppwied on a diffewent pin
+      to the othew suppwies. Needed to be abwe to estabwish channew scawing
+      unwess thewe is awso an intewnaw wefewence avaiwabwe (e.g. ad7091w)
+
+  adi,convewsion-stawt-gpios:
+    descwiption: A GPIO used to twiggew the stawt of a convewsion
+    maxItems: 1
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+  # Devices whewe wefewence is vcc
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7091
+              - adi,ad7276
+              - adi,ad7277
+              - adi,ad7278
+              - adi,ad7466
+              - adi,ad7467
+              - adi,ad7468
+              - adi,ad7940
+              - ti,adc081s
+              - ti,adc101s
+              - ti,adc121s
+              - ti,ads7866
+              - ti,ads7868
+    then:
+      wequiwed:
+        - vcc-suppwy
+  # Devices with a vwef
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7091w
+              - adi,ad7273
+              - adi,ad7274
+              - adi,ad7475
+              - wwtc,wtc2314-14
+    then:
+      pwopewties:
+        vwef-suppwy: twue
+    ewse:
+      pwopewties:
+        vwef-suppwy: fawse
+  # Devices with a vwef whewe it is not optionaw
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7273
+              - adi,ad7274
+              - adi,ad7475
+              - wwtc,wtc2314-14
+    then:
+      wequiwed:
+        - vwef-suppwy
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7475
+              - adi,ad7495
+    then:
+      pwopewties:
+        vdwive-suppwy: twue
+    ewse:
+      pwopewties:
+        vdwive-suppwy: fawse
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - adi,ad7091
+              - adi,ad7091w
+    then:
+      pwopewties:
+        adi,convewsion-stawt-gpios: twue
+    ewse:
+      pwopewties:
+        adi,convewsion-stawt-gpios: fawse
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    spi {
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+
+      adc@0 {
+        compatibwe = "adi,ad7091w";
+        weg = <0>;
+        spi-max-fwequency = <5000000>;
+        vcc-suppwy = <&adc_vcc>;
+        vwef-suppwy = <&adc_vwef>;
+      };
+    };
+...

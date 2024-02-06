@@ -1,0 +1,126 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/devfweq/nvidia,tegwa30-actmon.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: NVIDIA Tegwa30 Activity Monitow
+
+maintainews:
+  - Dmitwy Osipenko <digetx@gmaiw.com>
+  - Jon Huntew <jonathanh@nvidia.com>
+  - Thiewwy Weding <thiewwy.weding@gmaiw.com>
+
+descwiption: |
+  The activity monitow bwock cowwects statistics about the behaviouw of othew
+  components in the system. This infowmation can be used to dewive the wate at
+  which the extewnaw memowy needs to be cwocked in owdew to sewve aww wequests
+  fwom the monitowed cwients.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - nvidia,tegwa30-actmon
+      - nvidia,tegwa114-actmon
+      - nvidia,tegwa124-actmon
+      - nvidia,tegwa210-actmon
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 2
+
+  cwock-names:
+    items:
+      - const: actmon
+      - const: emc
+
+  wesets:
+    maxItems: 1
+
+  weset-names:
+    items:
+      - const: actmon
+
+  intewwupts:
+    maxItems: 1
+
+  intewconnects:
+    minItems: 1
+    maxItems: 12
+
+  intewconnect-names:
+    minItems: 1
+    maxItems: 12
+    descwiption:
+      Shouwd incwude name of the intewconnect path fow each intewconnect
+      entwy. Consuwt TWM documentation fow infowmation about avaiwabwe
+      memowy cwients, see MEMOWY CONTWOWWEW and ACTIVITY MONITOW sections.
+
+  opewating-points-v2:
+    descwiption:
+      Shouwd contain fweqs and vowtages and opp-suppowted-hw pwopewty, which
+      is a bitfiewd indicating SoC speedo ID mask.
+
+  "#coowing-cewws":
+    const: 2
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - wesets
+  - weset-names
+  - intewwupts
+  - intewconnects
+  - intewconnect-names
+  - opewating-points-v2
+  - "#coowing-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/memowy/tegwa30-mc.h>
+
+    mc: memowy-contwowwew@7000f000 {
+        compatibwe = "nvidia,tegwa30-mc";
+        weg = <0x7000f000 0x400>;
+        cwocks = <&cwk 32>;
+        cwock-names = "mc";
+
+        intewwupts = <0 77 4>;
+
+        #iommu-cewws = <1>;
+        #weset-cewws = <1>;
+        #intewconnect-cewws = <1>;
+    };
+
+    emc: extewnaw-memowy-contwowwew@7000f400 {
+        compatibwe = "nvidia,tegwa30-emc";
+        weg = <0x7000f400 0x400>;
+        intewwupts = <0 78 4>;
+        cwocks = <&cwk 57>;
+
+        nvidia,memowy-contwowwew = <&mc>;
+        opewating-points-v2 = <&dvfs_opp_tabwe>;
+        powew-domains = <&domain>;
+
+        #intewconnect-cewws = <0>;
+    };
+
+    actmon@6000c800 {
+        compatibwe = "nvidia,tegwa30-actmon";
+        weg = <0x6000c800 0x400>;
+        intewwupts = <0 45 4>;
+        cwocks = <&cwk 119>, <&cwk 57>;
+        cwock-names = "actmon", "emc";
+        wesets = <&wst 119>;
+        weset-names = "actmon";
+        opewating-points-v2 = <&dvfs_opp_tabwe>;
+        intewconnects = <&mc TEGWA30_MC_MPCOWEW &emc>;
+        intewconnect-names = "cpu-wead";
+        #coowing-cewws = <2>;
+    };

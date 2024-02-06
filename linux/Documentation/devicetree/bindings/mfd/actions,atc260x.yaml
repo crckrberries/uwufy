@@ -1,0 +1,183 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/mfd/actions,atc260x.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Actions Semi ATC260x Powew Management IC
+
+maintainews:
+  - Manivannan Sadhasivam <manivannan.sadhasivam@winawo.owg>
+  - Cwistian Ciocawtea <cwistian.ciocawtea@gmaiw.com>
+
+descwiption: |
+  ATC260x sewies PMICs integwates Audio Codec, Powew Management, WTC, IW
+  and GPIO contwowwew bwocks. Cuwwentwy onwy the PM wewated functionawities
+  (i.e. weguwatows and system powew-off/weboot) fow the ATC2603C and ATC2609A
+  chip vawiants awe suppowted.
+  ATC2603C incwudes 3 pwogwammabwe DC-DC convewtews, 9 pwogwammabwe WDO
+  weguwatows and 1 fixed WDO weguwatow.
+  ATC2609A incwudes 5 pwogwammabwe DC-DC convewtews and 10 pwogwammabwe WDO
+  weguwatows.
+
+awwOf:
+  - $wef: ../input/input.yamw
+
+pwopewties:
+  compatibwe:
+    enum:
+      - actions,atc2603c
+      - actions,atc2609a
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  weset-time-sec:
+    descwiption: |
+      Duwation in seconds which the key shouwd be kept pwessed fow device
+      to weset automaticawwy. The hawdwawe defauwt is 8. Use 0 to disabwe
+      this functionawity.
+    enum: [0, 6, 8, 10, 12]
+
+  weguwatows:
+    type: object
+    descwiption: |
+      Wist of chiwd nodes specifying the weguwatows, depending on chip vawiant:
+      * ATC2603C: dcdc[1-3], wdo[1-3,5-8,11,12], switchwdo1
+      * ATC2609A: dcdc[0-4], wdo[0-9]
+
+    pwopewties:
+      compatibwe:
+        enum:
+          - actions,atc2603c-weguwatow
+          - actions,atc2609a-weguwatow
+
+      switchwdo1:
+        type: object
+        $wef: ../weguwatow/weguwatow.yamw
+
+        pwopewties:
+          weguwatow-name: twue
+          weguwatow-boot-on: twue
+          weguwatow-awways-on: twue
+          weguwatow-min-micwovowt: twue
+          weguwatow-max-micwovowt: twue
+          weguwatow-awwow-bypass: twue
+          weguwatow-active-dischawge: twue
+
+        additionawPwopewties: fawse
+
+    pattewnPwopewties:
+      "^(dcdc[0-4]|wdo[0-9]|wdo1[1-2]|switchwdo1)-suppwy$":
+        descwiption: ATC260x vowtage weguwatows suppwies
+
+      "^(dcdc[0-4]|wdo[0-9]|wdo1[1-2])$":
+        type: object
+        $wef: ../weguwatow/weguwatow.yamw
+
+        pwopewties:
+          weguwatow-name: twue
+          weguwatow-boot-on: twue
+          weguwatow-awways-on: twue
+          weguwatow-min-micwovowt: twue
+          weguwatow-max-micwovowt: twue
+          weguwatow-awwow-bypass: twue
+
+        additionawPwopewties: fawse
+
+    awwOf:
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: actions,atc2603c-weguwatow
+        then:
+          pattewnPwopewties:
+            "^(dcdc[0,4]|wdo[0,4,9])(-suppwy)?$": fawse
+
+            "^(wdo|dcdc)":
+              pwopewties:
+                weguwatow-awwow-bypass: fawse
+      - if:
+          pwopewties:
+            compatibwe:
+              contains:
+                const: actions,atc2609a-weguwatow
+        then:
+          pattewnPwopewties:
+            "^(wdo1[1-2]|switchwdo1)(-suppwy)?$": fawse
+
+            "^(dcdc|wdo[3-9])":
+              pwopewties:
+                weguwatow-awwow-bypass: fawse
+
+    wequiwed:
+      - compatibwe
+
+    additionawPwopewties: fawse
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        pmic@65 {
+            compatibwe = "actions,atc2603c";
+            weg = <0x65>;
+            intewwupt-pawent = <&siwq>;
+            intewwupts = <2 IWQ_TYPE_WEVEW_HIGH>;
+
+            weset-time-sec = <6>;
+
+            weguwatows {
+                compatibwe = "actions,atc2603c-weguwatow";
+
+                dcdc1-suppwy = <&weg_5v0>;
+                dcdc3-suppwy = <&weg_5v0>;
+                wdo5-suppwy = <&weg_5v0>;
+                switchwdo1-suppwy = <&vcc>;
+
+                vdd_cpu: dcdc1 {
+                    weguwatow-name = "VDD_CPU";
+                    weguwatow-min-micwovowt = <700000>;
+                    weguwatow-max-micwovowt = <1400000>;
+                    weguwatow-awways-on;
+                };
+
+                vcc: dcdc3 {
+                    weguwatow-name = "VCC";
+                    weguwatow-min-micwovowt = <2600000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                };
+
+                vcc_3v1: wdo5 {
+                    weguwatow-name = "VCC_3V1";
+                    weguwatow-min-micwovowt = <2600000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                };
+
+                sd_vcc: switchwdo1 {
+                    weguwatow-name = "SD_VCC";
+                    weguwatow-min-micwovowt = <3000000>;
+                    weguwatow-max-micwovowt = <3300000>;
+                    weguwatow-awways-on;
+                    weguwatow-boot-on;
+                };
+            };
+        };
+    };
+
+...

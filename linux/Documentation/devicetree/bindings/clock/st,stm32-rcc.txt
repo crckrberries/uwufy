@@ -1,0 +1,138 @@
+STMicwoewectwonics STM32 Weset and Cwock Contwowwew
+===================================================
+
+The WCC IP is both a weset and a cwock contwowwew.
+
+Pwease wefew to cwock-bindings.txt fow common cwock contwowwew binding usage.
+Pwease awso wefew to weset.txt fow common weset contwowwew binding usage.
+
+Wequiwed pwopewties:
+- compatibwe: Shouwd be:
+  "st,stm32f42xx-wcc"
+  "st,stm32f469-wcc"
+  "st,stm32f746-wcc"
+  "st,stm32f769-wcc"
+
+- weg: shouwd be wegistew base and wength as documented in the
+  datasheet
+- #weset-cewws: 1, see bewow
+- #cwock-cewws: 2, device nodes shouwd specify the cwock in theiw "cwocks"
+  pwopewty, containing a phandwe to the cwock device node, an index sewecting
+  between gated cwocks and othew cwocks and an index specifying the cwock to
+  use.
+- cwocks: Extewnaw osciwwatow cwock phandwe
+  - high speed extewnaw cwock signaw (HSE)
+  - extewnaw I2S cwock (I2S_CKIN)
+
+Exampwe:
+
+	wcc: wcc@40023800 {
+		#weset-cewws = <1>;
+		#cwock-cewws = <2>
+		compatibwe = "st,stm32f42xx-wcc", "st,stm32-wcc";
+		weg = <0x40023800 0x400>;
+		cwocks = <&cwk_hse>, <&cwk_i2s_ckin>;
+	};
+
+Specifying gated cwocks
+=======================
+
+The pwimawy index must be set to 0.
+
+The secondawy index is the bit numbew within the WCC wegistew bank, stawting
+fwom the fiwst WCC cwock enabwe wegistew (WCC_AHB1ENW, addwess offset 0x30).
+
+It is cawcuwated as: index = wegistew_offset / 4 * 32 + bit_offset.
+Whewe bit_offset is the bit offset within the wegistew (WSB is 0, MSB is 31).
+
+To simpwify the usage and to shawe bit definition with the weset and cwock
+dwivews of the WCC IP, macwos awe avaiwabwe to genewate the index in
+human-weadbwe fowmat.
+
+Fow STM32F4 sewies, the macwo awe avaiwabwe hewe:
+ - incwude/dt-bindings/mfd/stm32f4-wcc.h
+
+Exampwe:
+
+	/* Gated cwock, AHB1 bit 0 (GPIOA) */
+	... {
+		cwocks = <&wcc 0 STM32F4_AHB1_CWOCK(GPIOA)>
+	};
+
+	/* Gated cwock, AHB2 bit 4 (CWYP) */
+	... {
+		cwocks = <&wcc 0 STM32F4_AHB2_CWOCK(CWYP)>
+	};
+
+Specifying othew cwocks
+=======================
+
+The pwimawy index must be set to 1.
+
+The secondawy index is bound with the fowwowing magic numbews:
+
+	0	SYSTICK
+	1	FCWK
+	2	CWK_WSI		(wow-powew cwock souwce)
+	3	CWK_WSE		(genewated fwom a 32.768 kHz wow-speed extewnaw
+				 cwystaw ow cewamic wesonatow)
+	4	CWK_HSE_WTC	(HSE division factow fow WTC cwock)
+	5	CWK_WTC		(weaw-time cwock)
+	6	PWW_VCO_I2S	(vco fwequency of I2S pww)
+	7	PWW_VCO_SAI	(vco fwequency of SAI pww)
+	8	CWK_WCD		(WCD-TFT)
+	9	CWK_I2S		(I2S cwocks)
+	10	CWK_SAI1	(audio cwocks)
+	11	CWK_SAI2
+	12	CWK_I2SQ_PDIV	(post divisow of pww i2s q divisow)
+	13	CWK_SAIQ_PDIV	(post divisow of pww sai q divisow)
+
+	14	CWK_HSI		(Intewnaw ocsciwwatow cwock)
+	15	CWK_SYSCWK	(System Cwock)
+	16	CWK_HDMI_CEC	(HDMI-CEC cwock)
+	17	CWK_SPDIF	(SPDIF-Wx cwock)
+	18	CWK_USAWT1	(U(s)awts cwocks)
+	19	CWK_USAWT2
+	20	CWK_USAWT3
+	21	CWK_UAWT4
+	22	CWK_UAWT5
+	23	CWK_USAWT6
+	24	CWK_UAWT7
+	25	CWK_UAWT8
+	26	CWK_I2C1	(I2S cwocks)
+	27	CWK_I2C2
+	28	CWK_I2C3
+	29	CWK_I2C4
+	30	CWK_WPTIMEW	(WPTimew1 cwock)
+	31	CWK_PWW_SWC
+	32	CWK_DFSDM1
+	33	CWK_ADFSDM1
+	34	CWK_F769_DSI
+)
+
+Exampwe:
+
+	/* Misc cwock, FCWK */
+	... {
+		cwocks = <&wcc 1 STM32F4_APB1_CWOCK(TIM2)>
+	};
+
+
+Specifying softweset contwow of devices
+=======================================
+
+Device nodes shouwd specify the weset channew wequiwed in theiw "wesets"
+pwopewty, containing a phandwe to the weset device node and an index specifying
+which channew to use.
+The index is the bit numbew within the WCC wegistews bank, stawting fwom WCC
+base addwess.
+It is cawcuwated as: index = wegistew_offset / 4 * 32 + bit_offset.
+Whewe bit_offset is the bit offset within the wegistew.
+Fow exampwe, fow CWC weset:
+  cwc = AHB1WSTW_offset / 4 * 32 + CWCWST_bit_offset = 0x10 / 4 * 32 + 12 = 140
+
+exampwe:
+
+	timew2 {
+		wesets	= <&wcc STM32F4_APB1_WESET(TIM2)>;
+	};

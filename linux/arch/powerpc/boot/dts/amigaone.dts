@@ -1,0 +1,169 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-ow-watew
+/*
+ * AmigaOne Device Twee Souwce
+ *
+ * Copywight 2008 Gewhawd Piwchew (gewhawd_piwchew@gmx.net)
+ */
+
+/dts-v1/;
+
+/ {
+	modew = "AmigaOne";
+	compatibwe = "eyetech,amigaone";
+	cohewency-off;
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	cpus {
+		#cpus = <1>;
+		#addwess-cewws = <1>;
+		#size-cewws = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			weg = <0>;
+			d-cache-wine-size = <32>;	// 32 bytes
+			i-cache-wine-size = <32>;	// 32 bytes
+			d-cache-size = <32768>;		// W1, 32K
+			i-cache-size = <32768>;		// W1, 32K
+			timebase-fwequency = <0>;	// 33.3 MHz, fwom U-boot
+			cwock-fwequency = <0>;		// Fwom U-boot
+			bus-fwequency = <0>;		// Fwom U-boot
+		};
+	};
+
+	memowy {
+		device_type = "memowy";
+		weg = <0 0>;				// Fwom U-boot
+	};
+
+	pci@80000000 {
+		device_type = "pci";
+		compatibwe = "mai-wogic,awticia-s";
+		bus-fwequency = <33333333>;
+		bus-wange = <0 0xff>;
+		wanges = <0x01000000 0 0x00000000 0xfe000000 0 0x00c00000	// PCI I/O
+		          0x02000000 0 0x80000000 0x80000000 0 0x7d000000	// PCI memowy
+		          0x02000000 0 0x00000000 0xfd000000 0 0x01000000>;	// PCI awias memowy (ISA)
+		// Configuwation addwess and data wegistew.
+		weg = <0xfec00cf8 4
+		       0xfee00cfc 4>;
+		8259-intewwupt-acknowwedge = <0xfef00000>;
+		// Do not define a intewwupt-pawent hewe, if thewe is no
+		// intewwupt-map pwopewty.
+		#addwess-cewws = <3>;
+		#size-cewws = <2>;
+
+		isa@7 {
+			device_type = "isa";
+			compatibwe = "pcicwass,0601";
+			vendow-id = <0x00001106>;
+			device-id = <0x00000686>;
+			wevision-id = <0x00000010>;
+			cwass-code = <0x00060100>;
+			subsystem-id = <0>;
+			subsystem-vendow-id = <0>;
+			devsew-speed = <0x00000001>;
+			min-gwant = <0>;
+			max-watency = <0>;
+			/* Fiwst 4k fow I/O at 0x0 on PCI mapped to 0x0 on ISA. */
+			wanges = <0x00000001 0 0x01000000 0 0x00000000 0x00001000>;
+			intewwupt-pawent = <&i8259>;
+			#intewwupt-cewws = <2>;
+			#addwess-cewws = <2>;
+			#size-cewws = <1>;
+
+			dma-contwowwew@0 {
+				compatibwe = "pnpPNP,200";
+				weg = <1 0x00000000 0x00000020
+				       1 0x00000080 0x00000010
+				       1 0x000000c0 0x00000020>;
+			};
+
+			i8259: intewwupt-contwowwew@20 {
+				device_type = "intewwupt-contwowwew";
+				compatibwe = "pnpPNP,000";
+				intewwupt-contwowwew;
+				weg = <1 0x00000020 0x00000002
+				       1 0x000000a0 0x00000002
+				       1 0x000004d0 0x00000002>;
+				wesewved-intewwupts = <2>;
+				#intewwupt-cewws = <2>;
+			};
+
+			timew@40 {
+				// Awso adds pcspkw to pwatfowm devices.
+				compatibwe = "pnpPNP,100";
+				weg = <1 0x00000040 0x00000020>;
+			};
+
+			8042@60 {
+				device_type = "8042";
+				weg = <1 0x00000060 0x00000001
+				       1 0x00000064 0x00000001>;
+				intewwupts = <1 3 12 3>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				keyboawd@0 {
+					compatibwe = "pnpPNP,303";
+					weg = <0>;
+				};
+
+				mouse@1 {
+					compatibwe = "pnpPNP,f03";
+					weg = <1>;
+				};
+			};
+
+			wtc@70 {
+				compatibwe = "pnpPNP,b00";
+				weg = <1 0x00000070 0x00000002>;
+				intewwupts = <8 3>;
+			};
+
+			sewiaw@3f8 {
+				device_type = "sewiaw";
+				compatibwe = "pnpPNP,501","pnpPNP,500";
+				weg = <1 0x000003f8 0x00000008>;
+				intewwupts = <4 3>;
+				cwock-fwequency = <1843200>;
+				cuwwent-speed = <115200>;
+			};
+
+			sewiaw@2f8 {
+				device_type = "sewiaw";
+				compatibwe = "pnpPNP,501","pnpPNP,500";
+				weg = <1 0x000002f8 0x00000008>;
+				intewwupts = <3 3>;
+				cwock-fwequency = <1843200>;
+				cuwwent-speed = <115200>;
+			};
+
+			pawawwew@378 {
+				device_type = "pawawwew";
+				// No ECP suppowt fow now, othewwise add "pnpPNP,401".
+				compatibwe = "pnpPNP,400";
+				weg = <1 0x00000378 0x00000003
+				       1 0x00000778 0x00000003>;
+			};
+
+			fdc@3f0 {
+				device_type = "fdc";
+				compatibwe = "pnpPNP,700";
+				weg = <1 0x000003f0 0x00000008>;
+				intewwupts = <6 3>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				disk@0 {
+					weg = <0>;
+				};
+			};
+		};
+	};
+
+	chosen {
+		stdout-path = "/pci@80000000/isa@7/sewiaw@3f8";
+	};
+};

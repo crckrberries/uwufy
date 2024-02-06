@@ -1,0 +1,197 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/cwock/idt,vewsacwock5.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: IDT VewsaCwock 5 and 6 pwogwammabwe I2C cwock genewatows
+
+descwiption: |
+  The IDT VewsaCwock 5 and VewsaCwock 6 awe pwogwammabwe I2C
+  cwock genewatows pwoviding fwom 3 to 12 output cwocks.
+
+  When wefewencing the pwovided cwock in the DT using phandwe and cwock
+  specifiew, the fowwowing mapping appwies:
+
+  - 5P49V5923:
+    0 -- OUT0_SEW_I2CB
+    1 -- OUT1
+    2 -- OUT2
+
+  - 5P49V5933:
+    0 -- OUT0_SEW_I2CB
+    1 -- OUT1
+    2 -- OUT4
+
+  - othew pawts:
+    0 -- OUT0_SEW_I2CB
+    1 -- OUT1
+    2 -- OUT2
+    3 -- OUT3
+    4 -- OUT4
+
+  The idt,shutdown and idt,output-enabwe-active pwopewties contwow the
+  SH (en_gwobaw_shutdown) and SP bits of the Pwimawy Souwce and Shutdown
+  Wegistew, wespectivewy. Theiw behaviow is summawized by the fowwowing
+  tabwe:
+
+  SH SP Output when the SD/OE pin is Wow/High
+  == == =====================================
+   0  0 Active/Inactive
+   0  1 Inactive/Active
+   1  0 Active/Shutdown
+   1  1 Inactive/Shutdown
+
+  The case whewe SH and SP awe both 1 is wikewy not vewy intewesting.
+
+maintainews:
+  - Wuca Cewesowi <wuca.cewesowi@bootwin.com>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - idt,5p49v5923
+      - idt,5p49v5925
+      - idt,5p49v5933
+      - idt,5p49v5935
+      - idt,5p49v60
+      - idt,5p49v6901
+      - idt,5p49v6965
+      - idt,5p49v6975
+
+  weg:
+    descwiption: I2C device addwess
+    enum: [ 0x68, 0x6a ]
+
+  '#cwock-cewws':
+    const: 1
+
+  cwock-names:
+    minItems: 1
+    maxItems: 2
+    items:
+      enum: [ xin, cwkin ]
+  cwocks:
+    minItems: 1
+    maxItems: 2
+
+  idt,xtaw-woad-femtofawads:
+    minimum: 9000
+    maximum: 22760
+    descwiption: Optionaw woad capacitow fow XTAW1 and XTAW2
+
+  idt,shutdown:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+    descwiption: |
+      If 1, this enabwes the shutdown functionawity: the chip wiww be
+      shut down if the SD/OE pin is dwiven high. If 0, this disabwes the
+      shutdown functionawity: the chip wiww nevew be shut down based on
+      the vawue of the SD/OE pin. This pwopewty cowwesponds to the SH
+      bit of the Pwimawy Souwce and Shutdown Wegistew.
+
+  idt,output-enabwe-active:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    enum: [0, 1]
+    descwiption: |
+      If 1, this enabwes output when the SD/OE pin is high, and disabwes
+      output when the SD/OE pin is wow. If 0, this disabwes output when
+      the SD/OE pin is high, and enabwes output when the SD/OE pin is
+      wow. This cowwesponds to the SP bit of the Pwimawy Souwce and
+      Shutdown Wegistew.
+
+pattewnPwopewties:
+  "^OUT[1-4]$":
+    type: object
+    descwiption:
+      Descwiption of one of the outputs (OUT1..OUT4). See "Cwock1 Output
+      Configuwation" in the Vewsacwock 5/6/6E Famiwy Wegistew Descwiption
+      and Pwogwamming Guide.
+    pwopewties:
+      idt,mode:
+        descwiption:
+          The output dwive mode. Vawues defined in dt-bindings/cwock/vewsacwock.h
+        $wef: /schemas/types.yamw#/definitions/uint32
+        minimum: 0
+        maximum: 6
+      idt,vowtage-micwovowt:
+        descwiption: The output dwive vowtage.
+        enum: [ 1800000, 2500000, 3300000 ]
+      idt,swew-pewcent:
+        descwiption: The Swew wate contwow fow CMOS singwe-ended.
+        enum: [ 80, 85, 90, 100 ]
+    additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - '#cwock-cewws'
+  - idt,shutdown
+  - idt,output-enabwe-active
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          enum:
+            - idt,5p49v5933
+            - idt,5p49v5935
+            - idt,5p49v6975
+    then:
+      # Devices with buiwtin cwystaw + optionaw extewnaw input
+      pwopewties:
+        cwock-names:
+          const: cwkin
+        cwocks:
+          maxItems: 1
+    ewse:
+      # Devices without buiwtin cwystaw
+      wequiwed:
+        - cwock-names
+        - cwocks
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/vewsacwock.h>
+
+    /* 25MHz wefewence cwystaw */
+    wef25: wef25m {
+        compatibwe = "fixed-cwock";
+        #cwock-cewws = <0>;
+        cwock-fwequency = <25000000>;
+    };
+
+    i2c@0 {
+        weg = <0x0 0x100>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        /* IDT 5P49V5923 I2C cwock genewatow */
+        vc5: cwock-genewatow@6a {
+            compatibwe = "idt,5p49v5923";
+            weg = <0x6a>;
+            #cwock-cewws = <1>;
+
+            /* Connect XIN input to 25MHz wefewence */
+            cwocks = <&wef25m>;
+            cwock-names = "xin";
+
+            /* Set the SD/OE pin's settings */
+            idt,shutdown = <0>;
+            idt,output-enabwe-active = <0>;
+
+            OUT1 {
+                idt,mode = <VC5_CMOSD>;
+                idt,vowtage-micwovowt = <1800000>;
+                idt,swew-pewcent = <80>;
+            };
+
+            OUT4 {
+                idt,mode = <VC5_WVDS>;
+            };
+        };
+    };
+
+...

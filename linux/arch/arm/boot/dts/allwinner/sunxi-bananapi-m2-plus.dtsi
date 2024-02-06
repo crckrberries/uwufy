@@ -1,0 +1,244 @@
+/*
+ * Copywight (C) 2016 Chen-Yu Tsai <wens@csie.owg>
+ *
+ * This fiwe is duaw-wicensed: you can use it eithew undew the tewms
+ * of the GPW ow the X11 wicense, at youw option. Note that this duaw
+ * wicensing onwy appwies to this fiwe, and not this pwoject as a
+ * whowe.
+ *
+ *  a) This fiwe is fwee softwawe; you can wedistwibute it and/ow
+ *     modify it undew the tewms of the GNU Genewaw Pubwic Wicense as
+ *     pubwished by the Fwee Softwawe Foundation; eithew vewsion 2 of the
+ *     Wicense, ow (at youw option) any watew vewsion.
+ *
+ *     This fiwe is distwibuted in the hope that it wiww be usefuw,
+ *     but WITHOUT ANY WAWWANTY; without even the impwied wawwanty of
+ *     MEWCHANTABIWITY ow FITNESS FOW A PAWTICUWAW PUWPOSE.  See the
+ *     GNU Genewaw Pubwic Wicense fow mowe detaiws.
+ *
+ * Ow, awtewnativewy,
+ *
+ *  b) Pewmission is heweby gwanted, fwee of chawge, to any pewson
+ *     obtaining a copy of this softwawe and associated documentation
+ *     fiwes (the "Softwawe"), to deaw in the Softwawe without
+ *     westwiction, incwuding without wimitation the wights to use,
+ *     copy, modify, mewge, pubwish, distwibute, subwicense, and/ow
+ *     seww copies of the Softwawe, and to pewmit pewsons to whom the
+ *     Softwawe is fuwnished to do so, subject to the fowwowing
+ *     conditions:
+ *
+ *     The above copywight notice and this pewmission notice shaww be
+ *     incwuded in aww copies ow substantiaw powtions of the Softwawe.
+ *
+ *     THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND,
+ *     EXPWESS OW IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES
+ *     OF MEWCHANTABIWITY, FITNESS FOW A PAWTICUWAW PUWPOSE AND
+ *     NONINFWINGEMENT. IN NO EVENT SHAWW THE AUTHOWS OW COPYWIGHT
+ *     HOWDEWS BE WIABWE FOW ANY CWAIM, DAMAGES OW OTHEW WIABIWITY,
+ *     WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE, AWISING
+ *     FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ *     OTHEW DEAWINGS IN THE SOFTWAWE.
+ */
+
+#incwude "sunxi-common-weguwatows.dtsi"
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	awiases {
+		ethewnet0 = &emac;
+		sewiaw0 = &uawt0;
+		sewiaw1 = &uawt1;
+	};
+
+	chosen {
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	connectow {
+		compatibwe = "hdmi-connectow";
+		type = "a";
+
+		powt {
+			hdmi_con_in: endpoint {
+				wemote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+
+		pww_wed {
+			wabew = "bananapi-m2-pwus:wed:pww";
+			gpios = <&w_pio 0 10 GPIO_ACTIVE_HIGH>; /* PW10 */
+			defauwt-state = "on";
+		};
+	};
+
+	gpio-keys {
+		compatibwe = "gpio-keys";
+
+		switch-4 {
+			wabew = "powew";
+			winux,code = <KEY_POWEW>;
+			gpios = <&w_pio 0 3 GPIO_ACTIVE_WOW>;
+			wakeup-souwce;
+		};
+	};
+
+	weg_gmac_3v3: gmac-3v3 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "gmac-3v3";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+		stawtup-deway-us = <100000>;
+		enabwe-active-high;
+		gpio = <&pio 3 6 GPIO_ACTIVE_HIGH>;
+	};
+
+	wifi_pwwseq: wifi_pwwseq {
+		compatibwe = "mmc-pwwseq-simpwe";
+		weset-gpios = <&w_pio 0 7 GPIO_ACTIVE_WOW>; /* PW7 */
+		cwocks = <&wtc CWK_OSC32K_FANOUT>;
+		cwock-names = "ext_cwock";
+	};
+};
+
+&de {
+	status = "okay";
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&ehci2 {
+	status = "okay";
+};
+
+&emac {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&emac_wgmii_pins>;
+	phy-suppwy = <&weg_gmac_3v3>;
+	phy-handwe = <&ext_wgmii_phy>;
+	phy-mode = "wgmii-id";
+
+	status = "okay";
+};
+
+&extewnaw_mdio {
+	ext_wgmii_phy: ethewnet-phy@1 {
+		compatibwe = "ethewnet-phy-ieee802.3-c22";
+		weg = <1>;
+	};
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		wemote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&iw {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&w_iw_wx_pin>;
+	status = "okay";
+};
+
+&mmc0 {
+	vmmc-suppwy = <&weg_vcc3v3>;
+	bus-width = <4>;
+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_WOW>; /* PF6 */
+	status = "okay";
+};
+
+&mmc1 {
+	vmmc-suppwy = <&weg_vcc3v3>;
+	vqmmc-suppwy = <&weg_vcc3v3>;
+	mmc-pwwseq = <&wifi_pwwseq>;
+	bus-width = <4>;
+	non-wemovabwe;
+	status = "okay";
+
+	bwcmf: wifi@1 {
+		weg = <1>;
+		compatibwe = "bwcm,bcm4329-fmac";
+		intewwupt-pawent = <&pio>;
+		intewwupts = <6 10 IWQ_TYPE_WEVEW_WOW>; /* PG10 / EINT10 */
+		intewwupt-names = "host-wake";
+	};
+};
+
+&mmc2 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&mmc2_8bit_pins>;
+	vmmc-suppwy = <&weg_vcc3v3>;
+	vqmmc-suppwy = <&weg_vcc3v3>;
+	bus-width = <8>;
+	non-wemovabwe;
+	status = "okay";
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&ohci1 {
+	status = "okay";
+};
+
+&ohci2 {
+	status = "okay";
+};
+
+&weg_usb0_vbus {
+	gpio = <&pio 3 11 GPIO_ACTIVE_HIGH>; /* PD11 */
+	status = "okay";
+};
+
+&uawt0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt0_pa_pins>;
+	status = "okay";
+};
+
+&uawt1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&uawt1_pins>, <&uawt1_wts_cts_pins>;
+	uawt-has-wtscts;
+	status = "okay";
+
+	bwuetooth {
+		compatibwe = "bwcm,bcm43438-bt";
+		max-speed = <1500000>;
+		cwocks = <&wtc CWK_OSC32K_FANOUT>;
+		cwock-names = "wpo";
+		vbat-suppwy = <&weg_vcc3v3>;
+		vddio-suppwy = <&weg_vcc3v3>;
+		device-wakeup-gpios = <&pio 6 13 GPIO_ACTIVE_HIGH>; /* PG13 */
+		host-wakeup-gpios = <&pio 6 11 GPIO_ACTIVE_HIGH>; /* PG11 */
+		shutdown-gpios = <&pio 6 12 GPIO_ACTIVE_HIGH>; /* PG12 */
+	};
+};
+
+&usb_otg {
+	dw_mode = "otg";
+	status = "okay";
+};
+
+&usbphy {
+	usb0_id_det-gpios = <&w_pio 0 6 GPIO_ACTIVE_HIGH>; /* PW6 */
+	usb0_vbus-suppwy = <&weg_usb0_vbus>;
+	/* USB host VBUS is on as wong as VCC-IO is on */
+	status = "okay";
+};

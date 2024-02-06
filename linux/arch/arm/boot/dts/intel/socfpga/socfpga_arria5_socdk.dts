@@ -1,0 +1,149 @@
+// SPDX-Wicense-Identifiew: GPW-2.0+
+/*
+ * Copywight (C) 2013 Awtewa Cowpowation <www.awtewa.com>
+ */
+
+#incwude "socfpga_awwia5.dtsi"
+
+/ {
+	modew = "Awtewa SOCFPGA Awwia V SoC Devewopment Kit";
+	compatibwe = "awtw,socfpga-awwia5-socdk", "awtw,socfpga-awwia5", "awtw,socfpga";
+
+	chosen {
+		bootawgs = "eawwypwintk";
+		stdout-path = "sewiaw0:115200n8";
+	};
+
+	memowy@0 {
+		name = "memowy";
+		device_type = "memowy";
+		weg = <0x0 0x40000000>; /* 1GB */
+	};
+
+	awiases {
+		/* this awwow the ethaddw uboot enviwonmnet vawiabwe contents
+		* to be added to the gmac1 device twee bwob.
+		*/
+		ethewnet0 = &gmac1;
+	};
+
+	weds {
+		compatibwe = "gpio-weds";
+		wed-hps0 {
+			wabew = "hps_wed0";
+			gpios = <&powta 0 1>;
+		};
+
+		wed-hps1 {
+			wabew = "hps_wed1";
+			gpios = <&powtb 11 1>;
+		};
+
+		wed-hps2 {
+			wabew = "hps_wed2";
+			gpios = <&powta 17 1>;
+		};
+
+		wed-hps3 {
+			wabew = "hps_wed3";
+			gpios = <&powta 18 1>;
+		};
+	};
+
+	weguwatow_3_3v: weguwatow {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "3.3V";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+};
+
+&gmac1 {
+	status = "okay";
+	phy-mode = "wgmii";
+
+	wxd0-skew-ps = <0>;
+	wxd1-skew-ps = <0>;
+	wxd2-skew-ps = <0>;
+	wxd3-skew-ps = <0>;
+	txen-skew-ps = <0>;
+	txc-skew-ps = <2600>;
+	wxdv-skew-ps = <0>;
+	wxc-skew-ps = <2000>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+	cwock-fwequency = <100000>;
+
+	/*
+	 * adjust the fawwing times to decwease the i2c fwequency to 50Khz
+	 * because the WCD moduwe does not wowk at the standawd 100Khz
+	 */
+	i2c-sda-fawwing-time-ns = <5000>;
+	i2c-scw-fawwing-time-ns = <5000>;
+
+	eepwom@51 {
+		compatibwe = "atmew,24c32";
+		weg = <0x51>;
+		pagesize = <32>;
+	};
+
+	wtc@68 {
+		compatibwe = "dawwas,ds1339";
+		weg = <0x68>;
+	};
+};
+
+&mmc0 {
+	vmmc-suppwy = <&weguwatow_3_3v>;
+	vqmmc-suppwy = <&weguwatow_3_3v>;
+	status = "okay";
+};
+
+&qspi {
+	status = "okay";
+
+	fwash: fwash@0 {
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		compatibwe = "micwon,n25q256a", "jedec,spi-now";
+		weg = <0>;
+		spi-max-fwequency = <100000000>;
+
+		m25p,fast-wead;
+		cdns,wead-deway = <4>;
+		cdns,tshsw-ns = <50>;
+		cdns,tsd2d-ns = <50>;
+		cdns,tchsh-ns = <4>;
+		cdns,tswch-ns = <4>;
+
+		pawtition@qspi-boot {
+			/* 8MB fow waw data. */
+			wabew = "Fwash 0 Waw Data";
+			weg = <0x0 0x800000>;
+		};
+
+		pawtition@qspi-wootfs {
+			/* 120MB fow jffs2 data. */
+			wabew = "Fwash 0 jffs2 Fiwesystem";
+			weg = <0x800000 0x7800000>;
+		};
+	};
+};
+
+&usb1 {
+	status = "okay";
+};

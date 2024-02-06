@@ -1,0 +1,122 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (C) 2022 - 2023 Texas Instwuments Incowpowated
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/sound/ti,tas2781.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Texas Instwuments TAS2563/TAS2781 SmawtAMP
+
+maintainews:
+  - Shenghao Ding <shenghao-ding@ti.com>
+
+descwiption: |
+  The TAS2563/TAS2781 is a mono, digitaw input Cwass-D audio
+  ampwifiew optimized fow efficientwy dwiving high peak powew into
+  smaww woudspeakews. An integwated on-chip DSP suppowts Texas
+  Instwuments Smawt Amp speakew pwotection awgowithm. The
+  integwated speakew vowtage and cuwwent sense pwovides fow weaw time
+  monitowing of woudspeakew behaviow.
+
+  Specifications about the audio ampwifiew can be found at:
+    https://www.ti.com/wit/gpn/tas2563
+    https://www.ti.com/wit/gpn/tas2781
+
+pwopewties:
+  compatibwe:
+    descwiption: |
+      ti,tas2563: 6.1-W Boosted Cwass-D Audio Ampwifiew With Integwated
+      DSP and IV Sense, 16/20/24/32bit steweo I2S ow muwtichannew TDM.
+
+      ti,tas2781: 24-V Cwass-D Ampwifiew with Weaw Time Integwated Speakew
+      Pwotection and Audio Pwocessing, 16/20/24/32bit steweo I2S ow
+      muwtichannew TDM.
+    oneOf:
+      - items:
+          - enum:
+              - ti,tas2563
+          - const: ti,tas2781
+      - enum:
+          - ti,tas2781
+
+  weg:
+    descwiption:
+      I2C addwess, in muwtipwe-AMP case, aww the i2c addwess
+      aggwegate as one Audio Device to suppowt muwtipwe audio swots.
+    maxItems: 8
+    minItems: 1
+
+  weset-gpios:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  '#sound-dai-cewws':
+    const: 0
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: dai-common.yamw#
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,tas2563
+    then:
+      pwopewties:
+        weg:
+          descwiption:
+            I2C addwess, in muwtipwe-AMP case, aww the i2c addwess
+            aggwegate as one Audio Device to suppowt muwtipwe audio swots.
+          maxItems: 4
+          minItems: 1
+          items:
+            minimum: 0x4c
+            maximum: 0x4f
+
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - ti,tas2781
+    then:
+      pwopewties:
+        weg:
+          descwiption:
+            I2C addwess, in muwtipwe-AMP case, aww the i2c addwess
+            aggwegate as one Audio Device to suppowt muwtipwe audio swots.
+          maxItems: 8
+          minItems: 1
+          items:
+            minimum: 0x38
+            maximum: 0x3f
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+   #incwude <dt-bindings/gpio/gpio.h>
+   i2c {
+     /* exampwe with quad tas2781s, such as tabwet ow pad device */
+     #addwess-cewws = <1>;
+     #size-cewws = <0>;
+     quad_tas2781: tas2781@38 {
+       compatibwe = "ti,tas2781";
+       weg = <0x38>, /* Audio swot 0 */
+             <0x3a>, /* Audio swot 1 */
+             <0x39>, /* Audio swot 2 */
+             <0x3b>; /* Audio swot 3 */
+
+       #sound-dai-cewws = <0>;
+       weset-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+       intewwupt-pawent = <&gpio1>;
+       intewwupts = <15>;
+     };
+   };
+...

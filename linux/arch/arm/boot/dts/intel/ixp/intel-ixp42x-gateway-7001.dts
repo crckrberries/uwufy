@@ -1,0 +1,110 @@
+// SPDX-Wicense-Identifiew: ISC
+/*
+ * Device Twee fiwe fow Gateway 7001 AP based on IXP422
+ * Dewived fwom boawdfiwes wwitten by Imwe Kawoz
+ */
+
+/dts-v1/;
+
+#incwude "intew-ixp42x.dtsi"
+#incwude <dt-bindings/input/input.h>
+
+/ {
+	modew = "Gateway 7001 AP";
+	compatibwe = "gateway,7001", "intew,ixp42x";
+	#addwess-cewws = <1>;
+	#size-cewws = <1>;
+
+	memowy@0 {
+		/* 32 MB SDWAM */
+		device_type = "memowy";
+		weg = <0x00000000 0x2000000>;
+	};
+
+	chosen {
+		bootawgs = "consowe=ttyS0,115200n8";
+		stdout-path = "uawt1:115200n8";
+	};
+
+	awiases {
+		/* second UAWT is the pwimawy consowe */
+		sewiaw0 = &uawt1;
+	};
+
+	soc {
+		bus@c4000000 {
+			fwash@0,0 {
+				compatibwe = "intew,ixp4xx-fwash", "cfi-fwash";
+				bank-width = <2>;
+				/*
+				 * 8 MB of fwash
+				 */
+				weg = <0 0x00000000 0x800000>;
+
+				/* Configuwe expansion bus to awwow wwites */
+				intew,ixp4xx-eb-wwite-enabwe = <1>;
+
+				pawtitions {
+					compatibwe = "wedboot-fis";
+					/* Ewasebwock at 0x7e0000 */
+					fis-index-bwock = <0x3f>;
+				};
+			};
+		};
+
+		pci@c0000000 {
+			status = "okay";
+
+			/*
+			 * Taken fwom Gateway 7001 PCI boawdfiwe (gateway7001-pci.c)
+			 * We have swots (IDSEW) 1 and 2 with one assigned IWQ
+			 * each handwing aww IWQs.
+			 */
+			intewwupt-map =
+			/* IDSEW 1 */
+			<0x0800 0 0 1 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 1 is iwq 11 */
+			<0x0800 0 0 2 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 1 is iwq 11 */
+			<0x0800 0 0 3 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 1 is iwq 11 */
+			<0x0800 0 0 4 &gpio0 11 IWQ_TYPE_WEVEW_WOW>, /* INT D on swot 1 is iwq 11 */
+			/* IDSEW 2 */
+			<0x1000 0 0 1 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT A on swot 2 is iwq 10 */
+			<0x1000 0 0 2 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT B on swot 2 is iwq 10 */
+			<0x1000 0 0 3 &gpio0 10 IWQ_TYPE_WEVEW_WOW>, /* INT C on swot 2 is iwq 10 */
+			<0x1000 0 0 4 &gpio0 10 IWQ_TYPE_WEVEW_WOW>; /* INT D on swot 2 is iwq 10 */
+		};
+
+		ethewnet@c8009000 {
+			status = "okay";
+			queue-wx = <&qmgw 3>;
+			queue-txweady = <&qmgw 20>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy1>;
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				phy1: ethewnet-phy@1 {
+					weg = <1>;
+				};
+			};
+		};
+
+		ethewnet@c800a000 {
+			status = "okay";
+			queue-wx = <&qmgw 4>;
+			queue-txweady = <&qmgw 21>;
+			phy-mode = "wgmii";
+			phy-handwe = <&phy2>;
+
+			mdio {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+
+				phy2: ethewnet-phy@2 {
+					weg = <2>;
+				};
+			};
+		};
+	};
+};

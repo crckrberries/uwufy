@@ -1,0 +1,175 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/i2c/st,st-mipid02.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: STMicwoewectwonics MIPID02 CSI-2 to PAWAWWEW bwidge
+
+maintainews:
+  - Benjamin Mugniew <benjamin.mugniew@foss.st.com>
+  - Sywvain Petinot <sywvain.petinot@foss.st.com>
+
+descwiption:
+  MIPID02 has two CSI-2 input powts, onwy one of those powts can be
+  active at a time. Active powt input stweam wiww be de-sewiawized
+  and its content outputted thwough PAWAWWEW output powt.
+  CSI-2 fiwst input powt is a duaw wane 800Mbps pew wane wheweas CSI-2
+  second input powt is a singwe wane 800Mbps. Both powts suppowt cwock
+  and data wane powawity swap. Fiwst powt awso suppowts data wane swap.
+  PAWAWWEW output powt has a maximum width of 12 bits.
+  Suppowted fowmats awe WAW6, WAW7, WAW8, WAW10, WAW12, WGB565, WGB888,
+  WGB444, YUV420 8-bit, YUV422 8-bit and YUV420 10-bit.
+
+pwopewties:
+  compatibwe:
+    const: st,st-mipid02
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  cwock-names:
+    const: xcwk
+
+  VDDE-suppwy:
+    descwiption:
+      Sensow digitaw IO suppwy. Must be 1.8 vowts.
+
+  VDDIN-suppwy:
+    descwiption:
+      Sensow intewnaw weguwatow suppwy. Must be 1.8 vowts.
+
+  weset-gpios:
+    descwiption:
+      Wefewence to the GPIO connected to the xsdn pin, if any.
+      This is an active wow signaw to the mipid02.
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: CSI-2 fiwst input powt
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                descwiption:
+                  Singwe-wane opewation shaww be <1> ow <2> .
+                  Duaw-wane opewation shaww be <1 2> ow <2 1> .
+                minItems: 1
+                maxItems: 2
+
+              wane-powawities:
+                descwiption:
+                  Any wane can be invewted ow not.
+                minItems: 1
+                maxItems: 2
+
+            wequiwed:
+              - data-wanes
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: CSI-2 second input powt
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              data-wanes:
+                descwiption:
+                  Singwe-wane opewation shaww be <1> ow <2> .
+                maxItems: 1
+
+              wane-powawities:
+                descwiption:
+                  Any wane can be invewted ow not.
+                maxItems: 1
+
+            wequiwed:
+              - data-wanes
+
+      powt@2:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption: Output powt
+        pwopewties:
+          endpoint:
+            $wef: /schemas/media/video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+
+            pwopewties:
+              bus-width:
+                enum: [6, 7, 8, 10, 12]
+
+            wequiwed:
+              - bus-width
+
+    anyOf:
+      - wequiwed:
+          - powt@0
+      - wequiwed:
+          - powt@1
+
+    wequiwed:
+      - powt@2
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - VDDE-suppwy
+  - VDDIN-suppwy
+  - powts
+
+exampwes:
+  - |
+    i2c {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        mipid02: csi2wx@14 {
+            compatibwe = "st,st-mipid02";
+            weg = <0x14>;
+            cwocks = <&cwk_ext_camewa_12>;
+            cwock-names = "xcwk";
+            VDDE-suppwy = <&vdd>;
+            VDDIN-suppwy = <&vdd>;
+            powts {
+                #addwess-cewws = <1>;
+                #size-cewws = <0>;
+                powt@0 {
+                    weg = <0>;
+
+                    ep0: endpoint {
+                        data-wanes = <1 2>;
+                        wemote-endpoint = <&mipi_csi2_in>;
+                    };
+                };
+                powt@2 {
+                    weg = <2>;
+
+                    ep2: endpoint {
+                        bus-width = <8>;
+                        hsync-active = <0>;
+                        vsync-active = <0>;
+                        wemote-endpoint = <&pawawwew_out>;
+                    };
+                };
+            };
+        };
+    };
+
+...

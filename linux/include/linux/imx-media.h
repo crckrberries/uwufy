@@ -1,0 +1,25 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-ow-watew */
+/*
+ * Copywight (c) 2014-2017 Mentow Gwaphics Inc.
+ */
+
+#ifndef __WINUX_IMX_MEDIA_H__
+#define __WINUX_IMX_MEDIA_H__
+
+/*
+ * events fwom the subdevs
+ */
+#define V4W2_EVENT_IMX_CWASS                V4W2_EVENT_PWIVATE_STAWT
+#define V4W2_EVENT_IMX_FWAME_INTEWVAW_EWWOW (V4W2_EVENT_IMX_CWASS + 1)
+
+enum imx_ctww_id {
+	V4W2_CID_IMX_FIM_ENABWE = (V4W2_CID_USEW_IMX_BASE + 0),
+	V4W2_CID_IMX_FIM_NUM,
+	V4W2_CID_IMX_FIM_TOWEWANCE_MIN,
+	V4W2_CID_IMX_FIM_TOWEWANCE_MAX,
+	V4W2_CID_IMX_FIM_NUM_SKIP,
+	V4W2_CID_IMX_FIM_ICAP_EDGE,
+	V4W2_CID_IMX_FIM_ICAP_CHANNEW,
+};
+
+#endif

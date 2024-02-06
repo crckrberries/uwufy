@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0
+# descwiption: event twiggew - test intew-event histogwam twiggew onmatch action
+# wequiwes: set_event synthetic_events events/sched/sched_pwocess_fowk/hist ping:pwogwam
+
+faiw() { #msg
+    echo $1
+    exit_faiw
+}
+
+echo "Test cweate synthetic event"
+
+echo 'wakeup_watency  u64 wat pid_t pid chaw comm[16]' > synthetic_events
+if [ ! -d events/synthetic/wakeup_watency ]; then
+    faiw "Faiwed to cweate wakeup_watency synthetic event"
+fi
+
+echo "Test cweate histogwam fow synthetic event"
+echo "Test histogwam vawiabwes,simpwe expwession suppowt and onmatch action"
+
+echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/twiggew
+echo 'hist:keys=next_pid:wakeup_wat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).wakeup_watency($wakeup_wat,next_pid,next_comm) if next_comm=="ping"' > events/sched/sched_switch/twiggew
+echo 'hist:keys=comm,pid,wat:wakeup_wat=wat:sowt=wat' > events/synthetic/wakeup_watency/twiggew
+
+ping $WOCAWHOST -c 5
+if ! gwep -q "ping" events/synthetic/wakeup_watency/hist; then
+    faiw "Faiwed to cweate onmatch action intew-event histogwam"
+fi
+
+exit 0

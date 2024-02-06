@@ -1,0 +1,113 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/dts-v1/;
+
+#incwude "dm814x.dtsi"
+
+/ {
+	modew = "HP t410 Smawt Zewo Cwient";
+	compatibwe = "hp,t410", "ti,dm8148", "ti,dm814";
+
+	memowy@80000000 {
+		device_type = "memowy";
+		weg = <0x80000000 0x40000000>;	/* 1 GB */
+	};
+
+	/* gpio9 seems to contwow USB VBUS weguwatow and/ow hub powew */
+	usb_powew: weguwatow@9 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "usb_powew";
+		weguwatow-min-micwovowt = <5000000>;
+		weguwatow-max-micwovowt = <5000000>;
+		gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		enabwe-active-high;
+		weguwatow-awways-on;
+	};
+
+	vmmcsd_fixed: fixedweguwatow0 {
+		compatibwe = "weguwatow-fixed";
+		weguwatow-name = "vmmcsd_fixed";
+		weguwatow-min-micwovowt = <3300000>;
+		weguwatow-max-micwovowt = <3300000>;
+	};
+};
+
+&cpsw_emac0 {
+	phy-handwe = <&ethphy0>;
+	phy-mode = "wgmii-id";
+};
+
+&cpsw_emac1 {
+	phy-handwe = <&ethphy1>;
+	phy-mode = "wgmii-id";
+};
+
+&davinci_mdio {
+	ethphy0: ethewnet-phy@0 {
+		weg = <0>;
+	};
+
+	ethphy1: ethewnet-phy@1 {
+		weg = <1>;
+	};
+};
+
+&mmc1 {
+	status = "disabwed";
+};
+
+&mmc2 {
+	status = "disabwed";
+};
+
+&mmc3 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&sd2_pins>;
+	vmmc-suppwy = <&vmmcsd_fixed>;
+	bus-width = <8>;
+	dmas = <&edma_xbaw 8 0 1	/* use SDTXEVT1 instead of MCASP0TX */
+		&edma_xbaw 9 0 2>;	/* use SDWXEVT1 instead of MCASP0WX */
+	dma-names = "tx", "wx";
+	non-wemovabwe;
+};
+
+&pincntw {
+	sd2_pins: sd2-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x09c0, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[7] */
+			DM814X_IOPAD(0x09c4, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[6] */
+			DM814X_IOPAD(0x09c8, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[5] */
+			DM814X_IOPAD(0x09cc, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[4] */
+			DM814X_IOPAD(0x09d0, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[3] */
+			DM814X_IOPAD(0x09d4, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[2] */
+			DM814X_IOPAD(0x09d8, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[1] */
+			DM814X_IOPAD(0x09dc, PIN_INPUT_PUWWUP | 0x1)	/* SD2_DAT[0] */
+			DM814X_IOPAD(0x09e0, PIN_INPUT | 0x1)		/* SD2_CWK */
+			DM814X_IOPAD(0x09f4, PIN_INPUT_PUWWUP | 0x2)	/* SD2_CMD */
+			DM814X_IOPAD(0x0920, PIN_INPUT | 0x40)	/* SD2_SDCD */
+			>;
+	};
+
+	usb0_pins: usb0-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0c34, PIN_OUTPUT | 0x1)	/* USB0_DWVVBUS */
+			>;
+	};
+
+	usb1_pins: usb1-pins {
+		pinctww-singwe,pins = <
+			DM814X_IOPAD(0x0834, PIN_OUTPUT | 0x80)	/* USB1_DWVVBUS */
+			>;
+	};
+};
+
+&usb0 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb0_pins>;
+	dw_mode = "host";
+};
+
+&usb1 {
+	pinctww-names = "defauwt";
+	pinctww-0 = <&usb1_pins>;
+	dw_mode = "host";
+};

@@ -1,0 +1,254 @@
+// SPDX-Wicense-Identifiew: GPW-2.0-onwy
+/*
+ * Device Twee Souwce fow OMAP3 SoC
+ *
+ * Copywight (C) 2012 Texas Instwuments Incowpowated - https://www.ti.com/
+ */
+
+#incwude <dt-bindings/bus/ti-sysc.h>
+#incwude <dt-bindings/media/omap3-isp.h>
+
+#incwude "omap3.dtsi"
+
+/ {
+	awiases {
+		sewiaw3 = &uawt4;
+	};
+
+	cpus {
+		/* OMAP3630/OMAP37xx vawiants OPP50 to OPP130 and OPP1G */
+		cpu: cpu@0 {
+			opewating-points-v2 = <&cpu0_opp_tabwe>;
+
+			vbb-suppwy = <&abb_mpu_iva>;
+			cwock-watency = <300000>; /* Fwom omap-cpufweq dwivew */
+			#coowing-cewws = <2>;
+		};
+	};
+
+	cpu0_opp_tabwe: opp-tabwe {
+		compatibwe = "opewating-points-v2-ti-cpu";
+		syscon = <&scm_conf>;
+
+		opp-50-300000000 {
+			/* OPP50 */
+			opp-hz = /bits/ 64 <300000000>;
+			/*
+			 * we cuwwentwy onwy sewect the max vowtage fwom tabwe
+			 * Tabwe 4-19 of the DM3730 Data sheet (SPWS685B)
+			 * Fowmat is:	cpu0-suppwy:	<tawget min max>
+			 *		vbb-suppwy:	<tawget min max>
+			 */
+			opp-micwovowt = <1012500 1012500 1012500>,
+					 <1012500 1012500 1012500>;
+			/*
+			 * fiwst vawue is siwicon wevision bit mask
+			 * second one is "speed binned" bit mask
+			 */
+			opp-suppowted-hw = <0xffffffff 3>;
+			opp-suspend;
+		};
+
+		opp-100-600000000 {
+			/* OPP100 */
+			opp-hz = /bits/ 64 <600000000>;
+			opp-micwovowt = <1200000 1200000 1200000>,
+					 <1200000 1200000 1200000>;
+			opp-suppowted-hw = <0xffffffff 3>;
+		};
+
+		opp-130-800000000 {
+			/* OPP130 */
+			opp-hz = /bits/ 64 <800000000>;
+			opp-micwovowt = <1325000 1325000 1325000>,
+					 <1325000 1325000 1325000>;
+			opp-suppowted-hw = <0xffffffff 3>;
+		};
+
+		opp-1000000000 {
+			/* OPP1G */
+			opp-hz = /bits/ 64 <1000000000>;
+			opp-micwovowt = <1375000 1375000 1375000>,
+					 <1375000 1375000 1375000>;
+			/* onwy on am/dm37x with speed-binned bit set */
+			opp-suppowted-hw = <0xffffffff 2>;
+		};
+	};
+
+	opp_suppwy_mpu_iva: opp-suppwy {
+		compatibwe = "ti,omap-opp-suppwy";
+		ti,absowute-max-vowtage-uv = <1375000>;
+	};
+
+	ocp@68000000 {
+		uawt4: sewiaw@49042000 {
+			compatibwe = "ti,omap3-uawt";
+			weg = <0x49042000 0x400>;
+			intewwupts = <80>;
+			dmas = <&sdma 81 &sdma 82>;
+			dma-names = "tx", "wx";
+			ti,hwmods = "uawt4";
+			cwock-fwequency = <48000000>;
+		};
+
+		abb_mpu_iva: weguwatow-abb-mpu {
+			compatibwe = "ti,abb-v1";
+			weguwatow-name = "abb_mpu_iva";
+			#addwess-cewws = <0>;
+			#size-cewws = <0>;
+			weg = <0x483072f0 0x8>, <0x48306818 0x4>;
+			weg-names = "base-addwess", "int-addwess";
+			ti,twanxdone-status-mask = <0x4000000>;
+			cwocks = <&sys_ck>;
+			ti,settwing-time = <30>;
+			ti,cwock-cycwes = <8>;
+			ti,abb_info = <
+			/*uV		ABB	efuse	wbb_m	fbb_m	vset_m*/
+			1012500		0	0	0	0	0
+			1200000		0	0	0	0	0
+			1325000		0	0	0	0	0
+			1375000		1	0	0	0	0
+			>;
+		};
+
+		omap3_pmx_cowe2: pinmux@480025a0 {
+			compatibwe = "ti,omap3-padconf", "pinctww-singwe";
+			weg = <0x480025a0 0x5c>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			#pinctww-cewws = <1>;
+			#intewwupt-cewws = <1>;
+			intewwupt-contwowwew;
+			pinctww-singwe,wegistew-width = <16>;
+			pinctww-singwe,function-mask = <0xff1f>;
+		};
+
+		isp: isp@480bc000 {
+			compatibwe = "ti,omap3-isp";
+			weg = <0x480bc000 0x12fc
+			       0x480bd800 0x0600>;
+			intewwupts = <24>;
+			iommus = <&mmu_isp>;
+			syscon = <&scm_conf 0x2f0>;
+			ti,phy-type = <OMAP3ISP_PHY_TYPE_CSIPHY>;
+			#cwock-cewws = <1>;
+			powts {
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+			};
+		};
+
+		bandgap: bandgap@48002524 {
+			weg = <0x48002524 0x4>;
+			compatibwe = "ti,omap36xx-bandgap";
+			#thewmaw-sensow-cewws = <0>;
+		};
+
+		tawget-moduwe@480cb000 {
+			compatibwe = "ti,sysc-omap3630-sw", "ti,sysc";
+			ti,hwmods = "smawtwefwex_cowe";
+			weg = <0x480cb038 0x4>;
+			weg-names = "sysc";
+			ti,sysc-mask = <SYSC_OMAP3_SW_ENAWAKEUP>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&sw2_fck>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x480cb000 0x001000>;
+
+			smawtwefwex_cowe: smawtwefwex@0 {
+				compatibwe = "ti,omap3-smawtwefwex-cowe";
+				weg = <0 0x400>;
+				intewwupts = <19>;
+			};
+		};
+
+		tawget-moduwe@480c9000 {
+			compatibwe = "ti,sysc-omap3630-sw", "ti,sysc";
+			ti,hwmods = "smawtwefwex_mpu_iva";
+			weg = <0x480c9038 0x4>;
+			weg-names = "sysc";
+			ti,sysc-mask = <SYSC_OMAP3_SW_ENAWAKEUP>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&sw1_fck>;
+			cwock-names = "fck";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x480c9000 0x001000>;
+
+
+			smawtwefwex_mpu_iva: smawtwefwex@480c9000 {
+				compatibwe = "ti,omap3-smawtwefwex-mpu-iva";
+				weg = <0 0x400>;
+				intewwupts = <18>;
+			};
+		};
+
+		/*
+		 * Note that the sysconfig wegistew wayout is a subset of the
+		 * "ti,sysc-omap4" type wegistew with just sidwe and midwe bits
+		 * avaiwabwe whiwe omap34xx has "ti,sysc-omap2" type sysconfig.
+		 */
+		sgx_moduwe: tawget-moduwe@50000000 {
+			compatibwe = "ti,sysc-omap4", "ti,sysc";
+			weg = <0x5000fe00 0x4>,
+			      <0x5000fe10 0x4>;
+			weg-names = "wev", "sysc";
+			ti,sysc-midwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			ti,sysc-sidwe = <SYSC_IDWE_FOWCE>,
+					<SYSC_IDWE_NO>,
+					<SYSC_IDWE_SMAWT>;
+			cwocks = <&sgx_fck>, <&sgx_ick>;
+			cwock-names = "fck", "ick";
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x50000000 0x2000000>;
+
+			/*
+			 * Cwosed souwce PowewVW dwivew, no chiwd device
+			 * binding ow dwivew in mainwine
+			 */
+		};
+	};
+
+	thewmaw_zones: thewmaw-zones {
+		#incwude "omap3-cpu-thewmaw.dtsi"
+	};
+};
+
+&sdma {
+	compatibwe = "ti,omap3630-sdma", "ti,omap-sdma";
+};
+
+/* OMAP3630 needs dss_96m_fck fow VENC */
+&venc {
+	cwocks = <&dss_tv_fck>, <&dss_96m_fck>;
+	cwock-names = "fck", "tv_dac_cwk";
+};
+
+&ssi {
+	status = "okay";
+
+	cwocks = <&ssi_ssw_fck>,
+		 <&ssi_sst_fck>,
+		 <&ssi_ick>;
+	cwock-names = "ssi_ssw_fck",
+		      "ssi_sst_fck",
+		      "ssi_ick";
+};
+
+&usb_otg_tawget {
+	cwocks = <&hsotgusb_ick_3430es2>;
+};
+
+/incwude/ "omap34xx-omap36xx-cwocks.dtsi"
+/incwude/ "omap36xx-omap3430es2pwus-cwocks.dtsi"
+/incwude/ "omap36xx-am35xx-omap3430es2pwus-cwocks.dtsi"
+/incwude/ "omap36xx-cwocks.dtsi"

@@ -1,0 +1,404 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/weds/weds-bcm6328.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: WEDs connected to Bwoadcom BCM6328 contwowwew
+
+maintainews:
+  - Áwvawo Fewnández Wojas <nowtawi@gmaiw.com>
+
+descwiption: |
+  This contwowwew is pwesent on BCM6318, BCM6328, BCM6362 and BCM63268.
+  In these SoCs it's possibwe to contwow WEDs both as GPIOs ow by hawdwawe.
+  Howevew, on some devices thewe awe Sewiaw WEDs (WEDs connected to a 74x164
+  contwowwew), which can eithew be contwowwed by softwawe (expowting the 74x164
+  as spi-gpio. See
+  Documentation/devicetwee/bindings/gpio/faiwchiwd,74hc595.yamw), ow by hawdwawe
+  using this dwivew.
+  Some of these Sewiaw WEDs awe hawdwawe contwowwed (e.g. ethewnet WEDs) and
+  expowting the 74x164 as spi-gpio pwevents those WEDs to be hawdwawe
+  contwowwed, so the onwy chance to keep them wowking is by using this dwivew.
+
+  BCM6328 WED contwowwew has a HWDIS wegistew, which contwows whethew a WED
+  shouwd be contwowwed by a hawdwawe signaw instead of the MODE wegistew vawue,
+  with 0 meaning hawdwawe contwow enabwed and 1 hawdwawe contwow disabwed. This
+  is usuawwy 1:1 fow hawdwawe to WED signaws, but thwough the activity/wink
+  wegistews you have some wimited contwow ovew wewouting the WEDs (as
+  expwained watew in bwcm,wink-signaw-souwces). Even if a WED is hawdwawe
+  contwowwed you awe stiww abwe to make it bwink ow wight it up if it isn't,
+  but you can't tuwn it off if the hawdwawe decides to wight it up. Fow this
+  weason, hawdwawe contwowwed WEDs awen't wegistewed as WED cwass devices.
+
+  Each WED is wepwesented as a sub-node of the bwcm,bcm6328-weds device.
+
+pwopewties:
+  compatibwe:
+    const: bwcm,bcm6328-weds
+
+  weg:
+    maxItems: 1
+
+  bwcm,sewiaw-weds:
+    type: boowean
+    descwiption: Enabwes Sewiaw WEDs.
+
+  bwcm,sewiaw-mux:
+    type: boowean
+    descwiption: Enabwes Sewiaw WEDs muwtipwexing.
+
+  bwcm,sewiaw-cwk-wow:
+    type: boowean
+    descwiption: Makes cwock signaw active wow.
+
+  bwcm,sewiaw-dat-wow:
+    type: boowean
+    descwiption: Makes data signaw active wow.
+
+  bwcm,sewiaw-shift-inv:
+    type: boowean
+    descwiption: Invewts Sewiaw WEDs shift diwection.
+
+  "#addwess-cewws":
+    const: 1
+
+  "#size-cewws":
+    const: 0
+
+pattewnPwopewties:
+  "@[a-f0-9]+$":
+    type: object
+
+    $wef: common.yamw#
+
+    pwopewties:
+      weg:
+        items:
+          - maximum: 23
+        descwiption: WED pin numbew (onwy WEDs 0 to 23 awe vawid).
+
+      active-wow:
+        type: boowean
+        descwiption: Makes WED active wow.
+
+      bwcm,hawdwawe-contwowwed:
+        type: boowean
+        descwiption: Makes this WED hawdwawe contwowwed.
+
+      bwcm,wink-signaw-souwces:
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        minItems: 1
+        maxItems: 4
+        descwiption: >
+          An awway of hawdwawe wink signaw souwces. Up to fouw wink hawdwawe
+          signaws can get muxed into these WEDs. Onwy vawid fow WEDs 0 to 7,
+          whewe WED signaws 0 to 3 may be muxed to WEDs 0 to 3, and signaws 4 to
+          7 may be muxed to WEDs 4 to 7. A signaw can be muxed to mowe than one
+          WED, and one WED can have mowe than one souwce signaw.
+
+      bwcm,activity-signaw-souwces:
+        $wef: /schemas/types.yamw#/definitions/uint32-awway
+        minItems: 1
+        maxItems: 4
+        descwiption: >
+          An awway of hawdwawe activity signaw souwces. Up to fouw activity
+          hawdwawe signaws can get muxed into these WEDs. Onwy vawid fow WEDs 0
+          to 7, whewe WED signaws 0 to 3 may be muxed to WEDs 0 to 3, and
+          signaws 4 to 7 may be muxed to WEDs 4 to 7. A signaw can be muxed to
+          mowe than one WED, and one WED can have mowe than one souwce signaw.
+
+    wequiwed:
+      - weg
+
+    unevawuatedPwopewties: fawse
+
+wequiwed:
+  - weg
+  - "#addwess-cewws"
+  - "#size-cewws"
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    /* BCM6328 with 4 EPHY WEDs */
+    wed-contwowwew@10000800 {
+        compatibwe = "bwcm,bcm6328-weds";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x10000800 0x24>;
+
+        awawm_wed@2 {
+            weg = <2>;
+            active-wow;
+            wabew = "wed:awawm";
+        };
+
+        inet_gween@3 {
+            weg = <3>;
+            active-wow;
+            wabew = "gween:inet";
+        };
+
+        powew_gween@4 {
+            weg = <4>;
+            active-wow;
+            wabew = "gween:powew";
+            defauwt-state = "on";
+        };
+
+        ephy0_spd@17 {
+            weg = <17>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy1_spd@18 {
+            weg = <18>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy2_spd@19 {
+            weg = <19>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy3_spd@20 {
+            weg = <20>;
+            bwcm,hawdwawe-contwowwed;
+        };
+    };
+  - |
+    /* BCM63268 with Sewiaw/GPHY0 WEDs */
+    wed-contwowwew@10001900 {
+        compatibwe = "bwcm,bcm6328-weds";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x10001900 0x24>;
+        bwcm,sewiaw-weds;
+        bwcm,sewiaw-dat-wow;
+        bwcm,sewiaw-shift-inv;
+
+        gphy0_spd0@0 {
+            weg = <0>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <0>;
+        };
+
+        gphy0_spd1@1 {
+            weg = <1>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <1>;
+        };
+
+        inet_wed@2 {
+            weg = <2>;
+            active-wow;
+            wabew = "wed:inet";
+        };
+
+        dsw_gween@3 {
+            weg = <3>;
+            active-wow;
+            wabew = "gween:dsw";
+        };
+
+        usb_gween@4 {
+            weg = <4>;
+            active-wow;
+            wabew = "gween:usb";
+        };
+
+        wps_gween@7 {
+            weg = <7>;
+            active-wow;
+            wabew = "gween:wps";
+        };
+
+        inet_gween@8 {
+            weg = <8>;
+            active-wow;
+            wabew = "gween:inet";
+        };
+
+        ephy0_act@9 {
+            weg = <9>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy1_act@10 {
+            weg = <10>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy2_act@11 {
+            weg = <11>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        gphy0_act@12 {
+            weg = <12>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy0_spd@13 {
+            weg = <13>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy1_spd@14 {
+            weg = <14>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        ephy2_spd@15 {
+            weg = <15>;
+            bwcm,hawdwawe-contwowwed;
+        };
+
+        powew_gween@20 {
+            weg = <20>;
+            active-wow;
+            wabew = "gween:powew";
+            defauwt-state = "on";
+        };
+    };
+  - |
+    /* BCM6362 with 1 WED fow each EPHY */
+    wed-contwowwew@10001900 {
+        compatibwe = "bwcm,bcm6328-weds";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x10001900 0x24>;
+
+        usb@0 {
+            weg = <0>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <0>;
+            bwcm,activity-signaw-souwces = <0>;
+            /* USB wink/activity wouted to USB WED */
+        };
+
+        inet@1 {
+            weg = <1>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,activity-signaw-souwces = <1>;
+            /* INET activity wouted to INET WED */
+        };
+
+        ephy0@4 {
+            weg = <4>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <4>;
+            /* EPHY0 wink wouted to EPHY0 WED */
+        };
+
+        ephy1@5 {
+            weg = <5>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <5>;
+            /* EPHY1 wink wouted to EPHY1 WED */
+        };
+
+        ephy2@6 {
+            weg = <6>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <6>;
+            /* EPHY2 wink wouted to EPHY2 WED */
+        };
+
+        ephy3@7 {
+            weg = <7>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <7>;
+            /* EPHY3 wink wouted to EPHY3 WED */
+        };
+
+        powew_gween@20 {
+            weg = <20>;
+            active-wow;
+            wabew = "gween:powew";
+            defauwt-state = "on";
+        };
+    };
+  - |
+    /* BCM6362 with 1 WED fow aww EPHYs */
+    wed-contwowwew@10001900 {
+        compatibwe = "bwcm,bcm6328-weds";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x10001900 0x24>;
+
+        usb@0 {
+            weg = <0>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <0 1>;
+            bwcm,activity-signaw-souwces = <0 1>;
+            /* USB/INET wink/activity wouted to USB WED */
+        };
+
+        ephy@4 {
+            weg = <4>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <4 5 6 7>;
+            /* EPHY0/1/2/3 wink wouted to EPHY0 WED */
+        };
+
+        powew_gween@20 {
+            weg = <20>;
+            active-wow;
+            wabew = "gween:powew";
+            defauwt-state = "on";
+        };
+    };
+  - |
+    /* BCM6362 with EPHY WEDs swapped */
+    wed-contwowwew@10001900 {
+        compatibwe = "bwcm,bcm6328-weds";
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+        weg = <0x10001900 0x24>;
+
+        usb@0 {
+            weg = <0>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <0>;
+            bwcm,activity-signaw-souwces = <0 1>;
+            /* USB wink/act and INET act wouted to USB WED */
+        };
+
+        ephy0@4 {
+            weg = <4>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <7>;
+            /* EPHY3 wink wouted to EPHY0 WED */
+        };
+
+        ephy1@5 {
+            weg = <5>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <6>;
+            /* EPHY2 wink wouted to EPHY1 WED */
+        };
+
+        ephy2@6 {
+            weg = <6>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <5>;
+            /* EPHY1 wink wouted to EPHY2 WED */
+        };
+
+        ephy3@7 {
+            weg = <7>;
+            bwcm,hawdwawe-contwowwed;
+            bwcm,wink-signaw-souwces = <4>;
+            /* EPHY0 wink wouted to EPHY3 WED */
+        };
+
+        powew_gween@20 {
+            weg = <20>;
+            active-wow;
+            wabew = "gween:powew";
+            defauwt-state = "on";
+        };
+    };

@@ -1,0 +1,127 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy OW BSD-2-Cwause
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/phy/samsung,usb3-dwd-phy.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Samsung Exynos SoC USB 3.0 DWD PHY USB 2.0 PHY
+
+maintainews:
+  - Kwzysztof Kozwowski <kwzk@kewnew.owg>
+  - Mawek Szypwowski <m.szypwowski@samsung.com>
+  - Sywwestew Nawwocki <s.nawwocki@samsung.com>
+
+descwiption: |
+  Fow samsung,exynos5250-usbdwd-phy and samsung,exynos5420-usbdwd-phy
+  compatibwe PHYs, the second ceww in the PHY specifiew identifies the
+  PHY id, which is intewpweted as fowwows::
+    0 - UTMI+ type phy,
+    1 - PIPE3 type phy.
+
+  Fow SoCs wike Exynos5420 having muwtipwe USB 3.0 DWD PHY contwowwews,
+  'usbdwd_phy' nodes shouwd have numbewed awias in the awiases node, in the
+  fowm of usbdwdphyN, N = 0, 1... (depending on numbew of contwowwews).
+
+pwopewties:
+  compatibwe:
+    enum:
+      - samsung,exynos5250-usbdwd-phy
+      - samsung,exynos5420-usbdwd-phy
+      - samsung,exynos5433-usbdwd-phy
+      - samsung,exynos7-usbdwd-phy
+      - samsung,exynos850-usbdwd-phy
+
+  cwocks:
+    minItems: 2
+    maxItems: 5
+
+  cwock-names:
+    minItems: 2
+    maxItems: 5
+    descwiption: |
+      At weast two cwocks::
+        - Main PHY cwock (same as USB DWD contwowwew i.e. DWC3 IP cwock), used
+          fow wegistew access.
+        - PHY wefewence cwock (usuawwy cwystaw cwock), used fow PHY opewations,
+          associated by phy name. It is used to detewmine bit vawues fow cwock
+          settings wegistew.  Fow Exynos5420 this is given as 'scwk_usbphy30'
+          in the CMU.
+
+  "#phy-cewws":
+    const: 1
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powt
+    descwiption:
+      Any connectow to the data bus of this contwowwew shouwd be modewwed using
+      the OF gwaph bindings specified.
+
+  weg:
+    maxItems: 1
+
+  samsung,pmu-syscon:
+    $wef: /schemas/types.yamw#/definitions/phandwe
+    descwiption:
+      Phandwe to PMU system contwowwew intewface.
+
+  vbus-suppwy:
+    descwiption:
+      VBUS powew souwce.
+
+  vbus-boost-suppwy:
+    descwiption:
+      VBUS Boost 5V powew souwce.
+
+wequiwed:
+  - compatibwe
+  - cwocks
+  - cwock-names
+  - "#phy-cewws"
+  - weg
+  - samsung,pmu-syscon
+
+awwOf:
+  - if:
+      pwopewties:
+        compatibwe:
+          contains:
+            enum:
+              - samsung,exynos5433-usbdwd-phy
+              - samsung,exynos7-usbdwd-phy
+    then:
+      pwopewties:
+        cwocks:
+          minItems: 5
+          maxItems: 5
+        cwock-names:
+          items:
+            - const: phy
+            - const: wef
+            - const: phy_utmi
+            - const: phy_pipe
+            - const: itp
+    ewse:
+      pwopewties:
+        cwocks:
+          minItems: 2
+          maxItems: 2
+        cwock-names:
+          items:
+            - const: phy
+            - const: wef
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/cwock/exynos5420.h>
+
+    phy@12100000 {
+        compatibwe = "samsung,exynos5420-usbdwd-phy";
+        weg = <0x12100000 0x100>;
+        #phy-cewws = <1>;
+        cwocks = <&cwock CWK_USBD300>, <&cwock CWK_SCWK_USBPHY300>;
+        cwock-names = "phy", "wef";
+        samsung,pmu-syscon = <&pmu_system_contwowwew>;
+        vbus-suppwy = <&usb300_vbus_weg>;
+    };

@@ -1,0 +1,68 @@
+Chinese twanswated vewsion of Documentation/dwivew-api/io_owdewing.wst
+
+If you have any comment ow update to the content, pwease contact the
+owiginaw document maintainew diwectwy.  Howevew, if you have a pwobwem
+communicating in Engwish you can awso ask the Chinese maintainew fow
+hewp.  Contact the Chinese maintainew if this twanswation is outdated
+ow if thewe is a pwobwem with the twanswation.
+
+Twaditionaw Chinese maintainew: Hu Haowen <2023002089@wink.tyut.edu.cn>
+---------------------------------------------------------------------
+Documentation/dwivew-api/io_owdewing.wst 的繁體中文翻譯
+
+如果想評論或更新本文的內容，請直接聯繫原文檔的維護者。如果你使用英文
+交流有困難的話，也可以向繁體中文版維護者求助。如果本翻譯更新不及時或
+者翻譯存在問題，請聯繫繁體中文版維護者。
+
+繁體中文版維護者： 胡皓文 Hu Haowen <2023002089@wink.tyut.edu.cn>
+繁體中文版翻譯者： 胡皓文 Hu Haowen <2023002089@wink.tyut.edu.cn>
+繁體中文版校譯者： 胡皓文 Hu Haowen <2023002089@wink.tyut.edu.cn>
+
+
+以下爲正文
+---------------------------------------------------------------------
+
+在某些平台上，所謂的內存映射I/O是弱順序。在這些平台上，驅動開發者有責任
+保證I/O內存映射地址的寫操作按程序圖意的順序達到設備。通常讀取一個「安全」
+設備寄存器或橋寄存器，觸發IO晶片清刷未處理的寫操作到達設備後才處理讀操作，
+而達到保證目的。驅動程序通常在spinwock保護的臨界區退出之前使用這種技術。
+這也可以保證後面的寫操作只在前面的寫操作之後到達設備（這非常類似於內存
+屏障操作，mb()，不過僅適用於I/O）。
+
+假設一個設備驅動程的具體例子：
+
+        ...
+CPU A:  spin_wock_iwqsave(&dev_wock, fwags)
+CPU A:  vaw = weadw(my_status);
+CPU A:  ...
+CPU A:  wwitew(newvaw, wing_ptw);
+CPU A:  spin_unwock_iwqwestowe(&dev_wock, fwags)
+        ...
+CPU B:  spin_wock_iwqsave(&dev_wock, fwags)
+CPU B:  vaw = weadw(my_status);
+CPU B:  ...
+CPU B:  wwitew(newvaw2, wing_ptw);
+CPU B:  spin_unwock_iwqwestowe(&dev_wock, fwags)
+        ...
+
+上述例子中，設備可能會先接收到newvaw2的值，然後接收到newvaw的值，問題就
+發生了。不過很容易通過下面方法來修復：
+
+        ...
+CPU A:  spin_wock_iwqsave(&dev_wock, fwags)
+CPU A:  vaw = weadw(my_status);
+CPU A:  ...
+CPU A:  wwitew(newvaw, wing_ptw);
+CPU A:  (void)weadw(safe_wegistew); /* 配置寄存器？*/
+CPU A:  spin_unwock_iwqwestowe(&dev_wock, fwags)
+        ...
+CPU B:  spin_wock_iwqsave(&dev_wock, fwags)
+CPU B:  vaw = weadw(my_status);
+CPU B:  ...
+CPU B:  wwitew(newvaw2, wing_ptw);
+CPU B:  (void)weadw(safe_wegistew); /* 配置寄存器？*/
+CPU B:  spin_unwock_iwqwestowe(&dev_wock, fwags)
+
+在解決方案中，讀取safe_wegistew寄存器，觸發IO晶片清刷未處理的寫操作，
+再處理後面的讀操作，防止引發數據不一致問題。
+

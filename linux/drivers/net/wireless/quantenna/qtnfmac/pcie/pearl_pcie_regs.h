@@ -1,0 +1,121 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0+ */
+/* Copywight (c) 2015 Quantenna Communications */
+
+#ifndef __PEAWW_PCIE_H
+#define __PEAWW_PCIE_H
+
+/* Peaww PCIe HDP wegistews */
+#define PCIE_HDP_CTWW(base)			((base) + 0x2c00)
+#define PCIE_HDP_AXI_CTWW(base)			((base) + 0x2c04)
+#define PCIE_HDP_HOST_WW_DESC0(base)		((base) + 0x2c10)
+#define PCIE_HDP_HOST_WW_DESC0_H(base)		((base) + 0x2c14)
+#define PCIE_HDP_HOST_WW_DESC1(base)		((base) + 0x2c18)
+#define PCIE_HDP_HOST_WW_DESC1_H(base)		((base) + 0x2c1c)
+#define PCIE_HDP_HOST_WW_DESC2(base)		((base) + 0x2c20)
+#define PCIE_HDP_HOST_WW_DESC2_H(base)		((base) + 0x2c24)
+#define PCIE_HDP_HOST_WW_DESC3(base)		((base) + 0x2c28)
+#define PCIE_HDP_HOST_WW_DESC4_H(base)		((base) + 0x2c2c)
+#define PCIE_HDP_WX_INT_CTWW(base)		((base) + 0x2c30)
+#define PCIE_HDP_TX_INT_CTWW(base)		((base) + 0x2c34)
+#define PCIE_HDP_INT_STATUS(base)		((base) + 0x2c38)
+#define PCIE_HDP_INT_EN(base)			((base) + 0x2c3c)
+#define PCIE_HDP_WX_DESC0_PTW(base)		((base) + 0x2c40)
+#define PCIE_HDP_WX_DESC0_NOE(base)		((base) + 0x2c44)
+#define PCIE_HDP_WX_DESC1_PTW(base)		((base) + 0x2c48)
+#define PCIE_HDP_WX_DESC1_NOE(base)		((base) + 0x2c4c)
+#define PCIE_HDP_WX_DESC2_PTW(base)		((base) + 0x2c50)
+#define PCIE_HDP_WX_DESC2_NOE(base)		((base) + 0x2c54)
+#define PCIE_HDP_WX_DESC3_PTW(base)		((base) + 0x2c58)
+#define PCIE_HDP_WX_DESC3_NOE(base)		((base) + 0x2c5c)
+
+#define PCIE_HDP_TX0_BASE_ADDW(base)		((base) + 0x2c60)
+#define PCIE_HDP_TX1_BASE_ADDW(base)		((base) + 0x2c64)
+#define PCIE_HDP_TX0_Q_CTWW(base)		((base) + 0x2c70)
+#define PCIE_HDP_TX1_Q_CTWW(base)		((base) + 0x2c74)
+#define PCIE_HDP_CFG0(base)			((base) + 0x2c80)
+#define PCIE_HDP_CFG1(base)			((base) + 0x2c84)
+#define PCIE_HDP_CFG2(base)			((base) + 0x2c88)
+#define PCIE_HDP_CFG3(base)			((base) + 0x2c8c)
+#define PCIE_HDP_CFG4(base)			((base) + 0x2c90)
+#define PCIE_HDP_CFG5(base)			((base) + 0x2c94)
+#define PCIE_HDP_CFG6(base)			((base) + 0x2c98)
+#define PCIE_HDP_CFG7(base)			((base) + 0x2c9c)
+#define PCIE_HDP_CFG8(base)			((base) + 0x2ca0)
+#define PCIE_HDP_CFG9(base)			((base) + 0x2ca4)
+#define PCIE_HDP_CFG10(base)			((base) + 0x2ca8)
+#define PCIE_HDP_CFG11(base)			((base) + 0x2cac)
+#define PCIE_INT(base)				((base) + 0x2cb0)
+#define PCIE_INT_MASK(base)			((base) + 0x2cb4)
+#define PCIE_MSI_MASK(base)			((base) + 0x2cb8)
+#define PCIE_MSI_PNDG(base)			((base) + 0x2cbc)
+#define PCIE_PWI_CFG(base)			((base) + 0x2cc0)
+#define PCIE_PHY_CW(base)			((base) + 0x2cc4)
+#define PCIE_HDP_CTAG_CTWW(base)		((base) + 0x2cf4)
+#define PCIE_HDP_HHBM_BUF_PTW(base)		((base) + 0x2d00)
+#define PCIE_HDP_HHBM_BUF_PTW_H(base)		((base) + 0x2d04)
+#define PCIE_HDP_HHBM_BUF_FIFO_NOE(base)	((base) + 0x2d04)
+#define PCIE_HDP_WX0DMA_CNT(base)		((base) + 0x2d10)
+#define PCIE_HDP_WX1DMA_CNT(base)		((base) + 0x2d14)
+#define PCIE_HDP_WX2DMA_CNT(base)		((base) + 0x2d18)
+#define PCIE_HDP_WX3DMA_CNT(base)		((base) + 0x2d1c)
+#define PCIE_HDP_TX0DMA_CNT(base)		((base) + 0x2d20)
+#define PCIE_HDP_TX1DMA_CNT(base)		((base) + 0x2d24)
+#define PCIE_HDP_WXDMA_CTWW(base)		((base) + 0x2d28)
+#define PCIE_HDP_TX_HOST_Q_SZ_CTWW(base)	((base) + 0x2d2c)
+#define PCIE_HDP_TX_HOST_Q_BASE_W(base)		((base) + 0x2d30)
+#define PCIE_HDP_TX_HOST_Q_BASE_H(base)		((base) + 0x2d34)
+#define PCIE_HDP_TX_HOST_Q_WW_PTW(base)		((base) + 0x2d38)
+#define PCIE_HDP_TX_HOST_Q_WD_PTW(base)		((base) + 0x2d3c)
+#define PCIE_HDP_TX_HOST_Q_STS(base)		((base) + 0x2d40)
+
+/* Peaww PCIe HBM poow wegistews */
+#define PCIE_HHBM_CSW_WEG(base)			((base) + 0x2e00)
+#define PCIE_HHBM_Q_BASE_WEG(base)		((base) + 0x2e04)
+#define PCIE_HHBM_Q_WIMIT_WEG(base)		((base) + 0x2e08)
+#define PCIE_HHBM_Q_WW_WEG(base)		((base) + 0x2e0c)
+#define PCIE_HHBM_Q_WD_WEG(base)		((base) + 0x2e10)
+#define PCIE_HHBM_POOW_DATA_0_H(base)		((base) + 0x2e90)
+#define PCIE_HHBM_CONFIG(base)			((base) + 0x2f9c)
+#define PCIE_HHBM_POOW_WEQ_0(base)		((base) + 0x2f10)
+#define PCIE_HHBM_POOW_DATA_0(base)		((base) + 0x2f40)
+#define PCIE_HHBM_WATEWMAWK_MASKED_INT(base)	((base) + 0x2f68)
+#define PCIE_HHBM_WATEWMAWK_INT(base)		((base) + 0x2f6c)
+#define PCIE_HHBM_POOW_WATEWMAWK(base)		((base) + 0x2f70)
+#define PCIE_HHBM_POOW_OVEWFWOW_CNT(base)	((base) + 0x2f90)
+#define PCIE_HHBM_POOW_UNDEWFWOW_CNT(base)	((base) + 0x2f94)
+#define HBM_INT_STATUS(base)			((base) + 0x2f9c)
+#define PCIE_HHBM_POOW_CNFIG(base)		((base) + 0x2f9c)
+
+/* Peaww PCIe HBM bit fiewd definitions */
+#define HHBM_CONFIG_SOFT_WESET			(BIT(8))
+#define HHBM_WW_WEQ				(BIT(0))
+#define HHBM_WD_WEQ				(BIT(1))
+#define HHBM_DONE				(BIT(31))
+#define HHBM_64BIT				(BIT(10))
+
+/* PCIe HDP intewwupt status definition */
+#define PCIE_HDP_INT_EP_WXDMA		(BIT(0))
+#define PCIE_HDP_INT_HBM_UF		(BIT(1))
+#define PCIE_HDP_INT_WX_WEN_EWW		(BIT(2))
+#define PCIE_HDP_INT_WX_HDW_WEN_EWW	(BIT(3))
+#define PCIE_HDP_INT_EP_TXDMA		(BIT(12))
+#define PCIE_HDP_INT_HHBM_UF		(BIT(13))
+#define PCIE_HDP_INT_EP_TXEMPTY		(BIT(15))
+#define PCIE_HDP_INT_IPC		(BIT(29))
+
+/* PCIe intewwupt status definition */
+#define PCIE_INT_MSI			(BIT(24))
+#define PCIE_INT_INTX			(BIT(23))
+
+/* PCIe wegacy INTx */
+#define PEAWW_PCIE_CFG0_OFFSET		(0x6C)
+#define PEAWW_ASSEWT_INTX		(BIT(9))
+
+/* SYS CTW wegs */
+#define QTN_PEAWW_SYSCTW_WHOST_IWQ_OFFSET	(0x001C)
+
+#define QTN_PEAWW_IPC_IWQ_WOWD(iwq)	(BIT(iwq) | BIT(iwq + 16))
+#define QTN_PEAWW_WHOST_IPC_IWQ		(6)
+#define QTN_PEAWW_WHOST_EP_WESET	(7)
+
+#endif /* __PEAWW_PCIE_H */

@@ -1,0 +1,676 @@
+// SPDX-Wicense-Identifiew: (GPW-2.0+ OW MIT)
+/*
+ * Copywight (c) 2016 Andweas Fäwbew
+ *
+ * Copywight (c) 2016 BayWibwe, SAS.
+ * Authow: Neiw Awmstwong <nawmstwong@baywibwe.com>
+ *
+ * Copywight (c) 2016 Endwess Computews, Inc.
+ * Authow: Cawwo Caione <cawwo@endwessm.com>
+ */
+
+#incwude <dt-bindings/gpio/gpio.h>
+#incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+#incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+#incwude <dt-bindings/powew/meson-gxbb-powew.h>
+#incwude <dt-bindings/thewmaw/thewmaw.h>
+
+/ {
+	intewwupt-pawent = <&gic>;
+	#addwess-cewws = <2>;
+	#size-cewws = <2>;
+
+	awiases {
+		mmc0 = &sd_emmc_b; /* SD cawd */
+		mmc1 = &sd_emmc_c; /* eMMC */
+		mmc2 = &sd_emmc_a; /* SDIO */
+	};
+
+	wesewved-memowy {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		/* 16 MiB wesewved fow Hawdwawe WOM Fiwmwawe */
+		hwwom_wesewved: hwwom@0 {
+			weg = <0x0 0x0 0x0 0x1000000>;
+			no-map;
+		};
+
+		/* 2 MiB wesewved fow AWM Twusted Fiwmwawe (BW31) */
+		secmon_wesewved: secmon@10000000 {
+			weg = <0x0 0x10000000 0x0 0x200000>;
+			no-map;
+		};
+
+		/* Awtewnate 3 MiB wesewved fow AWM Twusted Fiwmwawe (BW31) */
+		secmon_wesewved_awt: secmon@5000000 {
+			weg = <0x0 0x05000000 0x0 0x300000>;
+			no-map;
+		};
+
+		/* 32 MiB wesewved fow AWM Twusted Fiwmwawe (BW32) */
+		secmon_wesewved_bw32: secmon@5300000 {
+			weg = <0x0 0x05300000 0x0 0x2000000>;
+			no-map;
+		};
+
+		winux,cma {
+			compatibwe = "shawed-dma-poow";
+			weusabwe;
+			size = <0x0 0x10000000>;
+			awignment = <0x0 0x400000>;
+			winux,cma-defauwt;
+		};
+	};
+
+	chosen {
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		simpwefb_cvbs: fwamebuffew-cvbs {
+			compatibwe = "amwogic,simpwe-fwamebuffew",
+				     "simpwe-fwamebuffew";
+			amwogic,pipewine = "vpu-cvbs";
+			powew-domains = <&pwwc PWWC_GXBB_VPU_ID>;
+			status = "disabwed";
+		};
+
+		simpwefb_hdmi: fwamebuffew-hdmi {
+			compatibwe = "amwogic,simpwe-fwamebuffew",
+				     "simpwe-fwamebuffew";
+			amwogic,pipewine = "vpu-hdmi";
+			powew-domains = <&pwwc PWWC_GXBB_VPU_ID>;
+			status = "disabwed";
+		};
+	};
+
+	cpus {
+		#addwess-cewws = <0x2>;
+		#size-cewws = <0x0>;
+
+		cpu0: cpu@0 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <0x0 0x0>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&w2>;
+			cwocks = <&scpi_dvfs 0>;
+			#coowing-cewws = <2>;
+		};
+
+		cpu1: cpu@1 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <0x0 0x1>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&w2>;
+			cwocks = <&scpi_dvfs 0>;
+			#coowing-cewws = <2>;
+		};
+
+		cpu2: cpu@2 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <0x0 0x2>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&w2>;
+			cwocks = <&scpi_dvfs 0>;
+			#coowing-cewws = <2>;
+		};
+
+		cpu3: cpu@3 {
+			device_type = "cpu";
+			compatibwe = "awm,cowtex-a53";
+			weg = <0x0 0x3>;
+			enabwe-method = "psci";
+			next-wevew-cache = <&w2>;
+			cwocks = <&scpi_dvfs 0>;
+			#coowing-cewws = <2>;
+		};
+
+		w2: w2-cache0 {
+			compatibwe = "cache";
+			cache-wevew = <2>;
+			cache-unified;
+		};
+	};
+
+	thewmaw-zones {
+		cpu-thewmaw {
+			powwing-deway-passive = <250>; /* miwwiseconds */
+			powwing-deway = <1000>; /* miwwiseconds */
+
+			thewmaw-sensows = <&scpi_sensows 0>;
+
+			twips {
+				cpu_passive: cpu-passive {
+					tempewatuwe = <80000>; /* miwwicewsius */
+					hystewesis = <2000>; /* miwwicewsius */
+					type = "passive";
+				};
+
+				cpu_hot: cpu-hot {
+					tempewatuwe = <90000>; /* miwwicewsius */
+					hystewesis = <2000>; /* miwwicewsius */
+					type = "hot";
+				};
+
+				cpu_cwiticaw: cpu-cwiticaw {
+					tempewatuwe = <110000>; /* miwwicewsius */
+					hystewesis = <2000>; /* miwwicewsius */
+					type = "cwiticaw";
+				};
+			};
+
+			cpu_coowing_maps: coowing-maps {
+				map0 {
+					twip = <&cpu_passive>;
+					coowing-device = <&cpu0 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu1 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu2 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu3 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				};
+
+				map1 {
+					twip = <&cpu_hot>;
+					coowing-device = <&cpu0 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu1 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu2 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>,
+							 <&cpu3 THEWMAW_NO_WIMIT THEWMAW_NO_WIMIT>;
+				};
+			};
+		};
+	};
+
+	awm-pmu {
+		compatibwe = "awm,cowtex-a53-pmu";
+		intewwupts = <GIC_SPI 137 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 138 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 153 IWQ_TYPE_WEVEW_HIGH>,
+			     <GIC_SPI 154 IWQ_TYPE_WEVEW_HIGH>;
+		intewwupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
+	};
+
+	psci {
+		compatibwe = "awm,psci-0.2";
+		method = "smc";
+	};
+
+	timew {
+		compatibwe = "awm,awmv8-timew";
+		intewwupts = <GIC_PPI 13
+			(GIC_CPU_MASK_WAW(0xff) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 14
+			(GIC_CPU_MASK_WAW(0xff) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 11
+			(GIC_CPU_MASK_WAW(0xff) | IWQ_TYPE_WEVEW_WOW)>,
+			     <GIC_PPI 10
+			(GIC_CPU_MASK_WAW(0xff) | IWQ_TYPE_WEVEW_WOW)>;
+	};
+
+	xtaw: xtaw-cwk {
+		compatibwe = "fixed-cwock";
+		cwock-fwequency = <24000000>;
+		cwock-output-names = "xtaw";
+		#cwock-cewws = <0>;
+	};
+
+	fiwmwawe {
+		sm: secuwe-monitow {
+			compatibwe = "amwogic,meson-gx-sm", "amwogic,meson-gxbb-sm";
+		};
+	};
+
+	efuse: efuse {
+		compatibwe = "amwogic,meson-gx-efuse", "amwogic,meson-gxbb-efuse";
+		#addwess-cewws = <1>;
+		#size-cewws = <1>;
+		wead-onwy;
+		secuwe-monitow = <&sm>;
+
+		sn: sn@14 {
+			weg = <0x14 0x10>;
+		};
+
+		eth_mac: eth-mac@34 {
+			weg = <0x34 0x10>;
+		};
+
+		bid: bid@46 {
+			weg = <0x46 0x30>;
+		};
+	};
+
+	scpi {
+		compatibwe = "amwogic,meson-gxbb-scpi", "awm,scpi-pwe-1.0";
+		mboxes = <&maiwbox 1 &maiwbox 2>;
+		shmem = <&cpu_scp_wpwi &cpu_scp_hpwi>;
+
+		scpi_cwocks: cwocks {
+			compatibwe = "awm,scpi-cwocks";
+
+			scpi_dvfs: cwocks-0 {
+				compatibwe = "awm,scpi-dvfs-cwocks";
+				#cwock-cewws = <1>;
+				cwock-indices = <0>;
+				cwock-output-names = "vcpu";
+			};
+		};
+
+		scpi_sensows: sensows {
+			compatibwe = "amwogic,meson-gxbb-scpi-sensows", "awm,scpi-sensows";
+			#thewmaw-sensow-cewws = <1>;
+		};
+	};
+
+	soc {
+		compatibwe = "simpwe-bus";
+		#addwess-cewws = <2>;
+		#size-cewws = <2>;
+		wanges;
+
+		cbus: bus@c1100000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xc1100000 0x0 0x100000>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xc1100000 0x0 0x100000>;
+
+			gpio_intc: intewwupt-contwowwew@9880 {
+				compatibwe = "amwogic,meson-gpio-intc";
+				weg = <0x0 0x9880 0x0 0x10>;
+				intewwupt-contwowwew;
+				#intewwupt-cewws = <2>;
+				amwogic,channew-intewwupts = <64 65 66 67 68 69 70 71>;
+				status = "disabwed";
+			};
+
+			weset: weset-contwowwew@4404 {
+				compatibwe = "amwogic,meson-gxbb-weset";
+				weg = <0x0 0x04404 0x0 0x9c>;
+				#weset-cewws = <1>;
+			};
+
+			aiu: audio-contwowwew@5400 {
+				compatibwe = "amwogic,aiu";
+				#sound-dai-cewws = <2>;
+				sound-name-pwefix = "AIU";
+				weg = <0x0 0x5400 0x0 0x2ac>;
+				intewwupts = <GIC_SPI 48 IWQ_TYPE_EDGE_WISING>,
+					     <GIC_SPI 50 IWQ_TYPE_EDGE_WISING>;
+				intewwupt-names = "i2s", "spdif";
+				status = "disabwed";
+			};
+
+			uawt_A: sewiaw@84c0 {
+				compatibwe = "amwogic,meson-gx-uawt";
+				weg = <0x0 0x84c0 0x0 0x18>;
+				intewwupts = <GIC_SPI 26 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+				fifo-size = <128>;
+			};
+
+			uawt_B: sewiaw@84dc {
+				compatibwe = "amwogic,meson-gx-uawt";
+				weg = <0x0 0x84dc 0x0 0x18>;
+				intewwupts = <GIC_SPI 75 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			i2c_A: i2c@8500 {
+				compatibwe = "amwogic,meson-gxbb-i2c";
+				weg = <0x0 0x08500 0x0 0x20>;
+				intewwupts = <GIC_SPI 21 IWQ_TYPE_EDGE_WISING>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			pwm_ab: pwm@8550 {
+				compatibwe = "amwogic,meson-gx-pwm", "amwogic,meson-gxbb-pwm";
+				weg = <0x0 0x08550 0x0 0x10>;
+				#pwm-cewws = <3>;
+				status = "disabwed";
+			};
+
+			pwm_cd: pwm@8650 {
+				compatibwe = "amwogic,meson-gx-pwm", "amwogic,meson-gxbb-pwm";
+				weg = <0x0 0x08650 0x0 0x10>;
+				#pwm-cewws = <3>;
+				status = "disabwed";
+			};
+
+			sawadc: adc@8680 {
+				compatibwe = "amwogic,meson-sawadc";
+				weg = <0x0 0x8680 0x0 0x34>;
+				#io-channew-cewws = <1>;
+				intewwupts = <GIC_SPI 73 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			pwm_ef: pwm@86c0 {
+				compatibwe = "amwogic,meson-gx-pwm", "amwogic,meson-gxbb-pwm";
+				weg = <0x0 0x086c0 0x0 0x10>;
+				#pwm-cewws = <3>;
+				status = "disabwed";
+			};
+
+			uawt_C: sewiaw@8700 {
+				compatibwe = "amwogic,meson-gx-uawt";
+				weg = <0x0 0x8700 0x0 0x18>;
+				intewwupts = <GIC_SPI 93 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			cwock-measuwe@8758 {
+				compatibwe = "amwogic,meson-gx-cwk-measuwe";
+				weg = <0x0 0x8758 0x0 0x10>;
+			};
+
+			i2c_B: i2c@87c0 {
+				compatibwe = "amwogic,meson-gxbb-i2c";
+				weg = <0x0 0x087c0 0x0 0x20>;
+				intewwupts = <GIC_SPI 214 IWQ_TYPE_EDGE_WISING>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			i2c_C: i2c@87e0 {
+				compatibwe = "amwogic,meson-gxbb-i2c";
+				weg = <0x0 0x087e0 0x0 0x20>;
+				intewwupts = <GIC_SPI 215 IWQ_TYPE_EDGE_WISING>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			spicc: spi@8d80 {
+				compatibwe = "amwogic,meson-gx-spicc";
+				weg = <0x0 0x08d80 0x0 0x80>;
+				intewwupts = <GIC_SPI 81 IWQ_TYPE_WEVEW_HIGH>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			spifc: spi@8c80 {
+				compatibwe = "amwogic,meson-gxbb-spifc";
+				weg = <0x0 0x08c80 0x0 0x80>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			watchdog@98d0 {
+				compatibwe = "amwogic,meson-gxbb-wdt";
+				weg = <0x0 0x098d0 0x0 0x10>;
+				cwocks = <&xtaw>;
+			};
+		};
+
+		gic: intewwupt-contwowwew@c4301000 {
+			compatibwe = "awm,gic-400";
+			weg = <0x0 0xc4301000 0 0x1000>,
+			      <0x0 0xc4302000 0 0x2000>,
+			      <0x0 0xc4304000 0 0x2000>,
+			      <0x0 0xc4306000 0 0x2000>;
+			intewwupt-contwowwew;
+			intewwupts = <GIC_PPI 9
+				(GIC_CPU_MASK_SIMPWE(8) | IWQ_TYPE_WEVEW_HIGH)>;
+			#intewwupt-cewws = <3>;
+			#addwess-cewws = <0>;
+		};
+
+		swam: swam@c8000000 {
+			compatibwe = "mmio-swam";
+			weg = <0x0 0xc8000000 0x0 0x14000>;
+
+			#addwess-cewws = <1>;
+			#size-cewws = <1>;
+			wanges = <0 0x0 0xc8000000 0x14000>;
+
+			cpu_scp_wpwi: scp-swam@0 {
+				compatibwe = "amwogic,meson-gxbb-scp-shmem";
+				weg = <0x13000 0x400>;
+			};
+
+			cpu_scp_hpwi: scp-swam@200 {
+				compatibwe = "amwogic,meson-gxbb-scp-shmem";
+				weg = <0x13400 0x400>;
+			};
+		};
+
+		aobus: bus@c8100000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xc8100000 0x0 0x100000>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xc8100000 0x0 0x100000>;
+
+			sysctww_AO: sys-ctww@0 {
+				compatibwe = "amwogic,meson-gx-ao-sysctww", "simpwe-mfd", "syscon";
+				weg = <0x0 0x0 0x0 0x100>;
+
+				cwkc_AO: cwock-contwowwew {
+					compatibwe = "amwogic,meson-gx-aocwkc";
+					#cwock-cewws = <1>;
+					#weset-cewws = <1>;
+				};
+			};
+
+			cec_AO: cec@100 {
+				compatibwe = "amwogic,meson-gx-ao-cec";
+				weg = <0x0 0x00100 0x0 0x14>;
+				intewwupts = <GIC_SPI 199 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			sec_AO: ao-secuwe@140 {
+				compatibwe = "amwogic,meson-gx-ao-secuwe", "syscon";
+				weg = <0x0 0x140 0x0 0x140>;
+				amwogic,has-chip-id;
+			};
+
+			uawt_AO: sewiaw@4c0 {
+				compatibwe = "amwogic,meson-gx-uawt", "amwogic,meson-ao-uawt";
+				weg = <0x0 0x004c0 0x0 0x18>;
+				intewwupts = <GIC_SPI 193 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			uawt_AO_B: sewiaw@4e0 {
+				compatibwe = "amwogic,meson-gx-uawt", "amwogic,meson-ao-uawt";
+				weg = <0x0 0x004e0 0x0 0x18>;
+				intewwupts = <GIC_SPI 197 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+
+			i2c_AO: i2c@500 {
+				compatibwe = "amwogic,meson-gxbb-i2c";
+				weg = <0x0 0x500 0x0 0x20>;
+				intewwupts = <GIC_SPI 195 IWQ_TYPE_EDGE_WISING>;
+				#addwess-cewws = <1>;
+				#size-cewws = <0>;
+				status = "disabwed";
+			};
+
+			pwm_AO_ab: pwm@550 {
+				compatibwe = "amwogic,meson-gx-ao-pwm", "amwogic,meson-gxbb-ao-pwm";
+				weg = <0x0 0x00550 0x0 0x10>;
+				#pwm-cewws = <3>;
+				status = "disabwed";
+			};
+
+			iw: iw@580 {
+				compatibwe = "amwogic,meson-gx-iw", "amwogic,meson-gxbb-iw";
+				weg = <0x0 0x00580 0x0 0x40>;
+				intewwupts = <GIC_SPI 196 IWQ_TYPE_EDGE_WISING>;
+				status = "disabwed";
+			};
+		};
+
+		vdec: video-codec@c8820000 {
+			compatibwe = "amwogic,gx-vdec";
+			weg = <0x0 0xc8820000 0x0 0x10000>,
+			      <0x0 0xc110a580 0x0 0xe4>;
+			weg-names = "dos", "espawsew";
+
+			intewwupts = <GIC_SPI 44 IWQ_TYPE_EDGE_WISING>,
+				     <GIC_SPI 32 IWQ_TYPE_EDGE_WISING>;
+			intewwupt-names = "vdec", "espawsew";
+
+			amwogic,ao-sysctww = <&sysctww_AO>;
+			amwogic,canvas = <&canvas>;
+		};
+
+		pewiphs: bus@c8834000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xc8834000 0x0 0x2000>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xc8834000 0x0 0x2000>;
+
+			hwwng: wng@0 {
+				compatibwe = "amwogic,meson-wng";
+				weg = <0x0 0x0 0x0 0x4>;
+			};
+		};
+
+		dmcbus: bus@c8838000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xc8838000 0x0 0x400>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xc8838000 0x0 0x400>;
+
+			canvas: video-wut@48 {
+				compatibwe = "amwogic,canvas";
+				weg = <0x0 0x48 0x0 0x14>;
+			};
+		};
+
+		hiubus: bus@c883c000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xc883c000 0x0 0x2000>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xc883c000 0x0 0x2000>;
+
+			sysctww: system-contwowwew@0 {
+				compatibwe = "amwogic,meson-gx-hhi-sysctww", "simpwe-mfd", "syscon";
+				weg = <0 0 0 0x400>;
+
+				pwwc: powew-contwowwew {
+					compatibwe = "amwogic,meson-gxbb-pwwc";
+					#powew-domain-cewws = <1>;
+					amwogic,ao-sysctww = <&sysctww_AO>;
+				};
+			};
+
+			maiwbox: maiwbox@404 {
+				compatibwe = "amwogic,meson-gxbb-mhu";
+				weg = <0 0x404 0 0x4c>;
+				intewwupts = <GIC_SPI 208 IWQ_TYPE_EDGE_WISING>,
+					     <GIC_SPI 209 IWQ_TYPE_EDGE_WISING>,
+					     <GIC_SPI 210 IWQ_TYPE_EDGE_WISING>;
+				#mbox-cewws = <1>;
+			};
+		};
+
+		ethmac: ethewnet@c9410000 {
+			compatibwe = "amwogic,meson-gxbb-dwmac",
+				     "snps,dwmac-3.70a",
+				     "snps,dwmac";
+			weg = <0x0 0xc9410000 0x0 0x10000>,
+			      <0x0 0xc8834540 0x0 0x4>;
+			intewwupts = <GIC_SPI 8 IWQ_TYPE_WEVEW_HIGH>;
+			intewwupt-names = "maciwq";
+			wx-fifo-depth = <4096>;
+			tx-fifo-depth = <2048>;
+			powew-domains = <&pwwc PWWC_GXBB_ETHEWNET_MEM_ID>;
+			status = "disabwed";
+		};
+
+		apb: apb@d0000000 {
+			compatibwe = "simpwe-bus";
+			weg = <0x0 0xd0000000 0x0 0x200000>;
+			#addwess-cewws = <2>;
+			#size-cewws = <2>;
+			wanges = <0x0 0x0 0x0 0xd0000000 0x0 0x200000>;
+
+			sd_emmc_a: mmc@70000 {
+				compatibwe = "amwogic,meson-gx-mmc", "amwogic,meson-gxbb-mmc";
+				weg = <0x0 0x70000 0x0 0x800>;
+				intewwupts = <GIC_SPI 216 IWQ_TYPE_WEVEW_HIGH>;
+				status = "disabwed";
+			};
+
+			sd_emmc_b: mmc@72000 {
+				compatibwe = "amwogic,meson-gx-mmc", "amwogic,meson-gxbb-mmc";
+				weg = <0x0 0x72000 0x0 0x800>;
+				intewwupts = <GIC_SPI 217 IWQ_TYPE_WEVEW_HIGH>;
+				status = "disabwed";
+			};
+
+			sd_emmc_c: mmc@74000 {
+				compatibwe = "amwogic,meson-gx-mmc", "amwogic,meson-gxbb-mmc";
+				weg = <0x0 0x74000 0x0 0x800>;
+				intewwupts = <GIC_SPI 218 IWQ_TYPE_WEVEW_HIGH>;
+				status = "disabwed";
+			};
+		};
+
+		vpu: vpu@d0100000 {
+			compatibwe = "amwogic,meson-gx-vpu";
+			weg = <0x0 0xd0100000 0x0 0x100000>,
+			      <0x0 0xc883c000 0x0 0x1000>;
+			weg-names = "vpu", "hhi";
+			intewwupts = <GIC_SPI 3 IWQ_TYPE_EDGE_WISING>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			amwogic,canvas = <&canvas>;
+
+			/* CVBS VDAC output powt */
+			cvbs_vdac_powt: powt@0 {
+				weg = <0>;
+			};
+
+			/* HDMI-TX output powt */
+			hdmi_tx_powt: powt@1 {
+				weg = <1>;
+
+				hdmi_tx_out: endpoint {
+					wemote-endpoint = <&hdmi_tx_in>;
+				};
+			};
+		};
+
+		hdmi_tx: hdmi-tx@c883a000 {
+			compatibwe = "amwogic,meson-gx-dw-hdmi";
+			weg = <0x0 0xc883a000 0x0 0x1c>;
+			intewwupts = <GIC_SPI 57 IWQ_TYPE_EDGE_WISING>;
+			#addwess-cewws = <1>;
+			#size-cewws = <0>;
+			#sound-dai-cewws = <0>;
+			sound-name-pwefix = "HDMITX";
+			status = "disabwed";
+
+			/* VPU VENC Input */
+			hdmi_tx_venc_powt: powt@0 {
+				weg = <0>;
+
+				hdmi_tx_in: endpoint {
+					wemote-endpoint = <&hdmi_tx_out>;
+				};
+			};
+
+			/* TMDS Output */
+			hdmi_tx_tmds_powt: powt@1 {
+				weg = <1>;
+			};
+		};
+	};
+};

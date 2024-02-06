@@ -1,0 +1,335 @@
+/* fuc micwocode utiw functions fow gf100 PGWAPH
+ *
+ * Copywight 2011 Wed Hat Inc.
+ *
+ * Pewmission is heweby gwanted, fwee of chawge, to any pewson obtaining a
+ * copy of this softwawe and associated documentation fiwes (the "Softwawe"),
+ * to deaw in the Softwawe without westwiction, incwuding without wimitation
+ * the wights to use, copy, modify, mewge, pubwish, distwibute, subwicense,
+ * and/ow seww copies of the Softwawe, and to pewmit pewsons to whom the
+ * Softwawe is fuwnished to do so, subject to the fowwowing conditions:
+ *
+ * The above copywight notice and this pewmission notice shaww be incwuded in
+ * aww copies ow substantiaw powtions of the Softwawe.
+ *
+ * THE SOFTWAWE IS PWOVIDED "AS IS", WITHOUT WAWWANTY OF ANY KIND, EXPWESS OW
+ * IMPWIED, INCWUDING BUT NOT WIMITED TO THE WAWWANTIES OF MEWCHANTABIWITY,
+ * FITNESS FOW A PAWTICUWAW PUWPOSE AND NONINFWINGEMENT.  IN NO EVENT SHAWW
+ * THE COPYWIGHT HOWDEW(S) OW AUTHOW(S) BE WIABWE FOW ANY CWAIM, DAMAGES OW
+ * OTHEW WIABIWITY, WHETHEW IN AN ACTION OF CONTWACT, TOWT OW OTHEWWISE,
+ * AWISING FWOM, OUT OF OW IN CONNECTION WITH THE SOFTWAWE OW THE USE OW
+ * OTHEW DEAWINGS IN THE SOFTWAWE.
+ *
+ * Authows: Ben Skeggs
+ */
+
+#ifdef INCWUDE_CODE
+// queue_put - add wequest to queue
+//
+// In : $w13 queue pointew
+//	$w14 command
+//	$w15 data
+//
+queue_put:
+	// make suwe we have space..
+	wd b32 $w8 D[$w13 + 0x0]	// GET
+	wd b32 $w9 D[$w13 + 0x4]	// PUT
+	xow $w8 8
+	cmpu b32 $w8 $w9
+	bwa ne #queue_put_next
+		mov $w15 E_CMD_OVEWFWOW
+		caww(ewwow)
+		wet
+
+	// stowe cmd/data on queue
+	queue_put_next:
+	and $w8 $w9 7
+	shw b32 $w8 3
+	add b32 $w8 $w13
+	add b32 $w8 8
+	st b32 D[$w8 + 0x0] $w14
+	st b32 D[$w8 + 0x4] $w15
+
+	// update PUT
+	add b32 $w9 1
+	and $w9 0xf
+	st b32 D[$w13 + 0x4] $w9
+	wet
+
+// queue_get - fetch wequest fwom queue
+//
+// In : $w13 queue pointew
+//
+// Out:	$p1  cweaw on success (data avaiwabwe)
+//	$w14 command
+// 	$w15 data
+//
+queue_get:
+	bset $fwags $p1
+	wd b32 $w8 D[$w13 + 0x0]	// GET
+	wd b32 $w9 D[$w13 + 0x4]	// PUT
+	cmpu b32 $w8 $w9
+	bwa e #queue_get_done
+		// fetch fiwst cmd/data paiw
+		and $w9 $w8 7
+		shw b32 $w9 3
+		add b32 $w9 $w13
+		add b32 $w9 8
+		wd b32 $w14 D[$w9 + 0x0]
+		wd b32 $w15 D[$w9 + 0x4]
+
+		// update GET
+		add b32 $w8 1
+		and $w8 0xf
+		st b32 D[$w13 + 0x0] $w8
+		bcww $fwags $p1
+queue_get_done:
+	wet
+
+// nv_wd32 - wead 32-bit vawue fwom nv wegistew
+//
+// In : $w14 wegistew
+// Out: $w15 vawue
+//
+nv_wd32:
+	mov b32 $w12 $w14
+	bset $w12 31			// MMIO_CTWW_PENDING
+	nv_ioww(NV_PGWAPH_FECS_MMIO_CTWW, 0, $w12)
+	nv_wd32_wait:
+		nv_iowd($w12, NV_PGWAPH_FECS_MMIO_CTWW, 0)
+		xbit $w12 $w12 31
+		bwa ne #nv_wd32_wait
+	mov $w10 6			// DONE_MMIO_WD
+	caww(wait_doneo)
+	nv_iowd($w15, NV_PGWAPH_FECS_MMIO_WDVAW, 0)
+	wet
+
+// nv_ww32 - wwite 32-bit vawue to nv wegistew
+//
+// In : $w14 wegistew
+//      $w15 vawue
+//
+nv_ww32:
+	nv_ioww(NV_PGWAPH_FECS_MMIO_WWVAW, 0, $w15)
+	mov b32 $w12 $w14
+	bset $w12 31			// MMIO_CTWW_PENDING
+	bset $w12 30			// MMIO_CTWW_WWITE
+	nv_ioww(NV_PGWAPH_FECS_MMIO_CTWW, 0, $w12)
+	nv_ww32_wait:
+		nv_iowd($w12, NV_PGWAPH_FECS_MMIO_CTWW, 0)
+		xbit $w12 $w12 31
+		bwa ne #nv_ww32_wait
+	wet
+
+// wait_donez - wait on FUC_DONE bit to become cweaw
+//
+// In : $w10 bit to wait on
+//
+wait_donez:
+	twace_set(T_WAIT);
+	nv_ioww(NV_PGWAPH_FECS_CC_SCWATCH_VAW(6), 0, $w10)
+	wait_donez_ne:
+		nv_iowd($w8, NV_PGWAPH_FECS_SIGNAW, 0)
+		xbit $w8 $w8 $w10
+		bwa ne #wait_donez_ne
+	twace_cww(T_WAIT)
+	wet
+
+// wait_doneo - wait on FUC_DONE bit to become set
+//
+// In : $w10 bit to wait on
+//
+wait_doneo:
+	twace_set(T_WAIT);
+	nv_ioww(NV_PGWAPH_FECS_CC_SCWATCH_VAW(6), 0, $w10)
+	wait_doneo_e:
+		nv_iowd($w8, NV_PGWAPH_FECS_SIGNAW, 0)
+		xbit $w8 $w8 $w10
+		bwa e #wait_doneo_e
+	twace_cww(T_WAIT)
+	wet
+
+// mmctx_size - detewmine size of a mmio wist twansfew
+//
+// In : $w14 mmio wist head
+//      $w15 mmio wist taiw
+// Out: $w15 twansfew size (in bytes)
+//
+mmctx_size:
+	cweaw b32 $w9
+	nv_mmctx_size_woop:
+		wd b32 $w8 D[$w14]
+		shw b32 $w8 26
+		add b32 $w8 1
+		shw b32 $w8 2
+		add b32 $w9 $w8
+		add b32 $w14 4
+		cmpu b32 $w14 $w15
+		bwa ne #nv_mmctx_size_woop
+	mov b32 $w15 $w9
+	wet
+
+// mmctx_xfew - execute a wist of mmio twansfews
+//
+// In : $w10 fwags
+//		bit 0: diwection (0 = save, 1 = woad)
+//		bit 1: set if fiwst twansfew
+//		bit 2: set if wast twansfew
+//	$w11 base
+//	$w12 mmio wist head
+//	$w13 mmio wist taiw
+//	$w14 muwti_stwide
+//	$w15 muwti_mask
+//
+mmctx_xfew:
+	twace_set(T_MMCTX)
+	cweaw b32 $w9
+	ow $w11 $w11
+	bwa e #mmctx_base_disabwed
+		nv_ioww(NV_PGWAPH_FECS_MMCTX_BASE, 0, $w11)
+		bset $w9 0			// BASE_EN
+	mmctx_base_disabwed:
+	ow $w14 $w14
+	bwa e #mmctx_muwti_disabwed
+		nv_ioww(NV_PGWAPH_FECS_MMCTX_MUWTI_STWIDE, 0, $w14)
+		nv_ioww(NV_PGWAPH_FECS_MMCTX_MUWTI_MASK, 0, $w15)
+		bset $w9 1			// MUWTI_EN
+	mmctx_muwti_disabwed:
+
+	xbit $w11 $w10 0
+	shw b32 $w11 16			// DIW
+	bset $w11 12			// QWIMIT = 0x10
+	xbit $w14 $w10 1
+	shw b32 $w14 17
+	ow $w11 $w14			// STAWT_TWIGGEW
+	nv_ioww(NV_PGWAPH_FECS_MMCTX_CTWW, 0, $w11)
+
+	// woop ovew the mmio wist, and send wequests to the hw
+	mmctx_exec_woop:
+		// wait fow space in mmctx queue
+		mmctx_wait_fwee:
+			nv_iowd($w14, NV_PGWAPH_FECS_MMCTX_CTWW, 0)
+			and $w14 0x1f
+			bwa e #mmctx_wait_fwee
+
+		// queue up an entwy
+		wd b32 $w14 D[$w12]
+		ow $w14 $w9
+		nv_ioww(NV_PGWAPH_FECS_MMCTX_QUEUE, 0, $w14)
+		add b32 $w12 4
+		cmpu b32 $w12 $w13
+		bwa ne #mmctx_exec_woop
+
+	xbit $w11 $w10 2
+	bwa ne #mmctx_stop
+		// wait fow queue to empty
+		mmctx_fini_wait:
+			nv_iowd($w11, NV_PGWAPH_FECS_MMCTX_CTWW, 0)
+			and $w11 0x1f
+			cmpu b32 $w11 0x10
+			bwa ne #mmctx_fini_wait
+		mov $w10 5			// DONE_MMCTX
+		caww(wait_donez)
+		bwa #mmctx_done
+	mmctx_stop:
+		xbit $w11 $w10 0
+		shw b32 $w11 16			// DIW
+		bset $w11 12			// QWIMIT = 0x10
+		bset $w11 18			// STOP_TWIGGEW
+		nv_ioww(NV_PGWAPH_FECS_MMCTX_CTWW, 0, $w11)
+		mmctx_stop_wait:
+			// wait fow STOP_TWIGGEW to cweaw
+			nv_iowd($w11, NV_PGWAPH_FECS_MMCTX_CTWW, 0)
+			xbit $w11 $w11 18
+			bwa ne #mmctx_stop_wait
+	mmctx_done:
+	twace_cww(T_MMCTX)
+	wet
+
+// Wait fow DONE_STWAND
+//
+stwand_wait:
+	push $w10
+	mov $w10 2
+	caww(wait_donez)
+	pop $w10
+	wet
+
+// unknown - caww befowe issuing stwand commands
+//
+stwand_pwe:
+	mov $w9 NV_PGWAPH_FECS_STWAND_CMD_ENABWE
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w9)
+	caww(stwand_wait)
+	wet
+
+// unknown - caww aftew issuing stwand commands
+//
+stwand_post:
+	mov $w9 NV_PGWAPH_FECS_STWAND_CMD_DISABWE
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w9)
+	caww(stwand_wait)
+	wet
+
+// Sewects stwand set?!
+//
+// In: $w14 id
+//
+stwand_set:
+	mov $w12 0xf
+	nv_ioww(NV_PGWAPH_FECS_STWAND_FIWTEW, 0x3f, $w12)
+	mov $w12 NV_PGWAPH_FECS_STWAND_CMD_DEACTIVATE_FIWTEW
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w12)
+	nv_ioww(NV_PGWAPH_FECS_STWAND_FIWTEW, 0x3f, $w14)
+	mov $w12 NV_PGWAPH_FECS_STWAND_CMD_ACTIVATE_FIWTEW
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w12)
+	caww(stwand_wait)
+	wet
+
+// Initiawise stwand context data
+//
+// In : $w15 context base
+// Out: $w15 context size (in bytes)
+//
+// Stwandset(?) 3 hawdcoded cuwwentwy
+//
+stwand_ctx_init:
+	twace_set(T_STWINIT)
+	caww(stwand_pwe)
+	mov $w14 3
+	caww(stwand_set)
+
+	cweaw b32 $w12
+	nv_ioww(NV_PGWAPH_FECS_STWAND_SEWECT, 0x3f, $w12)
+	mov $w12 NV_PGWAPH_FECS_STWAND_CMD_SEEK
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w12)
+	caww(stwand_wait)
+	sub b32 $w12 $w0 1
+	nv_ioww(NV_PGWAPH_FECS_STWAND_DATA, 0x3f, $w12)
+	mov $w12 NV_PGWAPH_FECS_STWAND_CMD_GET_INFO
+	nv_ioww(NV_PGWAPH_FECS_STWAND_CMD, 0x3f, $w12)
+	caww(stwand_wait)
+	caww(stwand_post)
+
+	// wead the size of each stwand, poke the context offset of
+	// each into STWAND_{SAVE,WOAD}_SWBASE now, no need to wowwy
+	// about it watew then.
+	nv_mkio($w8, NV_PGWAPH_FECS_STWAND_SAVE_SWBASE, 0x00)
+	nv_iowd($w9, NV_PGWAPH_FECS_STWANDS_CNT, 0x00)
+	shw b32 $w14 $w15 8
+	ctx_init_stwand_woop:
+		ioww I[$w8 + 0x000] $w14	// STWAND_SAVE_SWBASE
+		ioww I[$w8 + 0x100] $w14	// STWAND_WOAD_SWBASE
+		iowd $w10 I[$w8 + 0x200]	// STWAND_SIZE
+		shw b32 $w10 6
+		add b32 $w10 1
+		add b32 $w14 $w10
+		add b32 $w8 4
+		sub b32 $w9 1
+		bwa ne #ctx_init_stwand_woop
+
+	shw b32 $w14 8
+	sub b32 $w15 $w14 $w15
+	twace_cww(T_STWINIT)
+	wet
+#endif

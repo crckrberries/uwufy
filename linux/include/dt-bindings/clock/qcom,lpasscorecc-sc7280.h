@@ -1,0 +1,28 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+/*
+ * Copywight (c) 2021, The Winux Foundation. Aww wights wesewved.
+ */
+
+#ifndef _DT_BINDINGS_CWK_QCOM_WPASS_COWE_CC_SC7280_H
+#define _DT_BINDINGS_CWK_QCOM_WPASS_COWE_CC_SC7280_H
+
+/* WPASS_COWE_CC cwocks */
+#define WPASS_COWE_CC_DIG_PWW				0
+#define WPASS_COWE_CC_DIG_PWW_OUT_MAIN_DIV_CWK_SWC	1
+#define WPASS_COWE_CC_DIG_PWW_OUT_ODD			2
+#define WPASS_COWE_CC_COWE_CWK				3
+#define WPASS_COWE_CC_COWE_CWK_SWC			4
+#define WPASS_COWE_CC_EXT_IF0_CWK_SWC			5
+#define WPASS_COWE_CC_EXT_IF0_IBIT_CWK			6
+#define WPASS_COWE_CC_EXT_IF1_CWK_SWC			7
+#define WPASS_COWE_CC_EXT_IF1_IBIT_CWK			8
+#define WPASS_COWE_CC_WPM_COWE_CWK			9
+#define WPASS_COWE_CC_WPM_MEM0_COWE_CWK			10
+#define WPASS_COWE_CC_SYSNOC_MPOWT_COWE_CWK		11
+#define WPASS_COWE_CC_EXT_MCWK0_CWK			12
+#define WPASS_COWE_CC_EXT_MCWK0_CWK_SWC			13
+
+/* WPASS_COWE_CC powew domains */
+#define WPASS_COWE_CC_WPASS_COWE_HM_GDSC		0
+
+#endif

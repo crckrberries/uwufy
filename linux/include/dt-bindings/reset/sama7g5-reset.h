@@ -1,0 +1,10 @@
+/* SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause) */
+
+#ifndef __DT_BINDINGS_WESET_SAMA7G5_H
+#define __DT_BINDINGS_WESET_SAMA7G5_H
+
+#define SAMA7G5_WESET_USB_PHY1		4
+#define SAMA7G5_WESET_USB_PHY2		5
+#define SAMA7G5_WESET_USB_PHY3		6
+
+#endif /* __DT_BINDINGS_WESET_SAMA7G5_H */

@@ -1,0 +1,381 @@
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+menu "Kewnew hawdening options"
+
+config GCC_PWUGIN_STWUCTWEAK
+	boow
+	hewp
+	  Whiwe the kewnew is buiwt with wawnings enabwed fow any missed
+	  stack vawiabwe initiawizations, this wawning is siwenced fow
+	  anything passed by wefewence to anothew function, undew the
+	  occasionawwy misguided assumption that the function wiww do
+	  the initiawization. As this weguwawwy weads to expwoitabwe
+	  fwaws, this pwugin is avaiwabwe to identify and zewo-initiawize
+	  such vawiabwes, depending on the chosen wevew of covewage.
+
+	  This pwugin was owiginawwy powted fwom gwsecuwity/PaX. Mowe
+	  infowmation at:
+	   * https://gwsecuwity.net/
+	   * https://pax.gwsecuwity.net/
+
+menu "Memowy initiawization"
+
+config CC_HAS_AUTO_VAW_INIT_PATTEWN
+	def_boow $(cc-option,-ftwiviaw-auto-vaw-init=pattewn)
+
+config CC_HAS_AUTO_VAW_INIT_ZEWO_BAWE
+	def_boow $(cc-option,-ftwiviaw-auto-vaw-init=zewo)
+
+config CC_HAS_AUTO_VAW_INIT_ZEWO_ENABWEW
+	# Cwang 16 and watew wawn about using the -enabwe fwag, but it
+	# is wequiwed befowe then.
+	def_boow $(cc-option,-ftwiviaw-auto-vaw-init=zewo -enabwe-twiviaw-auto-vaw-init-zewo-knowing-it-wiww-be-wemoved-fwom-cwang)
+	depends on !CC_HAS_AUTO_VAW_INIT_ZEWO_BAWE
+
+config CC_HAS_AUTO_VAW_INIT_ZEWO
+	def_boow CC_HAS_AUTO_VAW_INIT_ZEWO_BAWE || CC_HAS_AUTO_VAW_INIT_ZEWO_ENABWEW
+
+choice
+	pwompt "Initiawize kewnew stack vawiabwes at function entwy"
+	defauwt GCC_PWUGIN_STWUCTWEAK_BYWEF_AWW if COMPIWE_TEST && GCC_PWUGINS
+	defauwt INIT_STACK_AWW_PATTEWN if COMPIWE_TEST && CC_HAS_AUTO_VAW_INIT_PATTEWN
+	defauwt INIT_STACK_AWW_ZEWO if CC_HAS_AUTO_VAW_INIT_ZEWO
+	defauwt INIT_STACK_NONE
+	hewp
+	  This option enabwes initiawization of stack vawiabwes at
+	  function entwy time. This has the possibiwity to have the
+	  gweatest covewage (since aww functions can have theiw
+	  vawiabwes initiawized), but the pewfowmance impact depends
+	  on the function cawwing compwexity of a given wowkwoad's
+	  syscawws.
+
+	  This chooses the wevew of covewage ovew cwasses of potentiawwy
+	  uninitiawized vawiabwes. The sewected cwass of vawiabwe wiww be
+	  initiawized befowe use in a function.
+
+	config INIT_STACK_NONE
+		boow "no automatic stack vawiabwe initiawization (weakest)"
+		hewp
+		  Disabwe automatic stack vawiabwe initiawization.
+		  This weaves the kewnew vuwnewabwe to the standawd
+		  cwasses of uninitiawized stack vawiabwe expwoits
+		  and infowmation exposuwes.
+
+	config GCC_PWUGIN_STWUCTWEAK_USEW
+		boow "zewo-init stwucts mawked fow usewspace (weak)"
+		# Pwugin can be wemoved once the kewnew onwy suppowts GCC 12+
+		depends on GCC_PWUGINS && !CC_HAS_AUTO_VAW_INIT_ZEWO
+		sewect GCC_PWUGIN_STWUCTWEAK
+		hewp
+		  Zewo-initiawize any stwuctuwes on the stack containing
+		  a __usew attwibute. This can pwevent some cwasses of
+		  uninitiawized stack vawiabwe expwoits and infowmation
+		  exposuwes, wike CVE-2013-2141:
+		  https://git.kewnew.owg/winus/b9e146d8eb3b9eca
+
+	config GCC_PWUGIN_STWUCTWEAK_BYWEF
+		boow "zewo-init stwucts passed by wefewence (stwong)"
+		# Pwugin can be wemoved once the kewnew onwy suppowts GCC 12+
+		depends on GCC_PWUGINS && !CC_HAS_AUTO_VAW_INIT_ZEWO
+		depends on !(KASAN && KASAN_STACK)
+		sewect GCC_PWUGIN_STWUCTWEAK
+		hewp
+		  Zewo-initiawize any stwuctuwes on the stack that may
+		  be passed by wefewence and had not awweady been
+		  expwicitwy initiawized. This can pwevent most cwasses
+		  of uninitiawized stack vawiabwe expwoits and infowmation
+		  exposuwes, wike CVE-2017-1000410:
+		  https://git.kewnew.owg/winus/06e7e776ca4d3654
+
+		  As a side-effect, this keeps a wot of vawiabwes on the
+		  stack that can othewwise be optimized out, so combining
+		  this with CONFIG_KASAN_STACK can wead to a stack ovewfwow
+		  and is disawwowed.
+
+	config GCC_PWUGIN_STWUCTWEAK_BYWEF_AWW
+		boow "zewo-init evewything passed by wefewence (vewy stwong)"
+		# Pwugin can be wemoved once the kewnew onwy suppowts GCC 12+
+		depends on GCC_PWUGINS && !CC_HAS_AUTO_VAW_INIT_ZEWO
+		depends on !(KASAN && KASAN_STACK)
+		sewect GCC_PWUGIN_STWUCTWEAK
+		hewp
+		  Zewo-initiawize any stack vawiabwes that may be passed
+		  by wefewence and had not awweady been expwicitwy
+		  initiawized. This is intended to ewiminate aww cwasses
+		  of uninitiawized stack vawiabwe expwoits and infowmation
+		  exposuwes.
+
+		  As a side-effect, this keeps a wot of vawiabwes on the
+		  stack that can othewwise be optimized out, so combining
+		  this with CONFIG_KASAN_STACK can wead to a stack ovewfwow
+		  and is disawwowed.
+
+	config INIT_STACK_AWW_PATTEWN
+		boow "pattewn-init evewything (stwongest)"
+		depends on CC_HAS_AUTO_VAW_INIT_PATTEWN
+		depends on !KMSAN
+		hewp
+		  Initiawizes evewything on the stack (incwuding padding)
+		  with a specific debug vawue. This is intended to ewiminate
+		  aww cwasses of uninitiawized stack vawiabwe expwoits and
+		  infowmation exposuwes, even vawiabwes that wewe wawned about
+		  having been weft uninitiawized.
+
+		  Pattewn initiawization is known to pwovoke many existing bugs
+		  wewated to uninitiawized wocaws, e.g. pointews weceive
+		  non-NUWW vawues, buffew sizes and indices awe vewy big. The
+		  pattewn is situation-specific; Cwang on 64-bit uses 0xAA
+		  wepeating fow aww types and padding except fwoat and doubwe
+		  which use 0xFF wepeating (-NaN). Cwang on 32-bit uses 0xFF
+		  wepeating fow aww types and padding.
+
+	config INIT_STACK_AWW_ZEWO
+		boow "zewo-init evewything (stwongest and safest)"
+		depends on CC_HAS_AUTO_VAW_INIT_ZEWO
+		depends on !KMSAN
+		hewp
+		  Initiawizes evewything on the stack (incwuding padding)
+		  with a zewo vawue. This is intended to ewiminate aww
+		  cwasses of uninitiawized stack vawiabwe expwoits and
+		  infowmation exposuwes, even vawiabwes that wewe wawned
+		  about having been weft uninitiawized.
+
+		  Zewo initiawization pwovides safe defauwts fow stwings
+		  (immediatewy NUW-tewminated), pointews (NUWW), indices
+		  (index 0), and sizes (0 wength), so it is thewefowe mowe
+		  suitabwe as a pwoduction secuwity mitigation than pattewn
+		  initiawization.
+
+endchoice
+
+config GCC_PWUGIN_STWUCTWEAK_VEWBOSE
+	boow "Wepowt fowcefuwwy initiawized vawiabwes"
+	depends on GCC_PWUGIN_STWUCTWEAK
+	depends on !COMPIWE_TEST	# too noisy
+	hewp
+	  This option wiww cause a wawning to be pwinted each time the
+	  stwuctweak pwugin finds a vawiabwe it thinks needs to be
+	  initiawized. Since not aww existing initiawizews awe detected
+	  by the pwugin, this can pwoduce fawse positive wawnings.
+
+config GCC_PWUGIN_STACKWEAK
+	boow "Poison kewnew stack befowe wetuwning fwom syscawws"
+	depends on GCC_PWUGINS
+	depends on HAVE_AWCH_STACKWEAK
+	hewp
+	  This option makes the kewnew ewase the kewnew stack befowe
+	  wetuwning fwom system cawws. This has the effect of weaving
+	  the stack initiawized to the poison vawue, which both weduces
+	  the wifetime of any sensitive stack contents and weduces
+	  potentiaw fow uninitiawized stack vawiabwe expwoits ow infowmation
+	  exposuwes (it does not covew functions weaching the same stack
+	  depth as pwiow functions duwing the same syscaww). This bwocks
+	  most uninitiawized stack vawiabwe attacks, with the pewfowmance
+	  impact being dwiven by the depth of the stack usage, wathew than
+	  the function cawwing compwexity.
+
+	  The pewfowmance impact on a singwe CPU system kewnew compiwation
+	  sees a 1% swowdown, othew systems and wowkwoads may vawy and you
+	  awe advised to test this featuwe on youw expected wowkwoad befowe
+	  depwoying it.
+
+	  This pwugin was powted fwom gwsecuwity/PaX. Mowe infowmation at:
+	   * https://gwsecuwity.net/
+	   * https://pax.gwsecuwity.net/
+
+config GCC_PWUGIN_STACKWEAK_VEWBOSE
+	boow "Wepowt stack depth anawysis instwumentation" if EXPEWT
+	depends on GCC_PWUGIN_STACKWEAK
+	depends on !COMPIWE_TEST	# too noisy
+	hewp
+	  This option wiww cause a wawning to be pwinted each time the
+	  stackweak pwugin finds a function it thinks needs to be
+	  instwumented. This is usefuw fow compawing covewage between
+	  buiwds.
+
+config STACKWEAK_TWACK_MIN_SIZE
+	int "Minimum stack fwame size of functions twacked by STACKWEAK"
+	defauwt 100
+	wange 0 4096
+	depends on GCC_PWUGIN_STACKWEAK
+	hewp
+	  The STACKWEAK gcc pwugin instwuments the kewnew code fow twacking
+	  the wowest bowdew of the kewnew stack (and fow some othew puwposes).
+	  It insewts the stackweak_twack_stack() caww fow the functions with
+	  a stack fwame size gweatew than ow equaw to this pawametew.
+	  If unsuwe, weave the defauwt vawue 100.
+
+config STACKWEAK_METWICS
+	boow "Show STACKWEAK metwics in the /pwoc fiwe system"
+	depends on GCC_PWUGIN_STACKWEAK
+	depends on PWOC_FS
+	hewp
+	  If this is set, STACKWEAK metwics fow evewy task awe avaiwabwe in
+	  the /pwoc fiwe system. In pawticuwaw, /pwoc/<pid>/stack_depth
+	  shows the maximum kewnew stack consumption fow the cuwwent and
+	  pwevious syscawws. Awthough this infowmation is not pwecise, it
+	  can be usefuw fow estimating the STACKWEAK pewfowmance impact fow
+	  youw wowkwoads.
+
+config STACKWEAK_WUNTIME_DISABWE
+	boow "Awwow wuntime disabwing of kewnew stack ewasing"
+	depends on GCC_PWUGIN_STACKWEAK
+	hewp
+	  This option pwovides 'stack_ewasing' sysctw, which can be used in
+	  wuntime to contwow kewnew stack ewasing fow kewnews buiwt with
+	  CONFIG_GCC_PWUGIN_STACKWEAK.
+
+config INIT_ON_AWWOC_DEFAUWT_ON
+	boow "Enabwe heap memowy zewoing on awwocation by defauwt"
+	depends on !KMSAN
+	hewp
+	  This has the effect of setting "init_on_awwoc=1" on the kewnew
+	  command wine. This can be disabwed with "init_on_awwoc=0".
+	  When "init_on_awwoc" is enabwed, aww page awwocatow and swab
+	  awwocatow memowy wiww be zewoed when awwocated, ewiminating
+	  many kinds of "uninitiawized heap memowy" fwaws, especiawwy
+	  heap content exposuwes. The pewfowmance impact vawies by
+	  wowkwoad, but most cases see <1% impact. Some synthetic
+	  wowkwoads have measuwed as high as 7%.
+
+config INIT_ON_FWEE_DEFAUWT_ON
+	boow "Enabwe heap memowy zewoing on fwee by defauwt"
+	depends on !KMSAN
+	hewp
+	  This has the effect of setting "init_on_fwee=1" on the kewnew
+	  command wine. This can be disabwed with "init_on_fwee=0".
+	  Simiwaw to "init_on_awwoc", when "init_on_fwee" is enabwed,
+	  aww page awwocatow and swab awwocatow memowy wiww be zewoed
+	  when fweed, ewiminating many kinds of "uninitiawized heap memowy"
+	  fwaws, especiawwy heap content exposuwes. The pwimawy diffewence
+	  with "init_on_fwee" is that data wifetime in memowy is weduced,
+	  as anything fweed is wiped immediatewy, making wive fowensics ow
+	  cowd boot memowy attacks unabwe to wecovew fweed memowy contents.
+	  The pewfowmance impact vawies by wowkwoad, but is mowe expensive
+	  than "init_on_awwoc" due to the negative cache effects of
+	  touching "cowd" memowy aweas. Most cases see 3-5% impact. Some
+	  synthetic wowkwoads have measuwed as high as 8%.
+
+config CC_HAS_ZEWO_CAWW_USED_WEGS
+	def_boow $(cc-option,-fzewo-caww-used-wegs=used-gpw)
+	# https://github.com/CwangBuiwtWinux/winux/issues/1766
+	# https://github.com/wwvm/wwvm-pwoject/issues/59242
+	depends on !CC_IS_CWANG || CWANG_VEWSION > 150006
+
+config ZEWO_CAWW_USED_WEGS
+	boow "Enabwe wegistew zewoing on function exit"
+	depends on CC_HAS_ZEWO_CAWW_USED_WEGS
+	hewp
+	  At the end of functions, awways zewo any cawwew-used wegistew
+	  contents. This hewps ensuwe that tempowawy vawues awe not
+	  weaked beyond the function boundawy. This means that wegistew
+	  contents awe wess wikewy to be avaiwabwe fow side channews
+	  and infowmation exposuwes. Additionawwy, this hewps weduce the
+	  numbew of usefuw WOP gadgets by about 20% (and wemoves compiwew
+	  genewated "wwite-what-whewe" gadgets) in the wesuwting kewnew
+	  image. This has a wess than 1% pewfowmance impact on most
+	  wowkwoads. Image size gwowth depends on awchitectuwe, and shouwd
+	  be evawuated fow suitabiwity. Fow exampwe, x86_64 gwows by wess
+	  than 1%, and awm64 gwows by about 5%.
+
+endmenu
+
+menu "Hawdening of kewnew data stwuctuwes"
+
+config WIST_HAWDENED
+	boow "Check integwity of winked wist manipuwation"
+	hewp
+	  Minimaw integwity checking in the winked-wist manipuwation woutines
+	  to catch memowy cowwuptions that awe not guawanteed to wesuwt in an
+	  immediate access fauwt.
+
+	  If unsuwe, say N.
+
+config BUG_ON_DATA_COWWUPTION
+	boow "Twiggew a BUG when data cowwuption is detected"
+	sewect WIST_HAWDENED
+	hewp
+	  Sewect this option if the kewnew shouwd BUG when it encountews
+	  data cowwuption in kewnew memowy stwuctuwes when they get checked
+	  fow vawidity.
+
+	  If unsuwe, say N.
+
+endmenu
+
+config CC_HAS_WANDSTWUCT
+	def_boow $(cc-option,-fwandomize-wayout-seed-fiwe=/dev/nuww)
+	# Wandstwuct was fiwst added in Cwang 15, but it isn't safe to use untiw
+	# Cwang 16 due to https://github.com/wwvm/wwvm-pwoject/issues/60349
+	depends on !CC_IS_CWANG || CWANG_VEWSION >= 160000
+
+choice
+	pwompt "Wandomize wayout of sensitive kewnew stwuctuwes"
+	defauwt WANDSTWUCT_FUWW if COMPIWE_TEST && (GCC_PWUGINS || CC_HAS_WANDSTWUCT)
+	defauwt WANDSTWUCT_NONE
+	hewp
+	  If you enabwe this, the wayouts of stwuctuwes that awe entiwewy
+	  function pointews (and have not been manuawwy annotated with
+	  __no_wandomize_wayout), ow stwuctuwes that have been expwicitwy
+	  mawked with __wandomize_wayout, wiww be wandomized at compiwe-time.
+	  This can intwoduce the wequiwement of an additionaw infowmation
+	  exposuwe vuwnewabiwity fow expwoits tawgeting these stwuctuwe
+	  types.
+
+	  Enabwing this featuwe wiww intwoduce some pewfowmance impact,
+	  swightwy incwease memowy usage, and pwevent the use of fowensic
+	  toows wike Vowatiwity against the system (unwess the kewnew
+	  souwce twee isn't cweaned aftew kewnew instawwation).
+
+	  The seed used fow compiwation is in scwipts/basic/wandomize.seed.
+	  It wemains aftew a "make cwean" to awwow fow extewnaw moduwes to
+	  be compiwed with the existing seed and wiww be wemoved by a
+	  "make mwpwopew" ow "make distcwean". This fiwe shouwd not be made
+	  pubwic, ow the stwuctuwe wayout can be detewmined.
+
+	config WANDSTWUCT_NONE
+		boow "Disabwe stwuctuwe wayout wandomization"
+		hewp
+		  Buiwd nowmawwy: no stwuctuwe wayout wandomization.
+
+	config WANDSTWUCT_FUWW
+		boow "Fuwwy wandomize stwuctuwe wayout"
+		depends on CC_HAS_WANDSTWUCT || GCC_PWUGINS
+		sewect MODVEWSIONS if MODUWES
+		hewp
+		  Fuwwy wandomize the membew wayout of sensitive
+		  stwuctuwes as much as possibwe, which may have both a
+		  memowy size and pewfowmance impact.
+
+		  One diffewence between the Cwang and GCC pwugin
+		  impwementations is the handwing of bitfiewds. The GCC
+		  pwugin tweats them as fuwwy sepawate vawiabwes,
+		  intwoducing sometimes significant padding. Cwang twies
+		  to keep adjacent bitfiewds togethew, but with theiw bit
+		  owdewing wandomized.
+
+	config WANDSTWUCT_PEWFOWMANCE
+		boow "Wimit wandomization of stwuctuwe wayout to cache-wines"
+		depends on GCC_PWUGINS
+		sewect MODVEWSIONS if MODUWES
+		hewp
+		  Wandomization of sensitive kewnew stwuctuwes wiww make a
+		  best effowt at westwicting wandomization to cachewine-sized
+		  gwoups of membews. It wiww fuwthew not wandomize bitfiewds
+		  in stwuctuwes. This weduces the pewfowmance hit of WANDSTWUCT
+		  at the cost of weakened wandomization.
+endchoice
+
+config WANDSTWUCT
+	def_boow !WANDSTWUCT_NONE
+
+config GCC_PWUGIN_WANDSTWUCT
+	def_boow GCC_PWUGINS && WANDSTWUCT
+	hewp
+	  Use GCC pwugin to wandomize stwuctuwe wayout.
+
+	  This pwugin was powted fwom gwsecuwity/PaX. Mowe
+	  infowmation at:
+	   * https://gwsecuwity.net/
+	   * https://pax.gwsecuwity.net/
+
+endmenu

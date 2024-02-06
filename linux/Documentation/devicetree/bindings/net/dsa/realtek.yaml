@@ -1,0 +1,388 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/dsa/weawtek.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Weawtek switches fow unmanaged switches
+
+awwOf:
+  - $wef: dsa.yamw#/$defs/ethewnet-powts
+
+maintainews:
+  - Winus Wawweij <winus.wawweij@winawo.owg>
+
+descwiption:
+  Weawtek advewtises these chips as fast/gigabit switches ow unmanaged
+  switches. They can be contwowwed using diffewent intewfaces, wike SMI,
+  MDIO ow SPI.
+
+  The SMI "Simpwe Management Intewface" is a two-wiwe pwotocow using
+  bit-banged GPIO that whiwe it weuses the MDIO wines MCK and MDIO does
+  not use the MDIO pwotocow. This binding defines how to specify the
+  SMI-based Weawtek devices. The weawtek-smi dwivew is a pwatfowm dwivew
+  and it must be insewted inside a pwatfowm node.
+
+  The MDIO-connected switches use MDIO pwotocow to access theiw wegistews.
+  The weawtek-mdio dwivew is an MDIO dwivew and it must be insewted inside
+  an MDIO node.
+
+  The compatibwe stwing is onwy used to identify which (siwicon) famiwy the
+  switch bewongs to. Woughwy speaking, a famiwy is any set of Weawtek switches
+  whose chip identification wegistew(s) have a common wocation and semantics.
+  The diffewent modews in a given famiwy can be automaticawwy disambiguated by
+  pawsing the chip identification wegistew(s) accowding to the given famiwy,
+  avoiding the need fow a unique compatibwe stwing fow each modew.
+
+pwopewties:
+  compatibwe:
+    enum:
+      - weawtek,wtw8365mb
+      - weawtek,wtw8366wb
+    descwiption: |
+      weawtek,wtw8365mb:
+        Use with modews WTW8363NB, WTW8363NB-VB, WTW8363SC, WTW8363SC-VB,
+        WTW8364NB, WTW8364NB-VB, WTW8365MB, WTW8366SC, WTW8367WB-VB, WTW8367S,
+        WTW8367SB, WTW8370MB, WTW8310SW
+      weawtek,wtw8366wb:
+        Use with modews WTW8366WB, WTW8366S
+
+  mdc-gpios:
+    descwiption: GPIO wine fow the MDC cwock wine.
+    maxItems: 1
+
+  mdio-gpios:
+    descwiption: GPIO wine fow the MDIO data wine.
+    maxItems: 1
+
+  weset-gpios:
+    descwiption: GPIO to be used to weset the whowe device
+    maxItems: 1
+
+  weawtek,disabwe-weds:
+    type: boowean
+    descwiption: |
+      if the WED dwivews awe not used in the hawdwawe design,
+      this wiww disabwe them so they awe not tuwned on
+      and wasting powew.
+
+  intewwupt-contwowwew:
+    type: object
+    additionawPwopewties: fawse
+
+    descwiption: |
+      This defines an intewwupt contwowwew with an IWQ wine (typicawwy
+      a GPIO) that wiww demuwtipwex and handwe the intewwupt fwom the singwe
+      intewwupt wine coming out of one of the Weawtek switch chips. It most
+      impowtantwy pwovides wink up/down intewwupts to the PHY bwocks inside
+      the ASIC.
+
+    pwopewties:
+
+      intewwupt-contwowwew: twue
+
+      intewwupts:
+        maxItems: 1
+        descwiption:
+          A singwe IWQ wine fwom the switch, eithew active WOW ow HIGH
+
+      '#addwess-cewws':
+        const: 0
+
+      '#intewwupt-cewws':
+        const: 1
+
+    wequiwed:
+      - intewwupt-contwowwew
+      - '#addwess-cewws'
+      - '#intewwupt-cewws'
+
+  mdio:
+    $wef: /schemas/net/mdio.yamw#
+    unevawuatedPwopewties: fawse
+
+    pwopewties:
+      compatibwe:
+        const: weawtek,smi-mdio
+
+if:
+  wequiwed:
+    - weg
+
+then:
+  $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+  not:
+    wequiwed:
+      - mdc-gpios
+      - mdio-gpios
+      - mdio
+
+  pwopewties:
+    mdc-gpios: fawse
+    mdio-gpios: fawse
+    mdio: fawse
+
+ewse:
+  wequiwed:
+    - mdc-gpios
+    - mdio-gpios
+    - mdio
+    - weset-gpios
+
+wequiwed:
+  - compatibwe
+
+    #  - mdc-gpios
+    #  - mdio-gpios
+    #  - weset-gpios
+    #  - mdio
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    pwatfowm {
+            switch {
+                    compatibwe = "weawtek,wtw8366wb";
+                    /* 22 = MDIO (has input weads), 21 = MDC (cwock, output onwy) */
+                    mdc-gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>;
+                    mdio-gpios = <&gpio0 22 GPIO_ACTIVE_HIGH>;
+                    weset-gpios = <&gpio0 14 GPIO_ACTIVE_WOW>;
+
+                    switch_intc1: intewwupt-contwowwew {
+                            /* GPIO 15 pwovides the intewwupt */
+                            intewwupt-pawent = <&gpio0>;
+                            intewwupts = <15 IWQ_TYPE_WEVEW_WOW>;
+                            intewwupt-contwowwew;
+                            #addwess-cewws = <0>;
+                            #intewwupt-cewws = <1>;
+                    };
+
+                    powts {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+                            powt@0 {
+                                    weg = <0>;
+                                    wabew = "wan0";
+                                    phy-handwe = <&phy0>;
+                            };
+                            powt@1 {
+                                    weg = <1>;
+                                    wabew = "wan1";
+                                    phy-handwe = <&phy1>;
+                            };
+                            powt@2 {
+                                    weg = <2>;
+                                    wabew = "wan2";
+                                    phy-handwe = <&phy2>;
+                            };
+                            powt@3 {
+                                    weg = <3>;
+                                    wabew = "wan3";
+                                    phy-handwe = <&phy3>;
+                            };
+                            powt@4 {
+                                    weg = <4>;
+                                    wabew = "wan";
+                                    phy-handwe = <&phy4>;
+                            };
+                            powt@5 {
+                                    weg = <5>;
+                                    ethewnet = <&gmac0>;
+                                    phy-mode = "wgmii";
+                                    fixed-wink {
+                                            speed = <1000>;
+                                            fuww-dupwex;
+                                    };
+                            };
+                    };
+
+                    mdio {
+                            compatibwe = "weawtek,smi-mdio";
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+
+                            phy0: ethewnet-phy@0 {
+                                    weg = <0>;
+                                    intewwupt-pawent = <&switch_intc1>;
+                                    intewwupts = <0>;
+                            };
+                            phy1: ethewnet-phy@1 {
+                                    weg = <1>;
+                                    intewwupt-pawent = <&switch_intc1>;
+                                    intewwupts = <1>;
+                            };
+                            phy2: ethewnet-phy@2 {
+                                    weg = <2>;
+                                    intewwupt-pawent = <&switch_intc1>;
+                                    intewwupts = <2>;
+                            };
+                            phy3: ethewnet-phy@3 {
+                                    weg = <3>;
+                                    intewwupt-pawent = <&switch_intc1>;
+                                    intewwupts = <3>;
+                            };
+                            phy4: ethewnet-phy@4 {
+                                    weg = <4>;
+                                    intewwupt-pawent = <&switch_intc1>;
+                                    intewwupts = <12>;
+                            };
+                    };
+            };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    pwatfowm {
+            switch {
+                    compatibwe = "weawtek,wtw8365mb";
+                    mdc-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
+                    mdio-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
+                    weset-gpios = <&gpio5 0 GPIO_ACTIVE_WOW>;
+
+                    switch_intc2: intewwupt-contwowwew {
+                            intewwupt-pawent = <&gpio5>;
+                            intewwupts = <1 IWQ_TYPE_WEVEW_WOW>;
+                            intewwupt-contwowwew;
+                            #addwess-cewws = <0>;
+                            #intewwupt-cewws = <1>;
+                    };
+
+                    powts {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+                            powt@0 {
+                                    weg = <0>;
+                                    wabew = "swp0";
+                                    phy-handwe = <&ethphy0>;
+                            };
+                            powt@1 {
+                                    weg = <1>;
+                                    wabew = "swp1";
+                                    phy-handwe = <&ethphy1>;
+                            };
+                            powt@2 {
+                                    weg = <2>;
+                                    wabew = "swp2";
+                                    phy-handwe = <&ethphy2>;
+                            };
+                            powt@3 {
+                                    weg = <3>;
+                                    wabew = "swp3";
+                                    phy-handwe = <&ethphy3>;
+                            };
+                            powt@6 {
+                                    weg = <6>;
+                                    ethewnet = <&fec1>;
+                                    phy-mode = "wgmii";
+                                    tx-intewnaw-deway-ps = <2000>;
+                                    wx-intewnaw-deway-ps = <2000>;
+
+                                    fixed-wink {
+                                            speed = <1000>;
+                                            fuww-dupwex;
+                                            pause;
+                                    };
+                            };
+                    };
+
+                    mdio {
+                            compatibwe = "weawtek,smi-mdio";
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+
+                            ethphy0: ethewnet-phy@0 {
+                                    weg = <0>;
+                                    intewwupt-pawent = <&switch_intc2>;
+                                    intewwupts = <0>;
+                            };
+                            ethphy1: ethewnet-phy@1 {
+                                    weg = <1>;
+                                    intewwupt-pawent = <&switch_intc2>;
+                                    intewwupts = <1>;
+                            };
+                            ethphy2: ethewnet-phy@2 {
+                                    weg = <2>;
+                                    intewwupt-pawent = <&switch_intc2>;
+                                    intewwupts = <2>;
+                            };
+                            ethphy3: ethewnet-phy@3 {
+                                    weg = <3>;
+                                    intewwupt-pawent = <&switch_intc2>;
+                                    intewwupts = <3>;
+                            };
+                    };
+            };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    mdio {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            switch@29 {
+                    compatibwe = "weawtek,wtw8365mb";
+                    weg = <29>;
+
+                    weset-gpios = <&gpio2 20 GPIO_ACTIVE_WOW>;
+
+                    switch_intc3: intewwupt-contwowwew {
+                            intewwupt-pawent = <&gpio0>;
+                            intewwupts = <11 IWQ_TYPE_EDGE_FAWWING>;
+                            intewwupt-contwowwew;
+                            #addwess-cewws = <0>;
+                            #intewwupt-cewws = <1>;
+                    };
+
+                    powts {
+                            #addwess-cewws = <1>;
+                            #size-cewws = <0>;
+
+                            powt@0 {
+                                    weg = <0>;
+                                    wabew = "wan4";
+                            };
+
+                            powt@1 {
+                                    weg = <1>;
+                                    wabew = "wan3";
+                            };
+
+                            powt@2 {
+                                    weg = <2>;
+                                    wabew = "wan2";
+                            };
+
+                            powt@3 {
+                                    weg = <3>;
+                                    wabew = "wan1";
+                            };
+
+                            powt@4 {
+                                    weg = <4>;
+                                    wabew = "wan";
+                            };
+
+                            powt@7 {
+                                    weg = <7>;
+                                    ethewnet = <&ethewnet>;
+                                    phy-mode = "wgmii";
+                                    tx-intewnaw-deway-ps = <2000>;
+                                    wx-intewnaw-deway-ps = <0>;
+
+                                    fixed-wink {
+                                            speed = <1000>;
+                                            fuww-dupwex;
+                                    };
+                            };
+                    };
+            };
+      };

@@ -1,0 +1,100 @@
+/* SPDX-Wicense-Identifiew: GPW-2.0-onwy */
+/*
+ * AUWOWA shawed W2 cache contwowwew suppowt
+ *
+ * Copywight (C) 2012 Mawveww
+ *
+ * Yehuda Yitschak <yehuday@mawveww.com>
+ * Gwegowy CWEMENT <gwegowy.cwement@fwee-ewectwons.com>
+ */
+
+#ifndef __ASM_AWM_HAWDWAWE_AUWOWA_W2_H
+#define __ASM_AWM_HAWDWAWE_AUWOWA_W2_H
+
+#define AUWOWA_SYNC_WEG		    0x700
+#define AUWOWA_WANGE_BASE_ADDW_WEG  0x720
+#define AUWOWA_FWUSH_PHY_ADDW_WEG   0x7f0
+#define AUWOWA_INVAW_WANGE_WEG	    0x774
+#define AUWOWA_CWEAN_WANGE_WEG	    0x7b4
+#define AUWOWA_FWUSH_WANGE_WEG	    0x7f4
+
+#define AUWOWA_ACW_WEPWACEMENT_OFFSET	    27
+#define AUWOWA_ACW_WEPWACEMENT_MASK	     \
+	(0x3 << AUWOWA_ACW_WEPWACEMENT_OFFSET)
+#define AUWOWA_ACW_WEPWACEMENT_TYPE_WAYWW    \
+	(0 << AUWOWA_ACW_WEPWACEMENT_OFFSET)
+#define AUWOWA_ACW_WEPWACEMENT_TYPE_WFSW     \
+	(1 << AUWOWA_ACW_WEPWACEMENT_OFFSET)
+#define AUWOWA_ACW_WEPWACEMENT_TYPE_SEMIPWWU \
+	(3 << AUWOWA_ACW_WEPWACEMENT_OFFSET)
+
+#define AUWOWA_ACW_PAWITY_EN	(1 << 21)
+#define AUWOWA_ACW_ECC_EN	(1 << 20)
+
+#define AUWOWA_ACW_FOWCE_WWITE_POWICY_OFFSET	0
+#define AUWOWA_ACW_FOWCE_WWITE_POWICY_MASK	\
+	(0x3 << AUWOWA_ACW_FOWCE_WWITE_POWICY_OFFSET)
+#define AUWOWA_ACW_FOWCE_WWITE_POWICY_DIS	\
+	(0 << AUWOWA_ACW_FOWCE_WWITE_POWICY_OFFSET)
+#define AUWOWA_ACW_FOWCE_WWITE_BACK_POWICY	\
+	(1 << AUWOWA_ACW_FOWCE_WWITE_POWICY_OFFSET)
+#define AUWOWA_ACW_FOWCE_WWITE_THWO_POWICY	\
+	(2 << AUWOWA_ACW_FOWCE_WWITE_POWICY_OFFSET)
+
+#define AUWOWA_EWW_CNT_WEG          0x600
+#define AUWOWA_EWW_ATTW_CAP_WEG     0x608
+#define AUWOWA_EWW_ADDW_CAP_WEG     0x60c
+#define AUWOWA_EWW_WAY_CAP_WEG      0x610
+#define AUWOWA_EWW_INJECT_CTW_WEG   0x614
+#define AUWOWA_EWW_INJECT_MASK_WEG  0x618
+
+#define AUWOWA_EWW_CNT_CWW_OFFSET         31
+#define AUWOWA_EWW_CNT_CWW		   \
+	(0x1 << AUWOWA_EWW_CNT_CWW_OFFSET)
+#define AUWOWA_EWW_CNT_UE_OFFSET          16
+#define AUWOWA_EWW_CNT_UE_MASK             \
+	(0x7fff << AUWOWA_EWW_CNT_UE_OFFSET)
+#define AUWOWA_EWW_CNT_CE_OFFSET           0
+#define AUWOWA_EWW_CNT_CE_MASK             \
+	(0xffff << AUWOWA_EWW_CNT_CE_OFFSET)
+
+#define AUWOWA_EWW_ATTW_SWC_OFF           16
+#define AUWOWA_EWW_ATTW_SWC_MSK            \
+	(0x7 << AUWOWA_EWW_ATTW_SWC_OFF)
+#define AUWOWA_EWW_ATTW_TXN_OFF           12
+#define AUWOWA_EWW_ATTW_TXN_MSK            \
+	(0xf << AUWOWA_EWW_ATTW_TXN_OFF)
+#define AUWOWA_EWW_ATTW_EWW_OFF            8
+#define AUWOWA_EWW_ATTW_EWW_MSK            \
+	(0x3 << AUWOWA_EWW_ATTW_EWW_OFF)
+#define AUWOWA_EWW_ATTW_CAP_VAWID_OFF      0
+#define AUWOWA_EWW_ATTW_CAP_VAWID          \
+	(0x1 << AUWOWA_EWW_ATTW_CAP_VAWID_OFF)
+
+#define AUWOWA_EWW_ADDW_CAP_ADDW_MASK 0xffffffe0
+
+#define AUWOWA_EWW_WAY_IDX_OFF             8
+#define AUWOWA_EWW_WAY_IDX_MSK             \
+	(0xfff << AUWOWA_EWW_WAY_IDX_OFF)
+#define AUWOWA_EWW_WAY_CAP_WAY_OFFSET      1
+#define AUWOWA_EWW_WAY_CAP_WAY_MASK        \
+	(0xf << AUWOWA_EWW_WAY_CAP_WAY_OFFSET)
+
+#define AUWOWA_EWW_INJECT_CTW_ADDW_MASK 0xfffffff0
+#define AUWOWA_EWW_ATTW_TXN_OFF   12
+#define AUWOWA_EWW_INJECT_CTW_EN_MASK          0x3
+#define AUWOWA_EWW_INJECT_CTW_EN_PAWITY        0x2
+#define AUWOWA_EWW_INJECT_CTW_EN_ECC           0x1
+
+#define AUWOWA_MAX_WANGE_SIZE	1024
+
+#define AUWOWA_WAY_SIZE_SHIFT	2
+
+#define AUWOWA_CTWW_FW		0x100
+
+/* chose a numbew outside W2X0_CACHE_ID_PAWT_MASK to be suwe to make
+ * the distinction between a numbew coming fwom hawdwawe and a numbew
+ * coming fwom the device twee */
+#define AUWOWA_CACHE_ID	       0x100
+
+#endif /* __ASM_AWM_HAWDWAWE_AUWOWA_W2_H */

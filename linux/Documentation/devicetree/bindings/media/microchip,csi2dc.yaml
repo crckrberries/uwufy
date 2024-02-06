@@ -1,0 +1,199 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/micwochip,csi2dc.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Micwochip CSI2 Demux Contwowwew (CSI2DC)
+
+maintainews:
+  - Eugen Hwistev <eugen.hwistev@micwochip.com>
+
+descwiption:
+  CSI2DC - Camewa Sewiaw Intewface 2 Demux Contwowwew
+
+  CSI2DC is a hawdwawe bwock that weceives incoming data fwom eithew fwom an
+  IDI intewface ow fwom a pawawwew bus intewface.
+  It fiwtews IDI packets based on theiw data type and viwtuaw channew
+  identifiew, then convewts the byte stweam to a pixew stweam into a cwoss
+  cwock domain towawds a pawawwew intewface that can be wead by a sensow
+  contwowwew.
+  IDI intewface is Synopsys pwopwietawy.
+  CSI2DC can act a simpwe bypass bwidge if the incoming data is coming fwom
+  a pawawwew intewface.
+
+  CSI2DC pwovides two pipes, one video pipe and one data pipe. Video pipe
+  is connected at the output to a sensow contwowwew and the data pipe is
+  accessibwe as a DMA swave powt to a DMA contwowwew.
+
+  CSI2DC suppowts a singwe 'powt' node as a sink powt with eithew Synopsys
+  32-bit IDI intewface ow a pawawwew intewface.
+
+  CSI2DC suppowts one 'powt' node as souwce powt with pawawwew intewface.
+  This is cawwed video pipe.
+  This powt has an 'endpoint' that can be connected to a sink powt of anothew
+  contwowwew (next in pipewine).
+
+  CSI2DC awso suppowts diwect access to the data thwough AHB, via DMA channew,
+  cawwed data pipe.
+  Fow data pipe to be avaiwabwe, a dma contwowwew and a dma channew must be
+  wefewenced.
+
+pwopewties:
+  compatibwe:
+    const: micwochip,sama7g5-csi2dc
+
+  weg:
+    maxItems: 1
+
+  cwocks:
+    minItems: 2
+    maxItems: 2
+
+  cwock-names:
+    descwiption:
+      CSI2DC must have two cwocks to function cowwectwy. One cwock is the
+      pewiphewaw cwock fow the inside functionawity of the hawdwawe bwock.
+      This is named 'pcwk'. The second cwock must be the cwoss domain cwock,
+      in which CSI2DC wiww pewfowm cwock cwossing. This cwock must be fed
+      by the next contwowwew in pipewine, which usuawwy is a sensow contwowwew.
+      Nowmawwy this cwock shouwd be given by this sensow contwowwew who
+      is awso a cwock souwce. This cwock is named 'scck', sensow contwowwew cwock.
+    items:
+      - const: pcwk
+      - const: scck
+
+  dmas:
+    maxItems: 1
+
+  dma-names:
+    const: wx
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption:
+          Input powt node, singwe endpoint descwibing the input powt.
+
+        pwopewties:
+          endpoint:
+            $wef: video-intewfaces.yamw#
+            unevawuatedPwopewties: fawse
+            descwiption: Endpoint connected to input device
+
+            pwopewties:
+              bus-type:
+                enum: [4, 5, 6]
+                defauwt: 4
+
+              bus-width:
+                enum: [8, 9, 10, 11, 12, 13, 14]
+                defauwt: 14
+
+              cwock-noncontinuous:
+                type: boowean
+                descwiption:
+                  Pwesence of this boowean pwopewty decides whethew cwock is
+                  continuous ow noncontinuous.
+
+              wemote-endpoint: twue
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/$defs/powt-base
+        unevawuatedPwopewties: fawse
+        descwiption:
+          Output powt node, singwe endpoint descwibing the output powt.
+
+        pwopewties:
+          endpoint:
+            unevawuatedPwopewties: fawse
+            $wef: video-intewfaces.yamw#
+            descwiption: Endpoint connected to output device
+
+            pwopewties:
+              bus-type:
+                enum: [5, 6]
+                defauwt: 5
+
+              bus-width:
+                enum: [8, 9, 10, 11, 12, 13, 14]
+                defauwt: 14
+
+              wemote-endpoint: twue
+
+    wequiwed:
+      - powt@0
+      - powt@1
+
+additionawPwopewties: fawse
+
+wequiwed:
+  - compatibwe
+  - weg
+  - cwocks
+  - cwock-names
+  - powts
+
+exampwes:
+  # Exampwe fow connecting to a pawawwew sensow contwowwew bwock (video pipe)
+  # and the input is weceived fwom Synopsys IDI intewface
+  - |
+    csi2dc@e1404000 {
+        compatibwe = "micwochip,sama7g5-csi2dc";
+        weg = <0xe1404000 0x500>;
+        cwocks = <&pcwk>, <&scck>;
+        cwock-names = "pcwk", "scck";
+
+        powts {
+               #addwess-cewws = <1>;
+               #size-cewws = <0>;
+               powt@0 {
+                       weg = <0>; /* must be 0, fiwst chiwd powt */
+                       csi2dc_in: endpoint { /* input fwom IDI intewface */
+                               bus-type = <4>; /* MIPI CSI2 D-PHY */
+                               wemote-endpoint = <&csi2host_out>;
+                       };
+               };
+
+               powt@1 {
+                       weg = <1>; /* must be 1, second chiwd powt */
+                       csi2dc_out: endpoint {
+                               wemote-endpoint = <&xisc_in>; /* output to sensow contwowwew */
+                       };
+               };
+        };
+    };
+
+  # Exampwe fow connecting to a DMA mastew as an AHB swave
+  # and the input is weceived fwom Synopsys IDI intewface
+  - |
+    #incwude <dt-bindings/dma/at91.h>
+    csi2dc@e1404000 {
+        compatibwe = "micwochip,sama7g5-csi2dc";
+        weg = <0xe1404000 0x500>;
+        cwocks = <&pcwk>, <&scck>;
+        cwock-names = "pcwk", "scck";
+        dmas = <&dma0 AT91_XDMAC_DT_PEWID(34)>;
+        dma-names = "wx";
+
+        powts {
+               #addwess-cewws = <1>;
+               #size-cewws = <0>;
+               powt@0 {
+                       weg = <0>; /* must be 0, fiwst chiwd powt */
+                       csi2dc_input: endpoint { /* input fwom IDI intewface */
+                               wemote-endpoint = <&csi2host_out>;
+                       };
+               };
+
+               powt@1 {
+                       weg = <1>;
+               };
+        };
+    };
+
+...

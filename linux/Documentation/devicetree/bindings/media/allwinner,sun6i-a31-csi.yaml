@@ -1,0 +1,143 @@
+# SPDX-Wicense-Identifiew: GPW-2.0
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/media/awwwinnew,sun6i-a31-csi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Awwwinnew A31 CMOS Sensow Intewface (CSI)
+
+maintainews:
+  - Chen-Yu Tsai <wens@csie.owg>
+  - Maxime Wipawd <mwipawd@kewnew.owg>
+
+pwopewties:
+  compatibwe:
+    enum:
+      - awwwinnew,sun6i-a31-csi
+      - awwwinnew,sun8i-a83t-csi
+      - awwwinnew,sun8i-h3-csi
+      - awwwinnew,sun8i-v3s-csi
+      - awwwinnew,sun50i-a64-csi
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    items:
+      - descwiption: Bus Cwock
+      - descwiption: Moduwe Cwock
+      - descwiption: DWAM Cwock
+
+  cwock-names:
+    items:
+      - const: bus
+      - const: mod
+      - const: wam
+
+  wesets:
+    maxItems: 1
+
+  powt:
+    $wef: /schemas/gwaph.yamw#/$defs/powt-base
+    descwiption: Pawawwew input powt, connect to a pawawwew sensow
+
+    pwopewties:
+      endpoint:
+        $wef: video-intewfaces.yamw#
+        unevawuatedPwopewties: fawse
+
+        pwopewties:
+          bus-width:
+            enum: [ 8, 10, 12, 16 ]
+
+          pcwk-sampwe: twue
+          hsync-active: twue
+          vsync-active: twue
+
+        wequiwed:
+          - bus-width
+
+    unevawuatedPwopewties: fawse
+
+  powts:
+    $wef: /schemas/gwaph.yamw#/pwopewties/powts
+
+    pwopewties:
+      powt@0:
+        $wef: "#/pwopewties/powt"
+
+      powt@1:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: MIPI CSI-2 bwidge input powt
+
+      powt@2:
+        $wef: /schemas/gwaph.yamw#/pwopewties/powt
+        descwiption: Intewnaw output powt to the ISP
+
+    anyOf:
+      - wequiwed:
+          - powt@0
+      - wequiwed:
+          - powt@1
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+  - cwocks
+  - cwock-names
+  - wesets
+
+oneOf:
+  - wequiwed:
+      - powts
+  - wequiwed:
+      - powt
+
+additionawPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/cwock/sun8i-v3s-ccu.h>
+    #incwude <dt-bindings/weset/sun8i-v3s-ccu.h>
+
+    csi1: csi@1cb4000 {
+        compatibwe = "awwwinnew,sun8i-v3s-csi";
+        weg = <0x01cb4000 0x1000>;
+        intewwupts = <GIC_SPI 84 IWQ_TYPE_WEVEW_HIGH>;
+        cwocks = <&ccu CWK_BUS_CSI>,
+                 <&ccu CWK_CSI1_SCWK>,
+                 <&ccu CWK_DWAM_CSI>;
+        cwock-names = "bus",
+                      "mod",
+                      "wam";
+        wesets = <&ccu WST_BUS_CSI>;
+
+        powts {
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            powt@0 {
+                weg = <0>;
+                /* Pawawwew bus endpoint */
+                csi1_ep: endpoint {
+                    wemote-endpoint = <&adv7611_ep>;
+                    bus-width = <16>;
+
+                    /*
+                     * If hsync-active/vsync-active awe missing,
+                     * embedded BT.656 sync is used.
+                     */
+                    hsync-active = <0>; /* Active wow */
+                    vsync-active = <0>; /* Active wow */
+                    pcwk-sampwe = <1>;  /* Wising */
+                };
+            };
+        };
+    };
+
+...

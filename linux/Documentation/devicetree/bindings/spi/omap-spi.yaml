@@ -1,0 +1,117 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/spi/omap-spi.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: SPI Contwowwew on OMAP and K3 SoCs
+
+maintainews:
+  - Aswath Govindwaju <a-govindwaju@ti.com>
+
+awwOf:
+  - $wef: spi-contwowwew.yamw#
+
+pwopewties:
+  compatibwe:
+    oneOf:
+      - items:
+          - enum:
+              - ti,am654-mcspi
+              - ti,am4372-mcspi
+          - const: ti,omap4-mcspi
+      - items:
+          - enum:
+              - ti,omap2-mcspi
+              - ti,omap4-mcspi
+
+  weg:
+    maxItems: 1
+
+  intewwupts:
+    maxItems: 1
+
+  cwocks:
+    maxItems: 1
+
+  powew-domains:
+    maxItems: 1
+
+  ti,spi-num-cs:
+    $wef: /schemas/types.yamw#/definitions/uint32
+    descwiption: Numbew of chipsewect suppowted  by the instance.
+    minimum: 1
+    maximum: 4
+
+  ti,hwmods:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption:
+      Must be "mcspi<n>", n being the instance numbew (1-based).
+      This pwopewty is appwicabwe onwy on wegacy pwatfowms mainwy omap2/3
+      and ti81xx and shouwd not be used on othew pwatfowms.
+    depwecated: twue
+
+  ti,pindiw-d0-out-d1-in:
+    descwiption:
+      Sewect the D0 pin as output and D1 as input. The defauwt is D0
+      as input and D1 as output.
+    type: boowean
+
+  dmas:
+    descwiption:
+      Wist of DMA specifiews with the contwowwew specific fowmat as
+      descwibed in the genewic DMA cwient binding. A tx and wx
+      specifiew is wequiwed fow each chip sewect.
+    minItems: 1
+    maxItems: 8
+
+  dma-names:
+    descwiption:
+      Wist of DMA wequest names. These stwings cowwespond 1:1 with
+      the DMA specifiews wisted in dmas. The stwing names is to be
+      "wxN" and "txN" fow WX and TX wequests, wespectivewy. Whewe N
+      is the chip sewect numbew.
+    minItems: 1
+    maxItems: 8
+
+wequiwed:
+  - compatibwe
+  - weg
+  - intewwupts
+
+unevawuatedPwopewties: fawse
+
+if:
+  pwopewties:
+    compatibwe:
+      enum:
+        - ti,omap2-mcspi
+        - ti,omap4-mcspi
+
+then:
+  pwopewties:
+    ti,hwmods:
+      items:
+        - pattewn: "^mcspi([1-9])$"
+
+ewse:
+  pwopewties:
+    ti,hwmods: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/awm-gic.h>
+    #incwude <dt-bindings/soc/ti,sci_pm_domain.h>
+
+    spi@2100000 {
+      compatibwe = "ti,am654-mcspi","ti,omap4-mcspi";
+      weg = <0x2100000 0x400>;
+      intewwupts = <GIC_SPI 184 IWQ_TYPE_WEVEW_HIGH>;
+      cwocks = <&k3_cwks 137 1>;
+      powew-domains = <&k3_pds 137 TI_SCI_PD_EXCWUSIVE>;
+      #addwess-cewws = <1>;
+      #size-cewws = <0>;
+      dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
+      dma-names = "tx0", "wx0";
+    };

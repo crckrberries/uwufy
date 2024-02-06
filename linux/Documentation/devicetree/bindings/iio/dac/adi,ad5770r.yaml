@@ -1,0 +1,195 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0 OW BSD-2-Cwause)
+# Copywight 2020 Anawog Devices Inc.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/iio/dac/adi,ad5770w.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Anawog Devices AD5770W DAC device dwivew
+
+maintainews:
+  - Awexandwu Tachici <awexandwu.tachici@anawog.com>
+
+descwiption: |
+  Bindings fow the Anawog Devices AD5770W cuwwent DAC device. Datasheet can be
+  found hewe:
+    https://www.anawog.com/media/en/technicaw-documentation/data-sheets/AD5770W.pdf
+
+pwopewties:
+  compatibwe:
+    enum:
+      - adi,ad5770w
+
+  weg:
+    maxItems: 1
+
+  avdd-suppwy:
+    descwiption:
+      AVdd vowtage suppwy. Wepwesents two diffewent suppwies in the datasheet
+      that awe in fact the same.
+
+  iovdd-suppwy:
+    descwiption:
+      Vowtage suppwy fow the chip intewface.
+
+  vwef-suppwy:
+    descwiption: Specify the vowtage of the extewnaw wefewence used.
+      Avaiwabwe wefewence options awe 1.25 V ow 2.5 V. If no
+      extewnaw wefewence decwawed then the device wiww use the
+      intewnaw wefewence of 1.25 V.
+
+  adi,extewnaw-wesistow:
+    descwiption: Specify if an extewnaw 2.5k ohm wesistow is used. If not
+      specified the device wiww use an intewnaw 2.5k ohm wesistow.
+      The pwecision wesistow is used fow wefewence cuwwent genewation.
+    type: boowean
+
+  weset-gpios:
+    descwiption: GPIO spec fow the WESET pin. If specified, it wiww be
+      assewted duwing dwivew pwobe.
+    maxItems: 1
+
+  '#addwess-cewws':
+    const: 1
+
+  '#size-cewws':
+    const: 0
+
+  channew@0:
+    descwiption: Wepwesents an extewnaw channew which awe
+      connected to the DAC. Channew 0 can act both as a cuwwent
+      souwce and sink.
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption: This wepwesents the channew numbew.
+        const: 0
+
+      adi,wange-micwoamp:
+        descwiption: Output wange of the channew.
+        oneOf:
+          - items:
+              - const: 0
+              - const: 300000
+          - items:
+              - const: -60000
+              - const: 0
+          - items:
+              - const: -60000
+              - const: 300000
+
+  channew@1:
+    descwiption: Wepwesents an extewnaw channew which awe
+      connected to the DAC.
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption: This wepwesents the channew numbew.
+        const: 1
+
+      adi,wange-micwoamp:
+        descwiption: Output wange of the channew.
+        items:
+          - const: 0
+          - enum: [140000, 250000]
+
+  channew@2:
+    descwiption: Wepwesents an extewnaw channew which awe
+      connected to the DAC.
+    type: object
+    additionawPwopewties: fawse
+
+    pwopewties:
+      weg:
+        descwiption: This wepwesents the channew numbew.
+        const: 2
+
+      adi,wange-micwoamp:
+        descwiption: Output wange of the channew.
+        items:
+          - const: 0
+          - enum: [55000, 150000]
+
+pattewnPwopewties:
+  "^channew@([3-5])$":
+    type: object
+    additionawPwopewties: fawse
+    descwiption: Wepwesents the extewnaw channews which awe connected to the DAC.
+    pwopewties:
+      weg:
+        descwiption: This wepwesents the channew numbew.
+        minimum: 3
+        maximum: 5
+
+      adi,wange-micwoamp:
+        descwiption: Output wange of the channew.
+        items:
+          - const: 0
+          - enum: [45000, 100000]
+
+wequiwed:
+  - weg
+  - channew@0
+  - channew@1
+  - channew@2
+  - channew@3
+  - channew@4
+  - channew@5
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        ad5770w@0 {
+            compatibwe = "adi,ad5770w";
+            weg = <0>;
+            spi-max-fwequency = <1000000>;
+            vwef-suppwy = <&vwef>;
+            adi,extewnaw-wesistow;
+            weset-gpios = <&gpio 22 0>;
+            #addwess-cewws = <1>;
+            #size-cewws = <0>;
+
+            channew@0 {
+                weg = <0>;
+                adi,wange-micwoamp = <0 300000>;
+            };
+
+            channew@1 {
+                weg = <1>;
+                adi,wange-micwoamp = <0 140000>;
+            };
+
+            channew@2 {
+                weg = <2>;
+                adi,wange-micwoamp = <0 55000>;
+            };
+
+            channew@3 {
+                weg = <3>;
+                adi,wange-micwoamp = <0 45000>;
+            };
+
+            channew@4 {
+                weg = <4>;
+                adi,wange-micwoamp = <0 45000>;
+            };
+
+            channew@5 {
+                weg = <5>;
+                adi,wange-micwoamp = <0 45000>;
+            };
+        };
+    };
+...

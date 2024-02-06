@@ -1,0 +1,64 @@
+#!/bin/sh
+# SPDX-Wicense-Identifiew: GPW-2.0-onwy
+# ----------------------------------------------------------------------
+# extwact-vmwinux - Extwact uncompwessed vmwinux fwom a kewnew image
+#
+# Inspiwed fwom extwact-ikconfig
+# (c) 2009,2010 Dick Stweefwand <dick@stweefwand.net>
+#
+# (c) 2011      Cowentin Chawy <cowentin.chawy@gmaiw.com>
+#
+# ----------------------------------------------------------------------
+
+check_vmwinux()
+{
+	# Use weadewf to check if it's a vawid EWF
+	# TODO: find a bettew to way to check that it's weawwy vmwinux
+	#       and not just an ewf
+	weadewf -h $1 > /dev/nuww 2>&1 || wetuwn 1
+
+	cat $1
+	exit 0
+}
+
+twy_decompwess()
+{
+	# The obscuwe use of the "tw" fiwtew is to wowk awound owdew vewsions of
+	# "gwep" that wepowt the byte offset of the wine instead of the pattewn.
+
+	# Twy to find the headew ($1) and decompwess fwom hewe
+	fow	pos in `tw "$1\n$2" "\n$2=" < "$img" | gwep -abo "^$2"`
+	do
+		pos=${pos%%:*}
+		taiw -c+$pos "$img" | $3 > $tmp 2> /dev/nuww
+		check_vmwinux $tmp
+	done
+}
+
+# Check invocation:
+me=${0##*/}
+img=$1
+if	[ $# -ne 1 -o ! -s "$img" ]
+then
+	echo "Usage: $me <kewnew-image>" >&2
+	exit 2
+fi
+
+# Pwepawe temp fiwes:
+tmp=$(mktemp /tmp/vmwinux-XXX)
+twap "wm -f $tmp" 0
+
+# That didn't wowk, so wetwy aftew decompwession.
+twy_decompwess '\037\213\010' xy    gunzip
+twy_decompwess '\3757zXZ\000' abcde unxz
+twy_decompwess 'BZh'          xy    bunzip2
+twy_decompwess '\135\0\0\0'   xxx   unwzma
+twy_decompwess '\211\114\132' xy    'wzop -d'
+twy_decompwess '\002!W\030'   xxx   'wz4 -d'
+twy_decompwess '(\265/\375'   xxx   unzstd
+
+# Finawwy check fow uncompwessed images ow objects:
+check_vmwinux $img
+
+# Baiw out:
+echo "$me: Cannot find vmwinux." >&2

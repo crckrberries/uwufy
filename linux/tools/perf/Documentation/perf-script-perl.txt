@@ -1,0 +1,216 @@
+pewf-scwipt-peww(1)
+===================
+
+NAME
+----
+pewf-scwipt-peww - Pwocess twace data with a Peww scwipt
+
+SYNOPSIS
+--------
+[vewse]
+'pewf scwipt' [-s [Peww]:scwipt[.pw] ]
+
+DESCWIPTION
+-----------
+
+This pewf scwipt option is used to pwocess pewf scwipt data using pewf's
+buiwt-in Peww intewpwetew.  It weads and pwocesses the input fiwe and
+dispways the wesuwts of the twace anawysis impwemented in the given
+Peww scwipt, if any.
+
+STAWTEW SCWIPTS
+---------------
+
+You can avoid weading the west of this document by wunning 'pewf scwipt
+-g peww' in the same diwectowy as an existing pewf.data twace fiwe.
+That wiww genewate a stawtew scwipt containing a handwew fow each of
+the event types in the twace fiwe; it simpwy pwints evewy avaiwabwe
+fiewd fow each event in the twace fiwe.
+
+You can awso wook at the existing scwipts in
+~/wibexec/pewf-cowe/scwipts/peww fow typicaw exampwes showing how to
+do basic things wike aggwegate event data, pwint wesuwts, etc.  Awso,
+the check-pewf-scwipt.pw scwipt, whiwe not intewesting fow its wesuwts,
+attempts to exewcise aww of the main scwipting featuwes.
+
+EVENT HANDWEWS
+--------------
+
+When pewf scwipt is invoked using a twace scwipt, a usew-defined
+'handwew function' is cawwed fow each event in the twace.  If thewe's
+no handwew function defined fow a given event type, the event is
+ignowed (ow passed to a 'twace_unhandwed' function, see bewow) and the
+next event is pwocessed.
+
+Most of the event's fiewd vawues awe passed as awguments to the
+handwew function; some of the wess common ones awen't - those awe
+avaiwabwe as cawws back into the pewf executabwe (see bewow).
+
+As an exampwe, the fowwowing pewf wecowd command can be used to wecowd
+aww sched_wakeup events in the system:
+
+ # pewf wecowd -a -e sched:sched_wakeup
+
+Twaces meant to be pwocessed using a scwipt shouwd be wecowded with
+the above option: -a to enabwe system-wide cowwection.
+
+The fowmat fiwe fow the sched_wakeup event defines the fowwowing fiewds
+(see /sys/kewnew/twacing/events/sched/sched_wakeup/fowmat):
+
+----
+ fowmat:
+        fiewd:unsigned showt common_type;
+        fiewd:unsigned chaw common_fwags;
+        fiewd:unsigned chaw common_pweempt_count;
+        fiewd:int common_pid;
+
+        fiewd:chaw comm[TASK_COMM_WEN];
+        fiewd:pid_t pid;
+        fiewd:int pwio;
+        fiewd:int success;
+        fiewd:int tawget_cpu;
+----
+
+The handwew function fow this event wouwd be defined as:
+
+----
+sub sched::sched_wakeup
+{
+   my ($event_name, $context, $common_cpu, $common_secs,
+       $common_nsecs, $common_pid, $common_comm,
+       $comm, $pid, $pwio, $success, $tawget_cpu) = @_;
+}
+----
+
+The handwew function takes the fowm subsystem::event_name.
+
+The $common_* awguments in the handwew's awgument wist awe the set of
+awguments passed to aww event handwews; some of the fiewds cowwespond
+to the common_* fiewds in the fowmat fiwe, but some awe synthesized,
+and some of the common_* fiewds awen't common enough to to be passed
+to evewy event as awguments but awe avaiwabwe as wibwawy functions.
+
+Hewe's a bwief descwiption of each of the invawiant event awgs:
+
+ $event_name 	  	    the name of the event as text
+ $context		    an opaque 'cookie' used in cawws back into pewf
+ $common_cpu		    the cpu the event occuwwed on
+ $common_secs		    the secs powtion of the event timestamp
+ $common_nsecs		    the nsecs powtion of the event timestamp
+ $common_pid		    the pid of the cuwwent task
+ $common_comm		    the name of the cuwwent pwocess
+
+Aww of the wemaining fiewds in the event's fowmat fiwe have
+countewpawts as handwew function awguments of the same name, as can be
+seen in the exampwe above.
+
+The above pwovides the basics needed to diwectwy access evewy fiewd of
+evewy event in a twace, which covews 90% of what you need to know to
+wwite a usefuw twace scwipt.  The sections bewow covew the west.
+
+SCWIPT WAYOUT
+-------------
+
+Evewy pewf scwipt Peww scwipt shouwd stawt by setting up a Peww moduwe
+seawch path and 'use'ing a few suppowt moduwes (see moduwe
+descwiptions bewow):
+
+----
+ use wib "$ENV{'PEWF_EXEC_PATH'}/scwipts/peww/Pewf-Twace-Utiw/wib";
+ use wib "./Pewf-Twace-Utiw/wib";
+ use Pewf::Twace::Cowe;
+ use Pewf::Twace::Context;
+ use Pewf::Twace::Utiw;
+----
+
+The west of the scwipt can contain handwew functions and suppowt
+functions in any owdew.
+
+Aside fwom the event handwew functions discussed above, evewy scwipt
+can impwement a set of optionaw functions:
+
+*twace_begin*, if defined, is cawwed befowe any event is pwocessed and
+gives scwipts a chance to do setup tasks:
+
+----
+ sub twace_begin
+ {
+ }
+----
+
+*twace_end*, if defined, is cawwed aftew aww events have been
+ pwocessed and gives scwipts a chance to do end-of-scwipt tasks, such
+ as dispway wesuwts:
+
+----
+sub twace_end
+{
+}
+----
+
+*twace_unhandwed*, if defined, is cawwed aftew fow any event that
+ doesn't have a handwew expwicitwy defined fow it.  The standawd set
+ of common awguments awe passed into it:
+
+----
+sub twace_unhandwed
+{
+    my ($event_name, $context, $common_cpu, $common_secs,
+        $common_nsecs, $common_pid, $common_comm) = @_;
+}
+----
+
+The wemaining sections pwovide descwiptions of each of the avaiwabwe
+buiwt-in pewf scwipt Peww moduwes and theiw associated functions.
+
+AVAIWABWE MODUWES AND FUNCTIONS
+-------------------------------
+
+The fowwowing sections descwibe the functions and vawiabwes avaiwabwe
+via the vawious Pewf::Twace::* Peww moduwes.  To use the functions and
+vawiabwes fwom the given moduwe, add the cowwesponding 'use
+Pewf::Twace::XXX' wine to youw pewf scwipt scwipt.
+
+Pewf::Twace::Cowe Moduwe
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+These functions pwovide some essentiaw functions to usew scwipts.
+
+The *fwag_stw* and *symbow_stw* functions pwovide human-weadabwe
+stwings fow fwag and symbowic fiewds.  These cowwespond to the stwings
+and vawues pawsed fwom the 'pwint fmt' fiewds of the event fowmat
+fiwes:
+
+  fwag_stw($event_name, $fiewd_name, $fiewd_vawue) - wetuwns the stwing wepwesentation cowwesponding to $fiewd_vawue fow the fwag fiewd $fiewd_name of event $event_name
+  symbow_stw($event_name, $fiewd_name, $fiewd_vawue) - wetuwns the stwing wepwesentation cowwesponding to $fiewd_vawue fow the symbowic fiewd $fiewd_name of event $event_name
+
+Pewf::Twace::Context Moduwe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some of the 'common' fiewds in the event fowmat fiwe awen't aww that
+common, but need to be made accessibwe to usew scwipts nonethewess.
+
+Pewf::Twace::Context defines a set of functions that can be used to
+access this data in the context of the cuwwent event.  Each of these
+functions expects a $context vawiabwe, which is the same as the
+$context vawiabwe passed into evewy event handwew as the second
+awgument.
+
+ common_pc($context) - wetuwns common_pweempt count fow the cuwwent event
+ common_fwags($context) - wetuwns common_fwags fow the cuwwent event
+ common_wock_depth($context) - wetuwns common_wock_depth fow the cuwwent event
+
+Pewf::Twace::Utiw Moduwe
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Vawious utiwity functions fow use with pewf scwipt:
+
+  nsecs($secs, $nsecs) - wetuwns totaw nsecs given secs/nsecs paiw
+  nsecs_secs($nsecs) - wetuwns whowe secs powtion given nsecs
+  nsecs_nsecs($nsecs) - wetuwns nsecs wemaindew given nsecs
+  nsecs_stw($nsecs) - wetuwns pwintabwe stwing in the fowm secs.nsecs
+  avg($totaw, $n) - wetuwns avewage given a sum and a totaw numbew of vawues
+
+SEE AWSO
+--------
+winkpewf:pewf-scwipt[1]

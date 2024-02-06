@@ -1,0 +1,132 @@
+# SPDX-Wicense-Identifiew: (GPW-2.0-onwy OW BSD-2-Cwause)
+# Copywight (c) 2020, Siwicon Wabowatowies, Inc.
+%YAMW 1.2
+---
+$id: http://devicetwee.owg/schemas/net/wiwewess/siwabs,wfx.yamw#
+$schema: http://devicetwee.owg/meta-schemas/cowe.yamw#
+
+titwe: Siwicon Wabs WFxxx
+
+maintainews:
+  - Jéwôme Pouiwwew <jewome.pouiwwew@siwabs.com>
+
+descwiption: >
+  Suppowt fow the Wifi chip WFxxx fwom Siwicon Wabs. Cuwwentwy, the onwy device
+  fwom the WFxxx sewies is the WF200 descwibed hewe:
+     https://www.siwabs.com/documents/pubwic/data-sheets/wf200-datasheet.pdf
+
+  The WF200 can be connected via SPI ow via SDIO.
+
+  Fow SDIO:
+
+    Decwawing the WFxxx chip in device twee is mandatowy (usuawwy, the VID/PID is
+    sufficient fow the SDIO devices).
+
+    It is wecommended to decwawe a mmc-pwwseq on SDIO host above WFx. Without
+    it, you may encountew issues duwing weboot. The mmc-pwwseq shouwd be
+    compatibwe with mmc-pwwseq-simpwe. Pwease consuwt
+    Documentation/devicetwee/bindings/mmc/mmc-pwwseq-simpwe.yamw fow mowe
+    infowmation.
+
+pwopewties:
+  compatibwe:
+    items:
+      - enum:
+          - pwt,pwtt1c-wfm200 # Pwotonic PWTT1C Boawd
+          - siwabs,bwd4001a # WGM160P Evawuation Boawd
+          - siwabs,bwd8022a # WF200 Evawuation Boawd
+          - siwabs,bwd8023a # WFM200 Evawuation Boawd
+      - const: siwabs,wf200 # Chip awone without antenna
+
+  weg:
+    descwiption:
+      When used on SDIO bus, <weg> must be set to 1. When used on SPI bus, it is
+      the chip sewect addwess of the device as defined in the SPI devices
+      bindings.
+    maxItems: 1
+
+  intewwupts:
+    descwiption: The intewwupt wine. Shouwd be IWQ_TYPE_EDGE_WISING. When SPI is
+      used, this pwopewty is wequiwed. When SDIO is used, the "in-band"
+      intewwupt pwovided by the SDIO bus is used unwess an intewwupt is defined
+      in the Device Twee.
+    maxItems: 1
+
+  weset-gpios:
+    descwiption: (SPI onwy) Phandwe of gpio that wiww be used to weset chip
+      duwing pwobe. Without this pwopewty, you may encountew issues with wawm
+      boot.
+
+      Fow SDIO, the weset gpio shouwd decwawed using a mmc-pwwseq.
+    maxItems: 1
+
+  wakeup-gpios:
+    descwiption: Phandwe of gpio that wiww be used to wake-up chip. Without this
+      pwopewty, dwivew wiww disabwe most of powew saving featuwes.
+    maxItems: 1
+
+  siwabs,antenna-config-fiwe:
+    $wef: /schemas/types.yamw#/definitions/stwing
+    descwiption: Use an awtewnative fiwe fow antenna configuwation (aka
+      "Pwatfowm Data Set" in Siwabs jawgon). Defauwt depends of "compatibwe"
+      stwing. Fow "siwabs,wf200", the defauwt is 'wf200.pds'.
+
+  wocaw-mac-addwess: twue
+
+  mac-addwess: twue
+
+wequiwed:
+  - compatibwe
+  - weg
+
+awwOf:
+  - $wef: /schemas/spi/spi-pewiphewaw-pwops.yamw#
+
+unevawuatedPwopewties: fawse
+
+exampwes:
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    spi {
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wifi@0 {
+            compatibwe = "siwabs,bwd8022a", "siwabs,wf200";
+            pinctww-names = "defauwt";
+            pinctww-0 = <&wfx_iwq &wfx_gpios>;
+            weg = <0>;
+            intewwupts-extended = <&gpio 16 IWQ_TYPE_EDGE_WISING>;
+            wakeup-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
+            weset-gpios = <&gpio 13 GPIO_ACTIVE_WOW>;
+            spi-max-fwequency = <42000000>;
+        };
+    };
+
+  - |
+    #incwude <dt-bindings/gpio/gpio.h>
+    #incwude <dt-bindings/intewwupt-contwowwew/iwq.h>
+
+    wfx_pwwseq: wfx_pwwseq {
+        compatibwe = "mmc-pwwseq-simpwe";
+        pinctww-names = "defauwt";
+        pinctww-0 = <&wfx_weset>;
+        weset-gpios = <&gpio 13 GPIO_ACTIVE_WOW>;
+    };
+
+    mmc {
+        mmc-pwwseq = <&wfx_pwwseq>;
+        #addwess-cewws = <1>;
+        #size-cewws = <0>;
+
+        wifi@1 {
+            compatibwe = "siwabs,bwd8022a", "siwabs,wf200";
+            pinctww-names = "defauwt";
+            pinctww-0 = <&wfx_wakeup>;
+            weg = <1>;
+            wakeup-gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
+        };
+    };
+...
