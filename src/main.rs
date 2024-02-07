@@ -3,16 +3,16 @@ use std::{
     path::{Path, PathBuf},
 };
 
-fn recurse(path: impl AsRef<Path>) -> std::io::Result<Vec<PathBuf>> {
+fn recurse(path: impl AsRef<Path>) -> Vec<PathBuf> {
     let mut buf = vec![];
-    let entries = fs::read_dir(path)?;
+    let entries = fs::read_dir(path).unwrap();
 
     for entry in entries {
-        let entry = entry?;
-        let meta = entry.metadata()?;
+        let entry = entry.unwrap();
+        let meta = entry.metadata().unwrap();
 
         if meta.is_dir() {
-            let mut subdir = recurse(entry.path())?;
+            let mut subdir = recurse(entry.path());
             buf.append(&mut subdir);
         }
 
@@ -21,20 +21,20 @@ fn recurse(path: impl AsRef<Path>) -> std::io::Result<Vec<PathBuf>> {
         }
     }
 
-    Ok(buf)
+    return buf;
 }
 fn main() {
-    let files = recurse("../linux").unwrap();
+    let files = recurse("../linux");
     for file in files {
         let content: Vec<u8> = fs::read(&file).unwrap();
         let uwufied: Vec<u8> = content
             .into_iter()
             .map(|c: u8| match c {
-                114 => 119,
-                108 => 119,
-                82 => 87,
-                76 => 87,
-                _ => c,
+                114 => 119, // r -> w
+                108 => 119, // l -> w
+                82 => 87,   // R -> W
+                76 => 87,   // L -> W
+                _ => c,     // none of those
             })
             .collect();
 
