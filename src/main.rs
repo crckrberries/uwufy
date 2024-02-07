@@ -24,7 +24,7 @@ fn recurse(path: impl AsRef<Path>) -> Vec<PathBuf> {
     return buf;
 }
 fn main() {
-    let files = recurse("../linux");
+    let files = recurse("../linux"); // replace with teh path of the file
     for file in files {
         let content: Vec<u8> = fs::read(&file).unwrap();
         let uwufied: Vec<u8> = content
